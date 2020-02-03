@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBC7C3524D
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 18:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9221C3524F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 18:32:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98172087E
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 18:32:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4E5D2082E
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 18:32:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nYUJygIU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jH9/4klu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730011AbgBCSca (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Feb 2020 13:32:30 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35380 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729989AbgBCSca (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Feb 2020 13:32:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id y73so8018009pfg.2
-        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2020 10:32:29 -0800 (PST)
+        id S1729989AbgBCScb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Feb 2020 13:32:31 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43002 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730016AbgBCScb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Feb 2020 13:32:31 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 4so8002154pfz.9
+        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2020 10:32:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Jo0olqgMnkzurEg4dWqwCBwLi+N2wWcbXWJXOIPzme8=;
-        b=nYUJygIUSbVTXhXFO7+qNnTNnfukf5txscppTz+MTPVZ4oFv8iXEP9AkclCpjSHewY
-         XScnMbFGsaAUEa016ps6Q2v6Ivmcqffkepe0FN9stFAbXRmw7UOMx50mpNzqQdtuvO9p
-         B/yff2fq5OPRcUgalVaEDfWwTZXZ/R520zizk=
+        bh=5g1BX8oYOcgjo9pux5M5p2bLE7s9j8ECvjIyZHRTnQY=;
+        b=jH9/4kluz76UNEEinon0dfMka4SAYZN1IDWt64qfM1HpWCST1rVre8ZLTVnySBrQE4
+         r06F3cdXarrfXJbeH+c55smVRxDpXbI+4b0M3jlK4YWF8O9dGC/4TQ97lsUlI5mgSZgr
+         N0cMvp3/6MYuTIjeZSCD36rwx5ScKvjo8aXsY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Jo0olqgMnkzurEg4dWqwCBwLi+N2wWcbXWJXOIPzme8=;
-        b=Lv6Bj12HYlFScPdPfMw5D8f0Klrp4+FDPPiTne80+pwed8UesmkMkKZklEGoXKC7AT
-         vAyouJUz0ghdaxKZ9wxNA8DJGvM4gcVSHZ9masBcSRGKWhmpD9sZOPX2uFWesB0QLtzo
-         1j97sKezz9wo0ymvlbl1u6NuAEvWwGKjFl0TB9dKHuGH95OlHUMmp6HkAG8qithfhQ6w
-         R4KPImY8Qv/k3gxUMNNgiNenRo4KFrVw4OTUwisY9xuFocLFwdQb2PdGSwF6bsa9gITO
-         k/YeyyTNCFn8nIbfC2jQNmNx7samLB+8bcELsvoB73MzTl7poCUAcm7Cv1AHqCqf+FxK
-         EEGw==
-X-Gm-Message-State: APjAAAWs2zOQMQemk35bw2luRLOJSvpg8l8qnxV2rU8yvkaiEtBFgniu
-        nnWfWXKXAJz67vH0H7mxcDhJLA==
-X-Google-Smtp-Source: APXvYqxhWhgChXoUPvOD81GXdBg/j2G+GZuWLcUcvqFxA4nxIp7F10nCV9y5Pk48VXZ+rxgns3JLQQ==
-X-Received: by 2002:a63:e545:: with SMTP id z5mr26100199pgj.209.1580754748647;
-        Mon, 03 Feb 2020 10:32:28 -0800 (PST)
+        bh=5g1BX8oYOcgjo9pux5M5p2bLE7s9j8ECvjIyZHRTnQY=;
+        b=cEO21zMKytF2Pr62rfq0xghPxClqKXYEZt3jyCMaeb+14i7fIC0N64WpQqjBbmklco
+         lRsVRRrVRnmYYVc5+6iy1o4K8S3h1UDpDS7sAx6gOXvHWR3BeQSRkp0qGQzfau1zWDcO
+         gDQ7KfwV7oYGYXbrQwb4q3Qqr8hU4vrH7+vGXuEEczM+TqNzSgohTWq9uEoWxlvQ4OHt
+         bpS0IAwqbLM7+LwbOAnvngW2uhdhFiWQ/0svyXwP/21suhAjdzKWiZbvyaxjmBwWv+qN
+         pG50R4JVZ7yea0bA/XRmwlM9lStQ7Fm5kcrk2pVnSb8EgPZ+vrLWF+RwKr/m2c9uypFn
+         UDoA==
+X-Gm-Message-State: APjAAAXRm9b0aTmx1Rtr86wEyDJEpcAnGVMt2uZ64y0UCFdJuxTzMeRM
+        NkGuM/MAT6eZLdNrtSD1QILf6A==
+X-Google-Smtp-Source: APXvYqzTPiqHWb2iLW58b5qmzi+ONdPRjXdFJef+3ajjCtf9c5DeaPH9Qiwb5Hulf1bb3kru1zEZZA==
+X-Received: by 2002:aa7:9567:: with SMTP id x7mr26097051pfq.133.1580754749735;
+        Mon, 03 Feb 2020 10:32:29 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id f9sm21009137pfd.141.2020.02.03.10.32.27
+        by smtp.gmail.com with ESMTPSA id f9sm21009137pfd.141.2020.02.03.10.32.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Feb 2020 10:32:28 -0800 (PST)
+        Mon, 03 Feb 2020 10:32:29 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,11 +62,10 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
         linux-clk@vger.kernel.org, hoegsberg@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 13/15] clk: qcom: Use ARRAY_SIZE in videocc-sc7180 for parent clocks
-Date:   Mon,  3 Feb 2020 10:31:46 -0800
-Message-Id: <20200203103049.v4.13.If37e4b1b5553ac9db5ea51e84a6eec286cdf209e@changeid>
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v4 14/15] arm64: dts: qcom: sdm845: Add the missing clock on the videocc
+Date:   Mon,  3 Feb 2020 10:31:47 -0800
+Message-Id: <20200203103049.v4.14.Id0599319487f075808baba7cba02c4c3c486dc80@changeid>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200203183149.73842-1-dianders@chromium.org>
 References: <20200203183149.73842-1-dianders@chromium.org>
@@ -77,35 +76,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It's nicer to use ARRAY_SIZE instead of hardcoding.  Had we always
-been doing this it would have prevented a previous bug.  See commit
-74c31ff9c84a ("clk: qcom: gpu_cc_gmu_clk_src has 5 parents, not 6").
+We're transitioning over to requiring the Qualcomm Video Clock
+Controller to specify all the input clocks.  Let's add the one input
+clock for the videocc for sdm845.
+
+NOTE: Until the Linux driver for sdm845's video is updated, this clock
+will not actually be used in Linux.  It will continue to use global
+clock names to match things up.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v4: None
 Changes in v3:
-- Patch ("clk: qcom: Use ARRAY_SIZE in videocc-sc7180...") new for v3.
+- Unlike in v2, use internal name instead of purist name.
 
-Changes in v2: None
+Changes in v2:
+- Patch ("arm64: dts: qcom: sdm845: Add...videocc") new for v2.
 
- drivers/clk/qcom/videocc-sc7180.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-index 653fc4e6bb6f..c363c3cc544e 100644
---- a/drivers/clk/qcom/videocc-sc7180.c
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -76,7 +76,7 @@ static struct clk_rcg2 video_cc_venus_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "video_cc_venus_clk_src",
- 		.parent_data = video_cc_parent_data_1,
--		.num_parents = 2,
-+		.num_parents = ARRAY_SIZE(video_cc_parent_data_1),
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 35d7fcbda43c..3ad08d9deb54 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2607,6 +2607,8 @@ video-core1 {
+ 		videocc: clock-controller@ab00000 {
+ 			compatible = "qcom,sdm845-videocc";
+ 			reg = <0 0x0ab00000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>;
++			clock-names = "bi_tcxo";
+ 			#clock-cells = <1>;
+ 			#power-domain-cells = <1>;
+ 			#reset-cells = <1>;
 -- 
 2.25.0.341.g760bfbb309-goog
 
