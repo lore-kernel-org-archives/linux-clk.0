@@ -2,165 +2,240 @@ Return-Path: <SRS0=s2jw=3Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4484CC2D0B1
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 09:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C15C2D0B1
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 10:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBF8A218AC
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 09:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F56121741
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 10:24:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="HK499qij"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zOJkzAer"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgBDJvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 04:51:05 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:46633 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726343AbgBDJvE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 04:51:04 -0500
-Received: from [IPv6:2001:420:44c1:2577:c522:bb58:9147:43ff]
- ([IPv6:2001:420:44c1:2577:c522:bb58:9147:43ff])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id yurBiQflTVuxOyurFiI8yZ; Tue, 04 Feb 2020 10:51:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1580809861; bh=udrDG7W7XxVlZg9dFBjVJa1SeinJFWf8PYu2s1ZBzEE=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=HK499qijLMt0d3NsJ/R6CALFLgIH5TPDKLVv3JotVW7E7jZ07nDX/u+G3KPwDGiya
-         4vO23Pn04jCbJi6EvdQs9zHPgm/gaq7SPu1V1vcxUy6lHQbMxg4I6sahHsRi+zfTQj
-         OlBSokrE5w+DUmlQcCjjnkKOK2C+brr7gVNvAFop+zpL5UXbuooWaXd0/JdVlheRAT
-         WSE2ytobns3p7mUHPWFQ+eBzzs54fwXOfF4uZDMWcwgm/kMPMz44GEH+lILGNNy1wB
-         BdYCKaK1svlIxvF8PyWmJJvrOHO6jzJ4YgYSL2nFmktclMlk08Wo+AM9lmyPf7R+DP
-         KlTsvzXhDJ6uA==
-Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        frankc@nvidia.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
- <20200130154246.GA2904678@ulmo>
- <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
- <20200131170351.GA3444092@ulmo>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <b1678339-5ba6-4950-6afe-01fe26ee527f@xs4all.nl>
-Date:   Tue, 4 Feb 2020 10:50:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726479AbgBDKYS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Feb 2020 05:24:18 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53654 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726559AbgBDKYQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 05:24:16 -0500
+Received: by mail-wm1-f67.google.com with SMTP id s10so2608362wmh.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2020 02:24:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=8Di6ASz/+t9ylQNviPiHg7bITLqqjwAhj0GpBFWGF/Y=;
+        b=zOJkzAerIaHwyYFLOkvre+8Qel5FfFWyLAwjT6oztmUPSWMBUpaRiuuplB0HFoifef
+         uiigqpqIXh2LT6Bm513iJXh3B1a0FguRcPs+J9BOrkRzeLiyT3fHcq+WGk6snS0jRxmY
+         E/Vc5Vu20XZqZeqhKT3M1DPCX/6fpUpUyRExjkCWgN/axnj305t2H7W21yNVd3nS9tvv
+         pqnqRKNSX0WMaOcvpWJczoqPQ8S3EmeOBJsUy2Xer+689hvsS6sikQ8QseRE7yiaz2Dm
+         epujVaVZCVK9od8xZpdnlhVYcZ3zaHCkXlRDymuRd7p9wzEQb0NJwVzvwzkVKnNysoT1
+         dqbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=8Di6ASz/+t9ylQNviPiHg7bITLqqjwAhj0GpBFWGF/Y=;
+        b=Rh2QajYgW+St02TtAJEbegS3Kw96wcEKr+bYBudGQV4P6YXpy9SZqYRRT9nQebtgjA
+         cA1JBA7UxFC+nt6Wo5RIG3ACyEhvuKZJStIiQQ9NbhuvzLQFgSfrR3sojDPV4zQ+614i
+         APuMArGqQp0fJ7BCs23sIHSsaQISEOf6i+cXu1yrVhIJsqFC197Fcoo9TLMHX1dkP/UC
+         MNriIH+ur3IQR0ffi7WMQxSTUr6fQGNEg53Xd+9T0TIugydKoqd/mdCXVoGevkEldLou
+         Ts1JhpJkzLVdn0lhq4l10geZlecv7VyvHrtouHJGDii3UHWduDo+f9f+G+Qq18Lb5tah
+         92Pg==
+X-Gm-Message-State: APjAAAWMZMnC+EWYDBvEcf3mwGiZNmB4a5Th2Q1cTzeqm4UaUDja4Gj8
+        Z7FU9UrOfETpL1+X6+DVjfGLKA==
+X-Google-Smtp-Source: APXvYqwwqM9TCMtr6da/jGSKzvje6iPqSV8lHHCFcFwGr4zlwY6+j32lU1xiv+kbQye4qsnhRqFCTg==
+X-Received: by 2002:a05:600c:2383:: with SMTP id m3mr5242375wma.32.1580811853170;
+        Tue, 04 Feb 2020 02:24:13 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id l17sm28626715wro.77.2020.02.04.02.24.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 02:24:12 -0800 (PST)
+References: <20200120034937.128600-1-jian.hu@amlogic.com> <20200120034937.128600-3-jian.hu@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 2/5] clk: meson: add support for A1 PLL clock ops
+In-reply-to: <20200120034937.128600-3-jian.hu@amlogic.com>
+Date:   Tue, 04 Feb 2020 11:24:11 +0100
+Message-ID: <1jftfq7ir8.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20200131170351.GA3444092@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfE57kH2nPdi6RuL5Tj6iVOgBB0zQcKUPr7DSyqTUxljwxpmmpytfaq19V/tG1nCy/2R9YUpxBlmWXq14r7ylSGpMXGwLU42dekPcaxldoLur6pV9KZyV
- bmZ3MXgxDSVJZDaKgt7TNK5D66zRoiaCRZX5ad8dvMCxEXluNKfGp5uFyV/FQYVU142nJVOFaH08xF2mBEqHFhjdE40AvLtxGARg3NkLqb4QAmPq7yJibDpd
- jbYvK+HxyYndRWamV7nImM/+YIe0B2UCXpV6EZYNAnC4mOl9kUte1dh5SLAr3gofV2EZC7tm/sSsMnI0nhbNf21TWdbNVNnypNqOyypbnfhnjQnjLrGOtt5z
- tI6TLNg3Ay3dhmS4IsjnfvfaJSyYMWgrFOGIwXRD5gmihhhAXZzUSZbJwyZoGamDeTKx6nnP8koFBr1Z+lrwCtO62ecn3QYrRGS0WPqTLjct/wdBuGrVD6Tx
- KZogcjGuaBQxB6g1SerbtTxl7YLyikSGJnSr1cgzLspZhnYRBQ+lgkqSKEia61J+FK2Yc5aVd0iwOep+TuQHNmUjKWZt9RJG4i9OvrbsZGroHLFI3iqtPTIr
- BT8=
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/31/20 6:03 PM, Thierry Reding wrote:
-> On Fri, Jan 31, 2020 at 03:29:52PM +0100, Hans Verkuil wrote:
->> On 1/30/20 4:42 PM, Thierry Reding wrote:
->>> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
->>>> Hi Sowjanya,
->>>>
->>>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
->>>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>>>> generator (TPG) capture.
->>>>>
->>>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>>>> CSI port is one-to-one mapped to VI channel for video capture.
->>>>>
->>>>> This series has TPG support only where it creates hard media links
->>>>> between CSI subdevice and VI video device without device graphs.
->>>>>
->>>>> v4l2-compliance results are available below the patch diff.
->>>>>
->>>>> [v0]:	Includes,
->>>>> 	- Adds CSI TPG clock to Tegra210 clock driver
->>>>> 	- Host1x video driver with VI and CSI clients.
->>>>> 	- Support for Tegra210 only.
->>>>> 	- VI CSI TPG support with hard media links in driver.
->>>>> 	- Video formats supported by Tegra210 VI
->>>>> 	- CSI TPG supported video formats
->>>>
->>>> I'm trying to compile this patch series using the media_tree master
->>>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
->>>>
->>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
->>>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
->>>>    71 |  unsigned int count = *nbuffers;
->>>>       |               ^~~~~
->>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
->>>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>>>       |                                                       ^
->>>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
->>>> make[4]: *** Waiting for unfinished jobs....
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
->>>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>>>       |                                                       ^
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
->>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
->>>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
->>>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
->>>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
->>>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>>>       |                                                   ^~
->>>>
->>>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
->>>> have a 'host' field.
->>>>
->>>> Does this series depend on another patch that's not yet in mainline?
->>>
->>> Sowjanya's been working on top of linux-next, so, yes, this patch
->>> depends on a change that's been merged into the DRM tree for v5.6-rc1.
->>>
->>> Thierry
->>>
->>
->> Is there a specific linux-next tag that works? I tried next-20200131 but that
->> failed to boot. Same problem with the mainline repo since the host1x patches
->> were merged yesterday. It compiles fine, but the boot just stops. Or am I
->> missing some kernel config that is now important to have?
-> 
-> linux-next and mainline are currently regressing on Tegra210 (and some
-> Tegra124) boards. I just sent out a series that fixes the regression for
-> me:
-> 
-> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=156215
-> 
-> Please test if this works for you. If so, I'll send this to Dave as soon
-> as possible.
 
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+On Mon 20 Jan 2020 at 04:49, Jian Hu <jian.hu@amlogic.com> wrote:
 
-Thank you, now it boots on mainline + this series + the new VI/CSI driver.
+> Compared with the previous SoCs, self-adaption current module
+> is newly added for A1, and there is no reset parm except the
+> fixed pll. In A1 PLL, the PLL enable sequence is different, using
+> the new power-on sequence to enable the PLL.
 
-Regards,
+Things are getting clearer thanks to Martin's suggestions and I can
+understand what your driver is doing now
 
-	Hans
+However, I still have a problem with the fact that 2 different pll types
+are getting intertwined in this driver. Parameters mandatory to one is
+made optional to the other. Nothing clearly shows which needs what and
+the combinatorial are quickly growing.
 
-> 
-> Thierry
-> 
+Apparently the only real difference is in enable/disable, So I would
+prefer if the a1 had dedicated function for these ops.
+
+I suppose you'll have to submit clk_hw_enable() and clk_hw_disable()
+to the framework to call the appropriate ops dependind on the SoC.
+
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
+>  drivers/clk/meson/clk-pll.h |  2 ++
+>  2 files changed, 42 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index ddb1e5634739..10926291440f 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -283,10 +283,14 @@ static void meson_clk_pll_init(struct clk_hw *hw)
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+>  	if (pll->init_count) {
+> -		meson_parm_write(clk->map, &pll->rst, 1);
+> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+> +			meson_parm_write(clk->map, &pll->rst, 1);
+> +
+
+replace by
+        enabled = clk_hw_is_enabled(hw)
+        if (enabled)
+           clk_hw_disable(hw)
+
+>  		regmap_multi_reg_write(clk->map, pll->init_regs,
+>  				       pll->init_count);
+> -		meson_parm_write(clk->map, &pll->rst, 0);
+> +
+> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+> +			meson_parm_write(clk->map, &pll->rst, 0);
+
+       /* restore if necessary */
+       if (enabled)
+          clk_hw_enable(hw)
+
+>  	}
+>  }
+>  
+> @@ -295,8 +299,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+>  	struct clk_regmap *clk = to_clk_regmap(hw);
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+> -	if (meson_parm_read(clk->map, &pll->rst) ||
+> -	    !meson_parm_read(clk->map, &pll->en) ||
+> +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+> +	    meson_parm_read(clk->map, &pll->rst))
+> +		return 0;
+> +
+> +	if (!meson_parm_read(clk->map, &pll->en) ||
+>  	    !meson_parm_read(clk->map, &pll->l))
+>  		return 0;
+
+I suppose the pll can't be locked if it was in reset, so we could drop
+the check on `rst` entirely to simplify the function
+
+>  
+> @@ -323,13 +330,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>  		return 0;
+>  
+>  	/* Make sure the pll is in reset */
+> -	meson_parm_write(clk->map, &pll->rst, 1);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 1);
+>  
+>  	/* Enable the pll */
+>  	meson_parm_write(clk->map, &pll->en, 1);
+>  
+>  	/* Take the pll out reset */
+> -	meson_parm_write(clk->map, &pll->rst, 0);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 0);
+> +
+> +	/*
+> +	 * Compared with the previous SoCs, self-adaption current module
+> +	 * is newly added for A1, keep the new power-on sequence to enable the
+> +	 * PLL. The sequence is:
+> +	 * 1. enable the pll, delay for 10us
+> +	 * 2. enable the pll self-adaption current module, delay for 40us
+> +	 * 3. enable the lock detect module
+> +	 */
+> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+> +		udelay(10);
+> +		meson_parm_write(clk->map, &pll->current_en, 1);
+> +		udelay(40);
+> +	};
+> +
+> +	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+> +		meson_parm_write(clk->map, &pll->l_detect, 1);
+> +		meson_parm_write(clk->map, &pll->l_detect, 0);
+> +	}
+>  
+>  	if (meson_clk_pll_wait_lock(hw))
+>  		return -EIO;
+> @@ -343,10 +371,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+>  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>  
+>  	/* Put the pll is in reset */
+> -	meson_parm_write(clk->map, &pll->rst, 1);
+> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+> +		meson_parm_write(clk->map, &pll->rst, 1);
+>  
+>  	/* Disable the pll */
+>  	meson_parm_write(clk->map, &pll->en, 0);
+> +
+> +	/* Disable PLL internal self-adaption current module */
+> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
+> +		meson_parm_write(clk->map, &pll->current_en, 0);
+>  }
+
+With the above clarified, it should be easy to properly split the
+functions between the legacy type and the a1 type.
+
+You'll need to update meson_clk_pll_set_rate() to call
+ - clk_hw_is_enabled()
+ - clk_hw_enable() and clk_hw_disable() (again, you'll need to add
+ those in the framework first)
+
+>  
+>  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+> index 367efd0f6410..a2228c0fdce5 100644
+> --- a/drivers/clk/meson/clk-pll.h
+> +++ b/drivers/clk/meson/clk-pll.h
+> @@ -36,6 +36,8 @@ struct meson_clk_pll_data {
+>  	struct parm frac;
+>  	struct parm l;
+>  	struct parm rst;
+> +	struct parm current_en;
+> +	struct parm l_detect;
+>  	const struct reg_sequence *init_regs;
+>  	unsigned int init_count;
+>  	const struct pll_params_table *table;
 
