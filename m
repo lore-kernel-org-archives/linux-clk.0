@@ -2,330 +2,566 @@ Return-Path: <SRS0=s2jw=3Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,URI_HEX,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B165CC3F68F
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 12:53:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86288C3524D
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 13:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8583921D7D
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 12:53:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48A852166E
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 13:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="K26nAFOK"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="M0Z99vfO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbgBDMxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 07:53:37 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:48425 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727168AbgBDMxh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 07:53:37 -0500
-Received: from [IPv6:2001:420:44c1:2577:28db:bc36:e7fa:777f]
- ([IPv6:2001:420:44c1:2577:28db:bc36:e7fa:777f])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id yxhqiYfxpn7E5yxhtiAsWx; Tue, 04 Feb 2020 13:53:33 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1580820813; bh=QrEgOEmv0LGcaeOI9u6vPQa6tjAb25IHU0ai53OgkvI=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=K26nAFOKvA2DC1BHJDvoMGdfPBXRnn3HMKR0kap/DDKEIcUD/5a4c/lu7j8b4M7Qp
-         tNMFpc9tYatO1sxw6k7852wcPlLS2z4hh9bvzHZmPOM6+OAihOD+lyMSZjTrrm8J4+
-         /OvuKhZn+skKxo63UAD09vUDVjshRM2JoIxEYbWVAIuYTM5nL6ZSy7q225G13WF1yo
-         ERRYtLooBRr6GtMfuiu1+cFV6J7vonEt3cvNL6vQDtPsVpFCOSyQ8ElJE+ZqkIMsHW
-         zuZS2h33bcMhLQ+ce4zX7J7iqNi9Q0NuqW9zGR9/aZGX4S3mTJCeYp5YVsSatmKc9C
-         240qld99OYdpg==
-Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <098ac46f-fe13-f215-b9a4-aa8d01395592@xs4all.nl>
-Date:   Tue, 4 Feb 2020 13:53:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727149AbgBDNNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Feb 2020 08:13:52 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54102 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727183AbgBDNNw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 08:13:52 -0500
+Received: by mail-wm1-f65.google.com with SMTP id s10so3260409wmh.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2020 05:13:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=4+ZreWNwYj7OFQFlzqzrrix3cuAHazWWj8/rPIGWyJo=;
+        b=M0Z99vfOMeym0k0M//ZRqU+XgeZnY+6k59gul5cLqImd+3v9xW4aoiAbsVNC8w/6Yc
+         tDqrAC+zFj7TTKo7eB0ggzzUtKSJO+QnWD/BCsVvCJ6SeN1bpaWFW7kka2vsXA+12I4h
+         MK81WKFwnpE+7jOpy3YiJlTgjmz6J24CXrkg43xeVEwDjN66647tsStwHpVHbH0ZLWlS
+         pGjEy5xsvrkxUeqhAocVKsLhpIYcdn6eyqUTCdZVfefDIY90Nu20K/hGEJtC8I5B8hGo
+         /L6QRROOxkUoOTLQ9axRkRAlUHdtN+RrZQ3oH5CChcJ5zBSYUNrBYE9JkxKaHfT7mPU8
+         qLSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=4+ZreWNwYj7OFQFlzqzrrix3cuAHazWWj8/rPIGWyJo=;
+        b=cX/MzEeLrSpanpUdN0eaY60ivrQHzROY0W+W4UNoTZmECNKBTxIBdVl0psbSkLx1lS
+         n16tIrlIQqhOEW/YSLx8GvfxdoGUXz/EC8q12pvBco033LeDQ5GuyB91Vl40SUhPaxP1
+         MnUELjgNup2bgvgh0DAMGZgJAVclPKKctzEr+oyynTDMNiHsdQSpK8cCXfnpQ1p2NEqB
+         RJDgNIdXVjYY6AcoGPNhu7zbuK0zKk9M9EPXjpKAIGGQtefsYrtiJ7pZsKmKu4UFByVg
+         wib8G24JCfrICTqdYqABOP7pnKifM4g28dkbdGAOlMhYT6AjY88SFScpEka5iiuO4j2C
+         1eMQ==
+X-Gm-Message-State: APjAAAWO1GmjYoAZw5miGwf2Dqe7IJNRKdjZQZk3f6Dm/QmiDdQDfHHw
+        vaeUB4Lwf12pjcYqGRZeZuMN8A==
+X-Google-Smtp-Source: APXvYqwa8TjVIISu4WpJ5BmARG51IeDoMGSBvNTNUaWV+PC+gcbDYGihp7zaopr8eYWtFU9TFpm06g==
+X-Received: by 2002:a1c:6389:: with SMTP id x131mr6064652wmb.155.1580822027625;
+        Tue, 04 Feb 2020 05:13:47 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id y20sm3571466wmi.25.2020.02.04.05.13.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 05:13:46 -0800 (PST)
+References: <20200120034937.128600-1-jian.hu@amlogic.com> <20200120034937.128600-4-jian.hu@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 3/5] clk: meson: a1: add support for Amlogic A1 PLL clock driver
+In-reply-to: <20200120034937.128600-4-jian.hu@amlogic.com>
+Date:   Tue, 04 Feb 2020 14:13:46 +0100
+Message-ID: <1jeeva7awl.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfHDOXaK+8oEXxBVg2hAYBIS4p+0l3Ie8cHcMRFLnBN0rnQ6QsbrowXVwRwb61IRcuYGfmBVoK04qSj/EkGs/iZKsQYam4SydnOpzyILCTqASmvY71NYl
- CXgctuOBWUt6u7w0ahmD8KlfWfSaEtIrwpfNGGSdJZs45Vi3S71OcGgkravg6SvRKIPwbGEowFHWiSHCorJUr2/358whC1X+pRGnWWQsRUiUdgtZ6Ba7osA0
- hXzwaR2HX09875CH4w7SrbooVWsk23mimf0lKwJZyzIEAS3vTVZVaUr0M/aJ2fkiCA2IjkhgHaMjoSj78VRE+8ERkO4iJB4OE8xYIpWSOVAVIFrzyqGUgpEo
- S42WMv7ceNpkDhttKcteZplQ+pqBR5POjHNx8DuPdL/g/7slqoX90ZIuB7FCkzUhcqOHjA6AnBp1rQZAHIs2mWoDem1VbLnNfAVh5uaFbCTr1U7C7JBWfl4B
- GKMUf7t7u4JHE0yZpmOJzFMWnk5bbxWkB2nVqOxNNlwRJURzhpHEk6AgVKOBboUckUdbN6bp1+FOdnbWE72YVJ7HrdTmgwYsYb9hP1IcK+fxH/cCrZrnSb26
- 5cA=
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
-> This series adds Tegra210 VI and CSI driver for built-in test pattern
-> generator (TPG) capture.
-> 
-> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
-> CSI port is one-to-one mapped to VI channel for video capture.
-> 
-> This series has TPG support only where it creates hard media links
-> between CSI subdevice and VI video device without device graphs.
-> 
-> v4l2-compliance results are available below the patch diff.
-> 
-> [v0]:	Includes,
-> 	- Adds CSI TPG clock to Tegra210 clock driver
-> 	- Host1x video driver with VI and CSI clients.
-> 	- Support for Tegra210 only.
-> 	- VI CSI TPG support with hard media links in driver.
-> 	- Video formats supported by Tegra210 VI
-> 	- CSI TPG supported video formats
-> 
-> 
-> Sowjanya Komatineni (5):
->   dt-bindings: clock: tegra: Add clk id for CSI TPG clock
->   clk: tegra: Add Tegra210 CSI TPG clock gate
->   dt-binding: tegra: Add VI and CSI bindings
->   media: tegra: Add Tegra Video input driver for Tegra210
->   arm64: tegra: Add Tegra VI CSI suppport in device tree
-> 
->  .../display/tegra/nvidia,tegra20-host1x.txt        |  10 +-
->  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   8 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  31 +-
->  drivers/clk/tegra/clk-tegra210.c                   |   7 +
->  drivers/staging/media/Kconfig                      |   2 +
->  drivers/staging/media/Makefile                     |   1 +
->  drivers/staging/media/tegra/Kconfig                |  12 +
->  drivers/staging/media/tegra/Makefile               |  11 +
->  drivers/staging/media/tegra/TODO                   |  10 +
->  drivers/staging/media/tegra/csi.h                  | 111 ++++
->  drivers/staging/media/tegra/csi2_fops.c            | 335 +++++++++++
->  drivers/staging/media/tegra/csi2_fops.h            |  15 +
->  drivers/staging/media/tegra/host1x-video.c         | 120 ++++
->  drivers/staging/media/tegra/host1x-video.h         |  33 ++
->  drivers/staging/media/tegra/mc_common.h            | 131 +++++
->  drivers/staging/media/tegra/tegra-channel.c        | 628 +++++++++++++++++++++
->  drivers/staging/media/tegra/tegra-core.c           | 111 ++++
->  drivers/staging/media/tegra/tegra-core.h           | 125 ++++
->  drivers/staging/media/tegra/tegra-csi.c            | 380 +++++++++++++
->  drivers/staging/media/tegra/tegra-vi.c             | 351 ++++++++++++
->  drivers/staging/media/tegra/tegra-vi.h             | 101 ++++
->  drivers/staging/media/tegra/vi2_fops.c             | 364 ++++++++++++
->  drivers/staging/media/tegra/vi2_fops.h             |  15 +
->  drivers/staging/media/tegra/vi2_formats.h          | 119 ++++
->  drivers/staging/media/tegra/vi2_registers.h        | 194 +++++++
->  include/dt-bindings/clock/tegra210-car.h           |   2 +-
->  26 files changed, 3224 insertions(+), 3 deletions(-)
->  create mode 100644 drivers/staging/media/tegra/Kconfig
->  create mode 100644 drivers/staging/media/tegra/Makefile
->  create mode 100644 drivers/staging/media/tegra/TODO
->  create mode 100644 drivers/staging/media/tegra/csi.h
->  create mode 100644 drivers/staging/media/tegra/csi2_fops.c
->  create mode 100644 drivers/staging/media/tegra/csi2_fops.h
->  create mode 100644 drivers/staging/media/tegra/host1x-video.c
->  create mode 100644 drivers/staging/media/tegra/host1x-video.h
->  create mode 100644 drivers/staging/media/tegra/mc_common.h
->  create mode 100644 drivers/staging/media/tegra/tegra-channel.c
->  create mode 100644 drivers/staging/media/tegra/tegra-core.c
->  create mode 100644 drivers/staging/media/tegra/tegra-core.h
->  create mode 100644 drivers/staging/media/tegra/tegra-csi.c
->  create mode 100644 drivers/staging/media/tegra/tegra-vi.c
->  create mode 100644 drivers/staging/media/tegra/tegra-vi.h
->  create mode 100644 drivers/staging/media/tegra/vi2_fops.c
->  create mode 100644 drivers/staging/media/tegra/vi2_fops.h
->  create mode 100644 drivers/staging/media/tegra/vi2_formats.h
->  create mode 100644 drivers/staging/media/tegra/vi2_registers.h
-> 
-> 
-> v4l2-compliance SHA: e7402fb758fd106955c3b7d5a5e961d1cb606f4a, 32 bits, 32-bit time_t
-> 
-> Compliance test for tegra-video device /dev/video0:
 
-Since this driver creates a /dev/media0 device you should test with:
+On Mon 20 Jan 2020 at 04:49, Jian Hu <jian.hu@amlogic.com> wrote:
 
-v4l2-compliance -m0 -s10: that tests everything found in the media topology.
+> The Amlogic A1 clock includes three drivers:
+> pll clocks, peripheral clocks, CPU clocks.
+> sys pll and CPU clocks will be sent in next patch.
+>
+> Unlike the previous series, there is no EE/AO domain
+> in A1 CLK controllers.
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  drivers/clk/meson/Kconfig  |   9 +
+>  drivers/clk/meson/Makefile |   1 +
+>  drivers/clk/meson/a1-pll.c | 360 +++++++++++++++++++++++++++++++++++++
+>  drivers/clk/meson/a1-pll.h |  56 ++++++
+>  4 files changed, 426 insertions(+)
+>  create mode 100644 drivers/clk/meson/a1-pll.c
+>  create mode 100644 drivers/clk/meson/a1-pll.h
+>
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index dabeb435d067..31613c3bbbc7 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -93,6 +93,15 @@ config COMMON_CLK_AXG_AUDIO
+>  	  Support for the audio clock controller on AmLogic A113D devices,
+>  	  aka axg, Say Y if you want audio subsystem to work.
+>  
+> +config COMMON_CLK_A1_PLL
+> +	bool
+> +	depends on ARCH_MESON
+> +	select COMMON_CLK_MESON_REGMAP
+> +	select COMMON_CLK_MESON_PLL
+> +	help
+> +	  Support for the PLL clock controller on Amlogic A113L device,
+> +	  aka a1. Say Y if you want PLL to work.
+> +
+>  config COMMON_CLK_G12A
+>  	bool
+>  	depends on ARCH_MESON
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 3939f218587a..71d3b8e6fb8a 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -16,6 +16,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
+>  
+>  obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+> +obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> new file mode 100644
+> index 000000000000..69c1ca07d041
+> --- /dev/null
+> +++ b/drivers/clk/meson/a1-pll.c
+> @@ -0,0 +1,360 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + * Author: Jian Hu <jian.hu@amlogic.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include "a1-pll.h"
+> +#include "clk-pll.h"
+> +#include "clk-regmap.h"
+> +
+> +static struct clk_regmap a1_fixed_pll_dco = {
+> +	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+> +			.shift   = 28,
+> +			.width   = 1,
+> +		},
+> +		.m = {
+> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+> +			.shift   = 0,
+> +			.width   = 8,
+> +		},
+> +		.n = {
+> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+> +			.shift   = 10,
+> +			.width   = 5,
+> +		},
+> +		.frac = {
+> +			.reg_off = ANACTRL_FIXPLL_CTRL1,
+> +			.shift   = 0,
+> +			.width   = 19,
+> +		},
+> +		.l = {
+> +			.reg_off = ANACTRL_FIXPLL_STS,
+> +			.shift   = 31,
+> +			.width   = 1,
+> +		},
+> +		.rst = {
+> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+> +			.shift   = 29,
+> +			.width   = 1,
+> +		},
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fixed_pll_dco",
+> +		.ops = &meson_clk_pll_ro_ops,
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "xtal_fixpll",
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap a1_fixed_pll = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = ANACTRL_FIXPLL_CTRL0,
+> +		.bit_idx = 20,
+> +	},
+> +	.hw.init = &(struct clk_init_data) {
+> +		.name = "fixed_pll",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fixed_pll_dco.hw
+> +		},
+> +		.num_parents = 1,
+> +		/*
+> +		 * It is enough that the fdiv leaf has critical flag,
+> +		 * No critical or unused flag here.
+> +		 */
+> +	},
+> +};
+> +
+> +static const struct pll_mult_range a1_hifi_pll_mult_range = {
+> +	.min = 32,
+> +	.max = 64,
+> +};
+> +
+> +static const struct reg_sequence a1_hifi_init_regs[] = {
+> +	{ .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x01800000 },
+> +	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001100 },
+> +	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x100a1100 },
+> +	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x00302000 },
+> +	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x01f18440 },
+> +};
+> +
+> +static struct clk_regmap a1_hifi_pll = {
+> +	.data = &(struct meson_clk_pll_data){
+> +		.en = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+> +			.shift   = 28,
+> +			.width   = 1,
+> +		},
+> +		.m = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+> +			.shift   = 0,
+> +			.width   = 8,
+> +		},
+> +		.n = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+> +			.shift   = 10,
+> +			.width   = 5,
+> +		},
+> +		.frac = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL1,
+> +			.shift   = 0,
+> +			.width   = 19,
+> +		},
+> +		.l = {
+> +			.reg_off = ANACTRL_HIFIPLL_STS,
+> +			.shift   = 31,
+> +			.width   = 1,
+> +		},
+> +		.current_en = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+> +			.shift   = 26,
+> +			.width   = 1,
+> +		},
+> +		.l_detect = {
+> +			.reg_off = ANACTRL_HIFIPLL_CTRL2,
+> +			.shift   = 6,
+> +			.width   = 1,
+> +		},
+> +		.range = &a1_hifi_pll_mult_range,
+> +		.init_regs = a1_hifi_init_regs,
+> +		.init_count = ARRAY_SIZE(a1_hifi_init_regs),
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "hifi_pll",
+> +		.ops = &meson_clk_pll_ops,
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.fw_name = "xtal_hifipll",
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor a1_fclk_div2_div = {
+> +	.mult = 1,
+> +	.div = 2,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div2_div",
+> +		.ops = &clk_fixed_factor_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fixed_pll.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap a1_fclk_div2 = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = ANACTRL_FIXPLL_CTRL0,
+> +		.bit_idx = 21,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div2",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fclk_div2_div.hw
+> +		},
+> +		.num_parents = 1,
+> +		/*
+> +		 * This clock is used by DDR clock in BL2 firmware
+> +		 * and is required by the platform to operate correctly.
+> +		 * Until the following condition are met, we need this clock to
+> +		 * be marked as critical:
+> +		 * a) Mark the clock used by a firmware resource, if possible
+> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+> +		 *    clock stays on until the proper driver comes along
+> +		 */
+> +		.flags = CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor a1_fclk_div3_div = {
+> +	.mult = 1,
+> +	.div = 3,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div3_div",
+> +		.ops = &clk_fixed_factor_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fixed_pll.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap a1_fclk_div3 = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = ANACTRL_FIXPLL_CTRL0,
+> +		.bit_idx = 22,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div3",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fclk_div3_div.hw
+> +		},
+> +		.num_parents = 1,
+> +		/*
+> +		 * This clock is used by APB bus which is set in boot ROM code
+> +		 * and is required by the platform to operate correctly.
+> +		 * About critical, refer to a1_fclk_div2.
+> +		 */
+> +		.flags = CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor a1_fclk_div5_div = {
+> +	.mult = 1,
+> +	.div = 5,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div5_div",
+> +		.ops = &clk_fixed_factor_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fixed_pll.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap a1_fclk_div5 = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = ANACTRL_FIXPLL_CTRL0,
+> +		.bit_idx = 23,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div5",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fclk_div5_div.hw
+> +		},
+> +		.num_parents = 1,
+> +		/*
+> +		 * This clock is used by AXI bus which setted in Romcode
+> +		 * and is required by the platform to operate correctly.
+> +		 * About critical, refer to a1_fclk_div2.
+> +		 */
+> +		.flags = CLK_IS_CRITICAL,
+> +	},
+> +};
+> +
+> +static struct clk_fixed_factor a1_fclk_div7_div = {
+> +	.mult = 1,
+> +	.div = 7,
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div7_div",
+> +		.ops = &clk_fixed_factor_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fixed_pll.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +static struct clk_regmap a1_fclk_div7 = {
+> +	.data = &(struct clk_regmap_gate_data){
+> +		.offset = ANACTRL_FIXPLL_CTRL0,
+> +		.bit_idx = 24,
+> +	},
+> +	.hw.init = &(struct clk_init_data){
+> +		.name = "fclk_div7",
+> +		.ops = &clk_regmap_gate_ops,
+> +		.parent_hws = (const struct clk_hw *[]) {
+> +			&a1_fclk_div7_div.hw
+> +		},
+> +		.num_parents = 1,
+> +	},
+> +};
+> +
+> +/* Array of all clocks provided by this provider */
+> +static struct clk_hw_onecell_data a1_pll_hw_onecell_data = {
+> +	.hws = {
+> +		[CLKID_FIXED_PLL_DCO]		= &a1_fixed_pll_dco.hw,
+> +		[CLKID_FIXED_PLL]		= &a1_fixed_pll.hw,
+> +		[CLKID_HIFI_PLL]		= &a1_hifi_pll.hw,
+> +		[CLKID_FCLK_DIV2]		= &a1_fclk_div2.hw,
+> +		[CLKID_FCLK_DIV3]		= &a1_fclk_div3.hw,
+> +		[CLKID_FCLK_DIV5]		= &a1_fclk_div5.hw,
+> +		[CLKID_FCLK_DIV7]		= &a1_fclk_div7.hw,
+> +		[CLKID_FCLK_DIV2_DIV]		= &a1_fclk_div2_div.hw,
+> +		[CLKID_FCLK_DIV3_DIV]		= &a1_fclk_div3_div.hw,
+> +		[CLKID_FCLK_DIV5_DIV]		= &a1_fclk_div5_div.hw,
+> +		[CLKID_FCLK_DIV7_DIV]		= &a1_fclk_div7_div.hw,
+> +		[NR_PLL_CLKS]			= NULL,
+> +	},
+> +	.num = NR_PLL_CLKS,
+> +};
+> +
+> +static struct clk_regmap *const a1_pll_regmaps[] = {
+> +	&a1_fixed_pll_dco,
+> +	&a1_fixed_pll,
+> +	&a1_hifi_pll,
+> +	&a1_fclk_div2,
+> +	&a1_fclk_div3,
+> +	&a1_fclk_div5,
+> +	&a1_fclk_div7,
+> +};
+> +
+> +static struct regmap_config clkc_regmap_config = {
+> +	.reg_bits       = 32,
+> +	.val_bits       = 32,
+> +	.reg_stride     = 4,
+> +};
+> +
+> +static int meson_a1_pll_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	struct regmap *map;
+> +	int ret, i;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	map = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
+> +	if (IS_ERR(map))
+> +		return PTR_ERR(map);
+> +
+> +	/* Populate regmap for the regmap backed clocks */
+> +	for (i = 0; i < ARRAY_SIZE(a1_pll_regmaps); i++)
+> +		a1_pll_regmaps[i]->map = map;
+> +
+> +	for (i = 0; i < a1_pll_hw_onecell_data.num; i++) {
+> +		/* array might be sparse */
+> +		if (!a1_pll_hw_onecell_data.hws[i])
+> +			continue;
+> +
+> +		ret = devm_clk_hw_register(dev, a1_pll_hw_onecell_data.hws[i]);
+> +		if (ret) {
+> +			dev_err(dev, "Clock registration failed\n");
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+> +					   &a1_pll_hw_onecell_data);
+> +}
+> +
+> +static const struct of_device_id clkc_match_table[] = {
+> +	{ .compatible = "amlogic,a1-pll-clkc", },
+> +	{}
+> +};
+> +
+> +static struct platform_driver a1_pll_driver = {
+> +	.probe		= meson_a1_pll_probe,
+> +	.driver		= {
+> +		.name	= "a1-pll-clkc",
+> +		.of_match_table = clkc_match_table,
+> +	},
+> +};
+> +
+> +builtin_platform_driver(a1_pll_driver);
+> diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+> new file mode 100644
+> index 000000000000..8ded267061ad
+> --- /dev/null
+> +++ b/drivers/clk/meson/a1-pll.h
+> @@ -0,0 +1,56 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __A1_PLL_H
+> +#define __A1_PLL_H
+> +
+> +/* PLL register offset */
+> +#define ANACTRL_FIXPLL_CTRL0		0x0
+> +#define ANACTRL_FIXPLL_CTRL1		0x4
+> +#define ANACTRL_FIXPLL_CTRL2		0x8
+> +#define ANACTRL_FIXPLL_CTRL3		0xc
+> +#define ANACTRL_FIXPLL_CTRL4		0x10
+> +#define ANACTRL_FIXPLL_STS		0x14
+> +#define ANACTRL_SYSPLL_CTRL0		0x80
+> +#define ANACTRL_SYSPLL_CTRL1		0x84
+> +#define ANACTRL_SYSPLL_CTRL2		0x88
+> +#define ANACTRL_SYSPLL_CTRL3		0x8c
+> +#define ANACTRL_SYSPLL_CTRL4		0x90
+> +#define ANACTRL_SYSPLL_STS		0x94
+> +#define ANACTRL_HIFIPLL_CTRL0		0xc0
+> +#define ANACTRL_HIFIPLL_CTRL1		0xc4
+> +#define ANACTRL_HIFIPLL_CTRL2		0xc8
+> +#define ANACTRL_HIFIPLL_CTRL3		0xcc
+> +#define ANACTRL_HIFIPLL_CTRL4		0xd0
+> +#define ANACTRL_HIFIPLL_STS		0xd4
 
-It finds a few issues in the media topology itself:
+Non of the definition below are used.
+What are they ? Do you need them ?
 
-----------------------------------------------------------------------------
-$ v4l2-compliance -M0
-v4l2-compliance SHA: 5af0730d06247a2de487abf2e00e70b156f1fb82, 64 bits, 64-bit time_t
-
-Compliance test for host1x_video device /dev/media0:
-
-Media Driver Info:
-        Driver name      : host1x_video
-        Model            : NVIDIA Tegra Video Input Device
-        Serial           :
-        Bus info         :
-        Media version    : 5.5.0
-        Hardware revision: 0x00000003 (3)
-        Driver version   : 5.5.0
-
-Required ioctls:
-                warn: v4l2-test-media.cpp(52): empty bus_info
-        test MEDIA_IOC_DEVICE_INFO: OK
-
-Allow for multiple opens:
-        test second /dev/media0 open: OK
-                warn: v4l2-test-media.cpp(52): empty bus_info
-        test MEDIA_IOC_DEVICE_INFO: OK
-        test for unlimited opens: OK
-
-Media Controller ioctls:
-                fail: v4l2-test-media.cpp(117): function == MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
-                fail: v4l2-test-media.cpp(203): checkFunction(ent.function, true)
-        test MEDIA_IOC_G_TOPOLOGY: FAIL
-                fail: v4l2-test-media.cpp(390): num_data_links != num_links
-        test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
-        test MEDIA_IOC_SETUP_LINK: OK
-        test invalid ioctls: OK
-
-Total for host1x_video device /dev/media0: 8, Succeeded: 6, Failed: 2, Warnings: 2
-----------------------------------------------------------------------------
-
-Note: the -M0 option tests just /dev/media0 without testing any of the devices
-mentioned in the topology. Use -m0 for that.
-
-I see a lot of spam in the kernel log:
-
-[  484.362145] tegra-vi 54080000.vi: TPG mode is set to Black/White Direct Mode
-[  486.147937] tegra-csi 54080838.csi: using Tegra default WIDTH X HEIGHT (1920x1080)
-[  486.155499] tegra-csi 54080838.csi: using Tegra default RAW10 video format
-[  486.162403] tegra-csi 54080838.csi: using Tegra default RAW10 video format
-
-Change that to dev_dbg or delete altogether.
-
-I also noticed that changing the test pattern while streaming did not seem to have
-any effect until I stop and restart streaming. Is that a limitation of the HW or of
-the driver?
-
-Note that the RGB pixelformat appears to be incorrect: it is set to RGB32 but it
-should be BGR32. Actually, it should be XBGR32 since there is no alpha channel
-present (I think). RGB32 and BGR32 are deprecated in favor of RGBX/A and X/ABGR.
-
-Regards,
-
-	Hans
-
-> 
-> Driver Info:
->         Driver name      : tegra-video
->         Card type        : 54080000.vi-output-0
->         Bus info         : platform:54080000.vi:0
->         Driver version   : 5.5.0
->         Capabilities     : 0x85200001
->                 Video Capture
->                 Read/Write
->                 Streaming
->                 Extended Pix Format
->                 Device Capabilities
->         Device Caps      : 0x05200001
->                 Video Capture
->                 Read/Write
->                 Streaming
->                 Extended Pix Format
-> Media Driver Info:
->         Driver name      : host1x_video
->         Model            : NVIDIA Tegra Video Input Device
->         Serial           :
->         Bus info         :
->         Media version    : 5.5.0
->         Hardware revision: 0x00000003 (3)
->         Driver version   : 5.5.0
-> Interface Info:
->         ID               : 0x03000003
->         Type             : V4L Video
-> Entity Info:
->         ID               : 0x00000001 (1)
->         Name             : 54080000.vi-output-0
->         Function         : V4L2 I/O
->         Pad 0x01000002   : 0: Sink
->           Link 0x0200001b: from remote pad 0x100001a of entity 'tpg-0': Data, Enabled
-> 
-> Required ioctls:
->         test MC information (see 'Media Driver Info' above): OK
->         test VIDIOC_QUERYCAP: OK
-> 
-> Allow for multiple opens:
->         test second /dev/video0 open: OK
->         test VIDIOC_QUERYCAP: OK
->         test VIDIOC_G/S_PRIORITY: OK
->         test for unlimited opens: OK
-> 
->         test invalid ioctls: OK
-> Debug ioctls:
->         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
->         test VIDIOC_LOG_STATUS: OK (Not Supported)
-> 
-> Input ioctls:
->         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
->         test VIDIOC_ENUMAUDIO: OK (Not Supported)
->         test VIDIOC_G/S/ENUMINPUT: OK
->         test VIDIOC_G/S_AUDIO: OK (Not Supported)
->         Inputs: 1 Audio Inputs: 0 Tuners: 0
-> 
-> Output ioctls:
->         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
->         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
->         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
->         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
->         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
->         Outputs: 0 Audio Outputs: 0 Modulators: 0
-> 
-> Input/Output configuration ioctls:
->         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
->         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
->         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
->         test VIDIOC_G/S_EDID: OK (Not Supported)
-> 
-> Control ioctls (Input 0):
->         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->         test VIDIOC_QUERYCTRL: OK
->         test VIDIOC_G/S_CTRL: OK
->         test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
->         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->         Standard Controls: 2 Private Controls: 0
-> 
-> Format ioctls (Input 0):
->         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->         test VIDIOC_G/S_PARM: OK (Not Supported)
->         test VIDIOC_G_FBUF: OK (Not Supported)
->         test VIDIOC_G_FMT: OK
->         test VIDIOC_TRY_FMT: OK
->         test VIDIOC_S_FMT: OK
->         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->         test Cropping: OK (Not Supported)
->         test Composing: OK (Not Supported)
->         test Scaling: OK (Not Supported)
-> 
-> Codec ioctls (Input 0):
->         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls (Input 0):
->         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
->         test VIDIOC_EXPBUF: OK
->         test Requests: OK (Not Supported)
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
->         test read/write: OK
->         test blocking wait: OK
->         test MMAP (no poll): OK
->         test MMAP (select): OK
->         test MMAP (epoll): OK
->         test USERPTR (no poll): OK (Not Supported)
->         test USERPTR (select): OK (Not Supported)
->         test DMABUF: Cannot test, specify --expbuf-device
-> 
-> Total for tegra-video device /dev/video0: 53, Succeeded: 53, Failed: 0, Warnings: 0
-> 
+> +#define ANACTRL_AUDDDS_CTRL0		0x100
+> +#define ANACTRL_AUDDDS_CTRL1		0x104
+> +#define ANACTRL_AUDDDS_CTRL2		0x108
+> +#define ANACTRL_AUDDDS_CTRL3		0x10c
+> +#define ANACTRL_AUDDDS_CTRL4		0x110
+> +#define ANACTRL_AUDDDS_STS		0x114
+> +#define ANACTRL_MISCTOP_CTRL0		0x140
+> +#define ANACTRL_POR_CNTL		0x188
+> +
+> +/*
+> + * CLKID index values
+> + *
+> + * These indices are entirely contrived and do not map onto the hardware.
+> + * It has now been decided to expose everything by default in the DT header:
+> + * include/dt-bindings/clock/a1-pll-clkc.h. Only the clocks ids we don't want
+> + * to expose, such as the internal muxes and dividers of composite clocks,
+> + * will remain defined here.
+> + */
+> +#define CLKID_FIXED_PLL_DCO		0
+> +#define CLKID_FCLK_DIV2_DIV		2
+> +#define CLKID_FCLK_DIV3_DIV		3
+> +#define CLKID_FCLK_DIV5_DIV		4
+> +#define CLKID_FCLK_DIV7_DIV		5
+> +#define NR_PLL_CLKS			11
+> +
+> +/* include the CLKIDs that have been made part of the DT binding */
+> +#include <dt-bindings/clock/a1-pll-clkc.h>
+> +
+> +#endif /* __A1_PLL_H */
 
