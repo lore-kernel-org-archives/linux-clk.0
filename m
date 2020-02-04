@@ -2,240 +2,330 @@ Return-Path: <SRS0=s2jw=3Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,URI_HEX,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C15C2D0B1
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 10:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B165CC3F68F
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 12:53:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F56121741
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 10:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8583921D7D
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 12:53:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zOJkzAer"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="K26nAFOK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbgBDKYS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 05:24:18 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53654 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726559AbgBDKYQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 05:24:16 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s10so2608362wmh.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2020 02:24:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=8Di6ASz/+t9ylQNviPiHg7bITLqqjwAhj0GpBFWGF/Y=;
-        b=zOJkzAerIaHwyYFLOkvre+8Qel5FfFWyLAwjT6oztmUPSWMBUpaRiuuplB0HFoifef
-         uiigqpqIXh2LT6Bm513iJXh3B1a0FguRcPs+J9BOrkRzeLiyT3fHcq+WGk6snS0jRxmY
-         E/Vc5Vu20XZqZeqhKT3M1DPCX/6fpUpUyRExjkCWgN/axnj305t2H7W21yNVd3nS9tvv
-         pqnqRKNSX0WMaOcvpWJczoqPQ8S3EmeOBJsUy2Xer+689hvsS6sikQ8QseRE7yiaz2Dm
-         epujVaVZCVK9od8xZpdnlhVYcZ3zaHCkXlRDymuRd7p9wzEQb0NJwVzvwzkVKnNysoT1
-         dqbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=8Di6ASz/+t9ylQNviPiHg7bITLqqjwAhj0GpBFWGF/Y=;
-        b=Rh2QajYgW+St02TtAJEbegS3Kw96wcEKr+bYBudGQV4P6YXpy9SZqYRRT9nQebtgjA
-         cA1JBA7UxFC+nt6Wo5RIG3ACyEhvuKZJStIiQQ9NbhuvzLQFgSfrR3sojDPV4zQ+614i
-         APuMArGqQp0fJ7BCs23sIHSsaQISEOf6i+cXu1yrVhIJsqFC197Fcoo9TLMHX1dkP/UC
-         MNriIH+ur3IQR0ffi7WMQxSTUr6fQGNEg53Xd+9T0TIugydKoqd/mdCXVoGevkEldLou
-         Ts1JhpJkzLVdn0lhq4l10geZlecv7VyvHrtouHJGDii3UHWduDo+f9f+G+Qq18Lb5tah
-         92Pg==
-X-Gm-Message-State: APjAAAWMZMnC+EWYDBvEcf3mwGiZNmB4a5Th2Q1cTzeqm4UaUDja4Gj8
-        Z7FU9UrOfETpL1+X6+DVjfGLKA==
-X-Google-Smtp-Source: APXvYqwwqM9TCMtr6da/jGSKzvje6iPqSV8lHHCFcFwGr4zlwY6+j32lU1xiv+kbQye4qsnhRqFCTg==
-X-Received: by 2002:a05:600c:2383:: with SMTP id m3mr5242375wma.32.1580811853170;
-        Tue, 04 Feb 2020 02:24:13 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l17sm28626715wro.77.2020.02.04.02.24.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 02:24:12 -0800 (PST)
-References: <20200120034937.128600-1-jian.hu@amlogic.com> <20200120034937.128600-3-jian.hu@amlogic.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Jian Hu <jian.hu@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v7 2/5] clk: meson: add support for A1 PLL clock ops
-In-reply-to: <20200120034937.128600-3-jian.hu@amlogic.com>
-Date:   Tue, 04 Feb 2020 11:24:11 +0100
-Message-ID: <1jftfq7ir8.fsf@starbuckisacylon.baylibre.com>
+        id S1727301AbgBDMxh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Feb 2020 07:53:37 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:48425 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727168AbgBDMxh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 07:53:37 -0500
+Received: from [IPv6:2001:420:44c1:2577:28db:bc36:e7fa:777f]
+ ([IPv6:2001:420:44c1:2577:28db:bc36:e7fa:777f])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id yxhqiYfxpn7E5yxhtiAsWx; Tue, 04 Feb 2020 13:53:33 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1580820813; bh=QrEgOEmv0LGcaeOI9u6vPQa6tjAb25IHU0ai53OgkvI=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=K26nAFOKvA2DC1BHJDvoMGdfPBXRnn3HMKR0kap/DDKEIcUD/5a4c/lu7j8b4M7Qp
+         tNMFpc9tYatO1sxw6k7852wcPlLS2z4hh9bvzHZmPOM6+OAihOD+lyMSZjTrrm8J4+
+         /OvuKhZn+skKxo63UAD09vUDVjshRM2JoIxEYbWVAIuYTM5nL6ZSy7q225G13WF1yo
+         ERRYtLooBRr6GtMfuiu1+cFV6J7vonEt3cvNL6vQDtPsVpFCOSyQ8ElJE+ZqkIMsHW
+         zuZS2h33bcMhLQ+ce4zX7J7iqNi9Q0NuqW9zGR9/aZGX4S3mTJCeYp5YVsSatmKc9C
+         240qld99OYdpg==
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <098ac46f-fe13-f215-b9a4-aa8d01395592@xs4all.nl>
+Date:   Tue, 4 Feb 2020 13:53:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHDOXaK+8oEXxBVg2hAYBIS4p+0l3Ie8cHcMRFLnBN0rnQ6QsbrowXVwRwb61IRcuYGfmBVoK04qSj/EkGs/iZKsQYam4SydnOpzyILCTqASmvY71NYl
+ CXgctuOBWUt6u7w0ahmD8KlfWfSaEtIrwpfNGGSdJZs45Vi3S71OcGgkravg6SvRKIPwbGEowFHWiSHCorJUr2/358whC1X+pRGnWWQsRUiUdgtZ6Ba7osA0
+ hXzwaR2HX09875CH4w7SrbooVWsk23mimf0lKwJZyzIEAS3vTVZVaUr0M/aJ2fkiCA2IjkhgHaMjoSj78VRE+8ERkO4iJB4OE8xYIpWSOVAVIFrzyqGUgpEo
+ S42WMv7ceNpkDhttKcteZplQ+pqBR5POjHNx8DuPdL/g/7slqoX90ZIuB7FCkzUhcqOHjA6AnBp1rQZAHIs2mWoDem1VbLnNfAVh5uaFbCTr1U7C7JBWfl4B
+ GKMUf7t7u4JHE0yZpmOJzFMWnk5bbxWkB2nVqOxNNlwRJURzhpHEk6AgVKOBboUckUdbN6bp1+FOdnbWE72YVJ7HrdTmgwYsYb9hP1IcK+fxH/cCrZrnSb26
+ 5cA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+> This series adds Tegra210 VI and CSI driver for built-in test pattern
+> generator (TPG) capture.
+> 
+> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+> CSI port is one-to-one mapped to VI channel for video capture.
+> 
+> This series has TPG support only where it creates hard media links
+> between CSI subdevice and VI video device without device graphs.
+> 
+> v4l2-compliance results are available below the patch diff.
+> 
+> [v0]:	Includes,
+> 	- Adds CSI TPG clock to Tegra210 clock driver
+> 	- Host1x video driver with VI and CSI clients.
+> 	- Support for Tegra210 only.
+> 	- VI CSI TPG support with hard media links in driver.
+> 	- Video formats supported by Tegra210 VI
+> 	- CSI TPG supported video formats
+> 
+> 
+> Sowjanya Komatineni (5):
+>   dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+>   clk: tegra: Add Tegra210 CSI TPG clock gate
+>   dt-binding: tegra: Add VI and CSI bindings
+>   media: tegra: Add Tegra Video input driver for Tegra210
+>   arm64: tegra: Add Tegra VI CSI suppport in device tree
+> 
+>  .../display/tegra/nvidia,tegra20-host1x.txt        |  10 +-
+>  arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   8 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  31 +-
+>  drivers/clk/tegra/clk-tegra210.c                   |   7 +
+>  drivers/staging/media/Kconfig                      |   2 +
+>  drivers/staging/media/Makefile                     |   1 +
+>  drivers/staging/media/tegra/Kconfig                |  12 +
+>  drivers/staging/media/tegra/Makefile               |  11 +
+>  drivers/staging/media/tegra/TODO                   |  10 +
+>  drivers/staging/media/tegra/csi.h                  | 111 ++++
+>  drivers/staging/media/tegra/csi2_fops.c            | 335 +++++++++++
+>  drivers/staging/media/tegra/csi2_fops.h            |  15 +
+>  drivers/staging/media/tegra/host1x-video.c         | 120 ++++
+>  drivers/staging/media/tegra/host1x-video.h         |  33 ++
+>  drivers/staging/media/tegra/mc_common.h            | 131 +++++
+>  drivers/staging/media/tegra/tegra-channel.c        | 628 +++++++++++++++++++++
+>  drivers/staging/media/tegra/tegra-core.c           | 111 ++++
+>  drivers/staging/media/tegra/tegra-core.h           | 125 ++++
+>  drivers/staging/media/tegra/tegra-csi.c            | 380 +++++++++++++
+>  drivers/staging/media/tegra/tegra-vi.c             | 351 ++++++++++++
+>  drivers/staging/media/tegra/tegra-vi.h             | 101 ++++
+>  drivers/staging/media/tegra/vi2_fops.c             | 364 ++++++++++++
+>  drivers/staging/media/tegra/vi2_fops.h             |  15 +
+>  drivers/staging/media/tegra/vi2_formats.h          | 119 ++++
+>  drivers/staging/media/tegra/vi2_registers.h        | 194 +++++++
+>  include/dt-bindings/clock/tegra210-car.h           |   2 +-
+>  26 files changed, 3224 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/staging/media/tegra/Kconfig
+>  create mode 100644 drivers/staging/media/tegra/Makefile
+>  create mode 100644 drivers/staging/media/tegra/TODO
+>  create mode 100644 drivers/staging/media/tegra/csi.h
+>  create mode 100644 drivers/staging/media/tegra/csi2_fops.c
+>  create mode 100644 drivers/staging/media/tegra/csi2_fops.h
+>  create mode 100644 drivers/staging/media/tegra/host1x-video.c
+>  create mode 100644 drivers/staging/media/tegra/host1x-video.h
+>  create mode 100644 drivers/staging/media/tegra/mc_common.h
+>  create mode 100644 drivers/staging/media/tegra/tegra-channel.c
+>  create mode 100644 drivers/staging/media/tegra/tegra-core.c
+>  create mode 100644 drivers/staging/media/tegra/tegra-core.h
+>  create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+>  create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+>  create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+>  create mode 100644 drivers/staging/media/tegra/vi2_fops.c
+>  create mode 100644 drivers/staging/media/tegra/vi2_fops.h
+>  create mode 100644 drivers/staging/media/tegra/vi2_formats.h
+>  create mode 100644 drivers/staging/media/tegra/vi2_registers.h
+> 
+> 
+> v4l2-compliance SHA: e7402fb758fd106955c3b7d5a5e961d1cb606f4a, 32 bits, 32-bit time_t
+> 
+> Compliance test for tegra-video device /dev/video0:
 
-On Mon 20 Jan 2020 at 04:49, Jian Hu <jian.hu@amlogic.com> wrote:
+Since this driver creates a /dev/media0 device you should test with:
 
-> Compared with the previous SoCs, self-adaption current module
-> is newly added for A1, and there is no reset parm except the
-> fixed pll. In A1 PLL, the PLL enable sequence is different, using
-> the new power-on sequence to enable the PLL.
+v4l2-compliance -m0 -s10: that tests everything found in the media topology.
 
-Things are getting clearer thanks to Martin's suggestions and I can
-understand what your driver is doing now
+It finds a few issues in the media topology itself:
 
-However, I still have a problem with the fact that 2 different pll types
-are getting intertwined in this driver. Parameters mandatory to one is
-made optional to the other. Nothing clearly shows which needs what and
-the combinatorial are quickly growing.
+----------------------------------------------------------------------------
+$ v4l2-compliance -M0
+v4l2-compliance SHA: 5af0730d06247a2de487abf2e00e70b156f1fb82, 64 bits, 64-bit time_t
 
-Apparently the only real difference is in enable/disable, So I would
-prefer if the a1 had dedicated function for these ops.
+Compliance test for host1x_video device /dev/media0:
 
-I suppose you'll have to submit clk_hw_enable() and clk_hw_disable()
-to the framework to call the appropriate ops dependind on the SoC.
+Media Driver Info:
+        Driver name      : host1x_video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           :
+        Bus info         :
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
 
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
->  drivers/clk/meson/clk-pll.h |  2 ++
->  2 files changed, 42 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index ddb1e5634739..10926291440f 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -283,10 +283,14 @@ static void meson_clk_pll_init(struct clk_hw *hw)
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
->  	if (pll->init_count) {
-> -		meson_parm_write(clk->map, &pll->rst, 1);
-> +		if (MESON_PARM_APPLICABLE(&pll->rst))
-> +			meson_parm_write(clk->map, &pll->rst, 1);
-> +
+Required ioctls:
+                warn: v4l2-test-media.cpp(52): empty bus_info
+        test MEDIA_IOC_DEVICE_INFO: OK
 
-replace by
-        enabled = clk_hw_is_enabled(hw)
-        if (enabled)
-           clk_hw_disable(hw)
+Allow for multiple opens:
+        test second /dev/media0 open: OK
+                warn: v4l2-test-media.cpp(52): empty bus_info
+        test MEDIA_IOC_DEVICE_INFO: OK
+        test for unlimited opens: OK
 
->  		regmap_multi_reg_write(clk->map, pll->init_regs,
->  				       pll->init_count);
-> -		meson_parm_write(clk->map, &pll->rst, 0);
-> +
-> +		if (MESON_PARM_APPLICABLE(&pll->rst))
-> +			meson_parm_write(clk->map, &pll->rst, 0);
+Media Controller ioctls:
+                fail: v4l2-test-media.cpp(117): function == MEDIA_ENT_F_V4L2_SUBDEV_UNKNOWN
+                fail: v4l2-test-media.cpp(203): checkFunction(ent.function, true)
+        test MEDIA_IOC_G_TOPOLOGY: FAIL
+                fail: v4l2-test-media.cpp(390): num_data_links != num_links
+        test MEDIA_IOC_ENUM_ENTITIES/LINKS: FAIL
+        test MEDIA_IOC_SETUP_LINK: OK
+        test invalid ioctls: OK
 
-       /* restore if necessary */
-       if (enabled)
-          clk_hw_enable(hw)
+Total for host1x_video device /dev/media0: 8, Succeeded: 6, Failed: 2, Warnings: 2
+----------------------------------------------------------------------------
 
->  	}
->  }
->  
-> @@ -295,8 +299,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
->  	struct clk_regmap *clk = to_clk_regmap(hw);
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
-> -	if (meson_parm_read(clk->map, &pll->rst) ||
-> -	    !meson_parm_read(clk->map, &pll->en) ||
-> +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
-> +	    meson_parm_read(clk->map, &pll->rst))
-> +		return 0;
-> +
-> +	if (!meson_parm_read(clk->map, &pll->en) ||
->  	    !meson_parm_read(clk->map, &pll->l))
->  		return 0;
+Note: the -M0 option tests just /dev/media0 without testing any of the devices
+mentioned in the topology. Use -m0 for that.
 
-I suppose the pll can't be locked if it was in reset, so we could drop
-the check on `rst` entirely to simplify the function
+I see a lot of spam in the kernel log:
 
->  
-> @@ -323,13 +330,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->  		return 0;
->  
->  	/* Make sure the pll is in reset */
-> -	meson_parm_write(clk->map, &pll->rst, 1);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 1);
->  
->  	/* Enable the pll */
->  	meson_parm_write(clk->map, &pll->en, 1);
->  
->  	/* Take the pll out reset */
-> -	meson_parm_write(clk->map, &pll->rst, 0);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 0);
-> +
-> +	/*
-> +	 * Compared with the previous SoCs, self-adaption current module
-> +	 * is newly added for A1, keep the new power-on sequence to enable the
-> +	 * PLL. The sequence is:
-> +	 * 1. enable the pll, delay for 10us
-> +	 * 2. enable the pll self-adaption current module, delay for 40us
-> +	 * 3. enable the lock detect module
-> +	 */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
-> +		udelay(10);
-> +		meson_parm_write(clk->map, &pll->current_en, 1);
-> +		udelay(40);
-> +	};
-> +
-> +	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
-> +		meson_parm_write(clk->map, &pll->l_detect, 1);
-> +		meson_parm_write(clk->map, &pll->l_detect, 0);
-> +	}
->  
->  	if (meson_clk_pll_wait_lock(hw))
->  		return -EIO;
-> @@ -343,10 +371,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->  
->  	/* Put the pll is in reset */
-> -	meson_parm_write(clk->map, &pll->rst, 1);
-> +	if (MESON_PARM_APPLICABLE(&pll->rst))
-> +		meson_parm_write(clk->map, &pll->rst, 1);
->  
->  	/* Disable the pll */
->  	meson_parm_write(clk->map, &pll->en, 0);
-> +
-> +	/* Disable PLL internal self-adaption current module */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
-> +		meson_parm_write(clk->map, &pll->current_en, 0);
->  }
+[  484.362145] tegra-vi 54080000.vi: TPG mode is set to Black/White Direct Mode
+[  486.147937] tegra-csi 54080838.csi: using Tegra default WIDTH X HEIGHT (1920x1080)
+[  486.155499] tegra-csi 54080838.csi: using Tegra default RAW10 video format
+[  486.162403] tegra-csi 54080838.csi: using Tegra default RAW10 video format
 
-With the above clarified, it should be easy to properly split the
-functions between the legacy type and the a1 type.
+Change that to dev_dbg or delete altogether.
 
-You'll need to update meson_clk_pll_set_rate() to call
- - clk_hw_is_enabled()
- - clk_hw_enable() and clk_hw_disable() (again, you'll need to add
- those in the framework first)
+I also noticed that changing the test pattern while streaming did not seem to have
+any effect until I stop and restart streaming. Is that a limitation of the HW or of
+the driver?
 
->  
->  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 367efd0f6410..a2228c0fdce5 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -36,6 +36,8 @@ struct meson_clk_pll_data {
->  	struct parm frac;
->  	struct parm l;
->  	struct parm rst;
-> +	struct parm current_en;
-> +	struct parm l_detect;
->  	const struct reg_sequence *init_regs;
->  	unsigned int init_count;
->  	const struct pll_params_table *table;
+Note that the RGB pixelformat appears to be incorrect: it is set to RGB32 but it
+should be BGR32. Actually, it should be XBGR32 since there is no alpha channel
+present (I think). RGB32 and BGR32 are deprecated in favor of RGBX/A and X/ABGR.
+
+Regards,
+
+	Hans
+
+> 
+> Driver Info:
+>         Driver name      : tegra-video
+>         Card type        : 54080000.vi-output-0
+>         Bus info         : platform:54080000.vi:0
+>         Driver version   : 5.5.0
+>         Capabilities     : 0x85200001
+>                 Video Capture
+>                 Read/Write
+>                 Streaming
+>                 Extended Pix Format
+>                 Device Capabilities
+>         Device Caps      : 0x05200001
+>                 Video Capture
+>                 Read/Write
+>                 Streaming
+>                 Extended Pix Format
+> Media Driver Info:
+>         Driver name      : host1x_video
+>         Model            : NVIDIA Tegra Video Input Device
+>         Serial           :
+>         Bus info         :
+>         Media version    : 5.5.0
+>         Hardware revision: 0x00000003 (3)
+>         Driver version   : 5.5.0
+> Interface Info:
+>         ID               : 0x03000003
+>         Type             : V4L Video
+> Entity Info:
+>         ID               : 0x00000001 (1)
+>         Name             : 54080000.vi-output-0
+>         Function         : V4L2 I/O
+>         Pad 0x01000002   : 0: Sink
+>           Link 0x0200001b: from remote pad 0x100001a of entity 'tpg-0': Data, Enabled
+> 
+> Required ioctls:
+>         test MC information (see 'Media Driver Info' above): OK
+>         test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>         test second /dev/video0 open: OK
+>         test VIDIOC_QUERYCAP: OK
+>         test VIDIOC_G/S_PRIORITY: OK
+>         test for unlimited opens: OK
+> 
+>         test invalid ioctls: OK
+> Debug ioctls:
+>         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>         test VIDIOC_LOG_STATUS: OK (Not Supported)
+> 
+> Input ioctls:
+>         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>         test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMINPUT: OK
+>         test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>         Inputs: 1 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>         Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>         test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls (Input 0):
+>         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>         test VIDIOC_QUERYCTRL: OK
+>         test VIDIOC_G/S_CTRL: OK
+>         test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>         Standard Controls: 2 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+>         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>         test VIDIOC_G/S_PARM: OK (Not Supported)
+>         test VIDIOC_G_FBUF: OK (Not Supported)
+>         test VIDIOC_G_FMT: OK
+>         test VIDIOC_TRY_FMT: OK
+>         test VIDIOC_S_FMT: OK
+>         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>         test Cropping: OK (Not Supported)
+>         test Composing: OK (Not Supported)
+>         test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+>         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+>         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>         test VIDIOC_EXPBUF: OK
+>         test Requests: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+>         test read/write: OK
+>         test blocking wait: OK
+>         test MMAP (no poll): OK
+>         test MMAP (select): OK
+>         test MMAP (epoll): OK
+>         test USERPTR (no poll): OK (Not Supported)
+>         test USERPTR (select): OK (Not Supported)
+>         test DMABUF: Cannot test, specify --expbuf-device
+> 
+> Total for tegra-video device /dev/video0: 53, Succeeded: 53, Failed: 0, Warnings: 0
+> 
 
