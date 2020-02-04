@@ -2,82 +2,165 @@ Return-Path: <SRS0=s2jw=3Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C176AC3524B
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 07:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4484CC2D0B1
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 09:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 856B92087E
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 07:13:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580800438;
-	bh=4dteibOy4ES6giaiq+d9lMelNb1ecIhbNtrvVUt9phU=;
-	h=In-Reply-To:References:To:Subject:From:Date:List-ID:From;
-	b=H3gDXewfQtztn1qr+ls0aGrDqJ0eXLux6gCBubbpPqeeYuYuKdiJFw3nWJp5g/7gB
-	 2vLI+2cuVwW/74ekoBpOAkfiWnY5ycpgtna5zGKgYDgzxhM4qj9T6t9v78jYTZ2inp
-	 H6SIoNTmrjDQBWm69lkgSbX2ePr2GF7QBkN+bFlU=
+	by mail.kernel.org (Postfix) with ESMTP id BBF8A218AC
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 09:51:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="HK499qij"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbgBDHNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 02:13:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54826 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725834AbgBDHNt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Feb 2020 02:13:49 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A0662087E;
-        Tue,  4 Feb 2020 07:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580800429;
-        bh=4dteibOy4ES6giaiq+d9lMelNb1ecIhbNtrvVUt9phU=;
-        h=In-Reply-To:References:To:Subject:From:Date:From;
-        b=glybLJx9lH02+WiQlAdl448gEU8QXDYmvsCr/Bv6WqIJW9IJq70tAltfj1ejH4yQA
-         T+GeYYb1SuA/ECzWFQ4bRCd2HIvoKybRb4Vk9eu2d9/qBCBj1LEokOU7ClcY0EarhM
-         PCvcm1/nSCo3V+lO+ydJWEKX1bjm0xpdZqeked8Y=
-Content-Type: text/plain; charset="utf-8"
+        id S1726479AbgBDJvF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Feb 2020 04:51:05 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:46633 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726343AbgBDJvE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 04:51:04 -0500
+Received: from [IPv6:2001:420:44c1:2577:c522:bb58:9147:43ff]
+ ([IPv6:2001:420:44c1:2577:c522:bb58:9147:43ff])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id yurBiQflTVuxOyurFiI8yZ; Tue, 04 Feb 2020 10:51:01 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1580809861; bh=udrDG7W7XxVlZg9dFBjVJa1SeinJFWf8PYu2s1ZBzEE=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=HK499qijLMt0d3NsJ/R6CALFLgIH5TPDKLVv3JotVW7E7jZ07nDX/u+G3KPwDGiya
+         4vO23Pn04jCbJi6EvdQs9zHPgm/gaq7SPu1V1vcxUy6lHQbMxg4I6sahHsRi+zfTQj
+         OlBSokrE5w+DUmlQcCjjnkKOK2C+brr7gVNvAFop+zpL5UXbuooWaXd0/JdVlheRAT
+         WSE2ytobns3p7mUHPWFQ+eBzzs54fwXOfF4uZDMWcwgm/kMPMz44GEH+lILGNNy1wB
+         BdYCKaK1svlIxvF8PyWmJJvrOHO6jzJ4YgYSL2nFmktclMlk08Wo+AM9lmyPf7R+DP
+         KlTsvzXhDJ6uA==
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        frankc@nvidia.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <20200130154246.GA2904678@ulmo>
+ <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
+ <20200131170351.GA3444092@ulmo>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <b1678339-5ba6-4950-6afe-01fe26ee527f@xs4all.nl>
+Date:   Tue, 4 Feb 2020 10:50:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1579905147-12142-6-git-send-email-vnkgutta@codeaurora.org>
-References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org> <1579905147-12142-6-git-send-email-vnkgutta@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, jshriram@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, psodagud@codeaurora.org,
-        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
-        vinod.koul@linaro.org, vnkgutta@codeaurora.org
-Subject: Re: [PATCH v2 5/7] dt-bindings: clock: Add SM8250 GCC clock bindings
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 03 Feb 2020 23:13:48 -0800
-Message-Id: <20200204071349.0A0662087E@mail.kernel.org>
+In-Reply-To: <20200131170351.GA3444092@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfE57kH2nPdi6RuL5Tj6iVOgBB0zQcKUPr7DSyqTUxljwxpmmpytfaq19V/tG1nCy/2R9YUpxBlmWXq14r7ylSGpMXGwLU42dekPcaxldoLur6pV9KZyV
+ bmZ3MXgxDSVJZDaKgt7TNK5D66zRoiaCRZX5ad8dvMCxEXluNKfGp5uFyV/FQYVU142nJVOFaH08xF2mBEqHFhjdE40AvLtxGARg3NkLqb4QAmPq7yJibDpd
+ jbYvK+HxyYndRWamV7nImM/+YIe0B2UCXpV6EZYNAnC4mOl9kUte1dh5SLAr3gofV2EZC7tm/sSsMnI0nhbNf21TWdbNVNnypNqOyypbnfhnjQnjLrGOtt5z
+ tI6TLNg3Ay3dhmS4IsjnfvfaJSyYMWgrFOGIwXRD5gmihhhAXZzUSZbJwyZoGamDeTKx6nnP8koFBr1Z+lrwCtO62ecn3QYrRGS0WPqTLjct/wdBuGrVD6Tx
+ KZogcjGuaBQxB6g1SerbtTxl7YLyikSGJnSr1cgzLspZhnYRBQ+lgkqSKEia61J+FK2Yc5aVd0iwOep+TuQHNmUjKWZt9RJG4i9OvrbsZGroHLFI3iqtPTIr
+ BT8=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Venkata Narendra Kumar Gutta (2020-01-24 14:32:25)
-> From: Taniya Das <tdas@codeaurora.org>
->=20
-> Add device tree bindings for global clock controller on SM8250 SoCs.
->=20
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml        |   1 +
+On 1/31/20 6:03 PM, Thierry Reding wrote:
+> On Fri, Jan 31, 2020 at 03:29:52PM +0100, Hans Verkuil wrote:
+>> On 1/30/20 4:42 PM, Thierry Reding wrote:
+>>> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+>>>> Hi Sowjanya,
+>>>>
+>>>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+>>>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+>>>>> generator (TPG) capture.
+>>>>>
+>>>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+>>>>> CSI port is one-to-one mapped to VI channel for video capture.
+>>>>>
+>>>>> This series has TPG support only where it creates hard media links
+>>>>> between CSI subdevice and VI video device without device graphs.
+>>>>>
+>>>>> v4l2-compliance results are available below the patch diff.
+>>>>>
+>>>>> [v0]:	Includes,
+>>>>> 	- Adds CSI TPG clock to Tegra210 clock driver
+>>>>> 	- Host1x video driver with VI and CSI clients.
+>>>>> 	- Support for Tegra210 only.
+>>>>> 	- VI CSI TPG support with hard media links in driver.
+>>>>> 	- Video formats supported by Tegra210 VI
+>>>>> 	- CSI TPG supported video formats
+>>>>
+>>>> I'm trying to compile this patch series using the media_tree master
+>>>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+>>>>
+>>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
+>>>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
+>>>>    71 |  unsigned int count = *nbuffers;
+>>>>       |               ^~~~~
+>>>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
+>>>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>>>       |                                                       ^
+>>>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
+>>>> make[4]: *** Waiting for unfinished jobs....
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>>>       |                                                       ^
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
+>>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
+>>>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
+>>>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>>>       |                                                   ^~
+>>>>
+>>>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
+>>>> have a 'host' field.
+>>>>
+>>>> Does this series depend on another patch that's not yet in mainline?
+>>>
+>>> Sowjanya's been working on top of linux-next, so, yes, this patch
+>>> depends on a change that's been merged into the DRM tree for v5.6-rc1.
+>>>
+>>> Thierry
+>>>
+>>
+>> Is there a specific linux-next tag that works? I tried next-20200131 but that
+>> failed to boot. Same problem with the mainline repo since the host1x patches
+>> were merged yesterday. It compiles fine, but the boot just stops. Or am I
+>> missing some kernel config that is now important to have?
+> 
+> linux-next and mainline are currently regressing on Tegra210 (and some
+> Tegra124) boards. I just sent out a series that fixes the regression for
+> me:
+> 
+> 	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=156215
+> 
+> Please test if this works for you. If so, I'll send this to Dave as soon
+> as possible.
 
-Please rebase this atop Doug's clk series and specify the parents and
-binding file for the binding. I'd prefer that we make a new file in the
-bindings directory for this SoC.
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
->  include/dt-bindings/clock/qcom,gcc-sm8250.h        | 271 +++++++++++++++=
-++++++
->  2 files changed, 272 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
->=20
+Thank you, now it boots on mainline + this series + the new VI/CSI driver.
+
+Regards,
+
+	Hans
+
+> 
+> Thierry
+> 
+
