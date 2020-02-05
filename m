@@ -2,159 +2,89 @@ Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F78C35249
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 06:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976A2C3524F
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 07:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 937B72085B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 06:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F66422314
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 07:57:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JbHW6Y+R"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="PnO+Ao1a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgBEGy0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 01:54:26 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46838 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbgBEGyX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 01:54:23 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z124so461988pgb.13
-        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2020 22:54:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xC6pTkHOfWDELEok5+Rk1+a9t64mfOMziwPkHBy7kSE=;
-        b=JbHW6Y+RQ+QybQ7Gk2Mx+Qkw7MsZxHziwp2ap85W9f0rNcbLqhN+21ukKwPPvKo+1k
-         BLURHbCzVbGG+DYX1+w7EaLK6UsUcAaK0MDtMo3lpMtXuMfnxymPl/eyLpiwq3Lay191
-         78N/ayHrbaAG/KBmuJ3digCu40Cf7aWoX6rbg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=xC6pTkHOfWDELEok5+Rk1+a9t64mfOMziwPkHBy7kSE=;
-        b=MIYZRRayHTG0HQRRXwbiuvvHL8uIkK5htWUwfdt4kH1vMm7Ksf3M6JJZHEkmiG5SWs
-         CVCnvElXFLNiD5X1utjtgUyxdKlk4vH5ejjzR2g3T5OUO1DAPuKsWcMX0wgpaclLNyKM
-         H+7om/hLuoxGB6CwH4mKd4wXlwmw2mTedEMl4KCX4HLGN4/0oDR90EIcU5aZl48YapCg
-         V3cv191lVIWtSMcOalrM3l2sy/qq8ek+G05uBDo8Md/VZIB0EEXai8HrPUsbJOTqetNH
-         s4fXC9iXaBdwNM0MeWeqmYM6bq8QlH/IbcNAx/b4xLw7CCz0vcZDGI0PYydct8IaGfR9
-         +xmA==
-X-Gm-Message-State: APjAAAXZxNDDZSPheRkpPIY69dhpzkRChvY+3CigASRYdgqVFlW45ib6
-        iThhKsTYeccrtB6G3jXh68zJ5w==
-X-Google-Smtp-Source: APXvYqxLtsypnc5e6xwR5LhibDb5b+SOMmWOhDPpwbRPbyJCr56/sg1cj0sMa+gJN96i0oonpU3OWg==
-X-Received: by 2002:aa7:9629:: with SMTP id r9mr35694347pfg.51.1580885662409;
-        Tue, 04 Feb 2020 22:54:22 -0800 (PST)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u18sm26278894pgi.44.2020.02.04.22.54.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Feb 2020 22:54:21 -0800 (PST)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Subject: [PATCH] clk: qcom: alpha-pll: Make error prints more informative
-Date:   Tue,  4 Feb 2020 22:54:21 -0800
-Message-Id: <20200205065421.9426-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+        id S1727459AbgBEH5j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 02:57:39 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:57095 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727231AbgBEH5j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 02:57:39 -0500
+Received: from [192.168.2.10] ([46.9.235.248])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id zFYyiXwsAVuxOzFZ2iON1x; Wed, 05 Feb 2020 08:57:36 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1580889456; bh=Zon7+wQq6Y/OezBpVLpCFEKggV/uB8j1JtLlS5DUs4g=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=PnO+Ao1a3gALRFP16EWuypfaSxiI7wukdAi3iV3IIWqREdBDN7WXancubsZigZSN7
+         X8mxQQFiffs8g+r2999nlcv5oUAr9m4AFQFdII0t2WrzSNJMuqfoJf6U0av7WijK+x
+         EHzH9yIie35y4NhBsiSp7yZhp+RCOWldqUbXEsiEnCOLmuoZTYFRVwgjuG4pB6LPcE
+         vu2SlFcnLHOfzPDD2kThZIyFJAfNL+SJ8zVp2nOFm7OWYPeyzIBRivmUbIy4oCsfnJ
+         ZWQr4en4ylqmG3qiXQgwhpcAG+PxoayH0BvocyYMvNdrIBmVMqZDT5BfVNXlC4tHRF
+         RhlD0UODDFkHQ==
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <098ac46f-fe13-f215-b9a4-aa8d01395592@xs4all.nl>
+ <6c3d2557-8982-37bf-810a-6d9faad9e5a4@nvidia.com>
+ <9c4775f2-8188-43f4-1de1-56620fad2e7c@xs4all.nl>
+ <af813a4e-339c-4254-75a0-8db995fe2aba@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <474ca8c5-4735-1707-d6f6-cf541bfeb525@xs4all.nl>
+Date:   Wed, 5 Feb 2020 08:57:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <af813a4e-339c-4254-75a0-8db995fe2aba@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfH6omILRaT9sm0XhO0Kb85QAqiu7fDEbkga/0I8tPf5vU6is6YciSTeryOxUEvcb/d73otPRnDpn20BZCasUvUtOy4YajrmKQk5Qm/2MDHevnv0NuUlN
+ 1CzI4nx3arzn/x6o5Nztw1T2zsU2ixteauyiLs1GEATKt4y0IXCL3KUvLQYs1tLIrT0Uu4Uc3c6+yp6vsbS0+Sx99ha7cWYaXbMlGyqcU4aqZjtwPfcVyuSn
+ sGYgbNx07aBlyezqOsgk/rF/QtxMXytLgkl4PwG7i9U1PZdbElzhHdhKtK98TDvwzLT+KTf/cJ+N456YhbDVdedtgv3yTwQMmvoexQhWBS43IBblKdGbY3oG
+ wxdqUfvrzk5arnpPqOihGExs9k7lJ8CWtXLdI6I6gD7nCyNog3+2u8rwj6zaKK5icV2bZCM6Uf69pk9xaSCvvNB54O5XSEBoryFx0tzaDiOry4I3HLw=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-I recently ran across this printk error message spewing in my logs
+On 2/4/20 8:02 PM, Sowjanya Komatineni wrote:
+>>>> I also noticed that changing the test pattern while streaming did not seem to have
+>>>> any effect until I stop and restart streaming. Is that a limitation of the HW or of
+>>>> the driver?
+>>> Do you mean changing test pattern mode of different channel while other
+>>> channels are streaming?
+>> No, from the same channel. E.g. v4l2-ctl --stream-mmap, then do from another
+>> console 'v4l2-ctl -c test-pattern=1'.
+>>
+>> It depends on the hardware whether or not you can change the test pattern
+>> while streaming. But it is nice for testing if this is possible.
+> 
+> Test-pattern mode changes during active streaming will not get set as 
+> test-pattern mode is in CSI and mode is set every time during the start 
+> of streaming and then VI keeps capturing the frames.
+> 
+> basically its during CSI subdevice stream enable.
 
- Call set rate on the PLL with rounded rates!
+OK. Just add a little comment either at the point the control is created or
+where the control is set in vi_s_ctrl(). It's just to document that this
+will only take effect at the next streamon.
 
-and I had no idea what clk that was or what rate was failing to round
-properly. Make the printk more informative by telling us what went wrong
-and also add the name of the clk that's failing to change rate.
-Furthermore, update the other printks in this file with the clk name
-each time so we know what clk we're talking about.
+Regards,
 
-Cc: Taniya Das <tdas@codeaurora.org>
-Cc: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 7c2936da9b14..6d946770a80f 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -544,7 +544,8 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 	vco = alpha_pll_find_vco(pll, rate);
- 	if (pll->vco_table && !vco) {
--		pr_err("alpha pll not in a valid vco range\n");
-+		pr_err("%s: alpha pll not in a valid vco range\n",
-+		       clk_hw_get_name(hw));
- 		return -EINVAL;
- 	}
- 
-@@ -722,7 +723,7 @@ static int alpha_pll_huayra_set_rate(struct clk_hw *hw, unsigned long rate,
- 	 */
- 	if (clk_alpha_pll_is_enabled(hw)) {
- 		if (cur_alpha != a) {
--			pr_err("clock needs to be gated %s\n",
-+			pr_err("%s: clock needs to be gated\n",
- 			       clk_hw_get_name(hw));
- 			return -EBUSY;
- 		}
-@@ -1170,7 +1171,7 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 l, alpha_width = pll_alpha_width(pll);
- 	u64 a;
--	unsigned long rrate;
-+	unsigned long rrate, max = rate + FABIA_PLL_RATE_MARGIN;
- 
- 	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
- 
-@@ -1178,8 +1179,9 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
- 	 * Due to limited number of bits for fractional rate programming, the
- 	 * rounded up rate could be marginally higher than the requested rate.
- 	 */
--	if (rrate > (rate + FABIA_PLL_RATE_MARGIN) || rrate < rate) {
--		pr_err("Call set rate on the PLL with rounded rates!\n");
-+	if (rrate > max || rrate < rate) {
-+		pr_err("%s: Rounded rate %lu not within range [%lu, %lu)\n",
-+		       clk_hw_get_name(hw), rrate, rate, max);
- 		return -EINVAL;
- 	}
- 
-@@ -1196,6 +1198,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
- 	struct clk_hw *parent_hw;
- 	unsigned long cal_freq, rrate;
- 	u32 cal_l, val, alpha_width = pll_alpha_width(pll);
-+	const char *name = clk_hw_get_name(hw);
- 	u64 a;
- 	int ret;
- 
-@@ -1210,7 +1213,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
- 
- 	vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
- 	if (!vco) {
--		pr_err("alpha pll: not in a valid vco range\n");
-+		pr_err("%s: alpha pll not in a valid vco range\n", name);
- 		return -EINVAL;
- 	}
- 
-@@ -1236,7 +1239,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
- 	/* Bringup the PLL at calibration frequency */
- 	ret = clk_alpha_pll_enable(hw);
- 	if (ret) {
--		pr_err("alpha pll calibration failed\n");
-+		pr_err("%s: alpha pll calibration failed\n", name);
- 		return ret;
- 	}
- 
--- 
-Sent by a computer, using git, on the internet
-
+	Hans
