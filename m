@@ -2,101 +2,95 @@ Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFDADC35247
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 19:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED2F7C35247
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 21:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E0DF2072B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 19:54:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD2ED217BA
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 21:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jovhgea1"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ImbCkX8J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727149AbgBETyv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 14:54:51 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:16142 "EHLO
+        id S1727149AbgBEVXw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 16:23:52 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:6298 "EHLO
         hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgBETyu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 14:54:50 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3b1d710000>; Wed, 05 Feb 2020 11:54:25 -0800
+        with ESMTP id S1727104AbgBEVXw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 16:23:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3b324f0000>; Wed, 05 Feb 2020 13:23:27 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 05 Feb 2020 11:54:49 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 05 Feb 2020 13:23:51 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 05 Feb 2020 11:54:49 -0800
-Received: from [10.2.167.216] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
- 2020 19:54:49 +0000
-Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver for
- Tegra210
-To:     Stephen Boyd <sboyd@kernel.org>, <frankc@nvidia.com>,
-        <hverkuil@xs4all.nl>, <jonathanh@nvidia.com>,
-        <thierry.reding@gmail.com>
+        by hqpgpgate101.nvidia.com on Wed, 05 Feb 2020 13:23:51 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
+ 2020 21:23:51 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 5 Feb 2020 21:23:51 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.216]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e3b32660001>; Wed, 05 Feb 2020 13:23:51 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>
 CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
- <20200205192620.3A1F620720@mail.kernel.org>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <7e0ec06e-bb40-acf7-fd47-ced4b401afb2@nvidia.com>
-Date:   Wed, 5 Feb 2020 11:54:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Subject: [RFC PATCH v2 1/6] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+Date:   Wed, 5 Feb 2020 13:23:21 -0800
+Message-ID: <1580937806-17376-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
+References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20200205192620.3A1F620720@mail.kernel.org>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580932466; bh=9S5su+9VPxC93G/dxX1b6jj+ANaeVTDo08rIcJRucg0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=jovhgea1EE0wEhkSoMo/gyga7GSU0eHEiacjqnE/55fSedszkXo0MVXq8E1bzf4eR
-         qIDzn50VKD0blDpbwt+8+XgkJ2Y/XbJmg9mibmLKSEBoh6U5AES3n5hSVX/ANOjB6n
-         EamZ/RG9lqCaP+5dTk9lrfdLlDGTHiO2yr/a4h32l0plv2/ryGZImE3qP6IA/auHRJ
-         Cl9PVD3HInnYwd4wcYMlhZBh3UZdCy/mD2EMpIo7VRjYIqgEXTiONvHv8N3m0UrrGh
-         vzWVB8GpV8WhEO36kW4rekI4JlK5Wli2ijmvcTCTUdKfn4IRiDrEBDqKyLivCIzElV
-         MgpE942UVXO2w==
+        t=1580937807; bh=S6xZgZFIi3mqYtcaBlNqBcPaadNMOP/GEU2NRAJynoY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=ImbCkX8JcgW9LjNHBAbr4zRWTOTJkZsyJLSoRROFZ8jl6Qa2hjMpzUN4m1dQZPeT8
+         ZU2VGvnWtHuTFf2jG1+dOa1IeIMCvbKYVxquGNXnIJHjuHjMsKB6iNIahmAeFqY8qC
+         9G94XbHoVuBWBvqiGA4t81rLzcXG6Qps7r3+NBj9eGKWElsWiEYdUCD/1U2o3IpbFc
+         3Sk4eC+/9Of6d0xorTJXrRdcBNvEzaLMYPUz3460MQ8S6eOiiAUmq3LhA3bI8tOueU
+         U6zM2hPjq4jmF+McFjRGs5p+KQTcLMGhHjcDcnENyh8QMOis3BYzjmr+1XRJPfTEfI
+         qHbNfZ1KFYVsA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tegra210 uses PLLD out internally for CSI TPG.
 
-On 2/5/20 11:26 AM, Stephen Boyd wrote:
-> External email: Use caution opening links or attachments
->
->
-> Quoting Sowjanya Komatineni (2020-01-28 10:23:20)
->> diff --git a/drivers/staging/media/tegra/Kconfig b/drivers/staging/media/tegra/Kconfig
->> new file mode 100644
->> index 000000000000..443b99f2e2c9
->> --- /dev/null
->> +++ b/drivers/staging/media/tegra/Kconfig
->> @@ -0,0 +1,12 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +config VIDEO_TEGRA
->> +       tristate "NVIDIA Tegra VI driver"
->> +       depends on ARCH_TEGRA || (ARM && COMPILE_TEST)
->> +       depends on COMMON_CLK
-> What depends on the common clk framework? I don't see any clk-provider.h
-> includes here.
-COMMON_CLK is not needed. Will remove in v2. Thanks.
->
->> +       depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
->> +       depends on MEDIA_CONTROLLER
->> +       select TEGRA_HOST1X
->> +       select VIDEOBUF2_DMA_CONTIG
->> +       select V4L2_FWNODE
->> +       help
->> +         Say yes here to enable support for Tegra video input hardware
+This patch adds clk id for this CSI TPG clock from PLLD.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ include/dt-bindings/clock/tegra210-car.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 44f60623f99b..dc22aaec8805 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -349,7 +349,7 @@
+ #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
+ #define TEGRA210_CLK_XUSB_SSP_SRC 318
+ #define TEGRA210_CLK_PLL_RE_OUT1 319
+-/* 320 */
++#define TEGRA210_CLK_CSI_TPG 320
+ /* 321 */
+ #define TEGRA210_CLK_ISP 322
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+-- 
+2.7.4
+
