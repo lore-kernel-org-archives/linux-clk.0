@@ -2,124 +2,159 @@ Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A31C2D0B1
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 03:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F78C35249
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 06:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31502085B
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 03:07:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 937B72085B
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 06:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kxWtPX/K"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JbHW6Y+R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbgBEDHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 22:07:12 -0500
-Received: from mail-eopbgr60060.outbound.protection.outlook.com ([40.107.6.60]:39033
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727746AbgBEDHM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Feb 2020 22:07:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TTpvX75eMP89GGv8HLuvP7IKCh6x0v+5RpYg+jzxLI+RpAHi20LMz/f6JNAIjihPvs300q3dTpX3f4obJi3WrX7ZSrWcUGR10DNSvVWCGxgo2XJfEb53C8XLtJQ/AJiWO7P0vIHUpgHO0va+B1ByYig6kqBBC9OdVHqH3+1v8D0RLbamUPDSX6XYCAb/6TXouCJSXX2v6UZ9adIPFSnW7wR7+sQKorbaY4Gc3CMtcPjtvI9FOygr1QWhkq7A7vX319B+WFd/jGBUAS4DxjmuWIrsBrSpjV/uEBqFZVYmPJMASxSWpSE4PAbRMVV8OECur0klrCV6DNXCiFDWP9qSjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=11rOZ6ub1Ypt7xsleDLGkDFWVYHUW2rojAmRp2oYkoo=;
- b=l5y5cTpM0uFxvQlZMQNE6q0IjCfkwmIHcWwtJgNzgmQeQwZzJ4xtVn/YZIJtSHqmjl2+DRkHDVe44VYnw31DRBJxa6Rqj1mSN4Bmr1KCCM+OlW9zgMGLmY5NVJo5hEnzBsklbP8psxNv3MeFp+xA60KaEBPS5Uw94Gij3Eb7sK2CW9gc7p7WpYYkVm99CEe8FM/Cnr/TrPEMuJqw38dKL9MI2kDAWntBXSGbWBtM6QGmuZyC4yONaal3BAWws8FZFYSitnMB8wCHxHUMwTyOrb3RoPm1cV9dn59AqcrwbbQOJKJFVFbNb4oC9JYtkU0hor/1+YnCfSi8jcO8gStnBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=11rOZ6ub1Ypt7xsleDLGkDFWVYHUW2rojAmRp2oYkoo=;
- b=kxWtPX/KECd0qQhvm6wDW4C2YEh4snD6Fu9BaDkT4xSgnBiAZH0NrP+XPTwaKIPi78JvkepDaC/tLIxRgTEW9fB0G+TUWhr09jhr2coPWR+fR9QtH9Bt5T8Um1YJu47yK5h1OizxPo4cCMnq7+qQ9+1NanY94W63+5BAzLXBe7A=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
- DB7PR04MB4474.eurprd04.prod.outlook.com (52.135.141.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2686.30; Wed, 5 Feb 2020 03:07:08 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::59e6:140:b2df:a5b0]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::59e6:140:b2df:a5b0%7]) with mapi id 15.20.2686.035; Wed, 5 Feb 2020
- 03:07:08 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Fabio Estevam <festevam@gmail.com>
-CC:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH 0/7] ARM: imx: imx7ulp: add cpufreq support
-Thread-Topic: [PATCH 0/7] ARM: imx: imx7ulp: add cpufreq support
-Thread-Index: AQHV22DB4Jio1GYHq0SGCvfmhvaRDKgLDAqAgADebCA=
-Date:   Wed, 5 Feb 2020 03:07:08 +0000
-Message-ID: <DB7PR04MB44904E50D1B0AC71D999D1C288020@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
- <CAOMZO5Avbrzf8jNQ301mNN3YXXPjEGYWkooae_uw=wLykMgt+A@mail.gmail.com>
-In-Reply-To: <CAOMZO5Avbrzf8jNQ301mNN3YXXPjEGYWkooae_uw=wLykMgt+A@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: f2f55fa6-6fe4-4e46-2da0-08d7a9e87cd2
-x-ms-traffictypediagnostic: DB7PR04MB4474:|DB7PR04MB4474:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB4474C7918F90B3ADE631B07188020@DB7PR04MB4474.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0304E36CA3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39860400002)(136003)(346002)(396003)(189003)(199004)(26005)(44832011)(55016002)(5660300002)(81156014)(86362001)(478600001)(76116006)(316002)(66446008)(64756008)(66476007)(66946007)(66556008)(186003)(54906003)(4744005)(4326008)(8676002)(6506007)(52536014)(53546011)(33656002)(81166006)(71200400001)(7696005)(2906002)(8936002)(9686003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4474;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ftqWxKkoMiR9U2WhCZo3NFRkdDNX9pmBfeKBqYx3TxxRClXJjIlJwTzkN1lZCTCMwZnjvuCTZVLmJ8jj7p6jMAOB3dD6uqyXEhj0GNfXyXltSA+b8GKHrDl/MqMnKgBMKFZSytuACAjOjGsR32W15tSc2WnMkEE7QRo7s+gZOxs/dFAP+qNeOOsu8MA9zvlmrUR9TfTgO1OCZDZSRG3c8Lna7YSnoUDum8Kch1NLoibsfNx61QvpDP/f6EA6UZt2EFC38xnWYEhGLdBGrQ3dAxTszYva98ekaV6IKSZPMxuV6eaOGIB5pzYJXIg5N3Lra4QRgNzsgyIQ0D8vdd/pK9FfnBkRDLXQlCPw5+wBiBpr6P5Ugv2VEGcD/st+FRjrfnyo4ZXxapOQMZo2pRpd9Hw2WfaYiybaMiCNaEldjPm3mE0vKWgPcQ4u911p4gRX
-x-ms-exchange-antispam-messagedata: vxKE5273B2zgZPjiQPbu2D7CAzjN0ttqspnWod4mvWyXjUuzm/NqgfLAyT41uF5mJ7Vjn9OtMIDwTLgBfGaVka4XHKUzaNut/zGpRm9FeTrSACXAYJMErUkKKRskuh97TqozhBlMULixpEencJC5cg==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727231AbgBEGy0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 01:54:26 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46838 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbgBEGyX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 01:54:23 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z124so461988pgb.13
+        for <linux-clk@vger.kernel.org>; Tue, 04 Feb 2020 22:54:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xC6pTkHOfWDELEok5+Rk1+a9t64mfOMziwPkHBy7kSE=;
+        b=JbHW6Y+RQ+QybQ7Gk2Mx+Qkw7MsZxHziwp2ap85W9f0rNcbLqhN+21ukKwPPvKo+1k
+         BLURHbCzVbGG+DYX1+w7EaLK6UsUcAaK0MDtMo3lpMtXuMfnxymPl/eyLpiwq3Lay191
+         78N/ayHrbaAG/KBmuJ3digCu40Cf7aWoX6rbg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xC6pTkHOfWDELEok5+Rk1+a9t64mfOMziwPkHBy7kSE=;
+        b=MIYZRRayHTG0HQRRXwbiuvvHL8uIkK5htWUwfdt4kH1vMm7Ksf3M6JJZHEkmiG5SWs
+         CVCnvElXFLNiD5X1utjtgUyxdKlk4vH5ejjzR2g3T5OUO1DAPuKsWcMX0wgpaclLNyKM
+         H+7om/hLuoxGB6CwH4mKd4wXlwmw2mTedEMl4KCX4HLGN4/0oDR90EIcU5aZl48YapCg
+         V3cv191lVIWtSMcOalrM3l2sy/qq8ek+G05uBDo8Md/VZIB0EEXai8HrPUsbJOTqetNH
+         s4fXC9iXaBdwNM0MeWeqmYM6bq8QlH/IbcNAx/b4xLw7CCz0vcZDGI0PYydct8IaGfR9
+         +xmA==
+X-Gm-Message-State: APjAAAXZxNDDZSPheRkpPIY69dhpzkRChvY+3CigASRYdgqVFlW45ib6
+        iThhKsTYeccrtB6G3jXh68zJ5w==
+X-Google-Smtp-Source: APXvYqxLtsypnc5e6xwR5LhibDb5b+SOMmWOhDPpwbRPbyJCr56/sg1cj0sMa+gJN96i0oonpU3OWg==
+X-Received: by 2002:aa7:9629:: with SMTP id r9mr35694347pfg.51.1580885662409;
+        Tue, 04 Feb 2020 22:54:22 -0800 (PST)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id u18sm26278894pgi.44.2020.02.04.22.54.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Feb 2020 22:54:21 -0800 (PST)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Subject: [PATCH] clk: qcom: alpha-pll: Make error prints more informative
+Date:   Tue,  4 Feb 2020 22:54:21 -0800
+Message-Id: <20200205065421.9426-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2f55fa6-6fe4-4e46-2da0-08d7a9e87cd2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2020 03:07:08.7330
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v+v2lkvwflzhTjO40sRAUj54LY/Iqcw1E0tn+JLj1KGuJlF+NttxRLbifw4Uv3qTkabaygS0JXv+AcGcdmswyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4474
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDAvN10gQVJNOiBpbXg6IGlteDd1bHA6IGFkZCBjcHVmcmVx
-IHN1cHBvcnQNCj4gDQo+IEhpIFBlbmcsDQo+IA0KPiBPbiBUdWUsIEZlYiA0LCAyMDIwIGF0IDEw
-OjQxIEFNIDxwZW5nLmZhbkBueHAuY29tPiB3cm90ZToNCj4gDQo+ID4gSSBub3QgaW5jbHVkZSB0
-aGUgdm9sdGFnZSBjb25maWd1cmF0aW9uLCBiZWNhdXNlIGlteC1ycG1zZyBhbmQgcGYxNTUwDQo+
-ID4gcnBtc2cgZHJpdmVyIHN0aWxsIG5vdCB1cHN0cmVhbWVkLg0KPiANCj4gQW55IHBsYW5zIGZv
-ciB1cHN0cmVhbWluZyBpbXgtcnBtc2c/IEkgYXNzdW1lIHRoaXMgd2lsbCBnbyBpbnRvIHRoZQ0K
-PiByZW1vdGVwcm9jIGZyYW1ld29yay4NCg0KSSBuZWVkIGNoZWNrIHdpdGggUmljaGFyZCBmaXJz
-dCwgaWYgbm8gcGxhbiwgSSdsbCB0YWtlIGl0Lg0KDQo+IA0KPiBXaXRob3V0IHRoaXMgZHJpdmVy
-LCB0aGUgaS5NWDdVTFAgc3VwcG9ydCBpbiBtYWlubGluZSBpcyB2ZXJ5IGxpbWl0ZWQgaW4NCj4g
-ZnVuY3Rpb25hbGl0eS4NCg0KVG8gdGVzdCBvbmx5IGNsayBjaGFuZ2UsIHJwbXNnIGRyaXZlciBp
-cyBub3QgYSBtdXN0LiBJIGhhdmUgdGVzdGVkIHRoYXQsDQptaHogY291bGQgY29ycmVjdGx5IHNo
-b3cgNTAwTUh6IGFuZCA3MjBNaHogd2l0aCB0aGUgZGlmZiBhcHBsaWVkDQppbiBjb3ZlciBsZXR0
-ZXIuDQoNCkknbGwgdHJ5IHRvIHB1c2ggZm9yd2FyZCB3aXRoIHJwbXNnIGFuZCByZWd1bGF0b3Ig
-cGFydCwgYnV0IGJvdGggbm90DQpnbyB0aHJvdWdoIHNoYXduJ3MgdHJlZS4gVGhpcyBwYXRjaHNl
-dCB3aXRob3V0IHRoZSBkdHMgcGFydCwgY3B1ZnJlcQ0KYWxzbyBub3QgdGFrZSBlZmZlY3QsIHNv
-IGl0IGlzIHNhZmUgdG8gYmUgaW4gaWYgZ290IHJldmlld2VkLiBBZnRlcg0KdGhlIHJwbXNnL3Jl
-Z3VsYXRvciBwYXJ0IGdvdCBpbiwgd2UgY291bGQgYWRkIHRoZSBkdHMgcGF0Y2ggdG8NCnN3aXRj
-aCBvbiBjcHVmcmVxIGZvciBpLk1YN1VMUC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiANCj4gVGhh
-bmtzDQo=
+I recently ran across this printk error message spewing in my logs
+
+ Call set rate on the PLL with rounded rates!
+
+and I had no idea what clk that was or what rate was failing to round
+properly. Make the printk more informative by telling us what went wrong
+and also add the name of the clk that's failing to change rate.
+Furthermore, update the other printks in this file with the clk name
+each time so we know what clk we're talking about.
+
+Cc: Taniya Das <tdas@codeaurora.org>
+Cc: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 7c2936da9b14..6d946770a80f 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -544,7 +544,8 @@ static int __clk_alpha_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	rate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+ 	vco = alpha_pll_find_vco(pll, rate);
+ 	if (pll->vco_table && !vco) {
+-		pr_err("alpha pll not in a valid vco range\n");
++		pr_err("%s: alpha pll not in a valid vco range\n",
++		       clk_hw_get_name(hw));
+ 		return -EINVAL;
+ 	}
+ 
+@@ -722,7 +723,7 @@ static int alpha_pll_huayra_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 */
+ 	if (clk_alpha_pll_is_enabled(hw)) {
+ 		if (cur_alpha != a) {
+-			pr_err("clock needs to be gated %s\n",
++			pr_err("%s: clock needs to be gated\n",
+ 			       clk_hw_get_name(hw));
+ 			return -EBUSY;
+ 		}
+@@ -1170,7 +1171,7 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 l, alpha_width = pll_alpha_width(pll);
+ 	u64 a;
+-	unsigned long rrate;
++	unsigned long rrate, max = rate + FABIA_PLL_RATE_MARGIN;
+ 
+ 	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+ 
+@@ -1178,8 +1179,9 @@ static int alpha_pll_fabia_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * Due to limited number of bits for fractional rate programming, the
+ 	 * rounded up rate could be marginally higher than the requested rate.
+ 	 */
+-	if (rrate > (rate + FABIA_PLL_RATE_MARGIN) || rrate < rate) {
+-		pr_err("Call set rate on the PLL with rounded rates!\n");
++	if (rrate > max || rrate < rate) {
++		pr_err("%s: Rounded rate %lu not within range [%lu, %lu)\n",
++		       clk_hw_get_name(hw), rrate, rate, max);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1196,6 +1198,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
+ 	struct clk_hw *parent_hw;
+ 	unsigned long cal_freq, rrate;
+ 	u32 cal_l, val, alpha_width = pll_alpha_width(pll);
++	const char *name = clk_hw_get_name(hw);
+ 	u64 a;
+ 	int ret;
+ 
+@@ -1210,7 +1213,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
+ 
+ 	vco = alpha_pll_find_vco(pll, clk_hw_get_rate(hw));
+ 	if (!vco) {
+-		pr_err("alpha pll: not in a valid vco range\n");
++		pr_err("%s: alpha pll not in a valid vco range\n", name);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -1236,7 +1239,7 @@ static int alpha_pll_fabia_prepare(struct clk_hw *hw)
+ 	/* Bringup the PLL at calibration frequency */
+ 	ret = clk_alpha_pll_enable(hw);
+ 	if (ret) {
+-		pr_err("alpha pll calibration failed\n");
++		pr_err("%s: alpha pll calibration failed\n", name);
+ 		return ret;
+ 	}
+ 
+-- 
+Sent by a computer, using git, on the internet
+
