@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A1BC352A1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA0FC47409
 	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 23:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD3321927
+	by mail.kernel.org (Postfix) with ESMTP id A47832082E
 	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 23:28:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1580945297;
-	bh=46oZ7qfCkoMgiJNmlyL4gPed6RlcQ2p9W5//kGnmdW4=;
+	bh=dw12aJGBOCJdLWAJqheCoPQcMOCtJwKsLjtTgt6MMVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O2grZxk8ThBXUBg6NaSH6+zMJrbJOI4EGVSSHSxynoNMmEeuZic8zUOf21e25aRgw
-	 hHZQek2fpyvjvDUL8VfBbFdkkTwODATCaCE92c0IEXB1T+74SX2OP2O8DfI8zCYAjl
-	 TqpAguH1n5EfAUXFhgU4KOobKyECp6SCyELkLvwU=
+	b=CdT83dmHnRnA6N47KOEXpXxWH5jwtis+gN1IrW/yZGfT1eg/jMkr8nsoYDmZV/n9T
+	 +ocx4tOP2thhP2FRZcBVg9SbZEhCpyJLKuSHx7jSdncMLyx6sAjP34daf1clZW1/WM
+	 SxZTHlqqx/CAEAq2qc8iBuV+XoXqfR78F3SCGL5M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbgBEX2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 18:28:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38386 "EHLO mail.kernel.org"
+        id S1727415AbgBEX2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 18:28:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38370 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbgBEX2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1727482AbgBEX2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 5 Feb 2020 18:28:04 -0500
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3910021D7D;
-        Wed,  5 Feb 2020 23:28:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FB4B217BA;
+        Wed,  5 Feb 2020 23:28:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580945284;
-        bh=46oZ7qfCkoMgiJNmlyL4gPed6RlcQ2p9W5//kGnmdW4=;
+        s=default; t=1580945283;
+        bh=dw12aJGBOCJdLWAJqheCoPQcMOCtJwKsLjtTgt6MMVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1qbTzrp3OYJjljGNXksFzohyeQKOG16ZA9ElJOJZYE0pYz99RY6HzML5gYQ89yjdL
-         Ft1uzm50Nnv1XOe3XIqJV4vCS265FW8/kDT/HCP/xDGo2rq2kmokIHP8eEkYaKjY+a
-         ucPOoZv8Ay10YX+ExJwfnXubPJgxHebXfD3P4Kxc=
+        b=qPa8yQ3rZY9zQao7TbSyk8D9tmXff/r3WxMZTx+4cuK526Qjzz8Xb3P3ImilVgQu8
+         NLSyQEDEV3TXvZPW15U2QjK7AF+O7spZ7Xd1wqhyXXgk8wrfmrbzlZg+U4Fy7Skl2L
+         jDQoWkC+oUrh+XOHyKddP+bjY4/mLsrtSW4mC5xU=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -45,9 +45,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>,
         Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 4/4] clk: Bail out when calculating phase fails during clk registration
-Date:   Wed,  5 Feb 2020 15:28:02 -0800
-Message-Id: <20200205232802.29184-5-sboyd@kernel.org>
+Subject: [PATCH v2 1/4] clk: Don't cache errors from clk_ops::get_phase()
+Date:   Wed,  5 Feb 2020 15:27:59 -0800
+Message-Id: <20200205232802.29184-2-sboyd@kernel.org>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200205232802.29184-1-sboyd@kernel.org>
 References: <20200205232802.29184-1-sboyd@kernel.org>
@@ -58,34 +58,122 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Bail out of clk registration if we fail to get the phase for a clk that
-has a clk_ops::get_phase() callback. Print a warning too so that driver
-authors can easily figure out that some clk is unable to read back phase
-information at boot.
+We don't check for errors from clk_ops::get_phase() before storing away
+the result into the clk_core::phase member. This can lead to some fairly
+confusing debugfs information if these ops do return an error. Let's
+skip the store when this op fails to fix this. While we're here, move
+the locking outside of clk_core_get_phase() to simplify callers from
+the debugfs side.
 
 Cc: Douglas Anderson <dianders@chromium.org>
 Cc: Heiko Stuebner <heiko@sntech.de>
-Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 16 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 87532e2d124a..e9e83f7ae9e0 100644
+index d529ad67805c..26213e82f5f9 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+@@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
+ {
+ 	int ret;
+ 
+-	clk_prepare_lock();
++	lockdep_assert_held(&prepare_lock);
++	if (!core->ops->get_phase)
++		return 0;
++
+ 	/* Always try to update cached phase if possible */
+-	if (core->ops->get_phase)
+-		core->phase = core->ops->get_phase(core->hw);
+-	ret = core->phase;
+-	clk_prepare_unlock();
++	ret = core->ops->get_phase(core->hw);
++	if (ret >= 0)
++		core->phase = ret;
+ 
+ 	return ret;
+ }
+@@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
+  */
+ int clk_get_phase(struct clk *clk)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_get_phase(clk->core);
++	clk_prepare_lock();
++	ret = clk_core_get_phase(clk->core);
++	clk_prepare_unlock();
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_phase);
+ 
+@@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
+ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
+ {
+-	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
++	int phase;
++
++	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+-		   clk_core_get_rate(c), clk_core_get_accuracy(c),
+-		   clk_core_get_phase(c),
+-		   clk_core_get_scaled_duty_cycle(c, 100000));
++		   clk_core_get_rate(c), clk_core_get_accuracy(c));
++
++	phase = clk_core_get_phase(c);
++	if (phase >= 0)
++		seq_printf(s, "%5d", phase);
++	else
++		seq_puts(s, "-----");
++
++	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+ 
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
+ 
+ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+ {
++	int phase;
+ 	unsigned long min_rate, max_rate;
+ 
+ 	clk_core_get_boundaries(c, &min_rate, &max_rate);
+@@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+ 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
+ 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
+ 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+-	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
++	phase = clk_core_get_phase(c);
++	if (phase >= 0)
++		seq_printf(s, "\"phase\": %d,", phase);
+ 	seq_printf(s, "\"duty_cycle\": %u",
+ 		   clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+@@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
+ 		core->accuracy = 0;
+ 
+ 	/*
+-	 * Set clk's phase.
++	 * Set clk's phase by clk_core_get_phase() caching the phase.
  	 * Since a phase is by definition relative to its parent, just
  	 * query the current clock phase, or just assume it's in phase.
  	 */
--	clk_core_get_phase(core);
-+	ret = clk_core_get_phase(core);
-+	if (ret < 0) {
-+		pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
-+			core->name);
-+		goto out;
-+	}
+-	if (core->ops->get_phase)
+-		core->phase = core->ops->get_phase(core->hw);
+-	else
+-		core->phase = 0;
++	clk_core_get_phase(core);
  
  	/*
  	 * Set clk's duty cycle.
