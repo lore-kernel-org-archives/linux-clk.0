@@ -2,84 +2,68 @@ Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B6B2C33CA1
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 09:10:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20633C35247
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 19:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E051E21741
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 09:10:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E62402192A
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 19:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580930618;
+	bh=u2UIn7F+9QuQQyPEXQ+hPn66a/4sZE4MOJ97XcYdzrk=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=Ef7taE7sDwXjrpe2F8KkjsM28SYyvfzYhX8W37xHxG7rUzy3hYfy27WGyRSDTgeUS
+	 vT+zv7v6EQ1k1YgckGMdf73Mg1LzHgOXFUrJqHe98ezzYlmbY75dtAlRLMyxUK2sqa
+	 1LOvAydszFzoc2NzRiha65TAMQ3IPrn+R1fccMX8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbgBEJKZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 04:10:25 -0500
-Received: from mga12.intel.com ([192.55.52.136]:3362 "EHLO mga12.intel.com"
+        id S1727440AbgBETXh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 14:23:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727068AbgBEJKZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Feb 2020 04:10:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2020 01:10:24 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,405,1574150400"; 
-   d="scan'208";a="231654014"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2020 01:10:24 -0800
-Received: from [10.226.38.72] (unknown [10.226.38.72])
-        by linux.intel.com (Postfix) with ESMTP id 8B76C5805E9;
-        Wed,  5 Feb 2020 01:10:21 -0800 (PST)
-Subject: Re: [PATCH v4 2/2] dt-bindings: clk: intel: Add bindings document &
- header file for CGU
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        robh@kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com
-References: <cover.1580374761.git.rahul.tanwar@linux.intel.com>
- <24933f5f1c48a891f9c05c7292117108fc880932.1580374761.git.rahul.tanwar@linux.intel.com>
- <20200131022541.3853C2067C@mail.kernel.org>
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Message-ID: <556c2277-885c-f6be-60b3-564187618ca6@linux.intel.com>
-Date:   Wed, 5 Feb 2020 17:10:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727116AbgBETXh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Feb 2020 14:23:37 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 923B72072B;
+        Wed,  5 Feb 2020 19:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580930616;
+        bh=u2UIn7F+9QuQQyPEXQ+hPn66a/4sZE4MOJ97XcYdzrk=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=FJ1MCrdI1mNYYExkWaWxASa0jTixCeY/Myz3thcYyCHss/2HeB2LIsFuRuo85/Sq0
+         FbLViC0gDI/PdgSxcZ5MoGJs8Lmds4CDdW/uQDh9SgP0GHbeDXsNxrTb/ewB8IhVtG
+         YGammme3f5t04VhnbQIWlQN/gEsvdWSdR4E1knPs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200131022541.3853C2067C@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1580235801-4129-2-git-send-email-skomatineni@nvidia.com>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com> <1580235801-4129-2-git-send-email-skomatineni@nvidia.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [RFC PATCH v1 1/5] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+To:     frankc@nvidia.com, hverkuil@xs4all.nl, jonathanh@nvidia.com,
+        skomatineni@nvidia.com, thierry.reding@gmail.com
+User-Agent: alot/0.8.1
+Date:   Wed, 05 Feb 2020 11:23:35 -0800
+Message-Id: <20200205192336.923B72072B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sowjanya Komatineni (2020-01-28 10:23:17)
+> Tegra210 uses PLLD out internally for CSI TPG.
+>=20
+> This patch adds clk id for this CSI TPG clock from PLLD.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
 
-Hi Stephen,
-
-Thanks for taking time out to review.
-
-On 31/1/2020 10:25 AM, Stephen Boyd wrote:
-> Quoting Rahul Tanwar (2020-01-30 01:04:03)
->> Clock generation unit(CGU) is a clock controller IP of Intel's Lightning
->> Mountain(LGM) SoC. Add DT bindings include file and document for CGU clock
->> controller driver of LGM.
->>
->> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
->> ---
->>
->> +
->> +/* LJPLL4 */
->> +#define LGM_CLK_PCIE           45
->> +#define LGM_CLK_SATA           LGM_CLK_PCIE
-> What is with the aliases?
-
-Aliases are just for code readability when more than one peripherals
-share the same clock.
-
-Regards,
-Rahul
-
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
