@@ -2,106 +2,93 @@ Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F1FC352A1
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 21:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE970C35247
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 22:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C2952082E
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 21:24:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XnbrWVhn"
+	by mail.kernel.org (Postfix) with ESMTP id 8A72620730
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 22:51:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580943110;
+	bh=7jofB+B4X06+m/QmPPK8i8hbugSJUjDJNEOv4/+YztY=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=HiKIRyUl90MWLjangALpdDMT/jUxsB3XBR3nmGSVuL3kaHrrPD95SFCIX50chWnOc
+	 Xo7+EklINuzl6M5f5ClCnWrVG9DFX36WzOW0q72KoA9HIAPGQoA2W3Y9s9ug4uDe4D
+	 0qqFI9J7pDOkuFSdjyS9BgC9GRGQB5lj/Y/Rt+ic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbgBEVXx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 16:23:53 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4124 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727109AbgBEVXw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Feb 2020 16:23:52 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3b32590000>; Wed, 05 Feb 2020 13:23:38 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 05 Feb 2020 13:23:52 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 05 Feb 2020 13:23:52 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 5 Feb
- 2020 21:23:51 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 5 Feb 2020 21:23:52 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.167.216]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e3b32670000>; Wed, 05 Feb 2020 13:23:51 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v2 2/6] clk: tegra: Add Tegra210 CSI TPG clock gate
-Date:   Wed, 5 Feb 2020 13:23:22 -0800
-Message-ID: <1580937806-17376-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
-References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1727742AbgBEWvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Feb 2020 17:51:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40482 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727690AbgBEWvq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 5 Feb 2020 17:51:46 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5486220730;
+        Wed,  5 Feb 2020 22:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580943105;
+        bh=7jofB+B4X06+m/QmPPK8i8hbugSJUjDJNEOv4/+YztY=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=GXUjNVGDU3rvq+e8Cd55zKyh7jfZEp2d/wHxWUxnR4fXOOOLuxQO6gY2uYbUG874L
+         94yDoivV+jh7Jm0wdOqbfhs4xHWUexD9Tucl9VcXpNWpeDDC3Qu6ClTUIFKbmfBQS1
+         lSNmZZS0WPC4d3oQoEyeRcxAP8ST4gpVnWLp/2XQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580937818; bh=U33XItr+moxxea1Mr2O71xPE31NqHV1XULA57TM/x3s=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=XnbrWVhnVMfLS9EibM3fY56tHYO4SAGKG3Rk70vZ9f0B8xHCwRird30FMFncqeJat
-         vjJd6o3q3Lkp1qxlR8kB1d0Qfm0XMZ6SzT0kn75CO7iDc3kvgJp+obTPAQu37xhrWV
-         37S8oey7Txv9NYMTrtOlTZSiepXWBTj3FLgFmh/9cqcpEtHpKiVkY22/VPozSoc4QP
-         6d8waTpnBmEMh20Ocw8jKpZxcDcSbOgds9hsuQC7UyhkmO5ZI1h0lBbfG/mCCl+dKs
-         CVtjfmPOZ1D8eGW1OgcYHhHYPm4RDzpZDJYUobf/9J+MP/mJA0A6+oYIh7aAbHOSyD
-         H+tQv3rrfd/NQ==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200205194649.31309-1-geert+renesas@glider.be>
+References: <20200205194649.31309-1-geert+renesas@glider.be>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] of: clk: Make <linux/of_clk.h> self-contained
+To:     Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 05 Feb 2020 14:51:44 -0800
+Message-Id: <20200205225145.5486220730@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 CSI hardware internally uses PLLD for internal test pattern
-generator logic.
+Quoting Geert Uytterhoeven (2020-02-05 11:46:49)
+> Depending on include order:
+>=20
+>     include/linux/of_clk.h:11:45: warning: \u2018struct device_node\u2019=
+ declared inside parameter list will not be visible outside of this definit=
+ion or declaration
+>      unsigned int of_clk_get_parent_count(struct device_node *np);
+>                                                  ^~~~~~~~~~~
+>     include/linux/of_clk.h:12:43: warning: \u2018struct device_node\u2019=
+ declared inside parameter list will not be visible outside of this definit=
+ion or declaration
+>      const char *of_clk_get_parent_name(struct device_node *np, int index=
+);
+>                                                ^~~~~~~~~~~
+>     include/linux/of_clk.h:13:31: warning: \u2018struct of_device_id\u201=
+9 declared inside parameter list will not be visible outside of this defini=
+tion or declaration
+>      void of_clk_init(const struct of_device_id *matches);
+>                                    ^~~~~~~~~~~~
+>=20
+> Fix this by adding forward declarations for struct device_node and
+> struct of_device_id.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> Noticed when cleaning up some platform code.
+> I am not aware of this being triggered in upstream, but this will become a
+> dependency for these cleanups.
 
-PLLD_BASE register in CAR has a bit CSI_CLK_SOURCE to enable PLLD
-out to CSI during TPG mode.
+So apply for fixes? I'll just throw it in now.
 
-This patch adds this CSI TPG clock gate to Tegra210 clock driver
-to allow Tegra video driver to ungate CSI TPG clock during TPG mode
-and gate during non TPG mode.
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk-tegra210.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 762cd186f714..e66498b5fd6f 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3041,6 +3041,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					     periph_clk_enb_refcnt);
- 	clks[TEGRA210_CLK_DSIB] = clk;
- 
-+	/* csi_tpg */
-+	clk = clk_register_gate(NULL, "csi_tpg", "pll_d_out0",
-+				CLK_SET_RATE_PARENT, clk_base + PLLD_BASE,
-+				23, 0, &pll_d_lock);
-+	clk_register_clkdev(clk, "csi_tpg", NULL);
-+	clks[TEGRA210_CLK_CSI_TPG] = clk;
-+
- 	/* la */
- 	clk = tegra_clk_register_periph("la", la_parents,
- 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
--- 
-2.7.4
+Applied to clk-next.
 
