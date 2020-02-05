@@ -1,450 +1,119 @@
-Return-Path: <SRS0=s2jw=3Y=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D26C35247
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 22:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E4C35247
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 03:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AFAB21744
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Feb 2020 22:52:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D31B2082E
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 03:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0Z+ap+v"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dvNIFkod"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727686AbgBDWw1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Feb 2020 17:52:27 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:50385 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727412AbgBDWw1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Feb 2020 17:52:27 -0500
-Received: by mail-pj1-f68.google.com with SMTP id r67so82648pjb.0;
-        Tue, 04 Feb 2020 14:52:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=bL16aPVcHJJAbC6OpG1fw3NkrVsr1W8L9M44BnAEkuw=;
-        b=J0Z+ap+vFjC9eHG71WcxR24kdm4rTYivqEAdrI1gXwVgmDa5ilDUE2ChW0mYse8dBR
-         Sap/xWqL0gJVvNvn5RJymEHvXJhTodrVjSqJhkoJePeOshlxSkx6MDIX4M5ju7tOiydr
-         c79EjDk8uXB4FWICytChos0oriND69gaMieGIRGsPttyqTqXrBJ/5dSsbaXADnGUuhyF
-         dCkqtmrIPug7FHnr5fi2n6Pt1eUgaPQs1t/uayWd2A7Vzc7VJrmrp/kKnX8xvhgI3no3
-         0LRvbLQtBljPHTn1wrpQDZBb52aVB8aCEkAHGBfYhoLh1ztj2N2xRCrCJgEH6NHOepoh
-         nlzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=bL16aPVcHJJAbC6OpG1fw3NkrVsr1W8L9M44BnAEkuw=;
-        b=mgpWs7qU/nAzqRCdIXP2MCJnM6XokbBwlEQV1nHsRvLpiILfFIUTqC+X5F9+aX/KSv
-         TQ04Mn8BmyF/fzCJ6wz4t3Skeu6PRBBi1y9ga7jkgrqxsxCWXxsM6SS30u1BpshTleyH
-         +0a8n/N+IScurFI2YhytN/zu1SFgaTj3gc2HcMo/iUeBj961KIawD2n2qL0Xmg425Ksp
-         MMYr9dpoAWrKjG/pa3ZkmZBcbidAfEXUQcJlNYqYedFyJ2iGLsoQ9WaDPaBVGQU/dOlT
-         NKCiqnXwKQ3JGrbSZq1cxcPP86PQH/Wj9s+yAf5ChNmE1zZLJVUe63Io37QePysr4w3+
-         U1vg==
-X-Gm-Message-State: APjAAAVxckbZHKU4wZKTLFvf1DiKDRkwgwjJMH1GlW4bncDH597MHxIt
-        Szn1oinU80xVkHXgunYO3FywOPFsE9A=
-X-Google-Smtp-Source: APXvYqy46XuN+YVX43ywLX65VomhRNoV8459efeM12J5y894c511WIVrvzIyukPfnTr02wZJ82zpmQ==
-X-Received: by 2002:a17:90a:3603:: with SMTP id s3mr1830948pjb.61.1580856746360;
-        Tue, 04 Feb 2020 14:52:26 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id l10sm4621557pjy.5.2020.02.04.14.52.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 04 Feb 2020 14:52:25 -0800 (PST)
-Date:   Tue, 4 Feb 2020 14:52:24 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
+        id S1727854AbgBEC74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Feb 2020 21:59:56 -0500
+Received: from mail-eopbgr70083.outbound.protection.outlook.com ([40.107.7.83]:14126
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727924AbgBEC74 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Feb 2020 21:59:56 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=E+1LaayEGlt4Y7gb++ZXur7A7k/IdeuitSGCeAscvk8fUej/5wAaHEoZlsNUBhI3CE0HpJlh6KDmXNZFAEoENavGQEi7wQLkE/nyArQV3h+DOonsKky5JoS8At6zKRFpkUVr5PtRLflFez5rIIS6DWu2sgXljDq0oVZdABXdhjIi95/zxTeo/3VtQUTnaUUgA2hrIJGZZMwhO6T83OKvPn2gd/NM/COYpospbf5fA8ocY7E3dGknLeFF4l4H4jUm2Z2WeSEqxFDYqqqCz1jUSpgiIoSuOAjbv6Nd2KeD8XiF7ITG8bUcDs4LvicJUh73fuGQRA06oX8Zbe5Guyn/rQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pR58iCd+nNAnYwF+mvJyhklT4v/MM5nupao3qGVrJMY=;
+ b=iMpUkWArFlfTxlJN6I1xiqr2+1Vbd7XjMz9zrNyTq9m+1BcTME/OPPVxnb2sDTymyQXCGh6V2mE6kdSSFl6HseLG77lVxaX6Yb0Fupf2h4gDhxQhEpb276kq2IXRI81DoipGhU4NMBO8kIg+3Tcg/lg07WdiyMyxHMdjFcrPzMwuvSUlMumOw3Gcl0gfi4tilbumSNfjS06jbp7C5wqg/Mbe1Q3LD+SAkrfiFQ77fXuuGch/cv0tUm+tEWv1X62HXIfDwvRO8UNzrgrymjCBVhVcez38J8B8ixl8/kepqj+TiaWIiDwjoTMI7EB/3XflzW+3h0RNcrB7/SkTEJuqfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pR58iCd+nNAnYwF+mvJyhklT4v/MM5nupao3qGVrJMY=;
+ b=dvNIFkodcdHo7mE+ekvNsKFJ7FpXkDv/1z8lcdhOwGYX3zb7apSIbMSpSquMblawxUS1zwkgWJ+/0XcTr7RQLL2hKpabXpXkoGi1yFgE0Lf5IXLgoJ/iJmnYRG21JuYapkpIr6YCBTmvHwUhXCp+w6XR05x7tUwIpU4lrXtqpr8=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4249.eurprd04.prod.outlook.com (52.134.108.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.32; Wed, 5 Feb 2020 02:59:50 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::59e6:140:b2df:a5b0%7]) with mapi id 15.20.2686.035; Wed, 5 Feb 2020
+ 02:59:50 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+CC:     Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-clk@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix paths in schema $id fields
-Message-ID: <20200204225224.GA1914@roeck-us.net>
-References: <20200204224909.26880-1-robh@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 6/7] ARM: imx: imx7ulp: support HSRUN mode
+Thread-Topic: [PATCH 6/7] ARM: imx: imx7ulp: support HSRUN mode
+Thread-Index: AQHV22DS1fobjwyzsECLZwnJ5ghp3qgLDWuAgADcRAA=
+Date:   Wed, 5 Feb 2020 02:59:50 +0000
+Message-ID: <DB7PR04MB449032635121DD11181FC2F388020@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
+ <1580823277-13644-7-git-send-email-peng.fan@nxp.com>
+ <CAOMZO5BnfGdbDuobV=qi4zbzKriM0kNmAyd8zFCSdv2krVj=Og@mail.gmail.com>
+In-Reply-To: <CAOMZO5BnfGdbDuobV=qi4zbzKriM0kNmAyd8zFCSdv2krVj=Og@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: edb6c81b-869d-4d2f-1ab6-08d7a9e777b0
+x-ms-traffictypediagnostic: DB7PR04MB4249:|DB7PR04MB4249:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB4249401F0E1416725761329A88020@DB7PR04MB4249.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-forefront-prvs: 0304E36CA3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(376002)(346002)(39860400002)(136003)(366004)(189003)(199004)(53546011)(6506007)(4744005)(478600001)(2906002)(33656002)(186003)(4326008)(81166006)(54906003)(8936002)(316002)(81156014)(26005)(86362001)(5660300002)(6916009)(44832011)(64756008)(52536014)(7696005)(55016002)(71200400001)(8676002)(66946007)(66556008)(9686003)(66476007)(66446008)(76116006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4249;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: W5orJE7IQxN7yeB9UKpsxs030NCFNvTd7dUBBHQNenbNOTIDM53YjeJ1wvktrtyoSa1I7WhkIJTp0ZUvmjs6tY2YlofN7SgH4rY34Tx389Sp9lEJ+ttecnwCfresBTykc49rXfu11TbPEJymNuMJXlWDhgzDp3Kx1fkahgiJtRNRpndnniIBLAfXnYYN1bEpuvMYJOkDS+SzWQ6xOyikqyzGmIdL/Es9Gj9LB8hDNZWMc2LJoF3JIuBEaID8ANlkWQV9izOkStR52LMkWDoqfOQ6ApEvxGpmA7+JcI7TYWeqJRnORGOR5+gQCl4Nw2u1VtQBr47EpmkHpoo42Z8N/UIFLQGJljdurRPWFKNUBPpm8vowDKxB2s7NUVhQvuoVKYV5mxDSLwz1WGknWQNgU3CYPz2rQ8VVMIOaO5DbhNwsmXVfGKOo8RNDTQUQlWC9
+x-ms-exchange-antispam-messagedata: YTRKumUAfQEYVoY8MhlQjLX4YD+pB6O/Htn4YDyKHfZWA20cXzQ0DeflwFF0sLW9xfrcY7f3cXQKJXHV3rXg9Et/chCssI/d0Ges2QXvS/EK0ZVSQSx/afY+NMpzd6LHt5ESs42GwGU3GlA02tXPUg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200204224909.26880-1-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: edb6c81b-869d-4d2f-1ab6-08d7a9e777b0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2020 02:59:50.6044
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: t06Kas5yTlEY9Jbzxnkzs8F9xI88t+EXvP/no90vV9U8fQcNLli/9P9OtSuIKxxhxSxft32TQXGSyWilWTMEyg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4249
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 04, 2020 at 10:49:09PM +0000, Rob Herring wrote:
-> The $id path checks were inadequately checking the path part of the $id
-> value. With the check fixed, there's a number of errors that need to be
-> fixed. Most of the errors are including 'bindings/' in the path which
-> should not be as that is considered the root.
-> 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: "Nuno Sá" <nuno.sa@analog.com>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Stefan Popa <stefan.popa@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Marcus Folkesson <marcus.folkesson@gmail.com>
-> Cc: Kent Gustavsson <kent@minoris.se>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-input@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml                  | 2 +-
->  Documentation/devicetree/bindings/arm/qcom.yaml                 | 2 +-
->  Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml | 2 +-
->  Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml      | 2 +-
->  Documentation/devicetree/bindings/clock/imx8mn-clock.yaml       | 2 +-
->  Documentation/devicetree/bindings/clock/imx8mp-clock.yaml       | 2 +-
->  Documentation/devicetree/bindings/clock/milbeaut-clock.yaml     | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,dispcc.yaml        | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,gcc.yaml           | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,gpucc.yaml         | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml          | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml        | 2 +-
->  Documentation/devicetree/bindings/clock/qcom,videocc.yaml       | 2 +-
->  Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml    | 2 +-
->  Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml    | 2 +-
->  Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml        | 2 +-
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
->  Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml       | 2 +-
->  Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml       | 2 +-
->  .../devicetree/bindings/iio/adc/microchip,mcp3911.yaml          | 2 +-
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml         | 2 +-
->  Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml     | 2 +-
->  Documentation/devicetree/bindings/input/gpio-vibrator.yaml      | 2 +-
->  22 files changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> index f79683a628f0..b0a7454a70b8 100644
-> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/arm/fsl.yaml#
-> +$id: http://devicetree.org/schemas/arm/fsl.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Freescale i.MX Platforms Device Tree Bindings
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index e39d8f02e33c..b5bef5abc281 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/arm/qcom.yaml#
-> +$id: http://devicetree.org/schemas/arm/qcom.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: QCOM device tree bindings
-> diff --git a/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
-> index e63827399c1a..8559fe8f7efd 100644
-> --- a/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/bitmain,bm1880-clk.yaml#
-> +$id: http://devicetree.org/schemas/clock/bitmain,bm1880-clk.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Bitmain BM1880 Clock Controller
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> index 8fb2060ac47f..fc3bdfdc091a 100644
-> --- a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/fsl,sai-clock.yaml#
-> +$id: http://devicetree.org/schemas/clock/fsl,sai-clock.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Freescale SAI bitclock-as-a-clock binding
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> index 622f3658bd9f..cd0b8a341321 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/imx8mn-clock.yaml#
-> +$id: http://devicetree.org/schemas/clock/imx8mn-clock.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: NXP i.MX8M Nano Clock Control Module Binding
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> index 80278882cf57..89aee63c9019 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/imx8mp-clock.yaml#
-> +$id: http://devicetree.org/schemas/clock/imx8mp-clock.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: NXP i.MX8M Plus Clock Control Module Binding
-> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> index 5cf0b811821e..f0b804a7f096 100644
-> --- a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/milbeaut-clock.yaml#
-> +$id: http://devicetree.org/schemas/clock/milbeaut-clock.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Milbeaut SoCs Clock Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml b/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
-> index 9c58e02a1de1..795fe686f3ea 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,dispcc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,dispcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Display Clock & Reset Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> index cac1150c9292..e814eec1bf8d 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Global Clock & Reset Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> index 622845aa643f..679e7fe0fa83 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,gpucc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,gpucc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Graphics Clock & Reset Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> index 91101c915904..85518494ce43 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,mmcc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,mmcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Multimedia Clock & Reset Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> index 94e2f14eb967..2cd158f13bab 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,rpmhcc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,rpmhcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Technologies, Inc. RPMh Clocks Bindings
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> index 43cfc893a8d1..2946b240e161 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/qcom,videocc.yaml#
-> +$id: http://devicetree.org/schemas/clock/qcom,videocc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Qualcomm Video Clock & Reset Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
-> index b8f91e444d2f..4e385508f516 100644
-> --- a/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/st,stm32mp1-rcc.yaml#
-> +$id: http://devicetree.org/schemas/clock/st,stm32mp1-rcc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Reset Clock Controller Binding
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> index f1150cad34a4..229af98b1d30 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/clock/xlnx,versal-clk.yaml#
-> +$id: http://devicetree.org/schemas/clock/xlnx,versal-clk.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Xilinx Versal clock controller
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> index ae04903f34bf..6a742a51e2f9 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/hwmon/adi,ltc2947.yaml#
-> +$id: http://devicetree.org/schemas/hwmon/adi,ltc2947.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Analog Devices LTC2947 high precision power and energy monitor
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> index e932d5aed02f..f0934b295edc 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> @@ -2,7 +2,7 @@
->  # Copyright 2019 Analog Devices Inc.
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ad7124.yaml#
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7124.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Analog Devices AD7124 ADC device driver
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> index 567a33a83dce..84d25bd39488 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7192.yaml
-> @@ -2,7 +2,7 @@
->  # Copyright 2019 Analog Devices Inc.
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/iio/adc/adi,ad7192.yaml#
-> +$id: http://devicetree.org/schemas/iio/adc/adi,ad7192.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: Analog Devices AD7192 ADC device driver
-> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> index 881059b80d61..0ce290473fb0 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> @@ -2,7 +2,7 @@
->  # Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
->  %YAML 1.2
->  ---
-> -$id: "http://devicetree.org/schemas/bindings/iio/adc/microchip,mcp3911.yaml#"
-> +$id: "http://devicetree.org/schemas/iio/adc/microchip,mcp3911.yaml#"
->  $schema: "http://devicetree.org/meta-schemas/core.yaml#"
->  
->  title: Microchip MCP3911 Dual channel analog front end (ADC)
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> index c91407081aa5..acf36eef728b 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/st,stm32-dfsdm-adc.yaml#
-> +$id: http://devicetree.org/schemas/iio/adc/st,stm32-dfsdm-adc.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: STMicroelectronics STM32 DFSDM ADC device driver
-> diff --git a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> index 13d005b68931..a285eaba7125 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> @@ -2,7 +2,7 @@
->  # Copyright 2019 Marcus Folkesson <marcus.folkesson@gmail.com>
->  %YAML 1.2
->  ---
-> -$id: "http://devicetree.org/schemas/bindings/iio/dac/lltc,ltc1660.yaml#"
-> +$id: "http://devicetree.org/schemas/iio/dac/lltc,ltc1660.yaml#"
->  $schema: "http://devicetree.org/meta-schemas/core.yaml#"
->  
->  title: Linear Technology Micropower octal 8-Bit and 10-Bit DACs
-> diff --git a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml b/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> index 903475f52dbd..b98bf9363c8f 100644
-> --- a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> +++ b/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/input/gpio-vibrator.yaml#
-> +$id: http://devicetree.org/schemas/input/gpio-vibrator.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: GPIO vibrator
-> -- 
-> 2.20.1
-> 
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDYvN10gQVJNOiBpbXg6IGlteDd1bHA6IHN1cHBvcnQgSFNS
+VU4gbW9kZQ0KPiANCj4gSGkgUGVuZywNCj4gDQo+IE9uIFR1ZSwgRmViIDQsIDIwMjAgYXQgMTA6
+NDEgQU0gPHBlbmcuZmFuQG54cC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gRnJvbTogUGVuZyBGYW4g
+PHBlbmcuZmFuQG54cC5jb20+DQo+ID4NCj4gPiBDb25maWd1cmUgcG1wcm90IHRvIGxldCBBUk0g
+Y29yZSBjb3VsZCBydW4gaW50byBIU1JVTiBtb2RlLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTog
+UGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4gLS0tDQo+IA0KPiA+ICsgICAgICAgd3Jp
+dGVsX3JlbGF4ZWQoQk1fUE1QUk9UX0FIU1JVTiwgc21jMV9iYXNlICsNCj4gU01DX1BNUFJPVCk7
+DQo+IA0KPiBIU1JVTiBjYW5ub3QgYmUgY29uZmlndXJlZCB1bmNvbmRpdGlvbmFsbHkgYmVjYXVz
+ZSBpZiBpLk1YN1VMUCBydW5zIHdpdGgNCj4gTERPLWVuYWJsZWQgaXQgY2Fubm90IHJ1biBpbiBI
+U1JVTiBtb2RlLg0KDQpUaGFua3MsIEknbGwgdXBkYXRlIHRvIGFkZCBhIGNoZWNrIExETyBtb2Rl
+IGhlcmUuDQoNClRoYW5rcywNClBlbmcuDQo=
