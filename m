@@ -1,182 +1,103 @@
-Return-Path: <SRS0=3WMO=3Z=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wpFC=32=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA0FC47409
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 23:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C318EC2D0B1
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47832082E
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Feb 2020 23:28:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580945297;
-	bh=dw12aJGBOCJdLWAJqheCoPQcMOCtJwKsLjtTgt6MMVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CdT83dmHnRnA6N47KOEXpXxWH5jwtis+gN1IrW/yZGfT1eg/jMkr8nsoYDmZV/n9T
-	 +ocx4tOP2thhP2FRZcBVg9SbZEhCpyJLKuSHx7jSdncMLyx6sAjP34daf1clZW1/WM
-	 SxZTHlqqx/CAEAq2qc8iBuV+XoXqfR78F3SCGL5M=
+	by mail.kernel.org (Postfix) with ESMTP id 9EEE921775
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727415AbgBEX2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Feb 2020 18:28:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38370 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727482AbgBEX2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Feb 2020 18:28:04 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FB4B217BA;
-        Wed,  5 Feb 2020 23:28:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580945283;
-        bh=dw12aJGBOCJdLWAJqheCoPQcMOCtJwKsLjtTgt6MMVo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qPa8yQ3rZY9zQao7TbSyk8D9tmXff/r3WxMZTx+4cuK526Qjzz8Xb3P3ImilVgQu8
-         NLSyQEDEV3TXvZPW15U2QjK7AF+O7spZ7Xd1wqhyXXgk8wrfmrbzlZg+U4Fy7Skl2L
-         jDQoWkC+oUrh+XOHyKddP+bjY4/mLsrtSW4mC5xU=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v2 1/4] clk: Don't cache errors from clk_ops::get_phase()
-Date:   Wed,  5 Feb 2020 15:27:59 -0800
-Message-Id: <20200205232802.29184-2-sboyd@kernel.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
-In-Reply-To: <20200205232802.29184-1-sboyd@kernel.org>
-References: <20200205232802.29184-1-sboyd@kernel.org>
+        id S1726673AbgBFIHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Feb 2020 03:07:06 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43558 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbgBFIHG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 03:07:06 -0500
+Received: by mail-ot1-f66.google.com with SMTP id p8so4631757oth.10;
+        Thu, 06 Feb 2020 00:07:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Id5Si7PsBgV/5UriLIHb4WyiAl4QS9Vzrwa0lTz3goQ=;
+        b=XGAyRUng8Sg/sDTF1w/zOpUHtHRzfOCkHSVl6e6rGri8HmFYsKHhag+27Z542BnGha
+         AFMe3rwN82B7L+vhfl+D0CsHfprN5qAZNFjAJsrm33a/4+5OsABsG2M2DgmDZl5ISDM0
+         4cu7NgwDzWj38wSKqqTg6u+r7e5PSgCsErTiVXeCS6usIYP4KahLAj9kbqvjvU6ZYc7B
+         MF9BU52IZiXgkpyC5EL53agZ9cB+wsBHy9DAFGaUFzLSBeLnKP1ucvAlKUPfkT6/nLaJ
+         /SogXVQwX0kH2T0y3YJCE1Y6YKGE9Qjyf+gUDr1tkM7QLvoCIHWxAmQMX7rV4DtCGIQO
+         /Yew==
+X-Gm-Message-State: APjAAAW2cbFBw8Twvn9Qw7ObXOu+UjpScoHiGJjBWLClj0DAVoGslJDc
+        +RsAIpptSH1QfP2q0aBekRT2lGhRSmxdSO0hTTQ=
+X-Google-Smtp-Source: APXvYqyIaRpVcqlLoNT5REckbKTlfq6ceFveBrFPUMguk47N5cYuEDtZ/dv9fpMrmyvj/GC1jCTFTEfS5c3t7GXjfU4=
+X-Received: by 2002:a9d:7602:: with SMTP id k2mr385248otl.39.1580976425083;
+ Thu, 06 Feb 2020 00:07:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200205194649.31309-1-geert+renesas@glider.be> <20200205225145.5486220730@mail.kernel.org>
+In-Reply-To: <20200205225145.5486220730@mail.kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 6 Feb 2020 09:06:53 +0100
+Message-ID: <CAMuHMdXLFq+Ebtmfsw45=08U7X5Fv9ZvsHO=q-PcNON51HjqaQ@mail.gmail.com>
+Subject: Re: [PATCH] of: clk: Make <linux/of_clk.h> self-contained
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We don't check for errors from clk_ops::get_phase() before storing away
-the result into the clk_core::phase member. This can lead to some fairly
-confusing debugfs information if these ops do return an error. Let's
-skip the store when this op fails to fix this. While we're here, move
-the locking outside of clk_core_get_phase() to simplify callers from
-the debugfs side.
+Hi Stephen,
 
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+On Wed, Feb 5, 2020 at 11:51 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2020-02-05 11:46:49)
+> > Depending on include order:
+> >
+> >     include/linux/of_clk.h:11:45: warning: \u2018struct device_node\u2019 declared inside parameter list will not be visible outside of this definition or declaration
+> >      unsigned int of_clk_get_parent_count(struct device_node *np);
+> >                                                  ^~~~~~~~~~~
+> >     include/linux/of_clk.h:12:43: warning: \u2018struct device_node\u2019 declared inside parameter list will not be visible outside of this definition or declaration
+> >      const char *of_clk_get_parent_name(struct device_node *np, int index);
+> >                                                ^~~~~~~~~~~
+> >     include/linux/of_clk.h:13:31: warning: \u2018struct of_device_id\u2019 declared inside parameter list will not be visible outside of this definition or declaration
+> >      void of_clk_init(const struct of_device_id *matches);
+> >                                    ^~~~~~~~~~~~
+> >
+> > Fix this by adding forward declarations for struct device_node and
+> > struct of_device_id.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > Noticed when cleaning up some platform code.
+> > I am not aware of this being triggered in upstream, but this will become a
+> > dependency for these cleanups.
+>
+> So apply for fixes? I'll just throw it in now.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d529ad67805c..26213e82f5f9 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
- {
- 	int ret;
- 
--	clk_prepare_lock();
-+	lockdep_assert_held(&prepare_lock);
-+	if (!core->ops->get_phase)
-+		return 0;
-+
- 	/* Always try to update cached phase if possible */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	ret = core->phase;
--	clk_prepare_unlock();
-+	ret = core->ops->get_phase(core->hw);
-+	if (ret >= 0)
-+		core->phase = ret;
- 
- 	return ret;
- }
-@@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
-  */
- int clk_get_phase(struct clk *clk)
- {
-+	int ret;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_get_phase(clk->core);
-+	clk_prepare_lock();
-+	ret = clk_core_get_phase(clk->core);
-+	clk_prepare_unlock();
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_get_phase);
- 
-@@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
--	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
-+	int phase;
-+
-+	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
--		   clk_core_get_rate(c), clk_core_get_accuracy(c),
--		   clk_core_get_phase(c),
--		   clk_core_get_scaled_duty_cycle(c, 100000));
-+		   clk_core_get_rate(c), clk_core_get_accuracy(c));
-+
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "%5d", phase);
-+	else
-+		seq_puts(s, "-----");
-+
-+	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
- }
- 
- static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-@@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
-+	int phase;
- 	unsigned long min_rate, max_rate;
- 
- 	clk_core_get_boundaries(c, &min_rate, &max_rate);
-@@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
- 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
--	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "\"phase\": %d,", phase);
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
-@@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
- 		core->accuracy = 0;
- 
- 	/*
--	 * Set clk's phase.
-+	 * Set clk's phase by clk_core_get_phase() caching the phase.
- 	 * Since a phase is by definition relative to its parent, just
- 	 * query the current clock phase, or just assume it's in phase.
- 	 */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	else
--		core->phase = 0;
-+	clk_core_get_phase(core);
- 
- 	/*
- 	 * Set clk's duty cycle.
+Yep.
+
+> Applied to clk-next.
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Sent by a computer, using git, on the internet
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
