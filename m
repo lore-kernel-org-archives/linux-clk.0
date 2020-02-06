@@ -4,101 +4,174 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CFEC352A3
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23011C35247
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 21:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7911218AC
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D74C821775
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 21:49:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581022006;
-	bh=Ocj0H6TQmpr7XwjGv77HKUZhpIL7ZWZKic9S5tcam94=;
+	s=default; t=1581025796;
+	bh=PNLeOa/B2GLhZdzCuPeHzTPi1Ot/5D1FhqRvKDQafoY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GNgJWTDuG6EowEIgBc/T2qD39mWtlVw9vqFonUZ/iVu5QrkD7zUAQCRrlesFqdA+M
-	 HfBMyjc2qA4v0fCNMiGkvLIdTDVqazKB+yDVzvylwd/NDdaj4Sb0bFjQVVG7W64NUa
-	 KG9oAFwUlHogODYxgdCZaBDtYGjq+avx7MXOrGLs=
+	b=akv4k1NexboMmarndeQTyL9ERFvq6xmd39jfeISgQWK4nMCGDCcB3EKWF4VAkZJgn
+	 WpXLhYHt7qMcahzzjcBlx49646feVtUuIWxyO7ib8KpYjFeRDcdVP2Tavuv1oebEmV
+	 YL6auoRf+beaz+fAPv9yE8Fk6Y60RVf52/34kuNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbgBFUq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Feb 2020 15:46:26 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40745 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727877AbgBFUqZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 15:46:25 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z7so3333485pgk.7;
-        Thu, 06 Feb 2020 12:46:23 -0800 (PST)
+        id S1727443AbgBFVt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Feb 2020 16:49:56 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:35937 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbgBFVt4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 16:49:56 -0500
+Received: by mail-pj1-f66.google.com with SMTP id gv17so12795pjb.1;
+        Thu, 06 Feb 2020 13:49:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jPtOQdw8vyUeztLpc680CHtZLK6W1JEQ2cHvbgrlY+8=;
-        b=WqXY9MDGqAuSlJ3Htq+iCYlFvm9yzCL2kfMcTGeF6Fm4x7kEg1/X8EivvdBzr3oRew
-         7gHInV7c4+S9g2kIDnKx+40EffR34sc4K8E4NnQ1oxGGaM2UgZ2PbtM3itWF0qk/0LTN
-         ISTe4CXRiZfiQFqAOGy8CbBhOgTOPwyHoVjDXI5FbZTtB/aPUhxHXyzbeO7UP6qf8pIB
-         HR5fC5KKnih6yhfjQsYIUeOmpfZ4nKBY5fr7Yv+jClW2ixtRL0ZkeeJzystO/c/pqJct
-         kNxzqBha1V9aGfMoL2/B1jKkuwxz7XTcXCkQm0Omn45fPoZloF6d71dy1HbpSRekiTpC
-         hAKA==
-X-Gm-Message-State: APjAAAURznOXjApo7kd+BORqDLn+qnYPuIoHyISmXPBIPZcxqTaskEst
-        wB6Qm5XBxp1SoAObeqVebQ==
-X-Google-Smtp-Source: APXvYqxza9xpQ1nh+paMG8H01152jYTBvT3wn55ABgjvQ/4PX2elrh5aIP/rcP6j59uN6+87Rk8oUQ==
-X-Received: by 2002:a63:4b52:: with SMTP id k18mr5635945pgl.371.1581021982840;
-        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
+        bh=rLHr9RkGPW2j2XQRzleEq5XgRf6xszSSLPZxWj4wwdQ=;
+        b=TNfKDmob8zK8gBVpftfEL0XJhSAS9qQmRvggNoWraApLqX/8e20VDHhZeD/RGC6cb9
+         bEcu0c22U2RAF0dYIN+vk+4VcUKlq+Wcqfx0h+SA64vD3B7aigXx7b7KxcIsCwPqEe5P
+         ehmSuk5cQK6D3NqWqmMZmG1AFyAMGsygGeluz0tyqf4riU8qV3GgyqMoL8Shdvn5hEd+
+         TLJweBslDFF/shjzqFB+xaCe2xFE8/NwYyFMwPEBWCoE9IZ5+/6qztg21Pz5fsjhxF0z
+         Kje8vGJaeV5rX4DSva5kWMBiznxbfgZHHcNAV19TbQDmIHs1ta6S/+4AOg7LOI+4RuO6
+         LMjA==
+X-Gm-Message-State: APjAAAX9rniwNUEVNwzFruTD0vsfmKbhqEkPRZ3Do8jLWPK+EpNFOGgJ
+        4OrgBVZWQmmcWKszdk09bQ==
+X-Google-Smtp-Source: APXvYqwkwapEilpTs36vHDOSSgYgt04Nnz3fqFepzi44J73hw88iaNQ98Bk3mxxDhgjhBse4LxyTew==
+X-Received: by 2002:a17:902:9a4c:: with SMTP id x12mr5937233plv.297.1581025795514;
+        Thu, 06 Feb 2020 13:49:55 -0800 (PST)
 Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
-        by smtp.gmail.com with ESMTPSA id z29sm292462pgc.21.2020.02.06.12.46.21
+        by smtp.gmail.com with ESMTPSA id 84sm350093pgg.90.2020.02.06.13.49.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
-Received: (nullmailer pid 28243 invoked by uid 1000);
-        Thu, 06 Feb 2020 17:56:52 -0000
-Date:   Thu, 6 Feb 2020 17:56:52 +0000
+        Thu, 06 Feb 2020 13:49:55 -0800 (PST)
+Received: (nullmailer pid 7220 invoked by uid 1000);
+        Thu, 06 Feb 2020 21:49:53 -0000
+Date:   Thu, 6 Feb 2020 14:49:53 -0700
 From:   Rob Herring <robh@kernel.org>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
-        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
-        cheol.yong.kim@intel.com
-Subject: Re: [PATCH v3 2/2] dt-bindings: clk: intel: Add bindings document &
- header file for a new clock driver
-Message-ID: <20200206175652.GA25108@bogus>
-References: <cover.1580373142.git.rahul.tanwar@linux.intel.com>
- <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/6] dt-binding: tegra: Add VI and CSI bindings
+Message-ID: <20200206214953.GA4995@bogus>
+References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
+ <1580937806-17376-4-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
+In-Reply-To: <1580937806-17376-4-git-send-email-skomatineni@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jan 30, 2020 at 04:54:01PM +0800, Rahul Tanwar wrote:
-> Clock generation unit(CGU) is a clock controller IP of Intel's Lightning
-> Mountain(LGM) SoC. Add DT bindings include file and document for CGU clock
-> controller driver of LGM.
+On Wed, Feb 05, 2020 at 01:23:23PM -0800, Sowjanya Komatineni wrote:
+> Tegra contains VI controller which can support up to 6 MIPI CSI
+> camera sensors.
 > 
-> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> Each Tegra CSI port from CSI unit can be one-to-one mapper to
+> VI channel and can capture from an external camera sensor or
+> from built-in test pattern generator.
+> 
+> This patch adds dt-bindings for Tegra VI and CSI.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  40 +++++
->  include/dt-bindings/clock/intel,lgm-clk.h          | 165 +++++++++++++++++++++
->  2 files changed, 205 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
->  create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
+>  .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
+>  1 file changed, 47 insertions(+), 8 deletions(-)
+
+Thierry is working on converting this to schema, so you'll need to 
+coordinate.
+
+Rob
+
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
-> new file mode 100644
-> index 000000000000..e9649fe75435
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
-> @@ -0,0 +1,40 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/intel,cgu-lgm.yaml#
-
-Drop 'bindings'
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> index 9999255ac5b6..3d0ed540a646 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+> @@ -40,14 +40,24 @@ of the following host1x client modules:
+>  
+>    Required properties:
+>    - compatible: "nvidia,tegra<chip>-vi"
+> -  - reg: Physical base address and length of the controller's registers.
+> +  - reg: Physical base address and length of the controller registers.
+>    - interrupts: The interrupt outputs from the controller.
+> -  - clocks: Must contain one entry, for the module clock.
+> +  - clocks: Must contain an entry for the module clock "vi"
+>      See ../clocks/clock-bindings.txt for details.
+>    - resets: Must contain an entry for each entry in reset-names.
+>      See ../reset/reset.txt for details.
+> -  - reset-names: Must include the following entries:
+> -    - vi
+> +  - reset-names: Must include the entry "vi"
+> +
+> +  Tegra210 has CSI part of VI sharing same host interface and register
+> +  space. So, VI device node should have CSI child node.
+> +
+> +  - csi: mipi csi interface to vi
+> +
+> +    Required properties:
+> +    - compatible: "nvidia,tegra<chip>-csi"
+> +    - reg: Physical base address and length of the controller registers.
+> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
+> +      See ../clocks/clock-bindings.txt for details.
+>  
+>  - epp: encoder pre-processor
+>  
+> @@ -310,12 +320,41 @@ Example:
+>  		};
+>  
+>  		vi {
+> -			compatible = "nvidia,tegra20-vi";
+> -			reg = <0x54080000 0x00040000>;
+> +			compatible = "nvidia,tegra210-vi";
+> +			reg = <0x0 0x54080000 0x0 0x700>;
+>  			interrupts = <0 69 0x04>;
+> -			clocks = <&tegra_car TEGRA20_CLK_VI>;
+> -			resets = <&tegra_car 100>;
+> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+> +			clock-names = "vi";
+> +			resets = <&tegra_car 20>;
+>  			reset-names = "vi";
+> +
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +
+> +			ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
+> +
+> +			csi@0x54080838 {
+> +				compatible = "nvidia,tegra210-csi";
+> +				reg = <0x0 0x54080838 0x0 0x2000>;
+> +				status = "disabled";
+> +				assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+> +						  <&tegra_car TEGRA210_CLK_CILCD>,
+> +						  <&tegra_car TEGRA210_CLK_CILE>;
+> +				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+> +							 <&tegra_car TEGRA210_CLK_PLL_P>,
+> +							 <&tegra_car TEGRA210_CLK_PLL_P>;
+> +				assigned-clock-rates = <102000000>,
+> +						       <102000000>,
+> +						       <102000000>;
+> +				clocks = <&tegra_car TEGRA210_CLK_CSI>,
+> +					 <&tegra_car TEGRA210_CLK_CILAB>,
+> +					 <&tegra_car TEGRA210_CLK_CILCD>,
+> +					 <&tegra_car TEGRA210_CLK_CILE>;
+> +				clock-names = "csi", "cilab", "cilcd", "cile";
+> +			};
+> +
+>  		};
+>  
+>  		epp {
+> -- 
+> 2.7.4
+> 
