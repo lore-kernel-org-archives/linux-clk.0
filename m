@@ -2,59 +2,58 @@ Return-Path: <SRS0=wpFC=32=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF01FC2D0B1
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52475C2D0B1
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:27:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0063206CC
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2645F206CC
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 08:27:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="n8Aslr0l"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="M/XsjuOE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgBFI0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Feb 2020 03:26:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54688 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbgBFI0M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 03:26:12 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g1so5233458wmh.4
-        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2020 00:26:08 -0800 (PST)
+        id S1726673AbgBFI1d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Feb 2020 03:27:33 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35518 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728044AbgBFI1c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 03:27:32 -0500
+Received: by mail-wr1-f68.google.com with SMTP id w12so6041342wrt.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2020 00:27:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:date
          :message-id:mime-version;
-        bh=97BIRK5RGZCfZuJeDSFhTb2bxAVUveLxpXvHfjaGgSY=;
-        b=n8Aslr0lLw9jLwjqQepYhcW3j6MLyQY+XVzKTiFLrrdxsRHKCu9qVzalQy1RYDoAit
-         toeGhtEGswPD4Y33rDFSIeNKlrkcfGFdvNDfDfQnbnREMtIjyfVtiPGr3fIHb2NQxjFK
-         nptHPqbudM6I+P3oqAH18mwJjnrTGA+zzkf0/CvzmeWp9a7FBOB7qwBm+1St8D9/0iVv
-         /4qjzU2s4VEQk2q6c7489oKKKsFMFhbrT7cb5FQJbWz6VIEmwiZy+ghHiA2yJNrKzmav
-         +RKR9HIuZcCC2YySLAQ6imangA/bP2ObK+tGj4hpAltBw4s+N/9tq1Tn4vgAc3raQmHD
-         a3kA==
+        bh=9kljaJ45DR7PK3QOBkDdJqbWjqa2Tn065YYQ2Cnf0cU=;
+        b=M/XsjuOEGL4+SDRcqZM4k7xs5BWiR5BWhcOiQUTN4Iq+uK335R0Z2fZKFz04p+ty8K
+         gmFnwUfDFrDM3vFLB0o0htXtQ/vl+TmeboSwIe3sdy0wEfuF+/2CSGUINcfyNQsmBOdw
+         7N4Vi1GfzzkciICyvJPRYNQ8KTus8C/ZJjmJ+ydKONjVr+Qx1Mw/h7HrQV9fJWk7cIl6
+         Ex2I3Tefye97+rhQIT6I1sAFpzfUVbzrWroMKin7AeFe3hTLyxKTLfkI3ie61CaRs1kC
+         VDLC1inK51KM0OS5tpeA/1yLAwRWhzdASQDKE0sgdDxI0ycsKoGx8kcC5B5C6mEvJGV7
+         yclQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:date:message-id:mime-version;
-        bh=97BIRK5RGZCfZuJeDSFhTb2bxAVUveLxpXvHfjaGgSY=;
-        b=RvmRZ4Dc4Nw3L2985kSM0e6FHQg5uzWYT49acRwsvmykvJz/7OhU8vPkaFeTAcLCjz
-         IbUCNnb+0z5S9x/ExB4KjERxCGn50chVl319TCDDhL+Lz/8cLGISeZSpOFh7mNb04RCD
-         C+nTA3FIdljqPeMFhjCQw2WO9u6mel07Pndp87vjJ5VQvfNWZ4FdUnsK1fDrT5E3ywaC
-         /ELgttxOzBwUYlwdw8+5zRJR2dZaBYf8QlHu6pbkIEA/vpC6if3ai5MZtPJRPF54egsX
-         Z5M7z9SiMJ4u0ZTHinqH2ugswRX0oxYZeCeW0bioxc+JA2/1jVe4DURWz7DDEcQmLUm1
-         0q8A==
-X-Gm-Message-State: APjAAAUCtnzgk81vA9RNzgDb4Las3MXuhEi7XDvNMt/x0lFcB4VVbe5W
-        8nOYYWs6WmHOUDpH+sdZSCOdkw==
-X-Google-Smtp-Source: APXvYqytRZnInsW54r+Ha5yXhQPuvlr0nJBRRhewjndeHYzcvddDJz1JkgqvvG9CJzg/n3JZCGDH3Q==
-X-Received: by 2002:a05:600c:2056:: with SMTP id p22mr2947022wmg.136.1580977567997;
-        Thu, 06 Feb 2020 00:26:07 -0800 (PST)
+        bh=9kljaJ45DR7PK3QOBkDdJqbWjqa2Tn065YYQ2Cnf0cU=;
+        b=LZG0A5FPiq4v/Z7/2k/mYZqY5Kmq3S6IfPtXo2Xsuy1rcypFheltewGTv0XbfDJPOv
+         GsA23q83J5VWe/IfDkv3HFoUI3EySPRmLNT8zkc1ZZgPx7YUEw58Fb4OCgDE8sgEnY/O
+         psO0VIaotCnZRzt/Wt4dQwudYrwEm7kkUT+E3vrpgpfaRmN4bnVKfq5YBgThJ3fBYjjs
+         wIvUzZgxlvZNW0oZ3HMu7f1CFBhbmm/3jdD7YKR3/4Zpj3ZKQVx1nQtqlt1eG6t98RFu
+         6CsYGLb0SQMZdfcUqwWejK7ugqOMONv1JLSdWQ2Ever7uvwi6SmJSn6eK/3oEEfoT+9R
+         rpLw==
+X-Gm-Message-State: APjAAAUqpcrhwqJsHJn07BIg4k1lYjO8xbxjwEqvF/+niX0Xv30b9OFf
+        e1THasQJhiyiayF0OYsO+7I63w==
+X-Google-Smtp-Source: APXvYqx8yxt1KY4kzNaVuOxm7JyXWMOe8beX4W95UoZ08fJdBJtFC4At07M9rapBBTwcDh+bVp5smA==
+X-Received: by 2002:adf:dd46:: with SMTP id u6mr2376014wrm.13.1580977649868;
+        Thu, 06 Feb 2020 00:27:29 -0800 (PST)
 Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id i11sm3176299wrs.10.2020.02.06.00.26.07
+        by smtp.gmail.com with ESMTPSA id c13sm3320923wrn.46.2020.02.06.00.27.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 00:26:07 -0800 (PST)
-References: <20200205232802.29184-1-sboyd@kernel.org> <20200205232802.29184-2-sboyd@kernel.org>
+        Thu, 06 Feb 2020 00:27:29 -0800 (PST)
+References: <20200205232802.29184-1-sboyd@kernel.org>
 User-agent: mu4e 1.3.3; emacs 26.3
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
@@ -62,10 +61,10 @@ To:     Michael Turquette <mturquette@baylibre.com>,
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH v2 1/4] clk: Don't cache errors from clk_ops::get_phase()
-In-reply-to: <20200205232802.29184-2-sboyd@kernel.org>
-Date:   Thu, 06 Feb 2020 09:26:06 +0100
-Message-ID: <1jv9okazq9.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH v2 0/4] clk_phase error caching problems
+In-reply-to: <20200205232802.29184-1-sboyd@kernel.org>
+Date:   Thu, 06 Feb 2020 09:27:28 +0100
+Message-ID: <1jtv44aznz.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -76,126 +75,39 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu 06 Feb 2020 at 00:27, Stephen Boyd <sboyd@kernel.org> wrote:
 
-> We don't check for errors from clk_ops::get_phase() before storing away
-> the result into the clk_core::phase member. This can lead to some fairly
-> confusing debugfs information if these ops do return an error. Let's
-> skip the store when this op fails to fix this. While we're here, move
-> the locking outside of clk_core_get_phase() to simplify callers from
-> the debugfs side.
+> This patch series is a follow up to[1] which I sent out a few months
+> ago. We no longer cache the clk phase if it's an error value, so that
+> things like debugfs don't return us nonsense values for the phase.
+>
+> Futhermore, the last patch fixes up the locking so that debugfs code
+> can avoid doing a recursive prepare lock because we know what we're
+> doing in that case. While we get some more functions, we avoid taking
+> the lock again.
+>
+> Changes from v1:
+>  * A pile of new patches
+>  * Rebased to clk-next
+>  * New patch to bail out of registration if getting the phase fails
+
+Series look good - comment on patch 1 is just a nitpick
+
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+
 >
 > Cc: Douglas Anderson <dianders@chromium.org>
 > Cc: Heiko Stuebner <heiko@sntech.de>
 > Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
->  1 file changed, 32 insertions(+), 16 deletions(-)
 >
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index d529ad67805c..26213e82f5f9 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
->  {
->  	int ret;
->  
-> -	clk_prepare_lock();
-
-Should the function name get the "_nolock" suffix then ?
-
-> +	lockdep_assert_held(&prepare_lock);
-> +	if (!core->ops->get_phase)
-> +		return 0;
-> +
->  	/* Always try to update cached phase if possible */
-> -	if (core->ops->get_phase)
-> -		core->phase = core->ops->get_phase(core->hw);
-> -	ret = core->phase;
-> -	clk_prepare_unlock();
-> +	ret = core->ops->get_phase(core->hw);
-> +	if (ret >= 0)
-> +		core->phase = ret;
->  
->  	return ret;
->  }
-> @@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
->   */
->  int clk_get_phase(struct clk *clk)
->  {
-> +	int ret;
-> +
->  	if (!clk)
->  		return 0;
->  
-> -	return clk_core_get_phase(clk->core);
-> +	clk_prepare_lock();
-> +	ret = clk_core_get_phase(clk->core);
-> +	clk_prepare_unlock();
-> +
-> +	return ret;
->  }
->  EXPORT_SYMBOL_GPL(clk_get_phase);
->  
-> @@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
->  static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
->  				 int level)
->  {
-> -	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
-> +	int phase;
-> +
-> +	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
->  		   level * 3 + 1, "",
->  		   30 - level * 3, c->name,
->  		   c->enable_count, c->prepare_count, c->protect_count,
-> -		   clk_core_get_rate(c), clk_core_get_accuracy(c),
-> -		   clk_core_get_phase(c),
-> -		   clk_core_get_scaled_duty_cycle(c, 100000));
-> +		   clk_core_get_rate(c), clk_core_get_accuracy(c));
-> +
-> +	phase = clk_core_get_phase(c);
-> +	if (phase >= 0)
-> +		seq_printf(s, "%5d", phase);
-> +	else
-> +		seq_puts(s, "-----");
-> +
-> +	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
->  }
->  
->  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-> @@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
->  
->  static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
->  {
-> +	int phase;
->  	unsigned long min_rate, max_rate;
->  
->  	clk_core_get_boundaries(c, &min_rate, &max_rate);
-> @@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
->  	seq_printf(s, "\"min_rate\": %lu,", min_rate);
->  	seq_printf(s, "\"max_rate\": %lu,", max_rate);
->  	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
-> -	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
-> +	phase = clk_core_get_phase(c);
-> +	if (phase >= 0)
-> +		seq_printf(s, "\"phase\": %d,", phase);
->  	seq_printf(s, "\"duty_cycle\": %u",
->  		   clk_core_get_scaled_duty_cycle(c, 100000));
->  }
-> @@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
->  		core->accuracy = 0;
->  
->  	/*
-> -	 * Set clk's phase.
-> +	 * Set clk's phase by clk_core_get_phase() caching the phase.
->  	 * Since a phase is by definition relative to its parent, just
->  	 * query the current clock phase, or just assume it's in phase.
->  	 */
-> -	if (core->ops->get_phase)
-> -		core->phase = core->ops->get_phase(core->hw);
-> -	else
-> -		core->phase = 0;
-> +	clk_core_get_phase(core);
->  
->  	/*
->  	 * Set clk's duty cycle.
+> Stephen Boyd (4):
+>   clk: Don't cache errors from clk_ops::get_phase()
+>   clk: Use 'parent' to shorten lines in __clk_core_init()
+>   clk: Move rate and accuracy recalc to mostly consumer APIs
+>   clk: Bail out when calculating phase fails during clk registration
+>
+>  drivers/clk/clk.c | 119 +++++++++++++++++++++++++++-------------------
+>  1 file changed, 70 insertions(+), 49 deletions(-)
+>
+> [1] https://lkml.kernel.org/r/20191001174439.182435-1-sboyd@kernel.org
+>
+> base-commit: 5df867145f8adad9e5cdf9d67db1fbc0f71351e9
 
