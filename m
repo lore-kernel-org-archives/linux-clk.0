@@ -2,141 +2,149 @@ Return-Path: <SRS0=wpFC=32=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D673C33CAC
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 18:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B206C35247
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6106A214AF
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 18:44:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581014647;
-	bh=zrILCCCEDx7rKqJjdtvUZLYFTZ9XBxOcTr5tliB7lMw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=sDWAthXWG0YQkkfopFlob/HiJbfYLpQ0TvE0NZTqJE33DG/ci5NFNmXE7HqAR9xxU
-	 jvF5dX9Lu5qAr80EKXv3hNnUYtYPMkQN75IXXSseXtHdT1hIPcsZA/apUKo7yjg6YE
-	 KyKl7Smu2Br6yA7BYRrpL9LCnPxeN8Cs8TCetGj8=
+	by mail.kernel.org (Postfix) with ESMTP id 70703222D9
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:12:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GPdbUU4J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbgBFSoH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Feb 2020 13:44:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726990AbgBFSoH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 6 Feb 2020 13:44:07 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03EE5214AF;
-        Thu,  6 Feb 2020 18:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581014646;
-        bh=zrILCCCEDx7rKqJjdtvUZLYFTZ9XBxOcTr5tliB7lMw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Dsw5UQLNST/YCAH8NkDdiWUUtIedt5hBu0lZ/xbZAVapwSDJHmTdSqfKvDlOLT/5+
-         4ju8a24QKmWOKvxvBHS6HpaJJDRz/GytT1MrXf8bZZtpZigdX7ueaEZYxSzdPm35v3
-         2PTfFt1DPWjQOTArJ5S0Aw1MyzGrOqW0QVUbqpEs=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] more clk changes for the merge window
-Date:   Thu,  6 Feb 2020 10:44:05 -0800
-Message-Id: <20200206184405.183679-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+        id S1727474AbgBFUMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Feb 2020 15:12:53 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:52208 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727872AbgBFUMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 15:12:53 -0500
+Received: by mail-pj1-f67.google.com with SMTP id fa20so460882pjb.1
+        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2020 12:12:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Z6j9xl2gMAuJIZhUM3OZ+/+Wm5NYXPRonJqY9rHuf6Q=;
+        b=GPdbUU4JBvVFhS7rJEgeoHkbVXb9GzIGPU0J7jERwnBHvYLtYmAD1ll1Cga7j3ID3g
+         XUEt8PjNaOVqBa+CnbfH9oNsfyc+E7FT675Gr0zNZVCxWTmUKuLnW1iDC1ldRoxCMhjR
+         +Hmq3zVYVPbp79FzicizP0aOa3w1CpxzXqetZvuvAcplg8JDOohk0idIMjmWrgjBK+oY
+         FBIme313NDOlXXYSzVdrgEnGv9QL4vxFI2WM4STblguOEhb8FvXFskRPn/25ZmPYLm8z
+         IOn4LasE8kQj3lQ06o6jufXO2lJHYw68vrXd0uJrLP3QQIBZOkOco71lIkjh2fPA6EUa
+         DDUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Z6j9xl2gMAuJIZhUM3OZ+/+Wm5NYXPRonJqY9rHuf6Q=;
+        b=bovMi4h3luF+PpIEpOkVyoLgRDNkHSbJGFNVYNJi7E0V3isTqGzO/nbtQ+tLYB2Rhb
+         BVKtiMPsPoRwsvYHoUTgYuiv85PdCQTo4KHwbszwTianN9zMoQzLT8+4FIrSgiIm4sW8
+         j2InflpUaQJCw6smF2Yr/RMkNM/gEJabMx5Ly5gRWl5v6JR118wGuQj1lnQydDB1TnyA
+         F6VxQURni3JqLLrgZF1ZDGcbYOW2Y3QcUjvvHb5nzqZN4pD0v4yqRB2ZI2D5Xz1fYN0v
+         LPU1HDQMEAYvQf3GTu+wp/OidAqny+7MclSga0nlt2RlXPVnCzGuV36ZRqFarOYr6Ir9
+         LHug==
+X-Gm-Message-State: APjAAAUxuTtMs72L4W4fe8jfOyECVGGq3YX1v5XaPLARFJZ0tPWQWNng
+        C8t6FcSUz5mlLg0+LX76AB+vdg==
+X-Google-Smtp-Source: APXvYqxCYxs5NXO73LHmmJkSf8xcneqdHgt20U7cp772ADNCXrR7dMyGpQCGHZe8vjEXvFkit8aF4Q==
+X-Received: by 2002:a17:902:8d83:: with SMTP id v3mr5851345plo.282.1581019972735;
+        Thu, 06 Feb 2020 12:12:52 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id u26sm240765pfn.46.2020.02.06.12.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Feb 2020 12:12:51 -0800 (PST)
+Date:   Thu, 6 Feb 2020 12:12:48 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Nuno S? <nuno.sa@analog.com>, Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Stefan Popa <stefan.popa@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Marcus Folkesson <marcus.folkesson@gmail.com>,
+        Kent Gustavsson <kent@minoris.se>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-clk@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Fix paths in schema $id fields
+Message-ID: <20200206201248.GO2514@yoga>
+References: <20200204224909.26880-1-robh@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200204224909.26880-1-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit fc6a15c853085f04c30e08bbba7d49cb611f7773:
+On Tue 04 Feb 14:49 PST 2020, Rob Herring wrote:
 
-  dt/bindings: clk: fsl,plldig: Drop 'bindings' from schema id (2020-02-03 10:33:34 -0800)
+> The $id path checks were inadequately checking the path part of the $id
+> value. With the check fixed, there's a number of errors that need to be
+> fixed. Most of the errors are including 'bindings/' in the path which
+> should not be as that is considered the root.
+> 
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: NXP Linux Team <linux-imx@nxp.com>
+> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+> Cc: Alexandre Torgue <alexandre.torgue@st.com>
+> Cc: "Nuno Sá" <nuno.sa@analog.com>
+> Cc: Jean Delvare <jdelvare@suse.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Stefan Popa <stefan.popa@analog.com>
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+> Cc: Marcus Folkesson <marcus.folkesson@gmail.com>
+> Cc: Kent Gustavsson <kent@minoris.se>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+[..]
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index e39d8f02e33c..b5bef5abc281 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -1,7 +1,7 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/bindings/arm/qcom.yaml#
+> +$id: http://devicetree.org/schemas/arm/qcom.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  
+>  title: QCOM device tree bindings
 
-are available in the Git repository at:
+Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-
-for you to fetch changes up to 5df867145f8adad9e5cdf9d67db1fbc0f71351e9:
-
-  of: clk: Make <linux/of_clk.h> self-contained (2020-02-05 14:52:03 -0800)
-
-----------------------------------------------------------------
-A collection of fixes that would be good to get merged before -rc1.
-
- - Make of_clk.h self contained
- - Fix new qcom DT bindings that just merged to match the DTS files
- - Fix qcom clk driver to properly detect DFS clk frequencies
- - Fix the ls1028a driver to not deref a pointer before assigning it
-
-There are some conflicts in the dt bindings files.
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      clk: ls1028a: fix a dereference of pointer 'parent' before a null check
-
-Douglas Anderson (12):
-      dt-bindings: clk: qcom: Fix self-validation, split, and clean cruft
-      clk: qcom: rcg2: Don't crash if our parent can't be found; return an error
-      dt-bindings: clock: Fix qcom,dispcc bindings for sdm845/sc7180
-      clk: qcom: Get rid of fallback global names for dispcc-sc7180
-      clk: qcom: Get rid of the test clock for dispcc-sc7180
-      clk: qcom: Use ARRAY_SIZE in dispcc-sc7180 for parent clocks
-      dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
-      clk: qcom: Get rid of the test clock for gpucc-sc7180
-      clk: qcom: Use ARRAY_SIZE in gpucc-sc7180 for parent clocks
-      dt-bindings: clock: Cleanup qcom,videocc bindings for sdm845/sc7180
-      clk: qcom: Get rid of the test clock for videocc-sc7180
-      clk: qcom: Use ARRAY_SIZE in videocc-sc7180 for parent clocks
-
-Geert Uytterhoeven (1):
-      of: clk: Make <linux/of_clk.h> self-contained
-
-Stephen Boyd (1):
-      clk: qcom: Don't overwrite 'cfg' in clk_rcg2_dfs_populate_freq()
-
- .../bindings/clock/qcom,gcc-apq8064.yaml           |  83 ++++++++
- .../bindings/clock/qcom,gcc-ipq8074.yaml           |  51 +++++
- .../bindings/clock/qcom,gcc-msm8996.yaml           |  68 ++++++
- .../bindings/clock/qcom,gcc-msm8998.yaml           |  93 +++++++++
- .../devicetree/bindings/clock/qcom,gcc-qcs404.yaml |  51 +++++
- .../devicetree/bindings/clock/qcom,gcc-sc7180.yaml |  75 +++++++
- .../devicetree/bindings/clock/qcom,gcc-sm8150.yaml |  72 +++++++
- .../devicetree/bindings/clock/qcom,gcc.yaml        | 230 ++++-----------------
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |  72 -------
- .../{qcom,dispcc.yaml => qcom,msm8998-gpucc.yaml}  |  33 ++-
- .../bindings/clock/qcom,sc7180-dispcc.yaml         |  84 ++++++++
- .../bindings/clock/qcom,sc7180-gpucc.yaml          |  72 +++++++
- .../bindings/clock/qcom,sc7180-videocc.yaml        |  63 ++++++
- .../bindings/clock/qcom,sdm845-dispcc.yaml         |  99 +++++++++
- .../bindings/clock/qcom,sdm845-gpucc.yaml          |  72 +++++++
- ...{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} |  27 +--
- drivers/clk/clk-plldig.c                           |   4 +-
- drivers/clk/qcom/clk-rcg2.c                        |  11 +-
- drivers/clk/qcom/dispcc-sc7180.c                   |  45 ++--
- drivers/clk/qcom/gpucc-sc7180.c                    |   4 +-
- drivers/clk/qcom/videocc-sc7180.c                  |   4 +-
- include/linux/of_clk.h                             |   3 +
- 22 files changed, 979 insertions(+), 337 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
- rename Documentation/devicetree/bindings/clock/{qcom,dispcc.yaml => qcom,msm8998-gpucc.yaml} (51%)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
- rename Documentation/devicetree/bindings/clock/{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} (61%)
-
--- 
-Sent by a computer, using git, on the internet
+Regards,
+Bjorn
