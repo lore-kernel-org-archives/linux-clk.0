@@ -2,149 +2,103 @@ Return-Path: <SRS0=wpFC=32=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B206C35247
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CFEC352A3
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70703222D9
-	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:12:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GPdbUU4J"
+	by mail.kernel.org (Postfix) with ESMTP id C7911218AC
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Feb 2020 20:46:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581022006;
+	bh=Ocj0H6TQmpr7XwjGv77HKUZhpIL7ZWZKic9S5tcam94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GNgJWTDuG6EowEIgBc/T2qD39mWtlVw9vqFonUZ/iVu5QrkD7zUAQCRrlesFqdA+M
+	 HfBMyjc2qA4v0fCNMiGkvLIdTDVqazKB+yDVzvylwd/NDdaj4Sb0bFjQVVG7W64NUa
+	 KG9oAFwUlHogODYxgdCZaBDtYGjq+avx7MXOrGLs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727474AbgBFUMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 6 Feb 2020 15:12:53 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:52208 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbgBFUMx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 15:12:53 -0500
-Received: by mail-pj1-f67.google.com with SMTP id fa20so460882pjb.1
-        for <linux-clk@vger.kernel.org>; Thu, 06 Feb 2020 12:12:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=Z6j9xl2gMAuJIZhUM3OZ+/+Wm5NYXPRonJqY9rHuf6Q=;
-        b=GPdbUU4JBvVFhS7rJEgeoHkbVXb9GzIGPU0J7jERwnBHvYLtYmAD1ll1Cga7j3ID3g
-         XUEt8PjNaOVqBa+CnbfH9oNsfyc+E7FT675Gr0zNZVCxWTmUKuLnW1iDC1ldRoxCMhjR
-         +Hmq3zVYVPbp79FzicizP0aOa3w1CpxzXqetZvuvAcplg8JDOohk0idIMjmWrgjBK+oY
-         FBIme313NDOlXXYSzVdrgEnGv9QL4vxFI2WM4STblguOEhb8FvXFskRPn/25ZmPYLm8z
-         IOn4LasE8kQj3lQ06o6jufXO2lJHYw68vrXd0uJrLP3QQIBZOkOco71lIkjh2fPA6EUa
-         DDUw==
+        id S1728225AbgBFUq0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 6 Feb 2020 15:46:26 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:40745 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbgBFUqZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 6 Feb 2020 15:46:25 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z7so3333485pgk.7;
+        Thu, 06 Feb 2020 12:46:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=Z6j9xl2gMAuJIZhUM3OZ+/+Wm5NYXPRonJqY9rHuf6Q=;
-        b=bovMi4h3luF+PpIEpOkVyoLgRDNkHSbJGFNVYNJi7E0V3isTqGzO/nbtQ+tLYB2Rhb
-         BVKtiMPsPoRwsvYHoUTgYuiv85PdCQTo4KHwbszwTianN9zMoQzLT8+4FIrSgiIm4sW8
-         j2InflpUaQJCw6smF2Yr/RMkNM/gEJabMx5Ly5gRWl5v6JR118wGuQj1lnQydDB1TnyA
-         F6VxQURni3JqLLrgZF1ZDGcbYOW2Y3QcUjvvHb5nzqZN4pD0v4yqRB2ZI2D5Xz1fYN0v
-         LPU1HDQMEAYvQf3GTu+wp/OidAqny+7MclSga0nlt2RlXPVnCzGuV36ZRqFarOYr6Ir9
-         LHug==
-X-Gm-Message-State: APjAAAUxuTtMs72L4W4fe8jfOyECVGGq3YX1v5XaPLARFJZ0tPWQWNng
-        C8t6FcSUz5mlLg0+LX76AB+vdg==
-X-Google-Smtp-Source: APXvYqxCYxs5NXO73LHmmJkSf8xcneqdHgt20U7cp772ADNCXrR7dMyGpQCGHZe8vjEXvFkit8aF4Q==
-X-Received: by 2002:a17:902:8d83:: with SMTP id v3mr5851345plo.282.1581019972735;
-        Thu, 06 Feb 2020 12:12:52 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u26sm240765pfn.46.2020.02.06.12.12.50
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jPtOQdw8vyUeztLpc680CHtZLK6W1JEQ2cHvbgrlY+8=;
+        b=WqXY9MDGqAuSlJ3Htq+iCYlFvm9yzCL2kfMcTGeF6Fm4x7kEg1/X8EivvdBzr3oRew
+         7gHInV7c4+S9g2kIDnKx+40EffR34sc4K8E4NnQ1oxGGaM2UgZ2PbtM3itWF0qk/0LTN
+         ISTe4CXRiZfiQFqAOGy8CbBhOgTOPwyHoVjDXI5FbZTtB/aPUhxHXyzbeO7UP6qf8pIB
+         HR5fC5KKnih6yhfjQsYIUeOmpfZ4nKBY5fr7Yv+jClW2ixtRL0ZkeeJzystO/c/pqJct
+         kNxzqBha1V9aGfMoL2/B1jKkuwxz7XTcXCkQm0Omn45fPoZloF6d71dy1HbpSRekiTpC
+         hAKA==
+X-Gm-Message-State: APjAAAURznOXjApo7kd+BORqDLn+qnYPuIoHyISmXPBIPZcxqTaskEst
+        wB6Qm5XBxp1SoAObeqVebQ==
+X-Google-Smtp-Source: APXvYqxza9xpQ1nh+paMG8H01152jYTBvT3wn55ABgjvQ/4PX2elrh5aIP/rcP6j59uN6+87Rk8oUQ==
+X-Received: by 2002:a63:4b52:: with SMTP id k18mr5635945pgl.371.1581021982840;
+        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
+Received: from rob-hp-laptop (63-158-47-182.dia.static.qwest.net. [63.158.47.182])
+        by smtp.gmail.com with ESMTPSA id z29sm292462pgc.21.2020.02.06.12.46.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Feb 2020 12:12:51 -0800 (PST)
-Date:   Thu, 6 Feb 2020 12:12:48 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Nuno S? <nuno.sa@analog.com>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Stefan Popa <stefan.popa@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Marcus Folkesson <marcus.folkesson@gmail.com>,
-        Kent Gustavsson <kent@minoris.se>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-clk@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Fix paths in schema $id fields
-Message-ID: <20200206201248.GO2514@yoga>
-References: <20200204224909.26880-1-robh@kernel.org>
+        Thu, 06 Feb 2020 12:46:22 -0800 (PST)
+Received: (nullmailer pid 28243 invoked by uid 1000);
+        Thu, 06 Feb 2020 17:56:52 -0000
+Date:   Thu, 6 Feb 2020 17:56:52 +0000
+From:   Rob Herring <robh@kernel.org>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, andriy.shevchenko@intel.com,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com
+Subject: Re: [PATCH v3 2/2] dt-bindings: clk: intel: Add bindings document &
+ header file for a new clock driver
+Message-ID: <20200206175652.GA25108@bogus>
+References: <cover.1580373142.git.rahul.tanwar@linux.intel.com>
+ <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200204224909.26880-1-robh@kernel.org>
+In-Reply-To: <1c4b7a999f47df4214a60971e27fa9311c8c64b4.1580373142.git.rahul.tanwar@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 04 Feb 14:49 PST 2020, Rob Herring wrote:
-
-> The $id path checks were inadequately checking the path part of the $id
-> value. With the check fixed, there's a number of errors that need to be
-> fixed. Most of the errors are including 'bindings/' in the path which
-> should not be as that is considered the root.
+On Thu, Jan 30, 2020 at 04:54:01PM +0800, Rahul Tanwar wrote:
+> Clock generation unit(CGU) is a clock controller IP of Intel's Lightning
+> Mountain(LGM) SoC. Add DT bindings include file and document for CGU clock
+> controller driver of LGM.
 > 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: NXP Linux Team <linux-imx@nxp.com>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> Cc: "Nuno Sá" <nuno.sa@analog.com>
-> Cc: Jean Delvare <jdelvare@suse.com>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Cc: Stefan Popa <stefan.popa@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: Marcus Folkesson <marcus.folkesson@gmail.com>
-> Cc: Kent Gustavsson <kent@minoris.se>
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-iio@vger.kernel.org
-> Cc: linux-input@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-[..]
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index e39d8f02e33c..b5bef5abc281 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
->  %YAML 1.2
->  ---
-> -$id: http://devicetree.org/schemas/bindings/arm/qcom.yaml#
-> +$id: http://devicetree.org/schemas/arm/qcom.yaml#
->  $schema: http://devicetree.org/meta-schemas/core.yaml#
->  
->  title: QCOM device tree bindings
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> ---
+>  .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  40 +++++
+>  include/dt-bindings/clock/intel,lgm-clk.h          | 165 +++++++++++++++++++++
+>  2 files changed, 205 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+>  create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+> new file mode 100644
+> index 000000000000..e9649fe75435
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+> @@ -0,0 +1,40 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/intel,cgu-lgm.yaml#
 
-Acked-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Drop 'bindings'
 
-Regards,
-Bjorn
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
