@@ -2,104 +2,127 @@ Return-Path: <SRS0=aSum=36=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB02FC352A4
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 17:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D16DCC35254
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 18:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFB920873
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 17:55:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TH0vCFNj"
+	by mail.kernel.org (Postfix) with ESMTP id A36A420842
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 18:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581360348;
+	bh=1HEo325uKcJScMqA1TBMxTyz69hQ2kusxwb1WY+5d6w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=WjcnuQUBuON/wQaJqDaRDcoHZP1bTFrIKYazzG3avpgXbK772FFbLI4ZBvqLF9yy8
+	 WOL4XJ364+hGqDN8bPaIJLl0k72RgrVKub4HCug8xShcMV3f7kDy//qOpgZPf4jeSn
+	 Qbfn7udeDcX+R2UQ0QdVmFpzGLEA9JNYyFvXtAmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbgBJRzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Feb 2020 12:55:36 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:46460 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726896AbgBJRzg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Feb 2020 12:55:36 -0500
-Received: by mail-vk1-f193.google.com with SMTP id u6so2022494vkn.13
-        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2020 09:55:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=siKHOuO8wOb9sw6P22vlsxiKOGFhLZkeTDhUG0eBw1U=;
-        b=TH0vCFNjQCF7itW9+Z6ZYFb493fIZyD8YVn4iSK9fy1/KDtpK9dmmj5bVy6JE2ilET
-         kjwJPnFS/rOWJ7+jJzyyoiPCUJV+1GpGlAMyPz6u/zxhXBymGsTgm+bsdoWkcDBaToiZ
-         7+3z8uxOlnEAnw8r3bdd1mP4fIBTimHEgdSH8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=siKHOuO8wOb9sw6P22vlsxiKOGFhLZkeTDhUG0eBw1U=;
-        b=GU6xSsoR56Wosg7rvNOLtNubovDWJr2gE88moDkhqIeOszGLs9lpxvNIv0U0/6xRil
-         X1E6FzYLyj8L6VNEbJjiyx0dKeprPXlKkq3vNSeJu6gIqPb15C3+7QdQxSLBbtlhl/ux
-         gWcxz8b2QXbvPCHSZ6YA8lt2LTotIj4VzuIsd4s6Ej5TBqa6t1gBKPtR5W2p+U/JC9zP
-         gfyov4mOVVeFjfh1sncvzE63ALrk++1E/TYr7GWwwzg59m+ZMCcE6g9RyCaq8mXOC5j1
-         u4L6WX+8/M2ZUP/tO+WkVKV+WfYhtIUgwGp3crBapsxSYRg9HxYyGpvlJq7vjaysbTLP
-         v3Xw==
-X-Gm-Message-State: APjAAAUpjl3crLdiaabgPTLdOLEtIqTcvqhmK5nFViwMeJTfKz4rQBiS
-        UktB+xQMWrQi1Weq94jO2BanWN2mL+w=
-X-Google-Smtp-Source: APXvYqyZBsEr5NLjla1OyYiUv0alK8tk5ABW0Gie+OPvW8lTiK5926Q/l0+IqlLmqyW5EEqwVMr7oA==
-X-Received: by 2002:a1f:29c4:: with SMTP id p187mr1359208vkp.99.1581357333699;
-        Mon, 10 Feb 2020 09:55:33 -0800 (PST)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id o132sm340810vkd.17.2020.02.10.09.55.32
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2020 09:55:32 -0800 (PST)
-Received: by mail-ua1-f51.google.com with SMTP id f7so2800227uaa.8
-        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2020 09:55:32 -0800 (PST)
-X-Received: by 2002:a9f:300a:: with SMTP id h10mr1454266uab.91.1581357332297;
- Mon, 10 Feb 2020 09:55:32 -0800 (PST)
+        id S1727573AbgBJSps (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Feb 2020 13:45:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726816AbgBJSps (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Feb 2020 13:45:48 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FE6B20715;
+        Mon, 10 Feb 2020 18:45:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581360347;
+        bh=1HEo325uKcJScMqA1TBMxTyz69hQ2kusxwb1WY+5d6w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NdKqBThhzMhuAHRe2+WtUZ1+wejRl1ueQ6kv59onPhamqyc+lX6JIkIxnZ96amPkw
+         H+p42TwWdhwtBxbUDFDh0UW2ZwTa2JGVxwnV3vCVXju5Ku3/obTgujV8sDjDrI3IQo
+         xeiGrx+9qOrOv/fccDCB8NpQMziZ4n8mEMAhYtrI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <1581307266-26989-1-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1581307266-26989-1-git-send-email-tdas@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 10 Feb 2020 09:55:21 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X-URWfbe8vNqtjHZPo6Rokwkede8oSagJu1KiD18a8EQ@mail.gmail.com>
-Message-ID: <CAD=FV=X-URWfbe8vNqtjHZPo6Rokwkede8oSagJu1KiD18a8EQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clk: qcom: Add support for GPU GX GDSCR
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200207044425.32398-2-vigneshr@ti.com>
+References: <20200207044425.32398-1-vigneshr@ti.com> <20200207044425.32398-2-vigneshr@ti.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add binding documentation for TI syscon gate clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+To:     Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>
+Date:   Mon, 10 Feb 2020 10:45:46 -0800
+Message-ID: <158136034652.94449.4389789192412792346@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Quoting Vignesh Raghavendra (2020-02-06 20:44:24)
+> diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbcl=
+k.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+> new file mode 100644
+> index 000000000000..98fcac2b41f3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+> @@ -0,0 +1,47 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti,am654-ehrpwm-tbclk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TI syscon gate clock driver
+> +
+> +maintainers:
+> +  - Vignesh Raghavendra <vigneshr@ti.com>
+> +
+> +description: |
+> +
+> +  This binding uses common clock bindings
+> +  Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-On Sun, Feb 9, 2020 at 8:01 PM Taniya Das <tdas@codeaurora.org> wrote:
->
-> In the cases where the GPU SW requires to use the GX GDSCR add
-> support for the same.
->
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  include/dt-bindings/clock/qcom,gpucc-sc7180.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+Maybe have a real description instead of this line which is mostly
+useless.
 
-I already added my tag to this exact same patch in:
+> +
+> +properties:
+> +  compatible:
+> +    items:
 
-https://lore.kernel.org/linux-arm-msm/CAD=FV=VeMaKq3KR=t7dbG+VyVs5DS=gHasSdJQSqNQreTUoZig@mail.gmail.com/
+I think you can drop items.
 
-Please make sure to carry forward tags unless something major has
-changed.  In any case, re-adding my tag:
+> +      - const: ti,am654-ehrpwm-tbclk
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  ti,tbclk-syscon:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the system controller node that has bits to
+> +      control eHRPWM's TBCLK
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - ti,tbclk-syscon
+> +
+> +examples:
+> +  - |
+> +    tbclk_ctrl: tbclk_ctrl@4140 {
+> +        compatible =3D "syscon";
+> +        reg =3D <0x4140 0x18>;
+> +    };
+> +
+> +    ehrpwm_tbclk: clk0 {
+> +        compatible =3D "ti,am654-ehrpwm-tbclk";
+> +        #clock-cells =3D <1>;
+> +        ti,tbclk-syscon =3D <&tbclk_ctrl>;
+> +    };
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+I don't understand the binding. Why can't the syscon node register clks
+and have #clock-cells?
