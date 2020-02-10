@@ -2,87 +2,226 @@ Return-Path: <SRS0=aSum=36=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45750C3B189
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 04:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF628C35250
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 05:56:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D218208C4
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 04:01:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BsH0dqBU"
+	by mail.kernel.org (Postfix) with ESMTP id 8BB3721835
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 05:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581314205;
+	bh=y8WJhCtjiUgmevlVF8bPnBitNPUgs1QbeGeB5mZDx5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uqqCO3QiNvlgwvU7RUPmrSguca4W08fs87ybHEYMbGYLQesbX6nEstBOuXSF5WcO0
+	 UGf1jwrsHiCh5xSRyM/jfsbPoH2Kk1tdp4I2ZHXfDKzq8mtd4lfTos+DjfnojczrR4
+	 P2hgXCbi2khjX3f27vQGuH8+bBY6BM+IsdjxnEzk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbgBJEBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Feb 2020 23:01:22 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:34507 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727562AbgBJEBW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Feb 2020 23:01:22 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581307281; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=8SA8ehciD7y6aJS/ZzpFCj7wcIPwQZR49u7HDZf+h04=; b=BsH0dqBUwC5dwA/ATLhlD2GEplaq1GGHqXeZyJ3e9QhLgYg5EvhFEZcFX4gjMYCoV387SDip
- XTgCYvAHOda1GkRf6I6s49Xhi2DIjfL63Spaexu9oCkT47IDWIzyD+9dS7zqcWxdDi8DBEpL
- TUdbAham3W4Y2hblFgBH3YsZ9h0=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e40d590.7effc0ed1d88-smtp-out-n02;
- Mon, 10 Feb 2020 04:01:20 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id EC8ADC4479C; Mon, 10 Feb 2020 04:01:18 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1726103AbgBJF4p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Feb 2020 00:56:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59808 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726061AbgBJF4o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Feb 2020 00:56:44 -0500
+Received: from localhost (unknown [106.201.32.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A2849C43383;
-        Mon, 10 Feb 2020 04:01:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2849C43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
-        robh@kernel.org
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 1/2] dt-bindings: clk: qcom: Add support for GPU GX GDSCR
-Date:   Mon, 10 Feb 2020 09:31:05 +0530
-Message-Id: <1581307266-26989-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        by mail.kernel.org (Postfix) with ESMTPSA id 38D9820661;
+        Mon, 10 Feb 2020 05:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581314203;
+        bh=y8WJhCtjiUgmevlVF8bPnBitNPUgs1QbeGeB5mZDx5k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qybtcXfORlwW2sh851QqwW7QwgE5offrIYVPKCK2+7adJuA1yK91UDooJSTbdTcnu
+         HzEtBE8FJiRh7dcx3mo1l1uLAU0Uv1Yd1jRmHZ79h8DlfuxjWUzJtc0+CcLzY3VKMd
+         3oB7ywD7EfdHX6SY79BNWygygdYv7V9/ohuCm3LE=
+Date:   Mon, 10 Feb 2020 11:26:38 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, jshriram@codeaurora.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, psodagud@codeaurora.org,
+        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
+        vnkgutta@codeaurora.org
+Subject: Re: [PATCH v2 4/7] clk: qcom: clk-alpha-pll: Add support for
+ controlling Lucid PLLs
+Message-ID: <20200210055638.GT2618@vkoul-mobl>
+References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
+ <1579905147-12142-5-git-send-email-vnkgutta@codeaurora.org>
+ <20200205193353.2BDCC20720@mail.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205193353.2BDCC20720@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the cases where the GPU SW requires to use the GX GDSCR add
-support for the same.
+On 05-02-20, 11:33, Stephen Boyd wrote:
+> Quoting Venkata Narendra Kumar Gutta (2020-01-24 14:32:24)
+> > diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> > index 1b073b2..4258ab0 100644
+> > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > @@ -1367,3 +1388,172 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
+> >         .set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
+> >  };
+> >  EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
+> > +
+> > +void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+> 
+> Can we get some kernel documentation for this function?
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- include/dt-bindings/clock/qcom,gpucc-sc7180.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Okay adding
 
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sc7180.h b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
-index 0e4643b..65e706d 100644
---- a/include/dt-bindings/clock/qcom,gpucc-sc7180.h
-+++ b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
-@@ -15,7 +15,8 @@
- #define GPU_CC_CXO_CLK			6
- #define GPU_CC_GMU_CLK_SRC		7
- 
--/* CAM_CC GDSCRs */
-+/* GPU_CC GDSCRs */
- #define CX_GDSC				0
-+#define GX_GDSC				1
- 
- #endif
+> > +{
+> > +       if (config->l)
+> > +               regmap_write(regmap, PLL_L_VAL(pll), config->l);
+> > +
+> > +       regmap_write(regmap, PLL_CAL_L_VAL(pll), LUCID_PLL_CAL_VAL);
+> > +
+> > +       if (config->alpha)
+> > +               regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
+> > +
+> > +       if (config->config_ctl_val)
+> > +               regmap_write(regmap, PLL_CONFIG_CTL(pll),
+> > +                            config->config_ctl_val);
+> > +
+> > +       if (config->config_ctl_hi_val)
+> > +               regmap_write(regmap, PLL_CONFIG_CTL_U(pll),
+> > +                            config->config_ctl_hi_val);
+> > +
+> > +       if (config->config_ctl_hi1_val)
+> > +               regmap_write(regmap, PLL_CONFIG_CTL_U1(pll),
+> > +                            config->config_ctl_hi1_val);
+> > +
+> > +       if (config->user_ctl_val)
+> > +               regmap_write(regmap, PLL_USER_CTL(pll),
+> > +                            config->user_ctl_val);
+> > +
+> > +       if (config->user_ctl_hi_val)
+> > +               regmap_write(regmap, PLL_USER_CTL_U(pll),
+> > +                            config->user_ctl_hi_val);
+> > +
+> > +       if (config->user_ctl_hi1_val)
+> > +               regmap_write(regmap, PLL_USER_CTL_U1(pll),
+> > +                            config->user_ctl_hi1_val);
+> > +
+> > +       if (config->test_ctl_val)
+> > +               regmap_write(regmap, PLL_TEST_CTL(pll),
+> > +                            config->test_ctl_val);
+> > +
+> > +       if (config->test_ctl_hi_val)
+> > +               regmap_write(regmap, PLL_TEST_CTL_U(pll),
+> > +                            config->test_ctl_hi_val);
+> > +
+> > +       if (config->test_ctl_hi1_val)
+> > +               regmap_write(regmap, PLL_TEST_CTL_U1(pll),
+> > +                            config->test_ctl_hi1_val);
+> > +
+> > +       regmap_update_bits(regmap, PLL_MODE(pll), PLL_UPDATE_BYPASS,
+> > +                          PLL_UPDATE_BYPASS);
+> > +
+> > +       /* Disable PLL output */
+> > +       regmap_update_bits(regmap, PLL_MODE(pll),  PLL_OUTCTRL, 0);
+> > +
+> > +       /* Set operation mode to OFF */
+> > +       regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
+> > +
+> > +       /* PLL should be in OFF mode before continuing */
+> > +       wmb();
+> 
+> How does the write above overtake the write below? This barrier looks
+> wrong.
+
+I think you are correct, it doesnt :), so removing this
+
+> > +static int alpha_pll_lucid_prepare(struct clk_hw *hw)
+> > +{
+> > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +       u32 regval;
+> > +       int ret;
+> > +
+> > +       /* Return early if calibration is not needed. */
+> > +       regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &regval);
+> > +       if (regval & LUCID_PCAL_DONE)
+> > +               return 0;
+> > +
+> > +       ret = clk_trion_pll_enable(hw);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       clk_trion_pll_disable(hw);
+> > +
+> > +       return 0;
+> 
+> Can you write this like:
+> 
+> 	/* On/off to calibrate */
+> 	ret = clk_trion_pll_enable(hw);
+> 	if (!ret)
+> 		clk_trion_pll_disable(hw);
+> 
+> 	return ret;
+
+Looks better, updated now.
+
+> > +static int alpha_pll_lucid_set_rate(struct clk_hw *hw, unsigned long rate,
+> > +                                   unsigned long prate)
+> > +{
+> > +       struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+> > +       unsigned long rrate;
+> > +       u32 regval, l, alpha_width = pll_alpha_width(pll);
+> > +       u64 a;
+> > +       int ret;
+> > +
+> > +       rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
+> > +
+> > +       /*
+> > +        * Due to a limited number of bits for fractional rate programming, the
+> > +        * rounded up rate could be marginally higher than the requested rate.
+> > +        */
+> > +       if (rrate > (rate + PLL_RATE_MARGIN) || rrate < rate) {
+> 
+> Any chance this can be pushed into the alpha_pll_round_rate() API? It's
+> duplicated in this driver.
+
+Yes here and couple of fabia pll functions. Said that I see
+alpha_pll_round_rate() is also invoked two places,
+alpha_pll_fabia_set_rate() and __clk_alpha_pll_set_rate(), so should we
+let these two also be updated, if you are okay with that I will update
+this
+
+> > +       regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
+> > +       regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
+> > +
+> > +       /* Latch the PLL input */
+> > +       ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
+> > +                                PLL_UPDATE, PLL_UPDATE);
+> > +       if (ret)
+> > +               return ret;
+> > +
+> > +       /* Wait for 2 reference cycles before checking the ACK bit. */
+> 
+> Are reference cycles 2 * 1 / 19.2MHz?
+
+Will check and update on this
+
+> 
+> > +       udelay(1);
+> > +       regmap_read(pll->clkr.regmap, PLL_MODE(pll), &regval);
+> > +       if (!(regval & ALPHA_PLL_ACK_LATCH)) {
+> > +               WARN(1, "PLL latch failed. Output may be unstable!\n");
+> 
+> Do we need a big WARN stack for this? How about pr_warn() instead?
+
+Nope :), will move to a warn print :)
+
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+~Vinod
