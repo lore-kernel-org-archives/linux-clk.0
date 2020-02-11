@@ -2,118 +2,176 @@ Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1924C352A4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 03:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D397C352A3
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 06:40:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCA0220714
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 03:08:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSR5Znb7"
+	by mail.kernel.org (Postfix) with ESMTP id 6399A20842
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 06:40:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbgBKDIt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Feb 2020 22:08:49 -0500
-Received: from mail-qv1-f65.google.com ([209.85.219.65]:45720 "EHLO
-        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727612AbgBKDIt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Feb 2020 22:08:49 -0500
-Received: by mail-qv1-f65.google.com with SMTP id l14so4305703qvu.12
-        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2020 19:08:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wgGKUnlzEJ2a8qSB0a2zn1fdYwV5ER4chdWO8Q08nVo=;
-        b=PSR5Znb7L+upKokNQwWbVpknxT3Muaf31/mEXb+pBcRSQ6PHXgARO708mWit9QHUr0
-         ibmiPgIRciGUkP7kgjuB4u3d062JEQ4R0WMOryHxUmzaWrd9GpFCT9AxdYiyleWPlkG7
-         HWVFF6zhh3NJ+deD+r2JbV2xEl3RckLT7CBp7HMwEkZwDBbJZGI+WY22IHAVbQaGVjCN
-         fF+svijn84gQ2Fa6mbkxdCD5YvzW43XRRvREH3sEmztj+VlzyTPoS90+dmO4A9XqCX/5
-         MRvgCpSg7RsSDKfrjFq8PfQ5p3l2QMXlFDg0+qHYnvt+IyBo3zEmcuMlusTPBYM3oekU
-         kolg==
+        id S1727056AbgBKGkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Feb 2020 01:40:36 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:39889 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727045AbgBKGkg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 01:40:36 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m13so3382561edb.6;
+        Mon, 10 Feb 2020 22:40:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=wgGKUnlzEJ2a8qSB0a2zn1fdYwV5ER4chdWO8Q08nVo=;
-        b=fuxHNgPwLGFcaryUfSsHTL2mzGj79aNyY++pG41hj971iUcEguNrTwxPlcxtM/8cE8
-         eeTsV8kx2ta98NvulJ1MXEGlTO4Bvk+0Ne6QQywp/pb13UMNe7emp84A904fJvk3Ytje
-         yxtL0JViXk+ZVnjgzH5ZYJfbSDh8Zpu81ygKICfNKmkCe2fgwsoHVGz9xTTjF/9FdUAq
-         KiqL5w/OKpb+3QKwzdfW3ZQEEILf05QPWfc61UMrvGQf3QKQCRKiIjazrJHPiBayn7ix
-         R4LirSGurmdN0BG8mDbR9EbOBmlEio7Zk2wHhj+mmc8j68NA1y7Pw5qIxi/F6+VHdRW9
-         QPOQ==
-X-Gm-Message-State: APjAAAU5EWhBUd/aao0CB78ivCgd8T+d0/DjpQNtZa6Uyg6EJUzQr88e
-        ivP9aPnJD9lU45PSefJxN/o=
-X-Google-Smtp-Source: APXvYqyU9BnAd2BjDUkGBCIDNLhVOK8D8+Rp69IBo3DmZk4YQW+LtfWdj69yMYVM//AurEd+uNrq3Q==
-X-Received: by 2002:ad4:5429:: with SMTP id g9mr1100800qvt.134.1581390527001;
-        Mon, 10 Feb 2020 19:08:47 -0800 (PST)
-Received: from localhost.localdomain ([2804:14c:482:5bb::1])
-        by smtp.gmail.com with ESMTPSA id x41sm1345893qtj.52.2020.02.10.19.08.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2020 19:08:46 -0800 (PST)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     shawnguo@kernel.org
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH 2/2] clk: imx8mm: Add CLKO2 support
-Date:   Tue, 11 Feb 2020 00:08:13 -0300
-Message-Id: <20200211030813.13992-2-festevam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200211030813.13992-1-festevam@gmail.com>
-References: <20200211030813.13992-1-festevam@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fv/t2lPvzd/c6evGoFWSGvw45Jr9b11uQzUTPkD838A=;
+        b=RRzzjkO/C29FTF/Q8WPbI00QO1rZPXzgTYiE3/7oandYtsneBihu48cBXSEB7A3uHU
+         wiXvKbaJEHGXmfJGdy4EkgNVBnh9TpSPu5vxvMfU1DglWUVQEbEKpm9qvmZCgRLDo6lm
+         FnL382n0MyR5T+9xW1v1+rc6c+n41xkbccXjeiEvahDCGywB4FR1I3dnch3iS3brHtgJ
+         DV+sy9xEYngthwxQfUyZwyS28GGAI8c5cC1hsgJTqJInWWBcJIepIcVUUsYfI/oKiHzH
+         y5XfN4JBIiJ4F9r0VVmIELDEpPcZi4oA0f+/NshpVIWKR4sA5/PV1Q6d3JZ5x0p7unQA
+         ++ng==
+X-Gm-Message-State: APjAAAUOZBUryZiu4BZq1mPZ1pW79osqzOYdIzF5RcxvwjV0VZqwPtmR
+        aC+46glxiIr6/HynCi1FBpRL161ANgM=
+X-Google-Smtp-Source: APXvYqxUVcgiaYVbXFggyoLcst+lBYXmgHMnitvc+9lgq9orN9mfbjSqtKR5YLfal/Tr2woClqcG6w==
+X-Received: by 2002:a17:906:7f02:: with SMTP id d2mr4460011ejr.261.1581403233883;
+        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id n10sm265402ejc.58.2020.02.10.22.40.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id t3so10773046wru.7;
+        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
+X-Received: by 2002:a5d:6805:: with SMTP id w5mr6896277wru.64.1581403233013;
+ Mon, 10 Feb 2020 22:40:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20200210222807.206426-1-jernej.skrabec@siol.net> <20200210222807.206426-2-jernej.skrabec@siol.net>
+In-Reply-To: <20200210222807.206426-2-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 11 Feb 2020 14:40:22 +0800
+X-Gmail-Original-Message-ID: <CAGb2v659Znu1E74Ph8w4Un_cC8qovWmmLfOEDW0ax4jrLVs7GQ@mail.gmail.com>
+Message-ID: <CAGb2v659Znu1E74Ph8w4Un_cC8qovWmmLfOEDW0ax4jrLVs7GQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: sunxi-ng: sun8i-de2: Sort structures
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add CLKO2 support, which is useful for debugging purposes.
+On Tue, Feb 11, 2020 at 6:28 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> Current structures are not sorted by family first and then
+> alphabetically. Let's do that now.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- drivers/clk/imx/clk-imx8mm.c             | 3 +++
- include/dt-bindings/clock/imx8mm-clock.h | 4 +++-
- 2 files changed, 6 insertions(+), 1 deletion(-)
+I would do this at the end of the patch series for a couple of reasons.
+First of all, moving code around before the fixes make the fixes less
+likely to directly apply to stable kernels, and second, the H6 clks
+and resets lists disappear after all the changes.
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 770cf2ae58aa..2ea91ba5e63e 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -285,6 +285,8 @@ static const char *imx8mm_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", }
- 
- static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "dummy", "sys_pll1_200m",
- 					  "audio_pll2_out","sys_pll2_500m", "vpu_pll", "sys_pll1_80m", };
-+static const char *imx8mm_clko2_sels[] = {"osc_24m", "sys_pll2_200m", "sys_pll1_400m", "sys_pll2_166m",
-+					  "sys_pll3_out", "audio_pll1_out", "video_pll1_out", "osc_32k", };
- 
- static struct clk_hw_onecell_data *clk_hw_data;
- static struct clk_hw **hws;
-@@ -504,6 +506,7 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MM_CLK_WDOG] = imx8m_clk_hw_composite("wdog", imx8mm_wdog_sels, base + 0xb900);
- 	hws[IMX8MM_CLK_WRCLK] = imx8m_clk_hw_composite("wrclk", imx8mm_wrclk_sels, base + 0xb980);
- 	hws[IMX8MM_CLK_CLKO1] = imx8m_clk_hw_composite("clko1", imx8mm_clko1_sels, base + 0xba00);
-+	hws[IMX8MM_CLK_CLKO2] = imx8m_clk_hw_composite("clko2", imx8mm_clko2_sels, base + 0xba80);
- 	hws[IMX8MM_CLK_DSI_CORE] = imx8m_clk_hw_composite("dsi_core", imx8mm_dsi_core_sels, base + 0xbb00);
- 	hws[IMX8MM_CLK_DSI_PHY_REF] = imx8m_clk_hw_composite("dsi_phy_ref", imx8mm_dsi_phy_sels, base + 0xbb80);
- 	hws[IMX8MM_CLK_DSI_DBI] = imx8m_clk_hw_composite("dsi_dbi", imx8mm_dsi_dbi_sels, base + 0xbc00);
-diff --git a/include/dt-bindings/clock/imx8mm-clock.h b/include/dt-bindings/clock/imx8mm-clock.h
-index edeece2289f0..37f523cec390 100644
---- a/include/dt-bindings/clock/imx8mm-clock.h
-+++ b/include/dt-bindings/clock/imx8mm-clock.h
-@@ -265,6 +265,8 @@
- #define IMX8MM_SYS_PLL2_333M_CG			244
- #define IMX8MM_SYS_PLL2_500M_CG			245
- 
--#define IMX8MM_CLK_END				246
-+#define IMX8MM_CLK_CLKO2			246
-+
-+#define IMX8MM_CLK_END				247
- 
- #endif
--- 
-2.17.1
+ChenYu
 
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 56 ++++++++++++++--------------
+>  1 file changed, 28 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> index d9668493c3f9..a928e0c32222 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+> @@ -51,24 +51,6 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
+>  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+>                    CLK_SET_RATE_PARENT);
+>
+> -static struct ccu_common *sun50i_h6_de3_clks[] = {
+> -       &mixer0_clk.common,
+> -       &mixer1_clk.common,
+> -       &wb_clk.common,
+> -
+> -       &bus_mixer0_clk.common,
+> -       &bus_mixer1_clk.common,
+> -       &bus_wb_clk.common,
+> -
+> -       &mixer0_div_clk.common,
+> -       &mixer1_div_clk.common,
+> -       &wb_div_clk.common,
+> -
+> -       &bus_rot_clk.common,
+> -       &rot_clk.common,
+> -       &rot_div_clk.common,
+> -};
+> -
+>  static struct ccu_common *sun8i_a83t_de2_clks[] = {
+>         &mixer0_clk.common,
+>         &mixer1_clk.common,
+> @@ -108,6 +90,24 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
+>         &wb_div_clk.common,
+>  };
+>
+> +static struct ccu_common *sun50i_h6_de3_clks[] = {
+> +       &mixer0_clk.common,
+> +       &mixer1_clk.common,
+> +       &wb_clk.common,
+> +
+> +       &bus_mixer0_clk.common,
+> +       &bus_mixer1_clk.common,
+> +       &bus_wb_clk.common,
+> +
+> +       &mixer0_div_clk.common,
+> +       &mixer1_div_clk.common,
+> +       &wb_div_clk.common,
+> +
+> +       &bus_rot_clk.common,
+> +       &rot_clk.common,
+> +       &rot_div_clk.common,
+> +};
+> +
+>  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
+>         .hws    = {
+>                 [CLK_MIXER0]            = &mixer0_clk.common.hw,
+> @@ -219,6 +219,16 @@ static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
+>         .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
+>  };
+>
+> +static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+> +       .ccu_clks       = sun8i_v3s_de2_clks,
+> +       .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
+> +
+> +       .hw_clks        = &sun8i_v3s_de2_hw_clks,
+> +
+> +       .resets         = sun8i_a83t_de2_resets,
+> +       .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
+> +};
+> +
+>  static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
+>         .ccu_clks       = sun8i_h3_de2_clks,
+>         .num_ccu_clks   = ARRAY_SIZE(sun8i_h3_de2_clks),
+> @@ -239,16 +249,6 @@ static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
+>         .num_resets     = ARRAY_SIZE(sun50i_h6_de3_resets),
+>  };
+>
+> -static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
+> -       .ccu_clks       = sun8i_v3s_de2_clks,
+> -       .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
+> -
+> -       .hw_clks        = &sun8i_v3s_de2_hw_clks,
+> -
+> -       .resets         = sun8i_a83t_de2_resets,
+> -       .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
+> -};
+> -
+>  static int sunxi_de2_clk_probe(struct platform_device *pdev)
+>  {
+>         struct resource *res;
+> --
+> 2.25.0
+>
