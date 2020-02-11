@@ -2,176 +2,139 @@ Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D397C352A3
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 06:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F44C352A3
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 07:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6399A20842
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 06:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49DC72082F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 07:18:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YKnxBZtE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727056AbgBKGkg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Feb 2020 01:40:36 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:39889 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727045AbgBKGkg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 01:40:36 -0500
-Received: by mail-ed1-f67.google.com with SMTP id m13so3382561edb.6;
-        Mon, 10 Feb 2020 22:40:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fv/t2lPvzd/c6evGoFWSGvw45Jr9b11uQzUTPkD838A=;
-        b=RRzzjkO/C29FTF/Q8WPbI00QO1rZPXzgTYiE3/7oandYtsneBihu48cBXSEB7A3uHU
-         wiXvKbaJEHGXmfJGdy4EkgNVBnh9TpSPu5vxvMfU1DglWUVQEbEKpm9qvmZCgRLDo6lm
-         FnL382n0MyR5T+9xW1v1+rc6c+n41xkbccXjeiEvahDCGywB4FR1I3dnch3iS3brHtgJ
-         DV+sy9xEYngthwxQfUyZwyS28GGAI8c5cC1hsgJTqJInWWBcJIepIcVUUsYfI/oKiHzH
-         y5XfN4JBIiJ4F9r0VVmIELDEpPcZi4oA0f+/NshpVIWKR4sA5/PV1Q6d3JZ5x0p7unQA
-         ++ng==
-X-Gm-Message-State: APjAAAUOZBUryZiu4BZq1mPZ1pW79osqzOYdIzF5RcxvwjV0VZqwPtmR
-        aC+46glxiIr6/HynCi1FBpRL161ANgM=
-X-Google-Smtp-Source: APXvYqxUVcgiaYVbXFggyoLcst+lBYXmgHMnitvc+9lgq9orN9mfbjSqtKR5YLfal/Tr2woClqcG6w==
-X-Received: by 2002:a17:906:7f02:: with SMTP id d2mr4460011ejr.261.1581403233883;
-        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id n10sm265402ejc.58.2020.02.10.22.40.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id t3so10773046wru.7;
-        Mon, 10 Feb 2020 22:40:33 -0800 (PST)
-X-Received: by 2002:a5d:6805:: with SMTP id w5mr6896277wru.64.1581403233013;
- Mon, 10 Feb 2020 22:40:33 -0800 (PST)
+        id S1728069AbgBKHS1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Feb 2020 02:18:27 -0500
+Received: from mail-am6eur05on2046.outbound.protection.outlook.com ([40.107.22.46]:23705
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727467AbgBKHS0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 11 Feb 2020 02:18:26 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=N0FWlYkNBZPT6X0zQkSGF8tiaojr2nyoChqMJA2P9gK+anHYxnlpbr+aAO2NtDOpdqyvYweGoeiiGjJILLqP/3hKCBxJe7xT8P67mcTT4jEm9VhaJsiDNVdCSAE8ZVEIf1aR48weLysJHL4Wfoy5YON7LacvnSF2nBrVquh9Ulyv0DXKLDWtu5SE7MYRrYCJx4tXcRnXWqi+KAjcq0+zsNHH0ScJ3mg05Pl7CVlhUHYwq7A0+5QGilxYAn4YQaYDq2LChueyuIPE9HHn3N+Exiq/lGJXAL+4hvbkbhmAJEIDkkjyJCXBbnEiFB6OXa0Cvl9mfh5wytaTRTnZrHHD2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2EeDTQ6aeQpcHFHBjnweAvI4HrbzhWPqXBZwRMNSMG4=;
+ b=S230Ri6IZEc0Y5n48Pv+qMHjWc5CSdoQAGMsLKluAZT+NQDO9/C5INIxY0yIRhRRAstsVHKzhdKBgr7ftQ9pLbSCUdSaF6A2kdAaYp3qN2s48tPC6pASskOH7AhMF7PjoizpyuWz2T7lLGoY3u3PwcAHIXhzojj87VNlgAQ2WO1ESU0j8juoWzK4OYYgna2sQhTGR2AzVDxj7sNOoIxk/KlnpJW2YVASAVCw19EzyxJ6wlNw+bNNT3KwyWR7YVZm9B7Zp4mgWL5pp2/G4d6q9G/kr9N7ugFiNGec1uX1ozoHH7WRQ5c5dSe8mRJ+2m+4DBJa4lFtBuMVFWOzaztxkA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2EeDTQ6aeQpcHFHBjnweAvI4HrbzhWPqXBZwRMNSMG4=;
+ b=YKnxBZtEwuAaSGMcrkrcxv3DiwfWodradLzaMGoOYfPB0MjOPh2KFlC/2fOyeUGG8X+EpBBODuRoTwrtPZVnArRqPx7z2jClrSeGcnGvEr/n0zL8cUEyyeF5GQiOtU5MlXke9JepbTDAvc5NO6yyOzKC49xISqIfR9qe+jk44DI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=abel.vesa@nxp.com; 
+Received: from AM6PR04MB4599.eurprd04.prod.outlook.com (20.177.37.82) by
+ AM6PR04MB6712.eurprd04.prod.outlook.com (10.255.168.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.23; Tue, 11 Feb 2020 07:18:23 +0000
+Received: from AM6PR04MB4599.eurprd04.prod.outlook.com
+ ([fe80::8c62:b251:ffe3:af8c]) by AM6PR04MB4599.eurprd04.prod.outlook.com
+ ([fe80::8c62:b251:ffe3:af8c%5]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 07:18:23 +0000
+Date:   Tue, 11 Feb 2020 09:18:22 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     shawnguo@kernel.org, kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx8mm: Fix the CLKO1 source select list
+Message-ID: <20200211071822.z62jkodywyohi5c6@fsr-ub1664-175>
+References: <20200211030813.13992-1-festevam@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211030813.13992-1-festevam@gmail.com>
+User-Agent: NeoMutt/20180622
+X-ClientProxiedBy: AM5PR0701CA0067.eurprd07.prod.outlook.com
+ (2603:10a6:203:2::29) To AM6PR04MB4599.eurprd04.prod.outlook.com
+ (2603:10a6:20b:15::18)
 MIME-Version: 1.0
-References: <20200210222807.206426-1-jernej.skrabec@siol.net> <20200210222807.206426-2-jernej.skrabec@siol.net>
-In-Reply-To: <20200210222807.206426-2-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 11 Feb 2020 14:40:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v659Znu1E74Ph8w4Un_cC8qovWmmLfOEDW0ax4jrLVs7GQ@mail.gmail.com>
-Message-ID: <CAGb2v659Znu1E74Ph8w4Un_cC8qovWmmLfOEDW0ax4jrLVs7GQ@mail.gmail.com>
-Subject: Re: [PATCH 1/7] clk: sunxi-ng: sun8i-de2: Sort structures
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Received: from localhost (89.37.124.34) by AM5PR0701CA0067.eurprd07.prod.outlook.com (2603:10a6:203:2::29) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2729.9 via Frontend Transport; Tue, 11 Feb 2020 07:18:23 +0000
+X-Originating-IP: [89.37.124.34]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: ed9024f0-3fca-4b58-52e4-08d7aec2946a
+X-MS-TrafficTypeDiagnostic: AM6PR04MB6712:|AM6PR04MB6712:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM6PR04MB6712A50A5D773730ECAE8945F6180@AM6PR04MB6712.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:3631;
+X-Forefront-PRVS: 0310C78181
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(346002)(376002)(366004)(396003)(39860400002)(136003)(189003)(199004)(53546011)(6496006)(26005)(4326008)(186003)(16526019)(44832011)(81156014)(81166006)(6486002)(6916009)(316002)(8936002)(86362001)(956004)(5660300002)(8676002)(2906002)(478600001)(9686003)(52116002)(66556008)(66946007)(66476007)(1076003)(33716001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB6712;H:AM6PR04MB4599.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: OUMyNeCDT39ikt/eCvGxj32Jj7F3wC9QieqnNHWwUv4FHFK8MILz5R0nkwKbpLyxf5n5Alf5ZUrDSMaPVpS6RLBx05L/U6/pJBPtAiWhJiLtafMcMqVqXNE1JhMw4Ry1HOz0n3cZKMpgxs41PRJmbLL6Bp3bESsJv50t/q5SuPH2dnD+GJT+GegAG/HzfbKxn8M/0tuUdMNM1K6AFPFdxfNVLZF4/oe27aeClkZxU+zoqXJwIV6p16Rh3WYrwBwzoB2B4Di2N5w9ezuMDNRq5/zinpfsh34G36u80bEfO0fdRpOcvFrNngsLZODhw9KASOLxDxFXuDsMSRuR4tNYFEzfqu+nb34c6BvePygDOVhH2WPPsU5fJS2E3nEctFEDkanfpiwCGIehZe+6OcgCQsxahOn0dz6Lb7X4qEGd6IzV1k5xxxWC2PuEZPT+tUKkKhbd0z/tYcPu3Qef1Nu9BorlmEjCnZHR0rYyZ7mH+SX4vLo1NkaCl5AWUHC/g15a
+X-MS-Exchange-AntiSpam-MessageData: bVnDY++Qr1BugR5w0vQ/UcgHkh3qCPOinlNDIkMi6O0EslAQxCkfWq5H/f2J5o7KYckDzKCh6NYT94MLr6gNURjNgzMw1/I4tRCd1L5VrXp1NCiUi2/ZnIfEfYmUNAxegZPYvVrTl5lJHlWqjzzLNA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed9024f0-3fca-4b58-52e4-08d7aec2946a
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Feb 2020 07:18:23.5157
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: hSLJ9VjjFOfrYaXU+kvNn0DYPUDTTv/YIrJyDGWQtIi41FYEqImeWYTPyNh64SMCwofvU+3yfQJCDcNdeIcD8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB6712
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 6:28 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Current structures are not sorted by family first and then
-> alphabetically. Let's do that now.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On 20-02-11 00:08:12, Fabio Estevam wrote:
+> The CLKO1 clock source select list is the following as per the i.MX8MM
+> Reference Manual (put in increasing order):
+> 
+> 000 - 24M_REF_CLK
+> 001 - SYSTEM_PLL1_CLK
+> 010 - None
+> 011 - SYSTEM_PLL1_DIV4
+> 100 - AUDIO_PLL2_CLK
+> 101 - SYSTEM_PLL2_DIV2
+> 110 - VPU_PLL_CLK
+> 111 - SYSTEM_PLL1_DIV10
+> 
+> Fix it accordingly.
+> 
+> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
 
-I would do this at the end of the patch series for a couple of reasons.
-First of all, moving code around before the fixes make the fixes less
-likely to directly apply to stable kernels, and second, the H6 clks
-and resets lists disappear after all the changes.
+For both patches:
 
-ChenYu
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
 > ---
->  drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 56 ++++++++++++++--------------
->  1 file changed, 28 insertions(+), 28 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> index d9668493c3f9..a928e0c32222 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> @@ -51,24 +51,6 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "pll-de", 0x0c, 4, 4,
->  static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
->                    CLK_SET_RATE_PARENT);
->
-> -static struct ccu_common *sun50i_h6_de3_clks[] = {
-> -       &mixer0_clk.common,
-> -       &mixer1_clk.common,
-> -       &wb_clk.common,
-> -
-> -       &bus_mixer0_clk.common,
-> -       &bus_mixer1_clk.common,
-> -       &bus_wb_clk.common,
-> -
-> -       &mixer0_div_clk.common,
-> -       &mixer1_div_clk.common,
-> -       &wb_div_clk.common,
-> -
-> -       &bus_rot_clk.common,
-> -       &rot_clk.common,
-> -       &rot_div_clk.common,
-> -};
-> -
->  static struct ccu_common *sun8i_a83t_de2_clks[] = {
->         &mixer0_clk.common,
->         &mixer1_clk.common,
-> @@ -108,6 +90,24 @@ static struct ccu_common *sun8i_v3s_de2_clks[] = {
->         &wb_div_clk.common,
->  };
->
-> +static struct ccu_common *sun50i_h6_de3_clks[] = {
-> +       &mixer0_clk.common,
-> +       &mixer1_clk.common,
-> +       &wb_clk.common,
-> +
-> +       &bus_mixer0_clk.common,
-> +       &bus_mixer1_clk.common,
-> +       &bus_wb_clk.common,
-> +
-> +       &mixer0_div_clk.common,
-> +       &mixer1_div_clk.common,
-> +       &wb_div_clk.common,
-> +
-> +       &bus_rot_clk.common,
-> +       &rot_clk.common,
-> +       &rot_div_clk.common,
-> +};
-> +
->  static struct clk_hw_onecell_data sun8i_a83t_de2_hw_clks = {
->         .hws    = {
->                 [CLK_MIXER0]            = &mixer0_clk.common.hw,
-> @@ -219,6 +219,16 @@ static const struct sunxi_ccu_desc sun8i_h3_de2_clk_desc = {
->         .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
->  };
->
-> +static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
-> +       .ccu_clks       = sun8i_v3s_de2_clks,
-> +       .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
-> +
-> +       .hw_clks        = &sun8i_v3s_de2_hw_clks,
-> +
-> +       .resets         = sun8i_a83t_de2_resets,
-> +       .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
-> +};
-> +
->  static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc = {
->         .ccu_clks       = sun8i_h3_de2_clks,
->         .num_ccu_clks   = ARRAY_SIZE(sun8i_h3_de2_clks),
-> @@ -239,16 +249,6 @@ static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc = {
->         .num_resets     = ARRAY_SIZE(sun50i_h6_de3_resets),
->  };
->
-> -static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc = {
-> -       .ccu_clks       = sun8i_v3s_de2_clks,
-> -       .num_ccu_clks   = ARRAY_SIZE(sun8i_v3s_de2_clks),
-> -
-> -       .hw_clks        = &sun8i_v3s_de2_hw_clks,
-> -
-> -       .resets         = sun8i_a83t_de2_resets,
-> -       .num_resets     = ARRAY_SIZE(sun8i_a83t_de2_resets),
-> -};
-> -
->  static int sunxi_de2_clk_probe(struct platform_device *pdev)
->  {
->         struct resource *res;
-> --
-> 2.25.0
->
+>  drivers/clk/imx/clk-imx8mm.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index 2ed93fc25087..770cf2ae58aa 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -283,8 +283,8 @@ static const char *imx8mm_vpu_h1_sels[] = {"osc_24m", "vpu_pll_out", "sys_pll1_8
+>  
+>  static const char *imx8mm_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+>  
+> -static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m", "sys_pll1_200m", "audio_pll2_out",
+> -					 "vpu_pll", "sys_pll1_80m", };
+> +static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "dummy", "sys_pll1_200m",
+> +					  "audio_pll2_out", "sys_pll2_500m", "vpu_pll", "sys_pll1_80m", };
+>  
+>  static struct clk_hw_onecell_data *clk_hw_data;
+>  static struct clk_hw **hws;
+> -- 
+> 2.17.1
+> 
