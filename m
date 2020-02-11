@@ -7,39 +7,40 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18436C3B186
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA994C3B186
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4EB020842
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D452082F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sDKU/GfA"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="VAAowwna"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgBKMOP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Feb 2020 07:14:15 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:40991 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727960AbgBKMOP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 07:14:15 -0500
+        id S1727911AbgBKMO3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Feb 2020 07:14:29 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:61819 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728421AbgBKMO3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 07:14:29 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581423254; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=oRKfcwP++zy8LjliDmJ593dnq9AHGwth3BPAylfi5co=; b=sDKU/GfAEvT7CvH+ohnzNYqc2sKVQG0WZUYjAU2kaPFFFxSmjPVxRQQcXp2fT97PTlbzX91X
- JR3d4BubpZ52gfH/rDzq9e4dR6rsklV/Wc08SKuUIo0fE0bN75xdwM5aW0nHgYScamkZ+AuL
- GrhAjnq6hHp/nIINHhbxPRmRra8=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ s=smtp; t=1581423268; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=u1q5C/3e5zHh/x52XPH51N6g1G9jstuQCCgJKVOicgY=; b=VAAowwna9Y5+bnxuBja+Uy7ptroZ/NbwoP1VhUy7TjvMhZGoMzEmg3ApIyIGRmEAKyBBtNx9
+ uRFG/UQUyYa/0EBPleSORuBr2pRKC77oFJTOMBxyvWfFoDdIgXgincXNh8goO74vRg9BBpJa
+ y9VQN/a5pnVjAdrS0+D5Kb3sN9o=
+X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e429a90.7f39cbc3ec70-smtp-out-n01;
- Tue, 11 Feb 2020 12:14:08 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e429a9e.7f5331baa378-smtp-out-n03;
+ Tue, 11 Feb 2020 12:14:22 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id AA515C4479D; Tue, 11 Feb 2020 12:14:08 +0000 (UTC)
+        id B42E8C4479D; Tue, 11 Feb 2020 12:14:22 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A6A3C43383;
-        Tue, 11 Feb 2020 12:14:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A6A3C43383
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A51A4C43383;
+        Tue, 11 Feb 2020 12:14:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A51A4C43383
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -53,38 +54,63 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 1/2] clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
-Date:   Tue, 11 Feb 2020 17:43:55 +0530
-Message-Id: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v1 2/2] clk: qcom: dispcc: Remove support of disp_cc_mdss_rscc_ahb_clk
+Date:   Tue, 11 Feb 2020 17:43:56 +0530
+Message-Id: <1581423236-21341-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
+References: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clock disable signal for video_cc_vcodec0_core_clk is tied to
-vcodec0_gdsc which is supported in the HW control mode. Thus turning off
-the clock would be taken care automatically when the GDSC turns OFF by
-hardware and clock driver does not require to poll on the CLK_OFF bit.
+The disp_cc_mdss_rscc_ahb_clk is default enabled from hardware and thus
+does not require to be marked CRITICAL. This which would allow the RCG to
+be turned OFF when the display turns OFF and not blocking XO.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/videocc-sc7180.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/dispcc-sc7180.c | 19 -------------------
+ 1 file changed, 19 deletions(-)
 
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-index c363c3c..276e5ec 100644
---- a/drivers/clk/qcom/videocc-sc7180.c
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -97,7 +97,7 @@ static struct clk_branch video_cc_vcodec0_axi_clk = {
+diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
+index dd7af41..0a5d395 100644
+--- a/drivers/clk/qcom/dispcc-sc7180.c
++++ b/drivers/clk/qcom/dispcc-sc7180.c
+@@ -592,24 +592,6 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
+ 	},
+ };
 
- static struct clk_branch video_cc_vcodec0_core_clk = {
- 	.halt_reg = 0x890,
+-static struct clk_branch disp_cc_mdss_rscc_ahb_clk = {
+-	.halt_reg = 0x400c,
 -	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_VOTED,
- 	.clkr = {
- 		.enable_reg = 0x890,
- 		.enable_mask = BIT(0),
+-	.clkr = {
+-		.enable_reg = 0x400c,
+-		.enable_mask = BIT(0),
+-		.hw.init = &(struct clk_init_data){
+-			.name = "disp_cc_mdss_rscc_ahb_clk",
+-			.parent_data = &(const struct clk_parent_data){
+-				.hw = &disp_cc_mdss_ahb_clk_src.clkr.hw,
+-			},
+-			.num_parents = 1,
+-			.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+-			.ops = &clk_branch2_ops,
+-		},
+-	},
+-};
+-
+ static struct clk_branch disp_cc_mdss_rscc_vsync_clk = {
+ 	.halt_reg = 0x4008,
+ 	.halt_check = BRANCH_HALT,
+@@ -687,7 +669,6 @@ static struct clk_regmap *disp_cc_sc7180_clocks[] = {
+ 	[DISP_CC_MDSS_PCLK0_CLK_SRC] = &disp_cc_mdss_pclk0_clk_src.clkr,
+ 	[DISP_CC_MDSS_ROT_CLK] = &disp_cc_mdss_rot_clk.clkr,
+ 	[DISP_CC_MDSS_ROT_CLK_SRC] = &disp_cc_mdss_rot_clk_src.clkr,
+-	[DISP_CC_MDSS_RSCC_AHB_CLK] = &disp_cc_mdss_rscc_ahb_clk.clkr,
+ 	[DISP_CC_MDSS_RSCC_VSYNC_CLK] = &disp_cc_mdss_rscc_vsync_clk.clkr,
+ 	[DISP_CC_MDSS_VSYNC_CLK] = &disp_cc_mdss_vsync_clk.clkr,
+ 	[DISP_CC_MDSS_VSYNC_CLK_SRC] = &disp_cc_mdss_vsync_clk_src.clkr,
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
