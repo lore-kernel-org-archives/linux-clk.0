@@ -1,226 +1,244 @@
-Return-Path: <SRS0=aSum=36=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AD7C352A4
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 22:38:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74726C352A4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 01:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B11D2082F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Feb 2020 22:38:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581374319;
-	bh=t32JE0QwQ5xFG7CfQw/0jqZEZpeufpgLfqsDlYUyH7g=;
-	h=In-Reply-To:References:Subject:From:To:Cc:Date:List-ID:From;
-	b=T/DdRo7xCITlu1LLXScAw8SxADoNtw2TtLzYHs436DKcGFheYEIrGNtkMbLljX0cn
-	 OcGOCraJLqIeSjJ1y3Rt2rGWziNH3/CjPQPAKgNNe24Jxq/4aw3ZtqXZ3rzTLvg2Oj
-	 etbBDcEIPcfSjRlIX7Ekwnx0Eb7n6+Mmsp0AaIQM=
+	by mail.kernel.org (Postfix) with ESMTP id 3A62A20838
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 01:24:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="jrEeJ3CW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbgBJWij (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Feb 2020 17:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727422AbgBJWij (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 10 Feb 2020 17:38:39 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23C822072C;
-        Mon, 10 Feb 2020 22:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581374318;
-        bh=t32JE0QwQ5xFG7CfQw/0jqZEZpeufpgLfqsDlYUyH7g=;
-        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-        b=mkGl0Y/H7+dXMRabvHhLPPjq+rZueI2K+k1Gmd3pBO3oriGnP4aH9T0Psx+0tcfEw
-         YN62mNRsHAKsQ+qEm6lh6lzFHOUNvwjWmEmm+OR/64tQkfDE3Jm3NxYTyuXLJchlsf
-         5kae0OQVPN5owza0USiyqPP9EjWgqROHucpsvtec=
+        id S1727659AbgBKBYN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Feb 2020 20:24:13 -0500
+Received: from mail-eopbgr140078.outbound.protection.outlook.com ([40.107.14.78]:24926
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727398AbgBKBYN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 10 Feb 2020 20:24:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LdGxvdJbEySz04slxKoNQePXtUwhIsNTjzwzg6d0w8rWzHnHc4+5vTWQ9f/BsecvuOXO6IT/2FFzY7/+vPPBGjPArb69CuLHPeM60BmuYy8JPnXc/IZnWbII6HyGgyQdGQ9pveHOQPdh8c7YdNPpdBEPbFXPn50RyVQqNgyZkmRZW15f7SjIHBe7I+BFj9LimaM6mnM7ZXnHkptwLp/cebY20vflxksCnnoElxI+ngMowY9753PEsNECJbWuKVlYNn0dSKSwwVfDvzr/xsL7HxzEDs6EAp8Bl3j3q00UIcGcEexxycj5Xbjo7RzEU+JEZfmkIEjvBv/RBUNB80duSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CvxNdjn4Jpa6VgPvhcQLnshzTnBwTz0mLeDVww1P4vk=;
+ b=nPBqizkXVBYvB4v43pPvF+Fa15EgAhXWuT/uHkiRb8wgZic7MXidug406Kr4tYx+MTZ/I/FWRcQUh7VEn2x310gurJHvwdbhdlzBSRX+AWVpWp1idGhMAPjMzXxmThldDKIS+mrn4721WgSohMCUI6gOHPd0cZtmbNCLdz31TJSBvsIm9PAEMbiwBeBf/jaaQOkjZgGXvDd/nU3kLrM9zKdHOWSmPjo2mxHat8ds7liuSK90Us+U/pv/TbcDQiOhl7aW9U4mIK/ibLXHC37NbIID5rYUpK+ETzQK1LU7QW5wmNvunA3xTis2M4k+O3gYyV04TqZZGc/cxM1ClHrFag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CvxNdjn4Jpa6VgPvhcQLnshzTnBwTz0mLeDVww1P4vk=;
+ b=jrEeJ3CWemcI3q+Yl5m/5RpKG1ndA/EauwoVt/ehKiiPhpBUtgi3f7kKIn6aMndrxQHYa2qiMLCrvmVzrD5So/nsB4blBkmj6bbKeCy+qoOSQW9SJ9qV43FimNhTESJkqZGU8jXAZUuGqk2d2yFv/+NmeNFumw8bw7EOjZSbfKU=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5507.eurprd04.prod.outlook.com (20.178.112.95) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2707.23; Tue, 11 Feb 2020 01:24:08 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2707.030; Tue, 11 Feb 2020
+ 01:24:08 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH 4/7] clk: imx: add imx_hw_clk_cpuv2 for i.MX7ULP
+Thread-Topic: [PATCH 4/7] clk: imx: add imx_hw_clk_cpuv2 for i.MX7ULP
+Thread-Index: AQHV22DMfuNfrztGkEGJ4CGkxeeucqgVDumAgAApfcA=
+Date:   Tue, 11 Feb 2020 01:24:08 +0000
+Message-ID: <AM0PR04MB4481C105FCE5DFD4615C8BC588180@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com>
+ <1580823277-13644-5-git-send-email-peng.fan@nxp.com>
+ <158137431730.121156.17920534869042984062@swboyd.mtv.corp.google.com>
+In-Reply-To: <158137431730.121156.17920534869042984062@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 21597be9-8f2d-42e4-c834-08d7ae91179b
+x-ms-traffictypediagnostic: AM0PR04MB5507:|AM0PR04MB5507:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB55070FC1AA92E899EDD66D0E88180@AM0PR04MB5507.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0310C78181
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(39860400002)(376002)(136003)(199004)(189003)(8936002)(81166006)(478600001)(81156014)(52536014)(76116006)(71200400001)(966005)(186003)(9686003)(6506007)(26005)(66556008)(55016002)(66476007)(66446008)(66946007)(64756008)(8676002)(316002)(5660300002)(44832011)(7696005)(110136005)(54906003)(2906002)(33656002)(4326008)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5507;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ShI/50u45pL4zPblfqkRC53XwNWfBBdHrYaJLdrBF3WX1mEfDBzK1/kn2BhiE3FpksaOLiaTaX3/sVJfcF1blZps3E2LtzJAC35g+Tct1IiWiOMNO1GXNJikKMqFk0OiUan5RzmVnqI/GF2qehOTt5Kw8J3/ceKZwhaoCmMeADqEpIDL6CpTrjwgqd35FpPUuGwQdw6MBW7u/GI0aO6QR2c9gYz83aoCRL1lOabexP4Gfv2Cotfns9JjVhpeAe88Yrkg3STuNHk6H1L6PKH21LN7AOqDvxVzqTPpaXiNPqbsK/9vXyX3jsER8uilydvFNPDhL0+ohsw3IGgi7hJGnoBnaTo8sqWEvfMwTUYJtyhVOFG57eVw7DifYpDSKgtXBZuLI7sXwzVLUdaoFo2oWCIRHLhON8opMBONNp313VgeWWXBa0BHHHlaLsdsSsjBIUNRaubpx+NYIMciHfGVu//wAISXAY/Jojc1KBxYfOPfPXbLhZC6AnbjJ1yugjmRpPb+arpTETMAtbe2GvgQIw==
+x-ms-exchange-antispam-messagedata: gUXrMaA5JS1tGoxnK+E5vJw7DKWp8sPEFzWt+JQek+V1QhqvJDjYtlwvKNDNJRq7XD0nZ1FoMDpL7enmeWQoe8cnfJaHYIUYQgbUeTTlyS6zfCORSzFws1128WD26ebEsvPhBm61LDE9PW+3bfv4YA==
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1580823277-13644-5-git-send-email-peng.fan@nxp.com>
-References: <1580823277-13644-1-git-send-email-peng.fan@nxp.com> <1580823277-13644-5-git-send-email-peng.fan@nxp.com>
-Subject: Re: [PATCH 4/7] clk: imx: add imx_hw_clk_cpuv2 for i.MX7ULP
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     abel.vesa@nxp.com, aisheng.dong@nxp.com, leonard.crestez@nxp.com,
-        peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        ping.bai@nxp.com, Anson.Huang@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Date:   Mon, 10 Feb 2020 14:38:37 -0800
-Message-ID: <158137431730.121156.17920534869042984062@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 21597be9-8f2d-42e4-c834-08d7ae91179b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Feb 2020 01:24:08.4771
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GGdxZ+yHZoCLxXjATrTCTTGGk7GDx1H5oxxgdzL+EX0EvnjDrWcwTaGxfYzUBtt10YAB1coirPdcGZlwVvnZ9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5507
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting peng.fan@nxp.com (2020-02-04 05:34:34)
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> Add a clk api for i.MX7ULP ARM core clk usage.
-> imx_hw_clk_cpu could not be reused, because i.MX7ULP ARM core
-> clk has totally different design. To simplify ARM core clk
-> change logic, add a new clk api.
->=20
-> A draft picture to show the ARM core clock.
->                                                       |-sirc
->      |->   run(500MHz)    ->  div -> mux -------------|-firc
->   ARM|                                                |
->      |->   hsrun(720MHz)  ->  hs div -> hs mux -------|-spll pfd
->                                                       |-....
->=20
-> Need to configure PMC when ARM core runs in HSRUN or RUN mode.
->=20
-> RUN and HSRUN related registers are not same, but their
-> mux has same clocks as input.
->=20
-> The API takes arm core, div, hs div, mux, hs mux, mux parent, pfd, step
-> as params for switch clk freq.
->=20
-> When set rate, need to switch mux to take firc as input, then
-> set spll pfd freq, then switch back mux to spll pfd as parent.
->=20
-> Per i.MX7ULP requirement, when clk runs in HSRUN mode, it could
-> only support arm core wfi idle, so add pm qos to support it.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/Makefile    |   1 +
->  drivers/clk/imx/clk-cpuv2.c | 137 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  drivers/clk/imx/clk.h       |   9 +++
->  3 files changed, 147 insertions(+)
->  create mode 100644 drivers/clk/imx/clk-cpuv2.c
->=20
-> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-> index 928f874c73d2..9707fef8da98 100644
-> --- a/drivers/clk/imx/Makefile
-> +++ b/drivers/clk/imx/Makefile
-> @@ -5,6 +5,7 @@ obj-$(CONFIG_MXC_CLK) +=3D \
->         clk-busy.o \
->         clk-composite-8m.o \
->         clk-cpu.o \
-> +       clk-cpuv2.o \
->         clk-composite-7ulp.o \
->         clk-divider-gate.o \
->         clk-fixup-div.o \
-> diff --git a/drivers/clk/imx/clk-cpuv2.c b/drivers/clk/imx/clk-cpuv2.c
-> new file mode 100644
-> index 000000000000..a73d97a782aa
-> --- /dev/null
-> +++ b/drivers/clk/imx/clk-cpuv2.c
-> @@ -0,0 +1,137 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2020 NXP
-> + *
-> + * Peng Fan <peng.fan@nxp.com>
-> + */
-> +
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/slab.h>
-> +#include <linux/pm_qos.h>
-> +#include "clk.h"
-> +
-> +static struct pm_qos_request pm_qos_hsrun;
-> +
-> +#define MAX_NORMAL_RUN_FREQ    528000000
-> +
-> +struct clk_cpu {
-> +       struct clk_hw   hw;
-> +       struct clk_hw   *core;
-> +       struct clk_hw   *div_nor;
-> +       struct clk_hw   *div_hs;
-> +       struct clk_hw   *mux_nor;
-> +       struct clk_hw   *mux_hs;
-> +       struct clk_hw   *mux_parent;
-> +       struct clk_hw   *pfd;
-> +       struct clk_hw   *step;
-> +};
-> +
-> +static inline struct clk_cpu *to_clk_cpu(struct clk_hw *hw)
-> +{
-> +       return container_of(hw, struct clk_cpu, hw);
-> +}
-> +
-> +static unsigned long clk_cpu_recalc_rate(struct clk_hw *hw,
-> +                                        unsigned long parent_rate)
-> +{
-> +       struct clk_cpu *cpu =3D to_clk_cpu(hw);
-> +
-> +       return clk_hw_get_rate(cpu->core);
-> +}
-> +
-> +static long clk_cpu_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                              unsigned long *prate)
-> +{
-> +       return rate;
-> +}
-> +
-> +static int clk_cpu_set_rate(struct clk_hw *hw, unsigned long rate,
-> +                           unsigned long parent_rate)
-> +{
-> +       struct clk_cpu *cpu =3D to_clk_cpu(hw);
-> +       int ret;
-> +       struct clk_hw *div, *mux_now;
-> +       unsigned long old_rate =3D clk_hw_get_rate(cpu->core);
-> +
-> +       div =3D clk_hw_get_parent(cpu->core);
-> +
-> +       if (div =3D=3D cpu->div_nor)
-> +               mux_now =3D cpu->mux_nor;
-> +       else
-> +               mux_now =3D cpu->mux_hs;
-> +
-> +       ret =3D clk_hw_set_parent(mux_now, cpu->step);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D clk_set_rate(cpu->pfd->clk, rate);
-> +       if (ret) {
-> +               clk_hw_set_parent(mux_now, cpu->mux_parent);
-> +               return ret;
-> +       }
-> +
-> +       if (rate > MAX_NORMAL_RUN_FREQ) {
-> +               pm_qos_add_request(&pm_qos_hsrun, PM_QOS_CPU_DMA_LATENCY,=
- 0);
-> +               clk_hw_set_parent(cpu->mux_hs, cpu->mux_parent);
-> +               clk_hw_set_parent(cpu->core, cpu->div_hs);
-> +       } else {
-> +               clk_hw_set_parent(cpu->mux_nor, cpu->mux_parent);
-> +               clk_hw_set_parent(cpu->core, cpu->div_nor);
-> +               if (old_rate > MAX_NORMAL_RUN_FREQ)
-> +                       pm_qos_remove_request(&pm_qos_hsrun);
-> +       }
-> +
-
-This is a cpufreq driver. Please write a cpufreq driver instead of
-trying to make "clk_set_rate()" conform to the requirements that
-cpufreq-dt mandates, which is that one clk exists and that clk rate
-change changes the frequency of the CPU.
-
-If cpufreq-dt can work with the clk framework is up to the
-implementation of the hardware and the software. From what I see here,
-the clk framework is being subverted through the use of
-clk_hw_set_parent() and clk_set_rate() calls from within the framework
-to make the cpufreq-dt driver happy. Don't do that. Either write a
-proper clk driver for the clks that are there and have that manage the
-clk tree when clk_set_rate() is called, or write a cpufreq driver that
-controls various clks and adjusts their frequencies.
-
-I assume there is a mux or something that eventually clks the CPU, so
-that can certainly be modeled as a clk with the parents set some way.
-That will make clk_set_rate() mostly work as long as you can hardcode a
-min/max value to change the parents, etc. Should work!
-
-The use of pm_qos_add_request() is also pretty horrifying. We're deep in
-the clk framework implementation here and we're calling out to pm_qos.
-That shouldn't need to happen. If anything, we should do that from the
-core framework, but I don't know why we would. It's probably some sort
-of cpufreq thing.
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDQvN10gY2xrOiBpbXg6IGFkZCBpbXhfaHdfY2xrX2NwdXYy
+IGZvciBpLk1YN1VMUA0KDQorIFZpcmVzaA0KDQpIaSBTdGVwaGVuLA0KDQo+IA0KPiBRdW90aW5n
+IHBlbmcuZmFuQG54cC5jb20gKDIwMjAtMDItMDQgMDU6MzQ6MzQpDQo+ID4gRnJvbTogUGVuZyBG
+YW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4NCj4gPiBBZGQgYSBjbGsgYXBpIGZvciBpLk1YN1VM
+UCBBUk0gY29yZSBjbGsgdXNhZ2UuDQo+ID4gaW14X2h3X2Nsa19jcHUgY291bGQgbm90IGJlIHJl
+dXNlZCwgYmVjYXVzZSBpLk1YN1VMUCBBUk0gY29yZSBjbGsgaGFzDQo+ID4gdG90YWxseSBkaWZm
+ZXJlbnQgZGVzaWduLiBUbyBzaW1wbGlmeSBBUk0gY29yZSBjbGsgY2hhbmdlIGxvZ2ljLCBhZGQg
+YQ0KPiA+IG5ldyBjbGsgYXBpLg0KPiA+DQo+ID4gQSBkcmFmdCBwaWN0dXJlIHRvIHNob3cgdGhl
+IEFSTSBjb3JlIGNsb2NrLg0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIHwtc2lyYw0KPiA+ICAgICAgfC0+ICAgcnVuKDUwME1IeikgICAg
+LT4gIGRpdiAtPiBtdXggLS0tLS0tLS0tLS0tLXwtZmlyYw0KPiA+ICAgQVJNfCAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHwNCj4gPiAgICAgIHwtPiAgIGhz
+cnVuKDcyME1IeikgIC0+ICBocyBkaXYgLT4gaHMgbXV4IC0tLS0tLS18LXNwbGwgcGZkDQo+ID4g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfC0u
+Li4uDQo+ID4NCj4gPiBOZWVkIHRvIGNvbmZpZ3VyZSBQTUMgd2hlbiBBUk0gY29yZSBydW5zIGlu
+IEhTUlVOIG9yIFJVTiBtb2RlLg0KPiA+DQo+ID4gUlVOIGFuZCBIU1JVTiByZWxhdGVkIHJlZ2lz
+dGVycyBhcmUgbm90IHNhbWUsIGJ1dCB0aGVpciBtdXggaGFzIHNhbWUNCj4gPiBjbG9ja3MgYXMg
+aW5wdXQuDQo+ID4NCj4gPiBUaGUgQVBJIHRha2VzIGFybSBjb3JlLCBkaXYsIGhzIGRpdiwgbXV4
+LCBocyBtdXgsIG11eCBwYXJlbnQsIHBmZCwNCj4gPiBzdGVwIGFzIHBhcmFtcyBmb3Igc3dpdGNo
+IGNsayBmcmVxLg0KPiA+DQo+ID4gV2hlbiBzZXQgcmF0ZSwgbmVlZCB0byBzd2l0Y2ggbXV4IHRv
+IHRha2UgZmlyYyBhcyBpbnB1dCwgdGhlbiBzZXQgc3BsbA0KPiA+IHBmZCBmcmVxLCB0aGVuIHN3
+aXRjaCBiYWNrIG11eCB0byBzcGxsIHBmZCBhcyBwYXJlbnQuDQo+ID4NCj4gPiBQZXIgaS5NWDdV
+TFAgcmVxdWlyZW1lbnQsIHdoZW4gY2xrIHJ1bnMgaW4gSFNSVU4gbW9kZSwgaXQgY291bGQgb25s
+eQ0KPiA+IHN1cHBvcnQgYXJtIGNvcmUgd2ZpIGlkbGUsIHNvIGFkZCBwbSBxb3MgdG8gc3VwcG9y
+dCBpdC4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29t
+Pg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Nsay9pbXgvTWFrZWZpbGUgICAgfCAgIDEgKw0KPiA+
+ICBkcml2ZXJzL2Nsay9pbXgvY2xrLWNwdXYyLmMgfCAxMzcNCj4gKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysNCj4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay5oICAg
+ICAgIHwgICA5ICsrKw0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDE0NyBpbnNlcnRpb25zKCspDQo+
+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9pbXgvY2xrLWNwdXYyLmMNCj4gPg0K
+PiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvTWFrZWZpbGUgYi9kcml2ZXJzL2Nsay9p
+bXgvTWFrZWZpbGUgaW5kZXgNCj4gPiA5MjhmODc0YzczZDIuLjk3MDdmZWY4ZGE5OCAxMDA2NDQN
+Cj4gPiAtLS0gYS9kcml2ZXJzL2Nsay9pbXgvTWFrZWZpbGUNCj4gPiArKysgYi9kcml2ZXJzL2Ns
+ay9pbXgvTWFrZWZpbGUNCj4gPiBAQCAtNSw2ICs1LDcgQEAgb2JqLSQoQ09ORklHX01YQ19DTEsp
+ICs9IFwNCj4gPiAgICAgICAgIGNsay1idXN5Lm8gXA0KPiA+ICAgICAgICAgY2xrLWNvbXBvc2l0
+ZS04bS5vIFwNCj4gPiAgICAgICAgIGNsay1jcHUubyBcDQo+ID4gKyAgICAgICBjbGstY3B1djIu
+byBcDQo+ID4gICAgICAgICBjbGstY29tcG9zaXRlLTd1bHAubyBcDQo+ID4gICAgICAgICBjbGst
+ZGl2aWRlci1nYXRlLm8gXA0KPiA+ICAgICAgICAgY2xrLWZpeHVwLWRpdi5vIFwNCj4gPiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1jcHV2Mi5jIGIvZHJpdmVycy9jbGsvaW14L2Ns
+ay1jcHV2Mi5jDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXggMDAwMDAwMDAwMDAwLi5h
+NzNkOTdhNzgyYWENCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14
+L2Nsay1jcHV2Mi5jDQo+ID4gQEAgLTAsMCArMSwxMzcgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNl
+LUlkZW50aWZpZXI6IEdQTC0yLjAtb25seQ0KPiA+ICsvKg0KPiA+ICsgKiBDb3B5cmlnaHQgMjAy
+MCBOWFANCj4gPiArICoNCj4gPiArICogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4g
+KyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgPGxpbnV4L2Nsay5oPg0KPiA+ICsjaW5jbHVkZSA8
+bGludXgvY2xrLXByb3ZpZGVyLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9zbGFiLmg+DQo+ID4g
+KyNpbmNsdWRlIDxsaW51eC9wbV9xb3MuaD4NCj4gPiArI2luY2x1ZGUgImNsay5oIg0KPiA+ICsN
+Cj4gPiArc3RhdGljIHN0cnVjdCBwbV9xb3NfcmVxdWVzdCBwbV9xb3NfaHNydW47DQo+ID4gKw0K
+PiA+ICsjZGVmaW5lIE1BWF9OT1JNQUxfUlVOX0ZSRVEgICAgNTI4MDAwMDAwDQo+ID4gKw0KPiA+
+ICtzdHJ1Y3QgY2xrX2NwdSB7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3ICAgaHc7DQo+ID4g
+KyAgICAgICBzdHJ1Y3QgY2xrX2h3ICAgKmNvcmU7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3
+ICAgKmRpdl9ub3I7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3ICAgKmRpdl9oczsNCj4gPiAr
+ICAgICAgIHN0cnVjdCBjbGtfaHcgICAqbXV4X25vcjsNCj4gPiArICAgICAgIHN0cnVjdCBjbGtf
+aHcgICAqbXV4X2hzOw0KPiA+ICsgICAgICAgc3RydWN0IGNsa19odyAgICptdXhfcGFyZW50Ow0K
+PiA+ICsgICAgICAgc3RydWN0IGNsa19odyAgICpwZmQ7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xr
+X2h3ICAgKnN0ZXA7DQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBj
+bGtfY3B1ICp0b19jbGtfY3B1KHN0cnVjdCBjbGtfaHcgKmh3KSB7DQo+ID4gKyAgICAgICByZXR1
+cm4gY29udGFpbmVyX29mKGh3LCBzdHJ1Y3QgY2xrX2NwdSwgaHcpOyB9DQo+ID4gKw0KPiA+ICtz
+dGF0aWMgdW5zaWduZWQgbG9uZyBjbGtfY3B1X3JlY2FsY19yYXRlKHN0cnVjdCBjbGtfaHcgKmh3
+LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgdW5zaWduZWQg
+bG9uZw0KPiBwYXJlbnRfcmF0ZSkgew0KPiA+ICsgICAgICAgc3RydWN0IGNsa19jcHUgKmNwdSA9
+IHRvX2Nsa19jcHUoaHcpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiBjbGtfaHdfZ2V0X3Jh
+dGUoY3B1LT5jb3JlKTsgfQ0KPiA+ICsNCj4gPiArc3RhdGljIGxvbmcgY2xrX2NwdV9yb3VuZF9y
+YXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+ID4gKyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcgKnByYXRlKSB7DQo+ID4gKyAgICAg
+ICByZXR1cm4gcmF0ZTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGludCBjbGtfY3B1X3Nl
+dF9yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LCB1bnNpZ25lZCBsb25nIHJhdGUsDQo+ID4gKyAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHVuc2lnbmVkIGxvbmcgcGFyZW50X3JhdGUpIHsNCj4gPiAr
+ICAgICAgIHN0cnVjdCBjbGtfY3B1ICpjcHUgPSB0b19jbGtfY3B1KGh3KTsNCj4gPiArICAgICAg
+IGludCByZXQ7DQo+ID4gKyAgICAgICBzdHJ1Y3QgY2xrX2h3ICpkaXYsICptdXhfbm93Ow0KPiA+
+ICsgICAgICAgdW5zaWduZWQgbG9uZyBvbGRfcmF0ZSA9IGNsa19od19nZXRfcmF0ZShjcHUtPmNv
+cmUpOw0KPiA+ICsNCj4gPiArICAgICAgIGRpdiA9IGNsa19od19nZXRfcGFyZW50KGNwdS0+Y29y
+ZSk7DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKGRpdiA9PSBjcHUtPmRpdl9ub3IpDQo+ID4gKyAg
+ICAgICAgICAgICAgIG11eF9ub3cgPSBjcHUtPm11eF9ub3I7DQo+ID4gKyAgICAgICBlbHNlDQo+
+ID4gKyAgICAgICAgICAgICAgIG11eF9ub3cgPSBjcHUtPm11eF9oczsNCj4gPiArDQo+ID4gKyAg
+ICAgICByZXQgPSBjbGtfaHdfc2V0X3BhcmVudChtdXhfbm93LCBjcHUtPnN0ZXApOw0KPiA+ICsg
+ICAgICAgaWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiArDQo+
+ID4gKyAgICAgICByZXQgPSBjbGtfc2V0X3JhdGUoY3B1LT5wZmQtPmNsaywgcmF0ZSk7DQo+ID4g
+KyAgICAgICBpZiAocmV0KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGNsa19od19zZXRfcGFyZW50
+KG11eF9ub3csIGNwdS0+bXV4X3BhcmVudCk7DQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBy
+ZXQ7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgaWYgKHJhdGUgPiBNQVhfTk9S
+TUFMX1JVTl9GUkVRKSB7DQo+ID4gKyAgICAgICAgICAgICAgIHBtX3Fvc19hZGRfcmVxdWVzdCgm
+cG1fcW9zX2hzcnVuLA0KPiBQTV9RT1NfQ1BVX0RNQV9MQVRFTkNZLCAwKTsNCj4gPiArICAgICAg
+ICAgICAgICAgY2xrX2h3X3NldF9wYXJlbnQoY3B1LT5tdXhfaHMsIGNwdS0+bXV4X3BhcmVudCk7
+DQo+ID4gKyAgICAgICAgICAgICAgIGNsa19od19zZXRfcGFyZW50KGNwdS0+Y29yZSwgY3B1LT5k
+aXZfaHMpOw0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgY2xrX2h3
+X3NldF9wYXJlbnQoY3B1LT5tdXhfbm9yLCBjcHUtPm11eF9wYXJlbnQpOw0KPiA+ICsgICAgICAg
+ICAgICAgICBjbGtfaHdfc2V0X3BhcmVudChjcHUtPmNvcmUsIGNwdS0+ZGl2X25vcik7DQo+ID4g
+KyAgICAgICAgICAgICAgIGlmIChvbGRfcmF0ZSA+IE1BWF9OT1JNQUxfUlVOX0ZSRVEpDQo+ID4g
+KyAgICAgICAgICAgICAgICAgICAgICAgcG1fcW9zX3JlbW92ZV9yZXF1ZXN0KCZwbV9xb3NfaHNy
+dW4pOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gDQo+IFRoaXMgaXMgYSBjcHVmcmVxIGRyaXZl
+ci4gUGxlYXNlIHdyaXRlIGEgY3B1ZnJlcSBkcml2ZXIgaW5zdGVhZCBvZiB0cnlpbmcgdG8gbWFr
+ZQ0KPiAiY2xrX3NldF9yYXRlKCkiIGNvbmZvcm0gdG8gdGhlIHJlcXVpcmVtZW50cyB0aGF0IGNw
+dWZyZXEtZHQgbWFuZGF0ZXMsDQo+IHdoaWNoIGlzIHRoYXQgb25lIGNsayBleGlzdHMgYW5kIHRo
+YXQgY2xrIHJhdGUgY2hhbmdlIGNoYW5nZXMgdGhlIGZyZXF1ZW5jeSBvZg0KPiB0aGUgQ1BVLg0K
+DQpUaGVyZSB3YXMgYW4gb2xkIHRocmVhZCwgaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTcvOS8y
+MC85MzENCg0KQWlzaGVuZyBwcm9wb3NlZCBhIG9wcC0+c2V0X2NsayBpbXBsZW1lbnRlZCwgYnV0
+IHJlamVjdGVkIGJ5IFZpcmVzaC4NClZpcmVzaCBzdWdnZXN0ZWQgcmVzb2x2ZSB0aGlzIGlzc3Vl
+IGluIGNsayBkcml2ZXIgdG8gbGV0IGNsayBkcml2ZXIgaGFuZGxlDQp0aGUgY3B1IGNsayBmcmVx
+IGNoYW5nZS4NCg0KPiANCj4gSWYgY3B1ZnJlcS1kdCBjYW4gd29yayB3aXRoIHRoZSBjbGsgZnJh
+bWV3b3JrIGlzIHVwIHRvIHRoZSBpbXBsZW1lbnRhdGlvbiBvZg0KPiB0aGUgaGFyZHdhcmUgYW5k
+IHRoZSBzb2Z0d2FyZS4gRnJvbSB3aGF0IEkgc2VlIGhlcmUsIHRoZSBjbGsgZnJhbWV3b3JrIGlz
+DQo+IGJlaW5nIHN1YnZlcnRlZCB0aHJvdWdoIHRoZSB1c2Ugb2YNCj4gY2xrX2h3X3NldF9wYXJl
+bnQoKSBhbmQgY2xrX3NldF9yYXRlKCkgY2FsbHMgZnJvbSB3aXRoaW4gdGhlIGZyYW1ld29yayB0
+bw0KPiBtYWtlIHRoZSBjcHVmcmVxLWR0IGRyaXZlciBoYXBweS4gRG9uJ3QgZG8gdGhhdC4NCg0K
+b2sNCg0KIEVpdGhlciB3cml0ZSBhIHByb3BlciBjbGsNCj4gZHJpdmVyIGZvciB0aGUgY2xrcyB0
+aGF0IGFyZSB0aGVyZSBhbmQgaGF2ZSB0aGF0IG1hbmFnZSB0aGUgY2xrIHRyZWUgd2hlbg0KPiBj
+bGtfc2V0X3JhdGUoKSBpcyBjYWxsZWQsIA0KDQpEbyB5b3UgaGF2ZSBhbnkgc3VnZ2VzdGlvbnMg
+aWYgcHV0IHRoZSBjcHUgY2xrIGZyZXEgY2hhbmdlIGluIGNsayBkcml2ZXI/DQppLk1YN1VMUCBo
+YXMgc29tZSBzcGVjaWFsIHJlcXVpcmVtZW50cywgaXQgaGFzIFJVTiBhbmQgSFNSVU4gcmVnaXN0
+ZXJzDQp3aGljaCBtYXRjaCA1MDBNSHogYW5kIDcyME1IeiwgdG8gcnVuIGF0IDUwME1IeiwgbmVl
+ZCBjb25maWd1cmUgUlVODQpyZWxhdGVkIHJlZ2lzdGVyczsgdG8gcnVuIGF0IDcyME1IeiwgbmVl
+ZCBjb25maWd1cmUgSFNSVU4gcmVsYXRlZCByZWdpc3RlcnMuDQpTbyB0aGUgY3B1IGNsayBpcyBt
+dXggbWFya2VkIHdpdGggQ0xLX0lTX0NSSVRJQ0FMLiBIb3dldmVyIGluIGl0cyBwYXJlbnQNCnRy
+ZWUsIHBsbCBhbmQgcGZkIG5lZWRzIENMS19TRVRfUkFURV9HQVRFLiBTbyBhZnRlciBwbGwvcGZk
+IHByZXBhcmVkLA0KaXRzIGZyZXEgY291bGQgbm90IGJlIGNoYW5nZWQsIGJlY2F1c2Ugb2YgcHJv
+dGVjdGVkLg0KDQoNCm9yIHdyaXRlIGEgY3B1ZnJlcSBkcml2ZXIgdGhhdCBjb250cm9scyB2YXJp
+b3VzIGNsa3MgYW5kDQo+IGFkanVzdHMgdGhlaXIgZnJlcXVlbmNpZXMuDQo+IA0KPiBJIGFzc3Vt
+ZSB0aGVyZSBpcyBhIG11eCBvciBzb21ldGhpbmcgdGhhdCBldmVudHVhbGx5IGNsa3MgdGhlIENQ
+VSwgc28gdGhhdCBjYW4NCj4gY2VydGFpbmx5IGJlIG1vZGVsZWQgYXMgYSBjbGsgd2l0aCB0aGUg
+cGFyZW50cyBzZXQgc29tZSB3YXkuDQo+IFRoYXQgd2lsbCBtYWtlIGNsa19zZXRfcmF0ZSgpIG1v
+c3RseSB3b3JrIGFzIGxvbmcgYXMgeW91IGNhbiBoYXJkY29kZSBhDQo+IG1pbi9tYXggdmFsdWUg
+dG8gY2hhbmdlIHRoZSBwYXJlbnRzLCBldGMuIFNob3VsZCB3b3JrIQ0KDQpBcyBkZXNjcmliZWQg
+YWJvdmUsIHRoZSBwbGwvcGZkIGZsYWcgaGFzIENMS19TRVRfUkFURV9HQVRFLCB0aGUgbXV4DQpo
+YXMgZmxhZyBDTEtfSVNfQ1JJVElDQUwuIFNvIHRoZSBwbGwvcGZkIGZyZXEgY291bGQgbm90IGJl
+IGNoYW5nZWQgYmVjYXVzZQ0KY2xrIGZyYW1ld29yayBtYXJrZWQgcGxsL3BmZCBwcm90ZWN0ZWQu
+DQoNCkFueXdheSBJJ2xsIHRyeSB0byBmaW5kIG1vcmUgdG8gc2VlIGFueSBuZXcgc29sdXRpb25z
+Lg0KDQo+IA0KPiBUaGUgdXNlIG9mIHBtX3Fvc19hZGRfcmVxdWVzdCgpIGlzIGFsc28gcHJldHR5
+IGhvcnJpZnlpbmcuIFdlJ3JlIGRlZXAgaW4gdGhlDQo+IGNsayBmcmFtZXdvcmsgaW1wbGVtZW50
+YXRpb24gaGVyZSBhbmQgd2UncmUgY2FsbGluZyBvdXQgdG8gcG1fcW9zLg0KPiBUaGF0IHNob3Vs
+ZG4ndCBuZWVkIHRvIGhhcHBlbi4gSWYgYW55dGhpbmcsIHdlIHNob3VsZCBkbyB0aGF0IGZyb20g
+dGhlIGNvcmUNCj4gZnJhbWV3b3JrLCBidXQgSSBkb24ndCBrbm93IHdoeSB3ZSB3b3VsZC4gSXQn
+cyBwcm9iYWJseSBzb21lIHNvcnQgb2YNCj4gY3B1ZnJlcSB0aGluZy4NCg0KV2hlbiBydW4gYXQg
+NzIwTUh6LCBjcHUgYXJlIG9ubHkgYWxsb3dlZCBjcHUgY29yZSB3ZmkuIFNvIEkgYWRkIHBtIHFv
+cw0KdG8gYmxvY2sgbG93IHBvd2VyIGlkbGUuDQoNClRoYW5rcywNClBlbmcuDQo=
