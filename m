@@ -2,174 +2,233 @@ Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13D7AC35242
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 19:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8F6C3F68F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 19:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E402465D
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 19:01:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB6D21569
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 19:13:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XxVpd6ih"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731453AbgBKTBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Feb 2020 14:01:14 -0500
-Received: from mailoutvs55.siol.net ([185.57.226.246]:37497 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730813AbgBKTBN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 14:01:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id EDFEA520674;
-        Tue, 11 Feb 2020 20:01:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BhECTqe-gCir; Tue, 11 Feb 2020 20:01:09 +0100 (CET)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 9403252012A;
-        Tue, 11 Feb 2020 20:01:09 +0100 (CET)
-Received: from localhost.localdomain (cpe-194-152-20-232.static.triera.net [194.152.20.232])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 526AA525187;
-        Tue, 11 Feb 2020 20:01:07 +0100 (CET)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mripard@kernel.org, wens@csie.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, icenowy@aosc.io,
-        jernej.skrabec@siol.net, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/7] clk: sunxi-ng: sun8i-de2: H6 doesn't have rotate core
-Date:   Tue, 11 Feb 2020 19:59:32 +0100
-Message-Id: <20200211185936.245174-4-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200211185936.245174-1-jernej.skrabec@siol.net>
-References: <20200211185936.245174-1-jernej.skrabec@siol.net>
+        id S1730758AbgBKTNE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Feb 2020 14:13:04 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:56066 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730748AbgBKTND (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 14:13:03 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q9so5066485wmj.5;
+        Tue, 11 Feb 2020 11:12:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=yV/W7OjVzhnhoaIiEdL5uYFmycb/yF6SI7jbHOa+uWc=;
+        b=XxVpd6ihEfbwxBp+qxEzeKf0oZ/85cRaNzdsbUqXfckCxjQG62IQBhPcPdizMenASB
+         qsuC9ar8wQz/krCqUR0J+X58c079DdyqoqkUuL/Y/VdBAXETCYrbBPUbswx17VOAjVfG
+         cFgYivKeJbcgOkoZFYKb7MxLWd6Pt6dlVRH+T/OXC/7DPNYK998M0fKHB7FFc2X3huGy
+         EnYAuKPEFUH4HrXnbjyn8m1qB6f/zkGU9/NpXx1Bz17ehNaKkn5ruhbg1oSVA9GVKLHA
+         fv83L/+adklWgobU+QCC91VEQ7A8wq8kjD+ikwZsAUzydC0CaB+NB6umg/94+bCcMQtp
+         CwDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yV/W7OjVzhnhoaIiEdL5uYFmycb/yF6SI7jbHOa+uWc=;
+        b=cltOUuu4BZFxBiXF+Yaf495dvi6OGPIwdKnDjlH2wkoJda3GAdcapPwDkxLYP9ZcfR
+         x5my3LziPfkCeVrpe6lz/hh+4Gv1GjJ/QT0kI0OjylYguR7qBEiqa4HwFNfrvC/lU453
+         z9uAtxQMaD42J0wUCQlhvWmJwsXYx5PF2qdQ5X43LXLsYECfYm6xF4J3kWzcRvjvI2iA
+         7sTup+MMKBsuQxNAOD064akrHXg4r+OYWDdNGCKapMTIoVIjKCCrONDCNNjzSOdP6Kf9
+         20YM2xYcD/8fJcYjBDr4vdvuBSN94waqsTHdT/vZbIO0bAUXs5Kf+5KZ4UJC6HSfGQ8v
+         yaTQ==
+X-Gm-Message-State: APjAAAXXVexfrZC4pZB8+Qmmyo+VFmzc8rRs5b4OpaJOU70PME0MQdrB
+        LmmlI7dibz+wUi9IyesFiYE=
+X-Google-Smtp-Source: APXvYqzHGEsEDjUipivXQXZOOpPKSbnu17FHNNxOAmtRHg7brAQ9dvSPOc6wceHdQw0a9+uOrmOSRw==
+X-Received: by 2002:a05:600c:2c06:: with SMTP id q6mr7570602wmg.154.1581448379274;
+        Tue, 11 Feb 2020 11:12:59 -0800 (PST)
+Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net. [194.152.20.232])
+        by smtp.gmail.com with ESMTPSA id w1sm7076839wro.72.2020.02.11.11.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Feb 2020 11:12:57 -0800 (PST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To:     mripard@kernel.org, wens@csie.org, linux-sunxi@googlegroups.com
+Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        hverkuil-cisco@xs4all.nl, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-sunxi@googlegroups.com, jernej.skrabec@siol.net
+Subject: Re: [linux-sunxi] [PATCH 0/8] media: sunxi: Add DE2 rotate driver
+Date:   Tue, 11 Feb 2020 20:12:56 +0100
+Message-ID: <4206703.LvFx2qVVIh@jernej-laptop>
+In-Reply-To: <20200124232014.574989-1-jernej.skrabec@siol.net>
+References: <20200124232014.574989-1-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DE3 documentation regarding presence of rotate core in H6 is a bit
-confusing. Register descriptions mention bits for enabling rotate core
-clocks and reset, but general overview doesn't list it as feature of H6
-display engine, BSP kernel doesn't support it and there is no interrupt
-listed for it. Manual poking registers also didn't reveal presence of
-rotate core.
+Dne sobota, 25. januar 2020 ob 00:20:06 CET je Jernej Skrabec napisal(a):
+> Some of Allwinner SoCs like A83T and A64 SoCs contain DE2 rotate core
+> which can flip image horizontal and vertical and rotate it in 90 deg.
+> steps. It support a lot of output formats, but a bit less capture
+> formats. All YUV input formats get converted to yuv420p, while RGB
+> formats are preserved.
+> 
+> Patches 1-2 fix few issues with DE2 clocks.
+> 
+> Patches 3-4 fix register range of DE2 clocks (it would overlap with
+> rotate driver)
+> 
+> Patches 5-8 provide binding, implement driver and add nodes.
+> 
+> v4l2-compliance SHA: ec55a961487b449bedbe07650674b4965814cf07, 32 bits,
+> 32-bit time_t
+> 
+> Compliance test for sun8i-rotate device /dev/video0:
+> 
+> Driver Info:
+>         Driver name      : sun8i-rotate
+>         Card type        : sun8i-rotate
+>         Bus info         : platform:sun8i-rotate
+>         Driver version   : 5.5.0
+>         Capabilities     : 0x84208000
+>                 Video Memory-to-Memory
+>                 Streaming
+>                 Extended Pix Format
+>                 Device Capabilities
+>         Device Caps      : 0x04208000
+>                 Video Memory-to-Memory
+>                 Streaming
+>                 Extended Pix Format
+> 
+> Required ioctls:
+>         test VIDIOC_QUERYCAP: OK
+> 
+> Allow for multiple opens:
+>         test second /dev/video0 open: OK
+>         test VIDIOC_QUERYCAP: OK
+>         test VIDIOC_G/S_PRIORITY: OK
+>         test for unlimited opens: OK
+> 
+>         test invalid ioctls: OK
+> Debug ioctls:
+>         test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+>         test VIDIOC_LOG_STATUS: OK
+> 
+> Input ioctls:
+>         test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+>         test VIDIOC_ENUMAUDIO: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDIO: OK (Not Supported)
+>         Inputs: 0 Audio Inputs: 0 Tuners: 0
+> 
+> Output ioctls:
+>         test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+>         test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+>         test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+>         test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+>         test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+>         Outputs: 0 Audio Outputs: 0 Modulators: 0
+> 
+> Input/Output configuration ioctls:
+>         test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+>         test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+>         test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+>         test VIDIOC_G/S_EDID: OK (Not Supported)
+> 
+> Control ioctls:
+>         test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>         test VIDIOC_QUERYCTRL: OK
+>         test VIDIOC_G/S_CTRL: OK
+>         test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>         test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+>         test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>         Standard Controls: 4 Private Controls: 0
+> 
+> Format ioctls:
+>         test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>         test VIDIOC_G/S_PARM: OK (Not Supported)
+>         test VIDIOC_G_FBUF: OK (Not Supported)
+>         test VIDIOC_G_FMT: OK
+>         test VIDIOC_TRY_FMT: OK
+>         test VIDIOC_S_FMT: OK
+>         test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>         test Cropping: OK (Not Supported)
+>         test Composing: OK (Not Supported)
+>         test Scaling: OK (Not Supported)
+> 
+> Codec ioctls:
+>         test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>         test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>         test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls:
+>         test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+>         test VIDIOC_EXPBUF: OK
+>         test Requests: OK (Not Supported)
+> 
+> Total for sun8i-rotate device /dev/video0: 45, Succeeded: 45, Failed: 0,
+> Warnings: 0
+> 
+> Best regards,
+> Jernej
+> 
+> Jernej Skrabec (8):
+>   clk: sunxi-ng: sun8i-de2: Swap A64 and H6 definitions
+>   clk: sunxi-ng: sun8i-de2: Fix A83T clocks and reset
 
-Let's assume there isn't any rotate core on H6 present and remove
-related clocks. With that done, structures are same as those for H5, so
-just reuse H5 structure.
+Please disregard above two patches. It turns out that many more changes are 
+required to fix mess with rotation clocks and reset. I sent separate patch 
+series: http://lists.infradead.org/pipermail/linux-arm-kernel/2020-February/
+710242.html
 
-Fixes: 56808da9f97f ("clk: sunxi-ng: Add support for H6 DE3 clocks")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 57 +---------------------------
- 1 file changed, 1 insertion(+), 56 deletions(-)
+Comments on the rest of the series are welcome, though.
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
-ccu-sun8i-de2.c
-index c6220be8e205..87a30d072ae9 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -51,24 +51,6 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "=
-pll-de", 0x0c, 4, 4,
- static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
- 		   CLK_SET_RATE_PARENT);
-=20
--static struct ccu_common *sun50i_h6_de3_clks[] =3D {
--	&mixer0_clk.common,
--	&mixer1_clk.common,
--	&wb_clk.common,
--
--	&bus_mixer0_clk.common,
--	&bus_mixer1_clk.common,
--	&bus_wb_clk.common,
--
--	&mixer0_div_clk.common,
--	&mixer1_div_clk.common,
--	&wb_div_clk.common,
--
--	&bus_rot_clk.common,
--	&rot_clk.common,
--	&rot_div_clk.common,
--};
--
- static struct ccu_common *sun8i_a83t_de2_clks[] =3D {
- 	&mixer0_clk.common,
- 	&mixer1_clk.common,
-@@ -194,26 +176,6 @@ static struct clk_hw_onecell_data sun50i_a64_de2_hw_=
-clks =3D {
- 	.num	=3D CLK_NUMBER_WITH_ROT,
- };
-=20
--static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
--	.hws	=3D {
--		[CLK_MIXER0]		=3D &mixer0_clk.common.hw,
--		[CLK_MIXER1]		=3D &mixer1_clk.common.hw,
--		[CLK_WB]		=3D &wb_clk.common.hw,
--		[CLK_ROT]		=3D &rot_clk.common.hw,
--
--		[CLK_BUS_MIXER0]	=3D &bus_mixer0_clk.common.hw,
--		[CLK_BUS_MIXER1]	=3D &bus_mixer1_clk.common.hw,
--		[CLK_BUS_WB]		=3D &bus_wb_clk.common.hw,
--		[CLK_BUS_ROT]		=3D &bus_rot_clk.common.hw,
--
--		[CLK_MIXER0_DIV]	=3D &mixer0_div_clk.common.hw,
--		[CLK_MIXER1_DIV]	=3D &mixer1_div_clk.common.hw,
--		[CLK_WB_DIV]		=3D &wb_div_clk.common.hw,
--		[CLK_ROT_DIV]		=3D &rot_div_clk.common.hw,
--	},
--	.num	=3D CLK_NUMBER_WITH_ROT,
--};
--
- static struct ccu_reset_map sun8i_a83t_de2_resets[] =3D {
- 	[RST_MIXER0]	=3D { 0x08, BIT(0) },
- 	/*
-@@ -237,13 +199,6 @@ static struct ccu_reset_map sun50i_h5_de2_resets[] =3D=
- {
- 	[RST_WB]	=3D { 0x08, BIT(2) },
- };
-=20
--static struct ccu_reset_map sun50i_h6_de3_resets[] =3D {
--	[RST_MIXER0]	=3D { 0x08, BIT(0) },
--	[RST_MIXER1]	=3D { 0x08, BIT(1) },
--	[RST_WB]	=3D { 0x08, BIT(2) },
--	[RST_ROT]	=3D { 0x08, BIT(3) },
--};
--
- static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
- 	.ccu_clks	=3D sun8i_a83t_de2_clks,
- 	.num_ccu_clks	=3D ARRAY_SIZE(sun8i_a83t_de2_clks),
-@@ -284,16 +239,6 @@ static const struct sunxi_ccu_desc sun50i_h5_de2_clk=
-_desc =3D {
- 	.num_resets	=3D ARRAY_SIZE(sun50i_h5_de2_resets),
- };
-=20
--static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc =3D {
--	.ccu_clks	=3D sun50i_h6_de3_clks,
--	.num_ccu_clks	=3D ARRAY_SIZE(sun50i_h6_de3_clks),
--
--	.hw_clks	=3D &sun50i_h6_de3_hw_clks,
--
--	.resets		=3D sun50i_h6_de3_resets,
--	.num_resets	=3D ARRAY_SIZE(sun50i_h6_de3_resets),
--};
--
- static const struct sunxi_ccu_desc sun8i_v3s_de2_clk_desc =3D {
- 	.ccu_clks	=3D sun8i_v3s_de2_clks,
- 	.num_ccu_clks	=3D ARRAY_SIZE(sun8i_v3s_de2_clks),
-@@ -406,7 +351,7 @@ static const struct of_device_id sunxi_de2_clk_ids[] =
-=3D {
- 	},
- 	{
- 		.compatible =3D "allwinner,sun50i-h6-de3-clk",
--		.data =3D &sun50i_h6_de3_clk_desc,
-+		.data =3D &sun50i_h5_de2_clk_desc,
- 	},
- 	{ }
- };
---=20
-2.25.0
+Best regards,
+Jernej
+
+>   ARM: dts: sunxi: Fix DE2 clocks register range
+>   arm64: dts: allwinner: a64: Fix display clock register range
+>   media: dt-bindings: media: Add Allwinner A83T Rotate driver
+>   media: sun8i: Add Allwinner A83T Rotate driver
+>   ARM: dts: sun8i: a83t: Add device node for rotation core
+>   arm64: dts: allwinner: a64: add node for rotation core
+> 
+>  .../allwinner,sun8i-a83t-de2-rotate.yaml      |  70 ++
+>  MAINTAINERS                                   |   8 +
+>  arch/arm/boot/dts/sun8i-a83t.dtsi             |  13 +-
+>  arch/arm/boot/dts/sun8i-r40.dtsi              |   2 +-
+>  arch/arm/boot/dts/sun8i-v3s.dtsi              |   2 +-
+>  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |   2 +-
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  14 +-
+>  drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  49 +-
+>  drivers/media/platform/Kconfig                |  12 +
+>  drivers/media/platform/sunxi/Makefile         |   1 +
+>  .../platform/sunxi/sun8i-rotate/Makefile      |   2 +
+>  .../sunxi/sun8i-rotate/sun8i-formats.c        | 273 ++++++
+>  .../sunxi/sun8i-rotate/sun8i-formats.h        |  25 +
+>  .../sunxi/sun8i-rotate/sun8i-rotate.c         | 924 ++++++++++++++++++
+>  .../sunxi/sun8i-rotate/sun8i-rotate.h         | 135 +++
+>  15 files changed, 1512 insertions(+), 20 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/media/allwinner,sun8i-a83t-de2-rotate.yam
+> l create mode 100644 drivers/media/platform/sunxi/sun8i-rotate/Makefile
+> create mode 100644
+> drivers/media/platform/sunxi/sun8i-rotate/sun8i-formats.c create mode
+> 100644 drivers/media/platform/sunxi/sun8i-rotate/sun8i-formats.h create
+> mode 100644 drivers/media/platform/sunxi/sun8i-rotate/sun8i-rotate.c create
+> mode 100644 drivers/media/platform/sunxi/sun8i-rotate/sun8i-rotate.h
+
+
+
 
