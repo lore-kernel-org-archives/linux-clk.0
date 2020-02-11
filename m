@@ -2,173 +2,107 @@ Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B04EC352A4
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 02:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1D4C352A4
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 03:08:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ECD320733
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 02:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A51962082F
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 03:08:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="rw9bjGqn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKXZv/7y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727523AbgBKCvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Feb 2020 21:51:03 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:39321 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727742AbgBKCvD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Feb 2020 21:51:03 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1581389462; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=DwinruQUTHVtb433tEVtKSujUuJq0mr9jS6Gc9Jj1Ik=; b=rw9bjGqn+AodRX6+M2IE7HvNyfNU2a4dd5qel93jBLPTpiB0iWFpu3pySRlDh59cF3ji199c
- H1zeNfftKfiHjC7KopSKJiGc1AGD+y/+G2T2NwigQHYTy0saegGUGNRbzuqgpGamVaiup/iS
- 6hQ2FV2wGylaLS3i6cLg2KIj5fI=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e421696.7fa215564b90-smtp-out-n01;
- Tue, 11 Feb 2020 02:51:02 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DC8E7C4479D; Tue, 11 Feb 2020 02:51:00 +0000 (UTC)
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4AE8FC43383;
-        Tue, 11 Feb 2020 02:50:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4AE8FC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 2/2] clk: qcom: gpucc: Add support for GX GDSC for
- SC7180
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-References: <1581307266-26989-1-git-send-email-tdas@codeaurora.org>
- <1581307266-26989-2-git-send-email-tdas@codeaurora.org>
- <CAD=FV=VqRAVZ19gSbtxbmdRCBbPRr+CMxWVR29diWtfX5mL3jw@mail.gmail.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <9ac184a0-03a7-1354-1f18-890f3b66cdcb@codeaurora.org>
-Date:   Tue, 11 Feb 2020 08:20:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
-MIME-Version: 1.0
-In-Reply-To: <CAD=FV=VqRAVZ19gSbtxbmdRCBbPRr+CMxWVR29diWtfX5mL3jw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727632AbgBKDIp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Feb 2020 22:08:45 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34212 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727612AbgBKDIp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Feb 2020 22:08:45 -0500
+Received: by mail-qk1-f194.google.com with SMTP id c20so2803696qkm.1
+        for <linux-clk@vger.kernel.org>; Mon, 10 Feb 2020 19:08:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=bg8WGWFiNlP/c2kLxlwNG4J49V1wsso+2muB3C1AW9c=;
+        b=DKXZv/7ymzCe7lWR2nuYKaFhN0CvQPiBVLKdywBkaD9Mc8y06uZ7LJzBYeHcdwzRVu
+         iTi/CblpfuDt4yDEOdzC25FAjjiBEzXy4ZGxj5vgZnFmr0ceomoPDDbRYxu8+ajFQJhN
+         c/8n6HNrrCGpAhH12+/b592OXEtADYWx1nb6h9NEffFfGQLo1t4TdrQb1XFU0R/43cy1
+         bqtTEWrP6gHNdCTqw78gtDKeTnPMKV8K0K7mD2ovYgzyLlYrLc2Oajazt7v3ZqRIHiD2
+         50Z9w7Nks/TahzrHzejURNxveDbSQjFCzqa4zFD672Ks1pxdQj4uhoDM3YP1lRenHV9i
+         pVVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bg8WGWFiNlP/c2kLxlwNG4J49V1wsso+2muB3C1AW9c=;
+        b=T5SAhjklNakQvLJFNeEdK82fmpniPK/Bw9ZW4E4OOPNid0m7HBX6RojWHc0YJ8O5vD
+         4S3LLE8wVkVKIWrSsh6UD36xyLHUCudqGML4n/skNMhEcoJOdEJswGHQMPKCk/i1piSI
+         8jpex4Slbj8vEV5Sp+uc9ZW0EXWCWlPt18QzdBK/0T2bpuW7gA3jqhkms6ryt6xj7dn1
+         LeBiCQ56KdgXE9sdBat7AAMJmlSY7LXXJQj4fRaytR56ynLAuqpj2Lqlvk51P8ajpEPI
+         Y/ab6LwF5LjaKEePrQkwIqidSnASc84qZ7468Y+CqYjon8E93FBNoMBHz8ogPWYujzHb
+         XUJg==
+X-Gm-Message-State: APjAAAViauzFoM1D/RRg7YBdoNVP0rUMZz/amCsVLKGLHQdEYikBRWC/
+        IqeBIPn6a6va023CaX8AP04=
+X-Google-Smtp-Source: APXvYqxmeoHuS2wt0ms22icYBK4flqPZxbg5eqglY/c3VTu6tZNOcrevbp3eEvJ/BLCsdPxpr0bzfg==
+X-Received: by 2002:a37:4808:: with SMTP id v8mr4031673qka.263.1581390523759;
+        Mon, 10 Feb 2020 19:08:43 -0800 (PST)
+Received: from localhost.localdomain ([2804:14c:482:5bb::1])
+        by smtp.gmail.com with ESMTPSA id x41sm1345893qtj.52.2020.02.10.19.08.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2020 19:08:42 -0800 (PST)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     shawnguo@kernel.org
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH 1/2] clk: imx8mm: Fix the CLKO1 source select list
+Date:   Tue, 11 Feb 2020 00:08:12 -0300
+Message-Id: <20200211030813.13992-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Doug,
+The CLKO1 clock source select list is the following as per the i.MX8MM
+Reference Manual (put in increasing order):
 
-On 2/10/2020 11:19 PM, Doug Anderson wrote:
-> Hi,
-> 
-> On Sun, Feb 9, 2020 at 8:01 PM Taniya Das <tdas@codeaurora.org> wrote:
->>
->> Most of the time the CPU should not be touching the GX domain on the
->> GPU except for a very special use case when the CPU needs to force the
->> GX headswitch off. Add the GX domain for that use case.  As part of
->> this add a dummy enable function for the GX gdsc to simulate success
->> so that the pm_runtime reference counting is correct.  This matches
->> what was done in sdm845 in commit 85a3d920d30a ("clk: qcom: Add a
->> dummy enable function for GX gdsc").
->>
->> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> For future reference, if you have someone's tag in your commit message
-> it's nice to CC them on the email.
-> 
-> 
+000 - 24M_REF_CLK
+001 - SYSTEM_PLL1_CLK
+010 - None
+011 - SYSTEM_PLL1_DIV4
+100 - AUDIO_PLL2_CLK
+101 - SYSTEM_PLL2_DIV2
+110 - VPU_PLL_CLK
+111 - SYSTEM_PLL1_DIV10
 
-My bad my miss.
+Fix it accordingly.
 
->> ---
->>   drivers/clk/qcom/gpucc-sc7180.c | 37 +++++++++++++++++++++++++++++++++++++
->>   1 file changed, 37 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
->> index a96c0b9..7b656b6 100644
->> --- a/drivers/clk/qcom/gpucc-sc7180.c
->> +++ b/drivers/clk/qcom/gpucc-sc7180.c
->> @@ -170,8 +170,45 @@ static struct gdsc cx_gdsc = {
->>          .flags = VOTABLE,
->>   };
->>
->> +/*
->> + * On SC7180 the GPU GX domain is *almost* entirely controlled by the GMU
->> + * running in the CX domain so the CPU doesn't need to know anything about the
->> + * GX domain EXCEPT....
->> + *
->> + * Hardware constraints dictate that the GX be powered down before the CX. If
->> + * the GMU crashes it could leave the GX on. In order to successfully bring back
->> + * the device the CPU needs to disable the GX headswitch. There being no sane
->> + * way to reach in and touch that register from deep inside the GPU driver we
->> + * need to set up the infrastructure to be able to ensure that the GPU can
->> + * ensure that the GX is off during this super special case. We do this by
->> + * defining a GX gdsc with a dummy enable function and a "default" disable
->> + * function.
->> + *
->> + * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
->> + * driver. During power up, nothing will happen from the CPU (and the GMU will
->> + * power up normally but during power down this will ensure that the GX domain
->> + * is *really* off - this gives us a semi standard way of doing what we need.
->> + */
->> +static int gx_gdsc_enable(struct generic_pm_domain *domain)
->> +{
->> +       /* Do nothing but give genpd the impression that we were successful */
->> +       return 0;
->> +}
->> +
->> +static struct gdsc gx_gdsc = {
->> +       .gdscr = 0x100c,
->> +       .clamp_io_ctrl = 0x1508,
->> +       .pd = {
->> +               .name = "gx_gdsc",
->> +               .power_on = gx_gdsc_enable,
->> +       },
->> +       .pwrsts = PWRSTS_OFF_ON,
->> +       .flags = CLAMP_IO,
-> 
-> In my previous reply [1], I asked about these flags and if it was
-> intentional that they were different from sdm845.  I did see a private
-> response, but no public one.  In the future note that it's good to
-> reply publicly so everyone understands what happened.  In this case, I
-> was told "the GDSC's on 845 and SC7180 are different and hence the
-> change in flags is expected".  That answers my question and thus I'm
-> fine with my tag being here.  It also looks like you took my other
-> review feedback on v1, which is nice.
-> 
-> 
-> -Doug
-> 
+Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I am unable to respond to the other thread, thus we put out the reply.
-
-> 
-> [1] https://lore.kernel.org/r/CAD=FV=V6yM7UJwu0ZLPCqmDgV9FS4=g+wcLg0TV51b72zvWT9Q@mail.gmail.com
-> 
-
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 2ed93fc25087..770cf2ae58aa 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -283,8 +283,8 @@ static const char *imx8mm_vpu_h1_sels[] = {"osc_24m", "vpu_pll_out", "sys_pll1_8
+ 
+ static const char *imx8mm_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
+ 
+-static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "osc_27m", "sys_pll1_200m", "audio_pll2_out",
+-					 "vpu_pll", "sys_pll1_80m", };
++static const char *imx8mm_clko1_sels[] = {"osc_24m", "sys_pll1_800m", "dummy", "sys_pll1_200m",
++					  "audio_pll2_out", "sys_pll2_500m", "vpu_pll", "sys_pll1_80m", };
+ 
+ static struct clk_hw_onecell_data *clk_hw_data;
+ static struct clk_hw **hws;
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.17.1
 
---
