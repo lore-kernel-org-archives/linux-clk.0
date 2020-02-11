@@ -2,86 +2,89 @@ Return-Path: <SRS0=edwH=37=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D2CC352A3
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 07:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18436C3B186
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0C0F206D7
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 07:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4EB020842
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Feb 2020 12:14:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sDKU/GfA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbgBKHgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Feb 2020 02:36:41 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34352 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbgBKHgl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 02:36:41 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r18so3552471edl.1;
-        Mon, 10 Feb 2020 23:36:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=G4Z7VXCKOunamakdgxhm4cpbyrTmI1hya2jzoz0wGsM=;
-        b=HKB9+pjAgcqNwYzQR3pN3Zshcs/ttsVNFpcXrtIYIZO4+3tncvUUoH5hiIK9Ga8bAH
-         XCrD0caXoMyMqXMfdg9DQUEFlyFUMi0C+gWZnWG8kpozZu85yLVIFLGQ6jkxIZwPW7zH
-         hr9PInWEFf+fXr/cEMPig59wHVpk2heexnpG1ma8K1fVsXBeoZoNfWlIn3nK3763RTyP
-         BELKWu/VOerZqFFt6MMxu6rvMyS0/Qo1iq3y8L0u/DkAMacf2crdSbuibO8IUtmcrHoU
-         orhb6QmmwdS6yJIHrn+ay0t3hzJ5Ypi5cb/M+//hombD7i0yzBOWSrHJ4diHYJpUIcTn
-         dxGQ==
-X-Gm-Message-State: APjAAAV8nUstxrMTr/DZ3PGYg1A7KXDXJbZqcMOY9jEuFGjvkVO+n2Up
-        2O60kTkJo+Xw2UJg6yaUk9Mbgu3Kvkw=
-X-Google-Smtp-Source: APXvYqzqKtBJLtgKCxSXjRGHIY1cL24AaodwYsk5ckmw1bNhBKhqvhVjhheJZGwj7yIQwaRAQERZeA==
-X-Received: by 2002:a17:906:2296:: with SMTP id p22mr4812524eja.269.1581406598672;
-        Mon, 10 Feb 2020 23:36:38 -0800 (PST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id e13sm292618ejb.19.2020.02.10.23.36.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Feb 2020 23:36:38 -0800 (PST)
-Received: by mail-wr1-f50.google.com with SMTP id t3so10926547wru.7;
-        Mon, 10 Feb 2020 23:36:38 -0800 (PST)
-X-Received: by 2002:a5d:534b:: with SMTP id t11mr6826794wrv.120.1581406597700;
- Mon, 10 Feb 2020 23:36:37 -0800 (PST)
-MIME-Version: 1.0
-References: <20200210222807.206426-1-jernej.skrabec@siol.net> <20200210222807.206426-3-jernej.skrabec@siol.net>
-In-Reply-To: <20200210222807.206426-3-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 11 Feb 2020 15:36:26 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65Y_8r+uxqL_rCC6-_yjYjoviqW9xL68-DpcyR3Nkh+OQ@mail.gmail.com>
-Message-ID: <CAGb2v65Y_8r+uxqL_rCC6-_yjYjoviqW9xL68-DpcyR3Nkh+OQ@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: sunxi-ng: sun8i-de2: Split out H5 definitions
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727878AbgBKMOP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Feb 2020 07:14:15 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:40991 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727960AbgBKMOP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Feb 2020 07:14:15 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1581423254; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=oRKfcwP++zy8LjliDmJ593dnq9AHGwth3BPAylfi5co=; b=sDKU/GfAEvT7CvH+ohnzNYqc2sKVQG0WZUYjAU2kaPFFFxSmjPVxRQQcXp2fT97PTlbzX91X
+ JR3d4BubpZ52gfH/rDzq9e4dR6rsklV/Wc08SKuUIo0fE0bN75xdwM5aW0nHgYScamkZ+AuL
+ GrhAjnq6hHp/nIINHhbxPRmRra8=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e429a90.7f39cbc3ec70-smtp-out-n01;
+ Tue, 11 Feb 2020 12:14:08 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id AA515C4479D; Tue, 11 Feb 2020 12:14:08 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A6A3C43383;
+        Tue, 11 Feb 2020 12:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A6A3C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        robh@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 1/2] clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
+Date:   Tue, 11 Feb 2020 17:43:55 +0530
+Message-Id: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 11, 2020 at 6:28 AM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> H5 has less clocks and resets than A64. Currently that's not obvious
-> because A64 is missing rotation core related clocks and reset.
->
-> Split out H5 definition. A64 structures will be fixed in subsequent
-> commit.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+The clock disable signal for video_cc_vcodec0_core_clk is tied to
+vcodec0_gdsc which is supported in the HW control mode. Thus turning off
+the clock would be taken care automatically when the GDSC turns OFF by
+hardware and clock driver does not require to poll on the CLK_OFF bit.
 
-Fixes: 763c5bd045b1 ("clk: sunxi-ng: add support for DE2 CCU")
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/videocc-sc7180.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-You should also note that this patch requires commit 19368d99746e
-("clk: sunxi-ng: add support for Allwinner H3 DE2 CCU") for the
-H3 clock list.
+diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+index c363c3c..276e5ec 100644
+--- a/drivers/clk/qcom/videocc-sc7180.c
++++ b/drivers/clk/qcom/videocc-sc7180.c
+@@ -97,7 +97,7 @@ static struct clk_branch video_cc_vcodec0_axi_clk = {
 
-Code wise everything looks in order.
-
-ChenYu
+ static struct clk_branch video_cc_vcodec0_core_clk = {
+ 	.halt_reg = 0x890,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_VOTED,
+ 	.clkr = {
+ 		.enable_reg = 0x890,
+ 		.enable_mask = BIT(0),
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
