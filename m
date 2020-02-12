@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02E8C352A4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:32:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E8DC3B186
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24962168B
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:32:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B73D20578
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581550342;
-	bh=Sx7mVuf/x+Km9lDwz5M4AufiDC+BvLCJ+/UJUAOLWB0=;
+	s=default; t=1581550355;
+	bh=QUur6Tdhxx3i8fGGfMoEGp6FV02eDB8MM+/SlamQqQE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=y7DA9sz3Umkbp5fzcqN6l7IqmGs0qCnkHbiRs/UlGh6RRntIGvgiqTQcdsrQQRJN6
-	 JURMloty4PrM/WTjJQ14EH8BffmqH9X8N6Y4WczKh4fDYCOlbv68mlTYQUSS8JhJ1w
-	 gf0JxV1fvqpy9gZjgo0cBeZQwVffrjw+5OIU7rIA=
+	b=Qsip88moM9+XpMib13YqPxPhnX9AGT+e2wGWybRDS2FJ/cigfK3G6hccZMImqtIwL
+	 vhMxXZoEEu/mSnCspEX1SBZsFtxlnu6HQMWPwta/q6/5DU2XWas8fAyDdSXO4O+Bnk
+	 DTC5buFV3O9M55mCfXPoIQRUSs9xe2ado2AQywuA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbgBLXcW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:32:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48206 "EHLO mail.kernel.org"
+        id S1729377AbgBLXcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 18:32:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgBLXcW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:32:22 -0500
+        id S1729356AbgBLXcc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:32:32 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F51320578;
-        Wed, 12 Feb 2020 23:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A58D20578;
+        Wed, 12 Feb 2020 23:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581550341;
-        bh=Sx7mVuf/x+Km9lDwz5M4AufiDC+BvLCJ+/UJUAOLWB0=;
+        s=default; t=1581550352;
+        bh=QUur6Tdhxx3i8fGGfMoEGp6FV02eDB8MM+/SlamQqQE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=S3BBEpAcBvWxAdUoD7YPP7WabTann2mJjeP9Y754XEJX02V3opsx8Dx5YARGKB4fM
-         7i+3yjYCupX2cpNi/tZC31QgJV60/ltUZ6oQdvRf+IKqKs4KG6SBriSKxTVgdgoxTJ
-         My01g0eaj6NyNMSxY/WCBu+E0uBLByYeAnOPx6tk=
+        b=Tnr3CbsNxfO01g8yvQkNowCz3Yt+ePdCaSITNALP2tISz4ya2nBO+KykqwUulUxWf
+         u2xYAmVHrqczHOGg9AFBKK4Z78EkyxjftxkRgce/IGaCLj9jc41a8TifW9+T6uTAhm
+         e+zYUhaSWde9AxRmj57MONjrXva9O6xZrAZODf3c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1579261009-4573-4-git-send-email-claudiu.beznea@microchip.com>
-References: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com> <1579261009-4573-4-git-send-email-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH 3/4] clk: at91: usb: use proper usbs_mask
+In-Reply-To: <1579261009-4573-5-git-send-email-claudiu.beznea@microchip.com>
+References: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com> <1579261009-4573-5-git-send-email-claudiu.beznea@microchip.com>
+Subject: Re: [PATCH 4/4] clk: at91: usb: introduce num_parents in driver's structure
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
@@ -50,19 +50,18 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
         mturquette@baylibre.com, nicolas.ferre@microchip.com
-Date:   Wed, 12 Feb 2020 15:32:20 -0800
-Message-ID: <158155034081.184098.1411951142774904787@swboyd.mtv.corp.google.com>
+Date:   Wed, 12 Feb 2020 15:32:31 -0800
+Message-ID: <158155035131.184098.9806897959771690426@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu Beznea (2020-01-17 03:36:48)
-> Use usbs_mask passed as argument. The usbs_mask is different for
-> SAM9X60.
+Quoting Claudiu Beznea (2020-01-17 03:36:49)
+> SAM9X60 USB clock may have up to 3 parents. Save the number of parents in
+> driver's data structure and validate against it when setting parent.
 >=20
-> Fixes: 2423eeaead6f8 ("clk: at91: usb: Add sam9x60 support")
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 > ---
 
