@@ -2,93 +2,98 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 577C5C35242
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 00:33:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A280DC2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 07:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2173B2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 00:33:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581467627;
-	bh=jjeQHDoBXQjOLBKIhX09ch0SHN8PnG0nbXofAKl6AzU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=bFbvRMPaM0inL4NQIKYnhvf4gmO0fR35c9Jztbp2WgoQpJuLJHrpapvEzqqQjPT29
-	 GjIBmUbqrDQnj0jTcnCTbZKlrghcQESb2MNp4ncFR0merVVdbprb4jwfXqRlHhEFRd
-	 v3pIxHUAhMTMB+FQbKmrTn64/eNbIpQJPKAYlE7k=
+	by mail.kernel.org (Postfix) with ESMTP id 6DC722082F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 07:08:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgBLAdq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Feb 2020 19:33:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38274 "EHLO mail.kernel.org"
+        id S1728192AbgBLHID (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 02:08:03 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:34026 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728070AbgBLAdq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 11 Feb 2020 19:33:46 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDD1F2082F;
-        Wed, 12 Feb 2020 00:33:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581467626;
-        bh=jjeQHDoBXQjOLBKIhX09ch0SHN8PnG0nbXofAKl6AzU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=I26xL0kpqlxXj5LmwUqjG14aGBvnh4Qe3MGccFb1NkWMwFB1gZidOdBu91MTjqN/X
-         FTCAqXhFzbL1I0sJkI76ZDieoLYAqxf0V9D1F31fNOnAywr5rYJ6QG+udhIAkmIX7D
-         ZrBme8HAhH/0QFDWXM0oW+B9QC2A89oIDNtartlo=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
-References: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1 1/2] clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, robh@kernel.org
-Date:   Tue, 11 Feb 2020 16:33:45 -0800
-Message-ID: <158146762511.121156.15568536483085952043@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        id S1728150AbgBLHIC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 02:08:02 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 95D4C1A39F6;
+        Wed, 12 Feb 2020 08:08:00 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 138E81C74D7;
+        Wed, 12 Feb 2020 08:07:53 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DDDD0402E0;
+        Wed, 12 Feb 2020 15:07:43 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        leonard.crestez@nxp.com, abel.vesa@nxp.com, peng.fan@nxp.com,
+        ping.bai@nxp.com, jun.li@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
+Date:   Wed, 12 Feb 2020 15:02:23 +0800
+Message-Id: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-02-11 04:13:55)
-> The clock disable signal for video_cc_vcodec0_core_clk is tied to
-> vcodec0_gdsc which is supported in the HW control mode. Thus turning off
-> the clock would be taken care automatically when the GDSC turns OFF by
-> hardware and clock driver does not require to poll on the CLK_OFF bit.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/videocc-sc7180.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc=
--sc7180.c
-> index c363c3c..276e5ec 100644
-> --- a/drivers/clk/qcom/videocc-sc7180.c
-> +++ b/drivers/clk/qcom/videocc-sc7180.c
-> @@ -97,7 +97,7 @@ static struct clk_branch video_cc_vcodec0_axi_clk =3D {
->=20
->  static struct clk_branch video_cc_vcodec0_core_clk =3D {
->         .halt_reg =3D 0x890,
-> -       .halt_check =3D BRANCH_HALT,
-> +       .halt_check =3D BRANCH_HALT_VOTED,
+The i.MX8M SoCs clock driver are provider, NOT consumer, so clk-provider.h
+should be used instead of clk.h.
 
-Ok. I looked closely and now I notice that some code is using
-BRANCH_VOTED and other code is using BRANCH_HALT_VOTED. In the end, it's
-the same value. I guess I should remove BRANCH_VOTED from the header
-file and make it BIT(7) that's ored in there so that everyone
-consistently uses BRANCH_HALT_VOTED.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mm.c | 2 +-
+ drivers/clk/imx/clk-imx8mn.c | 2 +-
+ drivers/clk/imx/clk-imx8mq.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
->         .clkr =3D {
->                 .enable_reg =3D 0x890,
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 2ed93fc..3d19e87 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mm-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index c5e7316..ad20487 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -4,7 +4,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mn-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/io.h>
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 4c0edca..8c82e7a 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -5,7 +5,7 @@
+  */
+ 
+ #include <dt-bindings/clock/imx8mq-clock.h>
+-#include <linux/clk.h>
++#include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+-- 
+2.7.4
+
