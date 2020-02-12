@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63DAEC352A4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8358BC352A4
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:39:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36F95206DB
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4ABC6206DB
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581550730;
-	bh=SagTHuxEwnio4j42XiH0Rt3krAe38n1UYehH5PgY31k=;
+	s=default; t=1581550788;
+	bh=Ew5t4898iwRtdNmtDXVvo2DtXPQNTHCICkO0CUTsV0g=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=xbz83fonbntyXUqAvj6almfGovWIxaVfIiG7+bFK+0y3XjdCH2k4fIRdJx1G7maJw
-	 r1PaFYlBITTn4ztDrxRkwe5gQ+naq8OdPgceUhzstFgNPluUaRFRYz88+ch17cEdbt
-	 gwn+hoKvRXvQ0BLn/1gbxKiD9M9sf4oBdCEiJKkA=
+	b=jE3U9XQBF8I4J76/TIDo6EAjKY83chZxz2fU7JMxZxhNTsMFNMJ6kUtFJek3OPE8Y
+	 gdmcD2t9NYTwx+YLSiBEwP1nNqmKt/dN+RZmj6Sgmo5KhfWG8FA4E3TvHxmNYkNMvA
+	 cB8JAbbLhWiAuj0oKZIjDrPgc86DvqbBNC7KF9bk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbgBLXiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:38:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57014 "EHLO mail.kernel.org"
+        id S1729258AbgBLXjs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 18:39:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgBLXit (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:38:49 -0500
+        id S1729237AbgBLXjr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:39:47 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 284F020578;
-        Wed, 12 Feb 2020 23:38:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 563C320578;
+        Wed, 12 Feb 2020 23:39:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581550729;
-        bh=SagTHuxEwnio4j42XiH0Rt3krAe38n1UYehH5PgY31k=;
+        s=default; t=1581550787;
+        bh=Ew5t4898iwRtdNmtDXVvo2DtXPQNTHCICkO0CUTsV0g=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YPEObhMFSwfNdyQqb/mJEF2rN37HkVHxltxyOpKOv9MP09LT1ZxqXtsCfdgZfoxhq
-         2hjZk6Si5PVpKissE7zvdsA30Bq1tsJPJN9/XOGVXkMCMImFZtklBrjiiEe7Y2sZBc
-         GICzONDqLpV+MXWxkbtiKBKQ64lJu4SMKpnJvd8I=
+        b=PLB3VNpo0rIteXIq+K7uS3tCf4lhEgE0gd5AHzN2D9a+1tYhYF/MtedddeGbNBbAC
+         ajJ7bxofHyqCXp6Rel0Yvb3bMYR11QUT3Q/LeJyAC1j9oLADXfO1lhRI9abgqEOURM
+         5rdwGLsf8oAMLPpQVxfzjQ00eWCx5CCCcQ++iyfQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200121233349.28627-1-pakki001@umn.edu>
-References: <20200121233349.28627-1-pakki001@umn.edu>
-Subject: Re: [PATCH] clk: samsung: Remove redundant check in samsung_cmu_register_one
+In-Reply-To: <20191206133414.23925-1-geert+renesas@glider.be>
+References: <20191206133414.23925-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: Fix continuation of of_clk_detect_critical()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kjlu@umn.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+Cc:     linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lee Jones <lee.jones@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     pakki001@umn.edu
-Date:   Wed, 12 Feb 2020 15:38:48 -0800
-Message-ID: <158155072841.184098.6053108532542917536@swboyd.mtv.corp.google.com>
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Wed, 12 Feb 2020 15:39:46 -0800
+Message-ID: <158155078656.184098.15639971053640171247@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aditya Pakki (2020-01-21 15:33:49)
-> Consistent with other instances of samsung_clk_init, the check
-> if ctx is NULL is redundant. The function currently does not
-> return NULL.
+Quoting Geert Uytterhoeven (2019-12-06 05:34:14)
+> The second line of the of_clk_detect_critical() function signature is
+> not indented according to coding style.
 >=20
-> Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+> Fixes: d56f8994b6fb928f ("clk: Provide OF helper to mark clocks as CRITIC=
+AL")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
 Applied to clk-next
