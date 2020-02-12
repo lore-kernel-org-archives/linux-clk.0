@@ -7,66 +7,65 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C03EC2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3488C2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AECB20848
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE55C2073C
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:11:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728912AbgBLKJg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 05:09:36 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:56298 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728605AbgBLKJg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:09:36 -0500
+        id S1727649AbgBLKLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 05:11:02 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:60674 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727761AbgBLKLC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:11:02 -0500
 Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id 1m9b220065USYZQ01m9bLh; Wed, 12 Feb 2020 11:09:35 +0100
+        by albert.telenet-ops.be with bizsmtp
+        id 1mB0220015USYZQ06mB0CG; Wed, 12 Feb 2020 11:11:00 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1oxb-0001Fb-58; Wed, 12 Feb 2020 11:09:35 +0100
+        id 1j1oyx-0001Iu-UW; Wed, 12 Feb 2020 11:10:59 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1oxb-0005OR-3K; Wed, 12 Feb 2020 11:09:35 +0100
+        id 1j1oyx-0003C6-T4; Wed, 12 Feb 2020 11:10:59 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+To:     Guo Ren <guoren@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] arm64: time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Wed, 12 Feb 2020 11:09:34 +0100
-Message-Id: <20200212100934.20322-1-geert+renesas@glider.be>
+Subject: [PATCH] csky: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:10:58 +0100
+Message-Id: <20200212101058.11785-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The arm64 time code is not a clock provider, and just needs to call
+The C-Sky platform code is not a clock provider, and just needs to call
 of_clk_init().
 
 Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/kernel/time.c | 2 +-
+ arch/csky/kernel/time.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
-index 73f06d4b3aae5317..eebbc8d7123e08f1 100644
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -23,7 +23,7 @@
- #include <linux/irq.h>
- #include <linux/delay.h>
- #include <linux/clocksource.h>
--#include <linux/clk-provider.h>
-+#include <linux/of_clk.h>
- #include <linux/acpi.h>
+diff --git a/arch/csky/kernel/time.c b/arch/csky/kernel/time.c
+index b5fc9447d93f2307..52379d866fe45f28 100644
+--- a/arch/csky/kernel/time.c
++++ b/arch/csky/kernel/time.c
+@@ -1,8 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (C) 2018 Hangzhou C-SKY Microsystems co.,ltd.
  
- #include <clocksource/arm_arch_timer.h>
+-#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
++#include <linux/of_clk.h>
+ 
+ void __init time_init(void)
+ {
 -- 
 2.17.1
 
