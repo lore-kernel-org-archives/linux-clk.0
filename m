@@ -2,70 +2,106 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53263C2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 09:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC29C3B189
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 09:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED9F2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 09:15:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6514520848
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 09:43:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbgBLJPU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 04:15:20 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:40156 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728150AbgBLJPU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 04:15:20 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D18BF200F35;
-        Wed, 12 Feb 2020 10:15:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 30903203959;
-        Wed, 12 Feb 2020 10:15:12 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5A522402CF;
-        Wed, 12 Feb 2020 17:15:04 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, chen.fang@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx7ulp: Include clk-provider.h instead of clk.h
-Date:   Wed, 12 Feb 2020 17:09:43 +0800
-Message-Id: <1581498584-14674-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728721AbgBLJnV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 04:43:21 -0500
+Received: from michel.telenet-ops.be ([195.130.137.88]:33088 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728637AbgBLJnU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 04:43:20 -0500
+Received: from ramsan ([84.195.182.253])
+        by michel.telenet-ops.be with bizsmtp
+        id 1ljJ2200Q5USYZQ06ljJnX; Wed, 12 Feb 2020 10:43:18 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1oYA-0000xk-Cl; Wed, 12 Feb 2020 10:43:18 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j1oYA-0000Vp-Am; Wed, 12 Feb 2020 10:43:18 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] of: clk: Make of_clk_get_parent_{count,name}() parameter const
+Date:   Wed, 12 Feb 2020 10:43:17 +0100
+Message-Id: <20200212094317.1150-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The i.MX7ULP clock driver is provider, NOT consumer, so clk-provider.h
-should be used instead of clk.h.
+of_clk_get_parent_count() and of_clk_get_parent_name() never modify the
+device nodes passed, so they can be const.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/imx/clk-imx7ulp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c      | 4 ++--
+ include/linux/of_clk.h | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 0620d6c..3710aa0 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -8,7 +8,7 @@
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index e42145cd996a1f77..b6696c8e02518177 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4713,7 +4713,7 @@ EXPORT_SYMBOL(of_clk_get_by_name);
+  *
+  * Returns: The number of clocks that are possible parents of this node
   */
+-unsigned int of_clk_get_parent_count(struct device_node *np)
++unsigned int of_clk_get_parent_count(const struct device_node *np)
+ {
+ 	int count;
  
- #include <dt-bindings/clock/imx7ulp-clock.h>
--#include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/io.h>
+@@ -4725,7 +4725,7 @@ unsigned int of_clk_get_parent_count(struct device_node *np)
+ }
+ EXPORT_SYMBOL_GPL(of_clk_get_parent_count);
+ 
+-const char *of_clk_get_parent_name(struct device_node *np, int index)
++const char *of_clk_get_parent_name(const struct device_node *np, int index)
+ {
+ 	struct of_phandle_args clkspec;
+ 	struct property *prop;
+diff --git a/include/linux/of_clk.h b/include/linux/of_clk.h
+index c86fcad23fc21725..31b73a0da9db33e8 100644
+--- a/include/linux/of_clk.h
++++ b/include/linux/of_clk.h
+@@ -11,17 +11,17 @@ struct of_device_id;
+ 
+ #if defined(CONFIG_COMMON_CLK) && defined(CONFIG_OF)
+ 
+-unsigned int of_clk_get_parent_count(struct device_node *np);
+-const char *of_clk_get_parent_name(struct device_node *np, int index);
++unsigned int of_clk_get_parent_count(const struct device_node *np);
++const char *of_clk_get_parent_name(const struct device_node *np, int index);
+ void of_clk_init(const struct of_device_id *matches);
+ 
+ #else /* !CONFIG_COMMON_CLK || !CONFIG_OF */
+ 
+-static inline unsigned int of_clk_get_parent_count(struct device_node *np)
++static inline unsigned int of_clk_get_parent_count(const struct device_node *np)
+ {
+ 	return 0;
+ }
+-static inline const char *of_clk_get_parent_name(struct device_node *np,
++static inline const char *of_clk_get_parent_name(const struct device_node *np,
+ 						 int index)
+ {
+ 	return NULL;
 -- 
-2.7.4
+2.17.1
 
