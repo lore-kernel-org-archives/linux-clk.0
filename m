@@ -2,82 +2,75 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2760BC352A4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A1FC3B187
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE98221569
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC6E92173E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581548997;
-	bh=1iUCooTSVvuSZIPW3R3UIqC1urOlQcutMWC6laLHEHY=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=o9TVbzKH4HtvvULODEXqAy1FO7k95cDYbfp4VWYoUK0pwlA2PpkvHT4f5fQtry/l+
-	 r9pk/lxvMAAqOtc3+hLbB219BFCJxvXnkdBGApjvDRK+ICRz1p1y/Q4R893vnzYGtK
-	 K4F2Ah4De/dmBODtIA8Lkj1XxQbAV/f4LTZUbR0w=
+	s=default; t=1581549793;
+	bh=TvICLvO9Snk4i7FuNgUQI0ItU+qw1IAxuj3QcAxRPM0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=ci0KnUqGA5b7q07R9ZiamN0yZm6KvOtswG5RCjm0QI/4jIbQDGMesJsIbnskoDE8E
+	 8FVvqaipREsP8BXoAC3SQFmGsqCIUxOKIigTL3krJ4zsH8tfZijwIGbI76rwC6pRor
+	 UCiGXTG5sLqz7c1+S7NlQq5cpUoSiataFoKTKoAY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729194AbgBLXJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:09:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50528 "EHLO mail.kernel.org"
+        id S1729132AbgBLXXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 18:23:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729119AbgBLXJ4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:09:56 -0500
+        id S1727117AbgBLXXK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:23:10 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCE1F2168B;
-        Wed, 12 Feb 2020 23:09:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FB3020848;
+        Wed, 12 Feb 2020 23:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548995;
-        bh=1iUCooTSVvuSZIPW3R3UIqC1urOlQcutMWC6laLHEHY=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=vmYeuGVhwp8SuZHsnbrsdOd353kfjeHcJ0LtW/I/plYN/B2M5QzcZ1OGdPWwTpdGf
-         QPGpVOiRzvNLUVb87cyLcpkNPlGp595RhlYhtCIwO06wsPEZawP62eYVKI1tMWHgT1
-         O/E4MYJh2bonuiPq2d2hbdcNEiINDEnYfrT8noyk=
+        s=default; t=1581549789;
+        bh=TvICLvO9Snk4i7FuNgUQI0ItU+qw1IAxuj3QcAxRPM0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=1gdDaDj409R0nHzjEurNMPfxA0HIjFQdV+yJnpk9xhebX21Rx1UiXKxEDc0lZqi4R
+         7+1eZWfMS8M9vBOcMx4DAEKhSVkx1q5kdu0u9N22Exka94D4KVIaHMfuCFLsmmNB64
+         Xfm3fIbHaB3L3ljZcdTMkLViqSHmkjXd9GLNaAhE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1579905147-12142-4-git-send-email-vnkgutta@codeaurora.org>
-References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org> <1579905147-12142-4-git-send-email-vnkgutta@codeaurora.org>
-Subject: Re: [PATCH v2 3/7] clk: qcom: clk-alpha-pll: Refactor and cleanup trion PLL
+In-Reply-To: <0101016eee224b83-b0577d24-8f51-4e1a-9afb-b3f518e5ba77-000000@us-west-2.amazonses.com>
+References: <20191205002503.13088-1-masneyb@onstation.org> <20191205002503.13088-2-masneyb@onstation.org> <0101016eee224b83-b0577d24-8f51-4e1a-9afb-b3f518e5ba77-000000@us-west-2.amazonses.com>
+Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, jshriram@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, psodagud@codeaurora.org,
-        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
-        vinod.koul@linaro.org, vnkgutta@codeaurora.org
-Date:   Wed, 12 Feb 2020 15:09:54 -0800
-Message-ID: <158154899499.184098.8708399326565910374@swboyd.mtv.corp.google.com>
+Cc:     mark.rutland@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+To:     Brian Masney <masneyb@onstation.org>,
+        Taniya Das <tdas@codeaurora.org>, dmitry.torokhov@gmail.com,
+        robh+dt@kernel.org
+Date:   Wed, 12 Feb 2020 15:23:08 -0800
+Message-ID: <158154978850.184098.12366153456613977692@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Venkata Narendra Kumar Gutta (2020-01-24 14:32:23)
-> From: Taniya Das <tdas@codeaurora.org>
+Quoting Taniya Das (2019-12-09 20:47:35)
+> Hi Brian,
 >=20
-> The PLL run and standby modes are similar across the PLLs, thus rename
-> and refactor the code accordingly.
+> On 12/5/2019 5:54 AM, Brian Masney wrote:
+> > +     d_reg_val =3D mask - (((mask - 17) * duty->num) / duty->den);
+> > +     ret =3D __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
+> > +                                                d_reg_val, duty->num,
+> > +                                                duty->den);
 >=20
-> Remove duplicate function for calculating the round rate of PLL and also
-> update the trion pll ops to use the common function.
->=20
-> Reviewed-by: Vinod Koul <vkoul@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 71 +++++++++++++---------------------=
-------
->  1 file changed, 22 insertions(+), 49 deletions(-)
+> The duty-cycle calculation is not accurate.
+> There is already a plan to submit the duty-cycle changes from my side.
 
-Looks mostly ok but it's wrecked now by me. Can you resend, splitting
-this patch into at least two things? One patch to replace defines with
-standard names and another to do the rest that this patch does?
+What are the plans to submit this? Should we expect to see this support
+in the next week? Month?
