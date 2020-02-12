@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A512DC3B186
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26867C3F68F
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C11D20848
+	by mail.kernel.org (Postfix) with ESMTP id F2EC4217F4
 	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:08:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729022AbgBLKIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1729039AbgBLKIk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 12 Feb 2020 05:08:40 -0500
-Received: from laurent.telenet-ops.be ([195.130.137.89]:42452 "EHLO
-        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729033AbgBLKIk (ORCPT
+Received: from michel.telenet-ops.be ([195.130.137.88]:58944 "EHLO
+        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729023AbgBLKIk (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:08:40 -0500
 Received: from ramsan ([84.195.182.253])
-        by laurent.telenet-ops.be with bizsmtp
-        id 1m8Y2200M5USYZQ01m8Yjw; Wed, 12 Feb 2020 11:08:38 +0100
+        by michel.telenet-ops.be with bizsmtp
+        id 1m8Y2200f5USYZQ06m8Yvg; Wed, 12 Feb 2020 11:08:38 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1owa-0001ES-Ju; Wed, 12 Feb 2020 11:08:32 +0100
+        id 1j1owa-0001Ef-QB; Wed, 12 Feb 2020 11:08:32 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1owa-0000Ln-I2; Wed, 12 Feb 2020 11:08:32 +0100
+        id 1j1owa-0000Ml-OG; Wed, 12 Feb 2020 11:08:32 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Russell King <linux@armlinux.org.uk>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -43,9 +43,9 @@ Cc:     linux-arm-kernel@lists.infradead.org,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/7] ARM: mediatek: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Wed, 12 Feb 2020 11:08:25 +0100
-Message-Id: <20200212100830.446-3-geert+renesas@glider.be>
+Subject: [PATCH 6/7] ARM: sunxi: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:08:29 +0100
+Message-Id: <20200212100830.446-7-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200212100830.446-1-geert+renesas@glider.be>
 References: <20200212100830.446-1-geert+renesas@glider.be>
@@ -54,28 +54,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Mediatek platform code is not a clock provider, and just needs to
+The Allwinner platform code is not a clock provider, and just needs to
 call of_clk_init().
 
 Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm/mach-mediatek/mediatek.c | 2 +-
+ arch/arm/mach-sunxi/sunxi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-mediatek/mediatek.c b/arch/arm/mach-mediatek/mediatek.c
-index f6f102fa9e23a0f8..e6e9f93a1f01c7d0 100644
---- a/arch/arm/mach-mediatek/mediatek.c
-+++ b/arch/arm/mach-mediatek/mediatek.c
-@@ -9,7 +9,7 @@
- #include <linux/io.h>
- #include <asm/mach/arch.h>
- #include <linux/of.h>
--#include <linux/clk-provider.h>
-+#include <linux/of_clk.h>
- #include <linux/clocksource.h>
+diff --git a/arch/arm/mach-sunxi/sunxi.c b/arch/arm/mach-sunxi/sunxi.c
+index 933b6930f024f03a..06da2747a90bc21d 100644
+--- a/arch/arm/mach-sunxi/sunxi.c
++++ b/arch/arm/mach-sunxi/sunxi.c
+@@ -10,9 +10,9 @@
+  * warranty of any kind, whether express or implied.
+  */
  
+-#include <linux/clk-provider.h>
+ #include <linux/clocksource.h>
+ #include <linux/init.h>
++#include <linux/of_clk.h>
+ #include <linux/platform_device.h>
+ #include <linux/reset/sunxi.h>
  
 -- 
 2.17.1
