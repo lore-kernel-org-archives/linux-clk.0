@@ -2,59 +2,104 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D099C2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:04:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DBEC2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E7B32073C
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:04:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D6220873
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:25:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbgBLMES (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 07:04:18 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:35254 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727589AbgBLMER (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:04:17 -0500
-Received: from p508fd8fe.dip0.t-ipconnect.de ([80.143.216.254] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1j1qkU-0007ts-5l; Wed, 12 Feb 2020 13:04:10 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
-        robin.murphy@arm.com
-Subject: Re: [PATCH v3 1/3] clk: rockchip: convert rk3399 pll type to use readl_poll_timeout
-Date:   Wed, 12 Feb 2020 13:04:09 +0100
-Message-ID: <3214502.EbdgFk5LkT@phil>
-In-Reply-To: <20200129163821.1547295-1-heiko@sntech.de>
-References: <20200129163821.1547295-1-heiko@sntech.de>
+        id S1727561AbgBLMZV convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 07:25:21 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44280 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgBLMZV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 07:25:21 -0500
+Received: by mail-ot1-f68.google.com with SMTP id h9so1666186otj.11;
+        Wed, 12 Feb 2020 04:25:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5ZiL9siKE7XkZCgZqu6b2vONRR+3a8KiQl3qZgEgmeE=;
+        b=g5JohOIlnQGNtFp92wC2rmcWv99k0FB61crK8zhRjPVU5793KJIuHb8Tf9JhbSatNS
+         13mzdUdiiLttR8iSXXoxtCmoBTmHxOYMylHoXSAXjRAVm0dv8FliUUuPwL8PFeiW6FW0
+         v7TlBBeNIZ0uSDA/BZmnOWMFv2lq1KPGVlIJ7HmWQi+YYPJhMVl0ioTihJHbHjsTKfcH
+         bXUymMusnhEOW89ihKNOajvLI1STmHqm8ilT0L3M1NA3p23golG9NnS3xL4O36c4iDSI
+         nAZt2uS5JyMckyQZKCpPjle+bSV9E33f52oq55dU0qErSpch16ErLSK4B8X5mAr76PTo
+         YajA==
+X-Gm-Message-State: APjAAAXteWGCnSbs3BrKf3EYqx/TmUBakymowi1jayUHJwqNlUJb1aGc
+        Z8dRw2/bL3NAglhovI/26+zMVA+9TOylrtSP7ixa0A==
+X-Google-Smtp-Source: APXvYqxmGlXr/EAwEwS6bZTnKJ7k87TTOgxf/vN5Qb27UlIEyVHcDP7C58ED8HUgPwgzR225uufjJyjdtXjeckYQfGs=
+X-Received: by 2002:a9d:8f8:: with SMTP id 111mr8606343otf.107.1581510320462;
+ Wed, 12 Feb 2020 04:25:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20200212101651.9010-1-geert+renesas@glider.be> <CAEbi=3fMRq++Eot+BEtCedeyhM65kTc+nS7=inCTR8MkT5srww@mail.gmail.com>
+In-Reply-To: <CAEbi=3fMRq++Eot+BEtCedeyhM65kTc+nS7=inCTR8MkT5srww@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 12 Feb 2020 13:25:09 +0100
+Message-ID: <CAMuHMdU+VLpg5Yezo2Ea9v2vmvbA=nEcKObBgZYwjSV10OkY=A@mail.gmail.com>
+Subject: Re: [PATCH] nds32: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+To:     Greentime Hu <green.hu@gmail.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Nick Hu <nickhu@andestech.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 29. Januar 2020, 17:38:19 CET schrieb Heiko Stuebner:
-> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
-> 
-> Instead of open coding the polling of the lock status, use the
-> handy readl_poll_timeout for this. As the pll locking is normally
-> blazingly fast and we don't want to incur additional delays, we're
-> not doing any sleeps similar to for example the imx clk-pllv4
-> and define a very safe but still short timeout of 1ms.
-> 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Hi Greentime,
 
-applied all 3 for 5.7 with Stephen's Review
+On Wed, Feb 12, 2020 at 11:52 AM Greentime Hu <green.hu@gmail.com> wrote:
+> Geert Uytterhoeven <geert+renesas@glider.be> 於 2020年2月12日 週三 下午6:16寫道：
+> > The Andes platform code is not a clock provider, and just needs to call
+> > of_clk_init().
+> >
+> > Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> >  arch/nds32/kernel/time.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/nds32/kernel/time.c b/arch/nds32/kernel/time.c
+> > index ac9d78ce3a818926..574a3d0a853980a9 100644
+> > --- a/arch/nds32/kernel/time.c
+> > +++ b/arch/nds32/kernel/time.c
+> > @@ -2,7 +2,7 @@
+> >  // Copyright (C) 2005-2017 Andes Technology Corporation
+> >
+> >  #include <linux/clocksource.h>
+> > -#include <linux/clk-provider.h>
+> > +#include <linux/of_clk.h>
+> >
+> >  void __init time_init(void)
+> >  {
+>
+> Thank you, Geert.
+>
+> Let me know if you like to put in your tree or nds32's.
+> Acked-by: Greentime Hu <green.hu@gmail.com>
 
+Please take it in the nds32 tree.
+Thanks!
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
