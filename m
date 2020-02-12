@@ -2,75 +2,93 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A1FC3B187
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD49C352A4
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6E92173E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:23:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3BF82168B
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:28:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581549793;
-	bh=TvICLvO9Snk4i7FuNgUQI0ItU+qw1IAxuj3QcAxRPM0=;
+	s=default; t=1581550081;
+	bh=+9cAmBytFDRq8v6DYSm8WyN2UcW1McuocntwVo6iKUg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ci0KnUqGA5b7q07R9ZiamN0yZm6KvOtswG5RCjm0QI/4jIbQDGMesJsIbnskoDE8E
-	 8FVvqaipREsP8BXoAC3SQFmGsqCIUxOKIigTL3krJ4zsH8tfZijwIGbI76rwC6pRor
-	 UCiGXTG5sLqz7c1+S7NlQq5cpUoSiataFoKTKoAY=
+	b=imWGfLZc1SwxM0HErut1acYgY7acWrgKFmUELP9a6H6pX8waDPomvd6xIHN44fb4Z
+	 0hwa6QoCxp9S6AwXCVoYfbetdEmwR965vXZyFaOzjAvGyxLgV0y5uaWGKoPvevgjr5
+	 iIeeGUfhnDgcigYw9UjhPWceQi8nm0vNjFLe5n60=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbgBLXXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:23:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33280 "EHLO mail.kernel.org"
+        id S1729103AbgBLX2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 18:28:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727117AbgBLXXK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 18:23:10 -0500
+        id S1727117AbgBLX2B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:28:01 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FB3020848;
-        Wed, 12 Feb 2020 23:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FFED20848;
+        Wed, 12 Feb 2020 23:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581549789;
-        bh=TvICLvO9Snk4i7FuNgUQI0ItU+qw1IAxuj3QcAxRPM0=;
+        s=default; t=1581550080;
+        bh=+9cAmBytFDRq8v6DYSm8WyN2UcW1McuocntwVo6iKUg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=1gdDaDj409R0nHzjEurNMPfxA0HIjFQdV+yJnpk9xhebX21Rx1UiXKxEDc0lZqi4R
-         7+1eZWfMS8M9vBOcMx4DAEKhSVkx1q5kdu0u9N22Exka94D4KVIaHMfuCFLsmmNB64
-         Xfm3fIbHaB3L3ljZcdTMkLViqSHmkjXd9GLNaAhE=
+        b=r+POCyTBoKgcIxvtq7ycJ+KCMoaMiduzaZZ3xQ1SduU7sjMokzzjOtPw6wqwZS3io
+         eU2lNzojqF0xej67TAjee758E6QUFOLcPBr/IOOQFkAu/ieFSPcEww5snQX4wqChXy
+         MY6fMSsDNmdFYDbCy7CC7F6cyPJGTOR59Nf+kmb8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0101016eee224b83-b0577d24-8f51-4e1a-9afb-b3f518e5ba77-000000@us-west-2.amazonses.com>
-References: <20191205002503.13088-1-masneyb@onstation.org> <20191205002503.13088-2-masneyb@onstation.org> <0101016eee224b83-b0577d24-8f51-4e1a-9afb-b3f518e5ba77-000000@us-west-2.amazonses.com>
-Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
+In-Reply-To: <1jv9okazq9.fsf@starbuckisacylon.baylibre.com>
+References: <20200205232802.29184-1-sboyd@kernel.org> <20200205232802.29184-2-sboyd@kernel.org> <1jv9okazq9.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH v2 1/4] clk: Don't cache errors from clk_ops::get_phase()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mark.rutland@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Brian Masney <masneyb@onstation.org>,
-        Taniya Das <tdas@codeaurora.org>, dmitry.torokhov@gmail.com,
-        robh+dt@kernel.org
-Date:   Wed, 12 Feb 2020 15:23:08 -0800
-Message-ID: <158154978850.184098.12366153456613977692@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Wed, 12 Feb 2020 15:27:59 -0800
+Message-ID: <158155007950.184098.15676908208357845365@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-12-09 20:47:35)
-> Hi Brian,
+Quoting Jerome Brunet (2020-02-06 00:26:06)
 >=20
-> On 12/5/2019 5:54 AM, Brian Masney wrote:
-> > +     d_reg_val =3D mask - (((mask - 17) * duty->num) / duty->den);
-> > +     ret =3D __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
-> > +                                                d_reg_val, duty->num,
-> > +                                                duty->den);
+> On Thu 06 Feb 2020 at 00:27, Stephen Boyd <sboyd@kernel.org> wrote:
 >=20
-> The duty-cycle calculation is not accurate.
-> There is already a plan to submit the duty-cycle changes from my side.
+> > We don't check for errors from clk_ops::get_phase() before storing away
+> > the result into the clk_core::phase member. This can lead to some fairly
+> > confusing debugfs information if these ops do return an error. Let's
+> > skip the store when this op fails to fix this. While we're here, move
+> > the locking outside of clk_core_get_phase() to simplify callers from
+> > the debugfs side.
+> >
+> > Cc: Douglas Anderson <dianders@chromium.org>
+> > Cc: Heiko Stuebner <heiko@sntech.de>
+> > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > ---
+> >  drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
+> >  1 file changed, 32 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index d529ad67805c..26213e82f5f9 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *=
+core)
+> >  {
+> >       int ret;
+> > =20
+> > -     clk_prepare_lock();
+>=20
+> Should the function name get the "_nolock" suffix then ?
+>=20
 
-What are the plans to submit this? Should we expect to see this support
-in the next week? Month?
+I figure we can add such a one if clk_core_ prefix isn't enough to
+differentiate.
