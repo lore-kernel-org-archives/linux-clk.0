@@ -2,73 +2,68 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5CFAC3B187
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E989C352A4
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:56:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86DF6217F4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25D9C2173E
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:56:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581548171;
+	bh=SCnNSfEGNeaLvEPYBFXgqfow4bBeZQwy5T7gptghPE8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=rkjwZbxkZ4lSsLKcgPzvRed/s5IH4Lu+eo8GtIT4MIn5+s+VQ/jWK3yUtcFnlswIL
+	 mr5qGYqcsBfVQA8ZiHcgcVPTOlfQ0YsLwq0q6YwacCdxBlQfg90jIj/YpVcG14aOo8
+	 ieUh2CyjNTz2RN3td1JALf4hB63l3EbKxew0Ksgc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728098AbgBLWg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 17:36:27 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:39280 "EHLO gloria.sntech.de"
+        id S1729157AbgBLW4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 17:56:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbgBLWg1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:36:27 -0500
-Received: from p508fd8fe.dip0.t-ipconnect.de ([80.143.216.254] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1j20cF-0001ua-8B; Wed, 12 Feb 2020 23:36:19 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Justin Swartz <justin.swartz@risingedge.co.za>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks
-Date:   Wed, 12 Feb 2020 23:36:18 +0100
-Message-ID: <3638560.bLjz2vc75D@phil>
-In-Reply-To: <20200114162503.7548-1-justin.swartz@risingedge.co.za>
-References: <20200114162503.7548-1-justin.swartz@risingedge.co.za>
+        id S1728185AbgBLW4K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 17:56:10 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D357B2168B;
+        Wed, 12 Feb 2020 22:56:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581548169;
+        bh=SCnNSfEGNeaLvEPYBFXgqfow4bBeZQwy5T7gptghPE8=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=x/+w7+6ZCMH4J8zy6pThODObm0WIsKddbKyctJ1uGJ2hLo2RqxUYjFhzF/DOhJgqJ
+         /IQuYnyWJxDNkg8SRGiWkoBFl0RP6kIuVEMXx6kOgGrOqFvvX7H8FBGG7prp5Hl2Xa
+         sP9pjAeUtAb6P53W5C0wakF+gvlwUz82LxutybE4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+References: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        festevam@gmail.com, jun.li@nxp.com, kernel@pengutronix.de,
+        leonard.crestez@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Wed, 12 Feb 2020 14:56:09 -0800
+Message-ID: <158154816906.184098.11837279192030973805@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Justin,
+Quoting Anson Huang (2020-02-11 23:02:23)
+> The i.MX8M SoCs clock driver are provider, NOT consumer, so clk-provider.h
+> should be used instead of clk.h.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
 
-Am Dienstag, 14. Januar 2020, 17:25:02 CET schrieb Justin Swartz:
-> The following changes prevent the unrecoverable freezes and rcu_sched
-> stall warnings experienced in each of my attempts to take advantage of
-> lima.
-> 
-> Replace the COMPOSITE_NOGATE definition of aclk_gpu_pre with a
-> COMPOSITE that retains the selection of HDMIPHY as the PLL source, but
-> instead makes uses of the aclk_gpu PLL source gate and parent names
-> defined by mux_pll_src_4plls_p rather than mux_aclk_gpu_pre_p.
-> 
-> Remove the now unused mux_aclk_gpu_pre_p and the four named but also
-> unused definitions (cpll_gpu, gpll_gpu, hdmiphy_gpu and usb480m_gpu)
-> of the aclk_gpu PLL source gate.
-> 
-> Use the correct gate offset for aclk_gpu and aclk_gpu_noc.
-> 
-> Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
-
-thanks a lot for diving through the clock controller and fixing the
-issues. I've checked against the TRM as well and the previous state
-was quite wrong and your changes match the hardware manual.
-
-I've applied it as fix for 5.6 now.
-
-Thanks
-Heiko
-
-
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
