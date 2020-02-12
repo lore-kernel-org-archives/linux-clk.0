@@ -2,71 +2,59 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B73C2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D099C2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49E852073C
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7B32073C
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 12:04:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727600AbgBLMDU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 07:03:20 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:42624 "EHLO inva021.nxp.com"
+        id S1727613AbgBLMES (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 07:04:18 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:35254 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727762AbgBLMDT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 07:03:19 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B7BC2041C6;
-        Wed, 12 Feb 2020 13:03:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 260B62041BD;
-        Wed, 12 Feb 2020 13:03:10 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id E0660402B7;
-        Wed, 12 Feb 2020 20:02:59 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        allison@lohutok.net, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, abel.vesa@nxp.com, leonard.crestez@nxp.com,
-        peng.fan@nxp.com, ping.bai@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 2/5] clk: imx8mq: Add missing of_node_put()
-Date:   Wed, 12 Feb 2020 19:57:34 +0800
-Message-Id: <1581508657-12107-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581508657-12107-1-git-send-email-Anson.Huang@nxp.com>
-References: <1581508657-12107-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727589AbgBLMER (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 07:04:17 -0500
+Received: from p508fd8fe.dip0.t-ipconnect.de ([80.143.216.254] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1j1qkU-0007ts-5l; Wed, 12 Feb 2020 13:04:10 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
+        robin.murphy@arm.com
+Subject: Re: [PATCH v3 1/3] clk: rockchip: convert rk3399 pll type to use readl_poll_timeout
+Date:   Wed, 12 Feb 2020 13:04:09 +0100
+Message-ID: <3214502.EbdgFk5LkT@phil>
+In-Reply-To: <20200129163821.1547295-1-heiko@sntech.de>
+References: <20200129163821.1547295-1-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After finishing using device node got from of_find_compatible_node(),
-of_node_put() needs to be called.
+Am Mittwoch, 29. Januar 2020, 17:38:19 CET schrieb Heiko Stuebner:
+> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+> 
+> Instead of open coding the polling of the lock status, use the
+> handy readl_poll_timeout for this. As the pll locking is normally
+> blazingly fast and we don't want to incur additional delays, we're
+> not doing any sleeps similar to for example the imx clk-pllv4
+> and define a very safe but still short timeout of 1ms.
+> 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c | 1 +
- 1 file changed, 1 insertion(+)
+applied all 3 for 5.7 with Stephen's Review
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 8c82e7a..831ce71 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -305,6 +305,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mq-anatop");
- 	base = of_iomap(np, 0);
-+	of_node_put(np);
- 	if (WARN_ON(!base))
- 		return -ENOMEM;
- 
--- 
-2.7.4
 
