@@ -2,97 +2,71 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9075BC2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C03EC2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD4321569
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AECB20848
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbgBLKJB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 05:09:01 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:49804 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbgBLKIk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:08:40 -0500
+        id S1728912AbgBLKJg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 05:09:36 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:56298 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728605AbgBLKJg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:09:36 -0500
 Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 1m8Y2200H5USYZQ01m8YUq; Wed, 12 Feb 2020 11:08:39 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id 1m9b220065USYZQ01m9bLh; Wed, 12 Feb 2020 11:09:35 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1owa-0001EO-IO; Wed, 12 Feb 2020 11:08:32 +0100
+        id 1j1oxb-0001Fb-58; Wed, 12 Feb 2020 11:09:35 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1owa-0000LV-FB; Wed, 12 Feb 2020 11:08:32 +0100
+        id 1j1oxb-0005OR-3K; Wed, 12 Feb 2020 11:09:35 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Russell King <linux@armlinux.org.uk>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michal Simek <michal.simek@xilinx.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/7] ARM: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Wed, 12 Feb 2020 11:08:23 +0100
-Message-Id: <20200212100830.446-1-geert+renesas@glider.be>
+Subject: [PATCH] arm64: time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:09:34 +0100
+Message-Id: <20200212100934.20322-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi all,
+The arm64 time code is not a clock provider, and just needs to call
+of_clk_init().
 
-The OF clock helpers were moved to <linux/of_clk.h> a while ago.
-Hence code that is not a clock provider, but just needs to call
-of_clk_init(), can (and should) include <linux/of_clk.h> instead of
-<linux/clk-provider.h>.
+Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
-All these patches are independent of each others, and thus can be
-applied by the corresponding subsystem maintainers.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ arch/arm64/kernel/time.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
-Geert Uytterhoeven (7):
-  ARM/time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: mediatek: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: mmp: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: rockchip: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: shmobile: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: sunxi: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-  ARM: zynq: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-
- arch/arm/kernel/time.c                   | 2 +-
- arch/arm/mach-mediatek/mediatek.c        | 2 +-
- arch/arm/mach-mmp/mmp-dt.c               | 2 +-
- arch/arm/mach-mmp/mmp2-dt.c              | 2 +-
- arch/arm/mach-rockchip/rockchip.c        | 2 +-
- arch/arm/mach-shmobile/setup-rcar-gen2.c | 2 +-
- arch/arm/mach-sunxi/sunxi.c              | 2 +-
- arch/arm/mach-zynq/common.c              | 2 +-
- 8 files changed, 8 insertions(+), 8 deletions(-)
-
+diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
+index 73f06d4b3aae5317..eebbc8d7123e08f1 100644
+--- a/arch/arm64/kernel/time.c
++++ b/arch/arm64/kernel/time.c
+@@ -23,7 +23,7 @@
+ #include <linux/irq.h>
+ #include <linux/delay.h>
+ #include <linux/clocksource.h>
+-#include <linux/clk-provider.h>
++#include <linux/of_clk.h>
+ #include <linux/acpi.h>
+ 
+ #include <clocksource/arm_arch_timer.h>
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
