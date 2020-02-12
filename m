@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E989C352A4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F430C352A4
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D9C2173E
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 22:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E669A2168B
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581548171;
-	bh=SCnNSfEGNeaLvEPYBFXgqfow4bBeZQwy5T7gptghPE8=;
+	s=default; t=1581548516;
+	bh=1Dc+b6kANOK+MTUko6hygKOXL+SmgqNxbhJ3tJ96sug=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=rkjwZbxkZ4lSsLKcgPzvRed/s5IH4Lu+eo8GtIT4MIn5+s+VQ/jWK3yUtcFnlswIL
-	 mr5qGYqcsBfVQA8ZiHcgcVPTOlfQ0YsLwq0q6YwacCdxBlQfg90jIj/YpVcG14aOo8
-	 ieUh2CyjNTz2RN3td1JALf4hB63l3EbKxew0Ksgc=
+	b=W+SlXUINGiyo8HR4ZaNbyx7ifCl6v7jN0QnLgb+cxmtoJW4EkijfeDo2ySmhngWmO
+	 3/YCki8wNU+khrbwH004ZrD+SNbAVX79fv0/Kx/web0uZ2diIUh6NodXkrqeD3O83p
+	 ZnKyifXh0GVpgvVW2RO5ywgq0SDCvuOA4UrQ3U6w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbgBLW4K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 17:56:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42560 "EHLO mail.kernel.org"
+        id S1728674AbgBLXBz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 18:01:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728185AbgBLW4K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Feb 2020 17:56:10 -0500
+        id S1727692AbgBLXBz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Feb 2020 18:01:55 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D357B2168B;
-        Wed, 12 Feb 2020 22:56:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D49E521569;
+        Wed, 12 Feb 2020 23:01:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581548169;
-        bh=SCnNSfEGNeaLvEPYBFXgqfow4bBeZQwy5T7gptghPE8=;
+        s=default; t=1581548514;
+        bh=1Dc+b6kANOK+MTUko6hygKOXL+SmgqNxbhJ3tJ96sug=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=x/+w7+6ZCMH4J8zy6pThODObm0WIsKddbKyctJ1uGJ2hLo2RqxUYjFhzF/DOhJgqJ
-         /IQuYnyWJxDNkg8SRGiWkoBFl0RP6kIuVEMXx6kOgGrOqFvvX7H8FBGG7prp5Hl2Xa
-         sP9pjAeUtAb6P53W5C0wakF+gvlwUz82LxutybE4=
+        b=B02hWz3753ZHM5ekoQQLoas2pIjQX/l6HIjRBD/qLVakEVqrolq2dMisDy2ZrmOBj
+         uI5cD+KoD+MoDWoDB43+lY112neAIEoLEiC5BJTxVB5IW8iC/5G+7Lsn8WV40so9vC
+         1/xXlA7jUoSX70HtV6x5CkGw/S7Q1b00RW+ZO23Y=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
-References: <1581490943-17920-1-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH] clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
+In-Reply-To: <1581498180-2652-1-git-send-email-Anson.Huang@nxp.com>
+References: <1581498180-2652-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx: drop redundant initialization
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Linux-imx@nxp.com
 To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
-        festevam@gmail.com, jun.li@nxp.com, kernel@pengutronix.de,
-        leonard.crestez@nxp.com, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, peng.fan@nxp.com, ping.bai@nxp.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Wed, 12 Feb 2020 14:56:09 -0800
-Message-ID: <158154816906.184098.11837279192030973805@swboyd.mtv.corp.google.com>
+        allison@lohutok.net, broonie@kernel.org, festevam@gmail.com,
+        gregkh@linuxfoundation.org, info@metux.net, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        peng.fan@nxp.com, rfontana@redhat.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org, tglx@linutronix.de
+Date:   Wed, 12 Feb 2020 15:01:54 -0800
+Message-ID: <158154851405.184098.10235896077677896514@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-02-11 23:02:23)
-> The i.MX8M SoCs clock driver are provider, NOT consumer, so clk-provider.h
-> should be used instead of clk.h.
+Quoting Anson Huang (2020-02-12 01:03:00)
+> No need to initialize flags as 0, remove the initialization.
 >=20
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
