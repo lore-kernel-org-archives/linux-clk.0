@@ -2,109 +2,81 @@ Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 965C1C2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 18:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0883FC352A4
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 18:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654B520661
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 18:01:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="S3codB0S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DKi/2qYk"
+	by mail.kernel.org (Postfix) with ESMTP id DD24420714
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 18:25:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgBLSBg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 13:01:36 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54525 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726728AbgBLSBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 13:01:35 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id CF6F3889;
-        Wed, 12 Feb 2020 13:01:33 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 12 Feb 2020 13:01:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=X0tUEgWYpJskWtZqIPoTJqiI8dE
-        WemwbHtY1RuLYLac=; b=S3codB0SjgfiIeerPWZhWCajm4HsdDALTl7fEkpMSD+
-        eTtCk0tBX/aaMgE6NiI3ZYCRSB8L3Qpm/oQtC9uKtxa/mygebsxXLRPI1S+GGoPk
-        FKzM0uZvzjV7GY55Oxr8iwsh8lBqYIv4tEMwI1Z//tIKc4slQQkVLUyN0KqEi40j
-        kN0/fI1SiCubXxhmSJejIlyF3K7PrqK1hQPmZnDhAXfCUoYlZKhDuey2fslIRxvn
-        HgLGbSKqU9ld0/FSZ0sd2rfe1rKzXZtdV/aF2XofZD03eJa91QFiklt33nRSE/6T
-        tVbQU6++FLZd5aVosEqGp/p7LeKdfd+Bgngek1fzVIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=X0tUEg
-        WYpJskWtZqIPoTJqiI8dEWemwbHtY1RuLYLac=; b=DKi/2qYkOb4RXiyBa0ZtqP
-        VlIpTADIqROLl600En03rfr0/3XG4PGk4RKjV7trRkGwQRHMVHGXRlgey410zib5
-        PkRS5LeVrZhTkR7q5Z+IwweUWaPX1gRo+ku34IrAH8B6ntRincJXTESm9MnXepgM
-        6YEBsVFpjzl5dke+cG6ibcdE5BLdCPDetH0wa6yATxC2bxGdkSceKg9ETL7f6Edx
-        WwYsEeO5mwXQlpIn0ssYXsnH8MQQ1lcEXhdOntxmtY9FYbaW666/5qqrOmKo3r3O
-        QzszbqksMGs1QlHkfge77LSak8ymVnm20m3X+5rO4+uTKLB/2uau54io9uFiwWDA
-        ==
-X-ME-Sender: <xms:fD1EXgncqtNlKrmcXmTRI4OPNk4OtsF-8B_knl0x1Q75ufg5Kg2aqQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrieehgdduuddtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:fD1EXnJb43z0HlyQTC8HtyJzy3SBxOBRT9xyaOew91gFXah7c4q6DA>
-    <xmx:fD1EXhTL0-N2gPgABFG_wBbwHEPvr5_KKzXY6VoC_zerTiwDxGtD1g>
-    <xmx:fD1EXmqUM0DYEA2_Wcm2XI_tATG7lXCXnIdH6jxtjxwkUqxgD_-tAA>
-    <xmx:fT1EXlPb8FRYWG31si6SJypIn8ezCY230mMzItnY3AVP3zHI1Uu6AA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 462ED3280059;
-        Wed, 12 Feb 2020 13:01:32 -0500 (EST)
-Date:   Wed, 12 Feb 2020 19:01:30 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
-        icenowy@aosc.io, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] clk: sunxi-ng: sun8i-de2: Multiple fixes
-Message-ID: <20200212180130.kqxcafhbhw76gbmu@gilmour.lan>
-References: <20200211185936.245174-1-jernej.skrabec@siol.net>
+        id S1727279AbgBLSZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 13:25:09 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44059 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbgBLSZJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 13:25:09 -0500
+Received: by mail-ot1-f67.google.com with SMTP id h9so2874833otj.11;
+        Wed, 12 Feb 2020 10:25:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dQSPlBfsEd2wAypjHlcqXA/a/ZUcl1Otw36cJXyEZOY=;
+        b=pmYk3F0HWwrc4CCBs+4RIBa93E9wXCNXJroKsuu/kEVu5CD1/N/acgKrHUdpFFwXmv
+         VTUY9/+0awnZz/f4yfnYuFFQDToZ1JUZ/m7T9PLvdb0KpKOlC4fUeRRg2z3bNMOvZlBR
+         mdytrans2iGS3DPGN/PH9pbZFbmFRTHqQSOil6hzMQOa/u4VGxB+9S/e8c/SojBR0vtP
+         zuHsRipUogx9bqjuTLN35qYuDbM6r/xapE4f0OVmuFlWTucuRtQ+nUm2lEmfUUkWIKB3
+         vE+LF/ed+SFjEq99+J0Rw53MwRGlhqQGIZK1NcJZWukbAsZ4Tv9QGXYwg70TcAWcXdcs
+         bqDA==
+X-Gm-Message-State: APjAAAUhYUGJNm52PgjuOt06+KoFIgZkjz8wcaKplmtP7RB6YrGE2NVA
+        Yn1QIpB9JJZlQ4gnNvrCfkNDEaosg+ITMff9MIc=
+X-Google-Smtp-Source: APXvYqwOCRWQPSAtw26bXb40u6ym1UwgBhm9rv03JRcVMF+mL86f5KFLBEEOsA7KRpS01Cn8ihwfY2VRuJHgRz3w2kI=
+X-Received: by 2002:a9d:8f8:: with SMTP id 111mr9820405otf.107.1581531908721;
+ Wed, 12 Feb 2020 10:25:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="svjny34pbuqgftj2"
-Content-Disposition: inline
-In-Reply-To: <20200211185936.245174-1-jernej.skrabec@siol.net>
+References: <20200212100047.18642-1-geert+renesas@glider.be> <adba9217-352b-97a0-b1f7-d6895eb0c0d5@synopsys.com>
+In-Reply-To: <adba9217-352b-97a0-b1f7-d6895eb0c0d5@synopsys.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 12 Feb 2020 19:24:56 +0100
+Message-ID: <CAMuHMdUvtbkTOQEdZ0J52CktOC7Q0gwVYos+VYv_Yet=57DvHg@mail.gmail.com>
+Subject: Re: [PATCH] ARC: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Vineet,
 
---svjny34pbuqgftj2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Feb 11, 2020 at 07:59:29PM +0100, Jernej Skrabec wrote:
-> In current sun8i-de2 clock driver, rotation core related clocks and
-> reset weren't considered properly. All SoC which have that core don't
-> have those definitions. Even worse, the only SoC which have rotation
-> core related definitions doesn't have that core at all.
+On Wed, Feb 12, 2020 at 6:30 PM Vineet Gupta <Vineet.Gupta1@synopsys.com> wrote:
+> On 2/12/20 2:00 AM, Geert Uytterhoeven wrote:
+> > The ARC platform code is not a clock provider, and just needs to call
+> > of_clk_init().
+> >
+> > Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> This series fixes this mess.
+> Thx for this Geert. Do you want me to pick this up.
 
-Applied all of them, thanks!
-Maxime
+Yes please. Thanks!
 
---svjny34pbuqgftj2
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
+                        Geert
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXkQ9egAKCRDj7w1vZxhR
-xRlkAP9fPgQUlJwexenVqLaVnutT9EYmHdW/yd43xbmwPlJpgAD/fyvsNedPpviW
-OWmV/BPxV3fmlN3vlGhTn9TsLWNrjAc=
-=PIcB
------END PGP SIGNATURE-----
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---svjny34pbuqgftj2--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
