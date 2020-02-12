@@ -6,67 +6,69 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB38C2BA83
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F71C2BA83
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFBE2082F
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E79A421569
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 10:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbgBLKRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 05:17:40 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:51250 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727511AbgBLKRk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:17:40 -0500
+        id S1727727AbgBLKSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 05:18:16 -0500
+Received: from andre.telenet-ops.be ([195.130.132.53]:47756 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727429AbgBLKSQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 05:18:16 -0500
 Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id 1mHd2200M5USYZQ01mHdrN; Wed, 12 Feb 2020 11:17:38 +0100
+        by andre.telenet-ops.be with bizsmtp
+        id 1mJE2200A5USYZQ01mJE1K; Wed, 12 Feb 2020 11:18:14 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1p5N-0001Nb-Hf; Wed, 12 Feb 2020 11:17:37 +0100
+        id 1j1p5y-0001Nl-7X; Wed, 12 Feb 2020 11:18:14 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1j1p5N-0002Nv-GF; Wed, 12 Feb 2020 11:17:37 +0100
+        id 1j1p5y-0002Pc-6M; Wed, 12 Feb 2020 11:18:14 +0100
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>
+Cc:     linux-sh@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] powerpc/time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Wed, 12 Feb 2020 11:17:36 +0100
-Message-Id: <20200212101736.9126-1-geert+renesas@glider.be>
+Subject: [PATCH] sh: boards: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+Date:   Wed, 12 Feb 2020 11:18:13 +0100
+Message-Id: <20200212101813.9230-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PowerPC time code is not a clock provider, and just needs to call
-of_clk_init().
+The SuperH/J2 DT platform code is not a clock provider, and just needs
+to call of_clk_init().
 
 Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/powerpc/kernel/time.c | 2 +-
+ arch/sh/boards/of-generic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 1168e8b37e30696d..af0b6834f75c7007 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -50,7 +50,7 @@
- #include <linux/irq.h>
- #include <linux/delay.h>
- #include <linux/irq_work.h>
--#include <linux/clk-provider.h>
+diff --git a/arch/sh/boards/of-generic.c b/arch/sh/boards/of-generic.c
+index d91065e81a4e5cff..97a536d986a23f91 100644
+--- a/arch/sh/boards/of-generic.c
++++ b/arch/sh/boards/of-generic.c
+@@ -6,10 +6,10 @@
+  */
+ 
+ #include <linux/of.h>
 +#include <linux/of_clk.h>
- #include <linux/suspend.h>
- #include <linux/sched/cputime.h>
- #include <linux/processor.h>
+ #include <linux/of_fdt.h>
+ #include <linux/clocksource.h>
+ #include <linux/irqchip.h>
+-#include <linux/clk-provider.h>
+ #include <asm/machvec.h>
+ #include <asm/rtc.h>
+ 
 -- 
 2.17.1
 
