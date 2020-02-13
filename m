@@ -1,354 +1,135 @@
-Return-Path: <SRS0=CruU=4A=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEBAC352A4
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:47:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD99C352A4
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 02:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C3F21734
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Feb 2020 23:47:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9ED121739
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 02:55:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nNu3rbbz"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="dP3atqsd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729302AbgBLXqe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Feb 2020 18:46:34 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40430 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729132AbgBLXqd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 18:46:33 -0500
-Received: by mail-lj1-f194.google.com with SMTP id n18so4416092ljo.7;
-        Wed, 12 Feb 2020 15:46:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=asV4gL+YsfNPLapkas09h6qgYAxvmOzGpvVowKzGjNI=;
-        b=nNu3rbbzn0gb1FUgJUvYHi3ItgCG3HkiepSBJTDSuAm3pR5b+xSfKnKOWiMqu343wk
-         +PNtCNQB8y9n/jZMNg142IQXWPFo0jhSG7gEri0Ense4bgvM5HtlrEfVwJdZk/KrnbGn
-         wSvk4GNzrw+o6hIJUM46N3PeFJc4wbxjqye5vNmPpYo8zrddidoT2nN3lLimWSWuaDgw
-         n7DiMXEgxRrYLOAk3jK56L7yEXfeP3sGMKG9ASaPGL4nK78SbR/f2eLlAR2eyxqPcYuI
-         Qt4b50cP33dQvedMEwQ+yCYO8rXbiFqppkPRAkWcwhHBQR/2Jl3efNrClLDGwK3Ousbp
-         RPLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=asV4gL+YsfNPLapkas09h6qgYAxvmOzGpvVowKzGjNI=;
-        b=V2O1OQupOWMWe0uEVWK7Al0vMJPqVhMRh1fO5eO8fKdnmxITjjYia2tfJvu9UfaGow
-         HAhZTWyCpOyBA1vJMYWXEESA+c4oZK9IM2so8gONyoVOL9H2wnlN1zbpQeS+V4YhYEVc
-         koidFzZwlB6E8ePHdKSMZMIqHlsxSatj4/Dok5nShM0o/R17MZYt1pRDiwGazFgVqFVz
-         4YehEB5JiroXgMs66Lnt1il1aJMHMR/9hs2BLlrHxnF3Pe3OKRLZ8w/PjMlrixiZ8l8v
-         b+j855n0x14tQEnKw9AZrUpHqohp/YsKLUkoBTik3k2+8jfYICtUWf6jqEmYyVVds05E
-         wxPQ==
-X-Gm-Message-State: APjAAAV9/Y2trNtmkAF3mFowDqqOAHEhEIqRyxYuS094iubZdfUDpNpa
-        dnP8CutZtxtdZyklBsx7dOQ=
-X-Google-Smtp-Source: APXvYqxobdw2OZAtVWnOPi/VrXCgsk1Fb4iKfiQnDWWZpg8tiHi3WR8kmv1V4jPgsZIGLabWCzzx2Q==
-X-Received: by 2002:a05:651c:d4:: with SMTP id 20mr8974374ljr.269.1581551190349;
-        Wed, 12 Feb 2020 15:46:30 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id u15sm234453lfl.87.2020.02.12.15.46.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Feb 2020 15:46:29 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
+        id S1729378AbgBMCzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Feb 2020 21:55:33 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:57589 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729333AbgBMCzd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Feb 2020 21:55:33 -0500
+X-UUID: 48ed1d30c34048a29e148fc5056adcad-20200213
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=LJDuwYzpSPlqh0Fy0uu3RaMajNEpsKJmu5DTiLeNbr0=;
+        b=dP3atqsdr8isl/3fG9CbmsLXUBkSVfcUAhffChV7bxLeR0VkGn3LR37zpJajdbydwpc2TnMPwrPn9pKXDqKisXu/adAQ/GK65nO6PuS8BXEhZrALgcGBlSRoJj6vBtjA/Yy1Wfs8lBwHrtC4SuxQwOtah02d/3QEOv3IgAw6xT0=;
+X-UUID: 48ed1d30c34048a29e148fc5056adcad-20200213
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <macpaul.lin@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 748311156; Thu, 13 Feb 2020 10:55:29 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 13 Feb 2020 10:56:00 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 13 Feb 2020 10:54:23 +0800
+Message-ID: <1581562527.19053.18.camel@mtkswgap22>
+Subject: Re: [PATCH v7 5/7] soc: mediatek: add MT6765 scpsys and subdomain
+ support
+From:   Macpaul Lin <macpaul.lin@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Wendell Lin =?UTF-8?Q?=28=E6=9E=97=E7=90=A6=E8=80=80=29?= 
+        <Wendell.Lin@mediatek.com>, Weiyi Lu <Weiyi.Lu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        ";Ryder Lee" <Ryder.Lee@mediatek.com>,
+        Morven-CF Yeh <Morven-CF.Yeh@mediatek.com>,
+        Kevin-CW Chen <Kevin-CW.Chen@mediatek.com>,
+        Albert-ZL Huang <Albert-ZL.Huang@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Jasper Korten <jja2000@gmail.com>,
-        David Heidelberg <david@ixit.cz>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 01/12] clk: tegra: Add custom CCLK implementation
-Date:   Thu, 13 Feb 2020 02:45:56 +0300
-Message-Id: <20200212234607.11521-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200212234607.11521-1-digetx@gmail.com>
-References: <20200212234607.11521-1-digetx@gmail.com>
+        mtk01761 <wendell.lin@mediatek.com>,
+        Fabien Parent <fparent@baylibre.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Sean Wang <Sean.Wang@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        "Evan Green" <evgreen@chromium.org>,
+        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ryder Lee <Ryder.Lee@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Mediatek WSD Upstream <wsd_upstream@mediatek.com>
+Date:   Thu, 13 Feb 2020 10:55:27 +0800
+In-Reply-To: <c704bdab-8489-0b54-59de-401bc4ab24e6@gmail.com>
+References: <1581067250-12744-1-git-send-email-macpaul.lin@mediatek.com>
+         <1581067250-12744-6-git-send-email-macpaul.lin@mediatek.com>
+         <c704bdab-8489-0b54-59de-401bc4ab24e6@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CCLK stands for "CPU Clock", CPU core is running off CCLK. CCLK supports
-multiple parents, it has internal clock divider and a clock skipper.
-PLLX is the main CCLK parent that provides clock rates above 1GHz and it
-has special property such that the CCLK's internal divider is set into
-bypass mode when PLLX is selected as a parent for CCLK.
-
-This patch forks generic Super Clock into CCLK implementation which takes
-into account all CCLK specifics. The proper CCLK implementation is needed
-by the upcoming Tegra20 CPUFreq driver update that will allow to utilize
-the generic cpufreq-dt driver by moving intermediate clock selection into
-the clock driver.
-
-Note that technically this patch could be squashed into clk-super.c, but
-it is cleaner to have a separate source file. Also note that currently all
-CCLKLP bits are left in the clk-super.c and only CCLKG is supported by
-clk-tegra-super-cclk. It shouldn't be difficult to move the CCLKLP bits,
-but CCLKLP is not used by anything in kernel and thus better not to touch
-it for now.
-
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Jasper Korten <jja2000@gmail.com>
-Tested-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/Makefile               |   1 +
- drivers/clk/tegra/clk-tegra-super-cclk.c | 178 +++++++++++++++++++++++
- drivers/clk/tegra/clk.h                  |  11 +-
- 3 files changed, 188 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
-
-diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-index df966ca06788..f04b490f5416 100644
---- a/drivers/clk/tegra/Makefile
-+++ b/drivers/clk/tegra/Makefile
-@@ -14,6 +14,7 @@ obj-y					+= clk-tegra-audio.o
- obj-y					+= clk-tegra-periph.o
- obj-y					+= clk-tegra-pmc.o
- obj-y					+= clk-tegra-fixed.o
-+obj-y					+= clk-tegra-super-cclk.o
- obj-y					+= clk-tegra-super-gen4.o
- obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
- obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
-diff --git a/drivers/clk/tegra/clk-tegra-super-cclk.c b/drivers/clk/tegra/clk-tegra-super-cclk.c
-new file mode 100644
-index 000000000000..7bcb9e8d0860
---- /dev/null
-+++ b/drivers/clk/tegra/clk-tegra-super-cclk.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Based on clk-super.c
-+ * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * Based on older tegra20-cpufreq driver by Colin Cross <ccross@google.com>
-+ * Copyright (C) 2010 Google, Inc.
-+ *
-+ * Author: Dmitry Osipenko <digetx@gmail.com>
-+ * Copyright (C) 2019 GRATE-DRIVER project
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/slab.h>
-+#include <linux/types.h>
-+
-+#include "clk.h"
-+
-+#define PLLP_INDEX		4
-+#define PLLX_INDEX		8
-+
-+#define SUPER_CDIV_ENB		BIT(31)
-+
-+static u8 cclk_super_get_parent(struct clk_hw *hw)
-+{
-+	return tegra_clk_super_ops.get_parent(hw);
-+}
-+
-+static int cclk_super_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	return tegra_clk_super_ops.set_parent(hw, index);
-+}
-+
-+static int cclk_super_set_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long parent_rate)
-+{
-+	return tegra_clk_super_ops.set_rate(hw, rate, parent_rate);
-+}
-+
-+static unsigned long cclk_super_recalc_rate(struct clk_hw *hw,
-+					    unsigned long parent_rate)
-+{
-+	if (cclk_super_get_parent(hw) == PLLX_INDEX)
-+		return parent_rate;
-+
-+	return tegra_clk_super_ops.recalc_rate(hw, parent_rate);
-+}
-+
-+static int cclk_super_determine_rate(struct clk_hw *hw,
-+				     struct clk_rate_request *req)
-+{
-+	struct clk_hw *pllp_hw = clk_hw_get_parent_by_index(hw, PLLP_INDEX);
-+	struct clk_hw *pllx_hw = clk_hw_get_parent_by_index(hw, PLLX_INDEX);
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	unsigned long pllp_rate;
-+	long rate = req->rate;
-+
-+	if (WARN_ON_ONCE(!pllp_hw || !pllx_hw))
-+		return -EINVAL;
-+
-+	/*
-+	 * Switch parent to PLLP for all CCLK rates that are suitable for PLLP.
-+	 * PLLX will be disabled in this case, saving some power.
-+	 */
-+	pllp_rate = clk_hw_get_rate(pllp_hw);
-+
-+	if (rate <= pllp_rate) {
-+		if (super->flags & TEGRA20_SUPER_CLK)
-+			rate = pllp_rate;
-+		else
-+			rate = tegra_clk_super_ops.round_rate(hw, rate,
-+							      &pllp_rate);
-+
-+		req->best_parent_rate = pllp_rate;
-+		req->best_parent_hw = pllp_hw;
-+		req->rate = rate;
-+	} else {
-+		rate = clk_hw_round_rate(pllx_hw, rate);
-+		req->best_parent_rate = rate;
-+		req->best_parent_hw = pllx_hw;
-+		req->rate = rate;
-+	}
-+
-+	if (WARN_ON_ONCE(rate <= 0))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops tegra_cclk_super_ops = {
-+	.get_parent = cclk_super_get_parent,
-+	.set_parent = cclk_super_set_parent,
-+	.set_rate = cclk_super_set_rate,
-+	.recalc_rate = cclk_super_recalc_rate,
-+	.determine_rate = cclk_super_determine_rate,
-+};
-+
-+static const struct clk_ops tegra_cclk_super_mux_ops = {
-+	.get_parent = cclk_super_get_parent,
-+	.set_parent = cclk_super_set_parent,
-+	.determine_rate = cclk_super_determine_rate,
-+};
-+
-+struct clk *tegra_clk_register_super_cclk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock)
-+{
-+	struct tegra_clk_super_mux *super;
-+	struct clk *clk;
-+	struct clk_init_data init;
-+	u32 val;
-+
-+	super = kzalloc(sizeof(*super), GFP_KERNEL);
-+	if (!super)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = name;
-+	init.flags = flags;
-+	init.parent_names = parent_names;
-+	init.num_parents = num_parents;
-+
-+	super->reg = reg;
-+	super->lock = lock;
-+	super->width = 4;
-+	super->flags = clk_super_flags;
-+	super->hw.init = &init;
-+
-+	if (super->flags & TEGRA20_SUPER_CLK) {
-+		init.ops = &tegra_cclk_super_mux_ops;
-+	} else {
-+		init.ops = &tegra_cclk_super_ops;
-+
-+		super->frac_div.reg = reg + 4;
-+		super->frac_div.shift = 16;
-+		super->frac_div.width = 8;
-+		super->frac_div.frac_width = 1;
-+		super->frac_div.lock = lock;
-+		super->div_ops = &tegra_clk_frac_div_ops;
-+	}
-+
-+	/*
-+	 * Tegra30+ has the following CPUG clock topology:
-+	 *
-+	 *        +---+  +-------+  +-+            +-+                +-+
-+	 * PLLP+->+   +->+DIVIDER+->+0|  +-------->+0|  ------------->+0|
-+	 *        |   |  +-------+  | |  |  +---+  | |  |             | |
-+	 * PLLC+->+MUX|             | +->+  | S |  | +->+             | +->+CPU
-+	 *  ...   |   |             | |  |  | K |  | |  |  +-------+  | |
-+	 * PLLX+->+-->+------------>+1|  +->+ I +->+1|  +->+ DIV2  +->+1|
-+	 *        +---+             +++     | P |  +++     |SKIPPER|  +++
-+	 *                           ^      | P |   ^      +-------+   ^
-+	 *                           |      | E |   |                  |
-+	 *                PLLX_SEL+--+      | R |   |       OVERHEAT+--+
-+	 *                                  +---+   |
-+	 *                                          |
-+	 *                         SUPER_CDIV_ENB+--+
-+	 *
-+	 * Tegra20 is similar, but simpler. It doesn't have the divider and
-+	 * thermal DIV2 skipper.
-+	 *
-+	 * At least for now we're not going to use clock-skipper, hence let's
-+	 * ensure that it is disabled.
-+	 */
-+	val = readl_relaxed(reg + 4);
-+	val &= ~SUPER_CDIV_ENB;
-+	writel_relaxed(val, reg + 4);
-+
-+	clk = clk_register(NULL, &super->hw);
-+	if (IS_ERR(clk))
-+		kfree(super);
-+
-+	return clk;
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 416a6b09f6a3..ee35a847df08 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -729,8 +729,10 @@ struct clk *tegra_clk_register_periph_data(void __iomem *clk_base,
-  * TEGRA_DIVIDER_2 - LP cluster has additional divider. This flag indicates
-  *     that this is LP cluster clock.
-  * TEGRA210_CPU_CLK - This flag is used to identify CPU cluster for gen5
-- * super mux parent using PLLP branches. To use PLLP branches to CPU, need
-- * to configure additional bit PLLP_OUT_CPU in the clock registers.
-+ *     super mux parent using PLLP branches. To use PLLP branches to CPU, need
-+ *     to configure additional bit PLLP_OUT_CPU in the clock registers.
-+ * TEGRA20_SUPER_CLK - Tegra20 doesn't have a dedicated divider for Super
-+ *     clocks, it only has a clock-skipper.
-  */
- struct tegra_clk_super_mux {
- 	struct clk_hw	hw;
-@@ -748,6 +750,7 @@ struct tegra_clk_super_mux {
- 
- #define TEGRA_DIVIDER_2 BIT(0)
- #define TEGRA210_CPU_CLK BIT(1)
-+#define TEGRA20_SUPER_CLK BIT(2)
- 
- extern const struct clk_ops tegra_clk_super_ops;
- struct clk *tegra_clk_register_super_mux(const char *name,
-@@ -758,6 +761,10 @@ struct clk *tegra_clk_register_super_clk(const char *name,
- 		const char * const *parent_names, u8 num_parents,
- 		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
- 		spinlock_t *lock);
-+struct clk *tegra_clk_register_super_cclk(const char *name,
-+		const char * const *parent_names, u8 num_parents,
-+		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-+		spinlock_t *lock);
- 
- /**
-  * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
--- 
-2.24.0
+T24gU3VuLCAyMDIwLTAyLTA5IGF0IDIyOjI2ICswMTAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
+Og0KPg0KPiBPbiAwNy8wMi8yMDIwIDEwOjIwLCBNYWNwYXVsIExpbiB3cm90ZToNCj4gPiBGcm9t
+OiBNYXJzIENoZW5nIDxtYXJzLmNoZW5nQG1lZGlhdGVrLmNvbT4NCj4gPiANCj4gPiBUaGlzIGFk
+ZHMgc2Nwc3lzIHN1cHBvcnQgZm9yIE1UNjc2NQ0KPiA+IEFkZCBzdWJkb21haW4gc3VwcG9ydCBm
+b3IgTVQ2NzY1Og0KPiA+IGlzcCwgbW0sIGNvbm5zeXMsIG1mZywgYW5kIGNhbS4NCj4gPiANCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBNYXJzIENoZW5nIDxtYXJzLmNoZW5nQG1lZGlhdGVrLmNvbT4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBPd2VuIENoZW4gPG93ZW4uY2hlbkBtZWRpYXRlay5jb20+DQo+ID4g
+U2lnbmVkLW9mZi1ieTogTWFjcGF1bCBMaW4gPG1hY3BhdWwubGluQG1lZGlhdGVrLmNvbT4NCj4g
+PiAtLS0NCj4gPiAgZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLXNjcHN5cy5jIHwgMTMwICsrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTMwIGluc2Vy
+dGlvbnMoKykNCj4gPiANCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRr
+LXNjcHN5cy5jIGIvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLXNjcHN5cy5jDQo+ID4gaW5kZXgg
+ZjY2OWQzNzU0NjI3Li45OTQwYzZkMTMyMjIgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9zb2Mv
+bWVkaWF0ZWsvbXRrLXNjcHN5cy5jDQo+ID4gKysrIGIvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRr
+LXNjcHN5cy5jDQo+ID4gQEAgLTE1LDYgKzE1LDcgQEANCj4gPiAgDQo+ID4gICNpbmNsdWRlIDxk
+dC1iaW5kaW5ncy9wb3dlci9tdDI3MDEtcG93ZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRp
+bmdzL3Bvd2VyL210MjcxMi1wb3dlci5oPg0KPiA+ICsjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcG93
+ZXIvbXQ2NzY1LXBvd2VyLmg+DQo+ID4gICNpbmNsdWRlIDxkdC1iaW5kaW5ncy9wb3dlci9tdDY3
+OTctcG93ZXIuaD4NCj4gPiAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL3Bvd2VyL210NzYyMi1wb3dl
+ci5oPg0KPiA+ICAjaW5jbHVkZSA8ZHQtYmluZGluZ3MvcG93ZXIvbXQ3NjIzYS1wb3dlci5oPg0K
+PiA+IEBAIC03NDksNiArNzUwLDEyMCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHNjcF9zdWJkb21h
+aW4gc2NwX3N1YmRvbWFpbl9tdDI3MTJbXSA9IHsNCj4gPiAgCXtNVDI3MTJfUE9XRVJfRE9NQUlO
+X01GR19TQzIsIE1UMjcxMl9QT1dFUl9ET01BSU5fTUZHX1NDM30sDQo+ID4gIH07DQo+ID4gIA0K
+PiA+ICsvKg0KPiA+ICsgKiBNVDY3NjUgcG93ZXIgZG9tYWluIHN1cHBvcnQNCj4gPiArICovDQo+
+ID4gKyNkZWZpbmUgU1BNX1BXUl9TVEFUVVNfTVQ2NzY1CQkJMHgwMTgwDQo+ID4gKyNkZWZpbmUg
+U1BNX1BXUl9TVEFUVVNfMk5EX01UNjc2NQkJMHgwMTg0DQo+ID4gKw0KPiANCj4gVGhlIG9mZnNl
+dHMgYXJlIHRoZSBzYW1lIGFzIGZvciBNVDY3OTcuIENvdWxkIHdlIHJlbmFtZSB0aGUgZGVmaW5l
+IHRvIHNvbWV0aGluZw0KPiBnZW5lcmljIGFuZCBtb3ZlIGl0IHVwIGFuZCBwdXQgaXQganVzdCB1
+bmRlciBTUE1fUFdSX1NUQVRVU18yTkQ/IFByb2JhYmx5IGFzIGENCj4gc2VwYXJhdGUgcGF0Y2gu
+DQo+IA0KPiBSZWdhcmRzLA0KPiBNYXR0aGlhcw0KPiANCkxvb3AgbW9yZSByZWxhdGVkIG93bmVy
+cyBpbiB0aGlzIG1haWwgbG9vcC4NCg0KQWZ0ZXIgY2hlY2sgaXQgd2l0aCBvdXIgY2xvY2sgZHJp
+dmVyIG93bmVycywgdGhlcmUgYXJlIGRpZmZlcmVudA0KZ2VuZXJhdGlvbnMgb2YgY2xvY2sgSVBz
+LiBCZWNhdXNlIGRpZmZlcmVudCBzbWFydCBwaG9uZSBjaGlwcyByZXF1aXJlDQpkaWZmZXJlbnQg
+Y29zdC1mdW5jdGlvbiBvcmllbnRlZCBkZXNpZ24sIGV2ZW4gdGhleSB1c2UgdGhlIHNhbWUNCmdl
+bmVyYXRpb24gb2YgY2xvY2sgSVBzLCBtaWdodCBub3QgaGF2ZSB0aGUgc2FtZSBvZmZzZXRzLiBU
+YWtlIE1UNjc2NQ0KYW5kIE1UNjc5NyBmb3IgZXhhbXBsZSwgdGhlIGxpc3RlZCBvZmZzZXRzIGFy
+ZSBqdXN0IGNvaW5jaWRlbmNlLg0KDQpPdXIgY2xvY2sgZHJpdmVyIG93bmVycyB3aWxsIHdvcmsg
+b24gdGhpcyB0byBzdW1tYXJpemUgdGhlIGNvbW1vbiBvZmZzZXQNCnBhcnRzIGZvciBlYWNoIGdl
+bmVyYXRpb25zLCBidXQgYXQgdGhpcyBtb21lbnQsIHdlIHN1Z2dlc3QganVzdCBzZXBhcmF0ZQ0K
+dGhlIGZpbGVzIGZvciBtdDY3OTcgYW5kIG10Njc2NS4gQ29tbW9ubHkgdXNlZCBoZWFkZXIgc2hv
+dWxkIGJlIGNvbWUNCndpdGggdGhlIG5leHQgY2hpcCB3aGljaCBjbG9jayBJUCBqdXN0IHRoZSBz
+YW1lIGdlbmVyYXRpb24gb2YgbXQ2Nzk3IG9yDQptdDY3NjUuDQoNClRoYW5rcw0KTWFjcGF1bCBM
+aW4NCg0KDQo=
 
