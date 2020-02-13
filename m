@@ -2,102 +2,112 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0C5C2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:43:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA7DC2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 16:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D0F24684
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581608611;
-	bh=VB61Cnre32YZs17GqjOvsXq0m51tzpaI4sAI2/jxhPw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vyD5RWDA8rGGMw1gERJ2zUTJo1387ksgdRyOn2GUWisls3/9JUaiStG2oUB362qR2
-	 UQ0DEc/amvc0RUN+vk2TtVrf/gtDivjCvfAHPcPvWngqdIOV40XdS0+L2BlInlU4+4
-	 ZvgJuLRyfARmM62UxoGH2Zax8XxT1UEdH0KmyB5E=
+	by mail.kernel.org (Postfix) with ESMTP id 214B2206ED
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 16:18:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Pi5qtbZP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbgBMPn0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 10:43:26 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:44807 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727707AbgBMPnU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 10:43:20 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g19so7309976eds.11;
-        Thu, 13 Feb 2020 07:43:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xWjlmZnVBt/ZlK8vapzAQmz9T3RLkyLlYRSHtgLmYd4=;
-        b=CzVCjzh+FuyLd7kL9fHAM6HRWMCvbGLuy7tvQittfhNBsrvqkFhGl6KgQ5tZ/XHVRF
-         HzNqMi5hUxJ933xS2w0oPK0P8yhpl+z4E9+4s17hzVt9HHHlux49i8ES/aaensIlKhs0
-         6jYGbOCkFjtIuUZiuXJLY5A7J3FNXm1kEcPPkI42XF99GfmyRLCKtmIBlrw3rdhCj0Pi
-         6OQIkDwFcJ33Jsx6EF4xAhKX6W3nNlmuVRSpYpxjuSFRnTengdFqMrncA9FrWDxITuBg
-         5kyS2mSAaT0qzZgX1eW/+I372xPPrJFiwVKoHULommFOlPsbNmC1VIP6tyNCoZH/wjiW
-         wJtA==
-X-Gm-Message-State: APjAAAWEaGsk8ekv2+QI2i/4BWG9nbNEpROqM8sI0EKLSf2NcG3spr6E
-        63om7lV5GmPlYQhi0DdJDL4=
-X-Google-Smtp-Source: APXvYqxC6vfH1GEp1GXd5aDVxuhj2SoNdVlypepsj2HdRdhqBL5BWW5qSOnvNylv+AF9dT1OutTu0w==
-X-Received: by 2002:a50:9b03:: with SMTP id o3mr16345398edi.371.1581608597930;
-        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
-Received: from kozik-lap ([194.230.155.125])
-        by smtp.googlemail.com with ESMTPSA id w18sm293112eja.57.2020.02.13.07.43.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Feb 2020 07:43:17 -0800 (PST)
-Date:   Thu, 13 Feb 2020 16:43:14 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
-Message-ID: <20200213154314.GA7215@kozik-lap>
-References: <20200212120237.1332-1-linux.amoon@gmail.com>
- <20200213101744.GA11087@kozik-lap>
- <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
+        id S1727848AbgBMQSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 11:18:11 -0500
+Received: from mail-am6eur05on2055.outbound.protection.outlook.com ([40.107.22.55]:6210
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727926AbgBMQSL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Feb 2020 11:18:11 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gAjDji++Gyw9GQKXalTpGWoLTaJlhd8Ah6w7TNy2ENOFmD+432EfK91fadCYxzsCfzku0ltNZmYrExOfuId/nRFYT/Ty7kHYLudCB9uib8206bbb/ycthFQ3Nyyf902sUXD3cwuXNsOUdePtPw019FYA0ADCtFWPlzcINpyKhdrF8n+lZXfup8zyhyWUiROYjSNzal3e9F8mpQSkqHqg4HjrcFWiHDGkq/8lBe5c23hd0psLrJfkN3LGlisREZMAo5MIkLs+XgEZ0WJX22u8FEf8JVpIFPfskJ2Gz6IrhaVvHgbd1gJMpehSXlswkgpEeisfkYHkYDrAugSM8oB/Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lT31BqboP7OM/wcp+rLnV7morBDIg9MORXgrJSDdqRg=;
+ b=cTl6NXTzNukOjhbOLzUBagq/PE1gErFaB1Q6rZ6L7MFhrA7QXKloazdl7xrJIlzH3g0dMJzg9YfckqEuGjy7nxS6WA8gnj+sZ9ZLB8l6bFP4n27FxZi17aXVXIfR3BufN4ZH9ZP1BPwIF2YMtO2BLueHF5vG3y5jtirmkCTB6ypzK6slOoqZcc3toYigUQIOj5Ap8pyjb6veoz7okIJI/5QjmlZ0bYE1CkEQeW7fCTMKxKbs2VZ0bF6NIaNJuGDqfV8+fdVnFmCzeebTJ8CzbVYg9cSZRrtnPKrvvmjg7mWRN23Js9XZlJVndd6wwyeF5abiTYvFbuRxA9CI1GojdQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lT31BqboP7OM/wcp+rLnV7morBDIg9MORXgrJSDdqRg=;
+ b=Pi5qtbZPpIiuKirGO7oiPyVe8j2TaNHuYSxClGs4+U4FCRwJmpc660PzwDHfgGwqmK6M1gCGNk1KRFzKUM98lhUT5S4MbkeeMPQwFU1aFqjnKJiCDLc6xf/BDmxhnakfcaeSQWYblTveac/qkA2aoaewbFDeo+4EcuHkNIPgi/0=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB5011.eurprd04.prod.outlook.com (20.177.40.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.25; Thu, 13 Feb 2020 16:18:09 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::5024:13e2:7000:3c2]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::5024:13e2:7000:3c2%6]) with mapi id 15.20.2729.025; Thu, 13 Feb 2020
+ 16:18:09 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Oliver Graute <oliver.graute@gmail.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: clk: imx: clock driver for imx8qm?
+Thread-Topic: clk: imx: clock driver for imx8qm?
+Thread-Index: AQHV4oK4jf4Yk7gIB0yfade2LGWp9agZS8Hg
+Date:   Thu, 13 Feb 2020 16:18:08 +0000
+Message-ID: <AM0PR04MB4211AC5AB9F6A055F36040A2801A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20200213153151.GB6975@optiplex>
+In-Reply-To: <20200213153151.GB6975@optiplex>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [218.82.155.143]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d7b092a9-ea20-4ea8-a0bd-08d7b0a0509e
+x-ms-traffictypediagnostic: AM0PR04MB5011:|AM0PR04MB5011:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB50112248CB805FF73C8763B0801A0@AM0PR04MB5011.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 031257FE13
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(346002)(396003)(376002)(366004)(199004)(189003)(316002)(33656002)(66556008)(66446008)(7696005)(76116006)(66946007)(110136005)(54906003)(71200400001)(64756008)(66476007)(8936002)(2906002)(52536014)(4326008)(55016002)(44832011)(9686003)(86362001)(6506007)(81156014)(5660300002)(81166006)(8676002)(4744005)(478600001)(966005)(186003)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5011;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bu7vFDcdK7f182O04/6dAeKKzvPt6a2II1GZviPlZM3u1eOEM7z8eoffncM7qb5NYoVgGE6cc0bLBgNIXKkkQrb+BRYvFrkE4wqtIFwjKSEZB9LZYrfOf5KSg6LegUO2L01unZgwSZeHFtMYjgiU2UiuC7lJVgS/McGmTC0R6uu/fosnukGeta13IKA0JseI9Qjz79X/bQDnvDjxuJauMSu48tfJQ5IK3V8xKP/rxEE2JGPeBvabh7qS8JGdmZmopBatOIRgd7F4f4jU4n0EsWON3nanErx+Vrl0+ROa7dgwV3plT74nOQWssU3UU55YPuMAVTfxr9ySWg5CNS3tvsWyXJdqL0tXk+TM8WN+3KscWohyM76vlbCYdzVqFlyNGzDUqsTSS2mzU4VMBYXzTPLcYaEfT2JuCO+HxGNFQ9CtIzzv2KU3ME/lvKAjF07vxk67BY5X1XAqN5ZczCSi6TxeuRz6ziJHwFLKViWnJh6KEi8Tf1TqZXnphBjnIz4dmMccF7AlHmEJD6EFBA7RuymiKAgiUmy2aX9xofUsaOKHUcDdGkSqqM5xxDRH+lLz
+x-ms-exchange-antispam-messagedata: MnZGfFkEn1BSzdz4lFog/TibaUHgc+VgBIH2akxOepXFkNMBsgvHDBgNxiWhuHRSLxvUcCmHFQX31HolG2KeRmh8XtqsJIRd8Oh1Lv/H03Vb/+MOHK9BEs6I742Rjrv+OI+hNqFbM2jFhlIkT1LjZQ==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7b092a9-ea20-4ea8-a0bd-08d7b0a0509e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2020 16:18:08.9044
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2qJigXwItpkDjuMOLdEHL0WlwWYjNkVNXozFA9cGt49LvE0MzYGRrNdb3aWM6BjmnpHoAZbRCXzNvG9vzfOkKA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5011
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 13, 2020 at 06:58:51PM +0530, Anand Moon wrote:
-> hi Krzysztof,
-> 
-> On Thu, 13 Feb 2020 at 15:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
-> > > This patches add the power domain for MMC driver,
-> > > but somehow the suspend/resume feature is broken
-> > > so any input on how to fix this.
-> >
-> > I think S2R was working on XU3-family after Marek's fixes, so you mean
-> > that these patches break it?
-> >
-> Yes I my testing mmc driver failed to come up after suspend.
-
-Patches breaking systems should be clearly marked as work in progress,
-e.g.  by using RFC instead of PATCH in the title.
-
-This patchset cannot be applied.
-
-You probably have to figure out some missing dependencies, e.g. in
-clocks/power domains/pinctrl.
-
-Best regards,
-Krzysztof
-
+SGkgT2xpdmVyLA0KDQo+IEZyb206IE9saXZlciBHcmF1dGUgPG9saXZlci5ncmF1dGVAZ21haWwu
+Y29tPg0KPiBTZW50OiBUaHVyc2RheSwgRmVicnVhcnkgMTMsIDIwMjAgMTE6MzIgUE0NCj4NCj4g
+SGVsbG8gRmF2aW8sDQo+IEhlbGxvIEFuc29uLA0KPiANCj4gaXMgc29tZW9uZSB3b3JraW5nIG9u
+IGNsb2NrIGRyaXZlciBmb3IgaW14OHFtPyBJIG1pc3MgYXQgbGVhc3QgYSBjbGstaW14OHFtLmMN
+Cj4gaW4gdGhlIGRyaXZlcnMvaW14L2Nsay8gZGlyZWN0b3J5LiBJIHNhdyB0aGF0IHlvdSBhcmUg
+d29ya2luZyBpbiB0aGlzIGFyZWEgYW5kDQo+IHBlcmhhcHMgeW91IGNhbiBnaXZlIG1lIHNvbWUg
+aW5zaWdodHMgd2hhdCBpcyBuZWVkZWQgaGVyZS4NCj4gDQoNCk1YOFFNL1FYUCBhcmUgdXNpbmcg
+dGhlIHNhbWUgY2xvY2sgZHJpdmVyIGNsay1pbXg4cXhwLmMNCg0KW1BBVENIIFJFU0VORCBWNSAw
+MC8xMV0gY2xrOiBpbXg4OiBhZGQgbmV3IGNsb2NrIGJpbmRpbmcgZm9yIGJldHRlciBwbSBzdXBw
+b3J0DQpodHRwczovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9hcm0ta2VybmVsL21zZzc4MTY4Ny5o
+dG1sDQpUaGUgcmV2aWV3IG9mIHRoYXQgcGF0Y2ggc2VyaWVzIGlzIHBlbmRpbmcgZm9yIGEgY291
+cGxlIG9mIG1vbnRocy4NCg0KU3RlcGhlbiwNCldvdWxkIHlvdSBoZWxwIGl0Pw0KDQpSZWdhcmRz
+DQpBaXNoZW5nDQoNCj4gQmVzdCByZWdhcmRzLA0KPiANCj4gT2xpdmVyDQo=
