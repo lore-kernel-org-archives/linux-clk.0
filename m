@@ -2,68 +2,68 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FC0C3B18B
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC73C3B189
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3AE20873
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95442218AC
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zpuQcF4I"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/Xm0C5a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730060AbgBMOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 09:11:31 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33593 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730112AbgBMOLb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 09:11:31 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n25so4396238lfl.0
-        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2020 06:11:28 -0800 (PST)
+        id S1730127AbgBMOLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 09:11:33 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41826 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730082AbgBMOLd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 09:11:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id h23so6750931ljc.8
+        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2020 06:11:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fkyOwSYDYLCdovDDNZ6yM3vQcsvjxUIa3A0TtLeyc58=;
-        b=zpuQcF4IR7KFvezlHtOuRuJc/2Dsd2TkahsrLS8QTkeJjn/6GEORtvxGdauyY9R8vl
-         HFH3aTs4Wvkfu5R9e8LgZkjt4jZYx7POqEzOlFWrL6iq57v94L29n3bWODrLZMDIB1fo
-         YTix78gb6hGm3o1FO65QhEZqTXIhPZS1+HfD/JlL+9hrkvD47SnS2PMxp8rK85Gm5M5J
-         tukD8Sksdx3vG6Q1femuZMH8v3Cpb/smToT4/zUP/ruRWMiibYM7LowpeqMZzZg9frpU
-         +QmqwsBdP9mXTqNg2bmWGGXu3qatCg5+o5scD3zVQ4NK5rkqj1/n04m8m9coGcs+vzrk
-         xytQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=jmInR6ToitfmuXt2m2m0REU0jG0tl34rmyR4/V6wbYg=;
+        b=q/Xm0C5aRbv1Fcxc08JgWF0K+S46DK1lmjrPRupz0sb4ubVUB+IeaTR4LF2LUzmd17
+         G7O9fQh7msbSazt7uHnF3mHzataYtwmluObQJE2FeJpUGZBJn2esR6EFHp+KOZjGnjcW
+         UwryA3P8tzuu+cKCTq5FTfdIzleR24agZq0+Ots9int5zudKuWHyt6+RBs35q6Tc/+GA
+         FlL4nM6+JbSdFxyOr3aIgr5WQm6Xqz+1ekzcIn3GLdOsNTOewao5tUtRAj9wkrC+7ugx
+         0NrX+LedrX/xU0I0dVJMRa3lOjzpwG3V9ZGzgbXw6eg6GkS1MKtFJ3vMFG43j1Qc/prV
+         EELA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fkyOwSYDYLCdovDDNZ6yM3vQcsvjxUIa3A0TtLeyc58=;
-        b=PlKBa6rbsA2vyvcZ5b2ByvlZO/wFWk74sncBS9oIrR6r+a0wCJOHKgzjphuJxn2yj5
-         +IGBb2dzxtQpiCcG2cCKk2dQfk/Wdl1j5uS2dM6gAVvf4sr//L7YrpAv7qYJoa/zJtBG
-         13yMrR5rq2OunCfn33AC99hSqqM+R3l8dPjAIRXVYOt6csCZvvbaoC+lfCBVUp8PyCvo
-         8V6avvmX7mUBp7H4E5S0VC3mZfRJJo7pC/l6+WKB2E69M76vLgUEn2gTHIFhHS/XEaVE
-         dsnWwGnlogxKP41J1igUVsqgwgXlBOQF4Mg6Svv/aqBvGNis6DD9TXaKaT4OTDYJo4Fa
-         pHnw==
-X-Gm-Message-State: APjAAAUm9TWGcRi5z03CuahEf3bCR8Wx0v19h1Wm5ZmR7IUIePySuKUF
-        mtm8FEjvMrjg76Z6EwSN3KkFLxSnJy8=
-X-Google-Smtp-Source: APXvYqwh1eIQAnNU3umYZ4iPkxKgdjn0x6R3bDtbfcd59H84763IYh7kv9qMZz/ARfyMYJNFrL8abA==
-X-Received: by 2002:a19:c7c5:: with SMTP id x188mr530244lff.22.1581603087555;
-        Thu, 13 Feb 2020 06:11:27 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=jmInR6ToitfmuXt2m2m0REU0jG0tl34rmyR4/V6wbYg=;
+        b=UqIQMYAgbBcAtUknLuzYU7NwykyMwi2J51MLcVo89QvgToEuVQdeb7/vJCy+4p9rfG
+         7rPHcrSd0P+hsejPP7craJTlzpvm4ew1u97I/Ua8fi0cIdmZ/MbgHIOITR5cGtWvSNSK
+         H5v5cRasYgVhW5DPzVd+F3io3auDjH5tI3kXX//wAHMWsX42LgA/EPEj8NKrwNr51Ko3
+         9EqRFYh/F47h4B3e4+YR2nhEJkVJvOqd6nN3rvVcWWM+qB7uhZu2YP8cgqHbkjsShamI
+         KI6fUvjaJk1vaL918GJ1B3WwwFmbdOOKtXzNBo90MiosnU5yu54lUuFl0FyN/ggJYX+l
+         5dCQ==
+X-Gm-Message-State: APjAAAV4wzB1WIEPkCEPlKWzvP/pZVU+MI780nXlVE9MdewXE9wRNBbJ
+        sCdxp0toR1yUEJ3baBggf0XMEA==
+X-Google-Smtp-Source: APXvYqyW50HA7ZEhhXDGV1K1uohEVxNfR/6CJnWo6HJvN0BWMjntyKWw6/dCACHUO6pL6WmrCvqsAw==
+X-Received: by 2002:a2e:9b90:: with SMTP id z16mr11697255lji.254.1581603090018;
+        Thu, 13 Feb 2020 06:11:30 -0800 (PST)
 Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id r2sm1707612lff.63.2020.02.13.06.11.26
+        by smtp.gmail.com with ESMTPSA id r2sm1707612lff.63.2020.02.13.06.11.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 06:11:26 -0800 (PST)
+        Thu, 13 Feb 2020 06:11:29 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH 1/2] dt-bindings: clock: Create YAML schema for ICST clocks
-Date:   Thu, 13 Feb 2020 15:11:18 +0100
-Message-Id: <20200213141119.66462-1-linus.walleij@linaro.org>
+Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 2/2] clk: versatile: Add device tree probing for IM-PD1 clocks
+Date:   Thu, 13 Feb 2020 15:11:19 +0100
+Message-Id: <20200213141119.66462-2-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20200213141119.66462-1-linus.walleij@linaro.org>
+References: <20200213141119.66462-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -71,246 +71,101 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The ICST clocks used in the ARM Integrator, Versatile and
-RealView platforms are updated to use YAML schema, and two
-new ICST clocks used by the Integrator IM-PD1 logical module
-are added in the process.
+As we want to move these clocks over to probe from the device
+tree we add a device tree probing path.
 
-Cc: devicetree@vger.kernel.org
+The old platform data path will be deleted once we have the
+device tree overall code in place.
+
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../bindings/clock/arm,syscon-icst.yaml       | 102 ++++++++++++++++++
- .../bindings/clock/arm-integrator.txt         |  34 ------
- .../bindings/clock/arm-syscon-icst.txt        |  70 ------------
- 3 files changed, 102 insertions(+), 104 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/arm-integrator.txt
- delete mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+ drivers/clk/versatile/clk-impd1.c | 68 +++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
-new file mode 100644
-index 000000000000..06c4d84e8c3d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
-@@ -0,0 +1,102 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/arm,syscon-icst.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
+index 1991f15a5db9..96b1018bcb7a 100644
+--- a/drivers/clk/versatile/clk-impd1.c
++++ b/drivers/clk/versatile/clk-impd1.c
+@@ -7,7 +7,9 @@
+ #include <linux/clkdev.h>
+ #include <linux/err.h>
+ #include <linux/io.h>
++#include <linux/platform_device.h>
+ #include <linux/platform_data/clk-integrator.h>
++#include <linux/module.h>
+ 
+ #include "icst.h"
+ #include "clk-icst.h"
+@@ -175,3 +177,69 @@ void integrator_impd1_clk_exit(unsigned int id)
+ 	kfree(imc->pclkname);
+ }
+ EXPORT_SYMBOL_GPL(integrator_impd1_clk_exit);
 +
-+title: ARM System Conctroller ICST Clocks
++static void __init integrator_impd1_clk_spawn(struct device *dev,
++					      void __iomem *base,
++					      struct device_node *np)
++{
++	struct clk *clk = ERR_PTR(-EINVAL);
++	const char *clk_name = np->name;
++	const char *parent_name;
++	const struct clk_icst_desc *desc;
 +
-+maintainers:
-+  - Linus Walleij <linusw@kernel.org>
++	if (of_device_is_compatible(np, "arm,impd1-vco1")) {
++		dev_info(dev, "register VCO1\n");
++		desc = &impd1_icst1_desc;
++	} else if (of_device_is_compatible(np, "arm,impd1-vco2")) {
++		dev_info(dev, "register VCO2\n");
++		desc = &impd1_icst2_desc;
++	} else {
++		dev_err(dev, "not a clock node %s\n", np->name);
++		return;
++	}
 +
-+description: The ICS525 and ICS307 oscillators are produced by Integrated
-+  Devices Technology (IDT). ARM integrated these oscillators deeply into their
-+  reference designs by adding special control registers that manage such
-+  oscillators to their system controllers.
++	of_property_read_string(np, "clock-output-names", &clk_name);
 +
-+  The various ARM system controllers contain logic to serialize and initialize
-+  an ICST clock request after a write to the 32 bit register at an offset
-+  into the system controller. Furthermore, to even be able to alter one of
-+  these frequencies, the system controller must first be unlocked by
-+  writing a special token to another offset in the system controller.
++	parent_name = of_clk_get_parent_name(np, 0);
++	clk = icst_clk_register(NULL, desc, clk_name, parent_name, base);
++	if (!IS_ERR(clk))
++		of_clk_add_provider(np, of_clk_src_simple_get, clk);
++}
 +
-+  Some ARM hardware contain special versions of the serial interface that only
-+  connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
-+  different values and sometimes also hardwire the output divider. They
-+  therefore have special compatible strings as per this table (the OD value is
-+  the value on the pins, not the resulting output divider).
++static int integrator_impd1_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct device_node *child;
++	void __iomem *base;
 +
-+  In the core modules and logic tiles, the ICST is a configurable clock fed
-+  from a 24 MHz clock on the motherboard (usually the main crystal) used for
-+  generating e.g. video clocks. It is located on the core module and there is
-+  only one of these. This clock node must be a subnode of the core module.
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base)) {
++		dev_err(dev, "unable to remap syscon base\n");
++		return PTR_ERR(base);
++	}
++	dev_info(dev, "located syscon base\n");
 +
-+  Hardware variant         RDW     OD          VDW
++	for_each_available_child_of_node(np, child)
++		integrator_impd1_clk_spawn(dev, base, child);
 +
-+  Integrator/AP            22      1           Bit 8 0, rest variable
-+  integratorap-cm
++	return 0;
++}
 +
-+  Integrator/AP            46      3           Bit 8 0, rest variable
-+  integratorap-sys
++static const struct of_device_id impd1_syscon_match[] = {
++	{ .compatible = "arm,im-pd1-syscon", },
++	{}
++};
 +
-+  Integrator/AP            22 or   1           17 or (33 or 25 MHz)
-+  integratorap-pci         14      1           14
++static struct platform_driver impd1_clk_driver = {
++	.driver = {
++		.name = "impd1-clk",
++		.of_match_table = impd1_syscon_match,
++	},
++	.probe  = integrator_impd1_clk_probe,
++};
++builtin_platform_driver(impd1_clk_driver);
 +
-+  Integrator/CP            22      variable    Bit 8 0, rest variable
-+  integratorcp-cm-core
-+
-+  Integrator/CP            22      variable    Bit 8 0, rest variable
-+  integratorcp-cm-mem
-+
-+  The ICST oscillator must be provided inside a system controller node.
-+
-+properties:
-+  "#clock-cells":
-+    const: 0
-+
-+  compatible:
-+    enum:
-+      - arm,syscon-icst525
-+      - arm,syscon-icst307
-+      - arm,syscon-icst525-integratorap-cm
-+      - arm,syscon-icst525-integratorap-sys
-+      - arm,syscon-icst525-integratorap-pci
-+      - arm,syscon-icst525-integratorcp-cm-core
-+      - arm,syscon-icst525-integratorcp-cm-mem
-+      - arm,integrator-cm-auxosc
-+      - arm,versatile-cm-auxosc
-+      - arm,impd-vco1
-+      - arm,impd-vco2
-+
-+  clocks:
-+    description: Parent clock for the ICST VCO
-+    maxItems: 1
-+
-+  clock-output-names:
-+    maxItems: 1
-+
-+  lock-offset:
-+    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    description: Offset to the unlocking register for the oscillator
-+
-+  vco-offset:
-+    $ref: '/schemas/types.yaml#/definitions/uint32'
-+    description: Offset to the VCO register for the oscillator
-+
-+required:
-+  - "#clock-cells"
-+  - compatible
-+  - clocks
-+
-+examples:
-+  - |
-+    vco1: clock@00 {
-+      compatible = "arm,impd1-vco1";
-+      #clock-cells = <0>;
-+      lock-offset = <0x08>;
-+      vco-offset = <0x00>;
-+      clocks = <&sysclk>;
-+      clock-output-names = "IM-PD1-VCO1";
-+    };
-+
-+...
-diff --git a/Documentation/devicetree/bindings/clock/arm-integrator.txt b/Documentation/devicetree/bindings/clock/arm-integrator.txt
-deleted file mode 100644
-index 11f5f95f571b..000000000000
---- a/Documentation/devicetree/bindings/clock/arm-integrator.txt
-+++ /dev/null
-@@ -1,34 +0,0 @@
--Clock bindings for ARM Integrator and Versatile Core Module clocks
--
--Auxiliary Oscillator Clock
--
--This is a configurable clock fed from a 24 MHz chrystal,
--used for generating e.g. video clocks. It is located on the
--core module and there is only one of these.
--
--This clock node *must* be a subnode of the core module, since
--it obtains the base address for it's address range from its
--parent node.
--
--
--Required properties:
--- compatible: must be "arm,integrator-cm-auxosc" or "arm,versatile-cm-auxosc"
--- #clock-cells: must be <0>
--
--Optional properties:
--- clocks: parent clock(s)
--
--Example:
--
--core-module@10000000 {
--	xtal24mhz: xtal24mhz@24M {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <24000000>;
--	};
--	auxosc: cm_aux_osc@25M {
--		#clock-cells = <0>;
--		compatible = "arm,integrator-cm-auxosc";
--		clocks = <&xtal24mhz>;
--	};
--};
-diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-deleted file mode 100644
-index 4cd81742038f..000000000000
---- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
-+++ /dev/null
-@@ -1,70 +0,0 @@
--ARM System Controller ICST clocks
--
--The ICS525 and ICS307 oscillators are produced by Integrated Devices
--Technology (IDT). ARM integrated these oscillators deeply into their
--reference designs by adding special control registers that manage such
--oscillators to their system controllers.
--
--The various ARM system controllers contain logic to serialize and initialize
--an ICST clock request after a write to the 32 bit register at an offset
--into the system controller. Furthermore, to even be able to alter one of
--these frequencies, the system controller must first be unlocked by
--writing a special token to another offset in the system controller.
--
--Some ARM hardware contain special versions of the serial interface that only
--connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
--different values and sometimes also hardwire the output divider. They
--therefore have special compatible strings as per this table (the OD value is
--the value on the pins, not the resulting output divider):
--
--Hardware variant:        RDW     OD          VDW
--
--Integrator/AP            22      1           Bit 8 0, rest variable
--integratorap-cm
--
--Integrator/AP            46      3           Bit 8 0, rest variable
--integratorap-sys
--
--Integrator/AP            22 or   1           17 or (33 or 25 MHz)
--integratorap-pci         14      1           14
--
--Integrator/CP            22      variable    Bit 8 0, rest variable
--integratorcp-cm-core
--
--Integrator/CP            22      variable    Bit 8 0, rest variable
--integratorcp-cm-mem
--
--The ICST oscillator must be provided inside a system controller node.
--
--Required properties:
--- compatible: must be one of
--  "arm,syscon-icst525"
--  "arm,syscon-icst307"
--  "arm,syscon-icst525-integratorap-cm"
--  "arm,syscon-icst525-integratorap-sys"
--  "arm,syscon-icst525-integratorap-pci"
--  "arm,syscon-icst525-integratorcp-cm-core"
--  "arm,syscon-icst525-integratorcp-cm-mem"
--- lock-offset: the offset address into the system controller where the
--  unlocking register is located
--- vco-offset: the offset address into the system controller where the
--  ICST control register is located (even 32 bit address)
--- #clock-cells: must be <0>
--- clocks: parent clock, since the ICST needs a parent clock to derive its
--  frequency from, this attribute is compulsory.
--
--Example:
--
--syscon: syscon@10000000 {
--	compatible = "syscon";
--	reg = <0x10000000 0x1000>;
--
--	oscclk0: osc0@c {
--		compatible = "arm,syscon-icst307";
--		#clock-cells = <0>;
--		lock-offset = <0x20>;
--		vco-offset = <0x0c>;
--		clocks = <&xtal24mhz>;
--	};
--	(...)
--};
++MODULE_AUTHOR("Linus Walleij <linusw@kernel.org>");
++MODULE_DESCRIPTION("Arm IM-PD1 module clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.23.0
 
