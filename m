@@ -2,204 +2,316 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE19C3B18C
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 20:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A5CAC352A3
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 20:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A09821734
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 20:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A88222C2
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 20:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581625278;
-	bh=DixFOO1GKT4exK4e47L4oEKto/snnxtafkHfLyzoRjE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nG6vCMqsNFmRfbcmS/lVTy8zNgd8zXaj6p4JSePHpKw6y7OCkTvWzPIwHLLmmzLoE
-	 WGuRJJ7TURbeo83x2iB6D6FoP9vqR1wogS1WY1In3tK3yiVpZgyzhiGazhg/b1BKvF
-	 W6jFXtVltouLNrclV3JSs1JHilGIeAi2BUYvn2qA=
+	s=default; t=1581626407;
+	bh=cDF3LhQWpDWYHtuU7yBQ1h0a5rtx3Yo49kFgRyADYJM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=bktKWo7K2frHWP4S5I8m3AbTrkdRViyqXKjljo3+POJ1e0o2YB/yJP3XJQxAoqHJT
+	 m/wnjsolbuC5rqO9q1jGM6E7k5qaeVs9Tk6IufaR5gff4ILKruXWbRvqq7uiLqZwR1
+	 L7oMYp0Be0l5QqQKgYSc+s5txUMzv9QMevwOrOc8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbgBMUVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 15:21:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35964 "EHLO mail.kernel.org"
+        id S1727954AbgBMUkH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 15:40:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbgBMUVM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Feb 2020 15:21:12 -0500
-Received: from ziggy.cz (unknown [37.223.145.31])
+        id S1727905AbgBMUkG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Feb 2020 15:40:06 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EAFE246AF;
-        Thu, 13 Feb 2020 20:21:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 072C324677;
+        Thu, 13 Feb 2020 20:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581625270;
-        bh=DixFOO1GKT4exK4e47L4oEKto/snnxtafkHfLyzoRjE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aoQVPXYTBM5OOAECJE/bFoLv6kRxp2NCvyDhOWHJsrnOAbKQLbnfxHIZ8LjZtSCsC
-         ApqfRu79GzpDKRUSbQbon2hwwIiZsGhBYUDMVYJGw4rD3SOCh7oWTlZxDV9B1WYhXo
-         pLz5f5al64vrKwo51arNt5Ucl74Gm0bmXnKu+SJ0=
-From:   matthias.bgg@kernel.org
-To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, enric.balletbo@collabora.com
-Cc:     devicetree@vger.kernel.org, drinkcat@chromium.org,
-        frank-w@public-files.de, sean.wang@mediatek.com,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        wens@csie.org, linux-mediatek@lists.infradead.org,
-        rdunlap@infradead.org, matthias.bgg@kernel.org,
-        hsinyi@chromium.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: [PATCH v7 13/13] drm/mediatek: Add support for mmsys through a pdev
-Date:   Thu, 13 Feb 2020 21:19:53 +0100
-Message-Id: <20200213201953.15268-14-matthias.bgg@kernel.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200213201953.15268-1-matthias.bgg@kernel.org>
-References: <20200213201953.15268-1-matthias.bgg@kernel.org>
+        s=default; t=1581626405;
+        bh=cDF3LhQWpDWYHtuU7yBQ1h0a5rtx3Yo49kFgRyADYJM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Yhxm3r/nU8of76d1GF+p8ZhMvTSnLM4GvjDUrAgsoqZwdDadlg46Atu7GRXGQXe6N
+         9JRZeV2mg6Wq68bNpLKNSGKul7OBD8ZFiekiIvDN42nJroOezVjn4k8YpK3HRYICrD
+         y/OH5U07cEAfv474rLpbt7l9pjqaFaVdPqrcfE+w=
+Received: by mail-qt1-f181.google.com with SMTP id d18so5443765qtj.10;
+        Thu, 13 Feb 2020 12:40:05 -0800 (PST)
+X-Gm-Message-State: APjAAAU2NSEiaSYdA7sLQK6nZAKe1b1DvvXXjumaUnTuDXAc0RwW04+4
+        vqCX0osxw4mD++Od6jjD9Rn1GwIBbt5NzNC3Rg==
+X-Google-Smtp-Source: APXvYqyapGELfwtxtSmym+UJABxkTQiXuvJEHTRm4oUOPN5JVOJ2u/W90YhTS4laVx8f8kuKaQwn67ditKMdeRNiwFM=
+X-Received: by 2002:ac8:6747:: with SMTP id n7mr13361090qtp.224.1581626403988;
+ Thu, 13 Feb 2020 12:40:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200213141119.66462-1-linus.walleij@linaro.org>
+In-Reply-To: <20200213141119.66462-1-linus.walleij@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 13 Feb 2020 14:39:53 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL-_s==8TsLos=1OyYVkdyZXMuTj5z8UDYFbOC-F3am1Q@mail.gmail.com>
+Message-ID: <CAL_JsqL-_s==8TsLos=1OyYVkdyZXMuTj5z8UDYFbOC-F3am1Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Create YAML schema for ICST clocks
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Matthias Brugger <mbrugger@suse.com>
+On Thu, Feb 13, 2020 at 8:11 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> The ICST clocks used in the ARM Integrator, Versatile and
+> RealView platforms are updated to use YAML schema, and two
+> new ICST clocks used by the Integrator IM-PD1 logical module
+> are added in the process.
+>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  .../bindings/clock/arm,syscon-icst.yaml       | 102 ++++++++++++++++++
+>  .../bindings/clock/arm-integrator.txt         |  34 ------
+>  .../bindings/clock/arm-syscon-icst.txt        |  70 ------------
+>  3 files changed, 102 insertions(+), 104 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/clock/arm-integrator.txt
+>  delete mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+>
+> diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+> new file mode 100644
+> index 000000000000..06c4d84e8c3d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+> @@ -0,0 +1,102 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/arm,syscon-icst.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ARM System Conctroller ICST Clocks
+> +
+> +maintainers:
+> +  - Linus Walleij <linusw@kernel.org>
+> +
+> +description: The ICS525 and ICS307 oscillators are produced by Integrated
 
-The MMSYS subsystem includes clocks and drm components.
-This patch adds an initailization path through a platform device
-for the clock part, so that both drivers get probed from the same
-device tree compatible.
+Needs a literal block '|' to preserve formatting of your table below.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+With that,
 
----
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-Changes in v7:
-- Add Rv-by from Enric
-
-Changes in v6:
-- re-arrange the patch order
-- generate platform_device for mmsys clock driver inside the DRM driver
-- fix DTS binding accordingly
-- switch all mmsys clock driver to platform probing
-- fix mt8173 platform driver remove function
-- fix probe defer path in HDMI driver
-- fix probe defer path in mtk_mdp_comp
-- fix identation of error messages
-
-Changes in v5:
-- fix missing regmap accessors in drm diver (patch 1)
-- omit probe deffered warning on all drivers (patch 5)
-- update drm and clk bindings (patch 6 and 7)
-- put mmsys clock part in dts child node of mmsys. Only done
-for HW where no dts backport compatible breakage is expected
-(either DRM driver not yet implemented or no HW available to
-the public) (patch 9 to 12)
-
-Changes in v4:
-- use platform device to probe clock driver
-- add Acked-by CK Hu for the probe deferred patch
-
-Changes in v3:
-- fix kconfig typo (shame on me)
-- delete __initconst from mm_clocks as converted to a platform driver
-
-Changes in v2:
-- add binding documentation
-- ddp: use regmap_update_bits
-- ddp: ignore EPROBE_DEFER on clock probing
-- mfd: delete mmsys_private
-- add Reviewed-by and Acked-by tags
-
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 24 ++++++++++++++++++++++++
- drivers/gpu/drm/mediatek/mtk_drm_drv.h |  2 ++
- 2 files changed, 26 insertions(+)
-
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index b68837ea02b3..68605dedf997 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -125,6 +125,7 @@ static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
- 	.ext_path = mt2701_mtk_ddp_ext,
- 	.ext_len = ARRAY_SIZE(mt2701_mtk_ddp_ext),
- 	.shadow_register = true,
-+	.clk_drv_name = "clk-mt2701-mm",
- };
- 
- static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
-@@ -134,6 +135,7 @@ static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
- 	.ext_len = ARRAY_SIZE(mt2712_mtk_ddp_ext),
- 	.third_path = mt2712_mtk_ddp_third,
- 	.third_len = ARRAY_SIZE(mt2712_mtk_ddp_third),
-+	.clk_drv_name = "clk-mt2712-mm",
- };
- 
- static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
-@@ -141,6 +143,7 @@ static const struct mtk_mmsys_driver_data mt8173_mmsys_driver_data = {
- 	.main_len = ARRAY_SIZE(mt8173_mtk_ddp_main),
- 	.ext_path = mt8173_mtk_ddp_ext,
- 	.ext_len = ARRAY_SIZE(mt8173_mtk_ddp_ext),
-+	.clk_drv_name = "clk-mt8173-mm",
- };
- 
- static int mtk_drm_kms_init(struct drm_device *drm)
-@@ -437,6 +440,24 @@ static int mtk_drm_probe(struct platform_device *pdev)
- 
- 	private->data = of_device_get_match_data(dev);
- 
-+	/*
-+	 * MMSYS includes apart from components management a block providing
-+	 * clocks for the subsystem. We probe this clock driver via a platform
-+	 * device.
-+	 */
-+	if (private->data->clk_drv_name) {
-+		private->clk_dev = platform_device_register_data(dev,
-+						private->data->clk_drv_name, -1,
-+						NULL, 0);
-+
-+		if (IS_ERR(private->clk_dev)) {
-+			dev_err(dev, "failed to register %s platform device\n",
-+				private->data->clk_drv_name);
-+
-+			return PTR_ERR(private->clk_dev);
-+		}
-+	}
-+
- 	private->config_regs = syscon_node_to_regmap(dev->of_node);
- 	if (IS_ERR(private->config_regs))
- 		return PTR_ERR(private->config_regs);
-@@ -544,6 +565,9 @@ static int mtk_drm_remove(struct platform_device *pdev)
- 	for (i = 0; i < DDP_COMPONENT_ID_MAX; i++)
- 		of_node_put(private->comp_node[i]);
- 
-+	if (private->clk_dev)
-+		platform_device_unregister(private->clk_dev);
-+
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-index 03201080688d..15652264c233 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-@@ -29,11 +29,13 @@ struct mtk_mmsys_driver_data {
- 	unsigned int third_len;
- 
- 	bool shadow_register;
-+	const char *clk_drv_name;
- };
- 
- struct mtk_drm_private {
- 	struct drm_device *drm;
- 	struct device *dma_dev;
-+	struct platform_device *clk_dev;
- 
- 	unsigned int num_pipes;
- 
--- 
-2.24.1
-
+> +  Devices Technology (IDT). ARM integrated these oscillators deeply into their
+> +  reference designs by adding special control registers that manage such
+> +  oscillators to their system controllers.
+> +
+> +  The various ARM system controllers contain logic to serialize and initialize
+> +  an ICST clock request after a write to the 32 bit register at an offset
+> +  into the system controller. Furthermore, to even be able to alter one of
+> +  these frequencies, the system controller must first be unlocked by
+> +  writing a special token to another offset in the system controller.
+> +
+> +  Some ARM hardware contain special versions of the serial interface that only
+> +  connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
+> +  different values and sometimes also hardwire the output divider. They
+> +  therefore have special compatible strings as per this table (the OD value is
+> +  the value on the pins, not the resulting output divider).
+> +
+> +  In the core modules and logic tiles, the ICST is a configurable clock fed
+> +  from a 24 MHz clock on the motherboard (usually the main crystal) used for
+> +  generating e.g. video clocks. It is located on the core module and there is
+> +  only one of these. This clock node must be a subnode of the core module.
+> +
+> +  Hardware variant         RDW     OD          VDW
+> +
+> +  Integrator/AP            22      1           Bit 8 0, rest variable
+> +  integratorap-cm
+> +
+> +  Integrator/AP            46      3           Bit 8 0, rest variable
+> +  integratorap-sys
+> +
+> +  Integrator/AP            22 or   1           17 or (33 or 25 MHz)
+> +  integratorap-pci         14      1           14
+> +
+> +  Integrator/CP            22      variable    Bit 8 0, rest variable
+> +  integratorcp-cm-core
+> +
+> +  Integrator/CP            22      variable    Bit 8 0, rest variable
+> +  integratorcp-cm-mem
+> +
+> +  The ICST oscillator must be provided inside a system controller node.
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  compatible:
+> +    enum:
+> +      - arm,syscon-icst525
+> +      - arm,syscon-icst307
+> +      - arm,syscon-icst525-integratorap-cm
+> +      - arm,syscon-icst525-integratorap-sys
+> +      - arm,syscon-icst525-integratorap-pci
+> +      - arm,syscon-icst525-integratorcp-cm-core
+> +      - arm,syscon-icst525-integratorcp-cm-mem
+> +      - arm,integrator-cm-auxosc
+> +      - arm,versatile-cm-auxosc
+> +      - arm,impd-vco1
+> +      - arm,impd-vco2
+> +
+> +  clocks:
+> +    description: Parent clock for the ICST VCO
+> +    maxItems: 1
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  lock-offset:
+> +    $ref: '/schemas/types.yaml#/definitions/uint32'
+> +    description: Offset to the unlocking register for the oscillator
+> +
+> +  vco-offset:
+> +    $ref: '/schemas/types.yaml#/definitions/uint32'
+> +    description: Offset to the VCO register for the oscillator
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - compatible
+> +  - clocks
+> +
+> +examples:
+> +  - |
+> +    vco1: clock@00 {
+> +      compatible = "arm,impd1-vco1";
+> +      #clock-cells = <0>;
+> +      lock-offset = <0x08>;
+> +      vco-offset = <0x00>;
+> +      clocks = <&sysclk>;
+> +      clock-output-names = "IM-PD1-VCO1";
+> +    };
+> +
+> +...
+> diff --git a/Documentation/devicetree/bindings/clock/arm-integrator.txt b/Documentation/devicetree/bindings/clock/arm-integrator.txt
+> deleted file mode 100644
+> index 11f5f95f571b..000000000000
+> --- a/Documentation/devicetree/bindings/clock/arm-integrator.txt
+> +++ /dev/null
+> @@ -1,34 +0,0 @@
+> -Clock bindings for ARM Integrator and Versatile Core Module clocks
+> -
+> -Auxiliary Oscillator Clock
+> -
+> -This is a configurable clock fed from a 24 MHz chrystal,
+> -used for generating e.g. video clocks. It is located on the
+> -core module and there is only one of these.
+> -
+> -This clock node *must* be a subnode of the core module, since
+> -it obtains the base address for it's address range from its
+> -parent node.
+> -
+> -
+> -Required properties:
+> -- compatible: must be "arm,integrator-cm-auxosc" or "arm,versatile-cm-auxosc"
+> -- #clock-cells: must be <0>
+> -
+> -Optional properties:
+> -- clocks: parent clock(s)
+> -
+> -Example:
+> -
+> -core-module@10000000 {
+> -       xtal24mhz: xtal24mhz@24M {
+> -               #clock-cells = <0>;
+> -               compatible = "fixed-clock";
+> -               clock-frequency = <24000000>;
+> -       };
+> -       auxosc: cm_aux_osc@25M {
+> -               #clock-cells = <0>;
+> -               compatible = "arm,integrator-cm-auxosc";
+> -               clocks = <&xtal24mhz>;
+> -       };
+> -};
+> diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> deleted file mode 100644
+> index 4cd81742038f..000000000000
+> --- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+> +++ /dev/null
+> @@ -1,70 +0,0 @@
+> -ARM System Controller ICST clocks
+> -
+> -The ICS525 and ICS307 oscillators are produced by Integrated Devices
+> -Technology (IDT). ARM integrated these oscillators deeply into their
+> -reference designs by adding special control registers that manage such
+> -oscillators to their system controllers.
+> -
+> -The various ARM system controllers contain logic to serialize and initialize
+> -an ICST clock request after a write to the 32 bit register at an offset
+> -into the system controller. Furthermore, to even be able to alter one of
+> -these frequencies, the system controller must first be unlocked by
+> -writing a special token to another offset in the system controller.
+> -
+> -Some ARM hardware contain special versions of the serial interface that only
+> -connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
+> -different values and sometimes also hardwire the output divider. They
+> -therefore have special compatible strings as per this table (the OD value is
+> -the value on the pins, not the resulting output divider):
+> -
+> -Hardware variant:        RDW     OD          VDW
+> -
+> -Integrator/AP            22      1           Bit 8 0, rest variable
+> -integratorap-cm
+> -
+> -Integrator/AP            46      3           Bit 8 0, rest variable
+> -integratorap-sys
+> -
+> -Integrator/AP            22 or   1           17 or (33 or 25 MHz)
+> -integratorap-pci         14      1           14
+> -
+> -Integrator/CP            22      variable    Bit 8 0, rest variable
+> -integratorcp-cm-core
+> -
+> -Integrator/CP            22      variable    Bit 8 0, rest variable
+> -integratorcp-cm-mem
+> -
+> -The ICST oscillator must be provided inside a system controller node.
+> -
+> -Required properties:
+> -- compatible: must be one of
+> -  "arm,syscon-icst525"
+> -  "arm,syscon-icst307"
+> -  "arm,syscon-icst525-integratorap-cm"
+> -  "arm,syscon-icst525-integratorap-sys"
+> -  "arm,syscon-icst525-integratorap-pci"
+> -  "arm,syscon-icst525-integratorcp-cm-core"
+> -  "arm,syscon-icst525-integratorcp-cm-mem"
+> -- lock-offset: the offset address into the system controller where the
+> -  unlocking register is located
+> -- vco-offset: the offset address into the system controller where the
+> -  ICST control register is located (even 32 bit address)
+> -- #clock-cells: must be <0>
+> -- clocks: parent clock, since the ICST needs a parent clock to derive its
+> -  frequency from, this attribute is compulsory.
+> -
+> -Example:
+> -
+> -syscon: syscon@10000000 {
+> -       compatible = "syscon";
+> -       reg = <0x10000000 0x1000>;
+> -
+> -       oscclk0: osc0@c {
+> -               compatible = "arm,syscon-icst307";
+> -               #clock-cells = <0>;
+> -               lock-offset = <0x20>;
+> -               vco-offset = <0x0c>;
+> -               clocks = <&xtal24mhz>;
+> -       };
+> -       (...)
+> -};
+> --
+> 2.23.0
+>
