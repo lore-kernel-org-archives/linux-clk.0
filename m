@@ -2,91 +2,103 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A416AC2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 16:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B420C2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 17:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76BC624649
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 16:35:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63368218AC
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 17:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YxmBmTj3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+H8BR2W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbgBMQfL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 11:35:11 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53414 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbgBMQfK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 11:35:10 -0500
-Received: by mail-wm1-f68.google.com with SMTP id s10so6978136wmh.3
-        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2020 08:35:09 -0800 (PST)
+        id S1727940AbgBMRm3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 12:42:29 -0500
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:44663 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726282AbgBMRm2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 12:42:28 -0500
+Received: by mail-wr1-f47.google.com with SMTP id m16so7728700wrx.11;
+        Thu, 13 Feb 2020 09:42:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=7ggoquwaNTIaGIGrCsxu73hH4eSlanLhZjrOSvqsMIY=;
-        b=YxmBmTj3SW+Wse8RG2pL7SR9RV3XrCYFzSS2BLUiCl8l62VmGJnxEuqdBfqe+UGtAf
-         Disk8hZBDwTcK4PPU1RXUDLR8f/KJfIabkgPDSRhI8ofo3/TEvMYHvln0RgsGr9bH0Js
-         MIkLoZPP26TtSbkQAnMosIxWnZSlT5sp0Vm1aW2EkNacD+QhZdmfaNPQriyPjgtbeErj
-         sFl/6A9JrPdSO4ICLuhzyIy9vH+m/mGfGnDTnSaM2rWih2jFs+L7wWsaYU9f0IpIp7oy
-         y04cuSJBxmSEEH69ViGlShsfdwrSZ/Q8xW0cjA5wXTGniLOn8P5MjYBFC3firj4MPlgy
-         AEtQ==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1rRdFx88pI/kxSZV4027SuKrkg3wbK/X0SSnP/KD1KE=;
+        b=P+H8BR2W3RXELrDqPMn0NrlYbRqq4Qgn6+zGWwNidnOXP0b1DY/FXHlEdGRQuh/yGw
+         F2AhqH7cxR+UwKjp1khl50vLmDTpu9IJSu0jokLipd6iH9IsPwbZIU8LUAWxKX5o/dg7
+         2iS9yuz0snKF7iCf+JQ2NxRGqRIM2tEsRLuPvStkKH9ExVrtT24Q9pUAVRpyiaZt8raL
+         R9P9I5ZIOylTlJ7rAeHMUby093U1ZapfBkC3jT2YSpDiM0P9+CYiJfDWfgsJaP9iO3BK
+         2bVQOMnBlxaEmV04YSSAVwb/nitdRWj2vE8APKmEsFINeMBod8p3cGmcnVmRZsnys3ag
+         tDXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=7ggoquwaNTIaGIGrCsxu73hH4eSlanLhZjrOSvqsMIY=;
-        b=iZRyns7Zbk5YC9v5KzLSQHx5726DOIKPS2jabdpFGYrk0DZoMGktRFTQKdkzup2r5U
-         wySjugmW2zjKlvl6QqwzHAtCOWX36o6Q5iHhPC4sc79RnpKSyhXGsQKQ5KE8WuzTrL3J
-         MGg5YO8Mg3Dywij2H4ts1ActKRPgIydcIlmopfLeyMoNujxYlJ3JPDU8hmokib/znV6N
-         3DD21+mmw4OGY3alx9yO7DqXKx0X4Vy5z89IuGURAaGA69ZV6P69c+PBh4v7OsoEpTUm
-         WeKUZUwlUcINiKvly/ZC0vMDRJl+msXRlxD5jqVbF4VfJpKMuFfn0JqrQlC8j/FyocAq
-         UnHg==
-X-Gm-Message-State: APjAAAXARXCamjem54fCM3RXFPbWyG0pvzTXHv5DRq6dkdj34reEkbcm
-        hw4/4pXp36l6KDLnhGGOFZfZ5A==
-X-Google-Smtp-Source: APXvYqxvlqxWaCHriW4bHt4AIcsFVsaT/7IkORpPargfpB0fvDThsa0A0ZWKK8N731MNLaJGX/rA3g==
-X-Received: by 2002:a05:600c:149:: with SMTP id w9mr6248835wmm.132.1581611708925;
-        Thu, 13 Feb 2020 08:35:08 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c9sm3573960wmc.47.2020.02.13.08.35.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 08:35:08 -0800 (PST)
-References: <20200122100451.2443153-1-jbrunet@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, linux-clk@vger.kernel.org
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: meson: gxbb: audio clock updates
-In-reply-to: <20200122100451.2443153-1-jbrunet@baylibre.com>
-Date:   Thu, 13 Feb 2020 17:35:07 +0100
-Message-ID: <1jftfewimc.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1rRdFx88pI/kxSZV4027SuKrkg3wbK/X0SSnP/KD1KE=;
+        b=ST/43ajjCGgICrpjJJCal+nzIi8I765N9OBGX/1rBGEMzS1XMVdScAoK1D9QXr1Bha
+         0zjr/QJLYDTP/3mk/T+5O6QtAA3OSNBXVA3Or7aa15DedqoTzGXkt6A+Cp60Ixo7gjof
+         Z8ajeTtF0i8xuVF1voCLgjKNb/jFFPKwWtB+1DJmfmcnHdPgcfBGJjoCpsWjUVVqtLZh
+         xZ9FRbGMWE8H1ZT7lO8kFjVrtL7nQ3IS7+/yb0ziF/DSsx9iXDTKEx1FAuLX6jy7JNwe
+         /kYhShZo+BPysrymdR3K1xyco5ThlpSrMVF/uj3hHk1VS9o62CEXFypWqFkQre7J00zD
+         UHVA==
+X-Gm-Message-State: APjAAAWZRVY6iiqjm3ck5nSYfQNoijdQmYZyK9yOEMmkQb5vUai/f+in
+        a0Uzqz4fjpb+6V3+Fub6YyqDQCibd1EP3g==
+X-Google-Smtp-Source: APXvYqwy6WSPQoTbxPJQTZm66lOXl/OPjwf0AvbsjmRs/L5giK3yDroCWzZ/PI8TSyETBJUKVjR0pw==
+X-Received: by 2002:adf:e610:: with SMTP id p16mr24400302wrm.81.1581615747372;
+        Thu, 13 Feb 2020 09:42:27 -0800 (PST)
+Received: from localhost (ip1f115f16.dynamic.kabel-deutschland.de. [31.17.95.22])
+        by smtp.gmail.com with ESMTPSA id w8sm4003167wmm.0.2020.02.13.09.42.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 13 Feb 2020 09:42:26 -0800 (PST)
+Date:   Thu, 13 Feb 2020 18:42:25 +0100
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     "festevam@gmail.com" <festevam@gmail.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: clk: imx: clock driver for imx8qm?
+Message-ID: <20200213174225.GA11566@ripley>
+References: <20200213153151.GB6975@optiplex>
+ <AM0PR04MB4211AC5AB9F6A055F36040A2801A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM0PR04MB4211AC5AB9F6A055F36040A2801A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 13/02/20, Aisheng Dong wrote:
+> Hi Oliver,
+> 
+> > 
+> > is someone working on clock driver for imx8qm? I miss at least a clk-imx8qm.c
+> > in the drivers/imx/clk/ directory. I saw that you are working in this area and
+> > perhaps you can give me some insights what is needed here.
+> > 
+> 
+> MX8QM/QXP are using the same clock driver clk-imx8qxp.c
 
-On Wed 22 Jan 2020 at 11:04, Jerome Brunet <jbrunet@baylibre.com> wrote:
+ok thx, for that clarification.
 
-> This patcheset provides updates related to the audio peripheral clocks
-> It adds the peripheral clock required by the internal audio dac
-> and reorganize the AIU clocks into a hierarchy to better reflect the
-> behavior of the SoC.
->
-> Jerome Brunet (3):
->   dt-bindings: clk: meson: add the gxl internal dac gate
->   clk: meson: gxbb: add the gxl internal dac gate
->   clk: meson: gxbb: set audio output clock hierarchy
->
->  drivers/clk/meson/gxbb.c              | 21 +++++++++++++--------
->  drivers/clk/meson/gxbb.h              |  2 +-
->  include/dt-bindings/clock/gxbb-clkc.h |  1 +
->  3 files changed, 15 insertions(+), 9 deletions(-)
+> 
+> [PATCH RESEND V5 00/11] clk: imx8: add new clock binding for better pm support
+> https://www.spinics.net/lists/arm-kernel/msg781687.html
+> The review of that patch series is pending for a couple of months.
 
-Applied
+yes that is what I currently use. So further imx8qm development can
+happen if this is integrated?
+
+Best regards,
+
+Oliver
