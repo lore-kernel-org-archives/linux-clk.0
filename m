@@ -2,140 +2,315 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E78EFC2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 13:29:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FC0C3B18B
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B925C222C2
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 13:29:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D3AE20873
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qDPTDEy3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zpuQcF4I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729772AbgBMN3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 08:29:04 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:36765 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729588AbgBMN3E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 08:29:04 -0500
-Received: by mail-il1-f193.google.com with SMTP id b15so4965045iln.3;
-        Thu, 13 Feb 2020 05:29:03 -0800 (PST)
+        id S1730060AbgBMOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 09:11:31 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33593 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730112AbgBMOLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 09:11:31 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n25so4396238lfl.0
+        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2020 06:11:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yfE2W5LQkoH0UQl9XbqZm7z7YZPx+sJdXqj0cViMT9Y=;
-        b=qDPTDEy3Wwk4R4THsiNOjtlrg7zGYl9R2KtnB0Vy98kGWf8Mhue5K04gGadiYjOhJA
-         OECkjl7zgSyVTM5gbskiMbTETf+UpRizBu2GA90YYSh00wtnIubUwZNgzlLyxqv322Nt
-         2O4mOsjv3IVl5zqbDSjloBWSQzh/bXytjQEREZD1k1BtwrCRwdKPHywgcR/kymjYz59I
-         mB1xQVs4tye3cty8HbTxBWFkIilCgdhCURMlPWiJaeR6bR5PO3GCSLb2zqbTt5BJv3Dp
-         +Ednjlh1F9uwLcHkarMO30YaCVIN2e+VuOjGcWVFhpclKZrMSP6uuyRaTcFcRftXeUCz
-         BdFA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fkyOwSYDYLCdovDDNZ6yM3vQcsvjxUIa3A0TtLeyc58=;
+        b=zpuQcF4IR7KFvezlHtOuRuJc/2Dsd2TkahsrLS8QTkeJjn/6GEORtvxGdauyY9R8vl
+         HFH3aTs4Wvkfu5R9e8LgZkjt4jZYx7POqEzOlFWrL6iq57v94L29n3bWODrLZMDIB1fo
+         YTix78gb6hGm3o1FO65QhEZqTXIhPZS1+HfD/JlL+9hrkvD47SnS2PMxp8rK85Gm5M5J
+         tukD8Sksdx3vG6Q1femuZMH8v3Cpb/smToT4/zUP/ruRWMiibYM7LowpeqMZzZg9frpU
+         +QmqwsBdP9mXTqNg2bmWGGXu3qatCg5+o5scD3zVQ4NK5rkqj1/n04m8m9coGcs+vzrk
+         xytQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yfE2W5LQkoH0UQl9XbqZm7z7YZPx+sJdXqj0cViMT9Y=;
-        b=tRBtgux72wOdWQ1xpKox7kyk9mAWBzo8/izwxkRwcCoPtXRoc9m+/uyEPQlMoJQUWD
-         qOlhW2u72qzU9xeUx7abYVMxpI4hYjQwwRUHOZKH3hNQf5PeR9GxwfKDyzhJRRhADSjq
-         fj7i/9BSQrCkXlVcijnhB8q1YRDoyP0VR0uT6SmUmJplH0kkj+8PY2JPsJ3vnH1HT2gr
-         as0P4DLnJmE9EiU0DBR6tCH+6l1C4gYkZfqfTtDXGLpxcNjf+2iwoDc2+WVgFDaV8zwB
-         shXCDRwaRmvedrXfLoPQ+C7n7sulR+v0YHPJbyPjQVTmlSXQ61S3GFSiL8WoM4PX7Nzl
-         pIiw==
-X-Gm-Message-State: APjAAAVN3xWlbBAszULQOMgcJD0jdkjmzyJaxISgdHBOPO18U7VEEXYx
-        w5vnHFp6n80CL50sTzw9njx5pxhh8ike7sYgx/A=
-X-Google-Smtp-Source: APXvYqyZADe9aFJTPHWo+2m+qnyTFGMvRJstebqLC899Zq0rrvQgRDaG+VSSVPANdZD+NvJ4x3Rs9wqKM+CNDfEx+4Y=
-X-Received: by 2002:a92:5d92:: with SMTP id e18mr15908939ilg.75.1581600543378;
- Thu, 13 Feb 2020 05:29:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=fkyOwSYDYLCdovDDNZ6yM3vQcsvjxUIa3A0TtLeyc58=;
+        b=PlKBa6rbsA2vyvcZ5b2ByvlZO/wFWk74sncBS9oIrR6r+a0wCJOHKgzjphuJxn2yj5
+         +IGBb2dzxtQpiCcG2cCKk2dQfk/Wdl1j5uS2dM6gAVvf4sr//L7YrpAv7qYJoa/zJtBG
+         13yMrR5rq2OunCfn33AC99hSqqM+R3l8dPjAIRXVYOt6csCZvvbaoC+lfCBVUp8PyCvo
+         8V6avvmX7mUBp7H4E5S0VC3mZfRJJo7pC/l6+WKB2E69M76vLgUEn2gTHIFhHS/XEaVE
+         dsnWwGnlogxKP41J1igUVsqgwgXlBOQF4Mg6Svv/aqBvGNis6DD9TXaKaT4OTDYJo4Fa
+         pHnw==
+X-Gm-Message-State: APjAAAUm9TWGcRi5z03CuahEf3bCR8Wx0v19h1Wm5ZmR7IUIePySuKUF
+        mtm8FEjvMrjg76Z6EwSN3KkFLxSnJy8=
+X-Google-Smtp-Source: APXvYqwh1eIQAnNU3umYZ4iPkxKgdjn0x6R3bDtbfcd59H84763IYh7kv9qMZz/ARfyMYJNFrL8abA==
+X-Received: by 2002:a19:c7c5:: with SMTP id x188mr530244lff.22.1581603087555;
+        Thu, 13 Feb 2020 06:11:27 -0800 (PST)
+Received: from genomnajs.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id r2sm1707612lff.63.2020.02.13.06.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Feb 2020 06:11:26 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     linux-clk@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: Create YAML schema for ICST clocks
+Date:   Thu, 13 Feb 2020 15:11:18 +0100
+Message-Id: <20200213141119.66462-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <20200212120237.1332-1-linux.amoon@gmail.com> <20200213101744.GA11087@kozik-lap>
-In-Reply-To: <20200213101744.GA11087@kozik-lap>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Thu, 13 Feb 2020 18:58:51 +0530
-Message-ID: <CANAwSgR+PFiE0=FEhDY__FDx+470pe0OsbUXcSG64JDuG++ccQ@mail.gmail.com>
-Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-hi Krzysztof,
+The ICST clocks used in the ARM Integrator, Versatile and
+RealView platforms are updated to use YAML schema, and two
+new ICST clocks used by the Integrator IM-PD1 logical module
+are added in the process.
 
-On Thu, 13 Feb 2020 at 15:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
-> > This patches add the power domain for MMC driver,
-> > but somehow the suspend/resume feature is broken
-> > so any input on how to fix this.
->
-> I think S2R was working on XU3-family after Marek's fixes, so you mean
-> that these patches break it?
->
-Yes I my testing mmc driver failed to come up after suspend.
+Cc: devicetree@vger.kernel.org
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ .../bindings/clock/arm,syscon-icst.yaml       | 102 ++++++++++++++++++
+ .../bindings/clock/arm-integrator.txt         |  34 ------
+ .../bindings/clock/arm-syscon-icst.txt        |  70 ------------
+ 3 files changed, 102 insertions(+), 104 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/arm-integrator.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
 
-But I see below in power domain, Just to confirm.
-#  cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-domain                          status          slaves
-    /device                                             runtime status
-----------------------------------------------------------------------
-CAM                             off-0
-FSYS2                           on
-    /devices/platform/soc/10010000.clock-controller/exynos5-subcmu.6.auto
- active
-    /devices/platform/soc/12200000.mmc                  active
-    /devices/platform/soc/12220000.mmc                  active
+diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+new file mode 100644
+index 000000000000..06c4d84e8c3d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+@@ -0,0 +1,102 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/arm,syscon-icst.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM System Conctroller ICST Clocks
++
++maintainers:
++  - Linus Walleij <linusw@kernel.org>
++
++description: The ICS525 and ICS307 oscillators are produced by Integrated
++  Devices Technology (IDT). ARM integrated these oscillators deeply into their
++  reference designs by adding special control registers that manage such
++  oscillators to their system controllers.
++
++  The various ARM system controllers contain logic to serialize and initialize
++  an ICST clock request after a write to the 32 bit register at an offset
++  into the system controller. Furthermore, to even be able to alter one of
++  these frequencies, the system controller must first be unlocked by
++  writing a special token to another offset in the system controller.
++
++  Some ARM hardware contain special versions of the serial interface that only
++  connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
++  different values and sometimes also hardwire the output divider. They
++  therefore have special compatible strings as per this table (the OD value is
++  the value on the pins, not the resulting output divider).
++
++  In the core modules and logic tiles, the ICST is a configurable clock fed
++  from a 24 MHz clock on the motherboard (usually the main crystal) used for
++  generating e.g. video clocks. It is located on the core module and there is
++  only one of these. This clock node must be a subnode of the core module.
++
++  Hardware variant         RDW     OD          VDW
++
++  Integrator/AP            22      1           Bit 8 0, rest variable
++  integratorap-cm
++
++  Integrator/AP            46      3           Bit 8 0, rest variable
++  integratorap-sys
++
++  Integrator/AP            22 or   1           17 or (33 or 25 MHz)
++  integratorap-pci         14      1           14
++
++  Integrator/CP            22      variable    Bit 8 0, rest variable
++  integratorcp-cm-core
++
++  Integrator/CP            22      variable    Bit 8 0, rest variable
++  integratorcp-cm-mem
++
++  The ICST oscillator must be provided inside a system controller node.
++
++properties:
++  "#clock-cells":
++    const: 0
++
++  compatible:
++    enum:
++      - arm,syscon-icst525
++      - arm,syscon-icst307
++      - arm,syscon-icst525-integratorap-cm
++      - arm,syscon-icst525-integratorap-sys
++      - arm,syscon-icst525-integratorap-pci
++      - arm,syscon-icst525-integratorcp-cm-core
++      - arm,syscon-icst525-integratorcp-cm-mem
++      - arm,integrator-cm-auxosc
++      - arm,versatile-cm-auxosc
++      - arm,impd-vco1
++      - arm,impd-vco2
++
++  clocks:
++    description: Parent clock for the ICST VCO
++    maxItems: 1
++
++  clock-output-names:
++    maxItems: 1
++
++  lock-offset:
++    $ref: '/schemas/types.yaml#/definitions/uint32'
++    description: Offset to the unlocking register for the oscillator
++
++  vco-offset:
++    $ref: '/schemas/types.yaml#/definitions/uint32'
++    description: Offset to the VCO register for the oscillator
++
++required:
++  - "#clock-cells"
++  - compatible
++  - clocks
++
++examples:
++  - |
++    vco1: clock@00 {
++      compatible = "arm,impd1-vco1";
++      #clock-cells = <0>;
++      lock-offset = <0x08>;
++      vco-offset = <0x00>;
++      clocks = <&sysclk>;
++      clock-output-names = "IM-PD1-VCO1";
++    };
++
++...
+diff --git a/Documentation/devicetree/bindings/clock/arm-integrator.txt b/Documentation/devicetree/bindings/clock/arm-integrator.txt
+deleted file mode 100644
+index 11f5f95f571b..000000000000
+--- a/Documentation/devicetree/bindings/clock/arm-integrator.txt
++++ /dev/null
+@@ -1,34 +0,0 @@
+-Clock bindings for ARM Integrator and Versatile Core Module clocks
+-
+-Auxiliary Oscillator Clock
+-
+-This is a configurable clock fed from a 24 MHz chrystal,
+-used for generating e.g. video clocks. It is located on the
+-core module and there is only one of these.
+-
+-This clock node *must* be a subnode of the core module, since
+-it obtains the base address for it's address range from its
+-parent node.
+-
+-
+-Required properties:
+-- compatible: must be "arm,integrator-cm-auxosc" or "arm,versatile-cm-auxosc"
+-- #clock-cells: must be <0>
+-
+-Optional properties:
+-- clocks: parent clock(s)
+-
+-Example:
+-
+-core-module@10000000 {
+-	xtal24mhz: xtal24mhz@24M {
+-		#clock-cells = <0>;
+-		compatible = "fixed-clock";
+-		clock-frequency = <24000000>;
+-	};
+-	auxosc: cm_aux_osc@25M {
+-		#clock-cells = <0>;
+-		compatible = "arm,integrator-cm-auxosc";
+-		clocks = <&xtal24mhz>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt b/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
+deleted file mode 100644
+index 4cd81742038f..000000000000
+--- a/Documentation/devicetree/bindings/clock/arm-syscon-icst.txt
++++ /dev/null
+@@ -1,70 +0,0 @@
+-ARM System Controller ICST clocks
+-
+-The ICS525 and ICS307 oscillators are produced by Integrated Devices
+-Technology (IDT). ARM integrated these oscillators deeply into their
+-reference designs by adding special control registers that manage such
+-oscillators to their system controllers.
+-
+-The various ARM system controllers contain logic to serialize and initialize
+-an ICST clock request after a write to the 32 bit register at an offset
+-into the system controller. Furthermore, to even be able to alter one of
+-these frequencies, the system controller must first be unlocked by
+-writing a special token to another offset in the system controller.
+-
+-Some ARM hardware contain special versions of the serial interface that only
+-connects the low 8 bits of the VDW (missing one bit), hardwires RDW to
+-different values and sometimes also hardwire the output divider. They
+-therefore have special compatible strings as per this table (the OD value is
+-the value on the pins, not the resulting output divider):
+-
+-Hardware variant:        RDW     OD          VDW
+-
+-Integrator/AP            22      1           Bit 8 0, rest variable
+-integratorap-cm
+-
+-Integrator/AP            46      3           Bit 8 0, rest variable
+-integratorap-sys
+-
+-Integrator/AP            22 or   1           17 or (33 or 25 MHz)
+-integratorap-pci         14      1           14
+-
+-Integrator/CP            22      variable    Bit 8 0, rest variable
+-integratorcp-cm-core
+-
+-Integrator/CP            22      variable    Bit 8 0, rest variable
+-integratorcp-cm-mem
+-
+-The ICST oscillator must be provided inside a system controller node.
+-
+-Required properties:
+-- compatible: must be one of
+-  "arm,syscon-icst525"
+-  "arm,syscon-icst307"
+-  "arm,syscon-icst525-integratorap-cm"
+-  "arm,syscon-icst525-integratorap-sys"
+-  "arm,syscon-icst525-integratorap-pci"
+-  "arm,syscon-icst525-integratorcp-cm-core"
+-  "arm,syscon-icst525-integratorcp-cm-mem"
+-- lock-offset: the offset address into the system controller where the
+-  unlocking register is located
+-- vco-offset: the offset address into the system controller where the
+-  ICST control register is located (even 32 bit address)
+-- #clock-cells: must be <0>
+-- clocks: parent clock, since the ICST needs a parent clock to derive its
+-  frequency from, this attribute is compulsory.
+-
+-Example:
+-
+-syscon: syscon@10000000 {
+-	compatible = "syscon";
+-	reg = <0x10000000 0x1000>;
+-
+-	oscclk0: osc0@c {
+-		compatible = "arm,syscon-icst307";
+-		#clock-cells = <0>;
+-		lock-offset = <0x20>;
+-		vco-offset = <0x0c>;
+-		clocks = <&xtal24mhz>;
+-	};
+-	(...)
+-};
+-- 
+2.23.0
 
-# powerdebug -d
-FSYS2:
-current_state: on
-active_time: 29016991 ms
-total_idle_time: 4037 ms
-Idle States:
-             State            Time
-             S0               4037
-Devices:
-         /devices/platform/soc/10010000.clock-controller/exynos5-subcmu.6.auto
-         /devices/platform/soc/12200000.mmc
-         /devices/platform/soc/12220000.mmc
-
-> Best regards,
-> Krzysztof
->
->
-
--Anand
-
-> >
-> > Also on similar lines I tried to add power domain
-> > FSYS for usb3 and usb2 nodes but this time
-> > it failed to load the kernel, so how can I reslove
-> > this issue.
-> >
-> > -Anand
-> >
-> > Anand Moon (2):
-> >   ARM: dts: exynos: Add FSYS2 power domain to Exynos542x
-> >   clk: samsung: exynos542x: Move FSYS2 subsystem clocks to its sub-CMU
-> >
-> >  arch/arm/boot/dts/exynos5420.dtsi    | 10 ++++++++++
-> >  drivers/clk/samsung/clk-exynos5420.c | 24 +++++++++++++++++++++---
-> >  2 files changed, 31 insertions(+), 3 deletions(-)
-> >
-> > --
-> > 2.25.0
-> >
