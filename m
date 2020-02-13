@@ -2,83 +2,98 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BD6C2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8484C2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C61820675
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77682468A
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:36:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pMu8qWis"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="lZb8yl9U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728543AbgBMPfX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 10:35:23 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46949 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388085AbgBMPbz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 10:31:55 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z7so7179655wrl.13;
-        Thu, 13 Feb 2020 07:31:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
-        b=pMu8qWisYyaMHM2tnHMktgLsO04+nQvZ6zDXoYNfcRi1UXplaz/1HVsQS/Ea4ZnRIy
-         Y4EfxaXb9c3cxF8rXOM0BjWn7zYUNOvVsuZ1EEgXknU9BbKCt2yic2hQLu+uvGbfaDIq
-         bOras25oV+gjPZm0Xah6RXvFKK3pkzhRb0DED4iFXQwklCkfNacH1kkE2PKCrR8vrUhT
-         xcIqw5XUOdNKIQZmWV1a5q0Y9cEurSyc5lJ784goDVfUs7oorbiios0LjGZWKAbx892A
-         GAheOuDXqapKdiCKErkXodg6gpZ32V247Z6cdiWlztK0pyW9Vsu6PzDNyqFJw341KkkK
-         AXkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
-        b=olo6MZ1+5niy0iyHC+fjvzYxfYRDF+ySnlEfWyTZy4LWhhPPFZgXmjU41wZLuqjRCd
-         WxcgfcDD3quk2VEGfmK0TG9tfWGdqIxcx/cXaLrVKuvIbz/Q1wxAuIDLQyQ/eYexncH+
-         HRBa8OGfPvVBFCWCVaWdSSjim//6uYjonQJfA7cbJ9cjq/JfVckkGmGWNe9n1IT+P7D9
-         wFNQUf3iZ+hhENfBeDJf+3Y1Iygk1GL4erw2k2xBg1fk3bR5sSzSwTll1GcY/JnSTXve
-         bOhSc6SA/jWz5VEqiQC0yiYZqIDa0u19+2MbT4BRxty8pJ5Cs1dihjs3vxIQaA+dMpxV
-         HAdA==
-X-Gm-Message-State: APjAAAU4i9ADgdovXWEXqFJL8+ZvcpUqYo8vokFcEeXQsaR0ffjV+EmR
-        PqUO2ogFcv/5NSUOuZU4deo=
-X-Google-Smtp-Source: APXvYqw7slUsjNQkyU+rvi+PmJErVCo36nL+8e2UFRgWoCo3D5Shs+6iWOnwkAagzlIj1g9ifPTGCA==
-X-Received: by 2002:a5d:494f:: with SMTP id r15mr23122503wrs.143.1581607913331;
-        Thu, 13 Feb 2020 07:31:53 -0800 (PST)
-Received: from localhost ([193.47.161.132])
-        by smtp.gmail.com with ESMTPSA id q14sm3278650wrj.81.2020.02.13.07.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 13 Feb 2020 07:31:52 -0800 (PST)
-Date:   Thu, 13 Feb 2020 16:31:51 +0100
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     festevam@gmail.com, Anson.Huang@nxp.com
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>, leonard.crestez@nxp.com,
-        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        id S1728479AbgBMPgm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 10:36:42 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:48818 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728323AbgBMPgm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 10:36:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1581608199; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=iKjxGSNeDcBxV7nToyUB21fty1jGDd6Iqnl1fd+HIIs=;
+        b=lZb8yl9UE96+GZJeqOksy6FWcEmxfRWcQ8G1i7Uov8S3xUG/5lRVgtUj/zS/OhZtmeBWLB
+        FWrbkP0mQj0jo80+qDUKri5z6y+0byDkV9qvtXj1cpNskfQR1RZkjcbsnsh4mcZhRLJVf0
+        AQMrw9RHFpT9Tyqtg+NM0+A8QffhHEo=
+Date:   Thu, 13 Feb 2020 12:36:22 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 4/7] MIPS: jz4740: Replace <linux/clk-provider.h> by
+ <linux/of_clk.h>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        James Hartley <james.hartley@sondrel.com>,
+        John Crispin <john@phrozen.org>, linux-mips@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: clk: imx: clock driver for imx8qm?
-Message-ID: <20200213153151.GB6975@optiplex>
+Message-Id: <1581608182.3.0@crapouillou.net>
+In-Reply-To: <20200212101544.8793-5-geert+renesas@glider.be>
+References: <20200212101544.8793-1-geert+renesas@glider.be>
+        <20200212101544.8793-5-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Favio,
-Hello Anson,
+Hi,
 
-is someone working on clock driver for imx8qm? I miss at least a
-clk-imx8qm.c in the drivers/imx/clk/ directory. I saw that you are
-working in this area and perhaps you can give me some insights what is
-needed here.
 
-Best regards,
+Le mer., f=E9vr. 12, 2020 at 11:15, Geert Uytterhoeven=20
+<geert+renesas@glider.be> a =E9crit :
+> The Ingenic JZ4740 platform code is not a clock provider, and just=20
+> needs
+> to call of_clk_init().
+>=20
+> Hence it can include <linux/of_clk.h> instead of=20
+> <linux/clk-provider.h>.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Oliver
+Looks good to me.
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
+
+> ---
+>  arch/mips/jz4740/time.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/arch/mips/jz4740/time.c b/arch/mips/jz4740/time.c
+> index 5476899f0882a4b4..605a84a250bfb299 100644
+> --- a/arch/mips/jz4740/time.c
+> +++ b/arch/mips/jz4740/time.c
+> @@ -4,8 +4,8 @@
+>   *  JZ4740 platform time support
+>   */
+>=20
+> -#include <linux/clk-provider.h>
+>  #include <linux/clocksource.h>
+> +#include <linux/of_clk.h>
+>=20
+>  #include <asm/mach-jz4740/timer.h>
+>=20
+> --
+> 2.17.1
+>=20
+
+=
+
