@@ -2,89 +2,102 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA2CC2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 09:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F60C2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C77C20848
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 09:40:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC2872173E
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 10:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581589071;
+	bh=Z/qL3ylKFYdg16whtoypNjvTxzPPacyDkajEC6emP34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=J6H/6vDG6f41pKnAPciWjJiISrz9neS4372VUAQ5BWAcspK2F4mjUPOS9Kd+b1ESh
+	 iRuVUDvxUlZPwVl73vPIzTvI6MZrLGsMYrgoZ93DNZGp/J7/Sh95xfmGcVlu5oOv43
+	 VVZINKeZFwjX/NoBryZrVx9Um2lp9LblhOdR/tAE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbgBMJkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 04:40:47 -0500
-Received: from andre.telenet-ops.be ([195.130.132.53]:46302 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbgBMJkr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 04:40:47 -0500
-Received: from ramsan ([84.195.182.253])
-        by andre.telenet-ops.be with bizsmtp
-        id 29gj220075USYZQ019gj7i; Thu, 13 Feb 2020 10:40:44 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j2AzD-0007zc-5i; Thu, 13 Feb 2020 10:40:43 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j2A0b-0006Ku-4K; Thu, 13 Feb 2020 09:38:05 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] powerpc/time: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-Date:   Thu, 13 Feb 2020 09:38:04 +0100
-Message-Id: <20200213083804.24315-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1729511AbgBMKRv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 05:17:51 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35656 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729428AbgBMKRv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 05:17:51 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f8so6160652edv.2;
+        Thu, 13 Feb 2020 02:17:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RRIEPdo2GBfjmyVoBn6+vY/7+N02sDl5h1yeWIDZHL4=;
+        b=fE25IgnWH4kDnTlwGuqsrZtGTaN/VV/ZsLaOw5OmU1gQnN1vs826Vk9rkTMNPNv0lE
+         acjCiaoGZNhOun5ELMnCsKPE7dKtbHAIh4pnrLdRRrjBnfm8/uRyuRrzrvXmGq5Ownvs
+         dWR1eg4PoG7mCYv5rzatii2WqnBckT45J7bYbLXajTvwrkkHWTsitwXp+pzuMa2WsbbH
+         FuWzQnBOpXarn+xn4I/5TyKY6CJLlwTnsvSmXqcP5oA0L3UtbNRXEkLCZ80pHX/yh/QE
+         KsbuzpNc+hatvcAyX0I8k8ghOXhxm9UIsuGa7lFLQq3XFKWCFz89zPX7o8jOdiHdGrHH
+         ovGQ==
+X-Gm-Message-State: APjAAAXEqSAuWstI4x6zz1V6a/tmD9AceNmmJsPOD5AJy0Ydc+8WzSMi
+        F0mulTklYNG8LUje1IfbVtk=
+X-Google-Smtp-Source: APXvYqzJPEBHGEKtNpeIz/sbcpHCr12wSxQrNRMVB1G8sc2hvXl2J7zmFFF7vRMRvXQXSbI6JC33dg==
+X-Received: by 2002:a05:6402:1426:: with SMTP id c6mr7748047edx.49.1581589068803;
+        Thu, 13 Feb 2020 02:17:48 -0800 (PST)
+Received: from kozik-lap ([194.230.155.125])
+        by smtp.googlemail.com with ESMTPSA id k11sm158564edr.38.2020.02.13.02.17.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 02:17:48 -0800 (PST)
+Date:   Thu, 13 Feb 2020 11:17:44 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCHv1 0/2] Add FSYS2 power domain for MMC driver
+Message-ID: <20200213101744.GA11087@kozik-lap>
+References: <20200212120237.1332-1-linux.amoon@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20200212120237.1332-1-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PowerPC time code is not a clock provider, and just needs to call
-of_clk_init().
+On Wed, Feb 12, 2020 at 12:02:35PM +0000, Anand Moon wrote:
+> This patches add the power domain for MMC driver,
+> but somehow the suspend/resume feature is broken
+> so any input on how to fix this.
 
-Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+I think S2R was working on XU3-family after Marek's fixes, so you mean
+that these patches break it?
 
-Remove the #ifdef protecting the of_clk_init() call, as a stub is
-available for the !CONFIG_COMMON_CLK case.
+Best regards,
+Krzysztof
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
----
-v2:
-  - Add Reviewed-by,
-  - Remove #ifdef.
----
- arch/powerpc/kernel/time.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 1168e8b37e30696d..8ce3fa8a8c0a2d63 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -50,7 +50,7 @@
- #include <linux/irq.h>
- #include <linux/delay.h>
- #include <linux/irq_work.h>
--#include <linux/clk-provider.h>
-+#include <linux/of_clk.h>
- #include <linux/suspend.h>
- #include <linux/sched/cputime.h>
- #include <linux/processor.h>
-@@ -1158,9 +1158,7 @@ void __init time_init(void)
- 	init_decrementer_clockevent();
- 	tick_setup_hrtimer_broadcast();
- 
--#ifdef CONFIG_COMMON_CLK
- 	of_clk_init(NULL);
--#endif
- }
- 
- /*
--- 
-2.17.1
-
+> 
+> Also on similar lines I tried to add power domain
+> FSYS for usb3 and usb2 nodes but this time
+> it failed to load the kernel, so how can I reslove
+> this issue.
+> 
+> -Anand
+> 
+> Anand Moon (2):
+>   ARM: dts: exynos: Add FSYS2 power domain to Exynos542x
+>   clk: samsung: exynos542x: Move FSYS2 subsystem clocks to its sub-CMU
+> 
+>  arch/arm/boot/dts/exynos5420.dtsi    | 10 ++++++++++
+>  drivers/clk/samsung/clk-exynos5420.c | 24 +++++++++++++++++++++---
+>  2 files changed, 31 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.25.0
+> 
