@@ -2,119 +2,83 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C41C2BA83
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BD6C2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:35:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C17724649
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:04:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581606275;
-	bh=2Rd2AU/WNU1lpmydvkvdKJfxWlo/SgpiTWohFHRRSpI=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=oac1+SX5koFI35ZE7B7gbV33tAkdITmodA738S/L/UrMXX09D4ttN/WnCNQ+/DNlf
-	 N1o1ckq66zd17QkCfvLU2Lo9FHy6Qlg5enB/DmPr0ad+38TbLDq0JtyT12yi9ICvuf
-	 7YsFC/KNuF13R/ogbBCyVq0MfsTqBM8rJtG2Hrfk=
+	by mail.kernel.org (Postfix) with ESMTP id 1C61820675
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:35:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pMu8qWis"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727752AbgBMPEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 10:04:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgBMPEe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 13 Feb 2020 10:04:34 -0500
-Received: from [192.168.1.8] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A2A52073C;
-        Thu, 13 Feb 2020 15:04:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581606273;
-        bh=2Rd2AU/WNU1lpmydvkvdKJfxWlo/SgpiTWohFHRRSpI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Q/ZEwdXiD/OWDOOWaH7XsTgOH7UpgsIuJKr6Xsk4QborfGOvx58s9xkPiG8ZESjbZ
-         Gj7gtLwmvgvP2eAs8SQ4jtj3yOE4E5o/TPL2qvoIdSkulPIdgK0FSCuARfq8ftq9bv
-         inuGwZcBYyfQZ2cSbIeomzWWrIgd1+HBpaBqSjyA=
-Subject: Re: [PATCH 2/2] clk: socfpga: stratix10: simplify paramter passing
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org
-References: <20200114160726.19771-1-dinguyen@kernel.org>
- <20200114160726.19771-2-dinguyen@kernel.org>
- <c59d3637-5691-3595-e0f5-f87d15e272ba@kernel.org>
- <158155097933.184098.6917298388067951995@swboyd.mtv.corp.google.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c098b699-01fb-8237-cbba-539f5305b8af@kernel.org>
-Date:   Thu, 13 Feb 2020 09:04:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1728543AbgBMPfX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 10:35:23 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46949 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388085AbgBMPbz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 10:31:55 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z7so7179655wrl.13;
+        Thu, 13 Feb 2020 07:31:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
+        b=pMu8qWisYyaMHM2tnHMktgLsO04+nQvZ6zDXoYNfcRi1UXplaz/1HVsQS/Ea4ZnRIy
+         Y4EfxaXb9c3cxF8rXOM0BjWn7zYUNOvVsuZ1EEgXknU9BbKCt2yic2hQLu+uvGbfaDIq
+         bOras25oV+gjPZm0Xah6RXvFKK3pkzhRb0DED4iFXQwklCkfNacH1kkE2PKCrR8vrUhT
+         xcIqw5XUOdNKIQZmWV1a5q0Y9cEurSyc5lJ784goDVfUs7oorbiios0LjGZWKAbx892A
+         GAheOuDXqapKdiCKErkXodg6gpZ32V247Z6cdiWlztK0pyW9Vsu6PzDNyqFJw341KkkK
+         AXkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=jY+YnMofuqwzjILofdtROeXpT9sto3UqcBNW/xLjoRs=;
+        b=olo6MZ1+5niy0iyHC+fjvzYxfYRDF+ySnlEfWyTZy4LWhhPPFZgXmjU41wZLuqjRCd
+         WxcgfcDD3quk2VEGfmK0TG9tfWGdqIxcx/cXaLrVKuvIbz/Q1wxAuIDLQyQ/eYexncH+
+         HRBa8OGfPvVBFCWCVaWdSSjim//6uYjonQJfA7cbJ9cjq/JfVckkGmGWNe9n1IT+P7D9
+         wFNQUf3iZ+hhENfBeDJf+3Y1Iygk1GL4erw2k2xBg1fk3bR5sSzSwTll1GcY/JnSTXve
+         bOhSc6SA/jWz5VEqiQC0yiYZqIDa0u19+2MbT4BRxty8pJ5Cs1dihjs3vxIQaA+dMpxV
+         HAdA==
+X-Gm-Message-State: APjAAAU4i9ADgdovXWEXqFJL8+ZvcpUqYo8vokFcEeXQsaR0ffjV+EmR
+        PqUO2ogFcv/5NSUOuZU4deo=
+X-Google-Smtp-Source: APXvYqw7slUsjNQkyU+rvi+PmJErVCo36nL+8e2UFRgWoCo3D5Shs+6iWOnwkAagzlIj1g9ifPTGCA==
+X-Received: by 2002:a5d:494f:: with SMTP id r15mr23122503wrs.143.1581607913331;
+        Thu, 13 Feb 2020 07:31:53 -0800 (PST)
+Received: from localhost ([193.47.161.132])
+        by smtp.gmail.com with ESMTPSA id q14sm3278650wrj.81.2020.02.13.07.31.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 13 Feb 2020 07:31:52 -0800 (PST)
+Date:   Thu, 13 Feb 2020 16:31:51 +0100
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     festevam@gmail.com, Anson.Huang@nxp.com
+Cc:     Aisheng Dong <aisheng.dong@nxp.com>, leonard.crestez@nxp.com,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: clk: imx: clock driver for imx8qm?
+Message-ID: <20200213153151.GB6975@optiplex>
 MIME-Version: 1.0
-In-Reply-To: <158155097933.184098.6917298388067951995@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Favio,
+Hello Anson,
 
+is someone working on clock driver for imx8qm? I miss at least a
+clk-imx8qm.c in the drivers/imx/clk/ directory. I saw that you are
+working in this area and perhaps you can give me some insights what is
+needed here.
 
-On 2/12/20 5:42 PM, Stephen Boyd wrote:
-> Quoting Dinh Nguyen (2020-02-04 07:29:44)
->> Ping? Hopefully, there aren't any issues with these patches?
-> 
-> Was there a cover letter? Will there be more patches? Seems like it's
-> mostly code shuffling in preparation for something else.
-> 
+Best regards,
 
-Sorry about that. There was no cover letter. These 2 patches are a
-result of comments received from my v1 submission of a clock driver for
-the Agilex platform. Figure it would be easier to split out the patches
-rather than submitting it together in the Agilex series.
-
-Thanks,
-Dinh
+Oliver
