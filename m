@@ -2,170 +2,119 @@ Return-Path: <SRS0=sDih=4B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEC73C3B189
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C41C2BA83
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95442218AC
-	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 14:11:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q/Xm0C5a"
+	by mail.kernel.org (Postfix) with ESMTP id 6C17724649
+	for <linux-clk@archiver.kernel.org>; Thu, 13 Feb 2020 15:04:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581606275;
+	bh=2Rd2AU/WNU1lpmydvkvdKJfxWlo/SgpiTWohFHRRSpI=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=oac1+SX5koFI35ZE7B7gbV33tAkdITmodA738S/L/UrMXX09D4ttN/WnCNQ+/DNlf
+	 N1o1ckq66zd17QkCfvLU2Lo9FHy6Qlg5enB/DmPr0ad+38TbLDq0JtyT12yi9ICvuf
+	 7YsFC/KNuF13R/ogbBCyVq0MfsTqBM8rJtG2Hrfk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730127AbgBMOLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 13 Feb 2020 09:11:33 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41826 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730082AbgBMOLd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 13 Feb 2020 09:11:33 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h23so6750931ljc.8
-        for <linux-clk@vger.kernel.org>; Thu, 13 Feb 2020 06:11:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jmInR6ToitfmuXt2m2m0REU0jG0tl34rmyR4/V6wbYg=;
-        b=q/Xm0C5aRbv1Fcxc08JgWF0K+S46DK1lmjrPRupz0sb4ubVUB+IeaTR4LF2LUzmd17
-         G7O9fQh7msbSazt7uHnF3mHzataYtwmluObQJE2FeJpUGZBJn2esR6EFHp+KOZjGnjcW
-         UwryA3P8tzuu+cKCTq5FTfdIzleR24agZq0+Ots9int5zudKuWHyt6+RBs35q6Tc/+GA
-         FlL4nM6+JbSdFxyOr3aIgr5WQm6Xqz+1ekzcIn3GLdOsNTOewao5tUtRAj9wkrC+7ugx
-         0NrX+LedrX/xU0I0dVJMRa3lOjzpwG3V9ZGzgbXw6eg6GkS1MKtFJ3vMFG43j1Qc/prV
-         EELA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jmInR6ToitfmuXt2m2m0REU0jG0tl34rmyR4/V6wbYg=;
-        b=UqIQMYAgbBcAtUknLuzYU7NwykyMwi2J51MLcVo89QvgToEuVQdeb7/vJCy+4p9rfG
-         7rPHcrSd0P+hsejPP7craJTlzpvm4ew1u97I/Ua8fi0cIdmZ/MbgHIOITR5cGtWvSNSK
-         H5v5cRasYgVhW5DPzVd+F3io3auDjH5tI3kXX//wAHMWsX42LgA/EPEj8NKrwNr51Ko3
-         9EqRFYh/F47h4B3e4+YR2nhEJkVJvOqd6nN3rvVcWWM+qB7uhZu2YP8cgqHbkjsShamI
-         KI6fUvjaJk1vaL918GJ1B3WwwFmbdOOKtXzNBo90MiosnU5yu54lUuFl0FyN/ggJYX+l
-         5dCQ==
-X-Gm-Message-State: APjAAAV4wzB1WIEPkCEPlKWzvP/pZVU+MI780nXlVE9MdewXE9wRNBbJ
-        sCdxp0toR1yUEJ3baBggf0XMEA==
-X-Google-Smtp-Source: APXvYqyW50HA7ZEhhXDGV1K1uohEVxNfR/6CJnWo6HJvN0BWMjntyKWw6/dCACHUO6pL6WmrCvqsAw==
-X-Received: by 2002:a2e:9b90:: with SMTP id z16mr11697255lji.254.1581603090018;
-        Thu, 13 Feb 2020 06:11:30 -0800 (PST)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id r2sm1707612lff.63.2020.02.13.06.11.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Feb 2020 06:11:29 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 2/2] clk: versatile: Add device tree probing for IM-PD1 clocks
-Date:   Thu, 13 Feb 2020 15:11:19 +0100
-Message-Id: <20200213141119.66462-2-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20200213141119.66462-1-linus.walleij@linaro.org>
-References: <20200213141119.66462-1-linus.walleij@linaro.org>
+        id S1727752AbgBMPEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 13 Feb 2020 10:04:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbgBMPEe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 13 Feb 2020 10:04:34 -0500
+Received: from [192.168.1.8] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A2A52073C;
+        Thu, 13 Feb 2020 15:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581606273;
+        bh=2Rd2AU/WNU1lpmydvkvdKJfxWlo/SgpiTWohFHRRSpI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Q/ZEwdXiD/OWDOOWaH7XsTgOH7UpgsIuJKr6Xsk4QborfGOvx58s9xkPiG8ZESjbZ
+         Gj7gtLwmvgvP2eAs8SQ4jtj3yOE4E5o/TPL2qvoIdSkulPIdgK0FSCuARfq8ftq9bv
+         inuGwZcBYyfQZ2cSbIeomzWWrIgd1+HBpaBqSjyA=
+Subject: Re: [PATCH 2/2] clk: socfpga: stratix10: simplify paramter passing
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org
+References: <20200114160726.19771-1-dinguyen@kernel.org>
+ <20200114160726.19771-2-dinguyen@kernel.org>
+ <c59d3637-5691-3595-e0f5-f87d15e272ba@kernel.org>
+ <158155097933.184098.6917298388067951995@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c098b699-01fb-8237-cbba-539f5305b8af@kernel.org>
+Date:   Thu, 13 Feb 2020 09:04:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <158155097933.184098.6917298388067951995@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As we want to move these clocks over to probe from the device
-tree we add a device tree probing path.
 
-The old platform data path will be deleted once we have the
-device tree overall code in place.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/clk/versatile/clk-impd1.c | 68 +++++++++++++++++++++++++++++++
- 1 file changed, 68 insertions(+)
+On 2/12/20 5:42 PM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2020-02-04 07:29:44)
+>> Ping? Hopefully, there aren't any issues with these patches?
+> 
+> Was there a cover letter? Will there be more patches? Seems like it's
+> mostly code shuffling in preparation for something else.
+> 
 
-diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
-index 1991f15a5db9..96b1018bcb7a 100644
---- a/drivers/clk/versatile/clk-impd1.c
-+++ b/drivers/clk/versatile/clk-impd1.c
-@@ -7,7 +7,9 @@
- #include <linux/clkdev.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/platform_device.h>
- #include <linux/platform_data/clk-integrator.h>
-+#include <linux/module.h>
- 
- #include "icst.h"
- #include "clk-icst.h"
-@@ -175,3 +177,69 @@ void integrator_impd1_clk_exit(unsigned int id)
- 	kfree(imc->pclkname);
- }
- EXPORT_SYMBOL_GPL(integrator_impd1_clk_exit);
-+
-+static void __init integrator_impd1_clk_spawn(struct device *dev,
-+					      void __iomem *base,
-+					      struct device_node *np)
-+{
-+	struct clk *clk = ERR_PTR(-EINVAL);
-+	const char *clk_name = np->name;
-+	const char *parent_name;
-+	const struct clk_icst_desc *desc;
-+
-+	if (of_device_is_compatible(np, "arm,impd1-vco1")) {
-+		dev_info(dev, "register VCO1\n");
-+		desc = &impd1_icst1_desc;
-+	} else if (of_device_is_compatible(np, "arm,impd1-vco2")) {
-+		dev_info(dev, "register VCO2\n");
-+		desc = &impd1_icst2_desc;
-+	} else {
-+		dev_err(dev, "not a clock node %s\n", np->name);
-+		return;
-+	}
-+
-+	of_property_read_string(np, "clock-output-names", &clk_name);
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	clk = icst_clk_register(NULL, desc, clk_name, parent_name, base);
-+	if (!IS_ERR(clk))
-+		of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+}
-+
-+static int integrator_impd1_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child;
-+	void __iomem *base;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base)) {
-+		dev_err(dev, "unable to remap syscon base\n");
-+		return PTR_ERR(base);
-+	}
-+	dev_info(dev, "located syscon base\n");
-+
-+	for_each_available_child_of_node(np, child)
-+		integrator_impd1_clk_spawn(dev, base, child);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id impd1_syscon_match[] = {
-+	{ .compatible = "arm,im-pd1-syscon", },
-+	{}
-+};
-+
-+static struct platform_driver impd1_clk_driver = {
-+	.driver = {
-+		.name = "impd1-clk",
-+		.of_match_table = impd1_syscon_match,
-+	},
-+	.probe  = integrator_impd1_clk_probe,
-+};
-+builtin_platform_driver(impd1_clk_driver);
-+
-+MODULE_AUTHOR("Linus Walleij <linusw@kernel.org>");
-+MODULE_DESCRIPTION("Arm IM-PD1 module clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.23.0
+Sorry about that. There was no cover letter. These 2 patches are a
+result of comments received from my v1 submission of a clock driver for
+the Agilex platform. Figure it would be easier to split out the patches
+rather than submitting it together in the Agilex series.
 
+Thanks,
+Dinh
