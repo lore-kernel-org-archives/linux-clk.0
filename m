@@ -2,291 +2,320 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1852BC3B1A1
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBCFC2BA83
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF9C20637
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:20:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="a2KZ6Tqz"
+	by mail.kernel.org (Postfix) with ESMTP id 9804624650
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405116AbgBNRUR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:20:17 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8605 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390987AbgBNRUR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 12:20:17 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e46d6b20000>; Fri, 14 Feb 2020 09:19:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 14 Feb 2020 09:20:16 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 14 Feb 2020 09:20:16 -0800
-Received: from [10.2.163.245] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 14 Feb
- 2020 17:20:15 +0000
-Subject: Re: Re: [RFC PATCH v2 4/6] media: tegra: Add Tegra210 Video input
- driver
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1580937806-17376-1-git-send-email-skomatineni@nvidia.com>
- <1580937806-17376-5-git-send-email-skomatineni@nvidia.com>
- <20200214164642.GA1310813@ulmo>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <ccb32c83-2cd8-fb26-658c-6bc11f460336@nvidia.com>
-Date:   Fri, 14 Feb 2020 09:20:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2394670AbgBNR2i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 12:28:38 -0500
+Received: from out28-3.mail.aliyun.com ([115.124.28.3]:51964 "EHLO
+        out28-3.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403808AbgBNR2i (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 12:28:38 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.0743638|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.271369-0.00538365-0.723248;DS=CONTINUE|ham_system_inform|0.0395298-0.000262629-0.960208;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03303;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.Go9djQb_1581701284;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Go9djQb_1581701284)
+          by smtp.aliyun-inc.com(10.147.41.231);
+          Sat, 15 Feb 2020 01:28:18 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, paul@crapouillou.net,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: [PATCH v5 2/6] clk: Ingenic: Adjust cgu code to make it compatible with X1830.
+Date:   Sat, 15 Feb 2020 01:27:38 +0800
+Message-Id: <1581701262-110556-4-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1581701262-110556-1-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1581701262-110556-1-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-In-Reply-To: <20200214164642.GA1310813@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581700786; bh=0TgSKDENwvoW0ZWqchiqORNoTXWv77shXNuxZ0wmLyk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=a2KZ6TqzvYmI5spWyZVsGHn4FV3GYIlZzpNIYztBWq1kqasdrzeh5VcTXb6OtladD
-         1wIJ7m0ifFFiehE0r7TIm+vXXFnSgwo7L7gdILyhSIdFDPPe/dwQsiZt6TL9US8qzn
-         Izt/M7UQqoMSSPMDVzhCLWnpnkPwSh32BbyHe9tTQcYRNSHKpgkkTjD3IsQJ4zeU8d
-         1rY2FERgcFl/7UupdHzh07GEaXUH8Y8nlfUF643cpoEvmgg4wOBksyjSVnSgOSCfvN
-         mezLsmbs9FtXYD5Yl09pSbVMmVYNlO2x8V5Q2b77ynGOcHrqCP3POz+Jdr1J3q/Gg9
-         97ImdADcsFUJg==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The PLL of X1830 Soc from Ingenic has been greatly changed,
+the bypass control is placed in another register, so now two
+registers may needed to control the PLL. To this end, the
+original "reg" was changed to "pll_reg", and a new "bypass_reg"
+was introduced. In addition, when calculating rate, the PLL of
+X1830 introduced an extra 2x multiplier, so a new "rate_multiplier"
+was introduced. And adjust the code in jz47xx-cgu.c and x1000-cgu.c,
+make it to be compatible with the new cgu code.
 
-On 2/14/20 8:46 AM, Thierry Reding wrote:
-> On Wed, Feb 05, 2020 at 01:23:24PM -0800, Sowjanya Komatineni wrote:
-> [...]
->> +static int tegra_channel_capture_frame(struct tegra_vi_channel *chan,
->> +				       struct tegra_channel_buffer *buf)
->> +{
->> +	int err = 0;
->> +	u32 thresh, value, frame_start;
->> +	int bytes_per_line = chan->format.bytesperline;
->> +
->> +	/* program buffer address by using surface 0 */
->> +	vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_OFFSET_MSB, 0x0);
->> +	vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_OFFSET_LSB, buf->addr);
->> +	vi_csi_write(chan, TEGRA_VI_CSI_SURFACE0_STRIDE, bytes_per_line);
->> +
->> +	/* increase syncpoint max */
->> +	thresh = host1x_syncpt_incr_max(chan->sp, 1);
->> +
->> +	/* program syncpoint */
->> +	frame_start = VI_CSI_PP_FRAME_START(chan->portno);
->> +	value = VI_CFG_VI_INCR_SYNCPT_COND(frame_start) |
->> +		host1x_syncpt_id(chan->sp);
->> +	tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYNCPT, value);
-> Okay, so this programs the VI to increment the given syncpoint upon
-> frame start? What is that VI_CSI_PP_FRAME_START(chan->portno) exactly?
-This programs thresh for FS event. VI_CSI_PP_FRAME_START is frame start 
-condition for corresponding port PPA that we program in INVR_SYNCPT to 
-raise event for this condition.
->
->> +
->> +	vi_csi_write(chan, TEGRA_VI_CSI_SINGLE_SHOT, SINGLE_SHOT_CAPTURE);
-> And now we start capturing in single-shot mode.
-We set thres to have it raise event when it sees FS and we issue single 
-shot which initiates capture with FS first and at end of frame capture 
-we should see MW_ACK which confirms frame buffer memory write done.
->
->> +
->> +	/* move buffer to capture done queue */
->> +	spin_lock(&chan->done_lock);
->> +	list_add_tail(&buf->queue, &chan->done);
->> +	spin_unlock(&chan->done_lock);
->> +
->> +	/* wait up kthread for capture done */
->> +	wake_up_interruptible(&chan->done_wait);
-> But this I don't understand. You wake up the kthread...
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+---
 
-On issuing single start this wakes up other thread which checks for MW_ACK.
+Notes:
+    v1->v2:
+    1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
+      array (reg[2]).
+    2.Remove the "pll_info->version" and add a "pll_info->rate_multiplier".
+    3.Fix the coding style and add more detailed commit message.
+    4.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+      to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+      the old mailbox is in an unstable state.
+    
+    v2->v3:
+    Adjust order from [1/5] in v2 to [2/5] in v3.
+    
+    v3->v4:
+    Merge [3/5] in v3 into this patch.
+    
+    v4->v5:
+    Rebase on top of kernel 5.6-rc1.
 
-So one thread checks for FS and other checks for MW_ACK.
+ drivers/clk/ingenic/cgu.c         | 32 +++++++++++++++++++++-----------
+ drivers/clk/ingenic/cgu.h         |  8 ++++++--
+ drivers/clk/ingenic/jz4725b-cgu.c |  4 +++-
+ drivers/clk/ingenic/jz4740-cgu.c  |  4 +++-
+ drivers/clk/ingenic/jz4770-cgu.c  |  8 ++++++--
+ drivers/clk/ingenic/jz4780-cgu.c  |  4 +++-
+ drivers/clk/ingenic/x1000-cgu.c   |  8 ++++++--
+ 7 files changed, 48 insertions(+), 20 deletions(-)
 
-I do see race condition with this, so I had change in v3 where same 
-capture thread sets both FS COND SYncpoint and also MW_aCK and once it 
-see FS syncpt then only it wakes up other thread for MW_ACK otherwise it 
-just returns buffer with error state.
-
-
->
->> +
->> +	/* use syncpoint to wake up */
->> +	err = host1x_syncpt_wait(chan->sp, thresh,
->> +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
-> ... and then wait for the syncpoint to reach the given threshold? Isn't
-> that the wrong way around? Don't we need to wait for the syncpoint
-> increment *before* we wake up the kthread that will return the buffer
-> to userspace?
-V3 has change to check for MW_ACK only on successful FS. Will send out 
-v3 soon.
->> +	if (err) {
->> +		dev_err(&chan->video.dev,
->> +			"frame start syncpt timeout: %d\n", err);
->> +		tegra_channel_capture_error_status(chan);
->> +	}
->> +
->> +	return err;
->> +}
->> +
->> +static int tegra_channel_capture_done(struct tegra_vi_channel *chan,
->> +				      struct tegra_channel_buffer *buf)
->> +{
->> +	struct vb2_v4l2_buffer *vb = &buf->buf;
->> +	u32 thresh, value, mw_ack_done;
->> +	int ret = 0;
->> +
->> +	/* increase syncpoint max */
->> +	thresh = host1x_syncpt_incr_max(chan->sp, 1);
->> +
->> +	/* program syncpoint */
->> +	mw_ack_done = VI_CSI_MW_ACK_DONE(chan->portno);
->> +	value = VI_CFG_VI_INCR_SYNCPT_COND(mw_ack_done) |
->> +		host1x_syncpt_id(chan->sp);
->> +	tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYNCPT, value);
->> +
->> +	if (!vi_csi_read(chan, TEGRA_VI_CSI_SINGLE_SHOT))
->> +		vi_csi_write(chan, TEGRA_VI_CSI_SINGLE_SHOT,
->> +			     SINGLE_SHOT_CAPTURE);
->> +
->> +	/* use syncpoint to wake up */
->> +	ret = host1x_syncpt_wait(chan->sp, thresh,
->> +				 TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
->> +	if (ret)
->> +		dev_err(&chan->video.dev,
->> +			"MW_ACK_DONE syncpoint timeout: %d\n", ret);
-> Actually... there's another syncpoint wait here, so I guess this will
-> stall until VI has actually completed writing the captured frame to
-> memory.
-
-Yes with v2 it will wait till it sees MW_ACK before returning buffer.
-
-But as mentioned above, to avoid possible race condition moved 
-programming both threshold for same frame in capture thread and only on 
-receiving FS it wakes other thread to wait for MW_ACK and return buffer.
-
-
->> +
->> +	/* captured one frame */
->> +	vb->sequence = chan->sequence++;
->> +	vb->field = V4L2_FIELD_NONE;
->> +	vb->vb2_buf.timestamp = ktime_get_ns();
->> +	vb2_buffer_done(&vb->vb2_buf,
->> +			ret < 0 ? VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
-> So it's really only at this point that we return the buffer to
-> userspace, which should be after the hardware is done writing to the
-> buffer, so this should be fine.
->
-> That said, I'm wondering if host1x_syncpt_wait() is a good interface
-> for this use-case. We don't really have anything else right now, but
-> I think we may be able to add something to have a function called in
-> case the syncpoint reaches a threshold. Having to spawn two separate
-> threads with wait queues seems a bit overkill for this.
->
-> It's fine to leave this as it is for now, but maybe something to
-> consider as improvement in the future.
->
->> +	return ret;
->> +}
->> +
->> +static int chan_capture_kthread_start(void *data)
->> +{
->> +	struct tegra_vi_channel *chan = data;
->> +	struct tegra_channel_buffer *buf;
->> +	int err = 0;
->> +
->> +	set_freezable();
->> +
->> +	while (1) {
->> +		try_to_freeze();
->> +
->> +		wait_event_interruptible(chan->start_wait,
->> +					 !list_empty(&chan->capture) ||
->> +					 kthread_should_stop());
->> +		if (kthread_should_stop())
->> +			break;
->> +
->> +		if (err)
->> +			continue;
->> +
->> +		spin_lock(&chan->start_lock);
->> +		if (list_empty(&chan->capture)) {
->> +			spin_unlock(&chan->start_lock);
->> +			continue;
->> +		}
->> +
->> +		buf = list_entry(chan->capture.next,
->> +				 struct tegra_channel_buffer, queue);
->> +		list_del_init(&buf->queue);
->> +		spin_unlock(&chan->start_lock);
->> +		err = tegra_channel_capture_frame(chan, buf);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int chan_capture_kthread_done(void *data)
->> +{
->> +	struct tegra_vi_channel *chan = data;
->> +	struct tegra_channel_buffer *buf;
->> +	int err = 0;
->> +
->> +	set_freezable();
->> +
->> +	while (1) {
->> +		try_to_freeze();
->> +
->> +		wait_event_interruptible(chan->done_wait,
->> +					 !list_empty(&chan->done) ||
->> +					 kthread_should_stop());
->> +
->> +		if (kthread_should_stop())
->> +			break;
->> +
->> +		spin_lock(&chan->done_lock);
->> +		if (list_empty(&chan->done)) {
->> +			spin_unlock(&chan->done_lock);
->> +			continue;
->> +		}
->> +
->> +		buf = list_entry(chan->done.next, struct tegra_channel_buffer,
->> +				 queue);
->> +		if (!buf)
->> +			continue;
->> +
->> +		list_del_init(&buf->queue);
->> +		spin_unlock(&chan->done_lock);
->> +		err = tegra_channel_capture_done(chan, buf);
-> What's with the error here? I think we should either handle it in some
-> way, or just avoid even returning an error if we're not going to deal
-> with it anyway.
->
-> Thierry
-
-
-v3 has proper implementation where on no frame start which happens when 
-source is not streaming, we keep thread in wait till kthread stops and 
-we dont dequeue buffers.
-
-Once we see kthread stop then we return all buffers.
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index ab1302a..7d859e4 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -82,7 +82,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	BUG_ON(clk_info->type != CGU_CLK_PLL);
+ 	pll_info = &clk_info->pll;
+ 
+-	ctl = readl(cgu->base + pll_info->reg);
++	ctl = readl(cgu->base + pll_info->pll_reg);
+ 
+ 	m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
+ 	m += pll_info->m_offset;
+@@ -90,6 +90,9 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	n += pll_info->n_offset;
+ 	od_enc = ctl >> pll_info->od_shift;
+ 	od_enc &= GENMASK(pll_info->od_bits - 1, 0);
++
++	ctl = readl(cgu->base + pll_info->bypass_reg);
++
+ 	bypass = !pll_info->no_bypass_bit &&
+ 		 !!(ctl & BIT(pll_info->bypass_bit));
+ 
+@@ -103,7 +106,8 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
+ 	BUG_ON(od == pll_info->od_max);
+ 	od++;
+ 
+-	return div_u64((u64)parent_rate * m, n * od);
++	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier,
++		n * od);
+ }
+ 
+ static unsigned long
+@@ -136,7 +140,8 @@ ingenic_pll_calc(const struct ingenic_cgu_clk_info *clk_info,
+ 	if (pod)
+ 		*pod = od;
+ 
+-	return div_u64((u64)parent_rate * m, n * od);
++	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier,
++		n * od);
+ }
+ 
+ static inline const struct ingenic_cgu_clk_info *to_clk_info(
+@@ -180,7 +185,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 			clk_info->name, req_rate, rate);
+ 
+ 	spin_lock_irqsave(&cgu->lock, flags);
+-	ctl = readl(cgu->base + pll_info->reg);
++	ctl = readl(cgu->base + pll_info->pll_reg);
+ 
+ 	ctl &= ~(GENMASK(pll_info->m_bits - 1, 0) << pll_info->m_shift);
+ 	ctl |= (m - pll_info->m_offset) << pll_info->m_shift;
+@@ -191,7 +196,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+ 	ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
+ 
+-	writel(ctl, cgu->base + pll_info->reg);
++	writel(ctl, cgu->base + pll_info->pll_reg);
+ 	spin_unlock_irqrestore(&cgu->lock, flags);
+ 
+ 	return 0;
+@@ -209,16 +214,21 @@ static int ingenic_pll_enable(struct clk_hw *hw)
+ 	u32 ctl;
+ 
+ 	spin_lock_irqsave(&cgu->lock, flags);
+-	ctl = readl(cgu->base + pll_info->reg);
++	ctl = readl(cgu->base + pll_info->bypass_reg);
+ 
+ 	ctl &= ~BIT(pll_info->bypass_bit);
++
++	writel(ctl, cgu->base + pll_info->bypass_reg);
++
++	ctl = readl(cgu->base + pll_info->pll_reg);
++
+ 	ctl |= BIT(pll_info->enable_bit);
+ 
+-	writel(ctl, cgu->base + pll_info->reg);
++	writel(ctl, cgu->base + pll_info->pll_reg);
+ 
+ 	/* wait for the PLL to stabilise */
+ 	for (i = 0; i < timeout; i++) {
+-		ctl = readl(cgu->base + pll_info->reg);
++		ctl = readl(cgu->base + pll_info->pll_reg);
+ 		if (ctl & BIT(pll_info->stable_bit))
+ 			break;
+ 		mdelay(1);
+@@ -242,11 +252,11 @@ static void ingenic_pll_disable(struct clk_hw *hw)
+ 	u32 ctl;
+ 
+ 	spin_lock_irqsave(&cgu->lock, flags);
+-	ctl = readl(cgu->base + pll_info->reg);
++	ctl = readl(cgu->base + pll_info->pll_reg);
+ 
+ 	ctl &= ~BIT(pll_info->enable_bit);
+ 
+-	writel(ctl, cgu->base + pll_info->reg);
++	writel(ctl, cgu->base + pll_info->pll_reg);
+ 	spin_unlock_irqrestore(&cgu->lock, flags);
+ }
+ 
+@@ -258,7 +268,7 @@ static int ingenic_pll_is_enabled(struct clk_hw *hw)
+ 	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
+ 	u32 ctl;
+ 
+-	ctl = readl(cgu->base + pll_info->reg);
++	ctl = readl(cgu->base + pll_info->pll_reg);
+ 
+ 	return !!(ctl & BIT(pll_info->enable_bit));
+ }
+diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+index 0dc8004..f7b6908 100644
+--- a/drivers/clk/ingenic/cgu.h
++++ b/drivers/clk/ingenic/cgu.h
+@@ -16,7 +16,9 @@
+ 
+ /**
+  * struct ingenic_cgu_pll_info - information about a PLL
+- * @reg: the offset of the PLL's control register within the CGU
++ * @pll_reg: the offset of the PLL's control register within the CGU
++ * @bypass_reg: the offset of the bypass control register within the CGU
++ * @rate_multiplier: the multiplier needed by pll rate calculation
+  * @m_shift: the number of bits to shift the multiplier value by (ie. the
+  *           index of the lowest bit of the multiplier value in the PLL's
+  *           control register)
+@@ -43,7 +45,9 @@
+  * @no_bypass_bit: if set, the PLL has no bypass functionality
+  */
+ struct ingenic_cgu_pll_info {
+-	unsigned reg;
++	unsigned pll_reg;
++	unsigned bypass_reg;
++	unsigned rate_multiplier;
+ 	const s8 *od_encoding;
+ 	u8 m_shift, m_bits, m_offset;
+ 	u8 n_shift, n_bits, n_offset;
+diff --git a/drivers/clk/ingenic/jz4725b-cgu.c b/drivers/clk/ingenic/jz4725b-cgu.c
+index a3b4635..0b05167 100644
+--- a/drivers/clk/ingenic/jz4725b-cgu.c
++++ b/drivers/clk/ingenic/jz4725b-cgu.c
+@@ -53,7 +53,9 @@ static const struct ingenic_cgu_clk_info jz4725b_cgu_clocks[] = {
+ 		"pll", CGU_CLK_PLL,
+ 		.parents = { JZ4725B_CLK_EXT, -1, -1, -1 },
+ 		.pll = {
+-			.reg = CGU_REG_CPPCR,
++			.pll_reg = CGU_REG_CPPCR,
++			.bypass_reg = CGU_REG_CPPCR,
++			.rate_multiplier = 1,
+ 			.m_shift = 23,
+ 			.m_bits = 9,
+ 			.m_offset = 2,
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 4f0e92c..78f31df 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -68,7 +68,9 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		"pll", CGU_CLK_PLL,
+ 		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
+ 		.pll = {
+-			.reg = CGU_REG_CPPCR,
++			.pll_reg = CGU_REG_CPPCR,
++			.bypass_reg = CGU_REG_CPPCR,
++			.rate_multiplier = 1,
+ 			.m_shift = 23,
+ 			.m_bits = 9,
+ 			.m_offset = 2,
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index 956dd65..32e476d 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -101,7 +101,9 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"pll0", CGU_CLK_PLL,
+ 		.parents = { JZ4770_CLK_EXT },
+ 		.pll = {
+-			.reg = CGU_REG_CPPCR0,
++			.pll_reg = CGU_REG_CPPCR0,
++			.bypass_reg = CGU_REG_CPPCR0,
++			.rate_multiplier = 1,
+ 			.m_shift = 24,
+ 			.m_bits = 7,
+ 			.m_offset = 1,
+@@ -123,7 +125,9 @@ static const struct ingenic_cgu_clk_info jz4770_cgu_clocks[] = {
+ 		"pll1", CGU_CLK_PLL,
+ 		.parents = { JZ4770_CLK_EXT },
+ 		.pll = {
+-			.reg = CGU_REG_CPPCR1,
++			.pll_reg = CGU_REG_CPPCR1,
++			.bypass_reg = CGU_REG_CPPCR1,
++			.rate_multiplier = 1,
+ 			.m_shift = 24,
+ 			.m_bits = 7,
+ 			.m_offset = 1,
+diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
+index ea905ff..d07fff1 100644
+--- a/drivers/clk/ingenic/jz4780-cgu.c
++++ b/drivers/clk/ingenic/jz4780-cgu.c
+@@ -220,7 +220,9 @@ static const struct ingenic_cgu_clk_info jz4780_cgu_clocks[] = {
+ 	/* PLLs */
+ 
+ #define DEF_PLL(name) { \
+-	.reg = CGU_REG_ ## name, \
++	.pll_reg = CGU_REG_ ## name, \
++	.bypass_reg = CGU_REG_ ## name, \
++	.rate_multiplier = 1, \
+ 	.m_shift = 19, \
+ 	.m_bits = 13, \
+ 	.m_offset = 1, \
+diff --git a/drivers/clk/ingenic/x1000-cgu.c b/drivers/clk/ingenic/x1000-cgu.c
+index b22d87b..d6fe28f 100644
+--- a/drivers/clk/ingenic/x1000-cgu.c
++++ b/drivers/clk/ingenic/x1000-cgu.c
+@@ -57,7 +57,9 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		"apll", CGU_CLK_PLL,
+ 		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
+ 		.pll = {
+-			.reg = CGU_REG_APLL,
++			.pll_reg = CGU_REG_APLL,
++			.bypass_reg = CGU_REG_APLL,
++			.rate_multiplier = 1,
+ 			.m_shift = 24,
+ 			.m_bits = 7,
+ 			.m_offset = 1,
+@@ -78,7 +80,9 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		"mpll", CGU_CLK_PLL,
+ 		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
+ 		.pll = {
+-			.reg = CGU_REG_MPLL,
++			.pll_reg = CGU_REG_MPLL,
++			.bypass_reg = CGU_REG_MPLL,
++			.rate_multiplier = 1,
+ 			.m_shift = 24,
+ 			.m_bits = 7,
+ 			.m_offset = 1,
+-- 
+2.7.4
 
