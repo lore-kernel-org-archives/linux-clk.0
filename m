@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A8D7C3B1B4
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD32C3F68F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A912187F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACEF2168B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581703730;
-	bh=rVvA20sfcoYyNmfXyFcd9GfCkMVmQpc8fvd+zdtoQew=;
+	s=default; t=1581703769;
+	bh=L39ewZIAQLtVWClce3+6QIzm4nk1mjYhAteFKAvrzdY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kX/LGhe/L1BhWb8atOXH0ficr6DqGkQBBD0iKEn6sUDyRvevqrOAEohZJt4Sq4M2a
-	 pD4yIPxQAa9VfhHZ7dj4I4YHwyIMTUBTM0V0O2ljcXAgTyhv+nVQxpIauyH6ocBvBx
-	 TJ+NYqXFhikZDz9neE5ppsdkUUWUSEyPilsCEIao=
+	b=AfLFhVqgLZzdbqIB5OoxhDQ92MG4N92TQCkVIvyzifv4dQ4QQt+YJpjXU++gJppzw
+	 ZY2FL1/A2YqvzwtUKXjep/7SMz0ufL3RgLb9SW67Bw6HYVBFJU2jT5g6wsDKX42+C4
+	 /VanyMJLNj5YQGAJAkAkHq24B9a7R4ywgVCeSagc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731449AbgBNPyO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 10:54:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34048 "EHLO mail.kernel.org"
+        id S1731396AbgBNPyC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:54:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731441AbgBNPyN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:54:13 -0500
+        id S1731385AbgBNPyC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 515182467E;
-        Fri, 14 Feb 2020 15:54:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6465B2465D;
+        Fri, 14 Feb 2020 15:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695653;
-        bh=rVvA20sfcoYyNmfXyFcd9GfCkMVmQpc8fvd+zdtoQew=;
+        s=default; t=1581695641;
+        bh=L39ewZIAQLtVWClce3+6QIzm4nk1mjYhAteFKAvrzdY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KK2n/WdS5sJFy2l6vqJWdSHH4eOdzX0sZokteyM83cih+ve29ZCDtTwHY3A3jouiY
-         qBIL5XVJJbCb1u6oFjlShGpYBi1/9u05mPT/PvbwN4DPuXnvQPIPBf3iYgPIvkJ7RI
-         576E7CL/3AK2fMCH8r5aMpFjLV+OfE3IVW2t/A9Y=
+        b=VewLqZUvU+hrGGXd9aWmgEBS/nMQ7hQKMmP8HMQTc6mVkhV6GT714hy4SKZFlnshX
+         v00R/36KJOJ9F85sIy8v7+M3jDJPh+W0plGc2NRAAO98e5YjCBeeR7ibKKkLtnxdEW
+         y4kPcBSQ8rpQjpJJlICb9uoLzGZSJCWHWBnYUnc0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 245/542] clk: renesas: rcar-gen3: Allow changing the RPC[D2] clocks
-Date:   Fri, 14 Feb 2020 10:43:57 -0500
-Message-Id: <20200214154854.6746-245-sashal@kernel.org>
+Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 236/542] clk: qcom: smd: Add missing bimc clock
+Date:   Fri, 14 Feb 2020 10:43:48 -0500
+Message-Id: <20200214154854.6746-236-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -59,47 +60,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
 
-[ Upstream commit 0d67c0340a60829c5c1b7d09629d23bbd67696f3 ]
+[ Upstream commit 87ec9adcca71801a44ddb311185b17df09839ab5 ]
 
-I was unable to get clk_set_rate() setting a lower RPC-IF clock frequency
-and that issue boiled down to me not passing CLK_SET_RATE_PARENT flag to
-clk_register_composite() when registering the RPC[D2] clocks...
+It turns out booting the modem is dependent on a bimc vote from Linux on
+msm8998.  To make the modem happy, add the bimc clock to rely on the
+default vote from rpmcc.  Once we have interconnect support, bimc should
+be controlled properly.
 
-Fixes: db4a0073cc82 ("clk: renesas: rcar-gen3: Add RPC clocks")
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Link: https://lore.kernel.org/r/be27a344-d8bf-9e0c-8950-2d1b48498496@cogentembedded.com
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 6131dc81211c ("clk: qcom: smd: Add support for MSM8998 rpm clocks")
+Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Link: https://lkml.kernel.org/r/20191217165409.4919-1-jeffrey.l.hugo@gmail.com
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/rcar-gen3-cpg.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/clk/qcom/clk-smd-rpm.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index c97b647db9b68..488f8b3980c55 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -470,7 +470,8 @@ static struct clk * __init cpg_rpc_clk_register(const char *name,
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 930fa4a4c52a8..e5c3db11bf26c 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -648,6 +648,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
+ };
  
- 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
- 				     &rpc->div.hw,  &clk_divider_ops,
--				     &rpc->gate.hw, &clk_gate_ops, 0);
-+				     &rpc->gate.hw, &clk_gate_ops,
-+				     CLK_SET_RATE_PARENT);
- 	if (IS_ERR(clk)) {
- 		kfree(rpc);
- 		return clk;
-@@ -506,7 +507,8 @@ static struct clk * __init cpg_rpcd2_clk_register(const char *name,
- 
- 	clk = clk_register_composite(NULL, name, &parent_name, 1, NULL, NULL,
- 				     &rpcd2->fixed.hw, &clk_fixed_factor_ops,
--				     &rpcd2->gate.hw, &clk_gate_ops, 0);
-+				     &rpcd2->gate.hw, &clk_gate_ops,
-+				     CLK_SET_RATE_PARENT);
- 	if (IS_ERR(clk))
- 		kfree(rpcd2);
- 
+ /* msm8998 */
++DEFINE_CLK_SMD_RPM(msm8998, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8998, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+ DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
+@@ -671,6 +672,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
+ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
+ static struct clk_smd_rpm *msm8998_clks[] = {
++	[RPM_SMD_BIMC_CLK] = &msm8998_bimc_clk,
++	[RPM_SMD_BIMC_A_CLK] = &msm8998_bimc_a_clk,
+ 	[RPM_SMD_PCNOC_CLK] = &msm8998_pcnoc_clk,
+ 	[RPM_SMD_PCNOC_A_CLK] = &msm8998_pcnoc_a_clk,
+ 	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
 -- 
 2.20.1
 
