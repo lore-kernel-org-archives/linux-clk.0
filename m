@@ -2,99 +2,52 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C905C3B1B1
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56F5C3B1B2
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6399E20848
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581702408;
-	bh=ml9s32sxFxF2khA9u9Gzm/r5nsPwJ65bZbYiix3UbLY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZfHSC/Pck0YxKfO/4w7nyOY8KEc9ErN0h9EYooHbG5k5pzo9sH7D1Bg250iz8W94C
-	 EcwnkRfsu4VuYZK+RpbD5+OEys6Crvb/ArmmgmvHGVeOQYQLXFycrpJdlRH619IsAo
-	 C8AsSsIzGd6rX2L8x2vjAz1nCmiz7I4u9hGIGeNM=
+	by mail.kernel.org (Postfix) with ESMTP id 8740420848
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:03:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387466AbgBNRqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:46:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48384 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389270AbgBNQCM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:02:12 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47E2E24654;
-        Fri, 14 Feb 2020 16:02:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696132;
-        bh=ml9s32sxFxF2khA9u9Gzm/r5nsPwJ65bZbYiix3UbLY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ogfAG4Q2/ulyttPT9laYVPuYkjmgcm9jBn3GQg19dbCDTkaqvaPDe0xDf64noPH/A
-         6tF4ajsveknKCpkbi+0E1h0vBYPZy3rTSR5zMI2j7X73HXIEXdEKChaan9B3Ege4D9
-         OzzikMlcqSMhGfPRSZ+9Z2/1Ly5wNOkbSiWS2OWM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 016/459] clk: meson: g12a: fix missing uart2 in regmap table
-Date:   Fri, 14 Feb 2020 10:54:26 -0500
-Message-Id: <20200214160149.11681-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
-References: <20200214160149.11681-1-sashal@kernel.org>
+        id S2389624AbgBNSDm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 13:03:42 -0500
+Received: from out28-50.mail.aliyun.com ([115.124.28.50]:43659 "EHLO
+        out28-50.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731643AbgBNSDl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 13:03:41 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.4276498|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0431547-0.00657629-0.950269;DS=CONTINUE|ham_system_inform|0.0811337-0.248353-0.670513;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03268;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=27;RT=27;SR=0;TI=SMTPD_---.GoAKeCh_1581703384;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GoAKeCh_1581703384)
+          by smtp.aliyun-inc.com(10.147.42.253);
+          Sat, 15 Feb 2020 02:03:20 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, paul@crapouillou.net,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
+        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
+        ebiederm@xmission.com, miquel.raynal@bootlin.com,
+        paul@boddie.org.uk, hns@goldelico.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com, mips-creator-ci20-dev@googlegroups.com,
+        1326991897@qq.com
+Subject: Introduce SMP support for CI20 (based on JZ4780) v4.
+Date:   Sat, 15 Feb 2020 02:02:33 +0800
+Message-Id: <1581703360-112557-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
-
-[ Upstream commit b1b3f0622a9d52ac19a63619911823c89a4d85a4 ]
-
-UART2 peripheral is missing from the regmap fixup table of the g12a family
-clock controller. As it is, any access to this clock would Oops, which is
-not great.
-
-Add the clock to the table to fix the problem.
-
-Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-Reported-by: Dmitry Shmidt <dimitrysh@google.com>
-Tested-by: Dmitry Shmidt <dimitrysh@google.com>
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/meson/g12a.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index b3af61cc6fb94..d2760a021301d 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4692,6 +4692,7 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
- 	&g12a_bt656,
- 	&g12a_usb1_to_ddr,
- 	&g12a_mmc_pclk,
-+	&g12a_uart2,
- 	&g12a_vpu_intr,
- 	&g12a_gic,
- 	&g12a_sd_emmc_a_clk0,
--- 
-2.20.1
+Introduce SMP support for MIPS Creator CI20, which is
+based on Ingenic JZ4780 SoC.
 
