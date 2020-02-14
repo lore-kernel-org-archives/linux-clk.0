@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E18A5C3B1A1
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E1BC3B19D
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B998724699
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B36D24649
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581695507;
-	bh=xzcDHUr0AgOeeRhMZggU0VLWyxXQOHzz4fX3m50JerA=;
+	s=default; t=1581695672;
+	bh=+lVoJ8WapUZPeP45CSRrrWYwdJXfBF+qqGzFeUm9ljs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lCJwjm4lkwKVZTFEl3C3OoIGWc9/OzpOaAKMLqhkI5nK3NpoHhYagTt+6B80V2fyK
-	 8Olj7nJ65jvMTvLXGf1elx3d5L5UucU8aOqTV1pu/d3bsC1UR9WjMgRgTnm02rnsWK
-	 NsXRtLK8sm+dKGuYxJ9NLpEXMinbE9mwpbJ4/RU0=
+	b=GJA60rGxCybZpt5NjdnH1171CgWqz/HTA5BXeOgHQAHqHoU1ueYPh1+Ea1KYogV9m
+	 tAPJK3ihr7G+V8eGzvpz52iuEhWT6fqJ9scHZN4LZ0nA5MHvcdc7pDUjep+8eOfRs9
+	 6OzaLeh5kdWdCwG2AYInTzvvtdcRcTx1Z7hE8O1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbgBNPvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 10:51:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
+        id S1731547AbgBNPyb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:54:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34696 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730847AbgBNPvo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:51:44 -0500
+        id S1731539AbgBNPyb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 108A224686;
-        Fri, 14 Feb 2020 15:51:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D42D2465D;
+        Fri, 14 Feb 2020 15:54:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695504;
-        bh=xzcDHUr0AgOeeRhMZggU0VLWyxXQOHzz4fX3m50JerA=;
+        s=default; t=1581695669;
+        bh=+lVoJ8WapUZPeP45CSRrrWYwdJXfBF+qqGzFeUm9ljs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j80lsGFn8D5uyG60r7xR9LEQlxbqB9ZGC6+GIv+cU9dneXVOnFkyXpyvFrTDaNQd8
-         TQ+ICBRNyDJESXVv3vYSDXdOxzYH3Ss3GpMSxxzz+SerkzpG2QG/JjF/ygYCgbznPW
-         4xyWcDycFNfiS7ELqGfjOAqYnUOf1LUijfnYVGlk=
+        b=ZMYnG7lyWF6k5BZ3wHmf9YncqRzKXemqVgVykPOcV46DipH5yrVLCbI09gafBa7eJ
+         sqQKz4LGQdh2RgFsreI7S3UkabfnAx1TRVFLnT7rbE4ZUSarWCSNrVs/4qNwXor7pZ
+         Vyj7GOYoLK93LCaw7S96buII2Fzu1gi+2oAD8YMQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 130/542] clk: qcom: rcg2: Don't crash if our parent can't be found; return an error
-Date:   Fri, 14 Feb 2020 10:42:02 -0500
-Message-Id: <20200214154854.6746-130-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 258/542] clk: actually call the clock init before any other callback of the clock
+Date:   Fri, 14 Feb 2020 10:44:10 -0500
+Message-Id: <20200214154854.6746-258-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -60,68 +58,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 908b050114d8fefdddc57ec9fbc213c3690e7f5f ]
+[ Upstream commit f6fa75ca912be6021335de63a32aa4d295f3c524 ]
 
-When I got my clock parenting slightly wrong I ended up with a crash
-that looked like this:
+ __clk_init_parent() will call the .get_parent() callback of the clock
+ so .init() must run before.
 
-  Unable to handle kernel NULL pointer dereference at virtual
-  address 0000000000000000
-  ...
-  pc : clk_hw_get_rate+0x14/0x44
-  ...
-  Call trace:
-   clk_hw_get_rate+0x14/0x44
-   _freq_tbl_determine_rate+0x94/0xfc
-   clk_rcg2_determine_rate+0x2c/0x38
-   clk_core_determine_round_nolock+0x4c/0x88
-   clk_core_round_rate_nolock+0x6c/0xa8
-   clk_core_round_rate_nolock+0x9c/0xa8
-   clk_core_set_rate_nolock+0x70/0x180
-   clk_set_rate+0x3c/0x6c
-   of_clk_set_defaults+0x254/0x360
-   platform_drv_probe+0x28/0xb0
-   really_probe+0x120/0x2dc
-   driver_probe_device+0x64/0xfc
-   device_driver_attach+0x4c/0x6c
-   __driver_attach+0xac/0xc0
-   bus_for_each_dev+0x84/0xcc
-   driver_attach+0x2c/0x38
-   bus_add_driver+0xfc/0x1d0
-   driver_register+0x64/0xf8
-   __platform_driver_register+0x4c/0x58
-   msm_drm_register+0x5c/0x60
-   ...
-
-It turned out that clk_hw_get_parent_by_index() was returning NULL and
-we weren't checking.  Let's check it so that we don't crash.
-
-Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-Link: https://lkml.kernel.org/r/20200203103049.v4.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid
+Fixes: 541debae0adf ("clk: call the clock init() callback before any other ops callback")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lkml.kernel.org/r/20190924123954.31561-2-jbrunet@baylibre.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/clk.c | 26 +++++++++++++++-----------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 5e0f7d8f168dd..cecdb07ce13ba 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -217,6 +217,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 772258de2d1f3..53585cfc4b9ba 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3338,6 +3338,21 @@ static int __clk_core_init(struct clk_core *core)
+ 		goto out;
+ 	}
  
- 	clk_flags = clk_hw_get_flags(hw);
- 	p = clk_hw_get_parent_by_index(hw, index);
-+	if (!p)
-+		return -EINVAL;
++	/*
++	 * optional platform-specific magic
++	 *
++	 * The .init callback is not used by any of the basic clock types, but
++	 * exists for weird hardware that must perform initialization magic.
++	 * Please consider other ways of solving initialization problems before
++	 * using this callback, as its use is discouraged.
++	 *
++	 * If it exist, this callback should called before any other callback of
++	 * the clock
++	 */
++	if (core->ops->init)
++		core->ops->init(core->hw);
 +
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		rate = f->freq;
- 		if (f->pre_div) {
++
+ 	core->parent = __clk_init_parent(core);
+ 
+ 	/*
+@@ -3362,17 +3377,6 @@ static int __clk_core_init(struct clk_core *core)
+ 		core->orphan = true;
+ 	}
+ 
+-	/*
+-	 * optional platform-specific magic
+-	 *
+-	 * The .init callback is not used by any of the basic clock types, but
+-	 * exists for weird hardware that must perform initialization magic.
+-	 * Please consider other ways of solving initialization problems before
+-	 * using this callback, as its use is discouraged.
+-	 */
+-	if (core->ops->init)
+-		core->ops->init(core->hw);
+-
+ 	/*
+ 	 * Set clk's accuracy.  The preferred method is to use
+ 	 * .recalc_accuracy. For simple clocks and lazy developers the default
 -- 
 2.20.1
 
