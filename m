@@ -2,138 +2,131 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5362C3B196
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 12:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8CBC2BA83
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 13:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A723D2086A
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 12:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A19AC222C2
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 13:09:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581685770;
+	bh=S1KcqlRgaFv8iW8vw5VXuHf37fRz7NJhUiPg/24MFmM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kyQLsA8Qie4yBnXF8cTF3KWyPrZN3K7Wkiwd0NjaYQvtPoF+kZ7S1Q6GaQcqGGX0V
+	 EcDHJ0AXCXwJe+5e2+bMeYVp0i31byzck5DtkzIGBzSFwx8npHfj1UXyOMiVF1FaZG
+	 Qvx8PXt8/BF/3agj44rJjqXQE1PT7jydfsgGKL9w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728982AbgBNMTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 07:19:34 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44828 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbgBNMTe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 07:19:34 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 5E10528D7ED
-Subject: Re: [PATCH v7 01/13] dt-bindings: arm: move mmsys description to
- display
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>, matthias.bgg@kernel.org
-Cc:     mark.rutland@arm.com, airlied@linux.ie, mturquette@baylibre.com,
-        dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
-        ulrich.hecht+renesas@gmail.com, linux-clk@vger.kernel.org,
-        drinkcat@chromium.org, Weiyi Lu <weiyi.lu@mediatek.com>,
-        wens@csie.org, mtk01761 <wendell.lin@mediatek.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>, frank-w@public-files.de,
-        sean.wang@mediatek.com, robh+dt@kernel.org,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        id S1728557AbgBNNJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 08:09:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726191AbgBNNJa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 08:09:30 -0500
+Received: from localhost (unknown [106.201.58.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D02F02086A;
+        Fri, 14 Feb 2020 13:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581685769;
+        bh=S1KcqlRgaFv8iW8vw5VXuHf37fRz7NJhUiPg/24MFmM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ew9lNr986QqTsMdVyURhpqV13JrXJfHXSDcBF5HSqYvPETinKZMV+FMEHTwrmmt3U
+         EIcpnBgGSAfUYY4ClcqTE+zYekP6sLxR/JYKRQEhz3TmEIqTSzBlWZuK7Ypjmj4uXs
+         ukwSWiU+C5n8Je0aDM44pz4T1WHEwJoU6Ig29yDk=
+Date:   Fri, 14 Feb 2020 18:39:23 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, jshriram@codeaurora.org,
         linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>, sboyd@kernel.org,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de
-References: <20200213201953.15268-1-matthias.bgg@kernel.org>
- <20200213201953.15268-2-matthias.bgg@kernel.org>
- <1581662577.17949.3.camel@mtksdaap41>
- <2bda2dd7-9ed2-8b4c-897e-e585ccfa1fa5@gmail.com>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <022e8f64-b414-67a5-722e-bdd7c00230ff@collabora.com>
-Date:   Fri, 14 Feb 2020 13:19:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.2
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, psodagud@codeaurora.org,
+        robh+dt@kernel.org, tdas@codeaurora.org, tsoni@codeaurora.org,
+        vnkgutta@codeaurora.org
+Subject: Re: [PATCH v2 6/7] clk: qcom: gcc: Add global clock controller
+ driver for SM8250
+Message-ID: <20200214130923.GV2618@vkoul-mobl>
+References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
+ <1579905147-12142-7-git-send-email-vnkgutta@codeaurora.org>
+ <20200205194022.C5E8C20730@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <2bda2dd7-9ed2-8b4c-897e-e585ccfa1fa5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200205194022.C5E8C20730@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi CK,
+On 05-02-20, 11:40, Stephen Boyd wrote:
 
-On 14/2/20 11:01, Matthias Brugger wrote:
+> > +static const struct clk_parent_data gcc_parent_data_2[] = {
+> > +       { .fw_name = "bi_tcxo" },
+> > +       { .fw_name = "sleep_clk", .name = "sleep_clk" },
 > 
+> Please drop .name
+
+Yup, will do
+
+> > +static const struct clk_parent_data gcc_parent_data_5[] = {
+> > +       { .fw_name = "bi_tcxo" },
+> > +       { .hw = &gpll0.clkr.hw },
+> > +       { .fw_name = "aud_ref_clk", .name = "aud_ref_clk" },
 > 
-> On 14/02/2020 07:42, CK Hu wrote:
->> Hi, Matthias:
->>
->> On Thu, 2020-02-13 at 21:19 +0100, matthias.bgg@kernel.org wrote:
->>> From: Matthias Brugger <mbrugger@suse.com>
->>>
->>> The mmsys block provides registers and clocks for the display
->>> subsystem. The binding description should therefore live together with
->>> the rest of the display descriptions. Move it to display/mediatek.
->>>
->>
->> Yes, for the upstreamed driver, only display (DRM) use mmsys clock. For
->> some MDP patches [1] in progress, MDP also use mmsys clock. So we just
->> consider what's upstreamed now?
+> Why have .name? Pleas remove it.
+
+Dropped...
+
+> > +       { .hw = &gpll0_out_even.clkr.hw },
+> > +       { .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
 > 
+> Please drop these test inputs. I don't see any reason why they're listed.
 
-Let me jump into the discussion, and sorry if my question is silly because I'm
-just starting to look at this code.
+Dropped this and rest.
 
-IMO we should consider all the cases to find a proper fix on all this, and if
-MDP uses also mmsys clocks this approach will not work. I think the main problem
-here and the big question is what exactly is the MMSYS block, is an independent
-clock controller that provides clocks to DRM and other blocks? or is hardly tied
-to the DRM block in some way?
-
-Could you give us a block schema on how the things are interconnected?
-
-If is an independent clock controller I think there was a mistake when the first
-drm driver was pushed by using the compatible = "mediatek,mt8173-mmsys" as id
-for that driver.
-
-Thanks,
- Enric
-
-
-> I'm not sure if I understand you correctly. Are you proposing to keep the
-> binding description in arm/mediatek?
+> > +static struct clk_branch gcc_sys_noc_cpuss_ahb_clk = {
+> > +       .halt_reg = 0x48198,
+> > +       .halt_check = BRANCH_HALT_VOTED,
+> > +       .clkr = {
+> > +               .enable_reg = 0x52000,
+> > +               .enable_mask = BIT(0),
+> > +               .hw.init = &(struct clk_init_data){
+> > +                       .name = "gcc_sys_noc_cpuss_ahb_clk",
+> > +                       .parent_data = &(const struct clk_parent_data){
+> > +                               .hw = &gcc_cpuss_ahb_postdiv_clk_src.clkr.hw,
+> > +                       },
+> > +                       .num_parents = 1,
+> > +                       .flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+> > +                       .ops = &clk_branch2_ops,
+> > +               },
+> > +       },
+> > +};
 > 
-> Regards,
-> Matthias
+> Is there a need for this clk to be exposed? Why can't we just turn the
+> bit on in probe and ignore it after that? I'd prefer to not have
+> CLK_IS_CRITICAL in this driver unless necessary.
+
+yeah moved it as setting a bit in probe..
+
+> > +       /*
+> > +        * Keep the clocks always-ON
+> > +        * GCC_VIDEO_AHB_CLK, GCC_CAMERA_AHB_CLK, GCC_DISP_AHB_CLK,
+> > +        * GCC_CPUSS_DVM_BUS_CLK, GCC_GPU_CFG_AHB_CLK
+> > +        */
+> > +       regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x0b008, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x4818c, BIT(0), BIT(0));
+> > +       regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
 > 
->>
->> [1] https://patchwork.kernel.org/patch/11140747/
->>
->> Regards,
->> CK
->>
->>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
->>>
->>> ---
->>>
->>> Changes in v7:
->>> - move the binding description
->>>
->>> Changes in v6: None
->>> Changes in v5: None
->>> Changes in v4: None
->>> Changes in v3: None
->>> Changes in v2: None
->>>
->>>  .../bindings/{arm => display}/mediatek/mediatek,mmsys.txt         | 0
->>>  1 file changed, 0 insertions(+), 0 deletions(-)
->>>  rename Documentation/devicetree/bindings/{arm => display}/mediatek/mediatek,mmsys.txt (100%)
->>>
->>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
->>> similarity index 100%
->>> rename from Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
->>> rename to Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->>
+> These look like the AHB clks above that we just enabled and then ignore.
+
+right, I think these are rest of the always-on clocks
+
+-- 
+~Vinod
