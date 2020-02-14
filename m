@@ -2,79 +2,138 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4517CC2BA83
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 11:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5362C3B196
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 12:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C1424670
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 11:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A723D2086A
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 12:19:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387532AbgBNLFA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 06:05:00 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:37643 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728807AbgBNLFA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 06:05:00 -0500
-X-Originating-IP: 90.65.102.129
-Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id A4821E0016;
-        Fri, 14 Feb 2020 11:04:58 +0000 (UTC)
-Date:   Fri, 14 Feb 2020 12:04:58 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>
-Cc:     nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
-        linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 0/8] PM fixes and improvements for SAM9X60
-Message-ID: <20200214110458.GE3578@piout.net>
-References: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1728982AbgBNMTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 07:19:34 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44828 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728582AbgBNMTe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 07:19:34 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 5E10528D7ED
+Subject: Re: [PATCH v7 01/13] dt-bindings: arm: move mmsys description to
+ display
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        CK Hu <ck.hu@mediatek.com>, matthias.bgg@kernel.org
+Cc:     mark.rutland@arm.com, airlied@linux.ie, mturquette@baylibre.com,
+        dri-devel@lists.freedesktop.org, laurent.pinchart@ideasonboard.com,
+        ulrich.hecht+renesas@gmail.com, linux-clk@vger.kernel.org,
+        drinkcat@chromium.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        wens@csie.org, mtk01761 <wendell.lin@mediatek.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>, frank-w@public-files.de,
+        sean.wang@mediatek.com, robh+dt@kernel.org,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        linux-arm-kernel@lists.infradead.org,
+        Matthias Brugger <mbrugger@suse.com>, sboyd@kernel.org,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        p.zabel@pengutronix.de
+References: <20200213201953.15268-1-matthias.bgg@kernel.org>
+ <20200213201953.15268-2-matthias.bgg@kernel.org>
+ <1581662577.17949.3.camel@mtksdaap41>
+ <2bda2dd7-9ed2-8b4c-897e-e585ccfa1fa5@gmail.com>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <022e8f64-b414-67a5-722e-bdd7c00230ff@collabora.com>
+Date:   Fri, 14 Feb 2020 13:19:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <2bda2dd7-9ed2-8b4c-897e-e585ccfa1fa5@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20/01/2020 14:10:00+0200, Claudiu Beznea wrote:
-> Hi,
-> 
-> This series adds fixes and improvements for SAM9X60 as follows:
-> - fix master clock register offset in pm_suspend.S
-> - add support for disable/enable PLL for SAM9X60
-> - minor fix in pm_suspend.S: s/sfr/sfrbu
-> - move SAM9X60's macros for PLL in include/linux/clk/at91_pmc.h
-> 
-> Thank you,
-> Claudiu Beznea
-> 
-> Claudiu Beznea (8):
->   ARM: at91: pm: use proper master clock register offset
->   Revert "ARM: at91: pm: do not disable/enable PLLA for ULP modes"
->   ARM: at91: pm: add macros for plla disable/enable
->   ARM: at91: pm: add pmc_version member to at91_pm_data
->   ARM: at91: pm: s/sfr/sfrbu in pm_suspend.S
->   clk: at91: move sam9x60's PLL register offsets to PMC header
->   ARM: at91: pm: add plla disable/enable support for sam9x60
->   ARM: at91: pm: add quirk for sam9x60's ulp1
-> 
->  arch/arm/mach-at91/pm.c              |  35 ++++++-
->  arch/arm/mach-at91/pm.h              |   2 +
->  arch/arm/mach-at91/pm_data-offsets.c |   4 +
->  arch/arm/mach-at91/pm_suspend.S      | 189 ++++++++++++++++++++++++++++++++---
->  drivers/clk/at91/clk-sam9x60-pll.c   |  91 +++++++----------
->  include/linux/clk/at91_pmc.h         |  23 +++++
->  6 files changed, 270 insertions(+), 74 deletions(-)
-> 
-Applied, thanks.
+Hi CK,
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+On 14/2/20 11:01, Matthias Brugger wrote:
+> 
+> 
+> On 14/02/2020 07:42, CK Hu wrote:
+>> Hi, Matthias:
+>>
+>> On Thu, 2020-02-13 at 21:19 +0100, matthias.bgg@kernel.org wrote:
+>>> From: Matthias Brugger <mbrugger@suse.com>
+>>>
+>>> The mmsys block provides registers and clocks for the display
+>>> subsystem. The binding description should therefore live together with
+>>> the rest of the display descriptions. Move it to display/mediatek.
+>>>
+>>
+>> Yes, for the upstreamed driver, only display (DRM) use mmsys clock. For
+>> some MDP patches [1] in progress, MDP also use mmsys clock. So we just
+>> consider what's upstreamed now?
+> 
+
+Let me jump into the discussion, and sorry if my question is silly because I'm
+just starting to look at this code.
+
+IMO we should consider all the cases to find a proper fix on all this, and if
+MDP uses also mmsys clocks this approach will not work. I think the main problem
+here and the big question is what exactly is the MMSYS block, is an independent
+clock controller that provides clocks to DRM and other blocks? or is hardly tied
+to the DRM block in some way?
+
+Could you give us a block schema on how the things are interconnected?
+
+If is an independent clock controller I think there was a mistake when the first
+drm driver was pushed by using the compatible = "mediatek,mt8173-mmsys" as id
+for that driver.
+
+Thanks,
+ Enric
+
+
+> I'm not sure if I understand you correctly. Are you proposing to keep the
+> binding description in arm/mediatek?
+> 
+> Regards,
+> Matthias
+> 
+>>
+>> [1] https://patchwork.kernel.org/patch/11140747/
+>>
+>> Regards,
+>> CK
+>>
+>>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>>>
+>>> ---
+>>>
+>>> Changes in v7:
+>>> - move the binding description
+>>>
+>>> Changes in v6: None
+>>> Changes in v5: None
+>>> Changes in v4: None
+>>> Changes in v3: None
+>>> Changes in v2: None
+>>>
+>>>  .../bindings/{arm => display}/mediatek/mediatek,mmsys.txt         | 0
+>>>  1 file changed, 0 insertions(+), 0 deletions(-)
+>>>  rename Documentation/devicetree/bindings/{arm => display}/mediatek/mediatek,mmsys.txt (100%)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+>>> similarity index 100%
+>>> rename from Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+>>> rename to Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>>
