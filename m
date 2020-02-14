@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A82C3B19F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8CAC3B19F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:07:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CAD24654
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D77C024654
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:07:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581696422;
-	bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
+	s=default; t=1581696424;
+	bh=dqo48L2ou/yzvd2IcwqFxNL8U45KgACA6uI8nC2gyZo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yamcMCrMeCsqk3m+Su0KjbYuBh/vx/KjFiZttkAXxKUo2V+1bg1cUtTUSCIatTtkp
-	 5SMvWQt4UUFULQ0GJeh0UAJ1L9gxj+frx35QcOHcGSJovBfRW1F6VQfNx65254qH0M
-	 /WEziHpOSkrK+ucucm3P+7fYfWCj07JYchvsJZWA=
+	b=yhvhJQhBqjRdP6KzU3H0H+HUGIpJat0IAmbNFoDzKG8+wR3kdAQrxBoC+Jpc5Rn4q
+	 tFMu7TISk+KrW0K7Bdie/syZGSn3FZeCo5EAiUZJ/IMJGIYF7IXFJ8QRVZNylNNQBF
+	 nINNKFvXFmf6Ijcohzi83TmnytZkTNKqf0iv6aVs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389669AbgBNQHC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:07:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
+        id S2390570AbgBNQHE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 11:07:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389901AbgBNQHB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:07:01 -0500
+        id S2390565AbgBNQHD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:07:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1CAE24687;
-        Fri, 14 Feb 2020 16:06:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 33065222C2;
+        Fri, 14 Feb 2020 16:07:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581696420;
-        bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
+        s=default; t=1581696423;
+        bh=dqo48L2ou/yzvd2IcwqFxNL8U45KgACA6uI8nC2gyZo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dJiEuwWHE46lSyvDVaxebEqC3enXhMuqeEQNJTSIC3CRYI21yfkIuKhAW2uaYlNeT
-         y+p6i6Xu3LflAJIlamLR0D7TkGXKSdXkQgQMWnpcqumJe+yYbS4FSY2HGGzxiQz69n
-         fFqkdBNn8xWoJBgsCll+2IROnTK3h2O0ZfmbYPZI=
+        b=w8dKOpTekg4OcvX1j/zyf9RCHiDz9joZJ8pYg+U2h8EdYyrpYsjszWIsUGmOqNVyG
+         wdx1JnRAbdV3q5Qpd7hykrhwp9Uhk6lEK2AQurKm4O5Xyw/5cZ0V6AcYgjF5yvbY5B
+         4tw40nN8csGN03OFpFT1YvndTSEAxby9paPUoZkA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 241/459] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
-Date:   Fri, 14 Feb 2020 10:58:11 -0500
-Message-Id: <20200214160149.11681-241-sashal@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Niklas Cassel <nks@flawful.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 243/459] clk: Use parent node pointer during registration if necessary
+Date:   Fri, 14 Feb 2020 10:58:13 -0500
+Message-Id: <20200214160149.11681-243-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214160149.11681-1-sashal@kernel.org>
 References: <20200214160149.11681-1-sashal@kernel.org>
@@ -60,77 +60,92 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
+[ Upstream commit 9011f92622e5ef2d075f45e5fa818776d4feb8c0 ]
 
-The A64 PLL_CPU clock has the same instability if some factor changed
-without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
-H3.
+Sometimes clk drivers are attached to devices which are children of a
+parent device that is connected to a node in DT. This happens when
+devices are MFD-ish and the parent device driver mostly registers child
+devices to match against drivers placed in their respective subsystem
+directories like drivers/clk, drivers/regulator, etc. When the clk
+driver calls clk_register() with a device pointer, that struct device
+pointer won't have a device_node associated with it because it was
+created purely in software as a way to partition logic to a subsystem.
 
-Add the mux and pll notifiers for A64 CPU clock to workaround the
-problem.
+This causes problems for the way we find parent clks for the clks
+registered by these child devices because we look at the registering
+device's device_node pointer to lookup 'clocks' and 'clock-names'
+properties. Let's use the parent device's device_node pointer if the
+registering device doesn't have a device_node but the parent does. This
+simplifies clk registration code by avoiding the need to assign some
+device_node to the device registering the clk.
 
-Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20191230190455.141339-1-sboyd@kernel.org
+[sboyd@kernel.org: Fixup kernel-doc notation]
+Reviewed-by: Niklas Cassel <nks@flawful.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 49bd7a4c015c4..5f66bf8797723 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -921,11 +921,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
- };
- 
-+static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
-+	.common	= &pll_cpux_clk.common,
-+	/* copy from pll_cpux_clk */
-+	.enable	= BIT(31),
-+	.lock	= BIT(28),
-+};
-+
-+static struct ccu_mux_nb sun50i_a64_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(&pdev->dev, res);
-@@ -939,7 +954,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- 
- 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
- 
--	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Gate then ungate PLL CPU after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
-+
-+	/* Reparent CPU during PLL CPU rate changes */
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun50i_a64_cpu_nb);
-+
-+	return 0;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b0344a1a03704..62d0fc486d3a2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3718,6 +3718,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	return ERR_PTR(ret);
  }
  
- static const struct of_device_id sun50i_a64_ccu_ids[] = {
++/**
++ * dev_or_parent_of_node() - Get device node of @dev or @dev's parent
++ * @dev: Device to get device node of
++ *
++ * Return: device node pointer of @dev, or the device node pointer of
++ * @dev->parent if dev doesn't have a device node, or NULL if neither
++ * @dev or @dev->parent have a device node.
++ */
++static struct device_node *dev_or_parent_of_node(struct device *dev)
++{
++	struct device_node *np;
++
++	if (!dev)
++		return NULL;
++
++	np = dev_of_node(dev);
++	if (!np)
++		np = dev_of_node(dev->parent);
++
++	return np;
++}
++
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+@@ -3733,7 +3755,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return __clk_register(dev, dev_of_node(dev), hw);
++	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
+ }
+ EXPORT_SYMBOL_GPL(clk_register);
+ 
+@@ -3749,7 +3771,8 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
++			       hw));
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
+ 
 -- 
 2.20.1
 
