@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2002C3B1B5
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C33F1C2BA83
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75C6822314
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96F8F24650
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581704446;
-	bh=LNZd425aiv0ZyvHJC6f+H2IvIXnySvmj0POmQMGzmiw=;
+	s=default; t=1581704456;
+	bh=3mMW9xAzJDDMfYwE+KOeTghpU9ATN3hhSY+NwNKGAbo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kT5azECPH1/JBQg0ed7yA8LhwRWUhJb2CxPIpuf4IpXpc2YCe8VfmkhJbvxHQ0C8w
-	 YHGuFWCDFkvqzd4MFUQwe5SISUYTSLpAW8E4Vqu+WMbRPF6g4ApZSAS09ODzNDDJT0
-	 gzHdWar1lY4YcMhbFCZC2UjLxeQ9ymQh++ChUIeg=
+	b=h97TMj7ZZZAwkfKHTv1KEACz4L/WE3PnVL5h5wNYuKI4Whwvvt7RyFfPu2XQWf/Gt
+	 m/7PsMPftQn9bmFKHpTxqj8Xl1LhR3eUyTuc4dE4NI5qw8XEAp3Y5+OWzUM/JzXGC2
+	 2LvQW8duC815NiqeuOGGsRWvRi/1YK3kLDCnlXWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbgBNPuA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 10:50:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53534 "EHLO mail.kernel.org"
+        id S2387746AbgBNSUw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 13:20:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730302AbgBNPt7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:49:59 -0500
+        id S1730264AbgBNPt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B0FA24650;
-        Fri, 14 Feb 2020 15:49:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0439A24689;
+        Fri, 14 Feb 2020 15:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695398;
-        bh=LNZd425aiv0ZyvHJC6f+H2IvIXnySvmj0POmQMGzmiw=;
+        s=default; t=1581695395;
+        bh=3mMW9xAzJDDMfYwE+KOeTghpU9ATN3hhSY+NwNKGAbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BqZTy71xClPZ4IUQq754Zkvfkz+QZKqpwSM/3trdOeKGGzvg6DtgU1OhfjyQpc7gV
-         4pyHPFQdXIzOOvrExbcPiMa2xGdcCWMUV9DGDb/P6QE6PLBxrZ71PmCETFkx+rOmFL
-         H+5VPIUf93SqOHrD6g0LJpaQ8jkyZokLN23Ocejw=
+        b=iFZJv+4S4g9NMrFYeJmTv3icxSS98Pvk4aEYIh6qeUXwaEh4OtApMGRjY/7x8d9AH
+         wkJjy6SfiCQqjYMLmIwap4VxydDbDEUQaMQcuIdFZqC7J6UO25XeaRmcQVkqIl9Gly
+         ueYioJzT/WrZwZJb+D+p4sBiJupT9pyzYMEv5cAY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 049/542] clk: meson: meson8b: make the CCF use the glitch-free mali mux
-Date:   Fri, 14 Feb 2020 10:40:41 -0500
-Message-Id: <20200214154854.6746-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.5 047/542] clk: at91: sam9x60: fix programmable clock prescaler
+Date:   Fri, 14 Feb 2020 10:40:39 -0500
+Message-Id: <20200214154854.6746-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -60,63 +59,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-[ Upstream commit 8daeaea99caabe24a0929fac17977ebfb882fa86 ]
+[ Upstream commit 66d9f5214c9ba1c151478f99520b6817302d50dc ]
 
-The "mali_0" or "mali_1" clock trees should not be updated while the
-clock is running. Enforce this by setting CLK_SET_RATE_GATE on the
-"mali_0" and "mali_1" gates. This makes the CCF switch to the "mali_1"
-tree when "mali_0" is currently active and vice versa, which is exactly
-what the vendor driver does when updating the frequency of the mali
-clock.
+The prescaler works as parent rate divided by (PRES + 1) (is_pres_direct == 1)
+It does not work in the way of parent rate shifted to the right by (PRES + 1),
+which means division by 2^(PRES + 1) (is_pres_direct == 0)
+Thus is_pres_direct must be enabled for this SoC, to make the right computation.
+This field was added in
+commit 45b06682113b ("clk: at91: fix programmable clock for sama5d2")
+SAM9X60 has the same field as SAMA5D2 in the PCK
 
-This fixes a potential hang when changing the GPU frequency at runtime.
-
-Fixes: 74e1f2521f16ff ("clk: meson: meson8b: add the GPU clock tree")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Link: https://lkml.kernel.org/r/1575977088-16781-1-git-send-email-eugen.hristev@microchip.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/clk/at91/sam9x60.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 67e6691e080c1..8856ce476ccfa 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1764,8 +1764,11 @@ static struct clk_regmap meson8b_hdmi_sys = {
- 
- /*
-  * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
-- * muxed by a glitch-free switch on Meson8b and Meson8m2. Meson8 only
-- * has mali_0 and no glitch-free mux.
-+ * muxed by a glitch-free switch on Meson8b and Meson8m2. The CCF can
-+ * actually manage this glitch-free mux because it does top-to-bottom
-+ * updates the each clock tree and switches to the "inactive" one when
-+ * CLK_SET_RATE_GATE is set.
-+ * Meson8 only has mali_0 and no glitch-free mux.
-  */
- static const struct clk_hw *meson8b_mali_0_1_parent_hws[] = {
- 	&meson8b_xtal.hw,
-@@ -1830,7 +1833,7 @@ static struct clk_regmap meson8b_mali_0 = {
- 			&meson8b_mali_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
- 	},
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 86238d5ecb4da..77398aefeb6db 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -47,6 +47,7 @@ static const struct clk_programmable_layout sam9x60_programmable_layout = {
+ 	.pres_shift = 8,
+ 	.css_mask = 0x1f,
+ 	.have_slck_mck = 0,
++	.is_pres_direct = 1,
  };
  
-@@ -1885,7 +1888,7 @@ static struct clk_regmap meson8b_mali_1 = {
- 			&meson8b_mali_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
- 	},
- };
- 
+ static const struct clk_pcr_layout sam9x60_pcr_layout = {
 -- 
 2.20.1
 
