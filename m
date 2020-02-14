@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA5C3B1A1
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDACC3B1A1
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9286724718
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA3A2247A4
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 16:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581697162;
-	bh=nTuhEsUJ/ZNBwAWvy2RhX4lADpGDTGPM2k2rZZ1pgTs=;
+	s=default; t=1581697493;
+	bh=+4Sh4W9Ou5A62S+AACM+nRArbTPrXUh5TK3knHdufww=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EyymkZXezakJDWJyeRO8/iaclUVY//8LWAEwxGba3SrZKMaffANQ0Cm0KV++CfwAy
-	 jS1w1I9pL3dhZQ7SQPsn8nI0oqY6U37xywapOz3Ubf0Vdt9RptDK+p7jaYV2td2y9k
-	 bgRQXEJD7/QaqnfCO4nrGe5QT/gqSPHv+bArvQZ4=
+	b=zfwvVLQnABo+vllvyYiVCbgoxdxYo17UhORGi/fExPCkdvmRsL3LTHGeIBeIf/ZX7
+	 Xkncc60FWjmYOetrXQ6DKcXJsAId3fMNGNzHyfYK1PcqrVDUA02nLCMkl8K1kSZFpH
+	 Qp6aXkZ2KdEWUUDXHkex8izUVaanlMcTvXr8WLPs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404981AbgBNQTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 11:19:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52372 "EHLO mail.kernel.org"
+        id S2406009AbgBNQYw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 11:24:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404977AbgBNQTU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 11:19:20 -0500
+        id S2405999AbgBNQYv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 11:24:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D9CC2470B;
-        Fri, 14 Feb 2020 16:19:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90AA8247AC;
+        Fri, 14 Feb 2020 16:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581697160;
-        bh=nTuhEsUJ/ZNBwAWvy2RhX4lADpGDTGPM2k2rZZ1pgTs=;
+        s=default; t=1581697490;
+        bh=+4Sh4W9Ou5A62S+AACM+nRArbTPrXUh5TK3knHdufww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YiAezlQT4uky7XHiXGlC2/LGhj3zAHR7bopmuw5M5Uk+SCnrI0M6HbllR78hAQ668
-         v4tV59AVS8Cf7K2OG3YclQsEWp3M3raqISRxr080b/FiNRVM8TQTC+yEPYkUiff/dH
-         S3zd8ikos48XBbWLFiC/R/S6KWHfE7CzuqmU1tJ4=
+        b=lAiHmMNQ4I++EgQC1lC+NkIT0EjfoJTtHQP2jTp54begpKsL3NJDHwMFnQqWzX8c3
+         hO7MSsKFfLInyix5pmfJUd3Bn/1o5x3AlVBziwa/Nr4iq2y1W8Jw11v51NqG2xUBNx
+         TLmYprbVhxwFRpxvdn/Dg9KTL7lIt3oS7HPWp5JU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 097/186] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
-Date:   Fri, 14 Feb 2020 11:15:46 -0500
-Message-Id: <20200214161715.18113-97-sashal@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 020/100] clk: qcom: rcg2: Don't crash if our parent can't be found; return an error
+Date:   Fri, 14 Feb 2020 11:23:04 -0500
+Message-Id: <20200214162425.21071-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200214161715.18113-1-sashal@kernel.org>
-References: <20200214161715.18113-1-sashal@kernel.org>
+In-Reply-To: <20200214162425.21071-1-sashal@kernel.org>
+References: <20200214162425.21071-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,77 +60,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
+[ Upstream commit 908b050114d8fefdddc57ec9fbc213c3690e7f5f ]
 
-The A64 PLL_CPU clock has the same instability if some factor changed
-without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
-H3.
+When I got my clock parenting slightly wrong I ended up with a crash
+that looked like this:
 
-Add the mux and pll notifiers for A64 CPU clock to workaround the
-problem.
+  Unable to handle kernel NULL pointer dereference at virtual
+  address 0000000000000000
+  ...
+  pc : clk_hw_get_rate+0x14/0x44
+  ...
+  Call trace:
+   clk_hw_get_rate+0x14/0x44
+   _freq_tbl_determine_rate+0x94/0xfc
+   clk_rcg2_determine_rate+0x2c/0x38
+   clk_core_determine_round_nolock+0x4c/0x88
+   clk_core_round_rate_nolock+0x6c/0xa8
+   clk_core_round_rate_nolock+0x9c/0xa8
+   clk_core_set_rate_nolock+0x70/0x180
+   clk_set_rate+0x3c/0x6c
+   of_clk_set_defaults+0x254/0x360
+   platform_drv_probe+0x28/0xb0
+   really_probe+0x120/0x2dc
+   driver_probe_device+0x64/0xfc
+   device_driver_attach+0x4c/0x6c
+   __driver_attach+0xac/0xc0
+   bus_for_each_dev+0x84/0xcc
+   driver_attach+0x2c/0x38
+   bus_add_driver+0xfc/0x1d0
+   driver_register+0x64/0xf8
+   __platform_driver_register+0x4c/0x58
+   msm_drm_register+0x5c/0x60
+   ...
 
-Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+It turned out that clk_hw_get_parent_by_index() was returning NULL and
+we weren't checking.  Let's check it so that we don't crash.
+
+Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Link: https://lkml.kernel.org/r/20200203103049.v4.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/clk-rcg2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index eaafc038368f5..183985c8c9bab 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -884,11 +884,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
- 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
- };
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 350a01f748706..8b549ece9f13c 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -194,6 +194,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
  
-+static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
-+	.common	= &pll_cpux_clk.common,
-+	/* copy from pll_cpux_clk */
-+	.enable	= BIT(31),
-+	.lock	= BIT(28),
-+};
+ 	clk_flags = clk_hw_get_flags(hw);
+ 	p = clk_hw_get_parent_by_index(hw, index);
++	if (!p)
++		return -EINVAL;
 +
-+static struct ccu_mux_nb sun50i_a64_cpu_nb = {
-+	.common		= &cpux_clk.common,
-+	.cm		= &cpux_clk.mux,
-+	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
-+	.bypass_index	= 1, /* index of 24 MHz oscillator */
-+};
-+
- static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
- 	void __iomem *reg;
- 	u32 val;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	reg = devm_ioremap_resource(&pdev->dev, res);
-@@ -902,7 +917,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
- 
- 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
- 
--	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
-+	if (ret)
-+		return ret;
-+
-+	/* Gate then ungate PLL CPU after any rate changes */
-+	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
-+
-+	/* Reparent CPU during PLL CPU rate changes */
-+	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
-+				  &sun50i_a64_cpu_nb);
-+
-+	return 0;
- }
- 
- static const struct of_device_id sun50i_a64_ccu_ids[] = {
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		if (f->pre_div) {
+ 			if (!rate)
 -- 
 2.20.1
 
