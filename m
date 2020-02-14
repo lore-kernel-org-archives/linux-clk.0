@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 553BEC3B1B9
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2002C3B1B5
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA6224677
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:18:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75C6822314
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581704324;
-	bh=bnoGaRoBD2hyStehWg8KD7v12K1AJXgloD4rRnFFQ/c=;
+	s=default; t=1581704446;
+	bh=LNZd425aiv0ZyvHJC6f+H2IvIXnySvmj0POmQMGzmiw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dvMIXHHy0UadCVV1pZI2SwoaNJwP8n+Tq/kUhwyr3V+3DP3kIxnOSPECt3eusEb7X
-	 9/ckaxXnTeW63NaMy/u8iJt9KXOWNtPjaMZ2OrsWgvLS9NX1jByw80bP3P++cozmS7
-	 1CzswVJeozcXCh+Q1Ohguupn9uyHU4zOpjYHVMY4=
+	b=kT5azECPH1/JBQg0ed7yA8LhwRWUhJb2CxPIpuf4IpXpc2YCe8VfmkhJbvxHQ0C8w
+	 YHGuFWCDFkvqzd4MFUQwe5SISUYTSLpAW8E4Vqu+WMbRPF6g4ApZSAS09ODzNDDJT0
+	 gzHdWar1lY4YcMhbFCZC2UjLxeQ9ymQh++ChUIeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404920AbgBNSSg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 13:18:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55138 "EHLO mail.kernel.org"
+        id S1730312AbgBNPuA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730584AbgBNPup (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:50:45 -0500
+        id S1730302AbgBNPt7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:49:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB56024650;
-        Fri, 14 Feb 2020 15:50:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B0FA24650;
+        Fri, 14 Feb 2020 15:49:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695444;
-        bh=bnoGaRoBD2hyStehWg8KD7v12K1AJXgloD4rRnFFQ/c=;
+        s=default; t=1581695398;
+        bh=LNZd425aiv0ZyvHJC6f+H2IvIXnySvmj0POmQMGzmiw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mHwKwiJUNv+7gk51nsD6A0KiE7lexBwEQdUtLhz+H03m+DUWGFZOv/+YhF/+cH32t
-         JgzSIKUYH2ahwf9Sn27WcoHM+80SVSkd4QDgQZcUZVcaDTQ6nD8IbAMRsC15pyofUr
-         5bhYXDTKBSKHZrY+WmYnJJ7OIwtoFGZUuBEzvQt8=
+        b=BqZTy71xClPZ4IUQq754Zkvfkz+QZKqpwSM/3trdOeKGGzvg6DtgU1OhfjyQpc7gV
+         4pyHPFQdXIzOOvrExbcPiMa2xGdcCWMUV9DGDb/P6QE6PLBxrZ71PmCETFkx+rOmFL
+         H+5VPIUf93SqOHrD6g0LJpaQ8jkyZokLN23Ocejw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Sasha Levin <sashal@kernel.org>,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 085/542] clk: ti: dra7: fix parent for gmac_clkctrl
-Date:   Fri, 14 Feb 2020 10:41:17 -0500
-Message-Id: <20200214154854.6746-85-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.5 049/542] clk: meson: meson8b: make the CCF use the glitch-free mali mux
+Date:   Fri, 14 Feb 2020 10:40:41 -0500
+Message-Id: <20200214154854.6746-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -58,33 +60,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Grygorii Strashko <grygorii.strashko@ti.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 69e300283796dae7e8c2e6acdabcd31336c0c93e ]
+[ Upstream commit 8daeaea99caabe24a0929fac17977ebfb882fa86 ]
 
-The parent clk for gmac clk ctrl has to be gmac_main_clk (125MHz) instead
-of dpll_gmac_ck (1GHz). This is caused incorrect CPSW MDIO operation.
-Hence, fix it.
+The "mali_0" or "mali_1" clock trees should not be updated while the
+clock is running. Enforce this by setting CLK_SET_RATE_GATE on the
+"mali_0" and "mali_1" gates. This makes the CCF switch to the "mali_1"
+tree when "mali_0" is currently active and vice versa, which is exactly
+what the vendor driver does when updating the frequency of the mali
+clock.
 
-Fixes: dffa9051d546 ('clk: ti: dra7: add new clkctrl data')
-Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+This fixes a potential hang when changing the GPU frequency at runtime.
+
+Fixes: 74e1f2521f16ff ("clk: meson: meson8b: add the GPU clock tree")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/clk-7xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/meson/meson8b.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index 5f46782cebeb2..b656ba2abcf7e 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data dra7_gmac_bit_data[] __initconst = {
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 67e6691e080c1..8856ce476ccfa 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -1764,8 +1764,11 @@ static struct clk_regmap meson8b_hdmi_sys = {
+ 
+ /*
+  * The MALI IP is clocked by two identical clocks (mali_0 and mali_1)
+- * muxed by a glitch-free switch on Meson8b and Meson8m2. Meson8 only
+- * has mali_0 and no glitch-free mux.
++ * muxed by a glitch-free switch on Meson8b and Meson8m2. The CCF can
++ * actually manage this glitch-free mux because it does top-to-bottom
++ * updates the each clock tree and switches to the "inactive" one when
++ * CLK_SET_RATE_GATE is set.
++ * Meson8 only has mali_0 and no glitch-free mux.
+  */
+ static const struct clk_hw *meson8b_mali_0_1_parent_hws[] = {
+ 	&meson8b_xtal.hw,
+@@ -1830,7 +1833,7 @@ static struct clk_regmap meson8b_mali_0 = {
+ 			&meson8b_mali_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+ 	},
  };
  
- static const struct omap_clkctrl_reg_data dra7_gmac_clkctrl_regs[] __initconst = {
--	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "dpll_gmac_ck" },
-+	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "gmac_main_clk" },
- 	{ 0 },
+@@ -1885,7 +1888,7 @@ static struct clk_regmap meson8b_mali_1 = {
+ 			&meson8b_mali_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+ 	},
  };
  
 -- 
