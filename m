@@ -2,432 +2,150 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D56FCC3F68F
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8BFC3B1B2
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98D332465D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36C672168B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 18:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581703571;
+	bh=M0PJ8JZoSZ8dwHqx5cyIQLl2ynmitGbooB65Z3iUNV8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=s03Sftg/T9sZnfCNb9h2EYkODfzSGireQZXI6I/2RPNzjzKYK5ekDFsJDxVtq3IJS
+	 4vLVze4nWeobiMgFQt1rIsLhQ3ltRYeicD/URyApE8oD+vBG7wOjcMAlJfnIXF2p72
+	 osLEYAX9b6Rk1tP8tgfaWmuhfIGbF8KRamLChPv4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388771AbgBNSES (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 13:04:18 -0500
-Received: from out28-218.mail.aliyun.com ([115.124.28.218]:51663 "EHLO
-        out28-218.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387595AbgBNSDh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 13:03:37 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436282|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.121448-0.00844811-0.870103;DS=CONTINUE|ham_alarm|0.00674991-0.00141559-0.991835;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03300;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=27;RT=27;SR=0;TI=SMTPD_---.GoAKeCh_1581703384;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GoAKeCh_1581703384)
-          by smtp.aliyun-inc.com(10.147.42.253);
-          Sat, 15 Feb 2020 02:03:25 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, paul@crapouillou.net,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
-        ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        paul@boddie.org.uk, hns@goldelico.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, mips-creator-ci20-dev@googlegroups.com,
-        1326991897@qq.com
-Subject: [PATCH v4 2/6] clocksource: Ingenic: Add high resolution timer support for SMP.
-Date:   Sat, 15 Feb 2020 02:02:36 +0800
-Message-Id: <1581703360-112557-4-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581703360-112557-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1581703360-112557-1-git-send-email-zhouyanjie@wanyeetech.com>
+        id S1731675AbgBNPzB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:55:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731260AbgBNPzA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:55:00 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7318A24673;
+        Fri, 14 Feb 2020 15:54:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695699;
+        bh=M0PJ8JZoSZ8dwHqx5cyIQLl2ynmitGbooB65Z3iUNV8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=vKCcBlEElL2cVELYCPc/3RwWvP/queUuMXdWeYcQ5lvPodC9SYCQ7J/ABmJiRFk+N
+         Li6yCupHc4OgGuhtDGS8a0Y3z34w+A91e2Uq3Agm5j2eZIpQHqOxKQiZFqJmma9zmI
+         y1mP2QIw6RFLkUPxnFszlRg9laqJXMk2UNfoMwCw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Niklas Cassel <nks@flawful.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 281/542] clk: Use parent node pointer during registration if necessary
+Date:   Fri, 14 Feb 2020 10:44:33 -0500
+Message-Id: <20200214154854.6746-281-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Enable clock event handling on per CPU core basis.
-Make sure that interrupts raised on the first core execute
-event handlers on the correct CPU core.
+From: Stephen Boyd <sboyd@kernel.org>
 
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-Tested-by: Paul Boddie <paul@boddie.org.uk>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+[ Upstream commit 9011f92622e5ef2d075f45e5fa818776d4feb8c0 ]
+
+Sometimes clk drivers are attached to devices which are children of a
+parent device that is connected to a node in DT. This happens when
+devices are MFD-ish and the parent device driver mostly registers child
+devices to match against drivers placed in their respective subsystem
+directories like drivers/clk, drivers/regulator, etc. When the clk
+driver calls clk_register() with a device pointer, that struct device
+pointer won't have a device_node associated with it because it was
+created purely in software as a way to partition logic to a subsystem.
+
+This causes problems for the way we find parent clks for the clks
+registered by these child devices because we look at the registering
+device's device_node pointer to lookup 'clocks' and 'clock-names'
+properties. Let's use the parent device's device_node pointer if the
+registering device doesn't have a device_node but the parent does. This
+simplifies clk registration code by avoiding the need to assign some
+device_node to the device registering the clk.
+
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20191230190455.141339-1-sboyd@kernel.org
+[sboyd@kernel.org: Fixup kernel-doc notation]
+Reviewed-by: Niklas Cassel <nks@flawful.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
 
-Notes:
-    v1->v2:
-    1.Adjust function naming to make it more reasonable.
-    2.Replace function smp_call_function_single() with
-      smp_call_function_single_async() in order to resolve
-      the warning below:
-    
-    [    0.350942] smp: Brought up 1 node, 2 CPUs
-    [    0.365497] ------------[ cut here ]------------
-    [    0.365522] WARNING: CPU: 0 PID: 1 at kernel/smp.c:300 smp_call_function_single+0x110/0x200
-    [    0.365533] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.5.0-rc1+ #5
-    [    0.365537] Stack : 00000000 59c73bcd 00000037 80074e80 80000000 80670000 805a0000 80620590
-    [    0.365557]         8065ce38 8fc0dc8c 806d0000 00000000 80670000 00000001 8fc0dc20 59c73bcd
-    [    0.365574]         00000000 00000000 806f0000 80670000 00000000 806dab00 00000000 2d302e35
-    [    0.365591]         203a6d6d 806e0000 806e0000 70617773 80670000 00000000 00000000 00000009
-    [    0.365610]         00000000 8fc94e20 8fc0de30 80690000 00000018 803592dc 00000000 806d0000
-    [    0.365627]         ...
-    [    0.365634] Call Trace:
-    [    0.365647] [<8001b9a0>] show_stack+0x6c/0x12c
-    [    0.365663] [<804aed20>] dump_stack+0x98/0xc8
-    [    0.365673] [<8003044c>] __warn+0xc4/0xe8
-    [    0.365682] [<800304f4>] warn_slowpath_fmt+0x84/0xb8
-    [    0.365690] [<800a886c>] smp_call_function_single+0x110/0x200
-    [    0.365703] ---[ end trace 5785856ca39c79d5 ]---
-    [    0.365557]         8065ce38 8fc0dc8c 806d0000 00000000 80670000 00000001 8fc0dc20 59c73bcd
-    [    0.365574]         00000000 00000000 806f0000 80670000 00000000 806dab00 00000000 2d302e35
-    [    0.365591]         203a6d6d 806e0000 806e0000 70617773 80670000 00000000 00000000 00000009
-    [    0.365610]         00000000 8fc94e20 8fc0de30 80690000 00000018 803592dc 00000000 806d0000
-    [    0.365627]         ...
-    [    0.365634] Call Trace:
-    [    0.365647] [<8001b9a0>] show_stack+0x6c/0x12c
-    [    0.365663] [<804aed20>] dump_stack+0x98/0xc8
-    [    0.365673] [<8003044c>] __warn+0xc4/0xe8
-    [    0.365682] [<800304f4>] warn_slowpath_fmt+0x84/0xb8
-    [    0.365690] [<800a886c>] smp_call_function_single+0x110/0x200
-    [    0.365703] ---[ end trace 5785856ca39c79d5 ]---
-    
-    v2->v3:
-    No Change.
-    
-    v3->v4:
-    Rebase on top of kernel 5.6-rc1.
-
- drivers/clocksource/ingenic-timer.c | 200 ++++++++++++++++++++++++------------
- 1 file changed, 134 insertions(+), 66 deletions(-)
-
-diff --git a/drivers/clocksource/ingenic-timer.c b/drivers/clocksource/ingenic-timer.c
-index 4bbdb3d..9127c73 100644
---- a/drivers/clocksource/ingenic-timer.c
-+++ b/drivers/clocksource/ingenic-timer.c
-@@ -1,7 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * JZ47xx SoCs TCU IRQ driver
-+ * XBurst SoCs TCU IRQ driver
-  * Copyright (C) 2019 Paul Cercueil <paul@crapouillou.net>
-+ * Copyright (C) 2020 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-  */
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 53585cfc4b9ba..66f056ac4c156 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3736,6 +3736,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	return ERR_PTR(ret);
+ }
  
- #include <linux/bitops.h>
-@@ -21,18 +22,23 @@
- 
- #include <dt-bindings/clock/ingenic,tcu.h>
- 
-+static DEFINE_PER_CPU(call_single_data_t, ingenic_cevt_csd);
-+
- struct ingenic_soc_info {
- 	unsigned int num_channels;
- };
- 
- struct ingenic_tcu {
- 	struct regmap *map;
++/**
++ * dev_or_parent_of_node() - Get device node of @dev or @dev's parent
++ * @dev: Device to get device node of
++ *
++ * Return: device node pointer of @dev, or the device node pointer of
++ * @dev->parent if dev doesn't have a device node, or NULL if neither
++ * @dev or @dev->parent have a device node.
++ */
++static struct device_node *dev_or_parent_of_node(struct device *dev)
++{
 +	struct device_node *np;
- 	struct clk *timer_clk, *cs_clk;
-+	unsigned int timer_local[NR_CPUS];
- 	unsigned int timer_channel, cs_channel;
- 	struct clock_event_device cevt;
- 	struct clocksource cs;
--	char name[4];
-+	char name[16];
- 	unsigned long pwm_channels_mask;
-+	int cpu;
- };
- 
- static struct ingenic_tcu *ingenic_tcu;
-@@ -81,6 +87,25 @@ static int ingenic_tcu_cevt_set_next(unsigned long next,
- 	return 0;
- }
- 
-+static void ingenic_per_cpu_event_handler(void *info)
-+{
-+	struct clock_event_device *cevt = (struct clock_event_device *) info;
 +
-+	if (cevt->event_handler)
-+		cevt->event_handler(cevt);
++	if (!dev)
++		return NULL;
++
++	np = dev_of_node(dev);
++	if (!np)
++		np = dev_of_node(dev->parent);
++
++	return np;
 +}
 +
-+static void ingenic_tcu_per_cpu_cb(struct clock_event_device *evt)
-+{
-+	struct ingenic_tcu *tcu = to_ingenic_tcu(evt);
-+	call_single_data_t *csd;
-+
-+	csd = &per_cpu(ingenic_cevt_csd, tcu->cpu);
-+	csd->info = (void *) evt;
-+	csd->func = ingenic_per_cpu_event_handler;
-+	smp_call_function_single_async(tcu->cpu, csd);
-+}
-+
- static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+@@ -3751,7 +3773,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
  {
- 	struct clock_event_device *evt = dev_id;
-@@ -88,8 +113,7 @@ static irqreturn_t ingenic_tcu_cevt_cb(int irq, void *dev_id)
- 
- 	regmap_write(tcu->map, TCU_REG_TECR, BIT(tcu->timer_channel));
- 
--	if (evt->event_handler)
--		evt->event_handler(evt);
-+	ingenic_tcu_per_cpu_cb(evt);
- 
- 	return IRQ_HANDLED;
+-	return __clk_register(dev, dev_of_node(dev), hw);
++	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
  }
-@@ -105,14 +129,73 @@ static struct clk * __init ingenic_tcu_get_clock(struct device_node *np, int id)
- 	return of_clk_get_from_provider(&args);
- }
+ EXPORT_SYMBOL_GPL(clk_register);
  
--static int __init ingenic_tcu_timer_init(struct device_node *np,
--					 struct ingenic_tcu *tcu)
-+static int __init ingenic_tcu_clocksource_init(struct device_node *np,
-+					       struct ingenic_tcu *tcu)
-+{
-+	unsigned int channel = tcu->cs_channel;
-+	struct clocksource *cs = &tcu->cs;
-+	unsigned long rate;
-+	int err;
-+
-+	tcu->cs_clk = ingenic_tcu_get_clock(np, channel);
-+	if (IS_ERR(tcu->cs_clk))
-+		return PTR_ERR(tcu->cs_clk);
-+
-+	err = clk_prepare_enable(tcu->cs_clk);
-+	if (err)
-+		goto err_clk_put;
-+
-+	rate = clk_get_rate(tcu->cs_clk);
-+	if (!rate) {
-+		err = -EINVAL;
-+		goto err_clk_disable;
-+	}
-+
-+	/* Reset channel */
-+	regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel),
-+			   0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
-+
-+	/* Reset counter */
-+	regmap_write(tcu->map, TCU_REG_TDFRc(channel), 0xffff);
-+	regmap_write(tcu->map, TCU_REG_TCNTc(channel), 0);
-+
-+	/* Enable channel */
-+	regmap_write(tcu->map, TCU_REG_TESR, BIT(channel));
-+
-+	cs->name = "ingenic-timer";
-+	cs->rating = 200;
-+	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
-+	cs->mask = CLOCKSOURCE_MASK(16);
-+	cs->read = ingenic_tcu_timer_cs_read;
-+
-+	err = clocksource_register_hz(cs, rate);
-+	if (err)
-+		goto err_clk_disable;
-+
-+	return 0;
-+
-+err_clk_disable:
-+	clk_disable_unprepare(tcu->cs_clk);
-+err_clk_put:
-+	clk_put(tcu->cs_clk);
-+	return err;
-+}
-+
-+static int ingenic_tcu_setup_per_cpu_cevt(struct device_node *np,
-+				     unsigned int channel)
+@@ -3767,7 +3789,8 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
  {
--	unsigned int timer_virq, channel = tcu->timer_channel;
-+	unsigned int timer_virq;
- 	struct irq_domain *domain;
-+	struct ingenic_tcu *tcu;
- 	unsigned long rate;
- 	int err;
- 
-+	tcu = kzalloc(sizeof(*tcu), GFP_KERNEL);
-+	if (!tcu)
-+		return -ENOMEM;
-+
-+	tcu->map = ingenic_tcu->map;
-+
- 	tcu->timer_clk = ingenic_tcu_get_clock(np, channel);
- 	if (IS_ERR(tcu->timer_clk))
- 		return PTR_ERR(tcu->timer_clk);
-@@ -139,13 +222,15 @@ static int __init ingenic_tcu_timer_init(struct device_node *np,
- 		goto err_clk_disable;
- 	}
- 
--	snprintf(tcu->name, sizeof(tcu->name), "TCU");
-+	snprintf(tcu->name, sizeof(tcu->name), "TCU channel.%u", channel);
- 
- 	err = request_irq(timer_virq, ingenic_tcu_cevt_cb, IRQF_TIMER,
- 			  tcu->name, &tcu->cevt);
- 	if (err)
- 		goto err_irq_dispose_mapping;
- 
-+	tcu->cpu = smp_processor_id();
-+	tcu->timer_channel = channel;
- 	tcu->cevt.cpumask = cpumask_of(smp_processor_id());
- 	tcu->cevt.features = CLOCK_EVT_FEAT_ONESHOT;
- 	tcu->cevt.name = tcu->name;
-@@ -166,56 +251,23 @@ static int __init ingenic_tcu_timer_init(struct device_node *np,
- 	return err;
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
++			       hw));
  }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
  
--static int __init ingenic_tcu_clocksource_init(struct device_node *np,
--					       struct ingenic_tcu *tcu)
-+static int ingenic_tcu_setup_cevt(unsigned int cpu)
- {
--	unsigned int channel = tcu->cs_channel;
--	struct clocksource *cs = &tcu->cs;
--	unsigned long rate;
--	int err;
--
--	tcu->cs_clk = ingenic_tcu_get_clock(np, channel);
--	if (IS_ERR(tcu->cs_clk))
--		return PTR_ERR(tcu->cs_clk);
--
--	err = clk_prepare_enable(tcu->cs_clk);
--	if (err)
--		goto err_clk_put;
--
--	rate = clk_get_rate(tcu->cs_clk);
--	if (!rate) {
--		err = -EINVAL;
--		goto err_clk_disable;
--	}
--
--	/* Reset channel */
--	regmap_update_bits(tcu->map, TCU_REG_TCSRc(channel),
--			   0xffff & ~TCU_TCSR_RESERVED_BITS, 0);
--
--	/* Reset counter */
--	regmap_write(tcu->map, TCU_REG_TDFRc(channel), 0xffff);
--	regmap_write(tcu->map, TCU_REG_TCNTc(channel), 0);
--
--	/* Enable channel */
--	regmap_write(tcu->map, TCU_REG_TESR, BIT(channel));
--
--	cs->name = "ingenic-timer";
--	cs->rating = 200;
--	cs->flags = CLOCK_SOURCE_IS_CONTINUOUS;
--	cs->mask = CLOCKSOURCE_MASK(16);
--	cs->read = ingenic_tcu_timer_cs_read;
-+	int ret;
- 
--	err = clocksource_register_hz(cs, rate);
--	if (err)
--		goto err_clk_disable;
-+	ret = ingenic_tcu_setup_per_cpu_cevt(ingenic_tcu->np,
-+						ingenic_tcu->timer_local[cpu]);
-+	if (ret)
-+		goto err_tcu_clocksource_cleanup;
- 
- 	return 0;
- 
--err_clk_disable:
--	clk_disable_unprepare(tcu->cs_clk);
--err_clk_put:
--	clk_put(tcu->cs_clk);
--	return err;
-+err_tcu_clocksource_cleanup:
-+	clocksource_unregister(&ingenic_tcu->cs);
-+	clk_disable_unprepare(ingenic_tcu->cs_clk);
-+	clk_put(ingenic_tcu->cs_clk);
-+	kfree(ingenic_tcu);
-+	return ret;
- }
- 
- static const struct ingenic_soc_info jz4740_soc_info = {
-@@ -239,6 +291,7 @@ static int __init ingenic_tcu_init(struct device_node *np)
- 	const struct ingenic_soc_info *soc_info = id->data;
- 	struct ingenic_tcu *tcu;
- 	struct regmap *map;
-+	unsigned cpu = 0;
- 	long rate;
- 	int ret;
- 
-@@ -253,12 +306,14 @@ static int __init ingenic_tcu_init(struct device_node *np)
- 		return -ENOMEM;
- 
- 	/* Enable all TCU channels for PWM use by default except channels 0/1 */
--	tcu->pwm_channels_mask = GENMASK(soc_info->num_channels - 1, 2);
-+	tcu->pwm_channels_mask = GENMASK(soc_info->num_channels - 1,
-+								NR_CPUS + 1);
- 	of_property_read_u32(np, "ingenic,pwm-channels-mask",
- 			     (u32 *)&tcu->pwm_channels_mask);
- 
- 	/* Verify that we have at least two free channels */
--	if (hweight8(tcu->pwm_channels_mask) > soc_info->num_channels - 2) {
-+	if (hweight8(tcu->pwm_channels_mask) >
-+			soc_info->num_channels - NR_CPUS + 1) {
- 		pr_crit("%s: Invalid PWM channel mask: 0x%02lx\n", __func__,
- 			tcu->pwm_channels_mask);
- 		ret = -EINVAL;
-@@ -266,13 +321,29 @@ static int __init ingenic_tcu_init(struct device_node *np)
- 	}
- 
- 	tcu->map = map;
-+	tcu->np = np;
- 	ingenic_tcu = tcu;
- 
--	tcu->timer_channel = find_first_zero_bit(&tcu->pwm_channels_mask,
-+	tcu->timer_local[cpu] = find_first_zero_bit(&tcu->pwm_channels_mask,
- 						 soc_info->num_channels);
--	tcu->cs_channel = find_next_zero_bit(&tcu->pwm_channels_mask,
--					     soc_info->num_channels,
--					     tcu->timer_channel + 1);
-+
-+	if (NR_CPUS > 1) {
-+		for (cpu = 1; cpu < NR_CPUS; cpu++)
-+			tcu->timer_local[cpu] = find_next_zero_bit(
-+						&tcu->pwm_channels_mask,
-+						soc_info->num_channels,
-+						tcu->timer_local[cpu - 1] + 1);
-+
-+		tcu->cs_channel = find_next_zero_bit(&tcu->pwm_channels_mask,
-+					soc_info->num_channels,
-+					tcu->timer_local[cpu-1] + 1);
-+	} else {
-+		tcu->cs_channel = find_next_zero_bit(&tcu->pwm_channels_mask,
-+					soc_info->num_channels,
-+					tcu->timer_local[cpu] + 1);
-+	}
-+
-+
- 
- 	ret = ingenic_tcu_clocksource_init(np, tcu);
- 	if (ret) {
-@@ -280,9 +351,10 @@ static int __init ingenic_tcu_init(struct device_node *np)
- 		goto err_free_ingenic_tcu;
- 	}
- 
--	ret = ingenic_tcu_timer_init(np, tcu);
--	if (ret)
--		goto err_tcu_clocksource_cleanup;
-+	/* Setup clock events on each CPU core */
-+	ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "Ingenic XBurst: online",
-+				ingenic_tcu_setup_cevt, NULL);
-+	WARN_ON(ret < 0);
- 
- 	/* Register the sched_clock at the end as there's no way to undo it */
- 	rate = clk_get_rate(tcu->cs_clk);
-@@ -290,10 +362,6 @@ static int __init ingenic_tcu_init(struct device_node *np)
- 
- 	return 0;
- 
--err_tcu_clocksource_cleanup:
--	clocksource_unregister(&tcu->cs);
--	clk_disable_unprepare(tcu->cs_clk);
--	clk_put(tcu->cs_clk);
- err_free_ingenic_tcu:
- 	kfree(tcu);
- 	return ret;
 -- 
-2.7.4
+2.20.1
 
