@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E1BC3B19D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C193C2BA83
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B36D24649
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 533C024685
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581695672;
-	bh=+lVoJ8WapUZPeP45CSRrrWYwdJXfBF+qqGzFeUm9ljs=;
+	s=default; t=1581695699;
+	bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GJA60rGxCybZpt5NjdnH1171CgWqz/HTA5BXeOgHQAHqHoU1ueYPh1+Ea1KYogV9m
-	 tAPJK3ihr7G+V8eGzvpz52iuEhWT6fqJ9scHZN4LZ0nA5MHvcdc7pDUjep+8eOfRs9
-	 6OzaLeh5kdWdCwG2AYInTzvvtdcRcTx1Z7hE8O1c=
+	b=TYkSV/kl3JOF780K6vKKTmi4m8kqM2Ls9zkMn9gOo+TCrJSKSbWiLdChqpoWgFlyd
+	 6zJAAafaEaRq9MjcihG/JNzzQJzIh7/iJfPlR9zhn/HnF67isfremqbCqddPze4H8j
+	 jdF2EZxGNDLnGJZJOn6Ws149uyghHFJ/Q2A/WLCg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbgBNPyb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 10:54:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34696 "EHLO mail.kernel.org"
+        id S1731668AbgBNPy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:54:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731539AbgBNPyb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Feb 2020 10:54:31 -0500
+        id S1730691AbgBNPy5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:54:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D42D2465D;
-        Fri, 14 Feb 2020 15:54:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 362A32465D;
+        Fri, 14 Feb 2020 15:54:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581695669;
-        bh=+lVoJ8WapUZPeP45CSRrrWYwdJXfBF+qqGzFeUm9ljs=;
+        s=default; t=1581695697;
+        bh=y3cLW9E43Gt6K/m046jOyePIA/a7L/iQ/HgdNX4WiRg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZMYnG7lyWF6k5BZ3wHmf9YncqRzKXemqVgVykPOcV46DipH5yrVLCbI09gafBa7eJ
-         sqQKz4LGQdh2RgFsreI7S3UkabfnAx1TRVFLnT7rbE4ZUSarWCSNrVs/4qNwXor7pZ
-         Vyj7GOYoLK93LCaw7S96buII2Fzu1gi+2oAD8YMQ=
+        b=zS/5eQ2j5cfxuleXJla47n8cQDIKBCI0b8MD38/kKonI7RngyPU05tr/L+NxrUft2
+         BQz3mXNhia1eeiUBYG0OPI6f8HnvZwMINXV5pLHUwiIj93GiF8yLDGtxynKSnetEWy
+         oW+M+7oHfSTJ6+5GNf3fQO+Ij3EAPSry/bony9IQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.5 258/542] clk: actually call the clock init before any other callback of the clock
-Date:   Fri, 14 Feb 2020 10:44:10 -0500
-Message-Id: <20200214154854.6746-258-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 279/542] clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
+Date:   Fri, 14 Feb 2020 10:44:31 -0500
+Message-Id: <20200214154854.6746-279-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
 References: <20200214154854.6746-1-sashal@kernel.org>
@@ -58,66 +60,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit f6fa75ca912be6021335de63a32aa4d295f3c524 ]
+[ Upstream commit ec97faff743b398e21f74a54c81333f3390093aa ]
 
- __clk_init_parent() will call the .get_parent() callback of the clock
- so .init() must run before.
+The A64 PLL_CPU clock has the same instability if some factor changed
+without the PLL gated like other SoCs with sun6i-style CCU, e.g. A33,
+H3.
 
-Fixes: 541debae0adf ("clk: call the clock init() callback before any other ops callback")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lkml.kernel.org/r/20190924123954.31561-2-jbrunet@baylibre.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Add the mux and pll notifiers for A64 CPU clock to workaround the
+problem.
+
+Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 28 ++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 772258de2d1f3..53585cfc4b9ba 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3338,6 +3338,21 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index 49bd7a4c015c4..5f66bf8797723 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -921,11 +921,26 @@ static const struct sunxi_ccu_desc sun50i_a64_ccu_desc = {
+ 	.num_resets	= ARRAY_SIZE(sun50i_a64_ccu_resets),
+ };
  
-+	/*
-+	 * optional platform-specific magic
-+	 *
-+	 * The .init callback is not used by any of the basic clock types, but
-+	 * exists for weird hardware that must perform initialization magic.
-+	 * Please consider other ways of solving initialization problems before
-+	 * using this callback, as its use is discouraged.
-+	 *
-+	 * If it exist, this callback should called before any other callback of
-+	 * the clock
-+	 */
-+	if (core->ops->init)
-+		core->ops->init(core->hw);
++static struct ccu_pll_nb sun50i_a64_pll_cpu_nb = {
++	.common	= &pll_cpux_clk.common,
++	/* copy from pll_cpux_clk */
++	.enable	= BIT(31),
++	.lock	= BIT(28),
++};
 +
++static struct ccu_mux_nb sun50i_a64_cpu_nb = {
++	.common		= &cpux_clk.common,
++	.cm		= &cpux_clk.mux,
++	.delay_us	= 1, /* > 8 clock cycles at 24 MHz */
++	.bypass_index	= 1, /* index of 24 MHz oscillator */
++};
 +
- 	core->parent = __clk_init_parent(core);
+ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+ 	void __iomem *reg;
+ 	u32 val;
++	int ret;
  
- 	/*
-@@ -3362,17 +3377,6 @@ static int __clk_core_init(struct clk_core *core)
- 		core->orphan = true;
- 	}
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	reg = devm_ioremap_resource(&pdev->dev, res);
+@@ -939,7 +954,18 @@ static int sun50i_a64_ccu_probe(struct platform_device *pdev)
  
--	/*
--	 * optional platform-specific magic
--	 *
--	 * The .init callback is not used by any of the basic clock types, but
--	 * exists for weird hardware that must perform initialization magic.
--	 * Please consider other ways of solving initialization problems before
--	 * using this callback, as its use is discouraged.
--	 */
--	if (core->ops->init)
--		core->ops->init(core->hw);
--
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
- 	 * .recalc_accuracy. For simple clocks and lazy developers the default
+ 	writel(0x515, reg + SUN50I_A64_PLL_MIPI_REG);
+ 
+-	return sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	ret = sunxi_ccu_probe(pdev->dev.of_node, reg, &sun50i_a64_ccu_desc);
++	if (ret)
++		return ret;
++
++	/* Gate then ungate PLL CPU after any rate changes */
++	ccu_pll_notifier_register(&sun50i_a64_pll_cpu_nb);
++
++	/* Reparent CPU during PLL CPU rate changes */
++	ccu_mux_notifier_register(pll_cpux_clk.common.hw.clk,
++				  &sun50i_a64_cpu_nb);
++
++	return 0;
+ }
+ 
+ static const struct of_device_id sun50i_a64_ccu_ids[] = {
 -- 
 2.20.1
 
