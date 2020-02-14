@@ -2,27 +2,26 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C67C2BA83
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35101C3F68F
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA33B24650
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12B882467B
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 17:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390846AbgBNR2a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 12:28:30 -0500
-Received: from out28-2.mail.aliyun.com ([115.124.28.2]:38684 "EHLO
-        out28-2.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391169AbgBNR22 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 12:28:28 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.4007039|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0399408-0.00629691-0.953762;DS=CONTINUE|ham_regular_dialog|0.00571966-0.000426352-0.993854;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16367;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.Go9djQb_1581701284;
+        id S2390105AbgBNR2x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 12:28:53 -0500
+Received: from out28-195.mail.aliyun.com ([115.124.28.195]:42665 "EHLO
+        out28-195.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390990AbgBNR21 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 12:28:27 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.3497629|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.649454-0.0455406-0.305006;DS=CONTINUE|ham_regular_dialog|0.00968155-0.000435684-0.989883;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.Go9djQb_1581701284;
 Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Go9djQb_1581701284)
           by smtp.aliyun-inc.com(10.147.41.231);
-          Sat, 15 Feb 2020 01:28:19 +0800
+          Sat, 15 Feb 2020 01:28:16 +0800
 From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
         <zhouyanjie@wanyeetech.com>
 To:     linux-mips@vger.kernel.org
@@ -30,9 +29,9 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, paul@crapouillou.net,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com
-Subject: [PATCH v5 3/6] dt-bindings: clock: Add X1830 bindings.
-Date:   Sat, 15 Feb 2020 01:27:39 +0800
-Message-Id: <1581701262-110556-5-git-send-email-zhouyanjie@wanyeetech.com>
+Subject: [PATCH v5 0/6] Add support for the X1830 and fix bugs for X1000 v5.
+Date:   Sat, 15 Feb 2020 01:27:36 +0800
+Message-Id: <1581701262-110556-2-git-send-email-zhouyanjie@wanyeetech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1581701262-110556-1-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1581701262-110556-1-git-send-email-zhouyanjie@wanyeetech.com>
@@ -44,97 +43,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the clock bindings for the X1830 Soc from Ingenic.
+v4->v5:
+1.Rebase on top of kernel 5.6-rc1.
+2.Fix bugs for X1000.
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
+周琰杰 (Zhou Yanjie) (6):
+  clk: Ingenic: Remove unnecessary spinlock when reading registers.
+  clk: Ingenic: Adjust cgu code to make it compatible with X1830.
+  dt-bindings: clock: Add X1830 bindings.
+  clk: Ingenic: Add CGU driver for X1830.
+  dt-bindings: clock: Add and reorder ABI for X1000.
+  clk: X1000: Add FIXDIV for SSI clock of X1000.
 
-Notes:
-    v1->v2:
-    Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
-    to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
-    the old mailbox is in an unstable state.
-    
-    v2->v3:
-    Adjust order from [3/5] in v2 to [4/5] in v3.
-    
-    v3->v4:
-    Adjust order from [4/5] in v3 to [3/4] in v4.
-    
-    v4->v5:
-    Rebase on top of kernel 5.6-rc1.
-
- .../devicetree/bindings/clock/ingenic,cgu.txt      |  1 +
- include/dt-bindings/clock/x1830-cgu.h              | 47 ++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
+ .../devicetree/bindings/clock/ingenic,cgu.txt      |   1 +
+ drivers/clk/ingenic/Kconfig                        |  10 +
+ drivers/clk/ingenic/Makefile                       |   1 +
+ drivers/clk/ingenic/cgu.c                          |  44 +--
+ drivers/clk/ingenic/cgu.h                          |   8 +-
+ drivers/clk/ingenic/jz4725b-cgu.c                  |   4 +-
+ drivers/clk/ingenic/jz4740-cgu.c                   |   4 +-
+ drivers/clk/ingenic/jz4770-cgu.c                   |   8 +-
+ drivers/clk/ingenic/jz4780-cgu.c                   |   4 +-
+ drivers/clk/ingenic/x1000-cgu.c                    |  28 +-
+ drivers/clk/ingenic/x1830-cgu.c                    | 346 +++++++++++++++++++++
+ include/dt-bindings/clock/x1000-cgu.h              |  58 ++--
+ include/dt-bindings/clock/x1830-cgu.h              |  47 +++
+ 13 files changed, 502 insertions(+), 61 deletions(-)
+ create mode 100644 drivers/clk/ingenic/x1830-cgu.c
  create mode 100644 include/dt-bindings/clock/x1830-cgu.h
 
-diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-index 75598e6..74bfc57 100644
---- a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-+++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
-@@ -12,6 +12,7 @@ Required properties:
-   * ingenic,jz4770-cgu
-   * ingenic,jz4780-cgu
-   * ingenic,x1000-cgu
-+  * ingenic,x1830-cgu
- - reg : The address & length of the CGU registers.
- - clocks : List of phandle & clock specifiers for clocks external to the CGU.
-   Two such external clocks should be specified - first the external crystal
-diff --git a/include/dt-bindings/clock/x1830-cgu.h b/include/dt-bindings/clock/x1830-cgu.h
-new file mode 100644
-index 00000000..ca5ccfe
---- /dev/null
-+++ b/include/dt-bindings/clock/x1830-cgu.h
-@@ -0,0 +1,47 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides clock numbers for the ingenic,x1830-cgu DT binding.
-+ *
-+ * They are roughly ordered as:
-+ *   - external clocks
-+ *   - PLLs
-+ *   - muxes/dividers in the order they appear in the x1830 programmers manual
-+ *   - gates in order of their bit in the CLKGR* registers
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_X1830_CGU_H__
-+#define __DT_BINDINGS_CLOCK_X1830_CGU_H__
-+
-+#define X1830_CLK_EXCLK			0
-+#define X1830_CLK_RTCLK			1
-+#define X1830_CLK_APLL			2
-+#define X1830_CLK_MPLL			3
-+#define X1830_CLK_EPLL			4
-+#define X1830_CLK_VPLL			5
-+#define X1830_CLK_SCLKA			6
-+#define X1830_CLK_CPUMUX		7
-+#define X1830_CLK_CPU			8
-+#define X1830_CLK_L2CACHE		9
-+#define X1830_CLK_AHB0			10
-+#define X1830_CLK_AHB2PMUX		11
-+#define X1830_CLK_AHB2			12
-+#define X1830_CLK_PCLK			13
-+#define X1830_CLK_DDR			14
-+#define X1830_CLK_MAC			15
-+#define X1830_CLK_MSCMUX		16
-+#define X1830_CLK_MSC0			17
-+#define X1830_CLK_MSC1			18
-+#define X1830_CLK_SSIPLL		19
-+#define X1830_CLK_SSIPLL_DIV2	20
-+#define X1830_CLK_SSIMUX		21
-+#define X1830_CLK_SSI0			22
-+#define X1830_CLK_SMB0			23
-+#define X1830_CLK_SMB1			24
-+#define X1830_CLK_SMB2			25
-+#define X1830_CLK_UART0			26
-+#define X1830_CLK_UART1			27
-+#define X1830_CLK_SSI1			28
-+#define X1830_CLK_SFC			29
-+#define X1830_CLK_PDMA			30
-+
-+#endif /* __DT_BINDINGS_CLOCK_X1830_CGU_H__ */
 -- 
 2.7.4
 
