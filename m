@@ -2,271 +2,126 @@ Return-Path: <SRS0=/Rha=4C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11997C3B19D
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 14:59:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18A5C3B1A1
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:51:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A5A2468C
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 14:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B998724699
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Feb 2020 15:51:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581695507;
+	bh=xzcDHUr0AgOeeRhMZggU0VLWyxXQOHzz4fX3m50JerA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lCJwjm4lkwKVZTFEl3C3OoIGWc9/OzpOaAKMLqhkI5nK3NpoHhYagTt+6B80V2fyK
+	 8Olj7nJ65jvMTvLXGf1elx3d5L5UucU8aOqTV1pu/d3bsC1UR9WjMgRgTnm02rnsWK
+	 NsXRtLK8sm+dKGuYxJ9NLpEXMinbE9mwpbJ4/RU0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387551AbgBNO74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Feb 2020 09:59:56 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:44731 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387561AbgBNO74 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Feb 2020 09:59:56 -0500
-Received: from localhost (lfbn-lyo-1-1670-129.w90-65.abo.wanadoo.fr [90.65.102.129])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 789F524000E;
-        Fri, 14 Feb 2020 14:59:52 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1730850AbgBNPvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Feb 2020 10:51:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56882 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730847AbgBNPvo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 14 Feb 2020 10:51:44 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 108A224686;
+        Fri, 14 Feb 2020 15:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581695504;
+        bh=xzcDHUr0AgOeeRhMZggU0VLWyxXQOHzz4fX3m50JerA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j80lsGFn8D5uyG60r7xR9LEQlxbqB9ZGC6+GIv+cU9dneXVOnFkyXpyvFrTDaNQd8
+         TQ+ICBRNyDJESXVv3vYSDXdOxzYH3Ss3GpMSxxzz+SerkzpG2QG/JjF/ygYCgbznPW
+         4xyWcDycFNfiS7ELqGfjOAqYnUOf1LUijfnYVGlk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: at91: add at91rm9200 pmc driver
-Date:   Fri, 14 Feb 2020 15:59:33 +0100
-Message-Id: <20200214145934.53648-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.24.1
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.5 130/542] clk: qcom: rcg2: Don't crash if our parent can't be found; return an error
+Date:   Fri, 14 Feb 2020 10:42:02 -0500
+Message-Id: <20200214154854.6746-130-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200214154854.6746-1-sashal@kernel.org>
+References: <20200214154854.6746-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a driver for the PMC clocks of the at91rm9200.
+From: Douglas Anderson <dianders@chromium.org>
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+[ Upstream commit 908b050114d8fefdddc57ec9fbc213c3690e7f5f ]
+
+When I got my clock parenting slightly wrong I ended up with a crash
+that looked like this:
+
+  Unable to handle kernel NULL pointer dereference at virtual
+  address 0000000000000000
+  ...
+  pc : clk_hw_get_rate+0x14/0x44
+  ...
+  Call trace:
+   clk_hw_get_rate+0x14/0x44
+   _freq_tbl_determine_rate+0x94/0xfc
+   clk_rcg2_determine_rate+0x2c/0x38
+   clk_core_determine_round_nolock+0x4c/0x88
+   clk_core_round_rate_nolock+0x6c/0xa8
+   clk_core_round_rate_nolock+0x9c/0xa8
+   clk_core_set_rate_nolock+0x70/0x180
+   clk_set_rate+0x3c/0x6c
+   of_clk_set_defaults+0x254/0x360
+   platform_drv_probe+0x28/0xb0
+   really_probe+0x120/0x2dc
+   driver_probe_device+0x64/0xfc
+   device_driver_attach+0x4c/0x6c
+   __driver_attach+0xac/0xc0
+   bus_for_each_dev+0x84/0xcc
+   driver_attach+0x2c/0x38
+   bus_add_driver+0xfc/0x1d0
+   driver_register+0x64/0xf8
+   __platform_driver_register+0x4c/0x58
+   msm_drm_register+0x5c/0x60
+   ...
+
+It turned out that clk_hw_get_parent_by_index() was returning NULL and
+we weren't checking.  Let's check it so that we don't crash.
+
+Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Link: https://lkml.kernel.org/r/20200203103049.v4.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/Makefile     |   1 +
- drivers/clk/at91/at91rm9200.c | 199 ++++++++++++++++++++++++++++++++++
- 2 files changed, 200 insertions(+)
- create mode 100644 drivers/clk/at91/at91rm9200.c
+ drivers/clk/qcom/clk-rcg2.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 3732241352ce..08fa7930c8fd 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_HAVE_AT91_H32MX)		+= clk-h32mx.o
- obj-$(CONFIG_HAVE_AT91_GENERATED_CLK)	+= clk-generated.o
- obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
- obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
-+obj-$(CONFIG_SOC_AT91RM9200) += at91rm9200.o
- obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
- obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
-diff --git a/drivers/clk/at91/at91rm9200.c b/drivers/clk/at91/at91rm9200.c
-new file mode 100644
-index 000000000000..90b2ace7f7bd
---- /dev/null
-+++ b/drivers/clk/at91/at91rm9200.c
-@@ -0,0 +1,199 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 5e0f7d8f168dd..cecdb07ce13ba 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -217,6 +217,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 
+ 	clk_flags = clk_hw_get_flags(hw);
+ 	p = clk_hw_get_parent_by_index(hw, index);
++	if (!p)
++		return -EINVAL;
 +
-+#include <dt-bindings/clock/at91.h>
-+
-+#include "pmc.h"
-+
-+struct sck {
-+	char *n;
-+	char *p;
-+	u8 id;
-+};
-+
-+struct pck {
-+	char *n;
-+	u8 id;
-+};
-+
-+static const struct clk_master_characteristics rm9200_mck_characteristics = {
-+	.output = { .min = 0, .max = 80000000 },
-+	.divisors = { 1, 2, 3, 4 },
-+};
-+
-+static u8 rm9200_pll_out[] = { 0, 2 };
-+
-+static const struct clk_range rm9200_pll_outputs[] = {
-+	{ .min = 80000000, .max = 160000000 },
-+	{ .min = 150000000, .max = 180000000 },
-+};
-+
-+static const struct clk_pll_characteristics rm9200_pll_characteristics = {
-+	.input = { .min = 1000000, .max = 32000000 },
-+	.num_output = ARRAY_SIZE(rm9200_pll_outputs),
-+	.output = rm9200_pll_outputs,
-+	.out = rm9200_pll_out,
-+};
-+
-+static const struct sck at91rm9200_systemck[] = {
-+	{ .n = "udpck", .p = "usbck",    .id = 2 },
-+	{ .n = "uhpck", .p = "usbck",    .id = 4 },
-+	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-+	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-+	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-+	{ .n = "pck3",  .p = "prog3",    .id = 11 },
-+};
-+
-+static const struct pck at91rm9200_periphck[] = {
-+	{ .n = "pioA_clk",   .id = 2 },
-+	{ .n = "pioB_clk",   .id = 3 },
-+	{ .n = "pioC_clk",   .id = 4 },
-+	{ .n = "pioD_clk",   .id = 5 },
-+	{ .n = "usart0_clk", .id = 6 },
-+	{ .n = "usart1_clk", .id = 7 },
-+	{ .n = "usart2_clk", .id = 8 },
-+	{ .n = "usart3_clk", .id = 9 },
-+	{ .n = "mci0_clk",   .id = 10 },
-+	{ .n = "udc_clk",    .id = 11 },
-+	{ .n = "twi0_clk",   .id = 12 },
-+	{ .n = "spi0_clk",   .id = 13 },
-+	{ .n = "ssc0_clk",   .id = 14 },
-+	{ .n = "ssc1_clk",   .id = 15 },
-+	{ .n = "ssc2_clk",   .id = 16 },
-+	{ .n = "tc0_clk",    .id = 17 },
-+	{ .n = "tc1_clk",    .id = 18 },
-+	{ .n = "tc2_clk",    .id = 19 },
-+	{ .n = "tc3_clk",    .id = 20 },
-+	{ .n = "tc4_clk",    .id = 21 },
-+	{ .n = "tc5_clk",    .id = 22 },
-+	{ .n = "ohci_clk",   .id = 23 },
-+	{ .n = "macb0_clk",  .id = 24 },
-+};
-+
-+static void __init at91rm9200_pmc_setup(struct device_node *np)
-+{
-+	const char *slowxtal_name, *mainxtal_name;
-+	struct pmc_data *at91rm9200_pmc;
-+	u32 usb_div[] = { 1, 2, 0, 0 };
-+	const char *parent_names[6];
-+	struct regmap *regmap;
-+	struct clk_hw *hw;
-+	int i;
-+	bool bypass;
-+
-+	i = of_property_match_string(np, "clock-names", "slow_xtal");
-+	if (i < 0)
-+		return;
-+
-+	slowxtal_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "main_xtal");
-+	if (i < 0)
-+		return;
-+	mainxtal_name = of_clk_get_parent_name(np, i);
-+
-+	regmap = device_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	at91rm9200_pmc = pmc_data_allocate(PMC_MAIN + 1,
-+					    nck(at91rm9200_systemck),
-+					    nck(at91rm9200_periphck), 0);
-+	if (!at91rm9200_pmc)
-+		return;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
-+					bypass);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_rm9200_main(regmap, "mainck", "main_osc");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	at91rm9200_pmc->chws[PMC_MAIN] = hw;
-+
-+	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
-+				   &at91rm9200_pll_layout,
-+				   &rm9200_pll_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_pll(regmap, "pllbck", "mainck", 1,
-+				   &at91rm9200_pll_layout,
-+				   &rm9200_pll_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = slowxtal_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "pllack";
-+	parent_names[3] = "pllbck";
-+	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
-+				      &at91rm9200_master_layout,
-+				      &rm9200_mck_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	at91rm9200_pmc->chws[PMC_MCK] = hw;
-+
-+	hw = at91rm9200_clk_register_usb(regmap, "usbck", "pllbck", usb_div);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = slowxtal_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "pllack";
-+	parent_names[3] = "pllbck";
-+	for (i = 0; i < 4; i++) {
-+		char name[6];
-+
-+		snprintf(name, sizeof(name), "prog%d", i);
-+
-+		hw = at91_clk_register_programmable(regmap, name,
-+						    parent_names, 4, i,
-+						    &at91rm9200_programmable_layout);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(at91rm9200_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, at91rm9200_systemck[i].n,
-+					      at91rm9200_systemck[i].p,
-+					      at91rm9200_systemck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		at91rm9200_pmc->shws[at91rm9200_systemck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(at91rm9200_periphck); i++) {
-+		hw = at91_clk_register_peripheral(regmap,
-+						  at91rm9200_periphck[i].n,
-+						  "masterck",
-+						  at91rm9200_periphck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		at91rm9200_pmc->phws[at91rm9200_periphck[i].id] = hw;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, at91rm9200_pmc);
-+
-+	return;
-+
-+err_free:
-+	pmc_data_free(at91rm9200_pmc);
-+}
-+/* 
-+ * While the TCB can be used as the clocksource, the system timer is most likely
-+ * to be used instead. However, the pinctrl driver doesn't support probe
-+ * deferring properly. Once this is fixed, this can be switched to a platform
-+ * driver.
-+ */
-+CLK_OF_DECLARE_DRIVER(at91rm9200_pmc, "atmel,at91rm9200-pmc",
-+		      at91rm9200_pmc_setup);
+ 	if (clk_flags & CLK_SET_RATE_PARENT) {
+ 		rate = f->freq;
+ 		if (f->pre_div) {
 -- 
-2.24.1
+2.20.1
 
