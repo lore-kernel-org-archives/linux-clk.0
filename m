@@ -2,149 +2,137 @@ Return-Path: <SRS0=2DPS=4D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A85C352A4
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 07:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9C73C2BA83
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 12:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B992086A
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 07:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 870712082F
+	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 12:37:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWIz6DVL"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Yh5pGwWT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726073AbgBOHd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Feb 2020 02:33:26 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36893 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgBOHdZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Feb 2020 02:33:25 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z12so6248327pgl.4
-        for <linux-clk@vger.kernel.org>; Fri, 14 Feb 2020 23:33:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=j2dlqe8IHtaY+LXzB/pHVq0hnRV+mre/jg+PwqEvcS8=;
-        b=AWIz6DVLJIdQMqoVfz3wRh+Vy3/YO6Rj8qdKR2ACR5688rL4INQjtCNtispusY7Ghb
-         l+/zlkPJOyc9OvjpGe49NyVv5RN8BXhSxij1ywTbneVx/yeJdoAa72TerVGYvsoeQ21Z
-         pVzSt2aZvqMDeByl6BvVzbktr7TDkoQelaONUM1M9diTwokpM62mCAkUc9qZB47sT9xJ
-         dVUf2Wv+swFD0uj4xCzd/YNgHJKupqzR3fKOVgabOZbexx6idJNwtj3FU8ZjZu25PoY5
-         ebMGD+wkA41u48Ku7MC8KpJuVLez9j01fvFOUtnauOxGJopZHIA9iFIcVof484y/BJJP
-         71sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=j2dlqe8IHtaY+LXzB/pHVq0hnRV+mre/jg+PwqEvcS8=;
-        b=P0IOrvQpWch/DoutbFDxrtjiqt0Ebuk6WgkGptPn4Pg1q9odF/txGwbYrK7IEh8Mjd
-         Nice/klb43kYF8LI6GhhlhIihtYPacQLHxzHs/Zw2Vz+rLxTmmKmsm/RAZNw4Q1wFk+V
-         uYmEMKr5kD9ou91tCVzznP5eUJPjlbo0r0/LQoP5ia9On2bmBsYW9LbaCCn6lD2xSIxv
-         8Yas3+KyZG78vU5Kz62I2yB1ZEh0lTD7Nc8KZY0/WStIQwSG6mVEsCeLojAv8nksTRFv
-         ithZUk4gcCwGJb0LnaxPX+l4PnbsvZZYgTt6MM0Hqv2Zb8R4U0PKEOPdw5qTArEx5Uv2
-         3LUw==
-X-Gm-Message-State: APjAAAXEQ39a4YRgRDIDIQjYT2g/kjGEzJxUZKAmbQ3KJ9CR9IPr33tx
-        FS7heB0oEokyc7E5dvdC5Mefvw==
-X-Google-Smtp-Source: APXvYqwzKt7r8ABDtNBtoVyypViXPLxmsWx0rlgyfwfvOampDMUmR5cQA/VWM5u3tqLUqTrYXWhqjg==
-X-Received: by 2002:a63:df0a:: with SMTP id u10mr7715505pgg.282.1581752005210;
-        Fri, 14 Feb 2020 23:33:25 -0800 (PST)
-Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id t16sm9912477pgo.80.2020.02.14.23.33.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Feb 2020 23:33:24 -0800 (PST)
-Date:   Fri, 14 Feb 2020 23:32:33 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Mike Tipton <mdtipton@codeaurora.org>
-Cc:     sboyd@kernel.org, tdas@codeaurora.org, mturquette@baylibre.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-rpmh: Wait for completion when enabling
- clocks
-Message-ID: <20200215073233.GR955802@ripper>
-References: <20200215021232.1149-1-mdtipton@codeaurora.org>
+        id S1726007AbgBOMhq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 15 Feb 2020 07:37:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:35320 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbgBOMhp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Feb 2020 07:37:45 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01FCbde6090028;
+        Sat, 15 Feb 2020 06:37:39 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1581770259;
+        bh=97kZJ1UjjgCaml1kp4DusKVaxtjMSaE55gWgFzl2plA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Yh5pGwWTogms3kZHEmliVaEjnWhjt9N4Z65dOWUUj2/S0iwRpKyvSab5/AjxvuFcj
+         pcT907kPwtnDQOOlqPY/C4L1hBLU9kH12q5K/+VmOyXUmvPTQn4+LfaHPvqf2i99GA
+         KI5inI3J3t4tz3prQx5Dks2BW7K/1tDnMOKLFLAA=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01FCbdRq079201;
+        Sat, 15 Feb 2020 06:37:39 -0600
+Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Sat, 15
+ Feb 2020 06:37:39 -0600
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Sat, 15 Feb 2020 06:37:39 -0600
+Received: from [10.250.133.210] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01FCbZvJ044715;
+        Sat, 15 Feb 2020 06:37:35 -0600
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add binding documentation for
+ TI syscon gate clock
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>
+References: <20200207044425.32398-1-vigneshr@ti.com>
+ <20200207044425.32398-2-vigneshr@ti.com>
+ <158136034652.94449.4389789192412792346@swboyd.mtv.corp.google.com>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <f42d90ca-0078-7ae4-c9b1-a9d23dd251e3@ti.com>
+Date:   Sat, 15 Feb 2020 18:07:34 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200215021232.1149-1-mdtipton@codeaurora.org>
+In-Reply-To: <158136034652.94449.4389789192412792346@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 14 Feb 18:12 PST 2020, Mike Tipton wrote:
+Hi,
 
-> The current implementation always uses rpmh_write_async, which doesn't
-> wait for completion. That's fine for disable requests since there's no
-> immediate need for the clocks and they can be disabled in the
-> background. However, for enable requests we need to ensure the clocks
-> are actually enabled before returning to the client. Otherwise, clients
-> can end up accessing their HW before the necessary clocks are enabled,
-> which can lead to bus errors.
+On 2/11/2020 12:15 AM, Stephen Boyd wrote:
+> Quoting Vignesh Raghavendra (2020-02-06 20:44:24)
+[...]
+>> +  - Vignesh Raghavendra <vigneshr@ti.com>
+>> +
+>> +description: |
+>> +
+>> +  This binding uses common clock bindings
+>> +  Documentation/devicetree/bindings/clock/clock-bindings.txt
 > 
-> Use the synchronous version of this API (rpmh_write) for enable requests
-> in the active set to ensure completion.
+> Maybe have a real description instead of this line which is mostly
+> useless.
 > 
-> Completion isn't required for sleep/wake sets, since they don't take
-> effect until after we enter sleep. All rpmh requests are automatically
-> flushed prior to entering sleep.
-> 
-> Fixes: 9c7e47025a6b ("clk: qcom: clk-rpmh: Add QCOM RPMh clock driver")
-> Signed-off-by: Mike Tipton <mdtipton@codeaurora.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Will drop this line..
 
-Regards,
-Bjorn
-
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 12bd8715dece..3137595a736b 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -143,6 +143,19 @@ static inline bool has_state_changed(struct clk_rpmh *c, u32 state)
->  		!= (c->aggr_state & BIT(state));
->  }
->  
-> +static int clk_rpmh_send(struct clk_rpmh *c, enum rpmh_state state,
-> +			 struct tcs_cmd *cmd, bool wait_for_completion)
-> +{
-> +	int ret;
-> +
-> +	if (wait_for_completion)
-> +		ret = rpmh_write(c->dev, state, cmd, 1);
-> +	else
-> +		ret = rpmh_write_async(c->dev, state, cmd, 1);
-> +
-> +	return ret;
-> +}
-> +
->  static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->  {
->  	struct tcs_cmd cmd = { 0 };
-> @@ -159,7 +172,8 @@ static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
->  			if (cmd_state & BIT(state))
->  				cmd.data = on_val;
->  
-> -			ret = rpmh_write_async(c->dev, state, &cmd, 1);
-> +			ret = clk_rpmh_send(c, state, &cmd,
-> +				cmd_state && state == RPMH_ACTIVE_ONLY_STATE);
->  			if (ret) {
->  				dev_err(c->dev, "set %s state of %s failed: (%d)\n",
->  					!state ? "sleep" :
-> @@ -267,7 +281,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
->  	cmd.addr = c->res_addr;
->  	cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
->  
-> -	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
-> +	ret = clk_rpmh_send(c, RPMH_ACTIVE_ONLY_STATE, &cmd, enable);
->  	if (ret) {
->  		dev_err(c->dev, "set active state of %s failed: (%d)\n",
->  			c->res_name, ret);
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> I think you can drop items.
+> 
+>> +      - const: ti,am654-ehrpwm-tbclk
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  ti,tbclk-syscon:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>> +    description:
+>> +      Phandle to the system controller node that has bits to
+>> +      control eHRPWM's TBCLK
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - ti,tbclk-syscon
+>> +
+>> +examples:
+>> +  - |
+>> +    tbclk_ctrl: tbclk_ctrl@4140 {
+>> +        compatible = "syscon";
+>> +        reg = <0x4140 0x18>;
+>> +    };
+>> +
+>> +    ehrpwm_tbclk: clk0 {
+>> +        compatible = "ti,am654-ehrpwm-tbclk";
+>> +        #clock-cells = <1>;
+>> +        ti,tbclk-syscon = <&tbclk_ctrl>;
+>> +    };
+> 
+> I don't understand the binding. Why can't the syscon node register clks
+> and have #clock-cells?
+> 
+
+I did not know that would work. Will make syscon code to register clks..
+Thanks!
+
+Regards
+Vignesh
