@@ -1,90 +1,101 @@
-Return-Path: <SRS0=2DPS=4D=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ZliI=4E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA71FC76196
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 18:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 031D6C76199
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 10:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0DD320726
-	for <linux-clk@archiver.kernel.org>; Sat, 15 Feb 2020 18:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFE1A20857
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 10:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581848887;
+	bh=tFdLIRrPeGwxnZkYfT0YOBqyS7GHpTVYWDvgSynC27M=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=TXT5MEvEC5MdQNmHqoD67mtGFkNdam+5f/O4jSHcJUJZ4CZ/8kK7VcN5BI+CIGVXo
+	 z/gw2I+Y3D7LBrJpJ20XcPp1Qjw9ZN4ykTx7Fd/I/LLsl8FQha+byWHF+oyXUdOwxc
+	 MyNeI7EOnV0Rdv2G5vghop+n+6BM/GEwoYwP4W1c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgBOS4M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 15 Feb 2020 13:56:12 -0500
-Received: from out28-51.mail.aliyun.com ([115.124.28.51]:57904 "EHLO
-        out28-51.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbgBOS4K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 15 Feb 2020 13:56:10 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08891963|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.612978-0.0599614-0.327061;DS=CONTINUE|ham_system_inform|0.084116-0.000465042-0.915419;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07440;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.GoTIZgt_1581792955;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GoTIZgt_1581792955)
-          by smtp.aliyun-inc.com(10.147.42.241);
-          Sun, 16 Feb 2020 02:56:04 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, paul@crapouillou.net,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
-        tglx@linutronix.de, daniel.lezcano@linaro.org,
-        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
-        ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        paul@boddie.org.uk, hns@goldelico.com,
-        mips-creator-ci20-dev@googlegroups.com
-Subject: [PATCH v5 0/7] Introduce SMP support for JZ4780.
-Date:   Sun, 16 Feb 2020 02:55:25 +0800
-Message-Id: <1581792932-108032-2-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
+        id S1727720AbgBPK2E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Feb 2020 05:28:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725951AbgBPK2E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 16 Feb 2020 05:28:04 -0500
+Received: from localhost.localdomain (unknown [122.178.194.127])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889F820857;
+        Sun, 16 Feb 2020 10:27:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581848883;
+        bh=tFdLIRrPeGwxnZkYfT0YOBqyS7GHpTVYWDvgSynC27M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=2Hg5+89t9fa2SU6yNsw+x3xqSTqi1E91mWoyMdZG8M3PKQgwr0tfD+7WK+CfIDzLs
+         E1k7KDr5x85RclQv9oSo8XbGsCAVqC2rwFKSaRPhv4fWWE1t2ynN6D9XpC+bnGHzr8
+         rR7hCGZnwgSFZe8BanZKfeTGV0OJkJDPHGI3LDjU=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        psodagud@codeaurora.org, tsoni@codeaurora.org,
+        jshriram@codeaurora.org, tdas@codeaurora.org,
+        vnkgutta@codeaurora.org
+Subject: [PATCH v3 0/5] Add clock drivers for SM8250 SoC
+Date:   Sun, 16 Feb 2020 15:57:20 +0530
+Message-Id: <20200216102725.2629155-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Introduce SMP support for MIPS Creator CI20, which is
-based on Ingenic JZ4780 SoC.
+This series adds clock drivers support for SM8250 SoC.  As part of the
+device tree, the sm8250 dts file has basic nodes like CPU, PSCI, intc, timer
+and clock controller.
 
-周琰杰 (Zhou Yanjie) (7):
-  clk: JZ4780: Add function for enable the second core.
-  MIPS: JZ4780: Introduce SMP support.
-  MIPS: CI20: Modify DTS to support high resolution timer for SMP.
-  clocksource: Ingenic: Add high resolution timer support for SMP.
-  dt-bindings: MIPS: Document Ingenic SoCs binding.
-  MIPS: Ingenic: Add 'cpus' node for Ingenic SoCs.
-  MIPS: CI20: Update defconfig to support SMP.
+Required clock controller driver and RPMH cloks are added to
+support peripherals like USB.
 
- .../bindings/mips/ingenic/ingenic,cpu.yaml         |  53 ++++
- .../bindings/mips/ingenic/ingenic,soc.yaml         |  35 +++
- arch/mips/boot/dts/ingenic/ci20.dts                |  13 +-
- arch/mips/boot/dts/ingenic/jz4740.dtsi             |  14 +
- arch/mips/boot/dts/ingenic/jz4770.dtsi             |  15 +-
- arch/mips/boot/dts/ingenic/jz4780.dtsi             |  23 ++
- arch/mips/boot/dts/ingenic/x1000.dtsi              |  14 +
- arch/mips/configs/ci20_defconfig                   |   2 +
- arch/mips/include/asm/mach-jz4740/jz4780-smp.h     |  91 +++++++
- arch/mips/jz4740/Kconfig                           |   3 +
- arch/mips/jz4740/Makefile                          |   5 +
- arch/mips/jz4740/prom.c                            |   4 +
- arch/mips/jz4740/smp-entry.S                       |  57 +++++
- arch/mips/jz4740/smp.c                             | 283 +++++++++++++++++++++
- arch/mips/kernel/idle.c                            |  14 +-
- drivers/clk/ingenic/jz4780-cgu.c                   |  58 ++++-
- drivers/clocksource/ingenic-timer.c                | 115 +++++++--
- 17 files changed, 767 insertions(+), 32 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
- create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
- create mode 100644 arch/mips/include/asm/mach-jz4740/jz4780-smp.h
- create mode 100644 arch/mips/jz4740/smp-entry.S
- create mode 100644 arch/mips/jz4740/smp.c
+All this configuration is added to support SM8250 to boot up to the
+serial console.
+
+Changes in v3:
+- Dropped accepted patches by Steve
+- Split the common rename patch to rename and refactor patches
+- Rebase on clk/clk-qcom and move yaml binding to .../bindings/clock/qcom,gcc-sm8250.yaml
+- Fix comments form Steve on gcc-sm8250 clk driver
+
+Taniya Das (5):
+  clk: qcom: clk-alpha-pll: Use common names for defines
+  clk: qcom: clk-alpha-pll: Refactor trion PLL
+  clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs
+  dt-bindings: clock: Add SM8250 GCC clock bindings
+  clk: qcom: gcc: Add global clock controller driver for SM8250
+
+ .../bindings/clock/qcom,gcc-sm8250.yaml       |   72 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  264 +-
+ drivers/clk/qcom/clk-alpha-pll.h              |   12 +
+ drivers/clk/qcom/gcc-sm8250.c                 | 3690 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8250.h   |  271 ++
+ 7 files changed, 4268 insertions(+), 49 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+ create mode 100644 drivers/clk/qcom/gcc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
 
 -- 
-2.7.4
+2.24.1
 
