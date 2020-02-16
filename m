@@ -2,172 +2,192 @@ Return-Path: <SRS0=ZliI=4E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07738C2BA83
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 11:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E08C2BA83
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 14:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3F8227BF
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 11:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB032467B
+	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 14:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="tG0FT+xf"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="n5f5IWfZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbgBPLDu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Feb 2020 06:03:50 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:36309 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727943AbgBPLDt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Feb 2020 06:03:49 -0500
-Received: from [192.168.2.10] ([46.9.235.248])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id 3HiAjTYo48i433HiEjTw5k; Sun, 16 Feb 2020 12:03:47 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1581851027; bh=+aNvZy8aD/dcufEoPL+QDCX1KUO9B+3y0UVN4XJ/BNQ=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=tG0FT+xfYdW0/2XYT7hVpBBOwF/S9gdqIqgXu6cT52AYwsza6QFT51iH/4rNT2grj
-         st7dy2JhlO0230j85OYjIYSkA0KVaxZwkiasrq2ekaDgeRZGMTBa3tFqSVLSkXqIoC
-         gT1l4SuGRrJPPM5j+obCTz0NJcpOsfYIfcWc3dsI+H/fmfeOjFg/4CGUVAlZT5yGiF
-         juIEPI4l+ah5KbdKk2ZT4RJEQzv2OkNR4YKWddUaV4d5WPCkmkBVMgKZNgg1SxMGC9
-         GyIPc1mUjpKIUzx+CATaPTjvZfXpWGv9N/vPaLAF+qOxnTfe/2Ny6Mi2G3sohYGARp
-         ToXlJFItC93eA==
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        helen.koike@collabora.com, sboyd@kernel.org
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <30e417ba-84e1-63d2-de74-22cfe859bddb@xs4all.nl>
-Date:   Sun, 16 Feb 2020 12:03:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728271AbgBPOxq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Feb 2020 09:53:46 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:44850 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727691AbgBPOxq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Feb 2020 09:53:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1581864822; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=+hj+o5+flz0t0gYGOFX8vBGM9CELfzQub72n6jMJ6Sw=;
+        b=n5f5IWfZcbO+LPv5c9/TZ8UUA6i6eKGleH5VhoFXGwXKSmgQA2yYm89Rm+9I4DQUQnSmte
+        AHMP7hh/0gvffDb0Lk7YnHvRALT+O52iSkBM1Z/sn2aHWkDip9KFvrPD74L/3mPHekWn7q
+        51kUqqD9kLAgL/nj56sOB9MLa3v2J5g=
+Date:   Sun, 16 Feb 2020 11:53:16 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v5 1/7] clk: JZ4780: Add function for enable the second
+ core.
+To:     =?UTF-8?b?5ZGo55Cw5p2w?= "(Zhou Yanjie)" 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, ralf@linux-mips.org, paulburton@kernel.org,
+        jiaxun.yang@flygoat.com, chenhc@lemote.com, allison@lohutok.net,
+        tglx@linutronix.de, daniel.lezcano@linaro.org,
+        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
+        ebiederm@xmission.com, miquel.raynal@bootlin.com,
+        paul@boddie.org.uk, hns@goldelico.com,
+        mips-creator-ci20-dev@googlegroups.com
+Message-Id: <1581864796.3.2@crapouillou.net>
+In-Reply-To: <1581792932-108032-3-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
+        <1581792932-108032-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-In-Reply-To: <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEHJX4QNbEtlvlNbNh8D9iO53jn6o9B1tz9SAXEUfYWVqgJik08fvS124TIyTWQBoLaKpXZ0bVjkYd3BRCoYngir51sZDOisiV6vHpCxBuwe2+L8gB2p
- Rrj4kheVXgwW827H19M6HXaKoYc1oPrQTmNocNbL+LZgzAiWqYPg2eUh1aZ1FOu4C9XODs010r7nD+ORs7A4wMmF4mn3GrHMVdXelHGLyNVEg/G0aVT7laGv
- dcOyIIYkKccKcHVjcqu/PQocZYWFIoq8pIXnDOd9pfvce8fO8ohgsBo6hW5UBhKY+Re5NO4YWo+CtFdXNHb/Bt6ta8FJ5H9nS1FCh+7Sl1uRqQPnvjqUctdV
- e0CuselYWW5y2mK98CFVvvwE9bbV5mIvdVBLL+vKS9CHf8zrcKBUIZGk6zRHFKCXQKvZrQVJqNXzhjePMZ+PSjTc8C3NRALovcYGxuLXqfpfzqbNvmLjPDsK
- mYOHLcPs2HzlS2ErtSTGeEj/hC/u0gzlCVCvENfz85CSFHBVoiY9piFIdpAH7b207JXd7eKpUW+S9wei
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/14/20 7:23 PM, Sowjanya Komatineni wrote:
-> Tegra210 contains a powerful Video Input (VI) hardware controller
-> which can support up to 6 MIPI CSI camera sensors.
-> 
-> Each Tegra CSI port can be one-to-one mapped to VI channel and can
-> capture from an external camera sensor connected to CSI or from
-> built-in test pattern generator.
-> 
-> Tegra210 supports built-in test pattern generator from CSI to VI.
-> 
-> This patch adds a V4L2 media controller and capture driver support
-> for Tegra210 built-in CSI to VI test pattern generator.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Hi Zhou,
+
+Le dim., f=C3=A9vr. 16, 2020 at 02:55, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Ya=
+njie)=20
+<zhouyanjie@wanyeetech.com> a =C3=A9crit :
+> Add "jz4780_core1_enable()" for enable the second core of JZ4780,
+> prepare for later commits.
+>=20
+> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Tested-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wany=
+eetech.com>
+> Reviewed-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
 > ---
->  drivers/staging/media/Kconfig              |    2 +
->  drivers/staging/media/Makefile             |    1 +
->  drivers/staging/media/tegra/Kconfig        |   10 +
->  drivers/staging/media/tegra/Makefile       |    8 +
->  drivers/staging/media/tegra/TODO           |   10 +
->  drivers/staging/media/tegra/tegra-common.h |  239 +++++++
->  drivers/staging/media/tegra/tegra-csi.c    |  374 ++++++++++
->  drivers/staging/media/tegra/tegra-csi.h    |  115 ++++
->  drivers/staging/media/tegra/tegra-vi.c     | 1019 ++++++++++++++++++++++++++++
->  drivers/staging/media/tegra/tegra-vi.h     |   79 +++
->  drivers/staging/media/tegra/tegra-video.c  |  118 ++++
->  drivers/staging/media/tegra/tegra-video.h  |   32 +
->  drivers/staging/media/tegra/tegra210.c     |  767 +++++++++++++++++++++
->  drivers/staging/media/tegra/tegra210.h     |  190 ++++++
->  14 files changed, 2964 insertions(+)
->  create mode 100644 drivers/staging/media/tegra/Kconfig
->  create mode 100644 drivers/staging/media/tegra/Makefile
->  create mode 100644 drivers/staging/media/tegra/TODO
->  create mode 100644 drivers/staging/media/tegra/tegra-common.h
->  create mode 100644 drivers/staging/media/tegra/tegra-csi.c
->  create mode 100644 drivers/staging/media/tegra/tegra-csi.h
->  create mode 100644 drivers/staging/media/tegra/tegra-vi.c
->  create mode 100644 drivers/staging/media/tegra/tegra-vi.h
->  create mode 100644 drivers/staging/media/tegra/tegra-video.c
->  create mode 100644 drivers/staging/media/tegra/tegra-video.h
->  create mode 100644 drivers/staging/media/tegra/tegra210.c
->  create mode 100644 drivers/staging/media/tegra/tegra210.h
-> 
-
-<snip>
-
-> +/*
-> + * videobuf2 queue operations
-> + */
-> +static int tegra_channel_queue_setup(struct vb2_queue *vq,
-> +				     unsigned int *nbuffers,
-> +				     unsigned int *nplanes,
-> +				     unsigned int sizes[],
-> +				     struct device *alloc_devs[])
+>=20
+> Notes:
+>     v5:
+>     New patch, split from [1/6] in v4.
+>=20
+>  drivers/clk/ingenic/jz4780-cgu.c | 58=20
+> ++++++++++++++++++++++++++++++++++++----
+>  1 file changed, 53 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/clk/ingenic/jz4780-cgu.c=20
+> b/drivers/clk/ingenic/jz4780-cgu.c
+> index d07fff1..4f81819 100644
+> --- a/drivers/clk/ingenic/jz4780-cgu.c
+> +++ b/drivers/clk/ingenic/jz4780-cgu.c
+> @@ -16,7 +16,7 @@
+>=20
+>  /* CGU register offsets */
+>  #define CGU_REG_CLOCKCONTROL	0x00
+> -#define CGU_REG_PLLCONTROL	0x0c
+> +#define CGU_REG_LCR			0x04
+>  #define CGU_REG_APLL		0x10
+>  #define CGU_REG_MPLL		0x14
+>  #define CGU_REG_EPLL		0x18
+> @@ -46,8 +46,8 @@
+>  #define CGU_REG_CLOCKSTATUS	0xd4
+>=20
+>  /* bits within the OPCR register */
+> -#define OPCR_SPENDN0		(1 << 7)
+> -#define OPCR_SPENDN1		(1 << 6)
+> +#define OPCR_SPENDN0		BIT(7)
+> +#define OPCR_SPENDN1		BIT(6)
+>=20
+>  /* bits within the USBPCR register */
+>  #define USBPCR_USB_MODE		BIT(31)
+> @@ -88,6 +88,13 @@
+>  #define USBVBFIL_IDDIGFIL_MASK	(0xffff << USBVBFIL_IDDIGFIL_SHIFT)
+>  #define USBVBFIL_USBVBFIL_MASK	(0xffff)
+>=20
+> +/* bits within the LCR register */
+> +#define LCR_PD_SCPU			BIT(31)
+> +#define LCR_SCPUS			BIT(27)
+> +
+> +/* bits within the CLKGR1 register */
+> +#define CLKGR1_CORE1		BIT(15)
+> +
+>  static struct ingenic_cgu *cgu;
+>=20
+>  static u8 jz4780_otg_phy_get_parent(struct clk_hw *hw)
+> @@ -205,6 +212,47 @@ static const struct clk_ops jz4780_otg_phy_ops =3D=20
+> {
+>  	.set_rate =3D jz4780_otg_phy_set_rate,
+>  };
+>=20
+> +static int jz4780_core1_enable(struct clk_hw *hw)
 > +{
-> +	struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
+> +	struct ingenic_clk *ingenic_clk =3D to_ingenic_clk(hw);
+> +	struct ingenic_cgu *cgu =3D ingenic_clk->cgu;
+> +	const unsigned int timeout =3D 100;
+> +	unsigned long flags;
+> +	unsigned int i;
+> +	u32 lcr, clkgr1;
 > +
-> +	if (*nplanes)
-> +		return sizes[0] < chan->format.sizeimage ? -EINVAL : 0;
+> +	spin_lock_irqsave(&cgu->lock, flags);
 > +
-> +	*nplanes = 1;
-> +	sizes[0] = chan->format.sizeimage;
-> +	alloc_devs[0] = chan->vi->dev;
+> +	lcr =3D readl(cgu->base + CGU_REG_LCR);
+> +	lcr &=3D ~LCR_PD_SCPU;
+> +	writel(lcr, cgu->base + CGU_REG_LCR);
 > +
-> +	/*
-> +	 * allocate min 3 buffers in queue to avoid race between DMA
-> +	 * writes and userspace reads.
-> +	 */
-> +	if (*nbuffers < 3)
-> +		*nbuffers = 3;
+> +	clkgr1 =3D readl(cgu->base + CGU_REG_CLKGR1);
+> +	clkgr1 &=3D ~CLKGR1_CORE1;
+> +	writel(clkgr1, cgu->base + CGU_REG_CLKGR1);
+> +
+> +	spin_unlock_irqrestore(&cgu->lock, flags);
+> +
+> +	/* wait for the CPU to be powered up */
+> +	for (i =3D 0; i < timeout; i++) {
+> +		lcr =3D readl(cgu->base + CGU_REG_LCR);
+> +		if (!(lcr & LCR_SCPUS))
+> +			break;
+> +		mdelay(1);
+> +	}
 
-First of all, don't check this here, instead set the struct vb2_queue field
-'min_buffers_needed' to 3 instead.
+You can use readl_poll_timeout() from <linux/iopoll.h>.
 
-But the reason given for this check is peculiar: there should not be any
-race at all. Usually the reason for requiring a specific minimum number of
-buffers is that the DMA engine needs at least 2 buffers before it can start
-streaming: it can't give back a buffer to userspace (vb2_buffer_done())
-unless there is a second buffer it can start to capture to next. So for many
-DMA implementations you need a minimum of 2 buffers: two buffers for the
-DMA engine, one buffer being processed by userspace.
-
-If the driver is starved of buffers it will typically keep capturing to
-the last buffer until a new buffer is queued.
-
-In any case, once the driver releases a buffer via vb2_buffer_done() the
-buffer memory is no longer owned by the driver.
-
-To be precise, buffer ownership is as follows:
-
-userspace -> VIDIOC_QBUF -> vb2 -> buf_queue -> driver -> vb2_buffer_done() -> vb2 -> VIDIOC_DQBUF -> userspace
-
-(vb2 == videobuf2 framework)
-
-Note that vb2 never touches the buffer memory.
-
-So if you get a race condition in this driver, then there is something
-strange going on. It looks like vb2_buffer_done() is called while DMA is
-still ongoing, or because the driver really needs to keep one buffer
-available at all times.
-
-Regards,
-
-	Hans
-
+> +
+> +	if (i =3D=3D timeout) {
+> +		pr_err("%s: Wait for power up core1 timeout\n", __func__);
+> +		return -EBUSY;
+> +	}
 > +
 > +	return 0;
 > +}
+> +
+> +static const struct clk_ops jz4780_core1_ops =3D {
+> +	.enable =3D jz4780_core1_enable,
+> +};
+> +
+>  static const s8 pll_od_encoding[16] =3D {
+>  	0x0, 0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7,
+>  	0x8, 0x9, 0xa, 0xb, 0xc, 0xd, 0xe, 0xf,
+> @@ -701,9 +749,9 @@ static const struct ingenic_cgu_clk_info=20
+> jz4780_cgu_clocks[] =3D {
+>  	},
+>=20
+>  	[JZ4780_CLK_CORE1] =3D {
+> -		"core1", CGU_CLK_GATE,
+> +		"core1", CGU_CLK_CUSTOM,
+>  		.parents =3D { JZ4780_CLK_CPU, -1, -1, -1 },
+> -		.gate =3D { CGU_REG_CLKGR1, 15 },
+> +		.custom =3D { &jz4780_core1_ops },
+>  	},
+>=20
+>  };
+> --
+> 2.7.4
+>=20
+
+=
+
