@@ -7,62 +7,63 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAD5C35242
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 06:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69005C35242
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 06:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82C1220801
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 06:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8AF20726
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 06:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1581921238;
-	bh=a7iT+Xd2qH1d2AgAUtQiwnF35749MAcOj1fuF4ST5zo=;
+	s=default; t=1581921507;
+	bh=JVqwlL4yhQ5lezwX7g+G9KjZQyORJmAsbJv5b348mGs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rBJ+T8w+2v7tTBFyjnAB7weeeu9R9FoyCYeNvK0yfpm3UkASwOusfc2UH3bf3Ex1W
-	 FRGqQI3ODx3x/frLuk4xJKA6JA6uxsHaY2wueYP5qcknmSpdRoE3b/gkMKos177RoX
-	 rbMHVxc6G85/BWA2IHXBEeZvDaoqKQCvStKBQ2io=
+	b=yXlbWhcDe09lv2JIQeOoOOZ6EGQhC6uY41uy3KEUROEvqRTPObD0XdLZgECWcNS2u
+	 +iJ1p/nNLeYxcUPJJgxzIx3BY89L0NNzFyvB9OqCqQzvRQwaDGBSDS1U5tsFhXZdgL
+	 y5TCPJCJwAVwbtXHHcY8ex0rNqkcIBKaVfG+eZpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725935AbgBQGd6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Feb 2020 01:33:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39766 "EHLO mail.kernel.org"
+        id S1726124AbgBQGi1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Feb 2020 01:38:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbgBQGd6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Feb 2020 01:33:58 -0500
+        id S1726029AbgBQGi0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Feb 2020 01:38:26 -0500
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A582072C;
-        Mon, 17 Feb 2020 06:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EFA7320718;
+        Mon, 17 Feb 2020 06:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1581921237;
-        bh=a7iT+Xd2qH1d2AgAUtQiwnF35749MAcOj1fuF4ST5zo=;
+        s=default; t=1581921506;
+        bh=JVqwlL4yhQ5lezwX7g+G9KjZQyORJmAsbJv5b348mGs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aqx0kYY4CK305vVZwVOYcUG5rzzHy/izY/p3oH+YF9jsZJVgo0EGvK5f3IWVvUMQo
-         gvJw84LRXWA0kVSWekS7TM3SG4aCc/UIQw7eec/iGs7wlArHqMUualEk56xZyfclGS
-         9FB2KWQC5ECuhIcF/zM6b9nStWKRhgKOqhnN7h4U=
-Date:   Mon, 17 Feb 2020 14:33:51 +0800
+        b=HuLZF1eD/1LHnn31hy/z1l4LC74PFpw0aINQyWvKsdkSq1Th5fp6fEoD9cQNj2EN3
+         lOTopoNe5A/QzCfg5JuRzhOIGEwnMk1DUme3SBSh1DBDmj1tU/OeCSDlREstHFpic/
+         Xf0GpsYOzmjH0S6dsL3caXfa/CKQIDKhEi39W0UU=
+Date:   Mon, 17 Feb 2020 14:38:19 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Anson Huang <Anson.Huang@nxp.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, abel.vesa@nxp.com,
-        peng.fan@nxp.com, chen.fang@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx7ulp: Include clk-provider.h instead of clk.h
-Message-ID: <20200217063351.GB6952@dragon>
-References: <1581498584-14674-1-git-send-email-Anson.Huang@nxp.com>
+        kernel@pengutronix.de, festevam@gmail.com, allison@lohutok.net,
+        gregkh@linuxfoundation.org, tglx@linutronix.de, abel.vesa@nxp.com,
+        leonard.crestez@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH 1/5] clk: imx6sl: Add missing of_node_put()
+Message-ID: <20200217063810.GD6952@dragon>
+References: <1581508657-12107-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1581498584-14674-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1581508657-12107-1-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 12, 2020 at 05:09:43PM +0800, Anson Huang wrote:
-> The i.MX7ULP clock driver is provider, NOT consumer, so clk-provider.h
-> should be used instead of clk.h.
+On Wed, Feb 12, 2020 at 07:57:33PM +0800, Anson Huang wrote:
+> After finishing using device node got from of_find_compatible_node(),
+> of_node_put() needs to be called.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied, thanks.
+Applied all, thanks.
