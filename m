@@ -2,76 +2,76 @@ Return-Path: <SRS0=CWv7=4F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FDC6C7619E
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 03:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BEEC7619B
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 05:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 394F424649
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 03:27:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D8820718
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 05:50:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1581918635;
+	bh=MjiPieCmyZRIzZ0W3qjRJdsz7q6ukow9JNgZCvHQULk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=g8SuHsOe/fIxuaeU1MdoM3tvyKY2gDWndHKnidjSfzE6w4l2JYUMoHiB1lLK1Tblw
+	 Ty9wc1v7vpI3h6GvrXXW1nYxBFqGF0Y9U3yobB2q1yLlAm8V2L+MbjSdUZAH/VCgFs
+	 L89TFE8DVrhtQDNSmVIVWmQK+jDjeFJVyievTRyk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbgBQD0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Feb 2020 22:26:37 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:46074 "EHLO inva020.nxp.com"
+        id S1725855AbgBQFue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Feb 2020 00:50:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727078AbgBQD0h (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Feb 2020 22:26:37 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B025A1A1F4B;
-        Mon, 17 Feb 2020 04:26:35 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ED05F1A1F30;
-        Mon, 17 Feb 2020 04:26:25 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 41A8F402ED;
-        Mon, 17 Feb 2020 11:26:14 +0800 (SGT)
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com,
-        daniel.baluta@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
-        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: [PATCH 1/7] firmware: imx: scu-pd: add power domain for I2C and INTMUX in CM40 SS
-Date:   Mon, 17 Feb 2020 11:19:15 +0800
-Message-Id: <1581909561-12058-2-git-send-email-qiangqing.zhang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
-References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725835AbgBQFue (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Feb 2020 00:50:34 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EA1C2070B;
+        Mon, 17 Feb 2020 05:50:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1581918633;
+        bh=MjiPieCmyZRIzZ0W3qjRJdsz7q6ukow9JNgZCvHQULk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DnvSmgYEMsMlIYhxzZr94FjmiRqHBWTXU/6QhiRjG43Pa6/5SD2Y5Ur0/iTwTKKMJ
+         wNIHG+6YYJw0XaUH+Htk4X3RGk6/wYkotG3QiyA7Ot37U4rQ4u0LVORQOIuMKt7ERS
+         8jF5vyeju74lhCviC1vI+OuLXPaBr3CMyrwICO98=
+Date:   Mon, 17 Feb 2020 13:50:28 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: imx8mm: Fix the CLKO1 source select list
+Message-ID: <20200217055027.GC6042@dragon>
+References: <20200211030813.13992-1-festevam@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200211030813.13992-1-festevam@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add power domain for I2C and INTMUX in CM40 SS.
+On Tue, Feb 11, 2020 at 12:08:12AM -0300, Fabio Estevam wrote:
+> The CLKO1 clock source select list is the following as per the i.MX8MM
+> Reference Manual (put in increasing order):
+> 
+> 000 - 24M_REF_CLK
+> 001 - SYSTEM_PLL1_CLK
+> 010 - None
+> 011 - SYSTEM_PLL1_DIV4
+> 100 - AUDIO_PLL2_CLK
+> 101 - SYSTEM_PLL2_DIV2
+> 110 - VPU_PLL_CLK
+> 111 - SYSTEM_PLL1_DIV10
+> 
+> Fix it accordingly.
+> 
+> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
 
-Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
----
- drivers/firmware/imx/scu-pd.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/firmware/imx/scu-pd.c b/drivers/firmware/imx/scu-pd.c
-index b556612207e5..e803dcf60d14 100644
---- a/drivers/firmware/imx/scu-pd.c
-+++ b/drivers/firmware/imx/scu-pd.c
-@@ -158,6 +158,10 @@ static const struct imx_sc_pd_range imx8qxp_scu_pd_ranges[] = {
- 	/* DC SS */
- 	{ "dc0", IMX_SC_R_DC_0, 1, false, 0 },
- 	{ "dc0-pll", IMX_SC_R_DC_0_PLL_0, 2, true, 0 },
-+
-+	/* CM40 SS */
-+	{ "cm40_i2c", IMX_SC_R_M4_0_I2C, 1, 0 },
-+	{ "cm40_intmux", IMX_SC_R_M4_0_INTMUX, 1, 0 },
- };
- 
- static const struct imx_sc_pd_soc imx8qxp_scu_pd = {
--- 
-2.17.1
-
+Applied both, thanks.
