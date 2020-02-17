@@ -1,281 +1,149 @@
-Return-Path: <SRS0=ZliI=4E=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=CWv7=4F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A728DC33FA0
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 20:21:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A134C7619B
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 03:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72BDD208C3
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Feb 2020 20:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7A22072C
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 03:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="o3jerznX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lp1S4bjF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727974AbgBPUV6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Feb 2020 15:21:58 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:14558 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbgBPUV6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Feb 2020 15:21:58 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e49a4200000>; Sun, 16 Feb 2020 12:20:48 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 16 Feb 2020 12:21:57 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 16 Feb 2020 12:21:57 -0800
-Received: from [10.2.163.245] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 16 Feb
- 2020 20:21:56 +0000
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <30e417ba-84e1-63d2-de74-22cfe859bddb@xs4all.nl>
- <920b4276-b2ca-646c-a21b-ca0b9bacf471@nvidia.com>
- <6bb124db-681c-55c1-e328-6e1f766a8bb3@nvidia.com>
-Message-ID: <0f84d37c-105f-8de6-c922-186d2f9ea156@nvidia.com>
-Date:   Sun, 16 Feb 2020 12:22:03 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726591AbgBQDXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 16 Feb 2020 22:23:42 -0500
+Received: from mail-pj1-f67.google.com ([209.85.216.67]:39271 "EHLO
+        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726498AbgBQDXl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 16 Feb 2020 22:23:41 -0500
+Received: by mail-pj1-f67.google.com with SMTP id e9so6550159pjr.4;
+        Sun, 16 Feb 2020 19:23:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdpdyX+qh74e/x9oRj15IViPzfI9gUxu2+ZyneQM7WE=;
+        b=Lp1S4bjFv9z7K/N+snC61ek2luA4OaF5fnbGKXm5z/o1JTxjD8zDsGjtFex6nIWqmy
+         p69m5mVIJcetEK1GN6SLSDdZQGpvKnjc57W4TGceqNZSHpVMbK1GkygNgh5dlp9CrpbS
+         WKftJ2tehC5z79XvLAPLhQLQIP7o6Qlsi1KorO4aTOXG/nExQyz/Vo2htgGLqS/1bkcG
+         G/qkUXDGA576plhbVbcpnnB/HScdFpqaVA0jAtLjK4S1PaJFfZ0MvKRMVUktNgoS1Hg3
+         uQHZG4lwpgtn+EJOEH15kHXyB7MWpQxrdW1aX0Fq48lpf0NfVh+E8xJLtkcNFmrlEjJf
+         dPYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SdpdyX+qh74e/x9oRj15IViPzfI9gUxu2+ZyneQM7WE=;
+        b=tm7xkT/HL2iu5E01gtaSSaLTqN7i2VMSMOZ+zdGQKBLzi1sDz2hOaY8lxWrZdzMTja
+         d5gCibvrQyorRbe6GQ+JmeniRn6xpyrwOgqptMaYI2fEFzaPr5rvkyyfkhrDBbP7gCRo
+         8T3NupvGwtH9w59DGG24bUzhkafSq5ZGnuwkcKNogCAOa4X2HlMf25hoCA8mZkH5PAuS
+         B0EMCD8+bsf2Zq0zwol0mt9ejrPz+yjx00xvLOk2hjM5cHinPiQs44e0kVgrRASDVklX
+         glyMPE3mwynJIydOsxM78Prysh7BrJ7aMRCpZru0xKPSfOX9ELr2Lz3t93jwPsrsKXjo
+         ff7Q==
+X-Gm-Message-State: APjAAAXa7Kqm3F43ueYAkCuMQeH+r3IUER+/WUgdL7gXsLQSz79RkXnp
+        mIIW1pxrbYfB/PdMcRvb/0k=
+X-Google-Smtp-Source: APXvYqxw58LR20P0nOqiPgbVPoG6FQmjzXPIHV7Z72OMm+op/MjkJsBl2KV1Xb9zdJN1PGWPWW70dw==
+X-Received: by 2002:a17:902:5a42:: with SMTP id f2mr14278395plm.19.1581909820990;
+        Sun, 16 Feb 2020 19:23:40 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id 76sm14644383pfx.97.2020.02.16.19.23.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Feb 2020 19:23:40 -0800 (PST)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH v4 0/7] Add clocks for Unisoc's SC9863A
+Date:   Mon, 17 Feb 2020 11:23:14 +0800
+Message-Id: <20200217032321.15164-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <6bb124db-681c-55c1-e328-6e1f766a8bb3@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1581884448; bh=jZ5L2TNSpFF5Qbx5vfyoBsHsU3zI5lpu8LpfMXV6+J8=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=o3jerznXyvPBVIHCjVKnTQxyOClPaQY47npfRrIA4cl3zFtTXSryjY0Q4R20Pu41g
-         tV7AHTPzgcZQHO8s78N/jMcKeza+65+Yu5JT5vg5tca2jQ8ekiz3DR4dW5dDpzsew4
-         BdHeOtoytJASQVc2Nzb3FYjXEKH+h/o0bx90Fs+bmirIa6drKCdedkb7wuz/UWFSoM
-         Hb9mnbZkxBFZ6XAhh2dbV3wzUAvKQ7u3fckn+JZG0LKs1yZR9MYqlucMWHrefoFVvr
-         yD4y4mHumx1rnANn73SDtal1FIj/jDrKZLdY5AsIeiYymieMJEEdlYSC2GbUtucPYy
-         zM6oczqcCU2cg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-On 2/16/20 12:11 PM, Sowjanya Komatineni wrote:
->
-> On 2/16/20 11:54 AM, Sowjanya Komatineni wrote:
->>
->> On 2/16/20 3:03 AM, Hans Verkuil wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> On 2/14/20 7:23 PM, Sowjanya Komatineni wrote:
->>>> Tegra210 contains a powerful Video Input (VI) hardware controller
->>>> which can support up to 6 MIPI CSI camera sensors.
->>>>
->>>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->>>> capture from an external camera sensor connected to CSI or from
->>>> built-in test pattern generator.
->>>>
->>>> Tegra210 supports built-in test pattern generator from CSI to VI.
->>>>
->>>> This patch adds a V4L2 media controller and capture driver support
->>>> for Tegra210 built-in CSI to VI test pattern generator.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>> =C2=A0 drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 2 +
->>>> =C2=A0 drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 1 +
->>>> =C2=A0 drivers/staging/media/tegra/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 10 +
->>>> =C2=A0 drivers/staging/media/tegra/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0=C2=A0=C2=A0 8 +
->>>> =C2=A0 drivers/staging/media/tegra/TODO=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 10 +
->>>> =C2=A0 drivers/staging/media/tegra/tegra-common.h |=C2=A0 239 +++++++
->>>> =C2=A0 drivers/staging/media/tegra/tegra-csi.c=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 374 ++++++++++
->>>> =C2=A0 drivers/staging/media/tegra/tegra-csi.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 115 ++++
->>>> =C2=A0 drivers/staging/media/tegra/tegra-vi.c=C2=A0=C2=A0=C2=A0=C2=A0 =
-| 1019=20
->>>> ++++++++++++++++++++++++++++
->>>> =C2=A0 drivers/staging/media/tegra/tegra-vi.h=C2=A0=C2=A0=C2=A0=C2=A0 =
-|=C2=A0=C2=A0 79 +++
->>>> =C2=A0 drivers/staging/media/tegra/tegra-video.c=C2=A0 |=C2=A0 118 +++=
-+
->>>> =C2=A0 drivers/staging/media/tegra/tegra-video.h=C2=A0 |=C2=A0=C2=A0 3=
-2 +
->>>> =C2=A0 drivers/staging/media/tegra/tegra210.c=C2=A0=C2=A0=C2=A0=C2=A0 =
-|=C2=A0 767=20
->>>> +++++++++++++++++++++
->>>> =C2=A0 drivers/staging/media/tegra/tegra210.h=C2=A0=C2=A0=C2=A0=C2=A0 =
-|=C2=A0 190 ++++++
->>>> =C2=A0 14 files changed, 2964 insertions(+)
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Kconfig
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Makefile
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/TODO
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-common.h
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.c
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.h
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.c
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.h
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-video.c
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-video.h
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.c
->>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.h
->>>>
->>> <snip>
->>>
->>>> +/*
->>>> + * videobuf2 queue operations
->>>> + */
->>>> +static int tegra_channel_queue_setup(struct vb2_queue *vq,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int *nbuffe=
-rs,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int *nplane=
-s,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int sizes[]=
-,
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *alloc=
-_devs[])
->>>> +{
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D vb2_get_dr=
-v_priv(vq);
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (*nplanes)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return sizes[0] < chan->format.sizeimage ? -EINVAL : 0;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 *nplanes =3D 1;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 sizes[0] =3D chan->format.sizeimage;
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 alloc_devs[0] =3D chan->vi->dev;
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 /*
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * allocate min 3 buffers in queue to a=
-void race between DMA
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * writes and userspace reads.
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (*nbuffers < 3)
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 *nbuffers =3D 3;
->>> First of all, don't check this here, instead set the struct=20
->>> vb2_queue field
->>> 'min_buffers_needed' to 3 instead.
->>>
->>> But the reason given for this check is peculiar: there should not be=20
->>> any
->>> race at all. Usually the reason for requiring a specific minimum=20
->>> number of
->>> buffers is that the DMA engine needs at least 2 buffers before it=20
->>> can start
->>> streaming: it can't give back a buffer to userspace (vb2_buffer_done())
->>> unless there is a second buffer it can start to capture to next. So=20
->>> for many
->>> DMA implementations you need a minimum of 2 buffers: two buffers for=20
->>> the
->>> DMA engine, one buffer being processed by userspace.
->>>
->>> If the driver is starved of buffers it will typically keep capturing to
->>> the last buffer until a new buffer is queued.
->>>
->>> In any case, once the driver releases a buffer via vb2_buffer_done()=20
->>> the
->>> buffer memory is no longer owned by the driver.
->>>
->>> To be precise, buffer ownership is as follows:
->>>
->>> userspace -> VIDIOC_QBUF -> vb2 -> buf_queue -> driver ->=20
->>> vb2_buffer_done() -> vb2 -> VIDIOC_DQBUF -> userspace
->>>
->>> (vb2 =3D=3D videobuf2 framework)
->>>
->>> Note that vb2 never touches the buffer memory.
->>>
->>> So if you get a race condition in this driver, then there is something
->>> strange going on. It looks like vb2_buffer_done() is called while=20
->>> DMA is
->>> still ongoing, or because the driver really needs to keep one buffer
->>> available at all times.
->>>
->>> Regards,
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Hans
->>
->> Thanks Hans.
->>
->> On running v4l2-compliance streaming tests for longer run, I noticed=20
->> kernel reporting unable to write to read-only memory and with debugs=20
->> I observed when this error was reported, I see 2 buffers queued and=20
->> both using same address.
->>
->> for first buffer capture start thread initiates capture and wakes=20
->> done thread to wait for memory write ack and once its done buffer is=20
->> released to user space but I see upon buffer released to user space=20
->> immediate next buffer capture single shot gets issued (as soon as=20
->> single shot is issued frame capture data is written to memory by DMA)=20
->> and I see this kernel error of unable to write to read-only memory.
->>
->> This error happens rare and happens on long run and all the times of=20
->> repro's, I see when other thread releases buffer immediate I see=20
->> single shot gets issued as 2 buffers are queued up at the same time=20
->> with same DMA address.
->>
-> Just to be clear, I meant all the times when kernel reports error=20
-> unable to write to read-only memory, I see 2 buffers gets queued and=20
-> as the capture start thread and done thread are parallel and when=20
-> capture thread wakes done thread on receiving FS event, done thread=20
-> for waiting for memory write happens parallel to next frame capture=20
-> and I see while vb2_buffer_done happens in done thread next frame=20
-> single shot has been issues by capture start thread in parallel when=20
-> it hits this error.
+Add SC9863A specific clock driver and devicetree bindings for it,
+this patch add to support the new way of specifying parents
+without name strings of clocks.
 
-For low latency, we use 2 threads one thread for capture and wait for FS=20
-and on receiving FS even wakes other done thread to wait for memory=20
-write to finish.
+Also this patchset added support gate clock for pll which need to
+wait a certain time for stable after being switched on.
 
-While other done thread waits for memory write to finish, capture thread=20
-can start capture for next frame and as soon as single shot is issued=20
-capture frame is written to memory and as this thread runs in parallel=20
-to done thread
+Changes from v3:
+* Rebased onto v5.6-rc1.
 
-there is a possibility vb2_buffer_done being called by=20
-kthread_capture_done while DMA is ongoing by kthread_capture_start and I=20
-observed same DMA address being used got both buffers that got queued at=20
-same time when it hits this error.
+Changes from v2:
+* Addressed comments from Stephen:
+- Remove ununsed header file from sc9863a-clk.c;
+- Added comments for clocks which were marked with CLK_IGNORE_UNUSED,
+  and removed some unnecessary CLK_IGNORE_UNUSED;
+- Added error checking for sprd_clk_regmap_init().
 
->> With using minimum 3 buffers, this issue doesnt happen at all from=20
->> almost 72 hours of testing.
->>
->>
->> Will try with setting vb2 queue field min_buffers_needed as 3 instead=20
->> of adding check in queue setup.
->>
->
->>
->>>> +
->>>> +=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>> +}
+* Addressed comments from Rob:
+- Put some clocks under syscon nodes, since these clocks have the same
+  physical address base with the syscon;
+- Added clocks maxItems and listed out clock-names.
+
+* Added Rob's reviewed-by on patch 4.
+
+Changes from v1:
+* Addressed comments:
+- Removed redefine things;
+- Switched DT bindings to yaml schema;
+- Added macros for the new way of specifying clk parents; 
+- Switched to use the new way of specifying clk parents;
+- Clean CLK_IGNORE_UNUSED flags for some SC9863A clocks;
+- Dropped the module alias;
+- Use device_get_match_data() instead of of_match_node();
+
+* Added Rob's Acked-by on patch 2.
+
+Chunyan Zhang (6):
+  dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
+    specific
+  dt-bindings: clk: sprd: add bindings for sc9863a clock controller
+  clk: sprd: Add dt-bindings include file for SC9863A
+  clk: sprd: Add macros for referencing parents without strings
+  clk: sprd: support to get regmap from parent node
+  clk: sprd: add clocks support for SC9863A
+
+Xiaolong Zhang (1):
+  clk: sprd: add gate for pll clocks
+
+ .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
+ .../bindings/clock/sprd,sc9863a-clk.yaml      |  103 +
+ drivers/clk/sprd/Kconfig                      |    8 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/common.c                     |   10 +-
+ drivers/clk/sprd/composite.h                  |   39 +-
+ drivers/clk/sprd/div.h                        |   20 +-
+ drivers/clk/sprd/gate.c                       |   17 +
+ drivers/clk/sprd/gate.h                       |  120 +-
+ drivers/clk/sprd/mux.h                        |   28 +-
+ drivers/clk/sprd/pll.h                        |   55 +-
+ drivers/clk/sprd/sc9863a-clk.c                | 1772 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9863a-clk.h  |  334 ++++
+ 13 files changed, 2455 insertions(+), 54 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+
+-- 
+2.20.1
+
