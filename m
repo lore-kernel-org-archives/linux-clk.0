@@ -8,54 +8,54 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7F5C7619F
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 09:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E17C35254
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 09:48:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C7E2072C
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 09:40:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EF82206F4
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 09:48:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="txsXBkx9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TSDX6BGA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728941AbgBQJkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Feb 2020 04:40:25 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40760 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728919AbgBQJkZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Feb 2020 04:40:25 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so17625765wmi.5;
-        Mon, 17 Feb 2020 01:40:23 -0800 (PST)
+        id S1728428AbgBQJsc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Feb 2020 04:48:32 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43157 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgBQJsb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Feb 2020 04:48:31 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r11so18790581wrq.10;
+        Mon, 17 Feb 2020 01:48:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=2jk2U3A+UdC2j/40UYflxTvu2jRzfOgnsui2N5ti3cA=;
-        b=txsXBkx9hagw1F8lGYDCyBjPM0l9cIEXq3vJZdoXDWVa7V6rLnVgervweHeiiOvV6R
-         6z7kZ4U/riwXg7649B2BcoSZ2ZJYy2PCWG3nbcyI9RkQr9Z7oMR0EdqQ80vRDvr+1+8e
-         368YliYQzTMw4J9byCRqWGnB+eUYvNc4qUg7ZpTm+qH+Sb4LzuK3GP5b/m38nfRjUK/+
-         S+H8S2t23qTJRBXKyEnC5rzvC4ex3dtsQsPX+ZMHxbc4gKZOLcipUCdw08+AsJHAs94E
-         d6BrSGUDRY2P8RPoO+wv7yKOA5bRMD2DPq/MXGN6NIvGM6CsBVvrC9BFS4icR7oo6hOB
-         aVJA==
+        bh=mRzhu4FuDGLh80x5UO0rDFw65MYmAaxUcoBtzYtkWxk=;
+        b=TSDX6BGAs3Qkn46ZWpOSekS5iahlNNJ49ygptHlstiI3PQLXt7LamxtveGKsgUp8ol
+         XRJPirlPRQms90vlTjDwKnQFYqX2IzKu8XlkmcAazijEFuAWDCRNqmx1+iECQxt3bMi+
+         HHOTK6UNc/m2TDhxU2Kl/zCoskH5NzuoHMpzOzBX9hciE8DS/uTHKP/8DSKomA6bZ/CS
+         6ZZ5Ed6yBdeZ3xHgRrLDq06M06GPEhEpUtgE8q0JoSQo79n4vuE3FDmifiAegoByjSmN
+         ZFYBWH5t5/FXo7Kd1ONkv9IhnJdouKyURMc9Izgi8WIOKBkSiwf/x921NlsU4qpGlTBl
+         rL4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2jk2U3A+UdC2j/40UYflxTvu2jRzfOgnsui2N5ti3cA=;
-        b=YZcBASfJzStJwaP6nqpTiGKkBYRUCreCT90x8Zw6uJrjNjEoJY1GD/RLre9ipVL8lQ
-         uJaVYw9VT4IVbbocULOoxfnlYchrnbKx8pKD2ef3w4qGyI8YYqPDEn61P04ZwxGTeXwX
-         XUuj/x+COpSag1DCTDbikm+9vabvISg9JKNhyXW8NDCG4SxXD6nx+jKUGxRpmsSU1lUr
-         kMS6K5v2qreHx1hXp+EtKuRMnChVXJCyGW9MiejRGVPy6X9ulo4/RWC2up8KZLPdfLOn
-         8BxAO8oJRscGrPnzDCJxGLlrdYiowf7ZLYjgmv4P6/XMrB4nKXX5XSvyNtES1Tqq1vh/
-         Oiww==
-X-Gm-Message-State: APjAAAVUnD50UnKMpB+G8hCX4vrqZZFp92Kfkcn3E0NfkDOKcEeA597Y
-        YQrfvQR5j6JIw//Ad8XyRpY=
-X-Google-Smtp-Source: APXvYqwh4pc/7fN+8AgnYCes5SZY0fQ3oNF71KqEeMZq6eHUpYNp67Xs4LeLpryg/d8kcG1Jw3JOBg==
-X-Received: by 2002:a1c:3803:: with SMTP id f3mr21894082wma.134.1581932422701;
-        Mon, 17 Feb 2020 01:40:22 -0800 (PST)
+        bh=mRzhu4FuDGLh80x5UO0rDFw65MYmAaxUcoBtzYtkWxk=;
+        b=LahFMuPZbtDvacHuM7+VbcksmILfj7XTPgMWHPzP8QkyPcTP3oOsjgBxZYsL92oAHu
+         8AUPPm5ismw3+G7eKpzfKqGx0tsHxxJAB26+GThICnlVHsGGU16CPvv4d1kQQ6wOjxb0
+         qWyyx55ENl8iReyRWsWCW0LUradwbjO603XU0KQ5yZ3SMrh6TYdlkWFhUOm00RQWwPyW
+         PyBMs609CxSKKb+4JrPvIP5H8T+/QB8G7hjD6Rn2NdnD+NlqNzJGwZOiQXitR3QpNttU
+         froAR01xXswtU2Xo6p/0bwI+6D9Dbtt/XtRY+hxjs5o2qRFUPSKhv6rXTqC73FVcMw42
+         xQmQ==
+X-Gm-Message-State: APjAAAVZOnFzW6ECmCstZLXm0qK3BTrrgkUW7cQf6XmLmFAqd0b+pH+c
+        rFZrTnIxi7ppfXDxQcMK6is=
+X-Google-Smtp-Source: APXvYqwpWLMXEwOYrzCAyMCmt4QalBChgcLXQWUSaHA6rCffoHKWV9UywHWIC+4UvgfQCxeJ3zBfcA==
+X-Received: by 2002:a5d:4085:: with SMTP id o5mr20884290wrp.321.1581932909095;
+        Mon, 17 Feb 2020 01:48:29 -0800 (PST)
 Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id d4sm140834wra.14.2020.02.17.01.40.21
+        by smtp.gmail.com with ESMTPSA id a13sm104558wrp.93.2020.02.17.01.48.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Feb 2020 01:40:21 -0800 (PST)
-Date:   Mon, 17 Feb 2020 10:40:20 +0100
+        Mon, 17 Feb 2020 01:48:27 -0800 (PST)
+Date:   Mon, 17 Feb 2020 10:48:26 +0100
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
@@ -67,16 +67,16 @@ Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
         mmaddireddy@nvidia.com, markz@nvidia.com,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
- audio mclk
-Message-ID: <20200217094020.GM1339021@ulmo>
+Subject: Re: [PATCH v8 12/22] ASoC: tegra: Use device managed resource APIs
+ to get the clock
+Message-ID: <20200217094826.GN1339021@ulmo>
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-13-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="egxrhndXibJAPJ54"
+        protocol="application/pgp-signature"; boundary="WeDu0lr7bteb/II5"
 Content-Disposition: inline
-In-Reply-To: <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1578986667-16041-13-git-send-email-skomatineni@nvidia.com>
 User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -84,54 +84,59 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---egxrhndXibJAPJ54
+--WeDu0lr7bteb/II5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 13, 2020 at 11:24:16PM -0800, Sowjanya Komatineni wrote:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
+On Mon, Jan 13, 2020 at 11:24:17PM -0800, Sowjanya Komatineni wrote:
+> tegra_asoc_utils uses clk_get() to get the clock and clk_put() to
+> free them explicitly.
 >=20
-> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
->=20
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
->=20
-> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
+> This patch updates it to use device managed resource API
+> devm_clk_get() so the clock will be automatically released and freed
+> when the device is unbound and removes tegra_asoc_utils_fini() as
+> its no longer needed.
 >=20
 > Tested-by: Dmitry Osipenko <digetx@gmail.com>
 > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Sameer Pujar <spujar@nvidia.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-
-There's some inconsistent spelling of PMC in the above, but other than
-that:
+>  sound/soc/tegra/tegra_alc5632.c    |  7 +------
+>  sound/soc/tegra/tegra_asoc_utils.c | 39 +++++++++-----------------------=
+------
+>  sound/soc/tegra/tegra_asoc_utils.h |  1 -
+>  sound/soc/tegra/tegra_max98090.c   | 22 ++++++---------------
+>  sound/soc/tegra/tegra_rt5640.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_rt5677.c     |  7 +------
+>  sound/soc/tegra/tegra_sgtl5000.c   |  7 +------
+>  sound/soc/tegra/tegra_wm8753.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_wm8903.c     | 22 ++++++---------------
+>  sound/soc/tegra/tegra_wm9712.c     |  8 ++------
+>  sound/soc/tegra/trimslice.c        | 18 ++++--------------
+>  11 files changed, 42 insertions(+), 133 deletions(-)
 
 Acked-by: Thierry Reding <treding@nvidia.com>
 
---egxrhndXibJAPJ54
+--WeDu0lr7bteb/II5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KX4EACgkQ3SOs138+
-s6Fv6RAAuWcedNtxcpf1Te+X5nra3uQEEKd0TuNszot0ysatU9RzdUyV2WgKYaNM
-waUPM+ScmUboRJSGBgFEuXcIFs3eYo9JV0ODdkkONJfJqWAVR05lcn/CzpWyLYBt
-9KbqTnNPDMGZ/55wkn6+7VWl0skvgUrNtYsIFIXxAbPFQJle0X2Fv57a/b9XWTc4
-oJw4eEM16pHXkrl60WtbvMvt3Fwjj7juBa8bS707DnVOeMufR/SCJ5R9D2R0kJeI
-YIDbYuyLKzAjdrWc1cnWwYmfJmyAV2TNAH6QFxDPY6gxXErjvuY7xNSxxwlq/QDX
-8HW8FDKJQ7GREF5rAO+AbKfE1iF9jrmkGCKZwDdms3BvVEm2nYx+ZG9L86+kk6NN
-nn03DpAmNXNC3eiNNVgtTpDGokbKvDgjr/84dMdha1MHjqlaE9sovhfQpCpbcIEl
-gvHMRDmdIHhxF8zYn8wmqPSGI2xpvqLWt4gzkQNv79Bq+Q9qhGRRTbVJBg0SawRb
-TooYWT4EpiKvA8RV4rsM3gvCCtqQAD0ekFRSEb39r3Sn65zUmvCttPKyzAZ0ePk9
-/2TjbCQEtPPPjXV3DZYtmCGAODV+kEI/TPiz7t66TCV16oVSWmTFBSvIsrV3FmX1
-+/pfxQbsWJlWHjjsCDQ634jKLFUtefD6kaSrTMq+CbAnfspQTdw=
-=/mBF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5KYWoACgkQ3SOs138+
+s6GK5A/5AcdDL/94+MLDuWQO9rtvoWy8z68TTio7XPaP1m3tLsAWmOrO4b+QPfyp
+pnyHtrq8rW9fRShCzBPf6DM5tAKALPrwoJSBWABqZNr0vupPZKcDCc47xRyz0VSI
+oeT4BuDIjYJtEQyzvUibM3ZsnbKJ0Iis8ZKQZK2b5UjGKt3/mO2sf6HmrXrUjAnn
+fo3FNwCiEvIkBkcyEu7NIZN7BzpHHWKRni7BgBnu+2Tr7cdqKwxkr9Eek52AVFV6
+IBY7pn2JSCd3Yf82RadY/lpLmQ2i5M/ZKFhraMnVGfBYFr73B56sv69XEtv+I3do
+GP7t8FimcM2Nj+yNERQidOxBTT4JaF5lt6lXFEqqz3OYFcJ2GVc/3BNpEwrsL2z+
+s0mv00ALzbrSdifmLYE+JbSBdscZArJDzs4aOJmNEbJUXEo3ucMkRVBwFoGcHtjQ
+4RrvHR/pvGX85Cyhjmo0Z+uNi0Nr/JciRePBelXdjdeLn0LRCaSqntQ90rHnCi3V
+txQ33jOfO2Q5VlEsHBwuRYYzlqhIVVnIW8WII8cPSso91NM99QyI6tY+BLXJqT6p
+kqQw2OzXfCBdO/xCFLGu1LLsVFmFe9HPI+Yh5tde07/OutCgQ0hl5BnEDzg9ywnl
+CLdRdoUHbVoZdwg7R8QzMuUZ+nYTslcYQYYOBW5r/iBkd7u36Co=
+=yMLv
 -----END PGP SIGNATURE-----
 
---egxrhndXibJAPJ54--
+--WeDu0lr7bteb/II5--
