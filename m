@@ -4,57 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8A6CC7619D
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 07:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4822C7619D
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 08:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90BE92072C
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 07:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 784A92064C
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Feb 2020 08:02:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jtItyBiU"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Dqjt/y5q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726124AbgBQHtT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Feb 2020 02:49:19 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:50288 "EHLO
+        id S1727346AbgBQICa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Feb 2020 03:02:30 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34870 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgBQHtR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Feb 2020 02:49:17 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a5so16047696wmb.0
-        for <linux-clk@vger.kernel.org>; Sun, 16 Feb 2020 23:49:15 -0800 (PST)
+        with ESMTP id S1726932AbgBQICZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Feb 2020 03:02:25 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b17so17296734wmb.0
+        for <linux-clk@vger.kernel.org>; Mon, 17 Feb 2020 00:02:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:date
          :message-id:mime-version;
-        bh=lcsYrSRBQv0/tuOiLtIdcGzeEqOZwy/ucgpprLmBBKY=;
-        b=jtItyBiUgRgk6BmdYboXya2a/o9c2S21KkV7KiQxBx+O6/WaPpvHVfErJdssFjbZ4i
-         P30GjGDkteiyBRZp0k8BhIW+1GcTywIEbovUouGu/OgfmsDsIjMiWshH7A4OKSd28gaH
-         p5SS5NkDBquZz6AKGgu5seByFxMBbzCNQHVBbI7NAocYAgt1VqeoXMVMcjdYd9C4ccU6
-         LDQwxS+4Xepn/dGwZJkW2wyMnIxyfFq2eDYcMgs9DQ6Dt7px1HlhQqUTSIfbTL6kZZGl
-         jVFgUT/VcLP8iDlE2qaccCbQRDlQ7ewgbyFDpZ9SdHnRiRZuTI/jZHIkheuqwFHAzb/k
-         Riiw==
+        bh=l3DKox+qqztb4asvNOVtIBlg1suTqH8KA57WcRUyDeo=;
+        b=Dqjt/y5qO0gWAFA+/BwiQiNhQnAs5jTW/fatxUCIn40u9KvZm+xZrPas0dS2viq7bb
+         jgSlXwD9Suu+XUxmUNuKB+d41jrMD77xnjTrLbSIqa4rpt4hTuG1Vg6Z4PZf7vfR1y6M
+         PZ7Bpfk3t0Ys/yTJcz2WswnxPbn+B1ZTgALvyA457dZ3sb0WFxc3i2SkN30NVfhEsrKn
+         yjwGuobhZJuIsBjIXOX9C/RFy5ppYs4HMjiUY1y0tl983Am6BGddtiyrE5ozmCY/CSRh
+         f8d7UZvXyRjgawetaECG7ERoPthoDmHd7MBqGqypHgUVhTfvROhg73+BQ+lZcKll+QrN
+         JRlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:date:message-id:mime-version;
-        bh=lcsYrSRBQv0/tuOiLtIdcGzeEqOZwy/ucgpprLmBBKY=;
-        b=sHmDMR4r+AROmAMQsNh7gDEPw8mDHlBPc3wR0wPkYNR8w5QbDQiCWftcLPn14Myffh
-         zA/kdy8recBW5pGn+IuuguYETYtmao7hr1Y8aV11l8GuaA0exCk2HrV3nTMgYh/SupGM
-         niNSuZwBoVOeQ1T4NoPwPebVYH8rK5q19p5PL+aRlL2roOOWXYrHnhT9ikQ9OAbL+Bh+
-         VGE6l5VhBEPiRxdIslJjHNrZl4YgOR4pu9bImegZxKdzOSxMWdIVNkfrnqMdUivm/z+M
-         s4d07O/U5yI8eUQeto8RpxTRp/MepD3FGNqZs3QQdzf907BqxgCKm3Z0Xv0YLj6u4MRA
-         dyMg==
-X-Gm-Message-State: APjAAAX0NnaAgANxb9llpqd3CR5nQeSV0dy0UA9eMzZksW7XIihSKnxC
-        R9Qqf/UkUS+0frP3BAzX7z3n1Q==
-X-Google-Smtp-Source: APXvYqyJtjN2qsgU+dia/mVioDpDwyoJ+ti/pQN/I0BI9y/1B7olbgnxkE2KdsFVusIV1tYvrwUnkA==
-X-Received: by 2002:a1c:a553:: with SMTP id o80mr20042142wme.94.1581925754379;
-        Sun, 16 Feb 2020 23:49:14 -0800 (PST)
+        bh=l3DKox+qqztb4asvNOVtIBlg1suTqH8KA57WcRUyDeo=;
+        b=hRfhGskT6BPAzJ15Rgrk55fndMlTXYqnW0mKLhHL6rpkIB0XO/VaXXjG9sTIG4hqbI
+         aLxkaxAlNm48x6mW44+3+0xVBgONK+gdKzMMddDWvEw8nQGBEah03DB0SnmlxNXcFdkP
+         kJMDOdcHuZJZjofScXmGfa30k/aa2KZH9YXuIu+zq1pK5910oTpd5xqE7DvpS7iqTcco
+         2mXmMwffx6vGBjvnU1pvbA9V7nCV2IENCP/zMfan8qdvH/0DZMYFLIPufLllQ/cWQIoK
+         yG/CThPpvE9JQusinm7+8IFPAqYxq8Jt8kq7QlbMPlMV6U+UOSJtBFDyJFIr2UAWK+ff
+         HI9A==
+X-Gm-Message-State: APjAAAVjk0swszKkiuXGkYJDCbM8UHZoj740CUsUSrGHWoQ2sER9QDLK
+        yttXgTAzJxTqcQQPOV7XBitvmQ==
+X-Google-Smtp-Source: APXvYqx9LI03PNOr2Q02TPi4B2aVKc1GmmsYFLd4WBERnUA2AA8pCg4ZZaiDAl6iYjkK/uI2Jjh6JA==
+X-Received: by 2002:a1c:bc08:: with SMTP id m8mr21757452wmf.189.1581926543185;
+        Mon, 17 Feb 2020 00:02:23 -0800 (PST)
 Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id u23sm19462367wmu.14.2020.02.16.23.49.13
+        by smtp.gmail.com with ESMTPSA id f11sm18834522wml.3.2020.02.17.00.02.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Feb 2020 23:49:13 -0800 (PST)
-References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-3-linux.amoon@gmail.com>
+        Mon, 17 Feb 2020 00:02:22 -0800 (PST)
+References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-4-linux.amoon@gmail.com>
 User-agent: mu4e 1.3.3; emacs 26.3
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Anand Moon <linux.amoon@gmail.com>,
@@ -68,10 +67,10 @@ Cc:     Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: Re: [PATCHv1 2/3] arm64: dts: meson: Add missing regulator linked to VCCV5 regulator to VDDIO_C/TF_IO
-In-reply-to: <20200216173446.1823-3-linux.amoon@gmail.com>
-Date:   Mon, 17 Feb 2020 08:49:12 +0100
-Message-ID: <1jo8txzm9z.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCHv1 3/3] clk: meson: g12a: set cpu clock divider flags too CLK_IS_CRITICAL
+In-reply-to: <20200216173446.1823-4-linux.amoon@gmail.com>
+Date:   Mon, 17 Feb 2020 09:02:21 +0100
+Message-ID: <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -82,44 +81,65 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Sun 16 Feb 2020 at 18:34, Anand Moon <linux.amoon@gmail.com> wrote:
 
-> As per schematics add missing VCCV5 power supply to VDDIO_C/TF_IO
-> regulator. Also add TF_3V3N_1V8_EN signal name to gpio pin.
+> Odroid N2 would fail to boot using microSD unless we set
+> cpu freq clk divider flags to CLK_IS_CRITICAL to avoid stalling of
+> cpu when booting, most likely because of PWM module linked to
 
-Why ? I don't see the connection with the cover letter here ...
+Where did you see a PWM ?
 
+> the CPU for DVFS is getting disabled in between the late_init call,
+
+between the late_init call and what ?
+
+> so gaiting the clock source shuts down the power to the codes.
+
+what code ?
+
+> Setting clk divider flags to CLK_IS_CRITICAL help resolve the issue.
 >
-> Fixes: c35f6dc5c377 (arm64: dts: meson: Add minimal support for Odroid-N2)
 > Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > Cc: Jerome Brunet <jbrunet@baylibre.com>
 > Cc: Neil Armstrong <narmstrong@baylibre.com>
-> Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+> Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
 > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 > ---
->  arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts | 3 +++
->  1 file changed, 3 insertions(+)
 >
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-> index 353db3b32cc4..23eddff85fe5 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-g12b-odroid-n2.dts
-> @@ -66,11 +66,14 @@ tf_io: gpio-regulator-tf_io {
->  		regulator-min-microvolt = <1800000>;
->  		regulator-max-microvolt = <3300000>;
->  
-> +		/* TF_3V3N_1V8_EN */
-This is not terribly useful ... same for the previous patch
+> Following Neil's suggestion, I have prepared this patch.
+> https://patchwork.kernel.org/patch/11177441/#22964889
+> ---
+>  drivers/clk/meson/g12a.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index d2760a021301..accae3695fe5 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -283,6 +283,7 @@ static struct clk_fixed_factor g12a_fclk_div2_div = {
+>  		.ops = &clk_fixed_factor_ops,
+>  		.parent_hws = (const struct clk_hw *[]) { &g12a_fixed_pll.hw },
+>  		.num_parents = 1,
+> +		.flags = CLK_IS_CRITICAL,
 
->  		gpios = <&gpio_ao GPIOAO_9 GPIO_ACTIVE_HIGH>;
->  		gpios-states = <0>;
->  
->  		states = <3300000 0>,
->  			 <1800000 1>;
-> +		/* U16 RT9179GB */
-> +		vin-supply = <&vcc_5v>;
-That is not parsed and not even part of the gpio regulator binding
-documentation. It won't make any difference.
+This makes no sense for because:
+* This clock cannot gate and none of its parents can either. IOW, the
+output of this clock is never disabled.
+* I cannot guess the relation between fdiv2 and the commit description
 
->  	};
+>  	},
+>  };
 >  
->  	flash_1v8: regulator-flash_1v8 {
+> @@ -681,7 +682,7 @@ static struct clk_regmap g12b_cpub_clk = {
+>  			&g12a_sys_pll.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+
+Why not. Neil what do you think of this ?
+If nothing is claiming this clock and enabling it then I suppose it
+could make sense.
+
+
+>  	},
+>  };
 
