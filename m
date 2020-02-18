@@ -2,121 +2,157 @@ Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79136C3404B
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:22:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 939D7C34047
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525632465A
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:22:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66F0D2173E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582057324;
-	bh=W3jhPdgHCD67Gh7RYzd78SM3LfYF83JdcIbxNQefnXE=;
+	s=default; t=1582057915;
+	bh=oh7trNinL5HnQ47vhaNDfdVl4Rcr0N6EQQ6S3MAkd/o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xfX0yJMBKgerrRDff6Fkxg205In3fWHQMAdwO3bKdlrA5KY7HMYe4LB9b8Y4VgtGX
-	 wLGDv8zd97ZCWicmMsRYrp0TkpFgY5Z8kSlWO2OI1rd6lX4Q5kS93r3Bif1WAeAJR3
-	 zLv+ahz5OIfU4GqnWyKqwa9+sxgfDiwgHyGmO3vc=
+	b=esjFu6Y2CFyMzHMwqMfL63AEwNApczUC044MubKQRo7A2ImlRX/ZWDntoB/gNDl3C
+	 GiGNho05Ln2VrDBcmg7KDW9rUR/gH/Z/wUkt8mjJ9mWolh0u1KptB07dqzC1wA1ste
+	 pgutHDkEmRz8KM3cbGXQkVSGgPfcEFnebGkiOoNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726482AbgBRUWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 15:22:04 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45847 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726403AbgBRUWD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 15:22:03 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 59so20838397otp.12;
-        Tue, 18 Feb 2020 12:22:03 -0800 (PST)
+        id S1726528AbgBRUbz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 15:31:55 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37102 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgBRUby (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 15:31:54 -0500
+Received: by mail-oi1-f195.google.com with SMTP id q84so21512439oic.4;
+        Tue, 18 Feb 2020 12:31:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6bhlYFbTU31k44CeyF0cp+l2NnzkZFlb1NdHHQJJpQc=;
-        b=rbv4vK6QcuQ+O/YjvO01DZXJriMXnl6DI8PeRysvXqZjS6FsJk+zbB3CgqKS+lJCsa
-         GnldoiGTjt3MwAxLBRL+EHCVA45NMecYqfpBQGaTQd3Rcd0nLQxbiCayiCe1I4qKQIfr
-         b7XpPCgS8PSMRut01TRSvsB34Ycyd6lXuKJv3GS4tCPWKnFrB2zIYUKNhjeL4z5k5Ngy
-         zKnaDNLGD0O6rF0RiQ4SuN816qz1h49eAWhbZyubjdplbzfuw8sNqPbDuMZVaexKZi3k
-         p9YK/xD1pL0/JZom2QY78yCrM91l/svwhSCQEXihrpU9kGeGYM/7RsdGIBdfSqdgc/oW
-         uQ3A==
-X-Gm-Message-State: APjAAAW1/MEN3WJpBmfIWGVSRlTGrBgX0bZs+m8swSds53p9L1OTz+Cx
-        WYBycnGJWZOvv9FlqTSo2w==
-X-Google-Smtp-Source: APXvYqxT+CIgJyZ9ZV3zhU/dPm0cNLpPF5jFMryAjazLFUuf50hbJ2n2d8O+6N3EFn9+aeh2f/Dydw==
-X-Received: by 2002:a9d:63d6:: with SMTP id e22mr17382781otl.185.1582057322748;
-        Tue, 18 Feb 2020 12:22:02 -0800 (PST)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=J/VxJ3xiwdS6/BWNfUPWpgIlaLG5DINnCPtjKZgxKdM=;
+        b=to4rJbzvx2eabws6ZIqorBVPxeBvz1PRGBHQrRNnzrPBYB9b8OtUIAGxg4nWCQvMh7
+         Rt8zwcB1IjXcMtjJOkSvnwixmoP5lXTe7dnq6PgDXuv7UdXa9/lHhejQ7syN7BJY7FN4
+         BQ/ToBs3tzaw3CDnjWyBmxo7RJy2dMPsy3gFcDMgwKDHoxvQ2gOya3UH3ZKHQcN+kqDp
+         /qJuZ9B/itpHUcm9eeJ+NtPRyW4kzjukHbbK+T75Ng53AQoI0hfmvlDRZfTVa+vkFisz
+         X+LUEYdfRF0GNjrAYSmSg+GKKD07IAPNE83gX4L/aemV4gCsQBYAeP7lLPYB9aA5QTuO
+         MzKg==
+X-Gm-Message-State: APjAAAUgxRk/6MgwUq8bRHtb/oAIeiVFfzzXXo76aoBpC+h/oR0Q2abI
+        KFJw2OG2osp5nhOJRgaXtQ==
+X-Google-Smtp-Source: APXvYqz4+tMO0xRMFlD+Nj7EMFcqW+z3eblcWmDWok4aK303S3lbrgXPLQt5ovOmoCv1EkypuhWhDA==
+X-Received: by 2002:aca:af50:: with SMTP id y77mr2515745oie.8.1582057913671;
+        Tue, 18 Feb 2020 12:31:53 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 108sm1719452oti.1.2020.02.18.12.22.01
+        by smtp.gmail.com with ESMTPSA id y25sm1716518oto.27.2020.02.18.12.31.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 12:22:02 -0800 (PST)
-Received: (nullmailer pid 2334 invoked by uid 1000);
-        Tue, 18 Feb 2020 20:22:00 -0000
-Date:   Tue, 18 Feb 2020 14:22:00 -0600
+        Tue, 18 Feb 2020 12:31:52 -0800 (PST)
+Received: (nullmailer pid 19094 invoked by uid 1000);
+        Tue, 18 Feb 2020 20:31:51 -0000
+Date:   Tue, 18 Feb 2020 14:31:51 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        paul@crapouillou.net, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
-        paulburton@kernel.org, jiaxun.yang@flygoat.com, chenhc@lemote.com,
-        allison@lohutok.net, tglx@linutronix.de, daniel.lezcano@linaro.org,
-        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
-        ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        paul@boddie.org.uk, hns@goldelico.com,
-        mips-creator-ci20-dev@googlegroups.com
-Subject: Re: [PATCH v5 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
-Message-ID: <20200218202200.GA1533@bogus>
-References: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1581792932-108032-7-git-send-email-zhouyanjie@wanyeetech.com>
+To:     matthias.bgg@kernel.org
+Cc:     mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        enric.balletbo@collabora.com, devicetree@vger.kernel.org,
+        drinkcat@chromium.org, frank-w@public-files.de,
+        sean.wang@mediatek.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, wens@csie.org,
+        linux-mediatek@lists.infradead.org, rdunlap@infradead.org,
+        hsinyi@chromium.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: Re: [PATCH v7 02/13] dt-bindings: display: mediatek: Add mmsys
+ binding description
+Message-ID: <20200218203151.GA15948@bogus>
+References: <20200213201953.15268-1-matthias.bgg@kernel.org>
+ <20200213201953.15268-3-matthias.bgg@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1581792932-108032-7-git-send-email-zhouyanjie@wanyeetech.com>
+In-Reply-To: <20200213201953.15268-3-matthias.bgg@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 16 Feb 2020 02:55:30 +0800, =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= wrote:
-> Document the available properties for the SoC root node and the
-> CPU nodes of the devicetree for the Ingenic XBurst SoCs.
+On Thu, Feb 13, 2020 at 09:19:42PM +0100, matthias.bgg@kernel.org wrote:
+> From: Matthias Brugger <mbrugger@suse.com>
 > 
-> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Tested-by: Paul Boddie <paul@boddie.org.uk>
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> The MediaTek DRM has a block called mmsys, which sets
+> the routing and enables the different blocks.
+> This patch adds one line for the mmsys bindings description and changes
+> the mmsys description to use the generic form of referring to a specific
+> Soc.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> 
 > ---
 > 
-> Notes:
->     v1->v2:
->     Change the two Document from txt to yaml.
->     
->     v2->v3:
->     Fix formatting errors.
->     
->     v3->v4:
->     Fix bugs in the two yaml files.
->     
->     v4->v5:
->     No change.
+> Changes in v7:
+> - add hint to the mmsys binding document
+> - make mmsys description generic
+> - fix typo in commit message
 > 
->  .../bindings/mips/ingenic/ingenic,cpu.yaml         | 53 ++++++++++++++++++++++
->  .../bindings/mips/ingenic/ingenic,soc.yaml         | 35 ++++++++++++++
->  2 files changed, 88 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
+> Changes in v6: None
+> Changes in v5: None
+> Changes in v4: None
+> Changes in v3: None
+> Changes in v2: None
 > 
+>  .../bindings/display/mediatek/mediatek,disp.txt          | 3 +++
+>  .../bindings/display/mediatek/mediatek,mmsys.txt         | 9 +--------
+>  2 files changed, 4 insertions(+), 8 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> index b91e709db7a4..8e453026ef78 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+> @@ -24,6 +24,7 @@ connected to.
+>  For a description of the display interface sink function blocks, see
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,dsi.txt and
+>  Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt.
+> +Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt.
+>  
+>  Required properties (all function blocks):
+>  - compatible: "mediatek,<chip>-disp-<function>", one of
+> @@ -43,7 +44,9 @@ Required properties (all function blocks):
+>  	"mediatek,<chip>-dpi"        		- DPI controller, see mediatek,dpi.txt
+>  	"mediatek,<chip>-disp-mutex" 		- display mutex
+>  	"mediatek,<chip>-disp-od"    		- overdrive
+> +	"mediatek,<chip>-mmsys", "syscon"	- provide clocks and components management
+>    the supported chips are mt2701, mt2712 and mt8173.
+> +
+>  - reg: Physical base address and length of the function block register space
+>  - interrupts: The interrupt signal from the function block (required, except for
+>    merge and split function blocks).
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> index 301eefbe1618..7bbadee820e3 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,mmsys.txt
+> @@ -5,14 +5,7 @@ The Mediatek mmsys controller provides various clocks to the system.
+>  
+>  Required Properties:
+>  
+> -- compatible: Should be one of:
+> -	- "mediatek,mt2701-mmsys", "syscon"
+> -	- "mediatek,mt2712-mmsys", "syscon"
+> -	- "mediatek,mt6779-mmsys", "syscon"
+> -	- "mediatek,mt6797-mmsys", "syscon"
+> -	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
 
-My bot found errors running 'make dt_binding_check' on your patch:
+You've lost this information about the fallback...
 
-Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
-Error: Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dts:26.26-27 syntax error
-FATAL ERROR: Unable to parse input tree
-scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dt.yaml' failed
-make[1]: *** [Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dt.yaml] Error 1
-Makefile:1263: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+> -	- "mediatek,mt8173-mmsys", "syscon"
+> -	- "mediatek,mt8183-mmsys", "syscon"
+> +- compatible: "mediatek,<chip>-mmsys"
 
-See https://patchwork.ozlabs.org/patch/1238592
-Please check and re-submit.
+You are just going to have to add these all back when this is converted 
+to schema.
+
+Rob
