@@ -6,119 +6,92 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72442C34047
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:39:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A7AC34031
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 21:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477752173E
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:39:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC57F2070B
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 21:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582058393;
-	bh=1M7sJyKek2vzcD+WMBztTe3Vke3hE8g33/8xU4GekOY=;
+	s=default; t=1582059946;
+	bh=pXRGp6Z5lMsZ/0lr66clxg0dlS14Nc8pwOBlEOaxAT0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zk4fNJmkBQwnb7vEdPa8dBFKd27QJpakkeZzZxWObxVZx64OHt+xVvypmLg+xO4Mt
-	 sNLvnAP9Lw3Pp0eJaEzaulC3+7wWb6O0nJyyemmnDfQzMjKxxdzcZN6uxhuWUeRD2P
-	 mBk14M53rzSJvvSEhLftyvhectcm4y8v+jku7yEc=
+	b=A7LtndWoZ33VT+qXsJTXSAFOcEY7xenpvJJRxA3aaZyhKgAgXxuzEj+CcbAF8420N
+	 rTHGC5NDADO0SCRWoH0QfWFr1UmG4sT7ffw5DGbAwYMZxXwPXbmxwXG/Ekc56DERbC
+	 OXT2y5OJ2hVrY2JivzDukmnEl7gBXNtvOulqKMac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726464AbgBRUjx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 15:39:53 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41520 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgBRUjw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 15:39:52 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r27so20852454otc.8;
-        Tue, 18 Feb 2020 12:39:50 -0800 (PST)
+        id S1726761AbgBRVFp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 16:05:45 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39750 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbgBRVFp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 16:05:45 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 77so20950785oty.6;
+        Tue, 18 Feb 2020 13:05:44 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C8j0O76ayqbfqE0bVu8zQXNeOaxgxzZC+4WywF7J+iw=;
-        b=WloVHiBsfD/pptWSgH0gzkPztMIEUfHpyFJaQEM/4z5HB4tKR4QXpnESbtGGwn+Y/B
-         BzwqI8OwTeWwOGCOCoYiDiDpasjPLFwdcIMBsrh4tTRe/cwuvvN+2xYr2gG6Jz9s3LL5
-         jNJAY4siQikOD+fHAaKblz7zNco5FOfnblcMuynJsEVpB79YV11UplKkJSI4h5Fr37ca
-         ntSY/sh7J0sdQjMXB8tOva4XT2u3WsF31ch09KdVys/kW1CMC3/zBc/wvQDulu4SBqMf
-         EwXJcaFKyCeK2NzdHQMSW4iwVtHf0Qjaf7Tmp5gxehHHhZBJUabKQzLLzkvcsrPkVSdw
-         EEiQ==
-X-Gm-Message-State: APjAAAWyjdbCYUOTIfaC8UCbxIxjuih+kOD5N1RfBCP7vE2ANs+yQtUu
-        nbinY6FEFzKpNZNv2nNTZw==
-X-Google-Smtp-Source: APXvYqyH1p5MWdMBardwNwTmNs1F6hhPi3TUJe8KGhFk/oPzVltIMKXI9kg6VgPOTDZoEaMQDFRXnA==
-X-Received: by 2002:a9d:116:: with SMTP id 22mr16069633otu.149.1582058390424;
-        Tue, 18 Feb 2020 12:39:50 -0800 (PST)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2NFp6Xk53EoDTqiO1l+FnY4ve5J6YqrYXVw+6lM+mI8=;
+        b=s5kQnPUn+fzfSwuWKU6M/zm/PBLgj/RC1C7epH9ZRMuOyDqVDqjfI1JZHmaWJ929re
+         jaRHS3YGvkRY+aAYWefObd0El3kOej/kk0jazcgEsIByiv3KRTJGW9D35jRai1N7i+59
+         W9bU5Gsa2Cf5TdbyL9KrcaO1wb3JKB5mcqSA8h7p23j/yc4sq+sj2ElTu/POKd61Lssj
+         qCJB5nYQ6BjUwL4a0+GzL7kIpdHglF4/Vp+DfzGwzA9JelKhHR3xawVWu/ZgPfHB7aro
+         AkPToDY57Xf6byG19/Li1dSy03jBxD+waRtx/Clr9wqf6vR9pR+6ukDm7l+3egBS68w2
+         A+xQ==
+X-Gm-Message-State: APjAAAUwxIksyhxezx4rz6lUiL/b/iEE+eOkW4fgxdL+XW7hti43+Kps
+        t4e1FATGhlMiRczt8sMLwAp/5+U=
+X-Google-Smtp-Source: APXvYqxcwtPcb9dczEQuX/YRkNOyWP8oJdu6arcnSX/Hbr2ChjUqdwgZkFrS0kF7gjxMTNBUk++bxQ==
+X-Received: by 2002:a9d:6ad6:: with SMTP id m22mr18026683otq.7.1582059943981;
+        Tue, 18 Feb 2020 13:05:43 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id w197sm446590oia.12.2020.02.18.12.39.48
+        by smtp.gmail.com with ESMTPSA id w6sm1728684otp.69.2020.02.18.13.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 12:39:49 -0800 (PST)
-Received: (nullmailer pid 31148 invoked by uid 1000);
-        Tue, 18 Feb 2020 20:39:48 -0000
-Date:   Tue, 18 Feb 2020 14:39:48 -0600
+        Tue, 18 Feb 2020 13:05:43 -0800 (PST)
+Received: (nullmailer pid 3545 invoked by uid 1000);
+        Tue, 18 Feb 2020 21:05:42 -0000
+Date:   Tue, 18 Feb 2020 15:05:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-Cc:     Macpaul Lin <macpaul.lin@mediatek.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Fabien Parent <fparent@baylibre.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Evan Green <evgreen@chromium.org>,
-        Yong Wu <yong.wu@mediatek.com>, Joerg Roedel <jroedel@suse.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ryder Lee <Ryder.Lee@mediatek.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-Subject: Re: [PATCH v7 1/7] dt-bindings: clock: mediatek: document clk
- bindings for Mediatek MT6765 SoC
-Message-ID: <20200218203948.GA28003@bogus>
-References: <1581067250-12744-1-git-send-email-macpaul.lin@mediatek.com>
- <1581067250-12744-2-git-send-email-macpaul.lin@mediatek.com>
- <d606aeb2-5327-ff13-0043-e70ef37522f5@gmail.com>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        paul@crapouillou.net, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v5 5/6] dt-bindings: clock: Add and reorder ABI for X1000.
+Message-ID: <20200218210542.GA3483@bogus>
+References: <1581701262-110556-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1581701262-110556-7-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <d606aeb2-5327-ff13-0043-e70ef37522f5@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1581701262-110556-7-git-send-email-zhouyanjie@wanyeetech.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:47:25PM +0100, Matthias Brugger wrote:
+On Sat, 15 Feb 2020 01:27:41 +0800, =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?=          wrote:
+> The SSI clock of X1000 not like JZ4770 and JZ4780, they are not
+> directly derived from the output of SSIPLL, but from the clock
+> obtained by dividing the frequency by 2. "X1000_CLK_SSIPLL_DIV2"
+> is added for this purpose, it must between "X1000_CLK_SSIPLL"
+> and "X1000_CLK_SSIMUX", otherwise an error will occurs when
+> initializing the clock. These ABIs are only used for X1000, and
+> I'm sure that no other devicetree out there is using these ABIs,
+> so we should be able to reorder them.
 > 
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> ---
 > 
-> On 07/02/2020 10:20, Macpaul Lin wrote:
-> > From: Mars Cheng <mars.cheng@mediatek.com>
-> > 
-> > This patch adds the binding documentation for apmixedsys, audsys, camsys,
-> > imgsys, infracfg, mipi0a, topckgen, vcodecsys
-> > 
-> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> > Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> > ---
-> >  .../arm/mediatek/mediatek,apmixedsys.txt      |  1 +
-> >  .../bindings/arm/mediatek/mediatek,audsys.txt |  1 +
-> >  .../bindings/arm/mediatek/mediatek,camsys.txt |  1 +
-> >  .../bindings/arm/mediatek/mediatek,imgsys.txt |  1 +
-> >  .../arm/mediatek/mediatek,infracfg.txt        |  1 +
-> >  .../bindings/arm/mediatek/mediatek,mipi0a.txt | 28 +++++++++++++++++++
-> >  .../bindings/arm/mediatek/mediatek,mmsys.txt  |  1 +
-> >  .../arm/mediatek/mediatek,pericfg.txt         |  1 +
-> >  .../arm/mediatek/mediatek,topckgen.txt        |  1 +
-> >  .../arm/mediatek/mediatek,vcodecsys.txt       | 27 ++++++++++++++++++
+> Notes:
+>     v5:
+>     New patch.
 > 
-> I think it's OK to put all the bindings, that only add one compatible in onw
-> patch. But I think mipi0a and vcodesys should each go into a separate patch, as
-> we will need a Ack by Rob for that.
+>  include/dt-bindings/clock/x1000-cgu.h | 58 ++++++++++++++++++-----------------
+>  1 file changed, 30 insertions(+), 28 deletions(-)
+> 
 
-Yes, and DT schema for the new ones.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
