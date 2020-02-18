@@ -2,116 +2,121 @@ Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF6DC3404D
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 19:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79136C3404B
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3F5B2469F
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 19:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 525632465A
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 20:22:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582052577;
-	bh=yGg6yNRaAc7iDhwPELABRLvrPSnaAFrFM+ijBgVtWoo=;
+	s=default; t=1582057324;
+	bh=W3jhPdgHCD67Gh7RYzd78SM3LfYF83JdcIbxNQefnXE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FvTUHi9AXcdNwyrWdeuYK7kYAAWihOM02sVWgahht24LqZgXcpLhk8odRaaSsjfta
-	 QaFKwA5BwoEdEVjL/ye8wo8BfGENddZs7osPsI+guuki+w6jCwOsw4mwBg1k1HwIeJ
-	 vhXNJifbga/PX3CGLI9T8b5QTE24StU6kFUPBoto=
+	b=xfX0yJMBKgerrRDff6Fkxg205In3fWHQMAdwO3bKdlrA5KY7HMYe4LB9b8Y4VgtGX
+	 wLGDv8zd97ZCWicmMsRYrp0TkpFgY5Z8kSlWO2OI1rd6lX4Q5kS93r3Bif1WAeAJR3
+	 zLv+ahz5OIfU4GqnWyKqwa9+sxgfDiwgHyGmO3vc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbgBRTC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 14:02:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726291AbgBRTCz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Feb 2020 14:02:55 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1B0324655;
-        Tue, 18 Feb 2020 19:02:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582052575;
-        bh=yGg6yNRaAc7iDhwPELABRLvrPSnaAFrFM+ijBgVtWoo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dQJS5bcavE0VoZy3dS/+CN4EqnAgMsL2HFP6co6j0tfwA/VryfUjJD+jLWGKNgP/s
-         7QO45qSnZKAlxcLswZk8QyTW0yHgO6D+IZvIOhyIhkmq9+QCOiyce6wE7ufDXvGxU2
-         pRuXmqKCuzRTX4I3uR6QSvrSq7TyLtxmGr0TfG/w=
-Date:   Tue, 18 Feb 2020 14:02:53 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:PIN CONTROLLER - FREESCALE" <linux-gpio@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>
-Subject: Re: [PATCH] firmware: imx: Align imx SC msg structs to 4
-Message-ID: <20200218190253.GW1734@sasha-vm>
-References: <3a8b6772a1edffdd7cdb54d6d50030b03ba0bebb.1581455751.git.leonard.crestez@nxp.com>
- <20200217062129.GB6790@dragon>
- <VI1PR04MB7023CDE9E4AD086F2E926495EE160@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <20200218091831.GB6075@dragon>
- <VI1PR04MB7023C1C536805130D9429E11EE110@VI1PR04MB7023.eurprd04.prod.outlook.com>
+        id S1726482AbgBRUWE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 15:22:04 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45847 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726403AbgBRUWD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 15:22:03 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 59so20838397otp.12;
+        Tue, 18 Feb 2020 12:22:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6bhlYFbTU31k44CeyF0cp+l2NnzkZFlb1NdHHQJJpQc=;
+        b=rbv4vK6QcuQ+O/YjvO01DZXJriMXnl6DI8PeRysvXqZjS6FsJk+zbB3CgqKS+lJCsa
+         GnldoiGTjt3MwAxLBRL+EHCVA45NMecYqfpBQGaTQd3Rcd0nLQxbiCayiCe1I4qKQIfr
+         b7XpPCgS8PSMRut01TRSvsB34Ycyd6lXuKJv3GS4tCPWKnFrB2zIYUKNhjeL4z5k5Ngy
+         zKnaDNLGD0O6rF0RiQ4SuN816qz1h49eAWhbZyubjdplbzfuw8sNqPbDuMZVaexKZi3k
+         p9YK/xD1pL0/JZom2QY78yCrM91l/svwhSCQEXihrpU9kGeGYM/7RsdGIBdfSqdgc/oW
+         uQ3A==
+X-Gm-Message-State: APjAAAW1/MEN3WJpBmfIWGVSRlTGrBgX0bZs+m8swSds53p9L1OTz+Cx
+        WYBycnGJWZOvv9FlqTSo2w==
+X-Google-Smtp-Source: APXvYqxT+CIgJyZ9ZV3zhU/dPm0cNLpPF5jFMryAjazLFUuf50hbJ2n2d8O+6N3EFn9+aeh2f/Dydw==
+X-Received: by 2002:a9d:63d6:: with SMTP id e22mr17382781otl.185.1582057322748;
+        Tue, 18 Feb 2020 12:22:02 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 108sm1719452oti.1.2020.02.18.12.22.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 12:22:02 -0800 (PST)
+Received: (nullmailer pid 2334 invoked by uid 1000);
+        Tue, 18 Feb 2020 20:22:00 -0000
+Date:   Tue, 18 Feb 2020 14:22:00 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        paul@crapouillou.net, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, ralf@linux-mips.org,
+        paulburton@kernel.org, jiaxun.yang@flygoat.com, chenhc@lemote.com,
+        allison@lohutok.net, tglx@linutronix.de, daniel.lezcano@linaro.org,
+        geert+renesas@glider.be, krzk@kernel.org, keescook@chromium.org,
+        ebiederm@xmission.com, miquel.raynal@bootlin.com,
+        paul@boddie.org.uk, hns@goldelico.com,
+        mips-creator-ci20-dev@googlegroups.com
+Subject: Re: [PATCH v5 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
+Message-ID: <20200218202200.GA1533@bogus>
+References: <1581792932-108032-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1581792932-108032-7-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <VI1PR04MB7023C1C536805130D9429E11EE110@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1581792932-108032-7-git-send-email-zhouyanjie@wanyeetech.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 05:48:50PM +0000, Leonard Crestez wrote:
->On 18.02.2020 11:18, Shawn Guo wrote:
->> On Mon, Feb 17, 2020 at 08:37:45PM +0000, Leonard Crestez wrote:
->>> On 17.02.2020 08:21, Shawn Guo wrote:
->>>> On Tue, Feb 11, 2020 at 11:24:33PM +0200, Leonard Crestez wrote:
->>>>> The imx SC api strongly assumes that messages are composed out of
->>>>> 4-bytes words but some of our message structs have sizeof "6" and "7".
->>>>>
->>>>> This produces many oopses with CONFIG_KASAN=y:
->>>>>
->>>>> 	BUG: KASAN: stack-out-of-bounds in imx_mu_send_data+0x108/0x1f0
->>>>>
->>>>> It shouldn't cause an issues in normal use because these structs are
->>>>> always allocated on the stack.
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>
->>>> Should we have a fixes tag and send it for -rc?
->>>
->>> I haven't check but this would probably have to be split into multiple
->>> patches because the structs were not added all at once.
->>
->> Or maybe we can just drop the stable tag, as it addresses a corner
->> case issue which could concern very few people?
->
->I think that "kernel does not boot with KASAN=y" is an issue worth fixing.
->
->I will split and resend with appropriate Fixes: tags.
->
->It seems likely that this will be picked up for -stable anyway via
->Sasha's automation scripts and those scripts benefit from Fixes: tags.
+On Sun, 16 Feb 2020 02:55:30 +0800, =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= wrote:
+> Document the available properties for the SoC root node and the
+> CPU nodes of the devicetree for the Ingenic XBurst SoCs.
+> 
+> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Tested-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> ---
+> 
+> Notes:
+>     v1->v2:
+>     Change the two Document from txt to yaml.
+>     
+>     v2->v3:
+>     Fix formatting errors.
+>     
+>     v3->v4:
+>     Fix bugs in the two yaml files.
+>     
+>     v4->v5:
+>     No change.
+> 
+>  .../bindings/mips/ingenic/ingenic,cpu.yaml         | 53 ++++++++++++++++++++++
+>  .../bindings/mips/ingenic/ingenic,soc.yaml         | 35 ++++++++++++++
+>  2 files changed, 88 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
+> 
 
-Even if not, we realy very much on KASAN working on stable kernels, so
-please do fix this :)
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-Thanks,
-Sasha
+Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+Error: Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dts:26.26-27 syntax error
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.example.dt.yaml] Error 1
+Makefile:1263: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1238592
+Please check and re-submit.
