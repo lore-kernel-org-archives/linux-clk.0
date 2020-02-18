@@ -2,291 +2,152 @@ Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26068C34049
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 17:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 177DEC34026
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 17:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFFC924658
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 17:35:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E725F2464E
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 17:48:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GcgG0g7o"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="aiZ0YFN1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbgBRRfT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 12:35:19 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52737 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbgBRRfS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 12:35:18 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p9so3656437wmc.2
-        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2020 09:35:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RILWoXXun3vjq+42du8IC+UmbZgRdTK1KmCkih2WLgI=;
-        b=GcgG0g7oTyfqugWUxGmwTGyE0HE9J8IbJgdE4weTCvpOmnnj/PLJJRvmAzk5qQMHn3
-         le7wf/QB761zG1i/AU9+ZziDLItIJNxoADUEkKhMRod2TyJvMxCrB5Y074ZElULEV5lO
-         TDK/VyePvPm3q8pHXP2YiMdh30eVSqWmWJZv9gg4y9jYaTjJrQVonXIZo/BUoE+vJHcp
-         QYwbYS3MqIiB0EG5f+hBQ9/W3nvuZKxwLXkef12rCY6gruqCcqklg7TJMKl2XAonkFkv
-         +hIx5GlKXORzaP67V9J5jvF4nyqBgdyqgp/zAQGgTQX02nrDI5iNV58lh0752z4Adlpg
-         OQlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=RILWoXXun3vjq+42du8IC+UmbZgRdTK1KmCkih2WLgI=;
-        b=BHNDW0PiEEb0HaQi4qS6DRDQZXhdOhteO7wjBvPuO/BxqcJQu96o38oLn+Y43ZQKmD
-         86IdZvBbV/YunfKmbZTOiTBtmQGke+z4IosvUlHewFIbe9i8bRhvonrTVOyIE7yuT/R3
-         MO85iOJgQoZtTF20147c9/SynRdDMsO2aFOpTVYRfV0t4wvt7L5/CGQg6sqtWAkgVYiM
-         uNvbCzktNM3emB1ZeSMl1N2RtXD/rD0aqWgsv4Ir5GnA1LVe5fE31ebenOF82K6zCFXF
-         Jecx6oLwSXsv4/gT5gOoiec5j7+VeLXHTX5OVaGvi2xllOREwfM9qOzFJawuls+6gbOu
-         SF5A==
-X-Gm-Message-State: APjAAAVoXGlvR2wkmgaqan+5Ph/1VB7d6PQkrvgl4Bk0UWUd5tgZACjz
-        9auTcdwiOlVqvg9JxBf8zPr0AA==
-X-Google-Smtp-Source: APXvYqwV2asQG46dY9dPtK3kmRKdgGKPf77Ywn9l/NS4zXqZ/iEYlIgdCdisI+0MnwB3PrsCC0zWtg==
-X-Received: by 2002:a05:600c:2:: with SMTP id g2mr4245334wmc.18.1582047315026;
-        Tue, 18 Feb 2020 09:35:15 -0800 (PST)
-Received: from ?IPv6:2a01:e34:ed2f:f020:59:7ef1:274e:1203? ([2a01:e34:ed2f:f020:59:7ef1:274e:1203])
-        by smtp.googlemail.com with ESMTPSA id z8sm2273263wrv.74.2020.02.18.09.35.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Feb 2020 09:35:14 -0800 (PST)
-Subject: Re: [RFC PATCH 03/11] cpuidle: Remove Calxeda driver
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
+        id S1726754AbgBRRs4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 12:48:56 -0500
+Received: from mail-eopbgr20053.outbound.protection.outlook.com ([40.107.2.53]:6917
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726411AbgBRRs4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 Feb 2020 12:48:56 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=D9QaAI+omociSr3ChtBl26TVZnCoi/Tvv0QatzpFrk8gIdH1VY2Hw1377OxnxMIOvehFoiL4LURradRPUWsZ5dBccXpBkKFhCWjNJh4voDGA1PxmerTIseKcCY8GKhaEac7XmpkM4qt1K+PQDDWRNJhaSdcCh+GMx3sySqK9o6+9ohcEen2JfLt+I7ypznB0HOdOQRRn4raBVY75oaZhNUJoxEdJwJ4wD/JKSLGHvtainjdhwjcbtKEmHAu3dNrwIX/eTyKJVP4/eFSQgnEEdkfN6siCYqpZerImQlEytmyr+WsUQmXMVBpPSDvm+tAyZjvUKVa5jdTef8t0SmmEmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yz0kYFuv82HKWo/vr8c/lofCgWDiBaeUg061wNbgyAc=;
+ b=MfTawPV1ZLbXWHv4u5yz2cwJ5Wl4VucRatdaJ/42RgsqbhWOF/QNWycvfX0nxO1P3KJwc3w3u6bRauchdFsWKLUX2bm1SDWM1qQfYfrs/bgoCmb5lLqDyFozYjSPWBBsPbaK7wjsu1LIQvihz2bLf2p86RPCOsYrqUZjjsJfsAxZTBa6uk14jxi7S8SmsjE2m3P5z9Jery4nvrOvm/dORDGLZprMqh97v+I1biY1LdwYh8C5aDk4TFt/8/1iDBM4xNjlUTDRWKhcv4z9qTCdZ5dU17nxl//Uwq+KxmwY/fzrBKcRjSyJI11Jt5L0aJkLTjTO/Qm2optHHWSS1sSoKw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Yz0kYFuv82HKWo/vr8c/lofCgWDiBaeUg061wNbgyAc=;
+ b=aiZ0YFN1jwJUhXvmCl+s4CkGvua9fJAbO1Ht1mQqKS1/Pi7V9+e1QlhaEKYnyt/QJ9Qi84aCVagnxhbX8dT756gW0BQc5Wx/eEKVh/kdL8i4Iz6CCXCyJBhw75q5BoiVZGDumPDdugih4WVRtRNrOSkCuDjXKKdQHC2wr8yrhsU=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB2990.eurprd04.prod.outlook.com (10.170.227.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.29; Tue, 18 Feb 2020 17:48:50 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2729.032; Tue, 18 Feb 2020
+ 17:48:50 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Sasha Levin <sashal@kernel.org>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Will Deacon <will@kernel.org>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-4-robh@kernel.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <17a4842d-7ecb-a9c8-6f1e-9295b9b5f00d@linaro.org>
-Date:   Tue, 18 Feb 2020 18:35:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <20200218171321.30990-4-robh@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Franck Lenormand <franck.lenormand@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:PIN CONTROLLER - FREESCALE" <linux-gpio@vger.kernel.org>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>
+Subject: Re: [PATCH] firmware: imx: Align imx SC msg structs to 4
+Thread-Topic: [PATCH] firmware: imx: Align imx SC msg structs to 4
+Thread-Index: AQHV4SGqSL+k7/w06UOL1nyEN5GYug==
+Date:   Tue, 18 Feb 2020 17:48:50 +0000
+Message-ID: <VI1PR04MB7023C1C536805130D9429E11EE110@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <3a8b6772a1edffdd7cdb54d6d50030b03ba0bebb.1581455751.git.leonard.crestez@nxp.com>
+ <20200217062129.GB6790@dragon>
+ <VI1PR04MB7023CDE9E4AD086F2E926495EE160@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <20200218091831.GB6075@dragon>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7ba8ee1f-efb6-4296-5133-08d7b49ad049
+x-ms-traffictypediagnostic: VI1PR04MB2990:|VI1PR04MB2990:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB299084688AF8A783DDD2E122EE110@VI1PR04MB2990.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 031763BCAF
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(39860400002)(366004)(136003)(376002)(189003)(199004)(64756008)(66556008)(66446008)(71200400001)(66946007)(91956017)(66476007)(76116006)(5660300002)(8676002)(186003)(4326008)(8936002)(53546011)(6506007)(81156014)(81166006)(52536014)(54906003)(2906002)(9686003)(55016002)(478600001)(44832011)(316002)(7416002)(110136005)(86362001)(33656002)(7696005)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB2990;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: WVc9fxQq0pl+JrAmh5hTaBssm/tHBO7aS2m4iQMF0g5Xh3r2+Q+pCPVICTBsxtRDd0W9rmq7cJQ8q3vaxMJl2+rOHfZzXvTKwZWI00KPdWsjcPq9A6rLMfOCb1SO8dKELIBK1JXZk6SGUbDjtu45QMBL/l8gDS1922cmu/RdJ+rEomsM70OW+b6paR/GxwVyi1Q/WXXJS4EqCK4g66TclZvb5qO1eCkLQJV+WjMb59Q2JkG6p65OxPFs+XDayr3Yz2r1WX6a7+0YaBPUnIvKFxCX74TNiEzonaQ1S8po3rE2fz1vuiF2MH2zFNQzq8Ee5v6G64h2EckRtzc/u/3QMwZme5JRcniGioUne7EYw908MV64zmqlVPndTQnSb6XOBoNR6c6jSu3KBgFmtOUvxOQQyLlxYDFhhcjWh5d+sa1KBbYWkwa4GklA2K4+gDa2
+x-ms-exchange-antispam-messagedata: VLY1Yd3N5w8Rzyg+E8T6q6K4CNq7YSgNND+PGw2iEF389IqRTEYqVGrgdWluDH2bre9WtF8ss5j0232nquxZhD8A5VaX7GKR83MnahZAtJVO2zJ3a5JJwTIrux87UIT7rszswB3zdnUDq/tzWi3FCg==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba8ee1f-efb6-4296-5133-08d7b49ad049
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2020 17:48:50.7787
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: h/i72ZIVcUjXCbdcvDeuOsH3O+B2b5CMNXBRG+d24zhTN2uC9Svc9WJnm35A45CtDMxJNQ9mdOC8iiLhNMFwKw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB2990
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/02/2020 18:13, Rob Herring wrote:
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-
-> ---
-> Do not apply yet.
-> 
->  drivers/cpuidle/Kconfig.arm       |  7 ---
->  drivers/cpuidle/Makefile          |  1 -
->  drivers/cpuidle/cpuidle-calxeda.c | 72 -------------------------------
->  3 files changed, 80 deletions(-)
->  delete mode 100644 drivers/cpuidle/cpuidle-calxeda.c
-> 
-> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.arm
-> index 62272ecfa771..c2830d2ed44a 100644
-> --- a/drivers/cpuidle/Kconfig.arm
-> +++ b/drivers/cpuidle/Kconfig.arm
-> @@ -42,13 +42,6 @@ config ARM_CLPS711X_CPUIDLE
->  	help
->  	  Select this to enable cpuidle on Cirrus Logic CLPS711X SOCs.
-> 
-> -config ARM_HIGHBANK_CPUIDLE
-> -	bool "CPU Idle Driver for Calxeda processors"
-> -	depends on ARM_PSCI && !ARM64
-> -	select ARM_CPU_SUSPEND
-> -	help
-> -	  Select this to enable cpuidle on Calxeda processors.
-> -
->  config ARM_KIRKWOOD_CPUIDLE
->  	bool "CPU Idle Driver for Marvell Kirkwood SoCs"
->  	depends on (MACH_KIRKWOOD || COMPILE_TEST) && !ARM64
-> diff --git a/drivers/cpuidle/Makefile b/drivers/cpuidle/Makefile
-> index cc8c769d7fa9..eee5f276edf7 100644
-> --- a/drivers/cpuidle/Makefile
-> +++ b/drivers/cpuidle/Makefile
-> @@ -14,7 +14,6 @@ obj-$(CONFIG_HALTPOLL_CPUIDLE)		  += cpuidle-haltpoll.o
->  obj-$(CONFIG_ARM_MVEBU_V7_CPUIDLE) += cpuidle-mvebu-v7.o
->  obj-$(CONFIG_ARM_BIG_LITTLE_CPUIDLE)	+= cpuidle-big_little.o
->  obj-$(CONFIG_ARM_CLPS711X_CPUIDLE)	+= cpuidle-clps711x.o
-> -obj-$(CONFIG_ARM_HIGHBANK_CPUIDLE)	+= cpuidle-calxeda.o
->  obj-$(CONFIG_ARM_KIRKWOOD_CPUIDLE)	+= cpuidle-kirkwood.o
->  obj-$(CONFIG_ARM_ZYNQ_CPUIDLE)		+= cpuidle-zynq.o
->  obj-$(CONFIG_ARM_U8500_CPUIDLE)         += cpuidle-ux500.o
-> diff --git a/drivers/cpuidle/cpuidle-calxeda.c b/drivers/cpuidle/cpuidle-calxeda.c
-> deleted file mode 100644
-> index b17d9a8418b0..000000000000
-> --- a/drivers/cpuidle/cpuidle-calxeda.c
-> +++ /dev/null
-> @@ -1,72 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * Copyright 2012 Calxeda, Inc.
-> - *
-> - * Based on arch/arm/plat-mxc/cpuidle.c: #v3.7
-> - * Copyright 2012 Freescale Semiconductor, Inc.
-> - * Copyright 2012 Linaro Ltd.
-> - *
-> - * Maintainer: Rob Herring <rob.herring@calxeda.com>
-> - */
-> -
-> -#include <linux/cpuidle.h>
-> -#include <linux/cpu_pm.h>
-> -#include <linux/init.h>
-> -#include <linux/mm.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/psci.h>
-> -
-> -#include <asm/cpuidle.h>
-> -#include <asm/suspend.h>
-> -
-> -#include <uapi/linux/psci.h>
-> -
-> -#define CALXEDA_IDLE_PARAM \
-> -	((0 << PSCI_0_2_POWER_STATE_ID_SHIFT) | \
-> -	 (0 << PSCI_0_2_POWER_STATE_AFFL_SHIFT) | \
-> -	 (PSCI_POWER_STATE_TYPE_POWER_DOWN << PSCI_0_2_POWER_STATE_TYPE_SHIFT))
-> -
-> -static int calxeda_idle_finish(unsigned long val)
-> -{
-> -	return psci_ops.cpu_suspend(CALXEDA_IDLE_PARAM, __pa(cpu_resume));
-> -}
-> -
-> -static int calxeda_pwrdown_idle(struct cpuidle_device *dev,
-> -				struct cpuidle_driver *drv,
-> -				int index)
-> -{
-> -	cpu_pm_enter();
-> -	cpu_suspend(0, calxeda_idle_finish);
-> -	cpu_pm_exit();
-> -
-> -	return index;
-> -}
-> -
-> -static struct cpuidle_driver calxeda_idle_driver = {
-> -	.name = "calxeda_idle",
-> -	.states = {
-> -		ARM_CPUIDLE_WFI_STATE,
-> -		{
-> -			.name = "PG",
-> -			.desc = "Power Gate",
-> -			.exit_latency = 30,
-> -			.power_usage = 50,
-> -			.target_residency = 200,
-> -			.enter = calxeda_pwrdown_idle,
-> -		},
-> -	},
-> -	.state_count = 2,
-> -};
-> -
-> -static int calxeda_cpuidle_probe(struct platform_device *pdev)
-> -{
-> -	return cpuidle_register(&calxeda_idle_driver, NULL);
-> -}
-> -
-> -static struct platform_driver calxeda_cpuidle_plat_driver = {
-> -        .driver = {
-> -                .name = "cpuidle-calxeda",
-> -        },
-> -        .probe = calxeda_cpuidle_probe,
-> -};
-> -builtin_platform_driver(calxeda_cpuidle_plat_driver);
-> --
-> 2.20.1
-> 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+On 18.02.2020 11:18, Shawn Guo wrote:=0A=
+> On Mon, Feb 17, 2020 at 08:37:45PM +0000, Leonard Crestez wrote:=0A=
+>> On 17.02.2020 08:21, Shawn Guo wrote:=0A=
+>>> On Tue, Feb 11, 2020 at 11:24:33PM +0200, Leonard Crestez wrote:=0A=
+>>>> The imx SC api strongly assumes that messages are composed out of=0A=
+>>>> 4-bytes words but some of our message structs have sizeof "6" and "7".=
+=0A=
+>>>>=0A=
+>>>> This produces many oopses with CONFIG_KASAN=3Dy:=0A=
+>>>>=0A=
+>>>> 	BUG: KASAN: stack-out-of-bounds in imx_mu_send_data+0x108/0x1f0=0A=
+>>>>=0A=
+>>>> It shouldn't cause an issues in normal use because these structs are=
+=0A=
+>>>> always allocated on the stack.=0A=
+>>>>=0A=
+>>>> Cc: stable@vger.kernel.org=0A=
+>>>=0A=
+>>> Should we have a fixes tag and send it for -rc?=0A=
+>>=0A=
+>> I haven't check but this would probably have to be split into multiple=
+=0A=
+>> patches because the structs were not added all at once.=0A=
+> =0A=
+> Or maybe we can just drop the stable tag, as it addresses a corner=0A=
+> case issue which could concern very few people?=0A=
+=0A=
+I think that "kernel does not boot with KASAN=3Dy" is an issue worth fixing=
+.=0A=
+=0A=
+I will split and resend with appropriate Fixes: tags.=0A=
+=0A=
+It seems likely that this will be picked up for -stable anyway via =0A=
+Sasha's automation scripts and those scripts benefit from Fixes: tags.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
+=0A=
