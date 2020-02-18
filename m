@@ -2,186 +2,266 @@ Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.2 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38165C34031
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 07:45:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55A3C34033
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 09:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ABD624125
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 07:45:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 969D324654
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 09:05:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="uXc+7s1r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726114AbgBRHpq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 02:45:46 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48770 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbgBRHpq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 02:45:46 -0500
-Received: from [IPv6:2a00:5f00:102:0:dc20:7fff:fe92:d2bb] (unknown [IPv6:2a00:5f00:102:0:dc20:7fff:fe92:d2bb])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: gtucker)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0678328DB37;
-        Tue, 18 Feb 2020 07:45:43 +0000 (GMT)
-Subject: Re: next/master bisection: baseline.login on
- sun8i-h2-plus-orangepi-zero
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-References: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com>
-Cc:     broonie@kernel.org, tomeu.vizoso@collabora.com,
+        id S1726193AbgBRJFt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 04:05:49 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34086 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726264AbgBRJFt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 04:05:49 -0500
+Received: by mail-wr1-f65.google.com with SMTP id n10so20965246wrm.1
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2020 01:05:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=ZQOUNLnI2259PEgDQeFnGl4MBwAdHmsWL1wSexCinM4=;
+        b=uXc+7s1riFQCb+A5ws5EF3BokKj3HF5Ic7fu+a6RWMuGmjkBH2YIJ5d/XCq/0hbPe8
+         ZdV/SnkczBOx9DNcZDRkEG62+CVv+Ul71XEunTqjDbZba1X8yaPVIXjo8ZcC2X6TZwzV
+         zJdM5EVbamvY8CL1TmWChxN3kC2d7sJcmT57hcBw7iuT3weuEUHczpA/dEa7J8NHyLSj
+         3FfbhHrvX8TMlqVUm32ZicYOl4h6wkXdN6dPRY1WZRglffWh8F9fo3uwGhstowwATguW
+         GlhpbGhH7eQOnT6OVc3ya1iec+VOHF2fM96YAJpoNJzX6sCVFkDt+WAG1J5VIhjCy3l/
+         6FBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=ZQOUNLnI2259PEgDQeFnGl4MBwAdHmsWL1wSexCinM4=;
+        b=UhJkMsiF6RNyfMDP4zMNWGG3DokfsXXi6py7EDrzEKlOgexgSe1ROE32wV3CuZX2i9
+         /18nyD4G2SnA6VCn6v4wv4U4jmEZODgxTiOBBho5jPbvooso8NugzgOoZi9W7aJ2Eyks
+         vCAyk9scxnQ5u84+erXwGjkQcNnvafAHM3dwZxVCwEbGTCKB6cEz9uos3Z+vGHLwkjir
+         DKp9PRS4BabQims7IVOo5YuJxL4GBw1ZBik5jDuAZcbo8ftzOqIu+vXDZ7Dc4fiOQtXS
+         SLe/8xEs+MXzDik4imkG4Qh3aZGirjlVlh5P6AuJbZxqBSQNUwJw4/sSVRfwLwNV3wVN
+         VeLA==
+X-Gm-Message-State: APjAAAXHq8e4JiPbdGhmult5PKcAVy20hFF7e4fchuXI1eJDSDAya4vi
+        p0OtINcAu+eUdDniQ/52/4LA3g==
+X-Google-Smtp-Source: APXvYqw7gVv24LXO4yo+TKhY0kNEn11cDs1o6RHPmwxTKhpnXMxlZFCrF93NRIGzbtr+nGTfG9euuQ==
+X-Received: by 2002:a5d:5647:: with SMTP id j7mr27755061wrw.265.1582016745546;
+        Tue, 18 Feb 2020 01:05:45 -0800 (PST)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id w7sm2722224wmi.9.2020.02.18.01.05.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Feb 2020 01:05:44 -0800 (PST)
+References: <20200120034937.128600-1-jian.hu@amlogic.com> <20200120034937.128600-3-jian.hu@amlogic.com> <1jftfq7ir8.fsf@starbuckisacylon.baylibre.com> <ce7d406e-b5bd-44c8-84fb-5edd3b3ffbce@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        enric.balletbo@collabora.com, khilman@baylibre.com,
-        mgalka@collabora.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Guillaume Tucker <guillaume.tucker@collabora.com>
-Message-ID: <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
-Date:   Tue, 18 Feb 2020 07:45:41 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 2/5] clk: meson: add support for A1 PLL clock ops
+In-reply-to: <ce7d406e-b5bd-44c8-84fb-5edd3b3ffbce@amlogic.com>
+Date:   Tue, 18 Feb 2020 10:05:43 +0100
+Message-ID: <1jd0ac5kpk.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
 
-Please see the bisection report below about a boot failure.
+On Mon 10 Feb 2020 at 07:11, Jian Hu <jian.hu@amlogic.com> wrote:
 
-Reports aren't automatically sent to the public while we're
-trialing new bisection features on kernelci.org but this one
-looks valid.
+> Hi Jerome
+>
+> Thanks for your suggestions.
+>
+> On 2020/2/4 18:24, Jerome Brunet wrote:
+>>
+>> On Mon 20 Jan 2020 at 04:49, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>> Compared with the previous SoCs, self-adaption current module
+>>> is newly added for A1, and there is no reset parm except the
+>>> fixed pll. In A1 PLL, the PLL enable sequence is different, using
+>>> the new power-on sequence to enable the PLL.
+>>
+>> Things are getting clearer thanks to Martin's suggestions and I can
+>> understand what your driver is doing now
+>>
+>> However, I still have a problem with the fact that 2 different pll types
+>> are getting intertwined in this driver. Parameters mandatory to one is
+>> made optional to the other. Nothing clearly shows which needs what and
+>> the combinatorial are quickly growing.
+>>
+>> Apparently the only real difference is in enable/disable, So I would
+>> prefer if the a1 had dedicated function for these ops.
+>>
+>> I suppose you'll have to submit clk_hw_enable() and clk_hw_disable()
+>> to the framework to call the appropriate ops dependind on the SoC.
+>>
+> I am confused here.
+> What does clk_hw_is_enabled/clk_hw_enable/clk_hw_disable use here?
 
-There's nothing in the serial console log, probably because it's
-crashing too early during boot.  I'm not sure if other platforms
-on kernelci.org were hit by this in the same way, it's tricky to
-tell partly because there is no output.  It should possible to
-run it again with earlyprintk enabled in BayLibre's test lab
-though.
+I'm asking you to make different callback for .enable() and .disable().
+The .set_rate() callback of this driver needs to turn off and on the
+clock, so it needs to call the appropriate one.
 
-Thanks,
-Guillaume
+To do so, you should go through a clk_hw_xxxxx() function.
 
+>
+> clk_hw_is_enabled is intend to check a parm's existence? But
+> clk_hw_is_enabled which is existed in CCF to check a PLL is locked or
+> not. Maybe I understand wrong about your suggestions.
+>
+> Could you list a example for clk_hw_enable and clk_hw_disable function
+> implementation?
 
-On 18/02/2020 02:14, kernelci.org bot wrote:
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> * This automated bisection report was sent to you on the basis  *
-> * that you may be involved with the breaking commit it has      *
-> * found.  No manual investigation has been done to verify it,   *
-> * and the root cause of the problem may be somewhere else.      *
-> *                                                               *
-> * If you do send a fix, please include this trailer:            *
-> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-> *                                                               *
-> * Hope this helps!                                              *
-> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-> 
-> next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
-> 
-> Summary:
->   Start:      c25a951c50dc Add linux-next specific files for 20200217
->   Plain log:  https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.txt
->   HTML log:   https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.html
->   Result:     2760878662a2 clk: Bail out when calculating phase fails during clk registration
-> 
-> Checks:
->   revert:     PASS
->   verify:     PASS
-> 
-> Parameters:
->   Tree:       next
->   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->   Branch:     master
->   Target:     sun8i-h2-plus-orangepi-zero
->   CPU arch:   arm
->   Lab:        lab-baylibre
->   Compiler:   gcc-8
->   Config:     multi_v7_defconfig
->   Test case:  baseline.login
-> 
-> Breaking commit found:
-> 
-> -------------------------------------------------------------------------------
-> commit 2760878662a290ac57cff8a5a8d8bda8f4dddc37
-> Author: Stephen Boyd <sboyd@kernel.org>
-> Date:   Wed Feb 5 15:28:02 2020 -0800
-> 
->     clk: Bail out when calculating phase fails during clk registration
->     
->     Bail out of clk registration if we fail to get the phase for a clk that
->     has a clk_ops::get_phase() callback. Print a warning too so that driver
->     authors can easily figure out that some clk is unable to read back phase
->     information at boot.
->     
->     Cc: Douglas Anderson <dianders@chromium.org>
->     Cc: Heiko Stuebner <heiko@sntech.de>
->     Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
->     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
->     Link: https://lkml.kernel.org/r/20200205232802.29184-5-sboyd@kernel.org
->     Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index dc8bdfbd6a0c..ed1797857bae 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
->  	 * Since a phase is by definition relative to its parent, just
->  	 * query the current clock phase, or just assume it's in phase.
->  	 */
-> -	clk_core_get_phase(core);
-> +	ret = clk_core_get_phase(core);
-> +	if (ret < 0) {
-> +		pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
-> +			core->name);
-> +		goto out;
-> +	}
->  
->  	/*
->  	 * Set clk's duty cycle.
-> -------------------------------------------------------------------------------
-> 
-> 
-> Git bisection log:
-> 
-> -------------------------------------------------------------------------------
-> git bisect start
-> # good: [11a48a5a18c63fd7621bb050228cebf13566e4d8] Linux 5.6-rc2
-> git bisect good 11a48a5a18c63fd7621bb050228cebf13566e4d8
-> # bad: [c25a951c50dca1da4a449a985a9debd82dc18573] Add linux-next specific files for 20200217
-> git bisect bad c25a951c50dca1da4a449a985a9debd82dc18573
-> # bad: [5859c179b7ed01050641bd565959a2c4571923da] Merge remote-tracking branch 'swiotlb/linux-next'
-> git bisect bad 5859c179b7ed01050641bd565959a2c4571923da
-> # bad: [ecf5a6e1ec22ecbe1c9086f40130188f31e37a38] Merge remote-tracking branch 'xtensa/xtensa-for-next'
-> git bisect bad ecf5a6e1ec22ecbe1c9086f40130188f31e37a38
-> # good: [e475ff54b7d62c550768ce36617e8c8fec72cfc0] Merge remote-tracking branch 'reset/reset/next'
-> git bisect good e475ff54b7d62c550768ce36617e8c8fec72cfc0
-> # bad: [9e86f8cc2d2f464e27c172127e02641fe77eccea] Merge remote-tracking branch 'sh/sh-next'
-> git bisect bad 9e86f8cc2d2f464e27c172127e02641fe77eccea
-> # good: [1752d66d86600e9cb508612ded6984774b72321d] Merge remote-tracking branch 'tegra/for-next'
-> git bisect good 1752d66d86600e9cb508612ded6984774b72321d
-> # bad: [0ecb83df935b058a2c3727716a7fab539dbaba88] Merge remote-tracking branch 'csky/linux-next'
-> git bisect bad 0ecb83df935b058a2c3727716a7fab539dbaba88
-> # bad: [898fe3af935a45236cbfd053e79ae01506ae7aa2] Merge branch 'clk-formatting' into clk-next
-> git bisect bad 898fe3af935a45236cbfd053e79ae01506ae7aa2
-> # bad: [0d426990beac93127a4ee37cc056fce928466f7d] Merge branch 'clk-phase-errors' into clk-next
-> git bisect bad 0d426990beac93127a4ee37cc056fce928466f7d
-> # good: [6e37add6b938941f755928159ede3c9855307066] Merge branch 'clk-qcom' into clk-next
-> git bisect good 6e37add6b938941f755928159ede3c9855307066
-> # good: [5d98429bbebc5dc683ea6919d9b9e6e83e8c8867] Merge branch 'clk-fixes' into clk-next
-> git bisect good 5d98429bbebc5dc683ea6919d9b9e6e83e8c8867
-> # good: [768a5d4f63c29d3bed5abb3c187312fcf623fa05] clk: Use 'parent' to shorten lines in __clk_core_init()
-> git bisect good 768a5d4f63c29d3bed5abb3c187312fcf623fa05
-> # bad: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
-> git bisect bad 2760878662a290ac57cff8a5a8d8bda8f4dddc37
-> # good: [0daa376d832f4ce585f153efee4233b52fa3fe58] clk: Move rate and accuracy recalc to mostly consumer APIs
-> git bisect good 0daa376d832f4ce585f153efee4233b52fa3fe58
-> # first bad commit: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
-> -------------------------------------------------------------------------------
-> 
+drivers/clk/clk.c:523 : clk_hw_is_enabled()
+
+clk_hw_enable() and clk_hw_disable() so you'll need to implement these
+one and submit them.
+
+>>>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>> ---
+>>>   drivers/clk/meson/clk-pll.c | 47 +++++++++++++++++++++++++++++++------
+>>>   drivers/clk/meson/clk-pll.h |  2 ++
+>>>   2 files changed, 42 insertions(+), 7 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>>> index ddb1e5634739..10926291440f 100644
+>>> --- a/drivers/clk/meson/clk-pll.c
+>>> +++ b/drivers/clk/meson/clk-pll.c
+>>> @@ -283,10 +283,14 @@ static void meson_clk_pll_init(struct clk_hw *hw)
+>>>   	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>>>     	if (pll->init_count) {
+>>> -		meson_parm_write(clk->map, &pll->rst, 1);
+>>> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +			meson_parm_write(clk->map, &pll->rst, 1);
+>>> +
+>>
+>> replace by
+>>          enabled = clk_hw_is_enabled(hw)
+>>          if (enabled)
+>>             clk_hw_disable(hw)
+>>
+> clk_hw_is_enabled here is used to check 'pll->rst'?
+>>>   		regmap_multi_reg_write(clk->map, pll->init_regs,
+>>>   				       pll->init_count);
+>>> -		meson_parm_write(clk->map, &pll->rst, 0);
+>>> +
+>>> +		if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +			meson_parm_write(clk->map, &pll->rst, 0);
+>>
+>>         /* restore if necessary */
+>>         if (enabled)
+>>            clk_hw_enable(hw)
+>>
+>>>   	}
+>>>   }
+>>>   @@ -295,8 +299,11 @@ static int meson_clk_pll_is_enabled(struct clk_hw
+>>> *hw)
+>>>   	struct clk_regmap *clk = to_clk_regmap(hw);
+>>>   	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>>>   -	if (meson_parm_read(clk->map, &pll->rst) ||
+>>> -	    !meson_parm_read(clk->map, &pll->en) ||
+>>> +	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+>>> +	    meson_parm_read(clk->map, &pll->rst))
+>>> +		return 0;
+>>> +
+>>> +	if (!meson_parm_read(clk->map, &pll->en) ||
+>>>   	    !meson_parm_read(clk->map, &pll->l))
+>>>   		return 0;
+>>
+>> I suppose the pll can't be locked if it was in reset, so we could drop
+>> the check on `rst` entirely to simplify the function
+>>
+> OK, I will drop 'rst' check.
+>>>   @@ -323,13 +330,34 @@ static int meson_clk_pll_enable(struct clk_hw
+>>> *hw)
+>>>   		return 0;
+>>>     	/* Make sure the pll is in reset */
+>>> -	meson_parm_write(clk->map, &pll->rst, 1);
+>>> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +		meson_parm_write(clk->map, &pll->rst, 1);
+>>>     	/* Enable the pll */
+>>>   	meson_parm_write(clk->map, &pll->en, 1);
+>>>     	/* Take the pll out reset */
+>>> -	meson_parm_write(clk->map, &pll->rst, 0);
+>>> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +		meson_parm_write(clk->map, &pll->rst, 0);
+>>> +
+>>> +	/*
+>>> +	 * Compared with the previous SoCs, self-adaption current module
+>>> +	 * is newly added for A1, keep the new power-on sequence to enable the
+>>> +	 * PLL. The sequence is:
+>>> +	 * 1. enable the pll, delay for 10us
+>>> +	 * 2. enable the pll self-adaption current module, delay for 40us
+>>> +	 * 3. enable the lock detect module
+>>> +	 */
+>>> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+>>> +		udelay(10);
+>>> +		meson_parm_write(clk->map, &pll->current_en, 1);
+>>> +		udelay(40);
+>>> +	};
+>>> +
+>>> +	if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
+>>> +		meson_parm_write(clk->map, &pll->l_detect, 1);
+>>> +		meson_parm_write(clk->map, &pll->l_detect, 0);
+>>> +	}
+>>>     	if (meson_clk_pll_wait_lock(hw))
+>>>   		return -EIO;
+>>> @@ -343,10 +371,15 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
+>>>   	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+>>>     	/* Put the pll is in reset */
+>>> -	meson_parm_write(clk->map, &pll->rst, 1);
+>>> +	if (MESON_PARM_APPLICABLE(&pll->rst))
+>>> +		meson_parm_write(clk->map, &pll->rst, 1);
+>>>     	/* Disable the pll */
+>>>   	meson_parm_write(clk->map, &pll->en, 0);
+>>> +
+>>> +	/* Disable PLL internal self-adaption current module */
+>>> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
+>>> +		meson_parm_write(clk->map, &pll->current_en, 0);
+>>>   }
+>>
+>> With the above clarified, it should be easy to properly split the
+>> functions between the legacy type and the a1 type.
+>>
+>> You'll need to update meson_clk_pll_set_rate() to call
+>>   - clk_hw_is_enabled()
+>>   - clk_hw_enable() and clk_hw_disable() (again, you'll need to add
+>>   those in the framework first)
+>>
+>>>     static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long
+>>> rate,
+>>> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+>>> index 367efd0f6410..a2228c0fdce5 100644
+>>> --- a/drivers/clk/meson/clk-pll.h
+>>> +++ b/drivers/clk/meson/clk-pll.h
+>>> @@ -36,6 +36,8 @@ struct meson_clk_pll_data {
+>>>   	struct parm frac;
+>>>   	struct parm l;
+>>>   	struct parm rst;
+>>> +	struct parm current_en;
+>>> +	struct parm l_detect;
+>>>   	const struct reg_sequence *init_regs;
+>>>   	unsigned int init_count;
+>>>   	const struct pll_params_table *table;
+>>
+>> .
+>>
 
