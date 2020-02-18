@@ -2,102 +2,186 @@ Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A75FEC34031
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 04:12:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38165C34031
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 07:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD4A20836
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 04:12:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="N6WnfoTK"
+	by mail.kernel.org (Postfix) with ESMTP id 0ABD624125
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 07:45:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726261AbgBREM1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Feb 2020 23:12:27 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:55043 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726266AbgBREM0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Feb 2020 23:12:26 -0500
-X-UUID: cdb39c2320e145139c693c85c5567541-20200218
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=sC1dH8d6p1Sb7KU8Fpm99duFBOtY/J9QQu2NqxSwvKI=;
-        b=N6WnfoTKYUPY37LiLGDgStQon8O6ENar205hqs12I6Qs6XflcAJO9zhzPn7ct69epFnjRRxfxi5TNZwEBEyiTpn5UZD3TdJpA5pQ7rGHarmAe0SybGs8tQVoyIaYKe4Zp7xCpGdKdegUXCXDHouQbMYbokyqffS0ujhSWxpXdqY=;
-X-UUID: cdb39c2320e145139c693c85c5567541-20200218
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <macpaul.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 889799796; Tue, 18 Feb 2020 12:12:20 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 18 Feb 2020 12:09:51 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 18 Feb 2020 12:11:50 +0800
-Message-ID: <1581999138.19053.21.camel@mtkswgap22>
-Subject: Re: [PATCH v7 0/7] Add basic SoC support for mt6765
-From:   Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        "Evan Green" <evgreen@chromium.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        "Joerg Roedel" <jroedel@suse.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        "Sean Wang" <Sean.Wang@mediatek.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Will Deacon <will@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Mediatek WSD Upstream <wsd_upstream@mediatek.com>
-Date:   Tue, 18 Feb 2020 12:12:18 +0800
-In-Reply-To: <bf5e1a64-1aaa-e1e0-00bf-c0e750dd27ed@gmail.com>
-References: <1581067250-12744-1-git-send-email-macpaul.lin@mediatek.com>
-         <158155109134.184098.10100489231587620578@swboyd.mtv.corp.google.com>
-         <bf5e1a64-1aaa-e1e0-00bf-c0e750dd27ed@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726114AbgBRHpq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 02:45:46 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48770 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbgBRHpq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 02:45:46 -0500
+Received: from [IPv6:2a00:5f00:102:0:dc20:7fff:fe92:d2bb] (unknown [IPv6:2a00:5f00:102:0:dc20:7fff:fe92:d2bb])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: gtucker)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 0678328DB37;
+        Tue, 18 Feb 2020 07:45:43 +0000 (GMT)
+Subject: Re: next/master bisection: baseline.login on
+ sun8i-h2-plus-orangepi-zero
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>
+References: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com>
+Cc:     broonie@kernel.org, tomeu.vizoso@collabora.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        mgalka@collabora.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
+Date:   Tue, 18 Feb 2020 07:45:41 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 84BB3C13CA23C8AB9C9ED080959C0C3F21F3FB9B8B07A59D24DCEF47D5C4BF1C2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gU2F0LCAyMDIwLTAyLTE1IGF0IDAyOjQ3ICswMTAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
-Og0KDQpIaSBTdGVwaGVuLA0KDQo+IEhpIFN0ZXBoZW4sDQo+IA0KPiBPbiAxMy8wMi8yMDIwIDAw
-OjQ0LCBTdGVwaGVuIEJveWQgd3JvdGU6DQo+ID4gUXVvdGluZyBNYWNwYXVsIExpbiAoMjAyMC0w
-Mi0wNyAwMToyMDo0MykNCj4gPj4gVGhpcyBwYXRjaCBhZGRzIGJhc2ljIFNvQyBzdXBwb3J0IGZv
-ciBNZWRpYXRlaydzIG5ldyA4LWNvcmUgU29DLA0KPiA+PiBNVDY3NjUsIHdoaWNoIGlzIG1haW5s
-eSBmb3Igc21hcnRwaG9uZSBhcHBsaWNhdGlvbi4NCj4gPiANCj4gPiBDbG9jayBwYXRjaGVzIGxv
-b2sgT0sgdG8gbWUuIENhbiB5b3UgcmVzZW5kIHRoZW0gd2l0aG91dCB0aGUgZGVmY29uZmlnDQo+
-ID4gYW5kIGR0cyBwYXRjaGVzIGFuZCBhZGRyZXNzIE1hdHRoaWFzJyBxdWVzdGlvbj8NCj4gPiAN
-Cj4gDQo+IEknbSBub3Qgc3VyZSBpZiBJIHVuZGVyc3RhbmQgeW91LiBEbyB5b3UgcHJlZmVyIHRv
-IGhhdmUganVzdCB0aGUgY2xvY2sgcGFydHMNCj4gc2VuZCBhcyBhbiBpbmRlcGVuZGVudCB2ZXJz
-aW9uIHNvIHRoYXQgeW91IGNhbiBlYXNpZXIgYXBwbHkgdGhlIHBhdGNoZXMgdG8geW91cg0KPiB0
-cmVlPw0KPiANCj4gUGF0Y2ggMiwgNSwgNiBhbmQgNyBzaG91bGQgZ28gdGhyb3VnaCBteSB0cmVl
-Lg0KPiBTbyBkbyB5b3Ugd2FudCBhIHNlcmllcyB3aXRoIHBhdGNoZXMgMSwgMyBhbmQgND8NCj4g
-DQo+IFJlZ2FyZHMsDQo+IE1hdHRoaWFzDQoNCll1cCwgSSd2ZSBnb3QgYSBsaXR0bGUgYml0IGNv
-bmZ1c2VkLCB0b28uDQpTaG91bGQgSSBzZXBhcmF0ZSBhbmQgcmVzZW5kIHRoZXNlIHBhdGNoZXMg
-aW50byAyIHBhdGNoIHNldHM/DQpUaGUgMXN0IHBhdGNoIHNldCBpbmNsdWRlcyAjMSwgIzMsIGFu
-ZCAjND8NCkFuZCB0aGUgb3RoZXIgaW5jbHVkZXMgIzIsICM1LCAjNiwgYW5kICM3Pw0KDQpSZWdh
-cmRzLA0KTWFjcGF1bCBMaW4NCg0K
+Hi Stephen,
+
+Please see the bisection report below about a boot failure.
+
+Reports aren't automatically sent to the public while we're
+trialing new bisection features on kernelci.org but this one
+looks valid.
+
+There's nothing in the serial console log, probably because it's
+crashing too early during boot.  I'm not sure if other platforms
+on kernelci.org were hit by this in the same way, it's tricky to
+tell partly because there is no output.  It should possible to
+run it again with earlyprintk enabled in BayLibre's test lab
+though.
+
+Thanks,
+Guillaume
+
+
+On 18/02/2020 02:14, kernelci.org bot wrote:
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> 
+> next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+> 
+> Summary:
+>   Start:      c25a951c50dc Add linux-next specific files for 20200217
+>   Plain log:  https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.txt
+>   HTML log:   https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.html
+>   Result:     2760878662a2 clk: Bail out when calculating phase fails during clk registration
+> 
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       next
+>   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   Branch:     master
+>   Target:     sun8i-h2-plus-orangepi-zero
+>   CPU arch:   arm
+>   Lab:        lab-baylibre
+>   Compiler:   gcc-8
+>   Config:     multi_v7_defconfig
+>   Test case:  baseline.login
+> 
+> Breaking commit found:
+> 
+> -------------------------------------------------------------------------------
+> commit 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+> Author: Stephen Boyd <sboyd@kernel.org>
+> Date:   Wed Feb 5 15:28:02 2020 -0800
+> 
+>     clk: Bail out when calculating phase fails during clk registration
+>     
+>     Bail out of clk registration if we fail to get the phase for a clk that
+>     has a clk_ops::get_phase() callback. Print a warning too so that driver
+>     authors can easily figure out that some clk is unable to read back phase
+>     information at boot.
+>     
+>     Cc: Douglas Anderson <dianders@chromium.org>
+>     Cc: Heiko Stuebner <heiko@sntech.de>
+>     Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+>     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>     Link: https://lkml.kernel.org/r/20200205232802.29184-5-sboyd@kernel.org
+>     Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index dc8bdfbd6a0c..ed1797857bae 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+>  	 * Since a phase is by definition relative to its parent, just
+>  	 * query the current clock phase, or just assume it's in phase.
+>  	 */
+> -	clk_core_get_phase(core);
+> +	ret = clk_core_get_phase(core);
+> +	if (ret < 0) {
+> +		pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
+> +			core->name);
+> +		goto out;
+> +	}
+>  
+>  	/*
+>  	 * Set clk's duty cycle.
+> -------------------------------------------------------------------------------
+> 
+> 
+> Git bisection log:
+> 
+> -------------------------------------------------------------------------------
+> git bisect start
+> # good: [11a48a5a18c63fd7621bb050228cebf13566e4d8] Linux 5.6-rc2
+> git bisect good 11a48a5a18c63fd7621bb050228cebf13566e4d8
+> # bad: [c25a951c50dca1da4a449a985a9debd82dc18573] Add linux-next specific files for 20200217
+> git bisect bad c25a951c50dca1da4a449a985a9debd82dc18573
+> # bad: [5859c179b7ed01050641bd565959a2c4571923da] Merge remote-tracking branch 'swiotlb/linux-next'
+> git bisect bad 5859c179b7ed01050641bd565959a2c4571923da
+> # bad: [ecf5a6e1ec22ecbe1c9086f40130188f31e37a38] Merge remote-tracking branch 'xtensa/xtensa-for-next'
+> git bisect bad ecf5a6e1ec22ecbe1c9086f40130188f31e37a38
+> # good: [e475ff54b7d62c550768ce36617e8c8fec72cfc0] Merge remote-tracking branch 'reset/reset/next'
+> git bisect good e475ff54b7d62c550768ce36617e8c8fec72cfc0
+> # bad: [9e86f8cc2d2f464e27c172127e02641fe77eccea] Merge remote-tracking branch 'sh/sh-next'
+> git bisect bad 9e86f8cc2d2f464e27c172127e02641fe77eccea
+> # good: [1752d66d86600e9cb508612ded6984774b72321d] Merge remote-tracking branch 'tegra/for-next'
+> git bisect good 1752d66d86600e9cb508612ded6984774b72321d
+> # bad: [0ecb83df935b058a2c3727716a7fab539dbaba88] Merge remote-tracking branch 'csky/linux-next'
+> git bisect bad 0ecb83df935b058a2c3727716a7fab539dbaba88
+> # bad: [898fe3af935a45236cbfd053e79ae01506ae7aa2] Merge branch 'clk-formatting' into clk-next
+> git bisect bad 898fe3af935a45236cbfd053e79ae01506ae7aa2
+> # bad: [0d426990beac93127a4ee37cc056fce928466f7d] Merge branch 'clk-phase-errors' into clk-next
+> git bisect bad 0d426990beac93127a4ee37cc056fce928466f7d
+> # good: [6e37add6b938941f755928159ede3c9855307066] Merge branch 'clk-qcom' into clk-next
+> git bisect good 6e37add6b938941f755928159ede3c9855307066
+> # good: [5d98429bbebc5dc683ea6919d9b9e6e83e8c8867] Merge branch 'clk-fixes' into clk-next
+> git bisect good 5d98429bbebc5dc683ea6919d9b9e6e83e8c8867
+> # good: [768a5d4f63c29d3bed5abb3c187312fcf623fa05] clk: Use 'parent' to shorten lines in __clk_core_init()
+> git bisect good 768a5d4f63c29d3bed5abb3c187312fcf623fa05
+> # bad: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
+> git bisect bad 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+> # good: [0daa376d832f4ce585f153efee4233b52fa3fe58] clk: Move rate and accuracy recalc to mostly consumer APIs
+> git bisect good 0daa376d832f4ce585f153efee4233b52fa3fe58
+> # first bad commit: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
+> -------------------------------------------------------------------------------
+> 
 
