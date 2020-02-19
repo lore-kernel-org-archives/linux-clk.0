@@ -2,144 +2,179 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E6C34056
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 18:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53752C18DFF
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 19:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85B502064C
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 18:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DAAE24672
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 19:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582139096;
+	bh=witjqTYAnAVOmMzC51fiWL+WZGBZFYYv95mxRShPbCE=;
+	h=Date:From:To:CC:CC:CC:Subject:References:In-Reply-To:List-ID:
+	 From;
+	b=TXjGUoqQZa1NB6drUuKTyn9soQ/3kMdHD2yeyijSU4s3pTSol/+b6NXaA/GgHlpYb
+	 r1hj+0I7i5R0BclZgvWX8MUAkB5rO8xxjsmvn7601yfHUttJhY/M5Y5o4joINPMwGz
+	 0rgjajm2cZj4NFcPly+xQv8cXiH7EE/O1LT6m530=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbgBSS6l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 13:58:41 -0500
-Received: from nbd.name ([46.4.11.11]:57748 "EHLO nbd.name"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726609AbgBSS6l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Feb 2020 13:58:41 -0500
-Received: from [2a04:4540:1400:dd00:2cb7:e0af:5551:a051]
-        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <john@phrozen.org>)
-        id 1j4UYQ-00057x-UZ; Wed, 19 Feb 2020 19:58:39 +0100
-Subject: Re: [PATCH] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200219185226.1236-1-ansuelsmth@gmail.com>
-From:   John Crispin <john@phrozen.org>
-Message-ID: <3c2bdeaf-c54b-142b-367e-6573de700803@phrozen.org>
-Date:   Wed, 19 Feb 2020 19:58:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20200219185226.1236-1-ansuelsmth@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726645AbgBSTEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 14:04:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45555 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726634AbgBSTEz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 14:04:55 -0500
+Received: by mail-pg1-f193.google.com with SMTP id b9so546583pgk.12;
+        Wed, 19 Feb 2020 11:04:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:cc:cc:subject
+         :references:in-reply-to;
+        bh=kocwF+O1vACVeOoTXVC1r2xPM1rk+Pt4gRCOCoHb59E=;
+        b=cYPO+iWTtuyAskWSnsdw8ExnxgEA0l+N6EIMo8b7KvOe99+vxvWTuEaETkVe+E3uP6
+         uygDfsdu6iBlwmV8xXUQVnDQhuHcVaT+Dcw4hqjLCV6sx+PqTPDmkOOCR/EQFWTuAkZm
+         76mXlDxznUXUSwJ42oiyQhFJMcLwl2XMkYSXBmA39Jj2Wd0GP5LcvbQYZhnSQ9Y8WlCH
+         YbjG8doOpyZUJ5vzQTLgRTBajvgrHPEkmW6moxiGhNeFIQc7w73h7h38aSimOp0FVjbm
+         oRoJUruZQhylrfZiV2D++3z52s3I04hezvhZCnZaAS1ESyffufF9AYHtKMtudRKF5yHB
+         gKbg==
+X-Gm-Message-State: APjAAAWOmYPiHmjJttpJ/1ddB6yLjRFNpsPcJ1p+6CLqspAd2ueL4Qi5
+        NANZZP3xWdK5ShNT9xJF6ts=
+X-Google-Smtp-Source: APXvYqxILDyWPG2jl5KZXH15mkHqxLILbJsULM1VSWJlyw8FlDzdNiR5dyq43yKarParaxT6eqFZpA==
+X-Received: by 2002:a65:420c:: with SMTP id c12mr28177977pgq.270.1582139094170;
+        Wed, 19 Feb 2020 11:04:54 -0800 (PST)
+Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
+        by smtp.gmail.com with ESMTPSA id a13sm385320pfg.65.2020.02.19.11.04.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Feb 2020 11:04:53 -0800 (PST)
+Message-ID: <5e4d86d5.1c69fb81.85d93.1371@mx.google.com>
+Date:   Wed, 19 Feb 2020 11:04:48 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paulburton@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        James Hartley <james.hartley@sondrel.com>,
+        John Crispin <john@phrozen.org>
+CC:     linux-mips@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+CC:     linux-mips@vger.kernel.org
+Subject: Re: [PATCH 0/7] MIPS: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+References:  <20200212101544.8793-1-geert+renesas@glider.be>
+In-Reply-To:  <20200212101544.8793-1-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19/02/2020 19:52, Ansuel Smith wrote:
-> Add missing definition of rpm clk for ipq806x soc
-> 
-> Signed-off-by: John Crispin <john@phrozen.org>
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-Thanks for sending this upstream,
-Acked-by: John Crispin <john@phrozen.org>
+Hello,
 
-> ---
->   .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
->   drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
->   include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
->   3 files changed, 40 insertions(+)
+Geert Uytterhoeven wrote:
+> Hi all,
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> index 944719bd586f..dd0def465c79 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-> @@ -16,6 +16,7 @@ Required properties :
->   			"qcom,rpmcc-msm8974", "qcom,rpmcc"
->   			"qcom,rpmcc-apq8064", "qcom,rpmcc"
->   			"qcom,rpmcc-msm8996", "qcom,rpmcc"
-> +			"qcom,rpmcc-ipq806x", "qcom,rpmcc"
->   			"qcom,rpmcc-msm8998", "qcom,rpmcc"
->   			"qcom,rpmcc-qcs404", "qcom,rpmcc"
->   
-> diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-> index 9e3110a71f12..f71d228fd6bd 100644
-> --- a/drivers/clk/qcom/clk-rpm.c
-> +++ b/drivers/clk/qcom/clk-rpm.c
-> @@ -543,10 +543,45 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
->   	.num_clks = ARRAY_SIZE(apq8064_clks),
->   };
->   
-> +/* ipq806x */
-> +DEFINE_CLK_RPM(ipq806x, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(ipq806x, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-> +DEFINE_CLK_RPM(ipq806x, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-> +DEFINE_CLK_RPM(ipq806x, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-> +DEFINE_CLK_RPM(ipq806x, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-> +DEFINE_CLK_RPM(ipq806x, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-> +DEFINE_CLK_RPM(ipq806x, nss_fabric_0_clk, nss_fabric_0_a_clk, QCOM_RPM_NSS_FABRIC_0_CLK);
-> +DEFINE_CLK_RPM(ipq806x, nss_fabric_1_clk, nss_fabric_1_a_clk, QCOM_RPM_NSS_FABRIC_1_CLK);
-> +
-> +static struct clk_rpm *ipq806x_clks[] = {
-> +	[RPM_APPS_FABRIC_CLK] = &ipq806x_afab_clk,
-> +	[RPM_APPS_FABRIC_A_CLK] = &ipq806x_afab_a_clk,
-> +	[RPM_CFPB_CLK] = &ipq806x_cfpb_clk,
-> +	[RPM_CFPB_A_CLK] = &ipq806x_cfpb_a_clk,
-> +	[RPM_DAYTONA_FABRIC_CLK] = &ipq806x_daytona_clk,
-> +	[RPM_DAYTONA_FABRIC_A_CLK] = &ipq806x_daytona_a_clk,
-> +	[RPM_EBI1_CLK] = &ipq806x_ebi1_clk,
-> +	[RPM_EBI1_A_CLK] = &ipq806x_ebi1_a_clk,
-> +	[RPM_SYS_FABRIC_CLK] = &ipq806x_sfab_clk,
-> +	[RPM_SYS_FABRIC_A_CLK] = &ipq806x_sfab_a_clk,
-> +	[RPM_SFPB_CLK] = &ipq806x_sfpb_clk,
-> +	[RPM_SFPB_A_CLK] = &ipq806x_sfpb_a_clk,
-> +	[RPM_NSS_FABRIC_0_CLK] = &ipq806x_nss_fabric_0_clk,
-> +	[RPM_NSS_FABRIC_0_A_CLK] = &ipq806x_nss_fabric_0_a_clk,
-> +	[RPM_NSS_FABRIC_1_CLK] = &ipq806x_nss_fabric_1_clk,
-> +	[RPM_NSS_FABRIC_1_A_CLK] = &ipq806x_nss_fabric_1_a_clk,
-> +};
-> +
-> +static const struct rpm_clk_desc rpm_clk_ipq806x = {
-> +	.clks = ipq806x_clks,
-> +	.num_clks = ARRAY_SIZE(ipq806x_clks),
-> +};
-> +
->   static const struct of_device_id rpm_clk_match_table[] = {
->   	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
->   	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
->   	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
-> +	{ .compatible = "qcom,rpmcc-ipq806x", .data = &rpm_clk_ipq806x },
->   	{ }
->   };
->   MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
-> diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-> index 8e3095720552..ae74c43c485d 100644
-> --- a/include/dt-bindings/clock/qcom,rpmcc.h
-> +++ b/include/dt-bindings/clock/qcom,rpmcc.h
-> @@ -37,6 +37,10 @@
->   #define RPM_XO_A0				27
->   #define RPM_XO_A1				28
->   #define RPM_XO_A2				29
-> +#define RPM_NSS_FABRIC_0_CLK			30
-> +#define RPM_NSS_FABRIC_0_A_CLK			31
-> +#define RPM_NSS_FABRIC_1_CLK			32
-> +#define RPM_NSS_FABRIC_1_A_CLK			33
->   
->   /* SMD RPM clocks */
->   #define RPM_SMD_XO_CLK_SRC				0
+> The OF clock helpers were moved to <linux/of_clk.h> a while ago.
+> Hence code that is not a clock provider, but just needs to call
+> of_clk_init(), can (and should) include <linux/of_clk.h> instead of
+> <linux/clk-provider.h>.
 > 
+> All these patches are independent of each others, and thus can be
+> applied by the corresponding subsystem maintainers.
+> 
+> Thanks!
+> 
+> Geert Uytterhoeven (7):
+>   MIPS: ath79: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: BMIPS: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: generic: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: jz4740: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: pic32mzda: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: Pistachio: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   MIPS: ralink: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+> 
+>  arch/mips/ath79/setup.c          | 2 +-
+>  arch/mips/bmips/setup.c          | 2 +-
+>  arch/mips/generic/init.c         | 2 +-
+>  arch/mips/jz4740/time.c          | 2 +-
+>  arch/mips/pic32/pic32mzda/time.c | 2 +-
+>  arch/mips/pistachio/time.c       | 2 +-
+>  arch/mips/ralink/timer-gic.c     | 2 +-
+>  7 files changed, 7 insertions(+), 7 deletions(-)
 
+Series applied to mips-next.
+
+> MIPS: ath79: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit d2936bd02b19
+>   https://git.kernel.org/mips/c/d2936bd02b19
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: BMIPS: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit e40b3deff7af
+>   https://git.kernel.org/mips/c/e40b3deff7af
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: generic: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit 089a792c750d
+>   https://git.kernel.org/mips/c/089a792c750d
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: jz4740: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit 3a94afc68947
+>   https://git.kernel.org/mips/c/3a94afc68947
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: pic32mzda: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit 071cec1bfe1f
+>   https://git.kernel.org/mips/c/071cec1bfe1f
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: Pistachio: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit 97e04ea15fd5
+>   https://git.kernel.org/mips/c/97e04ea15fd5
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Acked-by: James Hartley <james.hartley@sondrel.com>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+> 
+> MIPS: ralink: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+>   commit 9926108f799a
+>   https://git.kernel.org/mips/c/9926108f799a
+>   
+>   Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>   Reviewed-by: Philippe Mathieu-Daudé <f4bug@amsat.org>
+>   Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>   Acked-by: John Crispin <john@phrozen.org>
+>   Signed-off-by: Paul Burton <paulburton@kernel.org>
+
+Thanks,
+    Paul
+
+[ This message was auto-generated; if you believe anything is incorrect
+  then please email paulburton@kernel.org to report it. ]
