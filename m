@@ -2,136 +2,194 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D03C34031
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 02:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8B5C3402F
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 03:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2949022B48
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 02:58:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582081096;
-	bh=zLZw1qR/XpXYBmvugwhE5yh5SqRSUw18nixQc8D5mtY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bAfzyw3VP6WuHtef+hLasLjFomRJKUVn2o1ZmeXsQVFQI/dJr0UjcDghAfal3h5ji
-	 5NYECI0eqylCFkTD+CXPcAbZizXQtTOyNWitISfhMVNfKyugR4sJOciALtth0acQTu
-	 5aweNsDk2AwSPVzP96tuxSeikGPI1KkImd5fpedA=
+	by mail.kernel.org (Postfix) with ESMTP id F101F2465D
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 03:28:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CdpmAVZE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728187AbgBSC6P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 21:58:15 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35256 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbgBSC6P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 21:58:15 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r16so21761087otd.2;
-        Tue, 18 Feb 2020 18:58:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xTGQmxUmNRth+yRhSKHtoUgcE+23rlmrBG/UqSF57C4=;
-        b=XNA29+YmzuxvM/slxw06R+9X+34E8Xau2m71G2+s1ko/IUXtCj7yhIvKr8gom8XrzA
-         LwpFydzHmiwzLNNb7UjGmYl4idD0+kMVz7Wn6m73Tr1+4pMi3P11Zip9UHc+/zxrPK5u
-         J4fNJXu0hqkAdj2hjzXkOyklszD2G5kcm6QBIF1jPr9PSQFAw6qdalmRRqgfaF2B7GQ+
-         P8VE0kdyAxdiclF98DEIceFEnqjrLci/CsK/Dorugef4BpPilYhd2m4V0JW6Qe+f2Htk
-         nSc0Zu7XKjZJyHr13Ldw3/Ky2FV31hK0QpUEkLnSZeSNIxNzn0yjNjnc4Z32qvBthkCa
-         fP5w==
-X-Gm-Message-State: APjAAAVuMWQ7rJhj+rbwsP82FC0POvKTDeTv5lnRzTQal4JG5SNcDuNF
-        Ld8rAo/AeeSZrVH+NJ04aA==
-X-Google-Smtp-Source: APXvYqw1L6GCZna8YMWf4yMNAkVw7UgscE3jBjEI1Do4b3teVIqY+vAlfCJe0QT1lA33JTK7rqs3sA==
-X-Received: by 2002:a9d:69ce:: with SMTP id v14mr18336960oto.248.1582081093490;
-        Tue, 18 Feb 2020 18:58:13 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r2sm204259otk.22.2020.02.18.18.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 18:58:12 -0800 (PST)
-Received: (nullmailer pid 8516 invoked by uid 1000);
-        Wed, 19 Feb 2020 02:58:11 -0000
-Date:   Tue, 18 Feb 2020 20:58:11 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Vignesh Raghavendra <vigneshr@ti.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Tero Kristo <t-kristo@ti.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: clock: Add binding documentation for
- TI syscon gate clock
-Message-ID: <20200219025811.GA20054@bogus>
-References: <20200215141724.32291-1-vigneshr@ti.com>
- <20200215141724.32291-2-vigneshr@ti.com>
+        id S1726667AbgBSD2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 22:28:34 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10618 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726346AbgBSD2e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 22:28:34 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e4cab410000>; Tue, 18 Feb 2020 19:28:01 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 18 Feb 2020 19:28:33 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 19:28:33 -0800
+Received: from [10.2.163.58] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Feb
+ 2020 03:28:32 +0000
+Subject: Re: [RFC PATCH v3 3/6] dt-binding: tegra: Add VI and CSI bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+ <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
+ <20200218231503.GA19099@bogus>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <5948bf42-9be2-8cf0-1c28-80f69b708c65@nvidia.com>
+Date:   Tue, 18 Feb 2020 19:28:36 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200215141724.32291-2-vigneshr@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200218231503.GA19099@bogus>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582082881; bh=cyoNazDtmT/h6DgHu5pqneFWToIbbP0fvPs2dxTlGMQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=CdpmAVZEN1+rPUXrq9ZTWHWteIUNLSIzWrA/h8Q6AVwCh3Xe4Ldg0Ae3e+GxK7GcY
+         WacUUqIeiFWQEZwv0nLL99pvzd7yUg5NLPubTPS2AdWA9TN8XbQJ5bJzJhlHt8RWiJ
+         6TtgMMo7qUbLyfXy4x+CGr20WXD3ZKfZtjAwmfiJbSKnFl580R/kSRv7HVRDeRfjs+
+         DG1NxmOr8BuAAqNiKBcjMuDvb6+c8RLy2qK8dxdArj863jZSvKQewH3SZODclwBXVd
+         vmrRmSBURvYrfXz/xK9kY16Mw5IA3TJfGDN44vMmxj06JQg/J89pX6dCvGDarNLTJx
+         Ln17zs2CfuKFQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 15, 2020 at 07:47:23PM +0530, Vignesh Raghavendra wrote:
-> Add dt bindings for TI syscon gate clock driver that is used to control
-> EHRPWM's TimeBase clock (TBCLK) on TI's AM654 SoC.
-> 
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
-> ---
->  .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml | 35 +++++++++++++++++++
->  1 file changed, 35 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> new file mode 100644
-> index 000000000000..3bf954ecb803
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
-> @@ -0,0 +1,35 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/ti,am654-ehrpwm-tbclk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TI syscon gate clock driver
 
-Bindings are for h/w blocks, not drivers.
+On 2/18/20 3:15 PM, Rob Herring wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On Fri, Feb 14, 2020 at 10:23:25AM -0800, Sowjanya Komatineni wrote:
+>> Tegra contains VI controller which can support up to 6 MIPI CSI
+>> camera sensors.
+>>
+>> Each Tegra CSI port from CSI unit can be one-to-one mapper to
+>> VI channel and can capture from an external camera sensor or
+>> from built-in test pattern generator.
+>>
+>> This patch adds dt-bindings for Tegra VI and CSI.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
+>>   1 file changed, 47 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> index 9999255ac5b6..3d0ed540a646 100644
+>> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+>> @@ -40,14 +40,24 @@ of the following host1x client modules:
+>>
+>>     Required properties:
+>>     - compatible: "nvidia,tegra<chip>-vi"
+>> -  - reg: Physical base address and length of the controller's registers.
+>> +  - reg: Physical base address and length of the controller registers.
+>>     - interrupts: The interrupt outputs from the controller.
+>> -  - clocks: Must contain one entry, for the module clock.
+>> +  - clocks: Must contain an entry for the module clock "vi"
+>>       See ../clocks/clock-bindings.txt for details.
+>>     - resets: Must contain an entry for each entry in reset-names.
+>>       See ../reset/reset.txt for details.
+>> -  - reset-names: Must include the following entries:
+>> -    - vi
+>> +  - reset-names: Must include the entry "vi"
+>> +
+>> +  Tegra210 has CSI part of VI sharing same host interface and register
+>> +  space. So, VI device node should have CSI child node.
+>> +
+>> +  - csi: mipi csi interface to vi
+>> +
+>> +    Required properties:
+>> +    - compatible: "nvidia,tegra<chip>-csi"
+>> +    - reg: Physical base address and length of the controller registers.
+>> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
+>> +      See ../clocks/clock-bindings.txt for details.
+>>
+>>   - epp: encoder pre-processor
+>>
+>> @@ -310,12 +320,41 @@ Example:
+>>                };
+>>
+>>                vi {
+>> -                     compatible = "nvidia,tegra20-vi";
+>> -                     reg = <0x54080000 0x00040000>;
+>> +                     compatible = "nvidia,tegra210-vi";
+>> +                     reg = <0x0 0x54080000 0x0 0x700>;
+>>                        interrupts = <0 69 0x04>;
+>> -                     clocks = <&tegra_car TEGRA20_CLK_VI>;
+>> -                     resets = <&tegra_car 100>;
+>> +                     assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+>> +                     assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+>> +                     clocks = <&tegra_car TEGRA210_CLK_VI>;
+>> +                     clock-names = "vi";
+>> +                     resets = <&tegra_car 20>;
+>>                        reset-names = "vi";
+>> +
+>> +                     #address-cells = <2>;
+>> +                     #size-cells = <2>;
+>> +
+>> +                     ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
+>> +
+>> +                     csi@0x54080838 {
+> Drop '0x'
+Will fix in v4
+>
+>> +                             compatible = "nvidia,tegra210-csi";
+>> +                             reg = <0x0 0x54080838 0x0 0x2000>;
+> Kind of odd that this address and ranges address are not the same. And
+> also wrong that the size here exceeds the bounds of ranges.
+>
+> Also, best practice is to make the child address 0 or relative to the
+> parent.
 
-> +
-> +maintainers:
-> +  - Vignesh Raghavendra <vigneshr@ti.com>
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - const: ti,am654-ehrpwm-tbclk
-> +      - const: syscon
+Actual CSI starts at offset 0x808 but we don't use couple of registers 
+at offset 0x808.
 
-Why is this a syscon? Are there other functions or it's just the easy 
-way to get a regmap.
+Will update ranges in v4 to start from 0x838 offset and will make child 
+address relative to parent.
 
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    ehrpwm_tbclk: syscon@4140 {
-> +        compatible = "ti,am654-ehrpwm-tbclk", "syscon";
-> +        reg = <0x4140 0x18>;
-> +        #clock-cells = <1>;
-> +    };
-> -- 
-> 2.25.0
-> 
+>
+>> +                             status = "disabled";
+> Don't show status in examples.
+Will remove.
+>
+>> +                             assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+>> +                                               <&tegra_car TEGRA210_CLK_CILCD>,
+>> +                                               <&tegra_car TEGRA210_CLK_CILE>;
+>> +                             assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+>> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>,
+>> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>;
+>> +                             assigned-clock-rates = <102000000>,
+>> +                                                    <102000000>,
+>> +                                                    <102000000>;
+>> +                             clocks = <&tegra_car TEGRA210_CLK_CSI>,
+>> +                                      <&tegra_car TEGRA210_CLK_CILAB>,
+>> +                                      <&tegra_car TEGRA210_CLK_CILCD>,
+>> +                                      <&tegra_car TEGRA210_CLK_CILE>;
+>> +                             clock-names = "csi", "cilab", "cilcd", "cile";
+>> +                     };
+>> +
+>>                };
+>>
+>>                epp {
+>> --
+>> 2.7.4
+>>
