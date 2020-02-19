@@ -2,114 +2,68 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC806C3404E
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 01:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D02C34031
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 02:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B4324654
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 01:49:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ts8VDPPB"
+	by mail.kernel.org (Postfix) with ESMTP id 89E162176D
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 02:19:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582078798;
+	bh=6KO77SOFrH1Ddyvoza5ZvqYLAvpu4o8si99XFZUtu2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WEjLNP/o3FU9A5FcAOXoPK7yglHbNOYjbzBhT884JjUwRVf+vU72I+7sDdSmDtaSx
+	 d588H9QK1WWGZWMjh+HEN4Bj7yq0YyhVbyzC28pc1t9eotDy4xD1fe4x/FxsxRMbr7
+	 tGCSIjvmuTmLB+A/uvWll1yc9oksWcrgNPpBaRuA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728091AbgBSBt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 20:49:57 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45069 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728085AbgBSBt4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 20:49:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id b9so11749173pgk.12
-        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2020 17:49:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
-        b=ts8VDPPBuLBZSekAbBB4AA9teS6dDAo1HBlFrWgCyrq8tuMc3thxftGa4AHpAl9HfC
-         u7yxDltYVpeECwcY8RzDqO6Oc+ujMt1LKMzE60hyRUp4CRmsuXIAURjdU5sPKFRoFEwm
-         6FN7vQ7hbitggAiOqBJscQwLzxfsXk6P3kE/ijGHV8xJt/0agF6tzs7iGM9/TJ0Fvy9F
-         ArDT1pSLD7/sstOaJU2GCdk92lHOemZWj0EQ3zQfulnRwfJ76bPc+DDLQ9ZRE1nVboYb
-         jR7FRhkDaPhSRUnmUrrhkxZbwc53oVyaoPQDanlDY6cxtAjJ8vR46+8/3WdA4kMg6eXF
-         I4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
-        b=P+FU2R0mWK7KnNbhaRafRE5a1BArzMUiHp8Y84eVJxoM7FJzfw3YD9flS1VeWywHJp
-         k1f+HBrR/NFGN+rs9XjeLsFJm5NNMV+XpQpfYogCs565Ad6xsAudH2Ppa8QIHfNy/dmE
-         5kl5WlkYOKgAcd9pEPSFXV2tjGbVa1jHWVtlz3P52B1mgu2CW6gC0mseGM3OAp24a5qE
-         4WZa7DnyQnGbehPAKuaVbT6iyLFn4FgP7BIMooyGySA9dNW3qZEOAwbEJpkZo6gJsB8L
-         2tYqw3lHZP5FBr+Kywukp2uyVNStzC3Zy6zocBPpjzEmxxiX7x0nGcx7QfXTZQtWaUdQ
-         mPdw==
-X-Gm-Message-State: APjAAAUeqGp09IljI+ED3Bptx3EVmk+vgCVGaHjIDkrsWoWDscmUN64i
-        hqFIyYcbqf/S7tSMfHhNRAVI7Q==
-X-Google-Smtp-Source: APXvYqywbiuEpD1gaeQyiKrj/G0fRGBegWe1kQhCb3QNT2ZiaM+5B/V4zEAel8kBFDrwr4m3Dknbgg==
-X-Received: by 2002:a63:2266:: with SMTP id t38mr26477980pgm.145.1582076994532;
-        Tue, 18 Feb 2020 17:49:54 -0800 (PST)
-Received: from localhost ([223.226.55.170])
-        by smtp.gmail.com with ESMTPSA id q25sm288920pfg.41.2020.02.18.17.49.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 18 Feb 2020 17:49:53 -0800 (PST)
-Date:   Wed, 19 Feb 2020 07:19:51 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
-Subject: Re: [RFC PATCH 04/11] cpufreq: Remove Calxeda driver
-Message-ID: <20200219014951.2o2diuw5dzooafji@vireshk-i7>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-5-robh@kernel.org>
+        id S1726882AbgBSCT6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 21:19:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50146 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726768AbgBSCT6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 Feb 2020 21:19:58 -0500
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE290207FD;
+        Wed, 19 Feb 2020 02:19:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582078797;
+        bh=6KO77SOFrH1Ddyvoza5ZvqYLAvpu4o8si99XFZUtu2Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Wkg5dbfOP2V8936xVv3qGO4JVvE8Ra8ZgwlcxCzfJIlVgIFWdmQCnh7xcj9B1DvAx
+         TRGQ950vP95jp7ww384KVIM4CpY5fc2SGzYA/NBnCH0DwGatvDspIoTeKcvj4tfiL2
+         JBleHomkbTQbPmmwkTrW770ZCmuRiv45Sud0HYXE=
+Date:   Wed, 19 Feb 2020 10:19:51 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        abel.vesa@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH 1/3] clk: imx8mp: Include slab.h instead of clkdev.h
+Message-ID: <20200219021950.GK6075@dragon>
+References: <1582023806-6261-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200218171321.30990-5-robh@kernel.org>
-User-Agent: NeoMutt/20180716-391-311a52
+In-Reply-To: <1582023806-6261-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-02-20, 11:13, Rob Herring wrote:
-> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: linux-pm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
-> Do not apply yet.
+On Tue, Feb 18, 2020 at 07:03:24PM +0800, Anson Huang wrote:
+> slab.h is necessary and included indirectly by clkdev.h,
+> actually, there is nothing in use from clkdev.h, so just
+> include slab.h instead of clkdev.h.
 > 
->  drivers/cpufreq/Kconfig.arm          |  10 ---
->  drivers/cpufreq/Makefile             |   3 +-
->  drivers/cpufreq/cpufreq-dt-platdev.c |   3 -
->  drivers/cpufreq/highbank-cpufreq.c   | 106 ---------------------------
->  4 files changed, 1 insertion(+), 121 deletions(-)
->  delete mode 100644 drivers/cpufreq/highbank-cpufreq.c
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
--- 
-viresh
+Applied all, thanks.
