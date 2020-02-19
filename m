@@ -2,272 +2,135 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DF3C34022
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 08:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 968DCC3404D
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 09:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94DBF208E4
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 08:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE1321D56
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 09:59:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="eluEgFKO"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="r88Wp/UD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbgBSItk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 03:49:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44634 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbgBSItk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 03:49:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id m16so27124598wrx.11
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2020 00:49:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5GSg/xDxPp49oDbA6vFdut+q4shLY3Pk8HEGAuRFez0=;
-        b=eluEgFKOncyKAGdAwn5OlTiyk2CNzP5MLYoMHFNmglRELyDY5Bk6FrEAlgWD7RuyYp
-         cIRQuyIF/z2xm2TY2HA0ExnS0Px90I2YnFFe2YaEp8nRZe8AWjSJ+yXWyGKS+FtSe+i3
-         SM4nfyn/zK9JP5yPnX1DcQrdxrAVI3xGW2dO320+301upQ6idUmjL64+5RLLV+F7l+R2
-         EHQNCCqP7FZ8UpTmLCXdGOj9Ec6wfsrNuyRGOwNJQOc2+ezeoKKUbgZ5NW+eB1kiJz4X
-         Xy/0uw/WlS0qq3ibJmSnCialEob3fLbK8sgqebp6PoO2HlZbIlAWjvIkZr4G71U1auup
-         hNYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5GSg/xDxPp49oDbA6vFdut+q4shLY3Pk8HEGAuRFez0=;
-        b=Fp/Xhgu3eROa7TnBKziaNdkNrBKcWqsmqICz2jXbf6ls1QTqbK4FRzzENElZXoYlV/
-         S7DI6MRioFNF651B5B9X1Q5CZkRr98t1wZqCBuUzsyT40ie5u2ydbI9RQOGNBmUEv7HH
-         m9nzLtbLNDUBv67Oxn1qFsw6PXQow3yZ/aJitmV4+XcXcmPW8KAWe8GETbSo+m0VGWau
-         VV3AxiWNAVcvpAM+jZs/tl7GoM0j3hGImEUGvOqDaDKkrNzMipnWwraIWiQLUi+E5qGz
-         iQpX3+3sI0hZdIDVzDMmk/ncCv3AneB/DC+3nopqGxriuSK+G1ditB06tPpb9dck7pLw
-         TAPQ==
-X-Gm-Message-State: APjAAAWADozlLXbgJ8yNt9lOTwc9A6pea1pyynOdITxQSj/A8xtfzOWV
-        NOJXyFbPydSmG5/YPMiIT5AXuw==
-X-Google-Smtp-Source: APXvYqzIWUthaSqh0c9Ww016Eg2GCgQn8e5Ju2qinfSCQh/Y6SpPyxGTiNTOn47XES0XFKoKalCppg==
-X-Received: by 2002:a05:6000:1187:: with SMTP id g7mr34747098wrx.109.1582102178017;
-        Wed, 19 Feb 2020 00:49:38 -0800 (PST)
-Received: from bender.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t13sm2021673wrw.19.2020.02.19.00.49.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 00:49:37 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: meson: g12a: add support for the SPICC SCLK Source clocks
-Date:   Wed, 19 Feb 2020 09:49:28 +0100
-Message-Id: <20200219084928.28707-3-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200219084928.28707-1-narmstrong@baylibre.com>
-References: <20200219084928.28707-1-narmstrong@baylibre.com>
+        id S1726270AbgBSJ7n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 04:59:43 -0500
+Received: from mail-am6eur05on2042.outbound.protection.outlook.com ([40.107.22.42]:9312
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726450AbgBSJ7m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Feb 2020 04:59:42 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ViuTN4t1WoxGvObKyKJhfjtFfMyJPdMuTo7nCy3569jxX+FAAAXiujrUMsDYcDkoyWXt/e5AA6L2FZx0WvWQmJx6TvIhYviIYKzp4yKxuyXYmuesM6+dGkmdTK2YXdrXGtX6bSMssvOrURRNrektBFd1RuOEnAp3oLI9NeILwr3jH/RJgoS9PugKxFrH1MXAhOpEzvFwf93+4nrnuT0ZmOOnpX0M4EQM7MDiX2WFv9XKSdRJig6FZ6q3AvU/8hJXtJMRhs13mVsSkMNQGnPF9JqjrZWIaz+HSVV7jxX5AbQvDwbRfTFPpG9kCMqj31iQRyTTAEjN5ce8PBfz7n+Y5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=XxlMOsN7nP+el48TesKRI2rE0wQrbs6lRnpTXOmXOR9Q7sSFxJr5F8fDSVWhXEvU9JQ/BvDhxJnfqcbb/eMbcWUPKszIgWYvCLsvXepjeGNWJUNMDbFpvetTqtg1FUNnTMOobi/E7W6PrxfybkdHZjBNieAu+PbJnXBB2eVyt773xN9eXXpcndtQrPuQuAOGAcCsVHt7ok/IxuH5Y61JeH1XzWv/Y8w1Lr2S+IJscMpq9dewnbChhbWeD3RvduZ2nmY9R+arC7CvC2h3b8WBysKGaEgSS+IGhdBattgdzxvGuCRqFHV5bu3zzECW8yglSSJTxNNnkm1ZGY1WnIFrQw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qUs0+8jKfz67XE1EDU0COV3hY0F1wHrKeEL5stXCfh4=;
+ b=r88Wp/UD1wO3x5Fvkeo/6slIVSZjoj3IXD2O9/DUIr1WBmUha4azIxAcqv+4uCOF5/I5mULg1uD6ktC/oLmewZxXKrWnaqso+2in0pbCBmcils6yO9irPFzQdl7OJ4m/U6Z3xT4E5g8rotxZxxG35hieuFkEhfK2Xd1wSp5hPFI=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6514.eurprd04.prod.outlook.com (20.179.254.19) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.17; Wed, 19 Feb 2020 09:59:39 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 09:59:39 +0000
+From:   peng.fan@nxp.com
+To:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        festevam@gmail.com, abel.vesa@nxp.com, leonard.crestez@nxp.com
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, anson.huang@nxp.com,
+        ping.bai@nxp.com, l.stach@pengutronix.de,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH v3 0/4] clk: imx: imx8m: fix a53 cpu clock
+Date:   Wed, 19 Feb 2020 17:53:34 +0800
+Message-Id: <1582106022-20926-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: HK2PR0302CA0008.apcprd03.prod.outlook.com
+ (2603:1096:202::18) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from localhost.localdomain (119.31.174.66) by HK2PR0302CA0008.apcprd03.prod.outlook.com (2603:1096:202::18) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2750.8 via Frontend Transport; Wed, 19 Feb 2020 09:59:34 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: e8ac4cd8-a3a6-4213-b6ac-08d7b5226ef8
+X-MS-TrafficTypeDiagnostic: AM0PR04MB6514:|AM0PR04MB6514:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB65143663F3703822FC5DB91488100@AM0PR04MB6514.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:8273;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(396003)(136003)(39860400002)(189003)(199004)(4326008)(2616005)(956004)(6512007)(5660300002)(8936002)(9686003)(16526019)(186003)(478600001)(81166006)(81156014)(8676002)(36756003)(2906002)(6486002)(6506007)(86362001)(66946007)(52116002)(69590400006)(66556008)(66476007)(316002)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6514;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ld55/VfB6iZDzJk6QRMhxIWP0iuf5ZOZ7j0/5fTG89KKJnwAznHvIUTx1i3Pj75geHFMU5EXG0DrsmOsdlumcN6Gryr2syXs7zpzisOO5eG5ld5A3F6dG19zJ1P+HlyK+Dp0aMP3vc0oPdby8vgUtFYu0CihbgMr94Ob0rQ4qNKGDZFYzuNDI5TZ+jlVRnK4opt3DU2humIrP0HuD/s+AkfevDA6ZnfKWgzFbRChL3MF9UD+C1aCb/PDGi7KJSuX8A4sumjmcJu/DmWhxXDE0bUs7ryU9P4vMlHP5Or+vJPANi5iTp1X1vEq4xVtxn7GIHIpGvqDGpn5gaIcjLnM//iy6ukkrdqivs4LtsofVDGnm1dvyj9NG2+NdVK+iAOOZJZ8KnuPFZt3+4Zc9JvueziI8/0Xp+DRO10l/SHqrNtAYC2ygJsp2D/a/yOBVxXtd1g1PiEvln8uSdJ/w5u6b9edsuH8oUqxIMOIMumudKJiWO6fQZXy7aM2DjAYxNDJeoq4ueOgDHr3KHQGxEtJg8Gc76AggXkOGJgeuvcCAQ+LGgnmeSlMxW3NGfsQUQSL
+X-MS-Exchange-AntiSpam-MessageData: BeOaCoLIFR3Yo5Uwgtu15rX48MC5jahHh7pVMR9NTedDcItHrerIRYAfDe451T0EqwSc9tW/pnmUqtYMjpBCF7rNyt4OGyM9LZ96/eUCNUYHvNdVOGfe5CqAlU886L2iEHKOrulA2bPriUxj92BO3A==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e8ac4cd8-a3a6-4213-b6ac-08d7b5226ef8
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 09:59:39.5351
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: qewFcObmvNFQ15roaR/j3whPr1Zpm1dNTinsHS1652X/4xmotcU1tFkV3iVcHZ1Y/W4lh/pJc/UbfXXxEb12Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6514
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the clocks used for the Amlogic G12A and compatible SoCs SPICC
-controller to provide a more complete range of frequencies instead of the
-SPICC internal divider over Xtal.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 129 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/meson/g12a.h |   6 +-
- 2 files changed, 134 insertions(+), 1 deletion(-)
+V3:
+ Rebased to Shawn's for-next branch
+ Typo fix
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index d2760a021301..fad616cac01e 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -3862,6 +3862,111 @@ static struct clk_regmap g12a_ts = {
- 	},
- };
- 
-+/* SPICC SCLK source clock */
-+
-+static const struct clk_parent_data spicc_sclk_parent_data[] = {
-+	{ .fw_name = "xtal", },
-+	{ .hw = &g12a_clk81.hw },
-+	{ .hw = &g12a_fclk_div4.hw },
-+	{ .hw = &g12a_fclk_div3.hw },
-+	{ .hw = &g12a_fclk_div5.hw },
-+	{ .hw = &g12a_fclk_div7.hw },
-+};
-+
-+static struct clk_regmap g12a_spicc0_sclk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.mask = 7,
-+		.shift = 7,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc0_sclk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = spicc_sclk_parent_data,
-+		.num_parents = ARRAY_SIZE(spicc_sclk_parent_data),
-+	},
-+};
-+
-+static struct clk_regmap g12a_spicc0_sclk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.shift = 0,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc0_sclk_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&g12a_spicc0_sclk_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap g12a_spicc0_sclk = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.bit_idx = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc0_sclk",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&g12a_spicc0_sclk_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap g12a_spicc1_sclk_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.mask = 7,
-+		.shift = 23,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc1_sclk_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = spicc_sclk_parent_data,
-+		.num_parents = ARRAY_SIZE(spicc_sclk_parent_data),
-+	},
-+};
-+
-+static struct clk_regmap g12a_spicc1_sclk_div = {
-+	.data = &(struct clk_regmap_div_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.shift = 16,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc1_sclk_div",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&g12a_spicc1_sclk_sel.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap g12a_spicc1_sclk = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_SPICC_CLK_CNTL,
-+		.bit_idx = 22,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "spicc1_sclk",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&g12a_spicc1_sclk_div.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
- #define MESON_GATE(_name, _reg, _bit) \
- 	MESON_PCLK(_name, _reg, _bit, &g12a_clk81.hw)
- 
-@@ -4159,6 +4264,12 @@ static struct clk_hw_onecell_data g12a_hw_onecell_data = {
- 		[CLKID_VDEC_HEVCF]		= &g12a_vdec_hevcf.hw,
- 		[CLKID_TS_DIV]			= &g12a_ts_div.hw,
- 		[CLKID_TS]			= &g12a_ts.hw,
-+		[CLKID_SPICC0_SCLK_SEL]		= &g12a_spicc0_sclk_sel.hw,
-+		[CLKID_SPICC0_SCLK_DIV]		= &g12a_spicc0_sclk_div.hw,
-+		[CLKID_SPICC0_SCLK]		= &g12a_spicc0_sclk.hw,
-+		[CLKID_SPICC1_SCLK_SEL]		= &g12a_spicc1_sclk_sel.hw,
-+		[CLKID_SPICC1_SCLK_DIV]		= &g12a_spicc1_sclk_div.hw,
-+		[CLKID_SPICC1_SCLK]		= &g12a_spicc1_sclk.hw,
- 		[NR_CLKS]			= NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -4408,6 +4519,12 @@ static struct clk_hw_onecell_data g12b_hw_onecell_data = {
- 		[CLKID_CPUB_CLK_AXI]		= &g12b_cpub_clk_axi.hw,
- 		[CLKID_CPUB_CLK_TRACE_SEL]	= &g12b_cpub_clk_trace_sel.hw,
- 		[CLKID_CPUB_CLK_TRACE]		= &g12b_cpub_clk_trace.hw,
-+		[CLKID_SPICC0_SCLK_SEL]		= &g12a_spicc0_sclk_sel.hw,
-+		[CLKID_SPICC0_SCLK_DIV]		= &g12a_spicc0_sclk_div.hw,
-+		[CLKID_SPICC0_SCLK]		= &g12a_spicc0_sclk.hw,
-+		[CLKID_SPICC1_SCLK_SEL]		= &g12a_spicc1_sclk_sel.hw,
-+		[CLKID_SPICC1_SCLK_DIV]		= &g12a_spicc1_sclk_div.hw,
-+		[CLKID_SPICC1_SCLK]		= &g12a_spicc1_sclk.hw,
- 		[NR_CLKS]			= NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -4642,6 +4759,12 @@ static struct clk_hw_onecell_data sm1_hw_onecell_data = {
- 		[CLKID_CPU1_CLK]		= &sm1_cpu1_clk.hw,
- 		[CLKID_CPU2_CLK]		= &sm1_cpu2_clk.hw,
- 		[CLKID_CPU3_CLK]		= &sm1_cpu3_clk.hw,
-+		[CLKID_SPICC0_SCLK_SEL]		= &g12a_spicc0_sclk_sel.hw,
-+		[CLKID_SPICC0_SCLK_DIV]		= &g12a_spicc0_sclk_div.hw,
-+		[CLKID_SPICC0_SCLK]		= &g12a_spicc0_sclk.hw,
-+		[CLKID_SPICC1_SCLK_SEL]		= &g12a_spicc1_sclk_sel.hw,
-+		[CLKID_SPICC1_SCLK_DIV]		= &g12a_spicc1_sclk_div.hw,
-+		[CLKID_SPICC1_SCLK]		= &g12a_spicc1_sclk.hw,
- 		[NR_CLKS]			= NULL,
- 	},
- 	.num = NR_CLKS,
-@@ -4877,6 +5000,12 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
- 	&sm1_cpu1_clk,
- 	&sm1_cpu2_clk,
- 	&sm1_cpu3_clk,
-+	&g12a_spicc0_sclk_sel,
-+	&g12a_spicc0_sclk_div,
-+	&g12a_spicc0_sclk,
-+	&g12a_spicc1_sclk_sel,
-+	&g12a_spicc1_sclk_div,
-+	&g12a_spicc1_sclk,
- };
- 
- static const struct reg_sequence g12a_init_regs[] = {
-diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
-index 9df4068aced1..a8852556836e 100644
---- a/drivers/clk/meson/g12a.h
-+++ b/drivers/clk/meson/g12a.h
-@@ -255,8 +255,12 @@
- #define CLKID_DSU_CLK_DYN1			249
- #define CLKID_DSU_CLK_DYN			250
- #define CLKID_DSU_CLK_FINAL			251
-+#define CLKID_SPICC0_SCLK_SEL			256
-+#define CLKID_SPICC0_SCLK_DIV			257
-+#define CLKID_SPICC1_SCLK_SEL			259
-+#define CLKID_SPICC1_SCLK_DIV			260
- 
--#define NR_CLKS					256
-+#define NR_CLKS					262
- 
- /* include the CLKIDs that have been made part of the DT binding */
- #include <dt-bindings/clock/g12a-clkc.h>
+V2:
+ Fix i.MX8MP build
+ Update cover letter, i.MX7D not have this issue 
+
+The A53 CCM clk root only accepts input up to 1GHz, CCM A53 root
+signoff timing is 1Ghz, however the A53 core which sources from CCM
+root could run above 1GHz which voilates the CCM.
+
+There is a CORE_SEL slice before A53 core, we need configure the
+CORE_SEL slice source from ARM PLL, not A53 CCM clk root.
+
+The A53 CCM clk root should only be used when need to change ARM PLL
+frequency.
+
+Peng Fan (4):
+  clk: imx: imx8mq: fix a53 cpu clock
+  clk: imx: imx8mm: fix a53 cpu clock
+  clk: imx: imx8mn: fix a53 cpu clock
+  clk: imx: imx8mp: fix a53 cpu clock
+
+ drivers/clk/imx/clk-imx8mm.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mn.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mp.c             | 16 ++++++++++++----
+ drivers/clk/imx/clk-imx8mq.c             | 16 ++++++++++++----
+ include/dt-bindings/clock/imx8mm-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mn-clock.h |  4 +++-
+ include/dt-bindings/clock/imx8mp-clock.h |  3 ++-
+ include/dt-bindings/clock/imx8mq-clock.h |  4 +++-
+ 8 files changed, 59 insertions(+), 20 deletions(-)
+
 -- 
-2.22.0
+2.16.4
 
