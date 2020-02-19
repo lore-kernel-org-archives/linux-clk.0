@@ -2,184 +2,233 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 894DDC761A1
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 22:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF042C5ACC4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 23:49:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B00924672
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 22:55:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="MgyJDERi"
+	by mail.kernel.org (Postfix) with ESMTP id 9C5B824676
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 23:49:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582156189;
+	bh=7nGfN2ZIcbajdQOWwV23BCstmz2w3d12JAcJoXWf9zc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=1s64pk4ChX+cC6Kr0WWrewlAiNFGaTxL3VjhzPBcSA1iyoo3GnOyX1db93xj4xWt/
+	 h+Ri5X1OfmZTG05kX4NSMn0l3kyz/y/AXjilF6WP769NXDAyASPI+r+uI/OVIvWYIU
+	 d5860QyJFovjj2agtKOx2hy+CaOpnS4p5Q4gAoNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727429AbgBSWzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 17:55:06 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:37072 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727931AbgBSWzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 17:55:06 -0500
-Received: by mail-il1-f193.google.com with SMTP id v13so22060091iln.4
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2020 14:55:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=EpAMqTgPV4b+hRig2cUuoFOjWPXPfch7/PyvuUrynfo=;
-        b=MgyJDERiivp1dcjo74oCW8yuyz6aC8CNoXb0F6HsaegPUinGGik9ix6+iP5CnOalk1
-         4UjzVEepkpU3z8MTk5mU1ADbPZVRkWYWlS2H4Ct3iRstTrtyq6jQV1GZeFhXFsOfAFJB
-         MRF928ZnYXO7aHo00rSYB5EX8sAHKDNNxZMo8Ul4ECu0STSLii2l6X4odKnwts1wmiLc
-         pTNby6eBi80K/79yJDmac47n7L1nrvDOPTuR0YKYmrKsNjQkf57nQ77NjximRQjy0WPu
-         oxVprbv/W3YU12Npr8w3cr1ssDrya9ovY16d0PyCYB6FmQYHDBnlcloXk0iHLs2HOI/B
-         oQgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=EpAMqTgPV4b+hRig2cUuoFOjWPXPfch7/PyvuUrynfo=;
-        b=UsY2KYrYVSQzAujtA1Afn0IrjBNeqqvgs8xHmr+5TyaEyoJ328mihk42s7B8sVOC5I
-         7e6EUI+5+WVmi5ae7FvvGYjpSAuyqskGgZNVuiqMjuRK5Cf8NJiyvYaO2RR06YCMTr06
-         7F4xXqrzDTUex3b+tt5vBg7yB5NcY+xG3GKNSNvHxoyfDeJMEmO4O/xLhTSbwEsPo/o4
-         D1k70TOrfmX+RVyBlSasq13zizWLEQC9bGWEOFiVkrq9RWlwpPl8QvcGvTXqnkawE5rE
-         X7A4ehGfw4XtknQHZ6DDoMAmJshAJJWep3H8VX5CFxwY1IJDMwYHnIdF7T/BiWmut++O
-         LcwQ==
-X-Gm-Message-State: APjAAAU0IwU+nnCxBT7RRuMwJfaHvJlen0IyoHzpvh2RT6IroZEB+zmy
-        mVKyibobT+crYIaqllFmUeSRACjRToQ2JrvWJ+cQKg==
-X-Google-Smtp-Source: APXvYqyb15r2mBFqMeHZTZlCfhyqX8qvJmHY5h2wuxudCzKO9l5t9qgNWFv72waBtxlihRgSTFhu7tMKS/98+D5l1K0=
-X-Received: by 2002:a92:db49:: with SMTP id w9mr24744338ilq.277.1582152904310;
- Wed, 19 Feb 2020 14:55:04 -0800 (PST)
+        id S1726751AbgBSXtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 18:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50452 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726731AbgBSXtt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Feb 2020 18:49:49 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDF7A2465D;
+        Wed, 19 Feb 2020 23:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582156188;
+        bh=7nGfN2ZIcbajdQOWwV23BCstmz2w3d12JAcJoXWf9zc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=aYRiLk2xVJqyJHgyqCsGbakOYSNsgGX//YSfRHtITVg/Ua7xhx28LW7zJt7Nq+Ew8
+         PcbXDPERCcgTp6c0i7mWHMBT2HY/6ByzozS0rycQQHJztdn+kPdOkR9cY8tzuXYOR1
+         OpwmqCp8TzJMS5aP44zzk/+u9fB1ehSVnFh8pIz8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200218171321.30990-1-robh@kernel.org> <20200218181356.09ae0779@donnerap.cambridge.arm.com>
-In-Reply-To: <20200218181356.09ae0779@donnerap.cambridge.arm.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Wed, 19 Feb 2020 14:54:53 -0800
-Message-ID: <CAOesGMg=-w6+gpAmBDV6yfAg-HUk5AZfsKxQ+kYOn56NcB59vA@mail.gmail.com>
-Subject: Re: [RFC PATCH 00/11] Removing Calxeda platform support
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        SoC Team <soc@kernel.org>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        DTML <devicetree@vger.kernel.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Network Development <netdev@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
+References: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com> <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
+Subject: Re: next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     broonie@kernel.org, tomeu.vizoso@collabora.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        mgalka@collabora.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 19 Feb 2020 15:49:47 -0800
+Message-ID: <158215618721.184098.2077489323832918966@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Adding some Allwinner folks. Presumably there is some sort of clk that
+is failing to calculate a phase when it gets registered. Maybe that's
+because the parent isn't registered yet?
 
-On Tue, Feb 18, 2020 at 10:14 AM Andre Przywara <andre.przywara@arm.com> wr=
-ote:
+Quoting Guillaume Tucker (2020-02-17 23:45:41)
+> Hi Stephen,
+>=20
+> Please see the bisection report below about a boot failure.
+>=20
+> Reports aren't automatically sent to the public while we're
+> trialing new bisection features on kernelci.org but this one
+> looks valid.
+>=20
+> There's nothing in the serial console log, probably because it's
+> crashing too early during boot.  I'm not sure if other platforms
+> on kernelci.org were hit by this in the same way, it's tricky to
+> tell partly because there is no output.  It should possible to
+> run it again with earlyprintk enabled in BayLibre's test lab
+> though.
+>=20
+> Thanks,
+> Guillaume
+>=20
+>=20
+> On 18/02/2020 02:14, kernelci.org bot wrote:
+> > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> > * This automated bisection report was sent to you on the basis  *
+> > * that you may be involved with the breaking commit it has      *
+> > * found.  No manual investigation has been done to verify it,   *
+> > * and the root cause of the problem may be somewhere else.      *
+> > *                                                               *
+> > * If you do send a fix, please include this trailer:            *
+> > *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> > *                                                               *
+> > * Hope this helps!                                              *
+> > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> >=20
+> > next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+> >=20
+> > Summary:
+> >   Start:      c25a951c50dc Add linux-next specific files for 20200217
+> >   Plain log:  https://storage.kernelci.org//next/master/next-20200217/a=
+rm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-ze=
+ro.txt
+> >   HTML log:   https://storage.kernelci.org//next/master/next-20200217/a=
+rm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-ze=
+ro.html
+> >   Result:     2760878662a2 clk: Bail out when calculating phase fails d=
+uring clk registration
+> >=20
+> > Checks:
+> >   revert:     PASS
+> >   verify:     PASS
+> >=20
+> > Parameters:
+> >   Tree:       next
+> >   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-=
+next.git
+> >   Branch:     master
+> >   Target:     sun8i-h2-plus-orangepi-zero
+> >   CPU arch:   arm
+> >   Lab:        lab-baylibre
+> >   Compiler:   gcc-8
+> >   Config:     multi_v7_defconfig
+> >   Test case:  baseline.login
+> >=20
+> > Breaking commit found:
+> >=20
+> > -----------------------------------------------------------------------=
+--------
+> > commit 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+> > Author: Stephen Boyd <sboyd@kernel.org>
+> > Date:   Wed Feb 5 15:28:02 2020 -0800
+> >=20
+> >     clk: Bail out when calculating phase fails during clk registration
+> >    =20
+> >     Bail out of clk registration if we fail to get the phase for a clk =
+that
+> >     has a clk_ops::get_phase() callback. Print a warning too so that dr=
+iver
+> >     authors can easily figure out that some clk is unable to read back =
+phase
+> >     information at boot.
+> >    =20
+> >     Cc: Douglas Anderson <dianders@chromium.org>
+> >     Cc: Heiko Stuebner <heiko@sntech.de>
+> >     Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> >     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> >     Link: https://lkml.kernel.org/r/20200205232802.29184-5-sboyd@kernel=
+.org
+> >     Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> >=20
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index dc8bdfbd6a0c..ed1797857bae 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+> >        * Since a phase is by definition relative to its parent, just
+> >        * query the current clock phase, or just assume it's in phase.
+> >        */
+> > -     clk_core_get_phase(core);
+> > +     ret =3D clk_core_get_phase(core);
+> > +     if (ret < 0) {
+> > +             pr_warn("%s: Failed to get phase for clk '%s'\n", __func_=
+_,
+> > +                     core->name);
+> > +             goto out;
+> > +     }
+> > =20
+> >       /*
+> >        * Set clk's duty cycle.
+> > -----------------------------------------------------------------------=
+--------
+> >=20
+> >=20
+> > Git bisection log:
+> >=20
+> > -----------------------------------------------------------------------=
+--------
+> > git bisect start
+> > # good: [11a48a5a18c63fd7621bb050228cebf13566e4d8] Linux 5.6-rc2
+> > git bisect good 11a48a5a18c63fd7621bb050228cebf13566e4d8
+> > # bad: [c25a951c50dca1da4a449a985a9debd82dc18573] Add linux-next specif=
+ic files for 20200217
+> > git bisect bad c25a951c50dca1da4a449a985a9debd82dc18573
+> > # bad: [5859c179b7ed01050641bd565959a2c4571923da] Merge remote-tracking=
+ branch 'swiotlb/linux-next'
+> > git bisect bad 5859c179b7ed01050641bd565959a2c4571923da
+> > # bad: [ecf5a6e1ec22ecbe1c9086f40130188f31e37a38] Merge remote-tracking=
+ branch 'xtensa/xtensa-for-next'
+> > git bisect bad ecf5a6e1ec22ecbe1c9086f40130188f31e37a38
+> > # good: [e475ff54b7d62c550768ce36617e8c8fec72cfc0] Merge remote-trackin=
+g branch 'reset/reset/next'
+> > git bisect good e475ff54b7d62c550768ce36617e8c8fec72cfc0
+> > # bad: [9e86f8cc2d2f464e27c172127e02641fe77eccea] Merge remote-tracking=
+ branch 'sh/sh-next'
+> > git bisect bad 9e86f8cc2d2f464e27c172127e02641fe77eccea
+> > # good: [1752d66d86600e9cb508612ded6984774b72321d] Merge remote-trackin=
+g branch 'tegra/for-next'
+> > git bisect good 1752d66d86600e9cb508612ded6984774b72321d
+> > # bad: [0ecb83df935b058a2c3727716a7fab539dbaba88] Merge remote-tracking=
+ branch 'csky/linux-next'
+> > git bisect bad 0ecb83df935b058a2c3727716a7fab539dbaba88
+> > # bad: [898fe3af935a45236cbfd053e79ae01506ae7aa2] Merge branch 'clk-for=
+matting' into clk-next
+> > git bisect bad 898fe3af935a45236cbfd053e79ae01506ae7aa2
+> > # bad: [0d426990beac93127a4ee37cc056fce928466f7d] Merge branch 'clk-pha=
+se-errors' into clk-next
+> > git bisect bad 0d426990beac93127a4ee37cc056fce928466f7d
+> > # good: [6e37add6b938941f755928159ede3c9855307066] Merge branch 'clk-qc=
+om' into clk-next
+> > git bisect good 6e37add6b938941f755928159ede3c9855307066
+> > # good: [5d98429bbebc5dc683ea6919d9b9e6e83e8c8867] Merge branch 'clk-fi=
+xes' into clk-next
+> > git bisect good 5d98429bbebc5dc683ea6919d9b9e6e83e8c8867
+> > # good: [768a5d4f63c29d3bed5abb3c187312fcf623fa05] clk: Use 'parent' to=
+ shorten lines in __clk_core_init()
+> > git bisect good 768a5d4f63c29d3bed5abb3c187312fcf623fa05
+> > # bad: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when ca=
+lculating phase fails during clk registration
+> > git bisect bad 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+> > # good: [0daa376d832f4ce585f153efee4233b52fa3fe58] clk: Move rate and a=
+ccuracy recalc to mostly consumer APIs
+> > git bisect good 0daa376d832f4ce585f153efee4233b52fa3fe58
+> > # first bad commit: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bai=
+l out when calculating phase fails during clk registration
+> > -----------------------------------------------------------------------=
+--------
+> >=20
 >
-> On Tue, 18 Feb 2020 11:13:10 -0600
-> Rob Herring <robh@kernel.org> wrote:
->
-> Hi,
->
-> > Calxeda has been defunct for 6 years now. Use of Calxeda servers carrie=
-d
-> > on for some time afterwards primarily as distro builders for 32-bit ARM=
-.
-> > AFAIK, those systems have been retired in favor of 32-bit VMs on 64-bit
-> > hosts.
-> >
-> > The other use of Calxeda Midway I'm aware of was testing 32-bit ARM KVM
-> > support as there are few or no other systems with enough RAM and LPAE. =
-Now
-> > 32-bit KVM host support is getting removed[1].
-> >
-> > While it's not much maintenance to support, I don't care to convert the
-> > Calxeda DT bindings to schema nor fix any resulting errors in the dts f=
-iles
-> > (which already don't exactly match what's shipping in firmware).
->
-> While every kernel maintainer seems always happy to take patches with a n=
-egative diffstat, I wonder if this is really justification enough to remove=
- a perfectly working platform. I don't really know about any active users, =
-but experience tells that some platforms really are used for quite a long t=
-ime, even if they are somewhat obscure. N900 or Netwinder, anyone?
-
-One of the only ways we know to confirm whether there are active users
-or not, is to propose removing a platform.
-
-The good news is that if/when you do, and someone cares enough about
-it to want to keep it alive, they should also have access to hardware
-and can help out in maintaining it and keeping it in a working state.
-
-For some hardware platforms, at some point in time it no longer makes
-sense to keep the latest kernel available on them, especially if
-maintainers and others no longer have easy access to hardware and
-resources/time to keep it functional.
-
-It's really more about "If you care about this enough to keep it
-going, please speak up and help out".
-
-> So to not give the impression that actually *everyone* (from that small s=
-ubset of people actively reading the kernel list) is happy with that, I thi=
-nk that having support for at least Midway would be useful. On the one hand=
- it's a decent LPAE platform (with memory actually exceeding 4GB), and on t=
-he other hand it's something with capable I/O (SATA) and networking, so one=
- can actually stress test the system. Which is the reason I was using that =
-for KVM testing, but even with that probably going away now there remain st=
-ill some use cases, and be it for general ARM(32) testing.
-
-How many bugs have you found on this platform that you would not have
-on a more popular one? And, how many of those bugs only affected this
-platform, i.e. just adding onto the support burden without positive
-impact to the broader community?
-
-> I don't particularly care about the more optional parts like EDAC, cpuidl=
-e, or cpufreq, but I wonder if keeping in at least the rather small SATA an=
-d XGMAC drivers and basic platform support is feasible.
-
-At what point are you better off just running under QEMU/virtualization?
-
-> If YAML DT bindings are used as an excuse, I am more than happy to conver=
-t those over.
->
-> And if anyone has any particular gripes with some code, maybe there is a =
-way to fix that instead of removing it? I was always wondering if we could =
-get rid of the mach-highbank directory, for instance. I think most of it is=
- Highbank (Cortex-A9) related.
-
-Again, how do you fix it if nobody has signed up for maintaining and
-keeping it working? Doing blind changes that might or might not work
-is not a way to keep a platform supported.
-
-Just because code is removed, it doesn't mean it can't be reintroduced
-when someone comes along and wants to do that. Look at some of the
-recent additions of old OLPC hardware support, for example. But
-there's a difference between this and keeping the code around hoping
-that someone will care about it. It's not lost, and it's easy to bring
-back.
-
-
-
--Olof
