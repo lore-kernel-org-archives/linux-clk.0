@@ -4,75 +4,132 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FE1C34022
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 06:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C8AAC34022
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BFB24656
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 06:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B258222D9
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbgBSGKP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 01:10:15 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:36492 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726096AbgBSGKM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Feb 2020 01:10:12 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 78D5A1A097C;
-        Wed, 19 Feb 2020 07:10:10 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F0E7E1A0890;
-        Wed, 19 Feb 2020 07:10:02 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D8BAA402DD;
-        Wed, 19 Feb 2020 14:09:53 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, abel.vesa@nxp.com,
-        peng.fan@nxp.com, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 3/3] clk: imx8mp: Correct the enet_qos parent clock
-Date:   Wed, 19 Feb 2020 14:04:11 +0800
-Message-Id: <1582092251-19222-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582092251-19222-1-git-send-email-Anson.Huang@nxp.com>
-References: <1582092251-19222-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727193AbgBSHeL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 02:34:11 -0500
+Received: from [167.172.186.51] ([167.172.186.51]:35154 "EHLO shell.v3.sk"
+        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726996AbgBSHeL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:34:11 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 4021FE006F;
+        Wed, 19 Feb 2020 07:34:24 +0000 (UTC)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id obBDEgqxufYX; Wed, 19 Feb 2020 07:34:19 +0000 (UTC)
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 9E60EE0051;
+        Wed, 19 Feb 2020 07:34:17 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id T9OzMkojXK5b; Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
+Received: from furthur.lan (unknown [109.183.109.54])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 0EC1EE0070;
+        Wed, 19 Feb 2020 07:34:16 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 09/10] clk: mmp2: Add PLLs that are available on MMP3
+Date:   Wed, 19 Feb 2020 08:33:52 +0100
+Message-Id: <20200219073353.184336-10-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200219073353.184336-1-lkundrak@v3.sk>
+References: <20200219073353.184336-1-lkundrak@v3.sk>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Fugang Duan <fugang.duan@nxp.com>
+There are more PLLs on MMP3 and are configured slightly differently.
+Tested on a MMP3-based Dell Wyse 3020 machine.
 
-enet_qos is for eqos tsn AXI bus clock whose clock source is from
-ccm_enet_axi_clk_root, and controlled by CCM_CCGR59(offset 0x43b0)
-and CCM_CCGR64(offset 0x4400), so correct enet_qos root clock's
-parent clock to sim_enet.
-
-Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
-Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/clk/imx/clk-imx8mp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 1a9d7a0..cb58fb8 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -688,7 +688,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_CAN1_ROOT] = imx_clk_hw_gate2("can1_root_clk", "can1", ccm_base + 0x4350, 0);
- 	hws[IMX8MP_CLK_CAN2_ROOT] = imx_clk_hw_gate2("can2_root_clk", "can2", ccm_base + 0x4360, 0);
- 	hws[IMX8MP_CLK_SDMA1_ROOT] = imx_clk_hw_gate4("sdma1_root_clk", "ipg_root", ccm_base + 0x43a0, 0);
--	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "enet_axi", ccm_base + 0x43b0, 0);
-+	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "sim_enet_root_clk", ccm_base + 0x43b0, 0);
- 	hws[IMX8MP_CLK_SIM_ENET_ROOT] = imx_clk_hw_gate4("sim_enet_root_clk", "enet_axi", ccm_base + 0x4400, 0);
- 	hws[IMX8MP_CLK_GPU2D_ROOT] = imx_clk_hw_gate4("gpu2d_root_clk", "gpu2d_div", ccm_base + 0x4450, 0);
- 	hws[IMX8MP_CLK_GPU3D_ROOT] = imx_clk_hw_gate4("gpu3d_root_clk", "gpu3d_core_div", ccm_base + 0x4460, 0);
--- 
-2.7.4
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.=
+c
+index 7594a8280b93a..310d77855f03f 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -57,10 +57,16 @@
+ #define APMU_USBHSIC0	0xf8
+ #define APMU_USBHSIC1	0xfc
+=20
+-#define MPMU_FCCR	0x8
+-#define MPMU_POSR	0x10
+-#define MPMU_UART_PLL	0x14
+-#define MPMU_PLL2_CR	0x34
++#define MPMU_FCCR		0x8
++#define MPMU_POSR		0x10
++#define MPMU_UART_PLL		0x14
++#define MPMU_PLL2_CR		0x34
++/* MMP3 specific below */
++#define MPMU_PLL3_CR		0x50
++#define MPMU_PLL3_CTRL1		0x58
++#define MPMU_PLL1_CTRL		0x5c
++#define MPMU_PLL_DIFF_CTRL	0x68
++#define MPMU_PLL2_CTRL1		0x414
+=20
+ enum mmp2_clk_model {
+ 	CLK_MODEL_MMP2,
+@@ -86,6 +92,14 @@ static struct mmp_param_pll_clk pll_clks[] =3D {
+ 	{MMP2_CLK_PLL2,   "pll2",           0, MPMU_PLL2_CR,       0x0300, MPMU=
+_PLL2_CR, 10},
+ };
+=20
++static struct mmp_param_pll_clk mmp3_pll_clks[] =3D {
++	{MMP2_CLK_PLL2,   "pll1",   797330000, MPMU_FCCR,          0x4000, MPMU=
+_POSR,     0,      26000000, MPMU_PLL1_CTRL,      25},
++	{MMP2_CLK_PLL2,   "pll2",           0, MPMU_PLL2_CR,       0x0300, MPMU=
+_PLL2_CR, 10,      26000000, MPMU_PLL2_CTRL1,     25},
++	{MMP3_CLK_PLL1_P, "pll1_p",         0, MPMU_PLL_DIFF_CTRL, 0x0010, 0,  =
+           0,     797330000, MPMU_PLL_DIFF_CTRL,   0},
++	{MMP3_CLK_PLL2_P, "pll2_p",         0, MPMU_PLL_DIFF_CTRL, 0x0100, MPMU=
+_PLL2_CR, 10,      26000000, MPMU_PLL_DIFF_CTRL,   5},
++	{MMP3_CLK_PLL3,   "pll3",           0, MPMU_PLL3_CR,       0x0300, MPMU=
+_PLL3_CR, 10,      26000000, MPMU_PLL3_CTRL1,     25},
++};
++
+ static struct mmp_param_fixed_factor_clk fixed_factor_clks[] =3D {
+ 	{MMP2_CLK_PLL1_2, "pll1_2", "pll1", 1, 2, 0},
+ 	{MMP2_CLK_PLL1_4, "pll1_4", "pll1_2", 1, 2, 0},
+@@ -127,9 +141,15 @@ static void mmp2_pll_init(struct mmp2_clk_unit *pxa_=
+unit)
+ 	mmp_register_fixed_rate_clks(unit, fixed_rate_clks,
+ 					ARRAY_SIZE(fixed_rate_clks));
+=20
+-	mmp_register_pll_clks(unit, pll_clks,
+-				pxa_unit->mpmu_base,
+-				ARRAY_SIZE(pll_clks));
++	if (pxa_unit->model =3D=3D CLK_MODEL_MMP3) {
++		mmp_register_pll_clks(unit, mmp3_pll_clks,
++					pxa_unit->mpmu_base,
++					ARRAY_SIZE(mmp3_pll_clks));
++	} else {
++		mmp_register_pll_clks(unit, pll_clks,
++					pxa_unit->mpmu_base,
++					ARRAY_SIZE(pll_clks));
++	}
+=20
+ 	mmp_register_fixed_factor_clks(unit, fixed_factor_clks,
+ 					ARRAY_SIZE(fixed_factor_clks));
+--=20
+2.24.1
 
