@@ -2,204 +2,176 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AF02C34047
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:33:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7286C34050
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 11:58:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 352B3208E4
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:33:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B7AE24676
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 11:58:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fIi8zPik"
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="dwSV9A7N";
+	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="XRvH903F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbgBSKdl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 05:33:41 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:40491 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbgBSKdk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 05:33:40 -0500
-Received: by mail-lj1-f193.google.com with SMTP id n18so26472232ljo.7
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2020 02:33:39 -0800 (PST)
+        id S1726788AbgBSL6f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 06:58:35 -0500
+Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:3806 "EHLO
+        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726558AbgBSL6e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 06:58:34 -0500
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+        by mx0b-0016f401.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 01JBuXu8008228;
+        Wed, 19 Feb 2020 03:57:51 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=date : from : to :
+ cc : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pfpt0818; bh=hVSYXq9QOrcLi3i8lVmT22lO2OcEHbVGSR8MrLGiwsU=;
+ b=dwSV9A7NLj6iYOkcIyHZjim503SXuDNKBmYBrk09Z9jadKyTDEzEKrQC55c96FcK4Rs4
+ QAHM9fT1BCaAs3ZiAmWSMAcpq1q57SV2WW2EmbBKOBZB42l0F1yBc3rYAbYyJ1w7g0BC
+ 6mm8+YywEivro2v7D78yYfU6xtQC8PHq72fbn4YIenDSq0n8UI8/odLz1yQSLVu6LQUW
+ 6ScKU3l3Wc/CVyZqBvJGwP/yeUw88pSC6QvzdlIyw7273oLCwvcVcSGlgCGVdkdMjmBL
+ rIdfl7QW6kOA6ieYK90IWJOIG62+/3rGitxzinYKvfGXfECDo8//r2h+TdsSD+hc/3L1 vg== 
+Received: from sc-exch02.marvell.com ([199.233.58.182])
+        by mx0b-0016f401.pphosted.com with ESMTP id 2y8ubv1wpy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 19 Feb 2020 03:57:51 -0800
+Received: from DC5-EXCH02.marvell.com (10.69.176.39) by SC-EXCH02.marvell.com
+ (10.93.176.82) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 19 Feb
+ 2020 03:57:49 -0800
+Received: from SC-EXCH01.marvell.com (10.93.176.81) by DC5-EXCH02.marvell.com
+ (10.69.176.39) with Microsoft SMTP Server (TLS) id 15.0.1497.2; Wed, 19 Feb
+ 2020 03:57:49 -0800
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (104.47.44.51) by
+ SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2 via Frontend Transport; Wed, 19 Feb 2020 03:57:48 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KJmk45N0JG6u/q/dRrfz4kjQy+Mbr5vy6HZcs5Q6ua1XFVfjXoifI1WvIOjkPsWn8WIEgB0/njD3Ij7ry/E67QZD6SBZGwyxdQEx31cfeNugjr81CtMIiv+SLF7DB1pKBnEC3BFS4DKMIZR1a8lpXpgFhfrnUDIsWC0B9XYpTLZ2Mo//PveZEw8GnK6mZ/RoNOrecOZWTpRQWdRbRZVD7NQAt8u25H9gnCJYA8rgb1CQHnPzDqz42U1tmijF1QvEVBYj9TZ/YST5N80GAnclkCcTfvagYBxORVvB9ngKLAneCAvYe2YFLOhSnmJDt/nI/HaJnmnTMkOLqCEBcfTHYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hVSYXq9QOrcLi3i8lVmT22lO2OcEHbVGSR8MrLGiwsU=;
+ b=MJzZ8YEJsDP7GBlFMhZHEfpcP6TrwtUhFGuE7rzI28Mr7vsgbK2poUotvhBYr6bTp98s8V7SYr1ScYb5JOeaxCOLhA/0dUJLP/9wVsk/f7z7HH1sDrn7Lq7N1/6zkbSpfDmOH29g/BCLt5ZyVB9WDCvb0iHIgadPUMn+UIqXHBeXhG8uEFCs/BqbLp8MHysFx+aYiFhUecIo3osrSM6pRog4QVunYRPNEE5zIghETpzjxX2TZUWGD/q00yT5sLYndMlHnysUq8BlXEjTocdAV7ULl1nJVf6En8P4wUSA+TD+5oF+gDprJK3sQnxCRC0viJKbpz0BBnschlahOxZsOA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=k3zL8BqD3nSyMrng2ALzfLDHclW3URpye2o+jipVp44=;
-        b=fIi8zPikranG0j9o2BCAT1Xd4cp4eNXZ/auO6yqpux1/UKrFLF0oPNUKcG15N9S8IV
-         YivHbCSdgBrzWwzxKgVN8lqZ7iCuussecW+7/eeLJahc2YHSQSkNbgG83Fpns53JGobl
-         fNNBacawYzkiLyi/NYQCv6jHLvAANvU4at7kbYhOv+eLU+SEWozYD6DMdQOSx8llQDAH
-         s8SOfQuki3lXixxTfFI9WhXXF1rCTjnQnox8p2jG3h/hSUPrY3UsuO8vHbSW980kR4Dy
-         +YKpSph3X9o7vAu0MTtKqTpt/qugW+vTsVMkM+0Bxq19lXsjyHurCoGOB7W6KEFWYvcE
-         0JuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=k3zL8BqD3nSyMrng2ALzfLDHclW3URpye2o+jipVp44=;
-        b=tbxY0Nub6iOBTUe57fG0ZWsO3VNtB58LPdPtYGCZ67ycLZcxsnUBT9+FXXkI3kYs4m
-         Wd+WoSnuSp6z60L32xZTHpdSlB1kDlVdJ08ZjJKMOJbRsFrdmRHVdWpWPW268OkKpmsZ
-         XuLpCc5ptRlkS98H5opY0a/FyU+Qr01EgcvbAWy8ed8QCX9qsNP9pkFw9tuM1s/R5H3x
-         6V3qd9+SL6OiAh61gqTvLculv9nGENhbkUU93MpNtE30UVue7v4bE22nhHjdLsLDbxWG
-         c3tcvqlLa6UTKdxRoocnCm3UmBTk/GpyNuEhc2iKfSbtLb9zVRg7XVb/P+9x6iQE++iz
-         ZzwA==
-X-Gm-Message-State: APjAAAXRsN8nEhmkawK19BGjy5hgsDrXf5vTOeYP4zBiA3GPp84W6RsY
-        NcH+U1nQibxzWBdjcvNjiyt/9g==
-X-Google-Smtp-Source: APXvYqze6ZB453ElkEFby3I+4uyFRO1UUNvFJvSkApvJ/cL59Fj6qkjJYdvR6Kyw564HS+M0bfx0vQ==
-X-Received: by 2002:a2e:a404:: with SMTP id p4mr15961894ljn.234.1582108418553;
-        Wed, 19 Feb 2020 02:33:38 -0800 (PST)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id k12sm1003316lfc.33.2020.02.19.02.33.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 02:33:37 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/3 v3] clk: versatile: Add device tree probing for IM-PD1 clocks
-Date:   Wed, 19 Feb 2020 11:33:26 +0100
-Message-Id: <20200219103326.81120-3-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200219103326.81120-1-linus.walleij@linaro.org>
-References: <20200219103326.81120-1-linus.walleij@linaro.org>
+ d=marvell.onmicrosoft.com; s=selector1-marvell-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hVSYXq9QOrcLi3i8lVmT22lO2OcEHbVGSR8MrLGiwsU=;
+ b=XRvH903FZc19KWXmHX4gi2jtQImddIqRwsXhsgVsdmy5UfD+Fq5Q+i09LzMtyQmfUQpoaUag7M8Y+hbXOj+M9wmFbECM7NhqWOOhP3l5Ew+GYkdr3SraOp5qYZ0GoxSe9m5t4xdtl1QVhDL90FeBnAAjWXBqBErFoO3KGAR/l1E=
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com (10.255.237.10) by
+ MN2PR18MB2766.namprd18.prod.outlook.com (20.178.255.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2729.29; Wed, 19 Feb 2020 11:57:46 +0000
+Received: from MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff]) by MN2PR18MB3408.namprd18.prod.outlook.com
+ ([fe80::30c4:52fe:fdf8:faff%7]) with mapi id 15.20.2729.033; Wed, 19 Feb 2020
+ 11:57:46 +0000
+Date:   Wed, 19 Feb 2020 12:57:36 +0100
+From:   Robert Richter <rrichter@marvell.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <soc@kernel.org>,
+        Andre Przywara <andre.przywara@arm.com>,
+        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        <devicetree@vger.kernel.org>, Eric Auger <eric.auger@redhat.com>,
+        <iommu@lists.linux-foundation.org>,
+        James Morse <james.morse@arm.com>,
+        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+        <kvm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-edac@vger.kernel.org>, <linux-ide@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        <netdev@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "Robin Murphy" <robin.murphy@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [RFC PATCH 05/11] EDAC: Remove Calxeda drivers
+Message-ID: <20200219115736.tiussdepepqj2jtf@rric.localdomain>
+References: <20200218171321.30990-1-robh@kernel.org>
+ <20200218171321.30990-6-robh@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200218171321.30990-6-robh@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: HE1PR05CA0296.eurprd05.prod.outlook.com
+ (2603:10a6:7:93::27) To MN2PR18MB3408.namprd18.prod.outlook.com
+ (2603:10b6:208:165::10)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from rric.localdomain (31.208.96.227) by HE1PR05CA0296.eurprd05.prod.outlook.com (2603:10a6:7:93::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2750.17 via Frontend Transport; Wed, 19 Feb 2020 11:57:42 +0000
+X-Originating-IP: [31.208.96.227]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: c0016273-6367-4ee4-ff14-08d7b532ef4d
+X-MS-TrafficTypeDiagnostic: MN2PR18MB2766:
+X-Microsoft-Antispam-PRVS: <MN2PR18MB2766A11793F4AC81A7F3A88ED9100@MN2PR18MB2766.namprd18.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:2399;
+X-Forefront-PRVS: 0318501FAE
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(376002)(39860400002)(396003)(136003)(199004)(189003)(7696005)(316002)(956004)(52116002)(2906002)(6666004)(4744005)(8936002)(478600001)(4326008)(7416002)(16526019)(54906003)(7406005)(186003)(6506007)(53546011)(5660300002)(26005)(55016002)(81156014)(81166006)(6916009)(86362001)(66476007)(66946007)(9686003)(1076003)(8676002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR18MB2766;H:MN2PR18MB3408.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: marvell.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: J6Wj/XBr5++dQdwABbQqaKSkbsdO+0osP8bTZH9ijEX5ayw4fWZ5wstnRp6XL/qjJEBTTMxNNQ1W5gORvM6dGMlNu1KM0XOoLIy0KuI7/X48QdR62Nr9h9zVeCeEcvbyAfwZLK+unsq8flT4Ja2gP9g/HpbFgZcYVd2V6SDEGeABiAGYBUXIdTEYOih8pdhlNCzNpes3znC5EVHIKJ3EnPz9/B+EhlmHkaki29E87v1LAzae+RB6ue61pcqC48eEoff5nWfasoTrsDPOkG2lxFT580583pPdhzLsgrOQjWhucignr2KhQI3/IAs/WKzWK+ZkbXhu0i/XUQQtP5DBKB4gHsIq5tfbh6F0cFyAJqdYP7KbvjY5W3PjQ92jSI1cCK8o1P7YZ+NwSWYYM6hJ/J3VZBfi268ayDeyNnjPcP0oPFcsFiUTzJmX6xWPvjWL
+X-MS-Exchange-AntiSpam-MessageData: iLbix4Tt12DsgbwXFE1wBpRypSb188b3KAARX+qlgxt/MQbqsSlFlHU9qvAL+pizl5GEku86usfY9gVgsVFWY0P1E0aRCvDTKzkkeNKAIs7naFyH+d4Cvb2ByO+bvFZcOYOSDiWvCSCcVssdn1JPLw==
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0016273-6367-4ee4-ff14-08d7b532ef4d
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Feb 2020 11:57:46.6401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: fKW7SCYVI9hUYCT9RFjp3gDDIndFWJJiYmDjeLQciNIKTypnY0UCcehmKtFOGvCh/p6eUSJllrbU5Aca/KqPqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR18MB2766
+X-OriginatorOrg: marvell.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.572
+ definitions=2020-02-19_03:2020-02-19,2020-02-19 signatures=0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As we want to move these clocks over to probe from the device
-tree we add a device tree probing path.
+On 18.02.20 11:13:15, Rob Herring wrote:
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Cc: Tony Luck <tony.luck@intel.com>
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Robert Richter <rrichter@marvell.com>
+> Cc: linux-edac@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> Do not apply yet.
+> 
+>  MAINTAINERS                     |   6 -
+>  drivers/edac/Kconfig            |  14 --
+>  drivers/edac/Makefile           |   3 -
+>  drivers/edac/highbank_l2_edac.c | 142 -----------------
+>  drivers/edac/highbank_mc_edac.c | 272 --------------------------------
+>  5 files changed, 437 deletions(-)
+>  delete mode 100644 drivers/edac/highbank_l2_edac.c
+>  delete mode 100644 drivers/edac/highbank_mc_edac.c
 
-The old platform data path will be deleted once we have the
-device tree overall code in place.
+> -EDAC-CALXEDA
+> -M:	Robert Richter <rric@kernel.org>
+> -L:	linux-edac@vger.kernel.org
+> -S:	Maintained
+> -F:	drivers/edac/highbank*
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v2->v3:
-- Resend with the rest
-ChangeLog v1->v2:
-- Drop some __init tagging
-- Provide MODULE_DEVICE_TABLE()
-- Rewrote to use the same method with regmap as clk-icst.c
-- The reuse of clk-icst.c makes the clock probe using hw
-  and then it needs no special handling for clock output
-  names.
----
- drivers/clk/versatile/clk-icst.h  |  1 +
- drivers/clk/versatile/clk-impd1.c | 79 +++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+Once upon a time in Texas...
 
-diff --git a/drivers/clk/versatile/clk-icst.h b/drivers/clk/versatile/clk-icst.h
-index 1206f008c11a..1a119ef11066 100644
---- a/drivers/clk/versatile/clk-icst.h
-+++ b/drivers/clk/versatile/clk-icst.h
-@@ -11,6 +11,7 @@ enum icst_control_type {
- 	ICST_INTEGRATOR_AP_PCI, /* Odd bit pattern storage */
- 	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
- 	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
-+	ICST_INTEGRATOR_IM_PD1, /* Like the Versatile, all control bits */
- };
- 
- /**
-diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
-index 1991f15a5db9..b05da8516d4c 100644
---- a/drivers/clk/versatile/clk-impd1.c
-+++ b/drivers/clk/versatile/clk-impd1.c
-@@ -7,7 +7,11 @@
- #include <linux/clkdev.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/platform_device.h>
- #include <linux/platform_data/clk-integrator.h>
-+#include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include "icst.h"
- #include "clk-icst.h"
-@@ -175,3 +179,78 @@ void integrator_impd1_clk_exit(unsigned int id)
- 	kfree(imc->pclkname);
- }
- EXPORT_SYMBOL_GPL(integrator_impd1_clk_exit);
-+
-+static int integrator_impd1_clk_spawn(struct device *dev,
-+				      struct device_node *parent,
-+				      struct device_node *np)
-+{
-+	struct regmap *map;
-+	struct clk *clk = ERR_PTR(-EINVAL);
-+	const char *name = np->name;
-+	const char *parent_name;
-+	const struct clk_icst_desc *desc;
-+	int ret;
-+
-+	map = syscon_node_to_regmap(parent);
-+	if (IS_ERR(map)) {
-+		pr_err("no regmap for syscon IM-PD1 ICST clock parent\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	if (of_device_is_compatible(np, "arm,impd1-vco1")) {
-+		desc = &impd1_icst1_desc;
-+	} else if (of_device_is_compatible(np, "arm,impd1-vco2")) {
-+		desc = &impd1_icst2_desc;
-+	} else {
-+		dev_err(dev, "not a clock node %s\n", name);
-+		return -ENODEV;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	clk = icst_clk_setup(NULL, desc, name, parent_name, map,
-+			     ICST_INTEGRATOR_IM_PD1);
-+	if (!IS_ERR(clk)) {
-+		of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+		ret = 0;
-+	} else {
-+		dev_err(dev, "error setting up IM-PD1 ICST clock\n");
-+		ret = PTR_ERR(clk);
-+	}
-+
-+	return ret;
-+}
-+
-+static int integrator_impd1_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child;
-+	int ret = 0;
-+
-+	for_each_available_child_of_node(np, child) {
-+		ret = integrator_impd1_clk_spawn(dev, np, child);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id impd1_syscon_match[] = {
-+	{ .compatible = "arm,im-pd1-syscon", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, impd1_syscon_match);
-+
-+static struct platform_driver impd1_clk_driver = {
-+	.driver = {
-+		.name = "impd1-clk",
-+		.of_match_table = impd1_syscon_match,
-+	},
-+	.probe  = integrator_impd1_clk_probe,
-+};
-+builtin_platform_driver(impd1_clk_driver);
-+
-+MODULE_AUTHOR("Linus Walleij <linusw@kernel.org>");
-+MODULE_DESCRIPTION("Arm IM-PD1 module clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.24.1
+If Andre wants to keep it, let's keep it.
 
+Otherwise:
+
+Acked-by: Robert Richter <rric@kernel.org>
+
+Goodbye Calxeda...
