@@ -2,51 +2,42 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBC8C34022
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0420C34022
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56BB21D56
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:35:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8288E24658
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 07:40:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgBSHeD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 02:34:03 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:35050 "EHLO shell.v3.sk"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726772AbgBSHeC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Feb 2020 02:34:02 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 8FF63E0071;
-        Wed, 19 Feb 2020 07:34:14 +0000 (UTC)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id HN17adJcV5R0; Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 1EE14E0046;
-        Wed, 19 Feb 2020 07:34:13 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 2QCWGCc6_F_A; Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
-Received: from furthur.lan (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 7C773DFCA2;
-        Wed, 19 Feb 2020 07:34:12 +0000 (UTC)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 00/10] MMP2 CLK Update
-Date:   Wed, 19 Feb 2020 08:33:43 +0100
-Message-Id: <20200219073353.184336-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.24.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S1726762AbgBSHkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 02:40:49 -0500
+Received: from mga01.intel.com ([192.55.52.88]:51863 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbgBSHkt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Feb 2020 02:40:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2020 23:40:48 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,459,1574150400"; 
+   d="scan'208";a="348882469"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga001.fm.intel.com with ESMTP; 18 Feb 2020 23:40:45 -0800
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v5 0/2] intel: Add a new driver for a new clock controller IP
+Date:   Wed, 19 Feb 2020 15:40:41 +0800
+Message-Id: <cover.1582096982.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -54,43 +45,92 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi,
 
-please consider applying this patch series. Its goal is to ultimately
-provide accurate clock sources from PLLs configured by firmware on MMP2 a=
-nd
-MMP3. Currently they are hardcoded to more or less wrong values, which
-causes bad timings when they are use (e.g. to generate display clock).
+This series adds clock driver for Clock Generation Unit(CGU) of
+Lightning Mountain(LGM) SoC.
 
-It starts off with a handful of cleanups:
+Patch 1 adds bindings document & include file for CGU.
+Patch 2 adds common clock framework based clock driver for CGU.
 
-  [PATCH 01/10] clk: mmp2: Remove a unused prototype
-  [PATCH 02/10] clk: mmp2: Constify some strings
-  [PATCH 03/10] dt-bindings: clock: Convert marvell,mmp2-clock to
+These patches are baselined upon Linux 5.6-rc1 at below Git link:
+git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
 
-The next patch adds the logic for calculating the rate of clock signals
-coming from the PLLs dynamically, while not actually switching the
-driver over to using it.
+v5:
+- Address review concerns - mainly below mentioned. (Stephen Boyd)
+- Improve commit message, add COMPILE_TEST in KConfig dependency.
+- Remove unused header include files, drop unnecessary casts.
+- Switch to using readl_poll_timeout() instead of implementing timeout routine.
+- Avoid using small functions which are called just once. Inline them or
+  remove them.
+- const static --> static const
+- Fix coding style/convention related review concerns.
+- Use __iomem for all IO addresses variables.
+- Consolidate clk_enable & clk_disable ops into a common clk_enable_disable
+  routine to avoid redundant code.
+- Remove unnecessary dev pointers for clk data structures.
+- Redesign code to use new way of specifying clk_parents i.e. use
+  clk_parent_data.fw_name instead of older parent_name strings.
+- Switch from raw_spin_locks() to normal spin_locks() and realign locking.
+- Drop __initconst, __init, __refdata.
+- Reorder patch series - make dt-binding patch as first patch.
+- Add pointer to include file in dt-bindings document.
+- Remove CLK_IS_CRITICAL flag for clks for which IGNORE_UNUSED flag is enough.
+  Add comments for clks which are marked as CRITICAL.
+- Fix $id path in dt-bindings - drop bindings. (Rob Herring).
+- Add Reviewed-by tag from Rob Herring. Thanks Rob.
 
-  [PATCH 04/10] clk: mmp2: Add support for PLL clock sources
+v4:
+- Add drivers/clk/x86/Kconfig file which got missed in v3 by mistake.
 
-Then MMP2 is switched over:
+v3:
+- Address review concerns:
+  Add Kconfig entry in x86 folder instead of modifying clk/Kconfig. (Andy Shevchenko)
+  Fix coding style/convention related concerns. (Andy Shevchenko)
+  Improve description, licensing info, rename node name correctly in dt bindings
+  document & remove CLK_NR_CLKS from dt-bindings header file. (Stephen Boyd)
+  Fix a build warning reported by kbuild test robot & Nathan Chancellor
+- Add few new clocks & rename few existing clocks.
+- Add more ops for ddiv & divider clk_ops.
+- Fix few minor bugs.
+- Use CLK_IS_CRITICAL flag for clocks which shall never be disabled.
 
-  [PATCH 05/10] clk: mmp2: Stop pretending PLL outputs are constant
+v2:
+- Move the driver to x86 folder.
+- Remove syscon usage.
+- Remove regmap based access. Use direct readl()/write() instead. Add spinlocks.
+- Change all enum values to capitals.
+- Rename all data structures & functions from intel_* to lgm_*.
+- Remove multiple header files. Keep only one header file.
+- Make probe fail when any of the clk/pll registration fails.
+- Fix few bugs with clk_init_data assignement.
+- Address review concerns for code quality/style/convention.
 
-Switching MMP3 requires some more work, because until now, the driver
-has been the same for both versions of the SoC:
+v1:
+- Initial version.
 
-  [PATCH 06/10] dt-bindings: clock: Add MMP3 compatible string
-  [PATCH 07/10] clk: mmp2: Check for MMP3
-  [PATCH 08/10] dt-bindings: marvell,mmp2: Add clock ids for MMP3 PLLs
-  [PATCH 09/10] clk: mmp2: Add PLLs that are available on MMP3
-  [PATCH 10/10] ARM: dts: mmp3: Use the MMP3 compatible string for
+Rahul Tanwar (1):
+  dt-bindings: clk: intel: Add bindings document & header file for CGU
 
-The hardware vendor doesn't supply documentation, so this is best-effort
-work based on the code dump from Marvell.
+rtanwar (1):
+  clk: intel: Add CGU clock driver for a new SoC
 
-Tested on MMP2 and MMP3 based hardware I have; details in relevant
-commit messages.
+ .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  44 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/x86/Kconfig                            |   8 +
+ drivers/clk/x86/Makefile                           |   1 +
+ drivers/clk/x86/clk-cgu-pll.c                      | 156 +++++
+ drivers/clk/x86/clk-cgu.c                          | 636 +++++++++++++++++++++
+ drivers/clk/x86/clk-cgu.h                          | 335 +++++++++++
+ drivers/clk/x86/clk-lgm.c                          | 492 ++++++++++++++++
+ include/dt-bindings/clock/intel,lgm-clk.h          | 165 ++++++
+ 9 files changed, 1838 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+ create mode 100644 drivers/clk/x86/Kconfig
+ create mode 100644 drivers/clk/x86/clk-cgu-pll.c
+ create mode 100644 drivers/clk/x86/clk-cgu.c
+ create mode 100644 drivers/clk/x86/clk-cgu.h
+ create mode 100644 drivers/clk/x86/clk-lgm.c
+ create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
 
-Thank you,
-Lubo
+-- 
+2.11.0
 
