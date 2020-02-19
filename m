@@ -1,184 +1,115 @@
-Return-Path: <SRS0=UhmE=4G=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB31C3404D
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 23:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC806C3404E
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 01:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D710C24656
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Feb 2020 23:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582067710;
-	bh=1e6s3LBPWIkH3B8CPIQcoHesI1x/DnMTo3Fll+14BP4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ztgMp7P0W91AGjNKpYI9ApQjulZEGHC7N31SznJsGN46gG6LthvU1XwyXAWto8Zv6
-	 2BOW+pGYLHPWQMD1Eg8iDvCi3F0Xr2Fl4xRWnqUPlx0eJraNTn4hdYVat4AhT7+TsP
-	 z3td+LAid5I7sqBNaqxPwNtju2EQ9BP6uqWr0ZiQ=
+	by mail.kernel.org (Postfix) with ESMTP id A4B4324654
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 01:49:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ts8VDPPB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbgBRXPG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 18:15:06 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35458 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727635AbgBRXPG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 18:15:06 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r16so21334333otd.2;
-        Tue, 18 Feb 2020 15:15:06 -0800 (PST)
+        id S1728091AbgBSBt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 20:49:57 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45069 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728085AbgBSBt4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 20:49:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id b9so11749173pgk.12
+        for <linux-clk@vger.kernel.org>; Tue, 18 Feb 2020 17:49:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
+        b=ts8VDPPBuLBZSekAbBB4AA9teS6dDAo1HBlFrWgCyrq8tuMc3thxftGa4AHpAl9HfC
+         u7yxDltYVpeECwcY8RzDqO6Oc+ujMt1LKMzE60hyRUp4CRmsuXIAURjdU5sPKFRoFEwm
+         6FN7vQ7hbitggAiOqBJscQwLzxfsXk6P3kE/ijGHV8xJt/0agF6tzs7iGM9/TJ0Fvy9F
+         ArDT1pSLD7/sstOaJU2GCdk92lHOemZWj0EQ3zQfulnRwfJ76bPc+DDLQ9ZRE1nVboYb
+         jR7FRhkDaPhSRUnmUrrhkxZbwc53oVyaoPQDanlDY6cxtAjJ8vR46+8/3WdA4kMg6eXF
+         I4yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G4WNEhQO20vNtBJwI7oQMtpqp8OCtjLcIlARAY579Do=;
-        b=WTH6j54BqdBaSzT+y1ao52Wn0APSvmvcAcgWBm/OpVPkRpEIuucAQZumAmSEGvxaqj
-         61xLW3nCmucalCD9TMpBVWd3Oq4SrLg9waurxp8L0pewa2Riu7Po5CCu7thssF256O8O
-         L3vIxVMcj50nRuNODVBeSyXcuaGvBVeLor+4c4hyk+WXahQ/9nuPmHYMwbF+uBuyVWXH
-         y9XtPeHsErRdCuW96chNruZ4MhsbcDNWD5FpCvdafkbrMpDoQt0Oh1vpBm6AHq1yVplj
-         Peb/ib1djfwukOZGVBHkMPCdmhoo+58zAgeSM9Y2FqDsgrJ3yOY7Ltc+rt140ZK2Jjej
-         22Dw==
-X-Gm-Message-State: APjAAAXYGLe/VJSQUksq6j6IRIM1iQgtPYN2IugUdpWUDIHNw35/+LM7
-        WHsBd20UJvt+1E+Bl7U0Jw==
-X-Google-Smtp-Source: APXvYqwW+XFF6Vp8UgFF8kVdHeUlJefeBvJgDBj4dBF+mFylUww+21EMO3di/ZeLcp2dJQvp5DyM+g==
-X-Received: by 2002:a05:6830:1294:: with SMTP id z20mr17143801otp.60.1582067705428;
-        Tue, 18 Feb 2020 15:15:05 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j13sm122236oii.14.2020.02.18.15.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Feb 2020 15:15:04 -0800 (PST)
-Received: (nullmailer pid 27451 invoked by uid 1000);
-        Tue, 18 Feb 2020 23:15:03 -0000
-Date:   Tue, 18 Feb 2020 17:15:03 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3 3/6] dt-binding: tegra: Add VI and CSI bindings
-Message-ID: <20200218231503.GA19099@bogus>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
+        bh=mCpHqL2j5BnpvPO+BvKBhD4kS+poF12ECCa7tnpH+YM=;
+        b=P+FU2R0mWK7KnNbhaRafRE5a1BArzMUiHp8Y84eVJxoM7FJzfw3YD9flS1VeWywHJp
+         k1f+HBrR/NFGN+rs9XjeLsFJm5NNMV+XpQpfYogCs565Ad6xsAudH2Ppa8QIHfNy/dmE
+         5kl5WlkYOKgAcd9pEPSFXV2tjGbVa1jHWVtlz3P52B1mgu2CW6gC0mseGM3OAp24a5qE
+         4WZa7DnyQnGbehPAKuaVbT6iyLFn4FgP7BIMooyGySA9dNW3qZEOAwbEJpkZo6gJsB8L
+         2tYqw3lHZP5FBr+Kywukp2uyVNStzC3Zy6zocBPpjzEmxxiX7x0nGcx7QfXTZQtWaUdQ
+         mPdw==
+X-Gm-Message-State: APjAAAUeqGp09IljI+ED3Bptx3EVmk+vgCVGaHjIDkrsWoWDscmUN64i
+        hqFIyYcbqf/S7tSMfHhNRAVI7Q==
+X-Google-Smtp-Source: APXvYqywbiuEpD1gaeQyiKrj/G0fRGBegWe1kQhCb3QNT2ZiaM+5B/V4zEAel8kBFDrwr4m3Dknbgg==
+X-Received: by 2002:a63:2266:: with SMTP id t38mr26477980pgm.145.1582076994532;
+        Tue, 18 Feb 2020 17:49:54 -0800 (PST)
+Received: from localhost ([223.226.55.170])
+        by smtp.gmail.com with ESMTPSA id q25sm288920pfg.41.2020.02.18.17.49.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 18 Feb 2020 17:49:53 -0800 (PST)
+Date:   Wed, 19 Feb 2020 07:19:51 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
+        Robert Richter <rrichter@marvell.com>,
+        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        iommu@lists.linux-foundation.org,
+        James Morse <james.morse@arm.com>,
+        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Luck <tony.luck@intel.com>, Will Deacon <will@kernel.org>
+Subject: Re: [RFC PATCH 04/11] cpufreq: Remove Calxeda driver
+Message-ID: <20200219014951.2o2diuw5dzooafji@vireshk-i7>
+References: <20200218171321.30990-1-robh@kernel.org>
+ <20200218171321.30990-5-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200218171321.30990-5-robh@kernel.org>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Feb 14, 2020 at 10:23:25AM -0800, Sowjanya Komatineni wrote:
-> Tegra contains VI controller which can support up to 6 MIPI CSI
-> camera sensors.
-> 
-> Each Tegra CSI port from CSI unit can be one-to-one mapper to
-> VI channel and can capture from an external camera sensor or
-> from built-in test pattern generator.
-> 
-> This patch adds dt-bindings for Tegra VI and CSI.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+On 18-02-20, 11:13, Rob Herring wrote:
+> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: linux-pm@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
->  1 file changed, 47 insertions(+), 8 deletions(-)
+> Do not apply yet.
 > 
-> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> index 9999255ac5b6..3d0ed540a646 100644
-> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-> @@ -40,14 +40,24 @@ of the following host1x client modules:
->  
->    Required properties:
->    - compatible: "nvidia,tegra<chip>-vi"
-> -  - reg: Physical base address and length of the controller's registers.
-> +  - reg: Physical base address and length of the controller registers.
->    - interrupts: The interrupt outputs from the controller.
-> -  - clocks: Must contain one entry, for the module clock.
-> +  - clocks: Must contain an entry for the module clock "vi"
->      See ../clocks/clock-bindings.txt for details.
->    - resets: Must contain an entry for each entry in reset-names.
->      See ../reset/reset.txt for details.
-> -  - reset-names: Must include the following entries:
-> -    - vi
-> +  - reset-names: Must include the entry "vi"
-> +
-> +  Tegra210 has CSI part of VI sharing same host interface and register
-> +  space. So, VI device node should have CSI child node.
-> +
-> +  - csi: mipi csi interface to vi
-> +
-> +    Required properties:
-> +    - compatible: "nvidia,tegra<chip>-csi"
-> +    - reg: Physical base address and length of the controller registers.
-> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
-> +      See ../clocks/clock-bindings.txt for details.
->  
->  - epp: encoder pre-processor
->  
-> @@ -310,12 +320,41 @@ Example:
->  		};
->  
->  		vi {
-> -			compatible = "nvidia,tegra20-vi";
-> -			reg = <0x54080000 0x00040000>;
-> +			compatible = "nvidia,tegra210-vi";
-> +			reg = <0x0 0x54080000 0x0 0x700>;
->  			interrupts = <0 69 0x04>;
-> -			clocks = <&tegra_car TEGRA20_CLK_VI>;
-> -			resets = <&tegra_car 100>;
-> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
-> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
-> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
-> +			clock-names = "vi";
-> +			resets = <&tegra_car 20>;
->  			reset-names = "vi";
-> +
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +
-> +			ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
-> +
-> +			csi@0x54080838 {
+>  drivers/cpufreq/Kconfig.arm          |  10 ---
+>  drivers/cpufreq/Makefile             |   3 +-
+>  drivers/cpufreq/cpufreq-dt-platdev.c |   3 -
+>  drivers/cpufreq/highbank-cpufreq.c   | 106 ---------------------------
+>  4 files changed, 1 insertion(+), 121 deletions(-)
+>  delete mode 100644 drivers/cpufreq/highbank-cpufreq.c
 
-Drop '0x'
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-> +				compatible = "nvidia,tegra210-csi";
-> +				reg = <0x0 0x54080838 0x0 0x2000>;
-
-Kind of odd that this address and ranges address are not the same. And 
-also wrong that the size here exceeds the bounds of ranges.
-
-Also, best practice is to make the child address 0 or relative to the 
-parent.
-
-> +				status = "disabled";
-
-Don't show status in examples.
-
-> +				assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
-> +						  <&tegra_car TEGRA210_CLK_CILCD>,
-> +						  <&tegra_car TEGRA210_CLK_CILE>;
-> +				assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
-> +							 <&tegra_car TEGRA210_CLK_PLL_P>,
-> +							 <&tegra_car TEGRA210_CLK_PLL_P>;
-> +				assigned-clock-rates = <102000000>,
-> +						       <102000000>,
-> +						       <102000000>;
-> +				clocks = <&tegra_car TEGRA210_CLK_CSI>,
-> +					 <&tegra_car TEGRA210_CLK_CILAB>,
-> +					 <&tegra_car TEGRA210_CLK_CILCD>,
-> +					 <&tegra_car TEGRA210_CLK_CILE>;
-> +				clock-names = "csi", "cilab", "cilcd", "cile";
-> +			};
-> +
->  		};
->  
->  		epp {
-> -- 
-> 2.7.4
-> 
+-- 
+viresh
