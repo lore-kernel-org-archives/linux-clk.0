@@ -2,194 +2,112 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8B5C3402F
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 03:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAECEC3404D
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 04:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F101F2465D
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 03:28:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C02B4208E4
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 04:05:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="CdpmAVZE"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="luCGDQ5t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726667AbgBSD2e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Feb 2020 22:28:34 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10618 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726346AbgBSD2e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 22:28:34 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4cab410000>; Tue, 18 Feb 2020 19:28:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 18 Feb 2020 19:28:33 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 18 Feb 2020 19:28:33 -0800
-Received: from [10.2.163.58] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 19 Feb
- 2020 03:28:32 +0000
-Subject: Re: [RFC PATCH v3 3/6] dt-binding: tegra: Add VI and CSI bindings
+        id S1726439AbgBSEFm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Feb 2020 23:05:42 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:30352 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726478AbgBSEFm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Feb 2020 23:05:42 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1582085141; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=+nsWEw7MESnefNMMm2RBSNdOC+YsR66U1WOkwwi4ZtI=; b=luCGDQ5twcqFHeGbcqp8MFHXF7rxS7n4ZCnj99/aykUJC7ZmSZR6kxLv6Wwp2wsymCL7lLk9
+ TCMuY0rYdQuZslgMkj2zDDyt1qpqeh9UkNYBM90KcS7LwS0t67/8k60nC07yi/NZCEyxDEzR
+ Z20TmXm/hTutvgM2a7HeDjDh/wI=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e4cb410.7fc9a17ff110-smtp-out-n02;
+ Wed, 19 Feb 2020 04:05:36 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 59C2CC4479F; Wed, 19 Feb 2020 04:05:35 +0000 (UTC)
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 020BFC43383;
+        Wed, 19 Feb 2020 04:05:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 020BFC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v4 3/5] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
 To:     Rob Herring <robh@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
- <20200218231503.GA19099@bogus>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <5948bf42-9be2-8cf0-1c28-80f69b708c65@nvidia.com>
-Date:   Tue, 18 Feb 2020 19:28:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh+dt@kernel.org
+References: <1582049733-17050-1-git-send-email-tdas@codeaurora.org>
+ <1582049733-17050-4-git-send-email-tdas@codeaurora.org>
+ <20200218230026.GA3778@bogus>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <6298769e-09bc-eb69-bf72-5aedd0e87f16@codeaurora.org>
+Date:   Wed, 19 Feb 2020 09:35:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200218231503.GA19099@bogus>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20200218230026.GA3778@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582082881; bh=cyoNazDtmT/h6DgHu5pqneFWToIbbP0fvPs2dxTlGMQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=CdpmAVZEN1+rPUXrq9ZTWHWteIUNLSIzWrA/h8Q6AVwCh3Xe4Ldg0Ae3e+GxK7GcY
-         WacUUqIeiFWQEZwv0nLL99pvzd7yUg5NLPubTPS2AdWA9TN8XbQJ5bJzJhlHt8RWiJ
-         6TtgMMo7qUbLyfXy4x+CGr20WXD3ZKfZtjAwmfiJbSKnFl580R/kSRv7HVRDeRfjs+
-         DG1NxmOr8BuAAqNiKBcjMuDvb6+c8RLy2qK8dxdArj863jZSvKQewH3SZODclwBXVd
-         vmrRmSBURvYrfXz/xK9kY16Mw5IA3TJfGDN44vMmxj06JQg/J89pX6dCvGDarNLTJx
-         Ln17zs2CfuKFQ==
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Rob,
 
-On 2/18/20 3:15 PM, Rob Herring wrote:
-> External email: Use caution opening links or attachments
->
->
-> On Fri, Feb 14, 2020 at 10:23:25AM -0800, Sowjanya Komatineni wrote:
->> Tegra contains VI controller which can support up to 6 MIPI CSI
->> camera sensors.
+On 2/19/2020 4:30 AM, Rob Herring wrote:
+> On Tue, 18 Feb 2020 23:45:31 +0530, Taniya Das wrote:
+>> The Modem Subsystem clock provider have a bunch of generic properties
+>> that are needed in a device tree. Add a YAML schemas for those.
 >>
->> Each Tegra CSI port from CSI unit can be one-to-one mapper to
->> VI channel and can capture from an external camera sensor or
->> from built-in test pattern generator.
->>
->> This patch adds dt-bindings for Tegra VI and CSI.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 >> ---
->>   .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
->>   1 file changed, 47 insertions(+), 8 deletions(-)
+>>   .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 ++++++++++++++++++++++
+>>   1 file changed, 62 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
 >>
->> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> index 9999255ac5b6..3d0ed540a646 100644
->> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->> @@ -40,14 +40,24 @@ of the following host1x client modules:
->>
->>     Required properties:
->>     - compatible: "nvidia,tegra<chip>-vi"
->> -  - reg: Physical base address and length of the controller's registers.
->> +  - reg: Physical base address and length of the controller registers.
->>     - interrupts: The interrupt outputs from the controller.
->> -  - clocks: Must contain one entry, for the module clock.
->> +  - clocks: Must contain an entry for the module clock "vi"
->>       See ../clocks/clock-bindings.txt for details.
->>     - resets: Must contain an entry for each entry in reset-names.
->>       See ../reset/reset.txt for details.
->> -  - reset-names: Must include the following entries:
->> -    - vi
->> +  - reset-names: Must include the entry "vi"
->> +
->> +  Tegra210 has CSI part of VI sharing same host interface and register
->> +  space. So, VI device node should have CSI child node.
->> +
->> +  - csi: mipi csi interface to vi
->> +
->> +    Required properties:
->> +    - compatible: "nvidia,tegra<chip>-csi"
->> +    - reg: Physical base address and length of the controller registers.
->> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
->> +      See ../clocks/clock-bindings.txt for details.
->>
->>   - epp: encoder pre-processor
->>
->> @@ -310,12 +320,41 @@ Example:
->>                };
->>
->>                vi {
->> -                     compatible = "nvidia,tegra20-vi";
->> -                     reg = <0x54080000 0x00040000>;
->> +                     compatible = "nvidia,tegra210-vi";
->> +                     reg = <0x0 0x54080000 0x0 0x700>;
->>                        interrupts = <0 69 0x04>;
->> -                     clocks = <&tegra_car TEGRA20_CLK_VI>;
->> -                     resets = <&tegra_car 100>;
->> +                     assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
->> +                     assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
->> +                     clocks = <&tegra_car TEGRA210_CLK_VI>;
->> +                     clock-names = "vi";
->> +                     resets = <&tegra_car 20>;
->>                        reset-names = "vi";
->> +
->> +                     #address-cells = <2>;
->> +                     #size-cells = <2>;
->> +
->> +                     ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
->> +
->> +                     csi@0x54080838 {
-> Drop '0x'
-Will fix in v4
->
->> +                             compatible = "nvidia,tegra210-csi";
->> +                             reg = <0x0 0x54080838 0x0 0x2000>;
-> Kind of odd that this address and ranges address are not the same. And
-> also wrong that the size here exceeds the bounds of ranges.
->
-> Also, best practice is to make the child address 0 or relative to the
-> parent.
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> Error: Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dts:21.26-27 syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml] Error 1
+> Makefile:1263: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
+> 
+> See https://patchwork.ozlabs.org/patch/1240251
+> Please check and re-submit.
+> 
 
-Actual CSI starts at offset 0x808 but we don't use couple of registers 
-at offset 0x808.
+I did see the same issue and then when I re-ordered by patches
+dt-bindings: clock: Add support for Modem clocks in GCC (dependent) on 
+this binding patch, I no longer encountered the issue.
+https://patchwork.kernel.org/patch/11389243/
 
-Will update ranges in v4 to start from 0x838 offset and will make child 
-address relative to parent.
+Please let me know.
 
->
->> +                             status = "disabled";
-> Don't show status in examples.
-Will remove.
->
->> +                             assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
->> +                                               <&tegra_car TEGRA210_CLK_CILCD>,
->> +                                               <&tegra_car TEGRA210_CLK_CILE>;
->> +                             assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
->> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>,
->> +                                                      <&tegra_car TEGRA210_CLK_PLL_P>;
->> +                             assigned-clock-rates = <102000000>,
->> +                                                    <102000000>,
->> +                                                    <102000000>;
->> +                             clocks = <&tegra_car TEGRA210_CLK_CSI>,
->> +                                      <&tegra_car TEGRA210_CLK_CILAB>,
->> +                                      <&tegra_car TEGRA210_CLK_CILCD>,
->> +                                      <&tegra_car TEGRA210_CLK_CILE>;
->> +                             clock-names = "csi", "cilab", "cilcd", "cile";
->> +                     };
->> +
->>                };
->>
->>                epp {
->> --
->> 2.7.4
->>
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
