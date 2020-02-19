@@ -2,202 +2,245 @@ Return-Path: <SRS0=r8+F=4H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B10C34047
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:05:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5B6C34047
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3E621D56
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33D6824658
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Feb 2020 10:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v3+Fsbmo"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="V4l8bC6n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726453AbgBSKFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Feb 2020 05:05:54 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40488 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgBSKFy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Feb 2020 05:05:54 -0500
-Received: by mail-lf1-f67.google.com with SMTP id c23so16948682lfi.7
-        for <linux-clk@vger.kernel.org>; Wed, 19 Feb 2020 02:05:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Gxi6KYGr5mqVq8fzO7WJDSPc3JwpyT1jXF3qnuigAWw=;
-        b=v3+FsbmoIQQtOkkzrQpyy22SkRwnx1+JS1E8I/n6hdNh7XNG38hYWpByYwJCPR3P6j
-         RXFkhWnqaUc+aDe8Ilzuqx0w2yjhbP6zBKDI4CwyRItv4kd/Hs9YY+PSODOIl759LzBK
-         MC9XLSnd78vMatYpWiiwc+SGX56ttu5gec3GAdgCjHCAI7xIa3iwtOZCIgM2qxpjSZG0
-         oDIG3lMgUbtvDWdJCGClZmBsE23H+n4/MVeQIVFJCvayqCFt2yS0CFHXTRDOwsO3+pRv
-         71/tuKc+sXQKdd6ZNRHosnMDomluZTD2igpF7xciNDqfAtYSN49QDdipfZIcNKP0qZyh
-         C2xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Gxi6KYGr5mqVq8fzO7WJDSPc3JwpyT1jXF3qnuigAWw=;
-        b=a1DXmGOZPJLRl+SNt4ppsRZPQ5dHlDD1HcrbEpgzqRfLpj35LvFyE2WfG1prV78K7t
-         1dnfoXr9gBDlQKnnfil7gqSawqNgB1+CeRRpZJp5kJP00HDJYvtTK3DPtD5ZySqeY4K3
-         IYosxvWaoPMc/xzQf2cUOFtiMeQIoqz3NiTMiLQ/H6k3w+pnGVqFALamgT+6Wc2hSQPs
-         7n0zwAGsQw4/BWsXFCwPDM2kAGYJCs2iywiuFNHgd3AspoV4ntsDcu1yscRhBQBsL9Dr
-         Nw/pzNMSTCsAez0z/QvMofFUmgoZRYmjixEeyNB444tFfDF0VHX3lO8JD6ZWFZe4XWdx
-         Y6Qw==
-X-Gm-Message-State: APjAAAVb+AyHam/NA0rKpaxqfGdO/L6q5Dv/3+m5k0X5tzUXfiXzJHFO
-        oBQA2Te7A0dntRcW7Odve8VfkhFY6V4=
-X-Google-Smtp-Source: APXvYqx3iQsjpEqeXi8xn4Hpkmoi/scOdToBb9tKqNTemDoaHLz6+/2iFWvABtoCopSlAwxaWfF0Fw==
-X-Received: by 2002:a05:6512:3f6:: with SMTP id n22mr13249538lfq.59.1582106751346;
-        Wed, 19 Feb 2020 02:05:51 -0800 (PST)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id r2sm1079982lff.63.2020.02.19.02.05.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Feb 2020 02:05:50 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3/3 v2] clk: versatile: Add device tree probing for IM-PD1 clocks
-Date:   Wed, 19 Feb 2020 11:05:43 +0100
-Message-Id: <20200219100543.78424-3-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200219100543.78424-1-linus.walleij@linaro.org>
-References: <20200219100543.78424-1-linus.walleij@linaro.org>
+        id S1726551AbgBSKUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Feb 2020 05:20:22 -0500
+Received: from mail-eopbgr140082.outbound.protection.outlook.com ([40.107.14.82]:45185
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726210AbgBSKUV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Feb 2020 05:20:21 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Dj23PwS4B23XdnVblyp92xrEh74AKxHo20SJUc4nbDXBEF1Vk3KSggyMnRKLvYVhckhi9lInNcD/QV91YIZvPsVg+ZLERM01naAe9V92uhFXmX4DxGTCjbM1jGUbPl3Yo+xV+psaHwfSt6b5oV2AoNxPnR0OLKZLHGZJKfSBO2JK3V2B77b6eHbdyozr5pQvMyIqVgG/brPQEWtaC0dzarEGd5nUj69/Luk8lRi57oNe/wsLgAw4I4tVvN2uAycFp5Qjm9ObAUpKaTLlR0Y1575yIVsDvgXqfhu6fvi56/J2e79lB2EV0SRzd0jzcUeOgidPsT2MzxBrpWIeXiWV4Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P3dB2i0Ig86H8iZdEGCP5pr7VoOEGZmTbWhiO8QzFXQ=;
+ b=ZPN7BbweQDPwhEivDg0if/wSGL13tyjTR3Hv1JoJD9Tz5Y3i7XLdrbrblKTF2pYWxF1RurdbF9qlDPMgIwHZIzbpuibmsKCk8LuTUHJx5sjBOPVBwm8jCoKi7cmpP9D5lNkFCMgvOXxKD55arz4c3e3rH34Dk7evV6fqtLWOUX5crcMq6516vIgMePEKVmMLLfl/9vIxlVoGUMDff+uG5UV0gMUw29EbGSH1gVuIuaJaFRZW+7c1hz/36378eGjoWWidehMwCOY9L8VRKrcJjJt030eJ4AQY7sYdQybYF4HW6rXElcOSv3DCsRNUrnPNQcztsItcYEXS6gC5z2tYvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P3dB2i0Ig86H8iZdEGCP5pr7VoOEGZmTbWhiO8QzFXQ=;
+ b=V4l8bC6n0if8+dGoi/mA7KTvLNcdjubRbMVsifymDMJ95lxbCi+AX3JTcmPleruf+Wdn3289WyKGdf+sea2i9MMuh/ononVqPX5JVrfx9gaQN+NF/AzNO7FyKJy+PunIvHVjsLKQsiZYRvf1Be7Swjzy8vi6kjUFEhDa4pZ44DY=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6884.eurprd04.prod.outlook.com (52.132.213.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2750.18; Wed, 19 Feb 2020 10:20:18 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2729.032; Wed, 19 Feb 2020
+ 10:20:18 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Subject: RE: [PATCH V3 1/4] clk: imx: composite-8m: add
+ imx8m_clk_hw_composite_core
+Thread-Topic: [PATCH V3 1/4] clk: imx: composite-8m: add
+ imx8m_clk_hw_composite_core
+Thread-Index: AQHV5wtPHJjqDVyDiUGylTO3QWs3rKgiTgRQ
+Date:   Wed, 19 Feb 2020 10:20:17 +0000
+Message-ID: <AM0PR04MB4481BEE793A6FEE5588ACEAC88100@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1582106022-20926-1-git-send-email-peng.fan@nxp.com>
+ <1582106022-20926-2-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1582106022-20926-2-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: a9f3b8e8-9f5b-44d8-4507-08d7b5255172
+x-ms-traffictypediagnostic: AM0PR04MB6884:|AM0PR04MB6884:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB68847C647FD1DFE3451397BF88100@AM0PR04MB6884.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0318501FAE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(366004)(376002)(346002)(396003)(199004)(189003)(64756008)(66446008)(52536014)(5660300002)(186003)(26005)(2906002)(55016002)(9686003)(76116006)(66946007)(6506007)(4326008)(66476007)(66556008)(7696005)(316002)(6636002)(8676002)(71200400001)(8936002)(81156014)(81166006)(86362001)(33656002)(44832011)(110136005)(54906003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6884;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: oaMilSviC/ViaD9VSHsTFYSqNhK9URGOSMNfByfHVULGrMEAZ4c7Mrz0X3nkXH2YO2Vq9ihf9pwqVrN1Ja2jpDUO50uBUk/gRuklXqwFFSR0gSETvPs/mCqraD0OaHP7KBrPg2giexQbpx2DJpGUHiMfozZvqTHwUtZ6L5m/lqkGxcOBvy/gy1OjUymds+SsbWCrwIkK6bDuxw3U37SdPBaDojpzwaf8H+y4ScplVzR830f2qAeaampiMVNvMMPZi7XkS2OGyC7EtVclZyUTh8P0gXSt64ym6r+LuhDS6j5SEyqzp57rT97UP7tnH0xopTXiOwXdwocHx/EtgLaspTRCxn5i3lfLCy3xtkD3ONjtalrNAH9jM2/MJ0ZA9gMWutoq4iFyZ35v7y7sEbMBxZ5hdamBubxxDH35ReMGQJ0ExCqP2pHNZoM1n3ypZPt1
+x-ms-exchange-antispam-messagedata: KOohFzGYxJw6zSElvHqH0r1S8igqtTG4q8vl0Iay8t8LvyEOp+XKMs+YreRfkzHz8j77GdP/WAy72yfsrx9iML7MrKilyxmQ2D++hFeHXvFcaHWTutbYlaaPMlG91AxTJujWrOAMBMMjcU22qDPw0w==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9f3b8e8-9f5b-44d8-4507-08d7b5255172
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Feb 2020 10:20:18.0105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /P1I/uUC6bWkCSZ4XEpZthIE3608A+J0Y5yBa9O91wCavvHqr2eJBeDf4/sgmPxhrFzPc36Ix4a8sFIZ/AWmbA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6884
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As we want to move these clocks over to probe from the device
-tree we add a device tree probing path.
+> Subject: [PATCH V3 1/4] clk: imx: composite-8m: add
+> imx8m_clk_hw_composite_core
 
-The old platform data path will be deleted once we have the
-device tree overall code in place.
+Sorry, some patches are wrongly sent out, please ignore this thread.
+I'll use PATCH RESEND to resend and drop unneed patches.
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
-ChangeLog v1->v2:
-- Drop some __init tagging
-- Provide MODULE_DEVICE_TABLE()
-- Rewrote to use the same method with regmap as clk-icst.c
-- The reuse of clk-icst.c makes the clock probe using hw
-  and then it needs no special handling for clock output
-  names.
----
- drivers/clk/versatile/clk-icst.h  |  1 +
- drivers/clk/versatile/clk-impd1.c | 79 +++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
+Thanks,
+Peng.
 
-diff --git a/drivers/clk/versatile/clk-icst.h b/drivers/clk/versatile/clk-icst.h
-index 1206f008c11a..1a119ef11066 100644
---- a/drivers/clk/versatile/clk-icst.h
-+++ b/drivers/clk/versatile/clk-icst.h
-@@ -11,6 +11,7 @@ enum icst_control_type {
- 	ICST_INTEGRATOR_AP_PCI, /* Odd bit pattern storage */
- 	ICST_INTEGRATOR_CP_CM_CORE, /* Only 8 bits of VDW and 3 bits of OD */
- 	ICST_INTEGRATOR_CP_CM_MEM, /* Only 8 bits of VDW and 3 bits of OD */
-+	ICST_INTEGRATOR_IM_PD1, /* Like the Versatile, all control bits */
- };
- 
- /**
-diff --git a/drivers/clk/versatile/clk-impd1.c b/drivers/clk/versatile/clk-impd1.c
-index 1991f15a5db9..b05da8516d4c 100644
---- a/drivers/clk/versatile/clk-impd1.c
-+++ b/drivers/clk/versatile/clk-impd1.c
-@@ -7,7 +7,11 @@
- #include <linux/clkdev.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/platform_device.h>
- #include <linux/platform_data/clk-integrator.h>
-+#include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include "icst.h"
- #include "clk-icst.h"
-@@ -175,3 +179,78 @@ void integrator_impd1_clk_exit(unsigned int id)
- 	kfree(imc->pclkname);
- }
- EXPORT_SYMBOL_GPL(integrator_impd1_clk_exit);
-+
-+static int integrator_impd1_clk_spawn(struct device *dev,
-+				      struct device_node *parent,
-+				      struct device_node *np)
-+{
-+	struct regmap *map;
-+	struct clk *clk = ERR_PTR(-EINVAL);
-+	const char *name = np->name;
-+	const char *parent_name;
-+	const struct clk_icst_desc *desc;
-+	int ret;
-+
-+	map = syscon_node_to_regmap(parent);
-+	if (IS_ERR(map)) {
-+		pr_err("no regmap for syscon IM-PD1 ICST clock parent\n");
-+		return PTR_ERR(map);
-+	}
-+
-+	if (of_device_is_compatible(np, "arm,impd1-vco1")) {
-+		desc = &impd1_icst1_desc;
-+	} else if (of_device_is_compatible(np, "arm,impd1-vco2")) {
-+		desc = &impd1_icst2_desc;
-+	} else {
-+		dev_err(dev, "not a clock node %s\n", name);
-+		return -ENODEV;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(np, 0);
-+	clk = icst_clk_setup(NULL, desc, name, parent_name, map,
-+			     ICST_INTEGRATOR_IM_PD1);
-+	if (!IS_ERR(clk)) {
-+		of_clk_add_provider(np, of_clk_src_simple_get, clk);
-+		ret = 0;
-+	} else {
-+		dev_err(dev, "error setting up IM-PD1 ICST clock\n");
-+		ret = PTR_ERR(clk);
-+	}
-+
-+	return ret;
-+}
-+
-+static int integrator_impd1_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child;
-+	int ret = 0;
-+
-+	for_each_available_child_of_node(np, child) {
-+		ret = integrator_impd1_clk_spawn(dev, np, child);
-+		if (ret)
-+			break;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id impd1_syscon_match[] = {
-+	{ .compatible = "arm,im-pd1-syscon", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, impd1_syscon_match);
-+
-+static struct platform_driver impd1_clk_driver = {
-+	.driver = {
-+		.name = "impd1-clk",
-+		.of_match_table = impd1_syscon_match,
-+	},
-+	.probe  = integrator_impd1_clk_probe,
-+};
-+builtin_platform_driver(impd1_clk_driver);
-+
-+MODULE_AUTHOR("Linus Walleij <linusw@kernel.org>");
-+MODULE_DESCRIPTION("Arm IM-PD1 module clock driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.24.1
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> There are several clock slices, current composite code only support bus/i=
+p
+> clock slices, it could not support core slice.
+>=20
+> So introduce a new API imx8m_clk_hw_composite_core to support core slice.
+> To core slice, post divider with 3 bits width and no pre divider. Other f=
+ields are
+> same as bus/ip slices.
+>=20
+> Add a flag IMX_COMPOSITE_CORE for the usecase.
+>=20
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-composite-8m.c | 18 ++++++++++++++----
+>  drivers/clk/imx/clk.h              | 13 +++++++++++--
+>  2 files changed, 25 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-composite-8m.c
+> b/drivers/clk/imx/clk-composite-8m.c
+> index e0f25983e80f..4174506e8bdd 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -15,6 +15,7 @@
+>  #define PCG_PREDIV_MAX		8
+>=20
+>  #define PCG_DIV_SHIFT		0
+> +#define PCG_CORE_DIV_WIDTH	3
+>  #define PCG_DIV_WIDTH		6
+>  #define PCG_DIV_MAX		64
+>=20
+> @@ -126,6 +127,7 @@ static const struct clk_ops
+> imx8m_clk_composite_divider_ops =3D {  struct clk_hw
+> *imx8m_clk_hw_composite_flags(const char *name,
+>  					const char * const *parent_names,
+>  					int num_parents, void __iomem *reg,
+> +					u32 composite_flags,
+>  					unsigned long flags)
+>  {
+>  	struct clk_hw *hw =3D ERR_PTR(-ENOMEM), *mux_hw; @@ -133,6 +135,7
+> @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+>  	struct clk_divider *div =3D NULL;
+>  	struct clk_gate *gate =3D NULL;
+>  	struct clk_mux *mux =3D NULL;
+> +	const struct clk_ops *divider_ops;
+>=20
+>  	mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);
+>  	if (!mux)
+> @@ -149,8 +152,16 @@ struct clk_hw
+> *imx8m_clk_hw_composite_flags(const char *name,
+>=20
+>  	div_hw =3D &div->hw;
+>  	div->reg =3D reg;
+> -	div->shift =3D PCG_PREDIV_SHIFT;
+> -	div->width =3D PCG_PREDIV_WIDTH;
+> +	if (composite_flags & IMX_COMPOSITE_CORE) {
+> +		div->shift =3D PCG_DIV_SHIFT;
+> +		div->width =3D PCG_CORE_DIV_WIDTH;
+> +		divider_ops =3D &clk_divider_ops;
+> +	} else {
+> +		div->shift =3D PCG_PREDIV_SHIFT;
+> +		div->width =3D PCG_PREDIV_WIDTH;
+> +		divider_ops =3D &imx8m_clk_composite_divider_ops;
+> +	}
+> +
+>  	div->lock =3D &imx_ccm_lock;
+>  	div->flags =3D CLK_DIVIDER_ROUND_CLOSEST;
+>=20
+> @@ -164,8 +175,7 @@ struct clk_hw
+> *imx8m_clk_hw_composite_flags(const char *name,
+>=20
+>  	hw =3D clk_hw_register_composite(NULL, name, parent_names,
+> num_parents,
+>  			mux_hw, &clk_mux_ops, div_hw,
+> -			&imx8m_clk_composite_divider_ops,
+> -			gate_hw, &clk_gate_ops, flags);
+> +			divider_ops, gate_hw, &clk_gate_ops, flags);
+>  	if (IS_ERR(hw))
+>  		goto fail;
+>=20
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h index
+> b05213b91dcf..f074dd8ec42e 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -477,20 +477,29 @@ struct clk_hw *imx_clk_hw_cpu(const char *name,
+> const char *parent_name,
+>  		struct clk *div, struct clk *mux, struct clk *pll,
+>  		struct clk *step);
+>=20
+> +#define IMX_COMPOSITE_CORE	BIT(0)
+> +
+>  struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+>  					    const char * const *parent_names,
+>  					    int num_parents,
+>  					    void __iomem *reg,
+> +					    u32 composite_flags,
+>  					    unsigned long flags);
+>=20
+> +#define imx8m_clk_hw_composite_core(name, parent_names, reg)	\
+> +	imx8m_clk_hw_composite_flags(name, parent_names, \
+> +			ARRAY_SIZE(parent_names), reg, \
+> +			IMX_COMPOSITE_CORE, \
+> +			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
+> +
+>  #define imx8m_clk_composite_flags(name, parent_names, num_parents,
+> reg, \
+>  				  flags) \
+>  	to_clk(imx8m_clk_hw_composite_flags(name, parent_names, \
+> -				num_parents, reg, flags))
+> +				num_parents, reg, 0, flags))
+>=20
+>  #define __imx8m_clk_hw_composite(name, parent_names, reg, flags) \
+>  	imx8m_clk_hw_composite_flags(name, parent_names, \
+> -		ARRAY_SIZE(parent_names), reg, \
+> +		ARRAY_SIZE(parent_names), reg, 0, \
+>  		flags | CLK_SET_RATE_NO_REPARENT |
+> CLK_OPS_PARENT_ENABLE)
+>=20
+>  #define __imx8m_clk_composite(name, parent_names, reg, flags) \
+> --
+> 2.16.4
 
