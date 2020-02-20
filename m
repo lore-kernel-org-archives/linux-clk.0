@@ -2,100 +2,111 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1529C11D24
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 21:15:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2972CC11D00
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 23:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B43E824654
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 21:15:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D810D207FD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 23:48:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Zk+cdZTJ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DBC8QHhV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbgBTVPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 16:15:19 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:38484 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727786AbgBTVPS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 16:15:18 -0500
-Received: by mail-ed1-f66.google.com with SMTP id p23so35395719edr.5;
-        Thu, 20 Feb 2020 13:15:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E0r8UtKklC8vn0exQFm1xc2bM7Px85fwUILOFwxpfXc=;
-        b=Zk+cdZTJrrQGLS4LPCXUuDR4TnwujssZT/tflyRWzR4m5EuB74oGIb4XNsW8ZpTcV6
-         0bMOKocFAC5Aws/uPZuTdgEtDPOjoyukKgAGlNmDCD977jXJDA419hAYFYPI1NXVuJQo
-         h430UdKqeKyZxLWCK4GO4NKiUkni6qDd7foBhauhsIrn9EgNs9smHTIWE+gilQ/16aAA
-         qfn6Hasa8dA4DT4sDD1+nxpUPc7G2OPFgzjY066Dx0k/Rav91/e4+SBstXos/38maA95
-         wnZg7wriDejBaAEUGOUJBhPWdWDn0GFAE47f0mBxFDKwa5X6dxLRje0PnLK0qSHVgZ26
-         oMsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E0r8UtKklC8vn0exQFm1xc2bM7Px85fwUILOFwxpfXc=;
-        b=HGnhpVFR1sxTmIAhQm6Ubn4AWXVyclQVIYWY3Vhhqbec7VeBiZRFyTinMhS5Op9LxF
-         et1VtkbbO7+POH0h68Lr4mS/wdU5HjEBAmuw0BxNDAXSbkME9DDlYnJfe+zBsku5f8rV
-         VrZI5+9Ed19GOC7NdSzf0+GklrP+jKr3Wj2ksEr8gwcW6j2GW1lfg4mwlKY0tH7GIN1v
-         eFNPyboDYgWvLJ/esMPLHW4Lp/bstuODYFRbYD5DnTg/Zl7sfRy+wbcyry+vKzFr8FZs
-         FjZZ5ogVLIzn27oFAeaaOsucMmmPlHXKLD4wa0FBb47+kCW5PGh/gYJr9NcOcv8zIwCt
-         Iu1w==
-X-Gm-Message-State: APjAAAVmqzhu/CNdRTlvFT+9Mo/PalwAFnP6hYizUvz1aF/D8EnHTTiJ
-        qmj9E3U/mrM8sOguoPBjNPlFUq/kWmDZq+7K/jg=
-X-Google-Smtp-Source: APXvYqwXYPTGE8gx5kvAp7lnVSFQVA+NMeL3QVC6+h/cuRK/8EgB3ahTv0Vbyn5nmgxN9HxsBKLSAoZv7ayNwuuXxTA=
-X-Received: by 2002:a05:6402:2037:: with SMTP id ay23mr29262250edb.146.1582233317366;
- Thu, 20 Feb 2020 13:15:17 -0800 (PST)
+        id S1729234AbgBTXsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 18:48:21 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:53870 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727135AbgBTXsV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 18:48:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=B9aSlxx7wx7w6JgLrqupsTcq3VAPuxTbkmWcCtYGRVU=; b=DBC8QHhVOjtp6ibn9AOlSwONWa
+        KS+1mQxLjWZ1bi5hyXU/HxnJJwr3OJQUSwQCDAtI7+eoLSgn4iNjY2MhDzDP5n8GYn0FvCNJCttJQ
+        rzKiBZcNL/0HJ8S7fG5sVQlps4VT5UOhSQScg+usFQZfMgH4c+qokRCncDFOblytGeiad8VvhuHWM
+        m5TZoAk/xEjg7RR957H7+0JnmNmSWKZnToH/oDiHO4hUdf+EJ8swHkdE81GLLywKdWUgeyOqJaYBb
+        WZ8O4Njk0F3VrCdwmLZyr23M+MYDcHnvxj+3k5AemtVQ0OK2yhmdgHvB0lOfiIhILLv0qlqtwe5Kl
+        BHd46h3w==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j4vYF-0007k0-KU; Thu, 20 Feb 2020 23:48:15 +0000
+Subject: Re: [PATCH v8 1/6] drm/mediatek: Use regmap for register access
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20200220172147.919996-1-enric.balletbo@collabora.com>
+ <20200220172147.919996-2-enric.balletbo@collabora.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <0b2046b9-90de-c894-7502-993b5df12e7a@infradead.org>
+Date:   Thu, 20 Feb 2020 15:48:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-4-linux.amoon@gmail.com>
- <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com> <CANAwSgSaQgU=H3h0S9deT11HA8z9R=Fhy5Kawii9tSBxKf2Wgw@mail.gmail.com>
-In-Reply-To: <CANAwSgSaQgU=H3h0S9deT11HA8z9R=Fhy5Kawii9tSBxKf2Wgw@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 20 Feb 2020 22:15:06 +0100
-Message-ID: <CAFBinCCSosE1XfwbKZOR9G+DVYg8zFcKShmTNWUhh1e8W0VoAQ@mail.gmail.com>
-Subject: Re: [PATCHv1 3/3] clk: meson: g12a: set cpu clock divider flags too CLK_IS_CRITICAL
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200220172147.919996-2-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Anand,
+On 2/20/20 9:21 AM, Enric Balletbo i Serra wrote:
+> From: Matthias Brugger <mbrugger@suse.com>
+> 
+> The mmsys memory space is shared between the drm and the
+> clk driver. Use regmap to access it.
+> 
+> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> 
+> Changes in v8: None
+> Changes in v7:
+> - Add R-by from CK
+> 
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 50 +++++++++++--------------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +-
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++-----
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>  5 files changed, 30 insertions(+), 43 deletions(-)
 
-On Mon, Feb 17, 2020 at 2:30 PM Anand Moon <linux.amoon@gmail.com> wrote:
-[...]
-> > > @@ -681,7 +682,7 @@ static struct clk_regmap g12b_cpub_clk = {
-> > >                       &g12a_sys_pll.hw
-> > >               },
-> > >               .num_parents = 2,
-> > > -             .flags = CLK_SET_RATE_PARENT,
-> > > +             .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> >
-> > Why not. Neil what do you think of this ?
-> > If nothing is claiming this clock and enabling it then I suppose it
-> > could make sense.
-> >
-> I would like core developers to handle this.
-> Sorry for the noise.
-can you please resend this patch with only the change to g12b_cpub_clk?
-I have no G12B board myself so it would be great if you could take care of this!
+Hi. Just a quick question:
 
+Do you need to select REGMAP or one of its derivatives to make sure
+that the proper interfaces are available for this driver?
 
-Martin
+thanks.
+-- 
+~Randy
+
