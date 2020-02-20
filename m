@@ -2,193 +2,129 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC692C11D20
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:39:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE346C11D20
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC27F208E4
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:39:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6424208E4
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:45:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JGkUCdur"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RZe84KTg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbgBTUjb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 15:39:31 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:2750 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbgBTUjb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 15:39:31 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e4eee740000>; Thu, 20 Feb 2020 12:39:16 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 20 Feb 2020 12:39:30 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 20 Feb 2020 12:39:30 -0800
-Received: from [10.2.163.58] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 20 Feb
- 2020 20:39:28 +0000
-Subject: Re: [RFC PATCH v3 3/6] dt-binding: tegra: Add VI and CSI bindings
-To:     Rob Herring <robh@kernel.org>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Frank Chen <frankc@nvidia.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Helen Koike <helen.koike@collabora.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-4-git-send-email-skomatineni@nvidia.com>
- <20200218231503.GA19099@bogus>
- <5948bf42-9be2-8cf0-1c28-80f69b708c65@nvidia.com>
- <CAL_JsqKAVBS-KvP60Bv2JBQjUzTUgicx33nShn4enFpvysS9YA@mail.gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <a41f3a6c-c6ed-4148-7af8-faf0cf36d67d@nvidia.com>
-Date:   Thu, 20 Feb 2020 12:39:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729260AbgBTUo7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 15:44:59 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51667 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728618AbgBTUo7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 15:44:59 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t23so1836wmi.1;
+        Thu, 20 Feb 2020 12:44:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
+        b=RZe84KTgVDumaVTivMwcyl7kEwDt57yX76+EH+ZLQWwRzv5k62azpHW8GqTx8mxI5J
+         6d86J/N/tD47TrjzY+73UOYpQtyxsiHyf/yJ2PAbvRbUgF4WGlHmAwxGRofiMzBIfWmu
+         DajDDq/fyp1k7BZfgCAdwxbHMfLZDowqN2cq23QtzZkTbeMw66pO0GdihywqH6QEC4LI
+         W/C3nTVpiEI4DWCMfTY8/yGtanqaqmcWk9EqVf+SKkCo+CAiF39bmSCyuPXOucKkcvc6
+         9BqwCvhOH5psaYpONEy2grDTT/ygotPLzUdunW6SVTK8+dcLurn4nftvXiPC+pd1vuuM
+         yTqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
+        b=c+798zZHLvXHnD3IlxbFlaXVbhJsptzJwNDGRTZ0wwWX5ss6AnqQipmd2aWJjsMSXO
+         LAOT3dHDz+b5KQbwSeGWkMZryI0xqjsDxlBr109xuJnf8lLjur6AkfaOCptB0p5HI2OL
+         D4DyEw4Hc9+8GfMRgjuiPlwxPi4iUVwFUShkqh9g9WqY1GIJaX0kDJ3kwIVAjtxb4wsq
+         mkeGcSWPAmtYHeLPsA09EUwCsgIZEUD+MyMZFN1azUF+vxG8sJ5rXFPSZQkR44AYTt+Z
+         en0yczjTxBUiN2DmS09zEOHQzjfFotmVIqZoJDQ1ljNesM+V4Y3/ga2MfSXKfV7g9R1h
+         FxOQ==
+X-Gm-Message-State: APjAAAW1lP9eQBAkcTB8tSgmNGcUSXqiWVaLSwSyYpUDM2BMWMlI1D6b
+        6SX4DOwRPh8zPFoUo1a8obw=
+X-Google-Smtp-Source: APXvYqxch3aaikANJA018nryWRbnsmAci2QcLCKH9CNx4CfFPp5Gcf4OfNOPQkVxewFpcm91NxbQvg==
+X-Received: by 2002:a7b:c204:: with SMTP id x4mr6326147wmi.20.1582231497318;
+        Thu, 20 Feb 2020 12:44:57 -0800 (PST)
+Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id r6sm902544wrp.95.2020.02.20.12.44.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Feb 2020 12:44:56 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, narmstrong@baylibre.com,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH] clk: meson: meson8b: set audio output clock hierarchy
+Date:   Thu, 20 Feb 2020 21:44:33 +0100
+Message-Id: <20200220204433.67113-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqKAVBS-KvP60Bv2JBQjUzTUgicx33nShn4enFpvysS9YA@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1582231156; bh=x3FSVTVnhy0xB8qhuAdvyWzG3JHJZQd1kGDJjAzQz10=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=JGkUCdurxr3SkgI7EvyQXUJOStOj4UBsFhEsTLa+UzobiHEdc3aeqclPmBz/gvmw4
-         Po68btgzdIaJcFU+TLyh5wSyJMb1p9ZJz7uX6trq82O0ZZty0cxWxslWrkCLzn6NI5
-         xGh+cykLu5ZrNO5KykmA7iWfhcyYF70HswLrckY1mTkcprmMYK0096OdOyhDqfdVaj
-         32LFT1p4VyTEMIy6G5sF1cS2eGRISg9XhIw6nxx9uyUz/kA1xM7gHMlaCd1SHDTzt4
-         th8HnIaKVzDwjsGxuPILSGf34/lzeVrajG/+IHKkqXJCdrWvzbKq4xWmjAL//nJwgy
-         XBoH+5OqJ7wNA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The aiu devices peripheral clocks needs the aiu and aiu_glue clocks to
+operate. Reflect this hierarchy in the clock tree.
 
-On 2/20/20 11:45 AM, Rob Herring wrote:
-> External email: Use caution opening links or attachments
->
->
-> On Tue, Feb 18, 2020 at 9:28 PM Sowjanya Komatineni
-> <skomatineni@nvidia.com> wrote:
->>
->> On 2/18/20 3:15 PM, Rob Herring wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> On Fri, Feb 14, 2020 at 10:23:25AM -0800, Sowjanya Komatineni wrote:
->>>> Tegra contains VI controller which can support up to 6 MIPI CSI
->>>> camera sensors.
->>>>
->>>> Each Tegra CSI port from CSI unit can be one-to-one mapper to
->>>> VI channel and can capture from an external camera sensor or
->>>> from built-in test pattern generator.
->>>>
->>>> This patch adds dt-bindings for Tegra VI and CSI.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>    .../display/tegra/nvidia,tegra20-host1x.txt        | 55 ++++++++++++++++++----
->>>>    1 file changed, 47 insertions(+), 8 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->>>> index 9999255ac5b6..3d0ed540a646 100644
->>>> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->>>> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
->>>> @@ -40,14 +40,24 @@ of the following host1x client modules:
->>>>
->>>>      Required properties:
->>>>      - compatible: "nvidia,tegra<chip>-vi"
->>>> -  - reg: Physical base address and length of the controller's registers.
->>>> +  - reg: Physical base address and length of the controller registers.
->>>>      - interrupts: The interrupt outputs from the controller.
->>>> -  - clocks: Must contain one entry, for the module clock.
->>>> +  - clocks: Must contain an entry for the module clock "vi"
->>>>        See ../clocks/clock-bindings.txt for details.
->>>>      - resets: Must contain an entry for each entry in reset-names.
->>>>        See ../reset/reset.txt for details.
->>>> -  - reset-names: Must include the following entries:
->>>> -    - vi
->>>> +  - reset-names: Must include the entry "vi"
->>>> +
->>>> +  Tegra210 has CSI part of VI sharing same host interface and register
->>>> +  space. So, VI device node should have CSI child node.
->>>> +
->>>> +  - csi: mipi csi interface to vi
->>>> +
->>>> +    Required properties:
->>>> +    - compatible: "nvidia,tegra<chip>-csi"
->>>> +    - reg: Physical base address and length of the controller registers.
->>>> +    - clocks: Must contain entries csi, cilab, cilcd, cile clocks.
->>>> +      See ../clocks/clock-bindings.txt for details.
->>>>
->>>>    - epp: encoder pre-processor
->>>>
->>>> @@ -310,12 +320,41 @@ Example:
->>>>                 };
->>>>
->>>>                 vi {
->>>> -                     compatible = "nvidia,tegra20-vi";
->>>> -                     reg = <0x54080000 0x00040000>;
->>>> +                     compatible = "nvidia,tegra210-vi";
->>>> +                     reg = <0x0 0x54080000 0x0 0x700>;
->>>>                         interrupts = <0 69 0x04>;
->>>> -                     clocks = <&tegra_car TEGRA20_CLK_VI>;
->>>> -                     resets = <&tegra_car 100>;
->>>> +                     assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
->>>> +                     assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
->>>> +                     clocks = <&tegra_car TEGRA210_CLK_VI>;
->>>> +                     clock-names = "vi";
->>>> +                     resets = <&tegra_car 20>;
->>>>                         reset-names = "vi";
->>>> +
->>>> +                     #address-cells = <2>;
->>>> +                     #size-cells = <2>;
->>>> +
->>>> +                     ranges = <0x0 0x54080808 0x0 0x54080808 0x0 0x2000>;
->>>> +
->>>> +                     csi@0x54080838 {
->>> Drop '0x'
->> Will fix in v4
->>>> +                             compatible = "nvidia,tegra210-csi";
->>>> +                             reg = <0x0 0x54080838 0x0 0x2000>;
->>> Kind of odd that this address and ranges address are not the same. And
->>> also wrong that the size here exceeds the bounds of ranges.
->>>
->>> Also, best practice is to make the child address 0 or relative to the
->>> parent.
->> Actual CSI starts at offset 0x808 but we don't use couple of registers
->> at offset 0x808.
->>
->> Will update ranges in v4 to start from 0x838 offset and will make child
->> address relative to parent.
-> Seems odd, but okay. And you will never, ever need to use those
-> registers no matter what, and we can reject any DT change trying to
-> change it later?
->
-> Rob
+Fixes: e31a1900c1ff73 ("meson: clk: Add support for clock gates")
+Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+This takes Jerome's patch for GXBB and ports it to the Meson8* SoCs.
+Hence the Suggested-by.
 
-Yes not required to access them by driver.
 
-On T210, CSI registers under VI starts from location 0x54080808
+ drivers/clk/meson/meson8b.c | 21 +++++++++++++--------
+ 1 file changed, 13 insertions(+), 8 deletions(-)
 
-SW don't need to access initial 3 registers at 0x54080808, 0x54080818, 
-0x54080828
-
-Actual CSI registers that are needed for SW starts from 0x54080838.
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 9fd31f23b2a9..34a70c4b4899 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -2605,14 +2605,6 @@ static MESON_GATE(meson8b_spi, HHI_GCLK_MPEG0, 30);
+ static MESON_GATE(meson8b_i2s_spdif, HHI_GCLK_MPEG1, 2);
+ static MESON_GATE(meson8b_eth, HHI_GCLK_MPEG1, 3);
+ static MESON_GATE(meson8b_demux, HHI_GCLK_MPEG1, 4);
+-static MESON_GATE(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6);
+-static MESON_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
+-static MESON_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
+-static MESON_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
+-static MESON_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
+-static MESON_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
+-static MESON_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
+-static MESON_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
+ static MESON_GATE(meson8b_blkmv, HHI_GCLK_MPEG1, 14);
+ static MESON_GATE(meson8b_aiu, HHI_GCLK_MPEG1, 15);
+ static MESON_GATE(meson8b_uart1, HHI_GCLK_MPEG1, 16);
+@@ -2659,6 +2651,19 @@ static MESON_GATE(meson8b_vclk2_vencl, HHI_GCLK_OTHER, 25);
+ static MESON_GATE(meson8b_vclk2_other, HHI_GCLK_OTHER, 26);
+ static MESON_GATE(meson8b_edp, HHI_GCLK_OTHER, 31);
+ 
++/* AIU gates */
++#define MESON_AIU_GLUE_GATE(_name, _reg, _bit) \
++	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw)
++
++static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw);
++static MESON_AIU_GLUE_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
++static MESON_AIU_GLUE_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
++static MESON_AIU_GLUE_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
++static MESON_AIU_GLUE_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
++static MESON_AIU_GLUE_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
++static MESON_AIU_GLUE_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
++static MESON_AIU_GLUE_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
++
+ /* Always On (AO) domain gates */
+ 
+ static MESON_GATE(meson8b_ao_media_cpu, HHI_GCLK_AO, 0);
+-- 
+2.25.1
 
