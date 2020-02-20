@@ -2,126 +2,118 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6CFC11D05
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 11:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C61B9C11D04
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 11:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DA2E207FD
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 11:19:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="GK+8ExaB"
+	by mail.kernel.org (Postfix) with ESMTP id 9A86F2465D
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 11:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582198023;
+	bh=CEk8idDaWnhSZHqSnOYyFDbQj7mAiD4KIa+YtxoO+74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=aNyUx325Xe+YI/zJZf+yTtjh0qo0Ips5dft6Ty1LcPRd1BmXp0DW8ShfoqOiMmn4s
+	 gQpf5Ss5+7bbXVlohQgbFFUi9/WyJ1+LzoYKFLK/7Motuer8+d/ZOwk3tMtvf1qxUr
+	 0nnMwLsSNSijRYFkpOPvfR7Ppy9qWHgiVSpWcSDw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726882AbgBTLTG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 06:19:06 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:30220 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727662AbgBTLTE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 06:19:04 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582197543; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=6KJhbm7JPq1+wBTiL3Bw1Lt65SssqbW9iQ7FMNPxTLc=;
- b=GK+8ExaBKyZg4iNTp1g/yZXNTMWEL/GjzDbx8a8uzzbFDAzpPzVnTl1CrcdNiDssvFChyFxT
- Kd0jVAfaL2gVZHN9k3EwRsyCpXJo2oXSKdrr2KzRPbhMi5PGe2lq7h9Rbw4S8uCtcJTJle10
- Rm8FwciDsHv7VQRA98ftrqju3dU=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e4e6b22.7fc9a682f8b8-smtp-out-n02;
- Thu, 20 Feb 2020 11:18:58 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F0729C447A0; Thu, 20 Feb 2020 11:18:56 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        id S1726825AbgBTL1D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 06:27:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726501AbgBTL1D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Feb 2020 06:27:03 -0500
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sibis)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 43580C43383;
-        Thu, 20 Feb 2020 11:18:56 +0000 (UTC)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 20 Feb 2020 16:48:56 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 562672071E;
+        Thu, 20 Feb 2020 11:27:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582198022;
+        bh=CEk8idDaWnhSZHqSnOYyFDbQj7mAiD4KIa+YtxoO+74=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oE+5vMySvi9PlHim4VNQTDn1Xdu7+jIng8by5DrKHwUmBtzXw/q+D0OuuFw31GjU4
+         yHpVgEeeT6CivTYmiMgnaDHlu3RUlPRKIhCtsoiuGP3u+Ue25jjAbYnbS4K/6wxndy
+         y8gXHMTIT/7Tpmh5Whdg6Z7BHDpWfN4N9ktjeA3g=
+Date:   Thu, 20 Feb 2020 12:27:00 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, linux-soc-owner@vger.kernel.org
-Subject: Re: [PATCH v4 3/5] dt-bindings: clock: Add YAML schemas for the QCOM
- MSS clock bindings
-In-Reply-To: <6298769e-09bc-eb69-bf72-5aedd0e87f16@codeaurora.org>
-References: <1582049733-17050-1-git-send-email-tdas@codeaurora.org>
- <1582049733-17050-4-git-send-email-tdas@codeaurora.org>
- <20200218230026.GA3778@bogus>
- <6298769e-09bc-eb69-bf72-5aedd0e87f16@codeaurora.org>
-Message-ID: <7cf3950b53a7b5881c840ed371e64158@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND RFC PATCH v3] clk: Use new helper in managed functions
+Message-ID: <20200220112700.GJ3374196@kroah.com>
+References: <f48d1df3-fc1f-ac5c-b11e-330f18aad539@free.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f48d1df3-fc1f-ac5c-b11e-330f18aad539@free.fr>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hey Taniya,
-
-+    <&gcc GCC_MSS_NAV_AXIS_CLK>,
-
-error is because of ^^ typo
-it should be GCC_MSS_NAV_AXI_CLK
-instead, with that dt_bindings
-check will go though.
-
-On 2020-02-19 09:35, Taniya Das wrote:
-> Hi Rob,
+On Thu, Feb 20, 2020 at 11:04:58AM +0100, Marc Gonzalez wrote:
+> Introduce devm_add() to wrap devres_alloc() / devres_add() calls.
 > 
-> On 2/19/2020 4:30 AM, Rob Herring wrote:
->> On Tue, 18 Feb 2020 23:45:31 +0530, Taniya Das wrote:
->>> The Modem Subsystem clock provider have a bunch of generic properties
->>> that are needed in a device tree. Add a YAML schemas for those.
->>> 
->>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
->>> ---
->>>   .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 
->>> ++++++++++++++++++++++
->>>   1 file changed, 62 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
->>> 
->> 
->> My bot found errors running 'make dt_binding_check' on your patch:
->> 
->> Error: 
->> Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dts:21.26-27 
->> syntax error
->> FATAL ERROR: Unable to parse input tree
->> scripts/Makefile.lib:300: recipe for target 
->> 'Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml' 
->> failed
->> make[1]: *** 
->> [Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml] 
->> Error 1
->> Makefile:1263: recipe for target 'dt_binding_check' failed
->> make: *** [dt_binding_check] Error 2
->> 
->> See https://patchwork.ozlabs.org/patch/1240251
->> Please check and re-submit.
->> 
+> Using that helper produces simpler code, and smaller object size.
+> E.g. with gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu:
 > 
-> I did see the same issue and then when I re-ordered by patches
-> dt-bindings: clock: Add support for Modem clocks in GCC (dependent) on
-> this binding patch, I no longer encountered the issue.
-> https://patchwork.kernel.org/patch/11389243/
+>     text	   data	    bss	    dec	    hex	filename
+> -   1708	     80	      0	   1788	    6fc	drivers/clk/clk-devres.o
+> +   1524	     80	      0	   1604	    644	drivers/clk/clk-devres.o
 > 
-> Please let me know.
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> ---
+> Differences from v2 to v3
+> x Make devm_add() return an error-code rather than the raw data pointer
+>   (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
+> x Provide a variadic version devm_vadd() to work with structs as suggested
+>   by Geert
+> x Don't use nested ifs in clk_devm* implementations (hopefully simpler
+>   code logic to follow) as suggested by Geert
+> 
+> Questions:
+> x This patch might need to be split in two? (Introduce the new API, then use it)
+> x Convert other subsystems to show the value of this proposal?
+> x Maybe comment the API usage somewhere
+> ---
+>  drivers/base/devres.c    | 15 ++++++
+>  drivers/clk/clk-devres.c | 99 ++++++++++++++--------------------------
+>  include/linux/device.h   |  3 ++
+>  3 files changed, 53 insertions(+), 64 deletions(-)
+> 
+> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+> index 0bbb328bd17f..b2603789755b 100644
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -685,6 +685,21 @@ int devres_release_group(struct device *dev, void *id)
+>  }
+>  EXPORT_SYMBOL_GPL(devres_release_group);
+>  
+> +int devm_add(struct device *dev, dr_release_t func, void *arg, size_t size)
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Please add a bunch of kerneldoc here, as I have no idea what this
+function does just by looking at the name of it :(
+
+thanks,
+
+greg k-h
