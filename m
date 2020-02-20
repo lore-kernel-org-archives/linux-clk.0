@@ -2,96 +2,172 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D16AC11D13
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 17:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA16C11D0C
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 17:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E5F206F4
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 17:07:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="giUHMUtf"
+	by mail.kernel.org (Postfix) with ESMTP id 337EA207FD
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 17:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbgBTRH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 12:07:57 -0500
-Received: from us-smtp-2.mimecast.com ([207.211.31.81]:47851 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728748AbgBTRHs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 12:07:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582218467;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=fRyl+HNCJYGuzif7UHbBNmoq+TguvgwSchvSmXTT2m8=;
-        b=giUHMUtfIAB0HemHQWmprLxqBb5rPV6Kp6+MEPN2dWwBtGo+ZL3ggisJjLdiIw6hkntwNn
-        e+FBi/TY/0gbeligtFHiyER+7m3jhFhm7o1HaF+crlbQfXQ+6jbu1y3waJi/baKoCcM8AU
-        BCIczJnJFZMJDaimAuasbIm+PHZ00Uw=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-387-o5UPWaBQMDeQ-SMDPVJK3A-1; Thu, 20 Feb 2020 12:07:44 -0500
-X-MC-Unique: o5UPWaBQMDeQ-SMDPVJK3A-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id E3649800EB4;
-        Thu, 20 Feb 2020 17:07:38 +0000 (UTC)
-Received: from redhatnow.users.ipa.redhat.com (ovpn-117-1.phx2.redhat.com [10.3.117.1])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A06D90F65;
-        Thu, 20 Feb 2020 17:07:29 +0000 (UTC)
-Subject: Re: [RFC PATCH 02/11] ata: Remove Calxeda AHCI driver
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Will Deacon <will@kernel.org>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-3-robh@kernel.org>
-From:   Mark Langsdorf <mlangsdo@redhat.com>
-Message-ID: <bf1291f2-597e-bff9-6780-ec233f5c2a20@redhat.com>
-Date:   Thu, 20 Feb 2020 11:07:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1728799AbgBTRWA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 12:22:00 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48646 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726959AbgBTRWA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 12:22:00 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id CCF2F29527F
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Fabien Parent <fparent@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v8 0/6] arm/arm64: mediatek: Fix mmsys device probing
+Date:   Thu, 20 Feb 2020 18:21:41 +0100
+Message-Id: <20200220172147.919996-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <20200218171321.30990-3-robh@kernel.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2/18/20 11:13 AM, Rob Herring wrote:
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: linux-ide@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Dear all,
 
-Acked-by: Mark Langsdorf <mark.langsdorf@gmail.com>
+Those patches are intended to solve an old standing issue on some
+Mediatek devices (mt8173, mt2701 and mt2712) in a slightly different way
+to the precedent series.
+
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on those devices.
+
+The version eight of the series tries to solve the problem with a
+different approach than the previous series but similar to how is solved
+on other Mediatek devices.
+
+The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
+control clock gates (which is used in the clk driver) and some registers
+to set the routing and enable the differnet blocks of the display
+and MDP (Media Data Path) subsystem. On this series the clk driver is
+not a pure clock controller but a system controller that can provide
+access to the shared registers between the different drivers that need
+it (mediatek-drm and mediatek-mdp). And the biggest change is, that in
+this version, clk driver is the entry point (parent) which will trigger
+the probe of the corresponding mediatek-drm driver and pass its MMSYS
+platform data for display configuration.
+
+All this series was tested on the Acer R13 Chromebook only.
+
+For reference, here are the links to the old discussions:
+
+* v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
+* v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
+* v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
+* v4:
+  * https://patchwork.kernel.org/patch/10530871/
+  * https://patchwork.kernel.org/patch/10530883/
+  * https://patchwork.kernel.org/patch/10530885/
+  * https://patchwork.kernel.org/patch/10530911/
+  * https://patchwork.kernel.org/patch/10530913/
+* v3:
+  * https://patchwork.kernel.org/patch/10367857/
+  * https://patchwork.kernel.org/patch/10367861/
+  * https://patchwork.kernel.org/patch/10367877/
+  * https://patchwork.kernel.org/patch/10367875/
+  * https://patchwork.kernel.org/patch/10367885/
+  * https://patchwork.kernel.org/patch/10367883/
+  * https://patchwork.kernel.org/patch/10367889/
+  * https://patchwork.kernel.org/patch/10367907/
+  * https://patchwork.kernel.org/patch/10367909/
+  * https://patchwork.kernel.org/patch/10367905/
+* v2: No relevant discussion, see v3
+* v1:
+  * https://patchwork.kernel.org/patch/10016497/
+  * https://patchwork.kernel.org/patch/10016499/
+  * https://patchwork.kernel.org/patch/10016505/
+  * https://patchwork.kernel.org/patch/10016507/
+
+Best regards,
+ Enric
+
+Changes in v8:
+- Be a builtin_platform_driver like other mediatek mmsys drivers.
+- New patches introduced in this series.
+
+Changes in v7:
+- Add R-by from CK
+- Add R-by from CK
+- Fix check of return value of of_clk_get
+- Fix identation
+- Free clk_data->clks as well
+- Get rid of private data structure
+
+Enric Balletbo i Serra (2):
+  drm/mediatek: Move MMSYS configuration to include/linux/platform_data
+  clk/drm: mediatek: Fix mediatek-drm device probing
+
+Matthias Brugger (4):
+  drm/mediatek: Use regmap for register access
+  drm/mediatek: Omit warning on probe defers
+  media: mtk-mdp: Check return value of of_clk_get
+  clk: mediatek: mt8173: Switch MMSYS to platform driver
+
+ drivers/clk/mediatek/Kconfig                  |   6 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-mt2701-mm.c          |  30 +++
+ drivers/clk/mediatek/clk-mt2712-mm.c          |  44 +++++
+ drivers/clk/mediatek/clk-mt8173-mm.c          | 172 ++++++++++++++++++
+ drivers/clk/mediatek/clk-mt8173.c             | 104 -----------
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        |  53 +++---
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h   |  56 +-----
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 113 +-----------
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  13 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
+ drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |   6 +
+ include/linux/platform_data/mtk_mmsys.h       |  73 ++++++++
+ 20 files changed, 401 insertions(+), 317 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
+ create mode 100644 include/linux/platform_data/mtk_mmsys.h
+
+-- 
+2.25.0
 
