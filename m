@@ -2,199 +2,90 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9CDDC11D10
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 16:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A086C11D0F
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 16:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2CAE24683
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 16:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73325208C4
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 16:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728669AbgBTQ2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 11:28:10 -0500
-Received: from out28-219.mail.aliyun.com ([115.124.28.219]:52233 "EHLO
-        out28-219.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728384AbgBTQ2J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 11:28:09 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07450332|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.208385-0.00957184-0.782043;DS=CONTINUE|ham_system_inform|0.028472-0.000402336-0.971126;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GqC0FCl_1582215911;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GqC0FCl_1582215911)
-          by smtp.aliyun-inc.com(10.147.40.2);
-          Fri, 21 Feb 2020 00:25:30 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de,
-        ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org,
-        daniel.lezcano@linaro.org, paul@crapouillou.net,
-        geert+renesas@glider.be, krzk@kernel.org, ebiederm@xmission.com,
-        miquel.raynal@bootlin.com, keescook@chromium.org,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
-        dongsheng.qiu@ingenic.com
-Subject: [PATCH v6 6/7] MIPS: Ingenic: Add 'cpus' node for Ingenic SoCs.
-Date:   Fri, 21 Feb 2020 00:24:48 +0800
-Message-Id: <1582215889-113034-8-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        id S1728406AbgBTQ3q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 11:29:46 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:58946 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726871AbgBTQ3p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Feb 2020 11:29:45 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6343A200BED;
+        Thu, 20 Feb 2020 17:29:43 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 54446200BC4;
+        Thu, 20 Feb 2020 17:29:43 +0100 (CET)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2BDDD20328;
+        Thu, 20 Feb 2020 17:29:42 +0100 (CET)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Franck LENORMAND <franck.lenormand@nxp.com>,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v2 0/8] firmware: imx: Align imx SC msg structs to 4
+Date:   Thu, 20 Feb 2020 18:29:31 +0200
+Message-Id: <cover.1582216144.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add 'cpus' node to the jz4740.dtsi, jz4770.dtsi, jz4780.dtsi
-and x1000.dtsi files.
+The imx SC api strongly assumes that messages are composed out of
+4-bytes words but some of our message structs have sizeof "6" and "7".
 
-Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
-Tested-by: Paul Boddie <paul@boddie.org.uk>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
+This produces many oopses with CONFIG_KASAN=y:
 
-Notes:
-    v1->v2:
-    No change.
-    
-    v2->v3:
-    No change.
-    
-    v3->v4:
-    Rebase on top of kernel 5.6-rc1.
-    
-    v4->v5:
-    No change.
-    
-    v5->v6:
-    No change.
+	BUG: KASAN: stack-out-of-bounds in imx_mu_send_data+0x108/0x1f0
 
- arch/mips/boot/dts/ingenic/jz4740.dtsi | 14 ++++++++++++++
- arch/mips/boot/dts/ingenic/jz4770.dtsi | 15 ++++++++++++++-
- arch/mips/boot/dts/ingenic/jz4780.dtsi | 23 +++++++++++++++++++++++
- arch/mips/boot/dts/ingenic/x1000.dtsi  | 14 ++++++++++++++
- 4 files changed, 65 insertions(+), 1 deletion(-)
+It shouldn't cause an issues in normal use because these structs are
+always allocated on the stack but tools like KASAN are very useful on
+stable kernels.
 
-diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-index 5accda2..9627d95 100644
---- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
-@@ -6,6 +6,20 @@
- 	#size-cells = <1>;
- 	compatible = "ingenic,jz4740";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "ingenic,xburst";
-+			reg = <0>;
-+
-+			clocks = <&cgu JZ4740_CLK_CCLK>;
-+			clock-names = "cpu";
-+		};
-+	};
-+
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-index 0bfb9ed..1b8114d 100644
---- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
- #include <dt-bindings/clock/jz4770-cgu.h>
- 
- / {
-@@ -7,6 +6,20 @@
- 	#size-cells = <1>;
- 	compatible = "ingenic,jz4770";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "ingenic,xburst";
-+			reg = <0>;
-+
-+			clocks = <&cgu JZ4770_CLK_CCLK>;
-+			clock-names = "cpu";
-+		};
-+	};
-+
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-index f928329..93a0604 100644
---- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
-+++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
-@@ -7,6 +7,29 @@
- 	#size-cells = <1>;
- 	compatible = "ingenic,jz4780";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "ingenic,xburst";
-+			reg = <0>;
-+
-+			clocks = <&cgu JZ4780_CLK_CPU>;
-+			clock-names = "cpu";
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "ingenic,xburst";
-+			reg = <1>;
-+
-+			clocks = <&cgu JZ4780_CLK_CORE1>;
-+			clock-names = "cpu";
-+		};
-+	};
-+
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
-diff --git a/arch/mips/boot/dts/ingenic/x1000.dtsi b/arch/mips/boot/dts/ingenic/x1000.dtsi
-index 4994c69..376df1b 100644
---- a/arch/mips/boot/dts/ingenic/x1000.dtsi
-+++ b/arch/mips/boot/dts/ingenic/x1000.dtsi
-@@ -7,6 +7,20 @@
- 	#size-cells = <1>;
- 	compatible = "ingenic,x1000", "ingenic,x1000e";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "ingenic,xburst";
-+			reg = <0>;
-+
-+			clocks = <&cgu X1000_CLK_CPU>;
-+			clock-names = "cpu";
-+		};
-+	};
-+
- 	cpuintc: interrupt-controller {
- 		#address-cells = <0>;
- 		#interrupt-cells = <1>;
+Chnages since v1:
+* Split into many patches with individual fixes: tags
+Link to v1: https://patchwork.kernel.org/patch/11376909/
+
+Leonard Crestez (8):
+  clk: imx: Align imx sc clock msg structs to 4
+  clk: imx: Align imx sc clock parent msg structs to 4
+  firmware: imx: misc: Align imx sc msg structs to 4
+  firmware: imx: scu-pd: Align imx sc msg structs to 4
+  firmware: imx: Align imx_sc_msg_req_cpu_start to 4
+  pinctrl: imx: scu: Align imx sc msg structs to 4
+  rtc: imx-sc: Align imx sc msg structs to 4
+  soc: imx-scu: Align imx sc msg structs to 4
+
+ drivers/clk/imx/clk-scu.c               | 8 ++++----
+ drivers/firmware/imx/misc.c             | 8 ++++----
+ drivers/firmware/imx/scu-pd.c           | 2 +-
+ drivers/pinctrl/freescale/pinctrl-scu.c | 4 ++--
+ drivers/rtc/rtc-imx-sc.c                | 2 +-
+ drivers/soc/imx/soc-imx-scu.c           | 2 +-
+ 6 files changed, 13 insertions(+), 13 deletions(-)
+
 -- 
-2.7.4
+2.17.1
 
