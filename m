@@ -2,132 +2,119 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URI_HEX,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AC0C11D04
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 13:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C3BC11D05
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 14:05:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58783208C4
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 13:33:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="VQiME1kh"
+	by mail.kernel.org (Postfix) with ESMTP id 84738208C4
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 14:05:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbgBTNdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 08:33:54 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:35771 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728051AbgBTNdx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 08:33:53 -0500
-Received: from [IPv6:2001:420:44c1:2577:ac15:94e:5ea0:8199]
- ([IPv6:2001:420:44c1:2577:ac15:94e:5ea0:8199])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 4lxbjYOH4jmHT4lxejJjq8; Thu, 20 Feb 2020 14:33:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1582205631; bh=W5ASoqeOAh17Qps81aLKTtl0jMkVCmNhhVWeB98kIlg=;
-        h=Subject:From:To:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=VQiME1kharihSlvLOG/fRjPvR5bBNO2M9q/euOR+rf8Xi5ZdL6Ob5tvwHCv/CX0wH
-         FvoeGv4APr2WlyboDCvvqBhsOzz2gjJkhUMwIR7VC9imGsFLeobf5wWAaV3RjQdYRc
-         8S4c3ihDqmz8tE/UWmAAMgkJeXhm7q/Rvcm4GTGLTCI0BaV8hqpjBtBOo2bzV8DLp2
-         X0frPcCFsjpYE36xE/fMBOUMoXBqbRR3/Lp2uLuCDTVqYc71VRU4IRbEI7ypbVmNZG
-         41xcH45Kp4Z4MHRX2CFpbwZK33STOtqLjSU9s8mfMsMZ5bwGbtodUyurOzNrxGEpJW
-         5l/gGtYyHwOmA==
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        helen.koike@collabora.com, sboyd@kernel.org
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
-Message-ID: <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
-Date:   Thu, 20 Feb 2020 14:33:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728054AbgBTOF5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 09:05:57 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:53816 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727943AbgBTOF5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 20 Feb 2020 09:05:57 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id E162B20050;
+        Thu, 20 Feb 2020 15:05:54 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id AEA9E1FF6A;
+        Thu, 20 Feb 2020 15:05:54 +0100 (CET)
+Subject: Re: [RESEND RFC PATCH v3] clk: Use new helper in managed functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <f48d1df3-fc1f-ac5c-b11e-330f18aad539@free.fr>
+ <20200220112700.GJ3374196@kroah.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <8866e533-967f-e208-1ec8-888d72f3052e@free.fr>
+Date:   Thu, 20 Feb 2020 15:05:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+In-Reply-To: <20200220112700.GJ3374196@kroah.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfIgbYI0jRMjFLIONkK7nMG/If2b+W2ijCTNCxtI5OT0b9Eo+Ml//odnii0LSDRn39gUvWvWon0ewb/nWgysr/BO9vTlDJPK4JXbfCSlwVVTfOtjdsYfW
- m9giEi3+XdgysUXMIC9ajCfu9dgDEgvrRgjR1VvOFG3k4e19UEIkcuuZIW5Lh68eAFOpKZO8g0kooxbhkAF6qqIqkQp/Twf5BycKYvWJ7ohThBbKlvJZ7kOH
- JdS6ByS8WPWZfHwQjbyrPeP/B5tFhZtXOUaB0dH6xXSPCgngNRnWoIX3Wus+/UYR3qVtR1HDkKyahdq4bmMwH6L/4Cy7QjH8NTJ5AwWAx8SOzKVfgLwar1Rc
- TWRd56Srn8dLbwuWENLRgcriaZ9Ty9oT78bsYUFd93F7P2WAY65VGQyy9NAuul+U1SfN9wHytaU2UWKAz4VwYggCZi0Ex4uUKZfZSgE/eA6L+DB3rXbft12Z
- c1BGU0ckKhnCPe+/59It5KQ4toYMh9nXXmJDZsr0yFSdurZOVD0pxBx69bqZEyUoeQdBCujRssygWu2A7Iq0jnyUu7C+QbKVrJGPAPogcL1tEylb1uKGfhNZ
- 7BqVPh9twuBWOw7g2L0GlFZvWqaaJSjIrm2u29klYLjUlmMn2WUNrEI030FNyiGOh2c=
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Thu Feb 20 15:05:54 2020 +0100 (CET)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-(Replying to myself so I can explain this a bit more)
+On 20/02/2020 12:27, Greg Kroah-Hartman wrote:
 
-On 2/20/20 1:44 PM, Hans Verkuil wrote:
->> +
->> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
->> +{
->> +	struct device_node *node = csi->dev->of_node;
->> +	unsigned int port_num;
->> +	int ret;
->> +	struct tegra_csi_channel *item;
->> +	unsigned int tpg_channels = csi->soc->csi_max_channels;
->> +
->> +	/* allocate CSI channel for each CSI x2 ports */
->> +	for (port_num = 0; port_num < tpg_channels; port_num++) {
->> +		item = devm_kzalloc(csi->dev, sizeof(*item), GFP_KERNEL);
+> On Thu, Feb 20, 2020 at 11:04:58AM +0100, Marc Gonzalez wrote:
+>
+>> Introduce devm_add() to wrap devres_alloc() / devres_add() calls.
+>>
+>> Using that helper produces simpler code, and smaller object size.
+>> E.g. with gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu:
+>>
+>>     text	   data	    bss	    dec	    hex	filename
+>> -   1708	     80	      0	   1788	    6fc	drivers/clk/clk-devres.o
+>> +   1524	     80	      0	   1604	    644	drivers/clk/clk-devres.o
+>>
+>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>> ---
+>> Differences from v2 to v3
+>> x Make devm_add() return an error-code rather than the raw data pointer
+>>   (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
+>> x Provide a variadic version devm_vadd() to work with structs as suggested
+>>   by Geert
+>> x Don't use nested ifs in clk_devm* implementations (hopefully simpler
+>>   code logic to follow) as suggested by Geert
+>>
+>> Questions:
+>> x This patch might need to be split in two? (Introduce the new API, then use it)
+>> x Convert other subsystems to show the value of this proposal?
+>> x Maybe comment the API usage somewhere
+>> ---
+>>  drivers/base/devres.c    | 15 ++++++
+>>  drivers/clk/clk-devres.c | 99 ++++++++++++++--------------------------
+>>  include/linux/device.h   |  3 ++
+>>  3 files changed, 53 insertions(+), 64 deletions(-)
+>>
+>> diff --git a/drivers/base/devres.c b/drivers/base/devres.c
+>> index 0bbb328bd17f..b2603789755b 100644
+>> --- a/drivers/base/devres.c
+>> +++ b/drivers/base/devres.c
+>> @@ -685,6 +685,21 @@ int devres_release_group(struct device *dev, void *id)
+>>  }
+>>  EXPORT_SYMBOL_GPL(devres_release_group);
+>>  
+>> +int devm_add(struct device *dev, dr_release_t func, void *arg, size_t size)
 > 
-> Using devm_*alloc can be dangerous. If someone unbinds the driver, then
-> all memory allocated with devm_ is immediately freed. But if an application
-> still has a filehandle open, then when it closes it it might still reference
-> this already-freed memory.
-> 
-> I recommend that you avoid using devm_*alloc for media drivers.
+> Please add a bunch of kerneldoc here, as I have no idea what this
+> function does just by looking at the name of it :(
 
-A good test is to unbind & bind the driver:
+Fair enough. (This was one of my "Questions" in the patch comments.)
 
-cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
-echo -n 54080000.vi >unbind
-echo -n 54080000.vi >bind
+Note: My patch adds a new function, then makes use of said function.
+Is this typically done in two patches or one?
 
-First just do this without the driver being used. That already
-gives me 'list_del corruption' kernel messages (list debugging
-is turned on in my kernel).
+Patch 1/2 augmenting the API.
+Patch 2/2 making use of the new function.
 
-Note that this first test is basically identical to a rmmod/modprobe
-of the driver. But when I compiled the driver as a module it didn't
-create any video device nodes! Nor did I see any errors in the kernel
-log. I didn't pursue this, and perhaps I did something wrong, but it's
-worth taking a look at.
-
-The next step would be to have a video node open with:
-
-v4l2-ctl --sleep 10
-
-then while it is sleeping unbind the driver and see what happens
-when v4l2-ctl exits.
-
-Worst case is when you are streaming:
-
-v4l2-ctl --stream-mmap
-
-and then unbind.
-
-In general, the best way to get this to work correctly is:
-
-1) don't use devm_*alloc
-2) set the release callback of struct v4l2_device and do all freeing there.
-3) in the platform remove() callback you call media_device_unregister()
-   and video_unregister_device().
-
-It's worth getting this right in this early stage, rather than fixing it
-in the future.
-
-Regards,
-
-	Hans
+Regards.
