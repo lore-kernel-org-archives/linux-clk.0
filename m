@@ -2,129 +2,100 @@ Return-Path: <SRS0=oOpq=4I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE346C11D20
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:45:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1529C11D24
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 21:15:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6424208E4
-	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 20:45:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43E824654
+	for <linux-clk@archiver.kernel.org>; Thu, 20 Feb 2020 21:15:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="RZe84KTg"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Zk+cdZTJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729260AbgBTUo7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 20 Feb 2020 15:44:59 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51667 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728618AbgBTUo7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 15:44:59 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t23so1836wmi.1;
-        Thu, 20 Feb 2020 12:44:58 -0800 (PST)
+        id S1729210AbgBTVPT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 20 Feb 2020 16:15:19 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38484 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727786AbgBTVPS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 20 Feb 2020 16:15:18 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p23so35395719edr.5;
+        Thu, 20 Feb 2020 13:15:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
-        b=RZe84KTgVDumaVTivMwcyl7kEwDt57yX76+EH+ZLQWwRzv5k62azpHW8GqTx8mxI5J
-         6d86J/N/tD47TrjzY+73UOYpQtyxsiHyf/yJ2PAbvRbUgF4WGlHmAwxGRofiMzBIfWmu
-         DajDDq/fyp1k7BZfgCAdwxbHMfLZDowqN2cq23QtzZkTbeMw66pO0GdihywqH6QEC4LI
-         W/C3nTVpiEI4DWCMfTY8/yGtanqaqmcWk9EqVf+SKkCo+CAiF39bmSCyuPXOucKkcvc6
-         9BqwCvhOH5psaYpONEy2grDTT/ygotPLzUdunW6SVTK8+dcLurn4nftvXiPC+pd1vuuM
-         yTqQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E0r8UtKklC8vn0exQFm1xc2bM7Px85fwUILOFwxpfXc=;
+        b=Zk+cdZTJrrQGLS4LPCXUuDR4TnwujssZT/tflyRWzR4m5EuB74oGIb4XNsW8ZpTcV6
+         0bMOKocFAC5Aws/uPZuTdgEtDPOjoyukKgAGlNmDCD977jXJDA419hAYFYPI1NXVuJQo
+         h430UdKqeKyZxLWCK4GO4NKiUkni6qDd7foBhauhsIrn9EgNs9smHTIWE+gilQ/16aAA
+         qfn6Hasa8dA4DT4sDD1+nxpUPc7G2OPFgzjY066Dx0k/Rav91/e4+SBstXos/38maA95
+         wnZg7wriDejBaAEUGOUJBhPWdWDn0GFAE47f0mBxFDKwa5X6dxLRje0PnLK0qSHVgZ26
+         oMsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=n76MR2hfIZsf6g57SD/GC8wwOFNZ4gbM6KJt3yOpBLs=;
-        b=c+798zZHLvXHnD3IlxbFlaXVbhJsptzJwNDGRTZ0wwWX5ss6AnqQipmd2aWJjsMSXO
-         LAOT3dHDz+b5KQbwSeGWkMZryI0xqjsDxlBr109xuJnf8lLjur6AkfaOCptB0p5HI2OL
-         D4DyEw4Hc9+8GfMRgjuiPlwxPi4iUVwFUShkqh9g9WqY1GIJaX0kDJ3kwIVAjtxb4wsq
-         mkeGcSWPAmtYHeLPsA09EUwCsgIZEUD+MyMZFN1azUF+vxG8sJ5rXFPSZQkR44AYTt+Z
-         en0yczjTxBUiN2DmS09zEOHQzjfFotmVIqZoJDQ1ljNesM+V4Y3/ga2MfSXKfV7g9R1h
-         FxOQ==
-X-Gm-Message-State: APjAAAW1lP9eQBAkcTB8tSgmNGcUSXqiWVaLSwSyYpUDM2BMWMlI1D6b
-        6SX4DOwRPh8zPFoUo1a8obw=
-X-Google-Smtp-Source: APXvYqxch3aaikANJA018nryWRbnsmAci2QcLCKH9CNx4CfFPp5Gcf4OfNOPQkVxewFpcm91NxbQvg==
-X-Received: by 2002:a7b:c204:: with SMTP id x4mr6326147wmi.20.1582231497318;
-        Thu, 20 Feb 2020 12:44:57 -0800 (PST)
-Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id r6sm902544wrp.95.2020.02.20.12.44.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Feb 2020 12:44:56 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, narmstrong@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH] clk: meson: meson8b: set audio output clock hierarchy
-Date:   Thu, 20 Feb 2020 21:44:33 +0100
-Message-Id: <20200220204433.67113-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.25.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E0r8UtKklC8vn0exQFm1xc2bM7Px85fwUILOFwxpfXc=;
+        b=HGnhpVFR1sxTmIAhQm6Ubn4AWXVyclQVIYWY3Vhhqbec7VeBiZRFyTinMhS5Op9LxF
+         et1VtkbbO7+POH0h68Lr4mS/wdU5HjEBAmuw0BxNDAXSbkME9DDlYnJfe+zBsku5f8rV
+         VrZI5+9Ed19GOC7NdSzf0+GklrP+jKr3Wj2ksEr8gwcW6j2GW1lfg4mwlKY0tH7GIN1v
+         eFNPyboDYgWvLJ/esMPLHW4Lp/bstuODYFRbYD5DnTg/Zl7sfRy+wbcyry+vKzFr8FZs
+         FjZZ5ogVLIzn27oFAeaaOsucMmmPlHXKLD4wa0FBb47+kCW5PGh/gYJr9NcOcv8zIwCt
+         Iu1w==
+X-Gm-Message-State: APjAAAVmqzhu/CNdRTlvFT+9Mo/PalwAFnP6hYizUvz1aF/D8EnHTTiJ
+        qmj9E3U/mrM8sOguoPBjNPlFUq/kWmDZq+7K/jg=
+X-Google-Smtp-Source: APXvYqwXYPTGE8gx5kvAp7lnVSFQVA+NMeL3QVC6+h/cuRK/8EgB3ahTv0Vbyn5nmgxN9HxsBKLSAoZv7ayNwuuXxTA=
+X-Received: by 2002:a05:6402:2037:: with SMTP id ay23mr29262250edb.146.1582233317366;
+ Thu, 20 Feb 2020 13:15:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-4-linux.amoon@gmail.com>
+ <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com> <CANAwSgSaQgU=H3h0S9deT11HA8z9R=Fhy5Kawii9tSBxKf2Wgw@mail.gmail.com>
+In-Reply-To: <CANAwSgSaQgU=H3h0S9deT11HA8z9R=Fhy5Kawii9tSBxKf2Wgw@mail.gmail.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 20 Feb 2020 22:15:06 +0100
+Message-ID: <CAFBinCCSosE1XfwbKZOR9G+DVYg8zFcKShmTNWUhh1e8W0VoAQ@mail.gmail.com>
+Subject: Re: [PATCHv1 3/3] clk: meson: g12a: set cpu clock divider flags too CLK_IS_CRITICAL
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The aiu devices peripheral clocks needs the aiu and aiu_glue clocks to
-operate. Reflect this hierarchy in the clock tree.
+Hi Anand,
 
-Fixes: e31a1900c1ff73 ("meson: clk: Add support for clock gates")
-Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
-This takes Jerome's patch for GXBB and ports it to the Meson8* SoCs.
-Hence the Suggested-by.
+On Mon, Feb 17, 2020 at 2:30 PM Anand Moon <linux.amoon@gmail.com> wrote:
+[...]
+> > > @@ -681,7 +682,7 @@ static struct clk_regmap g12b_cpub_clk = {
+> > >                       &g12a_sys_pll.hw
+> > >               },
+> > >               .num_parents = 2,
+> > > -             .flags = CLK_SET_RATE_PARENT,
+> > > +             .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+> >
+> > Why not. Neil what do you think of this ?
+> > If nothing is claiming this clock and enabling it then I suppose it
+> > could make sense.
+> >
+> I would like core developers to handle this.
+> Sorry for the noise.
+can you please resend this patch with only the change to g12b_cpub_clk?
+I have no G12B board myself so it would be great if you could take care of this!
 
 
- drivers/clk/meson/meson8b.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 9fd31f23b2a9..34a70c4b4899 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -2605,14 +2605,6 @@ static MESON_GATE(meson8b_spi, HHI_GCLK_MPEG0, 30);
- static MESON_GATE(meson8b_i2s_spdif, HHI_GCLK_MPEG1, 2);
- static MESON_GATE(meson8b_eth, HHI_GCLK_MPEG1, 3);
- static MESON_GATE(meson8b_demux, HHI_GCLK_MPEG1, 4);
--static MESON_GATE(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6);
--static MESON_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
--static MESON_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
--static MESON_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
--static MESON_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
--static MESON_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
--static MESON_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
--static MESON_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
- static MESON_GATE(meson8b_blkmv, HHI_GCLK_MPEG1, 14);
- static MESON_GATE(meson8b_aiu, HHI_GCLK_MPEG1, 15);
- static MESON_GATE(meson8b_uart1, HHI_GCLK_MPEG1, 16);
-@@ -2659,6 +2651,19 @@ static MESON_GATE(meson8b_vclk2_vencl, HHI_GCLK_OTHER, 25);
- static MESON_GATE(meson8b_vclk2_other, HHI_GCLK_OTHER, 26);
- static MESON_GATE(meson8b_edp, HHI_GCLK_OTHER, 31);
- 
-+/* AIU gates */
-+#define MESON_AIU_GLUE_GATE(_name, _reg, _bit) \
-+	MESON_PCLK(_name, _reg, _bit, &meson8b_aiu_glue.hw)
-+
-+static MESON_PCLK(meson8b_aiu_glue, HHI_GCLK_MPEG1, 6, &meson8b_aiu.hw);
-+static MESON_AIU_GLUE_GATE(meson8b_iec958, HHI_GCLK_MPEG1, 7);
-+static MESON_AIU_GLUE_GATE(meson8b_i2s_out, HHI_GCLK_MPEG1, 8);
-+static MESON_AIU_GLUE_GATE(meson8b_amclk, HHI_GCLK_MPEG1, 9);
-+static MESON_AIU_GLUE_GATE(meson8b_aififo2, HHI_GCLK_MPEG1, 10);
-+static MESON_AIU_GLUE_GATE(meson8b_mixer, HHI_GCLK_MPEG1, 11);
-+static MESON_AIU_GLUE_GATE(meson8b_mixer_iface, HHI_GCLK_MPEG1, 12);
-+static MESON_AIU_GLUE_GATE(meson8b_adc, HHI_GCLK_MPEG1, 13);
-+
- /* Always On (AO) domain gates */
- 
- static MESON_GATE(meson8b_ao_media_cpu, HHI_GCLK_AO, 0);
--- 
-2.25.1
-
+Martin
