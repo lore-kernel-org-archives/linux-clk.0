@@ -2,68 +2,73 @@ Return-Path: <SRS0=+prK=4J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7210BC35659
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 17:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 912A6C35646
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 18:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CED3222C4
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 17:10:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6531124650
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 18:49:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582310966;
+	bh=Ls0R4Qe/IcctCXvAuXMBeYsY+8SGJkuitM+5W+PueKg=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=tCPDakGaMIFjTJ+5CRdc9HSB4z6iwXIRA11wRsONf+8MgnSGXIBJD2W7Q0vZEIToL
+	 Vfb0XOeiEHPLSCCHHtKoztzBx3phnI074EJI2c5igGtnuAjA4lDBeAl7MSxzbGDlI6
+	 uXXLPY1pfJM6uNjB0utbXHqeuXy2mTV7BPsdhpUw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728113AbgBURKg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Feb 2020 12:10:36 -0500
-Received: from muru.com ([72.249.23.125]:56722 "EHLO muru.com"
+        id S1729355AbgBUSt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Feb 2020 13:49:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726408AbgBURKf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Feb 2020 12:10:35 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id D6E03807E;
-        Fri, 21 Feb 2020 17:11:19 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>
+        id S1726150AbgBUSt0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Feb 2020 13:49:26 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80902208E4;
+        Fri, 21 Feb 2020 18:49:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582310965;
+        bh=Ls0R4Qe/IcctCXvAuXMBeYsY+8SGJkuitM+5W+PueKg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=zG1EL/XfqmIsZXNzNzh/uxnJRX8DmMaUbAxsIUMpG6QXlGvZ/472Z//ta/RKq+PPE
+         /+SBlCLPajAxdEoo5f1eSfdMrzrUI4vtiS279H3BQp6xZe5v362h7GLOF0/89QGCEE
+         4bHxYm4WQ4jA3ag5hfTk7dXJxr/tiYtom38sqncM=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200221171030.39326-1-tony@atomide.com>
+References: <20200221171030.39326-1-tony@atomide.com>
+Subject: Re: [PATCH] clk: ti: am43xx: Fix clock parent for RTC clock
+From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: [PATCH] clk: ti: am43xx: Fix clock parent for RTC clock
-Date:   Fri, 21 Feb 2020 09:10:30 -0800
-Message-Id: <20200221171030.39326-1-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+Date:   Fri, 21 Feb 2020 10:49:24 -0800
+Message-ID: <158231096467.258574.11716255621346536160@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently enabling clkctrl clock on am4 can fail for RTC as the clock
-parent is wrong for RTC.
+Quoting Tony Lindgren (2020-02-21 09:10:30)
+> Currently enabling clkctrl clock on am4 can fail for RTC as the clock
+> parent is wrong for RTC.
+>=20
+> Fixes: 76a1049b84dd ("clk: ti: am43xx: add new clkctrl data for am43xx")
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>=20
+> It is unclear if we can end up with RTC hung with the current mainline
+> kernel in some cases. Probing RTC with device tree data only seems to
+> trigger this every time.
 
-Fixes: 76a1049b84dd ("clk: ti: am43xx: add new clkctrl data for am43xx")
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
-
-It is unclear if we can end up with RTC hung with the current mainline
-kernel in some cases. Probing RTC with device tree data only seems to
-trigger this every time.
-
----
- drivers/clk/ti/clk-43xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/ti/clk-43xx.c b/drivers/clk/ti/clk-43xx.c
---- a/drivers/clk/ti/clk-43xx.c
-+++ b/drivers/clk/ti/clk-43xx.c
-@@ -78,7 +78,7 @@ static const struct omap_clkctrl_reg_data am4_gfx_l3_clkctrl_regs[] __initconst
- };
- 
- static const struct omap_clkctrl_reg_data am4_l4_rtc_clkctrl_regs[] __initconst = {
--	{ AM4_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
-+	{ AM4_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clkdiv32k_ick" },
- 	{ 0 },
- };
- 
--- 
-2.25.1
+It's small enough and if it's annoying enough we can probably put it
+into clk-fixes to get it fixed for this release instead of waiting. Can
+Tero ack it?
