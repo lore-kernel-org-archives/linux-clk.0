@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52C8C35641
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 06:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905FCC35640
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 07:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D5B20722
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 06:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C03220722
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 07:05:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726325AbgBUGiE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Feb 2020 01:38:04 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:44852 "EHLO inva021.nxp.com"
+        id S1726278AbgBUHFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Feb 2020 02:05:40 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:37148 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726315AbgBUGiE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Feb 2020 01:38:04 -0500
+        id S1726244AbgBUHFj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Feb 2020 02:05:39 -0500
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 064D0206BA3;
-        Fri, 21 Feb 2020 07:38:02 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 78435206BD2;
+        Fri, 21 Feb 2020 08:05:37 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ED5712022C5;
-        Fri, 21 Feb 2020 07:37:54 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 68574206BCF;
+        Fri, 21 Feb 2020 08:05:30 +0100 (CET)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5BB064032D;
-        Fri, 21 Feb 2020 14:37:42 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CD73A40246;
+        Fri, 21 Feb 2020 15:05:21 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        leonard.crestez@nxp.com, peng.fan@nxp.com, yuehaibing@huawei.com,
-        ping.bai@nxp.com, linux-clk@vger.kernel.org,
+        abel.vesa@nxp.com, john@phrozen.org, heiko@sntech.de,
+        jonas.gorski@gmail.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: pll14xx: Return error if pll type is invalid
-Date:   Fri, 21 Feb 2020 14:31:56 +0800
-Message-Id: <1582266716-19821-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH] clk: imx: clk-sscg-pll: Drop unnecessary initialization
+Date:   Fri, 21 Feb 2020 14:59:36 +0800
+Message-Id: <1582268376-1672-1-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
@@ -44,27 +44,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When pll type is invalid, ONLY output error message is NOT enough,
-should return error immediately.
+No need to initialize 'ret' in many functions, as it will get
+the return value from function call, so remove the initializtion
+of 'ret'.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/imx/clk-pll14xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/imx/clk-sscg-pll.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 37e311e..a83bbbe 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -410,6 +410,8 @@ struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
- 	default:
- 		pr_err("%s: Unknown pll type for pll clk %s\n",
- 		       __func__, name);
-+		kfree(pll);
-+		return ERR_PTR(-EINVAL);
- 	};
+diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
+index acd1b90..d4a2be1 100644
+--- a/drivers/clk/imx/clk-sscg-pll.c
++++ b/drivers/clk/imx/clk-sscg-pll.c
+@@ -195,10 +195,10 @@ static int clk_sscg_pll2_find_setup(struct clk_sscg_pll_setup *setup,
+ 					uint64_t ref)
+ {
  
- 	pll->base = base;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	temp_setup->vco1 = ref;
+ 
+@@ -254,10 +254,10 @@ static int clk_sscg_pll1_find_setup(struct clk_sscg_pll_setup *setup,
+ 					uint64_t ref)
+ {
+ 
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	temp_setup->ref = ref;
+ 
+@@ -428,7 +428,7 @@ static int __clk_sscg_pll_determine_rate(struct clk_hw *hw,
+ 	struct clk_sscg_pll_setup *setup = &pll->setup;
+ 	struct clk_hw *parent_hw = NULL;
+ 	int bypass_parent_index;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	req->max_rate = max;
+ 	req->min_rate = min;
+@@ -467,10 +467,10 @@ static int clk_sscg_pll_determine_rate(struct clk_hw *hw,
+ 	uint64_t rate = req->rate;
+ 	uint64_t min = req->min_rate;
+ 	uint64_t max = req->max_rate;
+-	int ret = -EINVAL;
++	int ret;
+ 
+ 	if (rate < PLL_OUT_MIN_FREQ || rate > PLL_OUT_MAX_FREQ)
+-		return ret;
++		return -EINVAL;
+ 
+ 	ret = __clk_sscg_pll_determine_rate(hw, req, req->rate, req->rate,
+ 						rate, PLL_BYPASS2);
 -- 
 2.7.4
 
