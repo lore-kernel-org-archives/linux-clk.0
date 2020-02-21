@@ -6,69 +6,65 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 912A6C35646
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 18:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2C1C35669
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 23:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6531124650
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 18:49:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A07F5206DB
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Feb 2020 23:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582310966;
-	bh=Ls0R4Qe/IcctCXvAuXMBeYsY+8SGJkuitM+5W+PueKg=;
+	s=default; t=1582329453;
+	bh=lcNJ4N2cNdsfaAhCE0btC66qSo+qzJsDMEfe43gVqUs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=tCPDakGaMIFjTJ+5CRdc9HSB4z6iwXIRA11wRsONf+8MgnSGXIBJD2W7Q0vZEIToL
-	 Vfb0XOeiEHPLSCCHHtKoztzBx3phnI074EJI2c5igGtnuAjA4lDBeAl7MSxzbGDlI6
-	 uXXLPY1pfJM6uNjB0utbXHqeuXy2mTV7BPsdhpUw=
+	b=OKzraF2lVPjxz/LD2VV7wNbjc+8e6uyoQ0xR2LT9XRcmM1090AGhTgsv/yOerV3kW
+	 HXhhamwK911jF3x45eAuLPfiJmhq5gNwnHJOTzAIWGbnaJACDL8QwqSY9xUPYRswe2
+	 Ct+HHXciOT00yy8s5Uw+rdxBW+PILT41P05IYl80=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729355AbgBUSt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Feb 2020 13:49:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43184 "EHLO mail.kernel.org"
+        id S1729535AbgBUX5d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Feb 2020 18:57:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726150AbgBUSt0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 21 Feb 2020 13:49:26 -0500
+        id S1726802AbgBUX5d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 21 Feb 2020 18:57:33 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80902208E4;
-        Fri, 21 Feb 2020 18:49:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EDC92068F;
+        Fri, 21 Feb 2020 23:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582310965;
-        bh=Ls0R4Qe/IcctCXvAuXMBeYsY+8SGJkuitM+5W+PueKg=;
+        s=default; t=1582329452;
+        bh=lcNJ4N2cNdsfaAhCE0btC66qSo+qzJsDMEfe43gVqUs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=zG1EL/XfqmIsZXNzNzh/uxnJRX8DmMaUbAxsIUMpG6QXlGvZ/472Z//ta/RKq+PPE
-         /+SBlCLPajAxdEoo5f1eSfdMrzrUI4vtiS279H3BQp6xZe5v362h7GLOF0/89QGCEE
-         4bHxYm4WQ4jA3ag5hfTk7dXJxr/tiYtom38sqncM=
+        b=W+HysxCObViod/QRMGereEr4TyfFwvortsYBGG0TujR7rAUuIScNbRtgW0W2UDFm+
+         n5isUNsA+YGoqqbquxCRFcqpyybhNtPRwPGO3W3mwkGmHrVyOl3eCZyJT708GW5vrJ
+         bqxPfr2TeGHlJkn1TKrm8UigSVgqW6XvNUzcsYHs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200221171030.39326-1-tony@atomide.com>
-References: <20200221171030.39326-1-tony@atomide.com>
-Subject: Re: [PATCH] clk: ti: am43xx: Fix clock parent for RTC clock
+In-Reply-To: <1582268376-1672-1-git-send-email-Anson.Huang@nxp.com>
+References: <1582268376-1672-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] clk: imx: clk-sscg-pll: Drop unnecessary initialization
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-Date:   Fri, 21 Feb 2020 10:49:24 -0800
-Message-ID: <158231096467.258574.11716255621346536160@swboyd.mtv.corp.google.com>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        festevam@gmail.com, heiko@sntech.de, john@phrozen.org,
+        jonas.gorski@gmail.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Fri, 21 Feb 2020 15:57:31 -0800
+Message-ID: <158232945185.258574.18038079737425200654@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2020-02-21 09:10:30)
-> Currently enabling clkctrl clock on am4 can fail for RTC as the clock
-> parent is wrong for RTC.
+Quoting Anson Huang (2020-02-20 22:59:36)
+> No need to initialize 'ret' in many functions, as it will get
+> the return value from function call, so remove the initializtion
+> of 'ret'.
 >=20
-> Fixes: 76a1049b84dd ("clk: ti: am43xx: add new clkctrl data for am43xx")
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->=20
-> It is unclear if we can end up with RTC hung with the current mainline
-> kernel in some cases. Probing RTC with device tree data only seems to
-> trigger this every time.
 
-It's small enough and if it's annoying enough we can probably put it
-into clk-fixes to get it fixed for this release instead of waiting. Can
-Tero ack it?
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
