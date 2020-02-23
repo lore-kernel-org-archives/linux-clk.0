@@ -2,287 +2,245 @@ Return-Path: <SRS0=RWaf=4L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 253A2C35670
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Feb 2020 04:20:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64503C35666
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Feb 2020 13:34:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF21520675
-	for <linux-clk@archiver.kernel.org>; Sun, 23 Feb 2020 04:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3699F222C2
+	for <linux-clk@archiver.kernel.org>; Sun, 23 Feb 2020 13:34:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="XJ2snZnj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="faVC0fIX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S4wXPHlY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726884AbgBWETw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 22 Feb 2020 23:19:52 -0500
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:33427 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726983AbgBWETw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 22 Feb 2020 23:19:52 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 589E721B03;
-        Sat, 22 Feb 2020 23:19:50 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 22 Feb 2020 23:19:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=29jUBwoXvuarTIYCv2K9/Ed7RP
-        zIOgoOw2xOPHEd28A=; b=XJ2snZnj7a6mcv05PkQ04IqGL1WPX0jE1k35GsuDnz
-        a9/i+DS+fjwR3zHY83HTaHSMuL0Af3zkoS8uId802BhCe5n9BR2zOz/Nd6H1g6NG
-        TTNvxfyvDTXn3c1gmkwi/SBf66R2uVrUdlvoGR0GEfwm1G9q21ZU4kqXcE/4rbJa
-        OWWOxzqXb0qsPndCs7cYXhfwsC9C1lYwEnL7318RD+x/Mj/mIix6FQuVjxie0dOc
-        Xbz/V2ZFrt5ps4l2+Kj7TKIxGMWNu3X03EwS0NI+/NCPh5/0GQw/hHnpEOTc8bvv
-        vrTYciL4YR6cg0H0/qX5OfrcVMcLb3bgcgK3BckPHAeA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=29jUBwoXvuarTIYCv
-        2K9/Ed7RPzIOgoOw2xOPHEd28A=; b=faVC0fIXMmvtXXZl/KlJS2hCmrK5IpCBx
-        fGOUndeFr0+bdNkAgGWKsNgDmpqXEvvz8Nd+ooSl9ZgtjShM5GH5G+rrdvPTrAm9
-        GU0lib2mNA6Q1gGI055etM/t5YqjZYsYvFZUjQqSAxn6TfzCmQvGk6rFtfqrSLtT
-        CXLYvqRWfmXFf8Lp0Zg/wQx0zh39SWMCjQiKWY007OAVwx9Lyq1i2r9661p2V63n
-        WDgiowjswROxKDIEyrKGpFQj68vdis3Y3PIuJxrD4vNiUwXhIlTErhKRfUXTdecb
-        QPc/dsS/bpGQm++SinIFO185Q45T9YG8UEBLmbjTJvnyLku3wUBQA==
-X-ME-Sender: <xms:Zf1RXhx1tPRT0N4ffetoFIYSnbF6At4qplbON0WZyxHstcRHuixowg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrkeejgdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepufgrmhhuvghlucfj
-    ohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtd
-    drudefhedrudegkedrudehudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhg
-X-ME-Proxy: <xmx:Zf1RXvFhSZQJtqjmU8UyYKjL_6VYjVQy6wjui7IEhEd10pTb6-tTfA>
-    <xmx:Zf1RXsO4S3qkjKwFgR33W9t_G9s1K5elT9mhpk-SDS9P3zJ5wNC1Xg>
-    <xmx:Zf1RXufj2N5HbPheOar6ZRhgBX87cVQU9iWGYDS6C8Mv-hh_PDf0eA>
-    <xmx:Zv1RXm2lpTjvLOcqkWpLzi9ieURaM2VRibhMGiaWOX01qZSUwmsQ2g>
-Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CE9C7328005E;
-        Sat, 22 Feb 2020 23:19:48 -0500 (EST)
-From:   Samuel Holland <samuel@sholland.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 1/2] clk: Implement protected-clocks for all OF clock providers
-Date:   Sat, 22 Feb 2020 22:19:47 -0600
-Message-Id: <20200223041948.3218-1-samuel@sholland.org>
-X-Mailer: git-send-email 2.24.1
+        id S1726490AbgBWNef (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Feb 2020 08:34:35 -0500
+Received: from mail-io1-f41.google.com ([209.85.166.41]:41692 "EHLO
+        mail-io1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbgBWNef (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 23 Feb 2020 08:34:35 -0500
+Received: by mail-io1-f41.google.com with SMTP id m25so7494759ioo.8;
+        Sun, 23 Feb 2020 05:34:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pjlxCHc9TIK73b6JYIZFY6Ze1wSFh93pwbVlW0RqGQw=;
+        b=S4wXPHlYe1klCwC0XEptaw2iN6cSWpw4NT4/SAS2S/cEWnCAhupLRvzoqpScE8/iw4
+         OltgGfgfsOFQY82HJ8j7ZyEqT1KOJmDcXTRjnVzhlmaXIm2DPJB/eTcaJTSQzW1sVALD
+         P9qYRd9J0SVEpUnl1HUmrTnAHZL/hx0r7DYsGda6b2ZlBE0goXdH5yqCUomUx1XeRjz/
+         o0xh5HSIKDg7NfiVoCuK7Fdo+l0thF3jz5Q8DHmj6c/iptKCy7Zlc+6VhrNr7xcwyW3D
+         csalaThVXhZI3jGAyo9o7fwy4PkhBtkb6gg/7S+ak8m2hKpzPg3v+oGU9qjVblYBZJwP
+         7Ggw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pjlxCHc9TIK73b6JYIZFY6Ze1wSFh93pwbVlW0RqGQw=;
+        b=Jas6br1P419vGkHfBo3IB4KQShdxZoSRzGXTANhpLB3RUCCu5J+4IItj6n3TkHCwdu
+         0prb0BFjnPhUZEOynktprmUzRIo2oV7bmTfYISOltZD7gqg9SRTy3erL7Kd4l7LmbU1i
+         0COckqfthLv4pR9EBrILmjPldZoPzYFAjGzMUpNmxGfCuqKaYjpm5ao2uly7oTlWI7mh
+         LpGvaL0MLpr3J027/m+p71C47Jtwq+DilIaD6dcTMLLZEH9dB+yIyxJ7vscixgV009Bf
+         /PWufTlMjV1s8Q+G/thqcOjNymtW7PfT7FSZY9YfuWghmHByXKaFcDFFULR5EzPmLRwu
+         wkfQ==
+X-Gm-Message-State: APjAAAV9dXx/95P4xTBvGWkVjdEaGepsj9/Duu3VVuLvQecpc1c4w/5M
+        jsoxGbOAlN7rwiyZhfA8VYSthRMEhiG40+PSL7TRJ1G5
+X-Google-Smtp-Source: APXvYqzuka0HKg/Fr4Uu0KPzM3CzpCIv3wTW1akb/1w5wysjVXPDkvFNj8eadeNpBXZ1kbVST/UgckRZKgAKVMPUJY8=
+X-Received: by 2002:a5d:8790:: with SMTP id f16mr42917678ion.246.1582464874614;
+ Sun, 23 Feb 2020 05:34:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200216173446.1823-1-linux.amoon@gmail.com> <20200216173446.1823-4-linux.amoon@gmail.com>
+ <1jmu9hzlo2.fsf@starbuckisacylon.baylibre.com> <CANAwSgSaQgU=H3h0S9deT11HA8z9R=Fhy5Kawii9tSBxKf2Wgw@mail.gmail.com>
+ <CAFBinCCSosE1XfwbKZOR9G+DVYg8zFcKShmTNWUhh1e8W0VoAQ@mail.gmail.com>
+In-Reply-To: <CAFBinCCSosE1XfwbKZOR9G+DVYg8zFcKShmTNWUhh1e8W0VoAQ@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Sun, 23 Feb 2020 19:04:23 +0530
+Message-ID: <CANAwSgRZy1K0GZq30cEoH2KiJfjX-5LvkMy79ZeM_aSEyrkD+g@mail.gmail.com>
+Subject: Re: [PATCHv1 3/3] clk: meson: g12a: set cpu clock divider flags too CLK_IS_CRITICAL
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a generic implementation of the "protected-clocks" property from
-the common clock binding. It allows firmware to inform the OS about
-clocks that must not be disabled while the OS is running.
+Hi Martin / Jerome / Neil,
 
-This implementation comes with some caveats:
+On Fri, 21 Feb 2020 at 02:45, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
+>
+> Hi Anand,
+>
+> On Mon, Feb 17, 2020 at 2:30 PM Anand Moon <linux.amoon@gmail.com> wrote:
+> [...]
+> > > > @@ -681,7 +682,7 @@ static struct clk_regmap g12b_cpub_clk = {
+> > > >                       &g12a_sys_pll.hw
+> > > >               },
+> > > >               .num_parents = 2,
+> > > > -             .flags = CLK_SET_RATE_PARENT,
+> > > > +             .flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+> > >
+> > > Why not. Neil what do you think of this ?
+> > > If nothing is claiming this clock and enabling it then I suppose it
+> > > could make sense.
+> > >
+> > I would like core developers to handle this.
+> > Sorry for the noise.
+> can you please resend this patch with only the change to g12b_cpub_clk?
+> I have no G12B board myself so it would be great if you could take care of this!
+>
+>
+> Martin
 
-1) Clocks that have CLK_IS_CRITICAL in their init data are prepared/
-enabled before they are attached to the clock tree. protected-clocks are
-only protected once the clock provider is added, which is generally
-after all of the clocks it provides have been registered. This leaves a
-window of opportunity where something could disable or modify the clock,
-such as a driver running on another CPU, or the clock core itself. There
-is a comment to this effect in __clk_core_init():
+Thanks, yes I will try again, but I have a question.
 
-  /*
-   * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
-   * don't get accidentally disabled when walking the orphan tree and
-   * reparenting clocks
-   */
+On eMMC module  *cpub_clk* is not getting enabled, see below is
+clk_summay of eMMC.
+[...]
+          fclk_div2_div               1        1        0   999999985
+        0     0  50000
+             fclk_div2                2        2        0   999999985
+        0     0  50000
+                ff3f0000.ethernet#m250_sel       1        1        0
+999999985          0     0  50000
+                   ff3f0000.ethernet#m250_div       1        1
+0   249999997          0     0  50000
+                      ff3f0000.ethernet#fixed_div2       1        1
+    0   124999998          0     0  50000
+                         ff3f0000.ethernet#rgmii_tx_en       1
+1        0   124999998          0     0  50000
+                ffe07000.mmc#mux       1        1        0   999999985
+         0     0  50000
+                   ffe07000.mmc#div       1        1        0
+199999997          0     0  50000
+                cpub_clk_dyn1_sel       0        0        0
+999999985          0     0  50000
+                   cpub_clk_dyn1       0        0        0   999999985
+         0     0  50000
+                      cpub_clk_dyn       0        0        0
+999999985          0     0  50000
+                         cpub_clk       0        0        0
+999999985          0     0  50000
+                            cpub_clk_div8       0        0        0
+124999998          0     0  50000
+                            cpub_clk_div7       0        0        0
+142857140          0     0  50000
+                            cpub_clk_div6       0        0        0
+166666664          0     0  50000
+                               cpub_clk_trace_sel       0        0
+   0   166666664          0     0  50000
+                                  cpub_clk_trace       0        0
+  0   166666664          0     0  50000
+                            cpub_clk_div5       0        0        0
+199999997          0     0  50000
+                               cpub_clk_apb_sel       0        0
+ 0   199999997          0     0  50000
+                                  cpub_clk_apb       0        0
+0   199999997          0     0  50000
+                            cpub_clk_div4       0        0        0
+249999996          0     0  50000
+                            cpub_clk_div3       0        0        0
+333333328          0     0  50000
+                               cpub_clk_atb_sel       0        0
+ 0   333333328          0     0  50000
+                                  cpub_clk_atb       0        0
+0   333333328          0     0  50000
+                            cpub_clk_div2       0        0        0
+499999992          0     0  50000
+                               cpub_clk_axi_sel       0        0
+ 0   499999992          0     0  50000
+                                  cpub_clk_axi       0        0
+0   499999992          0     0  50000
+                            cpub_clk_div16_en       0        0
+0   999999985          0     0  50000
+                               cpub_clk_div16       0        0
+0    62499999          0     0  50000
 
-Similarly, these clocks will be enabled after they are first reparented,
-unlike other CLK_IS_CRITICAL clocks. See the comment in
-clk_core_reparent_orphans_nolock():
+After enable *cpub_clk* flags with
+.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+this clk is enabled on microSD card see clk_summary below.
+[...]
+         fclk_div2_div               1        1        0   999999985
+       0     0  50000
+             fclk_div2                3        3        0   999999985
+        0     0  50000
+                ff3f0000.ethernet#m250_sel       1        1        0
+999999985          0     0  50000
+                   ff3f0000.ethernet#m250_div       1        1
+0   249999997          0     0  50000
+                      ff3f0000.ethernet#fixed_div2       1        1
+    0   124999998          0     0  50000
+                         ff3f0000.ethernet#rgmii_tx_en       1
+1        0   124999998          0     0  50000
+                ffe05000.sd#mux       1        1        0   999999985
+        0     0  50000
+                   ffe05000.sd#div       1        1        0
+50000000          0     0  50000
+                cpub_clk_dyn1_sel       1        1        0
+999999985          0     0  50000
+                   cpub_clk_dyn1       1        1        0   999999985
+         0     0  50000
+                      cpub_clk_dyn       1        1        0
+999999985          0     0  50000
+                         cpub_clk       1        1        0
+999999985          0     0  50000
+                            cpub_clk_div8       0        0        0
+124999998          0     0  50000
+                            cpub_clk_div7       0        0        0
+142857140          0     0  50000
+                            cpub_clk_div6       0        0        0
+166666664          0     0  50000
+                               cpub_clk_trace_sel       0        0
+   0   166666664          0     0  50000
+                                  cpub_clk_trace       0        0
+  0   166666664          0     0  50000
+                            cpub_clk_div5       0        0        0
+199999997          0     0  50000
+                               cpub_clk_apb_sel       0        0
+ 0   199999997          0     0  50000
+                                  cpub_clk_apb       0        0
+0   199999997          0     0  50000
+                            cpub_clk_div4       0        0        0
+249999996          0     0  50000
+                            cpub_clk_div3       0        0        0
+333333328          0     0  50000
+                               cpub_clk_atb_sel       0        0
+ 0   333333328          0     0  50000
+                                  cpub_clk_atb       0        0
+0   333333328          0     0  50000
+                            cpub_clk_div2       0        0        0
+499999992          0     0  50000
+                               cpub_clk_axi_sel       0        0
+ 0   499999992          0     0  50000
+                                  cpub_clk_axi       0        0
+0   499999992          0     0  50000
+                            cpub_clk_div16_en       0        0
+0   999999985          0     0  50000
+                               cpub_clk_div16       0        0
+0    62499999          0     0  50000
+                   cpub_clk_dyn1_div       0        0        0
+999999985          0     0  50000
 
-  /*
-   * We need to use __clk_set_parent_before() and _after() to
-   * to properly migrate any prepare/enable count of the orphan
-   * clock. This is important for CLK_IS_CRITICAL clocks, which
-   * are enabled during init but might not have a parent yet.
-   */
+Is this correct approach to set the flags to enable *cpub_clk*.
+.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
 
-Ideally we could detect protected clocks before they are reparented, but
-there are two problems with that:
+What I meant is their *Dyn_enable[26]* field for enable/disable for
+HHI_SYS_CPU_CLK_CNTL0 and HHI_SYS_CPUB_CLK_CNTL clk controller.
+in the S922X datasheets which could help resolve this issue.
+Any thought on this.
 
-  a) From the clock core's perspective, hw->init is const.
-
-  b) The clock core doesn't see the device_node until __clk_register is
-     called on the first clock.
-
-So the only "race-free" way to detect protected-clocks is to do it in
-the middle of __clk_register, between when core->flags is initialized
-and calling __clk_core_init(). That requires scanning the device tree
-again for each clock, which is part of why I didn't do it that way.
-
-2) __clk_protect needs to be idempotent, for two reasons:
-
-  a) Clocks with CLK_IS_CRITICAL in their init data are already
-     prepared/enabled, and we don't want to prepare/enable them again.
-
-  b) of_clk_set_defaults() is called twice for (at least some) clock
-     controllers registered with CLK_OF_DECLARE. It is called first in
-     of_clk_add_provider()/of_clk_add_hw_provider() inside clk_init_cb,
-     and again afterward in of_clk_init(). The second call in
-     of_clk_init() may be unnecessary, but verifying that would require
-     auditing all users of CLK_OF_DECLARE to ensure they called one of
-     the of_clk_add{,_hw}_provider functions.
-
-Signed-off-by: Samuel Holland <samuel@sholland.org>
----
-
-Changes RFC->v1:
-  - Only set CLK_IS_CRITICAL, not other flags
-
----
- drivers/clk/clk-conf.c | 54 ++++++++++++++++++++++++++++++++++++++++++
- drivers/clk/clk.c      | 31 ++++++++++++++++++++++++
- drivers/clk/clk.h      |  2 ++
- 3 files changed, 87 insertions(+)
-
-diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-index 2ef819606c41..a57d28b0f397 100644
---- a/drivers/clk/clk-conf.c
-+++ b/drivers/clk/clk-conf.c
-@@ -11,6 +11,54 @@
- #include <linux/of.h>
- #include <linux/printk.h>
- 
-+#include "clk.h"
-+
-+static int __set_clk_flags(struct device_node *node)
-+{
-+	struct of_phandle_args clkspec;
-+	struct property *prop;
-+	int i, index = 0, rc;
-+	const __be32 *cur;
-+	struct clk *clk;
-+	u32 nr_cells;
-+
-+	rc = of_property_read_u32(node, "#clock-cells", &nr_cells);
-+	if (rc < 0) {
-+		pr_err("clk: missing #clock-cells property on %pOF\n", node);
-+		return rc;
-+	}
-+
-+	clkspec.np         = node;
-+	clkspec.args_count = nr_cells;
-+
-+	of_property_for_each_u32(node, "protected-clocks", prop, cur, clkspec.args[0]) {
-+		/* read the remainder of the clock specifier */
-+		for (i = 1; i < nr_cells; ++i) {
-+			cur = of_prop_next_u32(prop, cur, &clkspec.args[i]);
-+			if (!cur) {
-+				pr_err("clk: invalid value of protected-clocks"
-+				       " property at %pOF\n", node);
-+				return -EINVAL;
-+			}
-+		}
-+		clk = of_clk_get_from_provider(&clkspec);
-+		if (IS_ERR(clk)) {
-+			if (PTR_ERR(clk) != -EPROBE_DEFER)
-+				pr_err("clk: couldn't get protected clock"
-+				       " %u for %pOF\n", index, node);
-+			return PTR_ERR(clk);
-+		}
-+
-+		rc = __clk_protect(clk);
-+		if (rc < 0)
-+			pr_warn("clk: failed to protect %s: %d\n",
-+				__clk_get_name(clk), rc);
-+		clk_put(clk);
-+		index++;
-+	}
-+	return 0;
-+}
-+
- static int __set_clk_parents(struct device_node *node, bool clk_supplier)
- {
- 	struct of_phandle_args clkspec;
-@@ -135,6 +183,12 @@ int of_clk_set_defaults(struct device_node *node, bool clk_supplier)
- 	if (!node)
- 		return 0;
- 
-+	if (clk_supplier) {
-+		rc = __set_clk_flags(node);
-+		if (rc < 0)
-+			return rc;
-+	}
-+
- 	rc = __set_clk_parents(node, clk_supplier);
- 	if (rc < 0)
- 		return rc;
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f0f2b599fd7e..1dc1e115197b 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -4122,6 +4122,37 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw)
- }
- EXPORT_SYMBOL_GPL(devm_clk_hw_unregister);
- 
-+/*
-+ * clk-conf helpers
-+ */
-+
-+int __clk_protect(struct clk *clk)
-+{
-+	struct clk_core *core = clk->core;
-+	int ret = 0;
-+
-+	clk_prepare_lock();
-+
-+	/*
-+	 * If CLK_IS_CRITICAL was set in the clock's init data, then
-+	 * the clock was already prepared/enabled when it was added.
-+	 */
-+	if (core->flags & CLK_IS_CRITICAL)
-+		goto out;
-+
-+	core->flags |= CLK_IS_CRITICAL;
-+	ret = clk_core_prepare(core);
-+	if (ret)
-+		goto out;
-+
-+	ret = clk_core_enable_lock(core);
-+
-+out:
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
- /*
-  * clkdev helpers
-  */
-diff --git a/drivers/clk/clk.h b/drivers/clk/clk.h
-index 2d801900cad5..367a0f036b13 100644
---- a/drivers/clk/clk.h
-+++ b/drivers/clk/clk.h
-@@ -24,6 +24,7 @@ struct clk_hw *clk_find_hw(const char *dev_id, const char *con_id);
- #ifdef CONFIG_COMMON_CLK
- struct clk *clk_hw_create_clk(struct device *dev, struct clk_hw *hw,
- 			      const char *dev_id, const char *con_id);
-+int __clk_protect(struct clk *clk);
- void __clk_put(struct clk *clk);
- #else
- /* All these casts to avoid ifdefs in clkdev... */
-@@ -33,6 +34,7 @@ clk_hw_create_clk(struct device *dev, struct clk_hw *hw, const char *dev_id,
- {
- 	return (struct clk *)hw;
- }
-+static inline int __clk_protect(struct clk *clk) { return 0; }
- static inline void __clk_put(struct clk *clk) { }
- 
- #endif
--- 
-2.24.1
-
+-Anand
