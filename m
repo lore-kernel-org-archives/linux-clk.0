@@ -2,226 +2,241 @@ Return-Path: <SRS0=kzU5=4M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19150C11D30
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 13:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AA5C11D32
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 14:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D31A920732
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 13:08:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7902820838
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 14:55:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ggAX4k2X"
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="tTyvRsQ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727553AbgBXNII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Feb 2020 08:08:08 -0500
-Received: from us-smtp-1.mimecast.com ([207.211.31.81]:33583 "EHLO
-        us-smtp-delivery-1.mimecast.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727393AbgBXNII (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 08:08:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1582549687;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=8hYIHZTnTP03p6Yp4LlShbTvxf4UyOXsFmmyMPgeaYI=;
-        b=ggAX4k2X/nrSgbEhTp+FSzWVvJrMksYG+aQw/fFewmeopr8t5GVMxVo8Ko0zK+ubk8SGlF
-        slcxuKjlsB4HV3HQwEEAPxAoRubW2aGHP3ny957SSRsMQ4nXgMxVuNFfuWmPsz8ZWuE8fb
-        Xrsh5GL39M8Fa5iDWYLTVJ0mm+w/AAE=
-Received: from mimecast-mx01.redhat.com (mimecast-mx01.redhat.com
- [209.132.183.4]) (Using TLS) by relay.mimecast.com with ESMTP id
- us-mta-463-1KFA4pPFOt-nSzxZ1v6H2w-1; Mon, 24 Feb 2020 08:08:01 -0500
-X-MC-Unique: 1KFA4pPFOt-nSzxZ1v6H2w-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx01.redhat.com (Postfix) with ESMTPS id A47AB107ACCA;
-        Mon, 24 Feb 2020 13:07:55 +0000 (UTC)
-Received: from [10.36.116.59] (ovpn-116-59.ams2.redhat.com [10.36.116.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BF3FB909E9;
-        Mon, 24 Feb 2020 13:07:44 +0000 (UTC)
-Subject: Re: [RFC PATCH 01/11] vfio: Remove Calxeda XGMAC reset driver
-To:     Rob Herring <robh@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, iommu@lists.linux-foundation.org,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-edac@vger.kernel.org, linux-ide@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Will Deacon <will@kernel.org>
-References: <20200218171321.30990-1-robh@kernel.org>
- <20200218171321.30990-2-robh@kernel.org>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <23fda074-149e-9c77-5eee-4d6b591a6ebf@redhat.com>
-Date:   Mon, 24 Feb 2020 14:07:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727448AbgBXOzS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Feb 2020 09:55:18 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:45869 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727486AbgBXOzR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 09:55:17 -0500
+Received: by mail-vs1-f65.google.com with SMTP id m4so5809799vsa.12
+        for <linux-clk@vger.kernel.org>; Mon, 24 Feb 2020 06:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nf8Hhdqzm/gWtkB0ZWHb2rHYmerMHbHruZ0Ukrv/hp8=;
+        b=tTyvRsQ3w0ChPxDQdkv7glQk3wtPZb10J3tAyqqzoRHQ8KPQTGzEw7zNYCRWKnZ4q/
+         Sp8M/ZgkeF0DtmsdSoX/jaS9Cj+6QBjmmTRJVhrc7HoP/5FhbIeVVDjpdF5PLkBe58vj
+         ts7HWtfrr72NlXIevmGqHAfZoSQtS3kdP0RkKaH9LgNtDi+gsiTvRDUVyaaRZ9aMGbcK
+         nWLTioIrgs3f4ikzwkQv7LsyiNYZ06XlkRhH7duzXqdMOUtinyzy3B9nZHXoHNW2BDly
+         Q6PiovLQ+WSUH/5StMinuKTlSvTQU7SMVrsaqT4aYLh+Nu8jmjojFJaax3RoAahqLwvZ
+         0NHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nf8Hhdqzm/gWtkB0ZWHb2rHYmerMHbHruZ0Ukrv/hp8=;
+        b=JYgBmIWLTFKcu7ifGPre8EV8aT5kEdOUfupCmI7sdjR6C4hglsxa8p5kaMoMWT1IFe
+         wiixH5MswVSQvyqQ3/yn8XuaFortqRAeHv+W5XgQHq+bhJlcHpdm9xnEVuWDGe49zr5J
+         zyqcowLbAA1vOxaipG2b915gcC6u0WgNK2eDmQ5VHEkDbAvHqOj/Nt4FfN+2Rvp4KwKJ
+         wCpmW7cLxxQvc7fOzngQMpNe7GSKutBWcZCFEwZNW2XDUcQRdf6G6j903Z6kK6wAtOLy
+         2RVHSYOyzyyrgzmAATvwDNEK7UZTRHfV2y9y7Yr+PFquVrruPWwAUDDy8PTJbM2XWO0m
+         bYqQ==
+X-Gm-Message-State: APjAAAVFV8ElCoXJenCjbCTuIPs7UWOm1bg4Ujp4j/DlMfmZH4h+ZNAL
+        vSIFMht3zdDH9ns6c9XT6OvxvJnm7j0Ll5+gIeBaPg==
+X-Google-Smtp-Source: APXvYqwle+5L5EqgMdMX2NFSAUa3m6tBXE9trHhUlWTILDVFPKISTVy7qlGqCRTcc9lNxiPA7RF35oJihsqFh//dkI4=
+X-Received: by 2002:a05:6102:535:: with SMTP id m21mr25212006vsa.95.1582556116187;
+ Mon, 24 Feb 2020 06:55:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200218171321.30990-2-robh@kernel.org>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+References: <cover.1582361737.git.mchehab+huawei@kernel.org> <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
+In-Reply-To: <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Mon, 24 Feb 2020 20:25:05 +0530
+Message-ID: <CAHLCerP_UW-6CdaOziHTY01cD_6Ou4h0Jj6mOJKj60P4GL9H=w@mail.gmail.com>
+Subject: Re: [PATCH 2/7] docs: dt: fix several broken references due to renames
+To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Jyri Sarha <jsarha@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        lakml <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        linux-leds@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob, Alex,
-
-On 2/18/20 6:13 PM, Rob Herring wrote:
-> Cc: Eric Auger <eric.auger@redhat.com>
-> Cc: Alex Williamson <alex.williamson@redhat.com>
-> Cc: Cornelia Huck <cohuck@redhat.com>
-> Cc: kvm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+On Sat, Feb 22, 2020 at 2:30 PM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> Several DT references got broken due to txt->yaml conversion.
+>
+> Those are auto-fixed by running:
+>
+>         scripts/documentation-file-ref-check --fix
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 > ---
-> Do not apply yet.
-> 
->  drivers/vfio/platform/reset/Kconfig           |  8 --
->  drivers/vfio/platform/reset/Makefile          |  2 -
->  .../reset/vfio_platform_calxedaxgmac.c        | 74 -------------------
->  3 files changed, 84 deletions(-)
->  delete mode 100644 drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> 
-> diff --git a/drivers/vfio/platform/reset/Kconfig b/drivers/vfio/platform/reset/Kconfig
-> index 1edbe9ee7356..3668d1d92909 100644
-> --- a/drivers/vfio/platform/reset/Kconfig
-> +++ b/drivers/vfio/platform/reset/Kconfig
-> @@ -1,12 +1,4 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -config VFIO_PLATFORM_CALXEDAXGMAC_RESET
-> -	tristate "VFIO support for calxeda xgmac reset"
-> -	depends on VFIO_PLATFORM
-> -	help
-> -	  Enables the VFIO platform driver to handle reset for Calxeda xgmac
-> -
-> -	  If you don't know what to do here, say N.
-> -
->  config VFIO_PLATFORM_AMDXGBE_RESET
->  	tristate "VFIO support for AMD XGBE reset"
->  	depends on VFIO_PLATFORM
-> diff --git a/drivers/vfio/platform/reset/Makefile b/drivers/vfio/platform/reset/Makefile
-> index 7294c5ea122e..be7960ce5dbc 100644
-> --- a/drivers/vfio/platform/reset/Makefile
-> +++ b/drivers/vfio/platform/reset/Makefile
-> @@ -1,7 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -vfio-platform-calxedaxgmac-y := vfio_platform_calxedaxgmac.o
->  vfio-platform-amdxgbe-y := vfio_platform_amdxgbe.o
-> 
-> -obj-$(CONFIG_VFIO_PLATFORM_CALXEDAXGMAC_RESET) += vfio-platform-calxedaxgmac.o
->  obj-$(CONFIG_VFIO_PLATFORM_AMDXGBE_RESET) += vfio-platform-amdxgbe.o
->  obj-$(CONFIG_VFIO_PLATFORM_BCMFLEXRM_RESET) += vfio_platform_bcmflexrm.o
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c b/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> deleted file mode 100644
-> index 09a9453b75c5..000000000000
-> --- a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> +++ /dev/null
-> @@ -1,74 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0-only
-> -/*
-> - * VFIO platform driver specialized for Calxeda xgmac reset
-> - * reset code is inherited from calxeda xgmac native driver
-> - *
-> - * Copyright 2010-2011 Calxeda, Inc.
-> - * Copyright (c) 2015 Linaro Ltd.
-> - *              www.linaro.org
-> - */
-> -
-> -#include <linux/module.h>
-> -#include <linux/kernel.h>
-> -#include <linux/init.h>
-> -#include <linux/io.h>
-> -
-> -#include "../vfio_platform_private.h"
-> -
-> -#define DRIVER_VERSION  "0.1"
-> -#define DRIVER_AUTHOR   "Eric Auger <eric.auger@linaro.org>"
-> -#define DRIVER_DESC     "Reset support for Calxeda xgmac vfio platform device"
-> -
-> -/* XGMAC Register definitions */
-> -#define XGMAC_CONTROL           0x00000000      /* MAC Configuration */
-> -
-> -/* DMA Control and Status Registers */
-> -#define XGMAC_DMA_CONTROL       0x00000f18      /* Ctrl (Operational Mode) */
-> -#define XGMAC_DMA_INTR_ENA      0x00000f1c      /* Interrupt Enable */
-> -
-> -/* DMA Control registe defines */
-> -#define DMA_CONTROL_ST          0x00002000      /* Start/Stop Transmission */
-> -#define DMA_CONTROL_SR          0x00000002      /* Start/Stop Receive */
-> -
-> -/* Common MAC defines */
-> -#define MAC_ENABLE_TX           0x00000008      /* Transmitter Enable */
-> -#define MAC_ENABLE_RX           0x00000004      /* Receiver Enable */
-> -
-> -static inline void xgmac_mac_disable(void __iomem *ioaddr)
-> -{
-> -	u32 value = readl(ioaddr + XGMAC_DMA_CONTROL);
-> -
-> -	value &= ~(DMA_CONTROL_ST | DMA_CONTROL_SR);
-> -	writel(value, ioaddr + XGMAC_DMA_CONTROL);
-> -
-> -	value = readl(ioaddr + XGMAC_CONTROL);
-> -	value &= ~(MAC_ENABLE_TX | MAC_ENABLE_RX);
-> -	writel(value, ioaddr + XGMAC_CONTROL);
-> -}
-> -
-> -static int vfio_platform_calxedaxgmac_reset(struct vfio_platform_device *vdev)
-> -{
-> -	struct vfio_platform_region *reg = &vdev->regions[0];
-> -
-> -	if (!reg->ioaddr) {
-> -		reg->ioaddr =
-> -			ioremap(reg->addr, reg->size);
-> -		if (!reg->ioaddr)
-> -			return -ENOMEM;
-> -	}
-> -
-> -	/* disable IRQ */
-> -	writel(0, reg->ioaddr + XGMAC_DMA_INTR_ENA);
-> -
-> -	/* Disable the MAC core */
-> -	xgmac_mac_disable(reg->ioaddr);
-> -
-> -	return 0;
-> -}
-> -
-> -module_vfio_reset_handler("calxeda,hb-xgmac", vfio_platform_calxedaxgmac_reset);
-> -
-> -MODULE_VERSION(DRIVER_VERSION);
-> -MODULE_LICENSE("GPL v2");
-> -MODULE_AUTHOR(DRIVER_AUTHOR);
-> -MODULE_DESCRIPTION(DRIVER_DESC);
-> --
-> 2.20.1
-> 
-I do not have access to this HW anymore and I use Seattle to test
-vfio-platform. So
+>  Documentation/devicetree/bindings/arm/arm,scmi.txt        | 2 +-
+>  Documentation/devicetree/bindings/arm/arm,scpi.txt        | 2 +-
+>  .../devicetree/bindings/arm/bcm/brcm,bcm63138.txt         | 2 +-
+>  .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt  | 2 +-
+>  .../devicetree/bindings/arm/msm/qcom,idle-state.txt       | 2 +-
 
-Acked-by: Eric Auger <eric.auger@redhat.com>
+For qcom idle state and ..
 
-Thanks
+>  Documentation/devicetree/bindings/arm/omap/mpu.txt        | 2 +-
+>  Documentation/devicetree/bindings/arm/psci.yaml           | 2 +-
+>  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml       | 2 +-
 
-Eric
+For qcom tsens,
 
+Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
+
+>  .../devicetree/bindings/display/tilcdc/tilcdc.txt         | 2 +-
+>  Documentation/devicetree/bindings/leds/common.yaml        | 2 +-
+>  .../devicetree/bindings/leds/register-bit-led.txt         | 2 +-
+>  .../devicetree/bindings/memory-controllers/ti/emif.txt    | 2 +-
+>  Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt   | 2 +-
+>  .../bindings/pinctrl/aspeed,ast2400-pinctrl.yaml          | 2 +-
+>  .../bindings/pinctrl/aspeed,ast2500-pinctrl.yaml          | 2 +-
+>  .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml          | 2 +-
+>  .../devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml  | 2 +-
+>  .../devicetree/bindings/reset/st,stm32mp1-rcc.txt         | 2 +-
+>  .../devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml  | 2 +-
+>  MAINTAINERS                                               | 8 ++++----
+>  20 files changed, 23 insertions(+), 23 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> index f493d69e6194..dc102c4e4a78 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> +++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
+> @@ -102,7 +102,7 @@ Required sub-node properties:
+>  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  [2] Documentation/devicetree/bindings/power/power-domain.yaml
+>  [3] Documentation/devicetree/bindings/thermal/thermal.txt
+> -[4] Documentation/devicetree/bindings/sram/sram.txt
+> +[4] Documentation/devicetree/bindings/sram/sram.yaml
+>  [5] Documentation/devicetree/bindings/reset/reset.txt
+>
+>  Example:
+> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> index 7b83ef43b418..dd04d9d9a1b8 100644
+> --- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
+> @@ -109,7 +109,7 @@ Required properties:
+>  [0] http://infocenter.arm.com/help/topic/com.arm.doc.dui0922b/index.html
+>  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  [2] Documentation/devicetree/bindings/thermal/thermal.txt
+> -[3] Documentation/devicetree/bindings/sram/sram.txt
+> +[3] Documentation/devicetree/bindings/sram/sram.yaml
+>  [4] Documentation/devicetree/bindings/power/power-domain.yaml
+>
+>  Example:
+> diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
+> index b82b6a0ae6f7..8c7a4908a849 100644
+> --- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
+> +++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
+> @@ -62,7 +62,7 @@ Timer node:
+>
+>  Syscon reboot node:
+>
+> -See Documentation/devicetree/bindings/power/reset/syscon-reboot.txt for the
+> +See Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml for the
+>  detailed list of properties, the two values defined below are specific to the
+>  BCM6328-style timer:
+>
+> diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+> index 115c5be0bd0b..8defacc44dd5 100644
+> --- a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+> +++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
+> @@ -1,7 +1,7 @@
+>  * Hisilicon Hi3519 System Controller Block
+>
+>  This bindings use the following binding:
+> -Documentation/devicetree/bindings/mfd/syscon.txt
+> +Documentation/devicetree/bindings/mfd/syscon.yaml
+>
+>  Required properties:
+>  - compatible: "hisilicon,hi3519-sysctrl".
+> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt b/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
+> index 06df04cc827a..6ce0b212ec6d 100644
+> --- a/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
+> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
+> @@ -81,4 +81,4 @@ Example:
+>                 };
+>         };
+>
+> -[1]. Documentation/devicetree/bindings/arm/idle-states.txt
+> +[1]. Documentation/devicetree/bindings/arm/idle-states.yaml
+> diff --git a/Documentation/devicetree/bindings/arm/omap/mpu.txt b/Documentation/devicetree/bindings/arm/omap/mpu.txt
+> index f301e636fd52..e41490e6979c 100644
+> --- a/Documentation/devicetree/bindings/arm/omap/mpu.txt
+> +++ b/Documentation/devicetree/bindings/arm/omap/mpu.txt
+> @@ -17,7 +17,7 @@ am335x and am437x only:
+>  - pm-sram: Phandles to ocmcram nodes to be used for power management.
+>            First should be type 'protect-exec' for the driver to use to copy
+>            and run PM functions, second should be regular pool to be used for
+> -          data region for code. See Documentation/devicetree/bindings/sram/sram.txt
+> +          data region for code. See Documentation/devicetree/bindings/sram/sram.yaml
+>            for more details.
+>
+>  Examples:
+> diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
+> index 8ef85420b2ab..f8218e60e3e2 100644
+> --- a/Documentation/devicetree/bindings/arm/psci.yaml
+> +++ b/Documentation/devicetree/bindings/arm/psci.yaml
+> @@ -100,7 +100,7 @@ properties:
+>        bindings in [1]) must specify this property.
+>
+>        [1] Kernel documentation - ARM idle states bindings
+> -        Documentation/devicetree/bindings/arm/idle-states.txt
+> +        Documentation/devicetree/bindings/arm/idle-states.yaml
+>
+>    "#power-domain-cells":
+>      description:
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> index 17f87178f6b8..3647007f82ca 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+> @@ -42,7 +42,7 @@ properties:
+>        be part of GCC and hence the TSENS properties can also be part
+>        of the GCC/clock-controller node.
+>        For more details on the TSENS properties please refer
+> -      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
+>
+>    nvmem-cell-names:
+>      minItems: 1
