@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0800C3567B
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 07:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F51C11D24
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 07:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E13E20828
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 07:22:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66AB320828
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 07:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582528948;
-	bh=Sh/AFPrml+jxcD/YRPNsi/H8wjD86MKYjICDTThL1eY=;
+	s=default; t=1582529031;
+	bh=o0jeyadt12zgAsbuQin5BGy34nmDODXNaFHsP/wsmN0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iy0Yu2siiHrgeTrzGtftG3KE0Ufzu8uQYcuoxUtAMpuFJ3yjbJE+WPzMbfwZ937gs
-	 0V1/v5Ky2jf73dPO9zmZTrnYs3Q4rRYBJcienP5P45GoJ33zUtlo+xNYQD9Si4wqyL
-	 wa4ITaNt4iPSJ+bncIRCTaPULMCSeJ9F221DnkO0=
+	b=m6II6aVJ1A0p8+c64XRTWYIiXRVE97fWBWByQCedw23Vs2Vap0sRge+OvWiC1n4K7
+	 8ewb27OsDc5mGoVzrUwzGndUanDBjuskTbT+9+EpSYv3n7mLHAOYy20vLEvRHhmcLz
+	 K3wniLWmuVlTKienzbrzmI3+dct7s7k5q4bFQ4T0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727242AbgBXHW2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Feb 2020 02:22:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35254 "EHLO mail.kernel.org"
+        id S1726709AbgBXHXu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Feb 2020 02:23:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726452AbgBXHW2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 24 Feb 2020 02:22:28 -0500
+        id S1726452AbgBXHXu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 24 Feb 2020 02:23:50 -0500
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E71320578;
-        Mon, 24 Feb 2020 07:22:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67C7420578;
+        Mon, 24 Feb 2020 07:23:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582528947;
-        bh=Sh/AFPrml+jxcD/YRPNsi/H8wjD86MKYjICDTThL1eY=;
+        s=default; t=1582529030;
+        bh=o0jeyadt12zgAsbuQin5BGy34nmDODXNaFHsP/wsmN0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p34LEU//uyJoPaaP1R4g6ya+FaTQM72gWcIzNvx1iWFXp3Mk1eBDvbA7QDKZgbsPf
-         gsQgL7awq9LpMI5z4AwmvwJ1U+nIMbuJTntnEqiZbWdRS1ss+GtkPH+xZvhMdH/u0L
-         YIql1dDG9EN3ds16vHDgpuA8Fa9+R2YB/femOF+U=
-Date:   Mon, 24 Feb 2020 15:22:18 +0800
+        b=B30hbfpMvPLhoBfzPQASet/MSSsjARo+qHFxRHniBRloC+LIWJCDxrh8Y8Z71eNAP
+         3RsBI//5m/MztiryJmeushxDbfju2Vtfl+FfbFsGJ6IZPwb1unwK3nk7LgZ2z0zgSC
+         2ZL5z9ExZFTdgN6U38mYcQ9aD/4xLkhhHjkQwXjs=
+Date:   Mon, 24 Feb 2020 15:23:41 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Leonard Crestez <leonard.crestez@nxp.com>
 Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
@@ -55,21 +55,22 @@ Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         kernel@pengutronix.de, linux-imx@nxp.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] clk: imx: Align imx sc clock msg structs to 4
-Message-ID: <20200224072210.GR27688@dragon>
+Subject: Re: [PATCH v2 2/8] clk: imx: Align imx sc clock parent msg structs
+ to 4
+Message-ID: <20200224072340.GS27688@dragon>
 References: <cover.1582216144.git.leonard.crestez@nxp.com>
- <10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com>
+ <aad021e432b3062c142973d09b766656eec18fde.1582216144.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com>
+In-Reply-To: <aad021e432b3062c142973d09b766656eec18fde.1582216144.git.leonard.crestez@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Feb 20, 2020 at 06:29:32PM +0200, Leonard Crestez wrote:
+On Thu, Feb 20, 2020 at 06:29:33PM +0200, Leonard Crestez wrote:
 > The imx SC api strongly assumes that messages are composed out of
 > 4-bytes words but some of our message structs have odd sizeofs.
 > 
@@ -77,7 +78,7 @@ On Thu, Feb 20, 2020 at 06:29:32PM +0200, Leonard Crestez wrote:
 > 
 > Fix by marking with __aligned(4).
 > 
-> Fixes: fe37b4820417 ("clk: imx: add scu clock common part")
+> Fixes: 666aed2d13ee ("clk: imx: scu: add set parent support")
 > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
 Applied, thanks.
