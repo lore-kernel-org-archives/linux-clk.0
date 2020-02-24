@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50164C11D37
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 09:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27EAFC11D39
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 09:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20A582082E
+	by mail.kernel.org (Postfix) with ESMTP id E4F5520873
 	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 09:16:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="MGDZcc/A";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="c+QKLXSW"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ZuqNwR/t";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nlJrwX8f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbgBXJQH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Feb 2020 04:16:07 -0500
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:60279 "EHLO
+        id S1728501AbgBXJQI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Feb 2020 04:16:08 -0500
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:33209 "EHLO
         wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728144AbgBXJQF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 04:16:05 -0500
+        by vger.kernel.org with ESMTP id S1728373AbgBXJQH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 04:16:07 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.west.internal (Postfix) with ESMTP id E69695C7;
-        Mon, 24 Feb 2020 04:08:58 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:09:00 -0500
+        by mailnew.west.internal (Postfix) with ESMTP id 0160E61F;
+        Mon, 24 Feb 2020 04:09:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 24 Feb 2020 04:09:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=HvoZm/CXRFjaX
-        9itj5UKgqnwKV1jLHEaQ0lrY8kkzVk=; b=MGDZcc/Aq+Rw4qJP/RvJzxTT9zuhi
-        Vw+TSvutgz7J4MvR9+z/TbcjkJv4Zi88/MjjG+cIgUqJsI6OO5SuD6cRd72CXOQt
-        JxLhFehkvSPlU3Yt2PPeUezeD8RxbQ4PMvq33YaFO0gZSq09wVLDMkWB1nol/HYU
-        zKJ+4w2Txt1LtjjDqVyb3jQFYTc1pLhDQ9m90nKDOGn1+VeU5CEZEEQYc8WGeWrs
-        7hP4oZ1/foDhV2db+JDIY7KrI6OJfLakLunHY9SQXPmBh3y2zqRDAd6eP4pWny2o
-        sIHXd8Voz0Vo+ngIbUWFwe980Mbxc4t/nPmSzlPgrB4vfa38Dqd5m32wA==
+        :mime-version:content-transfer-encoding; s=fm2; bh=GJTCftH9+aMh6
+        9hSTQ5SiskF083sH6bzhzDLbLcu8to=; b=ZuqNwR/tnLyQbMrwfZAz4q0MVb3Cp
+        Rdb01zSvLob8F8GbbfiNuqpxCGHk1zUWXCW4uc1MyixE49lVBbcoJSoBRBbnuBxC
+        iKDgGz6IAb3kE1phNmfN2tI56wmNRkvcz2Y2L2Ng82zHA1THemcTQFFQ0/NVFCi5
+        wFEwJxwe+COUFxF7CTrAmTEXdVQS4K0MdNt98nX0ErGYYGa6girEBv1DLWJpwTka
+        LvIG94FWpRXqGdZk0lx6QR5c1uoKnEvMfocMum6ECBkK0Ex/Z8MhhN00TGojmb9h
+        hEzqg5r+PPxbRkHocseR+0LFSGwb+/l232OPdy75K3gWifjKtdPd4vCGw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=HvoZm/CXRFjaX9itj5UKgqnwKV1jLHEaQ0lrY8kkzVk=; b=c+QKLXSW
-        +lO4HtiCmhypK+Tn77ju2BGiGE7BW8mK1MP50t1b4EQ6lLOqGGTBV82mAINI5Xpa
-        c9BFIe4wm1tirltt+UcyDrTn4jy2fCDSd35PXwpblyEdb6Db9fl2WK3BFnvJTyOc
-        A1N9YrBqwqUynzJ2lVZ+9dBnXsg0KFQDzRf35dfQldUZDPyjbvBrF6pi6rzYIEZ2
-        VLaFWgRTTe7Z6O93/VZyloD70+j1TC08nV35OS9x/KY3NqoBrnGvhX5r2+qNyS4H
-        OL8rqQSdRQX5KiS2uFMc11sSQa2J73YBVw4OQf0pS44k5UL224UO9p7Xgo6pgxjJ
-        W1g1YvEbQGr0Zw==
-X-ME-Sender: <xms:qpJTXui9P-ESxQHWQI0LBhgMVPCVH-_TflmnM0T37CJ4nj8eXhQIeg>
+        fm2; bh=GJTCftH9+aMh69hSTQ5SiskF083sH6bzhzDLbLcu8to=; b=nlJrwX8f
+        ALtwwc1dRumaQXpIWKFF4L9wWsBgmZKTXDPaQg7mu2DvCKdX2mscO7nUMaR5QSDy
+        c74mlIIh8efo0JcZAD90CedqCDkbX/RJkc1ywutf14NZmHlDvrmK3nwb19mD1g1c
+        yeb2k1oRnVJ0gPQcwieoWPP/Be6HoNjBusivW3K2rDGjp3tlQpHkwhKpFydmMmZT
+        oF2fO9ihdAP6JlO1RuSVqPazz+yAFgKV17x8b2nydoYyS1HyjXBtchm3aelWa4rj
+        8iyV7T0u+5ZSwHnj85CxN7hdOxlPxnxqYaBZKBPGKarQS5QNRxhz0RUkLHPGQmpl
+        uJcGmHFXKnLRbw==
+X-ME-Sender: <xms:yJJTXifYGygHEUw63DMiqToDF8BAZ0REtoNi7dbLogcdGcgZjkn-Zg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledtucetufdoteggodetrfdotffvucfrrh
     hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
-    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegovehorg
-    hsthgrlhdqhfeguddvqddtvdculdduhedtmdenucfjughrpefhvffufffkofgjfhgggfes
-    tdekredtredttdenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrgigihhmvg
-    estggvrhhnohdrthgvtghhqeenucffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhg
-    necukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrg
-    hrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:qpJTXptRT016RRkMhbPQfof06Wfpic8DS3Pheb28o5RxhTaMcZ1pyw>
-    <xmx:qpJTXuzKfIDjKvfhnyFsq8vH8PHwy67PHK6l2qfL59Ixa8tVZi1GGw>
-    <xmx:qpJTXuYQ-EYI7Ph_T6fUEUFtwoVw5M2SOelNa6j3CuwQXXR9bbteHQ>
-    <xmx:qpJTXqIMbS5I4ZHSFhuiDyYWNPNy0FtWfuosE_chf1Ddj-TKPAbvkKnsV_4>
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    ephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcutfhi
+    phgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuffhomhgrihhnpehrtg
+    guvghvrdhnrhenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigv
+    pedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtg
+    hh
+X-ME-Proxy: <xmx:yJJTXm7rp1BpBGKc4PjUvRspH-8Y8122kT0D-pWW6TRu2ILvFsv_vg>
+    <xmx:yJJTXqLEK69NKIExlSi6QwiRx0iOBvDTw1tmT50kuWhfmZBovAvQRQ>
+    <xmx:yJJTXq7gzEY7u7MQcx8_pVEasOYdIZbT34GFCxy3nDvpCuXcJw3Svg>
+    <xmx:yJJTXvJc7CGTCjuWoY_QFgYNisSBglZsX7FO-aLiFlL4W-bIjlXYaT3n5dE>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 2D4A3328005A;
-        Mon, 24 Feb 2020 04:08:58 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 361363060FCB;
+        Mon, 24 Feb 2020 04:09:28 -0500 (EST)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Eric Anholt <eric@anholt.net>
@@ -78,9 +78,9 @@ Cc:     dri-devel@lists.freedesktop.org,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 06/89] dt-bindings: clock: Add a binding for the RPi Firmware clocks
-Date:   Mon, 24 Feb 2020 10:06:08 +0100
-Message-Id: <9166f3acdc2a64e3f3ca1cd2e283005ee2df37c9.1582533919.git-series.maxime@cerno.tech>
+Subject: [PATCH 27/89] clk: bcm: Add BCM2711 DVP driver
+Date:   Mon, 24 Feb 2020 10:06:29 +0100
+Message-Id: <6dd6bd48e894c1e8ee85c29a30ba1b18041d83c4.1582533919.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
 References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
@@ -91,9 +91,11 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The firmare running on the RPi VideoCore can be used to discover and
-change the various clocks running in the BCM2711. Since devices will
-need to use them through the DT, let's add a pretty simple binding.
+The HDMI block has a block that controls clocks and reset signals to the
+HDMI0 and HDMI1 controllers.
+
+Let's expose that through a clock driver implementing a clock and reset
+provider.
 
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
@@ -102,54 +104,154 @@ Cc: linux-clk@vger.kernel.org
 Cc: devicetree@vger.kernel.org
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
+ drivers/clk/bcm/Kconfig           |   1 +-
+ drivers/clk/bcm/Makefile          |   1 +-
+ drivers/clk/bcm/clk-bcm2711-dvp.c | 113 +++++++++++++++++++++++++++++++-
+ 3 files changed, 115 insertions(+)
+ create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
 
-diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 8c83977a7dc4..03bbd8040451 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -4,6 +4,7 @@ config CLK_BCM2835
+ 	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
+ 	depends on COMMON_CLK
+ 	default ARCH_BCM2835 || ARCH_BRCMSTB
++	select RESET_SIMPLE
+ 	help
+ 	  Enable common clock framework support for Broadcom BCM2835
+ 	  SoCs.
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 0070ddf6cdd2..2c1349062147 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
++obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2711-dvp.o
+ obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2835-aux.o
+ obj-$(CONFIG_CLK_RASPBERRYPI)	+= clk-raspberrypi.o
+diff --git a/drivers/clk/bcm/clk-bcm2711-dvp.c b/drivers/clk/bcm/clk-bcm2711-dvp.c
 new file mode 100644
-index 000000000000..d37bc311321d
+index 000000000000..f4773cc92724
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
-@@ -0,0 +1,39 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/raspberrypi,firmware-clocks.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/bcm/clk-bcm2711-dvp.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright 2020 Cerno
 +
-+title: RaspberryPi Firmware Clocks Device Tree Bindings
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/reset/reset-simple.h>
 +
-+maintainers:
-+  - Maxime Ripard <mripard@kernel.org>
++#define DVP_HT_RPI_SW_INIT	0x04
++#define DVP_HT_RPI_MISC_CONFIG	0x08
 +
-+properties:
-+  "#clock-cells":
-+    const: 1
++#define NR_CLOCKS	2
++#define NR_RESETS	6
 +
-+  compatible:
-+    const: raspberrypi,firmware-clocks
++struct clk_dvp {
++	struct clk			*clks[NR_CLOCKS];
++	struct clk_onecell_data		clk_data;
++	struct reset_simple_data	reset;
++};
 +
-+  raspberrypi,firmware:
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+    description: >
-+      Phandle to the mailbox node to communicate with the firmware.
++static int clk_dvp_probe(struct platform_device *pdev)
++{
++	struct resource *res;
++	struct clk_dvp *dvp;
++	void __iomem *base;
++	const char *parent;
++	int ret;
 +
-+required:
-+  - "#clock-cells"
-+  - compatible
-+  - raspberrypi,firmware
++	dvp = devm_kzalloc(&pdev->dev, sizeof(*dvp), GFP_KERNEL);
++	if (!dvp)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, dvp);
 +
-+additionalProperties: false
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
 +
-+examples:
-+  - |
-+    firmware_clocks: firmware-clocks {
-+        compatible = "raspberrypi,firmware-clocks";
-+        raspberrypi,firmware = <&firmware>;
-+        #clock-cells = <1>;
-+    };
++	dvp->reset.rcdev.owner = THIS_MODULE;
++	dvp->reset.rcdev.nr_resets = NR_RESETS;
++	dvp->reset.rcdev.ops = &reset_simple_ops;
++	dvp->reset.rcdev.of_node = pdev->dev.of_node;
++	dvp->reset.membase = base + DVP_HT_RPI_SW_INIT;
++	spin_lock_init(&dvp->reset.lock);
 +
-+...
++	ret = reset_controller_register(&dvp->reset.rcdev);
++	if (ret)
++		return ret;
++
++	parent = of_clk_get_parent_name(pdev->dev.of_node, 0);
++	if (!parent)
++		goto unregister_reset;
++
++	dvp->clks[0] = clk_register_gate(&pdev->dev, "hdmi0-108MHz",
++					 parent, CLK_IS_CRITICAL,
++					 base + DVP_HT_RPI_MISC_CONFIG, 3,
++					 CLK_GATE_SET_TO_DISABLE, &dvp->reset.lock);
++	if (IS_ERR(dvp->clks[0])) {
++		ret = PTR_ERR(dvp->clks[0]);
++		goto unregister_reset;
++	}
++
++	dvp->clks[1] = clk_register_gate(&pdev->dev, "hdmi1-108MHz",
++					 parent, CLK_IS_CRITICAL,
++					 base + DVP_HT_RPI_MISC_CONFIG, 4,
++					 CLK_GATE_SET_TO_DISABLE, &dvp->reset.lock);
++	if (IS_ERR(dvp->clks[1])) {
++		ret = PTR_ERR(dvp->clks[1]);
++		goto unregister_clk0;
++	}
++
++	dvp->clk_data.clks = dvp->clks;
++	dvp->clk_data.clk_num = NR_CLOCKS;
++	of_clk_add_provider(pdev->dev.of_node, of_clk_src_onecell_get,
++			    &dvp->clk_data);
++
++	return 0;
++
++
++unregister_clk0:
++	clk_unregister_gate(dvp->clks[0]);
++
++unregister_reset:
++	reset_controller_unregister(&dvp->reset.rcdev);
++	return ret;
++};
++
++static int clk_dvp_remove(struct platform_device *pdev)
++{
++	struct clk_dvp *dvp = platform_get_drvdata(pdev);
++
++	clk_unregister_gate(dvp->clks[1]);
++	clk_unregister_gate(dvp->clks[0]);
++	reset_controller_unregister(&dvp->reset.rcdev);
++
++	return 0;
++}
++
++static const struct of_device_id clk_dvp_dt_ids[] = {
++	{ .compatible = "brcm,brcm2711-dvp", },
++	{ /* sentinel */ },
++};
++
++static struct platform_driver clk_dvp_driver = {
++	.probe	= clk_dvp_probe,
++	.remove	= clk_dvp_remove,
++	.driver	= {
++		.name		= "brcm2711-dvp",
++		.of_match_table	= clk_dvp_dt_ids,
++	},
++};
++module_platform_driver(clk_dvp_driver);
 -- 
 git-series 0.9.1
