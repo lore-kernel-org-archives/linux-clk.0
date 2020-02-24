@@ -2,241 +2,379 @@ Return-Path: <SRS0=kzU5=4M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AA5C11D32
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 14:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CB6C11D34
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 15:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7902820838
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 14:55:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="tTyvRsQ3"
+	by mail.kernel.org (Postfix) with ESMTP id 82E6220714
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 15:26:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbgBXOzS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Feb 2020 09:55:18 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:45869 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbgBXOzR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 09:55:17 -0500
-Received: by mail-vs1-f65.google.com with SMTP id m4so5809799vsa.12
-        for <linux-clk@vger.kernel.org>; Mon, 24 Feb 2020 06:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nf8Hhdqzm/gWtkB0ZWHb2rHYmerMHbHruZ0Ukrv/hp8=;
-        b=tTyvRsQ3w0ChPxDQdkv7glQk3wtPZb10J3tAyqqzoRHQ8KPQTGzEw7zNYCRWKnZ4q/
-         Sp8M/ZgkeF0DtmsdSoX/jaS9Cj+6QBjmmTRJVhrc7HoP/5FhbIeVVDjpdF5PLkBe58vj
-         ts7HWtfrr72NlXIevmGqHAfZoSQtS3kdP0RkKaH9LgNtDi+gsiTvRDUVyaaRZ9aMGbcK
-         nWLTioIrgs3f4ikzwkQv7LsyiNYZ06XlkRhH7duzXqdMOUtinyzy3B9nZHXoHNW2BDly
-         Q6PiovLQ+WSUH/5StMinuKTlSvTQU7SMVrsaqT4aYLh+Nu8jmjojFJaax3RoAahqLwvZ
-         0NHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nf8Hhdqzm/gWtkB0ZWHb2rHYmerMHbHruZ0Ukrv/hp8=;
-        b=JYgBmIWLTFKcu7ifGPre8EV8aT5kEdOUfupCmI7sdjR6C4hglsxa8p5kaMoMWT1IFe
-         wiixH5MswVSQvyqQ3/yn8XuaFortqRAeHv+W5XgQHq+bhJlcHpdm9xnEVuWDGe49zr5J
-         zyqcowLbAA1vOxaipG2b915gcC6u0WgNK2eDmQ5VHEkDbAvHqOj/Nt4FfN+2Rvp4KwKJ
-         wCpmW7cLxxQvc7fOzngQMpNe7GSKutBWcZCFEwZNW2XDUcQRdf6G6j903Z6kK6wAtOLy
-         2RVHSYOyzyyrgzmAATvwDNEK7UZTRHfV2y9y7Yr+PFquVrruPWwAUDDy8PTJbM2XWO0m
-         bYqQ==
-X-Gm-Message-State: APjAAAVFV8ElCoXJenCjbCTuIPs7UWOm1bg4Ujp4j/DlMfmZH4h+ZNAL
-        vSIFMht3zdDH9ns6c9XT6OvxvJnm7j0Ll5+gIeBaPg==
-X-Google-Smtp-Source: APXvYqwle+5L5EqgMdMX2NFSAUa3m6tBXE9trHhUlWTILDVFPKISTVy7qlGqCRTcc9lNxiPA7RF35oJihsqFh//dkI4=
-X-Received: by 2002:a05:6102:535:: with SMTP id m21mr25212006vsa.95.1582556116187;
- Mon, 24 Feb 2020 06:55:16 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1582361737.git.mchehab+huawei@kernel.org> <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
-In-Reply-To: <83c5df4acbbe0fa55a1d58d4c4a435b51cd2a7ad.1582361737.git.mchehab+huawei@kernel.org>
-From:   Amit Kucheria <amit.kucheria@verdurent.com>
-Date:   Mon, 24 Feb 2020 20:25:05 +0530
-Message-ID: <CAHLCerP_UW-6CdaOziHTY01cD_6Ou4h0Jj6mOJKj60P4GL9H=w@mail.gmail.com>
-Subject: Re: [PATCH 2/7] docs: dt: fix several broken references due to renames
-To:     Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
+        id S1727576AbgBXP0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Feb 2020 10:26:44 -0500
+Received: from laurent.telenet-ops.be ([195.130.137.89]:60182 "EHLO
+        laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727719AbgBXP0o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Feb 2020 10:26:44 -0500
+Received: from ramsan ([84.195.182.253])
+        by laurent.telenet-ops.be with bizsmtp
+        id 6fSh2200v5USYZQ01fShpF; Mon, 24 Feb 2020 16:26:42 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6Fd3-0006KY-R5; Mon, 24 Feb 2020 16:26:41 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6Fd3-0000MI-Ob; Mon, 24 Feb 2020 16:26:41 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Jyri Sarha <jsarha@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        lakml <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DRI mailing list <dri-devel@lists.freedesktop.org>,
-        linux-leds@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
+Date:   Mon, 24 Feb 2020 16:26:40 +0100
+Message-Id: <20200224152640.1318-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Feb 22, 2020 at 2:30 PM Mauro Carvalho Chehab
-<mchehab+huawei@kernel.org> wrote:
->
-> Several DT references got broken due to txt->yaml conversion.
->
-> Those are auto-fixed by running:
->
->         scripts/documentation-file-ref-check --fix
->
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/devicetree/bindings/arm/arm,scmi.txt        | 2 +-
->  Documentation/devicetree/bindings/arm/arm,scpi.txt        | 2 +-
->  .../devicetree/bindings/arm/bcm/brcm,bcm63138.txt         | 2 +-
->  .../devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt  | 2 +-
->  .../devicetree/bindings/arm/msm/qcom,idle-state.txt       | 2 +-
+Convert the Renesas Clock Pulse Generator / Module Standby and Software
+Reset Device Tree binding documentation to json-schema.
 
-For qcom idle state and ..
+Note that #reset-cells was incorrecty marked a required property for
+RZ/A2 before.
 
->  Documentation/devicetree/bindings/arm/omap/mpu.txt        | 2 +-
->  Documentation/devicetree/bindings/arm/psci.yaml           | 2 +-
->  .../devicetree/bindings/clock/qcom,gcc-apq8064.yaml       | 2 +-
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ .../bindings/clock/renesas,cpg-mssr.txt       | 101 ---------
+ .../bindings/clock/renesas,cpg-mssr.yaml      | 204 ++++++++++++++++++
+ 2 files changed, 204 insertions(+), 101 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
 
-For qcom tsens,
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+deleted file mode 100644
+index 5846dee455b6318d..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ /dev/null
+@@ -1,100 +0,0 @@
+-* Renesas Clock Pulse Generator / Module Standby and Software Reset
+-
+-On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
+-and MSSR (Module Standby and Software Reset) blocks are intimately connected,
+-and share the same register block.
+-
+-They provide the following functionalities:
+-  - The CPG block generates various core clocks,
+-  - The MSSR block provides two functions:
+-      1. Module Standby, providing a Clock Domain to control the clock supply
+-	 to individual SoC devices,
+-      2. Reset Control, to perform a software reset of individual SoC devices.
+-
+-Required Properties:
+-  - compatible: Must be one of:
+-      - "renesas,r7s9210-cpg-mssr" for the r7s9210 SoC (RZ/A2)
+-      - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
+-      - "renesas,r8a7744-cpg-mssr" for the r8a7744 SoC (RZ/G1N)
+-      - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+-      - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
+-      - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
+-      - "renesas,r8a774b1-cpg-mssr" for the r8a774b1 SoC (RZ/G2N)
+-      - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
+-      - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
+-      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
+-      - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
+-      - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
+-      - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
+-      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
+-      - "renesas,r8a7796-cpg-mssr" for the r8a77960 SoC (R-Car M3-W)
+-      - "renesas,r8a77961-cpg-mssr" for the r8a77961 SoC (R-Car M3-W+)
+-      - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
+-      - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
+-      - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
+-      - "renesas,r8a77990-cpg-mssr" for the r8a77990 SoC (R-Car E3)
+-      - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
+-
+-  - reg: Base address and length of the memory resource used by the CPG/MSSR
+-    block
+-
+-  - clocks: References to external parent clocks, one entry for each entry in
+-    clock-names
+-  - clock-names: List of external parent clock names. Valid names are:
+-      - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
+-		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
+-		 r8a7794, r8a7795, r8a77960, r8a77961, r8a77965, r8a77970,
+-		 r8a77980, r8a77990, r8a77995)
+-      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a77960, r8a77961, r8a77965,
+-		  r8a77970, r8a77980)
+-      - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
+-		     r8a7793, r8a7794)
+-
+-  - #clock-cells: Must be 2
+-      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+-	and a core clock reference, as defined in
+-	<dt-bindings/clock/*-cpg-mssr.h>.
+-      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+-	a module number, as defined in the datasheet.
+-
+-  - #power-domain-cells: Must be 0
+-      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
+-	power-managed through Module Standby should refer to the CPG device
+-	node in their "power-domains" property, as documented by the generic PM
+-	Domain bindings in
+-	Documentation/devicetree/bindings/power/power-domain.yaml.
+-
+-  - #reset-cells: Must be 1
+-      - The single reset specifier cell must be the module number, as defined
+-	in the datasheet.
+-
+-
+-Examples
+---------
+-
+-  - CPG device node:
+-
+-	cpg: clock-controller@e6150000 {
+-		compatible = "renesas,r8a7795-cpg-mssr";
+-		reg = <0 0xe6150000 0 0x1000>;
+-		clocks = <&extal_clk>, <&extalr_clk>;
+-		clock-names = "extal", "extalr";
+-		#clock-cells = <2>;
+-		#power-domain-cells = <0>;
+-		#reset-cells = <1>;
+-	};
+-
+-
+-  - CPG/MSSR Clock Domain member device node:
+-
+-	scif2: serial@e6e88000 {
+-		compatible = "renesas,scif-r8a7795", "renesas,scif";
+-		reg = <0 0xe6e88000 0 64>;
+-		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&cpg CPG_MOD 310>;
+-		clock-names = "fck";
+-		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
+-		dma-names = "tx", "rx";
+-		power-domains = <&cpg>;
+-		resets = <&cpg 310>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+new file mode 100644
+index 0000000000000000..dfbd1933f1bc56de
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+@@ -0,0 +1,204 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
++$schema: "http://devicetree.org/meta-schemas/core.yaml#"
++
++title: Renesas Clock Pulse Generator / Module Standby and Software Reset
++
++maintainers:
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++
++description: |
++  On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
++  and MSSR (Module Standby and Software Reset) blocks are intimately connected,
++  and share the same register block.
++
++  They provide the following functionalities:
++    - The CPG block generates various core clocks,
++    - The MSSR block provides two functions:
++        1. Module Standby, providing a Clock Domain to control the clock supply
++           to individual SoC devices,
++        2. Reset Control, to perform a software reset of individual SoC devices.
++
++properties:
++  compatible:
++    enum:
++      - renesas,r7s9210-cpg-mssr  # RZ/A2
++      - renesas,r8a7743-cpg-mssr  # RZ/G1M
++      - renesas,r8a7744-cpg-mssr  # RZ/G1N
++      - renesas,r8a7745-cpg-mssr  # RZ/G1E
++      - renesas,r8a77470-cpg-mssr # RZ/G1C
++      - renesas,r8a774a1-cpg-mssr # RZ/G2M
++      - renesas,r8a774b1-cpg-mssr # RZ/G2N
++      - renesas,r8a774c0-cpg-mssr # RZ/G2E
++      - renesas,r8a7790-cpg-mssr  # R-Car H2
++      - renesas,r8a7791-cpg-mssr  # R-Car M2-W
++      - renesas,r8a7792-cpg-mssr  # R-Car V2H
++      - renesas,r8a7793-cpg-mssr  # R-Car M2-N
++      - renesas,r8a7794-cpg-mssr  # R-Car E2
++      - renesas,r8a7795-cpg-mssr  # R-Car H3
++      - renesas,r8a7796-cpg-mssr  # R-Car M3-W
++      - renesas,r8a77961-cpg-mssr # R-Car M3-W+
++      - renesas,r8a77965-cpg-mssr # R-Car M3-N
++      - renesas,r8a77970-cpg-mssr # R-Car V3M
++      - renesas,r8a77980-cpg-mssr # R-Car V3H
++      - renesas,r8a77990-cpg-mssr # R-Car E3
++      - renesas,r8a77995-cpg-mssr # R-Car D3
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    maxItems: 2
++
++  '#clock-cells':
++    description: |
++      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
++        and a core clock reference, as defined in
++        <dt-bindings/clock/*-cpg-mssr.h>
++      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
++        a module number, as defined in the datasheet.
++    const: 2
++
++  '#power-domain-cells':
++    description:
++      SoC devices that are part of the CPG/MSSR Clock Domain and can be
++      power-managed through Module Standby should refer to the CPG device node
++      in their "power-domains" property, as documented by the generic PM Domain
++      bindings in Documentation/devicetree/bindings/power/power-domain.yaml.
++    const: 0
++
++  '#reset-cells':
++    description:
++      The single reset specifier cell must be the module number, as defined in
++      the datasheet.
++    const: 1
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          items:
++            enum:
++              - renesas,r7s9210-cpg-mssr
++              - renesas,r8a774c0-cpg-mssr
++              - renesas,r8a7792-cpg-mssr
++              - renesas,r8a77990-cpg-mssr
++              - renesas,r8a77995-cpg-mssr
++
++    then:
++      properties:
++        clock:
++          maxItems: 1
++        clock-names:
++          maxItems: 1
++          items:
++            - const: extal
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r8a7743-cpg-mssr
++              - renesas,r8a7744-cpg-mssr
++              - renesas,r8a7745-cpg-mssr
++              - renesas,r8a77470-cpg-mssr
++              - renesas,r8a7790-cpg-mssr
++              - renesas,r8a7791-cpg-mssr
++              - renesas,r8a7793-cpg-mssr
++              - renesas,r8a7794-cpg-mssr
++
++    then:
++      properties:
++        clock:
++          minItems: 2
++        clock-names:
++          minItems: 2
++          items:
++            - const: extal
++            - const: usb_extal
++
++  - if:
++      properties:
++        compatible:
++          items:
++            enum:
++              - renesas,r8a774a1-cpg-mssr
++              - renesas,r8a774b1-cpg-mssr
++              - renesas,r8a7795-cpg-mssr
++              - renesas,r8a7796-cpg-mssr
++              - renesas,r8a77961-cpg-mssr
++              - renesas,r8a77965-cpg-mssr
++              - renesas,r8a77970-cpg-mssr
++              - renesas,r8a77980-cpg-mssr
++
++    then:
++      properties:
++        clock:
++          minItems: 2
++        clock-names:
++          minItems: 2
++          items:
++            - const: extal
++            - const: extalr
++
++  - if:
++      not:
++        properties:
++          compatible:
++            items:
++              enum:
++                - renesas,r7s9210-cpg-mssr
++    then:
++      required:
++        - '#reset-cells'
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++  - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    // CPG device node:
++
++    cpg: clock-controller@e6150000 {
++            compatible = "renesas,r8a7795-cpg-mssr";
++            reg = <0xe6150000 0x1000>;
++            clocks = <&extal_clk>, <&extalr_clk>;
++            clock-names = "extal", "extalr";
++            #clock-cells = <2>;
++            #power-domain-cells = <0>;
++            #reset-cells = <1>;
++    };
++
++  - |
++    // CPG/MSSR Clock Domain member device node:
++    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    scif2: serial@e6e88000 {
++            compatible = "renesas,scif-r8a7795", "renesas,rcar-gen3-scif",
++                         "renesas,scif";
++            reg = <0xe6e88000 64>;
++            interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
++            clocks = <&cpg CPG_MOD 310>, <&cpg CPG_CORE R8A7795_CLK_S3D1>,
++                     <&scif_clk>;
++            clock-names = "fck";
++            dmas = <&dmac1 0x13>, <&dmac1 0x12>, <&dmac2 0x13>, <&dmac2 0x12>;
++            dma-names = "tx", "rx", "tx", "rx";
++            power-domains = <&cpg>;
++            resets = <&cpg 310>;
++    };
+-- 
+2.17.1
 
-Reviewed-by: Amit Kucheria <amit.kucheria@linaro.org>
-
->  .../devicetree/bindings/display/tilcdc/tilcdc.txt         | 2 +-
->  Documentation/devicetree/bindings/leds/common.yaml        | 2 +-
->  .../devicetree/bindings/leds/register-bit-led.txt         | 2 +-
->  .../devicetree/bindings/memory-controllers/ti/emif.txt    | 2 +-
->  Documentation/devicetree/bindings/misc/fsl,qoriq-mc.txt   | 2 +-
->  .../bindings/pinctrl/aspeed,ast2400-pinctrl.yaml          | 2 +-
->  .../bindings/pinctrl/aspeed,ast2500-pinctrl.yaml          | 2 +-
->  .../bindings/pinctrl/aspeed,ast2600-pinctrl.yaml          | 2 +-
->  .../devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml  | 2 +-
->  .../devicetree/bindings/reset/st,stm32mp1-rcc.txt         | 2 +-
->  .../devicetree/bindings/thermal/brcm,avs-ro-thermal.yaml  | 2 +-
->  MAINTAINERS                                               | 8 ++++----
->  20 files changed, 23 insertions(+), 23 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/arm,scmi.txt b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> index f493d69e6194..dc102c4e4a78 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> +++ b/Documentation/devicetree/bindings/arm/arm,scmi.txt
-> @@ -102,7 +102,7 @@ Required sub-node properties:
->  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->  [2] Documentation/devicetree/bindings/power/power-domain.yaml
->  [3] Documentation/devicetree/bindings/thermal/thermal.txt
-> -[4] Documentation/devicetree/bindings/sram/sram.txt
-> +[4] Documentation/devicetree/bindings/sram/sram.yaml
->  [5] Documentation/devicetree/bindings/reset/reset.txt
->
->  Example:
-> diff --git a/Documentation/devicetree/bindings/arm/arm,scpi.txt b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-> index 7b83ef43b418..dd04d9d9a1b8 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,scpi.txt
-> +++ b/Documentation/devicetree/bindings/arm/arm,scpi.txt
-> @@ -109,7 +109,7 @@ Required properties:
->  [0] http://infocenter.arm.com/help/topic/com.arm.doc.dui0922b/index.html
->  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->  [2] Documentation/devicetree/bindings/thermal/thermal.txt
-> -[3] Documentation/devicetree/bindings/sram/sram.txt
-> +[3] Documentation/devicetree/bindings/sram/sram.yaml
->  [4] Documentation/devicetree/bindings/power/power-domain.yaml
->
->  Example:
-> diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
-> index b82b6a0ae6f7..8c7a4908a849 100644
-> --- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
-> +++ b/Documentation/devicetree/bindings/arm/bcm/brcm,bcm63138.txt
-> @@ -62,7 +62,7 @@ Timer node:
->
->  Syscon reboot node:
->
-> -See Documentation/devicetree/bindings/power/reset/syscon-reboot.txt for the
-> +See Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml for the
->  detailed list of properties, the two values defined below are specific to the
->  BCM6328-style timer:
->
-> diff --git a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-> index 115c5be0bd0b..8defacc44dd5 100644
-> --- a/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-> +++ b/Documentation/devicetree/bindings/arm/hisilicon/hi3519-sysctrl.txt
-> @@ -1,7 +1,7 @@
->  * Hisilicon Hi3519 System Controller Block
->
->  This bindings use the following binding:
-> -Documentation/devicetree/bindings/mfd/syscon.txt
-> +Documentation/devicetree/bindings/mfd/syscon.yaml
->
->  Required properties:
->  - compatible: "hisilicon,hi3519-sysctrl".
-> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt b/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
-> index 06df04cc827a..6ce0b212ec6d 100644
-> --- a/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
-> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,idle-state.txt
-> @@ -81,4 +81,4 @@ Example:
->                 };
->         };
->
-> -[1]. Documentation/devicetree/bindings/arm/idle-states.txt
-> +[1]. Documentation/devicetree/bindings/arm/idle-states.yaml
-> diff --git a/Documentation/devicetree/bindings/arm/omap/mpu.txt b/Documentation/devicetree/bindings/arm/omap/mpu.txt
-> index f301e636fd52..e41490e6979c 100644
-> --- a/Documentation/devicetree/bindings/arm/omap/mpu.txt
-> +++ b/Documentation/devicetree/bindings/arm/omap/mpu.txt
-> @@ -17,7 +17,7 @@ am335x and am437x only:
->  - pm-sram: Phandles to ocmcram nodes to be used for power management.
->            First should be type 'protect-exec' for the driver to use to copy
->            and run PM functions, second should be regular pool to be used for
-> -          data region for code. See Documentation/devicetree/bindings/sram/sram.txt
-> +          data region for code. See Documentation/devicetree/bindings/sram/sram.yaml
->            for more details.
->
->  Examples:
-> diff --git a/Documentation/devicetree/bindings/arm/psci.yaml b/Documentation/devicetree/bindings/arm/psci.yaml
-> index 8ef85420b2ab..f8218e60e3e2 100644
-> --- a/Documentation/devicetree/bindings/arm/psci.yaml
-> +++ b/Documentation/devicetree/bindings/arm/psci.yaml
-> @@ -100,7 +100,7 @@ properties:
->        bindings in [1]) must specify this property.
->
->        [1] Kernel documentation - ARM idle states bindings
-> -        Documentation/devicetree/bindings/arm/idle-states.txt
-> +        Documentation/devicetree/bindings/arm/idle-states.yaml
->
->    "#power-domain-cells":
->      description:
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> index 17f87178f6b8..3647007f82ca 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> @@ -42,7 +42,7 @@ properties:
->        be part of GCC and hence the TSENS properties can also be part
->        of the GCC/clock-controller node.
->        For more details on the TSENS properties please refer
-> -      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> +      Documentation/devicetree/bindings/thermal/qcom-tsens.yaml
->
->    nvmem-cell-names:
->      minItems: 1
