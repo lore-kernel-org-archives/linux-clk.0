@@ -2,99 +2,87 @@ Return-Path: <SRS0=kzU5=4M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FCFC35677
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 03:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB5BC35669
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 03:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C70C2067D
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 03:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED3220836
+	for <linux-clk@archiver.kernel.org>; Mon, 24 Feb 2020 03:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582513503;
-	bh=lBP3sLiTdE3mK2nNhYHVOrpOPMuKGWVZqzVUSARmOQ8=;
+	s=default; t=1582515563;
+	bh=JkrEc2MaNepQNF9f/dnwBAADKS3nNGfp1NS3WsPz978=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tTMBao6zLloZUJj4oOV7whFdllUiEmWRaOgIantm8qHCEunZ8ee/zOJCzBIu1hRNC
-	 M/QLStdehFxZb/6CA7zBOQYCz4Ew1tW9NrPZGPwYjv4BHVkoQXypsumTvOtq0+3rIe
-	 7F/fDE8Ny9/hHe1689aWxCex0AiqxLlfVQMwWQW0=
+	b=IcFkWrZn4AY7i5A0cRGz7ADJ9k7vwn/X00lBT6jG28qjE/0RBm+5WT2EUt0wcKynY
+	 XmnagI33QqnfMpKB/hhQyqiPy+gL5CQ8/bG4fBbbrouu+eUfh5QKGx+OUh1xWkJFFF
+	 hE7dWqaGllz7VHAWRPBpdRGzYetS9qx7RwY/navk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbgBXDFD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 23 Feb 2020 22:05:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37608 "EHLO mail.kernel.org"
+        id S1727189AbgBXDjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 23 Feb 2020 22:39:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727156AbgBXDFD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 23 Feb 2020 22:05:03 -0500
+        id S1727166AbgBXDjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 23 Feb 2020 22:39:23 -0500
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C9A20658;
-        Mon, 24 Feb 2020 03:04:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8711620658;
+        Mon, 24 Feb 2020 03:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582513502;
-        bh=lBP3sLiTdE3mK2nNhYHVOrpOPMuKGWVZqzVUSARmOQ8=;
+        s=default; t=1582515562;
+        bh=JkrEc2MaNepQNF9f/dnwBAADKS3nNGfp1NS3WsPz978=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LyOMw9JJ7RmFgbAhf5K9kXqji7z86MdXF9Aru7jF0ubHaQAAUUdHqWnWrtC9IUJhi
-         NFqfqFuWFHoHb0jHKr9z6MiGVOtY5wOx41yY4V0XpG2rGMLM0hjnVMrwouex3YD4DJ
-         c0zfOo/Qy8cuxrfTKfXFuEe4B3IxNkj7e67IqTLM=
-Date:   Mon, 24 Feb 2020 11:04:55 +0800
+        b=hRRB/vVqLw+c4mdGgtuPTPGB088ciHEohbGC1mZe9LVWhf5auaqrw0Yw9DLW+eVNY
+         azTqZg+KuarjySjwk3i8iVbDsApgXZNFWanZ2ISkdUfTdCEOSOPsT1cR1zd6O6FuLK
+         hh9ISC3IqCMHsrWn+E+2dmI+qjOMk2TCgXgLMkog=
+Date:   Mon, 24 Feb 2020 11:39:11 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, abel.vesa@nxp.com, peng.fan@nxp.com,
-        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
+To:     peng.fan@nxp.com
+Cc:     sboyd@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
+        abel.vesa@nxp.com, leonard.crestez@nxp.com, kernel@pengutronix.de,
+        linux-imx@nxp.com, aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH 3/3] clk: imx8mp: Correct the enet_qos parent clock
-Message-ID: <20200224030453.GG27688@dragon>
-References: <1582092251-19222-1-git-send-email-Anson.Huang@nxp.com>
- <1582092251-19222-3-git-send-email-Anson.Huang@nxp.com>
+        anson.huang@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de
+Subject: Re: [PATCH RESEND v3 0/4] clk: imx: imx8m: fix a53 cpu clock
+Message-ID: <20200224033911.GH27688@dragon>
+References: <1582107429-21123-1-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1582092251-19222-3-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1582107429-21123-1-git-send-email-peng.fan@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 02:04:11PM +0800, Anson Huang wrote:
-> From: Fugang Duan <fugang.duan@nxp.com>
+On Wed, Feb 19, 2020 at 06:17:05PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> enet_qos is for eqos tsn AXI bus clock whose clock source is from
-> ccm_enet_axi_clk_root, and controlled by CCM_CCGR59(offset 0x43b0)
-> and CCM_CCGR64(offset 0x4400), so correct enet_qos root clock's
-> parent clock to sim_enet.
+> V3:
+>  Rebased to Shawn's for-next branch
+>  Typo fix
 > 
-> Fixes: 9c140d992676 ("clk: imx: Add support for i.MX8MP clock driver")
-> Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
-
-When you forward a patch from someone, you need to add your SoB.
-
-I fixed it up and applied all.
-
-Shawn
-
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> V2:
+>  Fix i.MX8MP build
+>  Update cover letter, i.MX7D not have this issue 
 > 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 1a9d7a0..cb58fb8 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -688,7 +688,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_CAN1_ROOT] = imx_clk_hw_gate2("can1_root_clk", "can1", ccm_base + 0x4350, 0);
->  	hws[IMX8MP_CLK_CAN2_ROOT] = imx_clk_hw_gate2("can2_root_clk", "can2", ccm_base + 0x4360, 0);
->  	hws[IMX8MP_CLK_SDMA1_ROOT] = imx_clk_hw_gate4("sdma1_root_clk", "ipg_root", ccm_base + 0x43a0, 0);
-> -	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "enet_axi", ccm_base + 0x43b0, 0);
-> +	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "sim_enet_root_clk", ccm_base + 0x43b0, 0);
->  	hws[IMX8MP_CLK_SIM_ENET_ROOT] = imx_clk_hw_gate4("sim_enet_root_clk", "enet_axi", ccm_base + 0x4400, 0);
->  	hws[IMX8MP_CLK_GPU2D_ROOT] = imx_clk_hw_gate4("gpu2d_root_clk", "gpu2d_div", ccm_base + 0x4450, 0);
->  	hws[IMX8MP_CLK_GPU3D_ROOT] = imx_clk_hw_gate4("gpu3d_root_clk", "gpu3d_core_div", ccm_base + 0x4460, 0);
-> -- 
-> 2.7.4
+> The A53 CCM clk root only accepts input up to 1GHz, CCM A53 root
+> signoff timing is 1Ghz, however the A53 core which sources from CCM
+> root could run above 1GHz which voilates the CCM.
 > 
+> There is a CORE_SEL slice before A53 core, we need configure the
+> CORE_SEL slice source from ARM PLL, not A53 CCM clk root.
+> 
+> The A53 CCM clk root should only be used when need to change ARM PLL
+> frequency.
+> 
+> Peng Fan (4):
+>   clk: imx: imx8mq: fix a53 cpu clock
+>   clk: imx: imx8mm: fix a53 cpu clock
+>   clk: imx: imx8mn: fix a53 cpu clock
+>   clk: imx: imx8mp: fix a53 cpu clock
+
+Applied all, thanks.
