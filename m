@@ -2,49 +2,45 @@ Return-Path: <SRS0=Mizi=4N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C03B8C35E03
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 14:33:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E13A9C35E01
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDF321744
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 14:33:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B24DA24670
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:01:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbgBYOd2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 09:33:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43716 "EHLO mx2.suse.de"
+        id S1730648AbgBYQBB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 11:01:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41860 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729048AbgBYOd2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Feb 2020 09:33:28 -0500
+        id S1730422AbgBYQBB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:01:01 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id BCCD8B14B;
-        Tue, 25 Feb 2020 14:33:25 +0000 (UTC)
-Message-ID: <5754451af3663ba39e8358dd15e586ee1485f86a.camel@suse.de>
-Subject: Re: [PATCH 16/89] clk: bcm: rpi: Add clock id to data
+        by mx2.suse.de (Postfix) with ESMTP id 2B30FADBE;
+        Tue, 25 Feb 2020 16:00:58 +0000 (UTC)
+Message-ID: <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
+Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Tue, 25 Feb 2020 15:33:23 +0100
-In-Reply-To: <20200225095433.tyxamibqyrgw5355@gilmour.lan>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Date:   Tue, 25 Feb 2020 17:00:56 +0100
+In-Reply-To: <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
 References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-         <3028e04887c7b8a6ffc150c016aa63281461b434.1582533919.git-series.maxime@cerno.tech>
-         <67855a10-f7cb-b6b3-7b9f-d9c9baa5f105@i2se.com>
-         <20200225095433.tyxamibqyrgw5355@gilmour.lan>
+         <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-k9G+OdjwEzh2rr0BSMKX"
+        protocol="application/pgp-signature"; boundary="=-rHY9rlJOyK3Y6KPoBaSb"
 User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
@@ -53,87 +49,119 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-k9G+OdjwEzh2rr0BSMKX
+--=-rHY9rlJOyK3Y6KPoBaSb
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Hi Maxime,
 
-On Tue, 2020-02-25 at 10:54 +0100, Maxime Ripard wrote:
-> Hi Stefan,
+On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
+> The current firmware clock driver for the RaspberryPi can only be probed =
+by
+> manually registering an associated platform_device.
 >=20
-> On Mon, Feb 24, 2020 at 08:25:46PM +0100, Stefan Wahren wrote:
-> > Hi Maxime,
-> >=20
-> > Am 24.02.20 um 10:06 schrieb Maxime Ripard:
-> > > The driver has really only supported one clock so far and has hardcod=
-ed
-> > > the
-> > > ID used in communications with the firmware in all the functions
-> > > implementing the clock framework hooks. Let's store that in the clock=
- data
-> > > structure so that we can support more clocks later on.
-> >=20
-> > thank you for this series. I looked through it but i couldn't find an
-> > explanation why we need to expose firmware clocks via DT instead of
-> > extending clk-bcm2835. The whole pllb / clk-raspberrypi stuff was an
-> > exception to get cpufreq working. I prefer to keep it an exception.
+> While this works fine for cpufreq where the device gets attached a clkdev
+> lookup, it would be tedious to maintain a table of all the devices using
+> one of the clocks exposed by the firmware.
 >=20
-> Thanks for pointing this out, I indeed forgot to address it in my
-> cover letter or my commit log.
->=20
-> I'm not quite sure what the situation was with the previous
-> RaspberryPi, but the RPi4 firmware does a bunch of things under the
-> hood to make sure that everything works as expected:
->=20
->  - The HSM (and V3D) clocks will be reparented to multiple PLLs
->    depending on the rate being asked for.
->  - Still depending on the rate, the firmware will adjust the voltage
->    of the various PLLs.
->  - Depending on the temperature of the CPU and GPU, the firmware will
->    change the rate of clocks to throttle in case of the cores
->    overheating, with all the fallout that might happen to clocks
->    deriving from it.
->  - No matter what we choose to do in Linux, this will happen so
->    whether or not we want to do it, so doing it behind the firmware's
->    back (or the firmware doing it behind Linux's back) will only
->    result in troubles, with voltages too low, or the firmware trying
->    to access the same register at the same time than the Linux driver
->    would, etc.
->=20
-> So all in all, it just seems much easier and safer to use the firmware
-> clocks.
+> Since the DT on the other hand is the perfect place to store those
+> associations, make the firmware clocks driver probe-able through the devi=
+ce
+> tree so that we can represent it as a node.
 
-I agree with your assesment. Both DVFS and overheating/overvoltage protecti=
-ons
-will cause trouble, if not, make a Linux solution impossible while using th=
-e
-Foundation's firmware.
+I'm not convinced this is the right approach, and if we decide to go this w=
+ay,
+there are more changes to take into account.
 
-Please note that, as Stefan says, it'd be nice to keep track of those argum=
-ents
-somewhere in the commit messages.
+For one, if we create a dt node for this driver, we'd have to delete the
+platform device creation in firmware/raspberrypi.c and then we'd be even ab=
+le
+to bypass raspberrypi-cpufreq altogether by creating opp tables in dt. But
+there are reasons we didn't go that way at the time.
+
+We've made an effort to avoid using dt for firmware interfaces whenever
+possible as, on one hand, it's arguable they don't fit device-tree's hardwa=
+re
+description paradigm and, on the other, the lack of flexibility they impose
+once the binding is defined. VC4's firmware interfaces are not set in stone=
+,
+nor standardized like SCMI, so the more flexible we are to future changes t=
+he
+better.
+
+Another thing I'm not all that happy about it's how dynamic clock registeri=
+ng
+is handled in patch #22 (but I'll keep it here as relevant to the discussio=
+n):
+
+- Some of those fw managed clocks you're creating have their mmio counterpa=
+rt
+  being registered by clk-bcm238. IMO either register one or the other, giv=
+ing
+  precedence to the mmio counterpart. Note that for pllb, we deleted the
+  relevant code from clk-bcm2385.
+
+- The same way we were able to map the fw CPU clock into the clk tree
+  (pllb/pllb_arm) there are no reasons we shouldn't be able to do the same =
+for
+  the VPU clocks. It's way nicer and less opaque to users (this being a
+  learning platform adds to the argument).
+
+- On top of that, having a special case for the CPU clock registration is
+  nasty. Lets settle for one solution and make everyone follow it.
+
+- I don't see what's so bad about creating clock lookups. IIUC there are on=
+ly
+  two clocks that need this special handling CPU & HDMI, It's manageable. Y=
+ou
+  don't even have to mess with the consumer driver, if there was ever to be=
+ a
+  dt provided mmio option to this clock.
+
+>  drivers/clk/bcm/clk-raspberrypi.c | 11 ++++++++---
+>  1 file changed, 8 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
+> raspberrypi.c
+> index 1654fd0eedc9..94870234824c 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -255,15 +255,13 @@ static int raspberrypi_clk_probe(struct platform_de=
+vice
+> *pdev)
+>  	struct raspberrypi_clk *rpi;
+>  	int ret;
+> =20
+> -	firmware_node =3D of_find_compatible_node(NULL, NULL,
+> -					"raspberrypi,bcm2835-firmware");
+> +	firmware_node =3D of_parse_phandle(dev->of_node, "raspberrypi,firmware"=
+,
+> 0);
+
+There is no such phandle in the upstream device tree. Maybe this was aimed =
+at
+the downstream dt?
 
 Regards,
 Nicolas
 
 
---=-k9G+OdjwEzh2rr0BSMKX
+--=-rHY9rlJOyK3Y6KPoBaSb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VMDMACgkQlfZmHno8
-x/4/WQf+Kyv1s3y5c1zna47wu/wkKyIjrM7qRGSnveL9N9nIqBjK0Z4BH7iLDXBx
-25kFxVsa9SyNx5ipe612NlRgWcyYHbOxwaWI7SynhXnoSHvAd990CGpEAMA/WZx4
-jvB2Ll/SRJuHXtpAyRmZyOOBUE6vX7hnM/wC/Rl3pdd9jvc6phjEza5bB54BTGXW
-/CLu1E+DR/Yr1KPkeP6odZ+Xfc5UIuyYGqDi9lALXg7mPJhYjKYdMRHtbueyyNMI
-VGh5So6ZKwPMRCqruOh8C2A2+UqHg2Q8vq5x52uFBUC4PZXKgzpgDRWJBiPJLqhu
-pVGAeN2+7Odf4HzO6fexgYGCxlooRg==
-=yNC6
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VRLgACgkQlfZmHno8
+x/6Q2gf+ISkwE0dJhNaeauh1TOB9Ymx8NHoZYccWJLmwg4vqH+nOGwxQM4O26qbu
+lXwrXTBzGcDwvdJkGmBsrTqRGGRbgtmeBQu4siPFNjD7hl775Uz2FIfNlWnUEieQ
+lKbdquRkNjoHvXoDDuHEHuBlHQ2W0IckhNFiEMhdDGb2n9eAvBaILoba+pgjgwP6
+IAnRGDlk7JBf7kuWHk6RWEOjOwKoCJlHJsNA09ZK2tjXMkaOqKLWnGIVGFMECm7/
+ThGgG9gqv65WG/8uK1E/F5hnR3qVbYXLcXAXZLK28nxkXODDw7fNBEXEUfXHJKqT
+TtEHMJ79mu2FeQA32GE0G3lduoWGjg==
+=HBgi
 -----END PGP SIGNATURE-----
 
---=-k9G+OdjwEzh2rr0BSMKX--
+--=-rHY9rlJOyK3Y6KPoBaSb--
 
