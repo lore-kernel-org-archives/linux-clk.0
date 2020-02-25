@@ -2,119 +2,100 @@ Return-Path: <SRS0=Mizi=4N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B2CC35DE1
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 13:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBEEC35E01
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 13:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA3272064A
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 13:42:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="RL8mmcLV";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G5JoxY8H"
+	by mail.kernel.org (Postfix) with ESMTP id C82842465D
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 13:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582639115;
+	bh=t6y4ed1PLF1YCpiLXkMfIss2UpXqGJbG2hojsdADI9g=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=zCXGKddXMZXij4o9M+k60aciRdK5w1ikoKCHchEYTFBhZTPlLm+Xi2Sc2S9qn7lBU
+	 cFtGiyKuB/WB7+jeLLibcxqwoZ42ma4zVCWgSenvsEToSOaThfLUWevXhJ04cikxur
+	 JQ+mPSLYidK8GaUu6hHrG+jVK74+75ilUUjjBfWA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729810AbgBYNmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 08:42:53 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:36683 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728981AbgBYNmx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 08:42:53 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 9A55E21583;
-        Tue, 25 Feb 2020 08:42:52 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Tue, 25 Feb 2020 08:42:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=ZDhCy/y8yyPtBzPxZ7Aj2t/INM
-        hyzo12HfiiZ7ioDu4=; b=RL8mmcLVg5+DphyQCelzR0ZlT7kacbt9kFeG1ddqfJ
-        u/kJBPBeF9qWqyWC57FYbjVJlZKTbJx26MObjSQBcATy5rKpPOcz1BXjZJEBdvzw
-        IOJvmZr96uNmdDmpVlyaPAf88Vgf7Lsowu548TiZ8Q5gGFEKJO9bljbXVPwmEBRj
-        MYsf6G84UjyqT594l3gE9c7x8EEV5/zLQSvB/xjetUqH5QXyTy6R2qb2VYeBiKkW
-        grlYUclufUdRtlT3Aap6mE96RRqDfdyr8UK8qonQ4dF5DXVKkHKw4BfNFcex4Aj6
-        Jw5XbmCLEViR4AnH3Hg3ODhm9WRYlydFEUzJ26WVgbXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=ZDhCy/y8yyPtBzPxZ
-        7Aj2t/INMhyzo12HfiiZ7ioDu4=; b=G5JoxY8HqspBY55gQbCeR88ubQqO5Gl09
-        g1j9oWN2IiCm2uLP5jHqE5lauSAke4/0iKlkK3qYs6cz/y9WRFB5w9acAbR1Y1zk
-        XI6jlNC3Y5A+alLbcbhzLd4kTX+3prE20V9gPFws/WeIunrDGiivAWWpqqWEJsZH
-        mPZm54ocQd7ZLINrr+3F7FpYF62ag7GwHk6o2LcrIzWzlpkexnKaE+N8ezWJuaSg
-        vByoRaZn9K/GfjvB+chVbQp+2fWK9He4/7qEfPwytQSvbBUI22rChkNl6Np7yS6S
-        RArc8+R3fu1GK9o8qA8Fkh8NZ8LKsarVW1Jyh60J5wRInB9eb4mPA==
-X-ME-Sender: <xms:WyRVXip8D03nUG0yCpfjhvFVI_sVoAvFaoqHINXGN4VgI274dIIRBw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrledvgdehgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucft
-    ihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrdekle
-    drieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:WyRVXmesNuHmTnNP59hnjcrPE2cS5s0p6rrDsxQO-bmSWd9fLcmhMg>
-    <xmx:WyRVXsgroIsobdcPS3hCyBdK1HzSUMJd3Lo2VezYCbLEk2FjudWyqw>
-    <xmx:WyRVXsOZw-nqEKKOpJmpfAXgIkhcsQv-kYlVER77zW4JgATY_wkOlw>
-    <xmx:XCRVXiEnsincG-x-p9BvRqePhITkxnwqOJC-y9IGly2ziqapArKmSA>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4FE7C3060FE0;
-        Tue, 25 Feb 2020 08:42:51 -0500 (EST)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     linux-clk@vger.kernel.org, Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH] clk: Fix phase init check
-Date:   Tue, 25 Feb 2020 14:42:48 +0100
-Message-Id: <20200225134248.919889-1-maxime@cerno.tech>
-X-Mailer: git-send-email 2.24.1
+        id S1729421AbgBYN6c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 08:58:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37172 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729253AbgBYN6c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Feb 2020 08:58:32 -0500
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5BB8424676;
+        Tue, 25 Feb 2020 13:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582639111;
+        bh=t6y4ed1PLF1YCpiLXkMfIss2UpXqGJbG2hojsdADI9g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=f32zw9C0HfAdsMFNkR/SSZgTMMd51Yox8rfhODv5V66ybbzFYX82uNSO9d8WnnZOW
+         jroenNy7iLx1B2AIc/gPxv3Vo4wHCTw8ivpk4ssE2LEYAXVY5LPULd7Ersj6VQTrmg
+         8efTrJSNPey+Gan+KmEaUudMJEQZ8NEr2FCyPF8I=
+Received: by mail-qk1-f178.google.com with SMTP id j8so11934784qka.11;
+        Tue, 25 Feb 2020 05:58:31 -0800 (PST)
+X-Gm-Message-State: APjAAAXA3S0rBc2BzCVM0eAKlRq7a2efW21V9kx0vSWkHOTSl2mVew/D
+        2rPSmNQG7aDUA7d6F2vhe/E8yWYQtwRbXg5Zqw==
+X-Google-Smtp-Source: APXvYqycr1cIrkZDL636h3Say9Q5rIeytzoWFbqhPQujtpYITXrOa2jNW6Rhb9XWTsPBcgeSvBtiMfIR22F5FTfDteY=
+X-Received: by 2002:a05:620a:1237:: with SMTP id v23mr39928955qkj.223.1582639110486;
+ Tue, 25 Feb 2020 05:58:30 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1582540703-6328-1-git-send-email-tdas@codeaurora.org>
+ <1582540703-6328-4-git-send-email-tdas@codeaurora.org> <20200224184201.GA6030@bogus>
+ <eec22330-2bf4-f4f5-3d28-6b69aa71f992@codeaurora.org>
+In-Reply-To: <eec22330-2bf4-f4f5-3d28-6b69aa71f992@codeaurora.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 25 Feb 2020 07:58:19 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKRr3aOpcbPOtkArxnnJOBd-XaUGRVesR_CnA11pFHYXQ@mail.gmail.com>
+Message-ID: <CAL_JsqKRr3aOpcbPOtkArxnnJOBd-XaUGRVesR_CnA11pFHYXQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 2760878662a2 ("clk: Bail out when calculating phase fails during clk
-registration") introduced a check on error values at the time the clock is
-registered to bail out when such an error occurs.
+On Mon, Feb 24, 2020 at 11:49 PM Taniya Das <tdas@codeaurora.org> wrote:
+>
+> Hi Rob,
+>
+> On 2/25/2020 12:12 AM, Rob Herring wrote:
+>
+> >
+> > My bot found errors running 'make dt_binding_check' on your patch:
+> >
+> > Documentation/devicetree/bindings/display/simple-framebuffer.example.dts:21.16-37.11: Warning (chosen_node_is_root): /example-0/chosen: chosen node must be at root node
+> > Error: Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dts:21.26-27 syntax error
+> > FATAL ERROR: Unable to parse input tree
+> > scripts/Makefile.lib:300: recipe for target 'Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml' failed
+> > make[1]: *** [Documentation/devicetree/bindings/clock/qcom,sc7180-mss.example.dt.yaml] Error 1
+> > Makefile:1263: recipe for target 'dt_binding_check' failed
+> > make: *** [dt_binding_check] Error 2
+> >
+> > See https://patchwork.ozlabs.org/patch/1242999
+> > Please check and re-submit.
+> >
+>
+> The error shows syntax error at line 21, below is the example.dts from
+> my tree and would compile for me as I have the dependency of the include
+> file when I compile.
 
-However, it doesn't check whether the returned value is positive which will
-happen if the driver returns a non-zero phase, and ends up returning that
-to the caller on success, breaking the API that implies that the driver
-should return 0 on success.
+The header should be part of this patch if possible.
 
-Fixes: 2760878662a2 ("clk: Bail out when calculating phase fails during clk registration")
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/clk.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ebfc1e2103cb..f122e9911b57 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3344,6 +3344,7 @@ static int __clk_core_init(struct clk_core *core)
- 	int ret;
- 	struct clk_core *parent;
- 	unsigned long rate;
-+	int phase;
- 
- 	if (!core)
- 		return -EINVAL;
-@@ -3457,8 +3458,9 @@ static int __clk_core_init(struct clk_core *core)
- 	 * Since a phase is by definition relative to its parent, just
- 	 * query the current clock phase, or just assume it's in phase.
- 	 */
--	ret = clk_core_get_phase(core);
--	if (ret < 0) {
-+	phase = clk_core_get_phase(core);
-+	if (phase < 0) {
-+		ret = phase;
- 		pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
- 			core->name);
- 		goto out;
--- 
-2.24.1
-
+Rob
