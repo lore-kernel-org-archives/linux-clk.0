@@ -2,87 +2,152 @@ Return-Path: <SRS0=Mizi=4N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 913ABC35E04
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 17:58:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E88EBC35E04
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 18:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B43D2176D
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 17:58:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFEC620CC7
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 18:16:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582653484;
-	bh=LwXKWjZfFSdGikn7p8jWRZJOGinTNMobus6UKP/+6XE=;
+	s=default; t=1582654617;
+	bh=WMnTiSLcGKnpluzNKx++szmvD4S9JUV7fzgGr7J8B7E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mKnRwZjQIXk2bZZoVeFD4cHgLDcvOv/PHQrncZw7SrUkTtsYdcTLD1GO/xyiNJXbG
-	 AG5dmTGVA8BOpXoaLAK27pCPdKXAT5YJnvZqABal4wmqj1DqO6NArIw93ZQgKYVznf
-	 oZQm03Hlao1SZ6V6JanUtvkLlDQyF58hmYxjuYmE=
+	b=uwm+t4x57i5HRRz5j063HOKZyLLRSIPlyqtGhcBbmWn0C8IZwcTwSCCyEwE6Z2/v+
+	 dyJ16ur8YBxl41oXZPfKqwxuIp/yVXDdSpUF65vTHpj49JgjKOK5kMVyYo4jxZvEMc
+	 8pZ4867pSW4DmdHDcNhYp5NkwuXpLDWFxBm71xcs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbgBYR6E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 12:58:04 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38317 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729536AbgBYR6D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 12:58:03 -0500
-Received: by mail-ot1-f67.google.com with SMTP id z9so360582oth.5;
-        Tue, 25 Feb 2020 09:58:03 -0800 (PST)
+        id S1726953AbgBYSQ5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 13:16:57 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40136 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730995AbgBYSQ5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 13:16:57 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a142so236098oii.7;
+        Tue, 25 Feb 2020 10:16:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8GwTzddrLu/wUsAnxNvKRBKqXG7o72fYpPpNcXHr19E=;
-        b=ajEf5W+nHQHEO30OrPLyA821vOv2CcsaxFZZBl5NxHZ0Ev/z3kVmuA+D3B/S19N55F
-         hqIOj+kiRpdZ8gB9fSe6NrYEauxmffxc77LT5Au/6MqeXEpHiSfIN66HRYQYeurHhsP+
-         zkKwFjSGwLLwZe9u/aRjU58SiMW+MyHnbwwfTFlrYnRpiJyHCLJ7I/6cI+gNCQ4DHMka
-         TJUNFr8ZnwHJuduI+QqZL40K03u6I+pkM1fq085as7x0IKTO6Qv2umZ5grgW0vUm0nU+
-         gPyqZfM0Sb9sJV3JSKn+Ax0sUNa2ZZ/um0xTmc7ERhyKs+I7Joa5/GSFDQu/t6F4KWNv
-         HdPg==
-X-Gm-Message-State: APjAAAVm/P9sCpbY2wK/RVEUYq64ZnyJQgkhiUg15KZNyL/TWFpnbalM
-        h/tPB79YrBJIx6oyf1uW2g==
-X-Google-Smtp-Source: APXvYqyqIOkEAcKJ5+8hpXXY05G/dthQhXpUBc1sdkuly+kiJaFQmDzPObHMm6N2y/PtDm8/3bQW7Q==
-X-Received: by 2002:a05:6830:1149:: with SMTP id x9mr46722989otq.156.1582653483133;
-        Tue, 25 Feb 2020 09:58:03 -0800 (PST)
+        bh=7UyTeMzaTbOixtQKcOlo1zEfQ//tLMtgH0J7yCWDsaI=;
+        b=YFKBgbjPT381uwJhjngnsA2yYIsTFXd5kijxBupBIeEUKnJf7TI1M/FhpVABMeJ1pR
+         WDO2kSXuneSEL3AXaQSobykz6gBIyoKyMRf3lPW+Rz35o4IHREOJc17d3BRUHTdHQUoY
+         OJvCyDZ4u23m6hSWq5gKU0PB6JC1RMaCFDGLc1+HKs4CSQ70txwszbbtRPwfhOA3oE6U
+         bNaocxuWr7f2uC4ZzRhzQnfbTuXIbaywgNrxZVHf+6ZnOPeSUG+8Rr4U8i4BqW8rfelS
+         Zsvmnht31kYiPQ7hVas7umbBWT4bbpHsedvnLVDBtYxyRCCU8NwEOACm6F4YtYRd5EM4
+         O8LA==
+X-Gm-Message-State: APjAAAWz+x0Hwdi2J+UUk26AjQC4+kUnDInjbZ7+c5uSgsxLfnxUgNUH
+        ECFI4kN0swixllTaMu9LwzuBxIU=
+X-Google-Smtp-Source: APXvYqyG5jtbTR8e+2eatGO7AOO/3BLqG2/NHQ3384FNvtFffmk1sB1TsteHHtEFBpdhQlFHBTXPqA==
+X-Received: by 2002:aca:190b:: with SMTP id l11mr175520oii.65.1582654616272;
+        Tue, 25 Feb 2020 10:16:56 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y6sm5900513oti.44.2020.02.25.09.58.01
+        by smtp.gmail.com with ESMTPSA id c10sm5886903otl.77.2020.02.25.10.16.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Feb 2020 09:58:02 -0800 (PST)
-Received: (nullmailer pid 7499 invoked by uid 1000);
-        Tue, 25 Feb 2020 17:58:01 -0000
-Date:   Tue, 25 Feb 2020 11:58:01 -0600
+        Tue, 25 Feb 2020 10:16:55 -0800 (PST)
+Received: (nullmailer pid 3615 invoked by uid 1000);
+        Tue, 25 Feb 2020 18:16:54 -0000
+Date:   Tue, 25 Feb 2020 12:16:54 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com,
-        daniel.baluta@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
-        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Joakim Zhang <qiangqing.zhang@nxp.com>
-Subject: Re: [PATCH 3/7] bindings: clock: imx8qxp: add
- "fsl,imx8qxp-lpcg-cm40" compatible string
-Message-ID: <20200225175801.GA7447@bogus>
-References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
- <1581909561-12058-4-git-send-email-qiangqing.zhang@nxp.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 06/89] dt-bindings: clock: Add a binding for the RPi
+ Firmware clocks
+Message-ID: <20200225181654.GA694@bogus>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+ <9166f3acdc2a64e3f3ca1cd2e283005ee2df37c9.1582533919.git-series.maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1581909561-12058-4-git-send-email-qiangqing.zhang@nxp.com>
+In-Reply-To: <9166f3acdc2a64e3f3ca1cd2e283005ee2df37c9.1582533919.git-series.maxime@cerno.tech>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 17 Feb 2020 11:19:17 +0800, Joakim Zhang wrote:
-> Add "fsl,imx8qxp-lpcg-cm40" compatible string.
+On Mon, Feb 24, 2020 at 10:06:08AM +0100, Maxime Ripard wrote:
+> The firmare running on the RPi VideoCore can be used to discover and
+> change the various clocks running in the BCM2711. Since devices will
+> need to use them through the DT, let's add a pretty simple binding.
 > 
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
->  Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt | 1 +
->  1 file changed, 1 insertion(+)
+>  Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml | 39 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
+> new file mode 100644
+> index 000000000000..d37bc311321d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.yaml
+> @@ -0,0 +1,39 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/raspberrypi,firmware-clocks.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RaspberryPi Firmware Clocks Device Tree Bindings
+> +
+> +maintainers:
+> +  - Maxime Ripard <mripard@kernel.org>
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    const: raspberrypi,firmware-clocks
+> +
+> +  raspberrypi,firmware:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: >
+> +      Phandle to the mailbox node to communicate with the firmware.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Can't this be a child node of the phandle instead? Or just add 
+'#clock-cells' to the firmware node.
+
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - compatible
+> +  - raspberrypi,firmware
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    firmware_clocks: firmware-clocks {
+> +        compatible = "raspberrypi,firmware-clocks";
+> +        raspberrypi,firmware = <&firmware>;
+> +        #clock-cells = <1>;
+> +    };
+> +
+> +...
+> -- 
+> git-series 0.9.1
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
