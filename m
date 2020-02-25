@@ -2,71 +2,50 @@ Return-Path: <SRS0=Mizi=4N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.3 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44CBC35DF9
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 10:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7813BC35DF5
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 12:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6413324670
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 10:56:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A93220CC7
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 12:26:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729189AbgBYK4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 05:56:43 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:38132 "EHLO
+        id S1729181AbgBYM0B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 07:26:01 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39026 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729106AbgBYK4n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 05:56:43 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id AD0AC2942E3
-Subject: Re: [PATCH v8 0/6] arm/arm64: mediatek: Fix mmsys device probing
-To:     CK Hu <ck.hu@mediatek.com>
-Cc:     Matthias Brugger <mbrugger@suse.com>, mark.rutland@arm.com,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>, airlied@linux.ie,
-        mturquette@baylibre.com, dri-devel@lists.freedesktop.org,
-        Richard Fontana <rfontana@redhat.com>,
-        laurent.pinchart@ideasonboard.com, ulrich.hecht+renesas@gmail.com,
-        Collabora Kernel ML <kernel@collabora.com>,
-        linux-clk@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, wens@csie.org,
-        linux-arm-kernel@lists.infradead.org,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>, frank-w@public-files.de,
-        Seiya Wang <seiya.wang@mediatek.com>, sean.wang@mediatek.com,
-        Houlong Wei <houlong.wei@mediatek.com>, robh+dt@kernel.org,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Fabien Parent <fparent@baylibre.com>, sboyd@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-        p.zabel@pengutronix.de, matthias.bgg@kernel.org
-References: <20200220172147.919996-1-enric.balletbo@collabora.com>
- <1582259996.1846.7.camel@mtksdaap41>
- <7a87b486-1622-7f27-f5af-427b94a14c00@collabora.com>
- <1582277229.25992.9.camel@mtksdaap41>
- <1393a8c5-065f-cccb-2563-8b159c951d4b@suse.com>
- <1582283518.5889.10.camel@mtksdaap41>
- <6deab0a4-44a6-a15f-ac01-374f818b267c@collabora.com>
- <6eb9da70-9a0c-27fc-6c31-3ac62ede5a35@suse.com>
- <d9ad35c0-57df-ebb2-67e8-4aae55dd2fcb@collabora.com>
- <1582523544.25316.2.camel@mtksdaap41>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <688f6c85-0063-9458-858c-de7bbfb8a530@collabora.com>
-Date:   Tue, 25 Feb 2020 11:56:34 +0100
+        with ESMTP id S1729048AbgBYM0B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 07:26:01 -0500
+Received: from [IPv6:2a00:5f00:102:0:6dae:eb08:2e0f:5281] (unknown [IPv6:2a00:5f00:102:0:6dae:eb08:2e0f:5281])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: gtucker)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 535F7294D77;
+        Tue, 25 Feb 2020 12:25:59 +0000 (GMT)
+Subject: Re: next/master bisection: baseline.login on
+ sun8i-h2-plus-orangepi-zero
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     broonie@kernel.org, tomeu.vizoso@collabora.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        enric.balletbo@collabora.com, khilman@baylibre.com,
+        mgalka@collabora.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com>
+ <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
+ <158215618721.184098.2077489323832918966@swboyd.mtv.corp.google.com>
+From:   Guillaume Tucker <guillaume.tucker@collabora.com>
+Message-ID: <9bfacff8-33f2-8145-4210-dd382e6e4f27@collabora.com>
+Date:   Tue, 25 Feb 2020 12:25:56 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <1582523544.25316.2.camel@mtksdaap41>
+In-Reply-To: <158215618721.184098.2077489323832918966@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -75,386 +54,173 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 19/02/2020 23:49, Stephen Boyd wrote:
+> Adding some Allwinner folks. Presumably there is some sort of clk that
+> is failing to calculate a phase when it gets registered. Maybe that's
+> because the parent isn't registered yet?
 
+FYI this is still happening on several Allwinner boards:
 
-On 24/2/20 6:52, CK Hu wrote:
+On 25/02/2020 11:57, kernelci.org bot wrote:
+> next/master bisection: baseline.login on sun7i-a20-cubieboard2
 > 
-> Hi,
+> Summary:
+>   Start:      c99b17ac03994 Add linux-next specific files for 20200225
+>   Plain log:  https://storage.kernelci.org//next/master/next-20200225/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun7i-a20-cubieboard2.txt
+>   HTML log:   https://storage.kernelci.org//next/master/next-20200225/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun7i-a20-cubieboard2.html
+>   Result:     2760878662a29 clk: Bail out when calculating phase fails during clk registration
 > 
-> On Fri, 2020-02-21 at 18:10 +0100, Enric Balletbo i Serra wrote:
->> Hi,
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+> 
+> Parameters:
+>   Tree:       next
+>   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>   Branch:     master
+>   Target:     sun7i-a20-cubieboard2
+>   CPU arch:   arm
+>   Lab:        lab-baylibre
+>   Compiler:   gcc-8
+>   Config:     multi_v7_defconfig
+>   Test case:  baseline.login
+
+Guillaume
+
+> Quoting Guillaume Tucker (2020-02-17 23:45:41)
+>> Hi Stephen,
 >>
->> On 21/2/20 12:53, Matthias Brugger wrote:
+>> Please see the bisection report below about a boot failure.
+>>
+>> Reports aren't automatically sent to the public while we're
+>> trialing new bisection features on kernelci.org but this one
+>> looks valid.
+>>
+>> There's nothing in the serial console log, probably because it's
+>> crashing too early during boot.  I'm not sure if other platforms
+>> on kernelci.org were hit by this in the same way, it's tricky to
+>> tell partly because there is no output.  It should possible to
+>> run it again with earlyprintk enabled in BayLibre's test lab
+>> though.
+>>
+>> Thanks,
+>> Guillaume
+>>
+>>
+>> On 18/02/2020 02:14, kernelci.org bot wrote:
+>>> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+>>> * This automated bisection report was sent to you on the basis  *
+>>> * that you may be involved with the breaking commit it has      *
+>>> * found.  No manual investigation has been done to verify it,   *
+>>> * and the root cause of the problem may be somewhere else.      *
+>>> *                                                               *
+>>> * If you do send a fix, please include this trailer:            *
+>>> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+>>> *                                                               *
+>>> * Hope this helps!                                              *
+>>> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+>>>
+>>> next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+>>>
+>>> Summary:
+>>>   Start:      c25a951c50dc Add linux-next specific files for 20200217
+>>>   Plain log:  https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.txt
+>>>   HTML log:   https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.html
+>>>   Result:     2760878662a2 clk: Bail out when calculating phase fails during clk registration
+>>>
+>>> Checks:
+>>>   revert:     PASS
+>>>   verify:     PASS
+>>>
+>>> Parameters:
+>>>   Tree:       next
+>>>   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+>>>   Branch:     master
+>>>   Target:     sun8i-h2-plus-orangepi-zero
+>>>   CPU arch:   arm
+>>>   Lab:        lab-baylibre
+>>>   Compiler:   gcc-8
+>>>   Config:     multi_v7_defconfig
+>>>   Test case:  baseline.login
+>>>
+>>> Breaking commit found:
+>>>
+>>> -------------------------------------------------------------------------------
+>>> commit 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+>>> Author: Stephen Boyd <sboyd@kernel.org>
+>>> Date:   Wed Feb 5 15:28:02 2020 -0800
+>>>
+>>>     clk: Bail out when calculating phase fails during clk registration
+>>>     
+>>>     Bail out of clk registration if we fail to get the phase for a clk that
+>>>     has a clk_ops::get_phase() callback. Print a warning too so that driver
+>>>     authors can easily figure out that some clk is unable to read back phase
+>>>     information at boot.
+>>>     
+>>>     Cc: Douglas Anderson <dianders@chromium.org>
+>>>     Cc: Heiko Stuebner <heiko@sntech.de>
+>>>     Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+>>>     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>>>     Link: https://lkml.kernel.org/r/20200205232802.29184-5-sboyd@kernel.org
+>>>     Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+>>>
+>>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>>> index dc8bdfbd6a0c..ed1797857bae 100644
+>>> --- a/drivers/clk/clk.c
+>>> +++ b/drivers/clk/clk.c
+>>> @@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+>>>        * Since a phase is by definition relative to its parent, just
+>>>        * query the current clock phase, or just assume it's in phase.
+>>>        */
+>>> -     clk_core_get_phase(core);
+>>> +     ret = clk_core_get_phase(core);
+>>> +     if (ret < 0) {
+>>> +             pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
+>>> +                     core->name);
+>>> +             goto out;
+>>> +     }
+>>>  
+>>>       /*
+>>>        * Set clk's duty cycle.
+>>> -------------------------------------------------------------------------------
 >>>
 >>>
->>> On 21/02/2020 12:37, Enric Balletbo i Serra wrote:
->>>> Hi CK and Matthias,
->>>>
->>>> On 21/2/20 12:11, CK Hu wrote:
->>>>> Hi, Matthias:
->>>>>
->>>>> On Fri, 2020-02-21 at 11:24 +0100, Matthias Brugger wrote:
->>>>>>
->>>>>> On 21/02/2020 10:27, CK Hu wrote:
->>>>>>> Hi, Enric:
->>>>>>>
->>>>>>> On Fri, 2020-02-21 at 09:56 +0100, Enric Balletbo i Serra wrote:
->>>>>>>> Hi CK,
->>>>>>>>
->>>>>>>> Thanks for your quick answer.
->>>>>>>>
->>>>>>>> On 21/2/20 5:39, CK Hu wrote:
->>>>>>>>> Hi, Enric:
->>>>>>>>>
->>>>>>>>> On Thu, 2020-02-20 at 18:21 +0100, Enric Balletbo i Serra wrote:
->>>>>>>>>> Dear all,
->>>>>>>>>>
->>>>>>>>>> Those patches are intended to solve an old standing issue on some
->>>>>>>>>> Mediatek devices (mt8173, mt2701 and mt2712) in a slightly different way
->>>>>>>>>> to the precedent series.
->>>>>>>>>>
->>>>>>>>>> Up to now both drivers, clock and drm are probed with the same device tree
->>>>>>>>>> compatible. But only the first driver get probed, which in effect breaks
->>>>>>>>>> graphics on those devices.
->>>>>>>>>>
->>>>>>>>>> The version eight of the series tries to solve the problem with a
->>>>>>>>>> different approach than the previous series but similar to how is solved
->>>>>>>>>> on other Mediatek devices.
->>>>>>>>>>
->>>>>>>>>> The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
->>>>>>>>>> control clock gates (which is used in the clk driver) and some registers
->>>>>>>>>> to set the routing and enable the differnet blocks of the display
->>>>>>>>>> and MDP (Media Data Path) subsystem. On this series the clk driver is
->>>>>>>>>> not a pure clock controller but a system controller that can provide
->>>>>>>>>> access to the shared registers between the different drivers that need
->>>>>>>>>> it (mediatek-drm and mediatek-mdp). And the biggest change is, that in
->>>>>>>>>> this version, clk driver is the entry point (parent) which will trigger
->>>>>>>>>> the probe of the corresponding mediatek-drm driver and pass its MMSYS
->>>>>>>>>> platform data for display configuration.
->>>>>>>>>
->>>>>>>>> When mmsys is a system controller, I prefer to place mmsys in
->>>>>>>>> drivers/soc/mediatek, and it share registers for clock, display, and mdp
->>>>>>>>> driver. This means the probe function is placed in
->>>>>>>>> drivers/soc/mediatek ,its display clock function, mdp clock function are
->>>>>>>>> placed in drivers/clk, display routing are placed in drivers/gpu/drm,
->>>>>>>>> and mdp routing are placed in dirvers/video.
->>>>>>>>>
->>>>>>>>
->>>>>>>> I understand what you mean but I am not sure this makes the code clearer and
->>>>>>>> useful. The driver in drivers/soc/mediatek will be a simple dummy implementation
->>>>>>>> of a "simple-mfd" device (a driver that simply matches with
->>>>>>>> "mediatek,mt8173-mmsys" and instantiates the "clk-mt8173-mm" and the
->>>>>>>> "mediatek-drm" driver (note that mediatek-mdp" is already instantiated via
->>>>>>>> device-tree).
->>>>>>>>
->>>>>>>
->>>>>>> It's clear that mmsys is neither a pure clock controller nor a pure
->>>>>>> routing controller for display and mdp. 
->>>>>>>
->>>>>>>> It'd be nice had a proper device-tree with a "simple-mfd" for mmsys from the
->>>>>>>> beginning representing how really hardwware is, but I think that, change this
->>>>>>>> now, will break backward compatibility.
->>>>>>>
->>>>>>> Maybe this is a solution. Current device tree would work only on old
->>>>>>> kernel version with a bug, so this mean there is no any device tree
->>>>>>> works on kernel version without bug. Why do we compatible with such
->>>>>>> device tree?
->>>>>>>
->>>>>>
->>>>
->>>> So the only reason why current DT worked at some point is because there was a
->>>> kernel bug?
->>>>
+>>> Git bisection log:
 >>>
->>> I'd say you can call it a kernel bug:
->>> https://patchwork.kernel.org/patch/10367877/#22078767
->>>
->>>
->>>> If that's the case I think we shouldn't worry about break DT compatibility (I'm
->>>> sorry for those that having a buggy kernel makes display working)
->>>>
->>>>>> The idea behind this is, that the device-tree could be passed by some boot
->>>>>> firmware, so that the OS do not care about it. For this we need a stable DTS as
->>>>>> otherwise newer kernel with older FW would break.
->>>>>>
->>>>>> DTS is supposed to be just a different description of the HW like ACPI. So it
->>>>>> has to be compatible (newer kernel with older DTS and if possible vice versa).
->>>>>
->>>>> In my view, there is no FW (except some bug-inside FW) which works on
->>>>> this dts, so this dts is in a initial state. I think the compatibility
->>>>> is based on that dts correctly describe the HW. If we find this dts does
->>>>> not correctly describe the HW and it's in a initial state, should we
->>>>> still make it compatible?
->>>>>
->>>>
->>>> In this case I think we don't need to worry about buggy kernels, the only thing
->>>> that we need to take in consideration is that mmsys is instantiated on both (the
->>>> old DT and the new DT), we shouldn't expect display working (because never
->>>> worked, right?)
->>>>
->>>> With that in mind, I agree that is a good opportunity to fix properly the HW
->>>> topology.
->>>>
->>>> What thing that worries me is that I see this pattern on all Mediatek SoCs, does
->>>> this mean that display was never well supported for Mediatek SoCs?
->>>>
->>>
->>> That's exactly the case. Actually there were some patches for mt762x (can't
->>> remember if mt7623 or mt7622) whcih got pushed back, because we would need to
->>> fix the mmsys problem first.
->>>
->>> Ok, so if we come to the conclusion that this actually only worked because of a
->>> bug, then we can remodel the whole thing.
->>> In this case, I think the best would be to do what CK proposed:
->>> https://patchwork.kernel.org/patch/11381201/#23158169
->>>
->>> Making everything below 0x14000000 a subdevice of mmsys (mdp, ovl, rdma, you
->>> name it).
+>>> -------------------------------------------------------------------------------
+>>> git bisect start
+>>> # good: [11a48a5a18c63fd7621bb050228cebf13566e4d8] Linux 5.6-rc2
+>>> git bisect good 11a48a5a18c63fd7621bb050228cebf13566e4d8
+>>> # bad: [c25a951c50dca1da4a449a985a9debd82dc18573] Add linux-next specific files for 20200217
+>>> git bisect bad c25a951c50dca1da4a449a985a9debd82dc18573
+>>> # bad: [5859c179b7ed01050641bd565959a2c4571923da] Merge remote-tracking branch 'swiotlb/linux-next'
+>>> git bisect bad 5859c179b7ed01050641bd565959a2c4571923da
+>>> # bad: [ecf5a6e1ec22ecbe1c9086f40130188f31e37a38] Merge remote-tracking branch 'xtensa/xtensa-for-next'
+>>> git bisect bad ecf5a6e1ec22ecbe1c9086f40130188f31e37a38
+>>> # good: [e475ff54b7d62c550768ce36617e8c8fec72cfc0] Merge remote-tracking branch 'reset/reset/next'
+>>> git bisect good e475ff54b7d62c550768ce36617e8c8fec72cfc0
+>>> # bad: [9e86f8cc2d2f464e27c172127e02641fe77eccea] Merge remote-tracking branch 'sh/sh-next'
+>>> git bisect bad 9e86f8cc2d2f464e27c172127e02641fe77eccea
+>>> # good: [1752d66d86600e9cb508612ded6984774b72321d] Merge remote-tracking branch 'tegra/for-next'
+>>> git bisect good 1752d66d86600e9cb508612ded6984774b72321d
+>>> # bad: [0ecb83df935b058a2c3727716a7fab539dbaba88] Merge remote-tracking branch 'csky/linux-next'
+>>> git bisect bad 0ecb83df935b058a2c3727716a7fab539dbaba88
+>>> # bad: [898fe3af935a45236cbfd053e79ae01506ae7aa2] Merge branch 'clk-formatting' into clk-next
+>>> git bisect bad 898fe3af935a45236cbfd053e79ae01506ae7aa2
+>>> # bad: [0d426990beac93127a4ee37cc056fce928466f7d] Merge branch 'clk-phase-errors' into clk-next
+>>> git bisect bad 0d426990beac93127a4ee37cc056fce928466f7d
+>>> # good: [6e37add6b938941f755928159ede3c9855307066] Merge branch 'clk-qcom' into clk-next
+>>> git bisect good 6e37add6b938941f755928159ede3c9855307066
+>>> # good: [5d98429bbebc5dc683ea6919d9b9e6e83e8c8867] Merge branch 'clk-fixes' into clk-next
+>>> git bisect good 5d98429bbebc5dc683ea6919d9b9e6e83e8c8867
+>>> # good: [768a5d4f63c29d3bed5abb3c187312fcf623fa05] clk: Use 'parent' to shorten lines in __clk_core_init()
+>>> git bisect good 768a5d4f63c29d3bed5abb3c187312fcf623fa05
+>>> # bad: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
+>>> git bisect bad 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+>>> # good: [0daa376d832f4ce585f153efee4233b52fa3fe58] clk: Move rate and accuracy recalc to mostly consumer APIs
+>>> git bisect good 0daa376d832f4ce585f153efee4233b52fa3fe58
+>>> # first bad commit: [2760878662a290ac57cff8a5a8d8bda8f4dddc37] clk: Bail out when calculating phase fails during clk registration
+>>> -------------------------------------------------------------------------------
 >>>
 >>
->>
->> I see the MMSYS space as config registers to route the different ports in the
->> drm and video subsystem, so, as phandle of the display (drivers/gpur/drm) and
->> video (drivers/video) subsystem. What about something like this?
->>
->> mmsys: syscon@14000000 {
->> 	compatible = "mediatek,mt8173-mmsys", "syscon";
->> 	reg = <0 0x14000000 0 0x1000>;
->> 	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
->> 	assigned-clocks = <&topckgen CLK_TOP_MM_SEL>;
->> 	assigned-clock-rates = <400000000>;
->> 	#clock-cells = <1>;
->> };
->>
->> Basically is what we have with
->>
->> * [PATCH v8 4/6] clk: mediatek: mt8173: Switch MMSYS to platform driver
->>
->> And
->>
->> display-subsystem {
->> 	compatible = "mediatek,display-subsystem";
->> 	mediatek,mmsys = <&mmsys>; /* phandle to the routing config registers */
->> 	ports = <&ovl0>, <&ovl1>, < ... >
->> }
->>
->> We are introducing a new compatible that is not describing hardware but how
->> hardware is grouped, which I think is fine.
->>
->> The mediatek-drm driver will need a bit of rework but not much I guess.
->>
->> What is still not clear to me is the mdp part because doesn't seem to have an
->> entry point like the display part, instead it uses one port as entry point.
->>
->> 	mdp_rdma0: rdma@14001000 {
->> 		compatible = "mediatek,mt8173-mdp-rdma",
->> 			     "mediatek,mt8173-mdp";
->>
->> AFAICS that driver is not touching MMSYS config registers to route the mdp path,
->> only is getting the clocks, but I assume it will do in the future. In such case,
->> maybe we could do something similar to the display-subsystem node?
->>
-> 
-> Your proposal is to probe clock driver by mmsys device and probe display driver by another device. You have two choice to probe display driver: one is to create a virtual device that group display devices and probe display driver by this device. Another one is to choose one display device, such as OVL, to probe display driver.
-> 
-> I do not like a virtual device solution. In some Mediatek SoC, the routing is so flexible that one function block could be placed in display pipe or mdp pipe by different routing.
-> 
-> mmsys device control the display routing and display clock. OVL control. display overlay function. Both devices control partial display function, so probing display driver by which one looks the same for me.
-> 
-> I prefer to probe display driver by mmsys device because it has more information of display pipe line and OVL just focus on overlay function. Only when it's difficult to probe display driver by mmsys device, we have to probe display driver by OVL.
-> 
-> I think mmsys is really a multi-function device, and the device tree description may look like:
-> 
-> mmsys: system-controller@14000000 {
-> 	compatible = "mediatek,mt8173-mmsys", "syscon", "simple-mfd";
-> 	reg = <0 0x14000000 0 0x1000>;
-> 	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-> 	assigned-clocks = <&topckgen CLK_TOP_MM_SEL>;
-> 	assigned-clock-rates = <400000000>;
-> 	#clock-cells = <1>;
-> 
-> 	route {
-> 		compatible = "mediatek,mt8173-mmsys-route";
 
-Are you suggesting move the mediatek-drm routing to a new mt8173-mmsys-route
-driver? Or this is a more generic routing device? Is this routing device already
-implemented somewhere?
-
-> 	};
-> 
-> 	clock {
-> 		compatible = "mediatek,mt8173-mmsys-clk";
-> 	};
-> };
-> 
-> But from mt6797 register map [1], mmsys have many function such as fake engine, memory delay, reset,....
-> Should we break each function into a sub device?
-> Or we do not break any function (include clock and routing) into sub device?
-> Or just break these two function into device, remove "simple-mfd" from mmsys, so the rest control is in mmsys top device?
-> 
-
-How do you see move mmsys to drivers/soc/mediatek and instantiate the clk and
-mediatek-drm driver
-
- mmsys: syscon@14000000 {
- 	compatible = "mediatek,mt8173-mmsys", "syscon", "simple-mfd";
- 	reg = <0 0x14000000 0 0x1000>;
- 	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-
-	clock-controller {
-		compatible = "mediatek,clk-mt8173-mm"
-		assigned-clocks = <&topckgen CLK_TOP_MM_SEL>;
-	 	assigned-clock-rates = <400000000>;
- 		#clock-cells = <1>;
-	};
-
-	display-subsystem {
-		compatible = "mediatek,display-subsystem";
-	};
- };
-
-
-Regards,
- Enric
-
-> [1] https://www.96boards.org/documentation/consumer/mediatekx20/additional-docs/docs/MT6797_Register_Table_Part_2.pdf
-> 
-> Regards,
-> CK
-> 
-> 
->> Regards,
->>  Enric
->>
->>
->>> Regards,
->>> Matthias
->>>
->>>> Thanks.
->>>>
->>>>> If you have better solution, just let's forget this.
->>>>>
->>>>> Regards,
->>>>> CK
->>>>>
->>>>>>
->>>>>> Regards,
->>>>>> Matthias
->>>>>>
->>>>>>> Regards,
->>>>>>> CK
->>>>>>>
->>>>>>>>
->>>>>>>> IMHO I think that considering the clk driver as entry point is fine, but this is
->>>>>>>> something that the clock maintainers should decide.
->>>>>>>>
->>>>>>>> Also note that this is not only a MT8173 problem I am seeing the same problem on
->>>>>>>> all other Mediatek SoCs.
->>>>>>>>
->>>>>>>> Thanks.
->>>>>>>>
->>>>>>>>> Regards,
->>>>>>>>> CK
->>>>>>>>>
->>>>>>>>>>
->>>>>>>>>> All this series was tested on the Acer R13 Chromebook only.
->>>>>>>>>>
->>>>>>>>>> For reference, here are the links to the old discussions:
->>>>>>>>>>
->>>>>>>>>> * v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
->>>>>>>>>> * v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
->>>>>>>>>> * v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
->>>>>>>>>> * v4:
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10530871/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10530883/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10530885/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10530911/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10530913/
->>>>>>>>>> * v3:
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367857/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367861/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367877/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367875/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367885/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367883/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367889/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367907/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367909/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10367905/
->>>>>>>>>> * v2: No relevant discussion, see v3
->>>>>>>>>> * v1:
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10016497/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10016499/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10016505/
->>>>>>>>>>   * https://patchwork.kernel.org/patch/10016507/
->>>>>>>>>>
->>>>>>>>>> Best regards,
->>>>>>>>>>  Enric
->>>>>>>>>>
->>>>>>>>>> Changes in v8:
->>>>>>>>>> - Be a builtin_platform_driver like other mediatek mmsys drivers.
->>>>>>>>>> - New patches introduced in this series.
->>>>>>>>>>
->>>>>>>>>> Changes in v7:
->>>>>>>>>> - Add R-by from CK
->>>>>>>>>> - Add R-by from CK
->>>>>>>>>> - Fix check of return value of of_clk_get
->>>>>>>>>> - Fix identation
->>>>>>>>>> - Free clk_data->clks as well
->>>>>>>>>> - Get rid of private data structure
->>>>>>>>>>
->>>>>>>>>> Enric Balletbo i Serra (2):
->>>>>>>>>>   drm/mediatek: Move MMSYS configuration to include/linux/platform_data
->>>>>>>>>>   clk/drm: mediatek: Fix mediatek-drm device probing
->>>>>>>>>>
->>>>>>>>>> Matthias Brugger (4):
->>>>>>>>>>   drm/mediatek: Use regmap for register access
->>>>>>>>>>   drm/mediatek: Omit warning on probe defers
->>>>>>>>>>   media: mtk-mdp: Check return value of of_clk_get
->>>>>>>>>>   clk: mediatek: mt8173: Switch MMSYS to platform driver
->>>>>>>>>>
->>>>>>>>>>  drivers/clk/mediatek/Kconfig                  |   6 +
->>>>>>>>>>  drivers/clk/mediatek/Makefile                 |   1 +
->>>>>>>>>>  drivers/clk/mediatek/clk-mt2701-mm.c          |  30 +++
->>>>>>>>>>  drivers/clk/mediatek/clk-mt2712-mm.c          |  44 +++++
->>>>>>>>>>  drivers/clk/mediatek/clk-mt8173-mm.c          | 172 ++++++++++++++++++
->>>>>>>>>>  drivers/clk/mediatek/clk-mt8173.c             | 104 -----------
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |   4 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c        |  53 +++---
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   4 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.h   |  56 +-----
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 113 +-----------
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  13 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
->>>>>>>>>>  drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
->>>>>>>>>>  drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |   6 +
->>>>>>>>>>  include/linux/platform_data/mtk_mmsys.h       |  73 ++++++++
->>>>>>>>>>  20 files changed, 401 insertions(+), 317 deletions(-)
->>>>>>>>>>  create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
->>>>>>>>>>  create mode 100644 include/linux/platform_data/mtk_mmsys.h
->>>>>>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>> _______________________________________________
->>>>>>>> Linux-mediatek mailing list
->>>>>>>> Linux-mediatek@lists.infradead.org
->>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
->>>>>>>
->>>>>>
->>>>>> _______________________________________________
->>>>>> Linux-mediatek mailing list
->>>>>> Linux-mediatek@lists.infradead.org
->>>>>> http://lists.infradead.org/mailman/listinfo/linux-mediatek
->>>>>
->>>
->>
->> _______________________________________________
->> Linux-mediatek mailing list
->> Linux-mediatek@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-mediatek
-> 
-> 
