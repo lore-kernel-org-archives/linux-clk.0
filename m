@@ -6,24 +6,25 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A38FC35E01
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F94C35E04
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C94720CC7
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 154FB20CC7
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 16:17:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728367AbgBYQOd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 11:14:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47876 "EHLO mx2.suse.de"
+        id S1729206AbgBYQRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 11:17:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48448 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729992AbgBYQOd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Feb 2020 11:14:33 -0500
+        id S1730374AbgBYQRF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Feb 2020 11:17:05 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9A7D0ABD7;
-        Tue, 25 Feb 2020 16:14:31 +0000 (UTC)
-Message-ID: <609c96533fec609243f12a1f5fdd494e4f1ae34e.camel@suse.de>
-Subject: Re: [PATCH 11/89] clk: bcm: rpi: Make sure pllb_arm is removed
+        by mx2.suse.de (Postfix) with ESMTP id B978EABD7;
+        Tue, 25 Feb 2020 16:17:03 +0000 (UTC)
+Message-ID: <a39d4fbf02b21700df8f3a2e9451a917dfee4906.camel@suse.de>
+Subject: Re: [PATCH 12/89] clk: bcm: rpi: Remove pllb_arm_lookup global
+ pointer
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
 Cc:     dri-devel@lists.freedesktop.org,
@@ -35,12 +36,12 @@ Cc:     dri-devel@lists.freedesktop.org,
         Phil Elwell <phil@raspberrypi.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Tue, 25 Feb 2020 17:14:30 +0100
-In-Reply-To: <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+Date:   Tue, 25 Feb 2020 17:16:59 +0100
+In-Reply-To: <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
 References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-         <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+         <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-zSYz+O1TkTTw+s8JuVwF"
+        protocol="application/pgp-signature"; boundary="=-mQsztJO/CyD/HRPi/ysV"
 User-Agent: Evolution 3.34.4 
 MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
@@ -49,19 +50,17 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-zSYz+O1TkTTw+s8JuVwF
+--=-mQsztJO/CyD/HRPi/ysV
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
-> The pllb_arm clock was created at probe time, but was never removed if
-> something went wrong later in probe, or if the driver was ever removed fr=
-om
-> the system.
->=20
-> Now that we are using clk_hw_register, we can just use its managed varian=
+> The pllb_arm_lookup pointer in the struct raspberrypi_clk is not used for
+> anything but to store the returned pointer to clkdev_hw_create, and is no=
 t
-> to take care of that for us.
+> used anywhere else in the driver.
+>=20
+> Let's remove that global pointer from the structure.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
@@ -74,22 +73,22 @@ Thanks!
 Nicolas
 
 
---=-zSYz+O1TkTTw+s8JuVwF
+--=-mQsztJO/CyD/HRPi/ysV
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VR+YACgkQlfZmHno8
-x/5tbgf+KEUYT0jpT3C1Unk34E5t2GRWaiQ46ZtRMRoYx60hHiygSxcrkoZOtYiF
-WgsNmLUlhgSu30qeRzOgsfYHoS7ttnuZjDXWXB2Lx27bnGBXrgZPnLfEefBAQt02
-uCd/O+Nc45NFZLfxk3AGansY5ja4i5zG115Zy5njBoDBmxdchTmh4IX6dj99heKa
-p1VeDbgDt0CTpFUpUE2vVI59mLsI9MnVyTh2CngxfW0Kev9MpEPqWcWiO1xbxae4
-AND1pPwO5aAEc0qWB2NqlDOZ+c/eJMWwQ5p7UaorMdUaURQY5zr12Qfzqnhm+6QX
-gWJJCfh07YRMgduhXRK0dagH1ddjtQ==
-=LhDi
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5VSHsACgkQlfZmHno8
+x/6IRwf9Fqq8ki5864Qf/tulpjfn0fB7ZlgZ0G6L6r3pcZ8sKECJEgcEnzemvJlD
+gh24JKpJWl83h0w1UCFdDRE1zRoj14kKRyRh86c9etsVknCVQGLhW9n6rO9Zctwy
+xbCmnvEqN+JcJxldJ+ZEbEnCJZVtTJQz0wJX6UrjRcIoBCQXTUIcg3WP2c2xBZc+
+sVAH/gq+rleiF2BeiuTafx6U4Ey5n6AJDrhNVy+O03TX/AQnPzEEWnsp6VUZquDg
+qyqEzBIFkChRFat3B5rgfutAK6FOmOJvhS7/c5fJpn9Ug8CgkXeCBSKZAIG5udug
+k1Wk2dOK1zG+9iwhAaJ7mvp8ih9tEA==
+=NyHR
 -----END PGP SIGNATURE-----
 
---=-zSYz+O1TkTTw+s8JuVwF--
+--=-mQsztJO/CyD/HRPi/ysV--
 
