@@ -2,88 +2,103 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A0B2C4BA10
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 12:29:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0925C4BA14
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 13:42:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148D624687
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 12:29:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e5rTU9hA"
+	by mail.kernel.org (Postfix) with ESMTP id B8FA024688
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 13:42:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgBZM34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 07:29:56 -0500
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:36067 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726359AbgBZM34 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 07:29:56 -0500
-Received: by mail-lj1-f173.google.com with SMTP id r19so2905185ljg.3;
-        Wed, 26 Feb 2020 04:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eYRw4tH2Rs/e60d73NUbkuJbxLkTk8K47OrYj1p7M4A=;
-        b=e5rTU9hA8lMf+tk+gVuUunPWotj8HJSvkMmGE3KOwXtl4tirjK2K3T4z65fW1PoYPi
-         Iuj3oINUDtG42mwXpH9JpJdHNK0s0rmHYsGkOO2X7lomI1/D2R27634OQA9jT8O+MQVi
-         ZJmSaUA8/C5nHwBBj0kv+uQaoGBXkBiP8mK25RakFTvjaTqR7XwCz6i7YsolW4prfJrY
-         p/LL1mkTEGEqNgg/ehiug47bLAUaSYvjnqZiudDX1UOWT/GwZ1kIBXLMN1cMrvwU6RrP
-         4bGeInJTN0IdkY2eZrRtLq6n6O3Xf/Izwk+mUl2ditBFkca/23awgXWv9nhEvY+GIlc4
-         0ClQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eYRw4tH2Rs/e60d73NUbkuJbxLkTk8K47OrYj1p7M4A=;
-        b=J60IvysmghzdAsTKjdhz8JOaZ9AuPUc7AIjYZXutL/jlGfiImX4ZVh1fmujVuScyrL
-         2QYBuvMGlNeb7DRT1blUm8E1QPl6fvaww/bt4TLJOPTCn6ebVEpmFw3J2yGPVEtmmh0J
-         BC7c8hkCpIkGJbXXYehhkZLIrUuOwngl5FtnicKbEH3e+itkpsS0G1qw9PVibpamJove
-         a4T2MtzgMKP09PJ/SN1OP/QUgNlM4fL10pakzs/fjJt0WB0chHtw8asP4dmcriR0e5K3
-         vMDJVPloZ1lWLyywlBFFeRiGO3BpMS16FknULbMWM4+MEbZBylTuhMW4mNjb01Jhjukq
-         j87w==
-X-Gm-Message-State: APjAAAV5H36P9mMAQ6xSRGZMeLVN4fwQXVqgnFbVscuVtcJ08u0ftgH1
-        8a+OlMv8jePFrmmMKQZVkAnUqdU91VXDkaDmJtyMEQ==
-X-Google-Smtp-Source: APXvYqwIy0nEZGxxB6rW+LVv5AmFFL7l6FhryvMruyD05L6OvsPvKIXc/q7r6lY5P+ia6fVHqUpCZi4u77hNg/wnfB8=
-X-Received: by 2002:a2e:2e11:: with SMTP id u17mr2825719lju.117.1582720194301;
- Wed, 26 Feb 2020 04:29:54 -0800 (PST)
-MIME-Version: 1.0
-References: <20200213153151.GB6975@optiplex> <AM0PR04MB4211AC5AB9F6A055F36040A2801A0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20200213174225.GA11566@ripley> <AM0PR04MB42111BF00621C1949E1FBA9080150@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <20200217070429.GB7973@dragon> <VI1PR04MB42220B24B1C46756A4B9E7B180160@VI1PR04MB4222.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB42220B24B1C46756A4B9E7B180160@VI1PR04MB4222.eurprd04.prod.outlook.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 26 Feb 2020 09:29:43 -0300
-Message-ID: <CAOMZO5Dq3i5gVR-vrCeZ+g=fmL7CODchVOg0xdcEg+en8tJtLg@mail.gmail.com>
-Subject: Re: clk: imx: clock driver for imx8qm?
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Oliver Graute <oliver.graute@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
+        id S1727471AbgBZNmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 08:42:06 -0500
+Received: from jabberwock.ucw.cz ([46.255.230.98]:38720 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726555AbgBZNmG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 08:42:06 -0500
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id BBC4B1C0411; Wed, 26 Feb 2020 14:42:03 +0100 (CET)
+Date:   Wed, 26 Feb 2020 14:42:03 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v10 00/13] Support ROHM BD71828 PMIC
+Message-ID: <20200226134203.GD4080@duo.ucw.cz>
+References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200117103000.GG15507@dell>
+ <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="wULyF7TL5taEdwHz"
+Content-Disposition: inline
+In-Reply-To: <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Aisheng,
 
-On Mon, Feb 17, 2020 at 4:31 AM Aisheng Dong <aisheng.dong@nxp.com> wrote:
+--wULyF7TL5taEdwHz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> I remember I addressed all Stephen's comments in the last round of review
-> which is marked in the V5 resend change log.
-> https://www.spinics.net/lists/arm-kernel/msg769365.html
->
-> But I can double check it.
-> Should I re-send after a checking or wait for Stephen's feedback?
+Hi!
 
-I think it is a good idea to resend the series.
+> > > Changelog v10:
+> > >   - Split RTC patch to a BD70528 fix (which hopefully goes to 5.4)
+> > > and to
+> > >     BD71828 support
+> >=20
+> > Still missing LED Acks.
+> >=20
+>=20
+> Yep. I know. I haven't heard from Pavel recently and the patch 12
+> definitely requires his ack. Can you take the other patches in and
+> leave 12 and 13 out for now? I can continue work on LEDs with Pavel but
+> I would really like to have the regulators working and BD70528 RTC
+> fixed in next release...
 
-Thanks
+Going through my backlogs now. You taking patches up-to 11 so
+that we have two left sounds good :-).
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--wULyF7TL5taEdwHz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXlZ1qwAKCRAw5/Bqldv6
+8gMmAJ4nQGRvqIIofy6kdcys+H/DvgwB6QCgnqsTHp2iWDANQfm15weQRR1P0SY=
+=boMf
+-----END PGP SIGNATURE-----
+
+--wULyF7TL5taEdwHz--
