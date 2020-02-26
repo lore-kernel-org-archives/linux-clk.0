@@ -2,94 +2,163 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F48C4BA0E
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:42:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4000C4BA0B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F8E24673
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 911AA24689
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbgBZKml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 05:42:41 -0500
-Received: from baptiste.telenet-ops.be ([195.130.132.51]:40132 "EHLO
-        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727709AbgBZKml (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 05:42:41 -0500
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id 7Nie220025USYZQ01NiedP; Wed, 26 Feb 2020 11:42:39 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j6u9F-0002FG-Uf; Wed, 26 Feb 2020 11:42:37 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j6u9F-0004Ws-SE; Wed, 26 Feb 2020 11:42:37 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.7
-Date:   Wed, 26 Feb 2020 11:42:35 +0100
-Message-Id: <20200226104235.17367-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1727362AbgBZKya (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 05:54:30 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50722 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbgBZKya (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 05:54:30 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id A078328531A
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v9 0/4] arm64: mediatek: Fix mt8173 mmsys device probing
+Date:   Wed, 26 Feb 2020 11:54:15 +0100
+Message-Id: <20200226105419.632771-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Dear all,
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+Those patches are intended to solve an old standing issue on some
+Mediatek devices (mt8173, mt2701 and mt2712).
 
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver gets probed, which in effect breaks
+graphics on those devices.
 
-are available in the Git repository at:
+The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
+control clock gates (which is used in the clk driver) and some registers
+to set the routing and enable the differnet blocks of the display
+and MDP (Media Data Path) subsystem. On this series the clk driver is
+not a pure clock controller but a system controller that can provide
+access to the shared registers between the different drivers that need
+it (mediatek-drm and mediatek-mdp). Hence the MMSYS clk driver was moved
+to drivers/soc/mediatek and is the entry point (parent) which will trigger
+the probe of the corresponding mediatek-drm driver.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.7-tag1
+**IMPORTANT** This series only fixes the issue on mt8173 to make it
+simple and as is the only platform I can test. Similar changes should be
+applied for mt2701 and mt2712 to have display working.
 
-for you to fetch changes up to 068e7f85234c0b56f55cc0259ad9c05f2c64b8fb:
+For reference, here are the links to the old discussions:
+* v8: https://patchwork.kernel.org/project/linux-mediatek/list/?series=244891
+* v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
+* v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
+* v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
+* v4:
+  * https://patchwork.kernel.org/patch/10530871/
+  * https://patchwork.kernel.org/patch/10530883/
+  * https://patchwork.kernel.org/patch/10530885/
+  * https://patchwork.kernel.org/patch/10530911/
+  * https://patchwork.kernel.org/patch/10530913/
+* v3:
+  * https://patchwork.kernel.org/patch/10367857/
+  * https://patchwork.kernel.org/patch/10367861/
+  * https://patchwork.kernel.org/patch/10367877/
+  * https://patchwork.kernel.org/patch/10367875/
+  * https://patchwork.kernel.org/patch/10367885/
+  * https://patchwork.kernel.org/patch/10367883/
+  * https://patchwork.kernel.org/patch/10367889/
+  * https://patchwork.kernel.org/patch/10367907/
+  * https://patchwork.kernel.org/patch/10367909/
+  * https://patchwork.kernel.org/patch/10367905/
+* v2: No relevant discussion, see v3
+* v1:
+  * https://patchwork.kernel.org/patch/10016497/
+  * https://patchwork.kernel.org/patch/10016499/
+  * https://patchwork.kernel.org/patch/10016505/
+  * https://patchwork.kernel.org/patch/10016507/
 
-  clk: renesas: Remove use of ARCH_R8A7795 (2020-02-21 14:01:54 +0100)
+Best regards,
+ Enric
 
-----------------------------------------------------------------
-clk: renesas: Updates for v5.7
+Changes in v9:
+- Move mmsys to drivers/soc/mediatek (CK)
+- Do not move the display routing from the drm driver (CK)
+- Removed from this series because are not needed:
+  * [PATCH v8 5/6] drm/mediatek: Move MMSYS configuration to include/linux/platform_data
+- Removed from this series because are applied:
+  * [PATCH v8 3/6] media: mtk-mdp: Check return value of of_clk_get.
 
-  - Add Crypto clocks on R-Car M3-W/W+, M3-N, E3, and D3,
-  - Add RPC (QSPI/HyperFLASH) clocks on R-Car H3, M3-W/W+, and M3-N,
-  - A small cleanup.
+Changes in v8:
+- Select REGMAP and MFD_SYSCON (Randy Dunlap)
+- Be a builtin_platform_driver like other mediatek mmsys drivers.
+- New patch introduced in this series.
 
-Thanks for pulling!
-----------------------------------------------------------------
-Dirk Behme (3):
-      clk: renesas: r8a7795: Add RPC clocks
-      clk: renesas: r8a7796: Add RPC clocks
-      clk: renesas: r8a77965: Add RPC clocks
+Changes in v7:
+- Add R-by from CK
+- Free clk_data->clks as well
+- Get rid of private data structure
 
-Geert Uytterhoeven (2):
-      clk: renesas: rcar-gen3: Add CCREE clocks
-      clk: renesas: Remove use of ARCH_R8A7795
+Enric Balletbo i Serra (1):
+  drm/mediatek: Fix mediatek-drm device probing
 
- drivers/clk/renesas/Kconfig             |  2 +-
- drivers/clk/renesas/r8a7795-cpg-mssr.c  |  8 ++++++++
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 10 ++++++++++
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 12 +++++++++++-
- drivers/clk/renesas/r8a77990-cpg-mssr.c |  2 ++
- drivers/clk/renesas/r8a77995-cpg-mssr.c |  2 ++
- 6 files changed, 34 insertions(+), 2 deletions(-)
+Matthias Brugger (3):
+  drm/mediatek: Use regmap for register access
+  drm/mediatek: Omit warning on probe defers
+  soc: mediatek: Move mt8173 MMSYS to platform driver
 
-Gr{oetje,eeting}s,
+ drivers/clk/mediatek/clk-mt8173.c         | 104 ----------------
+ drivers/gpu/drm/mediatek/Kconfig          |   2 +
+ drivers/gpu/drm/mediatek/mtk_disp_color.c |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c   |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c  |   5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c        |  12 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c   |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c    |  53 ++++----
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h    |   4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c    |  45 ++++---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h    |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c        |   8 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c       |   4 +-
+ drivers/soc/mediatek/Kconfig              |   7 ++
+ drivers/soc/mediatek/Makefile             |   1 +
+ drivers/soc/mediatek/mt8173-mmsys.c       | 143 ++++++++++++++++++++++
+ 16 files changed, 233 insertions(+), 171 deletions(-)
+ create mode 100644 drivers/soc/mediatek/mt8173-mmsys.c
 
-						Geert
+-- 
+2.25.0
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
