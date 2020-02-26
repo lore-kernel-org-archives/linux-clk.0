@@ -2,239 +2,219 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18BEC4BA12
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:01:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3096C4BA12
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A3224685
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:01:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="NHQUGGrG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yN/wgmfg"
+	by mail.kernel.org (Postfix) with ESMTP id C60BB2467D
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582730809;
+	bh=2LGcpavSmipH6rIBYAM911GZvRXy5NjGLP+bOq6LCbc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=MArmMv0UkGZMZ+U0ysr0cUF/Hu+IVjoHy8Aw4WPpgsfoY7xS8N4wz4VuwY6W2yiM9
+	 WUebtwovonaWf+os/v6h/hCEdioSQ41Yhk/CJDbky1aWfw2NW5xz3fBJA3ONuZAPOd
+	 T1r9Owl23q/hcWYfbmGgkthZSRci7fi8eYfobeHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgBZPBS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 10:01:18 -0500
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:44515 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727068AbgBZPBS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 10:01:18 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E5E7F7746;
-        Wed, 26 Feb 2020 10:01:16 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 26 Feb 2020 10:01:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=m4ZpJCtrl25F20H9lycsmonkXKn
-        Jty8aZIaI2aucoXo=; b=NHQUGGrGqrSiaLq/B3LSPoXUq7TyK3kgtOCNCbwJaic
-        ff/ZVnr1KBpyJjCDa6lo5pY65Do6ImobrA5nRll4VL6S/gKrCXbe4bJ6pSUs+tbQ
-        WZ8+o4YZmPIy3KRrrPwFUfhxlWfFaKb6Izr6tzVptFC2NQRMoihev3JNYBgBr1Aw
-        C+0UncHqPGzQCvzucF1TBh7YvPIdLgktLYPRwin3KUiLldd7288E/h1GiZeYeTvp
-        aa90uGEE7fnWGNCpzM+7UsUBjGjTW5+eVJCAueKWx+b9Hlo0TzvNKKlwBzr9p7ZX
-        tgGIuecRtEJCw6UWrxhewX2+Z7wMA68XJ2HcyXLTE9g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=m4ZpJC
-        trl25F20H9lycsmonkXKnJty8aZIaI2aucoXo=; b=yN/wgmfgqzHVfkRAgnt7mN
-        9bv7hYhbQvIKN4VeC0lR25sLTJnEX2UmTIzNoCizdbDNdnH0QUCInqknkcxzTX7Q
-        1hc0YxoETaSb1BeOeAchdMOAJD1UWdXfv1XKpjaF6LuhdRdlixFUPOtV1pCWKrGB
-        75wpNDteNQnr2+OFo7LnvW+YlPnI96UU0XI/WlC4NMchZzjhL9msFVkJ8mqslBrp
-        gxtzpLAkesMNTzyPNxaNXXqxLFZwp5TXHUNjUOF/hSHnGrEl5qmgCEtK1piSSoYL
-        T6SMsZdUb3YwaU+ZZu9awCLbVA51DwUX1IMqp4ZmQiIeGXi5VjmXHczkKk+gHwYw
-        ==
-X-ME-Sender: <xms:O4hWXndkZMl0CN8fol2QE7iNHeKGeOSaZS7Wdw7-phP30V1Md3wyyw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdejfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
-    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
-    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:O4hWXsXrQIqwLxgLNO7swUQiX3AFe2o1oNBI0vCWbMc_88DGfTN-ng>
-    <xmx:O4hWXlhzkVukrOGgXr-9WChP9MImXftoehjQGcDmak5gLs9jIqpo-A>
-    <xmx:O4hWXog_s-mSw3G0altL6wpqbyjqzk_lJsNkGfatS5TAJ2UskmjPaQ>
-    <xmx:PIhWXolBMob80y5aQ8iRvlB8OmEJYi-t-n2Wdv9lVpyjX7s_9kYCXw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 783FC328005E;
-        Wed, 26 Feb 2020 10:01:15 -0500 (EST)
-Date:   Wed, 26 Feb 2020 16:01:13 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
+        id S1728139AbgBZP0p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 10:26:45 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36756 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbgBZP0p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 10:26:45 -0500
+Received: by mail-ot1-f65.google.com with SMTP id j20so3300991otq.3;
+        Wed, 26 Feb 2020 07:26:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9RM2qplPak7AljZxjMc9YQCmJZvQ+Q6c/mA66gm9+R8=;
+        b=ZxVwsASE58e0vDFUX3R0oHuKJpCn2ULZVDGIohiXBW8YC8kjy1kNwyvK2wzrFiFdYP
+         bxwvI4MdSdKsAR1FNCKeglBI+5z5nGHYbqWTzKBLbdWwt8lMZZAt9oJWJEJ1PC2AUuPY
+         9nSJ57xfNoVSkYVGgQNk+4GcND/XbzBLqAeQZ657AaidVkLNX/jNpTtkgaVkA6wuaiMK
+         1l0FPcWoc16eeP25KWG3MzvWM0cslJkU+Xz5+tTo2M+06aWa48wWZfeILE5ueCyItxq9
+         6wAE41pTZe/6lqqCJE0TqZjt+P/xPnFs5fKRrJD4Oe36y8rLJhs1d6sBCw2mIjMEeIP0
+         jv/w==
+X-Gm-Message-State: APjAAAWB+mOyjcKlmMyjW+LtsxGPnJTbiTqY0v3q/qAbPYZ/nJaXZQqz
+        1HOUfHR2xiwD9wMjtZqhng==
+X-Google-Smtp-Source: APXvYqxlqaPG48CQ8FpDR9lxOz6WMsCsbJ7qIcWsypoZ1dMulgChx2uhA2AC5sT/NEN/FP8jU9L06g==
+X-Received: by 2002:a05:6830:1d7b:: with SMTP id l27mr3292649oti.251.1582730804414;
+        Wed, 26 Feb 2020 07:26:44 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n8sm875925otl.11.2020.02.26.07.26.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 07:26:43 -0800 (PST)
+Received: (nullmailer pid 688 invoked by uid 1000);
+        Wed, 26 Feb 2020 15:26:42 -0000
+Date:   Wed, 26 Feb 2020 09:26:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
-Message-ID: <20200226150113.oqymkr6h2cxs2uia@gilmour.lan>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
- <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: Re: [PATCH v5 3/7] dt-bindings: clk: sprd: add bindings for sc9863a
+ clock controller
+Message-ID: <20200226152642.GA26474@bogus>
+References: <20200219040915.2153-1-zhang.lyra@gmail.com>
+ <20200219040915.2153-4-zhang.lyra@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2aqopof2crla2kds"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
+In-Reply-To: <20200219040915.2153-4-zhang.lyra@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Feb 19, 2020 at 12:09:11PM +0800, Chunyan Zhang wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> 
+> add a new bindings to describe sc9863a clock compatible string.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+>  .../bindings/clock/sprd,sc9863a-clk.yaml      | 110 ++++++++++++++++++
+>  1 file changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> new file mode 100644
+> index 000000000000..b31569b524e5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+> @@ -0,0 +1,110 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +# Copyright 2019 Unisoc Inc.
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/sprd,sc9863a-clk.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: SC9863A Clock Control Unit Device Tree Bindings
+> +
+> +maintainers:
+> +  - Orson Zhai <orsonzhai@gmail.com>
+> +  - Baolin Wang <baolin.wang7@gmail.com>
+> +  - Chunyan Zhang <zhang.lyra@gmail.com>
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  compatible :
+> +    enum:
+> +      - sprd,sc9863a-ap-clk
+> +      - sprd,sc9863a-aon-clk
+> +      - sprd,sc9863a-apahb-gate
+> +      - sprd,sc9863a-pmu-gate
+> +      - sprd,sc9863a-aonapb-gate
+> +      - sprd,sc9863a-pll
+> +      - sprd,sc9863a-mpll
+> +      - sprd,sc9863a-rpll
+> +      - sprd,sc9863a-dpll
+> +      - sprd,sc9863a-mm-gate
+> +      - sprd,sc9863a-apapb-gate
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      The input parent clock(s) phandle for this clock, only list fixed
+> +      clocks which are declared in devicetree.
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 4
+> +    description: |
+> +      Clock name strings used for driver to reference.
 
---2aqopof2crla2kds
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Drop this. That's all 'clock-names'.
 
-Hi Nicolas,
+> +    items:
+> +      - const: ext-26m
+> +      - const: ext-32k
+> +      - const: ext-4m
+> +      - const: rco-100m
+> +
+> +  reg:
+> +    description: |
+> +      Contain the registers base address and length.
 
-On Tue, Feb 25, 2020 at 05:00:56PM +0100, Nicolas Saenz Julienne wrote:
-> On Mon, 2020-02-24 at 10:06 +0100, Maxime Ripard wrote:
-> > The current firmware clock driver for the RaspberryPi can only be probed by
-> > manually registering an associated platform_device.
-> >
-> > While this works fine for cpufreq where the device gets attached a clkdev
-> > lookup, it would be tedious to maintain a table of all the devices using
-> > one of the clocks exposed by the firmware.
-> >
-> > Since the DT on the other hand is the perfect place to store those
-> > associations, make the firmware clocks driver probe-able through the device
-> > tree so that we can represent it as a node.
->
-> I'm not convinced this is the right approach, and if we decide to go this way,
-> there are more changes to take into account.
+Drop this. You need to define how many entries (maxItems: 1).
 
-This was actually a shameless bait to start that discussion, so I'm
-glad it worked ;)
+> +
+> +required:
+> +  - compatible
+> +  - '#clock-cells'
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      enum:
+> +        - sprd,sc9863a-ap-clk
+> +        - sprd,sc9863a-aon-clk
+> +then:
+> +  required:
+> +    - reg
+> +
+> +else:
+> +  description: |
+> +    Other SC9863a clock nodes should be the child of a syscon node with
+> +    the required property:
+> +
+> +    - compatible: Should be the following:
+> +                  "sprd,sc9863a-glbregs", "syscon", "simple-mfd"
+> +
+> +    The 'reg' property is also required if there is a sub range of
+> +    registers for the clocks that are contiguous.
 
-> For one, if we create a dt node for this driver, we'd have to delete the
-> platform device creation in firmware/raspberrypi.c and then we'd be even able
-> to bypass raspberrypi-cpufreq altogether by creating opp tables in dt. But
-> there are reasons we didn't go that way at the time.
+Which ones are these? You should be able to define that exactly starting 
+with the example below.
 
-Right, I missed that one since the check for the firmware phandle was
-preventing the double-probe to happen, but it's bad indeed.
+> +
+> +examples:
+> +  - |
+> +    ap_clk: clock-controller@21500000 {
+> +      compatible = "sprd,sc9863a-ap-clk";
+> +      reg = <0 0x21500000 0 0x1000>;
+> +      clocks = <&ext_26m>, <&ext_32k>;
+> +      clock-names = "ext-26m", "ext-32k";
+> +      #clock-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      ap_ahb_regs: syscon@20e00000 {
+> +        compatible = "sprd,sc9863a-glbregs", "syscon", "simple-mfd";
+> +        reg = <0 0x20e00000 0 0x4000>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+> +        ranges = <0 0 0x20e00000 0x4000>;
+> +
+> +        apahb_gate: apahb-gate@0 {
+> +          compatible = "sprd,sc9863a-apahb-gate";
+> +          reg = <0x0 0x1020>;
+> +          #clock-cells = <1>;
 
-> We've made an effort to avoid using dt for firmware interfaces whenever
-> possible as, on one hand, it's arguable they don't fit device-tree's hardware
-> description paradigm and, on the other, the lack of flexibility they impose
-> once the binding is defined. VC4's firmware interfaces are not set in stone,
-> nor standardized like SCMI, so the more flexible we are to future changes the
-> better.
+Doesn't this block have input clocks?
 
-The device tree isn't just about the hardware though, but also
-contains the state the bootloader / firmware left the hardware
-in. You're mentionning SCMI, and SCMI clocks IDs are stored in the
-device tree. Just like pen release addresses, PSCI function ids, etc.
-
-The firmware IDs of these clocks shouldn't change too.
-
-But you also raise a valid point with the lack of flexibility,
-especially since the clock tree isn't that well understood.
-
-> Another thing I'm not all that happy about it's how dynamic clock registering
-> is handled in patch #22 (but I'll keep it here as relevant to the discussion):
->
-> - Some of those fw managed clocks you're creating have their mmio counterpart
->   being registered by clk-bcm238. IMO either register one or the other, giving
->   precedence to the mmio counterpart. Note that for pllb, we deleted the
->   relevant code from clk-bcm2385.
-
-Indeed, and it's really that part of the discussion I wanted to
-start. For some reason, it looks like a good chunk of those clocks are
-non-functional at the moment (they all report 0). If we're going to
-use the firmware clocks as I did here, we'd have to modify most of the
-device clocks used so far (UART, especially) to derive from the core
-clock.
-
-I wasn't really sure of the implications though, since it's my first
-experience with the RPi clock tree.
-
-> - The same way we were able to map the fw CPU clock into the clk tree
->   (pllb/pllb_arm) there are no reasons we shouldn't be able to do the same for
->   the VPU clocks. It's way nicer and less opaque to users (this being a
->   learning platform adds to the argument).
-
-This would make the Linux clock tree match the one in hardware, which
-would indeed be more readable to a beginner, but I see three main
-drawbacks with this:
-
-  - The parent / child relationship is already encoded in the firmware
-    discovery mechanism. It's not used yet by the driver, because the
-    firmware reports all of them as root clocks, but that's pretty
-    easy to fix.
-
-  - It would make the code far more complicated and confusing than it
-    could, especially to beginners. And as far as I know, only the RPi
-    is doing that, while pretty much all the other platforms either
-    have the clock tree entirely defined, or rely on the firmware, but
-    don't have an hybrid. So they would learn something that cannot
-    really be applied to anywhere else.
-
-  - I have no idea what the clock tree is supposed to look like :)
-
-> - On top of that, having a special case for the CPU clock registration is
->   nasty. Lets settle for one solution and make everyone follow it.
-
-It seemed to me that the CPU clock had a factor between the actual CPU
-frequency and its clock? If not, then yeah we should definitely get
-rid of it.
-
-> - I don't see what's so bad about creating clock lookups. IIUC there are only
->   two clocks that need this special handling CPU & HDMI, It's manageable. You
->   don't even have to mess with the consumer driver, if there was ever to be a
->   dt provided mmio option to this clock.
-
-V3D needs one too, and I might have missed a bunch of them in that
-series given how the current debugging of the remaining issues turn
-out to be. And clk_lookups are local to devices, so you need to factor
-that by the number of devices you have.
-
-Sure, it works, but it feels to me like that's going to be an issue
-pretty fast, especially with the lookups on the way out?
-
-> >  drivers/clk/bcm/clk-raspberrypi.c | 11 ++++++++---
-> >  1 file changed, 8 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
-> > raspberrypi.c
-> > index 1654fd0eedc9..94870234824c 100644
-> > --- a/drivers/clk/bcm/clk-raspberrypi.c
-> > +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> > @@ -255,15 +255,13 @@ static int raspberrypi_clk_probe(struct platform_device
-> > *pdev)
-> >  	struct raspberrypi_clk *rpi;
-> >  	int ret;
-> >
-> > -	firmware_node = of_find_compatible_node(NULL, NULL,
-> > -					"raspberrypi,bcm2835-firmware");
-> > +	firmware_node = of_parse_phandle(dev->of_node, "raspberrypi,firmware",
-> > 0);
->
-> There is no such phandle in the upstream device tree. Maybe this was aimed at
-> the downstream dt?
-
-raspberrypi,firmware is the property, it points to the /soc/firmware
-node that is defined in bcm2835-rpi.dtsi
-
-Maxime
-
---2aqopof2crla2kds
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXlaIOQAKCRDj7w1vZxhR
-xX95AQCghtDEdUEbVo09vi66HyIp5yffz/4j3kyxQivGa8e3BgD6A1NLZNaMBGxh
-nnzEWO2Fktf4+XGMXJjIgBajc+epxQ8=
-=+dyv
------END PGP SIGNATURE-----
-
---2aqopof2crla2kds--
+> +        };
+> +      };
+> +    };
+> +
+> +...
+> -- 
+> 2.20.1
+> 
