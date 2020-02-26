@@ -2,82 +2,107 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C440C4BA13
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3091C4BA13
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4667521D7E
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582730985;
-	bh=Z3y4/knEic2yQ8Egeo6AD73KI5q+q2iFw/IKKbKOBn4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZMnV6MfNWKA9NJgWRhLDL/+MKq3McHEDrdPTT/1Y/Xj10gNcHcD85RHOrw35KsxWs
-	 umkvV5UoPhRhlFrUeNVObdM4vu+UjKcHeroo2vpqPq6CYp4xw3oqP4/gW4m+4MBgQr
-	 46MvTVr2TyI5PVFiiv7rXZ2nknEW6fnGXp7/jg1c=
+	by mail.kernel.org (Postfix) with ESMTP id 797C424690
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:40:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QZiWhKFy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbgBZP3p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 10:29:45 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35317 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728019AbgBZP3o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 10:29:44 -0500
-Received: by mail-ot1-f67.google.com with SMTP id r16so3332987otd.2;
-        Wed, 26 Feb 2020 07:29:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L2eDFUj6+ZgHsv30b3IWHnryr2PQNv2tUG/pwmYNTCY=;
-        b=iCxEUGKPv/FRMfXkLS/uC4TtaW+iOcRft6LE7f4TZcabNMWx3hgO8zAKz8dDuVSLKt
-         oUVC83dHQxmyaYteYKbPieNqcgGLxef5qvp4tBcQFjID3yyWWB0ntQVZ2nta8poOZ7AI
-         OSese1k8zyj9lCNMJyklypMTRCnmLMPal/Sd/EKMH3Ng5G9Z+weNJcHwg1JB1GBLuLlv
-         jKHJVj6nLhyN4IfRAbjfOuFldndcyO8fGMZIiRb8buJDrMKDpZjudWneLg0/qi2Y1/PT
-         EtbiT1r6/uxSRqJ67wa+Haf7Q46PiJ2HSLUBALzfxCTzYCkhqr4DO+NrYs/lRt9IW9Vy
-         D52g==
-X-Gm-Message-State: APjAAAVWcXsayovJsL3c472QdyBS5Q3E1JHgCR+vDVx5NstK/fQGTfLa
-        +T6sOFWDnq/nvQ4tKoRG0dEp/Bs=
-X-Google-Smtp-Source: APXvYqwkgLOQ11KkhrIdopjRwjvsy1oDDhHlY1VCalaAfJDndkzbKF6J3ryE55DovBte5OZJt1wggA==
-X-Received: by 2002:a9d:6ad6:: with SMTP id m22mr3775162otq.7.1582730984108;
-        Wed, 26 Feb 2020 07:29:44 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r2sm874632otk.22.2020.02.26.07.29.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 07:29:43 -0800 (PST)
-Received: (nullmailer pid 5886 invoked by uid 1000);
-        Wed, 26 Feb 2020 15:29:42 -0000
-Date:   Wed, 26 Feb 2020 09:29:42 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clk: g12a-clkc: add SPICC SCLK Source
- clock IDs
-Message-ID: <20200226152942.GA5832@bogus>
-References: <20200219084928.28707-1-narmstrong@baylibre.com>
- <20200219084928.28707-2-narmstrong@baylibre.com>
+        id S1728326AbgBZPkb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 10:40:31 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:41560 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728323AbgBZPkb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 10:40:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description;
+        bh=RdfI8zcYUbYtVeFuEktgZYpmdsO2bxZo0zxF/fSi1ho=; b=QZiWhKFyhqE4wOJ4Fc2qb1NIjh
+        +aCjkUnk6fdzX+rGLHwqwjOJ+6bxSaXFwf9Kl5W13iavOwYJu15WkjT+FRP9+8j1dlpP6+w1TjFkb
+        l0KX7scOeP1gS6U0jzc4RTX9aMchaKjhHg00bVZv0j2+t9865z+c/u4otvCYk25mD576+3nVoAD53
+        8reA1R6AD5lLyP+dykIdyV9K4AcNU6zV0ID4tLfSyVLPcXzZDCcP6lj+/O18BdoN69QwxFGcxefhi
+        JsRx6aDf5Jc9A1XlpCtpHNdfuvIuJa1BXqtgkmmPgmJhscCnvmWd3X+Zm1f7o8h7o9sEd1Fut96kG
+        a5cuJNdw==;
+Received: from [2601:1c0:6280:3f0::19c2]
+        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1j6ynR-0001q6-Qg; Wed, 26 Feb 2020 15:40:25 +0000
+Subject: Re: [PATCH v9 3/4] soc: mediatek: Move mt8173 MMSYS to platform
+ driver
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+References: <20200226105419.632771-1-enric.balletbo@collabora.com>
+ <20200226105419.632771-4-enric.balletbo@collabora.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <54b3cfed-92f3-54c8-05a1-90ef4c057e4c@infradead.org>
+Date:   Wed, 26 Feb 2020 07:40:22 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200219084928.28707-2-narmstrong@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200226105419.632771-4-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 19 Feb 2020 09:49:27 +0100, Neil Armstrong wrote:
-> Add clock ids used by the SPICC Controllers of the G12A and compatible SoCs
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  include/dt-bindings/clock/g12a-clkc.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+On 2/26/20 2:54 AM, Enric Balletbo i Serra wrote:
+> diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+> index 2114b563478c..dcd6481a14d0 100644
+> --- a/drivers/soc/mediatek/Kconfig
+> +++ b/drivers/soc/mediatek/Kconfig
+> @@ -44,4 +44,11 @@ config MTK_SCPSYS
+>  	  Say yes here to add support for the MediaTek SCPSYS power domain
+>  	  driver.
+>  
+> +config MT8173_MMSYS
+> +	bool "MediaTek MT8173 MMSYS Support"
 
-Acked-by: Rob Herring <robh@kernel.org>
+Hi,
+Can this be tristate instead of bool?
+
+> +	depends on COMMON_CLK_MT8173
+> +	help
+> +	  Say yes here to add support for the MediaTek MT8173 Multimedia
+> +	  Subsystem (MMSYS).
+> +
+>  endmenu
+
+thanks.
+-- 
+~Randy
+
