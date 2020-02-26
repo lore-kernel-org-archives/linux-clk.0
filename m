@@ -1,120 +1,140 @@
-Return-Path: <SRS0=Mizi=4N=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FA1C4BA02
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 22:02:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C44EC4BA09
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 00:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A0A2467C
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Feb 2020 22:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 010CE24673
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 00:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582668134;
-	bh=ASA6axefWklSU78pWejTSwer0ZOaWKFTnH47gYDjOZA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=v69NWx7TJfPZ+lIkmGJ1qF+N31z4r77eyHF/aUhOxWPpUJ50QMmXFMao5jLlXXEN5
-	 1YtED2bTpBKz8mwIgULq9PzK1V1ha6NGvBHH+kuqar+JeG1x06eEgjuR67qR5Nv/Mv
-	 c0m/VF1nFWwOqADWp6j6n99ho5s7jpKqKMXhktZ8=
+	s=default; t=1582676439;
+	bh=INgY5gIlHr53sxSgKS3G6uBLIe2jvapkukMmWoDkebM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=gSUc+HhUoiLgRjLGkqb8UFNBaIE7ktUxc5pvQ2XIALokUTjijwrg0cUm1QtdXpV7X
+	 kmo45f9/Q7rrJFsM5KHpm6JsWCcpCVMzVFuDL/ivuxE3zLdGC1+IuBmzEwi9s146hw
+	 lC8QhouQCj42U0FNBPjfIOOTSvrFdkVOTOymr/9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbgBYWCI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 17:02:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52078 "EHLO mail.kernel.org"
+        id S1729282AbgBZAUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 19:20:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbgBYWCH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Feb 2020 17:02:07 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728989AbgBZAUf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Feb 2020 19:20:35 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BABEF2467B;
-        Tue, 25 Feb 2020 22:02:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93E3F24656;
+        Wed, 26 Feb 2020 00:20:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582668126;
-        bh=ASA6axefWklSU78pWejTSwer0ZOaWKFTnH47gYDjOZA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CTCD9kg9XuK/5B5/i8D8A/5G6NN6eG+R/lePr4JYYbypdV7FZygukNX4N2vScKNMR
-         AcowiA3TsPtPrp9pjfqln0aJMCgno1iOeRyF4hIx8g2f5Ai/mJTN4X1rrllv43N8WQ
-         yeXIAeDINI5iDpqzRb+S/V40752h2KdAmsoPsWz0=
-Received: by mail-qk1-f182.google.com with SMTP id 11so763049qkd.1;
-        Tue, 25 Feb 2020 14:02:06 -0800 (PST)
-X-Gm-Message-State: APjAAAXovnpnqOnxO6TIMLj1I1Q7o6ie4wdbK3YAQfHoY7wP6QY/+mQF
-        ty23BTDM2NQtFgs0W1Isrn4f1OKezLZdVWydnw==
-X-Google-Smtp-Source: APXvYqw5XKZGdHCXY9u0tVRDbjlPaa0iutz4jC8T9d3E9Z8AVXYJLUY39qJiOoxuGit3bif1zq9Awqp6HaEj5QU++i0=
-X-Received: by 2002:ae9:f205:: with SMTP id m5mr1310560qkg.152.1582668125762;
- Tue, 25 Feb 2020 14:02:05 -0800 (PST)
+        s=default; t=1582676434;
+        bh=INgY5gIlHr53sxSgKS3G6uBLIe2jvapkukMmWoDkebM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=wUFeTDFzUC990SUndKt7nkejf0qsoHLJyv7ZTU2Rvfzz75sxVlIvy594esmrmyJP9
+         zpVwNsv0EMUbrfWw0Y3P0A6iion2GkjAOqfknsZrlhuke0f9slhAbVL5br0PxSUcyb
+         QDCUYyDy4hIvPUHP2lwnQh8uR1o0pOPY6KMXNRSY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200218171321.30990-1-robh@kernel.org> <20200218171321.30990-7-robh@kernel.org>
- <20200218172000.GF1133@willie-the-truck>
-In-Reply-To: <20200218172000.GF1133@willie-the-truck>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 25 Feb 2020 16:01:54 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJn1kG6gah+4318NQfJ4PaS3x3woWEUh08+OTfOcD+1MQ@mail.gmail.com>
-Message-ID: <CAL_JsqJn1kG6gah+4318NQfJ4PaS3x3woWEUh08+OTfOcD+1MQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 06/11] iommu: arm-smmu: Remove Calxeda secure mode quirk
-To:     Will Deacon <will@kernel.org>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        soc@kernel.org, Andre Przywara <andre.przywara@arm.com>,
-        Robert Richter <rrichter@marvell.com>,
-        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Mark Langsdorf <mlangsdo@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
-        Linux IOMMU <iommu@lists.linux-foundation.org>,
-        James Morse <james.morse@arm.com>,
-        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
-        kvm@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1582540703-6328-6-git-send-email-tdas@codeaurora.org>
+References: <1582540703-6328-1-git-send-email-tdas@codeaurora.org> <1582540703-6328-6-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v5 5/5] clk: qcom: Add modem clock controller driver for SC7180
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Tue, 25 Feb 2020 16:20:33 -0800
+Message-ID: <158267643373.177367.14343331439641557635@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 18, 2020 at 11:20 AM Will Deacon <will@kernel.org> wrote:
->
-> On Tue, Feb 18, 2020 at 11:13:16AM -0600, Rob Herring wrote:
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Robin Murphy <robin.murphy@arm.com>
-> > Cc: Joerg Roedel <joro@8bytes.org>
-> > Cc: iommu@lists.linux-foundation.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> > Do not apply yet.
->
-> Pleeeeease? ;)
->
-> >  drivers/iommu/arm-smmu-impl.c | 43 -----------------------------------
-> >  1 file changed, 43 deletions(-)
->
-> Yes, I'm happy to get rid of this. Sadly, I don't think we can remove
-> anything from 'struct arm_smmu_impl' because most implementations fall
-> just short of perfect.
->
-> Anyway, let me know when I can push the button and I'll queue this in
-> the arm-smmu tree.
+Quoting Taniya Das (2020-02-24 02:38:23)
+> diff --git a/drivers/clk/qcom/mss-sc7180.c b/drivers/clk/qcom/mss-sc7180.c
+> new file mode 100644
+> index 0000000..993749e
+> --- /dev/null
+> +++ b/drivers/clk/qcom/mss-sc7180.c
+> @@ -0,0 +1,143 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of_address.h>
 
-Seems we're leaving the platform support for now, but I think we never
-actually enabled SMMU support. It's not in the dts either in mainline
-nor the version I have which should be close to what shipped in
-firmware. So as long as Andre agrees, this one is good to apply.
+Is this used?
 
-Rob
+> +#include <linux/pm_clock.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <dt-bindings/clock/qcom,mss-sc7180.h>
+> +
+> +#include "clk-regmap.h"
+> +#include "clk-branch.h"
+> +#include "common.h"
+> +
+> +static struct clk_branch mss_axi_nav_clk =3D {
+> +       .halt_reg =3D 0x20bc,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x20bc,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "mss_axi_nav_clk",
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .fw_name =3D "gcc_mss_nav_axi_clk",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct clk_branch mss_axi_crypto_clk =3D {
+> +       .halt_reg =3D 0x20cc,
+> +       .halt_check =3D BRANCH_HALT,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x20cc,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "mss_axi_crypto_clk",
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .fw_name =3D "gcc_mss_mfab_axis_clk",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static const struct regmap_config mss_regmap_config =3D {
+> +       .reg_bits       =3D 32,
+> +       .reg_stride     =3D 4,
+> +       .val_bits       =3D 32,
+> +       .fast_io        =3D true,
+
+What is the max register?
+
+> +};
+> +
+> +static struct clk_regmap *mss_sc7180_clocks[] =3D {
+> +       [MSS_AXI_CRYPTO_CLK] =3D &mss_axi_crypto_clk.clkr,
+> +       [MSS_AXI_NAV_CLK] =3D &mss_axi_nav_clk.clkr,
+> +};
