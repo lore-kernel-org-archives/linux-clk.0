@@ -2,150 +2,288 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55853C4BA09
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 02:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A91FEC4BA0B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 04:49:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0B421744
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 02:56:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8160721927
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 04:49:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UoP/xWxb"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qCpI9+Zp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729434AbgBZC4s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Feb 2020 21:56:48 -0500
-Received: from mail-eopbgr00063.outbound.protection.outlook.com ([40.107.0.63]:15331
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728989AbgBZC4s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 25 Feb 2020 21:56:48 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CT65n8YQfvtIUgrF567cYkMbFY0u6xuDzxpaA4d5OCOh/QprK2RMAI9ik49952dcRlIlYUK9e11QKP75H4fp8Nu0cLFSNG+8nsqiAk8UfMno82YslyQ0/OoXF0rYjS6PzEbSOaXy8AgYanmRm3kMCGUrweL13UAK+Ub147jkCkqhMA+D4yXiTYJn5zg7QIqdA1b1XbBo18egYK2vdqz4UD9C6JRpJlISaWV+fOX2pRGnG0Bim7ia4dbru1yX2GgiQidOkSYUr2W5ZJe0/mqLNdFIHAymaXpRHdntIybAMQm+ETVU6cF4MhvZqfUZXvPECXljJcDlqEPBC9hpYpE34w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rkC16IAxrfYoBhPcBghxfMT+/kQNhYDyPxaoUDSSJG0=;
- b=Sz8pUVvsMiXT2hU8cvXVsHSKwaRTT9j40scgE8EBH7zibm/tykurFVpYePj3r9v6np2fVff16ftdTFo2AL/3lppM8vHyZUkddyUzxq4XMMH+UOk3CbmVXv1XDL/nUWmA3UE/NPEt5YXn6PYdB7hOzf6OJ7VccnrpgmH2LjRGtB1o6Z6ydFC0iM3+TdwLsHGfQdmUp8kynrzNKxeJqTmcX/3V+1SlZ7y5fKm3p0A54s097G2SXuGz0GE5pL2YuBu2dHfNQZKHrCmBhteqYS60dkIyFPy9KmAdXpOhAoZ4ai94ChvYiCg+PKDrNDRO3KODWgkLybohnU2k77+Yqb+3rQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rkC16IAxrfYoBhPcBghxfMT+/kQNhYDyPxaoUDSSJG0=;
- b=UoP/xWxbdXursMpPKhjb8o8NK68Rzj9XwBC8x+pE4QWg2/0hh/OBVbPnVDowpBKfWy04P9cXFa+N1RyPJXjXVapdZWKCqsli9v9QzJ1eCKjJAcorMLmYK7vyzrIBARphSd0N2PTJ4a4GcV2cARf3iWKDbXt7YoxNWgZxJID4dLg=
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.139.151) by
- DB7PR04MB5995.eurprd04.prod.outlook.com (20.178.107.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2750.21; Wed, 26 Feb 2020 02:56:44 +0000
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::5cb4:81c8:1618:5ca]) by DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::5cb4:81c8:1618:5ca%7]) with mapi id 15.20.2750.021; Wed, 26 Feb 2020
- 02:56:44 +0000
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/7] clk: imx8: Add SCU and LPCG clocks for I2C in CM40 SS
-Thread-Topic: [PATCH 2/7] clk: imx8: Add SCU and LPCG clocks for I2C in CM40
- SS
-Thread-Index: AQHV5UIQzDG739vOdEefzni3O2DFrqgsP5qAgACTgBA=
-Date:   Wed, 26 Feb 2020 02:56:44 +0000
-Message-ID: <DB7PR04MB46183E18F10C5B1B1F214DCCE6EA0@DB7PR04MB4618.eurprd04.prod.outlook.com>
-References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
- <1581909561-12058-3-git-send-email-qiangqing.zhang@nxp.com>
- <20200225175735.GA5232@bogus>
-In-Reply-To: <20200225175735.GA5232@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiangqing.zhang@nxp.com; 
-x-originating-ip: [222.93.202.38]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 29ee1899-5184-4fb4-6e3b-08d7ba67839d
-x-ms-traffictypediagnostic: DB7PR04MB5995:|DB7PR04MB5995:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB5995F5BAAB4A56B9EE6AF54EE6EA0@DB7PR04MB5995.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1417;
-x-forefront-prvs: 0325F6C77B
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(366004)(39860400002)(136003)(396003)(199004)(189003)(26005)(66476007)(33656002)(52536014)(76116006)(86362001)(7416002)(6916009)(53546011)(478600001)(71200400001)(66946007)(5660300002)(81156014)(9686003)(7696005)(55016002)(64756008)(316002)(6506007)(54906003)(66556008)(8936002)(81166006)(186003)(2906002)(8676002)(4326008)(66446008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5995;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: K0J7xK+g6GWIShZuHWPF52IL3qtYEFoU/BdxV6cx1i4626H8mlwmuQAkIRjXlpCZa5ZOxfENoc7MkbZOaxH9OqD7Jiy/9lLEzzB9FegIxo+p0pZ5Nyclu18OxFhlQ1gvkyfK1RxgWM23hDnbjNPFWwHwVYhfbW7VCRelj9Jmh0ipBDIEO6o/hPNCskacQObU6mkbFa/enJtOC7QBRchffZ9JoXHAlMWbTUvZHjXt2947qmb6QXyoZB4xGpe9cAiK+ORDaDdSu+IessaNt91GjL5R+M5SO1s9pk2dIFCv5jGaHgiQiOBldQZhUU5R3WXwbUDl3aBvig8WFH9g4U5lxJb9josHSHGlxAKYrM4L9gJ6yCWJm7nUobXawYXqZaIT5YvmZtYbTVrw+Z8TVvHif9nC88QV5ygR3CWFDOgEw14Jmnw6yi+OxyaZjL86vCDN
-x-ms-exchange-antispam-messagedata: TWVekSp/tsck1/e9nqhFANsilv6vDDN1eLI24uyqfeN7YWC6mKTfH2YG3vmjBQxCdW9FK2WO1myNwjJfrEf9KFUtlZBY8zzbYBIFKlFgHQ+nvvWi6BlPJFNH1NU1S5wb48lXs/02U3+5kIMNNHRUOQ==
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        id S1726063AbgBZEtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Feb 2020 23:49:50 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8458 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbgBZEtu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Feb 2020 23:49:50 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e55f8de0000>; Tue, 25 Feb 2020 20:49:34 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 25 Feb 2020 20:49:48 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 25 Feb 2020 20:49:48 -0800
+Received: from [10.2.163.212] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 26 Feb
+ 2020 04:49:47 +0000
+Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+ <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
+ <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <821f0878-56da-9b51-425a-9d6fb65d2e0c@nvidia.com>
+Date:   Tue, 25 Feb 2020 20:49:46 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 29ee1899-5184-4fb4-6e3b-08d7ba67839d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Feb 2020 02:56:44.8165
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: j8dJzI3HCGx1KxL9aUhXPKRgVbXeBZetIWOsjTwjt8WmS5fLLabk0wB/zTDQPfcJ31GAvI3Jl8PWGePStpoukQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5995
+In-Reply-To: <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1582692574; bh=Bv83nIVhE0DgqB7FO17S5t98nsvMOJ3o/2ZyNDehyzg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=qCpI9+Zp92w5sb+wPXYm6kDoU/UAG+tyk7dFkGCQzzVCQIUtGGKhLpjXutodBltSl
+         7ZoYNR8D7mMrg6SjNhw2Urtko4+qrNfIOVXqY4jVI+yA9fhuEGUu76bbC5+gJjqNHY
+         sHacgJ1ce69XAGPZk7W/nK0je9hqQ5l/8Df/+XV6/rVVljvbKcRLy0KiJbOztY1jRR
+         2VnUX3ULKBy4IoCuY9fL5+imgciq4So+HN1uQI7LAg2WYREwdghIa3DIiGXcgGWPQd
+         4gUeJrRyBymLJuB0ngoM0xhqUqY56nEFUoIX/VlqB4VMXH00P5few/kw5mC0bnwbxn
+         YgpCAoV4yumOw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFJvYiBIZXJyaW5nIDxyb2Jo
-QGtlcm5lbC5vcmc+DQo+IFNlbnQ6IDIwMjDE6jLUwjI2yNUgMTo1OA0KPiBUbzogSm9ha2ltIFpo
-YW5nIDxxaWFuZ3FpbmcuemhhbmdAbnhwLmNvbT4NCj4gQ2M6IG10dXJxdWV0dGVAYmF5bGlicmUu
-Y29tOyBzYm95ZEBrZXJuZWwub3JnOyBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsNCj4gc2hhd25ndW9A
-a2VybmVsLm9yZzsgcy5oYXVlckBwZW5ndXRyb25peC5kZTsga2VybmVsQHBlbmd1dHJvbml4LmRl
-Ow0KPiBmZXN0ZXZhbUBnbWFpbC5jb207IGRsLWxpbnV4LWlteCA8bGludXgtaW14QG54cC5jb20+
-OyBBbnNvbiBIdWFuZw0KPiA8YW5zb24uaHVhbmdAbnhwLmNvbT47IExlb25hcmQgQ3Jlc3RleiA8
-bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+Ow0KPiBEYW5pZWwgQmFsdXRhIDxkYW5pZWwuYmFsdXRh
-QG54cC5jb20+OyBBaXNoZW5nIERvbmcNCj4gPGFpc2hlbmcuZG9uZ0BueHAuY29tPjsgUGVuZyBG
-YW4gPHBlbmcuZmFuQG54cC5jb20+OyBBbmR5IER1YW4NCj4gPGZ1Z2FuZy5kdWFuQG54cC5jb20+
-OyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOw0KPiBkZXZpY2V0cmVlQHZnZXIua2VybmVsLm9y
-ZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBsaW51eC1rZXJuZWxA
-dmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi83XSBjbGs6IGlteDg6IEFk
-ZCBTQ1UgYW5kIExQQ0cgY2xvY2tzIGZvciBJMkMgaW4gQ000MCBTUw0KPiANCj4gT24gTW9uLCBG
-ZWIgMTcsIDIwMjAgYXQgMTE6MTk6MTZBTSArMDgwMCwgSm9ha2ltIFpoYW5nIHdyb3RlOg0KPiA+
-IEFkZCBTQ1UgYW5kIExQQ0cgY2xvY2tzIGZvciBJMkMgaW4gQ000MCBTUy4NCj4gPg0KPiA+IFNp
-Z25lZC1vZmYtYnk6IEpvYWtpbSBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+DQo+ID4g
-LS0tDQo+ID4gIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svaW14OC1jbG9jay5oIHwgMTMgKysr
-KysrKysrKysrLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKSwgMSBkZWxl
-dGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2sv
-aW14OC1jbG9jay5oDQo+IGIvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9pbXg4LWNsb2NrLmgN
-Cj4gPiBpbmRleCA2NzNhOGM2NjIzNDAuLjg0YTQ0MmJlNzAwZiAxMDA2NDQNCj4gPiAtLS0gYS9p
-bmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL2lteDgtY2xvY2suaA0KPiA+ICsrKyBiL2luY2x1ZGUv
-ZHQtYmluZGluZ3MvY2xvY2svaW14OC1jbG9jay5oDQo+ID4gQEAgLTEzMSw3ICsxMzEsMTIgQEAN
-Cj4gPiAgI2RlZmluZSBJTVhfQURNQV9QV01fQ0xLCQkJCTE4OA0KPiA+ICAjZGVmaW5lIElNWF9B
-RE1BX0xDRF9DTEsJCQkJMTg5DQo+ID4NCj4gPiAtI2RlZmluZSBJTVhfU0NVX0NMS19FTkQJCQkJ
-CTE5MA0KPiA+ICsvKiBDTTQwIFNTICovDQo+ID4gKyNkZWZpbmUgSU1YX0NNNDBfSVBHX0NMSwkJ
-CQkyMDANCj4gPiArI2RlZmluZSBJTVhfQ000MF9JMkNfQ0xLCQkJCTIwNQ0KPiA+ICsNCj4gPiAr
-I2RlZmluZSBJTVhfU0NVX0NMS19FTkQJCQkJCTIyMA0KPiANCj4gV2h5IGFyZSB5b3Ugc2tpcHBp
-bmcgbnVtYmVycz8NCkhpIFJvYiwNCg0KSSBmb3VuZCB0aGF0IHRoZXJlIGlzIGEgZ2FwIGluIFND
-VSBjbG9jayBiZXR3ZWVuIHN1YnN5c3RlbSwgc29tZSBudW1iZXJzIGNvdWxkIGJlIHJlc2VydmVk
-IGZvciBkZXZpY2VzIHdoaWNoIG1heSBiZSBhZGRlZCBpbnRvIHRoaXMgc3Vic3lzdGVtIGluIHRo
-ZSBmdXR1cmUuIA0KDQpCZXN0IFJlZ2FyZHMsDQpKb2FraW0gWmhhbmcNCj4gPiArDQo+ID4NCj4g
-PiAgLyogTFBDRyBjbG9ja3MgKi8NCj4gPg0KPiA+IEBAIC0yOTAsNCArMjk1LDEwIEBADQo+ID4N
-Cj4gPiAgI2RlZmluZSBJTVhfQURNQV9MUENHX0NMS19FTkQJCQkJNDUNCj4gPg0KPiA+ICsvKiBD
-TTQwIFNTIExQQ0cgKi8NCj4gPiArI2RlZmluZSBJTVhfQ000MF9MUENHX0kyQ19JUEdfQ0xLCQkJ
-MA0KPiA+ICsjZGVmaW5lIElNWF9DTTQwX0xQQ0dfSTJDX0NMSwkJCQkxDQo+ID4gKw0KPiA+ICsj
-ZGVmaW5lIElNWF9DTTQwX0xQQ0dfQ0xLX0VORAkJCQkyDQo+ID4gKw0KPiA+ICAjZW5kaWYgLyog
-X19EVF9CSU5ESU5HU19DTE9DS19JTVhfSCAqLw0KPiA+IC0tDQo+ID4gMi4xNy4xDQo+ID4NCg==
+
+On 2/20/20 4:44 AM, Hans Verkuil wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> Hi Sowjanya,
+>
+> Some code review comments below:
+>
+> On 2/14/20 7:23 PM, Sowjanya Komatineni wrote:
+>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>> which can support up to 6 MIPI CSI camera sensors.
+>>
+>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>> capture from an external camera sensor connected to CSI or from
+>> built-in test pattern generator.
+>>
+>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>
+>> This patch adds a V4L2 media controller and capture driver support
+>> for Tegra210 built-in CSI to VI test pattern generator.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/staging/media/Kconfig              |    2 +
+>>   drivers/staging/media/Makefile             |    1 +
+>>   drivers/staging/media/tegra/Kconfig        |   10 +
+>>   drivers/staging/media/tegra/Makefile       |    8 +
+>>   drivers/staging/media/tegra/TODO           |   10 +
+>>   drivers/staging/media/tegra/tegra-common.h |  239 +++++++
+>>   drivers/staging/media/tegra/tegra-csi.c    |  374 ++++++++++
+>>   drivers/staging/media/tegra/tegra-csi.h    |  115 ++++
+>>   drivers/staging/media/tegra/tegra-vi.c     | 1019 ++++++++++++++++++++++++++++
+>>   drivers/staging/media/tegra/tegra-vi.h     |   79 +++
+>>   drivers/staging/media/tegra/tegra-video.c  |  118 ++++
+>>   drivers/staging/media/tegra/tegra-video.h  |   32 +
+>>   drivers/staging/media/tegra/tegra210.c     |  767 +++++++++++++++++++++
+>>   drivers/staging/media/tegra/tegra210.h     |  190 ++++++
+>>   14 files changed, 2964 insertions(+)
+>>   create mode 100644 drivers/staging/media/tegra/Kconfig
+>>   create mode 100644 drivers/staging/media/tegra/Makefile
+>>   create mode 100644 drivers/staging/media/tegra/TODO
+>>   create mode 100644 drivers/staging/media/tegra/tegra-common.h
+>>   create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+>>   create mode 100644 drivers/staging/media/tegra/tegra-csi.h
+>>   create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+>>   create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+>>   create mode 100644 drivers/staging/media/tegra/tegra-video.c
+>>   create mode 100644 drivers/staging/media/tegra/tegra-video.h
+>>   create mode 100644 drivers/staging/media/tegra/tegra210.c
+>>   create mode 100644 drivers/staging/media/tegra/tegra210.h
+>>
+
+>> +static int chan_capture_kthread_done(void *data)
+>> +{
+>> +     struct tegra_vi_channel *chan = data;
+>> +     struct tegra_channel_buffer *buf;
+>> +
+>> +     set_freezable();
+>> +
+>> +     while (1) {
+>> +             try_to_freeze();
+>> +
+>> +             wait_event_interruptible(chan->done_wait,
+>> +                                      !list_empty(&chan->done) ||
+>> +                                      kthread_should_stop());
+>> +
+>> +             if (kthread_should_stop())
+>> +                     break;
+> I think it makes more sense if this test is moved to the end...
+>
+>> +
+>> +             buf = dequeue_buf_done(chan);
+>> +             if (!buf)
+>> +                     continue;
+> ... and this becomes:
+>
+>                  if (buf)
+>> +                     tegra_channel_capture_done(chan, buf);
+> This change simplifies stop_streaming (see below).
+
+With kthread_should_stop check at end, I see sometimes outstanding 
+buffer in done queue by the time threads are stopped during stream stop.
+
+When I run compliance stream io tests continuously in loop, depending on 
+time of stream stop request capture thread terminated after initiating 
+frame capture and moving buffer to done queue while done thread was 
+still in wait for previous MW_ACK and on seeing kthread_should_stop done 
+thread terminated with last buffer left in done queue.
+
+So looks like we need to keep checking for outstanding buffer and handle 
+it during stop streaming like in v3.
+
+
+>> +     }
+>> +
+>> +     return 0;
+>> +}
+>> +
+>> +int tegra210_vi_start_streaming(struct vb2_queue *vq, u32 count)
+>> +{
+>> +     struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
+>> +     struct media_pipeline *pipe = &chan->video.pipe;
+>> +     int ret = 0;
+>> +
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, VI_CG_2ND_LEVEL_EN);
+>> +
+>> +     /* clear errors */
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS, 0xFFFFFFFF);
+>> +
+>> +     /*
+>> +      * Sync point FIFO full stalls the host interface.
+>> +      * Setting NO_STALL will drop INCR_SYNCPT methods when fifos are
+>> +      * full and the corresponding condition bits in INCR_SYNCPT_ERROR
+>> +      * register will be set.
+>> +      * This allows SW to process error recovery.
+>> +      */
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_VI_INCR_SYNCPT_CNTRL,
+>> +                    TEGRA_VI_CFG_VI_INCR_SYNCPT_NO_STALL);
+>> +
+>> +     /* start the pipeline */
+>> +     ret = media_pipeline_start(&chan->video.entity, pipe);
+>> +     if (ret < 0)
+>> +             goto error_pipeline_start;
+>> +
+>> +     /* program VI registers after TPG, sensors and CSI streaming */
+>> +     ret = tegra_channel_set_stream(chan, true);
+>> +     if (ret < 0)
+>> +             goto error_set_stream;
+>> +
+>> +     tegra_channel_capture_setup(chan);
+>> +
+>> +     chan->sequence = 0;
+>> +
+>> +     /* start kthreads to capture data to buffer and return them */
+>> +     chan->kthread_capture_done = kthread_run(chan_capture_kthread_done,
+>> +                                              chan, "%s:1",
+>> +                                              chan->video.name);
+>> +     if (IS_ERR(chan->kthread_capture_done)) {
+>> +             ret = PTR_ERR(chan->kthread_capture_done);
+>> +             chan->kthread_capture_done = NULL;
+>> +             dev_err(&chan->video.dev,
+>> +                     "failed capture done kthread: %d\n", ret);
+>> +             goto error_kthread_done;
+>> +     }
+>> +
+>> +     chan->kthread_capture_start = kthread_run(chan_capture_kthread_start,
+>> +                                               chan, "%s:0",
+>> +                                               chan->video.name);
+>> +     if (IS_ERR(chan->kthread_capture_start)) {
+>> +             ret = PTR_ERR(chan->kthread_capture_start);
+>> +             chan->kthread_capture_start = NULL;
+>> +             dev_err(&chan->video.dev,
+>> +                     "failed capture start kthread: %d\n", ret);
+>> +             goto error_kthread_start;
+>> +     }
+>> +
+>> +     return 0;
+>> +
+>> +error_kthread_start:
+>> +     kthread_stop(chan->kthread_capture_done);
+>> +error_kthread_done:
+>> +     tegra_channel_set_stream(chan, false);
+>> +error_set_stream:
+>> +     media_pipeline_stop(&chan->video.entity);
+>> +error_pipeline_start:
+>> +     vq->start_streaming_called = 0;
+>> +     tegra_channel_release_queued_buffers(chan, VB2_BUF_STATE_QUEUED);
+>> +     return ret;
+>> +}
+>> +
+>> +void tegra210_vi_stop_streaming(struct vb2_queue *vq)
+>> +{
+>> +     struct tegra_vi_channel *chan = vb2_get_drv_priv(vq);
+>> +     struct tegra_channel_buffer *buf;
+>> +
+>> +     if (!chan->kthread_capture_start || !chan->kthread_capture_done)
+>> +             return;
+>> +
+>> +     kthread_stop(chan->kthread_capture_start);
+>> +     chan->kthread_capture_start = NULL;
+>> +     kthread_stop(chan->kthread_capture_done);
+>> +     chan->kthread_capture_done = NULL;
+>> +
+> With the change in chan_capture_kthread_done() as described above you can
+> drop the next 4 lines since that's guaranteed to be done by the thread.
+>
+>> +     /* wait for last frame MW_ACK_DONE */
+>> +     buf = dequeue_buf_done(chan);
+>> +     if (buf)
+>> +             tegra_channel_capture_done(chan, buf);
+>> +
+>> +     tegra_channel_release_queued_buffers(chan, VB2_BUF_STATE_ERROR);
+>> +
+>> +     tegra_channel_set_stream(chan, false);
+>> +
+>> +     /* disable clock gating to enable continuous clock */
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, 0);
+>> +
+>> +     /* reset VI MCIF, PF, SENSORCTL, and SHADOW logic */
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0xF);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_SW_RESET, 0x0);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_IMAGE_DEF, 0);
+>> +
+>> +     /* enable clock gating so VI can be clock gated if necessary */
+>> +     tegra_vi_write(chan, TEGRA_VI_CFG_CG_CTRL, VI_CG_2ND_LEVEL_EN);
+>> +     vi_csi_write(chan, TEGRA_VI_CSI_ERROR_STATUS, 0xFFFFFFFF);
+>> +
+>> +     media_pipeline_stop(&chan->video.entity);
+>> +}
+>> +
+>> +void tegra210_csi_error_recover(struct tegra_csi_channel *csi_chan)
+>
+> Regards,
+>
+>          Hans
