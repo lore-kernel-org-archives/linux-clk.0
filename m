@@ -2,103 +2,125 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0925C4BA14
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 13:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F08C4BA16
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8FA024688
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 13:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1DB424688
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:09:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="uBz3+g+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbgBZNmG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 08:42:06 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:38720 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgBZNmG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 08:42:06 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id BBC4B1C0411; Wed, 26 Feb 2020 14:42:03 +0100 (CET)
-Date:   Wed, 26 Feb 2020 14:42:03 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v10 00/13] Support ROHM BD71828 PMIC
-Message-ID: <20200226134203.GD4080@duo.ucw.cz>
-References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
- <20200117103000.GG15507@dell>
- <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
+        id S1726278AbgBZOJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 09:09:54 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37528 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727426AbgBZOJt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 09:09:49 -0500
+Received: by mail-ed1-f68.google.com with SMTP id t7so3916233edr.4
+        for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2020 06:09:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=fXFKoR7odDqKyjm1wlalyPUtaV5JgRAtJWLDNUWDC8E=;
+        b=uBz3+g+j8keWl8UqI79zfp5ubt5QR7/jXbEkrRg/FCZsiZGJC3aScHfLMQZxnVbof3
+         /QZebawsO2zze1XxLqeBsXC2dsMaenQfIFyIOtbY2d5jk5G7uwQkFUZrYjeLa+zy3DE7
+         lzADPtw5KQoK/Pm/ROUTLWxaKS8vLmq7PtHLzzwWCoYi/uqf06dA+oXXNc1vUs/imun1
+         GOWPx1wK29lGZ/IcYPHFQbIU6q34VUM+92OI4u3yF1LEl7bMTJirNuZm/atrMNTPRdg5
+         ZG/tqQrfoKU+uMNPz9Ru9PJe0pyNk6lFQEORi/37O03LN46FGtKkMXMCRNDMc5vDil1W
+         RjJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=fXFKoR7odDqKyjm1wlalyPUtaV5JgRAtJWLDNUWDC8E=;
+        b=P1kJd1Xr190aZEA7IBzz3SOUM58fCfvgyI28y0klW6E2JwP1lKLlPGhYI9EcfUM87P
+         Gx65QVw71mbqKlhTZI0jH+2FJiBYU56Mc2DGazZy9aCWfTayawczhcBIgBwoBdch5qeb
+         510kQitOrYXbypn0/SMpYdYUDwUTPw9iqqOyUrYqhfYs+BiIkrhIcwnYIJnHzZNH0QSt
+         WjqZ6XOU2asI+UEdY5rb+9T0SZwOCOkA7MAOsdPd0p7C1of/Y3A27owd/CL8yErH/0/x
+         BG2QwuAbdfczHh4knHWTbWlNcXEpZ1tft+eaL86BOOzuCosnclNPF3sehPdwPJYRw1yY
+         fMHA==
+X-Gm-Message-State: APjAAAX0wksvGoIVtxJcw+E3COedkFldXlnWiuc23hRN89LpouPQzNxr
+        z44++XKQHxPUE0NT8+a2MpoLiA==
+X-Google-Smtp-Source: APXvYqw0u4w7Awwn/Oq86trc1VxG309aOYxrpuzvaTjpcOA5sSGDTXcJUngxdDIFv1GDoA39EXuUlA==
+X-Received: by 2002:a05:6402:22d4:: with SMTP id dm20mr5099174edb.353.1582726187668;
+        Wed, 26 Feb 2020 06:09:47 -0800 (PST)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id c19sm91152ejm.47.2020.02.26.06.09.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Feb 2020 06:09:46 -0800 (PST)
+Subject: Re: [PATCH v4 0/5] Add clock drivers for SM8250 SoC
+To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        psodagud@codeaurora.org, tsoni@codeaurora.org,
+        jshriram@codeaurora.org, tdas@codeaurora.org,
+        vnkgutta@codeaurora.org
+References: <20200224045003.3783838-1-vkoul@kernel.org>
+From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Message-ID: <ada86697-374c-653d-156e-36af61b53c52@nexus-software.ie>
+Date:   Wed, 26 Feb 2020 14:09:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="wULyF7TL5taEdwHz"
-Content-Disposition: inline
-In-Reply-To: <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200224045003.3783838-1-vkoul@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 24/02/2020 04:49, Vinod Koul wrote:
+> This series adds clock drivers support for SM8250 SoC.  As part of the
+> device tree, the sm8250 dts file has basic nodes like CPU, PSCI, intc, timer
+> and clock controller.
+> 
+> Required clock controller driver and RPMH cloks are added to
+> support peripherals like USB.
+> 
+> All this configuration is added to support SM8250 to boot up to the
+> serial console.
+> 
+> Changes in v4:
+>   - Make qcom,gcc-sm8250.yaml license as dual GPL + BSD
+> 
+> Changes in v3:
+> - Dropped accepted patches by Steve
+> - Split the common rename patch to rename and refactor patches
+> - Rebase on clk/clk-qcom and move yaml binding to .../bindings/clock/qcom,gcc-sm8250.yaml
+> - Fix comments form Steve on gcc-sm8250 clk driver
+> 
+> Taniya Das (5):
+>    clk: qcom: clk-alpha-pll: Use common names for defines
+>    clk: qcom: clk-alpha-pll: Refactor trion PLL
+>    clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs
+>    dt-bindings: clock: Add SM8250 GCC clock bindings
+>    clk: qcom: gcc: Add global clock controller driver for SM8250
+> 
+>   .../bindings/clock/qcom,gcc-sm8250.yaml       |   72 +
+>   drivers/clk/qcom/Kconfig                      |    7 +
+>   drivers/clk/qcom/Makefile                     |    1 +
+>   drivers/clk/qcom/clk-alpha-pll.c              |  264 +-
+>   drivers/clk/qcom/clk-alpha-pll.h              |   12 +
+>   drivers/clk/qcom/gcc-sm8250.c                 | 3690 +++++++++++++++++
+>   include/dt-bindings/clock/qcom,gcc-sm8250.h   |  271 ++
+>   7 files changed, 4268 insertions(+), 49 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
+>   create mode 100644 drivers/clk/qcom/gcc-sm8250.c
+>   create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
+> 
 
---wULyF7TL5taEdwHz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> > > Changelog v10:
-> > >   - Split RTC patch to a BD70528 fix (which hopefully goes to 5.4)
-> > > and to
-> > >     BD71828 support
-> >=20
-> > Still missing LED Acks.
-> >=20
->=20
-> Yep. I know. I haven't heard from Pavel recently and the patch 12
-> definitely requires his ack. Can you take the other patches in and
-> leave 12 and 13 out for now? I can continue work on LEDs with Pavel but
-> I would really like to have the regulators working and BD70528 RTC
-> fixed in next release...
-
-Going through my backlogs now. You taking patches up-to 11 so
-that we have two left sounds good :-).
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---wULyF7TL5taEdwHz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCXlZ1qwAKCRAw5/Bqldv6
-8gMmAJ4nQGRvqIIofy6kdcys+H/DvgwB6QCgnqsTHp2iWDANQfm15weQRR1P0SY=
-=boMf
------END PGP SIGNATURE-----
-
---wULyF7TL5taEdwHz--
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
