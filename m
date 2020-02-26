@@ -2,208 +2,212 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27693C4BA1C
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 16:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94C91C4BA13
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 17:15:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E84CE2468A
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 16:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5A5206E6
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 17:15:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSj8QK91"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXDH/CMD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgBZQ5v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 11:57:51 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40564 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbgBZQ5v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 11:57:51 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r17so1841098wrj.7;
-        Wed, 26 Feb 2020 08:57:50 -0800 (PST)
+        id S1726277AbgBZRPv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 12:15:51 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46590 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbgBZRPu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 12:15:50 -0500
+Received: by mail-qk1-f196.google.com with SMTP id u124so85331qkh.13;
+        Wed, 26 Feb 2020 09:15:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LTnKsoB4AHL0Snl7rS1+dxo+f9zUGTx20/bjCtbZfUk=;
-        b=jSj8QK91Bei3ZtBRSgP4/M6DmJg58SFTDJVi+oWjJXWyUlc5PdKVwDjpzJc+GsAUsl
-         s1VyRMNUgwK4V8TwQY58z+xHiSgYufvbUSaeypVa59Uwe+2V9cjPWog4c6tl88dz7IgO
-         /rDhKI8l6YJugDDiNnHpDDCFYz5PKS/MTM/cginoQYKfuVuvzagbhe5ZzAyP2LyMBlnv
-         fedkAuixsBtj902DvH35CarLsdXtNv7W8EDOTSus+8gW7auqLfWsJclci9iVhD3qU6VV
-         vuDj3eKdgJvwOZGsI/NYGqtwbLYeVqY0SfB+aSKpMDWhLi3hlF2uuB7F6u0LwJTF3dq/
-         kdwQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R5CxkaIVTY0HaJ9D8eCB6WdnU+YVYJtVOwAoTc9aGqs=;
+        b=WXDH/CMDQZYGSi/eYGAv/ziZ/Kath+bSx6jYB4GgTHD1m/q6tAb2ftqED/bmvqDkja
+         RS1qOwLC29AdSDKuQJNCf560UMMTg/iP4n3uou8F7rfZjletWYFtvbRIk86kC2wvgaGG
+         7Kr07LDtT1p0XW+VMSuqxduPva0ovFrcwYgAC4TBaZJK7lA0GibCM6fT7T7IyLdv+Dlo
+         Z7Ey1VCllHYQ0nuuEILba3eBMtQwSLgDE0VNPU5Mz6ecMc/h23Jt0SWtIuUSaUhf+Rdg
+         VcxRQP6NGfMtmqZH2Z+f1OJxWlULafkyR48fBcU7Iqh4Be3STgE8GAH+k+a3NnrFv6+R
+         3Aww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LTnKsoB4AHL0Snl7rS1+dxo+f9zUGTx20/bjCtbZfUk=;
-        b=fUZ1B59KovS+kz7au1H5iaz7s4iWU8ypU8h8eP8Q8xhF8qdqGVfsLHRbWLCjRJgJxr
-         eBR73sxgrgAoR88T2QGDXdabBeuhZcADWUeB3dps5T4mdDrcDALs8tNKZIymIQ3fpykx
-         rNFfibRBGW6TzPoasfy7+ckUTb0Kp3mWZeC27h+5aVqhQbmtx0OudL7s2lRYPc4O/X2f
-         iyHM8ir6obKkdJpibCW+9kr5aY0w3dorOrFVYeRkImeA9d+R8rAEA5kwxKAoc4ZbcVnT
-         HplGUn5R8nHkzN+I1KYx0Nlsk/2p5mcS6HEbWFfRkW8RpqPPkplWtDePyh0DuBfPSZCX
-         faoQ==
-X-Gm-Message-State: APjAAAVIGOMjjDL6M4RWunQMn0iU/VvUoUGL2dbt1r1zBIp48xQPNvZ7
-        B6PhmOtKvGS/Vgbzaw99A9k=
-X-Google-Smtp-Source: APXvYqxjn0zIyssHpKxJ/ktrsS1gyu41mZpxUcjjEzpuIwUXcZtYIMToPnprQ4nt5hXpLsBAHHBEww==
-X-Received: by 2002:a5d:4b91:: with SMTP id b17mr6363630wrt.325.1582736269484;
-        Wed, 26 Feb 2020 08:57:49 -0800 (PST)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id d4sm4082431wra.14.2020.02.26.08.57.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2020 08:57:48 -0800 (PST)
-Date:   Wed, 26 Feb 2020 17:57:46 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Joseph Lo <josephl@nvidia.com>
-Cc:     Dmitry Osipenko <digetx@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH V4 4/8] memory: tegra: Add Tegra210 EMC clock driver
-Message-ID: <20200226165746.GA818759@ulmo>
-References: <20190529082139.5581-1-josephl@nvidia.com>
- <20190529082139.5581-5-josephl@nvidia.com>
- <403181d4-100b-679e-b1d8-c052c6d1f3ac@gmail.com>
- <2f9722b4-df92-546b-9659-3b02768bbe41@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R5CxkaIVTY0HaJ9D8eCB6WdnU+YVYJtVOwAoTc9aGqs=;
+        b=a0iuUOuip5tDXrwmTbBJFCpm3oWFeVNIdXr0PeV+s5ICBIx+nFiHevn858P9nOfTCD
+         MWwFuf28JKLn6faGqWS53rXTEBRtCC1jFd3zQs88VE6VoRbqeZ9k2xBrTva2Lq12Vm/U
+         EIRr3B8QtA9A3RxRdtS0Ucp280Zh27UfvNJ00dW452fKwBJvfP5luWnHYH/iFuMS9YnI
+         /2M7oEXlgQEc2dsvjVNnatlGkuZzfOgNPl+07OWDr2cYun0hGz8/P5EhSwXKRXLzKPVO
+         Xg9PiRXoGxuax8U+HAG7cnSjRjfT2yVokUp8anACN/8exEG4OJavVHSx+tksk6PfYE5W
+         3BBw==
+X-Gm-Message-State: APjAAAVZQKMnaS1GvY1QgCLnZa2laBRLoHy2xRk2XA8Us50cisOaLFNa
+        rP5ubwyQtjAmjj3v43Ey1/XJ6iqmH+Y0HOe9Dgyzns6+ixM=
+X-Google-Smtp-Source: APXvYqwRVpJ+rNp2Wc3lNOmF5kn+eN1/4ttVSLtk+NtQMQ6cs0LrcaTVF3D1uBty6j577ThS87zLPgJvA/V4ZP/T0hM=
+X-Received: by 2002:a37:b744:: with SMTP id h65mr109687qkf.85.1582737349337;
+ Wed, 26 Feb 2020 09:15:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <2f9722b4-df92-546b-9659-3b02768bbe41@nvidia.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+References: <5e4b4889.1c69fb81.bc072.65a9@mx.google.com> <50f9ce8b-c303-3b25-313b-cfb62d7e8735@collabora.com>
+ <158215618721.184098.2077489323832918966@swboyd.mtv.corp.google.com> <20200225133815.fjc6apts3ns5zcm5@gilmour.lan>
+In-Reply-To: <20200225133815.fjc6apts3ns5zcm5@gilmour.lan>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Wed, 26 Feb 2020 18:15:38 +0100
+Message-ID: <CAFqH_52T7QATdhJktDQPx7CeBTKocZfZ8LPAZp4+RMqsOHu0gw@mail.gmail.com>
+Subject: Re: next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Kevin Hilman <khilman@baylibre.com>, mgalka@collabora.com,
+        linux-clk@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi all,
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Missatge de Maxime Ripard <maxime@cerno.tech> del dia dt., 25 de febr.
+2020 a les 15:34:
+>
+> On Wed, Feb 19, 2020 at 03:49:47PM -0800, Stephen Boyd wrote:
+> > Adding some Allwinner folks. Presumably there is some sort of clk that
+> > is failing to calculate a phase when it gets registered. Maybe that's
+> > because the parent isn't registered yet?
+>
+> It's simpler than that :)
+>
+> > Quoting Guillaume Tucker (2020-02-17 23:45:41)
+> > > Hi Stephen,
+> > >
+> > > Please see the bisection report below about a boot failure.
+> > >
+> > > Reports aren't automatically sent to the public while we're
+> > > trialing new bisection features on kernelci.org but this one
+> > > looks valid.
+> > >
+> > > There's nothing in the serial console log, probably because it's
+> > > crashing too early during boot.  I'm not sure if other platforms
+> > > on kernelci.org were hit by this in the same way, it's tricky to
+> > > tell partly because there is no output.  It should possible to
+> > > run it again with earlyprintk enabled in BayLibre's test lab
+> > > though.
+> > >
+> > > Thanks,
+> > > Guillaume
+> > >
+> > >
+> > > On 18/02/2020 02:14, kernelci.org bot wrote:
+> > > > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> > > > * This automated bisection report was sent to you on the basis  *
+> > > > * that you may be involved with the breaking commit it has      *
+> > > > * found.  No manual investigation has been done to verify it,   *
+> > > > * and the root cause of the problem may be somewhere else.      *
+> > > > *                                                               *
+> > > > * If you do send a fix, please include this trailer:            *
+> > > > *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> > > > *                                                               *
+> > > > * Hope this helps!                                              *
+> > > > * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> > > >
+> > > > next/master bisection: baseline.login on sun8i-h2-plus-orangepi-zero
+> > > >
+> > > > Summary:
+> > > >   Start:      c25a951c50dc Add linux-next specific files for 20200217
+> > > >   Plain log:  https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.txt
+> > > >   HTML log:   https://storage.kernelci.org//next/master/next-20200217/arm/multi_v7_defconfig/gcc-8/lab-baylibre/baseline-sun8i-h2-plus-orangepi-zero.html
+> > > >   Result:     2760878662a2 clk: Bail out when calculating phase fails during clk registration
+> > > >
+> > > > Checks:
+> > > >   revert:     PASS
+> > > >   verify:     PASS
+> > > >
+> > > > Parameters:
+> > > >   Tree:       next
+> > > >   URL:        git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> > > >   Branch:     master
+> > > >   Target:     sun8i-h2-plus-orangepi-zero
+> > > >   CPU arch:   arm
+> > > >   Lab:        lab-baylibre
+> > > >   Compiler:   gcc-8
+> > > >   Config:     multi_v7_defconfig
+> > > >   Test case:  baseline.login
+> > > >
+> > > > Breaking commit found:
+> > > >
+> > > > -------------------------------------------------------------------------------
+> > > > commit 2760878662a290ac57cff8a5a8d8bda8f4dddc37
+> > > > Author: Stephen Boyd <sboyd@kernel.org>
+> > > > Date:   Wed Feb 5 15:28:02 2020 -0800
+> > > >
+> > > >     clk: Bail out when calculating phase fails during clk registration
+> > > >
+> > > >     Bail out of clk registration if we fail to get the phase for a clk that
+> > > >     has a clk_ops::get_phase() callback. Print a warning too so that driver
+> > > >     authors can easily figure out that some clk is unable to read back phase
+> > > >     information at boot.
+> > > >
+> > > >     Cc: Douglas Anderson <dianders@chromium.org>
+> > > >     Cc: Heiko Stuebner <heiko@sntech.de>
+> > > >     Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > >     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > > >     Link: https://lkml.kernel.org/r/20200205232802.29184-5-sboyd@kernel.org
+> > > >     Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> > > >
+> > > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > > index dc8bdfbd6a0c..ed1797857bae 100644
+> > > > --- a/drivers/clk/clk.c
+> > > > +++ b/drivers/clk/clk.c
+> > > > @@ -3457,7 +3457,12 @@ static int __clk_core_init(struct clk_core *core)
+> > > >        * Since a phase is by definition relative to its parent, just
+> > > >        * query the current clock phase, or just assume it's in phase.
+> > > >        */
+> > > > -     clk_core_get_phase(core);
+> > > > +     ret = clk_core_get_phase(core);
+> > > > +     if (ret < 0) {
+> > > > +             pr_warn("%s: Failed to get phase for clk '%s'\n", __func__,
+> > > > +                     core->name);
+> > > > +             goto out;
+> > > > +     }
+>
+> The thing is, clk_core_get_phase actually returns the phase on success :)
+>
+> So, when you actually have a phase returned, and not an error, you end
+> up with a positive, non-zero, value for ret.
+>
+> And since it's the latest assignment of that value, and that we return
+> ret all the time, even on success, we end up returning that positive,
+> non-zero value to __clk_register, which in turn tests whether it's
+> non-zero for success (it's not), and then proceeds to garbage collect
+> everything.
+>
+> I guess we're just the odd ones actually returning non-zero phases at
+> init time and in kernelci.
+>
 
-On Thu, May 30, 2019 at 10:45:01AM +0800, Joseph Lo wrote:
-> On 5/29/19 9:26 PM, Dmitry Osipenko wrote:
-> > 29.05.2019 11:21, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > > This is the initial patch for Tegra210 EMC clock driver, which doesn't
-> > > include the support code and detail sequence for clock scaling yet.
-> > >=20
-> > > The driver is designed to support LPDDR4 SDRAM. Because of the LPDDR4
-> > > devices need to do initial time training before it can be used, the
-> > > firmware will help to do that at early boot stage. Then, the trained
-> > > table of the rates we support will pass to the kernel via DT. So the
-> > > driver can get the trained table for clock scaling support.
-> > >=20
-> > > For the higher rate support (above 800MHz), the periodic training is
-> > > needed for the timing compensation. So basically, two methodologies f=
-or
-> > > clock scaling are supported, one is following the clock changing
-> > > sequence to update the EMC table to EMC registers and another is if t=
-he
-> > > rate needs periodic training, then we will start a timer to do that
-> > > periodically until it scales to the lower rate.
-> > >=20
-> > > Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
-> > >=20
-> > > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > > ---
-> > > v4:
-> > > - remove the statistic data in debugfs
-> > > - add tegra210_clk_register_emc API to make it compatible with the ca=
-se
-> > >    if the kernel still uses the older DTB which doesn't have EMC node.
-> > >    And the MC and EMC clock can still be registered successfully.
-> > > v3:
-> > > - address almost all the comments from the previous version
-> > > - remove the DT parser of EMC table
-> > > - The EMC table is passing as a binary blob now.
-> > > ---
-> > >   drivers/memory/tegra/Kconfig        |  10 +
-> > >   drivers/memory/tegra/Makefile       |   1 +
-> > >   drivers/memory/tegra/tegra210-emc.c | 671 +++++++++++++++++++++++++=
-+++
-> > >   drivers/memory/tegra/tegra210-emc.h | 156 +++++++
-> > >   include/soc/tegra/emc.h             |   2 +
-> > >   5 files changed, 840 insertions(+)
-> > >   create mode 100644 drivers/memory/tegra/tegra210-emc.c
-> > >   create mode 100644 drivers/memory/tegra/tegra210-emc.h
-> > >=20
-> > > diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kcon=
-fig
-> > > index 4680124ddcab..9d051bcdbee3 100644
-> > > --- a/drivers/memory/tegra/Kconfig
-> > > +++ b/drivers/memory/tegra/Kconfig
-> > > @@ -26,3 +26,13 @@ config TEGRA124_EMC
-> > >   	  Tegra124 chips. The EMC controls the external DRAM on the board.
-> > >   	  This driver is required to change memory timings / clock rate for
-> > >   	  external memory.
-> > > +
-> > > +config TEGRA210_EMC
-> > > +	bool "NVIDIA Tegra210 External Memory Controller driver"
-> > > +	default y
-> >=20
-> > This is not enough since you're leaving possibility to disable
-> > compilation of the driver, but the compilation will fail because of the
-> > unresolved symbol (tegra210_clk_register_emc).
-> >=20
-> > > +	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
-> > > +	help
-> > > +	  This driver is for the External Memory Controller (EMC) found on
-> > > +	  Tegra210 chips. The EMC controls the external DRAM on the board.
-> > > +	  This driver is required to change memory timings / clock rate for
-> > > +	  external memory.
-> >=20
-> > Either TEGRA210_EMC Kconfig option shall be always force-selected for
-> > T210 or you should move all the clk-related code into drivers/clk/tegra=
-/.
-> >=20
-> > Could you please give a rationale for having EMC clock code within the
-> > EMC driver?
->=20
-> I didn't have a specific reason for that initially, just wanted the clock
-> code and EMC driver together for easier maintenance.
->=20
-> But considering the fix in v4, that makes it backward compatible with the
-> case if the kernel uses the older DT without EMC node, I think it's better
-> to move the clock code into the clk folder now.
+Just to note that not only Allwiner is affected, Rockchip is also
+affected by this issue. Reverting the patch fixes the issue for me,
+but the patch proposed by Maxime [1] does _NOT_ fixes the issue for
+Rockchip, there is something else, I'll take a look. I can't answer
+that patch because didn't reach my inbox.
 
-I looked into this a bit and I don't think this is actually worth it.
-The problem is that, as opposed to Tegra124 and earlier, the sequence
-for changing the EMC frequency is much more entangled. The bulk of the
-programming will be on the EMC side, with the code occasionally calling
-into CAR code to set the parent clock and some other flags.
+Regards,
+ Enric
 
-So there's going to be some interdependencies regardless of where the
-clock code actually lives. I can try to split this apart, but I don't
-have very high hopes that the end result will be any cleaner than the
-version here.
+[1] https://patchwork.kernel.org/patch/11403837/
 
-Thierry
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5Wo4YACgkQ3SOs138+
-s6FCXA//bWBXN7bSyzNc46zqWag8Is1uVhZgTR0H59XJTfsxw4K+6eDOpVcVCmLa
-0cSrwEsh+4ggJuXovFA7ISWgbgRMM9eL+tv8gxtWheXtuPco2OzUfLGSe+rE7fCn
-/boebHLd+04IRklVz0BkjmwtLVmzbTAMGV1SRc75Wz0eg9AqEoVNMBYEHnyZ3Z+n
-po6Spd1ITGZdAZ1H3UA4UhGusFmDGDOLEbQPTSOs2iSRYFr08PJngqv28fsLTNnn
-eXm8f97NJedT5LhgQNxA2jZE9Frg6YBO8bgikL0UpCP3hMW8F3lXA0F4Rf8Nt+ZM
-sX3H0WXs3iwFcr7KzK2QGWntXKWhUpjNiZtrjgo+wXuzeMxOSgcfgC/DskEuSFHk
-IQvKAxM2W2iyh6QfiZhUpDzF1rHY3RggAEWsLpXGqzTizfiXUu1yb1SEQuC7wxmg
-lawIhYSMykcVb6+m/TUuN+FxbFSeofft9xA4hMa33OoQ9M3NlljppxsgR1YRijGy
-/YdClu/Jibzt+qKmRHtkjWYMe9VvAeLhMpr1W7aadFp5+vSGACVHn+DB9c6SGQoZ
-oU9FMiSEnfgwV6rbTO7NegUHWNbnqHDzFk4dl21ZGOYIbgvTA4sUq/R0HxqdNoks
-ejGKyBWQ/H7hFdR3IQ6EvvnqWuvQymbHp/Sua9oIDb9s3vTWn3Q=
-=BuGo
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+> I'll send a patch
+>
+> Maxime
