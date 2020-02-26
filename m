@@ -2,58 +2,58 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24F08C4BA16
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C356C4BA14
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:11:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1DB424688
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DD392468B
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:11:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="uBz3+g+j"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HFzgY7fA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbgBZOJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 09:09:54 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37528 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727426AbgBZOJt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 09:09:49 -0500
-Received: by mail-ed1-f68.google.com with SMTP id t7so3916233edr.4
-        for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2020 06:09:48 -0800 (PST)
+        id S1726867AbgBZOLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 09:11:02 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46908 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727196AbgBZOLC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 09:11:02 -0500
+Received: by mail-ed1-f66.google.com with SMTP id p14so3846530edy.13
+        for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2020 06:11:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
+        d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=fXFKoR7odDqKyjm1wlalyPUtaV5JgRAtJWLDNUWDC8E=;
-        b=uBz3+g+j8keWl8UqI79zfp5ubt5QR7/jXbEkrRg/FCZsiZGJC3aScHfLMQZxnVbof3
-         /QZebawsO2zze1XxLqeBsXC2dsMaenQfIFyIOtbY2d5jk5G7uwQkFUZrYjeLa+zy3DE7
-         lzADPtw5KQoK/Pm/ROUTLWxaKS8vLmq7PtHLzzwWCoYi/uqf06dA+oXXNc1vUs/imun1
-         GOWPx1wK29lGZ/IcYPHFQbIU6q34VUM+92OI4u3yF1LEl7bMTJirNuZm/atrMNTPRdg5
-         ZG/tqQrfoKU+uMNPz9Ru9PJe0pyNk6lFQEORi/37O03LN46FGtKkMXMCRNDMc5vDil1W
-         RjJw==
+        bh=5DhKMOCKougglQKBhGOeHVANE51m9Ir+JY7qypOlF1M=;
+        b=HFzgY7fAErEEDpdomlXQINmzmWIb+d13WsvTNxgkexmA0K5Qiw5yOLP8OkZpcRJgYZ
+         ztK8mfnAOleT9kyx4AwB//dzL15yj/TxvUYErvFfRqKAlGgFT/oI3pKplgvaO9XOCinP
+         c0C7HVk9s7LErAnqIVH5HpOxZi+TAlhfN2a28lSQFPPtq+fDh3JQ1pJsavJBN9s46WNG
+         uCVA3iOT5fV8LS7ajS8ZvoPz2kf9tvcv5lqRIJYXyd0peSjIqFJpDkxJ6EI0J2XAHik0
+         0TfQWxxP9utTVJOn795X/1kcyffN6Fs29zRAOme0kqSlgoA5XYxhWt+hkgxjDpJKNrJX
+         DWAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=fXFKoR7odDqKyjm1wlalyPUtaV5JgRAtJWLDNUWDC8E=;
-        b=P1kJd1Xr190aZEA7IBzz3SOUM58fCfvgyI28y0klW6E2JwP1lKLlPGhYI9EcfUM87P
-         Gx65QVw71mbqKlhTZI0jH+2FJiBYU56Mc2DGazZy9aCWfTayawczhcBIgBwoBdch5qeb
-         510kQitOrYXbypn0/SMpYdYUDwUTPw9iqqOyUrYqhfYs+BiIkrhIcwnYIJnHzZNH0QSt
-         WjqZ6XOU2asI+UEdY5rb+9T0SZwOCOkA7MAOsdPd0p7C1of/Y3A27owd/CL8yErH/0/x
-         BG2QwuAbdfczHh4knHWTbWlNcXEpZ1tft+eaL86BOOzuCosnclNPF3sehPdwPJYRw1yY
-         fMHA==
-X-Gm-Message-State: APjAAAX0wksvGoIVtxJcw+E3COedkFldXlnWiuc23hRN89LpouPQzNxr
-        z44++XKQHxPUE0NT8+a2MpoLiA==
-X-Google-Smtp-Source: APXvYqw0u4w7Awwn/Oq86trc1VxG309aOYxrpuzvaTjpcOA5sSGDTXcJUngxdDIFv1GDoA39EXuUlA==
-X-Received: by 2002:a05:6402:22d4:: with SMTP id dm20mr5099174edb.353.1582726187668;
-        Wed, 26 Feb 2020 06:09:47 -0800 (PST)
+        bh=5DhKMOCKougglQKBhGOeHVANE51m9Ir+JY7qypOlF1M=;
+        b=qr4hgqZ7yMjJo5+38Hyn/VsgO1iEyOcmYJN9y9mvVt18UFOnFFlf3YwWBP0zTvtOwd
+         /nArefgpbLx3ZDWkQCQy/rTtbY2FKtj+CpvmGTdwk1iOdYw+UowD77xXdhqf46ZGePrB
+         SaxTtxA92SSGPUA0M7R6/Zhp+VuYrAC63GVZhJ2GkcU3U/DlLUG/6lKtQyY5Br5gfAWN
+         Opn28ADC8ymokkQq3OJo2vfRL1c01m5YTRFMYXi5fogzEFcnmzwqVRkYeeQSnQBjnIxo
+         7qWBap+F7LiCO5gV33aexVzcIDTLq0bhM/hoXCl5P/2LAMerRKrH33aaDpVPOuZvNhlA
+         DYsw==
+X-Gm-Message-State: APjAAAX5cUopUjgI5LI8hp5w3TOd91sTGDVQR/eEwwC50KO4tmHZBW6c
+        AyTZrLpqcfROX4f92pVyqgu+mQ==
+X-Google-Smtp-Source: APXvYqxFEpx1h3DCctgiXd8YObb2t6UvVKbAfD7zvtcYN4qUL9HT0QEeCyTofZJB+vP8XAV1fXOcFQ==
+X-Received: by 2002:a17:906:a3c6:: with SMTP id ca6mr4738582ejb.265.1582726260216;
+        Wed, 26 Feb 2020 06:11:00 -0800 (PST)
 Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id c19sm91152ejm.47.2020.02.26.06.09.46
+        by smtp.gmail.com with ESMTPSA id dh4sm131393edb.77.2020.02.26.06.10.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 06:09:46 -0800 (PST)
+        Wed, 26 Feb 2020 06:10:59 -0800 (PST)
 Subject: Re: [PATCH v4 0/5] Add clock drivers for SM8250 SoC
 To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -67,9 +67,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         jshriram@codeaurora.org, tdas@codeaurora.org,
         vnkgutta@codeaurora.org
 References: <20200224045003.3783838-1-vkoul@kernel.org>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Message-ID: <ada86697-374c-653d-156e-36af61b53c52@nexus-software.ie>
-Date:   Wed, 26 Feb 2020 14:09:58 +0000
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Message-ID: <ef54b53f-f29f-be28-3fb4-f72fde389090@linaro.org>
+Date:   Wed, 26 Feb 2020 14:11:10 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
@@ -121,6 +121,10 @@ On 24/02/2020 04:49, Vinod Koul wrote:
 >   create mode 100644 drivers/clk/qcom/gcc-sm8250.c
 >   create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
 > 
+
+Resend from the right email address.
+
+For the series:
 
 Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
