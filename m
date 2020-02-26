@@ -2,129 +2,135 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C356C4BA14
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E721C4BA10
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD392468B
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE92124687
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 14:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HFzgY7fA"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="WgTEJSBQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1X4uKlKj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgBZOLC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 09:11:02 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46908 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727196AbgBZOLC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 09:11:02 -0500
-Received: by mail-ed1-f66.google.com with SMTP id p14so3846530edy.13
-        for <linux-clk@vger.kernel.org>; Wed, 26 Feb 2020 06:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=5DhKMOCKougglQKBhGOeHVANE51m9Ir+JY7qypOlF1M=;
-        b=HFzgY7fAErEEDpdomlXQINmzmWIb+d13WsvTNxgkexmA0K5Qiw5yOLP8OkZpcRJgYZ
-         ztK8mfnAOleT9kyx4AwB//dzL15yj/TxvUYErvFfRqKAlGgFT/oI3pKplgvaO9XOCinP
-         c0C7HVk9s7LErAnqIVH5HpOxZi+TAlhfN2a28lSQFPPtq+fDh3JQ1pJsavJBN9s46WNG
-         uCVA3iOT5fV8LS7ajS8ZvoPz2kf9tvcv5lqRIJYXyd0peSjIqFJpDkxJ6EI0J2XAHik0
-         0TfQWxxP9utTVJOn795X/1kcyffN6Fs29zRAOme0kqSlgoA5XYxhWt+hkgxjDpJKNrJX
-         DWAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=5DhKMOCKougglQKBhGOeHVANE51m9Ir+JY7qypOlF1M=;
-        b=qr4hgqZ7yMjJo5+38Hyn/VsgO1iEyOcmYJN9y9mvVt18UFOnFFlf3YwWBP0zTvtOwd
-         /nArefgpbLx3ZDWkQCQy/rTtbY2FKtj+CpvmGTdwk1iOdYw+UowD77xXdhqf46ZGePrB
-         SaxTtxA92SSGPUA0M7R6/Zhp+VuYrAC63GVZhJ2GkcU3U/DlLUG/6lKtQyY5Br5gfAWN
-         Opn28ADC8ymokkQq3OJo2vfRL1c01m5YTRFMYXi5fogzEFcnmzwqVRkYeeQSnQBjnIxo
-         7qWBap+F7LiCO5gV33aexVzcIDTLq0bhM/hoXCl5P/2LAMerRKrH33aaDpVPOuZvNhlA
-         DYsw==
-X-Gm-Message-State: APjAAAX5cUopUjgI5LI8hp5w3TOd91sTGDVQR/eEwwC50KO4tmHZBW6c
-        AyTZrLpqcfROX4f92pVyqgu+mQ==
-X-Google-Smtp-Source: APXvYqxFEpx1h3DCctgiXd8YObb2t6UvVKbAfD7zvtcYN4qUL9HT0QEeCyTofZJB+vP8XAV1fXOcFQ==
-X-Received: by 2002:a17:906:a3c6:: with SMTP id ca6mr4738582ejb.265.1582726260216;
-        Wed, 26 Feb 2020 06:11:00 -0800 (PST)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id dh4sm131393edb.77.2020.02.26.06.10.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Feb 2020 06:10:59 -0800 (PST)
-Subject: Re: [PATCH v4 0/5] Add clock drivers for SM8250 SoC
-To:     Vinod Koul <vkoul@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        id S1726695AbgBZOPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 09:15:14 -0500
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:53219 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726579AbgBZOPO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 09:15:14 -0500
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailnew.nyi.internal (Postfix) with ESMTP id E1B638363;
+        Wed, 26 Feb 2020 09:15:12 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Wed, 26 Feb 2020 09:15:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=bom162ac9gFcma9iDy1OFat3ZlF
+        vKtIzDMH8zrN0kDQ=; b=WgTEJSBQc0Giu0DeGNBqZ/LQw2ug88/mp3W/Ys3KlO8
+        LoB5f0/SCHWrQEHleI9Wp6rjzFK75hGqI+TovHWWv44ZDjGFrEUnP1bFnnNh9IqS
+        nnISRiK7YtF/2/Z3OQO/qnW6Ys5Q9iUylCq7MIpfZ1IYl3nID7Ekw2kT48mUudGx
+        IFrFO7ea234w9NDj0CR7wQ8KtgG1S29UnHb8m4YTiE4tnW/rJ4g1WisF9pLwJ8gJ
+        RHekUGi5GdabkCgbEYd0Vgk7Vj65IiZzu7xz+HsjUsS9PoQZ2m4mlz7QgbEccfa6
+        fFlXpJBnkAT94imNELyAyRx4kFeV8SubySmkce/QWNw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=bom162
+        ac9gFcma9iDy1OFat3ZlFvKtIzDMH8zrN0kDQ=; b=1X4uKlKjPafmoLx5sje8fN
+        Z5F2e61U76rNKHqHghkOcwD655QLYMt47hkt4N1d543s/Z+X56oWH53kfSlO8VO8
+        l7SqkCAmJG5FO40/GyRr59Vi4z6EmKnDBqe6lDthTOTg2O7GwDYKxFIFwPdr1LkG
+        XBeOv6LRm1u4sf2+qGmOJU/vAHRMCL5XUJHyqxlv+gIAsKvnJBHI0mZo58goCe/n
+        NjtOnRow9mZeXICIlU1Q2fYqVkGHhunIGbihqr+sC2pXeW/pN7BG0YliXK7nG7R+
+        9N5UJ5zraiGkWIVY03WhM+6iFW+9ZLx1VpGWZGq5wrtWp1Cv1lU5zTop7uEJFlrQ
+        ==
+X-ME-Sender: <xms:b31WXi4Z6d9VBrI7lGa7V6wGVLxCEg5J19Mn3-8ZyB3his6AWJqDNg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrleeggdeigecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucfkphepledtrd
+    ekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:b31WXlM5-g_WtYHlWm-jrMwWExH9Z-Ts0OOLciJ7u5UvldkwC08iuA>
+    <xmx:b31WXgNFDN54P2k12Ebr9Uu0rsYfeu5P5PpdTPzKHdNkFFw7pwJHIw>
+    <xmx:b31WXqJk28cMiUtq82-O0kijFf-nA1Nve3KQRwkje6h_xTeFSHwYKA>
+    <xmx:cH1WXiyyCeM1sLeCCJd95c1VrD4DVpaEHcNxrdECjrdHAUDQM-oMSw>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C60B33060FCB;
+        Wed, 26 Feb 2020 09:15:10 -0500 (EST)
+Date:   Wed, 26 Feb 2020 15:15:09 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        psodagud@codeaurora.org, tsoni@codeaurora.org,
-        jshriram@codeaurora.org, tdas@codeaurora.org,
-        vnkgutta@codeaurora.org
-References: <20200224045003.3783838-1-vkoul@kernel.org>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <ef54b53f-f29f-be28-3fb4-f72fde389090@linaro.org>
-Date:   Wed, 26 Feb 2020 14:11:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 22/89] clk: bcm: rpi: Discover the firmware clocks
+Message-ID: <20200226141509.awlydvh6bi7re27o@gilmour.lan>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+ <d197ab836d84b89b94ff1927872126767d921e94.1582533919.git-series.maxime@cerno.tech>
+ <2814be76-4006-4651-0a84-6dfaf2064e4a@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200224045003.3783838-1-vkoul@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n5yxkfnp2qbxja73"
+Content-Disposition: inline
+In-Reply-To: <2814be76-4006-4651-0a84-6dfaf2064e4a@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/02/2020 04:49, Vinod Koul wrote:
-> This series adds clock drivers support for SM8250 SoC.  As part of the
-> device tree, the sm8250 dts file has basic nodes like CPU, PSCI, intc, timer
-> and clock controller.
-> 
-> Required clock controller driver and RPMH cloks are added to
-> support peripherals like USB.
-> 
-> All this configuration is added to support SM8250 to boot up to the
-> serial console.
-> 
-> Changes in v4:
->   - Make qcom,gcc-sm8250.yaml license as dual GPL + BSD
-> 
-> Changes in v3:
-> - Dropped accepted patches by Steve
-> - Split the common rename patch to rename and refactor patches
-> - Rebase on clk/clk-qcom and move yaml binding to .../bindings/clock/qcom,gcc-sm8250.yaml
-> - Fix comments form Steve on gcc-sm8250 clk driver
-> 
-> Taniya Das (5):
->    clk: qcom: clk-alpha-pll: Use common names for defines
->    clk: qcom: clk-alpha-pll: Refactor trion PLL
->    clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs
->    dt-bindings: clock: Add SM8250 GCC clock bindings
->    clk: qcom: gcc: Add global clock controller driver for SM8250
-> 
->   .../bindings/clock/qcom,gcc-sm8250.yaml       |   72 +
->   drivers/clk/qcom/Kconfig                      |    7 +
->   drivers/clk/qcom/Makefile                     |    1 +
->   drivers/clk/qcom/clk-alpha-pll.c              |  264 +-
->   drivers/clk/qcom/clk-alpha-pll.h              |   12 +
->   drivers/clk/qcom/gcc-sm8250.c                 | 3690 +++++++++++++++++
->   include/dt-bindings/clock/qcom,gcc-sm8250.h   |  271 ++
->   7 files changed, 4268 insertions(+), 49 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8250.yaml
->   create mode 100644 drivers/clk/qcom/gcc-sm8250.c
->   create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
-> 
 
-Resend from the right email address.
+--n5yxkfnp2qbxja73
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-For the series:
+Hi Florian,
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+On Mon, Feb 24, 2020 at 10:15:32AM -0800, Florian Fainelli wrote:
+> On 2/24/20 1:06 AM, Maxime Ripard wrote:
+> > The firmware has an interface to discover the clocks it exposes.
+> >
+> > Let's use it to discover, register the clocks in the clocks framework and
+> > then expose them through the device tree for consumers to use them.
+> >
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>
+> That seems like a re-implementaiton of SCMI without all of its
+> protocols, without being able to use the existing drivers, maybe a
+> firmware update should be considered so standard drivers can be leveraged?
+
+I'm not really qualified to talk about how the firmware will evolve in
+the future, but you're right that it looks a lot like what SCMI can
+do.
+
+Even if a firmware update was to support SCMI at some point, since the
+firmware is flashed in an EEPROM, we'd still have to support that
+interface.
+
+Maxime
+
+--n5yxkfnp2qbxja73
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXlZ9bQAKCRDj7w1vZxhR
+xfqTAP4vLh532NQ+/Wzxq6syIJ/bQnWdlyFvUKhuvHlwOVJikgD9EEvRQkVNQLSB
+OFFRQxI+ToWjkDElsX49T4eIov7qRAI=
+=N7b+
+-----END PGP SIGNATURE-----
+
+--n5yxkfnp2qbxja73--
