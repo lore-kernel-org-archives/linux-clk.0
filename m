@@ -2,151 +2,94 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2B8C4BA10
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 09:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F48C4BA0E
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C27424653
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 09:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3F8E24673
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 10:42:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbgBZJYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 04:24:12 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:49712 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbgBZJYM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 04:24:12 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 0209328DB54
-Subject: Re: [PATCH v8 0/6] arm/arm64: mediatek: Fix mmsys device probing
-To:     CK Hu <ck.hu@mediatek.com>
-Cc:     mark.rutland@arm.com, Kate Stewart <kstewart@linuxfoundation.org>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>, airlied@linux.ie,
-        mturquette@baylibre.com, dri-devel@lists.freedesktop.org,
-        Richard Fontana <rfontana@redhat.com>,
-        laurent.pinchart@ideasonboard.com, ulrich.hecht+renesas@gmail.com,
-        Collabora Kernel ML <kernel@collabora.com>,
-        linux-clk@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>, wens@csie.org,
-        Allison Randal <allison@lohutok.net>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        p.zabel@pengutronix.de, frank-w@public-files.de,
-        Seiya Wang <seiya.wang@mediatek.com>, sean.wang@mediatek.com,
-        Houlong Wei <houlong.wei@mediatek.com>, robh+dt@kernel.org,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        Matthias Brugger <"matthias. bgg"@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <mbrugger@suse.com>,
-        Fabien Parent <fparent@baylibre.com>, sboyd@kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>, matthias.bgg@kernel.org
-References: <20200220172147.919996-1-enric.balletbo@collabora.com>
- <1582259996.1846.7.camel@mtksdaap41>
- <7a87b486-1622-7f27-f5af-427b94a14c00@collabora.com>
- <1582277229.25992.9.camel@mtksdaap41>
- <1393a8c5-065f-cccb-2563-8b159c951d4b@suse.com>
- <1582283518.5889.10.camel@mtksdaap41>
- <6deab0a4-44a6-a15f-ac01-374f818b267c@collabora.com>
- <6eb9da70-9a0c-27fc-6c31-3ac62ede5a35@suse.com>
- <d9ad35c0-57df-ebb2-67e8-4aae55dd2fcb@collabora.com>
- <1582523544.25316.2.camel@mtksdaap41>
- <688f6c85-0063-9458-858c-de7bbfb8a530@collabora.com>
- <1582695176.8324.4.camel@mtksdaap41>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <6355f1fd-b929-730e-e0f6-96dd5100e3f9@collabora.com>
-Date:   Wed, 26 Feb 2020 10:24:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <1582695176.8324.4.camel@mtksdaap41>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1727855AbgBZKml (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 05:42:41 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:40132 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727709AbgBZKml (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 05:42:41 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id 7Nie220025USYZQ01NiedP; Wed, 26 Feb 2020 11:42:39 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6u9F-0002FG-Uf; Wed, 26 Feb 2020 11:42:37 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1j6u9F-0004Ws-SE; Wed, 26 Feb 2020 11:42:37 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.7
+Date:   Wed, 26 Feb 2020 11:42:35 +0100
+Message-Id: <20200226104235.17367-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi CK,
+	Hi Mike, Stephen,
 
-On 26/2/20 6:32, CK Hu wrote:
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-[snip]
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
->>
->> How do you see move mmsys to drivers/soc/mediatek and instantiate the clk and
->> mediatek-drm driver
->>
->>  mmsys: syscon@14000000 {
->>  	compatible = "mediatek,mt8173-mmsys", "syscon", "simple-mfd";
->>  	reg = <0 0x14000000 0 0x1000>;
->>  	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
->>
->> 	clock-controller {
->> 		compatible = "mediatek,clk-mt8173-mm"
->> 		assigned-clocks = <&topckgen CLK_TOP_MM_SEL>;
->> 	 	assigned-clock-rates = <400000000>;
->>  		#clock-cells = <1>;
->> 	};
->>
->> 	display-subsystem {
->> 		compatible = "mediatek,display-subsystem";
->> 	};
->>  };
->>
-> 
-> Let's start with the simple definition.
-> 
-> mmsys: syscon at 14000000 {
-> 	compatible = "mediatek,mt8173-mmsys", "syscon";
-> 	reg = <0 0x14000000 0 0x1000>;
-> 	power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
-> 	assigned-clocks = <&topckgen CLK_TOP_MM_SEL>;
-> 	assigned-clock-rates = <400000000>;
-> 	#clock-cells = <1>;
-> };
-> 
-> When we break clock control to a sub device of mmsys, the reason is that
-> 'Linux' generally categorize clock controller to a device. When we break
-> display control to a sub device of mmsys, the reason is that 'Linux'
-> generally categorize display controller to a device. All these seems
-> software-oriented reason, so I think we do not break any sub device and
-> keep mmsys simple.
-> 
-> When I search of_clk_add_provider(), I find that not all clock provider
-> code is in drivers/clk. Maybe when a clock controller is not an
-> independent device, the driver code of clock controller could be placed
-> within the device driver it belonged to. We could place mmsys driver in
-> drivers/soc/mediatek/, and it control the clock, routing, fake engine,
-> memory delay,.... I would like drm driver to be placed in
-> drivers/gpu/drm/ because display function block, such as OVL, does not
-> belong to mmsys device. And finally let mmsys driver to probe
-> mediatek-drm driver.
-> 
+are available in the Git repository at:
 
-You can apply the same reasoning in the clk subsystem, not all the drivers in
-drivers/clk are pure clock controllers, some of them are already
-system-controller or "simple-mfd" and some of them even instantiate other
-subdrivers via the platform register API.
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.7-tag1
 
-Note that moving clk-<chip>-mm drivers to drivers/soc/mediatek will imply move a
-lot of code, I'll focus only on mt8173 for now because is the only platform I
-can really test. Let me prepare a v9 and lets see how looks like.
+for you to fetch changes up to 068e7f85234c0b56f55cc0259ad9c05f2c64b8fb:
 
-Thanks,
- Enric
+  clk: renesas: Remove use of ARCH_R8A7795 (2020-02-21 14:01:54 +0100)
 
-> Regards,
-> CK
+----------------------------------------------------------------
+clk: renesas: Updates for v5.7
 
-[snip]
+  - Add Crypto clocks on R-Car M3-W/W+, M3-N, E3, and D3,
+  - Add RPC (QSPI/HyperFLASH) clocks on R-Car H3, M3-W/W+, and M3-N,
+  - A small cleanup.
+
+Thanks for pulling!
+----------------------------------------------------------------
+Dirk Behme (3):
+      clk: renesas: r8a7795: Add RPC clocks
+      clk: renesas: r8a7796: Add RPC clocks
+      clk: renesas: r8a77965: Add RPC clocks
+
+Geert Uytterhoeven (2):
+      clk: renesas: rcar-gen3: Add CCREE clocks
+      clk: renesas: Remove use of ARCH_R8A7795
+
+ drivers/clk/renesas/Kconfig             |  2 +-
+ drivers/clk/renesas/r8a7795-cpg-mssr.c  |  8 ++++++++
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  | 10 ++++++++++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 12 +++++++++++-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c |  2 ++
+ drivers/clk/renesas/r8a77995-cpg-mssr.c |  2 ++
+ 6 files changed, 34 insertions(+), 2 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
