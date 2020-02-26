@@ -2,85 +2,255 @@ Return-Path: <SRS0=Lbrj=4O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_RHS_DOB,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E8CC4BA14
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EC56C4BA18
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 16:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD0E24680
-	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 15:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E13922084E
+	for <linux-clk@archiver.kernel.org>; Wed, 26 Feb 2020 16:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582734555;
+	bh=l2nuJCyNbqSdbQikb0aZK9APBcSliY2KaIsbBQ355BI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=VS55QhSKW2JZ5OzeCFESa9etH+rVd3qPBtPNS7IaQjALy5dRrb8bAlZzT0hePk8qB
+	 AmpiLpX+98qBfYhb/Kai+EPpjV4X+wl/9/5nWVbiXU6fsFa9kzKAuZpyVF7ka1Hto6
+	 sbkBe0kO1R1FcFDCN80bWZsXe6kbhcNeiBT8lgjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbgBZPzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 10:55:07 -0500
-Received: from ns.iliad.fr ([212.27.33.1]:48486 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728470AbgBZPzG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 26 Feb 2020 10:55:06 -0500
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id D19A620076;
-        Wed, 26 Feb 2020 16:55:04 +0100 (CET)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id BF00C20025;
-        Wed, 26 Feb 2020 16:55:04 +0100 (CET)
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [RFC PATCH v4 0/2] Small devm helper for devm implementations
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Message-ID: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr>
-Date:   Wed, 26 Feb 2020 16:44:51 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1727338AbgBZQ3M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 26 Feb 2020 11:29:12 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34909 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726148AbgBZQ3L (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 11:29:11 -0500
+Received: by mail-ot1-f68.google.com with SMTP id r16so3539674otd.2;
+        Wed, 26 Feb 2020 08:29:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=N6xzgWnvG9GnDucTt/KJELhYr9ugnkjtItBaJ6wFEc4=;
+        b=pTVhMP3x3q5LmFBKPqasm+8plYmEsRVF6A4yPV5o2b/MxATb1Ijpnbw9fMXc9u5wr7
+         ehjDhqcLuDuupRHanoyit+xzS9cnW2YZ9abWxHT/rDoeCeXh7+nlZl3VYrXscH9rcX0C
+         FXHqX5unSbetvux4hituRtc1wfD/vrBBceHS6rOqjFqwn2HcHOMoXJv3Km41AzazWyAL
+         wm+BNhMB/IyiZrT2cltjG76+YWF68ntLylWaz8gjirx1rQJuZlFh+C0ah7NK0+CVEEmk
+         zNfE/ckP6Qeaidh4XSMCtNllxzcUkFxcqZjR2Rc9zh16D9OkPRtjJ3xHRCbS8XBzcxut
+         cFmw==
+X-Gm-Message-State: APjAAAVK5ATWX8WD9EX9toupnYNzssVVgUiuHSM1Xsqol9Tr4jxC5+Bw
+        2dFlKnjHmBTVQA5SaIFwNg==
+X-Google-Smtp-Source: APXvYqy6Xg9l4BYtpmsxJmpFyy0bDN/OPmMkZRktcNgKD2aLUwscbPU2kJgPRg/G/F0gCFrqE/9oIQ==
+X-Received: by 2002:a9d:6a90:: with SMTP id l16mr3533796otq.353.1582734550281;
+        Wed, 26 Feb 2020 08:29:10 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e16sm933404otp.72.2020.02.26.08.29.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2020 08:29:09 -0800 (PST)
+Received: (nullmailer pid 24095 invoked by uid 1000);
+        Wed, 26 Feb 2020 16:29:07 -0000
+Date:   Wed, 26 Feb 2020 10:29:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        tglx@linutronix.de, ralf@linux-mips.org, paulburton@kernel.org,
+        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
+        mturquette@baylibre.com, mark.rutland@arm.com,
+        daniel.lezcano@linaro.org, paul@crapouillou.net,
+        geert+renesas@glider.be, krzk@kernel.org, ebiederm@xmission.com,
+        miquel.raynal@bootlin.com, keescook@chromium.org,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
+        dongsheng.qiu@ingenic.com
+Subject: Re: [PATCH v6 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
+Message-ID: <20200226162907.GA13489@bogus>
+References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Wed Feb 26 16:55:04 2020 +0100 (CET)
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+On Fri, Feb 21, 2020 at 12:24:47AM +0800, 周琰杰 (Zhou Yanjie) wrote:
+> Document the available properties for the SoC root node and the
+> CPU nodes of the devicetree for the Ingenic XBurst SoCs.
+> 
+> Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
+> Tested-by: Paul Boddie <paul@boddie.org.uk>
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> ---
+> 
+> Notes:
+>     v1->v2:
+>     Change the two Document from txt to yaml.
+>     
+>     v2->v3:
+>     Fix formatting errors.
+>     
+>     v3->v4:
+>     Fix bugs in the two yaml files.
+>     
+>     v4->v5:
+>     No change.
+>     
+>     v5->v6:
+>     Rewrite the two yaml files.
+> 
+>  .../bindings/mips/ingenic/ingenic,cpu.yaml         | 61 ++++++++++++++++++++++
+>  .../bindings/mips/ingenic/ingenic,soc.yaml         | 34 ++++++++++++
+>  2 files changed, 95 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+>  create mode 100644 Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+> new file mode 100644
+> index 00000000..ad1fd86
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
+> @@ -0,0 +1,61 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bindings for Ingenic XBurst family CPUs
+> +
+> +maintainers:
+> +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
 
-Differences from v3 to v4
-x Add a bunch of kerneldoc above devm_add() [Greg KH]
-x Split patch in two [Greg KH]
+Blank line here.
 
-Differences from v2 to v3
-x Make devm_add() return an error-code rather than the raw data pointer
-  (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
-x Provide a variadic version devm_vadd() to work with structs as suggested
-  by Geert
-x Don't use nested ifs in clk_devm* implementations (hopefully simpler
-  code logic to follow) as suggested by Geert
+> +description: |
 
-Marc Gonzalez (2):
-  devres: Provide new helper for devm functions
-  clk: Use devm_add in managed functions
+Drop the '|'.
 
- drivers/base/devres.c    |  28 +++++++++++
- drivers/clk/clk-devres.c | 101 ++++++++++++++-------------------------
- include/linux/device.h   |   3 ++
- 3 files changed, 68 insertions(+), 64 deletions(-)
+> +  Ingenic XBurst family CPUs shall have the following properties.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +
+> +      - description: Ingenic XBurst®1 CPU Core
+> +        items:
+> +          - const: ingenic,xburst
+> +
+> +      - description: Ingenic XBurst®2 CPU Core
+> +        items:
+> +          - const: ingenic,xburst2
 
--- 
-2.17.1
+enum:
+  - ingenic,xburst  # Ingenic XBurst®1 CPU Core
+  - ingenic,xburst2 # Ingenic XBurst®2 CPU Core
+
+Though I don't find the description really adds much.
+
+> +
+> +  reg:
+> +    description: |
+> +      The number of the CPU.
+
+Drop this.
+
+Add:
+
+maxItems: 1
+
+> +
+> +required:
+> +  - device_type
+> +  - compatible
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/jz4780-cgu.h>
+> +
+> +    cpus {
+> +    	#address-cells = <1>;
+> +    	#size-cells = <0>;
+> +
+> +    	cpu0: cpu@0 {
+> +    		device_type = "cpu";
+> +    		compatible = "ingenic,xburst";
+> +    		reg = <0>;
+> +
+
+> +    		clocks = <&cgu JZ4780_CLK_CPU>;
+> +    		clock-names = "cpu";
+
+Not documented.
+
+> +    	};
+> +
+> +    	cpu1: cpu@1 {
+> +    		device_type = "cpu";
+> +    		compatible = "ingenic,xburst";
+> +    		reg = <1>;
+> +
+> +    		clocks = <&cgu JZ4780_CLK_CORE1>;
+> +    		clock-names = "cpu";
+> +    	};
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
+> new file mode 100644
+> index 00000000..8943e73
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
+> @@ -0,0 +1,34 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,soc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Bindings for Ingenic SoCs with XBurst CPU inside.
+> +
+> +maintainers:
+> +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+
+Blank line.
+
+> +description: |
+> +  Ingenic SoCs with XBurst CPU inside shall have the following properties.
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +
+> +      - description: Ingenic JZ47 Series Mobile Application Processor
+> +        items:
+> +          - const: ingenic,jz4740
+> +          - const: ingenic,jz4725b
+> +          - const: ingenic,jz4760
+> +          - const: ingenic,jz4760b
+> +          - const: ingenic,jz4770
+> +          - const: ingenic,jz4780
+
+This is defining the root compatible is 6 strings. You want a enum here 
+I think.
+
+> +
+> +      - description: Ingenic X Series IoT Application Processor
+> +        items:
+> +          - const: ingenic,x1000
+> +          - const: ingenic,x1000e
+> +          - const: ingenic,x1500
+
+Same here.
+
+Did you validate your dts file with this schema using 'make dtbs_check'?
+
+Rob
