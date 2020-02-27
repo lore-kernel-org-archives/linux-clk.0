@@ -2,264 +2,188 @@ Return-Path: <SRS0=aKI2=4P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9F0C35677
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 14:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EB0C34022
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 15:18:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E78852469F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 14:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09E1B246A4
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 15:18:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="QXHFFlll"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xds/R4BC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729685AbgB0Nsl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 08:48:41 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:37276 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730653AbgB0Nsl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 08:48:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1582811318; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=U8EHEG3UQNjA4HaBYXHdmP9NqhqX3Zb9Ia6fEhNQAAY=;
-        b=QXHFFllloRMGuXUtT013hAbV7mOi6b8FP0crwe0A2LqOyhYISrobkuNR2Sddb1NF1NVWTu
-        +GfqibsyfI9SALRcPXQmofyYFrCNykCVCDEsu53F9K4Pw41x1nZuSDcOCzaS+JL3+I20Nl
-        5HwNlNJmBDGgF8QiT+KFMQPJPH3YSY8=
-Date:   Thu, 27 Feb 2020 10:48:15 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v6 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
-To:     =?UTF-8?b?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de,
-        ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, geert+renesas@glider.be,
-        krzk@kernel.org, ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        keescook@chromium.org, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, dongsheng.qiu@ingenic.com
-Message-Id: <1582811295.3.1@crapouillou.net>
-In-Reply-To: <20200226162907.GA13489@bogus>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
-        <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
-        <20200226162907.GA13489@bogus>
+        id S1730407AbgB0PSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 10:18:13 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34312 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729279AbgB0PSN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 10:18:13 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x7so3890981ljc.1;
+        Thu, 27 Feb 2020 07:18:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M4uLZ+YZgo9Q68Dx5CiKtqfNH6WlHnEQZUoVCBn8Lbc=;
+        b=Xds/R4BCpC6BW8dtHzTtZGQOCQGcOhXw+x+LzzwA/VJAA/Fpq6fXrabWA4Io39mSbY
+         I8EXdBzJq4OithOB0SjRvPqGZY2qCNMJmyjZCFXcScHogSkDq2kXTr1Ju7TBLKuMxq4V
+         9pp5l9LKE/3UFPBLmsvj2kpal5qDKajtLLbZ8FslteeR2jO5qUF6I89+LlEOtPaX7sYE
+         3DLUdCyCHHep/Kc+EF8/k0wKJoJKYh/kEX57/LQH3kLFodc1ei1s7eu7LWeEP1E1ZQha
+         NoG7OvkqtH9bukiPObP041+mnsPO2ZK2eoIa6RVUkxs/hpBcuKm8HSQ0AntWsOiRX9jc
+         2ZMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M4uLZ+YZgo9Q68Dx5CiKtqfNH6WlHnEQZUoVCBn8Lbc=;
+        b=ALzSvV2BaAW4xpsSQXJQh5W8y9jYGxqfZyXlKsQEmNf9YjUtVJd8ZeSFDcfRdJzYWN
+         QUvMiyEm2S3UDaIpycBpzvZGpwg8qxjrZHZL4VM5uAJW4kNBDkJiHCbnMQdtw8cpxXqP
+         ExCaxkwVqVL3WIqLY4LYFvZKHliQyZvNAzuq7QHsNNeVw/tKawocOwh0Qm+Rnp96FdB0
+         KbOzK+4Nc/X2kVLQYEjKKcbApXQ+st1WqTN9rCV7U0CDBZcNoNW7fzty0tHvar1ozL8s
+         AQHXIu4kshfWyjohIHH+KeeEatNdnMFFGXLb1IctqK3nlx2UDxGlj7Movbx9K693bpzE
+         3ffA==
+X-Gm-Message-State: ANhLgQ1G8h7Whd94X1y6HoaYYHgT26TS6FxFcdG2NOPt1AISfI8D3I+R
+        HgyekyVWlKP6H+38r2/GQmw=
+X-Google-Smtp-Source: ADFU+vvWGmb7VbXM2thy02s+ZlBJEquIVTkcMVYWcqrjO/570bRTlqOJc56Hn86Q1ksLj3e7mv01pQ==
+X-Received: by 2002:a05:651c:414:: with SMTP id 20mr3024627lja.165.1582816689249;
+        Thu, 27 Feb 2020 07:18:09 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id t1sm3409703lji.98.2020.02.27.07.18.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 27 Feb 2020 07:18:06 -0800 (PST)
+Subject: Re: [PATCH V4 4/8] memory: tegra: Add Tegra210 EMC clock driver
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Joseph Lo <josephl@nvidia.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190529082139.5581-1-josephl@nvidia.com>
+ <20190529082139.5581-5-josephl@nvidia.com>
+ <403181d4-100b-679e-b1d8-c052c6d1f3ac@gmail.com>
+ <2f9722b4-df92-546b-9659-3b02768bbe41@nvidia.com>
+ <20200226165746.GA818759@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <922e3faf-dd51-e159-4dc4-d427af58dc8f@gmail.com>
+Date:   Thu, 27 Feb 2020 18:18:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200226165746.GA818759@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+26.02.2020 19:57, Thierry Reding пишет:
+> On Thu, May 30, 2019 at 10:45:01AM +0800, Joseph Lo wrote:
+>> On 5/29/19 9:26 PM, Dmitry Osipenko wrote:
+>>> 29.05.2019 11:21, Joseph Lo пишет:
+>>>> This is the initial patch for Tegra210 EMC clock driver, which doesn't
+>>>> include the support code and detail sequence for clock scaling yet.
+>>>>
+>>>> The driver is designed to support LPDDR4 SDRAM. Because of the LPDDR4
+>>>> devices need to do initial time training before it can be used, the
+>>>> firmware will help to do that at early boot stage. Then, the trained
+>>>> table of the rates we support will pass to the kernel via DT. So the
+>>>> driver can get the trained table for clock scaling support.
+>>>>
+>>>> For the higher rate support (above 800MHz), the periodic training is
+>>>> needed for the timing compensation. So basically, two methodologies for
+>>>> clock scaling are supported, one is following the clock changing
+>>>> sequence to update the EMC table to EMC registers and another is if the
+>>>> rate needs periodic training, then we will start a timer to do that
+>>>> periodically until it scales to the lower rate.
+>>>>
+>>>> Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+>>>>
+>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>> ---
+>>>> v4:
+>>>> - remove the statistic data in debugfs
+>>>> - add tegra210_clk_register_emc API to make it compatible with the case
+>>>>    if the kernel still uses the older DTB which doesn't have EMC node.
+>>>>    And the MC and EMC clock can still be registered successfully.
+>>>> v3:
+>>>> - address almost all the comments from the previous version
+>>>> - remove the DT parser of EMC table
+>>>> - The EMC table is passing as a binary blob now.
+>>>> ---
+>>>>   drivers/memory/tegra/Kconfig        |  10 +
+>>>>   drivers/memory/tegra/Makefile       |   1 +
+>>>>   drivers/memory/tegra/tegra210-emc.c | 671 ++++++++++++++++++++++++++++
+>>>>   drivers/memory/tegra/tegra210-emc.h | 156 +++++++
+>>>>   include/soc/tegra/emc.h             |   2 +
+>>>>   5 files changed, 840 insertions(+)
+>>>>   create mode 100644 drivers/memory/tegra/tegra210-emc.c
+>>>>   create mode 100644 drivers/memory/tegra/tegra210-emc.h
+>>>>
+>>>> diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+>>>> index 4680124ddcab..9d051bcdbee3 100644
+>>>> --- a/drivers/memory/tegra/Kconfig
+>>>> +++ b/drivers/memory/tegra/Kconfig
+>>>> @@ -26,3 +26,13 @@ config TEGRA124_EMC
+>>>>   	  Tegra124 chips. The EMC controls the external DRAM on the board.
+>>>>   	  This driver is required to change memory timings / clock rate for
+>>>>   	  external memory.
+>>>> +
+>>>> +config TEGRA210_EMC
+>>>> +	bool "NVIDIA Tegra210 External Memory Controller driver"
+>>>> +	default y
+>>>
+>>> This is not enough since you're leaving possibility to disable
+>>> compilation of the driver, but the compilation will fail because of the
+>>> unresolved symbol (tegra210_clk_register_emc).
+>>>
+>>>> +	depends on TEGRA_MC && ARCH_TEGRA_210_SOC
+>>>> +	help
+>>>> +	  This driver is for the External Memory Controller (EMC) found on
+>>>> +	  Tegra210 chips. The EMC controls the external DRAM on the board.
+>>>> +	  This driver is required to change memory timings / clock rate for
+>>>> +	  external memory.
+>>>
+>>> Either TEGRA210_EMC Kconfig option shall be always force-selected for
+>>> T210 or you should move all the clk-related code into drivers/clk/tegra/.
+>>>
+>>> Could you please give a rationale for having EMC clock code within the
+>>> EMC driver?
+>>
+>> I didn't have a specific reason for that initially, just wanted the clock
+>> code and EMC driver together for easier maintenance.
+>>
+>> But considering the fix in v4, that makes it backward compatible with the
+>> case if the kernel uses the older DT without EMC node, I think it's better
+>> to move the clock code into the clk folder now.
+> 
+> I looked into this a bit and I don't think this is actually worth it.
+> The problem is that, as opposed to Tegra124 and earlier, the sequence
+> for changing the EMC frequency is much more entangled. The bulk of the
+> programming will be on the EMC side, with the code occasionally calling
+> into CAR code to set the parent clock and some other flags.
+> 
+> So there's going to be some interdependencies regardless of where the
+> clock code actually lives. I can try to split this apart, but I don't
+> have very high hopes that the end result will be any cleaner than the
+> version here.
 
-Le mer., f=C3=A9vr. 26, 2020 at 10:29, Rob Herring <robh@kernel.org> a=20
-=C3=A9crit :
-> On Fri, Feb 21, 2020 at 12:24:47AM +0800, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zh=
-ou Yanjie)=20
-> wrote:
->>  Document the available properties for the SoC root node and the
->>  CPU nodes of the devicetree for the Ingenic XBurst SoCs.
->>=20
->>  Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->>  Tested-by: Paul Boddie <paul@boddie.org.uk>
->>  Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wa=
-nyeetech.com>
->>  ---
->>=20
->>  Notes:
->>      v1->v2:
->>      Change the two Document from txt to yaml.
->>=20
->>      v2->v3:
->>      Fix formatting errors.
->>=20
->>      v3->v4:
->>      Fix bugs in the two yaml files.
->>=20
->>      v4->v5:
->>      No change.
->>=20
->>      v5->v6:
->>      Rewrite the two yaml files.
->>=20
->>   .../bindings/mips/ingenic/ingenic,cpu.yaml         | 61=20
->> ++++++++++++++++++++++
->>   .../bindings/mips/ingenic/ingenic,soc.yaml         | 34=20
->> ++++++++++++
->>   2 files changed, 95 insertions(+)
->>   create mode 100644=20
->> Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>   create mode 100644=20
->> Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>=20
->>  diff --git=20
->> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml=20
->> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>  new file mode 100644
->>  index 00000000..ad1fd86
->>  --- /dev/null
->>  +++=20
->> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>  @@ -0,0 +1,61 @@
->>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>  +%YAML 1.2
->>  +---
->>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
->>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>  +
->>  +title: Bindings for Ingenic XBurst family CPUs
->>  +
->>  +maintainers:
->>  +  - =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wanyeetech.c=
-om>
->=20
-> Blank line here.
->=20
->>  +description: |
->=20
-> Drop the '|'.
->=20
->>  +  Ingenic XBurst family CPUs shall have the following properties.
->>  +
->>  +properties:
->>  +  compatible:
->>  +    oneOf:
->>  +
->>  +      - description: Ingenic XBurst=C2=AE1 CPU Core
->>  +        items:
->>  +          - const: ingenic,xburst
->>  +
->>  +      - description: Ingenic XBurst=C2=AE2 CPU Core
->>  +        items:
->>  +          - const: ingenic,xburst2
->=20
-> enum:
->   - ingenic,xburst  # Ingenic XBurst=C2=AE1 CPU Core
->   - ingenic,xburst2 # Ingenic XBurst=C2=AE2 CPU Core
->=20
-> Though I don't find the description really adds much.
+I'm vaguely recalling that there was another reason than just to "make
+things cleaner"..
 
-About the enum values: shouldn't they be a bit more descriptive? There=20
-has been various versions of the Xburst1 chip, with slightly different=20
-instruction sets and hardware (FPU).
+https://patchwork.kernel.org/patch/10938389/#22641053
 
--Paul
+Secondly, if you're going to use the CCF API for the clock changes, then
+I'm not sure that having couple custom clock-API functions sounds too bad.
 
->>  +
->>  +  reg:
->>  +    description: |
->>  +      The number of the CPU.
->=20
-> Drop this.
->=20
-> Add:
->=20
-> maxItems: 1
->=20
->>  +
->>  +required:
->>  +  - device_type
->>  +  - compatible
->>  +  - reg
->>  +
->>  +examples:
->>  +  - |
->>  +    #include <dt-bindings/clock/jz4780-cgu.h>
->>  +
->>  +    cpus {
->>  +    	#address-cells =3D <1>;
->>  +    	#size-cells =3D <0>;
->>  +
->>  +    	cpu0: cpu@0 {
->>  +    		device_type =3D "cpu";
->>  +    		compatible =3D "ingenic,xburst";
->>  +    		reg =3D <0>;
->>  +
->=20
->>  +    		clocks =3D <&cgu JZ4780_CLK_CPU>;
->>  +    		clock-names =3D "cpu";
->=20
-> Not documented.
->=20
->>  +    	};
->>  +
->>  +    	cpu1: cpu@1 {
->>  +    		device_type =3D "cpu";
->>  +    		compatible =3D "ingenic,xburst";
->>  +    		reg =3D <1>;
->>  +
->>  +    		clocks =3D <&cgu JZ4780_CLK_CORE1>;
->>  +    		clock-names =3D "cpu";
->>  +    	};
->>  +    };
->>  +...
->>  diff --git=20
->> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml=20
->> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>  new file mode 100644
->>  index 00000000..8943e73
->>  --- /dev/null
->>  +++=20
->> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>  @@ -0,0 +1,34 @@
->>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>  +%YAML 1.2
->>  +---
->>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,soc.yaml#
->>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>  +
->>  +title: Bindings for Ingenic SoCs with XBurst CPU inside.
->>  +
->>  +maintainers:
->>  +  - =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wanyeetech.c=
-om>
->=20
-> Blank line.
->=20
->>  +description: |
->>  +  Ingenic SoCs with XBurst CPU inside shall have the following=20
->> properties.
->>  +
->>  +properties:
->>  +  $nodename:
->>  +    const: '/'
->>  +  compatible:
->>  +    oneOf:
->>  +
->>  +      - description: Ingenic JZ47 Series Mobile Application=20
->> Processor
->>  +        items:
->>  +          - const: ingenic,jz4740
->>  +          - const: ingenic,jz4725b
->>  +          - const: ingenic,jz4760
->>  +          - const: ingenic,jz4760b
->>  +          - const: ingenic,jz4770
->>  +          - const: ingenic,jz4780
->=20
-> This is defining the root compatible is 6 strings. You want a enum=20
-> here
-> I think.
->=20
->>  +
->>  +      - description: Ingenic X Series IoT Application Processor
->>  +        items:
->>  +          - const: ingenic,x1000
->>  +          - const: ingenic,x1000e
->>  +          - const: ingenic,x1500
->=20
-> Same here.
->=20
-> Did you validate your dts file with this schema using 'make=20
-> dtbs_check'?
->=20
-> Rob
-
-=
-
+Lastly, in regards to the cleanup.. at minimum you should strip out all
+the unused parts from this code, make a generic cleanup to make it all
+look better, address previous comments.
