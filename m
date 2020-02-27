@@ -2,203 +2,281 @@ Return-Path: <SRS0=aKI2=4P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36D2C4BA3D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 10:56:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8138C4BA24
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 11:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BEC24697
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 10:56:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="xU7etbtW"
+	by mail.kernel.org (Postfix) with ESMTP id 889F124697
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 11:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgB0K4B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 05:56:01 -0500
-Received: from mail27.static.mailgun.info ([104.130.122.27]:12690 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728753AbgB0K4A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 05:56:00 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1582800959; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=3cZIt2T45FhuR9MsW/GWNiPSGv9vPQ9J3TLcsSxKz20=; b=xU7etbtW1hgN+adx5XnW4DbsHJL+til0RqMhfM7svyMU3VvuCOuFmTMHa7V2VKCqgKVJEkFv
- 8kzW2hLQTXw0dv4N+h3JnI7cBm7L4ABWHV858aiHrWg+L3N8R+OuiVQE19Skqkdp0jc2dP6h
- K+ZuMY3QF7SEWYfI//abG6VYLZs=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e57a033.7fb5ee1ab110-smtp-out-n01;
- Thu, 27 Feb 2020 10:55:47 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 75737C433A2; Thu, 27 Feb 2020 10:55:47 +0000 (UTC)
-Received: from [10.242.242.60] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id B4C3BC43383;
-        Thu, 27 Feb 2020 10:55:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B4C3BC43383
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH 1/2] clk: qcom: Add DT bindings for ipq6018 apss clock
- controller
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org>
- <1582797318-26288-2-git-send-email-sivaprak@codeaurora.org>
- <e94805e32d1264ca9a162891db26730e@codeaurora.org>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <28fb9f7c-2b62-93e3-4d22-ea428d36d94f@codeaurora.org>
-Date:   Thu, 27 Feb 2020 16:25:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1728845AbgB0LMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 06:12:49 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40289 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728762AbgB0LMs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 06:12:48 -0500
+Received: by mail-oi1-f194.google.com with SMTP id a142so2885183oii.7;
+        Thu, 27 Feb 2020 03:12:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BRZl22qTx+n0iXrkM4uPLZmiGijPZu3bo/mxnerKIoY=;
+        b=foY6N/WtfbG3ju7wmgF6gkWQnGfByIF8s3affJFIAwB5LfaFZN9TgsqKbQ+fz8YmUG
+         qOAJh2MOYBuCCmssD+q2+psaQ30Qoj1sTwHRZEsQGQjbvpTMnRICSE2HM2oe+OTtp9y4
+         kEeHSNdwvSVpXuI6c5umuAQidwjpCbmTHogmonfygLmPT7YtaFBrlx0wG6WwU5sVmgsn
+         HYsG3HOXxiOMlbj9nf5DgX+fmI4AlSOUFervTJQjahg9pwwZl0oC8Spto/aT+fK0yz58
+         cHQ3l/YYWLn/aPkGnwNlzasYlQiDTLYNYt1QgE+8ZVAAO+WjCf7VqQEiONKR/mN6jvlj
+         CfGQ==
+X-Gm-Message-State: APjAAAWl2JeTSa0u+0aYzXWjpE1TcCnyntT4BGFrKRwGXbSyuqRRrwkU
+        8aZ3OPgr9nyKeguAL8VEB3kEOiMDvjFhZqNOnRc=
+X-Google-Smtp-Source: APXvYqx8JkPWGFyKwQUC6fADauIojDD6kegNTwPJ5zzR2R+qSvbkUfWUOMyceK8YtlC6zWYKWbJr1kxzVs8QLn2+vbQ=
+X-Received: by 2002:aca:b4c3:: with SMTP id d186mr2732342oif.131.1582801967331;
+ Thu, 27 Feb 2020 03:12:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e94805e32d1264ca9a162891db26730e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200224152640.1318-1-geert+renesas@glider.be> <158265013473.177367.4512247165308399202@swboyd.mtv.corp.google.com>
+In-Reply-To: <158265013473.177367.4512247165308399202@swboyd.mtv.corp.google.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Feb 2020 12:12:36 +0100
+Message-ID: <CAMuHMdUDjWKYaQ_MN+AvYg8vimZKMcck3SdHUSg8tPCCAEieJQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sibi,
+Hi Stephen,
 
-Thanks for the review.
+Thanks for your comments!
 
-On 2/27/2020 4:08 PM, Sibi Sankar wrote:
-> Hey Sivaprakash,
+On Tue, Feb 25, 2020 at 6:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2020-02-24 07:26:40)
+> > diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > new file mode 100644
+> > index 0000000000000000..dfbd1933f1bc56de
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > @@ -0,0 +1,204 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
+> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > +
+> > +title: Renesas Clock Pulse Generator / Module Standby and Software Reset
+> > +
+> > +maintainers:
+> > +  - Geert Uytterhoeven <geert+renesas@glider.be>
+> > +
+> > +description: |
+> > +  On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
+> > +  and MSSR (Module Standby and Software Reset) blocks are intimately connected,
+> > +  and share the same register block.
+> > +
+> > +  They provide the following functionalities:
+> > +    - The CPG block generates various core clocks,
+> > +    - The MSSR block provides two functions:
+> > +        1. Module Standby, providing a Clock Domain to control the clock supply
+> > +           to individual SoC devices,
+> > +        2. Reset Control, to perform a software reset of individual SoC devices.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - renesas,r7s9210-cpg-mssr  # RZ/A2
+> > +      - renesas,r8a7743-cpg-mssr  # RZ/G1M
+> > +      - renesas,r8a7744-cpg-mssr  # RZ/G1N
+> > +      - renesas,r8a7745-cpg-mssr  # RZ/G1E
+> > +      - renesas,r8a77470-cpg-mssr # RZ/G1C
+> > +      - renesas,r8a774a1-cpg-mssr # RZ/G2M
+> > +      - renesas,r8a774b1-cpg-mssr # RZ/G2N
+> > +      - renesas,r8a774c0-cpg-mssr # RZ/G2E
+> > +      - renesas,r8a7790-cpg-mssr  # R-Car H2
+> > +      - renesas,r8a7791-cpg-mssr  # R-Car M2-W
+> > +      - renesas,r8a7792-cpg-mssr  # R-Car V2H
+> > +      - renesas,r8a7793-cpg-mssr  # R-Car M2-N
+> > +      - renesas,r8a7794-cpg-mssr  # R-Car E2
+> > +      - renesas,r8a7795-cpg-mssr  # R-Car H3
+> > +      - renesas,r8a7796-cpg-mssr  # R-Car M3-W
+> > +      - renesas,r8a77961-cpg-mssr # R-Car M3-W+
+> > +      - renesas,r8a77965-cpg-mssr # R-Car M3-N
+> > +      - renesas,r8a77970-cpg-mssr # R-Car V3M
+> > +      - renesas,r8a77980-cpg-mssr # R-Car V3H
+> > +      - renesas,r8a77990-cpg-mssr # R-Car E3
+> > +      - renesas,r8a77995-cpg-mssr # R-Car D3
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 2
 >
-> On 2020-02-27 15:25, Sivaprakash Murugesan wrote:
->> add dt-binding for ipq6018 apss clock controller
->>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->>  .../devicetree/bindings/clock/qcom,apsscc.yaml     | 58 
->> ++++++++++++++++++++++
->>  include/dt-bindings/clock/qcom,apss-ipq6018.h      | 26 ++++++++++
->>  2 files changed, 84 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/clock/qcom,apsscc.yaml
->>  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq6018.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,apsscc.yaml
->> b/Documentation/devicetree/bindings/clock/qcom,apsscc.yaml
->> new file mode 100644
->> index 0000000..7433721
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,apsscc.yaml
->> @@ -0,0 +1,58 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->
-> Dual license
-missed it. will add in next series.
->
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/bindings/clock/qcom,apsscc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm IPQ6018 APSS Clock Controller Binding
->> +
->> +maintainers:
->> +  - Stephen Boyd <sboyd@kernel.org>
->> +
->> +description: |
->> +  Qualcomm IPQ6018 APSS clock control module which supports the 
->> clocks with
->> +  frequencies above 800Mhz.
->> +
->> +properties:
->> +  compatible :
->> +    const: qcom,apss-ipq6018
->
-> Please use qcom,<chip>-<device>
-> instead.
-ok.
->
->> +
->> +  clocks:
->> +    description: clocks required for this controller.
->> +    maxItems: 4
->> +
->> +  clock-names:
->> +    description: clock output names of required clocks.
->> +    maxItems: 4
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#clock-cells'
->> +  - '#reset-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +      #include <dt-bindings/clock/qcom,gcc-ipq6018.h>
->> +      apss_clk: qcom,apss_clk@b111000 {
->> +            compatible = "qcom,apss-ipq6018";
->> +            clocks = <&xo>, <&gcc GPLL0>,
->> +                        <&gcc GPLL2>, <&gcc GPLL4>;
->> +            clock-names = "xo", "gpll0",
->> +                         "gpll2", "gpll4";
->> +            reg = <0xb11100c 0x5ff4>;
->> +            #clock-cells = <1>;
->> +            #reset-cells = <1>;
->> +      };
->> +...
->> diff --git a/include/dt-bindings/clock/qcom,apss-ipq6018.h
->> b/include/dt-bindings/clock/qcom,apss-ipq6018.h
->> new file mode 100644
->> index 0000000..ed9d7d8
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,apss-ipq6018.h
->> @@ -0,0 +1,26 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
->> + *
->> + * Permission to use, copy, modify, and/or distribute this software 
->> for any
->> + * purpose with or without fee is hereby granted, provided that the 
->> above
->> + * copyright notice and this permission notice appear in all copies.
->> + *
->> + * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL 
->> WARRANTIES
->> + * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
->> + * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE 
->> LIABLE FOR
->> + * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY 
->> DAMAGES
->> + * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER 
->> IN AN
->> + * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING 
->> OUT OF
->> + * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
->
-> ^^ is not needed just the SPDX
-> license identifier is enough.
->
-ok.
+> Do we need this here and also below? Why can't it just be below with the
+> more specific constraints?
 
-Thanks,
+With the above removed:
 
-Siva
+    Documentation/devicetree/bindings/clock/renesas,cpg-mssr.example.dt.yaml:
+clock-controller@e6150000: 'clock-names', 'clocks' do not match any of
+the regexes: 'pinctrl-[0-9]+'
+
+while the "if" below overriding minItems did trigger, as removing entries from
+clocks/clock-names in the example causes more errors.
+
+So it seems all properties must be listed in the main, unconditional,
+properties section at the top.
+
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          items:
+> > +            enum:
+> > +              - renesas,r7s9210-cpg-mssr
+> > +              - renesas,r8a774c0-cpg-mssr
+> > +              - renesas,r8a7792-cpg-mssr
+> > +              - renesas,r8a77990-cpg-mssr
+> > +              - renesas,r8a77995-cpg-mssr
+> > +
+> > +    then:
+> > +      properties:
+> > +        clock:
+> > +          maxItems: 1
+> > +        clock-names:
+> > +          maxItems: 1
+> > +          items:
+> > +            - const: extal
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - renesas,r8a7743-cpg-mssr
+> > +              - renesas,r8a7744-cpg-mssr
+> > +              - renesas,r8a7745-cpg-mssr
+> > +              - renesas,r8a77470-cpg-mssr
+> > +              - renesas,r8a7790-cpg-mssr
+> > +              - renesas,r8a7791-cpg-mssr
+> > +              - renesas,r8a7793-cpg-mssr
+> > +              - renesas,r8a7794-cpg-mssr
+> > +
+> > +    then:
+> > +      properties:
+> > +        clock:
+> > +          minItems: 2
+> > +        clock-names:
+> > +          minItems: 2
+> > +          items:
+> > +            - const: extal
+> > +            - const: usb_extal
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          items:
+> > +            enum:
+> > +              - renesas,r8a774a1-cpg-mssr
+> > +              - renesas,r8a774b1-cpg-mssr
+> > +              - renesas,r8a7795-cpg-mssr
+> > +              - renesas,r8a7796-cpg-mssr
+> > +              - renesas,r8a77961-cpg-mssr
+> > +              - renesas,r8a77965-cpg-mssr
+> > +              - renesas,r8a77970-cpg-mssr
+> > +              - renesas,r8a77980-cpg-mssr
+> > +
+> > +    then:
+> > +      properties:
+> > +        clock:
+> > +          minItems: 2
+> > +        clock-names:
+> > +          minItems: 2
+> > +          items:
+> > +            - const: extal
+> > +            - const: extalr
+> > +
+> > +  - if:
+> > +      not:
+> > +        properties:
+> > +          compatible:
+> > +            items:
+> > +              enum:
+> > +                - renesas,r7s9210-cpg-mssr
+> > +    then:
+> > +      required:
+> > +        - '#reset-cells'
+>
+> It may make sense to split this binding up into multiple bindings so
+> that we don't have deeply nested if/else/then.
+
+Note that the above is not a nested if, but the yaml-equivalent of a switch()
+statement.
+
+If this is to be split, how to split it?
+Each if contains SoCs from multiple families, and each family of SoCs is
+split across multiple ifs.
+
+> > +examples:
+> > +  - |
+> > +    // CPG device node:
+> > +
+> > +    cpg: clock-controller@e6150000 {
+> > +            compatible = "renesas,r8a7795-cpg-mssr";
+> > +            reg = <0xe6150000 0x1000>;
+> > +            clocks = <&extal_clk>, <&extalr_clk>;
+> > +            clock-names = "extal", "extalr";
+> > +            #clock-cells = <2>;
+> > +            #power-domain-cells = <0>;
+> > +            #reset-cells = <1>;
+> > +    };
+> > +
+> > +  - |
+> > +    // CPG/MSSR Clock Domain member device node:
+> > +    #include <dt-bindings/clock/r8a7795-cpg-mssr.h>
+> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +    scif2: serial@e6e88000 {
+> > +            compatible = "renesas,scif-r8a7795", "renesas,rcar-gen3-scif",
+> > +                         "renesas,scif";
+> > +            reg = <0xe6e88000 64>;
+> > +            interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
+> > +            clocks = <&cpg CPG_MOD 310>, <&cpg CPG_CORE R8A7795_CLK_S3D1>,
+> > +                     <&scif_clk>;
+> > +            clock-names = "fck";
+> > +            dmas = <&dmac1 0x13>, <&dmac1 0x12>, <&dmac2 0x13>, <&dmac2 0x12>;
+> > +            dma-names = "tx", "rx", "tx", "rx";
+> > +            power-domains = <&cpg>;
+> > +            resets = <&cpg 310>;
+> > +    };
+>
+> I'm not sure we need this in the example.
+
+OK, the second example can be removed.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
