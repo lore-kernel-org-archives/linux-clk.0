@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B8AC4BA2D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:29:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D742C4BA24
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:36:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB15B246A3
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:29:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AED3246A1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:36:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729258AbgB0N2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 08:28:48 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39566 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729249AbgB0N2r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 08:28:47 -0500
-Received: by mail-ot1-f67.google.com with SMTP id x97so268081ota.6;
-        Thu, 27 Feb 2020 05:28:45 -0800 (PST)
+        id S1729136AbgB0Ngl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 08:36:41 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42482 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729124AbgB0Ngl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 08:36:41 -0500
+Received: by mail-oi1-f193.google.com with SMTP id l12so1945799oil.9;
+        Thu, 27 Feb 2020 05:36:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=//cTzY2jobbRh8YsJlOJYjMBENtlYHf1uI24D6DEJ4A=;
-        b=UuQe/jD0rU4YGh/LRlHuKqyIn7lzPh2TfSIDWFgim2wh3gVZqZAaCPBmVcpHH+n4mG
-         w0JmM4LxDSZzwFKkFtoVPZzNB2r7SVcj3jlHmk4xR4mrw/X5k8nuEpogNP2GwZyVW0Oi
-         TQqAmPP0HQY8XeV6k7yYP9DrzfVBcGTIGFQBYMpfVA7sFgCNu4rKK1u1IP9eli2rkesV
-         dZC9JguyZl6SBWPOD6ecM6wo9N3Hz9N4b7u6BIRyyoGmgqLQzZuViGpifnwkoIPOl+lh
-         rLQziIVJmtPYL3n8C35YtEyaWKUcu9nHyXoRvhOJ6oxFxEGncs47uZOtQccdDC01926V
-         Q14A==
-X-Gm-Message-State: APjAAAV3DQHxx8z6yV4L7/HybHFqyas9Jx4j04a0dT4PeU9SyJEB6TLk
-        7bECRnd4RFPNZDpG1ga82lIA3+7P8AA2ecZZzLE=
-X-Google-Smtp-Source: APXvYqwoav7VAvRpxWespYQXROtXYAxxR/lhJ9BIHxTAy4kvVi44lWZOsMb2I0GiCyANrGW+f7BSim4VRrTCfMC2XRg=
-X-Received: by 2002:a05:6830:10e:: with SMTP id i14mr3308619otp.39.1582810125298;
- Thu, 27 Feb 2020 05:28:45 -0800 (PST)
+        bh=MgPO7ELVuWGwpya2a5yhCTpGcfN6PfsNmhRsLtt669A=;
+        b=C1UoMFUDjujRiXfszX/o3PFyFEK8I0mbFj07guffDUyBkInGF97ukKNki+2hOz6V/n
+         07YiX10iOanpiqpD9VIoPF7N+gZFNcwlotUIk/Woi1ckxtwNUTUlFDOJa/xOIelDDyLm
+         3eg8NDruVq4LS4zm3xv0X5p9iXCoRLkeJP0XY+Ip1Gc2omlY1guh9G9Gyxd14efAQp7o
+         RwxEB72d57ozZ5QzNubZiBCbvqMISRccKkNcDkxbZyQdW8jj/A+/W/J0tuu+ZKBIh6oy
+         nhsoDo7JHthZT8Pe8GrE8WhCbtD9vB2Hhc81D7CKuzGHX5E350ZUJLj6EN8yHn0iYmXl
+         7vCQ==
+X-Gm-Message-State: APjAAAWW7tN2i/bXZ5xdW2d21AXh+id9it/kZ1RRON94Ip5w96hW97OD
+        xp+Xue6t2JKRJwWxUDh1G/BQVriPK/0qomZk3Iw=
+X-Google-Smtp-Source: APXvYqzIYnQiYyviv4vxEN0xt3PJIW3ungOh7jqD4M4TFya2yAyor+8r40KHsX2LrN6OlxEwrnEvFwy6FGg4JA5Qe48=
+X-Received: by 2002:aca:1a06:: with SMTP id a6mr3143012oia.148.1582810600115;
+ Thu, 27 Feb 2020 05:36:40 -0800 (PST)
 MIME-Version: 1.0
-References: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr> <f53767e0-e533-74bc-2967-e2cc4c3df15e@free.fr>
-In-Reply-To: <f53767e0-e533-74bc-2967-e2cc4c3df15e@free.fr>
+References: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr> <e88ca46a-799d-9c86-f2d2-6284eb3c3419@free.fr>
+In-Reply-To: <e88ca46a-799d-9c86-f2d2-6284eb3c3419@free.fr>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 27 Feb 2020 14:28:32 +0100
-Message-ID: <CAMuHMdWA3CwABeiV0whvuThVYSZvVi_KNAKdNEFyM0h9fAnTOw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 1/2] devres: Provide new helper for devm functions
+Date:   Thu, 27 Feb 2020 14:36:29 +0100
+Message-ID: <CAMuHMdUZfR6pYG-hourZCKT-jhh1t+x-ySF4JnEPJjscGAQT+A@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 2/2] clk: Use devm_add in managed functions
 To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -70,37 +70,75 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Marc,
 
+Thanks for your patch!
+
 On Wed, Feb 26, 2020 at 4:55 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
-> Provide a simple wrapper for devres_alloc / devres_add.
+> Using the helper produces simpler code, and smaller object size.
+> E.g. with gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu:
 >
+>     text           data     bss     dec     hex filename
+> -   1708             80       0    1788     6fc drivers/clk/clk-devres.o
+> +   1524             80       0    1604     644 drivers/clk/clk-devres.o
+
+And the size reduction could have been even more ;-)
+
 > Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-With the grammar fixed, as per below:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> --- a/drivers/clk/clk-devres.c
+> +++ b/drivers/clk/clk-devres.c
 
-> --- a/drivers/base/devres.c
-> +++ b/drivers/base/devres.c
-> @@ -685,6 +685,34 @@ int devres_release_group(struct device *dev, void *id)
->  }
->  EXPORT_SYMBOL_GPL(devres_release_group);
+> @@ -55,25 +51,17 @@ static void devm_clk_bulk_release(struct device *dev, void *res)
+>  static int __devm_clk_bulk_get(struct device *dev, int num_clks,
+>                                struct clk_bulk_data *clks, bool optional)
+>  {
+> -       struct clk_bulk_devres *devres;
+>         int ret;
 >
-> +/**
-> + * devm_add - allocate and register new device resource
-> + * @dev: device to add resource to
-> + * @func: resource release function
-> + * @arg: resource data
-> + * @size: resource data size
-> + *
-> + * Simple wrapper for devres_alloc / devres_add.
-> + * Release the resource if the allocation fails.
+> -       devres = devres_alloc(devm_clk_bulk_release,
+> -                             sizeof(*devres), GFP_KERNEL);
+> -       if (!devres)
+> -               return -ENOMEM;
+> -
+>         if (optional)
+>                 ret = clk_bulk_get_optional(dev, num_clks, clks);
+>         else
+>                 ret = clk_bulk_get(dev, num_clks, clks);
+> -       if (!ret) {
+> -               devres->clks = clks;
+> -               devres->num_clks = num_clks;
+> -               devres_add(dev, devres);
+> -       } else {
+> -               devres_free(devres);
+> -       }
+> +
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret = devm_vadd(dev, my_clk_bulk_put, clk_bulk_args, num_clks, clks);
+>
+>         return ret;
 
-Releases ... failed.
+return devm_vadd(...);
 
-> + *
-> + * RETURNS:
-> + * 0 if the allocation succeeds, -ENOMEM otherwise.
+>  }
 
-"0 on success" would avoid any discussion about "succeeds" or "succeeded" ;-)
+> @@ -128,30 +109,22 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
+>
+>  void devm_clk_put(struct device *dev, struct clk *clk)
+>  {
+> -       int ret;
+> -
+> -       ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
+> -
+> -       WARN_ON(ret);
+> +       WARN_ON(devres_release(dev, my_clk_put, devm_clk_match, clk));
+
+Getting rid of "ret" is an unrelated change, which actually increases
+kernel size, as the WARN_ON() parameter is stringified for the warning
+message.
+
+The rest looks good, so with the above fixed:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
 Gr{oetje,eeting}s,
 
