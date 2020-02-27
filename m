@@ -2,251 +2,169 @@ Return-Path: <SRS0=aKI2=4P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02A69C35E0E
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 17:44:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29B25C11D3D
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 18:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15312469F
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 17:44:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A198246A1
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 18:09:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730670AbgB0Roj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 12:44:39 -0500
-Received: from out28-5.mail.aliyun.com ([115.124.28.5]:52317 "EHLO
-        out28-5.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730627AbgB0Roh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 12:44:37 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07441786|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.411568-0.0104174-0.578014;DS=CONTINUE|ham_regular_dialog|0.0594824-0.00168407-0.938833;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=23;RT=23;SR=0;TI=SMTPD_---.GtKZqhO_1582825466;
-Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GtKZqhO_1582825466)
-          by smtp.aliyun-inc.com(10.147.41.199);
-          Fri, 28 Feb 2020 01:44:28 +0800
-Subject: Re: [PATCH v6 5/7] dt-bindings: MIPS: Document Ingenic SoCs binding.
-To:     Paul Cercueil <paul@crapouillou.net>
-References: <1582215889-113034-1-git-send-email-zhouyanjie@wanyeetech.com>
- <1582215889-113034-7-git-send-email-zhouyanjie@wanyeetech.com>
- <20200226162907.GA13489@bogus> <1582811295.3.1@crapouillou.net>
-Cc:     Rob Herring <robh@kernel.org>, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, tglx@linutronix.de,
-        ralf@linux-mips.org, paulburton@kernel.org,
-        jiaxun.yang@flygoat.com, chenhc@lemote.com, sboyd@kernel.org,
-        mturquette@baylibre.com, mark.rutland@arm.com,
-        daniel.lezcano@linaro.org, geert+renesas@glider.be,
-        krzk@kernel.org, ebiederm@xmission.com, miquel.raynal@bootlin.com,
-        keescook@chromium.org, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com, dongsheng.qiu@ingenic.com
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <5E57FFF9.2030804@wanyeetech.com>
-Date:   Fri, 28 Feb 2020 01:44:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        id S1729314AbgB0SJJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 13:09:09 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40778 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729232AbgB0SJJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 13:09:09 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 255672963D9
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v10 0/5] arm/arm64: mediatek: Fix mt8173 mmsys device probing
+Date:   Thu, 27 Feb 2020 19:08:53 +0100
+Message-Id: <20200227180858.1514157-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-In-Reply-To: <1582811295.3.1@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+Dear all,
 
-On 2020年02月27日 21:48, Paul Cercueil wrote:
-> Hi,
->
-> Le mer., févr. 26, 2020 at 10:29, Rob Herring <robh@kernel.org> a écrit :
->> On Fri, Feb 21, 2020 at 12:24:47AM +0800, 周琰杰 (Zhou Yanjie) wrote:
->>>  Document the available properties for the SoC root node and the
->>>  CPU nodes of the devicetree for the Ingenic XBurst SoCs.
->>>
->>>  Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
->>>  Tested-by: Paul Boddie <paul@boddie.org.uk>
->>>  Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>>  ---
->>>
->>>  Notes:
->>>      v1->v2:
->>>      Change the two Document from txt to yaml.
->>>
->>>      v2->v3:
->>>      Fix formatting errors.
->>>
->>>      v3->v4:
->>>      Fix bugs in the two yaml files.
->>>
->>>      v4->v5:
->>>      No change.
->>>
->>>      v5->v6:
->>>      Rewrite the two yaml files.
->>>
->>>   .../bindings/mips/ingenic/ingenic,cpu.yaml         | 61 
->>> ++++++++++++++++++++++
->>>   .../bindings/mips/ingenic/ingenic,soc.yaml         | 34 ++++++++++++
->>>   2 files changed, 95 insertions(+)
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>   create mode 100644 
->>> Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>
->>>  diff --git 
->>> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml 
->>> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>  new file mode 100644
->>>  index 00000000..ad1fd86
->>>  --- /dev/null
->>>  +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,cpu.yaml
->>>  @@ -0,0 +1,61 @@
->>>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>  +%YAML 1.2
->>>  +---
->>>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,cpu.yaml#
->>>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  +
->>>  +title: Bindings for Ingenic XBurst family CPUs
->>>  +
->>>  +maintainers:
->>>  +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>
->> Blank line here.
->>
->>>  +description: |
->>
->> Drop the '|'.
->>
->>>  +  Ingenic XBurst family CPUs shall have the following properties.
->>>  +
->>>  +properties:
->>>  +  compatible:
->>>  +    oneOf:
->>>  +
->>>  +      - description: Ingenic XBurst®1 CPU Core
->>>  +        items:
->>>  +          - const: ingenic,xburst
->>>  +
->>>  +      - description: Ingenic XBurst®2 CPU Core
->>>  +        items:
->>>  +          - const: ingenic,xburst2
->>
->> enum:
->>   - ingenic,xburst  # Ingenic XBurst®1 CPU Core
->>   - ingenic,xburst2 # Ingenic XBurst®2 CPU Core
->>
->> Though I don't find the description really adds much.
->
-> About the enum values: shouldn't they be a bit more descriptive? There 
-> has been various versions of the Xburst1 chip, with slightly different 
-> instruction sets and hardware (FPU).
+Those patches are intended to solve an old standing issue on some
+Mediatek devices (mt8173, mt2701 and mt2712 are affected by this issue).
 
-Sure, will change in next version.
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver gets probed, which in effect breaks
+graphics on those devices.
 
->
-> -Paul
->
->>>  +
->>>  +  reg:
->>>  +    description: |
->>>  +      The number of the CPU.
->>
->> Drop this.
->>
->> Add:
->>
->> maxItems: 1
->>
->>>  +
->>>  +required:
->>>  +  - device_type
->>>  +  - compatible
->>>  +  - reg
->>>  +
->>>  +examples:
->>>  +  - |
->>>  +    #include <dt-bindings/clock/jz4780-cgu.h>
->>>  +
->>>  +    cpus {
->>>  +        #address-cells = <1>;
->>>  +        #size-cells = <0>;
->>>  +
->>>  +        cpu0: cpu@0 {
->>>  +            device_type = "cpu";
->>>  +            compatible = "ingenic,xburst";
->>>  +            reg = <0>;
->>>  +
->>
->>>  +            clocks = <&cgu JZ4780_CLK_CPU>;
->>>  +            clock-names = "cpu";
->>
->> Not documented.
->>
->>>  +        };
->>>  +
->>>  +        cpu1: cpu@1 {
->>>  +            device_type = "cpu";
->>>  +            compatible = "ingenic,xburst";
->>>  +            reg = <1>;
->>>  +
->>>  +            clocks = <&cgu JZ4780_CLK_CORE1>;
->>>  +            clock-names = "cpu";
->>>  +        };
->>>  +    };
->>>  +...
->>>  diff --git 
->>> a/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml 
->>> b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>  new file mode 100644
->>>  index 00000000..8943e73
->>>  --- /dev/null
->>>  +++ b/Documentation/devicetree/bindings/mips/ingenic/ingenic,soc.yaml
->>>  @@ -0,0 +1,34 @@
->>>  +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>  +%YAML 1.2
->>>  +---
->>>  +$id: http://devicetree.org/schemas/mips/ingenic/ingenic,soc.yaml#
->>>  +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>  +
->>>  +title: Bindings for Ingenic SoCs with XBurst CPU inside.
->>>  +
->>>  +maintainers:
->>>  +  - 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>
->> Blank line.
->>
->>>  +description: |
->>>  +  Ingenic SoCs with XBurst CPU inside shall have the following 
->>> properties.
->>>  +
->>>  +properties:
->>>  +  $nodename:
->>>  +    const: '/'
->>>  +  compatible:
->>>  +    oneOf:
->>>  +
->>>  +      - description: Ingenic JZ47 Series Mobile Application Processor
->>>  +        items:
->>>  +          - const: ingenic,jz4740
->>>  +          - const: ingenic,jz4725b
->>>  +          - const: ingenic,jz4760
->>>  +          - const: ingenic,jz4760b
->>>  +          - const: ingenic,jz4770
->>>  +          - const: ingenic,jz4780
->>
->> This is defining the root compatible is 6 strings. You want a enum here
->> I think.
->>
->>>  +
->>>  +      - description: Ingenic X Series IoT Application Processor
->>>  +        items:
->>>  +          - const: ingenic,x1000
->>>  +          - const: ingenic,x1000e
->>>  +          - const: ingenic,x1500
->>
->> Same here.
->>
->> Did you validate your dts file with this schema using 'make dtbs_check'?
->>
->> Rob
->
+The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
+control clock gates (which is used in the clk driver) and some registers
+to set the routing and enable the differnet blocks of the display
+and MDP (Media Data Path) subsystem. On this series the clk driver is
+not a pure clock controller but a system controller that can provide
+access to the shared registers between the different drivers that need
+it (mediatek-drm and mediatek-mdp). Hence the MMSYS clk driver was moved
+to drivers/soc/mediatek and is the entry point (parent) which will trigger
+the probe of the corresponding mediatek-drm driver.
+
+**IMPORTANT** This series only fixes the issue on mt8173 to make it
+simple and as is the only platform I can test. Similar changes should be
+applied for mt2701 and mt2712 to have display working.
+
+For reference, here are the links to the old discussions:
+* v9: https://patchwork.kernel.org/project/linux-clk/list/?series=247591
+* v8: https://patchwork.kernel.org/project/linux-mediatek/list/?series=244891
+* v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
+* v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
+* v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
+* v4:
+  * https://patchwork.kernel.org/patch/10530871/
+  * https://patchwork.kernel.org/patch/10530883/
+  * https://patchwork.kernel.org/patch/10530885/
+  * https://patchwork.kernel.org/patch/10530911/
+  * https://patchwork.kernel.org/patch/10530913/
+* v3:
+  * https://patchwork.kernel.org/patch/10367857/
+  * https://patchwork.kernel.org/patch/10367861/
+  * https://patchwork.kernel.org/patch/10367877/
+  * https://patchwork.kernel.org/patch/10367875/
+  * https://patchwork.kernel.org/patch/10367885/
+  * https://patchwork.kernel.org/patch/10367883/
+  * https://patchwork.kernel.org/patch/10367889/
+  * https://patchwork.kernel.org/patch/10367907/
+  * https://patchwork.kernel.org/patch/10367909/
+  * https://patchwork.kernel.org/patch/10367905/
+* v2: No relevant discussion, see v3
+* v1:
+  * https://patchwork.kernel.org/patch/10016497/
+  * https://patchwork.kernel.org/patch/10016499/
+  * https://patchwork.kernel.org/patch/10016505/
+  * https://patchwork.kernel.org/patch/10016507/
+
+Best regards,
+ Enric
+
+Changes in v10:
+- Update the binding documentation for the mmsys system controller.
+- Renamed to be generic mtk-mmsys
+- Add driver data support to be able to support diferent SoCs
+- Introduced a new patch to move routing control into mmsys driver.
+- Removed the patch to use regmap as is not needed anymore.
+- Match driver data to get display routing.
+
+Changes in v9:
+- Move mmsys to drivers/soc/mediatek (CK)
+- Do not move the display routing from the drm driver (CK)
+
+Changes in v8:
+- Be a builtin_platform_driver like other mediatek mmsys drivers.
+- New patch introduced in this series.
+
+Changes in v7:
+- Free clk_data->clks as well
+- Get rid of private data structure
+
+Enric Balletbo i Serra (3):
+  dt-bindings: mediatek: Update mmsys binding to reflect it is a system
+    controller
+  soc / drm: mediatek: Move routing control to mmsys device
+  soc / drm: mediatek: Fix mediatek-drm device probing
+
+Matthias Brugger (2):
+  drm/mediatek: Omit warning on probe defers
+  soc: mediatek: Move mt8173 MMSYS to platform driver
+
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |   7 +-
+ drivers/clk/mediatek/clk-mt8173.c             | 104 -----
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  13 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 259 +----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   7 -
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  44 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
+ drivers/soc/mediatek/Kconfig                  |   7 +
+ drivers/soc/mediatek/Makefile                 |   1 +
+ drivers/soc/mediatek/mtk-mmsys.c              | 435 ++++++++++++++++++
+ include/linux/soc/mediatek/mtk-mmsys.h        |  19 +
+ 16 files changed, 529 insertions(+), 406 deletions(-)
+ create mode 100644 drivers/soc/mediatek/mtk-mmsys.c
+ create mode 100644 include/linux/soc/mediatek/mtk-mmsys.h
+
+-- 
+2.25.0
 
