@@ -2,228 +2,108 @@ Return-Path: <SRS0=aKI2=4P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B8BC4BA37
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 02:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19F9BC4BA06
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 05:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92EE624672
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 02:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC39A24656
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 05:35:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9ZotFPx"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rmtsiL1H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728209AbgB0C21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 26 Feb 2020 21:28:27 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40181 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbgB0C21 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 26 Feb 2020 21:28:27 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r17so1393257wrj.7;
-        Wed, 26 Feb 2020 18:28:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P8Lr83wNxTFREKN1d8E1dyvqjENy/kw2pJKojCtakbE=;
-        b=i9ZotFPxkm7GQc49OJKH81Y7IDYieuPltjdBMQ8RtayWDXsEW2l5Vse9B0juD/Zf6R
-         n5wiYTkrGB4LyCfiL5an9ze9p88cATCobO06hR38mDhDj0rap5m8HBJDTG8J2T/r7yPH
-         kCeUR5kiQ9igj++voYjo28hkQs5lsxJ1GIS9ubGA598q0rlwc0Yz0ZCMr8Wlltn5eoQ1
-         q6VoyaPqLpe9l31CaT2lvxG97NOilDCYaKSuHGAsHYBH9VEXf05+thAC/Ss7ov28edUQ
-         2i5KiF03aEMRn5ccvmAefJzaih16Ai8u4Y9Ree90YFn9SLQK/V6ABMJgx3mj6kzUb6Vt
-         zpGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P8Lr83wNxTFREKN1d8E1dyvqjENy/kw2pJKojCtakbE=;
-        b=NhU9AKWOKE9G9jkyjbzsTsOPNiYQacgYBb3PJb3ku7F/8vjC5FvtPJwkIWas4evZyN
-         waKaRESUOcmer0pPY+x6SXkL6q4VNwjmdFkYvuG1SMVyLg/JC58jp5i9Et3Tro4A5kD7
-         4LjLYZVskVx6oaiSs46R00yRw0MS0FY68w2KOx4JAeO7QG1jxrWgqLQaz4gYmeNnuNmj
-         gOYRRGT0SXDYmE4wYoHbkb8sI67hsIlomzUlXMeF3ucQ7DFCU8iaz8iYglVGzCxDeFWg
-         5hc4VUedHozXGS3nREHx7mXAMm3PxeMdYO34GfOv4V6Gd377DgA4IGkYc/g19Otd857T
-         3xsQ==
-X-Gm-Message-State: APjAAAVtr3iLgYd1gKNfxC23PONDn4EG3D30gk+IWviaZExXcS6MtoAh
-        K20R46GT5VbWg1EwvDcV0NuyKtEDiBLt5mvetEnWQQ==
-X-Google-Smtp-Source: APXvYqwXT16KLR5zlU/wMXoQvOaWaYIAoekY3yfqDvvkwzJK4fsraLbt2QibNRgH7xwfukOMyqXlt6f5XmWqgMLMgFU=
-X-Received: by 2002:adf:f648:: with SMTP id x8mr1950156wrp.198.1582770504539;
- Wed, 26 Feb 2020 18:28:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20200219040915.2153-1-zhang.lyra@gmail.com> <20200219040915.2153-4-zhang.lyra@gmail.com>
- <20200226152642.GA26474@bogus>
-In-Reply-To: <20200226152642.GA26474@bogus>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 27 Feb 2020 10:27:47 +0800
-Message-ID: <CAAfSe-tNmQTzMSC5hZwTjC+MFOwV-UeJ7ZhK8+m3vD5RfmthoQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] dt-bindings: clk: sprd: add bindings for sc9863a
- clock controller
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725884AbgB0FfO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 00:35:14 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47142 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725730AbgB0FfO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 00:35:14 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 01R5Z9nq009722;
+        Wed, 26 Feb 2020 23:35:09 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1582781709;
+        bh=W6a8xjdmdk6xg15QL1s3y6dekJ7l96jr9e8pSwH3q0E=;
+        h=From:To:CC:Subject:Date;
+        b=rmtsiL1HmQ71s9YKQNYsl5WFRhepg6ktXQ5L5+MjW8BP3wwbrg1D7iOCGVPQAsobw
+         myUIvlxF3PY+hUazeUZegFWF53o8cjkhuzMA01/h5wLzBGa4T4F3/rSuwlBFVTVPjy
+         6maSyuJcKyTwNpHMgHglBNRPJ8+6migD4MOrKqow=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 01R5Z9mT020205
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 26 Feb 2020 23:35:09 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 26
+ Feb 2020 23:35:09 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 26 Feb 2020 23:35:09 -0600
+Received: from a0132425.dhcp.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 01R5Z6ee022834;
+        Wed, 26 Feb 2020 23:35:06 -0600
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+        Santosh Shilimkar <ssantosh@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH v4 0/2]  clk: keystone: Add new driver to handle ehrpwm tbclk
+Date:   Thu, 27 Feb 2020 11:05:27 +0530
+Message-ID: <20200227053529.16479-1-vigneshr@ti.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 Feb 2020 at 23:26, Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, Feb 19, 2020 at 12:09:11PM +0800, Chunyan Zhang wrote:
-> > From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> >
-> > add a new bindings to describe sc9863a clock compatible string.
-> >
-> > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> > ---
-> >  .../bindings/clock/sprd,sc9863a-clk.yaml      | 110 ++++++++++++++++++
-> >  1 file changed, 110 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-> > new file mode 100644
-> > index 000000000000..b31569b524e5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
-> > @@ -0,0 +1,110 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# Copyright 2019 Unisoc Inc.
-> > +%YAML 1.2
-> > +---
-> > +$id: "http://devicetree.org/schemas/clock/sprd,sc9863a-clk.yaml#"
-> > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-> > +
-> > +title: SC9863A Clock Control Unit Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Orson Zhai <orsonzhai@gmail.com>
-> > +  - Baolin Wang <baolin.wang7@gmail.com>
-> > +  - Chunyan Zhang <zhang.lyra@gmail.com>
-> > +
-> > +properties:
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  compatible :
-> > +    enum:
-> > +      - sprd,sc9863a-ap-clk
-> > +      - sprd,sc9863a-aon-clk
-> > +      - sprd,sc9863a-apahb-gate
-> > +      - sprd,sc9863a-pmu-gate
-> > +      - sprd,sc9863a-aonapb-gate
-> > +      - sprd,sc9863a-pll
-> > +      - sprd,sc9863a-mpll
-> > +      - sprd,sc9863a-rpll
-> > +      - sprd,sc9863a-dpll
-> > +      - sprd,sc9863a-mm-gate
-> > +      - sprd,sc9863a-apapb-gate
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 4
-> > +    description: |
-> > +      The input parent clock(s) phandle for this clock, only list fixed
-> > +      clocks which are declared in devicetree.
-> > +
-> > +  clock-names:
-> > +    minItems: 1
-> > +    maxItems: 4
-> > +    description: |
-> > +      Clock name strings used for driver to reference.
->
-> Drop this. That's all 'clock-names'.
+On TI's AM654 and J721e SoCs, certain clocks can be gated/ungated by setting a
+single bit in SoC's System Control registers. Sometime more than
+one clock control can be in the same register. But these registers might
+also have bits to control other SoC functionalities.
+For example, Time Base clock(TBclk) enable bits for various EPWM IPs are
+all in EPWM_CTRL Syscon registers on K2G SoC.
 
-Ok.
+This series adds a new clk driver to support controlling tbclk. Registers
+which control clocks will be grouped into a syscon DT node, thus
+enabling sharing of register across clk drivers and other drivers.
 
->
-> > +    items:
-> > +      - const: ext-26m
-> > +      - const: ext-32k
-> > +      - const: ext-4m
-> > +      - const: rco-100m
-> > +
-> > +  reg:
-> > +    description: |
-> > +      Contain the registers base address and length.
->
-> Drop this. You need to define how many entries (maxItems: 1).
+v4:
+Fix up the title of YAML bindings file to drop reference to driver
 
-Ok.
+v3:
+Register syscon node as clk provider
 
->
-> > +
-> > +required:
-> > +  - compatible
-> > +  - '#clock-cells'
-> > +
-> > +if:
-> > +  properties:
-> > +    compatible:
-> > +      enum:
-> > +        - sprd,sc9863a-ap-clk
-> > +        - sprd,sc9863a-aon-clk
-> > +then:
-> > +  required:
-> > +    - reg
-> > +
-> > +else:
-> > +  description: |
-> > +    Other SC9863a clock nodes should be the child of a syscon node with
-> > +    the required property:
-> > +
-> > +    - compatible: Should be the following:
-> > +                  "sprd,sc9863a-glbregs", "syscon", "simple-mfd"
-> > +
-> > +    The 'reg' property is also required if there is a sub range of
-> > +    registers for the clocks that are contiguous.
->
-> Which ones are these? You should be able to define that exactly starting
-> with the example below.
+v2:
+Simplify driver to have only one clock node per group of syscon
+controller registers instead of one per clock instance.
 
-This is for the second example below, which clocks are under syscon node.
+v1: https://patchwork.kernel.org/cover/10848783/
 
->
-> > +
-> > +examples:
-> > +  - |
-> > +    ap_clk: clock-controller@21500000 {
-> > +      compatible = "sprd,sc9863a-ap-clk";
-> > +      reg = <0 0x21500000 0 0x1000>;
-> > +      clocks = <&ext_26m>, <&ext_32k>;
-> > +      clock-names = "ext-26m", "ext-32k";
-> > +      #clock-cells = <1>;
-> > +    };
-> > +
-> > +  - |
-> > +    soc {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> > +
-> > +      ap_ahb_regs: syscon@20e00000 {
-> > +        compatible = "sprd,sc9863a-glbregs", "syscon", "simple-mfd";
-> > +        reg = <0 0x20e00000 0 0x4000>;
-> > +        #address-cells = <1>;
-> > +        #size-cells = <1>;
-> > +        ranges = <0 0 0x20e00000 0x4000>;
-> > +
-> > +        apahb_gate: apahb-gate@0 {
-> > +          compatible = "sprd,sc9863a-apahb-gate";
-> > +          reg = <0x0 0x1020>;
-> > +          #clock-cells = <1>;
->
-> Doesn't this block have input clocks?
+Vignesh Raghavendra (2):
+  dt-bindings: clock: Add binding documentation for TI EHRPWM TBCLK
+  clk: keystone: Add new driver to handle syscon based clocks
 
-Since it switched to the new way of referencing parent, some clocks
-whose parents are all in the same driver don't need to get their
-parent from DT.
+ .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml |  35 ++++
+ drivers/clk/keystone/Kconfig                  |   8 +
+ drivers/clk/keystone/Makefile                 |   1 +
+ drivers/clk/keystone/syscon-clk.c             | 172 ++++++++++++++++++
+ 4 files changed, 216 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
+ create mode 100644 drivers/clk/keystone/syscon-clk.c
 
-Thanks,
-Chunyan
+-- 
+2.25.1
+
