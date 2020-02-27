@@ -2,111 +2,113 @@ Return-Path: <SRS0=aKI2=4P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F02C0C4BA2D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14B8AC4BA2D
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:29:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB78624650
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:06:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQtnK7x6"
+	by mail.kernel.org (Postfix) with ESMTP id EB15B246A3
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 13:29:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729052AbgB0NGb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 08:06:31 -0500
-Received: from mail-wr1-f42.google.com ([209.85.221.42]:36830 "EHLO
-        mail-wr1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729025AbgB0NGb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 08:06:31 -0500
-Received: by mail-wr1-f42.google.com with SMTP id j16so1708647wrt.3
-        for <linux-clk@vger.kernel.org>; Thu, 27 Feb 2020 05:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=r9UDArMRXs4Mmuh86mluCWMWz6S3F8bHKkTAV4tquwc=;
-        b=dQtnK7x6rc9gwoWqwwCtjeX8IKsQYwxhnvCkjo7OaAfutwqX0KNKbfwdp90f9Xt2JE
-         6jkxdR4yQYViWKAnnbjnOCs4ErCCNZBCX58u7Vdwj5KzuFhtoBhPVA/JnVW8FvZSVTlL
-         5xZHiiUroijt74+FaCpVBJbmW0IdHZJ9yGhrwAwakr/dQhf2Y381D4kSf7R4mxqDWBsI
-         xE8GwMEoj5UJgWPit/Os7rqW1NLdKv9SOpMZNScmbQy7B0INsrEs0UWouJ1nadIQc8Nb
-         fFIeGrX6SvSfWwjkDO9/kl43hxybXGEUOeJfdQMEgQ0/Np0GyRFfwgVboVmaPb9VpqU7
-         1k2Q==
+        id S1729258AbgB0N2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 08:28:48 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39566 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729249AbgB0N2r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 08:28:47 -0500
+Received: by mail-ot1-f67.google.com with SMTP id x97so268081ota.6;
+        Thu, 27 Feb 2020 05:28:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=r9UDArMRXs4Mmuh86mluCWMWz6S3F8bHKkTAV4tquwc=;
-        b=cRaVqMvc+uT/RFu/piwuk6f085BvilymmObCOmG3zyljJ0yALjeoZ8NnRoW1Zka/M7
-         STb/xxPfmFqQomIYudREDPzmcdFqXbDp5OBuGWbOjtjKLmvMH1xgWF+p+30u3J7MPvze
-         ZfO/HT59jhSAA+EKRxHmCI0D8Lr1/y1j3stTVpR42Yd6Sy0pY3v1lyfir5T9DiwFy2Kg
-         W5oaSawAgnJX29pddMkG0WEh0+S58kLi0TNZBKgehineEDw/EAMXO540MwEp5F9Ompsc
-         R/LVxYZU9OA4hr8/lD/EJj7nYDtNmd4x5aADQBbeVtnt+1RpTCWH6/QLI36yXgbNcEP3
-         uKGw==
-X-Gm-Message-State: APjAAAXt3sSR1jJmI8PPAuDuc2JjDi9HMZeQr6KwhA/EexVZrz2fqtwq
-        QecXxhdYexTuAdbR2agQ2Dc=
-X-Google-Smtp-Source: APXvYqwyWG0bYHyhxsK+EnYYgz3YtoQiRKQcnmffBH+PsYQCzSZ2hjB04mCUtyT7ifXoL+j5W1XJ1g==
-X-Received: by 2002:a05:6000:14d:: with SMTP id r13mr4793931wrx.63.1582808789241;
-        Thu, 27 Feb 2020 05:06:29 -0800 (PST)
-Received: from localhost (dslb-002-207-138-002.002.207.pools.vodafone-ip.de. [2.207.138.2])
-        by smtp.gmail.com with ESMTPSA id p16sm7151635wrw.15.2020.02.27.05.06.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 27 Feb 2020 05:06:28 -0800 (PST)
-Date:   Thu, 27 Feb 2020 13:57:43 +0100
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     aisheng.dong@nxp.com, anson.huang@nxp.com
-Cc:     festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        s.hauer@pengutronix.de, mturquette@baylibre.com,
-        leonard.crestez@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: RFC: imx8qm: imx-scu-clk: probe of clk failed
-Message-ID: <20200227125743.GC16310@optiplex>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=//cTzY2jobbRh8YsJlOJYjMBENtlYHf1uI24D6DEJ4A=;
+        b=UuQe/jD0rU4YGh/LRlHuKqyIn7lzPh2TfSIDWFgim2wh3gVZqZAaCPBmVcpHH+n4mG
+         w0JmM4LxDSZzwFKkFtoVPZzNB2r7SVcj3jlHmk4xR4mrw/X5k8nuEpogNP2GwZyVW0Oi
+         TQqAmPP0HQY8XeV6k7yYP9DrzfVBcGTIGFQBYMpfVA7sFgCNu4rKK1u1IP9eli2rkesV
+         dZC9JguyZl6SBWPOD6ecM6wo9N3Hz9N4b7u6BIRyyoGmgqLQzZuViGpifnwkoIPOl+lh
+         rLQziIVJmtPYL3n8C35YtEyaWKUcu9nHyXoRvhOJ6oxFxEGncs47uZOtQccdDC01926V
+         Q14A==
+X-Gm-Message-State: APjAAAV3DQHxx8z6yV4L7/HybHFqyas9Jx4j04a0dT4PeU9SyJEB6TLk
+        7bECRnd4RFPNZDpG1ga82lIA3+7P8AA2ecZZzLE=
+X-Google-Smtp-Source: APXvYqwoav7VAvRpxWespYQXROtXYAxxR/lhJ9BIHxTAy4kvVi44lWZOsMb2I0GiCyANrGW+f7BSim4VRrTCfMC2XRg=
+X-Received: by 2002:a05:6830:10e:: with SMTP id i14mr3308619otp.39.1582810125298;
+ Thu, 27 Feb 2020 05:28:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr> <f53767e0-e533-74bc-2967-e2cc4c3df15e@free.fr>
+In-Reply-To: <f53767e0-e533-74bc-2967-e2cc4c3df15e@free.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 27 Feb 2020 14:28:32 +0100
+Message-ID: <CAMuHMdWA3CwABeiV0whvuThVYSZvVi_KNAKdNEFyM0h9fAnTOw@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 1/2] devres: Provide new helper for devm functions
+To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Aisheng,
-Hello Anson,
+Hi Marc,
 
-I get the following imx-scu errors when using Linux version
-5.6.0-rc1-next-20200214 with scfw Build 3353, Commit 494c97f3
+On Wed, Feb 26, 2020 at 4:55 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+> Provide a simple wrapper for devres_alloc / devres_add.
+>
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
-It seems that important clocks are off somehow and that lpspi isn't
-working because of that. What is the best way to debug such issues?
+With the grammar fixed, as per below:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[    1.103799] imx-scu scu: NXP i.MX SCU Initialized
-[    1.111383] a35_clk: failed to get clock rate -22
-[    1.122843]  lcd0-pwm0: failed to power up resource 188 ret -22
-[    1.128438] imx-scu-clk: probe of pwm_clk failed with error -22
-[    1.134746]  lcd0: failed to power up resource 187 ret -22
-[    1.139898] imx-scu-clk: probe of lcd_clk failed with error -22
-[    1.151177] mipi_csi0_core_clk: failed to attached the power domain -2
-[    1.157581] mipi_csi0_esc_clk: failed to attached the power domain -2
-[    1.163985] mipi_csi0_i2c0_clk: failed to attached the power domain -2
-[    1.170524] mipi_csi0_pwm0_clk: failed to attached the power domain -2
-[    1.181817] imx8qm-pinctrl scu:pinctrl: initialized IMX pinctrl driver
-[    1.211140] random: fast init done
-[    1.216039] 5a060000.serial: ttyLP0 at MMIO 0x5a060000 (irq = 8, base_baud = 5000000) is a FSL_LPUAR[    1.225100] printk: console [ttyLP0] enabled
-[    1.225100] printk: console [ttyLP0] enabled
-[    1.233543] printk: bootconsole [lpuart32] disabled
-[    1.233543] printk: bootconsole [lpuart32] disabled
-[    1.243549] fsl-lpuart 5a060000.serial: DMA tx channel request failed, operating without tx DMA
-[    1.252275] fsl-lpuart 5a060000.serial: DMA rx channel request failed, operating without rx DMA
-[    1.261868] 5a070000.serial: ttyLP1 at MMIO 0x5a070000 (irq = 9, base_baud = 0) is a FSL_LPUART
-[    1.270767] fsl-lpuart 5a070000.serial: DMA tx channel request failed, operating without tx DMA
-[    1.279481] fsl-lpuart 5a070000.serial: DMA rx channel request failed, operating without rx DMA
-[    1.289310] fb_st7789v spi0.0: fbtft_property_value: buswidth = 9
-[    1.296105] fsl_lpspi 5a010000.lpspi: failed to enable clock
-[    1.301771] spi_master spi0: failed to prepare transfer hardware: -13
-[    1.308231] fb_st7789v spi0.0: write() failed and returned -13
+> --- a/drivers/base/devres.c
+> +++ b/drivers/base/devres.c
+> @@ -685,6 +685,34 @@ int devres_release_group(struct device *dev, void *id)
+>  }
+>  EXPORT_SYMBOL_GPL(devres_release_group);
+>
+> +/**
+> + * devm_add - allocate and register new device resource
+> + * @dev: device to add resource to
+> + * @func: resource release function
+> + * @arg: resource data
+> + * @size: resource data size
+> + *
+> + * Simple wrapper for devres_alloc / devres_add.
+> + * Release the resource if the allocation fails.
 
+Releases ... failed.
 
-Best regards,
+> + *
+> + * RETURNS:
+> + * 0 if the allocation succeeds, -ENOMEM otherwise.
 
-Oliver
+"0 on success" would avoid any discussion about "succeeds" or "succeeded" ;-)
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
