@@ -4,125 +4,304 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B43AC4BA24
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 07:19:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51627C4BA06
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 08:45:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3742072D
-	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 07:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 259F32467B
+	for <linux-clk@archiver.kernel.org>; Thu, 27 Feb 2020 08:45:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727413AbgB0HTb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 27 Feb 2020 02:19:31 -0500
-Received: from mga12.intel.com ([192.55.52.136]:22237 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726999AbgB0HTb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 27 Feb 2020 02:19:31 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Feb 2020 23:19:30 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,491,1574150400"; 
-   d="scan'208";a="238310161"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga003.jf.intel.com with ESMTP; 26 Feb 2020 23:19:30 -0800
-Received: from [10.226.38.56] (unknown [10.226.38.56])
-        by linux.intel.com (Postfix) with ESMTP id 50F62580544;
-        Wed, 26 Feb 2020 23:19:27 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] clk: intel: Add CGU clock driver for a new SoC
-To:     Randy Dunlap <rdunlap@infradead.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
-        rtanwar <rahul.tanwar@intel.com>
-References: <cover.1582096982.git.rahul.tanwar@linux.intel.com>
- <6148b5b25d4a6833f0a72801d569ed97ac6ca55b.1582096982.git.rahul.tanwar@linux.intel.com>
- <e8259928-cb2a-a453-8f2a-1b57c8abdb8c@infradead.org>
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Message-ID: <4fb7a643-cbe1-da82-2629-2dbd0c0d143b@linux.intel.com>
-Date:   Thu, 27 Feb 2020 15:19:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1728539AbgB0IpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 27 Feb 2020 03:45:11 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33966 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728482AbgB0IpL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 27 Feb 2020 03:45:11 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 12DFD295A11
+Subject: Re: [PATCH v9 1/4] drm/mediatek: Use regmap for register access
+To:     CK Hu <ck.hu@mediatek.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        dri-devel@lists.freedesktop.org,
+        Richard Fontana <rfontana@redhat.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        wens@csie.org, linux-arm-kernel@lists.infradead.org,
+        mtk01761 <wendell.lin@mediatek.com>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, frank-w@public-files.de,
+        Seiya Wang <seiya.wang@mediatek.com>, sean.wang@mediatek.com,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Allison Randal <allison@lohutok.net>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>, matthias.bgg@kernel.org
+References: <20200226105419.632771-1-enric.balletbo@collabora.com>
+ <20200226105419.632771-2-enric.balletbo@collabora.com>
+ <1582765858.20746.2.camel@mtksdaap41>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <07976851-8ac4-9c0d-3257-74fd4df74ef0@collabora.com>
+Date:   Thu, 27 Feb 2020 09:45:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <e8259928-cb2a-a453-8f2a-1b57c8abdb8c@infradead.org>
+In-Reply-To: <1582765858.20746.2.camel@mtksdaap41>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi CK,
 
-Hi Randy,
+On 27/2/20 2:10, CK Hu wrote:
+> Hi, Enric:
+> 
+> On Wed, 2020-02-26 at 11:54 +0100, Enric Balletbo i Serra wrote:
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> The mmsys memory space is shared between the drm and the
+>> clk driver. Use regmap to access it.
+> 
+> Once there is a mmsys driver and clock control is moved into mmsys
+> driver, I think we should also move routing control into mmsys driver
+> and we could drop this patch.
+> 
 
-On 19/2/2020 3:59 PM, Randy Dunlap wrote:
-> On 2/18/20 11:40 PM, Rahul Tanwar wrote:
->> From: rtanwar <rahul.tanwar@intel.com>
+Do you want me do this in this series or later?
+
+Thanks,
+ Enric
+
+> Regards,
+> CK
+> 
 >>
->> Clock Generation Unit(CGU) is a new clock controller IP of a forthcoming
->> Intel network processor SoC named Lightning Mountain(LGM). It provides
->> programming interfaces to control & configure all CPU & peripheral clocks.
->> Add common clock framework based clock controller driver for CGU.
->>
->> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 >> ---
->>  drivers/clk/Kconfig           |   1 +
->>  drivers/clk/x86/Kconfig       |   8 +
->>  drivers/clk/x86/Makefile      |   1 +
->>  drivers/clk/x86/clk-cgu-pll.c | 156 +++++++++++
->>  drivers/clk/x86/clk-cgu.c     | 636 ++++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/x86/clk-cgu.h     | 335 ++++++++++++++++++++++
->>  drivers/clk/x86/clk-lgm.c     | 492 ++++++++++++++++++++++++++++++++
->>  7 files changed, 1629 insertions(+)
->>  create mode 100644 drivers/clk/x86/Kconfig
->>  create mode 100644 drivers/clk/x86/clk-cgu-pll.c
->>  create mode 100644 drivers/clk/x86/clk-cgu.c
->>  create mode 100644 drivers/clk/x86/clk-cgu.h
->>  create mode 100644 drivers/clk/x86/clk-lgm.c
 >>
->> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
->> index bcb257baed06..43dab257e7aa 100644
->> --- a/drivers/clk/Kconfig
->> +++ b/drivers/clk/Kconfig
->> @@ -360,6 +360,7 @@ source "drivers/clk/sunxi-ng/Kconfig"
->>  source "drivers/clk/tegra/Kconfig"
->>  source "drivers/clk/ti/Kconfig"
->>  source "drivers/clk/uniphier/Kconfig"
->> +source "drivers/clk/x86/Kconfig"
->>  source "drivers/clk/zynqmp/Kconfig"
+>> Changes in v9: None
+>> Changes in v8:
+>> - Select REGMAP and MFD_SYSCON (Randy Dunlap)
+>>
+>> Changes in v7:
+>> - Add R-by from CK
+>>
+>>  drivers/gpu/drm/mediatek/Kconfig        |  2 +
+>>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c  | 50 +++++++++++--------------
+>>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h  |  4 +-
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 13 ++-----
+>>  drivers/gpu/drm/mediatek/mtk_drm_drv.h  |  2 +-
+>>  6 files changed, 32 insertions(+), 43 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/Kconfig b/drivers/gpu/drm/mediatek/Kconfig
+>> index fa5ffc4fe823..89e18a473cb5 100644
+>> --- a/drivers/gpu/drm/mediatek/Kconfig
+>> +++ b/drivers/gpu/drm/mediatek/Kconfig
+>> @@ -10,8 +10,10 @@ config DRM_MEDIATEK
+>>  	select DRM_KMS_HELPER
+>>  	select DRM_MIPI_DSI
+>>  	select DRM_PANEL
+>> +	select MFD_SYSCON
+>>  	select MEMORY
+>>  	select MTK_SMI
+>> +	select REGMAP
+>>  	select VIDEOMODE_HELPERS
+>>  	help
+>>  	  Choose this option if you have a Mediatek SoCs.
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+>> index 5ee74d7ce35c..a236499123aa 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
+>> @@ -28,7 +28,7 @@
+>>   * @enabled: records whether crtc_enable succeeded
+>>   * @planes: array of 4 drm_plane structures, one for each overlay plane
+>>   * @pending_planes: whether any plane has pending changes to be applied
+>> - * @config_regs: memory mapped mmsys configuration register space
+>> + * @config_regs: regmap mapped mmsys configuration register space
+>>   * @mutex: handle to one of the ten disp_mutex streams
+>>   * @ddp_comp_nr: number of components in ddp_comp
+>>   * @ddp_comp: array of pointers the mtk_ddp_comp structures used by this crtc
+>> @@ -50,7 +50,7 @@ struct mtk_drm_crtc {
+>>  	u32				cmdq_event;
+>>  #endif
 >>  
->>  endmenu
-> Hi,
->
->> diff --git a/drivers/clk/x86/Kconfig b/drivers/clk/x86/Kconfig
->> new file mode 100644
->> index 000000000000..2e2b9730541f
->> --- /dev/null
->> +++ b/drivers/clk/x86/Kconfig
->> @@ -0,0 +1,8 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +config CLK_LGM_CGU
->> +	depends on (OF && HAS_IOMEM) || COMPILE_TEST
-> This "depends on" looks problematic to me. I guess we shall see when
-> all the build bots get to it.
-
-At the moment, i am not able to figure out possible problems in this..
-
->> +	select OF_EARLY_FLATTREE
-> If OF is not set and HAS_IOMEM is not set, but COMPILE_TEST is set,
-> I expect that this should not be attempting to select OF_EARLY_FLATTREE.
->
-> Have you tried such a config combination?
-
-Agree, that would be a problem. I will change it to
-
-select OF_EARLY_FLATTREE if OF
-
-Thanks.
-
-Regards,
-Rahul
+>> -	void __iomem			*config_regs;
+>> +	struct regmap			*config_regs;
+>>  	struct mtk_disp_mutex		*mutex;
+>>  	unsigned int			ddp_comp_nr;
+>>  	struct mtk_ddp_comp		**ddp_comp;
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> index 13035c906035..302753744cc6 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+>> @@ -383,61 +383,53 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>>  	return value;
+>>  }
+>>  
+>> -static void mtk_ddp_sout_sel(void __iomem *config_regs,
+>> +static void mtk_ddp_sout_sel(struct regmap *config_regs,
+>>  			     enum mtk_ddp_comp_id cur,
+>>  			     enum mtk_ddp_comp_id next)
+>>  {
+>>  	if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DSI0) {
+>> -		writel_relaxed(BLS_TO_DSI_RDMA1_TO_DPI1,
+>> -			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+>> +		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
+>> +				BLS_TO_DSI_RDMA1_TO_DPI1);
+>>  	} else if (cur == DDP_COMPONENT_BLS && next == DDP_COMPONENT_DPI0) {
+>> -		writel_relaxed(BLS_TO_DPI_RDMA1_TO_DSI,
+>> -			       config_regs + DISP_REG_CONFIG_OUT_SEL);
+>> -		writel_relaxed(DSI_SEL_IN_RDMA,
+>> -			       config_regs + DISP_REG_CONFIG_DSI_SEL);
+>> -		writel_relaxed(DPI_SEL_IN_BLS,
+>> -			       config_regs + DISP_REG_CONFIG_DPI_SEL);
+>> +		regmap_write(config_regs, DISP_REG_CONFIG_OUT_SEL,
+>> +				BLS_TO_DPI_RDMA1_TO_DSI);
+>> +		regmap_write(config_regs, DISP_REG_CONFIG_DSI_SEL,
+>> +				DSI_SEL_IN_RDMA);
+>> +		regmap_write(config_regs, DISP_REG_CONFIG_DPI_SEL,
+>> +				DPI_SEL_IN_BLS);
+>>  	}
+>>  }
+>>  
+>> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+>> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+>>  			      enum mtk_ddp_comp_id cur,
+>>  			      enum mtk_ddp_comp_id next)
+>>  {
+>> -	unsigned int addr, value, reg;
+>> +	unsigned int addr, value;
+>>  
+>>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>> -	if (value) {
+>> -		reg = readl_relaxed(config_regs + addr) | value;
+>> -		writel_relaxed(reg, config_regs + addr);
+>> -	}
+>> +	if (value)
+>> +		regmap_update_bits(config_regs, addr, value, value);
+>>  
+>>  	mtk_ddp_sout_sel(config_regs, cur, next);
+>>  
+>>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>> -	if (value) {
+>> -		reg = readl_relaxed(config_regs + addr) | value;
+>> -		writel_relaxed(reg, config_regs + addr);
+>> -	}
+>> +	if (value)
+>> +		regmap_update_bits(config_regs, addr, value, value);
+>>  }
+>>  
+>> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+>> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+>>  				   enum mtk_ddp_comp_id cur,
+>>  				   enum mtk_ddp_comp_id next)
+>>  {
+>> -	unsigned int addr, value, reg;
+>> +	unsigned int addr, value;
+>>  
+>>  	value = mtk_ddp_mout_en(cur, next, &addr);
+>> -	if (value) {
+>> -		reg = readl_relaxed(config_regs + addr) & ~value;
+>> -		writel_relaxed(reg, config_regs + addr);
+>> -	}
+>> +	if (value)
+>> +		regmap_update_bits(config_regs, addr, value, 0);
+>>  
+>>  	value = mtk_ddp_sel_in(cur, next, &addr);
+>> -	if (value) {
+>> -		reg = readl_relaxed(config_regs + addr) & ~value;
+>> -		writel_relaxed(reg, config_regs + addr);
+>> -	}
+>> +	if (value)
+>> +		regmap_update_bits(config_regs, addr, value, 0);
+>>  }
+>>  
+>>  struct mtk_disp_mutex *mtk_disp_mutex_get(struct device *dev, unsigned int id)
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+>> index 827be424a148..01ff8b68881f 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.h
+>> @@ -12,10 +12,10 @@ struct regmap;
+>>  struct device;
+>>  struct mtk_disp_mutex;
+>>  
+>> -void mtk_ddp_add_comp_to_path(void __iomem *config_regs,
+>> +void mtk_ddp_add_comp_to_path(struct regmap *config_regs,
+>>  			      enum mtk_ddp_comp_id cur,
+>>  			      enum mtk_ddp_comp_id next);
+>> -void mtk_ddp_remove_comp_from_path(void __iomem *config_regs,
+>> +void mtk_ddp_remove_comp_from_path(struct regmap *config_regs,
+>>  				   enum mtk_ddp_comp_id cur,
+>>  				   enum mtk_ddp_comp_id next);
+>>  
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index 0563c6813333..b68837ea02b3 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -6,6 +6,7 @@
+>>  
+>>  #include <linux/component.h>
+>>  #include <linux/iommu.h>
+>> +#include <linux/mfd/syscon.h>
+>>  #include <linux/module.h>
+>>  #include <linux/of_address.h>
+>>  #include <linux/of_platform.h>
+>> @@ -425,7 +426,6 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>>  {
+>>  	struct device *dev = &pdev->dev;
+>>  	struct mtk_drm_private *private;
+>> -	struct resource *mem;
+>>  	struct device_node *node;
+>>  	struct component_match *match = NULL;
+>>  	int ret;
+>> @@ -437,14 +437,9 @@ static int mtk_drm_probe(struct platform_device *pdev)
+>>  
+>>  	private->data = of_device_get_match_data(dev);
+>>  
+>> -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -	private->config_regs = devm_ioremap_resource(dev, mem);
+>> -	if (IS_ERR(private->config_regs)) {
+>> -		ret = PTR_ERR(private->config_regs);
+>> -		dev_err(dev, "Failed to ioremap mmsys-config resource: %d\n",
+>> -			ret);
+>> -		return ret;
+>> -	}
+>> +	private->config_regs = syscon_node_to_regmap(dev->of_node);
+>> +	if (IS_ERR(private->config_regs))
+>> +		return PTR_ERR(private->config_regs);
+>>  
+>>  	/* Iterate over sibling DISP function blocks */
+>>  	for_each_child_of_node(dev->of_node->parent, node) {
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+>> index 17bc99b9f5d4..03201080688d 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
+>> @@ -39,7 +39,7 @@ struct mtk_drm_private {
+>>  
+>>  	struct device_node *mutex_node;
+>>  	struct device *mutex_dev;
+>> -	void __iomem *config_regs;
+>> +	struct regmap *config_regs;
+>>  	struct device_node *comp_node[DDP_COMPONENT_ID_MAX];
+>>  	struct mtk_ddp_comp *ddp_comp[DDP_COMPONENT_ID_MAX];
+>>  	const struct mtk_mmsys_driver_data *data;
+> 
