@@ -2,257 +2,316 @@ Return-Path: <SRS0=AG5N=4Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E49D7C3F2D2
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 19:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E386C3F2D2
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 20:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B967F24677
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 19:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8A02246B0
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 20:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1582922184;
+	bh=82G5bMsbbX/PJ9S7g4In+ZAGDal1cM6uHXZ3zbPyr8Q=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=CF1qNE8eXGkyumxQJ4kaq66Oecw2YftmYrt29oTQakNcu8h3CSIM/v7uZGWNm2mBV
+	 3Aao1oa0HqevzrDraMxiqkW3kjoLk9oRlN5h00xFA74yDrQROyootT3cFJpyNLJBbW
+	 OixBtKiorVkld+EIunvDjy9OYvFawGKTI9wrPKNw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725769AbgB1T5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Feb 2020 14:57:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37544 "EHLO mx2.suse.de"
+        id S1726046AbgB1UgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Feb 2020 15:36:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB1T5V (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Feb 2020 14:57:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 7F7DBAC58;
-        Fri, 28 Feb 2020 19:57:17 +0000 (UTC)
-Message-ID: <d19470274ef0dc8198fab35b039edb68a02f0358.camel@suse.de>
-Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Fri, 28 Feb 2020 20:57:13 +0100
-In-Reply-To: <20200226150113.oqymkr6h2cxs2uia@gilmour.lan>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
-         <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
-         <71cd7b35af81ee91c3b4dc5e7c05760ecd590c5d.camel@suse.de>
-         <20200226150113.oqymkr6h2cxs2uia@gilmour.lan>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-1Cpbyod9TIcXBG/YDz/T"
-User-Agent: Evolution 3.34.4 
-MIME-Version: 1.0
+        id S1725730AbgB1UgY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Feb 2020 15:36:24 -0500
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00A2D24690;
+        Fri, 28 Feb 2020 20:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1582922182;
+        bh=82G5bMsbbX/PJ9S7g4In+ZAGDal1cM6uHXZ3zbPyr8Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j5k27icMOr5YfokqXjjMWO1g95b2bVgj8Lbilm6RYfDo9JZCHI91t5DVLuJjh/M59
+         2eQMjN0efa+rz7o2yXgl1zUHsUROMVRT5P+hJNq6NJSttICLoXyIcZ5pvmPTb51lmp
+         FPP9H5FHMGvInhpr6bDXQfVWzGmWRHjxoKII1iHQ=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     sboyd@kernel.org
+Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: socfpga: stratix10: use new parent data scheme
+Date:   Fri, 28 Feb 2020 14:36:11 -0600
+Message-Id: <20200228203611.15507-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Convert, where possible, the stratix10 clock driver to the new parent
+data scheme by specifying the parent data for clocks that have multiple
+parents.
 
---=-1Cpbyod9TIcXBG/YDz/T
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-gate-s10.c   |   5 +-
+ drivers/clk/socfpga/clk-periph-s10.c |  10 ++-
+ drivers/clk/socfpga/clk-pll-s10.c    |   4 +-
+ drivers/clk/socfpga/clk-s10.c        | 110 ++++++++++++++++++++-------
+ drivers/clk/socfpga/stratix10-clk.h  |   8 +-
+ 5 files changed, 96 insertions(+), 41 deletions(-)
 
-Hi Maxime,
-
-On Wed, 2020-02-26 at 16:01 +0100, Maxime Ripard wrote:
-
-[...]
-
-> This was actually a shameless bait to start that discussion, so I'm
-> glad it worked ;)
-
-:)
-
-[...]
-
-> > - Some of those fw managed clocks you're creating have their mmio
-> > counterpart
-> >   being registered by clk-bcm238. IMO either register one or the other,
-> > giving
-> >   precedence to the mmio counterpart. Note that for pllb, we deleted th=
-e
-> >   relevant code from clk-bcm2385.
->=20
-> Indeed, and it's really that part of the discussion I wanted to
-> start. For some reason, it looks like a good chunk of those clocks are
-> non-functional at the moment (they all report 0).
-
-Yes, although they should be alright. I think it's just a matter of passing=
- the
-right flags to the clk framework (disable caching and so on), but never fou=
-nd
-the time to investigate further.
-
-> If we're going to
-> use the firmware clocks as I did here, we'd have to modify most of the
-> device clocks used so far (UART, especially) to derive from the core
-> clock. I wasn't really sure of the implications though, since it's my fir=
-st
-> experience with the RPi clock tree.
-
-That's something I'm confused about. I played around with your code and the=
- HSM
-clock changes seem to be completely unrelated to the VPU clock. Actually it
-seems it's derived from 'plld_per' (here Florian can maybe contradict me). =
-I
-found out by feeding the mmio HSM clock to your driver, which actually seem=
-ed
-to work (albeit maybe just out of luck since the FW already set up everythi=
-ng).
-
-Bare in mind, we disable turbo mode upstream so as for the firmware not to
-change the VPU frequencies on par with CPU changes (controlled by a special=
- bit
-in the CPU clock mailbox property). So, if I'm not wrong, this simplifies
-things. As we don't have to worry about re-clocking all peripherals with ev=
-ery
-resolution change.
-
-This even opens up another question. Which clocks is the firmware interface
-monitoring for DVFS? If it's just the VPU and CPU we could be over-complica=
-ting
-things here, and MMIO clks could be an option, isn't it?
-
-On the subject of re-clocking, I had a word with the clk maintainers on how=
- to
-properly implement it, see the two last paragraphs here if curious:
-https://www.spinics.net/lists/linux-clk/msg36937.html
-
-> > - The same way we were able to map the fw CPU clock into the clk tree
-> >   (pllb/pllb_arm) there are no reasons we shouldn't be able to do the s=
-ame
-> > for
-> >   the VPU clocks. It's way nicer and less opaque to users (this being a
-> >   learning platform adds to the argument).
->=20
-> This would make the Linux clock tree match the one in hardware, which
-> would indeed be more readable to a beginner, but I see three main
-> drawbacks with this:
->=20
->   - The parent / child relationship is already encoded in the firmware
->     discovery mechanism. It's not used yet by the driver, because the
->     firmware reports all of them as root clocks, but that's pretty
->     easy to fix.
-
-Had a look at this, they all return root as their parent. Which is somewhat
-true from the fw interface perspective (only leaves are represented), but n=
-ot
-too endearing.
-
->   - It would make the code far more complicated and confusing than it
->     could, especially to beginners. And as far as I know, only the RPi
->     is doing that, while pretty much all the other platforms either
->     have the clock tree entirely defined, or rely on the firmware, but
->     don't have an hybrid. So they would learn something that cannot
->     really be applied to anywhere else.
-
-Fair enough. Still, for now, I think I prefer a hybrid clk tree approach.
-
->   - I have no idea what the clock tree is supposed to look like :)
-
-I don't have access to the official clock tree either. The closest we have =
-is
-whatever the mmio clk driver exposes.
-
-> > - On top of that, having a special case for the CPU clock registration =
-is
-> >   nasty. Lets settle for one solution and make everyone follow it.
->=20
-> It seemed to me that the CPU clock had a factor between the actual CPU
-> frequency and its clock? If not, then yeah we should definitely get
-> rid of it.
-
-Yes, IIRC, there is a factor because the CPU clock firmware interface actua=
-lly
-controls the underlying PLL frequency which is then divided by 2 before
-reaching the CPU. Which kind of breaks the FW interface design if you ask
-me (alongside this turbo mode thing).
-
-> > - I don't see what's so bad about creating clock lookups. IIUC there ar=
-e
-> > only
-> >   two clocks that need this special handling CPU & HDMI, It's manageabl=
-e.
-> > You
-> >   don't even have to mess with the consumer driver, if there was ever t=
-o be
-> > a
-> >   dt provided mmio option to this clock.
->=20
-> V3D needs one too, and I might have missed a bunch of them in that
-> series given how the current debugging of the remaining issues turn
-> out to be.
-
-Would be nice to see if V3D is also affected by DVFS, and the rest of clock=
-s
-for that matter.
-
-> And clk_lookups are local to devices, so you need to factor that by the
-> number of devices you have. Sure, it works, but it feels to me like that'=
-s
-> going to be an issue pretty fast, especially with the lookups on the way =
-out?
-
-I see your point, TBH I don't mind moving it into the device-tree if things=
- are
-going to get nasty.
-
-
-> > >  drivers/clk/bcm/clk-raspberrypi.c | 11 ++++++++---
-> > >  1 file changed, 8 insertions(+), 3 deletions(-)
-> > >=20
-> > > diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
-> > > raspberrypi.c
-> > > index 1654fd0eedc9..94870234824c 100644
-> > > --- a/drivers/clk/bcm/clk-raspberrypi.c
-> > > +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> > > @@ -255,15 +255,13 @@ static int raspberrypi_clk_probe(struct
-> > > platform_device
-> > > *pdev)
-> > >  	struct raspberrypi_clk *rpi;
-> > >  	int ret;
-> > >=20
-> > > -	firmware_node =3D of_find_compatible_node(NULL, NULL,
-> > > -					"raspberrypi,bcm2835-firmware");
-> > > +	firmware_node =3D of_parse_phandle(dev->of_node, "raspberrypi,firmw=
-are",
-> > > 0);
-> >=20
-> > There is no such phandle in the upstream device tree. Maybe this was ai=
-med
-> > at
-> > the downstream dt?
->=20
-> raspberrypi,firmware is the property, it points to the /soc/firmware
-> node that is defined in bcm2835-rpi.dtsi
-
-Yes, my bad. On that topic, I kind of like Robh's suggestion of making this
-driver a child of the firmware node (see an example in
-input/touchscreen/raspberrypi-ts.c).
-
-Regards,
-Nicolas
-
-
---=-1Cpbyod9TIcXBG/YDz/T
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl5ZcJkACgkQlfZmHno8
-x/7qkAgAnKf47HcMZjcr44eDMhGGEgNotW7Ypk7We9YIl6H3luwT8iFCQWn08AOs
-cZAxa9p+UGEF4FOmETJxQNIkykv3W4wvIyjPk5jEe2SwvAX+kv9S8JpQkB9ynSdu
-aLIBA8DwLwsr5BilidRIXNzm8sozE4jvpTtQU6wgqLkvShw5qvp4K2Gjon0TwPT3
-mToCPqtHyto6DHT/Dc8TpsMxELqPNkl19E5812GOIIs9FAo0yx6hT2ukFMuMx37p
-uHQBolswmSqnknHBzfjs+gin1FQXUKxgmc7rNkc1ctoYP2hHR+Lz2vV5bHVx7FQE
-VVi2TUJ1wO4IpudaNWJbsfgKP/Su2g==
-=dI+Q
------END PGP SIGNATURE-----
-
---=-1Cpbyod9TIcXBG/YDz/T--
+diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
+index 8be4722f6064..083b2ec21fdd 100644
+--- a/drivers/clk/socfpga/clk-gate-s10.c
++++ b/drivers/clk/socfpga/clk-gate-s10.c
+@@ -70,7 +70,6 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
+ 	struct clk *clk;
+ 	struct socfpga_gate_clk *socfpga_clk;
+ 	struct clk_init_data init;
+-	const char * const *parent_names = clks->parent_names;
+ 	const char *parent_name = clks->parent_name;
+ 
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+@@ -108,7 +107,9 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+index dd6d4056e9de..397b77b89b16 100644
+--- a/drivers/clk/socfpga/clk-periph-s10.c
++++ b/drivers/clk/socfpga/clk-periph-s10.c
+@@ -81,7 +81,6 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -94,7 +93,9 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+@@ -114,7 +115,6 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -137,7 +137,9 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+index a301bb22f36c..bcd3f14e9145 100644
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -117,7 +117,6 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 	struct socfpga_pll *pll_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+ 	if (WARN_ON(!pll_clk))
+@@ -134,7 +133,8 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names;
++	init.parent_names = NULL;
++	init.parent_data = clks->parent_data;
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index dea7c6c7d269..ed11c8509a15 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -12,35 +12,87 @@
+ 
+ #include "stratix10-clk.h"
+ 
+-static const char * const pll_mux[] = { "osc1", "cb-intosc-hs-div2-clk",
+-					"f2s-free-clk",};
+-static const char * const cntr_mux[] = { "main_pll", "periph_pll",
+-					 "osc1", "cb-intosc-hs-div2-clk",
+-					 "f2s-free-clk"};
+-static const char * const boot_mux[] = { "osc1", "cb-intosc-hs-div2-clk",};
+-
+-static const char * const noc_free_mux[] = {"main_noc_base_clk",
+-					    "peri_noc_base_clk",
+-					    "osc1", "cb-intosc-hs-div2-clk",
+-					    "f2s-free-clk"};
+-
+-static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
+-static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
+-static const char * const emac_ptp_free_mux[] = {"peri_emac_ptp_clk", "boot_clk"};
+-static const char * const gpio_db_free_mux[] = {"peri_gpio_db_clk", "boot_clk"};
+-static const char * const sdmmc_free_mux[] = {"main_sdmmc_clk", "boot_clk"};
+-static const char * const s2f_usr1_free_mux[] = {"peri_s2f_usr1_clk", "boot_clk"};
+-static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
+-static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
+-
+-static const char * const s2f_usr0_mux[] = {"f2s-free-clk", "boot_clk"};
+-static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
+-static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
+-
+-static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
+-					    "peri_mpu_base_clk",
+-					    "osc1", "cb-intosc-hs-div2-clk",
+-					    "f2s-free-clk"};
++static const struct clk_parent_data pll_mux[] = {
++	{ .name = "osc1" },
++	{ .name = "cb-intosc-hs-div2-clk" },
++	{ .name = "f2s-free-clk" },
++};
++
++static const struct clk_parent_data cntr_mux[] = {
++	{ .name = "main_pll", },
++	{ .name = "periph_pll", },
++	{ .name = "osc1", },
++	{ .name = "cb-intosc-hs-div2-clk", },
++	{ .name = "f2s-free-clk", },
++};
++
++static const struct clk_parent_data boot_mux[] = {
++	{ .name = "osc1" },
++	{ .name = "cb-intosc-hs-div2-clk" },
++};
++
++static const struct clk_parent_data noc_free_mux[] = {
++	{ .name = "main_noc_base_clk", },
++	{ .name = "peri_noc_base_clk", },
++	{ .name = "osc1", },
++	{ .name = "cb-intosc-hs-div2-clk", },
++	{ .name = "f2s-free-clk", },
++};
++
++static const struct clk_parent_data emaca_free_mux[] = {
++	{ .name = "peri_emaca_clk", },
++	{ .name = "boot_clk", },
++};
++
++static const struct clk_parent_data emacb_free_mux[] = {
++	{ .name = "peri_emacb_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data emac_ptp_free_mux[] = {
++	{ .name = "peri_emac_ptp_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data gpio_db_free_mux[] = {
++	{ .name = "peri_gpio_db_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data sdmmc_free_mux[] = {
++	{ .name = "main_sdmmc_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data s2f_usr1_free_mux[] = {
++	{ .name = "peri_s2f_usr1_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data psi_ref_free_mux[] = {
++	{ .name = "peri_psi_ref_clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data mpu_mux[] = {
++	{ .name = "mpu_free_clk", },
++	{ .name = "boot_clk", },
++};
++
++static const struct clk_parent_data s2f_usr0_mux[] = {
++	{ .name = "f2s-free-clk", },
++	{ .name = "boot_clk", },
++};
++static const struct clk_parent_data emac_mux[] = {
++	{ .name = "emaca_free_clk", },
++	{ .name = "emacb_free_clk", },
++};
++static const struct clk_parent_data noc_mux[] = {
++	{ .name = "noc_free_clk", },
++	{ .name = "boot_clk", },
++};
++
++static const struct clk_parent_data mpu_free_mux[] = {
++	{ .name = "main_mpu_base_clk", },
++	{ .name = "peri_mpu_base_clk", },
++	{ .name = "osc1", },
++	{ .name = "cb-intosc-hs-div2-clk", },
++	{ .name = "f2s-free-clk", },
++};
+ 
+ /* clocks in AO (always on) controller */
+ static const struct stratix10_pll_clock s10_pll_clks[] = {
+diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
+index fcabef42249c..ffbd1fb2c8ef 100644
+--- a/drivers/clk/socfpga/stratix10-clk.h
++++ b/drivers/clk/socfpga/stratix10-clk.h
+@@ -14,7 +14,7 @@ struct stratix10_clock_data {
+ struct stratix10_pll_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -24,7 +24,7 @@ struct stratix10_perip_c_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -34,7 +34,7 @@ struct stratix10_perip_cnt_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -47,7 +47,7 @@ struct stratix10_gate_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		gate_reg;
+-- 
+2.17.1
 
