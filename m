@@ -2,214 +2,121 @@ Return-Path: <SRS0=AG5N=4Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4069FC3F2D0
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 06:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E468BC3F2CF
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:19:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0356E246A8
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 06:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD6C246B7
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:19:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SeOOV8+3"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="sObfravm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725862AbgB1GqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Feb 2020 01:46:05 -0500
-Received: from mail-eopbgr70084.outbound.protection.outlook.com ([40.107.7.84]:26085
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726785AbgB1GqF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Feb 2020 01:46:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JDlhaf+GBS0l63NcxELfFVtCNmaXu3d+pVpFzyB8N191M7O03yhnzsrl7jWZV3mvEPA+GJKsXOrJIHCD/Hl2ZESQOxPfhO0nKFjc3kfGwKvojrK334leX/9j6mkpK9jP6YbKiapJeDtf+Dr5MedufF+kGVmh39KT0QZcPoG2utEzeY756xPhh3I5Hh07zvviWiLxGiGaRUjsBRFmCQ5JHWwhzeRmPt2XvEHmCOOwGKLvPTHL8A5te2W83UJ1La35kx5TTp9ZckmIGsyMWKbAInvrh7Qyz4uEAkjfhpCjYU7mDbKoWNLY404hxy7D9JNf4jKZY4Jo/jVEEeB0mWdoHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g0H8XUUUxvXFu0Ir2B/SU/S8KeIfqDVQjaest89bF8M=;
- b=UeLtf662Py+FodCJK2FxlfHPq/lMnFkNs1k4suBWihEKZRjQ9no2HBiBzSoE6tudgo3eTwesflaqNOR+gAbYdlRUpZqOuzqIi6tMXZANBIF+AWbchP0NPtvI2m+B2unxumNlBnGpRIQ8cO4E63cbGwaDOl8Zkr1JZs49aEcz/2aMDWN8n26wg5t2w/K6kIR72Q36DBf/Jpqi0Pma/qHfikQ0k7JX/4tBAeH+6uHo2C4YVycVQE5wV9tS9YTFKAqDiuCINIjp5apdjSSjQtXhpIzFdCnUPoBNHfleRYXLWVYCfaTUZ8qBLvUUa0iGc8U10GtRslxBp4Ru/6N1iUG50A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=g0H8XUUUxvXFu0Ir2B/SU/S8KeIfqDVQjaest89bF8M=;
- b=SeOOV8+3IMWiPOn7p142o89jSrh1iUnEIVSh2XB7bjt6ZSgQyD7oehUHQhRq0NMEwkimfuQklFNQ69V2pvpoUeySnAOmcFsRnKyHF4jUHFWHHlytOsG8sJJZk3iycf27UtT1/vImzop6+Zgs3bS3W+1LPk3wWjrRoGYqGF1E4u8=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6354.eurprd04.prod.outlook.com (20.179.255.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2772.14; Fri, 28 Feb 2020 06:45:59 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2772.012; Fri, 28 Feb 2020
- 06:45:59 +0000
-From:   peng.fan@nxp.com
-To:     sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        festevam@gmail.com, abel.vesa@nxp.com, leonard.crestez@nxp.com
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com, aisheng.dong@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, anson.huang@nxp.com,
-        ping.bai@nxp.com, l.stach@pengutronix.de,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 3/3] clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code
-Date:   Fri, 28 Feb 2020 14:39:42 +0800
-Message-Id: <1582871982-29662-3-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1582871982-29662-1-git-send-email-peng.fan@nxp.com>
-References: <1582871982-29662-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0028.apcprd02.prod.outlook.com
- (2603:1096:3:18::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1726766AbgB1JTw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Feb 2020 04:19:52 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:65069 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726207AbgB1JTw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Feb 2020 04:19:52 -0500
+X-UUID: caab609a429849368284e83c25abd92c-20200228
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=6zeC4yb1VQBu7ApncTTy8tf7CnDnABwjHUo57+LSsO8=;
+        b=sObfravm74/bA6AytUYIAQBeFbeGeZ/0otXn+fYlZbbNA/h7vjLnFFHE7HrlJws4/KInkSIrQHMWoxXX7xuCHPJ/FPk09vAQxu/YO3qUxNp07A16o/21nq2HBHHMcmiUoLhC08rKtTmYQ++TTeaB44x2pmPVg4JXFfha1GoyLPA=;
+X-UUID: caab609a429849368284e83c25abd92c-20200228
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1234426427; Fri, 28 Feb 2020 17:19:47 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Feb 2020 17:18:48 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Feb 2020 17:19:44 +0800
+Message-ID: <1582881585.22475.0.camel@mtksdaap41>
+Subject: Re: [PATCH v10 2/5] dt-bindings: mediatek: Update mmsys binding to
+ reflect it is a system controller
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        <rdunlap@infradead.org>, <dri-devel@lists.freedesktop.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        "Seiya Wang" <seiya.wang@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        "Collabora Kernel ML" <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, <wens@csie.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <sean.wang@mediatek.com>, <frank-w@public-files.de>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <hsinyi@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <matthias.bgg@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 28 Feb 2020 17:19:45 +0800
+In-Reply-To: <20200227180858.1514157-3-enric.balletbo@collabora.com>
+References: <20200227180858.1514157-1-enric.balletbo@collabora.com>
+         <20200227180858.1514157-3-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR02CA0028.apcprd02.prod.outlook.com (2603:1096:3:18::16) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2772.15 via Frontend Transport; Fri, 28 Feb 2020 06:45:53 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 2f69d3c1-33e9-45e1-b671-08d7bc19ddf9
-X-MS-TrafficTypeDiagnostic: AM0PR04MB6354:|AM0PR04MB6354:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB6354C1A2135682F517004C5B88E80@AM0PR04MB6354.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:294;
-X-Forefront-PRVS: 0327618309
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(136003)(376002)(346002)(366004)(199004)(189003)(2906002)(81166006)(5660300002)(956004)(66946007)(16526019)(186003)(478600001)(4326008)(66476007)(66556008)(26005)(2616005)(6666004)(69590400007)(316002)(8676002)(36756003)(8936002)(6506007)(81156014)(86362001)(6486002)(6512007)(9686003)(52116002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6354;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8VGc7j5OBnJHNmsw0S+ZcAV5LIIXaRktSh4dCFfYldlRAb0bGRq1Rhb50ajzZVpq7Ae7m0CMZMdAJTSk2nRIdsovmecpnkXy+mswR5NOIRwt0V46gGI+VM+kTby6Ap17hjtxtkBMi6HFKPPgNBPQjxBXrxFGm5T7IIkoKsKMTZggYEt8ekbqWlx8lEKedTbvf3krNP+ToKNOzOAQx3Vb0Zn50JeNrzQT021ySSCnSmwz9ni4u7jSw/dP6TDMV1aR+vmmoRqzs6wMkuRCjUT9gxJW04ZSeEVVx7m/lqYx7wF1gCBL27tIzsyezBy5XUa8HkE6Z8lN0goVuPCNOY1H0wbD0VZslNLWlAcBRrK29Uw57t0/aYnZy7r3IiJ/9eYyruQqndB6VerayAmAz9+d16JJQEe72ie950opkn8g0fSHKWc433j1N2gPZwfQhGbR2MoRgvh4K+lGcnfh/ghj1SMbgEftmPvB7lsB6J6qCy1U/vUNvo0kXZ/MbwW3CpM8blCuOg44346NWI+KWoElsA==
-X-MS-Exchange-AntiSpam-MessageData: 7yHoTcnKRry54lcwQKupieEF7GrQ0zLiZoiVkY/NkXXwWHFgXm2vTtOeMBm55Ib4OdsEhvNRm+9Q9ljZfFInnuQx+EAbivBpendSY2EBKhSb2OyKnZ4hLwGGDGO/F0NstsJm65E7dgiR1mDFYwRLUA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2f69d3c1-33e9-45e1-b671-08d7bc19ddf9
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Feb 2020 06:45:59.7509
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: C+vBg465MSjgzGwIdl7jqxql1OBE0Gc1rggKZykleD3FWpG/7+TC5neAUMuV0/0xRJQ5MbP0WxDxlLcQDGe69w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6354
+X-TM-SNTS-SMTP: FC89D009C6FEBE11B57038010837F5A87B7460971BF352976EDF9382E63247B12000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
-
-Use imx8m_clk_hw_composite_core to simpliy clks that belong to
-core clk slice.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
-
-V2:
- New
-
- drivers/clk/imx/clk-imx8mp.c             | 42 +++++++++++---------------------
- include/dt-bindings/clock/imx8mp-clock.h | 11 ++++++++-
- 2 files changed, 24 insertions(+), 29 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 5596dfd3387b..200c503a25ed 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -547,32 +547,18 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_SYS_PLL2_1000M] = imx_clk_hw_fixed_factor("sys_pll2_1000m", "sys_pll2_out", 1, 1);
- 
- 	hws[IMX8MP_CLK_A53_SRC] = imx_clk_hw_mux2("arm_a53_src", ccm_base + 0x8000, 24, 3, imx8mp_a53_sels, ARRAY_SIZE(imx8mp_a53_sels));
--	hws[IMX8MP_CLK_M7_SRC] = imx_clk_hw_mux2("arm_m7_src", ccm_base + 0x8080, 24, 3, imx8mp_m7_sels, ARRAY_SIZE(imx8mp_m7_sels));
--	hws[IMX8MP_CLK_ML_SRC] = imx_clk_hw_mux2("ml_src", ccm_base + 0x8100, 24, 3, imx8mp_ml_sels, ARRAY_SIZE(imx8mp_ml_sels));
--	hws[IMX8MP_CLK_GPU3D_CORE_SRC] = imx_clk_hw_mux2("gpu3d_core_src", ccm_base + 0x8180, 24, 3,  imx8mp_gpu3d_core_sels, ARRAY_SIZE(imx8mp_gpu3d_core_sels));
--	hws[IMX8MP_CLK_GPU3D_SHADER_SRC] = imx_clk_hw_mux2("gpu3d_shader_src", ccm_base + 0x8200, 24, 3, imx8mp_gpu3d_shader_sels, ARRAY_SIZE(imx8mp_gpu3d_shader_sels));
--	hws[IMX8MP_CLK_GPU2D_SRC] = imx_clk_hw_mux2("gpu2d_src", ccm_base + 0x8280, 24, 3, imx8mp_gpu2d_sels, ARRAY_SIZE(imx8mp_gpu2d_sels));
--	hws[IMX8MP_CLK_AUDIO_AXI_SRC] = imx_clk_hw_mux2("audio_axi_src", ccm_base + 0x8300, 24, 3, imx8mp_audio_axi_sels, ARRAY_SIZE(imx8mp_audio_axi_sels));
--	hws[IMX8MP_CLK_HSIO_AXI_SRC] = imx_clk_hw_mux2("hsio_axi_src", ccm_base + 0x8380, 24, 3, imx8mp_hsio_axi_sels, ARRAY_SIZE(imx8mp_hsio_axi_sels));
--	hws[IMX8MP_CLK_MEDIA_ISP_SRC] = imx_clk_hw_mux2("media_isp_src", ccm_base + 0x8400, 24, 3, imx8mp_media_isp_sels, ARRAY_SIZE(imx8mp_media_isp_sels));
- 	hws[IMX8MP_CLK_A53_CG] = imx_clk_hw_gate3("arm_a53_cg", "arm_a53_src", ccm_base + 0x8000, 28);
--	hws[IMX8MP_CLK_M4_CG] = imx_clk_hw_gate3("arm_m7_cg", "arm_m7_src", ccm_base + 0x8080, 28);
--	hws[IMX8MP_CLK_ML_CG] = imx_clk_hw_gate3("ml_cg", "ml_src", ccm_base + 0x8100, 28);
--	hws[IMX8MP_CLK_GPU3D_CORE_CG] = imx_clk_hw_gate3("gpu3d_core_cg", "gpu3d_core_src", ccm_base + 0x8180, 28);
--	hws[IMX8MP_CLK_GPU3D_SHADER_CG] = imx_clk_hw_gate3("gpu3d_shader_cg", "gpu3d_shader_src", ccm_base + 0x8200, 28);
--	hws[IMX8MP_CLK_GPU2D_CG] = imx_clk_hw_gate3("gpu2d_cg", "gpu2d_src", ccm_base + 0x8280, 28);
--	hws[IMX8MP_CLK_AUDIO_AXI_CG] = imx_clk_hw_gate3("audio_axi_cg", "audio_axi_src", ccm_base + 0x8300, 28);
--	hws[IMX8MP_CLK_HSIO_AXI_CG] = imx_clk_hw_gate3("hsio_axi_cg", "hsio_axi_src", ccm_base + 0x8380, 28);
--	hws[IMX8MP_CLK_MEDIA_ISP_CG] = imx_clk_hw_gate3("media_isp_cg", "media_isp_src", ccm_base + 0x8400, 28);
- 	hws[IMX8MP_CLK_A53_DIV] = imx_clk_hw_divider2("arm_a53_div", "arm_a53_cg", ccm_base + 0x8000, 0, 3);
--	hws[IMX8MP_CLK_M7_DIV] = imx_clk_hw_divider2("arm_m7_div", "arm_m7_cg", ccm_base + 0x8080, 0, 3);
--	hws[IMX8MP_CLK_ML_DIV] = imx_clk_hw_divider2("ml_div", "ml_cg", ccm_base + 0x8100, 0, 3);
--	hws[IMX8MP_CLK_GPU3D_CORE_DIV] = imx_clk_hw_divider2("gpu3d_core_div", "gpu3d_core_cg", ccm_base + 0x8180, 0, 3);
--	hws[IMX8MP_CLK_GPU3D_SHADER_DIV] = imx_clk_hw_divider2("gpu3d_shader_div", "gpu3d_shader_cg", ccm_base + 0x8200, 0, 3);
--	hws[IMX8MP_CLK_GPU2D_DIV] = imx_clk_hw_divider2("gpu2d_div", "gpu2d_cg", ccm_base + 0x8280, 0, 3);
--	hws[IMX8MP_CLK_AUDIO_AXI_DIV] = imx_clk_hw_divider2("audio_axi_div", "audio_axi_cg", ccm_base + 0x8300, 0, 3);
--	hws[IMX8MP_CLK_HSIO_AXI_DIV] = imx_clk_hw_divider2("hsio_axi_div", "hsio_axi_cg", ccm_base + 0x8380, 0, 3);
--	hws[IMX8MP_CLK_MEDIA_ISP_DIV] = imx_clk_hw_divider2("media_isp_div", "media_isp_cg", ccm_base + 0x8400, 0, 3);
-+
-+	hws[IMX8MP_CLK_M7_CORE] = imx8m_clk_hw_composite_core("m7_core", imx8mp_m7_sels, ccm_base + 0x8080);
-+	hws[IMX8MP_CLK_ML_CORE] = imx8m_clk_hw_composite_core("ml_core", imx8mp_ml_sels, ccm_base + 0x8100);
-+	hws[IMX8MP_CLK_GPU3D_CORE] = imx8m_clk_hw_composite_core("gpu3d_core", imx8mp_gpu3d_core_sels, ccm_base + 0x8180);
-+	hws[IMX8MP_CLK_GPU3D_SHADER_CORE] = imx8m_clk_hw_composite("gpu3d_shader_core", imx8mp_gpu3d_shader_sels, ccm_base + 0x8200);
-+	hws[IMX8MP_CLK_GPU2D_CORE] = imx8m_clk_hw_composite("gpu2d_core", imx8mp_gpu2d_sels, ccm_base + 0x8280);
-+	hws[IMX8MP_CLK_AUDIO_AXI] = imx8m_clk_hw_composite("audio_axi", imx8mp_audio_axi_sels, ccm_base + 0x8300);
-+	hws[IMX8MP_CLK_AUDIO_AXI_SRC] = hws[IMX8MP_CLK_AUDIO_AXI];
-+	hws[IMX8MP_CLK_HSIO_AXI] = imx8m_clk_hw_composite("hsio_axi", imx8mp_hsio_axi_sels, ccm_base + 0x8380);
-+	hws[IMX8MP_CLK_MEDIA_ISP] = imx8m_clk_hw_composite("media_isp", imx8mp_media_isp_sels, ccm_base + 0x8400);
- 
- 	/* CORE SEL */
- 	hws[IMX8MP_CLK_A53_CORE] = imx_clk_hw_mux2_flags("arm_a53_core", ccm_base + 0x9880, 24, 1, imx8mp_a53_core_sels, ARRAY_SIZE(imx8mp_a53_core_sels), CLK_IS_CRITICAL);
-@@ -713,8 +699,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_SDMA1_ROOT] = imx_clk_hw_gate4("sdma1_root_clk", "ipg_root", ccm_base + 0x43a0, 0);
- 	hws[IMX8MP_CLK_ENET_QOS_ROOT] = imx_clk_hw_gate4("enet_qos_root_clk", "sim_enet_root_clk", ccm_base + 0x43b0, 0);
- 	hws[IMX8MP_CLK_SIM_ENET_ROOT] = imx_clk_hw_gate4("sim_enet_root_clk", "enet_axi", ccm_base + 0x4400, 0);
--	hws[IMX8MP_CLK_GPU2D_ROOT] = imx_clk_hw_gate4("gpu2d_root_clk", "gpu2d_div", ccm_base + 0x4450, 0);
--	hws[IMX8MP_CLK_GPU3D_ROOT] = imx_clk_hw_gate4("gpu3d_root_clk", "gpu3d_core_div", ccm_base + 0x4460, 0);
-+	hws[IMX8MP_CLK_GPU2D_ROOT] = imx_clk_hw_gate4("gpu2d_root_clk", "gpu2d_core", ccm_base + 0x4450, 0);
-+	hws[IMX8MP_CLK_GPU3D_ROOT] = imx_clk_hw_gate4("gpu3d_root_clk", "gpu3d_core", ccm_base + 0x4460, 0);
- 	hws[IMX8MP_CLK_SNVS_ROOT] = imx_clk_hw_gate4("snvs_root_clk", "ipg_root", ccm_base + 0x4470, 0);
- 	hws[IMX8MP_CLK_UART1_ROOT] = imx_clk_hw_gate4("uart1_root_clk", "uart1", ccm_base + 0x4490, 0);
- 	hws[IMX8MP_CLK_UART2_ROOT] = imx_clk_hw_gate4("uart2_root_clk", "uart2", ccm_base + 0x44a0, 0);
-@@ -731,7 +717,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_GPU_ROOT] = imx_clk_hw_gate4("gpu_root_clk", "gpu_axi", ccm_base + 0x4570, 0);
- 	hws[IMX8MP_CLK_VPU_VC8KE_ROOT] = imx_clk_hw_gate4("vpu_vc8ke_root_clk", "vpu_vc8000e", ccm_base + 0x4590, 0);
- 	hws[IMX8MP_CLK_VPU_G2_ROOT] = imx_clk_hw_gate4("vpu_g2_root_clk", "vpu_g2", ccm_base + 0x45a0, 0);
--	hws[IMX8MP_CLK_NPU_ROOT] = imx_clk_hw_gate4("npu_root_clk", "ml_div", ccm_base + 0x45b0, 0);
-+	hws[IMX8MP_CLK_NPU_ROOT] = imx_clk_hw_gate4("npu_root_clk", "ml_core", ccm_base + 0x45b0, 0);
- 	hws[IMX8MP_CLK_HSIO_ROOT] = imx_clk_hw_gate4("hsio_root_clk", "ipg_root", ccm_base + 0x45c0, 0);
- 	hws[IMX8MP_CLK_MEDIA_APB_ROOT] = imx_clk_hw_gate2_shared2("media_apb_root_clk", "media_apb", ccm_base + 0x45d0, 0, &share_count_media);
- 	hws[IMX8MP_CLK_MEDIA_AXI_ROOT] = imx_clk_hw_gate2_shared2("media_axi_root_clk", "media_axi", ccm_base + 0x45d0, 0, &share_count_media);
-@@ -739,7 +725,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_MEDIA_CAM2_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_cam2_pix_root_clk", "media_cam2_pix", ccm_base + 0x45d0, 0, &share_count_media);
- 	hws[IMX8MP_CLK_MEDIA_DISP1_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_disp1_pix_root_clk", "media_disp1_pix", ccm_base + 0x45d0, 0, &share_count_media);
- 	hws[IMX8MP_CLK_MEDIA_DISP2_PIX_ROOT] = imx_clk_hw_gate2_shared2("media_disp2_pix_root_clk", "media_disp2_pix", ccm_base + 0x45d0, 0, &share_count_media);
--	hws[IMX8MP_CLK_MEDIA_ISP_ROOT] = imx_clk_hw_gate2_shared2("media_isp_root_clk", "media_isp_div", ccm_base + 0x45d0, 0, &share_count_media);
-+	hws[IMX8MP_CLK_MEDIA_ISP_ROOT] = imx_clk_hw_gate2_shared2("media_isp_root_clk", "media_isp", ccm_base + 0x45d0, 0, &share_count_media);
- 
- 	hws[IMX8MP_CLK_USDHC3_ROOT] = imx_clk_hw_gate4("usdhc3_root_clk", "usdhc3", ccm_base + 0x45e0, 0);
- 	hws[IMX8MP_CLK_HDMI_ROOT] = imx_clk_hw_gate4("hdmi_root_clk", "hdmi_axi", ccm_base + 0x45f0, 0);
-diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
-index 46c69cd66c62..8430bc4fd182 100644
---- a/include/dt-bindings/clock/imx8mp-clock.h
-+++ b/include/dt-bindings/clock/imx8mp-clock.h
-@@ -313,6 +313,15 @@
- #define IMX8MP_SYS_PLL2_333M_CG			303
- #define IMX8MP_SYS_PLL2_500M_CG			304
- 
--#define IMX8MP_CLK_END				305
-+#define IMX8MP_CLK_M7_CORE			305
-+#define IMX8MP_CLK_ML_CORE			306
-+#define IMX8MP_CLK_GPU3D_CORE			307
-+#define IMX8MP_CLK_GPU3D_SHADER_CORE		308
-+#define IMX8MP_CLK_GPU2D_CORE			309
-+#define IMX8MP_CLK_AUDIO_AXI			310
-+#define IMX8MP_CLK_HSIO_AXI			311
-+#define IMX8MP_CLK_MEDIA_ISP			312
-+
-+#define IMX8MP_CLK_END				313
- 
- #endif
--- 
-2.16.4
+SGksIEVucmljOg0KDQpPbiBUaHUsIDIwMjAtMDItMjcgYXQgMTk6MDggKzAxMDAsIEVucmljIEJh
+bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IFRoZSBtbXN5cyBzeXN0ZW0gY29udHJvbGxlciBpcyBu
+b3Qgb25seSBhIHB1cmUgY2xvY2sgY29udHJvbGxlciwgc28NCj4gdXBkYXRlIHRoZSBiaW5kaW5n
+IGRvY3VtZW50YXRpb24gdG8gcmVmbGVjdCB0aGF0IGFwYXJ0IGZyb20gcHJvdmlkaW5nDQo+IGNs
+b2NrcywgaXQgYWxzbyBwcm92aWRlcyByb3V0aW5nIGFuZCBtaXNjZWxsYW5lb3VzIGNvbnRyb2wg
+cmVnaXN0ZXJzLg0KPiANCg0KUmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+
+DQoNCj4gU2lnbmVkLW9mZi1ieTogRW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0
+Ym9AY29sbGFib3JhLmNvbT4NCj4gLS0tDQo+IA0KPiBDaGFuZ2VzIGluIHYxMDoNCj4gLSBVcGRh
+dGUgdGhlIGJpbmRpbmcgZG9jdW1lbnRhdGlvbiBmb3IgdGhlIG1tc3lzIHN5c3RlbSBjb250cm9s
+bGVyLg0KPiANCj4gQ2hhbmdlcyBpbiB2OTogTm9uZQ0KPiBDaGFuZ2VzIGluIHY4OiBOb25lDQo+
+IENoYW5nZXMgaW4gdjc6IE5vbmUNCj4gDQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0v
+bWVkaWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0ICAgIHwgNyArKysrLS0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgNCBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWss
+bW1zeXMudHh0IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRl
+ay9tZWRpYXRlayxtbXN5cy50eHQNCj4gaW5kZXggMzAxZWVmYmUxNjE4Li44ZDZhOWQ5OGU3YTYg
+MTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVk
+aWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssbW1zeXMudHh0DQo+IEBAIC0xLDcgKzEs
+OCBAQA0KPiAgTWVkaWF0ZWsgbW1zeXMgY29udHJvbGxlcg0KPiAgPT09PT09PT09PT09PT09PT09
+PT09PT09PT09PQ0KPiAgDQo+IC1UaGUgTWVkaWF0ZWsgbW1zeXMgY29udHJvbGxlciBwcm92aWRl
+cyB2YXJpb3VzIGNsb2NrcyB0byB0aGUgc3lzdGVtLg0KPiArVGhlIE1lZGlhdGVrIG1tc3lzIHN5
+c3RlbSBjb250cm9sbGVyIHByb3ZpZGVzIGNsb2NrIGNvbnRyb2wsIHJvdXRpbmcgY29udHJvbCwN
+Cj4gK2FuZCBtaXNjZWxsYW5lb3VzIGNvbnRyb2wgaW4gbW1zeXMgcGFydGl0aW9uLg0KPiAgDQo+
+ICBSZXF1aXJlZCBQcm9wZXJ0aWVzOg0KPiAgDQo+IEBAIC0xNSwxMyArMTYsMTMgQEAgUmVxdWly
+ZWQgUHJvcGVydGllczoNCj4gIAktICJtZWRpYXRlayxtdDgxODMtbW1zeXMiLCAic3lzY29uIg0K
+PiAgLSAjY2xvY2stY2VsbHM6IE11c3QgYmUgMQ0KPiAgDQo+IC1UaGUgbW1zeXMgY29udHJvbGxl
+ciB1c2VzIHRoZSBjb21tb24gY2xrIGJpbmRpbmcgZnJvbQ0KPiArRm9yIHRoZSBjbG9jayBjb250
+cm9sLCB0aGUgbW1zeXMgY29udHJvbGxlciB1c2VzIHRoZSBjb21tb24gY2xrIGJpbmRpbmcgZnJv
+bQ0KPiAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL2Nsb2NrLWJpbmRp
+bmdzLnR4dA0KPiAgVGhlIGF2YWlsYWJsZSBjbG9ja3MgYXJlIGRlZmluZWQgaW4gZHQtYmluZGlu
+Z3MvY2xvY2svbXQqLWNsay5oLg0KPiAgDQo+ICBFeGFtcGxlOg0KPiAgDQo+IC1tbXN5czogY2xv
+Y2stY29udHJvbGxlckAxNDAwMDAwMCB7DQo+ICttbXN5czogc3lzY29uQDE0MDAwMDAwIHsNCj4g
+IAljb21wYXRpYmxlID0gIm1lZGlhdGVrLG10ODE3My1tbXN5cyIsICJzeXNjb24iOw0KPiAgCXJl
+ZyA9IDwwIDB4MTQwMDAwMDAgMCAweDEwMDA+Ow0KPiAgCSNjbG9jay1jZWxscyA9IDwxPjsNCg0K
 
