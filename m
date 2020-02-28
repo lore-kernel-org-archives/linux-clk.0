@@ -2,146 +2,158 @@ Return-Path: <SRS0=AG5N=4Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19E03C3F2D0
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C55FC3F2D2
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB4D5246AC
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 347C724672
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 09:37:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhG0ADsL"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="ZRx8M3Wn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgB1JgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Feb 2020 04:36:24 -0500
-Received: from mail-wr1-f52.google.com ([209.85.221.52]:46143 "EHLO
-        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbgB1JgY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Feb 2020 04:36:24 -0500
-Received: by mail-wr1-f52.google.com with SMTP id j7so2092179wrp.13
-        for <linux-clk@vger.kernel.org>; Fri, 28 Feb 2020 01:36:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gPAGlkcQCf/Lm8yRgf2pxUcWg+Lei3LJ/oeCwqIf2XI=;
-        b=EhG0ADsLPbPrgMAUt6aaWTKjj+tB1tSOzmQhcyapn2EcxnlwwZOEcIdu+F5SNSrNhM
-         AmzjWwkWd/eL10qYcDD5BU/eX0NAQJ9dRJeVOvtukwoHyBp9FL4GhkG1GwTI6PT5mdP1
-         yHuWvMbc1nt6rMm322IrAYOoHDkZanu600NurmUxaybZeZ37SEmMP9T4c19tBaomgf2B
-         7QG5PP3cNnT4Hmu0dL1mSD6EJEuVjj5Ox4cMCF/eC1tCGy79WVsy2fiqAGoaPlcbzIqx
-         RzJ0xS9dtgp8a7khGX3iaswev4kYEdnLr4K9dpK53pjxb9BpI/wTxrFDn9gO2GNUTiTP
-         Wljg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gPAGlkcQCf/Lm8yRgf2pxUcWg+Lei3LJ/oeCwqIf2XI=;
-        b=LuLFkSRMUrp5G29/uwlWpaYzNKDUqmp2uaJ2ktD7QqeWK8IAO7kn9SmSmNfDo8ITYx
-         v+Kyf5kZWNyeNEOwwo1meir6Yj+scMg8aAiS8V7m6dsfybIhuTQof7M9Vy6+Tmg5xcwx
-         YpivPHTK8bdbIZLoB/vGe0+uHahoLAJsmyFlXiF2X+MYUgH0M8B+ceHQeb2j0b2iSiel
-         p80yTEHj4jPPiVzDJefIshqNpJ4DvBqk5B+rMbrErHnoI5B14iCz0tPHcTcMK79Fb2lr
-         8wi7JqadrnbT2QkCUl+B3UjasmeQjmUtznKj1h2gPU7MfdpW2ymffhwE0WOnJ9AHZNZ3
-         aabQ==
-X-Gm-Message-State: APjAAAUfo/1b0Q05Nlkrad6zNEygD4Zy9cwg5wBJlncWFYiiRkvnJvzd
-        5KOYGBzIWQZwdinaunLcTkQ=
-X-Google-Smtp-Source: APXvYqyHR5qGmd+zCJ6OKsvXf4wTw71OXAIBT3QCYzmU4xUr3hIBivc2F1fI3/Zp7Mf8w9iCyu7tRA==
-X-Received: by 2002:a5d:53d2:: with SMTP id a18mr3900719wrw.49.1582882582728;
-        Fri, 28 Feb 2020 01:36:22 -0800 (PST)
-Received: from localhost (dslb-002-207-138-002.002.207.pools.vodafone-ip.de. [2.207.138.2])
-        by smtp.gmail.com with ESMTPSA id z14sm8420219wrg.76.2020.02.28.01.36.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 28 Feb 2020 01:36:21 -0800 (PST)
-Date:   Fri, 28 Feb 2020 10:14:29 +0100
-From:   Oliver Graute <oliver.graute@gmail.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: RFC: imx8qm: imx-scu-clk: probe of clk failed
-Message-ID: <20200228091429.GE16310@optiplex>
-References: <20200227125743.GC16310@optiplex>
- <20200227153110.GD16310@optiplex>
- <DB3PR0402MB3916849150B4778E117B6F86F5E80@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        id S1726063AbgB1Jht (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Feb 2020 04:37:49 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:15222 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726642AbgB1Jht (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Feb 2020 04:37:49 -0500
+X-UUID: f3b7790cce4e46a48dd3fb5a2e6e76ae-20200228
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=wbDyMawynlrwHWkUP0rf/CmT5tZ9aeV3JKqgN+jnUl8=;
+        b=ZRx8M3Wnifgb+h9tl0gfO6h5jaIQLReCZBPxWaOoSwovd/QlrWYu7DNqjAV7NACZooSZvcV1UjGyrTZFHhGlelpTLEpVpDaTzAsdymzfuVlK1mzucRwLmXvIUAEG4Lg9dM29X9j1G1KMI2s9myAZmEISNLp5h5GGR4IRTf7Lc8I=;
+X-UUID: f3b7790cce4e46a48dd3fb5a2e6e76ae-20200228
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1750308215; Fri, 28 Feb 2020 17:37:45 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 28 Feb 2020 17:36:54 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 28 Feb 2020 17:37:27 +0800
+Message-ID: <1582882664.22475.6.camel@mtksdaap41>
+Subject: Re: [PATCH v10 4/5] soc / drm: mediatek: Move routing control to
+ mmsys device
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ulrich.hecht+renesas@gmail.com>,
+        <laurent.pinchart@ideasonboard.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        <rdunlap@infradead.org>, <dri-devel@lists.freedesktop.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        "Seiya Wang" <seiya.wang@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        "Collabora Kernel ML" <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, <wens@csie.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <sean.wang@mediatek.com>, <frank-w@public-files.de>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>, <hsinyi@chromium.org>,
+        Matthias Brugger <mbrugger@suse.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        <linux-kernel@vger.kernel.org>, <matthias.bgg@kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 28 Feb 2020 17:37:44 +0800
+In-Reply-To: <20200227180858.1514157-5-enric.balletbo@collabora.com>
+References: <20200227180858.1514157-1-enric.balletbo@collabora.com>
+         <20200227180858.1514157-5-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DB3PR0402MB3916849150B4778E117B6F86F5E80@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/02/20, Anson Huang wrote:
-> Hi, Oliver
-> 
-> > Subject: Re: RFC: imx8qm: imx-scu-clk: probe of clk failed
-> > 
-> > On 27/02/20, Oliver Graute wrote:
-> > > Hello Aisheng,
-> > > Hello Anson,
-> > >
-> > > I get the following imx-scu errors when using Linux version
-> > > 5.6.0-rc1-next-20200214 with scfw Build 3353, Commit 494c97f3
-> > >
-> > > It seems that important clocks are off somehow and that lpspi isn't
-> > > working because of that. What is the best way to debug such issues?
-> > >
-> > > [    1.103799] imx-scu scu: NXP i.MX SCU Initialized
-> > > [    1.111383] a35_clk: failed to get clock rate -22
-> > 
-> > After some deeper digging I saw that the reason for "a35_clk: failed" is an
-> > IMX_SC_ERR_PARM = 3. Because he trys to get the resource SC_R_A35 which
-> > is only available on imx8qxp and not on imx8qm. No clue why he try that
-> > instead of SC_R_A53.
-> 
-> You are running on i.MX8QM board, right? Is it because the A35/A53/A72 clocks
-> are registered on same clock driver, so that clock core will calculate their rate during
-> clock tree setup? But even A35 clock get rate failed on i.MX8QM, I don't see it will
-> impact lpspi.
+SGksIEVucmljOg0KDQpPbiBUaHUsIDIwMjAtMDItMjcgYXQgMTk6MDggKzAxMDAsIEVucmljIEJh
+bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IFByb3ZpZGUgYSBtdGtfbW1zeXNfZGRwX2Nvbm5lY3Qo
+KSBhbmQgbXRrX21tc3lzX2Rpc2Nvbm5lY3QoKSBmdW5jdGlvbnMgdG8NCj4gcmVwbGFjZSBtdGtf
+ZGRwX2FkZF9jb21wX3RvX3BhdGgoKSBhbmQgbXRrX2RkcF9yZW1vdmVfY29tcF9mcm9tX3BhdGgo
+KS4NCj4gVGhvc2UgZnVuY3Rpb25zIHdpbGwgYWxsb3cgRFJNIGRyaXZlciBhbmQgb3RoZXJzIHRv
+IGNvbnRyb2wgdGhlIGRhdGENCj4gcGF0aCByb3V0aW5nLg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
+RW5yaWMgQmFsbGV0Ym8gaSBTZXJyYSA8ZW5yaWMuYmFsbGV0Ym9AY29sbGFib3JhLmNvbT4NCj4g
+LS0tDQo+IA0KPiBDaGFuZ2VzIGluIHYxMDoNCj4gLSBJbnRyb2R1Y2VkIGEgbmV3IHBhdGNoIHRv
+IG1vdmUgcm91dGluZyBjb250cm9sIGludG8gbW1zeXMgZHJpdmVyLg0KPiAtIFJlbW92ZWQgdGhl
+IHBhdGNoIHRvIHVzZSByZWdtYXAgYXMgaXMgbm90IG5lZWRlZCBhbnltb3JlLg0KPiANCj4gQ2hh
+bmdlcyBpbiB2OTogTm9uZQ0KPiBDaGFuZ2VzIGluIHY4OiBOb25lDQo+IENoYW5nZXMgaW4gdjc6
+IE5vbmUNCj4gDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9jcnRjLmMgfCAg
+MTMgKy0NCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2RkcC5jICB8IDI1NiAt
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICBkcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2Ry
+bV9kZHAuaCAgfCAgIDcgLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2
+LmMgIHwgIDEzICstDQo+ICBkcml2ZXJzL3NvYy9tZWRpYXRlay9tdGstbW1zeXMuYyAgICAgICAg
+fCAyNzUgKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBpbmNsdWRlL2xpbnV4L3NvYy9tZWRp
+YXRlay9tdGstbW1zeXMuaCAgfCAgMTkgKysNCj4gIDYgZmlsZXMgY2hhbmdlZCwgMzA2IGluc2Vy
+dGlvbnMoKyksIDI3NyBkZWxldGlvbnMoLSkNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRl
+L2xpbnV4L3NvYy9tZWRpYXRlay9tdGstbW1zeXMuaA0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRp
+YXRlay9tdGtfZHJtX2NydGMuYw0KPiBpbmRleCBmZDQwNDJkZTEyZjIuLjNjODk0NDliZWE2ZSAx
+MDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fY3J0Yy5jDQo+
+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfZHJtX2NydGMuYw0KPiBAQCAtNiw2
+ICs2LDcgQEANCj4gICNpbmNsdWRlIDxsaW51eC9jbGsuaD4NCj4gICNpbmNsdWRlIDxsaW51eC9w
+bV9ydW50aW1lLmg+DQo+ICAjaW5jbHVkZSA8bGludXgvc29jL21lZGlhdGVrL210ay1jbWRxLmg+
+DQo+ICsjaW5jbHVkZSA8bGludXgvc29jL21lZGlhdGVrL210ay1tbXN5cy5oPg0KPiAgDQo+ICAj
+aW5jbHVkZSA8YXNtL2JhcnJpZXIuaD4NCj4gICNpbmNsdWRlIDxzb2MvbWVkaWF0ZWsvc21pLmg+
+DQo+IEBAIC0yOTYsOSArMjk3LDkgQEAgc3RhdGljIGludCBtdGtfY3J0Y19kZHBfaHdfaW5pdChz
+dHJ1Y3QgbXRrX2RybV9jcnRjICptdGtfY3J0YykNCj4gIAl9DQo+ICANCj4gIAlmb3IgKGkgPSAw
+OyBpIDwgbXRrX2NydGMtPmRkcF9jb21wX25yIC0gMTsgaSsrKSB7DQo+IC0JCW10a19kZHBfYWRk
+X2NvbXBfdG9fcGF0aChtdGtfY3J0Yy0+Y29uZmlnX3JlZ3MsDQo+IC0JCQkJCSBtdGtfY3J0Yy0+
+ZGRwX2NvbXBbaV0tPmlkLA0KPiAtCQkJCQkgbXRrX2NydGMtPmRkcF9jb21wW2kgKyAxXS0+aWQp
+Ow0KPiArCQltdGtfbW1zeXNfZGRwX2Nvbm5lY3QobXRrX2NydGMtPmNvbmZpZ19yZWdzLA0KPiAr
+CQkJCSAgICAgIG10a19jcnRjLT5kZHBfY29tcFtpXS0+aWQsDQo+ICsJCQkJICAgICAgbXRrX2Ny
+dGMtPmRkcF9jb21wW2kgKyAxXS0+aWQpOw0KDQpXaGVuIENPTkZJR19NVEtfTU1TWVMgaXMgbm90
+IGVuYWJsZSwgdGhpcyB3b3VsZCBidWlsdCBmYWlsLiBTbyBtYWtlIHNvbWUNCm1vZGlmaWNhdGlv
+biBpbiBLY29uZmlnLg0KDQo+ICAJCW10a19kaXNwX211dGV4X2FkZF9jb21wKG10a19jcnRjLT5t
+dXRleCwNCj4gIAkJCQkJbXRrX2NydGMtPmRkcF9jb21wW2ldLT5pZCk7DQo+ICAJfQ0KPiBAQCAt
+MzU1LDkgKzM1Niw5IEBAIHN0YXRpYyB2b2lkIG10a19jcnRjX2RkcF9od19maW5pKHN0cnVjdCBt
+dGtfZHJtX2NydGMgKm10a19jcnRjKQ0KPiAgCQkJCQkgICBtdGtfY3J0Yy0+ZGRwX2NvbXBbaV0t
+PmlkKTsNCj4gIAltdGtfZGlzcF9tdXRleF9kaXNhYmxlKG10a19jcnRjLT5tdXRleCk7DQo+ICAJ
+Zm9yIChpID0gMDsgaSA8IG10a19jcnRjLT5kZHBfY29tcF9uciAtIDE7IGkrKykgew0KPiAtCQlt
+dGtfZGRwX3JlbW92ZV9jb21wX2Zyb21fcGF0aChtdGtfY3J0Yy0+Y29uZmlnX3JlZ3MsDQo+IC0J
+CQkJCSAgICAgIG10a19jcnRjLT5kZHBfY29tcFtpXS0+aWQsDQo+IC0JCQkJCSAgICAgIG10a19j
+cnRjLT5kZHBfY29tcFtpICsgMV0tPmlkKTsNCj4gKwkJbXRrX21tc3lzX2RkcF9kaXNjb25uZWN0
+KG10a19jcnRjLT5jb25maWdfcmVncywNCj4gKwkJCQkJIG10a19jcnRjLT5kZHBfY29tcFtpXS0+
+aWQsDQo+ICsJCQkJCSBtdGtfY3J0Yy0+ZGRwX2NvbXBbaSArIDFdLT5pZCk7DQo+ICAJCW10a19k
+aXNwX211dGV4X3JlbW92ZV9jb21wKG10a19jcnRjLT5tdXRleCwNCj4gIAkJCQkJICAgbXRrX2Ny
+dGMtPmRkcF9jb21wW2ldLT5pZCk7DQo+ICAJfQ0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
+X2RybV9kZHAuYw0KPiBpbmRleCBiODg1ZjYwZjQ3NGMuLjAxNGMxYmJlMWRmMiAxMDA2NDQNCj4g
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmMNCj4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZGRwLmMNCj4gQEAgLTEzLDI2ICsxMyw2IEBA
+DQo+ICAjaW5jbHVkZSAibXRrX2RybV9kZHAuaCINCj4gICNpbmNsdWRlICJtdGtfZHJtX2RkcF9j
+b21wLmgiDQo+ICANCg0KW3NuaXBdDQoNCj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvc29j
+L21lZGlhdGVrL210ay1tbXN5cy5oIGIvaW5jbHVkZS9saW51eC9zb2MvbWVkaWF0ZWsvbXRrLW1t
+c3lzLmgNCj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMDAwMDAwLi4wMmZk
+ODZlNjJhOGQNCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9pbmNsdWRlL2xpbnV4L3NvYy9tZWRp
+YXRlay9tdGstbW1zeXMuaA0KPiBAQCAtMCwwICsxLDE5IEBADQo+ICsvKiBTUERYLUxpY2Vuc2Ut
+SWRlbnRpZmllcjogR1BMLTIuMC1vbmx5ICovDQo+ICsvKg0KPiArICogQ29weXJpZ2h0IChjKSAy
+MDE1IE1lZGlhVGVrIEluYy4NCj4gKyAqLw0KPiArDQo+ICsjaWZuZGVmIF9fTVRLX01NU1lTX0gN
+Cj4gKyNkZWZpbmUgX19NVEtfTU1TWVNfSA0KPiArDQo+ICtlbnVtIG10a19kZHBfY29tcF9pZDsN
+Cj4gKw0KPiArdm9pZCBtdGtfbW1zeXNfZGRwX2Nvbm5lY3Qodm9pZCBfX2lvbWVtICpjb25maWdf
+cmVncywNCg0KSSBwcmVmZXIgdGhlIGZpcnN0IHBhcmFtZXRlciB0byBiZSAnc3RydWN0IGRldmlj
+ZSAqZGV2JyB3aGljaCBpcyB0aGUNCmRldmljZSBwb2ludGVyIG9mIG1tc3lzIGRldmljZS4gYW5k
+IG1tc3lzIGRyaXZlciBjb3VsZCB1c2UgdGhpcyBwb2ludGVyDQp0byBnZXQgaXRzIHJlZ2lzdGVy
+IGFkZHJlc3MuDQoNClJlZ2FyZHMsDQpDSw0KDQo+ICsJCQkgICBlbnVtIG10a19kZHBfY29tcF9p
+ZCBjdXIsDQo+ICsJCQkgICBlbnVtIG10a19kZHBfY29tcF9pZCBuZXh0KTsNCj4gKw0KPiArdm9p
+ZCBtdGtfbW1zeXNfZGRwX2Rpc2Nvbm5lY3Qodm9pZCBfX2lvbWVtICpjb25maWdfcmVncywNCj4g
+KwkJCSAgICAgIGVudW0gbXRrX2RkcF9jb21wX2lkIGN1ciwNCj4gKwkJCSAgICAgIGVudW0gbXRr
+X2RkcF9jb21wX2lkIG5leHQpOw0KPiArDQo+ICsjZW5kaWYgLyogX19NVEtfTU1TWVNfSCAqLw0K
+DQo=
 
-yes I'am using a i.MX8QM based board. Which clocks are needed to get
-lpspi working on imx8qm?
-> 
-> i.MX8QM is already supported on our internal v5.4 tree, there are some
-> changes in clk-scu.c, I pasted some code piece as below, maybe you can
-> compare the difference and have a try?
-
-ok I use your proposed code now. A struct clk_scu_pi_ops is missing for
-me here. Also I added this:
-
---- a/include/dt-bindings/clock/imx8-clock.h
-+++ b/include/dt-bindings/clock/imx8-clock.h
-@@ -131,7 +131,9 @@
- #define IMX_ADMA_PWM_CLK                               188
- #define IMX_ADMA_LCD_CLK                               189
-
--#define IMX_SCU_CLK_END                                        190
-+#define IMX_A53_CLK                                    190
-+#define IMX_A72_CLK                                    191
-+#define IMX_SCU_CLK_END                                        192
-
---- a/drivers/clk/imx/clk-imx8qxp.c
-+++ b/drivers/clk/imx/clk-imx8qxp.c
-@@ -60,6 +68,8 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
-
-        /* ARM core */
-        clks[IMX_A35_CLK]               = imx_clk_scu("a35_clk", IMX_SC_R_A35, IMX_SC_PM_CLK_CPU, clk_cells);
-+       clks[IMX_A53_CLK]               = imx_clk_scu("a53_clk", IMX_SC_R_A53, IMX_SC_PM_CLK_CPU, clk_cells);
-+       clks[IMX_A72_CLK]               = imx_clk_scu("a72_clk", IMX_SC_R_A72, IMX_SC_PM_CLK_CPU, clk_cells);
-
-
-Is it correct to use the imx8qxp clock probing here?
-
-Best regards,
-
-Oliver
