@@ -2,164 +2,120 @@ Return-Path: <SRS0=AG5N=4Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF2FC3F2D2
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 10:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EF0C3F2D3
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 10:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 157F3246B3
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 10:07:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HtrLp0Fn"
+	by mail.kernel.org (Postfix) with ESMTP id 14970246A8
+	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 10:26:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726626AbgB1KHx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Feb 2020 05:07:53 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49546 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726400AbgB1KHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 28 Feb 2020 05:07:53 -0500
-X-UUID: 0ec4a2220662443b863fd358cded835e-20200228
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1DhT26Nw0ev4Fr8ahrt98NxVPN2Jg/ECXsapb7EkmRI=;
-        b=HtrLp0Fn/52njlsl7gP4qX/rtdjoWM3Yx5sAZb02xfx13B6XMjhW2GRxxZ1QEn5fRsNCeJ1dIXrb1LeGxJqkuBUieJpcVZvnWdYZ+nUcqKo/fcC/CfQNoZKj82PlQKj4vPBihy3rEzou/j8HSQupuH3lJdKG9VAOCF+v+jzFRtU=;
-X-UUID: 0ec4a2220662443b863fd358cded835e-20200228
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1660331952; Fri, 28 Feb 2020 18:07:38 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 28 Feb 2020 18:06:43 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 28 Feb 2020 18:07:36 +0800
-Message-ID: <1582884456.25698.0.camel@mtksdaap41>
-Subject: Re: [PATCH v10 5/5] soc / drm: mediatek: Fix mediatek-drm device
- probing
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-CC:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <p.zabel@pengutronix.de>, <airlied@linux.ie>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ulrich.hecht+renesas@gmail.com>,
-        <laurent.pinchart@ideasonboard.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        <rdunlap@infradead.org>, <dri-devel@lists.freedesktop.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        "Seiya Wang" <seiya.wang@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        "Collabora Kernel ML" <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, <wens@csie.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <sean.wang@mediatek.com>, <frank-w@public-files.de>,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>, <hsinyi@chromium.org>,
-        Matthias Brugger <mbrugger@suse.com>,
+        id S1726740AbgB1K0J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 28 Feb 2020 05:26:09 -0500
+Received: from foss.arm.com ([217.140.110.172]:36148 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726440AbgB1K0J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 28 Feb 2020 05:26:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0806D4B2;
+        Fri, 28 Feb 2020 02:26:08 -0800 (PST)
+Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FBBF3F73B;
+        Fri, 28 Feb 2020 02:26:04 -0800 (PST)
+Date:   Fri, 28 Feb 2020 10:25:56 +0000
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Will Deacon <will@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     Rob Herring <robh@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        Richard Fontana <rfontana@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <matthias.bgg@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>
-Date:   Fri, 28 Feb 2020 18:07:36 +0800
-In-Reply-To: <20200227180858.1514157-6-enric.balletbo@collabora.com>
-References: <20200227180858.1514157-1-enric.balletbo@collabora.com>
-         <20200227180858.1514157-6-enric.balletbo@collabora.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        soc@kernel.org, Robert Richter <rrichter@marvell.com>,
+        Jon Loeliger <jdl@jdl.com>, Alexander Graf <graf@amazon.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Mark Langsdorf <mlangsdo@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        devicetree@vger.kernel.org, Eric Auger <eric.auger@redhat.com>,
+        Linux IOMMU <iommu@lists.linux-foundation.org>,
+        James Morse <james.morse@arm.com>,
+        Jens Axboe <axboe@kernel.dk>, Joerg Roedel <joro@8bytes.org>,
+        kvm@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
+        <linux-ide@vger.kernel.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Tony Luck <tony.luck@intel.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [RFC PATCH 06/11] iommu: arm-smmu: Remove Calxeda secure mode
+ quirk
+Message-ID: <20200228102556.1dde016e@donnerap.cambridge.arm.com>
+In-Reply-To: <20200228100446.GA2395@willie-the-truck>
+References: <20200218171321.30990-1-robh@kernel.org>
+        <20200218171321.30990-7-robh@kernel.org>
+        <20200218172000.GF1133@willie-the-truck>
+        <CAL_JsqJn1kG6gah+4318NQfJ4PaS3x3woWEUh08+OTfOcD+1MQ@mail.gmail.com>
+        <20200228100446.GA2395@willie-the-truck>
+Organization: ARM
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGksIEVucmljOg0KDQpPbiBUaHUsIDIwMjAtMDItMjcgYXQgMTk6MDggKzAxMDAsIEVucmljIEJh
-bGxldGJvIGkgU2VycmEgd3JvdGU6DQo+IEluIHRoZSBhY3R1YWwgaW1wbGVtZW50YXRpb24gdGhl
-IHNhbWUgY29tcGF0aWJsZSBzdHJpbmcNCj4gIm1lZGlhdGVrLDxjaGlwPi1tbXN5cyIgaXMgdXNl
-ZCB0byBiaW5kIHRoZSBjbG9jayBkcml2ZXJzDQo+IChkcml2ZXJzL3NvYy9tZWRpYXRlaykgYXMg
-d2VsbCBhcyB0byB0aGUgZ3B1IGRyaXZlcg0KPiAoZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210
-a19kcm1fZHJ2LmMpLiBUaGlzIGVuZHMgd2l0aCB0aGUgcHJvYmxlbQ0KPiB0aGF0IHRoZSBvbmx5
-IHByb2JlZCBkcml2ZXIgaXMgdGhlIGNsb2NrIGRyaXZlciBhbmQgdGhlcmUgaXMgbm8gZGlzcGxh
-eQ0KPiBhdCBhbGwuDQo+IA0KPiBJbiBhbnkgY2FzZSBoYXZpbmcgdGhlIHNhbWUgY29tcGF0aWJs
-ZSBzdHJpbmcgZm9yIHR3byBkcml2ZXJzIGlzIG5vdA0KPiBjb3JyZWN0IGFuZCBzaG91bGQgYmUg
-Zml4ZWQuIFRvIGZpeCB0aGlzLCBhbmQgbWFpbnRhaW4gYmFja3dhcmQNCj4gY29tcGF0aWJpbGl0
-eSwgd2UgY2FuIGNvbnNpZGVyIHRoYXQgdGhlIG1tc3lzIGRyaXZlciBpcyB0aGUgdG9wLWxldmVs
-DQo+IGVudHJ5IHBvaW50IGZvciB0aGUgbXVsdGltZWRpYSBzdWJzeXN0ZW0sIHNvIGlzIG5vdCBh
-IHB1cmUgY2xvY2sNCj4gY29udHJvbGxlciBidXQgYSBzeXN0ZW0gY29udHJvbGxlciwgYW5kIHRo
-ZSBkcm0gZHJpdmVyIGlzIGluc3RhbnRpYXRlZA0KPiBieSB0aGF0IE1NU1lTIGRyaXZlci4NCg0K
-UmV2aWV3ZWQtYnk6IENLIEh1IDxjay5odUBtZWRpYXRlay5jb20+DQo+IA0KPiBTaWduZWQtb2Zm
-LWJ5OiBFbnJpYyBCYWxsZXRibyBpIFNlcnJhIDxlbnJpYy5iYWxsZXRib0Bjb2xsYWJvcmEuY29t
-Pg0KPiAtLS0NCj4gDQo+IENoYW5nZXMgaW4gdjEwOg0KPiAtIE1hdGNoIGRyaXZlciBkYXRhIHRv
-IGdldCBkaXNwbGF5IHJvdXRpbmcuDQo+IA0KPiBDaGFuZ2VzIGluIHY5Og0KPiAtIERvIG5vdCBt
-b3ZlIHRoZSBkaXNwbGF5IHJvdXRpbmcgZnJvbSB0aGUgZHJtIGRyaXZlciAoQ0spDQo+IA0KPiBD
-aGFuZ2VzIGluIHY4Og0KPiAtIE5ldyBwYXRjaCBpbnRyb2R1Y2VkIGluIHRoaXMgc2VyaWVzLg0K
-PiANCj4gQ2hhbmdlcyBpbiB2NzogTm9uZQ0KPiANCj4gIGRyaXZlcnMvZ3B1L2RybS9tZWRpYXRl
-ay9tdGtfZHJtX2Rydi5jIHwgMzEgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0NCj4gIGRyaXZl
-cnMvc29jL21lZGlhdGVrL210ay1tbXN5cy5jICAgICAgIHwgIDYgKysrKysNCj4gIDIgZmlsZXMg
-Y2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RybV9kcnYuYw0KPiBpbmRleCAwMjAxMWQzMTY4ZGYuLjI5MjUy
-ZmMwYWFiNyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1f
-ZHJ2LmMNCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kcm1fZHJ2LmMNCj4g
-QEAgLTQyMiw5ICs0MjIsMjEgQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgbXRr
-X2RkcF9jb21wX2R0X2lkc1tdID0gew0KPiAgCXsgfQ0KPiAgfTsNCj4gIA0KPiArc3RhdGljIGNv
-bnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgbXRrX2RybV9vZl9pZHNbXSA9IHsNCj4gKwl7IC5jb21w
-YXRpYmxlID0gIm1lZGlhdGVrLG10MjcwMS1tbXN5cyIsDQo+ICsJICAuZGF0YSA9ICZtdDI3MDFf
-bW1zeXNfZHJpdmVyX2RhdGF9LA0KPiArCXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQyNzEy
-LW1tc3lzIiwNCj4gKwkgIC5kYXRhID0gJm10MjcxMl9tbXN5c19kcml2ZXJfZGF0YX0sDQo+ICsJ
-eyAuY29tcGF0aWJsZSA9ICJtZWRpYXRlayxtdDgxNzMtbW1zeXMiLA0KPiArCSAgLmRhdGEgPSAm
-bXQ4MTczX21tc3lzX2RyaXZlcl9kYXRhfSwNCj4gKwl7IH0NCj4gK307DQo+ICsNCj4gIHN0YXRp
-YyBpbnQgbXRrX2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgew0K
-PiAgCXN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ICsJc3RydWN0IGRldmljZV9u
-b2RlICpwaGFuZGxlID0gZGV2LT5wYXJlbnQtPm9mX25vZGU7DQo+ICsJY29uc3Qgc3RydWN0IG9m
-X2RldmljZV9pZCAqb2ZfaWQ7DQo+ICAJc3RydWN0IG10a19kcm1fcHJpdmF0ZSAqcHJpdmF0ZTsN
-Cj4gIAlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5vZGU7DQo+ICAJc3RydWN0IGNvbXBvbmVudF9tYXRj
-aCAqbWF0Y2ggPSBOVUxMOw0KPiBAQCAtNDQzLDggKzQ1NSwxNCBAQCBzdGF0aWMgaW50IG10a19k
-cm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIAkJcmV0dXJuIC1FTk9E
-RVY7DQo+ICAJfQ0KPiAgDQo+ICsJb2ZfaWQgPSBvZl9tYXRjaF9ub2RlKG10a19kcm1fb2ZfaWRz
-LCBwaGFuZGxlKTsNCj4gKwlpZiAoIW9mX2lkKQ0KPiArCQlyZXR1cm4gLUVOT0RFVjsNCj4gKw0K
-PiArCXByaXZhdGUtPmRhdGEgPSBvZl9pZC0+ZGF0YTsNCj4gKw0KPiAgCS8qIEl0ZXJhdGUgb3Zl
-ciBzaWJsaW5nIERJU1AgZnVuY3Rpb24gYmxvY2tzICovDQo+IC0JZm9yX2VhY2hfY2hpbGRfb2Zf
-bm9kZShkZXYtPm9mX25vZGUtPnBhcmVudCwgbm9kZSkgew0KPiArCWZvcl9lYWNoX2NoaWxkX29m
-X25vZGUocGhhbmRsZS0+cGFyZW50LCBub2RlKSB7DQo+ICAJCWNvbnN0IHN0cnVjdCBvZl9kZXZp
-Y2VfaWQgKm9mX2lkOw0KPiAgCQllbnVtIG10a19kZHBfY29tcF90eXBlIGNvbXBfdHlwZTsNCj4g
-IAkJaW50IGNvbXBfaWQ7DQo+IEBAIC01NzYsMjIgKzU5NCwxMSBAQCBzdGF0aWMgaW50IG10a19k
-cm1fc3lzX3Jlc3VtZShzdHJ1Y3QgZGV2aWNlICpkZXYpDQo+ICBzdGF0aWMgU0lNUExFX0RFVl9Q
-TV9PUFMobXRrX2RybV9wbV9vcHMsIG10a19kcm1fc3lzX3N1c3BlbmQsDQo+ICAJCQkgbXRrX2Ry
-bV9zeXNfcmVzdW1lKTsNCj4gIA0KPiAtc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQg
-bXRrX2RybV9vZl9pZHNbXSA9IHsNCj4gLQl7IC5jb21wYXRpYmxlID0gIm1lZGlhdGVrLG10Mjcw
-MS1tbXN5cyIsDQo+IC0JICAuZGF0YSA9ICZtdDI3MDFfbW1zeXNfZHJpdmVyX2RhdGF9LA0KPiAt
-CXsgLmNvbXBhdGlibGUgPSAibWVkaWF0ZWssbXQyNzEyLW1tc3lzIiwNCj4gLQkgIC5kYXRhID0g
-Jm10MjcxMl9tbXN5c19kcml2ZXJfZGF0YX0sDQo+IC0JeyAuY29tcGF0aWJsZSA9ICJtZWRpYXRl
-ayxtdDgxNzMtbW1zeXMiLA0KPiAtCSAgLmRhdGEgPSAmbXQ4MTczX21tc3lzX2RyaXZlcl9kYXRh
-fSwNCj4gLQl7IH0NCj4gLX07DQo+IC0NCj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVy
-IG10a19kcm1fcGxhdGZvcm1fZHJpdmVyID0gew0KPiAgCS5wcm9iZQk9IG10a19kcm1fcHJvYmUs
-DQo+ICAJLnJlbW92ZQk9IG10a19kcm1fcmVtb3ZlLA0KPiAgCS5kcml2ZXIJPSB7DQo+ICAJCS5u
-YW1lCT0gIm1lZGlhdGVrLWRybSIsDQo+IC0JCS5vZl9tYXRjaF90YWJsZSA9IG10a19kcm1fb2Zf
-aWRzLA0KPiAgCQkucG0gICAgID0gJm10a19kcm1fcG1fb3BzLA0KPiAgCX0sDQo+ICB9Ow0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmMgYi9kcml2ZXJzL3Nv
-Yy9tZWRpYXRlay9tdGstbW1zeXMuYw0KPiBpbmRleCBhOGE5ODc3NzA2NGUuLmQ5OWM4YmViMmVk
-MiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmMNCj4gKysr
-IGIvZHJpdmVycy9zb2MvbWVkaWF0ZWsvbXRrLW1tc3lzLmMNCj4gQEAgLTM3Nyw2ICszNzcsNyBA
-QCBzdGF0aWMgaW50IG10a19tbXN5c19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQ0KPiAgCWNvbnN0IHN0cnVjdCBtdGtfbW1zeXNfZHJpdmVyX2RhdGEgKmRhdGE7DQo+ICAJc3Ry
-dWN0IGNsa19vbmVjZWxsX2RhdGEgKmNsa19kYXRhOw0KPiAgCXN0cnVjdCBkZXZpY2UgKmRldiA9
-ICZwZGV2LT5kZXY7DQo+ICsJc3RydWN0IHBsYXRmb3JtX2RldmljZSAqZHJtOw0KPiAgCXZvaWQg
-X19pb21lbSAqY29uZmlnX3JlZ3M7DQo+ICAJc3RydWN0IHJlc291cmNlICptZW07DQo+ICAJaW50
-IHJldDsNCj4gQEAgLTQwNyw2ICs0MDgsMTEgQEAgc3RhdGljIGludCBtdGtfbW1zeXNfcHJvYmUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gIAlpZiAocmV0KQ0KPiAgCQlyZXR1cm4g
-cmV0Ow0KPiAgDQo+ICsJZHJtID0gcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyX2RhdGEoJnBkZXYt
-PmRldiwgIm1lZGlhdGVrLWRybSIsDQo+ICsJCQkJCSAgICBQTEFURk9STV9ERVZJRF9OT05FLCBO
-VUxMLCAwKTsNCj4gKwlpZiAoSVNfRVJSKGRybSkpDQo+ICsJCXJldHVybiBQVFJfRVJSKGRybSk7
-DQo+ICsNCj4gIAlyZXR1cm4gMDsNCj4gIH0NCj4gIA0KDQo=
+On Fri, 28 Feb 2020 10:04:47 +0000
+Will Deacon <will@kernel.org> wrote:
 
+Hi,
+
+> On Tue, Feb 25, 2020 at 04:01:54PM -0600, Rob Herring wrote:
+> > On Tue, Feb 18, 2020 at 11:20 AM Will Deacon <will@kernel.org> wrote:  
+> > >
+> > > On Tue, Feb 18, 2020 at 11:13:16AM -0600, Rob Herring wrote:  
+> > > > Cc: Will Deacon <will@kernel.org>
+> > > > Cc: Robin Murphy <robin.murphy@arm.com>
+> > > > Cc: Joerg Roedel <joro@8bytes.org>
+> > > > Cc: iommu@lists.linux-foundation.org
+> > > > Signed-off-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > > Do not apply yet.  
+> > >
+> > > Pleeeeease? ;)
+> > >  
+> > > >  drivers/iommu/arm-smmu-impl.c | 43 -----------------------------------
+> > > >  1 file changed, 43 deletions(-)  
+> > >
+> > > Yes, I'm happy to get rid of this. Sadly, I don't think we can remove
+> > > anything from 'struct arm_smmu_impl' because most implementations fall
+> > > just short of perfect.
+> > >
+> > > Anyway, let me know when I can push the button and I'll queue this in
+> > > the arm-smmu tree.  
+> > 
+> > Seems we're leaving the platform support for now, but I think we never
+> > actually enabled SMMU support. It's not in the dts either in mainline
+> > nor the version I have which should be close to what shipped in
+> > firmware. So as long as Andre agrees, this one is good to apply.  
+> 
+> Andre? Can I queue this one for 5.7, please?
+
+I was wondering how much of a pain it is to keep it in? AFAICS there are other users of the "impl" indirection. If those goes away, I would be happy to let Calxeda go.
+But Eric had the magic DT nodes to get the SMMU working, and I used that before, with updating the DT either on flash or dynamically via U-Boot.
+
+So I don't know exactly *how* desperate you are with removing this, or if there are other reasons than "negative diffstat", but if possible I would like to keep it in.
+
+Cheers,
+Andre.
