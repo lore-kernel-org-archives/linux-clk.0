@@ -1,317 +1,139 @@
-Return-Path: <SRS0=AG5N=4Q=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=oteG=4S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E386C3F2D2
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 20:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD3DC3F2CE
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Mar 2020 12:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8A02246B0
-	for <linux-clk@archiver.kernel.org>; Fri, 28 Feb 2020 20:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1582922184;
-	bh=82G5bMsbbX/PJ9S7g4In+ZAGDal1cM6uHXZ3zbPyr8Q=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=CF1qNE8eXGkyumxQJ4kaq66Oecw2YftmYrt29oTQakNcu8h3CSIM/v7uZGWNm2mBV
-	 3Aao1oa0HqevzrDraMxiqkW3kjoLk9oRlN5h00xFA74yDrQROyootT3cFJpyNLJBbW
-	 OixBtKiorVkld+EIunvDjy9OYvFawGKTI9wrPKNw=
+	by mail.kernel.org (Postfix) with ESMTP id D4DC821775
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Mar 2020 12:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbgB1UgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 28 Feb 2020 15:36:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43366 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725730AbgB1UgY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 28 Feb 2020 15:36:24 -0500
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00A2D24690;
-        Fri, 28 Feb 2020 20:36:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1582922182;
-        bh=82G5bMsbbX/PJ9S7g4In+ZAGDal1cM6uHXZ3zbPyr8Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=j5k27icMOr5YfokqXjjMWO1g95b2bVgj8Lbilm6RYfDo9JZCHI91t5DVLuJjh/M59
-         2eQMjN0efa+rz7o2yXgl1zUHsUROMVRT5P+hJNq6NJSttICLoXyIcZ5pvmPTb51lmp
-         FPP9H5FHMGvInhpr6bDXQfVWzGmWRHjxoKII1iHQ=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     sboyd@kernel.org
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: socfpga: stratix10: use new parent data scheme
-Date:   Fri, 28 Feb 2020 14:36:11 -0600
-Message-Id: <20200228203611.15507-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726103AbgCAMQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Mar 2020 07:16:51 -0500
+Received: from mout.kundenserver.de ([212.227.17.10]:58033 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726094AbgCAMQv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Mar 2020 07:16:51 -0500
+Received: from [192.168.1.183] ([37.4.249.171]) by mrelayeu.kundenserver.de
+ (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M890H-1j3AS51sDT-005L5i; Sun, 01 Mar 2020 13:16:30 +0100
+Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>
+Cc:     Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
+ <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=stefan.wahren@i2se.com; keydata=
+ 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 AQ==
+Message-ID: <d793e358-32db-5fea-aac9-d06062918718@i2se.com>
+Date:   Sun, 1 Mar 2020 13:16:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:zyw9tGSyL8cdeQBz13wPTVaGjy0pjbIhlN6+NMypZBquz0QLgSo
+ o22u5bw2XCub2BKDmuu9XtfxpuuNdqsU6GdPNzyr/FbfD/wsnVuOAM4c2sCKinB1Hqja5ZW
+ 7mgSquNlO/X1gK6de5u7phveu5lt01VoMKVcGXHVF8dklAN33i3E0MQU49cxwMjY320L50V
+ R33fzGdAK8vTQkGdJQGow==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:VNj77z+HmrA=:B6cwnkMZaBMzXpAuLfkwWl
+ goMCDGOi0ZMH2xLPBNwmWhClI1roUsuor77zUiRujR1F7wjDVglD4H07dJeOkboozDhZanoHd
+ GeT/58IJU1BOQ5o8Wq424x9hGND8NJCyy90QP48lGjyvACQqcPe+FBuc8Kjolm4U0AhlGU9MS
+ D+0X3KWo/x1/g22v73OFPcYwZ2L1zl/QqlmZFyMujG5hKvZrP4iCExruLrmvG76oRMHFPv+6W
+ VlRpqFopMvsuDF0BUy3BT496sRZxipwgKIWNdchGCrEK49dRAHkV5nEfgmm4osYU2wRg04Oxu
+ ed3cnMD1oRTq11tF93lGWUi59tzgigkinS9yyZP4jlwZjF6JHD7iQwzeumd99aUcS3aCguGHl
+ rzmPUfkuTdzO511MqHQl+LAZUlG3V4JNdcgxy6Veiu7rho+IRbC6NWs1PKKjedDixbHCKrsr7
+ XWZLzXXTthEFdjle6RUv/G18czrriewKT9Myre9JO7hysMsoXGPFbnNmX9K2BWn0WIR20gfps
+ cdEdgw7nLo3QiZveiImRXzBpjBhGDZmBaF4jhqapgmOAl4hxAHNpfRBcLsCrWy190UHch0om4
+ LVI8dH/jZKPt49eqveEp9Qzkm9n1NXUc6JlFQSsmW05Jfj50ebLw39b8+0Wwmiz9J42oTqLyi
+ MqmzYabZLF477atPKSRJHJA5ahe/cTp6Gh8U8av1dSplXN8eMLFD1M/3ZuYaOYnaysrfMczu+
+ +MAUQouaxymlYova4rjl5Qi9OEKCEBIs6ndz17LxhghpJ3X++YxXa9QxFQyiKQjhspGkabzoU
+ o5Fymq+XDgYyauaUP7xC0NWWjbu4BaWghUb7k/5YlTjZ1CovToD8ETqTPtTePI962nKRrud
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert, where possible, the stratix10 clock driver to the new parent
-data scheme by specifying the parent data for clocks that have multiple
-parents.
+Hi Maxime,
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-gate-s10.c   |   5 +-
- drivers/clk/socfpga/clk-periph-s10.c |  10 ++-
- drivers/clk/socfpga/clk-pll-s10.c    |   4 +-
- drivers/clk/socfpga/clk-s10.c        | 110 ++++++++++++++++++++-------
- drivers/clk/socfpga/stratix10-clk.h  |   8 +-
- 5 files changed, 96 insertions(+), 41 deletions(-)
+Am 24.02.20 um 10:06 schrieb Maxime Ripard:
+> The current firmware clock driver for the RaspberryPi can only be probed by
+> manually registering an associated platform_device.
+>
+> While this works fine for cpufreq where the device gets attached a clkdev
+> lookup, it would be tedious to maintain a table of all the devices using
+> one of the clocks exposed by the firmware.
+>
+> Since the DT on the other hand is the perfect place to store those
+> associations, make the firmware clocks driver probe-able through the device
+> tree so that we can represent it as a node.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
-index 8be4722f6064..083b2ec21fdd 100644
---- a/drivers/clk/socfpga/clk-gate-s10.c
-+++ b/drivers/clk/socfpga/clk-gate-s10.c
-@@ -70,7 +70,6 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
- 	struct clk *clk;
- 	struct socfpga_gate_clk *socfpga_clk;
- 	struct clk_init_data init;
--	const char * const *parent_names = clks->parent_names;
- 	const char *parent_name = clks->parent_name;
- 
- 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
-@@ -108,7 +107,9 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
- 	init.flags = clks->flags;
- 
- 	init.num_parents = clks->num_parents;
--	init.parent_names = parent_names ? parent_names : &parent_name;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	if (init.parent_names == NULL)
-+		init.parent_data = clks->parent_data;
- 	socfpga_clk->hw.hw.init = &init;
- 
- 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-index dd6d4056e9de..397b77b89b16 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -81,7 +81,6 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
- 	struct clk_init_data init;
- 	const char *name = clks->name;
- 	const char *parent_name = clks->parent_name;
--	const char * const *parent_names = clks->parent_names;
- 
- 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
- 	if (WARN_ON(!periph_clk))
-@@ -94,7 +93,9 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
- 	init.flags = clks->flags;
- 
- 	init.num_parents = clks->num_parents;
--	init.parent_names = parent_names ? parent_names : &parent_name;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	if (init.parent_names == NULL)
-+		init.parent_data = clks->parent_data;
- 
- 	periph_clk->hw.hw.init = &init;
- 
-@@ -114,7 +115,6 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
- 	struct clk_init_data init;
- 	const char *name = clks->name;
- 	const char *parent_name = clks->parent_name;
--	const char * const *parent_names = clks->parent_names;
- 
- 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
- 	if (WARN_ON(!periph_clk))
-@@ -137,7 +137,9 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
- 	init.flags = clks->flags;
- 
- 	init.num_parents = clks->num_parents;
--	init.parent_names = parent_names ? parent_names : &parent_name;
-+	init.parent_names = parent_name ? &parent_name : NULL;
-+	if (init.parent_names == NULL)
-+		init.parent_data = clks->parent_data;
- 
- 	periph_clk->hw.hw.init = &init;
- 
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index a301bb22f36c..bcd3f14e9145 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -117,7 +117,6 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
- 	struct socfpga_pll *pll_clk;
- 	struct clk_init_data init;
- 	const char *name = clks->name;
--	const char * const *parent_names = clks->parent_names;
- 
- 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
- 	if (WARN_ON(!pll_clk))
-@@ -134,7 +133,8 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
- 	init.flags = clks->flags;
- 
- 	init.num_parents = clks->num_parents;
--	init.parent_names = parent_names;
-+	init.parent_names = NULL;
-+	init.parent_data = clks->parent_data;
- 	pll_clk->hw.hw.init = &init;
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
-diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
-index dea7c6c7d269..ed11c8509a15 100644
---- a/drivers/clk/socfpga/clk-s10.c
-+++ b/drivers/clk/socfpga/clk-s10.c
-@@ -12,35 +12,87 @@
- 
- #include "stratix10-clk.h"
- 
--static const char * const pll_mux[] = { "osc1", "cb-intosc-hs-div2-clk",
--					"f2s-free-clk",};
--static const char * const cntr_mux[] = { "main_pll", "periph_pll",
--					 "osc1", "cb-intosc-hs-div2-clk",
--					 "f2s-free-clk"};
--static const char * const boot_mux[] = { "osc1", "cb-intosc-hs-div2-clk",};
--
--static const char * const noc_free_mux[] = {"main_noc_base_clk",
--					    "peri_noc_base_clk",
--					    "osc1", "cb-intosc-hs-div2-clk",
--					    "f2s-free-clk"};
--
--static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
--static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
--static const char * const emac_ptp_free_mux[] = {"peri_emac_ptp_clk", "boot_clk"};
--static const char * const gpio_db_free_mux[] = {"peri_gpio_db_clk", "boot_clk"};
--static const char * const sdmmc_free_mux[] = {"main_sdmmc_clk", "boot_clk"};
--static const char * const s2f_usr1_free_mux[] = {"peri_s2f_usr1_clk", "boot_clk"};
--static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
--static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
--
--static const char * const s2f_usr0_mux[] = {"f2s-free-clk", "boot_clk"};
--static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
--static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
--
--static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
--					    "peri_mpu_base_clk",
--					    "osc1", "cb-intosc-hs-div2-clk",
--					    "f2s-free-clk"};
-+static const struct clk_parent_data pll_mux[] = {
-+	{ .name = "osc1" },
-+	{ .name = "cb-intosc-hs-div2-clk" },
-+	{ .name = "f2s-free-clk" },
-+};
-+
-+static const struct clk_parent_data cntr_mux[] = {
-+	{ .name = "main_pll", },
-+	{ .name = "periph_pll", },
-+	{ .name = "osc1", },
-+	{ .name = "cb-intosc-hs-div2-clk", },
-+	{ .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data boot_mux[] = {
-+	{ .name = "osc1" },
-+	{ .name = "cb-intosc-hs-div2-clk" },
-+};
-+
-+static const struct clk_parent_data noc_free_mux[] = {
-+	{ .name = "main_noc_base_clk", },
-+	{ .name = "peri_noc_base_clk", },
-+	{ .name = "osc1", },
-+	{ .name = "cb-intosc-hs-div2-clk", },
-+	{ .name = "f2s-free-clk", },
-+};
-+
-+static const struct clk_parent_data emaca_free_mux[] = {
-+	{ .name = "peri_emaca_clk", },
-+	{ .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data emacb_free_mux[] = {
-+	{ .name = "peri_emacb_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data emac_ptp_free_mux[] = {
-+	{ .name = "peri_emac_ptp_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data gpio_db_free_mux[] = {
-+	{ .name = "peri_gpio_db_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data sdmmc_free_mux[] = {
-+	{ .name = "main_sdmmc_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data s2f_usr1_free_mux[] = {
-+	{ .name = "peri_s2f_usr1_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data psi_ref_free_mux[] = {
-+	{ .name = "peri_psi_ref_clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data mpu_mux[] = {
-+	{ .name = "mpu_free_clk", },
-+	{ .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data s2f_usr0_mux[] = {
-+	{ .name = "f2s-free-clk", },
-+	{ .name = "boot_clk", },
-+};
-+static const struct clk_parent_data emac_mux[] = {
-+	{ .name = "emaca_free_clk", },
-+	{ .name = "emacb_free_clk", },
-+};
-+static const struct clk_parent_data noc_mux[] = {
-+	{ .name = "noc_free_clk", },
-+	{ .name = "boot_clk", },
-+};
-+
-+static const struct clk_parent_data mpu_free_mux[] = {
-+	{ .name = "main_mpu_base_clk", },
-+	{ .name = "peri_mpu_base_clk", },
-+	{ .name = "osc1", },
-+	{ .name = "cb-intosc-hs-div2-clk", },
-+	{ .name = "f2s-free-clk", },
-+};
- 
- /* clocks in AO (always on) controller */
- static const struct stratix10_pll_clock s10_pll_clks[] = {
-diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
-index fcabef42249c..ffbd1fb2c8ef 100644
---- a/drivers/clk/socfpga/stratix10-clk.h
-+++ b/drivers/clk/socfpga/stratix10-clk.h
-@@ -14,7 +14,7 @@ struct stratix10_clock_data {
- struct stratix10_pll_clock {
- 	unsigned int		id;
- 	const char		*name;
--	const char		*const *parent_names;
-+	const struct clk_parent_data	*parent_data;
- 	u8			num_parents;
- 	unsigned long		flags;
- 	unsigned long		offset;
-@@ -24,7 +24,7 @@ struct stratix10_perip_c_clock {
- 	unsigned int		id;
- 	const char		*name;
- 	const char		*parent_name;
--	const char		*const *parent_names;
-+	const struct clk_parent_data	*parent_data;
- 	u8			num_parents;
- 	unsigned long		flags;
- 	unsigned long		offset;
-@@ -34,7 +34,7 @@ struct stratix10_perip_cnt_clock {
- 	unsigned int		id;
- 	const char		*name;
- 	const char		*parent_name;
--	const char		*const *parent_names;
-+	const struct clk_parent_data	*parent_data;
- 	u8			num_parents;
- 	unsigned long		flags;
- 	unsigned long		offset;
-@@ -47,7 +47,7 @@ struct stratix10_gate_clock {
- 	unsigned int		id;
- 	const char		*name;
- 	const char		*parent_name;
--	const char		*const *parent_names;
-+	const struct clk_parent_data	*parent_data;
- 	u8			num_parents;
- 	unsigned long		flags;
- 	unsigned long		gate_reg;
--- 
-2.17.1
+FWIW i want to mention that starting with this commit, X doesn't start
+on my Raspberry Pi 3A (applied on top of linux-next using
+multi_v7_defconfig).
+
+Regards
+Stefan
 
