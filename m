@@ -1,139 +1,159 @@
-Return-Path: <SRS0=oteG=4S=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=oWSs=4T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD3DC3F2CE
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Mar 2020 12:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78255C3F2D2
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 10:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4DC821775
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Mar 2020 12:16:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EBCA20842
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 10:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbgCAMQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 Mar 2020 07:16:51 -0500
-Received: from mout.kundenserver.de ([212.227.17.10]:58033 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726094AbgCAMQv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Mar 2020 07:16:51 -0500
-Received: from [192.168.1.183] ([37.4.249.171]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M890H-1j3AS51sDT-005L5i; Sun, 01 Mar 2020 13:16:30 +0100
-Subject: Re: [PATCH 07/89] clk: bcm: rpi: Allow the driver to be probed by DT
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1727206AbgCBKBt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Mar 2020 05:01:49 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:38100 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727060AbgCBKBs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Mar 2020 05:01:48 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 25B9D20025;
+        Mon,  2 Mar 2020 11:01:46 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 3E52720020;
+        Mon,  2 Mar 2020 11:01:45 +0100 (CET)
+Subject: Re: [RFC PATCH v4 2/2] clk: Use devm_add in managed functions
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech>
- <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=stefan.wahren@i2se.com; keydata=
- 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 AQ==
-Message-ID: <d793e358-32db-5fea-aac9-d06062918718@i2se.com>
-Date:   Sun, 1 Mar 2020 13:16:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr>
+ <e88ca46a-799d-9c86-f2d2-6284eb3c3419@free.fr>
+ <CAMuHMdUZfR6pYG-hourZCKT-jhh1t+x-ySF4JnEPJjscGAQT+A@mail.gmail.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <7622db71-b1f4-62b4-86ee-78e00d5bd52c@free.fr>
+Date:   Mon, 2 Mar 2020 11:01:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <c358081207dcf4f320a6b7e2932f0d5365bf3242.1582533919.git-series.maxime@cerno.tech>
+In-Reply-To: <CAMuHMdUZfR6pYG-hourZCKT-jhh1t+x-ySF4JnEPJjscGAQT+A@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Provags-ID: V03:K1:zyw9tGSyL8cdeQBz13wPTVaGjy0pjbIhlN6+NMypZBquz0QLgSo
- o22u5bw2XCub2BKDmuu9XtfxpuuNdqsU6GdPNzyr/FbfD/wsnVuOAM4c2sCKinB1Hqja5ZW
- 7mgSquNlO/X1gK6de5u7phveu5lt01VoMKVcGXHVF8dklAN33i3E0MQU49cxwMjY320L50V
- R33fzGdAK8vTQkGdJQGow==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VNj77z+HmrA=:B6cwnkMZaBMzXpAuLfkwWl
- goMCDGOi0ZMH2xLPBNwmWhClI1roUsuor77zUiRujR1F7wjDVglD4H07dJeOkboozDhZanoHd
- GeT/58IJU1BOQ5o8Wq424x9hGND8NJCyy90QP48lGjyvACQqcPe+FBuc8Kjolm4U0AhlGU9MS
- D+0X3KWo/x1/g22v73OFPcYwZ2L1zl/QqlmZFyMujG5hKvZrP4iCExruLrmvG76oRMHFPv+6W
- VlRpqFopMvsuDF0BUy3BT496sRZxipwgKIWNdchGCrEK49dRAHkV5nEfgmm4osYU2wRg04Oxu
- ed3cnMD1oRTq11tF93lGWUi59tzgigkinS9yyZP4jlwZjF6JHD7iQwzeumd99aUcS3aCguGHl
- rzmPUfkuTdzO511MqHQl+LAZUlG3V4JNdcgxy6Veiu7rho+IRbC6NWs1PKKjedDixbHCKrsr7
- XWZLzXXTthEFdjle6RUv/G18czrriewKT9Myre9JO7hysMsoXGPFbnNmX9K2BWn0WIR20gfps
- cdEdgw7nLo3QiZveiImRXzBpjBhGDZmBaF4jhqapgmOAl4hxAHNpfRBcLsCrWy190UHch0om4
- LVI8dH/jZKPt49eqveEp9Qzkm9n1NXUc6JlFQSsmW05Jfj50ebLw39b8+0Wwmiz9J42oTqLyi
- MqmzYabZLF477atPKSRJHJA5ahe/cTp6Gh8U8av1dSplXN8eMLFD1M/3ZuYaOYnaysrfMczu+
- +MAUQouaxymlYova4rjl5Qi9OEKCEBIs6ndz17LxhghpJ3X++YxXa9QxFQyiKQjhspGkabzoU
- o5Fymq+XDgYyauaUP7xC0NWWjbu4BaWghUb7k/5YlTjZ1CovToD8ETqTPtTePI962nKRrud
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Mar  2 11:01:46 2020 +0100 (CET)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime,
+On 27/02/2020 14:36, Geert Uytterhoeven wrote:
 
-Am 24.02.20 um 10:06 schrieb Maxime Ripard:
-> The current firmware clock driver for the RaspberryPi can only be probed by
-> manually registering an associated platform_device.
->
-> While this works fine for cpufreq where the device gets attached a clkdev
-> lookup, it would be tedious to maintain a table of all the devices using
-> one of the clocks exposed by the firmware.
->
-> Since the DT on the other hand is the perfect place to store those
-> associations, make the firmware clocks driver probe-able through the device
-> tree so that we can represent it as a node.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> Hi Marc,
+> 
+> Thanks for your patch!
+> 
+> On Wed, Feb 26, 2020 at 4:55 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+>> Using the helper produces simpler code, and smaller object size.
+>> E.g. with gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu:
+>>
+>>     text           data     bss     dec     hex filename
+>> -   1708             80       0    1788     6fc drivers/clk/clk-devres.o
+>> +   1524             80       0    1604     644 drivers/clk/clk-devres.o
+> 
+> And the size reduction could have been even more ;-)
 
-FWIW i want to mention that starting with this commit, X doesn't start
-on my Raspberry Pi 3A (applied on top of linux-next using
-multi_v7_defconfig).
+I'll see what I can do! ;-)
 
-Regards
-Stefan
+I have another patch with even smaller object code, but it requires
+C11 to be well-defined (memcmp the whole struct, which requires zeros
+in the padding holes).
 
+
+>> --- a/drivers/clk/clk-devres.c
+>> +++ b/drivers/clk/clk-devres.c
+> 
+>> @@ -55,25 +51,17 @@ static void devm_clk_bulk_release(struct device *dev, void *res)
+>>  static int __devm_clk_bulk_get(struct device *dev, int num_clks,
+>>                                struct clk_bulk_data *clks, bool optional)
+>>  {
+>> -       struct clk_bulk_devres *devres;
+>>         int ret;
+>>
+>> -       devres = devres_alloc(devm_clk_bulk_release,
+>> -                             sizeof(*devres), GFP_KERNEL);
+>> -       if (!devres)
+>> -               return -ENOMEM;
+>> -
+>>         if (optional)
+>>                 ret = clk_bulk_get_optional(dev, num_clks, clks);
+>>         else
+>>                 ret = clk_bulk_get(dev, num_clks, clks);
+>> -       if (!ret) {
+>> -               devres->clks = clks;
+>> -               devres->num_clks = num_clks;
+>> -               devres_add(dev, devres);
+>> -       } else {
+>> -               devres_free(devres);
+>> -       }
+>> +
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       ret = devm_vadd(dev, my_clk_bulk_put, clk_bulk_args, num_clks, clks);
+>>
+>>         return ret;
+> 
+> return devm_vadd(...);
+
+If you think that makes it look better, I'll make the change!
+
+
+>> @@ -128,30 +109,22 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
+>>
+>>  void devm_clk_put(struct device *dev, struct clk *clk)
+>>  {
+>> -       int ret;
+>> -
+>> -       ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
+>> -
+>> -       WARN_ON(ret);
+>> +       WARN_ON(devres_release(dev, my_clk_put, devm_clk_match, clk));
+> 
+> Getting rid of "ret" is an unrelated change, which actually increases
+> kernel size, as the WARN_ON() parameter is stringified for the warning
+> message.
+
+Weird... Are you sure about that? I built the preprocessed file,
+and it didn't appear to be so.
+
+#ifndef WARN_ON
+#define WARN_ON(condition) ({						\
+	int __ret_warn_on = !!(condition);				\
+	if (unlikely(__ret_warn_on))					\
+		__WARN();						\
+	unlikely(__ret_warn_on);					\
+})
+#endif
+
+Maybe you were thinking of i915's WARN_ON?
+
+#define WARN_ON(x) WARN((x), "%s", "WARN_ON(" __stringify(x) ")")
+
+Regards.
