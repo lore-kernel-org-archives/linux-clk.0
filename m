@@ -2,114 +2,150 @@ Return-Path: <SRS0=oWSs=4T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312C0C3F2D1
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 15:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FF3C3F2D7
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 17:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E07C21D56
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 15:58:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 607A724676
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 17:01:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="G//D/RNJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbgCBP6d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Mar 2020 10:58:33 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:47302 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbgCBP6d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 10:58:33 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: myjosserand)
-        with ESMTPSA id E1E61295BA8
-From:   =?UTF-8?q?Myl=C3=A8ne=20Josserand?= 
-        <mylene.josserand@collabora.com>
-To:     linux@armlinux.org.uk, heiko@sntech.de, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     mylene.josserand@collabora.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kernel@collabora.com,
+        id S1727393AbgCBRB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Mar 2020 12:01:28 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41715 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbgCBRBY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 12:01:24 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v4so621887wrs.8
+        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2020 09:01:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=JxxZMXsVW1OlUAj2yQJ6ZF+K072kLAsn2WXP+512A/M=;
+        b=G//D/RNJf7ItaCMkYYyhrVVoLHbmg+VdXhMwiw86M2PluaUELtampqk8xrbWLKMLqe
+         wDF6bck4vxs+t2ye9djT5PqWyAngPJSwNSuWytRndAweD5E9TdzAcOMNjOpOyQNtZZZg
+         r7vL6QxW0b3sBA7umhlOFOrPG88rJermRECnzifaNjrCU0zarr6CZ6TLwVTnV4KbC7Dz
+         KKCLPYE2Dbc/TUsbpqgaCjNK+2s1i2B07rTF8WBiOaoSBJ93SrGx7UA6IdL5G6Z1Qdsj
+         uktYR5gQeIpnWGXqf4kRgvEeN+l3bmxU2AD9cznl/S5X2ZM5XmTsbVcBGYTB9Wc/54/p
+         +mVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=JxxZMXsVW1OlUAj2yQJ6ZF+K072kLAsn2WXP+512A/M=;
+        b=fWLeanVY/Whe7/QOubBvygPH6fTas3G6f7jxglODz0GgaOPFsaNTRYsFHH9wEhyGCT
+         Ai3HX30/wmvHchBSlYYlUluzwwUxAIVlJFO3uPvDYhzFBFlF6Uq2NL96T7WJHWAmlECi
+         szI82PsGA5dknVRWwY6LrnvETgNCCx9HW3Q7ilzpGJmgRLdeZNuf8+w1WvT8Qj5PDwAC
+         +xMlxITInnU7M2h1zMPbuq36HTcmjEiJHwgRk/svV3uDP4jVrSSl/ojeP03GX9fo3dA9
+         u+EIol5SHY/MRgb9mtaCO6QX8qRAAvkdqhsuGAaz/j6pBKDXoG/71c4MQFI1kAKltFq1
+         ynIQ==
+X-Gm-Message-State: ANhLgQ0IeKArgFxesKX1O6QZwcO9zWabPUSy5IihlVDSkwhCUGgvu4Mh
+        ymAoqcn+zHJf/iSwurdX8rbXew==
+X-Google-Smtp-Source: ADFU+vvbCDhbjKnBTJ0P9gUMwbINUDb4htWjCWs1X4yIjcZsa/sq2I2rF81VVO4nPsuCrCG5FapnZA==
+X-Received: by 2002:adf:df8f:: with SMTP id z15mr533884wrl.184.1583168481691;
+        Mon, 02 Mar 2020 09:01:21 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id p10sm23628037wrx.81.2020.03.02.09.01.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 02 Mar 2020 09:01:21 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Anand Moon <linux.amoon@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 2/2] clk: rockchip: rk3288: Handle clock tree for rk3288w
-Date:   Mon,  2 Mar 2020 16:57:03 +0100
-Message-Id: <20200302155703.278421-3-mylene.josserand@collabora.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200302155703.278421-1-mylene.josserand@collabora.com>
-References: <20200302155703.278421-1-mylene.josserand@collabora.com>
+Subject: Re: [PATCHv2 2/2] clk: meson: g12a: set cpub_clk flags to CLK_IS_CRITICAL
+In-Reply-To: <20200302125310.742-3-linux.amoon@gmail.com>
+References: <20200302125310.742-1-linux.amoon@gmail.com> <20200302125310.742-3-linux.amoon@gmail.com>
+Date:   Mon, 02 Mar 2020 18:01:20 +0100
+Message-ID: <7hlfoir8rj.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The revision rk3288w has a different clock tree about
-"hclk_vio" clock, according to the BSP kernel code [1].
+Anand Moon <linux.amoon@gmail.com> writes:
 
-This patch handles this difference by detecting which SOC it is
-and creating the div accordingly.
+> On Odroid n2, cpub_clk is not geting enable, which lead the stalling
+> at booting of the device,
 
-[1]: https://github.com/rockchip-linux/kernel/blob/develop-4.4/drivers/clk/rockchip/clk-rk3288.c#L960..L964
+First, how is the CPU_B clk related to the SD card issue described in
+the cover letter?  I think this patch is attempting to fix something
+unrelated to the SD card.  Please separate from this series (or describe
+in detail how it's related to the SD card booting.)
 
-Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
----
- drivers/clk/rockchip/clk-rk3288.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+Also, we're missing lots of details here to be able to help.  Are you
+using the u-boot from hardkernel?  your own?  something else?  What's
+the version?
 
-diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-index cc2a177bbdbf..e7d6e3a095a5 100644
---- a/drivers/clk/rockchip/clk-rk3288.c
-+++ b/drivers/clk/rockchip/clk-rk3288.c
-@@ -10,6 +10,7 @@
- #include <linux/of_address.h>
- #include <linux/syscore_ops.h>
- #include <dt-bindings/clock/rk3288-cru.h>
-+#include <soc/rockchip/revision.h>
- #include "clk.h"
- 
- #define RK3288_GRF_SOC_CON(x)	(0x244 + x * 4)
-@@ -425,8 +426,6 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	COMPOSITE(0, "aclk_vio0", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(31), 6, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK3288_CLKGATE_CON(3), 0, GFLAGS),
--	DIV(0, "hclk_vio", "aclk_vio0", 0,
--			RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
- 	COMPOSITE(0, "aclk_vio1", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
- 			RK3288_CLKSEL_CON(31), 14, 2, MFLAGS, 8, 5, DFLAGS,
- 			RK3288_CLKGATE_CON(3), 2, GFLAGS),
-@@ -819,6 +818,16 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
- 	INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
- };
- 
-+static struct rockchip_clk_branch rk3288w_hclkvio_branch[] __initdata = {
-+	DIV(0, "hclk_vio", "aclk_vio1", 0,
-+	    RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
-+};
-+
-+static struct rockchip_clk_branch rk3288_hclkvio_branch[] __initdata = {
-+	DIV(0, "hclk_vio", "aclk_vio0", 0,
-+	    RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
-+};
-+
- static const char *const rk3288_critical_clocks[] __initconst = {
- 	"aclk_cpu",
- 	"aclk_peri",
-@@ -931,6 +940,14 @@ static void __init rk3288_clk_init(struct device_node *np)
- 		return;
- 	}
- 
-+	/* Check for the rk3288w revision as Clock tree is different */
-+	if (soc_is_rk3288w())
-+		rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
-+					       ARRAY_SIZE(rk3288w_hclkvio_branch));
-+	else
-+		rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
-+					       ARRAY_SIZE(rk3288_hclkvio_branch));
-+
- 	rockchip_clk_register_plls(ctx, rk3288_pll_clks,
- 				   ARRAY_SIZE(rk3288_pll_clks),
- 				   RK3288_GRF_SOC_STATUS1);
--- 
-2.25.1
+Can you share logs (including u-boot logs) showing how your kernel is
+booting and full kernel boot log (including the stalls.)
 
+> updating flags to CLK_IS_CRITICAL which help enable all the parent for
+> cpub_clk.
+
+With current mainline, I've tested DVFS using CPUfreq on both clusters
+on odroid-n2, and both clusters are booting, so I don't understand the
+need for this patch.  
+
+It's not related to your problem (I don't think) but for the regulators
+used by each cluster, the PWM driver is needed, and there's a bug/race
+in the probing of the PWM regulators used for CPU_B.  If you make the
+PWM regulators, built-in this problem goes away for CPUfreq.
+
+Just for kicks, can you build your kernel with CONFIG_PWM_MESON=y
+(currently defaults to =n) and see if you have any better results with
+booting.
+
+And FYI, any use of CLK_IS_CRITICAL will be very highly scrutinized.
+You will need detailed justification for adding this flag since it most
+often is just masking some other bug.
+
+Kevin
+
+> Fixes: ffae8475b90c (clk: meson: g12a: add notifiers to handle cpu clock change);
+> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Previous changes
+> 	fix the commit $subject and $message as previously I was
+>         wrong on the my findings.
+>         Added the Fixed tags to the commit.
+>
+> Following Neil's suggestion, I have prepared this patch.
+> https://patchwork.kernel.org/patch/11177441/#22964889
+> ---
+>  drivers/clk/meson/g12a.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+> index d2760a021301..7237d08b4112 100644
+> --- a/drivers/clk/meson/g12a.c
+> +++ b/drivers/clk/meson/g12a.c
+> @@ -681,7 +681,7 @@ static struct clk_regmap g12b_cpub_clk = {
+>  			&g12a_sys_pll.hw
+>  		},
+>  		.num_parents = 2,
+> -		.flags = CLK_SET_RATE_PARENT,
+> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>  	},
+>  };
+>  
+> -- 
+> 2.25.1
