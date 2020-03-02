@@ -2,124 +2,116 @@ Return-Path: <SRS0=oWSs=4T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 325C9C3F2D2
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 10:14:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F52C3F2D7
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 11:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1291320870
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 10:14:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE62F2467B
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 11:01:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbgCBKOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Mar 2020 05:14:43 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36098 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbgCBKOn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 05:14:43 -0500
-Received: by mail-ot1-f65.google.com with SMTP id j14so4842104otq.3;
-        Mon, 02 Mar 2020 02:14:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SVlemy32h72Zpj8jVlIGq7eQAhoadA5R3segFYSq66w=;
-        b=ELGPzNhp69sj+2oC0Y1Eh6u2+NdtJvFBULhKksN2+XrUtV4T+VM7c1VyjYFeARvPCl
-         MftwjcW/5q6KANeXz9vVyYKrt2ehobZzpq5unUneP5GfA5HRh9jJIaVtXjAOCja1esd5
-         1T1NeK7DFZuPphl+ztE9AK5jOrJ0rQDrWbN6IFsKhV/5RVe+gVgaZbg1+cdYI0B05u8p
-         L7EP/dOckGuLud6inX6FUhKgjFwA+rOYEYMsFaYy/kx82qXISyVJgLEQxvB+9VmZE+IO
-         LxmfuO4Plz+mRbwIY+OR2/gs4Gy6PJ7f38zhZ5nbXr5I/Zw88DGtI3JQ/KvG+d0HKqNx
-         5HaQ==
-X-Gm-Message-State: ANhLgQ0etdj+RxP+k+krSpUjyiERJq8VOGL/RR7KoP0sBkQ9DeCHO0ic
-        8pVL9J3z2BOKErjsierqCtu8eZpWM4qFRY46nhmWjw==
-X-Google-Smtp-Source: ADFU+vs/0ZiJfqPA7EukyL4+DZs2EJZ2FkBQDZwJ/jcv1Cma/xnhZmbg/F6SIEf/URrc+W049AaZlV2ArAclptArrf0=
-X-Received: by 2002:a05:6830:12d1:: with SMTP id a17mr3526676otq.39.1583144083038;
- Mon, 02 Mar 2020 02:14:43 -0800 (PST)
-MIME-Version: 1.0
-References: <68219a85-295d-7b7c-9658-c3045bbcbaeb@free.fr> <e88ca46a-799d-9c86-f2d2-6284eb3c3419@free.fr>
- <CAMuHMdUZfR6pYG-hourZCKT-jhh1t+x-ySF4JnEPJjscGAQT+A@mail.gmail.com> <7622db71-b1f4-62b4-86ee-78e00d5bd52c@free.fr>
-In-Reply-To: <7622db71-b1f4-62b4-86ee-78e00d5bd52c@free.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 2 Mar 2020 11:14:21 +0100
-Message-ID: <CAMuHMdVYghD_xLeXVFD+PGBKECSkQ+_KxPBwFmUDDO3W5skscQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/2] clk: Use devm_add in managed functions
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        id S1727891AbgCBLBq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Mar 2020 06:01:46 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:44502 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbgCBLBp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 06:01:45 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id CC79F2949CF
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>, rdunlap@infradead.org,
+        dri-devel@lists.freedesktop.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
+        Kate Stewart <kstewart@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        sean.wang@mediatek.com, frank-w@public-files.de,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Richard Fontana <rfontana@redhat.com>,
+        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
+        Daniel Vetter <daniel@ffwll.ch>
+Subject: [PATCH v11 2/5] dt-bindings: mediatek: Update mmsys binding to reflect it is a system controller
+Date:   Mon,  2 Mar 2020 12:01:25 +0100
+Message-Id: <20200302110128.2664251-3-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200302110128.2664251-1-enric.balletbo@collabora.com>
+References: <20200302110128.2664251-1-enric.balletbo@collabora.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marc,
+The mmsys system controller is not only a pure clock controller, so
+update the binding documentation to reflect that apart from providing
+clocks, it also provides routing and miscellaneous control registers.
 
-On Mon, Mar 2, 2020 at 11:01 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
-> On 27/02/2020 14:36, Geert Uytterhoeven wrote:
-> > On Wed, Feb 26, 2020 at 4:55 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
-> >> Using the helper produces simpler code, and smaller object size.
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Reviewed-by: CK Hu <ck.hu@mediatek.com>
+---
 
-> >> --- a/drivers/clk/clk-devres.c
-> >> +++ b/drivers/clk/clk-devres.c
+Changes in v11: None
+Changes in v10:
+- Update the binding documentation for the mmsys system controller.
 
-> >> @@ -128,30 +109,22 @@ static int devm_clk_match(struct device *dev, void *res, void *data)
-> >>
-> >>  void devm_clk_put(struct device *dev, struct clk *clk)
-> >>  {
-> >> -       int ret;
-> >> -
-> >> -       ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
-> >> -
-> >> -       WARN_ON(ret);
-> >> +       WARN_ON(devres_release(dev, my_clk_put, devm_clk_match, clk));
-> >
-> > Getting rid of "ret" is an unrelated change, which actually increases
-> > kernel size, as the WARN_ON() parameter is stringified for the warning
-> > message.
->
-> Weird... Are you sure about that? I built the preprocessed file,
-> and it didn't appear to be so.
->
-> #ifndef WARN_ON
-> #define WARN_ON(condition) ({                                           \
->         int __ret_warn_on = !!(condition);                              \
->         if (unlikely(__ret_warn_on))                                    \
->                 __WARN();                                               \
->         unlikely(__ret_warn_on);                                        \
-> })
-> #endif
->
-> Maybe you were thinking of i915's WARN_ON?
->
-> #define WARN_ON(x) WARN((x), "%s", "WARN_ON(" __stringify(x) ")")
+Changes in v9: None
+Changes in v8: None
+Changes in v7: None
 
-Oops, you're right.  I got trapped again by an override of a standard macro
-(IMHO this should be removed).
+ .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt    | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 301eefbe1618..8d6a9d98e7a6 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -1,7 +1,8 @@
+ Mediatek mmsys controller
+ ============================
+ 
+-The Mediatek mmsys controller provides various clocks to the system.
++The Mediatek mmsys system controller provides clock control, routing control,
++and miscellaneous control in mmsys partition.
+ 
+ Required Properties:
+ 
+@@ -15,13 +16,13 @@ Required Properties:
+ 	- "mediatek,mt8183-mmsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+-The mmsys controller uses the common clk binding from
++For the clock control, the mmsys controller uses the common clk binding from
+ Documentation/devicetree/bindings/clock/clock-bindings.txt
+ The available clocks are defined in dt-bindings/clock/mt*-clk.h.
+ 
+ Example:
+ 
+-mmsys: clock-controller@14000000 {
++mmsys: syscon@14000000 {
+ 	compatible = "mediatek,mt8173-mmsys", "syscon";
+ 	reg = <0 0x14000000 0 0x1000>;
+ 	#clock-cells = <1>;
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.25.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
