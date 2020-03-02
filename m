@@ -2,97 +2,261 @@ Return-Path: <SRS0=oWSs=4T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4334FC3F2D1
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 17:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C44DCC3F2D1
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 20:26:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A7A2222C4
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 17:18:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="mSdaRQNl"
+	by mail.kernel.org (Postfix) with ESMTP id 999F022B48
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 20:26:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583180772;
+	bh=059wxh3OVufAI46JCgDU8RbaUU2qIFjWdThp031XBgU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=KKoujIMt7sV2rrWLqRfBnRkm3FyEPqQCa49j7jG5tgieMUmQFrbZDfFmkjZhB8ZTt
+	 ywWLjnychD5Obt8ycspxJfz/KKiuNOb4XxLwhn2/53uR5JFdkg3dZhSsh9rHZeWvZ4
+	 wKaJSwn08TFPMDmmO28YvNo58uW8Sq9MUIQgyvDk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbgCBRSY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Mar 2020 12:18:24 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38532 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727329AbgCBRSX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 12:18:23 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t11so723968wrw.5
-        for <linux-clk@vger.kernel.org>; Mon, 02 Mar 2020 09:18:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=SXg4ANPPHujnOtlOtYMneAF3xY1y0Qzs6lLnP3dZ2Eo=;
-        b=mSdaRQNlY7mufhxefFHO9E0HmiRuJqcR5IkePx8zpUI992xFIFgiMiz4Gi5sNj3NEI
-         hd9N2W+4Dsx6v7z2hXGn5kxId0G3btlLTgkiwpAyx9BHnkcH7DNgJkFwd9JeQ/SLXftl
-         +9HmX3flc+V509SOfMf1CeDGcImsWgpc1FtEXVRF59szYLbOFJ8Ac3vjMAclYY3eVBO0
-         VkaksqS/ZaI/Hkm6f1oXy+NUAJUmm7teNAIJtZaVhrPE/dpzQP5pX6HxaqApu+UnpgrR
-         m30yCONditdo/eeyfb0vTsI+hldY5qSWaLg8a86atbEOC1iqlmuPytX8k26Sb8Z2TLdZ
-         ZtTg==
+        id S1725883AbgCBU0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Mar 2020 15:26:12 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38617 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbgCBU0M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 15:26:12 -0500
+Received: by mail-ot1-f65.google.com with SMTP id i14so640950otp.5;
+        Mon, 02 Mar 2020 12:26:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=SXg4ANPPHujnOtlOtYMneAF3xY1y0Qzs6lLnP3dZ2Eo=;
-        b=WxpzhELqkT9yD9GutJFoYkp739maRA9JeyJP2O+m9efSbLCeWBEwREl7TAN/EDn6kY
-         6yU98w9E1ZdG3/4HRtwsnKzhrprBHL/J3g6A0AR83agJgOF6pvk3lSiXxZNCt06+mAaY
-         Qr3pHaDbhBi+YyOJW7h3lE1pdKBnPLQtT4OrgMwIojtcspiKJWah5LQgXay3DqN+uLFL
-         hZ4v2DSlEcAAFBaZcQvJPvHuUvF+bxvxu9Tl3bk8/okeYPmJuhscaPJuFovN5sYGdgB0
-         tLPMroGNJAMVQ7PT786jH+nQlkDluykQQ1wPY7o7Fx/c17ravjTDC8Y05PIq82ICfbHJ
-         hE0A==
-X-Gm-Message-State: ANhLgQ09MMEafibhDKtSuNGZ5wl25Hb6dznZVq2ZXfH3Hxq0zv/ZkN6t
-        fXnrAWg9f7tpZqlkR6JxLVUoyQ==
-X-Google-Smtp-Source: ADFU+vsX7sylmYulhpint5DODaeUoRGQLESGv6af+LdEy2T3qLGW2WZccdCEKj2zO/+pPKdQyCoHhQ==
-X-Received: by 2002:adf:fdc2:: with SMTP id i2mr652127wrs.166.1583169499293;
-        Mon, 02 Mar 2020 09:18:19 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c2sm45867wma.39.2020.03.02.09.18.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 02 Mar 2020 09:18:18 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Anand Moon <linux.amoon@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5XBtgrtLiy94riHECcrFgVdKA2SyAZZ5XYgSL/pdgvM=;
+        b=sRj4ADFhuC1i07T60y6nPKHB9fz2lJI/Lmv2r14xM0/Q16lcAZkYgfdXW/O9G4HEHW
+         DhzpZVGRTI6pw5Wd1h4N6iQS11Owkhl7+1FtWRVy7RgG2e0dcj5czv+DIO2aXV7ux7ze
+         6vn8hrf4+jfbrg9MEJ0pvu5uZScgtr7I6e2cURkpLHAh8G93bW06yguDSxJZkqBArmqZ
+         L+7w0uvXLZFt1mVHdHKXDs+YW8jr/GBLFPWcoqJra61BTw4d3NEIFp6HaN33ZRk3aeBm
+         Xeu81y/JX1PEZDhhC/1+3CuXCwIdFyUCEVw5zGEdRqVlageXWfPOqLTHNRlXYXizpRlg
+         +zbg==
+X-Gm-Message-State: ANhLgQ3/UrnjBZgKCzgmUfAhPsaw39VXZjf930M9mxBUSPK9NxMX6Sok
+        +itpXNlg2kqoZnteKzLOMw==
+X-Google-Smtp-Source: ADFU+vsXDzZVDlw6FcVhTkZxRni0C3yrmMHNPiLxu+STNcPBcOGjF4Xm7pEmlBDqttBkz1l3czXchg==
+X-Received: by 2002:a05:6830:108d:: with SMTP id y13mr723232oto.241.1583180770877;
+        Mon, 02 Mar 2020 12:26:10 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l8sm6928111otn.31.2020.03.02.12.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Mar 2020 12:26:10 -0800 (PST)
+Received: (nullmailer pid 4438 invoked by uid 1000);
+        Mon, 02 Mar 2020 20:26:09 -0000
+Date:   Mon, 2 Mar 2020 14:26:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCHv2 1/2] arm64: dts: meson: Add missing regulator linked to VDDAO_3V3 regulator to FLASH_VDD
-In-Reply-To: <20200302125310.742-2-linux.amoon@gmail.com>
-References: <20200302125310.742-1-linux.amoon@gmail.com> <20200302125310.742-2-linux.amoon@gmail.com>
-Date:   Mon, 02 Mar 2020 18:18:17 +0100
-Message-ID: <7hfteqr7za.fsf@baylibre.com>
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: cpg-mssr: Convert to
+ json-schema
+Message-ID: <20200302202609.GA24264@bogus>
+References: <20200224152640.1318-1-geert+renesas@glider.be>
+ <158265013473.177367.4512247165308399202@swboyd.mtv.corp.google.com>
+ <CAMuHMdUDjWKYaQ_MN+AvYg8vimZKMcck3SdHUSg8tPCCAEieJQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUDjWKYaQ_MN+AvYg8vimZKMcck3SdHUSg8tPCCAEieJQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Anand Moon <linux.amoon@gmail.com> writes:
+On Thu, Feb 27, 2020 at 12:12:36PM +0100, Geert Uytterhoeven wrote:
+> Hi Stephen,
+> 
+> Thanks for your comments!
+> 
+> On Tue, Feb 25, 2020 at 6:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2020-02-24 07:26:40)
+> > > diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > > new file mode 100644
+> > > index 0000000000000000..dfbd1933f1bc56de
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > > @@ -0,0 +1,204 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
+> > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > +
+> > > +title: Renesas Clock Pulse Generator / Module Standby and Software Reset
+> > > +
+> > > +maintainers:
+> > > +  - Geert Uytterhoeven <geert+renesas@glider.be>
+> > > +
+> > > +description: |
+> > > +  On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
+> > > +  and MSSR (Module Standby and Software Reset) blocks are intimately connected,
+> > > +  and share the same register block.
+> > > +
+> > > +  They provide the following functionalities:
+> > > +    - The CPG block generates various core clocks,
+> > > +    - The MSSR block provides two functions:
+> > > +        1. Module Standby, providing a Clock Domain to control the clock supply
+> > > +           to individual SoC devices,
+> > > +        2. Reset Control, to perform a software reset of individual SoC devices.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    enum:
+> > > +      - renesas,r7s9210-cpg-mssr  # RZ/A2
+> > > +      - renesas,r8a7743-cpg-mssr  # RZ/G1M
+> > > +      - renesas,r8a7744-cpg-mssr  # RZ/G1N
+> > > +      - renesas,r8a7745-cpg-mssr  # RZ/G1E
+> > > +      - renesas,r8a77470-cpg-mssr # RZ/G1C
+> > > +      - renesas,r8a774a1-cpg-mssr # RZ/G2M
+> > > +      - renesas,r8a774b1-cpg-mssr # RZ/G2N
+> > > +      - renesas,r8a774c0-cpg-mssr # RZ/G2E
+> > > +      - renesas,r8a7790-cpg-mssr  # R-Car H2
+> > > +      - renesas,r8a7791-cpg-mssr  # R-Car M2-W
+> > > +      - renesas,r8a7792-cpg-mssr  # R-Car V2H
+> > > +      - renesas,r8a7793-cpg-mssr  # R-Car M2-N
+> > > +      - renesas,r8a7794-cpg-mssr  # R-Car E2
+> > > +      - renesas,r8a7795-cpg-mssr  # R-Car H3
+> > > +      - renesas,r8a7796-cpg-mssr  # R-Car M3-W
+> > > +      - renesas,r8a77961-cpg-mssr # R-Car M3-W+
+> > > +      - renesas,r8a77965-cpg-mssr # R-Car M3-N
+> > > +      - renesas,r8a77970-cpg-mssr # R-Car V3M
+> > > +      - renesas,r8a77980-cpg-mssr # R-Car V3H
+> > > +      - renesas,r8a77990-cpg-mssr # R-Car E3
+> > > +      - renesas,r8a77995-cpg-mssr # R-Car D3
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    minItems: 1
+> > > +    maxItems: 2
+> > > +
+> > > +  clock-names:
+> > > +    minItems: 1
+> > > +    maxItems: 2
+> >
+> > Do we need this here and also below? Why can't it just be below with the
+> > more specific constraints?
+> 
+> With the above removed:
+> 
+>     Documentation/devicetree/bindings/clock/renesas,cpg-mssr.example.dt.yaml:
+> clock-controller@e6150000: 'clock-names', 'clocks' do not match any of
+> the regexes: 'pinctrl-[0-9]+'
+> 
+> while the "if" below overriding minItems did trigger, as removing entries from
+> clocks/clock-names in the example causes more errors.
+> 
+> So it seems all properties must be listed in the main, unconditional,
+> properties section at the top.
+> 
+> > > +allOf:
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          items:
+> > > +            enum:
+> > > +              - renesas,r7s9210-cpg-mssr
+> > > +              - renesas,r8a774c0-cpg-mssr
+> > > +              - renesas,r8a7792-cpg-mssr
+> > > +              - renesas,r8a77990-cpg-mssr
+> > > +              - renesas,r8a77995-cpg-mssr
+> > > +
+> > > +    then:
+> > > +      properties:
+> > > +        clock:
+> > > +          maxItems: 1
+> > > +        clock-names:
+> > > +          maxItems: 1
+> > > +          items:
+> > > +            - const: extal
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          contains:
+> > > +            enum:
+> > > +              - renesas,r8a7743-cpg-mssr
+> > > +              - renesas,r8a7744-cpg-mssr
+> > > +              - renesas,r8a7745-cpg-mssr
+> > > +              - renesas,r8a77470-cpg-mssr
+> > > +              - renesas,r8a7790-cpg-mssr
+> > > +              - renesas,r8a7791-cpg-mssr
+> > > +              - renesas,r8a7793-cpg-mssr
+> > > +              - renesas,r8a7794-cpg-mssr
+> > > +
+> > > +    then:
+> > > +      properties:
+> > > +        clock:
+> > > +          minItems: 2
+> > > +        clock-names:
+> > > +          minItems: 2
+> > > +          items:
+> > > +            - const: extal
+> > > +            - const: usb_extal
+> > > +
+> > > +  - if:
+> > > +      properties:
+> > > +        compatible:
+> > > +          items:
+> > > +            enum:
+> > > +              - renesas,r8a774a1-cpg-mssr
+> > > +              - renesas,r8a774b1-cpg-mssr
+> > > +              - renesas,r8a7795-cpg-mssr
+> > > +              - renesas,r8a7796-cpg-mssr
+> > > +              - renesas,r8a77961-cpg-mssr
+> > > +              - renesas,r8a77965-cpg-mssr
+> > > +              - renesas,r8a77970-cpg-mssr
+> > > +              - renesas,r8a77980-cpg-mssr
+> > > +
+> > > +    then:
+> > > +      properties:
+> > > +        clock:
+> > > +          minItems: 2
+> > > +        clock-names:
+> > > +          minItems: 2
+> > > +          items:
+> > > +            - const: extal
+> > > +            - const: extalr
+> > > +
+> > > +  - if:
+> > > +      not:
+> > > +        properties:
+> > > +          compatible:
+> > > +            items:
+> > > +              enum:
+> > > +                - renesas,r7s9210-cpg-mssr
+> > > +    then:
+> > > +      required:
+> > > +        - '#reset-cells'
+> >
+> > It may make sense to split this binding up into multiple bindings so
+> > that we don't have deeply nested if/else/then.
+> 
+> Note that the above is not a nested if, but the yaml-equivalent of a switch()
+> statement.
+> 
+> If this is to be split, how to split it?
+> Each if contains SoCs from multiple families, and each family of SoCs is
+> split across multiple ifs.
 
-> As per schematics add missing VDDAO_3V3 power supply to FLASH_VDD
-> regulator.
+Looks like 3 files based on the first 3 if's above.
 
-Could you please add a link to the specific schematics you used to find
-this usseu?
+Personally, I'd be fine with just a single schema without all the if's. 
+It wouldn't be as strict as to what's allowed for each compatible, but 
+good enough IMO.
 
-> Also add TFLASH_VDD_EN signal name to gpio pin.
-
-Your patch does not do this part.
-
-Similarily to the other patch, can you explain in more detail (including
-kernel boot logs) how the SD card is not working?
-
-I just tested with latest mainline, and the MMC driver is detecting both
-the eMMC and the SD card.
-
-Kevin
+Rob
