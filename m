@@ -2,300 +2,106 @@ Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC254C3F2C6
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 09:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 655A7C3F2D8
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 10:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87C5520848
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 09:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A2F321556
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 10:09:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbgCCJsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Mar 2020 04:48:54 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:60368 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728304AbgCCJsy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 04:48:54 -0500
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id 9loq2200M5USYZQ01loqNa; Tue, 03 Mar 2020 10:48:50 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j94AU-0006lE-6p; Tue, 03 Mar 2020 10:48:50 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1j94AU-0006AV-4H; Tue, 03 Mar 2020 10:48:50 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
-Date:   Tue,  3 Mar 2020 10:48:48 +0100
-Message-Id: <20200303094848.23670-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1727412AbgCCKJi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Mar 2020 05:09:38 -0500
+Received: from mga05.intel.com ([192.55.52.43]:21993 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727820AbgCCKJi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Mar 2020 05:09:38 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Mar 2020 02:09:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,510,1574150400"; 
+   d="scan'208";a="351792132"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga001.fm.intel.com with ESMTP; 03 Mar 2020 02:09:34 -0800
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1j94Ua-006WAi-JV; Tue, 03 Mar 2020 12:09:36 +0200
+Date:   Tue, 3 Mar 2020 12:09:36 +0200
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        rtanwar <rahul.tanwar@intel.com>
+Subject: Re: [PATCH v5 2/2] clk: intel: Add CGU clock driver for a new SoC
+Message-ID: <20200303100936.GL1224808@smile.fi.intel.com>
+References: <cover.1582096982.git.rahul.tanwar@linux.intel.com>
+ <6148b5b25d4a6833f0a72801d569ed97ac6ca55b.1582096982.git.rahul.tanwar@linux.intel.com>
+ <e8259928-cb2a-a453-8f2a-1b57c8abdb8c@infradead.org>
+ <4fb7a643-cbe1-da82-2629-2dbd0c0d143b@linux.intel.com>
+ <20200227100239.GD1224808@smile.fi.intel.com>
+ <12c16eb0-04aa-79cf-fa76-3f45b8972319@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <12c16eb0-04aa-79cf-fa76-3f45b8972319@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the Renesas Clock Pulse Generator / Module Standby and Software
-Reset Device Tree binding documentation to json-schema.
+On Tue, Mar 03, 2020 at 11:37:23AM +0800, Tanwar, Rahul wrote:
+> On 27/2/2020 6:02 PM, Andy Shevchenko wrote:
+> > On Thu, Feb 27, 2020 at 03:19:26PM +0800, Tanwar, Rahul wrote:
+> >> On 19/2/2020 3:59 PM, Randy Dunlap wrote:
+> >>> On 2/18/20 11:40 PM, Rahul Tanwar wrote:
+> >>>
+> >>>> +config CLK_LGM_CGU
+> >>>> +	depends on (OF && HAS_IOMEM) || COMPILE_TEST
+> >>> This "depends on" looks problematic to me. I guess we shall see when
+> >>> all the build bots get to it.
+> >> At the moment, i am not able to figure out possible problems in this..
+> > COMPILE_TEST should be accompanied by non-generic dependency.
+> > There is none.
+> >
+> > So, I quite agree with Randy.
+> 
+> I see COMPILE_TEST is mostly ORed with ARCH_xx. How about below?
+> 
+> depends on OF && HAS_IOMEM && (CONFIG_X86 || COMPILE_TEST)
 
-Note that #reset-cells was incorrecty marked a required property for
-RZ/A2 before.
+How about to leave logical parts separately?
+How is OF related to architecture?
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in clk-renesas-for-v5.7.
+On top of that, is this code only for x86 for sure?
 
-v2:
-  - Remove complex if-construct implementing per-SoC clocks/clock-names
-    constraints; list all possible clock-names upfront instead,
-  - Drop Clock Domain member example.
----
- .../bindings/clock/renesas,cpg-mssr.txt       | 100 ---------------
- .../bindings/clock/renesas,cpg-mssr.yaml      | 119 ++++++++++++++++++
- 2 files changed, 119 insertions(+), 100 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> >>>> +	select OF_EARLY_FLATTREE
+> >>> If OF is not set and HAS_IOMEM is not set, but COMPILE_TEST is set,
+> >>> I expect that this should not be attempting to select OF_EARLY_FLATTREE.
+> >>>
+> >>> Have you tried such a config combination?
+> >> Agree, that would be a problem. I will change it to
+> >>
+> >> select OF_EARLY_FLATTREE if OF
+> > Nope, I think this is wrong work around.
+> > See above.
+> 
+> With above proposed change, i can simply switch to
+> select OF_EARLY_FLATTREE since all dependencies are already
+> in place..
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-deleted file mode 100644
-index f4d153f24a0ff803..0000000000000000
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ /dev/null
-@@ -1,100 +0,0 @@
--* Renesas Clock Pulse Generator / Module Standby and Software Reset
--
--On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
--and MSSR (Module Standby and Software Reset) blocks are intimately connected,
--and share the same register block.
--
--They provide the following functionalities:
--  - The CPG block generates various core clocks,
--  - The MSSR block provides two functions:
--      1. Module Standby, providing a Clock Domain to control the clock supply
--	 to individual SoC devices,
--      2. Reset Control, to perform a software reset of individual SoC devices.
--
--Required Properties:
--  - compatible: Must be one of:
--      - "renesas,r7s9210-cpg-mssr" for the r7s9210 SoC (RZ/A2)
--      - "renesas,r8a7743-cpg-mssr" for the r8a7743 SoC (RZ/G1M)
--      - "renesas,r8a7744-cpg-mssr" for the r8a7744 SoC (RZ/G1N)
--      - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
--      - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
--      - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
--      - "renesas,r8a774b1-cpg-mssr" for the r8a774b1 SoC (RZ/G2N)
--      - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
--      - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
--      - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
--      - "renesas,r8a7792-cpg-mssr" for the r8a7792 SoC (R-Car V2H)
--      - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
--      - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
--      - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
--      - "renesas,r8a7796-cpg-mssr" for the r8a77960 SoC (R-Car M3-W)
--      - "renesas,r8a77961-cpg-mssr" for the r8a77961 SoC (R-Car M3-W+)
--      - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
--      - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
--      - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
--      - "renesas,r8a77990-cpg-mssr" for the r8a77990 SoC (R-Car E3)
--      - "renesas,r8a77995-cpg-mssr" for the r8a77995 SoC (R-Car D3)
--
--  - reg: Base address and length of the memory resource used by the CPG/MSSR
--    block
--
--  - clocks: References to external parent clocks, one entry for each entry in
--    clock-names
--  - clock-names: List of external parent clock names. Valid names are:
--      - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
--		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
--		 r8a7794, r8a7795, r8a77960, r8a77961, r8a77965, r8a77970,
--		 r8a77980, r8a77990, r8a77995)
--      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a77960, r8a77961, r8a77965,
--		  r8a77970, r8a77980)
--      - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
--		     r8a7793, r8a7794)
--
--  - #clock-cells: Must be 2
--      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
--	and a core clock reference, as defined in
--	<dt-bindings/clock/*-cpg-mssr.h>.
--      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
--	a module number, as defined in the datasheet.
--
--  - #power-domain-cells: Must be 0
--      - SoC devices that are part of the CPG/MSSR Clock Domain and can be
--	power-managed through Module Standby should refer to the CPG device
--	node in their "power-domains" property, as documented by the generic PM
--	Domain bindings in
--	Documentation/devicetree/bindings/power/power-domain.yaml.
--
--  - #reset-cells: Must be 1
--      - The single reset specifier cell must be the module number, as defined
--	in the datasheet.
--
--
--Examples
----------
--
--  - CPG device node:
--
--	cpg: clock-controller@e6150000 {
--		compatible = "renesas,r8a7795-cpg-mssr";
--		reg = <0 0xe6150000 0 0x1000>;
--		clocks = <&extal_clk>, <&extalr_clk>;
--		clock-names = "extal", "extalr";
--		#clock-cells = <2>;
--		#power-domain-cells = <0>;
--		#reset-cells = <1>;
--	};
--
--
--  - CPG/MSSR Clock Domain member device node:
--
--	scif2: serial@e6e88000 {
--		compatible = "renesas,scif-r8a7795", "renesas,scif";
--		reg = <0 0xe6e88000 0 64>;
--		interrupts = <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>;
--		clocks = <&cpg CPG_MOD 310>;
--		clock-names = "fck";
--		dmas = <&dmac1 0x13>, <&dmac1 0x12>;
--		dma-names = "tx", "rx";
--		power-domains = <&cpg>;
--		resets = <&cpg 310>;
--	};
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-new file mode 100644
-index 0000000000000000..4c1e6ac272196e97
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-@@ -0,0 +1,119 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Renesas Clock Pulse Generator / Module Standby and Software Reset
-+
-+maintainers:
-+  - Geert Uytterhoeven <geert+renesas@glider.be>
-+
-+description: |
-+  On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
-+  and MSSR (Module Standby and Software Reset) blocks are intimately connected,
-+  and share the same register block.
-+
-+  They provide the following functionalities:
-+    - The CPG block generates various core clocks,
-+    - The MSSR block provides two functions:
-+        1. Module Standby, providing a Clock Domain to control the clock supply
-+           to individual SoC devices,
-+        2. Reset Control, to perform a software reset of individual SoC devices.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - renesas,r7s9210-cpg-mssr  # RZ/A2
-+      - renesas,r8a7743-cpg-mssr  # RZ/G1M
-+      - renesas,r8a7744-cpg-mssr  # RZ/G1N
-+      - renesas,r8a7745-cpg-mssr  # RZ/G1E
-+      - renesas,r8a77470-cpg-mssr # RZ/G1C
-+      - renesas,r8a774a1-cpg-mssr # RZ/G2M
-+      - renesas,r8a774b1-cpg-mssr # RZ/G2N
-+      - renesas,r8a774c0-cpg-mssr # RZ/G2E
-+      - renesas,r8a7790-cpg-mssr  # R-Car H2
-+      - renesas,r8a7791-cpg-mssr  # R-Car M2-W
-+      - renesas,r8a7792-cpg-mssr  # R-Car V2H
-+      - renesas,r8a7793-cpg-mssr  # R-Car M2-N
-+      - renesas,r8a7794-cpg-mssr  # R-Car E2
-+      - renesas,r8a7795-cpg-mssr  # R-Car H3
-+      - renesas,r8a7796-cpg-mssr  # R-Car M3-W
-+      - renesas,r8a77961-cpg-mssr # R-Car M3-W+
-+      - renesas,r8a77965-cpg-mssr # R-Car M3-N
-+      - renesas,r8a77970-cpg-mssr # R-Car V3M
-+      - renesas,r8a77980-cpg-mssr # R-Car V3H
-+      - renesas,r8a77990-cpg-mssr # R-Car E3
-+      - renesas,r8a77995-cpg-mssr # R-Car D3
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 2
-+
-+  clock-names:
-+    minItems: 1
-+    maxItems: 2
-+    items:
-+      enum:
-+        - extal     # All
-+        - extalr    # Most R-Car Gen3 and RZ/G2
-+        - usb_extal # Most R-Car Gen2 and RZ/G1
-+
-+  '#clock-cells':
-+    description: |
-+      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
-+        and a core clock reference, as defined in
-+        <dt-bindings/clock/*-cpg-mssr.h>
-+      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
-+        a module number, as defined in the datasheet.
-+    const: 2
-+
-+  '#power-domain-cells':
-+    description:
-+      SoC devices that are part of the CPG/MSSR Clock Domain and can be
-+      power-managed through Module Standby should refer to the CPG device node
-+      in their "power-domains" property, as documented by the generic PM Domain
-+      bindings in Documentation/devicetree/bindings/power/power-domain.yaml.
-+    const: 0
-+
-+  '#reset-cells':
-+    description:
-+      The single reset specifier cell must be the module number, as defined in
-+      the datasheet.
-+    const: 1
-+
-+if:
-+  not:
-+    properties:
-+      compatible:
-+        items:
-+          enum:
-+            - renesas,r7s9210-cpg-mssr
-+then:
-+  required:
-+    - '#reset-cells'
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+  - '#power-domain-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    cpg: clock-controller@e6150000 {
-+            compatible = "renesas,r8a7795-cpg-mssr";
-+            reg = <0xe6150000 0x1000>;
-+            clocks = <&extal_clk>, <&extalr_clk>;
-+            clock-names = "extal", "extalr";
-+            #clock-cells = <2>;
-+            #power-domain-cells = <0>;
-+            #reset-cells = <1>;
-+    };
+Right.
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
