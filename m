@@ -2,107 +2,91 @@ Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C22C3F2C6
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B851C3F2D7
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:59:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9FF520838
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:12:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdYyZGSc"
+	by mail.kernel.org (Postfix) with ESMTP id 23FA420828
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:59:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583247567;
+	bh=Po21GpAsxJXHa8omSA0fH0AF3jSqp6NBSXKyNPFTq40=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gvEk80XATCfen+qNOBPOMAFPpjNq983X0oO3FTrAhp3LZzOqOaR2rw192qf4JlJCY
+	 DyN+M7Ni++XKpDDeW4BMqLOej2G4AUlXE8sQtAQoJEYGEloyhglNomRn0vFdbMal8x
+	 DCZXht2QPdXG69ol4lOZDrLFr5U1FmUiXP6n9aKM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727936AbgCCOMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Mar 2020 09:12:03 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39786 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbgCCOMD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 09:12:03 -0500
-Received: by mail-il1-f194.google.com with SMTP id w69so2856309ilk.6;
-        Tue, 03 Mar 2020 06:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9oLRc0nmTu5IkCd4vNNk7O1hyfZenptlFlSFbqIq9b0=;
-        b=VdYyZGScoutk3pxfC0VoVaIu9BuHy1HCBXNmZUt+8WqM74tgN4AlUhmurTANElQaPQ
-         yWkKVfparLXbkK9wP5rpSE/sQq3Hss3OvRIaujGhkC+OwuuoV4rfzH72UR1mXvCcu75N
-         bVSc7fJbKr0Eo1gxqzECfP0flYFKurnkaLqmoH+pjauXp45yOZg3Aw8hLFJnKTJo8bCp
-         33yx0V33Hr/GIxiiX0vKrYuVXwa/w9fY4M5yVf4jjaZVg0Uc/zUhTtih+ggCCqJkcKRZ
-         8cLtv8b5Z6j4Zhi7drt4vRJ3k3qYTGPfNOh6qltZmGnkwCouqVyQCtX/5bTgPeh81ejZ
-         F39Q==
+        id S1729720AbgCCO7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Mar 2020 09:59:23 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40330 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728975AbgCCO7X (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 09:59:23 -0500
+Received: by mail-ot1-f65.google.com with SMTP id x19so3270759otp.7;
+        Tue, 03 Mar 2020 06:59:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9oLRc0nmTu5IkCd4vNNk7O1hyfZenptlFlSFbqIq9b0=;
-        b=Ml9uK2hasTjKqQrtAD6quKp39tLEGSNzG8rHO7mN5jhAK9+QQMm+QNBOxNOrvY5fHA
-         ZVJfZ0GEsGx9ndYaiZSG/QZ0ysL/+VK7OB9j7//baiK+wVBtnF7NbtXe8tG7Htd+yeXc
-         DGxn+/Qf4NeP8aJAfK+zpI0axTsZUpf2PmrzvqYBv4RVdfD0//UofoNVqWxRRH74M/Br
-         aQfCy21YB9UC6RqlkGM8g19ITufN99LHoh4gmec0WmwICLnvSATDw7QNWj9ADfvNklxJ
-         1Gt6RdSeV+YP9ye3mSdIpPg2cm1jddCKUaTvSPUGWAGRhpL4LifYGPewlfHhdLJ+7+99
-         GRzw==
-X-Gm-Message-State: ANhLgQ1gkq999gO1AKm9sz3DCUdx5DqwJ8H/otVN3EvSs/F4x8DUP+CM
-        qqkYETUB09CqxsDcwIDS4eLB34K6G3wSoTHsjnQ=
-X-Google-Smtp-Source: ADFU+vurE9ThOeaOHx0MHGxMnPxoGfO/3ZZeZtvaaomjQ7bHlMWt7ERjyJ02dTTMc6V00/ur6J0Ef8fA5gobdIyxzN8=
-X-Received: by 2002:a92:3a55:: with SMTP id h82mr4919098ila.75.1583244722519;
- Tue, 03 Mar 2020 06:12:02 -0800 (PST)
-MIME-Version: 1.0
-References: <20200302125310.742-1-linux.amoon@gmail.com> <20200302125310.742-2-linux.amoon@gmail.com>
- <7hfteqr7za.fsf@baylibre.com>
-In-Reply-To: <7hfteqr7za.fsf@baylibre.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Tue, 3 Mar 2020 19:41:51 +0530
-Message-ID: <CANAwSgS_9uterktdPqSchyRDjfytEQFU1eci+a4oDmG-K1izuw@mail.gmail.com>
-Subject: Re: [PATCHv2 1/2] arm64: dts: meson: Add missing regulator linked to
- VDDAO_3V3 regulator to FLASH_VDD
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jxXZabJF36zBqHLvSkp1BT+uIXDUsdzVqIFAD0M2EXo=;
+        b=Ec0whZDOP87o26kq8TtpXG6lXy8JX2l9/TEDXRM3pM6nb9lBbOKZOxZvVrdZ5I2eUi
+         RZ4BaU0h7pqdc+x3TvbVYaWGa26lk/KgwS6boEnOidBJnKiss4o/G8PWvdC8zqUl2IfT
+         nn1zhdr0QKcF7Qd/32SA+83cKF6cPoEvaNJLWOUbbnVivV9OA2YAi29MJZJpW1FKtbsB
+         MBfoBHXQxON3UNjwz4FpL8qw/0MSHC0o4K2AXT0x0y6JVKjxwxSehYmzOmjiBbkGh0ZA
+         V3hPphBqgKm6MCnDHiJJzUua/MDZJHuA8AQfoVdN46qrpHlXSETdRlILcX3ek95A02TG
+         wVig==
+X-Gm-Message-State: ANhLgQ0wg6VVuqTcbxvNCkxCa6ldIRtMQbQ0WPG7k8TDM4MM/GN+koWI
+        G7blP8ffL/8ZigRuQh6ppg==
+X-Google-Smtp-Source: ADFU+vs0akez33tRS244m5eGi3FSV87z7OM5KR9hAV09veZ9Jb9+CkWsSjCrP6apKPamqlw3XwLehQ==
+X-Received: by 2002:a9d:748c:: with SMTP id t12mr3506779otk.38.1583247562238;
+        Tue, 03 Mar 2020 06:59:22 -0800 (PST)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c7sm7904442otm.63.2020.03.03.06.59.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Mar 2020 06:59:21 -0800 (PST)
+Received: (nullmailer pid 32405 invoked by uid 1000);
+        Tue, 03 Mar 2020 14:59:20 -0000
+Date:   Tue, 3 Mar 2020 08:59:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Ansuel Smith <ansuelsmth@gmail.com>
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
+Message-ID: <20200303145920.GA32328@bogus>
+References: <robh@kernel.org>
+ <20200226214812.390-1-ansuelsmth@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200226214812.390-1-ansuelsmth@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Kevin,
+On Wed, 26 Feb 2020 22:48:12 +0100, Ansuel Smith wrote:
+> Add missing definition of rpm clk for ipq806x soc
+> 
+> Signed-off-by: John Crispin <john@phrozen.org>
+> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> Acked-by: John Crispin <john@phrozen.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+>  drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
+>  include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
+>  3 files changed, 40 insertions(+)
+> 
 
-On Mon, 2 Mar 2020 at 22:48, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> Anand Moon <linux.amoon@gmail.com> writes:
->
-> > As per schematics add missing VDDAO_3V3 power supply to FLASH_VDD
-> > regulator.
->
-> Could you please add a link to the specific schematics you used to find
-> this usseu?
->
-> > Also add TFLASH_VDD_EN signal name to gpio pin.
->
-> Your patch does not do this part.
->
-> Similarily to the other patch, can you explain in more detail (including
-> kernel boot logs) how the SD card is not working?
->
-> I just tested with latest mainline, and the MMC driver is detecting both
-> the eMMC and the SD card.
->
-> Kevin
-
-Ok lets discard this changes, I have tried many dts changes
-but I do not know where is the problem or where I am going wrong.
-
--Anand
+Acked-by: Rob Herring <robh@kernel.org>
