@@ -2,99 +2,256 @@ Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DD1C3F2CD
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 03:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD638C3F2C6
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 08:08:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 578DF2173E
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 03:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1E9A20CC7
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 08:08:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgCCDh3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Mar 2020 22:37:29 -0500
-Received: from mga04.intel.com ([192.55.52.120]:27777 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726947AbgCCDh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Mar 2020 22:37:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Mar 2020 19:37:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,509,1574150400"; 
-   d="scan'208";a="258229584"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 02 Mar 2020 19:37:27 -0800
-Received: from [10.226.38.56] (unknown [10.226.38.56])
-        by linux.intel.com (Postfix) with ESMTP id D289B580274;
-        Mon,  2 Mar 2020 19:37:24 -0800 (PST)
-Subject: Re: [PATCH v5 2/2] clk: intel: Add CGU clock driver for a new SoC
-To:     Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc:     Randy Dunlap <rdunlap@infradead.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh@kernel.org, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, qi-ming.wu@intel.com,
-        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
-        rtanwar <rahul.tanwar@intel.com>
-References: <cover.1582096982.git.rahul.tanwar@linux.intel.com>
- <6148b5b25d4a6833f0a72801d569ed97ac6ca55b.1582096982.git.rahul.tanwar@linux.intel.com>
- <e8259928-cb2a-a453-8f2a-1b57c8abdb8c@infradead.org>
- <4fb7a643-cbe1-da82-2629-2dbd0c0d143b@linux.intel.com>
- <20200227100239.GD1224808@smile.fi.intel.com>
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Message-ID: <12c16eb0-04aa-79cf-fa76-3f45b8972319@linux.intel.com>
-Date:   Tue, 3 Mar 2020 11:37:23 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727656AbgCCIIv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Mar 2020 03:08:51 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:43999 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727577AbgCCIIv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 03:08:51 -0500
+Received: by mail-ot1-f66.google.com with SMTP id j5so2097654otn.10;
+        Tue, 03 Mar 2020 00:08:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tnsLoZ2+ZJ9fFHKXi3EF1/dm4uTQYUq+JzUajRZ2h+c=;
+        b=r+x1IY6wSBVuqF8oqOY1lk9P1pjwo0pEyuKIUW4O+kOU1HDMU2J8ZECMFWiIiSaI8c
+         rHMzRM3KZ0QrpwSPLbzg/Y3/2auhjr86kmrSIm7fP38UJjSH2P4RLZ5EgtRoGmG/9aRt
+         gM2/6IbNubBpf492QNtEhImM2dCj1WqhrTmho+URPOnc4YPAEJjv8enD8Hpp4NSrNjVV
+         MlRYX2qwNpqz3ILQZ87IDDqOtc++Y6iH9vbss9CBUL6oDdLf/a8BpF/AuAFnJC0m9Qjp
+         4jxtFKK7V/G/Z8oQVXVG0IPqDLmyGJ6vPz/A4zH2b+iQtSygbUXoKkIqolYyqA/Ge/Ab
+         I10Q==
+X-Gm-Message-State: ANhLgQ2SJwFD+Ib/I9v9uwee4Kgndzpi4hbbZh+jYFh5HSLkmFTyaxZi
+        aLpN0CYudGD4rRW6GESr4G0OVr3d7SrT1hMYZrM=
+X-Google-Smtp-Source: ADFU+vshWGB7tPqasQr01SWBNXK56E3VM6/cuuVC0u24ieCvps6JZtv6VLhiWLuVyOUAdH9lC6gJYjnAPytMnwsJu9M=
+X-Received: by 2002:a9d:dc1:: with SMTP id 59mr2475400ots.250.1583222929855;
+ Tue, 03 Mar 2020 00:08:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200227100239.GD1224808@smile.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20200224152640.1318-1-geert+renesas@glider.be>
+ <158265013473.177367.4512247165308399202@swboyd.mtv.corp.google.com>
+ <CAMuHMdUDjWKYaQ_MN+AvYg8vimZKMcck3SdHUSg8tPCCAEieJQ@mail.gmail.com> <20200302202609.GA24264@bogus>
+In-Reply-To: <20200302202609.GA24264@bogus>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 3 Mar 2020 09:08:38 +0100
+Message-ID: <CAMuHMdWZ=_p2qfv+Q1XCXts88SUgR3ote=7PQ5sHRR7pM4U0Yw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Rob,
 
-
-On 27/2/2020 6:02 PM, Andy Shevchenko wrote:
-> On Thu, Feb 27, 2020 at 03:19:26PM +0800, Tanwar, Rahul wrote:
->> On 19/2/2020 3:59 PM, Randy Dunlap wrote:
->>> On 2/18/20 11:40 PM, Rahul Tanwar wrote:
->>>
->>>> +config CLK_LGM_CGU
->>>> +	depends on (OF && HAS_IOMEM) || COMPILE_TEST
->>> This "depends on" looks problematic to me. I guess we shall see when
->>> all the build bots get to it.
->> At the moment, i am not able to figure out possible problems in this..
-> COMPILE_TEST should be accompanied by non-generic dependency.
-> There is none.
+On Mon, Mar 2, 2020 at 9:26 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Feb 27, 2020 at 12:12:36PM +0100, Geert Uytterhoeven wrote:
+> > On Tue, Feb 25, 2020 at 6:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Geert Uytterhoeven (2020-02-24 07:26:40)
+> > > > diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > > > new file mode 100644
+> > > > index 0000000000000000..dfbd1933f1bc56de
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+> > > > @@ -0,0 +1,204 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: "http://devicetree.org/schemas/clock/renesas,cpg-mssr.yaml#"
+> > > > +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> > > > +
+> > > > +title: Renesas Clock Pulse Generator / Module Standby and Software Reset
+> > > > +
+> > > > +maintainers:
+> > > > +  - Geert Uytterhoeven <geert+renesas@glider.be>
+> > > > +
+> > > > +description: |
+> > > > +  On Renesas ARM SoCs (SH/R-Mobile, R-Car, RZ), the CPG (Clock Pulse Generator)
+> > > > +  and MSSR (Module Standby and Software Reset) blocks are intimately connected,
+> > > > +  and share the same register block.
+> > > > +
+> > > > +  They provide the following functionalities:
+> > > > +    - The CPG block generates various core clocks,
+> > > > +    - The MSSR block provides two functions:
+> > > > +        1. Module Standby, providing a Clock Domain to control the clock supply
+> > > > +           to individual SoC devices,
+> > > > +        2. Reset Control, to perform a software reset of individual SoC devices.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - renesas,r7s9210-cpg-mssr  # RZ/A2
+> > > > +      - renesas,r8a7743-cpg-mssr  # RZ/G1M
+> > > > +      - renesas,r8a7744-cpg-mssr  # RZ/G1N
+> > > > +      - renesas,r8a7745-cpg-mssr  # RZ/G1E
+> > > > +      - renesas,r8a77470-cpg-mssr # RZ/G1C
+> > > > +      - renesas,r8a774a1-cpg-mssr # RZ/G2M
+> > > > +      - renesas,r8a774b1-cpg-mssr # RZ/G2N
+> > > > +      - renesas,r8a774c0-cpg-mssr # RZ/G2E
+> > > > +      - renesas,r8a7790-cpg-mssr  # R-Car H2
+> > > > +      - renesas,r8a7791-cpg-mssr  # R-Car M2-W
+> > > > +      - renesas,r8a7792-cpg-mssr  # R-Car V2H
+> > > > +      - renesas,r8a7793-cpg-mssr  # R-Car M2-N
+> > > > +      - renesas,r8a7794-cpg-mssr  # R-Car E2
+> > > > +      - renesas,r8a7795-cpg-mssr  # R-Car H3
+> > > > +      - renesas,r8a7796-cpg-mssr  # R-Car M3-W
+> > > > +      - renesas,r8a77961-cpg-mssr # R-Car M3-W+
+> > > > +      - renesas,r8a77965-cpg-mssr # R-Car M3-N
+> > > > +      - renesas,r8a77970-cpg-mssr # R-Car V3M
+> > > > +      - renesas,r8a77980-cpg-mssr # R-Car V3H
+> > > > +      - renesas,r8a77990-cpg-mssr # R-Car E3
+> > > > +      - renesas,r8a77995-cpg-mssr # R-Car D3
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clocks:
+> > > > +    minItems: 1
+> > > > +    maxItems: 2
+> > > > +
+> > > > +  clock-names:
+> > > > +    minItems: 1
+> > > > +    maxItems: 2
+> > >
+> > > Do we need this here and also below? Why can't it just be below with the
+> > > more specific constraints?
+> >
+> > With the above removed:
+> >
+> >     Documentation/devicetree/bindings/clock/renesas,cpg-mssr.example.dt.yaml:
+> > clock-controller@e6150000: 'clock-names', 'clocks' do not match any of
+> > the regexes: 'pinctrl-[0-9]+'
+> >
+> > while the "if" below overriding minItems did trigger, as removing entries from
+> > clocks/clock-names in the example causes more errors.
+> >
+> > So it seems all properties must be listed in the main, unconditional,
+> > properties section at the top.
+> >
+> > > > +allOf:
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          items:
+> > > > +            enum:
+> > > > +              - renesas,r7s9210-cpg-mssr
+> > > > +              - renesas,r8a774c0-cpg-mssr
+> > > > +              - renesas,r8a7792-cpg-mssr
+> > > > +              - renesas,r8a77990-cpg-mssr
+> > > > +              - renesas,r8a77995-cpg-mssr
+> > > > +
+> > > > +    then:
+> > > > +      properties:
+> > > > +        clock:
+> > > > +          maxItems: 1
+> > > > +        clock-names:
+> > > > +          maxItems: 1
+> > > > +          items:
+> > > > +            - const: extal
+> > > > +
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            enum:
+> > > > +              - renesas,r8a7743-cpg-mssr
+> > > > +              - renesas,r8a7744-cpg-mssr
+> > > > +              - renesas,r8a7745-cpg-mssr
+> > > > +              - renesas,r8a77470-cpg-mssr
+> > > > +              - renesas,r8a7790-cpg-mssr
+> > > > +              - renesas,r8a7791-cpg-mssr
+> > > > +              - renesas,r8a7793-cpg-mssr
+> > > > +              - renesas,r8a7794-cpg-mssr
+> > > > +
+> > > > +    then:
+> > > > +      properties:
+> > > > +        clock:
+> > > > +          minItems: 2
+> > > > +        clock-names:
+> > > > +          minItems: 2
+> > > > +          items:
+> > > > +            - const: extal
+> > > > +            - const: usb_extal
+> > > > +
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          items:
+> > > > +            enum:
+> > > > +              - renesas,r8a774a1-cpg-mssr
+> > > > +              - renesas,r8a774b1-cpg-mssr
+> > > > +              - renesas,r8a7795-cpg-mssr
+> > > > +              - renesas,r8a7796-cpg-mssr
+> > > > +              - renesas,r8a77961-cpg-mssr
+> > > > +              - renesas,r8a77965-cpg-mssr
+> > > > +              - renesas,r8a77970-cpg-mssr
+> > > > +              - renesas,r8a77980-cpg-mssr
+> > > > +
+> > > > +    then:
+> > > > +      properties:
+> > > > +        clock:
+> > > > +          minItems: 2
+> > > > +        clock-names:
+> > > > +          minItems: 2
+> > > > +          items:
+> > > > +            - const: extal
+> > > > +            - const: extalr
+> > > > +
+> > > > +  - if:
+> > > > +      not:
+> > > > +        properties:
+> > > > +          compatible:
+> > > > +            items:
+> > > > +              enum:
+> > > > +                - renesas,r7s9210-cpg-mssr
+> > > > +    then:
+> > > > +      required:
+> > > > +        - '#reset-cells'
+> > >
+> > > It may make sense to split this binding up into multiple bindings so
+> > > that we don't have deeply nested if/else/then.
+> >
+> > Note that the above is not a nested if, but the yaml-equivalent of a switch()
+> > statement.
+> >
+> > If this is to be split, how to split it?
+> > Each if contains SoCs from multiple families, and each family of SoCs is
+> > split across multiple ifs.
 >
-> So, I quite agree with Randy.
+> Looks like 3 files based on the first 3 if's above.
 
-I see COMPILE_TEST is mostly ORed with ARCH_xx. How about below?
+Yeah, but how to name them: renesas,cpg-mssr-[123].yaml?
 
-depends on OF && HAS_IOMEM && (CONFIG_X86 || COMPILE_TEST)
+> Personally, I'd be fine with just a single schema without all the if's.
+> It wouldn't be as strict as to what's allowed for each compatible, but
+> good enough IMO.
 
->>>> +	select OF_EARLY_FLATTREE
->>> If OF is not set and HAS_IOMEM is not set, but COMPILE_TEST is set,
->>> I expect that this should not be attempting to select OF_EARLY_FLATTREE.
->>>
->>> Have you tried such a config combination?
->> Agree, that would be a problem. I will change it to
->>
->> select OF_EARLY_FLATTREE if OF
-> Nope, I think this is wrong work around.
-> See above.
+OK, that seems sensible to me, too.
 
-With above proposed change, i can simply switch to
-select OF_EARLY_FLATTREE since all dependencies are already
-in place..
+Gr{oetje,eeting}s,
 
-Thanks.
+                        Geert
 
-Regards,
-Rahul
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
