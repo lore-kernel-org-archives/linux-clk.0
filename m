@@ -2,91 +2,104 @@ Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B851C3F2D7
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF100C3F2D1
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 19:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23FA420828
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 14:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583247567;
-	bh=Po21GpAsxJXHa8omSA0fH0AF3jSqp6NBSXKyNPFTq40=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gvEk80XATCfen+qNOBPOMAFPpjNq983X0oO3FTrAhp3LZzOqOaR2rw192qf4JlJCY
-	 DyN+M7Ni++XKpDDeW4BMqLOej2G4AUlXE8sQtAQoJEYGEloyhglNomRn0vFdbMal8x
-	 DCZXht2QPdXG69ol4lOZDrLFr5U1FmUiXP6n9aKM=
+	by mail.kernel.org (Postfix) with ESMTP id 8609E2072D
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 19:30:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Xu4sE3PK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbgCCO7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Mar 2020 09:59:23 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40330 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728975AbgCCO7X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 09:59:23 -0500
-Received: by mail-ot1-f65.google.com with SMTP id x19so3270759otp.7;
-        Tue, 03 Mar 2020 06:59:22 -0800 (PST)
+        id S1730705AbgCCTaU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Mar 2020 14:30:20 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50884 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728885AbgCCTaP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 14:30:15 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so4638428wmb.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2020 11:30:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eLsvFFlZ8l09UWApmtGDnVPv6MG087h7rXG6DY2TdQE=;
+        b=Xu4sE3PKhvoy3YjexN5KvyigUsTgJJBukVuuOSRBr0c/pIvm8TKwRPDfTIY4YbbujF
+         klJ2W2xJVKFFfbOec8iHOip9Saic+QZ4m2Toy88Sxe0zyKXLfyWYmBWoZNEzhWDXe5+9
+         FFGPggOGod2ndlcqGtG1xR+rhjH2jXV9O2JxV32xSmzFT5rAhFaTcaQpXjI8NWp44ndx
+         u2oTtofjCNzMFdOlY9EH8TFVshAZWXIw9kpm/b+MZlW/zCWznxbXGEWExRPAqqOeivxp
+         eta6po1Dysrdc6nJ8qxnjzV8TL1RlUWS5osRWJEA0RJLcji4LEuctGdbx+rgDk8fjQwB
+         FQ1w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jxXZabJF36zBqHLvSkp1BT+uIXDUsdzVqIFAD0M2EXo=;
-        b=Ec0whZDOP87o26kq8TtpXG6lXy8JX2l9/TEDXRM3pM6nb9lBbOKZOxZvVrdZ5I2eUi
-         RZ4BaU0h7pqdc+x3TvbVYaWGa26lk/KgwS6boEnOidBJnKiss4o/G8PWvdC8zqUl2IfT
-         nn1zhdr0QKcF7Qd/32SA+83cKF6cPoEvaNJLWOUbbnVivV9OA2YAi29MJZJpW1FKtbsB
-         MBfoBHXQxON3UNjwz4FpL8qw/0MSHC0o4K2AXT0x0y6JVKjxwxSehYmzOmjiBbkGh0ZA
-         V3hPphBqgKm6MCnDHiJJzUua/MDZJHuA8AQfoVdN46qrpHlXSETdRlILcX3ek95A02TG
-         wVig==
-X-Gm-Message-State: ANhLgQ0wg6VVuqTcbxvNCkxCa6ldIRtMQbQ0WPG7k8TDM4MM/GN+koWI
-        G7blP8ffL/8ZigRuQh6ppg==
-X-Google-Smtp-Source: ADFU+vs0akez33tRS244m5eGi3FSV87z7OM5KR9hAV09veZ9Jb9+CkWsSjCrP6apKPamqlw3XwLehQ==
-X-Received: by 2002:a9d:748c:: with SMTP id t12mr3506779otk.38.1583247562238;
-        Tue, 03 Mar 2020 06:59:22 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c7sm7904442otm.63.2020.03.03.06.59.21
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eLsvFFlZ8l09UWApmtGDnVPv6MG087h7rXG6DY2TdQE=;
+        b=YoFxu4VHpgFtg6F4+VbuMgp9aJrJKzKQ6SGqetMuuWwEZ3+poyinTpX7vzwHmW76w4
+         i50d5xNSlQavCgrP06FgORJBVaDFCtkh5EZYmdVXqarLfdfAkYlWZuVXHcLYU4pcxfGn
+         QqxrNCVV0xahYkV47ACpBMVP7PrU1UaijgvLXJ9vvrQosvF7wFrGL2kMslCJ+7ajS2my
+         QiCcZvF76E0C6a4+hnwBU1J1LFXwOEbMfuaph/DPWjAOwrZkUGQfhQtTimIiB+bdTEcW
+         GOMS0g1CufFfvZWHyCG6js9DFFeW+fIAvBcob9IbcLOrznyfXcLxwn/ob/99Qp6eWtjh
+         Ftmw==
+X-Gm-Message-State: ANhLgQ2Aoc8s0+ttYo3IQlXF8yuXvaV4bfHQkkQ0r9usFX7YWJBKT9SJ
+        7pvhO9++J2/IiQTG13pArgaSOg==
+X-Google-Smtp-Source: ADFU+vvgohVRhFuFhTLyG/81TfZZbiRhxlI1wlFSO8TcMr7u7HNNf234Xb78qJex+ypXm4I6EEmadA==
+X-Received: by 2002:a1c:80d4:: with SMTP id b203mr87984wmd.91.1583263813664;
+        Tue, 03 Mar 2020 11:30:13 -0800 (PST)
+Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id w22sm102469wmk.34.2020.03.03.11.30.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 06:59:21 -0800 (PST)
-Received: (nullmailer pid 32405 invoked by uid 1000);
-        Tue, 03 Mar 2020 14:59:20 -0000
-Date:   Tue, 3 Mar 2020 08:59:20 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
-Message-ID: <20200303145920.GA32328@bogus>
-References: <robh@kernel.org>
- <20200226214812.390-1-ansuelsmth@gmail.com>
+        Tue, 03 Mar 2020 11:30:13 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH] clk: rockchip: fix mmc get phase
+Date:   Tue,  3 Mar 2020 20:29:56 +0100
+Message-Id: <20200303192956.64410-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200226214812.390-1-ansuelsmth@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 26 Feb 2020 22:48:12 +0100, Ansuel Smith wrote:
-> Add missing definition of rpm clk for ipq806x soc
-> 
-> Signed-off-by: John Crispin <john@phrozen.org>
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> Acked-by: John Crispin <john@phrozen.org>
-> ---
->  .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
->  drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
->  include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
->  3 files changed, 40 insertions(+)
-> 
+If the mmc clock has no rate, it can be assumed to be constant.
+In such case, there is no measurable phase shift. Just return 0
+in this case instead of returning an error.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Fixes: 2760878662a2 ("clk: Bail out when calculating phase fails during clk
+registration")
+Tested-by: Markus Reichl <m.reichl@fivetechno.de>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/rockchip/clk-mmc-phase.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 4abe7ff31f53..975454a3dd72 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -51,9 +51,9 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
+ 	u16 degrees;
+ 	u32 delay_num = 0;
+ 
+-	/* See the comment for rockchip_mmc_set_phase below */
++	/* Constant signal, no measurable phase shift */
+ 	if (!rate)
+-		return -EINVAL;
++		return 0;
+ 
+ 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
+ 
+-- 
+2.24.1
+
