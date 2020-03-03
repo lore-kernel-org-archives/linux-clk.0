@@ -2,104 +2,184 @@ Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF100C3F2D1
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 19:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B362C3F2D7
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 20:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8609E2072D
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 19:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 481B820CC7
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 20:16:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Xu4sE3PK"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AuVQRqcC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730705AbgCCTaU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Mar 2020 14:30:20 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50884 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728885AbgCCTaP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 14:30:15 -0500
-Received: by mail-wm1-f67.google.com with SMTP id a5so4638428wmb.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2020 11:30:14 -0800 (PST)
+        id S1731536AbgCCUQd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Mar 2020 15:16:33 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35318 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730263AbgCCUQd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Mar 2020 15:16:33 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i19so2053471pfa.2
+        for <linux-clk@vger.kernel.org>; Tue, 03 Mar 2020 12:16:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eLsvFFlZ8l09UWApmtGDnVPv6MG087h7rXG6DY2TdQE=;
-        b=Xu4sE3PKhvoy3YjexN5KvyigUsTgJJBukVuuOSRBr0c/pIvm8TKwRPDfTIY4YbbujF
-         klJ2W2xJVKFFfbOec8iHOip9Saic+QZ4m2Toy88Sxe0zyKXLfyWYmBWoZNEzhWDXe5+9
-         FFGPggOGod2ndlcqGtG1xR+rhjH2jXV9O2JxV32xSmzFT5rAhFaTcaQpXjI8NWp44ndx
-         u2oTtofjCNzMFdOlY9EH8TFVshAZWXIw9kpm/b+MZlW/zCWznxbXGEWExRPAqqOeivxp
-         eta6po1Dysrdc6nJ8qxnjzV8TL1RlUWS5osRWJEA0RJLcji4LEuctGdbx+rgDk8fjQwB
-         FQ1w==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CQpBh1BNcIaWkFGF7Hg6jRb7icXAaxhnvR9Kqee2mNU=;
+        b=AuVQRqcC2Blxz+vgF1Jv82r0s2gQaEJ3DRSp4jN5A9hzDHnra/BBJRf8nfGvljLxTk
+         1XOc+P35r0bI0cuDZOhUEsdbbey6F/+gUcbyH6S4nrKXn1dp94dlxpMmTx5+oorTDWLC
+         SzWd6mHnXWb2u6IErT8SuFU1UDVJo2IoXbxzI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eLsvFFlZ8l09UWApmtGDnVPv6MG087h7rXG6DY2TdQE=;
-        b=YoFxu4VHpgFtg6F4+VbuMgp9aJrJKzKQ6SGqetMuuWwEZ3+poyinTpX7vzwHmW76w4
-         i50d5xNSlQavCgrP06FgORJBVaDFCtkh5EZYmdVXqarLfdfAkYlWZuVXHcLYU4pcxfGn
-         QqxrNCVV0xahYkV47ACpBMVP7PrU1UaijgvLXJ9vvrQosvF7wFrGL2kMslCJ+7ajS2my
-         QiCcZvF76E0C6a4+hnwBU1J1LFXwOEbMfuaph/DPWjAOwrZkUGQfhQtTimIiB+bdTEcW
-         GOMS0g1CufFfvZWHyCG6js9DFFeW+fIAvBcob9IbcLOrznyfXcLxwn/ob/99Qp6eWtjh
-         Ftmw==
-X-Gm-Message-State: ANhLgQ2Aoc8s0+ttYo3IQlXF8yuXvaV4bfHQkkQ0r9usFX7YWJBKT9SJ
-        7pvhO9++J2/IiQTG13pArgaSOg==
-X-Google-Smtp-Source: ADFU+vvgohVRhFuFhTLyG/81TfZZbiRhxlI1wlFSO8TcMr7u7HNNf234Xb78qJex+ypXm4I6EEmadA==
-X-Received: by 2002:a1c:80d4:: with SMTP id b203mr87984wmd.91.1583263813664;
-        Tue, 03 Mar 2020 11:30:13 -0800 (PST)
-Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id w22sm102469wmk.34.2020.03.03.11.30.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Mar 2020 11:30:13 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Markus Reichl <m.reichl@fivetechno.de>
-Subject: [PATCH] clk: rockchip: fix mmc get phase
-Date:   Tue,  3 Mar 2020 20:29:56 +0100
-Message-Id: <20200303192956.64410-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CQpBh1BNcIaWkFGF7Hg6jRb7icXAaxhnvR9Kqee2mNU=;
+        b=PVqgrIxz+eJt/R+Vyo6FLc2j8ExwTcGlKBCYSaKdYTFoK/6Ih9wHW9kU+SPc9/yr/j
+         xsE0Oa1xG+Vt/w06irjbKZbg5ZcWHPISbR0OFz3tdlpWC2ZLhQJcX+VQErR822G1o+a8
+         AQx1ktYlMgGrRkiOANwDnAfHXwJ6sNMcEROqurdWFJQizzQEQW2PF845vpw2gmZMSmfz
+         D2PLBW/txryFCbD1x3isy+Tr2VSUdasYkgyifGo3ExXKhEK7VCQbSKRVJYA553xKI3MG
+         21QKaiDnxtGkYcR7xuGcFx4xEgG26HiM/sOWVwzwgdpU3QNRf+3OdKwjBbQZQER0Lq80
+         SVAA==
+X-Gm-Message-State: ANhLgQ2S0WqZTTupqSAJhX8L+6D49h5oxAKh80hPdF/e2wMPlu+PgvDq
+        c0/3LWAl1+8qbsyOK7S5FNRKyQ==
+X-Google-Smtp-Source: ADFU+vvmbkzkJuM0o8H4jqUXysXLgPO20sGie81ragjOYgB7rWyU8SuVNO1IhdYEsUGuBzU4ixEf3Q==
+X-Received: by 2002:a63:7e09:: with SMTP id z9mr5563746pgc.383.1583266591922;
+        Tue, 03 Mar 2020 12:16:31 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id u23sm25250820pfm.29.2020.03.03.12.16.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Mar 2020 12:16:31 -0800 (PST)
+Date:   Tue, 3 Mar 2020 12:16:29 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
+        robh@kernel.org, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v1 2/2] clk: qcom: dispcc: Remove support of
+ disp_cc_mdss_rscc_ahb_clk
+Message-ID: <20200303201629.GP24720@google.com>
+References: <1581423236-21341-1-git-send-email-tdas@codeaurora.org>
+ <1581423236-21341-2-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1581423236-21341-2-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If the mmc clock has no rate, it can be assumed to be constant.
-In such case, there is no measurable phase shift. Just return 0
-in this case instead of returning an error.
+On Tue, Feb 11, 2020 at 05:43:56PM +0530, Taniya Das wrote:
+> The disp_cc_mdss_rscc_ahb_clk is default enabled from hardware and thus
+> does not require to be marked CRITICAL. This which would allow the RCG to
+> be turned OFF when the display turns OFF and not blocking XO.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/dispcc-sc7180.c | 19 -------------------
+>  1 file changed, 19 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
+> index dd7af41..0a5d395 100644
+> --- a/drivers/clk/qcom/dispcc-sc7180.c
+> +++ b/drivers/clk/qcom/dispcc-sc7180.c
+> @@ -592,24 +592,6 @@ static struct clk_branch disp_cc_mdss_rot_clk = {
+>  	},
+>  };
+> 
+> -static struct clk_branch disp_cc_mdss_rscc_ahb_clk = {
+> -	.halt_reg = 0x400c,
+> -	.halt_check = BRANCH_HALT,
+> -	.clkr = {
+> -		.enable_reg = 0x400c,
+> -		.enable_mask = BIT(0),
+> -		.hw.init = &(struct clk_init_data){
+> -			.name = "disp_cc_mdss_rscc_ahb_clk",
+> -			.parent_data = &(const struct clk_parent_data){
+> -				.hw = &disp_cc_mdss_ahb_clk_src.clkr.hw,
+> -			},
+> -			.num_parents = 1,
+> -			.flags = CLK_IS_CRITICAL | CLK_SET_RATE_PARENT,
+> -			.ops = &clk_branch2_ops,
+> -		},
+> -	},
+> -};
+> -
+>  static struct clk_branch disp_cc_mdss_rscc_vsync_clk = {
+>  	.halt_reg = 0x4008,
+>  	.halt_check = BRANCH_HALT,
+> @@ -687,7 +669,6 @@ static struct clk_regmap *disp_cc_sc7180_clocks[] = {
+>  	[DISP_CC_MDSS_PCLK0_CLK_SRC] = &disp_cc_mdss_pclk0_clk_src.clkr,
+>  	[DISP_CC_MDSS_ROT_CLK] = &disp_cc_mdss_rot_clk.clkr,
+>  	[DISP_CC_MDSS_ROT_CLK_SRC] = &disp_cc_mdss_rot_clk_src.clkr,
+> -	[DISP_CC_MDSS_RSCC_AHB_CLK] = &disp_cc_mdss_rscc_ahb_clk.clkr,
+>  	[DISP_CC_MDSS_RSCC_VSYNC_CLK] = &disp_cc_mdss_rscc_vsync_clk.clkr,
+>  	[DISP_CC_MDSS_VSYNC_CLK] = &disp_cc_mdss_vsync_clk.clkr,
+>  	[DISP_CC_MDSS_VSYNC_CLK_SRC] = &disp_cc_mdss_vsync_clk_src.clkr,
 
-Fixes: 2760878662a2 ("clk: Bail out when calculating phase fails during clk
-registration")
-Tested-by: Markus Reichl <m.reichl@fivetechno.de>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/rockchip/clk-mmc-phase.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+We found that this change leads to a panic at boot time on SC7180 devices
+without display configuration (e.g. the SC7180 IDP with the current DT):
 
-diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
-index 4abe7ff31f53..975454a3dd72 100644
---- a/drivers/clk/rockchip/clk-mmc-phase.c
-+++ b/drivers/clk/rockchip/clk-mmc-phase.c
-@@ -51,9 +51,9 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
- 	u16 degrees;
- 	u32 delay_num = 0;
- 
--	/* See the comment for rockchip_mmc_set_phase below */
-+	/* Constant signal, no measurable phase shift */
- 	if (!rate)
--		return -EINVAL;
-+		return 0;
- 
- 	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
- 
--- 
-2.24.1
-
+[    2.412820] SError Interrupt on CPU6, code 0xbe000411 -- SError
+[    2.412822] CPU: 6 PID: 1 Comm: swapper/0 Tainted: G S                5.4.22 #103
+[    2.412822] Hardware name: Qualcomm Technologies, Inc. SC7180 IDP (DT)
+[    2.412823] pstate: 20c00089 (nzCv daIf +PAN +UAO)
+[    2.412823] pc : regmap_mmio_read32le+0x28/0x40
+[    2.412823] lr : regmap_mmio_read+0x44/0x6c
+[    2.412824] sp : ffffffc01005ba90
+[    2.412824] x29: ffffffc01005ba90 x28: 0000000000000000
+[    2.412825] x27: 0000000000000000 x26: 0000000000000000
+[    2.412826] x25: 0000000000000000 x24: ffffffd1f4aed018
+[    2.412827] x23: ffffffd1f4c12148 x22: ffffff8177a6c800
+[    2.412827] x21: 0000000000002048 x20: ffffff8177489e00
+[    2.412828] x19: 0000000000002048 x18: 000000004a746f4b
+[    2.412829] x17: 00000000d0e09034 x16: 000000005079b450
+[    2.412830] x15: 000000003e3bf7ed x14: 0000000000007fff
+[    2.412830] x13: ffffff8177309b40 x12: 0000000000000000
+[    2.412831] x11: 0000000000000000 x10: 0000000000000000
+[    2.412831] x9 : 0000000000000001 x8 : ffffffc011c02048
+[    2.412832] x7 : aaaaaaaaaaaaaaaa x6 : 0000000000000000
+[    2.412833] x5 : 0000000000000000 x4 : 0000000000000000
+[    2.412834] x3 : 0000000000000000 x2 : ffffffc01005bb84
+[    2.412834] x1 : 0000000000002048 x0 : 0000000080000000
+[    2.412835] Kernel panic - not syncing: Asynchronous SError Interrupt
+[    2.412836] CPU: 6 PID: 1 Comm: swapper/0 Tainted: G S                5.4.22 #103
+[    2.412836] Hardware name: Qualcomm Technologies, Inc. SC7180 IDP (DT)
+[    2.412836] Call trace:
+[    2.412837]  dump_backtrace+0x0/0x150
+[    2.412837]  show_stack+0x20/0x2c
+[    2.412837]  dump_stack+0xa0/0xd8
+[    2.412838]  panic+0x158/0x360
+[    2.412838]  panic+0x0/0x360
+[    2.412838]  arm64_serror_panic+0x78/0x84
+[    2.412839]  do_serror+0x110/0x118
+[    2.412839]  el1_error+0x84/0xf8
+[    2.412839]  regmap_mmio_read32le+0x28/0x40
+[    2.412840]  regmap_mmio_read+0x44/0x6c
+[    2.412840]  _regmap_bus_reg_read+0x34/0x44
+[    2.412841]  _regmap_read+0x88/0x164
+[    2.412841]  regmap_read+0x54/0x78
+[    2.412841]  clk_is_enabled_regmap+0x3c/0x8c
+[    2.412842]  clk_core_is_enabled+0x68/0xac
+[    2.412842]  clk_disable_unused_subtree+0x90/0x22c
+[    2.412843]  clk_disable_unused_subtree+0x34/0x22c
+[    2.412843]  clk_disable_unused+0x74/0x108
+[    2.412843]  do_one_initcall+0x13c/0x2c8
+[    2.412844]  do_initcall_level+0x144/0x16c
+[    2.412844]  do_basic_setup+0x30/0x48
+[    2.412844]  kernel_init_freeable+0xc4/0x140
+[    2.412845]  kernel_init+0x14/0x100
+[    2.412845]  ret_from_fork+0x10/0x18
+[    2.412858] SMP: stopping secondary CPUs
+[    2.412859] Kernel Offset: 0x11e3a00000 from 0xffffffc010000000
+[    2.412859] PHYS_OFFSET: 0xffffffe780000000
+[    2.412860] CPU features: 0x0006,2a80aa18
+[    2.412860] Memory Limit: none
