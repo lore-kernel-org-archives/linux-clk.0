@@ -1,4 +1,4 @@
-Return-Path: <SRS0=oWSs=4T=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=CqdR=4U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,114 +6,80 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63649C3F2CD
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 23:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B90C3F2D1
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 01:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D382465E
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Mar 2020 23:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49E9F2467E
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Mar 2020 01:28:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583192427;
-	bh=7F6YZaYUo+bFsyPu/iD1rssKpwVVUWfNFhyXmJyZjKg=;
+	s=default; t=1583198907;
+	bh=n4apYBCVrZ5g5EQLM4MQiFRZoU/6FZvGRX0yQps0rR0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GaFYS2C6BR3DkexISTNQO5editk1kqmAILnoC4A0Lw3P9VG+cG1ZnDOH42tt4x637
-	 unMHsOG/0d6ba43S7QrgzfpKkyhzJAlQzM6/fD00eipOObGmwnBDIg5UiKl4vw/T0h
-	 C/fW7LeU5XtjF8vB/mIWnP9saUH8PY7lILHNIxj4=
+	b=e67/flzXS3HZG8/vCQIjeNGeZsjn5Mh0bN8pyMryUdHRMUBI3Qdq7HFlX6Rnmwmie
+	 d2UVw96j3ZjCvjTOrDyQVHwx4Wfscuocn8djczeBe6co1Oj1vuDiwefJnR52VNGXlJ
+	 4ueeGAmNseaZnOyakOfCa9JafWtJnEJANp5VJr8I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbgCBXk1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Mar 2020 18:40:27 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38738 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbgCBXk0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 18:40:26 -0500
-Received: by mail-oi1-f194.google.com with SMTP id 2so1121823oiz.5;
-        Mon, 02 Mar 2020 15:40:26 -0800 (PST)
+        id S1726843AbgCCB21 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Mar 2020 20:28:27 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44380 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbgCCB20 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Mar 2020 20:28:26 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so1301387oia.11;
+        Mon, 02 Mar 2020 17:28:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9vV5PavoKMjDsMnqHBiR5ea2gdjD5MmrYM/2QvxafIs=;
-        b=dgq6O59wi5Y+WWE1ipZbc5pgbf9qBCAoZh7bRG6hnKFT54cnmn3q+VNLvrO2CrXGx2
-         0P8zan3yQ/mEo7Yva3ICpK4rLIRU35fo/IaYoogb93Hteen8CZ5sYZ8evAzJorpmlj/Z
-         sXwEF5zZVIgpWhtH1S6O7gWldE0iFviujigXJ8TLgJ4l90sCSilqkW3fEx9hrq5Xbjwx
-         EdXbJNMVYyLIgWOI0l/FXZB0Gu88Cb0pJtPLqO0d494+wJYiNcbYvpOUIBVwEWNRvC61
-         49X5bfHMEp+tKFWt8m45VFribaNeEV5KCrXzPTq2fp6RXJevQM/1cIq0R2Gk1XB/4JNu
-         UhQQ==
-X-Gm-Message-State: ANhLgQ3hbACVlRPOks4Xk49Intgx3TOPvGr3UQnyp5ph9+xoj7nVyF0N
-        6akUKM8Oa6MjyyC1EAr3yA==
-X-Google-Smtp-Source: ADFU+vtgcYVuJTNmsDp6or+nYg6nhWTDc+Rs/i0JWWu7H1wds1V1X0/hmCpu4JSt66QSVVmXpfJv+w==
-X-Received: by 2002:aca:c709:: with SMTP id x9mr609649oif.130.1583192425557;
-        Mon, 02 Mar 2020 15:40:25 -0800 (PST)
+        bh=+1KyOHwBn/viSAsJSh8AjzAW83mdyjNjKZ1smKP6L5I=;
+        b=gowULXKi1t2SA+eZriCLpHwrimvmr4FW+HFillEdE7x1kqJD2VaOom5qKx9Eob0WAP
+         UroPv2PWNLU7TsH1GljP8OeHs2LQ6U8nSbhIF6QNus0Z1pZDYylyjIgSI30T3w6DlMFd
+         HH0kCZVQeOQDoQBuSlzoWOakxmoG6WIh+kMGEJ+bJ0YbqID6+6tglial1yc1Mfx+ahCt
+         /llVDTIb9Gvscmzp4N5ViHWTc6wsmXrY3DeJB3L6hZIlA180IFvQkXu4UTxifB1Sj62S
+         2NcalEhmyyR1lSZTq6apg29V4IBsq5UBqJV041qrWrc/HfrlJvsq0If0w9Jq3ezgViLa
+         GQpA==
+X-Gm-Message-State: ANhLgQ1gsu9M7yvWhknj1GjaqtQK8+8qhI+6+m4nhpJlyZxWuubmBt8f
+        zgRBt/yb5aNaTvavzkuqTg==
+X-Google-Smtp-Source: ADFU+vuXH/1hxcsxPMVP9wigrFZpla2XwPEdAwOWERbHAnI6m6fNRmH5HugZb8pe9eB5At7zzu07xA==
+X-Received: by 2002:aca:1204:: with SMTP id 4mr891001ois.143.1583198904510;
+        Mon, 02 Mar 2020 17:28:24 -0800 (PST)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j4sm3556682otr.30.2020.03.02.15.40.23
+        by smtp.gmail.com with ESMTPSA id s23sm1981432oie.0.2020.03.02.17.28.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Mar 2020 15:40:24 -0800 (PST)
-Received: (nullmailer pid 20489 invoked by uid 1000);
-        Mon, 02 Mar 2020 23:40:22 -0000
-Date:   Mon, 2 Mar 2020 17:40:22 -0600
+        Mon, 02 Mar 2020 17:28:24 -0800 (PST)
+Received: (nullmailer pid 7901 invoked by uid 1000);
+        Tue, 03 Mar 2020 01:28:23 -0000
+Date:   Mon, 2 Mar 2020 19:28:23 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        rdunlap@infradead.org, dri-devel@lists.freedesktop.org,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>, wens@csie.org,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        sean.wang@mediatek.com, frank-w@public-files.de,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
-        Matthias Brugger <mbrugger@suse.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Richard Fontana <rfontana@redhat.com>,
-        linux-kernel@vger.kernel.org, matthias.bgg@kernel.org,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v11 2/5] dt-bindings: mediatek: Update mmsys binding to
- reflect it is a system controller
-Message-ID: <20200302234022.GA20424@bogus>
-References: <20200302110128.2664251-1-enric.balletbo@collabora.com>
- <20200302110128.2664251-3-enric.balletbo@collabora.com>
+To:     Vignesh Raghavendra <vigneshr@ti.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add binding documentation for
+ TI EHRPWM TBCLK
+Message-ID: <20200303012823.GA7863@bogus>
+References: <20200227053529.16479-1-vigneshr@ti.com>
+ <20200227053529.16479-2-vigneshr@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200302110128.2664251-3-enric.balletbo@collabora.com>
+In-Reply-To: <20200227053529.16479-2-vigneshr@ti.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon,  2 Mar 2020 12:01:25 +0100, Enric Balletbo i Serra wrote:
-> The mmsys system controller is not only a pure clock controller, so
-> update the binding documentation to reflect that apart from providing
-> clocks, it also provides routing and miscellaneous control registers.
+On Thu, 27 Feb 2020 11:05:28 +0530, Vignesh Raghavendra wrote:
+> Add DT bindings for TI EHRPWM's TimeBase clock (TBCLK) on TI's AM654 SoC.
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
 > ---
-> 
-> Changes in v11: None
-> Changes in v10:
-> - Update the binding documentation for the mmsys system controller.
-> 
-> Changes in v9: None
-> Changes in v8: None
-> Changes in v7: None
-> 
->  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt    | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+>  .../bindings/clock/ti,am654-ehrpwm-tbclk.yaml | 35 +++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti,am654-ehrpwm-tbclk.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
