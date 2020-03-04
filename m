@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A6AC3F2CE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 19:26:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1779C3F2CE
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 21:22:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F8A20870
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 19:26:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 850C82084E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 21:22:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8e4s6WJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdRc9kTs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbgCDT05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Mar 2020 14:26:57 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43381 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726440AbgCDT05 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Mar 2020 14:26:57 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e3so3314824lja.10;
-        Wed, 04 Mar 2020 11:26:55 -0800 (PST)
+        id S2388342AbgCDVW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Mar 2020 16:22:57 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41436 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388337AbgCDVW5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Mar 2020 16:22:57 -0500
+Received: by mail-lf1-f67.google.com with SMTP id y17so2728530lfe.8;
+        Wed, 04 Mar 2020 13:22:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=h9+gXDr2n+K6UTBw+RLqNH196xTwcF81lFAULEwi8EQ=;
-        b=Q8e4s6WJu3XtnXYfQeM77+BGKy+WFz/181sCDmwYsOwoOqes9SXtdpGt8RqV2r6O4+
-         4kI52Fnw3EnW9B5kAAj3RJ8rKxHdW1ufv30xtFzf4EJwuIyD8cWInDlSfc/84cvMLFl6
-         WU7g39Hv5Kqj2xY8daAReOpV1CUJHATElj2VQCkw1b3zs0rbQeeerOQf7QeSYNpI9Sjr
-         Xq2ice4LL1Q7sdh8Yr3Rt+8f1LtRmNWBa4iMlqM1l/tG0MoD7VsUGCAKdP4AEPWKgHih
-         loVDysaIFBFoa7XDIC5OG54wPRzEUbCwxPCyLKzWMHVTqHXZARYBSGhcmY9cuKaKC2av
-         a5pQ==
+        bh=91pQ9hJXrzxABBV4Ff80CFHiJGifmgVQhImUB6I8nyM=;
+        b=rdRc9kTsvR9Z6XTv805rReh6SfrEuiMQ5Q0Vml8v5wr3lfGCoA8ECi3XmoOTIInmqE
+         4mH6l9rHXMY4erzVsHEMboGq45Rf/FiDGHWHd4aiQZFPM7Y/57g4eGqu7DPPQ/uRF856
+         hx8bJ9TLGNO+RgFJjYr+Y3jIuLcsIZk3ns3jvojcJeRRMHGFjDoNtPnVahytbJ9ssdjM
+         s2GkpbBm7kuYZLV1YCjs61DrFCdcITfJknuWlzWKnb2KMEQGJpJGdfHWvWjbMHSKl2J4
+         E+HDUaupHTWw5tI4KpsM2om0OSGUdWalGZ6LETJ1bGukAK5XuGUUZUusZN3hly4RqsPT
+         d9aQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=h9+gXDr2n+K6UTBw+RLqNH196xTwcF81lFAULEwi8EQ=;
-        b=f3tgYN5SNJFmK1FP/ovA9xJ9obv+n8Q/ENzkX6sH+QnuB9CFhgls4ob1ZtuO+R/xvZ
-         C0KhaxFvQKX5L1blZY3GfgARGjVhnDweFzL0jE3SmbSROZ0AHyMcKtws2GgeyGNxXjLn
-         0trDGCAK1DCVrXlrPA8hjjxjumLQ2wi4HNjOxwlPzmC1wHkFhWtJHLyjoQ+O3RZn0zZ8
-         MaXPq2sPzEZPBHyaCmZMqJLMjk/0iWS56pt8CSc8Qzc1bfq8oFYmDzitoyO/7yt8jo8D
-         +ea1ky2X/huizmvpZ+aVbvDvZs9x/NJPKu/8Gvil23WPH9K5ZGziZIzFzL/KQEIzzype
-         Sqsw==
-X-Gm-Message-State: ANhLgQ3YkhgYitse//DNivRNCvIok/tDr7I3FXPm/7HMweimNuGboAjP
-        IG4PbH33x1BbEsOReUfVmuqrofF3
-X-Google-Smtp-Source: ADFU+vtMCiiz/effcIYjUGXEguNi4afmSupjt4869RyrttMpxSVz8amVJRj9+OE3AYZgwUTk81oMzw==
-X-Received: by 2002:a2e:b8d3:: with SMTP id s19mr2882158ljp.222.1583350014666;
-        Wed, 04 Mar 2020 11:26:54 -0800 (PST)
+        bh=91pQ9hJXrzxABBV4Ff80CFHiJGifmgVQhImUB6I8nyM=;
+        b=GvaETFyq8cCEajpzluy+9he6qSZToALCs+Vqd5UPymcMh7O6wjMF30MSxt8LWJIqG7
+         XawwbNHzK2shfEQXL+oY87V5c/nrc1xyjiBlKtfnD7j02BmjNM0BaIHfimkNAJQ754ID
+         e5/aWJF9pP2JYp9TbfzpBr6F2mbySoap11WHqczRtE5fsBD8LP+H4tTcdtmJ9HC9sq20
+         Q05aDGu2xjx1tQYrVvclNCLoYKTz3KJivW7yRTujXL6Jye5jOVgIuCmN1CtN7hYJyUiU
+         5C9lRdwtYn61KnrQGNXXPU8Vo56QHL/NXYq6l+4VZjWJOhZZA/1dNzSvzlwE1/tWXaKX
+         HE6A==
+X-Gm-Message-State: ANhLgQ0i1YvyJvWzhmZtWGz9MBlT5uhK3gcM3ngk1nj3cdq3SZbTAK/A
+        MlmSV+7S1fF/Nu6wVkADzGw+0dQO
+X-Google-Smtp-Source: ADFU+vv5+JOfNQoShXbxXJvnWKVTQeFFdQJeRcd+SMgQYxKizXbBREoopsfDidBF8W6Kj0helBCH6A==
+X-Received: by 2002:ac2:5609:: with SMTP id v9mr3187088lfd.17.1583356974237;
+        Wed, 04 Mar 2020 13:22:54 -0800 (PST)
 Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id t7sm14401789ljo.7.2020.03.04.11.26.53
+        by smtp.googlemail.com with ESMTPSA id g18sm13037795ljn.32.2020.03.04.13.22.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 11:26:54 -0800 (PST)
+        Wed, 04 Mar 2020 13:22:53 -0800 (PST)
 Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
@@ -68,13 +69,13 @@ Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
  <20200217095940.GE1345979@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
-Date:   Wed, 4 Mar 2020 22:26:52 +0300
+ <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
+Message-ID: <7722b7b8-82df-c450-a94c-704d15819af0@gmail.com>
+Date:   Thu, 5 Mar 2020 00:22:52 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200217095940.GE1345979@ulmo>
+In-Reply-To: <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,39 +84,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-17.02.2020 12:59, Thierry Reding пишет:
-...
-> I've applied patches 1-10 and 13-16 to the Tegra tree, but I think it
-> should be fine for Mark to pick up the ASoC patches into his tree,
-> right?
+04.03.2020 22:26, Dmitry Osipenko пишет:
+> 17.02.2020 12:59, Thierry Reding пишет:
+> ...
+>> I've applied patches 1-10 and 13-16 to the Tegra tree, but I think it
+>> should be fine for Mark to pick up the ASoC patches into his tree,
+>> right?
+>>
+>> As I mentioned in my reply to patch 20, I think we need to hold off on
+>> applying patches 20-22 until all the rest have been merged, otherwise
+>> we'll regress.
 > 
-> As I mentioned in my reply to patch 20, I think we need to hold off on
-> applying patches 20-22 until all the rest have been merged, otherwise
-> we'll regress.
+> Hello Thierry and Sowjanya,
+> 
+> I was trying today's next-20200304 and found that WiFi / Bluetooth got
+> broken:
+> 
+> [   23.130017] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
+> brcmf_proto_bcdc_msg failed w/status -110
+> [   23.130167] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
+> failed (-110)
+> [   25.690008] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
+> brcmf_proto_bcdc_msg failed w/status -110
+> [   30.811972] ieee80211 phy0: brcmf_dongle_scantime: Scan assoc time
+> error (-110)
+> [   33.370184] ieee80211 phy0: brcmf_netdev_open: failed to bring up
+> cfg80211
+> [   35.929994] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
+> brcmf_proto_bcdc_msg failed w/status -110
+> [   35.930181] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
+> failed (-110)
+> 
+> The fix is to replace TEGRA30_CLK_BLINK with TEGRA_PMC_CLK_BLINK in a
+> device-tree.
+> 
+> I'm not sure that the TEGRA30_CLK_BLINK breakage is expected to happen
+> because all clk/tegra/ PMC code is still in place. Please take a look,
+> thanks in advance.
 
-Hello Thierry and Sowjanya,
+This happens because the unused "pmc_blink" is getting auto-disabled by
+the CCF. Which means that it's wrong to apply this series partially.
 
-I was trying today's next-20200304 and found that WiFi / Bluetooth got
-broken:
-
-[   23.130017] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-brcmf_proto_bcdc_msg failed w/status -110
-[   23.130167] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-failed (-110)
-[   25.690008] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-brcmf_proto_bcdc_msg failed w/status -110
-[   30.811972] ieee80211 phy0: brcmf_dongle_scantime: Scan assoc time
-error (-110)
-[   33.370184] ieee80211 phy0: brcmf_netdev_open: failed to bring up
-cfg80211
-[   35.929994] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-brcmf_proto_bcdc_msg failed w/status -110
-[   35.930181] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-failed (-110)
-
-The fix is to replace TEGRA30_CLK_BLINK with TEGRA_PMC_CLK_BLINK in a
-device-tree.
-
-I'm not sure that the TEGRA30_CLK_BLINK breakage is expected to happen
-because all clk/tegra/ PMC code is still in place. Please take a look,
-thanks in advance.
+@Thierry, please re-apply it all properly. All patches, excluding patch
+#11, should be applied. Thanks in advance.
