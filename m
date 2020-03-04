@@ -2,196 +2,108 @@ Return-Path: <SRS0=n35e=4V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD28C3F2D1
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 11:00:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8583EC3F2CD
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 11:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA8BF22522
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 11:00:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B9C2073D
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 11:22:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbgCDLAK convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Mar 2020 06:00:10 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:37666 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387774AbgCDLAK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Mar 2020 06:00:10 -0500
-Received: from ip5f5a5d2f.dynamic.kabel-deutschland.de ([95.90.93.47] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1j9Rko-0006RL-Ow; Wed, 04 Mar 2020 11:59:54 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@collabora.com>
-Cc:     linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, kernel@collabora.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/2] ARM: Rockchip: Handle rk3288/rk3288w revision
-Date:   Wed, 04 Mar 2020 11:59:54 +0100
-Message-ID: <2221545.2vEflg7qi2@diego>
-In-Reply-To: <20200302155703.278421-2-mylene.josserand@collabora.com>
-References: <20200302155703.278421-1-mylene.josserand@collabora.com> <20200302155703.278421-2-mylene.josserand@collabora.com>
+        id S1729118AbgCDLWn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Mar 2020 06:22:43 -0500
+Received: from out28-194.mail.aliyun.com ([115.124.28.194]:44833 "EHLO
+        out28-194.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726137AbgCDLWn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Mar 2020 06:22:43 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08880497|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.103441-0.00660654-0.889953;DS=CONTINUE|ham_system_inform|0.00489006-0.000231126-0.994879;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03301;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.Gw2Hmn-_1583320951;
+Received: from 192.168.10.227(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Gw2Hmn-_1583320951)
+          by smtp.aliyun-inc.com(10.147.41.199);
+          Wed, 04 Mar 2020 19:22:32 +0800
+Subject: Re: [PATCH 4/4] irqchip: Ingenic: Add support for TCU of X1000.
+To:     Marc Zyngier <maz@kernel.org>
+References: <1582100974-129559-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1582100974-129559-6-git-send-email-zhouyanjie@wanyeetech.com>
+ <cf9434a075ee7efa6430bc39877c416c@kernel.org>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        tglx@linutronix.de, jason@lakedaemon.net, sboyd@kernel.org,
+        mturquette@baylibre.com, mark.rutland@arm.com, robh+dt@kernel.org,
+        daniel.lezcano@linaro.org, paul@crapouillou.net,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com,
+        dongsheng.qiu@ingenic.com
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5E5F8F76.6060803@wanyeetech.com>
+Date:   Wed, 4 Mar 2020 19:22:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <cf9434a075ee7efa6430bc39877c416c@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Marc,
 
-Am Montag, 2. M�rz 2020, 16:57:02 CET schrieb Myl�ne Josserand:
-> Determine which revision of rk3288 by checking the HDMI version.
-> According to the Rockchip BSP kernel, on rk3288w, the HDMI
-> revision equals 0x1A which is not the case for the rk3288 [1].
-> 
-> As these SOC have some differences, the new function
-> 'soc_is_rk3288w' will help us to know on which revision
-> we are.
+On 2020年03月04日 18:58, Marc Zyngier wrote:
+> On 2020-02-19 08:29, 周琰杰 wrote:
+>> X1000 has a different TCU containing OST, since X1000, OST has been
+>> independent of TCU. This patch is prepare for later OST driver.
+>
+> You keep on talking about OST (whatever that is), but never deals with 
+> it.
 
-what happened to just having a different compatible in the dts?
-Aka doing a 
+Sorry, I didn't make it clear. My intention was to explain why we need 
+to add an IRQCHIP_DECLARE to x1000 separately.
 
-rk3288w.dtsi with
+> Why don't you just say
+>
+> "Enable TCU support for Ingenic X1000, which can be supported by
+> the existing driver."
+>
+> as this is what the patch is doing?
 
-#include "rk3288.dtsi"
+Yes, this patch is to ensure that TCU can be used normally when the new 
+OST driver is merged, thank you for your suggestion.
 
-&cru {
-	compatible = "rockchip,rk3288w-cru";
-}
+Thanks and best regards!
 
-I somehow don't expect boards to just switch between soc variants
-on the fly.
-
-Also, doing things in mach-rockchip is not very future-proof:
-
-(1) having random soc-specific APIs spanning the kernel feels wrong,
-    especially as at some point it might not be contained to our own special
-    drivers like the cru. I cannot really see people being enthusiastic if
-    something like this would be needed in say the core Analogix-DP bridge ;-)
-(2) I guess the rk3288w will not be the last soc doing this and on arm64 you
-    can't do it that way, as there is no mach-rockchip there
-
-So my personal preference would really would be just a specific compatible
-for affected ip blocks.
-
-Heiko
-
-> [1]:https://github.com/rockchip-linux/u-boot/blob/f992fe3334aa5090acb448261982628b5a3d37a5/arch/arm/include/asm/arch-rockchip/cpu.h#L30..L34
-> 
-> Signed-off-by: Myl�ne Josserand <mylene.josserand@collabora.com>
-> ---
->  arch/arm/mach-rockchip/rockchip.c | 45 +++++++++++++++++++++++++++++++
->  include/soc/rockchip/revision.h   | 22 +++++++++++++++
->  2 files changed, 67 insertions(+)
->  create mode 100644 include/soc/rockchip/revision.h
-> 
-> diff --git a/arch/arm/mach-rockchip/rockchip.c b/arch/arm/mach-rockchip/rockchip.c
-> index f9797a2b5d0d..b907ba390093 100644
-> --- a/arch/arm/mach-rockchip/rockchip.c
-> +++ b/arch/arm/mach-rockchip/rockchip.c
-> @@ -9,12 +9,14 @@
->  #include <linux/kernel.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> +#include <linux/of_address.h>
->  #include <linux/of_platform.h>
->  #include <linux/irqchip.h>
->  #include <linux/clk-provider.h>
->  #include <linux/clocksource.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <soc/rockchip/revision.h>
->  #include <asm/mach/arch.h>
->  #include <asm/mach/map.h>
->  #include <asm/hardware/cache-l2x0.h>
-> @@ -22,6 +24,49 @@
->  #include "pm.h"
->  
->  #define RK3288_TIMER6_7_PHYS 0xff810000
-> +#define RK3288_HDMI_REV_REG	0x04
-> +#define RK3288W_HDMI_REV	0x1A
-> +
-> +static const struct of_device_id rk3288_dt_hdmi_match[] __initconst = {
-> +	{ .compatible = "rockchip,rk3288-dw-hdmi" },
-> +	{ }
-> +};
-> +
-> +int rk3288_get_revision(void)
-> +{
-> +	static int revision = RK3288_SOC_REV_UNKNOWN;
-> +	struct device_node *dn;
-> +	void __iomem *hdmi_base;
-> +
-> +	if (revision != RK3288_SOC_REV_UNKNOWN)
-> +		return revision;
-> +
-> +	dn = of_find_matching_node(NULL, rk3288_dt_hdmi_match);
-> +	if (!dn) {
-> +		pr_err("%s: Couldn't find HDMI node\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	hdmi_base = of_iomap(dn, 0);
-> +	of_node_put(dn);
-> +
-> +	if (!hdmi_base) {
-> +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
-> +		       hdmi_base);
-> +		return -ENXIO;
-> +	}
-> +
-> +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG) ==
-> +	    RK3288W_HDMI_REV)
-> +		revision = RK3288_SOC_REV_RK3288W;
-> +	else
-> +		revision = RK3288_SOC_REV_RK3288;
-> +
-> +	iounmap(hdmi_base);
-> +
-> +	return revision;
-> +}
-> +EXPORT_SYMBOL(rk3288_get_revision);
->  
->  static void __init rockchip_timer_init(void)
->  {
-> diff --git a/include/soc/rockchip/revision.h b/include/soc/rockchip/revision.h
-> new file mode 100644
-> index 000000000000..226419c60af0
-> --- /dev/null
-> +++ b/include/soc/rockchip/revision.h
-> @@ -0,0 +1,22 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright 2020 Collabora
-> + */
-> +
-> +#ifndef __SOC_ROCKCHIP_REVISION_H__
-> +#define __SOC_ROCKCHIP_REVISION_H__
-> +
-> +enum rk3288_soc_revision {
-> +	RK3288_SOC_REV_UNKNOWN,
-> +	RK3288_SOC_REV_RK3288,
-> +	RK3288_SOC_REV_RK3288W,
-> +};
-> +
-> +int rk3288_get_revision(void);
-> +
-> +static inline bool soc_is_rk3288w(void)
-> +{
-> +	return rk3288_get_revision() == RK3288_SOC_REV_RK3288W;
-> +}
-> +
-> +#endif /* __SOC_ROCKCHIP_REVISION_H__ */
-> 
-
-
-
+>
+>>
+>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> ---
+>>  drivers/irqchip/irq-ingenic-tcu.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/irqchip/irq-ingenic-tcu.c
+>> b/drivers/irqchip/irq-ingenic-tcu.c
+>> index 6d05cef..7a7222d 100644
+>> --- a/drivers/irqchip/irq-ingenic-tcu.c
+>> +++ b/drivers/irqchip/irq-ingenic-tcu.c
+>> @@ -180,3 +180,4 @@ static int __init ingenic_tcu_irq_init(struct
+>> device_node *np,
+>>  IRQCHIP_DECLARE(jz4740_tcu_irq, "ingenic,jz4740-tcu", 
+>> ingenic_tcu_irq_init);
+>>  IRQCHIP_DECLARE(jz4725b_tcu_irq, "ingenic,jz4725b-tcu", 
+>> ingenic_tcu_irq_init);
+>>  IRQCHIP_DECLARE(jz4770_tcu_irq, "ingenic,jz4770-tcu", 
+>> ingenic_tcu_irq_init);
+>> +IRQCHIP_DECLARE(x1000_tcu_irq, "ingenic,x1000-tcu", 
+>> ingenic_tcu_irq_init);
+>
+> Otherwise,
+>
+> Acked-by: Marc Zyngier <maz@kernel.org>
+>
+> I expect this to go via the MIPS tree as a series.
+>
+> Thanks,
+>
+>         M.
 
