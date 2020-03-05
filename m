@@ -1,129 +1,245 @@
-Return-Path: <SRS0=n35e=4V=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=nGmH=4W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1779C3F2CE
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 21:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1D08C3F2D8
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Mar 2020 00:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850C82084E
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Mar 2020 21:22:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rdRc9kTs"
+	by mail.kernel.org (Postfix) with ESMTP id C5C942146E
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Mar 2020 00:03:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388342AbgCDVW5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Mar 2020 16:22:57 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41436 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388337AbgCDVW5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Mar 2020 16:22:57 -0500
-Received: by mail-lf1-f67.google.com with SMTP id y17so2728530lfe.8;
-        Wed, 04 Mar 2020 13:22:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=91pQ9hJXrzxABBV4Ff80CFHiJGifmgVQhImUB6I8nyM=;
-        b=rdRc9kTsvR9Z6XTv805rReh6SfrEuiMQ5Q0Vml8v5wr3lfGCoA8ECi3XmoOTIInmqE
-         4mH6l9rHXMY4erzVsHEMboGq45Rf/FiDGHWHd4aiQZFPM7Y/57g4eGqu7DPPQ/uRF856
-         hx8bJ9TLGNO+RgFJjYr+Y3jIuLcsIZk3ns3jvojcJeRRMHGFjDoNtPnVahytbJ9ssdjM
-         s2GkpbBm7kuYZLV1YCjs61DrFCdcITfJknuWlzWKnb2KMEQGJpJGdfHWvWjbMHSKl2J4
-         E+HDUaupHTWw5tI4KpsM2om0OSGUdWalGZ6LETJ1bGukAK5XuGUUZUusZN3hly4RqsPT
-         d9aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=91pQ9hJXrzxABBV4Ff80CFHiJGifmgVQhImUB6I8nyM=;
-        b=GvaETFyq8cCEajpzluy+9he6qSZToALCs+Vqd5UPymcMh7O6wjMF30MSxt8LWJIqG7
-         XawwbNHzK2shfEQXL+oY87V5c/nrc1xyjiBlKtfnD7j02BmjNM0BaIHfimkNAJQ754ID
-         e5/aWJF9pP2JYp9TbfzpBr6F2mbySoap11WHqczRtE5fsBD8LP+H4tTcdtmJ9HC9sq20
-         Q05aDGu2xjx1tQYrVvclNCLoYKTz3KJivW7yRTujXL6Jye5jOVgIuCmN1CtN7hYJyUiU
-         5C9lRdwtYn61KnrQGNXXPU8Vo56QHL/NXYq6l+4VZjWJOhZZA/1dNzSvzlwE1/tWXaKX
-         HE6A==
-X-Gm-Message-State: ANhLgQ0i1YvyJvWzhmZtWGz9MBlT5uhK3gcM3ngk1nj3cdq3SZbTAK/A
-        MlmSV+7S1fF/Nu6wVkADzGw+0dQO
-X-Google-Smtp-Source: ADFU+vv5+JOfNQoShXbxXJvnWKVTQeFFdQJeRcd+SMgQYxKizXbBREoopsfDidBF8W6Kj0helBCH6A==
-X-Received: by 2002:ac2:5609:: with SMTP id v9mr3187088lfd.17.1583356974237;
-        Wed, 04 Mar 2020 13:22:54 -0800 (PST)
-Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id g18sm13037795ljn.32.2020.03.04.13.22.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 04 Mar 2020 13:22:53 -0800 (PST)
-Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        spujar@nvidia.com, josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <20200217095940.GE1345979@ulmo>
- <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
-Message-ID: <7722b7b8-82df-c450-a94c-704d15819af0@gmail.com>
-Date:   Thu, 5 Mar 2020 00:22:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S2388584AbgCEADl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Mar 2020 19:03:41 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:47990 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388527AbgCEADl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Mar 2020 19:03:41 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 4471C29637E
+Message-ID: <5fa8402863c7fb4171d8b2021a776b9ac0be1596.camel@collabora.com>
+Subject: Re: [PATCH 1/2] ARM: Rockchip: Handle rk3288/rk3288w revision
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@collabora.com>
+Cc:     linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, kernel@collabora.com,
+        linux-clk@vger.kernel.org
+Date:   Wed, 04 Mar 2020 21:03:30 -0300
+In-Reply-To: <2221545.2vEflg7qi2@diego>
+References: <20200302155703.278421-1-mylene.josserand@collabora.com>
+         <20200302155703.278421-2-mylene.josserand@collabora.com>
+         <2221545.2vEflg7qi2@diego>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-In-Reply-To: <96ed39c9-32d3-98a1-e9d8-ffe63307a556@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-04.03.2020 22:26, Dmitry Osipenko пишет:
-> 17.02.2020 12:59, Thierry Reding пишет:
-> ...
->> I've applied patches 1-10 and 13-16 to the Tegra tree, but I think it
->> should be fine for Mark to pick up the ASoC patches into his tree,
->> right?
->>
->> As I mentioned in my reply to patch 20, I think we need to hold off on
->> applying patches 20-22 until all the rest have been merged, otherwise
->> we'll regress.
-> 
-> Hello Thierry and Sowjanya,
-> 
-> I was trying today's next-20200304 and found that WiFi / Bluetooth got
-> broken:
-> 
-> [   23.130017] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   23.130167] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-> failed (-110)
-> [   25.690008] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   30.811972] ieee80211 phy0: brcmf_dongle_scantime: Scan assoc time
-> error (-110)
-> [   33.370184] ieee80211 phy0: brcmf_netdev_open: failed to bring up
-> cfg80211
-> [   35.929994] ieee80211 phy0: brcmf_proto_bcdc_query_dcmd:
-> brcmf_proto_bcdc_msg failed w/status -110
-> [   35.930181] ieee80211 phy0: brcmf_cfg80211_get_channel: chanspec
-> failed (-110)
-> 
-> The fix is to replace TEGRA30_CLK_BLINK with TEGRA_PMC_CLK_BLINK in a
-> device-tree.
-> 
-> I'm not sure that the TEGRA30_CLK_BLINK breakage is expected to happen
-> because all clk/tegra/ PMC code is still in place. Please take a look,
-> thanks in advance.
+Hi Heiko,
 
-This happens because the unused "pmc_blink" is getting auto-disabled by
-the CCF. Which means that it's wrong to apply this series partially.
+On Wed, 2020-03-04 at 11:59 +0100, Heiko Stübner wrote:
+> Hi,
+> 
+> Am Montag, 2. März 2020, 16:57:02 CET schrieb Mylène Josserand:
+> > Determine which revision of rk3288 by checking the HDMI version.
+> > According to the Rockchip BSP kernel, on rk3288w, the HDMI
+> > revision equals 0x1A which is not the case for the rk3288 [1].
+> > 
+> > As these SOC have some differences, the new function
+> > 'soc_is_rk3288w' will help us to know on which revision
+> > we are.
+> 
+> what happened to just having a different compatible in the dts?
+> Aka doing a 
+> 
+> rk3288w.dtsi with
+> 
+> #include "rk3288.dtsi"
+> 
+> &cru {
+> 	compatible = "rockchip,rk3288w-cru";
+> }
+> 
 
-@Thierry, please re-apply it all properly. All patches, excluding patch
-#11, should be applied. Thanks in advance.
+I guess you have something like this in mind:
+
+static void __init rk3288_clk_init(struct device_node *np)
+{
+        __rk3288_clk_init(np, RK3288_SOC_REV_RK3288W);
+}
+CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+
+static void __init rk3288w_clk_init(struct device_node *np)
+{
+        __rk3288_clk_init(np, RK3288_SOC_REV_RK3288);
+}
+CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288w-cru", rk3288w_clk_init);
+
+And the rest is mostly untouched, except the revision is
+no longer queried and is now passed by the DT?
+
+This would be cleaner for the kernel, with the obvious
+drawback being that you now have to maintain
+another DTS.
+
+This could be an inconvenience. I believe
+RK3288W is meant as a direct replacement for RK3288,
+so folks building products would expect to just use
+RK3288W, and not really bother with passing a
+different DTS or what not.
+
+> I somehow don't expect boards to just switch between soc variants
+> on the fly.
+> 
+
+While I agree they are nasty, quirks like this
+are not uncommon.
+
+> Also, doing things in mach-rockchip is not very future-proof:
+> 
+
+There is actually no reason to keep this in mach-rockchip, right?
+
+The quirk could be placed in other places. For instance,
+directly in the clock driver.
+
+Thanks for reviewing!
+Ezequiel
+
+> (1) having random soc-specific APIs spanning the kernel feels wrong,
+>     especially as at some point it might not be contained to our own special
+>     drivers like the cru. I cannot really see people being enthusiastic if
+>     something like this would be needed in say the core Analogix-DP bridge ;-)
+> (2) I guess the rk3288w will not be the last soc doing this and on arm64 you
+>     can't do it that way, as there is no mach-rockchip there
+> 
+> So my personal preference would really would be just a specific compatible
+> for affected ip blocks.
+> 
+> Heiko
+> 
+> > [1]:https://github.com/rockchip-linux/u-boot/blob/f992fe3334aa5090acb448261982628b5a3d37a5/arch/arm/include/asm/arch-rockchip/cpu.h#L30..L34
+> > 
+> > Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
+> > ---
+> >  arch/arm/mach-rockchip/rockchip.c | 45 +++++++++++++++++++++++++++++++
+> >  include/soc/rockchip/revision.h   | 22 +++++++++++++++
+> >  2 files changed, 67 insertions(+)
+> >  create mode 100644 include/soc/rockchip/revision.h
+> > 
+> > diff --git a/arch/arm/mach-rockchip/rockchip.c b/arch/arm/mach-rockchip/rockchip.c
+> > index f9797a2b5d0d..b907ba390093 100644
+> > --- a/arch/arm/mach-rockchip/rockchip.c
+> > +++ b/arch/arm/mach-rockchip/rockchip.c
+> > @@ -9,12 +9,14 @@
+> >  #include <linux/kernel.h>
+> >  #include <linux/init.h>
+> >  #include <linux/io.h>
+> > +#include <linux/of_address.h>
+> >  #include <linux/of_platform.h>
+> >  #include <linux/irqchip.h>
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/clocksource.h>
+> >  #include <linux/mfd/syscon.h>
+> >  #include <linux/regmap.h>
+> > +#include <soc/rockchip/revision.h>
+> >  #include <asm/mach/arch.h>
+> >  #include <asm/mach/map.h>
+> >  #include <asm/hardware/cache-l2x0.h>
+> > @@ -22,6 +24,49 @@
+> >  #include "pm.h"
+> >  
+> >  #define RK3288_TIMER6_7_PHYS 0xff810000
+> > +#define RK3288_HDMI_REV_REG	0x04
+> > +#define RK3288W_HDMI_REV	0x1A
+> > +
+> > +static const struct of_device_id rk3288_dt_hdmi_match[] __initconst = {
+> > +	{ .compatible = "rockchip,rk3288-dw-hdmi" },
+> > +	{ }
+> > +};
+> > +
+> > +int rk3288_get_revision(void)
+> > +{
+> > +	static int revision = RK3288_SOC_REV_UNKNOWN;
+> > +	struct device_node *dn;
+> > +	void __iomem *hdmi_base;
+> > +
+> > +	if (revision != RK3288_SOC_REV_UNKNOWN)
+> > +		return revision;
+> > +
+> > +	dn = of_find_matching_node(NULL, rk3288_dt_hdmi_match);
+> > +	if (!dn) {
+> > +		pr_err("%s: Couldn't find HDMI node\n", __func__);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	hdmi_base = of_iomap(dn, 0);
+> > +	of_node_put(dn);
+> > +
+> > +	if (!hdmi_base) {
+> > +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
+> > +		       hdmi_base);
+> > +		return -ENXIO;
+> > +	}
+> > +
+> > +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG) ==
+> > +	    RK3288W_HDMI_REV)
+> > +		revision = RK3288_SOC_REV_RK3288W;
+> > +	else
+> > +		revision = RK3288_SOC_REV_RK3288;
+> > +
+> > +	iounmap(hdmi_base);
+> > +
+> > +	return revision;
+> > +}
+> > +EXPORT_SYMBOL(rk3288_get_revision);
+> >  
+> >  static void __init rockchip_timer_init(void)
+> >  {
+> > diff --git a/include/soc/rockchip/revision.h b/include/soc/rockchip/revision.h
+> > new file mode 100644
+> > index 000000000000..226419c60af0
+> > --- /dev/null
+> > +++ b/include/soc/rockchip/revision.h
+> > @@ -0,0 +1,22 @@
+> > +/* SPDX-License-Identifier: GPL-2.0-only */
+> > +/*
+> > + * Copyright 2020 Collabora
+> > + */
+> > +
+> > +#ifndef __SOC_ROCKCHIP_REVISION_H__
+> > +#define __SOC_ROCKCHIP_REVISION_H__
+> > +
+> > +enum rk3288_soc_revision {
+> > +	RK3288_SOC_REV_UNKNOWN,
+> > +	RK3288_SOC_REV_RK3288,
+> > +	RK3288_SOC_REV_RK3288W,
+> > +};
+> > +
+> > +int rk3288_get_revision(void);
+> > +
+> > +static inline bool soc_is_rk3288w(void)
+> > +{
+> > +	return rk3288_get_revision() == RK3288_SOC_REV_RK3288W;
+> > +}
+> > +
+> > +#endif /* __SOC_ROCKCHIP_REVISION_H__ */
+> > 
+> 
+> 
+> 
+> 
+
+
