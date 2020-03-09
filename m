@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90BDEC18E5C
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C707C2BB8B
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:51:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7515524679
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF2E224676
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgCITu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 15:50:56 -0400
-Received: from v6.sk ([167.172.42.174]:34892 "EHLO v6.sk"
+        id S1726655AbgCITu7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 15:50:59 -0400
+Received: from v6.sk ([167.172.42.174]:34904 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726466AbgCITuz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:50:55 -0400
+        id S1726702AbgCITu6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:50:58 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id A23BF61313;
-        Mon,  9 Mar 2020 19:44:03 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id D131261308;
+        Mon,  9 Mar 2020 19:43:43 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -29,9 +29,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 16/17] clk: mmp2: Add clock for fifth SD HCI on MMP3
-Date:   Mon,  9 Mar 2020 20:42:53 +0100
-Message-Id: <20200309194254.29009-17-lkundrak@v3.sk>
+Subject: [PATCH v2 11/17] dt-bindings: marvell,mmp2: Add clock ids for the GPU clocks
+Date:   Mon,  9 Mar 2020 20:42:48 +0100
+Message-Id: <20200309194254.29009-12-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200309194254.29009-1-lkundrak@v3.sk>
 References: <20200309194254.29009-1-lkundrak@v3.sk>
@@ -42,8 +42,9 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There's one extra SDHCI on MMP3, used by the internal SD card on OLPC
-XO-4. Add a clock for it.
+MMP2 has a single GC860 core while MMP3 has a GC2000 and a GC300.
+On both platforms there's an AXI bus interface clock that's common for
+all GPUs and each GPU core has a separate clock.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 
@@ -51,29 +52,25 @@ Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 Changes since v1:
 - Added this patch
 
- drivers/clk/mmp/clk-of-mmp2.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/dt-bindings/clock/marvell,mmp2.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 0057a53905d8b..8769860fab640 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -49,6 +49,7 @@
- #define APMU_SDH1	0x58
- #define APMU_SDH2	0xe8
- #define APMU_SDH3	0xec
-+#define APMU_SDH4	0x15c
- #define APMU_USB	0x5c
- #define APMU_DISP0	0x4c
- #define APMU_DISP1	0x110
-@@ -332,6 +333,7 @@ static struct mmp_param_gate_clk mmp2_apmu_gate_clks[] = {
- };
+diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
+index 22006392b411b..dd5067bd92f22 100644
+--- a/include/dt-bindings/clock/marvell,mmp2.h
++++ b/include/dt-bindings/clock/marvell,mmp2.h
+@@ -77,6 +77,11 @@
+ #define MMP2_CLK_DISP0_LCDC		120
+ #define MMP2_CLK_USBHSIC0		121
+ #define MMP2_CLK_USBHSIC1		122
++#define MMP2_CLK_GPU_BUS		123
++#define MMP3_CLK_GPU_BUS		MMP2_CLK_GPU_BUS
++#define MMP2_CLK_GPU_3D			124
++#define MMP3_CLK_GPU_3D			MMP2_CLK_GPU_3D
++#define MMP3_CLK_GPU_2D			125
  
- static struct mmp_param_gate_clk mmp3_apmu_gate_clks[] = {
-+	{MMP3_CLK_SDH4, "sdh4_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH4, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP3_CLK_GPU_3D, "gpu_3d_clk", "gpu_3d_div", CLK_SET_RATE_PARENT, APMU_GPU, 0x5, 0x5, 0x0, MMP_CLK_GATE_NEED_DELAY, &gpu_lock},
- 	{MMP3_CLK_GPU_2D, "gpu_2d_clk", "gpu_2d_div", CLK_SET_RATE_PARENT, APMU_GPU, 0x1c0000, 0x1c0000, 0x0, MMP_CLK_GATE_NEED_DELAY, &gpu_lock},
- };
+ #define MMP2_NR_CLKS			200
+ #endif
 -- 
 2.25.1
 
