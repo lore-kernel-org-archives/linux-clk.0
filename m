@@ -2,69 +2,124 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D0F3C10F25
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 22:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B737C10F25
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 22:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE2172465A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 22:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 720AA24671
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 22:30:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583792858;
-	bh=SCrGQrtiQbHdndUvuWPRISRmR7N42dZ8DlMegyW5Wb0=;
+	s=default; t=1583793005;
+	bh=Ug0zeSOe7y0l/++Oomd/cMJ1Mcz3Y3Ukl281K3wA12M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=tQoG566IdFwzG4C+rwh0ma6EouqUzqgUzz1V5ZkLoHElawxiWf4Pn/mpBp3SAldjR
-	 PoZeWZdDAxGIHaBFUqj2I/qvOiO6DVt7+psvvZ7Ib0bza3gIDbNwVq8oeY1H+SEFh7
-	 lsMbN3PGVtmg4K3lTBlvl2MIfr7q/j+v54FSPNqQ=
+	b=zRhku10eO9rql7soWAh9Za9StW3LrA/h3A20gfBzKh5QBqDXBC0MU2rhvxiAobDKC
+	 eFpE5o9IwIm22i4DcTVzVrt465Jsyr6Yt6yPqpapNi9vgzpVrM6KMQwt1KscsEtsZM
+	 vhTEguVKS48i2Hg27VJTMlXIHdjBWkPMj+cZ0tK4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbgCIW1i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 18:27:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59482 "EHLO mail.kernel.org"
+        id S1726937AbgCIWaF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 18:30:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726937AbgCIW1i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 18:27:38 -0400
+        id S1726838AbgCIWaE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Mar 2020 18:30:04 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B235024649;
-        Mon,  9 Mar 2020 22:27:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 114C324649;
+        Mon,  9 Mar 2020 22:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583792857;
-        bh=SCrGQrtiQbHdndUvuWPRISRmR7N42dZ8DlMegyW5Wb0=;
+        s=default; t=1583793004;
+        bh=Ug0zeSOe7y0l/++Oomd/cMJ1Mcz3Y3Ukl281K3wA12M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=BACj3hfXpP29ednM4WvWuZsjYimfdeu/+LpcCFZUEi6sXMqZ0ACvFAVcUSp5EKgPY
-         t7DWiIAgQ3EnGzN62zJOmAEkygGXIPFq3ybmIEuZ1xSfPY5aMm6ROPBf1QlfvbhRjY
-         xcBY8ibee4+r8qYWlRYtvc4dR/F2+QggekF8a2fo=
+        b=j1vLlyPLYfZLdGfvn6AnKPWxKGQgcM1vmYd0y5UV7xABU8qlsm+kOVo3HiPKHFBCj
+         qAFN8+em2FucvCPA1qLPigqSjKVfpEJqt3b8Md8AJd+7tAh3c9IOFNxBVUd7NiN42/
+         nX7mDD/yRRy7DjiZTxbupR/bChRfUQQwzrCO/6GY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200228203611.15507-1-dinguyen@kernel.org>
-References: <20200228203611.15507-1-dinguyen@kernel.org>
-Subject: Re: [PATCH] clk: socfpga: stratix10: use new parent data scheme
+In-Reply-To: <20200309171653.27630-3-dinguyen@kernel.org>
+References: <20200309171653.27630-1-dinguyen@kernel.org> <20200309171653.27630-3-dinguyen@kernel.org>
+Subject: Re: [PATCHv2 2/3] dt-bindings: documentation: add clock bindings information for Agilex
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dinguyen@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Date:   Mon, 09 Mar 2020 15:27:36 -0700
-Message-ID: <158379285687.149997.12928033376494434912@swboyd.mtv.corp.google.com>
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com
+To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+Date:   Mon, 09 Mar 2020 15:30:03 -0700
+Message-ID: <158379300325.149997.17942016518688387697@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2020-02-28 12:36:11)
+Quoting Dinh Nguyen (2020-03-09 10:16:52)
+> diff --git a/Documentation/devicetree/bindings/clock/intc,agilex.yaml b/D=
+ocumentation/devicetree/bindings/clock/intc,agilex.yaml
+> new file mode 100644
+> index 000000000000..bd5c4f590e12
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intc,agilex.yaml
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/intc,agilex.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +static const struct clk_parent_data mpu_free_mux[] =3D {
-> +       { .name =3D "main_mpu_base_clk", },
-> +       { .name =3D "peri_mpu_base_clk", },
-> +       { .name =3D "osc1", },
-> +       { .name =3D "cb-intosc-hs-div2-clk", },
-> +       { .name =3D "f2s-free-clk", },
-> +};
+> +title: Intel SoCFPGA Agilex platform clock controller binding
+> +
+> +maintainers:
+> +  - Dinh Nguyen <dinguyen@kernel.org>
+> +
+> +description: |
+> +  The Intel Agilex Clock controller is an integrated clock controller, w=
+hich
+> +  generates and supplies to all modules.
+> +
+> +  This binding uses the common clock binding[1].
+> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-While this changes everything to use the new way it doesn't actually
-migrate anything over to using direct pointers or the .fw_name field.
-What's going on?
+I think you can remove this last sentence, and drop the | on the
+description because formatting doesn't matter.
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - intel,agilex-clkmgr
+> +
+
+Just use
+
+  compatible:
+    const: intel,agilex-clkmgr
+
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +examples:
+> +  # Clock controller node
+> +  - |
+> +       clkmgr: clock-controller@ffd10000 {
+> +               compatible =3D "intel,agilex-clkmgr";
+> +               reg =3D <0xffd10000 0x1000>;
+> +               #clock-cells =3D <1>;
+
+Does it consume any clks?
+
+> +       };
+> +
+> +  # External clocks
+
+Everything below here is not necessary and shouldn't be in the binding.
