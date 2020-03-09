@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1432DC10F25
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF013C3F2D8
 	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E82372146E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7E052465A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbgCITu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 15:50:58 -0400
-Received: from v6.sk ([167.172.42.174]:34930 "EHLO v6.sk"
+        id S1726682AbgCITu7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 15:50:59 -0400
+Received: from v6.sk ([167.172.42.174]:34940 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726620AbgCITu5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:50:57 -0400
+        id S1726655AbgCITu6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:50:58 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 9DA1A60EF0;
-        Mon,  9 Mar 2020 19:43:04 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 0EE1561302;
+        Mon,  9 Mar 2020 19:43:24 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -28,10 +28,10 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 01/17] clk: mmp2: Remove a unused prototype
-Date:   Mon,  9 Mar 2020 20:42:38 +0100
-Message-Id: <20200309194254.29009-2-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 06/17] dt-bindings: clock: Add MMP3 compatible string
+Date:   Mon,  9 Mar 2020 20:42:43 +0100
+Message-Id: <20200309194254.29009-7-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200309194254.29009-1-lkundrak@v3.sk>
 References: <20200309194254.29009-1-lkundrak@v3.sk>
@@ -42,27 +42,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no mmp_clk_register_pll2() routine.
+This binding describes the PMUs that are found on MMP3 as well. Add the
+compatible strings and adjust the description.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/clk/mmp/clk.h | 3 ---
- 1 file changed, 3 deletions(-)
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
-index 70bb73257647a..5bcbced3f458e 100644
---- a/drivers/clk/mmp/clk.h
-+++ b/drivers/clk/mmp/clk.h
-@@ -124,9 +124,6 @@ extern struct clk *mmp_clk_register_gate(struct device *dev, const char *name,
- 			u32 val_disable, unsigned int gate_flags,
- 			spinlock_t *lock);
+---
+Changes since v1:
+- Collected Rob's Reviewed-by tag
+
+ .../devicetree/bindings/clock/marvell,mmp2-clock.yaml  | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
+index c5fc2ad0236dd..e2b6ac96bbcb0 100644
+--- a/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
+@@ -4,14 +4,14 @@
+ $id: http://devicetree.org/schemas/clock/marvell,mmp2-clock.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
  
--
--extern struct clk *mmp_clk_register_pll2(const char *name,
--		const char *parent_name, unsigned long flags);
- extern struct clk *mmp_clk_register_apbc(const char *name,
- 		const char *parent_name, void __iomem *base,
- 		unsigned int delay, unsigned int apbc_flags, spinlock_t *lock);
+-title: Marvell MMP2 Clock Controller
++title: Marvell MMP2 and MMP3 Clock Controller
+ 
+ maintainers:
+   - Lubomir Rintel <lkundrak@v3.sk>
+ 
+ description: |
+-  The MMP2 clock subsystem generates and supplies clock to various
+-  controllers within the MMP2 SoC.
++  The clock subsystem on MMP2 or MMP3 generates and supplies clock to various
++  controllers within the SoC.
+ 
+   Each clock is assigned an identifier and client nodes use this identifier
+   to specify the clock which they consume.
+@@ -20,7 +20,9 @@ description: |
+ 
+ properties:
+   compatible:
+-    const: marvell,mmp2-clock # controller compatible with MMP2 SoC
++    enum:
++      - marvell,mmp2-clock # controller compatible with MMP2 SoC
++      - marvell,mmp3-clock # controller compatible with MMP3 SoC
+ 
+   reg:
+     items:
 -- 
 2.25.1
 
