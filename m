@@ -2,88 +2,80 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 198A1C10F29
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1BCC10F25
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD39524656
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:08:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ACD82465A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583788082;
-	bh=I8FgkWV2hDJmqqtoiYGojcLmO+AFJ0xdAa3H17SBlOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BdjVe7gb/nqdsJXfV6wSCqBAp1jJTkt3iLwKzTsJ7sO9lUid2xb6zGudFaNgH0pkz
-	 vMsrtvv5g+z7VJBAprna59EN2mBoSwkQASaAdy8rKm5VbTenYNZVE0unR4Rcp+wxJe
-	 LJvldlK1rd2lnoCA8Gv2GZW2EJpotEut2gFaxJbo=
+	s=default; t=1583788258;
+	bh=yU68s5HuqYhNTYUkzjC1U86mJUMTG72xWa99BdXa1bY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=AeEMKGDNoANlCQTl8TqbPktM+TQnls7fJtlxvQGWX1XFQpOOMob+/h0V3qT2vuQjP
+	 dxIfl1vgPTJl4E8Ahx4u/9npKJ7SjwvHaYYOem5KRlTQYzTIXnat2Ux445oHmgiZGt
+	 K3ZQLDmmqhm+B68+gOLzQTUJs8sr1ItYb+vHi7eU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726266AbgCIVHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 17:07:55 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33182 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726118AbgCIVHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 17:07:55 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g15so4977260otr.0;
-        Mon, 09 Mar 2020 14:07:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pMV++LytUtj3P6dSF++V99qkX7EhPLEm12vYJmHEnZw=;
-        b=Uo4yIFxYYw33dOkHHrM7bRMj9kfE4EMOF9wQTnB/OmFncAWwdqqbxtIM9gfjvriziu
-         rdp0FE4zc2K/O1TXvnks5+6rtn4+iFfj4XDPaqi2lcCMXUYvafRQQTBi299D/f4W8jx0
-         vgiW/zAO5X9+jbUpbmKpcuOKB5PDcO0/nVMvi/nfs0qnAgYxtagxb9s7IteuPNzSqIq7
-         Tg27VLL2Cugy6U4g8bPJNTuDjtLZJXur4y6GCEnmai/K08aRxvZqutn5xXEDcVf8y70M
-         dIipa/LKpFQZfjBLqopLMKILvwl5YoIYgPjfCrOj7m2H85L8mmV3KolGxCQQ9wvC5D59
-         WqJg==
-X-Gm-Message-State: ANhLgQ0JIIoia4fIdhYQcIGs5feDUW5aoY0eqxIEtf3Pbvru2j7P0Ai+
-        Gqfznyj/bSETknk1K8ffDA==
-X-Google-Smtp-Source: ADFU+vshu1EjqoKlJxPqEOxyh0K4Uwd9Ih8PrChG30GxNXBknM6ohPNCu7bxWTCS66Oxoqm8ACMmRg==
-X-Received: by 2002:a9d:77d7:: with SMTP id w23mr13695380otl.45.1583788073292;
-        Mon, 09 Mar 2020 14:07:53 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l4sm2688904oti.65.2020.03.09.14.07.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Mar 2020 14:07:52 -0700 (PDT)
-Received: (nullmailer pid 10666 invoked by uid 1000);
-        Mon, 09 Mar 2020 21:07:51 -0000
-Date:   Mon, 9 Mar 2020 16:07:51 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] clk: qcom: Add DT bindings for ipq6018 apss clock
- controller
-Message-ID: <20200309210751.GA7716@bogus>
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org>
- <1582797318-26288-2-git-send-email-sivaprak@codeaurora.org>
- <20200227171425.GA4211@bogus>
- <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
+        id S1726439AbgCIVKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 17:10:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726157AbgCIVKz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Mar 2020 17:10:55 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D84DF2146E;
+        Mon,  9 Mar 2020 21:10:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583788255;
+        bh=yU68s5HuqYhNTYUkzjC1U86mJUMTG72xWa99BdXa1bY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ZiHtmQcjssp3eqcwno/Z5O1qOGfIC18fPg9z1OUcICEZI42NWDZ6K1K5BWNv+P1uM
+         USxqOOwfqAdf8EDqwM8vqAoxXEWc6UQFXWyXUQsDR8/im7LeR09i+cT5LHc9fwoy4S
+         EkSQNZCoVaFh0602XoLwEmox69k44dEIyZshMPNk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200215021232.1149-1-mdtipton@codeaurora.org>
+References: <20200215021232.1149-1-mdtipton@codeaurora.org>
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Wait for completion when enabling clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        agross@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Mike Tipton <mdtipton@codeaurora.org>
+To:     Mike Tipton <mdtipton@codeaurora.org>, tdas@codeaurora.org
+Date:   Mon, 09 Mar 2020 14:10:54 -0700
+Message-ID: <158378825407.66766.14135857856613969751@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 04, 2020 at 10:54:56AM +0530, Sivaprakash Murugesan wrote:
-> Hi Rob,
-> 
-> I ran make dt_binding_check and dtbs_check both on mainline(5.6-rc4) and
-> linux-next both are successful.
-> 
-> The file qcom,gcc-ipq6018.h is merged in 5.6, not sure what is going wrong.
-> 
-> Could you please help?
+Quoting Mike Tipton (2020-02-14 18:12:32)
+> The current implementation always uses rpmh_write_async, which doesn't
+> wait for completion. That's fine for disable requests since there's no
+> immediate need for the clocks and they can be disabled in the
+> background. However, for enable requests we need to ensure the clocks
+> are actually enabled before returning to the client. Otherwise, clients
+> can end up accessing their HW before the necessary clocks are enabled,
+> which can lead to bus errors.
+>=20
+> Use the synchronous version of this API (rpmh_write) for enable requests
+> in the active set to ensure completion.
+>=20
+> Completion isn't required for sleep/wake sets, since they don't take
+> effect until after we enter sleep. All rpmh requests are automatically
+> flushed prior to entering sleep.
+>=20
+> Fixes: 9c7e47025a6b ("clk: qcom: clk-rpmh: Add QCOM RPMh clock driver")
+> Signed-off-by: Mike Tipton <mdtipton@codeaurora.org>
+> ---
 
-Sorry, my fault there. The checks have to be warning free and that 
-didn't happen til 5.6-rc5, so I was still based on 5.5.
-
-Rob
+Applied to clk-next but I squashed in some changes to make it easier for
+me to read.
