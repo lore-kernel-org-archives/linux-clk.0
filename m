@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21AF9C10F27
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0811FC10F29
 	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A30324682
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E088C2467E
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726469AbgCITu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1726558AbgCITu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 9 Mar 2020 15:50:56 -0400
-Received: from v6.sk ([167.172.42.174]:34880 "EHLO v6.sk"
+Received: from v6.sk ([167.172.42.174]:34890 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbgCITuz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726469AbgCITuz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 9 Mar 2020 15:50:55 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id B662261311;
-        Mon,  9 Mar 2020 19:43:59 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 5C6F2612FC;
+        Mon,  9 Mar 2020 19:43:12 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -28,10 +28,10 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 15/17] dt-bindings: marvell,mmp2: Add clock id for the fifth SD HCI on MMP3
-Date:   Mon,  9 Mar 2020 20:42:52 +0100
-Message-Id: <20200309194254.29009-16-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v2 03/17] dt-bindings: clock: Convert marvell,mmp2-clock to json-schema
+Date:   Mon,  9 Mar 2020 20:42:40 +0100
+Message-Id: <20200309194254.29009-4-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200309194254.29009-1-lkundrak@v3.sk>
 References: <20200309194254.29009-1-lkundrak@v3.sk>
@@ -42,30 +42,121 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There's one extra SDHCI on MMP3, used by the internal SD card on OLPC
-XO-4. Add a clock for it.
+Convert the fixed-factor-clock binding to DT schema format using
+json-schema.
+
+While at that, fix a couple of small errors: make the file base name
+match the compatible string, add an example and document the reg-names
+property.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
 ---
 Changes since v1:
-- Added this patch
+- Collected Rob's Reviewed-by tag
 
- include/dt-bindings/clock/marvell,mmp2.h | 1 +
- 1 file changed, 1 insertion(+)
+ .../bindings/clock/marvell,mmp2-clock.yaml    | 62 +++++++++++++++++++
+ .../bindings/clock/marvell,mmp2.txt           | 21 -------
+ 2 files changed, 62 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2.txt
 
-diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
-index 2793fdf300066..06bb7fe4c62f4 100644
---- a/include/dt-bindings/clock/marvell,mmp2.h
-+++ b/include/dt-bindings/clock/marvell,mmp2.h
-@@ -86,6 +86,7 @@
- #define MMP2_CLK_GPU_3D			124
- #define MMP3_CLK_GPU_3D			MMP2_CLK_GPU_3D
- #define MMP3_CLK_GPU_2D			125
-+#define MMP3_CLK_SDH4			126
- 
- #define MMP2_NR_CLKS			200
- #endif
+diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
+new file mode 100644
+index 0000000000000..c5fc2ad0236dd
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,mmp2-clock.yaml
+@@ -0,0 +1,62 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/marvell,mmp2-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell MMP2 Clock Controller
++
++maintainers:
++  - Lubomir Rintel <lkundrak@v3.sk>
++
++description: |
++  The MMP2 clock subsystem generates and supplies clock to various
++  controllers within the MMP2 SoC.
++
++  Each clock is assigned an identifier and client nodes use this identifier
++  to specify the clock which they consume.
++
++  All these identifiers could be found in <dt-bindings/clock/marvell,mmp2.h>.
++
++properties:
++  compatible:
++    const: marvell,mmp2-clock # controller compatible with MMP2 SoC
++
++  reg:
++    items:
++      - description: MPMU register region
++      - description: APMU register region
++      - description: APBC register region
++
++  reg-names:
++    items:
++      - const: mpmu
++      - const: apmu
++      - const: apbc
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - reg-names
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@d4050000 {
++      compatible = "marvell,mmp2-clock";
++      reg = <0xd4050000 0x1000>,
++            <0xd4282800 0x400>,
++            <0xd4015000 0x1000>;
++      reg-names = "mpmu", "apmu", "apbc";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
+diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2.txt b/Documentation/devicetree/bindings/clock/marvell,mmp2.txt
+deleted file mode 100644
+index 23b52dc02266a..0000000000000
+--- a/Documentation/devicetree/bindings/clock/marvell,mmp2.txt
++++ /dev/null
+@@ -1,21 +0,0 @@
+-* Marvell MMP2 Clock Controller
+-
+-The MMP2 clock subsystem generates and supplies clock to various
+-controllers within the MMP2 SoC.
+-
+-Required Properties:
+-
+-- compatible: should be one of the following.
+-  - "marvell,mmp2-clock" - controller compatible with MMP2 SoC.
+-
+-- reg: physical base address of the clock subsystem and length of memory mapped
+-  region. There are 3 places in SOC has clock control logic:
+-  "mpmu", "apmu", "apbc". So three reg spaces need to be defined.
+-
+-- #clock-cells: should be 1.
+-- #reset-cells: should be 1.
+-
+-Each clock is assigned an identifier and client nodes use this identifier
+-to specify the clock which they consume.
+-
+-All these identifiers could be found in <dt-bindings/clock/marvell,mmp2.h>.
 -- 
 2.25.1
 
