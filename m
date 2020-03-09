@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D355C18E7A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33F06C2BB58
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 142E92146E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1244A2465A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726492AbgCITu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 15:50:57 -0400
-Received: from v6.sk ([167.172.42.174]:34904 "EHLO v6.sk"
+        id S1726633AbgCITu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 15:50:58 -0400
+Received: from v6.sk ([167.172.42.174]:34934 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726462AbgCITu4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 15:50:56 -0400
+        id S1726595AbgCITu5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Mar 2020 15:50:57 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 7B4546130B;
-        Mon,  9 Mar 2020 19:43:51 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 1561F61305;
+        Mon,  9 Mar 2020 19:43:40 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -29,9 +29,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 13/17] dt-bindings: marvell,mmp2: Add clock ids for the thermal sensors
-Date:   Mon,  9 Mar 2020 20:42:50 +0100
-Message-Id: <20200309194254.29009-14-lkundrak@v3.sk>
+Subject: [PATCH v2 10/17] ARM: dts: mmp3: Use the MMP3 compatible string for /clocks
+Date:   Mon,  9 Mar 2020 20:42:47 +0100
+Message-Id: <20200309194254.29009-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200309194254.29009-1-lkundrak@v3.sk>
 References: <20200309194254.29009-1-lkundrak@v3.sk>
@@ -42,33 +42,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There seems to be a single thermal sensor block on MMP2 and a couple
-more on MMP3. Add definitions for their respective clocks.
+Clocks are in fact slightly different on MMP3. In particular, PLL2 is
+fixed to a different frequency, there's an extra PLL3, and the GPU
+clocks are configured differently.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v1:
-- Added this patch
+ arch/arm/boot/dts/mmp3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- include/dt-bindings/clock/marvell,mmp2.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/dt-bindings/clock/marvell,mmp2.h b/include/dt-bindings/clock/marvell,mmp2.h
-index dd5067bd92f22..2793fdf300066 100644
---- a/include/dt-bindings/clock/marvell,mmp2.h
-+++ b/include/dt-bindings/clock/marvell,mmp2.h
-@@ -53,6 +53,10 @@
- #define MMP2_CLK_SSP2			79
- #define MMP2_CLK_SSP3			80
- #define MMP2_CLK_TIMER			81
-+#define MMP2_CLK_THERMAL0		82
-+#define MMP3_CLK_THERMAL1		83
-+#define MMP3_CLK_THERMAL2		84
-+#define MMP3_CLK_THERMAL3		85
+diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
+index 59a108e49b41e..3e28f0dc9df41 100644
+--- a/arch/arm/boot/dts/mmp3.dtsi
++++ b/arch/arm/boot/dts/mmp3.dtsi
+@@ -531,7 +531,7 @@ l2: l2-cache-controller@d0020000 {
+ 		};
  
- /* axi periphrals */
- #define MMP2_CLK_SDH0			101
+ 		soc_clocks: clocks@d4050000 {
+-			compatible = "marvell,mmp2-clock";
++			compatible = "marvell,mmp3-clock";
+ 			reg = <0xd4050000 0x1000>,
+ 			      <0xd4282800 0x400>,
+ 			      <0xd4015000 0x1000>;
 -- 
 2.25.1
 
