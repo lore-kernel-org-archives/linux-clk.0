@@ -2,118 +2,89 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40783C3F2D1
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 09:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB84CC10F27
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 16:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22D6E20863
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 09:21:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B459D2467D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 16:17:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="nmPfM390"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725962AbgCIJVn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 05:21:43 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:39420 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725796AbgCIJVn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 05:21:43 -0400
-Received: by mail-ot1-f66.google.com with SMTP id a9so2637779otl.6;
-        Mon, 09 Mar 2020 02:21:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0chbd4nwR5irzruqlvYBPN4eYq66a85QmEWWjg+J+Uc=;
-        b=ftFFfTmlYSK+tVcqUNZjYko0G2v9U+ke+zdonK/orm2gDzNYhv+udaO+j4nWtck6BD
-         gWaEstT1hw12aUX8adrBxxYlAumYmPGUHDQd7X8uqjE1+W+PGuGqmbEXPwDKV/MlAOZO
-         +fvlDT4hLwAcOGWasL+wu6A1Ys6yoVEXFoigwYs2pZ1/B3MoCfZnV0rLzoHxAqqIglqg
-         OWTbOak2vtBj2xoeURlE3aMaM/ukjZulPjkGu6KcvKvtdm7kWwnX38s4KUXCpOf+Q5wP
-         c2unonQRak+9yOBinuc9qZ0FZDGkhrdzZixhUOwRt86ST1J1+rPEvq82awjm5BCisgR8
-         Gfsw==
-X-Gm-Message-State: ANhLgQ17339ilcHlXivhvNEicRFTeZWw7I9/gTOSWQgGkAay1pf3Nqcf
-        k3V5yHX3cBorQ7LpPCP3Zxzk8p2VGllDh9Uf4UHOcg==
-X-Google-Smtp-Source: ADFU+vuhP8K63glnB2X4iEc7HTPTFJXZEPkIIW22Q78fMzb/B95Goj5cxitaZ8igflDkbBXOM7yVb7ajPKCM3OcTgZw=
-X-Received: by 2002:a9d:4d02:: with SMTP id n2mr2907132otf.107.1583745702518;
- Mon, 09 Mar 2020 02:21:42 -0700 (PDT)
+        id S1727202AbgCIQRT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 12:17:19 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:57640 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726973AbgCIQRT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 12:17:19 -0400
+Received: from pendragon.bb.dnainternet.fi (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D59DA2D2;
+        Mon,  9 Mar 2020 17:17:16 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1583770637;
+        bh=ml87TgXbfAEwecY2YM0QeCIphKoRoAmA8kLHojFY760=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nmPfM390BLJvUmzRNb7BjZSJr2NUlRQffwKm9umL9JQa/Ub48LRnTRjw7U/mQbDkJ
+         vXODXEYfzQ6tJ6+rgHzsVMmemW+HIXXfM8Z58xnvJ0pJ8EA/W7oInGe25V2ACwASOs
+         sRLa9xP1FGqGPuInbW6vBQP5FcGJEa0lNt9F3WNs=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     linux-clk@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Shawn Guo <shawnguo@kernel.org>
+Subject: [PATCH] clk: imx7d: Add PXP clock
+Date:   Mon,  9 Mar 2020 18:17:09 +0200
+Message-Id: <20200309161709.30982-1-laurent.pinchart@ideasonboard.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-References: <1583304137-28482-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1583304137-28482-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 9 Mar 2020 10:21:31 +0100
-Message-ID: <CAMuHMdVQ=evfYLP09q7UMZB1gry-y=g+sP0FDgSmk-iwuRf3kQ@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] clk: renesas: rcar-usb2-clock-sel: Fix clks/resets handling
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shimda-san,
+The PXP has a single CCGR clock gate, gating both the IPG_CLK_ROOT and
+the MAIN_AXI_CLK_ROOT. Add a single clock to cover both.
 
-On Wed, Mar 4, 2020 at 7:42 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch series is based on the latest renesas-drivers.git /
-> renesas-drivers-2020-02-25-v5.6-rc3 branch.
-> The hardware also needs multiple clocks/resets management like
-> renesas_usbhs driver [1], so this patch series fixes it.
->
-> [1]
-> 3df0e24 usb: renesas_usbhs: Add multiple clocks management
-> f181dbb usb: renesas_usbhs: Add reset_control
->
-> Changes from v3:
->  - Add reset-names property in patch 2/4.
->  - Use devm_clk_bulk_get() instead of multiple devm_clk_get() in patch 3/4.
->  - Add Geert's Reviewed-by into the patch 4/4.
->  https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=196577
->
-> Changes from v2:
->  - Add Rob's Reviewed-by into the patch [12]/4.
->  - Fix typo in patch 2/4.
->  https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=194309
->
-> Changes from v1:
->  - Add Reviewed-by into this series' patch 1/4.
->  - (new) Add resets and power-domains properties into the patch 2/4.
->  - Use clk_bulk_* APIs (except clk_bulk_get() because this driver has
->    4 clocks and used only 2 clocks).
->  - Add "select RESET_CONTROLLER" into Kconfig
->  - Use devm_reset_control_array_get() instead of optional API.
->  https://patchwork.kernel.org/project/linux-renesas-soc/list/?series=192869
->
-> Yoshihiro Shimoda (4):
->   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix clock[-name]s
->     properties
->   dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add power-domains
->     and resets properties
->   clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
->   clk: renesas: rcar-usb2-clock-sel: Add reset_control
->
->  .../bindings/clock/renesas,rcar-usb2-clock-sel.txt | 17 +++++++--
->  drivers/clk/renesas/Kconfig                        |  1 +
->  drivers/clk/renesas/rcar-usb2-clock-sel.c          | 40 ++++++++++++++++++++--
->  3 files changed, 53 insertions(+), 5 deletions(-)
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+---
+ drivers/clk/imx/clk-imx7d.c             | 1 +
+ include/dt-bindings/clock/imx7d-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-Thanks, queued in clk-renesas-for-v5.7.
+diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
+index fbea774ef687..4f1ead22781e 100644
+--- a/drivers/clk/imx/clk-imx7d.c
++++ b/drivers/clk/imx/clk-imx7d.c
+@@ -802,6 +802,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
+ 	hws[IMX7D_PCIE_PHY_ROOT_CLK] = imx_clk_hw_gate4("pcie_phy_root_clk", "pcie_phy_post_div", base + 0x4600, 0);
+ 	hws[IMX7D_EPDC_PIXEL_ROOT_CLK] = imx_clk_hw_gate4("epdc_pixel_root_clk", "epdc_pixel_post_div", base + 0x44a0, 0);
+ 	hws[IMX7D_LCDIF_PIXEL_ROOT_CLK] = imx_clk_hw_gate4("lcdif_pixel_root_clk", "lcdif_pixel_post_div", base + 0x44b0, 0);
++	hws[IMX7D_PXP_CLK] = imx_clk_hw_gate4("pxp_clk", "main_axi_root_clk", base + 0x44c0, 0);
+ 	hws[IMX7D_MIPI_DSI_ROOT_CLK] = imx_clk_hw_gate4("mipi_dsi_root_clk", "mipi_dsi_post_div", base + 0x4650, 0);
+ 	hws[IMX7D_MIPI_CSI_ROOT_CLK] = imx_clk_hw_gate4("mipi_csi_root_clk", "mipi_csi_post_div", base + 0x4640, 0);
+ 	hws[IMX7D_MIPI_DPHY_ROOT_CLK] = imx_clk_hw_gate4("mipi_dphy_root_clk", "mipi_dphy_post_div", base + 0x4660, 0);
+diff --git a/include/dt-bindings/clock/imx7d-clock.h b/include/dt-bindings/clock/imx7d-clock.h
+index e6a670e1a3f8..1d4c0dfe0202 100644
+--- a/include/dt-bindings/clock/imx7d-clock.h
++++ b/include/dt-bindings/clock/imx7d-clock.h
+@@ -451,5 +451,6 @@
+ #define IMX7D_SNVS_CLK			442
+ #define IMX7D_CAAM_CLK			443
+ #define IMX7D_KPP_ROOT_CLK		444
+-#define IMX7D_CLK_END			445
++#define IMX7D_PXP_CLK			445
++#define IMX7D_CLK_END			446
+ #endif /* __DT_BINDINGS_CLOCK_IMX7D_H */
+-- 
+Regards,
 
-Gr{oetje,eeting}s,
+Laurent Pinchart
 
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
