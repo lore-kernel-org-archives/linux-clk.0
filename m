@@ -2,71 +2,88 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E762FC10F25
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198A1C10F29
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA702464B
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD39524656
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 21:08:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583788082;
+	bh=I8FgkWV2hDJmqqtoiYGojcLmO+AFJ0xdAa3H17SBlOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BdjVe7gb/nqdsJXfV6wSCqBAp1jJTkt3iLwKzTsJ7sO9lUid2xb6zGudFaNgH0pkz
+	 vMsrtvv5g+z7VJBAprna59EN2mBoSwkQASaAdy8rKm5VbTenYNZVE0unR4Rcp+wxJe
+	 LJvldlK1rd2lnoCA8Gv2GZW2EJpotEut2gFaxJbo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgCIUxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 16:53:38 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:40519 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726197AbgCIUxi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 16:53:38 -0400
-X-Originating-IP: 82.66.179.123
-Received: from localhost (unknown [82.66.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id A0FC420007;
-        Mon,  9 Mar 2020 20:53:34 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] clk: meson-axg: remove CLKID_MIPI_ENABLE
-Date:   Mon,  9 Mar 2020 22:01:57 +0100
-Message-Id: <20200309210157.29860-3-repk@triplefau.lt>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <20200309210157.29860-1-repk@triplefau.lt>
-References: <20200309210157.29860-1-repk@triplefau.lt>
+        id S1726266AbgCIVHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 17:07:55 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33182 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726118AbgCIVHz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 17:07:55 -0400
+Received: by mail-ot1-f68.google.com with SMTP id g15so4977260otr.0;
+        Mon, 09 Mar 2020 14:07:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pMV++LytUtj3P6dSF++V99qkX7EhPLEm12vYJmHEnZw=;
+        b=Uo4yIFxYYw33dOkHHrM7bRMj9kfE4EMOF9wQTnB/OmFncAWwdqqbxtIM9gfjvriziu
+         rdp0FE4zc2K/O1TXvnks5+6rtn4+iFfj4XDPaqi2lcCMXUYvafRQQTBi299D/f4W8jx0
+         vgiW/zAO5X9+jbUpbmKpcuOKB5PDcO0/nVMvi/nfs0qnAgYxtagxb9s7IteuPNzSqIq7
+         Tg27VLL2Cugy6U4g8bPJNTuDjtLZJXur4y6GCEnmai/K08aRxvZqutn5xXEDcVf8y70M
+         dIipa/LKpFQZfjBLqopLMKILvwl5YoIYgPjfCrOj7m2H85L8mmV3KolGxCQQ9wvC5D59
+         WqJg==
+X-Gm-Message-State: ANhLgQ0JIIoia4fIdhYQcIGs5feDUW5aoY0eqxIEtf3Pbvru2j7P0Ai+
+        Gqfznyj/bSETknk1K8ffDA==
+X-Google-Smtp-Source: ADFU+vshu1EjqoKlJxPqEOxyh0K4Uwd9Ih8PrChG30GxNXBknM6ohPNCu7bxWTCS66Oxoqm8ACMmRg==
+X-Received: by 2002:a9d:77d7:: with SMTP id w23mr13695380otl.45.1583788073292;
+        Mon, 09 Mar 2020 14:07:53 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l4sm2688904oti.65.2020.03.09.14.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Mar 2020 14:07:52 -0700 (PDT)
+Received: (nullmailer pid 10666 invoked by uid 1000);
+        Mon, 09 Mar 2020 21:07:51 -0000
+Date:   Mon, 9 Mar 2020 16:07:51 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] clk: qcom: Add DT bindings for ipq6018 apss clock
+ controller
+Message-ID: <20200309210751.GA7716@bogus>
+References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org>
+ <1582797318-26288-2-git-send-email-sivaprak@codeaurora.org>
+ <20200227171425.GA4211@bogus>
+ <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b4e3fad9-414f-ce90-26b0-ba8498d21ade@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CLKID_MIPI_ENABLE is not handled by the AXG clock driver anymore but by
-the MIPI/PCIe PHY driver.
+On Wed, Mar 04, 2020 at 10:54:56AM +0530, Sivaprakash Murugesan wrote:
+> Hi Rob,
+> 
+> I ran make dt_binding_check and dtbs_check both on mainline(5.6-rc4) and
+> linux-next both are successful.
+> 
+> The file qcom,gcc-ipq6018.h is merged in 5.6, not sure what is going wrong.
+> 
+> Could you please help?
 
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
- include/dt-bindings/clock/axg-clkc.h | 1 -
- 1 file changed, 1 deletion(-)
+Sorry, my fault there. The checks have to be warning free and that 
+didn't happen til 5.6-rc5, so I was still based on 5.5.
 
-diff --git a/include/dt-bindings/clock/axg-clkc.h b/include/dt-bindings/clock/axg-clkc.h
-index fd1f938c38d1..ab04b3a94959 100644
---- a/include/dt-bindings/clock/axg-clkc.h
-+++ b/include/dt-bindings/clock/axg-clkc.h
-@@ -70,7 +70,6 @@
- #define CLKID_HIFI_PLL				69
- #define CLKID_PCIE_CML_EN0			79
- #define CLKID_PCIE_CML_EN1			80
--#define CLKID_MIPI_ENABLE			81
- #define CLKID_GEN_CLK				84
- 
- #endif /* __AXG_CLKC_H */
--- 
-2.25.0
-
+Rob
