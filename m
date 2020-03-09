@@ -2,95 +2,94 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8E2C10F29
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 17:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EC1C10F25
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:35:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F03A208C3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 17:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583774239;
-	bh=5yHR3Ujn0DynzVH9Ws0JWy8TxK1tv97Kz6riXZaz3J0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=ChHOPgS4yWor1bVPnrRzd9YBQ9kXqOtTC5fGB7Zhf28X35sQc7iUzFod7VavincQP
-	 gmkk6fHrOfeYiuR8IeRHfzvdhHgdDLdz3w46WJ2Rxhz8qX75Rb7kCJHC2ghiNEob0k
-	 c1fr7D5BL8QJi9djs/Z38uWa+8tmfPPsP/+M6LRI=
+	by mail.kernel.org (Postfix) with ESMTP id 8D4A52465A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 19:35:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbgCIRRE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 13:17:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43630 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727195AbgCIRRE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 13:17:04 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4ADE20828;
-        Mon,  9 Mar 2020 17:17:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583774223;
-        bh=5yHR3Ujn0DynzVH9Ws0JWy8TxK1tv97Kz6riXZaz3J0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=CDi1KzsbcpSmQ2xbABBuFQQCx8uyO2Y0j+8cAr5lq6u8MDFPAeD4RaAHuLwPF9pgX
-         VX3MbgqNvUX/wzaRyjH2ASXHWoAcxTsxaja8NwUcvUpdOHZGzqxqw6Weey0s5CKbxU
-         3VHnxLUN+JUwa/2uSMCaMT/341doGUzO/4/0no8g=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
-Subject: [PATCHv2 0/3] clk: agilex: add clock driver
-Date:   Mon,  9 Mar 2020 12:16:50 -0500
-Message-Id: <20200309171653.27630-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        id S1726595AbgCITfY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 15:35:24 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:22379 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726520AbgCITfY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 15:35:24 -0400
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 09 Mar 2020 12:35:21 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 09 Mar 2020 12:35:20 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 776CB463E; Mon,  9 Mar 2020 12:35:20 -0700 (PDT)
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Guru Das Srinagesh <gurus@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v7 01/13] clk: pwm: Use 64-bit division macros for period and duty cycle
+Date:   Mon,  9 Mar 2020 12:35:04 -0700
+Message-Id: <4e427fc990b214ec96840a96dfd59f4f56e01ecb.1583782035.git.gurus@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1583782035.git.gurus@codeaurora.org>
+References: <cover.1583782035.git.gurus@codeaurora.org>
+In-Reply-To: <cover.1583782035.git.gurus@codeaurora.org>
+References: <cover.1583782035.git.gurus@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Because period and duty cycle are defined in the PWM framework structs
+as ints with units of nanoseconds, the maximum time duration that can be
+set is limited to ~2.147 seconds. Redefining them as u64 values will
+enable larger time durations to be set.
 
-This is version 2 of the patchset to add clock driver to the Agilex
-platform. It's been while since I posted v1 so I want clarify the
-patches a bit in this cover letter.
+As a first step, prepare drivers to handle the switch to u64 period and
+duty_cycle by replacing division operations involving pwm period and duty cycle
+with their 64-bit equivalents as appropriate. The actual switch to u64 period
+and duty_cycle follows as a separate patch.
 
-Since the Agilex clocking is very similar to Stratix10, the
-driver is very similar and will re-use the clock data structures of
-Stratix10. Thus, there needs to be updates to the Stratix10 clock
-driver.
+Where the dividend is 64-bit but the divisor is 32-bit, use *_ULL
+macros:
+- DIV_ROUND_UP_ULL
+- DIV_ROUND_CLOSEST_ULL
+- div_u64
 
-Patch 1/3 : update the Stratix10 clock driver to make use of the new
-	parent data scheme
-Patch 2/3 : version 2 of the documenation, converted to YAML
-Patch 3/4 : version 2 of the clock driver with comments from v1
-	addressed
+Where the divisor is 64-bit (dividend may be 32-bit or 64-bit), use
+DIV64_* macros:
+- DIV64_U64_ROUND_CLOSEST
+- div64_u64
 
-Thanks,
-Dinh
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
 
-Dinh Nguyen (3):
-  clk: socfpga: stratix10: use new parent data scheme
-  dt-bindings: documentation: add clock bindings information for Agilex
-  clk: socfpga: agilex: add clock driver for the Agilex platform
+Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+---
+ drivers/clk/clk-pwm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../bindings/clock/intc,agilex.yaml           |  79 ++++
- drivers/clk/Makefile                          |   1 +
- drivers/clk/socfpga/Makefile                  |   2 +
- drivers/clk/socfpga/clk-agilex.c              | 369 ++++++++++++++++++
- drivers/clk/socfpga/clk-gate-s10.c            |   5 +-
- drivers/clk/socfpga/clk-periph-s10.c          |  10 +-
- drivers/clk/socfpga/clk-pll-s10.c             |  74 +++-
- drivers/clk/socfpga/clk-s10.c                 | 110 ++++--
- drivers/clk/socfpga/stratix10-clk.h           |  10 +-
- include/dt-bindings/clock/agilex-clock.h      |  70 ++++
- 10 files changed, 689 insertions(+), 41 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/intc,agilex.yaml
- create mode 100644 drivers/clk/socfpga/clk-agilex.c
- create mode 100644 include/dt-bindings/clock/agilex-clock.h
-
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index 87fe0b0e..7b1f7a0 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+-		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
++		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
+ 
+ 	if (pargs.period != NSEC_PER_SEC / clk_pwm->fixed_rate &&
+ 	    pargs.period != DIV_ROUND_UP(NSEC_PER_SEC, clk_pwm->fixed_rate)) {
 -- 
-2.17.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
