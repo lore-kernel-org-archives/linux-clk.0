@@ -2,166 +2,68 @@ Return-Path: <SRS0=a9zA=42=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 938BDC10F25
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3014BC10F25
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D1D2146E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:24:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583785480;
-	bh=StFL5QvmItJfOwz5VxmHCR0sM7EiUH0ldEUy/9kuvBI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=X3Qwo/LRqqqyZQBTi0y/lCJxcs4ZBXXD5J/zHn4fsw0BJb7PFk9YyIY8oKYNtCqOa
-	 /CCLrkk3kAllhFF+a3ZFsoDL0E6LRePPtsw5baTwJafBzGyEeDY5u7HmNLBeIgfT9M
-	 YBxdMP9ci05hOHVE4F7PqshDMjR3yLdbPv/hzkSE=
+	by mail.kernel.org (Postfix) with ESMTP id 14E722464B
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Mar 2020 20:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726118AbgCIUYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 16:24:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726106AbgCIUYg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 16:24:36 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D87F62146E;
-        Mon,  9 Mar 2020 20:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583785476;
-        bh=StFL5QvmItJfOwz5VxmHCR0sM7EiUH0ldEUy/9kuvBI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mEltg4vcLqtYrMmRBSqoDNjFIEKXPWo+0y9RcaDbIdUbJgApQjySqLUB03QgQkVHQ
-         MiLGalrDdPxg9svfAdIjRCd5U7eMPLG7pUgeFQr/CgHNkq2dj1Mtn71lHcXyn5XBVP
-         3ShE/8zhFEQvjPWlCh8RuqexbeyA1TD3J/wmlz8I=
-Content-Type: text/plain; charset="utf-8"
+        id S1726333AbgCIUx2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Mar 2020 16:53:28 -0400
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:49865 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgCIUx2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Mar 2020 16:53:28 -0400
+X-Originating-IP: 82.66.179.123
+Received: from localhost (unknown [82.66.179.123])
+        (Authenticated sender: repk@triplefau.lt)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id CC5E720008;
+        Mon,  9 Mar 2020 20:53:23 +0000 (UTC)
+From:   Remi Pommarel <repk@triplefau.lt>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH 0/2] clk: meson: axg: Remove MIPI enable clock gate
+Date:   Mon,  9 Mar 2020 22:01:55 +0100
+Message-Id: <20200309210157.29860-1-repk@triplefau.lt>
+X-Mailer: git-send-email 2.25.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1582797318-26288-3-git-send-email-sivaprak@codeaurora.org>
-References: <1582797318-26288-1-git-send-email-sivaprak@codeaurora.org> <1582797318-26288-3-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH 2/2] clk: qcom: Add ipq6018 apss clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     sivaprak@codeaurora.org
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Mon, 09 Mar 2020 13:24:35 -0700
-Message-ID: <158378547505.66766.155212878365765346@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-02-27 01:55:18)
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 15cdcdc..37e4ce2 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -89,6 +89,14 @@ config APQ_MMCC_8084
->           Say Y if you want to support multimedia devices such as display,
->           graphics, video encode/decode, camera, etc.
-> =20
-> +config IPQ_APSS_6018
-> +       tristate "IPQ6018 APSS Clock Controller"
-> +       select IPQ_GCC_6018
-> +       help
-> +         Support for APSS clock controller on ipq6018 devices. The
-> +         APSS clock controller supports frequencies higher than 800Mhz.
+As discussed here [0], HHI_MIPI_CNTL0 is part of the MIPI/PCIe analog
+PHY region and is not related to clock one. Since MIPI/PCIe PHY driver
+has been added with [1], this region can be removed from the clock
+driver.
 
-supports CPU frequencies? It's not clear what APSS is to a lot of people
-out there.
+Please not that this serie depends on [1] to be merged first.
 
-> +         Say Y if you want to support higher frequencies on ipq6018 devi=
-ces.
+[0] https://lkml.org/lkml/2019/12/16/119
+[1] https://lkml.org/lkml/2020/1/23/945
 
-support CPU frequency scaling on ipq6018?
+Remi Pommarel (2):
+  clk: meson: axg: Remove MIPI enable clock gate
+  clk: meson-axg: remove CLKID_MIPI_ENABLE
 
-> +
->  config IPQ_GCC_4019
->         tristate "IPQ4019 Global Clock Controller"
->         help
-> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6=
-018.c
-> new file mode 100644
-> index 0000000..04b8962
-> --- /dev/null
-> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> @@ -0,0 +1,210 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/module.h>
+ drivers/clk/meson/axg.c              | 3 ---
+ drivers/clk/meson/axg.h              | 1 -
+ include/dt-bindings/clock/axg-clkc.h | 1 -
+ 3 files changed, 5 deletions(-)
 
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
+-- 
+2.25.0
 
-Are these two includes needed at all?
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <linux/reset-controller.h>
-> +#include <dt-bindings/clock/qcom,apss-ipq6018.h>
-> +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +#include "clk-rcg.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "clk-regmap-divider.h"
-> +#include "clk-regmap-mux.h"
-> +#include "reset.h"
-> +
-> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
-
-This can be removed. It's common in clk-rcg.h now
-
-> +
-> +static struct clk_branch apcs_alias0_core_clk =3D {
-> +       .halt_reg =3D 0x004c,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x004c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "apcs_alias0_core_clk",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &apcs_alias0_clk_src.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-
-Please add a comment about why CLK_IS_CRITICAL is here. Presumably in
-the case that a cpufreq driver doesn't probe and claim this clk?
-
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +
-[...]
-> +
-> +static int __init apss_ipq6018_init(void)
-> +{
-> +       return platform_driver_register(&apss_ipq6018_driver);
-> +}
-> +core_initcall(apss_ipq6018_init);
-> +
-> +static void __exit apss_ipq6018_exit(void)
-> +{
-> +       platform_driver_unregister(&apss_ipq6018_driver);
-> +}
-> +module_exit(apss_ipq6018_exit);
-
-Any reason this can't just be module_platform_driver()?
