@@ -2,62 +2,61 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DAE1C10F27
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 17:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6211C10F27
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 17:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA98821D56
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 17:13:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF75222C3
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 17:44:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TtPPrB9r"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q4NR1a/x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbgCJRNo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 13:13:44 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40047 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726623AbgCJRNn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 13:13:43 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p2so16086804wrw.7;
-        Tue, 10 Mar 2020 10:13:41 -0700 (PDT)
+        id S1726369AbgCJRoo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 13:44:44 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38882 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgCJRon (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 13:44:43 -0400
+Received: by mail-lj1-f194.google.com with SMTP id w1so15173049ljh.5;
+        Tue, 10 Mar 2020 10:44:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X1PUxwFQA8c9j51WnRi6Nm8Fu/nPospzhRaCoQrGYvE=;
-        b=TtPPrB9rIchoH0ODp+e06tmGnlJKRBp5681b2S8QU1VoLl8Mr8uKXciqfBJruLy5kO
-         72t0joEWFQBFNs5WVYkF3GtcrXID7z15k3HvjhWWmkpyOEUuI4Fz2rM4sMfJLpAX2ZIh
-         ee+UtCDyPFhgPYaA6Nc76uS1g1WT1FLdyqSwdst3IBSI0gCpd+lSkgETpBjny3QWDTuU
-         pzAY08DkKsmszrhUyyNCM2Pnu2zl9Vm7OS5+i7YFpoMii1TAgOtcl43QrNauVcNKsC+T
-         I8M42kxFSviaxuPBKxtloPYIsdqb/f0Ure4AuVxYXmBW6haXnrOk+YCO4yiJ4swpZKDH
-         H8cg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GHzaWg3f9PXj0XCOnlYVM0t9EpHANTjAH8lOSKib10g=;
+        b=q4NR1a/xd5/emofZa/GJ+NEzpDE46eywiiRq/5MsLLapNO99t6/vZC+h7gS89a4Hqh
+         QtPUnNujxuDr+I+BudWjJCbxxh7LrO0rtprfl2xW8ZyVPLyu1PFv5gGqwc8VecibsCsR
+         gNMVkd5XYWtNH+c4KzlApP7+n2k0pTpCsVMnpOblFN9Rm9kRNpBKGkuoZiI9B1q+fljd
+         +OqLDo6dbHEh1Jzu/ijKFo/F8PkDSTmmV2JX8dIC5sKpuyKwBJSnJMfP40KtlUa1inNY
+         7oShBwFNSuV784d+0tZAHmFcmPP7PrBVzAITxiy7z1CD0Nz8Anco+FZ4YUbKlFM5sQJO
+         B3CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X1PUxwFQA8c9j51WnRi6Nm8Fu/nPospzhRaCoQrGYvE=;
-        b=Ru+Gp9qayQk8WtNZEmEHODNfEFOLCSuRabst0JGMuzeeK5aK1xZZjK/plE1EXlAXzx
-         WAU6vc2zGRHdT4uTriaTkJReoGn/1abFvBcnnfbplzYt0f1HmhG6+gAVekdOePOuss0P
-         QpR/V+opwqJDnjqTOYQnwWn09evvRbPwvsqtQRBa4lQ7BRq+VjpFK7d7VL2V7W5oAExL
-         jYhmGo84/xvukOpBAW5BhfZZpDBCEUmLB8PhJKHq7ijcWtXcFphAw0bIlnHw+wFTgN7Y
-         iaWuXrYY7kR4mPmSUUsYSktZ0pYIgNiniZWuMxMGSQVX7xSy1ONsUvFnbEAfOVwI9mux
-         87mw==
-X-Gm-Message-State: ANhLgQ3ER6Zx/oAEfTqfBf6G5LraAxa6eOyRKN+zghwhCZhwdJI8MiG7
-        /09S6V/VPr6lmp2rVq8y+R0=
-X-Google-Smtp-Source: ADFU+vv082ivAK2kV9o82i+Lh/FeTPGbh6XmML1p2AierlRN9G266AFBkNd8zghr+Sy639X9cISJTA==
-X-Received: by 2002:a05:6000:370:: with SMTP id f16mr22278312wrf.9.1583860420748;
-        Tue, 10 Mar 2020 10:13:40 -0700 (PDT)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id t18sm5049212wml.17.2020.03.10.10.13.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 10:13:39 -0700 (PDT)
-Date:   Tue, 10 Mar 2020 18:13:38 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GHzaWg3f9PXj0XCOnlYVM0t9EpHANTjAH8lOSKib10g=;
+        b=iF4yw5hw+tWTUtNt+UAm4hJBPIlXlcx2dEAkU11oTiAuZ8P8uvacuEaE1frQd/28y5
+         idbW9btqSgzIEcmG1UvOzzA9H/HC43ScEQeg6QbIE9kt2Kjjh4oO2FRtOAuRsAmD+iKI
+         EBX83GnCiPFYOaRxQJ7mDueaEJdz61oQM/9SI2FoxppoUYFVn2LgosOzxsybfPHXn3mZ
+         /d01ARr5zcZcukCxNw3Bc9V7owGq7GWi43nb3g/vSSnyjiJJN7iorC6p8KwdlekfG+Ep
+         qQCDSFF4jrv9dIaDiVui26B9GQKOxOQ0HEDKYX4cIVQtCvjPz4Zuf+6yOL/yFLe156fE
+         5bEA==
+X-Gm-Message-State: ANhLgQ2X3TlX3QBQFdUNZfXQwi+9EpmZYe4QaDSTOeTkr48gConnAsly
+        f6bdnxfRlrmwLYVpest4HQdwB3Or
+X-Google-Smtp-Source: ADFU+vtedvwOTK2i5hsjsLdZAGJefepqqYliPvSiQKHVCcPbuAjQSCqfBBO7fuz7yRotFfidXnpBjw==
+X-Received: by 2002:a2e:330e:: with SMTP id d14mr3309081ljc.72.1583862280236;
+        Tue, 10 Mar 2020 10:44:40 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id c20sm16687727lfb.60.2020.03.10.10.44.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Mar 2020 10:44:39 -0700 (PDT)
+Subject: Re: [PATCH v5 3/8] clk: tegra: Implement Tegra210 EMC clock
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -66,107 +65,76 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v5 5/8] memory: tegra: Add EMC scaling support code for
- Tegra210
-Message-ID: <20200310171338.GF3079591@ulmo>
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
- <20200310152003.2945170-6-thierry.reding@gmail.com>
- <4ea3a96f-52cb-4eab-cf92-932f6882ad85@gmail.com>
+ <20200310152003.2945170-4-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a5c9e3d6-2b65-ec93-d8f1-7c7680092e53@gmail.com>
+Date:   Tue, 10 Mar 2020 20:44:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="NGIwU0kFl1Z1A3An"
-Content-Disposition: inline
-In-Reply-To: <4ea3a96f-52cb-4eab-cf92-932f6882ad85@gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <20200310152003.2945170-4-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+10.03.2020 18:19, Thierry Reding пишет:
+> From: Joseph Lo <josephl@nvidia.com>
+> 
+> The EMC clock needs to carefully coordinate with the EMC controller
+> programming to make sure external memory can be properly clocked. Do so
+> by hooking up the EMC clock with an EMC provider that will specify which
+> rates are supported by the EMC and provide a callback to use for setting
+> the clock rate at the EMC.
+> 
+> Based on work by Peter De Schrijver <pdeschrijver@nvidia.com>.
+> 
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v5:
+> - major rework and cleanup
 
---NGIwU0kFl1Z1A3An
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
+> +static u8 tegra210_clk_emc_get_parent(struct clk_hw *hw)
+> +{
+> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
+> +	u32 value;
+> +	u8 src;
+> +
+> +	value = readl_relaxed(emc->regs + CLK_SOURCE_EMC);
+> +	src = (value >> CLK_SOURCE_EMC_2X_CLK_SRC_SHIFT) &
+> +			CLK_SOURCE_EMC_2X_CLK_SRC_MASK;
 
-On Tue, Mar 10, 2020 at 07:43:12PM +0300, Dmitry Osipenko wrote:
-> 10.03.2020 18:20, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > From: Joseph Lo <josephl@nvidia.com>
-> >=20
-> > This is the initial patch for Tegra210 EMC frequency scaling. It has the
-> > code to program various aspects of the EMC that are standardized, but it
-> > does not yet include the specific programming sequence needed for clock
-> > scaling.
-> >=20
-> > The driver is designed to support LPDDR4 SDRAM. Devices that use LPDDR4
-> > need to perform training of the RAM before it can be used. Firmware will
-> > perform this training during early boot and pass a table of supported
-> > frequencies to the kernel via device tree.
-> >=20
-> > For the frequencies above 800 MHz, periodic retraining is needed to
-> > compensate for changes in timing. This periodic training will have to be
-> > performed until the frequency drops back to or below 800 MHz.
-> >=20
-> > This driver provides helpers used during this runtime retraining that
-> > will be used by the sequence specific code in a follow-up patch.
-> >=20
-> > Based on work by Peter De Schrijver <pdeschrijver@nvidia.com>.
-> >=20
-> > Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Changes in v5:
-> > - major rework and cleanup
-> >=20
-> >  drivers/memory/tegra/tegra210-emc.c | 1952 +++++++++++++++++++++------
-> >  drivers/memory/tegra/tegra210-emc.h |  893 +++++++++++-
-> >  2 files changed, 2390 insertions(+), 455 deletions(-)
-> >=20
-> > diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra=
-/tegra210-emc.c
-> > index 80ea14d1e6ce..4ea8fb70a4fd 100644
-> > --- a/drivers/memory/tegra/tegra210-emc.c
-> > +++ b/drivers/memory/tegra/tegra210-emc.c
-> > @@ -1,6 +1,6 @@
-> >  // SPDX-License-Identifier: GPL-2.0
-> >  /*
-> > - * Copyright (c) 2015-2019, NVIDIA CORPORATION.  All rights reserved.
-> > + * Copyright (c) 2015-2020, NVIDIA CORPORATION.  All rights reserved.
-> >   */
->=20
-> Would be nice to avoid all the unnecessary changes, like the one above
-> and then all the code's removals/reshuffling.
->=20
-> Such that a new patch was a clean addition to a previous patch, instead
-> of a re-write.
+What about to use a generic FIELD_GET/PREP()?
 
-I think this is the result of me messing up a rebase. The EMC driver
-changes added in the clock driver patch should've been in this patch,
-which would've made this a clean addition. I'll reshuffle the code
-for the next revision.
+> +static int tegra210_clk_emc_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				     unsigned long parent_rate)
+> +{
+> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
+> +	struct tegra210_clk_emc_provider *provider = emc->provider;
+> +	struct tegra210_clk_emc_config *config;
+> +	struct device *dev = provider->dev;
+> +	struct clk_hw *old, *new, *parent;
+> +	u8 old_idx, new_idx, index;
+> +	struct clk *clk;
+> +	unsigned int i;
+> +	int err;
+> +
+> +	if (!provider || !provider->configs || provider->num_configs == 0)
+> +		return -EINVAL;
 
-Thanks for pointing that out.
+Why all these checks are needed? I don't think it ever could fail,
+couldn't it?
 
-Thierry
+> +static int emc_table_lookup(struct tegra_emc *emc, unsigned long rate)
+> +{
+> +	int i;
 
---NGIwU0kFl1Z1A3An
-Content-Type: application/pgp-signature; name="signature.asc"
+unsigned int
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl5nysIACgkQ3SOs138+
-s6HEAA//QmK3t4ukt87828r7Nv2SwiHTTaa2Ye2D+MviiW5gQGuejM71cG0f1yVD
-pRfZtF83Vw0y8rITa25HiCjM+qCBk8ZaHMgokgXgSPW1t3Ata4aoCnjyGlFfNSGX
-SM8DmMt7zFLdoVgjV4oWgk16CnbwamqmCvTGLrIObnvilJMD1EGaJpAgliom5DJt
-VHsxit2CGv2jsEkHsBvqpUq2Vfe959FiiCQoQwyf8uYaMM7RWhYKTTDGhi0y0Wdb
-Xktq0/448CK9QW2jj/rWfmFLCOt0NnuYK3rFf3ldtDsYkFfUu4iqn5rt3u9XxqCo
-+1g8vUzEc+1peAUeTSO/GjtiTEx2qcE2W0yx2AikAejEM/qNwR5VopkInSclClKl
-Cv5JAg10mHFJCySzZqTiKojCgllnj/WHvgN3UJER+hYsBQ3Vx1qTAQ2gVymlHVyq
-2ee70J8KN5sQj43sQ+4WlwjtrtT03ORmdLCwL6gUhQZM/JfblDIJ0YE8Cvd+QMWk
-utuXITH33f+CJcu7OrYOapFUqwTyyXOyXbJpnegYlYtqoygZ8GRWsr1aIIAP3Nht
-0yGpo0lxdGeAt6jqqYgABOMwWphCsJ5ihofV5RhecXyFAVlLt+9HlWgXH9LSKONl
-fD/QqzKMIPOWdmBkSfavRfK1pb+hqFcHlwpoin67t1H026CexQs=
-=+3N+
------END PGP SIGNATURE-----
-
---NGIwU0kFl1Z1A3An--
+Same for all other occurrences in the code.
