@@ -2,73 +2,131 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0FD0C10DCE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 03:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E67DC10DCE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 05:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D4852467D
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 03:50:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056782071B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 05:55:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583812207;
-	bh=V6Fs8/S/s0dumZ8zRQ2hxKHD2zRTiM/tcLO3wbRf1kc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kmKY+0e6xj+y8jpNZK+dxPe7+ZHDGag3L14Q0C45x07Q4OrB62EgwVVVRu15uRtFs
-	 j5gMpnvJ+//aWrWtQwbiLhaf6aIBUvPA8MrobswqTFTaqashXQyrwlz4ldobxgh+e+
-	 XfdUw0+34qEtIQ7vH5dDjiXdJtcaYiLoiTyMgJXI=
+	s=default; t=1583819730;
+	bh=CfIeQmQ6C6M6rM8rTUeTUi2w+nRv/b9xXAEIS/3cIDA=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=mZL1jPVK1hszh3K4CGu8WNQ5qGngzZ3HEgU0cc1p6gY8lZdc48pkKGD7Hlx6a5qsx
+	 cp4NaxptvOMYpM3fzMzBDZV5ee2FcsBOWcZro27Nj2DYo0v68Va/zd/DUQbbwfe6zr
+	 SGVNJn5VQ153RI980rrO9lCo4ns/GMTiVyQJaRb0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgCJDuE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Mar 2020 23:50:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55720 "EHLO mail.kernel.org"
+        id S1726170AbgCJFz3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 01:55:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725845AbgCJDuE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Mar 2020 23:50:04 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726100AbgCJFz3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Mar 2020 01:55:29 -0400
+Received: from [192.168.1.24] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82D2C24649;
-        Tue, 10 Mar 2020 03:49:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 131AE2071B;
+        Tue, 10 Mar 2020 05:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583812203;
-        bh=V6Fs8/S/s0dumZ8zRQ2hxKHD2zRTiM/tcLO3wbRf1kc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ivKooelmrdr2ntwdFFobIbBeuTiXiBvIXHsTpFFwRrULfocXoxWtCuXUUh8m10p+q
-         ffDvYRUJS/2/uCvGDJMi899BuzsVAk0YyahYb61AwXylOFPaxlISzpQiSrXB9jQKKm
-         RPlE6G6Y0z9z4AvnC34I5bqpZmicTJzGkDsjDQaQ=
-Date:   Tue, 10 Mar 2020 11:49:56 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, leonard.crestez@nxp.com,
-        daniel.baluta@nxp.com, aisheng.dong@nxp.com, peng.fan@nxp.com,
-        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        s=default; t=1583819728;
+        bh=CfIeQmQ6C6M6rM8rTUeTUi2w+nRv/b9xXAEIS/3cIDA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fC1QRkSDuXELMyGvBT0H1suCP+oSuqPlg49LZFJ0k1OmBbxxet+/69/TmctNWBh9v
+         AklVg/cap/haAqND0xOut71W95L6qBfPZYoXu2xNBbDa1UWSxsyTTUz/6HMusv2Po5
+         psQj/hIJ1AWpz/F3aern7GCdNyrXeq4hpQzYguY0=
+Subject: Re: [PATCH] clk: socfpga: stratix10: use new parent data scheme
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] arch: arm64: dts: imx8qxp: add device node for I2C
- and INTMUX in CM40 SS
-Message-ID: <20200310034953.GD15729@dragon>
-References: <1581909561-12058-1-git-send-email-qiangqing.zhang@nxp.com>
- <1581909561-12058-6-git-send-email-qiangqing.zhang@nxp.com>
+References: <20200228203611.15507-1-dinguyen@kernel.org>
+ <158379285687.149997.12928033376494434912@swboyd.mtv.corp.google.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <8a863030-bf95-90c6-9f8b-2a55ad46cb03@kernel.org>
+Date:   Tue, 10 Mar 2020 00:55:27 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1581909561-12058-6-git-send-email-qiangqing.zhang@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <158379285687.149997.12928033376494434912@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 17, 2020 at 11:19:19AM +0800, Joakim Zhang wrote:
-> Add device node for I2C and INTMUX in CM40 SS.
+
+
+On 3/9/20 5:27 PM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2020-02-28 12:36:11)
+>> +
+>> +static const struct clk_parent_data mpu_free_mux[] = {
+>> +       { .name = "main_mpu_base_clk", },
+>> +       { .name = "peri_mpu_base_clk", },
+>> +       { .name = "osc1", },
+>> +       { .name = "cb-intosc-hs-div2-clk", },
+>> +       { .name = "f2s-free-clk", },
+>> +};
 > 
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
+> While this changes everything to use the new way it doesn't actually
+> migrate anything over to using direct pointers or the .fw_name field.
+> What's going on?
+> 
 
-The 'arch:' prefix in subject is not necessary.
+Sorry about that. I am using direct pointers to the new parent data here:
 
-Shawn
+in drivers/clk/socfpga/clk-periph-s10.c
+
+-       init.parent_names = parent_names;
++       init.parent_names = NULL;
++       init.parent_data = clks->parent_data;
+
+The driver seems to work fine without having to add .fw_name.
+
+Dinh
+
