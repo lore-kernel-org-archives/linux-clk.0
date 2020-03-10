@@ -5,58 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845EAC10F27
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 16:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46158C3F2C6
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 16:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BDC820873
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 16:13:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F67924658
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 16:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ec9Xy47+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJxbR7Nx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgCJQNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 12:13:30 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:43427 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbgCJQN3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 12:13:29 -0400
-Received: by mail-lf1-f65.google.com with SMTP id q9so4721754lfc.10;
-        Tue, 10 Mar 2020 09:13:27 -0700 (PDT)
+        id S1727075AbgCJQQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 12:16:22 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:37508 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbgCJQQV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 12:16:21 -0400
+Received: by mail-lj1-f194.google.com with SMTP id r24so1203899ljd.4;
+        Tue, 10 Mar 2020 09:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=W+60mEKOc6FZpec77KfiUx6G8m6jCqzHZbWxKsI68hg=;
-        b=Ec9Xy47+PEgWoZAna5oFPlDRIuAjLD0n5J1sYYhhvbZCyOwpVFQMQ9XujlWExJs3gU
-         7IwvIHCypTprj5W4tTESsxFSFbeqz9RBaIeJwEfQbxWzwX/oiySVJuiNe+tc8b4AIcDS
-         s+CIz9PNBIesDikyaqiiLYix5W0mypifUSly7oN/hs4eUs/WIJr14ghZJeIktIi0SjPf
-         24LH4DcyqCAxbnqVBGc29gB8XISHLBBgplOexNl1aDjLREoxHdyby2EQW3Qt6UR2SY9u
-         lv41viFMWNFfAm/YvDown//2YQqJzY5zIMJP+fQ1K1uH2r9jChayZRg0WrkxzuMD+dFO
-         L1tg==
+        bh=RjaCGXNjRwtaH9QvtoEkEWAf93tfcxpeZIkmTeM6Kac=;
+        b=PJxbR7NxiXrWYDxph/s80a0xfFYJALFbg0lgiM/Na7hrjFyMqWi4bIDja60OH+2gai
+         r4Y+0QXErE2COKoqutTh0HmMm0pdGUHUoYJwozxJFMcG6ScchrKG3PKA6PhDHIP7Oq4T
+         mGZNHU5ZT4J80hgUdusmp8Ei4hiKw4z+02ADlWdpQrAp9OSU7/UvZrIX5bkGda5cFYfe
+         meDYxpn7asJEn0/VKHJrhhKSwrZM5J7luopdabdC8Ztf/VQrh5C1VFm2GIyYVRL6oDBg
+         p47swnjc6phMB/EYZkC70RNn6shhHc1Fkydi+9z8cGhvRHlivILGtXSSsERxzD5HyuS2
+         Qamg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=W+60mEKOc6FZpec77KfiUx6G8m6jCqzHZbWxKsI68hg=;
-        b=q4e6wM0t/Fjb6BHJbJEOmzlJduOSrUU9BPmoBxV6aIgIEWBESXpgR33Hxpgf8+sc+o
-         uYyY6VVf7ETNtc14gRaK1JecTggYwbVBPJYv44sM9s2HSR27jnMYBfbBm1jpKL/p/oSC
-         6coRypvYHlrioJMmg1aH6emdrjGb54vV4NtbV+kOiStg+s2NXApPJuYXuhnfp2IJR2r4
-         YpoimZRKIEhntXh4YbpggX6T9eUffWemVzLf5fqJz2d6rW1vQelcPd4n0VjbrVGOyP/b
-         nFlBU2EYYVgtDUvQGjaqct8h82hbK8h8U3Azw9GnwjHnpUDPNCfSPmx4pqBLgyhTMNZc
-         5nBA==
-X-Gm-Message-State: ANhLgQ1U5wFHZSvdwMlhIWnF5WWdSETk3w8HBwEXzzOD+8X6/PnJWPsa
-        2Q3o7WDLfETTRvbCgPUe0kQ=
-X-Google-Smtp-Source: ADFU+vtaKKamjRMw8i2j8oskqRtAMyNXrKMEbwftPQGJTJ3Tr/icqA8fhaQeQsImoRUm3raAqgliwg==
-X-Received: by 2002:a19:4c08:: with SMTP id z8mr7699955lfa.95.1583856806690;
-        Tue, 10 Mar 2020 09:13:26 -0700 (PDT)
+        bh=RjaCGXNjRwtaH9QvtoEkEWAf93tfcxpeZIkmTeM6Kac=;
+        b=rzzpsanwWCUmwDoKOD2vcgrIKEaKxFxvSLN9ZOHraB3n9/pvfTZi0Xv1OW82ni78l/
+         AcIZnmSCyHky3v3yVNv9uo/AQ46zmLpya34sVvRTzQEcjJsGqEA71vEBy3QuMsLrxaB1
+         oaDyJ1ZavVbqlg9thbUZgnFBBev5Otqb1qVk4sXEYIsD1BnmrLNqsdfIx0tuFIF6WJgF
+         IFJ9dgTBsdQl0xBmytk6lt4P17Ty4+nkXGkqbn2FnkimMWe9u4OW7nP2Z4sBWLeL5VaF
+         xRrLwKqFqUhJb7CghSQ8k0gXGgMlmEwd3hy+oTjopED6Jyxq7g+KKWINDcdDtp1ECRxb
+         lQGQ==
+X-Gm-Message-State: ANhLgQ31YFsQg+wSaDrDs/zhYwypJZHuc5w2tpS+yPNVYoXgoRg0Ui0s
+        NsIS4ITpMMwb8Q0hV/cIG3s=
+X-Google-Smtp-Source: ADFU+vvBHH36dIlNgKvb4wlGwtmjMNU9As71C/R/V+eZBvBQEoLLiBKML70HHd5NEFujerM1RXOobA==
+X-Received: by 2002:a2e:904f:: with SMTP id n15mr12784000ljg.101.1583856976966;
+        Tue, 10 Mar 2020 09:16:16 -0700 (PDT)
 Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.googlemail.com with ESMTPSA id t27sm11160833ljk.78.2020.03.10.09.13.25
+        by smtp.googlemail.com with ESMTPSA id x13sm10752448lfq.97.2020.03.10.09.16.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 10 Mar 2020 09:13:26 -0700 (PDT)
+        Tue, 10 Mar 2020 09:16:16 -0700 (PDT)
 Subject: Re: [PATCH v5 2/8] clk: tegra: Export functions for EMC clock scaling
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -68,13 +69,13 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         linux-arm-kernel@lists.infradead.org
 References: <20200310152003.2945170-1-thierry.reding@gmail.com>
  <20200310152003.2945170-3-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8e1f11e9-a95a-500f-ff44-6f44ad990863@gmail.com>
-Date:   Tue, 10 Mar 2020 19:13:25 +0300
+ <8e1f11e9-a95a-500f-ff44-6f44ad990863@gmail.com>
+Message-ID: <1ac24caf-e4c1-b20e-4c3d-97b328a97ea5@gmail.com>
+Date:   Tue, 10 Mar 2020 19:16:15 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200310152003.2945170-3-thierry.reding@gmail.com>
+In-Reply-To: <8e1f11e9-a95a-500f-ff44-6f44ad990863@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -83,24 +84,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-10.03.2020 18:19, Thierry Reding пишет:
-> From: Joseph Lo <josephl@nvidia.com>
+10.03.2020 19:13, Dmitry Osipenko пишет:
+> 10.03.2020 18:19, Thierry Reding пишет:
+>> From: Joseph Lo <josephl@nvidia.com>
+>>
+>> Export functions to allow accessing the CAR register required by EMC
+>> clock scaling. These functions will be used to access the CAR register
+>> as part of the scaling sequence.
+>>
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>> ---
+>> Changes in v5:
+>> - remove tegra210_clk_emc_update_setting() which is no longer needed
+>>
+> ...
+>> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
+> ...
+>> +extern void tegra210_clk_emc_dll_enable(bool flag);
+>> +extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
+>> +extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
 > 
-> Export functions to allow accessing the CAR register required by EMC
-> clock scaling. These functions will be used to access the CAR register
-> as part of the scaling sequence.
+> Why these exports are needed given that the EMC driver is built-in?
 > 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v5:
-> - remove tegra210_clk_emc_update_setting() which is no longer needed
-> 
-...
-> +EXPORT_SYMBOL_GPL(tegra210_clk_emc_update_setting);
-...
-> +extern void tegra210_clk_emc_dll_enable(bool flag);
-> +extern void tegra210_clk_emc_dll_update_setting(u32 emc_dll_src_value);
-> +extern void tegra210_clk_emc_update_setting(u32 emc_src_value);
 
-Why these exports are needed given that the EMC driver is built-in?
+Also, seems changelog doesn't match the patch itself.
