@@ -4,103 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B281C10F27
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 965FBC3F2D0
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2988C20727
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:36:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9722464B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:38:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583865379;
-	bh=2x9OjP/cL989J/BJIl8ZTmdrXYn701P4JDMdpwdKyKc=;
+	s=default; t=1583865521;
+	bh=sWhVyiDzhH2/LT5EnNWWeerl7XPZ5N7R/DUZZzrWBIg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GFY52cHEMoFcCfKN8fhgOsTT3QDsd30XlaEye/9gcCK6bqwyklGzMf69Dxz/91o9J
-	 GPznQYNz+ypxt4T2OfrgY/srDA+POn+DgDEXIHAC8WBFYVMmY1zwRE2AftKnGskelt
-	 ROX8hmJgaS2yNRrbSh8Zua0xS/Zl/wHMPoo2QYFM=
+	b=J4tzGY6WlTWeQ+r+smjjRnidtS6BFMcjbcg6Ku9Ka09/G7FXA4G2976YvM9SdzQ1N
+	 uFHX7N+gsbo/d/X8XiYSIfIm1df9dI/rwR+jrf/t/5c3EhD/CEekppFFo+QtOUdvNv
+	 LiruimZHaHXakXlVvcts4teMtwvjPHatPeCnjVzg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726520AbgCJSgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 14:36:18 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43907 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgCJSgS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 14:36:18 -0400
-Received: by mail-ot1-f67.google.com with SMTP id a6so6273685otb.10;
-        Tue, 10 Mar 2020 11:36:18 -0700 (PDT)
+        id S1727076AbgCJSil (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 14:38:41 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33661 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726315AbgCJSik (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 14:38:40 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r7so1789360oij.0;
+        Tue, 10 Mar 2020 11:38:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RWBhtEAElv+woAI0B9coW/qcWUrLc+hN8tGBRRi9/8s=;
-        b=KzL0Cc2cTGGSj3qjzAhUSqEeOnk1ivJqba8748Famn+YIdUawiC4uLcDT8KRVyX+yU
-         VIfN/IwTtsE+dI5olqNVHQtGDoHaHYccQzJRAocYrYMaLo7ackvUWyLgo03YQ9lSaXn7
-         nHzTV/rgesOuXcdFD+B8SYhC+7agbbalbonCjqK1AMOf4Cg/Svy4mAUueLZka/RtBcGd
-         xCtbMhY7r9SBBIU8Ie/1KecLDLpidggoNbCSsFSqe38YbXQ37w1J4yQKsPS2AKIfNxxy
-         9cxWRZ0pDd0TGaH0Riw3feG7n9RbFGURqi2/n1yYmkOUfGy6AULzBx/9g6ybgaNDWLLX
-         PAhw==
-X-Gm-Message-State: ANhLgQ1EfaAk3JlXxz0t9etC6zcpWIp34e9UibQhYUSmBqNpYEHeJsX/
-        pMkq57nDmsj1dfWc3Tm0fg==
-X-Google-Smtp-Source: ADFU+vu0ICotI3P1yky6B20yPZmLQBQBsrF3y63sWlL0hNI6+A8JD+ItyEEvuVkvK6xbWwo2T/IxBA==
-X-Received: by 2002:a9d:6e90:: with SMTP id a16mr5846143otr.72.1583865377661;
-        Tue, 10 Mar 2020 11:36:17 -0700 (PDT)
+        bh=rcKiHvyeeVweEFjKVsIEKKh5OdVQ21JonvREl9Oqx8E=;
+        b=fLNrpGIZDwnxQinE02d5+06iYlWdgNqK6SeT3ex652Ytja3OJg74RGBVrEWy57JP1Z
+         CV3AanNemxBUhPbkAhTrLMIKnQhYCoSFtO0Usey3Pke0NKJWKlVSZltT8Hf3AvG3ExHT
+         /VBmLrg0tcyiiYnkA2n+TpEHboZk6gAVyqJnorHhz5Z2XVV5uWo0gh45B2e6TYlvFCRW
+         LCVN7cXJYT+mrmYRYheOlRdVakgZ/mTY06nnaRQPv+eNc/K0FYjFLL10IUdmDO8NEsUW
+         9G1tYYto1qt/8/5PcFBCBDYcUsZawqJKSt+uzbMdoiJ624t3BnDaQ2nymgc11NCBsbRZ
+         fNZQ==
+X-Gm-Message-State: ANhLgQ1ebcfiPK5+OixSqll6tBknQPDbDP//HUv8UDTv4rdkwVpjGXsf
+        YT8yJLYkHtZXjXtteYeTtw==
+X-Google-Smtp-Source: ADFU+vsoV3qqlTEQdCVrmWtlFKB7yKGYbJtvxst09oJE3MqwGuSD0LEr/QkIJob56v6U03bQwXU4Mw==
+X-Received: by 2002:aca:4d86:: with SMTP id a128mr1767381oib.96.1583865519689;
+        Tue, 10 Mar 2020 11:38:39 -0700 (PDT)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c12sm4551332oic.27.2020.03.10.11.36.16
+        by smtp.gmail.com with ESMTPSA id l10sm4493995oii.29.2020.03.10.11.38.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 11:36:16 -0700 (PDT)
-Received: (nullmailer pid 22533 invoked by uid 1000);
-        Tue, 10 Mar 2020 18:36:16 -0000
-Date:   Tue, 10 Mar 2020 13:36:16 -0500
+        Tue, 10 Mar 2020 11:38:39 -0700 (PDT)
+Received: (nullmailer pid 26679 invoked by uid 1000);
+        Tue, 10 Mar 2020 18:38:38 -0000
+Date:   Tue, 10 Mar 2020 13:38:38 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCHv2 2/3] dt-bindings: documentation: add clock bindings
- information for Agilex
-Message-ID: <20200310183616.GA20350@bogus>
-References: <20200309171653.27630-1-dinguyen@kernel.org>
- <20200309171653.27630-3-dinguyen@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Message-ID: <20200310183838.GA25904@bogus>
+References: <20200310152003.2945170-1-thierry.reding@gmail.com>
+ <20200310152003.2945170-5-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309171653.27630-3-dinguyen@kernel.org>
+In-Reply-To: <20200310152003.2945170-5-thierry.reding@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon,  9 Mar 2020 12:16:52 -0500, Dinh Nguyen wrote:
-> Document the Agilex clock bindings, and add the clock header file. The
-> clock header is an enumeration of all the different clocks on the Agilex
-> platform.
+On Tue, 10 Mar 2020 16:19:59 +0100, Thierry Reding wrote:
+> From: Joseph Lo <josephl@nvidia.com>
 > 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> Add the binding document for the external memory controller (EMC) which
+> communicates with external LPDDR4 devices. It includes the bindings of
+> the EMC node and a sub-node of EMC table which under the reserved memory
+> node. The EMC table contains the data of the rates that EMC supported.
+> 
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
-> v2: convert original document to YAML
-> ---
->  .../bindings/clock/intc,agilex.yaml           | 79 +++++++++++++++++++
->  include/dt-bindings/clock/agilex-clock.h      | 70 ++++++++++++++++
->  2 files changed, 149 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intc,agilex.yaml
->  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> Changes in v5:
+> - convert to dt-schema
+> 
+>  .../nvidia,tegra210-emc.yaml                  | 83 +++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
-Documentation/devicetree/bindings/clock/intc,agilex.yaml:  while scanning a block scalar
-  in "<unicode string>", line 36, column 5
-found a tab character where an indentation space is expected
-  in "<unicode string>", line 37, column 1
-Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/clock/intc,agilex.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/clock/intc,agilex.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-warning: no schema found in file: Documentation/devicetree/bindings/clock/intc,agilex.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/intc,agilex.yaml: ignoring, error parsing file
-Makefile:1262: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
+Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #address-cells (2) differs from /example-0 (1)
+Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.example.dts:23.13-20: Warning (ranges_format): /example-0/reserved-memory:ranges: empty "ranges" property but its #size-cells (2) differs from /example-0 (1)
 
-See https://patchwork.ozlabs.org/patch/1251669
+See https://patchwork.ozlabs.org/patch/1252240
 Please check and re-submit.
