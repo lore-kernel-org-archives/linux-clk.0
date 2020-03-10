@@ -2,76 +2,73 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B85C18E5A
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 14:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D205C10F27
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54038208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 14:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D802D21655
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmPjz/lh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hGnPcZLO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726622AbgCJOiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 10:38:10 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55800 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgCJOiK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 10:38:10 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 6so1669853wmi.5;
-        Tue, 10 Mar 2020 07:38:08 -0700 (PDT)
+        id S1726766AbgCJPUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 11:20:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43801 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgCJPUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 11:20:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v9so16368298wrf.10;
+        Tue, 10 Mar 2020 08:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=TjTCBST6cpMsAppV8JBTTv+T9QV8G6JLefGJ8DTMePs=;
-        b=TmPjz/lhjnZcVRNn4y7bnt8Dk07ZJMZgLzzwpZhO0PigzBsVHOzApOPqb8iS68o/0k
-         68Pfb1OWY6pUMqTmla/Xpx059WGaOz7mrx3lZaN0Jc/Cww2Weu/4QuCe5D7IKW9wyapS
-         9bMaFcqPftQSMlzmOoApEsG8MtVqdbJPC8wuvEfiNcpXcJw4AJMnruYO4sHW6HiZy+W5
-         YP9bCAMQUnJQLxUnb57Xb/lZHz18dPYCVVBwQdPS/UOSTshMrArQpZYkI5UCmu3ubPwh
-         gdpLBWrqe6AU88bYyLlXipVH8XOjZKei/9XNKnWOY94jeRRHYHhFMUCFMs2qGWKFKtzc
-         L3WA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4n2mLbjo7aNwrYZdMSacX3rbOo2B1BidTBnQhKnQzMY=;
+        b=hGnPcZLOVtBzDoE+WzzkasurCg1KMifhIB0cT0mfVWjDCpDX37pU6cHYixT/kBuRTW
+         fj6ky1PozzwITKbkfZ6PikNwIt4+o7or4KXFv12jpwRMCYEU+Rk7tumvdMru+48LdhMp
+         Zv8gx9tWF1Iu+GXHXivdfwRfabg6g256vFiqg+eSdbXYyZzcFqx5oGuZ2c4zUVeAsgsu
+         lmhqJreT86cmN+Z/7BHBX0qyblFrDsGz6fgT3gmdaGzcTGpsa2Oaz5MJpROeEVuNH9sb
+         T4JlORBEr3VUhy/P+aDDL9LZAgiFyS3I2UFfsVXXTMseOv98jGqcpdViLVopkUGKSGF3
+         KfPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=TjTCBST6cpMsAppV8JBTTv+T9QV8G6JLefGJ8DTMePs=;
-        b=YssoY7dhfl3vop8VPmwE/ozv1QW1CuJJuKfJIZSbGTHJCle7VZyJ2yZG0VOyKN8tZK
-         zZZocc/3VUmPcbVGT2meDBxw99NgNDws9jkSZVtgH9A9zBtsEyNzfoQMcFr2XdcUAX7E
-         NSZDiymUuL493XwVd60Ic4E0jt6aDXJ7bS8gBKGlOVMflAscuYrV3cBBjWqYJVvUim0B
-         GXsE922HKDmXmwtO4AQW1dwIYaPzkWM0TSHKWLmwZhyKQTo4V8vY1nF5gHK9/Vx+CzjI
-         +eFGUfT7VJZPtwRgRUuRmkf/yuYaOMyilws7br5vYmNOKuTf64wJmfRLohLNhEFzdety
-         vS3A==
-X-Gm-Message-State: ANhLgQ0rz23wpK8gOaM3iUB2gt2UPOh2hYG+6MBEutvuBAhlhv+GHp2m
-        kze4u/CBn7ZHBSgUMJJUvq4=
-X-Google-Smtp-Source: ADFU+vtljeoEU+yem2iyDmCFuSh/4804c3cfqoE81CpBPKgnGi1igq3KI2mh2HhVQsq/asf+qr2lkw==
-X-Received: by 2002:a7b:cb97:: with SMTP id m23mr1992564wmi.140.1583851087374;
-        Tue, 10 Mar 2020 07:38:07 -0700 (PDT)
-Received: from Ansuel-XPS.localdomain (host218-254-dynamic.53-79-r.retail.telecomitalia.it. [79.53.254.218])
-        by smtp.googlemail.com with ESMTPSA id c23sm4516611wme.39.2020.03.10.07.38.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4n2mLbjo7aNwrYZdMSacX3rbOo2B1BidTBnQhKnQzMY=;
+        b=OrlIIg/KtudWM1iPRf5xOgiz0yTCb1bJPYzlddyZwSXOnVe0X90I6oVaGCNYwOsTPF
+         UvTTVoiXbPe2HCoVaszM36a0aE+l1G7kwx+Gx1UbYEPf1A6k5AMR+7A5zaEHjMEndNbd
+         DcZ4w9Mae+BTSzue/2dnCW5U1cB9v13AiovcqNOI6pTixyG/LF0OWlxREB/RVgUODQys
+         fF6amqbq2VJDEVhhwAIhoyitVgjwkVsafjIr99YqIureF7s17VlUO4wjjkEgubOxZEsc
+         GYUwmix1UBHABSl/Wph1xf+a9EwheBUoP4G3bIRzFfxIyg4STe+ZdwSN/OpRDEfQPjG3
+         cl+Q==
+X-Gm-Message-State: ANhLgQ0a1mCLZUiRGoRLauqGcaUXtRThMlUEeB3APYMutWSN+AblAkkr
+        8fVwoVH/lmORssNkzNj0I4g=
+X-Google-Smtp-Source: ADFU+vtdcepOM3l2BB9d90s/i+qW7uZK5sCMgjr8svNQswMlI4uZgM5Yxn7HJr/DclKr1TyOG7ycGA==
+X-Received: by 2002:adf:e98c:: with SMTP id h12mr11964222wrm.345.1583853611077;
+        Tue, 10 Mar 2020 08:20:11 -0700 (PDT)
+Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
+        by smtp.gmail.com with ESMTPSA id d63sm4416772wmd.44.2020.03.10.08.20.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 07:38:06 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     sboyd@kernel.org
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        Tue, 10 Mar 2020 08:20:09 -0700 (PDT)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
-Date:   Tue, 10 Mar 2020 15:37:56 +0100
-Message-Id: <20200310143756.244-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.25.0
-In-Reply-To: <sboyd@kernel.org>
-References: <sboyd@kernel.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v5 0/8] Add EMC scaling support for Tegra210
+Date:   Tue, 10 Mar 2020 16:19:55 +0100
+Message-Id: <20200310152003.2945170-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -79,94 +76,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing definition of rpm clk for ipq806x soc
+From: Thierry Reding <treding@nvidia.com>
 
-Signed-off-by: John Crispin <john@phrozen.org>
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-Acked-by: John Crispin <john@phrozen.org>
----
- .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
- drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
- 3 files changed, 40 insertions(+)
+This series introduces the EMC clock scaling support for Tegra210. The
+EMC table of supported frequencies is passed to the kernel via a device
+tree reserved memory region.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-index 944719bd586f..4bb2cbeff2b4 100644
---- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-+++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
-@@ -15,6 +15,7 @@ Required properties :
- 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
- 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
-+			"qcom,rpmcc-ipq806x", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
- 			"qcom,rpmcc-msm8998", "qcom,rpmcc"
- 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
-diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
-index 9e3110a71f12..f71d228fd6bd 100644
---- a/drivers/clk/qcom/clk-rpm.c
-+++ b/drivers/clk/qcom/clk-rpm.c
-@@ -543,10 +543,45 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
- 	.num_clks = ARRAY_SIZE(apq8064_clks),
- };
- 
-+/* ipq806x */
-+DEFINE_CLK_RPM(ipq806x, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
-+DEFINE_CLK_RPM(ipq806x, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
-+DEFINE_CLK_RPM(ipq806x, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
-+DEFINE_CLK_RPM(ipq806x, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
-+DEFINE_CLK_RPM(ipq806x, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
-+DEFINE_CLK_RPM(ipq806x, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
-+DEFINE_CLK_RPM(ipq806x, nss_fabric_0_clk, nss_fabric_0_a_clk, QCOM_RPM_NSS_FABRIC_0_CLK);
-+DEFINE_CLK_RPM(ipq806x, nss_fabric_1_clk, nss_fabric_1_a_clk, QCOM_RPM_NSS_FABRIC_1_CLK);
-+
-+static struct clk_rpm *ipq806x_clks[] = {
-+	[RPM_APPS_FABRIC_CLK] = &ipq806x_afab_clk,
-+	[RPM_APPS_FABRIC_A_CLK] = &ipq806x_afab_a_clk,
-+	[RPM_CFPB_CLK] = &ipq806x_cfpb_clk,
-+	[RPM_CFPB_A_CLK] = &ipq806x_cfpb_a_clk,
-+	[RPM_DAYTONA_FABRIC_CLK] = &ipq806x_daytona_clk,
-+	[RPM_DAYTONA_FABRIC_A_CLK] = &ipq806x_daytona_a_clk,
-+	[RPM_EBI1_CLK] = &ipq806x_ebi1_clk,
-+	[RPM_EBI1_A_CLK] = &ipq806x_ebi1_a_clk,
-+	[RPM_SYS_FABRIC_CLK] = &ipq806x_sfab_clk,
-+	[RPM_SYS_FABRIC_A_CLK] = &ipq806x_sfab_a_clk,
-+	[RPM_SFPB_CLK] = &ipq806x_sfpb_clk,
-+	[RPM_SFPB_A_CLK] = &ipq806x_sfpb_a_clk,
-+	[RPM_NSS_FABRIC_0_CLK] = &ipq806x_nss_fabric_0_clk,
-+	[RPM_NSS_FABRIC_0_A_CLK] = &ipq806x_nss_fabric_0_a_clk,
-+	[RPM_NSS_FABRIC_1_CLK] = &ipq806x_nss_fabric_1_clk,
-+	[RPM_NSS_FABRIC_1_A_CLK] = &ipq806x_nss_fabric_1_a_clk,
-+};
-+
-+static const struct rpm_clk_desc rpm_clk_ipq806x = {
-+	.clks = ipq806x_clks,
-+	.num_clks = ARRAY_SIZE(ipq806x_clks),
-+};
-+
- static const struct of_device_id rpm_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
- 	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
- 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
-+	{ .compatible = "qcom,rpmcc-ipq806x", .data = &rpm_clk_ipq806x },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index 8e3095720552..ae74c43c485d 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -37,6 +37,10 @@
- #define RPM_XO_A0				27
- #define RPM_XO_A1				28
- #define RPM_XO_A2				29
-+#define RPM_NSS_FABRIC_0_CLK			30
-+#define RPM_NSS_FABRIC_0_A_CLK			31
-+#define RPM_NSS_FABRIC_1_CLK			32
-+#define RPM_NSS_FABRIC_1_A_CLK			33
- 
- /* SMD RPM clocks */
- #define RPM_SMD_XO_CLK_SRC				0
+Joseph posted the v4 of this series[0] about a year ago. I've dusted it
+off a bit and tried to address all of the comments that Dmitry had made
+in response to v4.
+
+Changes in v4:
+- major rework to split this into a clk driver and an EMC driver
+- refactored some code to remove duplication and improve readability
+- removed some unused code and variables
+
+Thierry
+
+[0]: https://lore.kernel.org/linux-arm-kernel/20190529082139.5581-1-josephl@nvidia.com/
+
+Joseph Lo (8):
+  clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
+  clk: tegra: Export functions for EMC clock scaling
+  clk: tegra: Implement Tegra210 EMC clock
+  dt-bindings: memory: tegra: Add external memory controller binding for
+    Tegra210
+  memory: tegra: Add EMC scaling support code for Tegra210
+  memory: tegra: Add EMC scaling sequence code for Tegra210
+  arm64: tegra: Add external memory controller node for Tegra210
+  clk: tegra: Remove the old emc_mux clock for Tegra210
+
+ .../nvidia,tegra210-emc.yaml                  |   83 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      |   11 +
+ drivers/clk/tegra/Makefile                    |    1 +
+ drivers/clk/tegra/clk-tegra210-emc.c          |  352 ++++
+ drivers/clk/tegra/clk-tegra210.c              |   83 +-
+ drivers/clk/tegra/clk.h                       |    3 +
+ drivers/memory/tegra/Kconfig                  |   10 +
+ drivers/memory/tegra/Makefile                 |    1 +
+ drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1782 ++++++++++++++++
+ drivers/memory/tegra/tegra210-emc.c           | 1800 +++++++++++++++++
+ drivers/memory/tegra/tegra210-emc.h           | 1065 ++++++++++
+ include/dt-bindings/clock/tegra210-car.h      |    4 +-
+ include/linux/clk/tegra.h                     |   26 +
+ 13 files changed, 5202 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
+ create mode 100644 drivers/clk/tegra/clk-tegra210-emc.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc.c
+ create mode 100644 drivers/memory/tegra/tegra210-emc.h
+
 -- 
-2.25.0
+2.24.1
 
