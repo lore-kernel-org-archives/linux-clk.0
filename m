@@ -2,119 +2,68 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B57C10F27
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 11:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6429CC10F27
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 13:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8963B2468D
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 11:04:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kapsi.fi header.i=@kapsi.fi header.b="Y28vOHU2"
+	by mail.kernel.org (Postfix) with ESMTP id 43F7A21D7E
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 13:55:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726202AbgCJLEq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 07:04:46 -0400
-Received: from mail.kapsi.fi ([91.232.154.25]:60931 "EHLO mail.kapsi.fi"
+        id S1726390AbgCJNzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 09:55:10 -0400
+Received: from mga11.intel.com ([192.55.52.93]:1647 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726186AbgCJLEq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Mar 2020 07:04:46 -0400
-X-Greylist: delayed 2382 seconds by postgrey-1.27 at vger.kernel.org; Tue, 10 Mar 2020 07:04:44 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=kapsi.fi;
-         s=20161220; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=on/1XDRbw6x43hmVH8OZnVWKvKhaSL5RS5ovw2YMc8c=; b=Y28vOHU2jUV8tyB8DksmJSwq1L
-        KZJOlg2bCXAbxAaN4gPv/5FgmYDU/JyALC4z0PC15JABJ8Uq8+yuRRI65UokTh8G1MIcXBrLlO64X
-        paGfflOsWwp9GckDYb7RJlN33nN4iSjCuIEm9tjAA8wF6UAzMcQ7c3SN1dqy7KD1JSklA+tFbY6SA
-        Ofi8T8796ayaJK1aAe9m5dyocpk3Iy0mL8zYUAInnah/zt/EdEwj4BL0eqXOtHlP5NO1Nip0z6R/d
-        gFuvQxrhbENPWhOVsss5bE3Gg7VozHhdPmlVzhJosIAdl3nOStW1m6htGNaD1bU8f6eMo7FV9/JxG
-        2ZS+L0Ng==;
-Received: from dsl-hkibng22-54faa0-215.dhcp.inet.fi ([84.250.160.215] helo=[192.168.1.10])
-        by mail.kapsi.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <cyndis@kapsi.fi>)
-        id 1jBc4L-00070l-JT; Tue, 10 Mar 2020 12:25:01 +0200
-Subject: Re: [PATCH] clk: Do not recalc rate for reparented clocks
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-References: <20200305175138.92075-1-thierry.reding@gmail.com>
- <158380492739.149997.15800995149056434664@swboyd.mtv.corp.google.com>
-From:   Mikko Perttunen <cyndis@kapsi.fi>
-Message-ID: <21f65d74-eb09-6735-4338-8c5e865533ad@kapsi.fi>
-Date:   Tue, 10 Mar 2020 12:25:01 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1726316AbgCJNzK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Mar 2020 09:55:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:55:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
+   d="scan'208";a="443171684"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 10 Mar 2020 06:55:08 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D7525193; Tue, 10 Mar 2020 15:55:07 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1] clk: Fix trivia typo in comment exlusive => exclusive
+Date:   Tue, 10 Mar 2020 15:55:07 +0200
+Message-Id: <20200310135507.87959-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <158380492739.149997.15800995149056434664@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 84.250.160.215
-X-SA-Exim-Mail-From: cyndis@kapsi.fi
-X-SA-Exim-Scanned: No (on mail.kapsi.fi); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/10/20 3:48 AM, Stephen Boyd wrote:
-> Quoting Thierry Reding (2020-03-05 09:51:38)
->> From: Thierry Reding <treding@nvidia.com>
->>
->> As part of the clock frequency change sequence, a driver may need to
->> reparent a clock. In that case, the rate will already have been updated
->> and the cached parent rate will no longer be valid, so just skip the
->> recalculation.
-> 
-> Can you describe more about what's going on and why this needs to
-> change? For example, we have 'set_rate_and_parent' for cases where a
-> driver reparents a clk during a rate change. Is that not sufficient
-> here?
-> 
+Fix trivia typo in comment exlusive => exclusive.
 
-I believe this is related to the memory clock change sequence on Tegra, 
-where the EMC clock may have to be reparented multiple times during the 
-rate change sequence.
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If EMC is running off parent A, and the requested new OPP also uses 
-parent A, we have to temporarily switch to a different OPP with parent B 
-so that the rate change sequence can be executed on parent A without 
-affecting the system's memory accesses.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index f122e9911b57..39c59f063aa0 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -774,7 +774,7 @@ static void clk_core_rate_restore_protect(struct clk_core *core, int count)
+  * clk_rate_exclusive_get - get exclusivity over the clk rate control
+  * @clk: the clk over which the exclusity of rate control is requested
+  *
+- * clk_rate_exlusive_get() begins a critical section during which a clock
++ * clk_rate_exclusive_get() begins a critical section during which a clock
+  * consumer cannot tolerate any other consumer making any operation on the
+  * clock which could result in a rate change or rate glitch. Exclusive clocks
+  * cannot have their rate changed, either directly or indirectly due to changes
+-- 
+2.25.1
 
-Mikko
-
->>
->> Signed-off-by: Thierry Reding <treding@nvidia.com>
->> ---
->>   drivers/clk/clk.c | 9 ++++++++-
->>   1 file changed, 8 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index ebfc1e2103cb..49d92f4785a2 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -2079,7 +2079,14 @@ static void clk_change_rate(struct clk_core *core)
->>   
->>          trace_clk_set_rate_complete(core, core->new_rate);
->>   
->> -       core->rate = clk_recalc(core, best_parent_rate);
->> +       /*
->> +        * Some drivers need to change the parent of a clock as part of the
->> +        * rate change sequence. In that case, best_parent_rate is no longer
->> +        * valid. However, reparenting already recalculates the rate for the
->> +        * entire clock subtree, so we can safely skip this here.
->> +        */
->> +       if (core->parent == parent)
->> +               core->rate = clk_recalc(core, best_parent_rate);
->>   
-> 
-> I wonder if we can undo the recursion and figure out a way to make this
-> only happen once, when we want it to happen.
-> 
