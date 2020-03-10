@@ -2,357 +2,105 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFBF8C18E7A
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B281C10F27
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC92E208C3
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:35:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2988C20727
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 18:36:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583865379;
+	bh=2x9OjP/cL989J/BJIl8ZTmdrXYn701P4JDMdpwdKyKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GFY52cHEMoFcCfKN8fhgOsTT3QDsd30XlaEye/9gcCK6bqwyklGzMf69Dxz/91o9J
+	 GPznQYNz+ypxt4T2OfrgY/srDA+POn+DgDEXIHAC8WBFYVMmY1zwRE2AftKnGskelt
+	 ROX8hmJgaS2yNRrbSh8Zua0xS/Zl/wHMPoo2QYFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbgCJSf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 14:35:29 -0400
-Received: from muru.com ([72.249.23.125]:59672 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727123AbgCJSf2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Mar 2020 14:35:28 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 011D9812F;
-        Tue, 10 Mar 2020 18:36:12 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     linux-omap@vger.kernel.org
-Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org,
-        Brian Hutchinson <b.hutchman@gmail.com>,
-        Graeme Smecher <gsmecher@threespeedlogic.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 10/10] ARM: OMAP2+: Drop legacy platform data for ti81xx edma
-Date:   Tue, 10 Mar 2020 11:35:04 -0700
-Message-Id: <20200310183504.65358-11-tony@atomide.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200310183504.65358-1-tony@atomide.com>
-References: <20200310183504.65358-1-tony@atomide.com>
+        id S1726520AbgCJSgS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 14:36:18 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43907 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726391AbgCJSgS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 14:36:18 -0400
+Received: by mail-ot1-f67.google.com with SMTP id a6so6273685otb.10;
+        Tue, 10 Mar 2020 11:36:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RWBhtEAElv+woAI0B9coW/qcWUrLc+hN8tGBRRi9/8s=;
+        b=KzL0Cc2cTGGSj3qjzAhUSqEeOnk1ivJqba8748Famn+YIdUawiC4uLcDT8KRVyX+yU
+         VIfN/IwTtsE+dI5olqNVHQtGDoHaHYccQzJRAocYrYMaLo7ackvUWyLgo03YQ9lSaXn7
+         nHzTV/rgesOuXcdFD+B8SYhC+7agbbalbonCjqK1AMOf4Cg/Svy4mAUueLZka/RtBcGd
+         xCtbMhY7r9SBBIU8Ie/1KecLDLpidggoNbCSsFSqe38YbXQ37w1J4yQKsPS2AKIfNxxy
+         9cxWRZ0pDd0TGaH0Riw3feG7n9RbFGURqi2/n1yYmkOUfGy6AULzBx/9g6ybgaNDWLLX
+         PAhw==
+X-Gm-Message-State: ANhLgQ1EfaAk3JlXxz0t9etC6zcpWIp34e9UibQhYUSmBqNpYEHeJsX/
+        pMkq57nDmsj1dfWc3Tm0fg==
+X-Google-Smtp-Source: ADFU+vu0ICotI3P1yky6B20yPZmLQBQBsrF3y63sWlL0hNI6+A8JD+ItyEEvuVkvK6xbWwo2T/IxBA==
+X-Received: by 2002:a9d:6e90:: with SMTP id a16mr5846143otr.72.1583865377661;
+        Tue, 10 Mar 2020 11:36:17 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id c12sm4551332oic.27.2020.03.10.11.36.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 11:36:16 -0700 (PDT)
+Received: (nullmailer pid 22533 invoked by uid 1000);
+        Tue, 10 Mar 2020 18:36:16 -0000
+Date:   Tue, 10 Mar 2020 13:36:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCHv2 2/3] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200310183616.GA20350@bogus>
+References: <20200309171653.27630-1-dinguyen@kernel.org>
+ <20200309171653.27630-3-dinguyen@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309171653.27630-3-dinguyen@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We can now probe devices with ti-sysc interconnect driver and dts
-data. Let's drop the related platform data and custom ti,hwmods
-dts property.
+On Mon,  9 Mar 2020 12:16:52 -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intc,agilex.yaml           | 79 +++++++++++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 ++++++++++++++++
+>  2 files changed, 149 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intc,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> 
 
-As we're just dropping data, and the early platform data init
-is based on the custom ti,hwmods property, we want to drop both
-the platform data and ti,hwmods property in a single patch.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Cc: Brian Hutchinson <b.hutchman@gmail.com>
-Cc: Graeme Smecher <gsmecher@threespeedlogic.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- arch/arm/boot/dts/dm814x.dtsi              |   5 -
- arch/arm/boot/dts/dm816x.dtsi              |   5 -
- arch/arm/mach-omap2/omap_hwmod_81xx_data.c | 173 ---------------------
- 3 files changed, 183 deletions(-)
+Documentation/devicetree/bindings/clock/intc,agilex.yaml:  while scanning a block scalar
+  in "<unicode string>", line 36, column 5
+found a tab character where an indentation space is expected
+  in "<unicode string>", line 37, column 1
+Documentation/devicetree/bindings/Makefile:12: recipe for target 'Documentation/devicetree/bindings/clock/intc,agilex.example.dts' failed
+make[1]: *** [Documentation/devicetree/bindings/clock/intc,agilex.example.dts] Error 1
+make[1]: *** Waiting for unfinished jobs....
+warning: no schema found in file: Documentation/devicetree/bindings/clock/intc,agilex.yaml
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/intc,agilex.yaml: ignoring, error parsing file
+Makefile:1262: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-diff --git a/arch/arm/boot/dts/dm814x.dtsi b/arch/arm/boot/dts/dm814x.dtsi
---- a/arch/arm/boot/dts/dm814x.dtsi
-+++ b/arch/arm/boot/dts/dm814x.dtsi
-@@ -523,7 +523,6 @@ mmc3: mmc@47810000 {
- 
- 		target-module@49000000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tpcc";
- 			reg = <0x49000000 0x4>;
- 			reg-names = "rev";
- 			clocks = <&alwon_clkctrl DM814_TPCC_CLKCTRL 0>;
-@@ -551,7 +550,6 @@ edma: dma@0 {
- 
- 		target-module@49800000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc0";
- 			reg = <0x49800000 0x4>,
- 			      <0x49800010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -575,7 +573,6 @@ edma_tptc0: dma@0 {
- 
- 		target-module@49900000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc1";
- 			reg = <0x49900000 0x4>,
- 			      <0x49900010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -599,7 +596,6 @@ edma_tptc1: dma@0 {
- 
- 		target-module@49a00000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc2";
- 			reg = <0x49a00000 0x4>,
- 			      <0x49a00010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -623,7 +619,6 @@ edma_tptc2: dma@0 {
- 
- 		target-module@49b00000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc3";
- 			reg = <0x49b00000 0x4>,
- 			      <0x49b00010 0x4>;
- 			reg-names = "rev", "sysc";
-diff --git a/arch/arm/boot/dts/dm816x.dtsi b/arch/arm/boot/dts/dm816x.dtsi
---- a/arch/arm/boot/dts/dm816x.dtsi
-+++ b/arch/arm/boot/dts/dm816x.dtsi
-@@ -142,7 +142,6 @@ scrm_clockdomains: clockdomains {
- 
- 		target-module@49000000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tpcc";
- 			reg = <0x49000000 0x4>;
- 			reg-names = "rev";
- 			clocks = <&alwon_clkctrl DM816_TPCC_CLKCTRL 0>;
-@@ -170,7 +169,6 @@ edma: dma@0 {
- 
- 		target-module@49800000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc0";
- 			reg = <0x49800000 0x4>,
- 			      <0x49800010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -194,7 +192,6 @@ edma_tptc0: dma@0 {
- 
- 		target-module@49900000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc1";
- 			reg = <0x49900000 0x4>,
- 			      <0x49900010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -218,7 +215,6 @@ edma_tptc1: dma@0 {
- 
- 		target-module@49a00000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc2";
- 			reg = <0x49a00000 0x4>,
- 			      <0x49a00010 0x4>;
- 			reg-names = "rev", "sysc";
-@@ -242,7 +238,6 @@ edma_tptc2: dma@0 {
- 
- 		target-module@49b00000 {
- 			compatible = "ti,sysc-omap4", "ti,sysc";
--			ti,hwmods = "tptc3";
- 			reg = <0x49b00000 0x4>,
- 			      <0x49b00010 0x4>;
- 			reg-names = "rev", "sysc";
-diff --git a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
---- a/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
-+++ b/arch/arm/mach-omap2/omap_hwmod_81xx_data.c
-@@ -129,13 +129,6 @@ static struct omap_hwmod dm81xx_alwon_l3_med_hwmod = {
- 	.flags		= HWMOD_NO_IDLEST,
- };
- 
--static struct omap_hwmod dm81xx_alwon_l3_fast_hwmod = {
--	.name		= "l3_fast",
--	.clkdm_name	= "alwon_l3_fast_clkdm",
--	.class		= &l3_hwmod_class,
--	.flags		= HWMOD_NO_IDLEST,
--};
--
- /*
-  * L4 standard peripherals, see TRM table 1-12 for devices using this.
-  * See TRM table 1-73 for devices using the 125MHz SYSCLK6 clock.
-@@ -1265,154 +1258,6 @@ static struct omap_hwmod_ocp_if dm81xx_l4_ls__spinbox = {
- 	.user		= OCP_USER_MPU,
- };
- 
--static struct omap_hwmod_class dm81xx_tpcc_hwmod_class = {
--	.name		= "tpcc",
--};
--
--static struct omap_hwmod dm81xx_tpcc_hwmod = {
--	.name		= "tpcc",
--	.class		= &dm81xx_tpcc_hwmod_class,
--	.clkdm_name	= "alwon_l3s_clkdm",
--	.main_clk	= "sysclk4_ck",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= DM81XX_CM_ALWON_TPCC_CLKCTRL,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static struct omap_hwmod_ocp_if dm81xx_alwon_l3_fast__tpcc = {
--	.master		= &dm81xx_alwon_l3_fast_hwmod,
--	.slave		= &dm81xx_tpcc_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_class dm81xx_tptc0_hwmod_class = {
--	.name		= "tptc0",
--};
--
--static struct omap_hwmod dm81xx_tptc0_hwmod = {
--	.name		= "tptc0",
--	.class		= &dm81xx_tptc0_hwmod_class,
--	.clkdm_name	= "alwon_l3s_clkdm",
--	.main_clk	= "sysclk4_ck",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= DM81XX_CM_ALWON_TPTC0_CLKCTRL,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static struct omap_hwmod_ocp_if dm81xx_alwon_l3_fast__tptc0 = {
--	.master		= &dm81xx_alwon_l3_fast_hwmod,
--	.slave		= &dm81xx_tptc0_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if dm81xx_tptc0__alwon_l3_fast = {
--	.master		= &dm81xx_tptc0_hwmod,
--	.slave		= &dm81xx_alwon_l3_fast_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_class dm81xx_tptc1_hwmod_class = {
--	.name		= "tptc1",
--};
--
--static struct omap_hwmod dm81xx_tptc1_hwmod = {
--	.name		= "tptc1",
--	.class		= &dm81xx_tptc1_hwmod_class,
--	.clkdm_name	= "alwon_l3s_clkdm",
--	.main_clk	= "sysclk4_ck",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= DM81XX_CM_ALWON_TPTC1_CLKCTRL,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static struct omap_hwmod_ocp_if dm81xx_alwon_l3_fast__tptc1 = {
--	.master		= &dm81xx_alwon_l3_fast_hwmod,
--	.slave		= &dm81xx_tptc1_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if dm81xx_tptc1__alwon_l3_fast = {
--	.master		= &dm81xx_tptc1_hwmod,
--	.slave		= &dm81xx_alwon_l3_fast_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_class dm81xx_tptc2_hwmod_class = {
--	.name		= "tptc2",
--};
--
--static struct omap_hwmod dm81xx_tptc2_hwmod = {
--	.name		= "tptc2",
--	.class		= &dm81xx_tptc2_hwmod_class,
--	.clkdm_name	= "alwon_l3s_clkdm",
--	.main_clk	= "sysclk4_ck",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= DM81XX_CM_ALWON_TPTC2_CLKCTRL,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static struct omap_hwmod_ocp_if dm81xx_alwon_l3_fast__tptc2 = {
--	.master		= &dm81xx_alwon_l3_fast_hwmod,
--	.slave		= &dm81xx_tptc2_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if dm81xx_tptc2__alwon_l3_fast = {
--	.master		= &dm81xx_tptc2_hwmod,
--	.slave		= &dm81xx_alwon_l3_fast_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_class dm81xx_tptc3_hwmod_class = {
--	.name		= "tptc3",
--};
--
--static struct omap_hwmod dm81xx_tptc3_hwmod = {
--	.name		= "tptc3",
--	.class		= &dm81xx_tptc3_hwmod_class,
--	.clkdm_name	= "alwon_l3s_clkdm",
--	.main_clk	= "sysclk4_ck",
--	.prcm		= {
--		.omap4	= {
--			.clkctrl_offs	= DM81XX_CM_ALWON_TPTC3_CLKCTRL,
--			.modulemode	= MODULEMODE_SWCTRL,
--		},
--	},
--};
--
--static struct omap_hwmod_ocp_if dm81xx_alwon_l3_fast__tptc3 = {
--	.master		= &dm81xx_alwon_l3_fast_hwmod,
--	.slave		= &dm81xx_tptc3_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
--static struct omap_hwmod_ocp_if dm81xx_tptc3__alwon_l3_fast = {
--	.master		= &dm81xx_tptc3_hwmod,
--	.slave		= &dm81xx_alwon_l3_fast_hwmod,
--	.clk		= "sysclk4_ck",
--	.user		= OCP_USER_MPU,
--};
--
- /*
-  * REVISIT: Test and enable the following once clocks work:
-  * dm81xx_l4_ls__mailbox
-@@ -1443,15 +1288,6 @@ static struct omap_hwmod_ocp_if *dm814x_hwmod_ocp_ifs[] __initdata = {
- 	&dm814x_l4_ls__mmc1,
- 	&dm814x_l4_ls__mmc2,
- 	&ti81xx_l4_ls__rtc,
--	&dm81xx_alwon_l3_fast__tpcc,
--	&dm81xx_alwon_l3_fast__tptc0,
--	&dm81xx_alwon_l3_fast__tptc1,
--	&dm81xx_alwon_l3_fast__tptc2,
--	&dm81xx_alwon_l3_fast__tptc3,
--	&dm81xx_tptc0__alwon_l3_fast,
--	&dm81xx_tptc1__alwon_l3_fast,
--	&dm81xx_tptc2__alwon_l3_fast,
--	&dm81xx_tptc3__alwon_l3_fast,
- 	&dm814x_l4_ls__timer1,
- 	&dm814x_l4_ls__timer2,
- 	&dm81xx_alwon_l3_slow__gpmc,
-@@ -1496,15 +1332,6 @@ static struct omap_hwmod_ocp_if *dm816x_hwmod_ocp_ifs[] __initdata = {
- 	&dm81xx_emac0__mdio,
- 	&dm816x_l4_hs__emac1,
- 	&dm81xx_l4_hs__sata,
--	&dm81xx_alwon_l3_fast__tpcc,
--	&dm81xx_alwon_l3_fast__tptc0,
--	&dm81xx_alwon_l3_fast__tptc1,
--	&dm81xx_alwon_l3_fast__tptc2,
--	&dm81xx_alwon_l3_fast__tptc3,
--	&dm81xx_tptc0__alwon_l3_fast,
--	&dm81xx_tptc1__alwon_l3_fast,
--	&dm81xx_tptc2__alwon_l3_fast,
--	&dm81xx_tptc3__alwon_l3_fast,
- 	&dm81xx_alwon_l3_slow__gpmc,
- 	&dm816x_default_l3_slow__usbss,
- 	NULL,
--- 
-2.25.1
+See https://patchwork.ozlabs.org/patch/1251669
+Please check and re-submit.
