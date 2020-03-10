@@ -7,82 +7,93 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3552CC10DCE
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 20:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836C3C10DCE
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 20:19:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAA71215A4
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 20:17:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A7AF215A4
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 20:19:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583871459;
-	bh=cnbireeiV5S3r6lq2ej/Yy197jTRchqLG5DrkP8MDXk=;
+	s=default; t=1583871556;
+	bh=kH8DTv3FTEEvST7bpx5jAEBrtTfl+7II1OqQNYlD92w=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=CI1buwAESV1MX76AKIUkv+Rp419NsQtMCrrRLpqSd/U0wMPqtMg8kVz3vizPmY32r
-	 tpb3gJ4wF1Z33Fli05W9RdC/K4qfU/Th4ce4HY4siSxTTKikId5ohGsSEN+kGIKaKu
-	 0nvu1n1AnsjOOsFF0SnsIO+rb1y/zoA0F45eDYCc=
+	b=W9v/JcET402QeQHuHjR31jHxZSG4XN4An7zixcD8JCx2QNYYZ/xjQBXEeifjYMg6u
+	 S4lK45gtXVLrvOArAjN18ZtG4JU+vrNFd0DpTMzTI74EGSo6Ff/C2W65wcm1uNxe1+
+	 fPSn4tf2J3ZXBKBz8R4AscnFVyd54bz4LB4ZJi1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbgCJURj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 16:17:39 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33576 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbgCJURj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 16:17:39 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g15so8400629otr.0;
-        Tue, 10 Mar 2020 13:17:37 -0700 (PDT)
+        id S1726325AbgCJUTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 16:19:16 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:33995 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbgCJUTP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 16:19:15 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g6so15317002oiy.1;
+        Tue, 10 Mar 2020 13:19:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SALtb00tEMzq9uXRFmiEx+QH3Zf98Xn1eLOE8cTe24I=;
-        b=W/8rLsfafV8/aTCibIqkDcQ0EKqQ6uOq5hOD5FuaM0P8CDcyBM/mX3g8uog911l9t+
-         bmQnw2iTun+nHhIjtt4D3QRmb79MgESkz3FCXOm4ygtkLNM21XapZ15zXv6LaF2JktuX
-         ra0w9B4U2I6FCF7xLMemaVCeMmctt1ePrA6RuXC1X9R+13h+XomrmcLTj24jQXpG7vt6
-         98D0BCpRe8GdibSn+o0w2zpDRjBRPw5k8eE8GK+PeeYt+09GKOYUY7C5W4Mi2R88sNCp
-         QHB36NevxLJMo1Vl9shT4CMB07YpzVm+E6OFM6Nnw/7hDLfs2m1xhpZWA82sT9HB6N7a
-         ZSOQ==
-X-Gm-Message-State: ANhLgQ2tYaiZ2VYMVr4pBfvismgFbOSH+V3wdcl4gwgN0XyvQWAYwYEf
-        kTAFV6COHtGDJX6Xs7nM9w==
-X-Google-Smtp-Source: ADFU+vvd4bWBEv3HptnfOHpj19yNbzPlCehj5aSpWXjg8ppsPpo03XcBLibrk39Ai/jwvcUg9e35Xw==
-X-Received: by 2002:a05:6830:1d69:: with SMTP id l9mr18434593oti.192.1583871456874;
-        Tue, 10 Mar 2020 13:17:36 -0700 (PDT)
+        bh=AFq1DdnvEPEiWUIBZ8XMuzd1FRD5fPx8e3pkYB6x7lA=;
+        b=eEZi5xsYYS+MEVVRmuKMdsQ9PSWiLL57+1rihYjAyQX5TAZN0jEHTaTPfMNEngdvvK
+         Z7qa6hqGBharr+zUBjBXpaOHfCbqv7dBMj0W+RKTaJzMYhLA6YbAizJ/G4bl3JT49NTJ
+         o1pKiaQTZv/Sk7Pdpwl27eObLkcdcpKRupwgn+eUOHiOfcL75Dh/RBwS/PAaGUJ6h+FS
+         isnLTtc3WUIdRM6u4y/agViVA3RKzRST9ozVxUZjzV4WpEEOc9WhLnehNX6v94eT0qGE
+         71LyNPdpKcjKBqfd8h6Yofmch9tctoToLgGGqyRJWKErCzQMVAK8Yl7Lyp3hawn+Fequ
+         Hj8g==
+X-Gm-Message-State: ANhLgQ2BbqhR6fLUV403cXS/aUDLxDXZFcaqOvZ4EshHL0zxBnTanK3/
+        r0l6n6z672X+g01c+wpzAg==
+X-Google-Smtp-Source: ADFU+vvvg/ETQnv8QslVQHIZ0sV61kxtcOyz2SY3bt9I0ZnGmiT8R7zO6pDr8Jh91tKE6yR0zXuznA==
+X-Received: by 2002:aca:600b:: with SMTP id u11mr2481775oib.6.1583871554816;
+        Tue, 10 Mar 2020 13:19:14 -0700 (PDT)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l1sm4573693oic.22.2020.03.10.13.17.35
+        by smtp.gmail.com with ESMTPSA id l1sm288460otp.76.2020.03.10.13.19.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 13:17:35 -0700 (PDT)
-Received: (nullmailer pid 31532 invoked by uid 1000);
-        Tue, 10 Mar 2020 20:17:34 -0000
-Date:   Tue, 10 Mar 2020 15:17:34 -0500
+        Tue, 10 Mar 2020 13:19:13 -0700 (PDT)
+Received: (nullmailer pid 2066 invoked by uid 1000);
+        Tue, 10 Mar 2020 20:19:12 -0000
+Date:   Tue, 10 Mar 2020 15:19:12 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lee Jones <lee.jones@linaro.org>,
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Anson Huang <anson.huang@nxp.com>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
         NXP Linux Team <linux-imx@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [RFC 07/11] dt-bindings: clocks: imx8mp: Add ids for audiomix
- clocks
-Message-ID: <20200310201734.GA31480@bogus>
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC 10/11] reset: imx: Add audiomix reset controller support
+Message-ID: <20200310201912.GA31651@bogus>
 References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
- <1583226206-19758-8-git-send-email-abel.vesa@nxp.com>
+ <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1583226206-19758-8-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue,  3 Mar 2020 11:03:22 +0200, Abel Vesa wrote:
-> Add all the clock ids for the audiomix clocks.
+On Tue, Mar 03, 2020 at 11:03:25AM +0200, Abel Vesa wrote:
+> The imx-mix MFD driver registers some devices, one of which, in case of
+> audiomix, maps correctly to a reset controller type. This driver registers
+> a reset controller for that. For now, only the EARC specific resets are added.
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 > ---
->  include/dt-bindings/clock/imx8mp-clock.h | 62 ++++++++++++++++++++++++++++++++
->  1 file changed, 62 insertions(+)
-> 
+>  drivers/reset/Kconfig                          |   7 ++
+>  drivers/reset/Makefile                         |   1 +
+>  drivers/reset/reset-imx-audiomix.c             | 122 +++++++++++++++++++++++++
+>  include/dt-bindings/reset/imx-audiomix-reset.h |  15 +++
 
-Acked-by: Rob Herring <robh@kernel.org>
+This should be in a binding patch which makes me wonder where is the 
+binding patch?
+
+Rob
