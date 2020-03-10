@@ -2,2166 +2,1100 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E8AC18E7A
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058BCC10F27
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F1A621655
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:20:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lisuPpPy"
+	by mail.kernel.org (Postfix) with ESMTP id B54C221927
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 15:30:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583854218;
+	bh=x9TTahJxeurA/dj2Lv1aiCuQmJlmVgZLVjy7+fgJVAs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=DX3QoE80eui7/Z3Jmn8T/JVYCqr43l0PrZCdAwiAJmqfbMQP+HhKVfaUU+7h5OZzy
+	 UcWEF0++Qui6sI8yHvLidTheMYiWW+d/ux93ASMTh/7cd/w/5hzZSsz35zYDcgEv+6
+	 GhO5JYbwknd+Ra0NdnerJ/Iqyy3Zk4pITES8gL6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbgCJPUd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 11:20:33 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36991 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727300AbgCJPUc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 11:20:32 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a141so1809824wme.2;
-        Tue, 10 Mar 2020 08:20:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3plVQVKSX4nWebGyldnyIT8CqvbozEek2doWoXXZJn0=;
-        b=lisuPpPylA/xRlETTsYpBdJb33wh2BSTUx8FDtrTFvqh7Kkw8YiMTppZnrxUDIUDi3
-         uQtThNxjhV8h7mbek5BOSDiRzjB71iW4gQ44w9fg4MTfi2Rs098LLk8YZ+Fz8Yx31J8E
-         QMb2i3ffc4t/zHArs1dR0u5q+qqnE73dC9XL5yZEAwZau8MjUX/IdGw6HmvkbhQiQifw
-         di1GePneAoMsaFqXZkk0fwpIo1lBQjpmUTG6sqg0A/ewhD1gEJjOdHCSkYOaY3aNZN+/
-         YfvCEUrV2cz4HersmHYpGWVCTkeVku/48XeKTWbDYUV9j6tRRIYkvEHfkhoWdMTJ1ztR
-         Ev1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3plVQVKSX4nWebGyldnyIT8CqvbozEek2doWoXXZJn0=;
-        b=Cn/ftP0aAIszwXFL8U2NTF4PNq1v/gNUgF+xL93vTX67Gl7wTAPU5I+79FIPOeEYEn
-         bntcxlK2ZT/n5sqnalI4XAski9BTl5XkEKZ7O1kbJI4AF+ULlKVc6Gs7Bq2Tzud7KuUo
-         N5IMLNha1Cy8zRbFN0gVjhgmTqoWhdaVBqgXoxpHALHyhc06E8RH5sa203onFWrhS8uD
-         WelTaHDvsnqWaYWSJAAtrfNthJT3UmQmB7HqWs7k7ZkgUt4jGRB8XVHzs90hX9/tTvbk
-         Bsfzzw5545BzJCRx4n+btkvw2y7HwudXFUKMAkiMxewjQzwipAWzBU5Pv81CipVo8F+W
-         b6wQ==
-X-Gm-Message-State: ANhLgQ06/FdMbWfYEFUk1l29KiT+BeU5oR4g9Tf9oBrzvwxB83JwIHKi
-        LESO8yb5EMOovFf59H/hTHs=
-X-Google-Smtp-Source: ADFU+vtATBILwB/ChhNINp5SqCj1jXXo1geHTbHLIRzCTHoZvWj9xd9Mmz1YWkFWvN2o5IOIjdzvrg==
-X-Received: by 2002:a1c:f319:: with SMTP id q25mr2595905wmq.142.1583853624270;
-        Tue, 10 Mar 2020 08:20:24 -0700 (PDT)
-Received: from localhost (pD9E516A9.dip0.t-ipconnect.de. [217.229.22.169])
-        by smtp.gmail.com with ESMTPSA id u8sm20305457wrn.69.2020.03.10.08.20.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Mar 2020 08:20:22 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v5 6/8] memory: tegra: Add EMC scaling sequence code for Tegra210
-Date:   Tue, 10 Mar 2020 16:20:01 +0100
-Message-Id: <20200310152003.2945170-7-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20200310152003.2945170-1-thierry.reding@gmail.com>
-References: <20200310152003.2945170-1-thierry.reding@gmail.com>
+        id S1726461AbgCJPaS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 11:30:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726269AbgCJPaS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Mar 2020 11:30:18 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E467620578;
+        Tue, 10 Mar 2020 15:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583854216;
+        bh=x9TTahJxeurA/dj2Lv1aiCuQmJlmVgZLVjy7+fgJVAs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=ujoeTcG5YxNtIUP5KoYndnrjlN910E1kmF3TVlZmy0Io2ZocEsUqtOSSO2QIqCdmZ
+         5Y9yCWJEFpNjVs90Tr3woBiR14yvY+EPYyUC6DQjzs4MMnCWXXFJSFxRHeVIQbZyVf
+         oZNo92Sn7Y7ywv/T+v4LNxbfRLyol5CozeExj1OU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200306130058.27F388030797@mail.baikalelectronics.ru>
+References: <20200306130048.8868-1-Sergey.Semin@baikalelectronics.ru> <20200306130058.27F388030797@mail.baikalelectronics.ru>
+Subject: Re: [PATCH 4/5] clk: Add Baikal-T1 CCU PLLs driver
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Sergey.Semin@baikalelectronics.ru
+Date:   Tue, 10 Mar 2020 08:30:15 -0700
+Message-ID: <158385421510.149997.8848277501063917345@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Joseph Lo <josephl@nvidia.com>
+Quoting Sergey.Semin@baikalelectronics.ru (2020-03-06 05:00:47)
+> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+>=20
+> Baikal-T1 is supposed to be supplied with a high-frequency external
+> oscillator. But in order to create signals suitable for each IP-block
+> embedded into the SoC the oscillator output is primarily connected to
+> a set of CCU PLLs. There are five of them to create clocks for the MIPS
+> P5600 cores, the embedded DDR controller, SATA, Ethernet and PCIe
+> domains. The last three domains though named by the biggest system
+> interfaces in fact include nearly all of the rest SoC peripherals.
+> Each of the PLLs is based on True Circuits TSMC CLN28HPM IP-core with
+> an interface wrapper (so called safe PLL' clocks switcher) to simplify
+> the PLL configuration procedure.
+>=20
+> This driver creates the of-based hardware clocks to use them then in
+> the corresponding subsystems. In order to simplify the driver code we
+> split the functionality up into the PLLs clocks operations and hardware
+> clocks declaration/registration procedures. So if CLK_BT1_CCU is
+> defined, then the first part is available in the kernel, while
+> CLK_BT1_CCU_PLL config makes the actual clocks being registered at the
+> time of_clk_init() is called.
+>=20
+> Even though the PLLs are based on the same IP-core, they actually may
+> have some differences. In particular, some CCU PLLs supports the output
+> clock change without gating them (like CPU or PCIe PLLs), while the
+> others don't, some CCU PLLs are critical and aren't supposed to be
+> gated. In order to cover all of these cases the hardware clocks driver
+> is designed with a info-descriptor pattern. So there are special static
+> descriptors declared for each PLL, which is then used to create a
+> hardware clock with proper operations. Additionally debugfs-files are
+> provided for each PLL' field to make sure the implemented
+> rate-PLLs-dividers calculation algorithm is correct.
+>=20
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Signed-off-by: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+> Cc: Paul Burton <paulburton@kernel.org>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
 
-This patch includes the sequence for clock tuning and the dynamic
-training mechanism for the clock above 800MHz.
+> diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
+> new file mode 100644
+> index 000000000000..0e2fc86f3ab8
+> --- /dev/null
+> +++ b/drivers/clk/baikal-t1/Kconfig
+> @@ -0,0 +1,35 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +config CLK_BAIKAL_T1
+> +       bool "Baikal-T1 Clocks Control Unit interface"
+> +       depends on (MIPS_BAIKAL_T1 || COMPILE_TEST) && OF
 
-And historically there have been different sequences to change the EMC
-clock. The sequence to be used is specified in the EMC table.
-However, for the currently supported upstreaming platform, only the most
-recent sequence is used. So only support that in this patch.
+Does it actually depend on OF for any compilation?
 
-Based on the work of Peter De Schrijver <pdeschrijver@nvidia.com>.
+> +       default y
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Changes in v5:
-- major rework and cleanup
+Please no default y. Maybe default MIPS_BAIKAL_T1?
 
- drivers/memory/tegra/Makefile                 |    2 +-
- drivers/memory/tegra/tegra210-emc-cc-r21021.c | 1782 +++++++++++++++++
- drivers/memory/tegra/tegra210-emc.c           |    1 +
- drivers/memory/tegra/tegra210-emc.h           |  102 +
- 4 files changed, 1886 insertions(+), 1 deletion(-)
- create mode 100644 drivers/memory/tegra/tegra210-emc-cc-r21021.c
+> +       help
+> +         Clocks Control Unit is the core of Baikal-T1 SoC responsible fo=
+r the
+> +         chip subsystems clocking and resetting. It consists of multiple
+> +         global clock domains, which can be reset by means of the CCU co=
+ntrol
+> +         registers. These domains and devices placed in them are fed with
+> +         clocks generated by a hierarchy of PLLs, configurable and fixed
+> +         dividers. In addition CCU exposes several unrelated functional =
+blocks
+> +         like irqless Designware i2c controller with indirectly accessed
+> +         registers, AXI bus errors detector, DW PCIe controller PM/clock=
+s/reset
+> +         manager, etc.
+> +
+> +         This driver provides a set of functions to create the kernel cl=
+ock
+> +         devices of Baikal-T1 PLLs and dividers, and to manipulate the r=
+eset
+> +         signals of the SoC.
+> +
+> +if CLK_BAIKAL_T1
+> +
+> +config CLK_BT1_CCU_PLL
+> +       bool "Baikal-T1 CCU PLLs support"
+> +       default y
 
-diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
-index 1c59150ccf58..8a663bb3b263 100644
---- a/drivers/memory/tegra/Makefile
-+++ b/drivers/memory/tegra/Makefile
-@@ -13,6 +13,6 @@ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
- obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
- obj-$(CONFIG_TEGRA30_EMC)  += tegra30-emc.o
- obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
--obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o
-+obj-$(CONFIG_TEGRA210_EMC) += tegra210-emc.o tegra210-emc-cc-r21021.o
- obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o tegra186-emc.o
- obj-$(CONFIG_ARCH_TEGRA_194_SOC) += tegra186.o tegra186-emc.o
-diff --git a/drivers/memory/tegra/tegra210-emc-cc-r21021.c b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-new file mode 100644
-index 000000000000..042ac3127c15
---- /dev/null
-+++ b/drivers/memory/tegra/tegra210-emc-cc-r21021.c
-@@ -0,0 +1,1782 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2020, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/io.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+
-+#include <soc/tegra/mc.h>
-+
-+#include "mc.h"
-+#include "tegra210-emc.h"
-+
-+/*
-+ * Enable flags for specifying verbosity.
-+ */
-+#define INFO            (1 << 0)
-+#define STEPS           (1 << 1)
-+#define SUB_STEPS       (1 << 2)
-+#define PRELOCK         (1 << 3)
-+#define PRELOCK_STEPS   (1 << 4)
-+#define ACTIVE_EN       (1 << 5)
-+#define PRAMP_UP        (1 << 6)
-+#define PRAMP_DN        (1 << 7)
-+#define EMA_WRITES      (1 << 10)
-+#define EMA_UPDATES     (1 << 11)
-+#define PER_TRAIN       (1 << 16)
-+#define CC_PRINT        (1 << 17)
-+#define CCFIFO          (1 << 29)
-+#define REGS            (1 << 30)
-+#define REG_LISTS       (1 << 31)
-+
-+#define emc_dbg(emc, flags, ...) dev_dbg(emc->dev, __VA_ARGS__)
-+
-+#define DVFS_CLOCK_CHANGE_VERSION	21021
-+#define EMC_PRELOCK_VERSION		2101
-+
-+enum {
-+	DVFS_SEQUENCE = 1,
-+	WRITE_TRAINING_SEQUENCE = 2,
-+	PERIODIC_TRAINING_SEQUENCE = 3,
-+	DVFS_PT1 = 10,
-+	DVFS_UPDATE = 11,
-+	TRAINING_PT1 = 12,
-+	TRAINING_UPDATE = 13,
-+	PERIODIC_TRAINING_UPDATE = 14
-+};
-+
-+/*
-+ * PTFV defines - basically just indexes into the per table PTFV array.
-+ */
-+#define PTFV_DQSOSC_MOVAVG_C0D0U0_INDEX		0
-+#define PTFV_DQSOSC_MOVAVG_C0D0U1_INDEX		1
-+#define PTFV_DQSOSC_MOVAVG_C0D1U0_INDEX		2
-+#define PTFV_DQSOSC_MOVAVG_C0D1U1_INDEX		3
-+#define PTFV_DQSOSC_MOVAVG_C1D0U0_INDEX		4
-+#define PTFV_DQSOSC_MOVAVG_C1D0U1_INDEX		5
-+#define PTFV_DQSOSC_MOVAVG_C1D1U0_INDEX		6
-+#define PTFV_DQSOSC_MOVAVG_C1D1U1_INDEX		7
-+#define PTFV_DVFS_SAMPLES_INDEX			9
-+#define PTFV_MOVAVG_WEIGHT_INDEX		10
-+#define PTFV_CONFIG_CTRL_INDEX			11
-+
-+#define PTFV_CONFIG_CTRL_USE_PREVIOUS_EMA	(1 << 0)
-+
-+/*
-+ * Do arithmetic in fixed point.
-+ */
-+#define MOVAVG_PRECISION_FACTOR		100
-+
-+/*
-+ * The division portion of the average operation.
-+ */
-+#define __AVERAGE_PTFV(dev)						\
-+	({ next->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] =	\
-+	   next->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] /	\
-+	   next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
-+
-+/*
-+ * Convert val to fixed point and add it to the temporary average.
-+ */
-+#define __INCREMENT_PTFV(dev, val)					\
-+	({ next->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] +=	\
-+	   ((val) * MOVAVG_PRECISION_FACTOR); })
-+
-+/*
-+ * Convert a moving average back to integral form and return the value.
-+ */
-+#define __MOVAVG_AC(timing, dev)					\
-+	((timing)->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX] /	\
-+	 MOVAVG_PRECISION_FACTOR)
-+
-+/* Weighted update. */
-+#define __WEIGHTED_UPDATE_PTFV(dev, nval)				\
-+	do {								\
-+		int w = PTFV_MOVAVG_WEIGHT_INDEX;			\
-+		int dqs = PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX;		\
-+									\
-+		next->ptfv_list[dqs] =					\
-+			((nval * MOVAVG_PRECISION_FACTOR) +		\
-+			 (next->ptfv_list[dqs] *			\
-+			  next->ptfv_list[w])) /			\
-+			(next->ptfv_list[w] + 1);			\
-+									\
-+		emc_dbg(emc, EMA_UPDATES, "%s: (s=%lu) EMA: %u\n",	\
-+			__stringify(dev), nval, next->ptfv_list[dqs]);	\
-+	} while (0)
-+
-+/* Access a particular average. */
-+#define __MOVAVG(timing, dev)                      \
-+	((timing)->ptfv_list[PTFV_DQSOSC_MOVAVG_ ## dev ## _INDEX])
-+
-+static u32 tegra210_emc_mrr_read(struct tegra210_emc *emc, unsigned int chip,
-+				 unsigned int address,
-+				 unsigned int num_channels)
-+{
-+	u32 value, ret = 0;
-+	unsigned int i;
-+
-+	value = (chip & EMC_MRR_DEV_SEL_MASK) << EMC_MRR_DEV_SEL_SHIFT |
-+		(address & EMC_MRR_MA_MASK) << EMC_MRR_MA_SHIFT;
-+	emc_writel(emc, value, EMC_MRR);
-+
-+	for (i = 0; i < num_channels; i++)
-+		WARN(tegra210_emc_wait_for_update(emc, i, EMC_EMC_STATUS,
-+						  EMC_EMC_STATUS_MRR_DIVLD, 1),
-+			"Timed out waiting for MRR %u (ch=%u)\n", address, i);
-+
-+	for (i = 0; i < num_channels; i++) {
-+		value = emc_channel_readl(emc, i, EMC_MRR);
-+		value &= EMC_MRR_DATA_MASK;
-+
-+		ret = (ret << 16) | value;
-+	}
-+
-+	return ret;
-+}
-+
-+static u32 update_clock_tree_delay(struct tegra210_emc *emc,
-+				   unsigned int num_channels, int type)
-+{
-+	bool periodic_training_update = type == PERIODIC_TRAINING_UPDATE;
-+	struct tegra210_emc_timing *last = emc->last;
-+	struct tegra210_emc_timing *next = emc->next;
-+	u32 last_timing_rate_mhz = last->rate / 1000;
-+	u32 next_timing_rate_mhz = next->rate / 1000;
-+	bool dvfs_update = type == DVFS_UPDATE;
-+	s32 tdel = 0, tmdel = 0, adel = 0;
-+	bool dvfs_pt1 = type == DVFS_PT1;
-+	unsigned long cval = 0;
-+	u32 temp[2][2], value;
-+	unsigned int i;
-+
-+	/*
-+	 * Dev0 MSB.
-+	 */
-+	if (dvfs_pt1 || periodic_training_update) {
-+		value = tegra210_emc_mrr_read(emc, 2, 19, num_channels);
-+
-+		for (i = 0; i < num_channels; i++) {
-+			temp[i][0] = (value & 0x00ff) << 8;
-+			temp[i][1] = (value & 0xff00) << 0;
-+			value >>= 16;
-+		}
-+
-+		/*
-+		 * Dev0 LSB.
-+		 */
-+		value = tegra210_emc_mrr_read(emc, 2, 18, num_channels);
-+
-+		for (i = 0; i < num_channels; i++) {
-+			temp[i][0] |= (value & 0x00ff) >> 0;
-+			temp[i][1] |= (value & 0xff00) >> 8;
-+			value >>= 16;
-+		}
-+	}
-+
-+	if (dvfs_pt1 || periodic_training_update) {
-+		cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		cval *= 1000000;
-+		cval /= last_timing_rate_mhz * 2 * temp[0][0];
-+	}
-+
-+	if (dvfs_pt1)
-+		__INCREMENT_PTFV(C0D0U0, cval);
-+	else if (dvfs_update)
-+		__AVERAGE_PTFV(C0D0U0);
-+	else if (periodic_training_update)
-+		__WEIGHTED_UPDATE_PTFV(C0D0U0, cval);
-+
-+	if (dvfs_update || periodic_training_update) {
-+		tdel = next->current_dram_clktree[C0D0U0] -
-+				__MOVAVG_AC(next, C0D0U0);
-+		tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+		adel = tmdel;
-+
-+		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+		    next->tree_margin)
-+			next->current_dram_clktree[C0D0U0] =
-+				__MOVAVG_AC(next, C0D0U0);
-+	}
-+
-+	if (dvfs_pt1 || periodic_training_update) {
-+		cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		cval *= 1000000;
-+		cval /= last_timing_rate_mhz * 2 * temp[0][1];
-+	}
-+
-+	if (dvfs_pt1)
-+		__INCREMENT_PTFV(C0D0U1, cval);
-+	else if (dvfs_update)
-+		__AVERAGE_PTFV(C0D0U1);
-+	else if (periodic_training_update)
-+		__WEIGHTED_UPDATE_PTFV(C0D0U1, cval);
-+
-+	if (dvfs_update || periodic_training_update) {
-+		tdel = next->current_dram_clktree[C0D0U1] -
-+				__MOVAVG_AC(next, C0D0U1);
-+		tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+		if (tmdel > adel)
-+			adel = tmdel;
-+
-+		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+		    next->tree_margin)
-+			next->current_dram_clktree[C0D0U1] =
-+				__MOVAVG_AC(next, C0D0U1);
-+	}
-+
-+	if (num_channels > 1) {
-+		if (dvfs_pt1 || periodic_training_update) {
-+			cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+			cval *= 1000000;
-+			cval /= last_timing_rate_mhz * 2 * temp[1][0];
-+		}
-+
-+		if (dvfs_pt1)
-+			__INCREMENT_PTFV(C1D0U0, cval);
-+		else if (dvfs_update)
-+			__AVERAGE_PTFV(C1D0U0);
-+		else if (periodic_training_update)
-+			__WEIGHTED_UPDATE_PTFV(C1D0U0, cval);
-+
-+		if (dvfs_update || periodic_training_update) {
-+			tdel = next->current_dram_clktree[C1D0U0] -
-+					__MOVAVG_AC(next, C1D0U0);
-+			tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+			if (tmdel > adel)
-+				adel = tmdel;
-+
-+			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+			    next->tree_margin)
-+				next->current_dram_clktree[C1D0U0] =
-+					__MOVAVG_AC(next, C1D0U0);
-+		}
-+
-+		if (dvfs_pt1 || periodic_training_update) {
-+			cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+			cval *= 1000000;
-+			cval /= last_timing_rate_mhz * 2 * temp[1][1];
-+		}
-+
-+		if (dvfs_pt1)
-+			__INCREMENT_PTFV(C1D0U1, cval);
-+		else if (dvfs_update)
-+			__AVERAGE_PTFV(C1D0U1);
-+		else if (periodic_training_update)
-+			__WEIGHTED_UPDATE_PTFV(C1D0U1, cval);
-+
-+		if (dvfs_update || periodic_training_update) {
-+			tdel = next->current_dram_clktree[C1D0U1] -
-+					__MOVAVG_AC(next, C1D0U1);
-+			tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+			if (tmdel > adel)
-+				adel = tmdel;
-+
-+			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+			    next->tree_margin)
-+				next->current_dram_clktree[C1D0U1] =
-+					__MOVAVG_AC(next, C1D0U1);
-+		}
-+	}
-+
-+	if (emc->num_devices < 2)
-+		goto done;
-+
-+	/*
-+	 * Dev1 MSB.
-+	 */
-+	if (dvfs_pt1 || periodic_training_update) {
-+		value = tegra210_emc_mrr_read(emc, 1, 19, num_channels);
-+
-+		for (i = 0; i < num_channels; i++) {
-+			temp[i][0] = (value & 0x00ff) << 8;
-+			temp[i][1] = (value & 0xff00) << 0;
-+			value >>= 16;
-+		}
-+
-+		/*
-+		 * Dev1 LSB.
-+		 */
-+		value = tegra210_emc_mrr_read(emc, 2, 18, num_channels);
-+
-+		for (i = 0; i < num_channels; i++) {
-+			temp[i][0] |= (value & 0x00ff) >> 0;
-+			temp[i][1] |= (value & 0xff00) >> 8;
-+			value >>= 16;
-+		}
-+	}
-+
-+	if (dvfs_pt1 || periodic_training_update) {
-+		cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		cval *= 1000000;
-+		cval /= last_timing_rate_mhz * 2 * temp[0][0];
-+	}
-+
-+	if (dvfs_pt1)
-+		__INCREMENT_PTFV(C0D1U0, cval);
-+	else if (dvfs_update)
-+		__AVERAGE_PTFV(C0D1U0);
-+	else if (periodic_training_update)
-+		__WEIGHTED_UPDATE_PTFV(C0D1U0, cval);
-+
-+	if (dvfs_update || periodic_training_update) {
-+		tdel = next->current_dram_clktree[C0D1U0] -
-+				__MOVAVG_AC(next, C0D1U0);
-+		tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+		if (tmdel > adel)
-+			adel = tmdel;
-+
-+		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+		    next->tree_margin)
-+			next->current_dram_clktree[C0D1U0] =
-+				__MOVAVG_AC(next, C0D1U0);
-+	}
-+
-+	if (dvfs_pt1 || periodic_training_update) {
-+		cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		cval *= 1000000;
-+		cval /= last_timing_rate_mhz * 2 * temp[0][1];
-+	}
-+
-+	if (dvfs_pt1)
-+		__INCREMENT_PTFV(C0D1U1, cval);
-+	else if (dvfs_update)
-+		__AVERAGE_PTFV(C0D1U1);
-+	else if (periodic_training_update)
-+		__WEIGHTED_UPDATE_PTFV(C0D1U1, cval);
-+
-+	if (dvfs_update || periodic_training_update) {
-+		tdel = next->current_dram_clktree[C0D1U1] -
-+				__MOVAVG_AC(next, C0D1U1);
-+		tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+		if (tmdel > adel)
-+			adel = tmdel;
-+
-+		if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+		    next->tree_margin)
-+			next->current_dram_clktree[C0D1U1] =
-+				__MOVAVG_AC(next, C0D1U1);
-+	}
-+
-+	if (num_channels > 1) {
-+		if (dvfs_pt1 || periodic_training_update) {
-+			cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+			cval *= 1000000;
-+			cval /= last_timing_rate_mhz * 2 * temp[1][0];
-+		}
-+
-+		if (dvfs_pt1)
-+			__INCREMENT_PTFV(C1D1U0, cval);
-+		else if (dvfs_update)
-+			__AVERAGE_PTFV(C1D1U0);
-+		else if (periodic_training_update)
-+			__WEIGHTED_UPDATE_PTFV(C1D1U0, cval);
-+
-+		if (dvfs_update || periodic_training_update) {
-+			tdel = next->current_dram_clktree[C1D1U0] -
-+					__MOVAVG_AC(next, C1D1U0);
-+			tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+			if (tmdel > adel)
-+				adel = tmdel;
-+
-+			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+			    next->tree_margin)
-+				next->current_dram_clktree[C1D1U0] =
-+					__MOVAVG_AC(next, C1D1U0);
-+		}
-+
-+		if (dvfs_pt1 || periodic_training_update) {
-+			cval = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+			cval *= 1000000;
-+			cval /= last_timing_rate_mhz * 2 * temp[1][1];
-+		}
-+
-+		if (dvfs_pt1)
-+			__INCREMENT_PTFV(C1D1U1, cval);
-+		else if (dvfs_update)
-+			__AVERAGE_PTFV(C1D1U1);
-+		else if (periodic_training_update)
-+			__WEIGHTED_UPDATE_PTFV(C1D1U1, cval);
-+
-+		if (dvfs_update || periodic_training_update) {
-+			tdel = next->current_dram_clktree[C1D1U1] -
-+					__MOVAVG_AC(next, C1D1U1);
-+			tmdel = (tdel < 0) ? -1 * tdel : tdel;
-+
-+			if (tmdel > adel)
-+				adel = tmdel;
-+
-+			if (tmdel * 128 * next_timing_rate_mhz / 1000000 >
-+			    next->tree_margin)
-+				next->current_dram_clktree[C1D1U1] =
-+					__MOVAVG_AC(next, C1D1U1);
-+		}
-+	}
-+
-+done:
-+	return adel;
-+}
-+
-+static u32 periodic_compensation_handler(struct tegra210_emc *emc, u32 type,
-+					 unsigned int num_channels,
-+					 struct tegra210_emc_timing *last,
-+					 struct tegra210_emc_timing *next)
-+{
-+#define __COPY_EMA(nt, lt, dev)						\
-+	({ __MOVAVG(nt, dev) = __MOVAVG(lt, dev) *			\
-+	   (nt)->ptfv_list[PTFV_DVFS_SAMPLES_INDEX]; })
-+
-+	u32 i, adel = 0, samples = next->ptfv_list[PTFV_DVFS_SAMPLES_INDEX];
-+	u32 delay;
-+
-+	delay = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+	delay *= 1000;
-+	delay = 2 + (delay / last->rate);
-+
-+	if (!next->periodic_training)
-+		return 0;
-+
-+	if (type == DVFS_SEQUENCE) {
-+		if (last->periodic_training &&
-+		    (next->ptfv_list[PTFV_CONFIG_CTRL_INDEX] &
-+		     PTFV_CONFIG_CTRL_USE_PREVIOUS_EMA)) {
-+			/*
-+			 * If the previous frequency was using periodic
-+			 * calibration then we can reuse the previous
-+			 * frequencies EMA data.
-+			 */
-+			__COPY_EMA(next, last, C0D0U0);
-+			__COPY_EMA(next, last, C0D0U1);
-+			__COPY_EMA(next, last, C1D0U0);
-+			__COPY_EMA(next, last, C1D0U1);
-+			__COPY_EMA(next, last, C0D1U0);
-+			__COPY_EMA(next, last, C0D1U1);
-+			__COPY_EMA(next, last, C1D1U0);
-+			__COPY_EMA(next, last, C1D1U1);
-+		} else {
-+			/* Reset the EMA.*/
-+			__MOVAVG(next, C0D0U0) = 0;
-+			__MOVAVG(next, C0D0U1) = 0;
-+			__MOVAVG(next, C1D0U0) = 0;
-+			__MOVAVG(next, C1D0U1) = 0;
-+			__MOVAVG(next, C0D1U0) = 0;
-+			__MOVAVG(next, C0D1U1) = 0;
-+			__MOVAVG(next, C1D1U0) = 0;
-+			__MOVAVG(next, C1D1U1) = 0;
-+
-+			for (i = 0; i < samples; i++) {
-+				tegra210_emc_start_periodic_compensation(emc);
-+				udelay(delay);
-+
-+				/*
-+				 * Generate next sample of data.
-+				 */
-+				adel = update_clock_tree_delay(emc,
-+							       num_channels,
-+							       DVFS_PT1);
-+			}
-+		}
-+
-+		/*
-+		 * Seems like it should be part of the
-+		 * 'if (last_timing->periodic_training)' conditional
-+		 * since is already done for the else clause.
-+		 */
-+		adel = update_clock_tree_delay(emc, num_channels, DVFS_UPDATE);
-+	}
-+
-+	if (type == PERIODIC_TRAINING_SEQUENCE) {
-+		tegra210_emc_start_periodic_compensation(emc);
-+		udelay(delay);
-+
-+		adel = update_clock_tree_delay(emc, num_channels,
-+					       PERIODIC_TRAINING_UPDATE);
-+	}
-+
-+	return adel;
-+}
-+
-+static u32 tegra210_emc_r21021_periodic_compensation(struct tegra210_emc *emc)
-+{
-+	u32 emc_cfg, emc_cfg_o, emc_cfg_update, del, value;
-+	unsigned int num_channels = 1;
-+	u32 list[] = {
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2,
-+		EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3,
-+		EMC_DATA_BRLSHFT_0,
-+		EMC_DATA_BRLSHFT_1
-+	};
-+	struct tegra210_emc_timing *last = emc->last;
-+	unsigned int items = ARRAY_SIZE(list), i;
-+	unsigned long delay;
-+
-+	if (last->periodic_training) {
-+		if (last->burst_regs[EMC_FBIO_CFG7_INDEX] & (1 << 2))
-+			num_channels = 2;
-+
-+		emc_dbg(emc, PER_TRAIN, "Periodic training starting\n");
-+
-+		value = emc_readl(emc, EMC_DBG);
-+		emc_cfg_o = emc_readl(emc, EMC_CFG);
-+		emc_cfg = emc_cfg_o & ~(EMC_CFG_DYN_SELF_REF |
-+					EMC_CFG_DRAM_ACPD |
-+					EMC_CFG_DRAM_CLKSTOP_PD |
-+					EMC_CFG_DRAM_CLKSTOP_PD);
-+
-+
-+		/*
-+		 * 1. Power optimizations should be off.
-+		 */
-+		emc_writel(emc, emc_cfg, EMC_CFG);
-+
-+		/* Does emc_timing_update() for above changes. */
-+		tegra210_emc_dll_disable(emc, num_channels);
-+
-+		for (i = 0; i < num_channels; i++)
-+			tegra210_emc_wait_for_update(emc, i, EMC_EMC_STATUS,
-+						     EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK,
-+						     0);
-+
-+		for (i = 0; i < num_channels; i++)
-+			tegra210_emc_wait_for_update(emc, i, EMC_EMC_STATUS,
-+						     EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK,
-+						     0);
-+
-+		emc_cfg_update = value = emc_readl(emc, EMC_CFG_UPDATE);
-+		value &= ~EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_MASK;
-+		value |= (2 << EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT);
-+		emc_writel(emc, value, EMC_CFG_UPDATE);
-+
-+		/*
-+		 * 2. osc kick off - this assumes training and dvfs have set
-+		 *    correct MR23.
-+		 */
-+		tegra210_emc_start_periodic_compensation(emc);
-+
-+		/*
-+		 * 3. Let dram capture its clock tree delays.
-+		 */
-+		delay = tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		delay *= 1000;
-+		delay /= last->rate + 1;
-+		udelay(delay);
-+
-+		/*
-+		 * 4. Check delta wrt previous values (save value if margin
-+		 *    exceeds what is set in table).
-+		 */
-+		del = periodic_compensation_handler(emc,
-+						    PERIODIC_TRAINING_SEQUENCE,
-+						    num_channels, last, last);
-+
-+		/*
-+		 * 5. Apply compensation w.r.t. trained values (if clock tree
-+		 *    has drifted more than the set margin).
-+		 */
-+		if (last->tree_margin < ((del * 128 * (last->rate / 1000)) / 1000000)) {
-+			for (i = 0; i < items; i++) {
-+				value = tegra210_emc_compensate(last, list[i]);
-+				emc_dbg(emc, EMA_WRITES, "0x%08x <= 0x%08x\n",
-+					list[i], value);
-+				emc_writel(emc, value, list[i]);
-+			}
-+		}
-+
-+		emc_writel(emc, emc_cfg_o, EMC_CFG);
-+
-+		/*
-+		 * 6. Timing update actally applies the new trimmers.
-+		 */
-+		tegra210_emc_timing_update(emc, num_channels);
-+
-+		/* 6.1. Restore the UPDATE_DLL_IN_UPDATE field. */
-+		emc_writel(emc, emc_cfg_update, EMC_CFG_UPDATE);
-+
-+		/* 6.2. Restore the DLL. */
-+		tegra210_emc_dll_enable(emc, num_channels);
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Do the clock change sequence.
-+ */
-+static void tegra210_emc_r21021_set_clock(struct tegra210_emc *emc, u32 clksrc)
-+{
-+	/*
-+	 * This is the timing table for the source frequency. It does _not_
-+	 * necessarily correspond to the actual timing values in the EMC at the
-+	 * moment. If the boot BCT differs from the table then this can happen.
-+	 * However, we need it for accessing the dram_timings (which are not
-+	 * really registers) array for the current frequency.
-+	 */
-+	u32 tmp, cya_allow_ref_cc = 0, ref_b4_sref_en = 0, cya_issue_pc_ref = 0;
-+	struct tegra210_emc_timing *fake, *last = emc->last, *next = emc->next;
-+	u32 bg_regulator_switch_complete_wait_clks, bg_regulator_mode_change;
-+	u32 opt_zcal_en_cc, opt_do_sw_qrst = 1, opt_dvfs_mode, opt_dll_mode;
-+	u32 emc_zcal_wait_cnt_old, emc_zcal_wait_cnt_new, emc_dbg_active;
-+	u32 opt_cc_short_zcal = 1, opt_short_zcal = 1, opt_war_200024907;
-+	u32 tRTM, RP_war, R2P_war, TRPab_war, deltaTWATM, W2P_war, tRPST;
-+	u32 adel = 0, compensate_trimmer_applicable = 0, mrw_req, value;
-+	unsigned long next_timing_rate_mhz = next->rate / 1000, delay;
-+	u32 tZQCAL_lpddr4 = 1000000, zq_wait_long, shared_zq_resistor;
-+	s32 zq_latch_dvfs_wait_time, tZQCAL_lpddr4_fc_adj, nRTP;
-+	u32 tFC_lpddr4 = 1000 * next->dram_timings[T_FC_LPDDR4];
-+	u32 emc_auto_cal_config, auto_cal_en, mr13_catr_enable;
-+	u32 zq_op, zcal_wait_time_clocks, zcal_wait_time_ps;
-+	u32 emc_cfg, emc_sel_dpd_ctrl, emc_zcal_interval;
-+	int next_push, next_dq_e_ivref, next_dqs_e_ivref;
-+	u32 mr13_flip_fspwr, mr13_flip_fspop, is_lpddr3;
-+	u32 enable_bglp_regulator, enable_bg_regulator;
-+	u32 emc_dbg_o, emc_cfg_pipe_clk_o, emc_pin_o;
-+	u32 ramp_up_wait = 0, ramp_down_wait = 0;
-+	u32 save_restore_clkstop_pd = 1, dll_out;
-+	u32 ref_delay_mult, ref_delay, dram_type;
-+	unsigned int num_channels = 1, i;
-+	static u32 fsp_for_next_freq;
-+	/* In picoseconds. */
-+	u32 source_clock_period, destination_clock_period;
-+	u32 zqcal_before_cc_cutoff = 2400;
-+
-+	emc_dbg(emc, INFO, "Running clock change.\n");
-+
-+	/* XXX fake == last */
-+	fake = tegra210_emc_find_timing(emc, last->rate * 1000UL);
-+	fsp_for_next_freq = !fsp_for_next_freq;
-+
-+	dram_type = emc_readl(emc, EMC_FBIO_CFG5) &
-+		    EMC_FBIO_CFG5_DRAM_TYPE_MASK >>
-+		    EMC_FBIO_CFG5_DRAM_TYPE_SHIFT;
-+	shared_zq_resistor = last->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX] &
-+			     1 << 31;
-+	if (last->burst_regs[EMC_FBIO_CFG7_INDEX] & (1 << 2))
-+		num_channels = 2;
-+	opt_zcal_en_cc = (next->burst_regs[EMC_ZCAL_INTERVAL_INDEX] &&
-+			  !last->burst_regs[EMC_ZCAL_INTERVAL_INDEX]) ||
-+			  dram_type == DRAM_TYPE_LPDDR4;
-+	opt_dll_mode = (dram_type == DRAM_TYPE_DDR3) ?
-+		       tegra210_emc_get_dll_state(next) : 0;
-+	is_lpddr3 = (dram_type == DRAM_TYPE_LPDDR2) &&
-+		    next->burst_regs[EMC_FBIO_CFG5_INDEX] &
-+		    1 << 25;
-+	opt_war_200024907 = (dram_type == DRAM_TYPE_LPDDR4);
-+	opt_dvfs_mode = MAN_SR;
-+
-+	emc_readl(emc, EMC_CFG);
-+	emc_auto_cal_config = emc_readl(emc, EMC_AUTO_CAL_CONFIG);
-+
-+	source_clock_period = 1000000000 / last->rate;
-+	destination_clock_period = 1000000000 / next->rate;
-+
-+	tZQCAL_lpddr4_fc_adj = (destination_clock_period >
-+				zqcal_before_cc_cutoff) ?
-+		tZQCAL_lpddr4 / destination_clock_period :
-+		(tZQCAL_lpddr4 - tFC_lpddr4) / destination_clock_period;
-+	emc_dbg_o = emc_readl(emc, EMC_DBG);
-+	emc_pin_o = emc_readl(emc, EMC_PIN);
-+	emc_cfg_pipe_clk_o = emc_readl(emc, EMC_CFG_PIPE_CLK);
-+
-+	emc_cfg = next->burst_regs[EMC_CFG_INDEX];
-+	emc_cfg &= ~(EMC_CFG_DYN_SELF_REF | EMC_CFG_DRAM_ACPD |
-+		     EMC_CFG_DRAM_CLKSTOP_SR | EMC_CFG_DRAM_CLKSTOP_PD);
-+	emc_sel_dpd_ctrl = next->emc_sel_dpd_ctrl;
-+	emc_sel_dpd_ctrl &= ~(EMC_SEL_DPD_CTRL_CLK_SEL_DPD_EN |
-+			      EMC_SEL_DPD_CTRL_CA_SEL_DPD_EN |
-+			      EMC_SEL_DPD_CTRL_RESET_SEL_DPD_EN |
-+			      EMC_SEL_DPD_CTRL_ODT_SEL_DPD_EN |
-+			      EMC_SEL_DPD_CTRL_DATA_SEL_DPD_EN);
-+
-+	emc_dbg(emc, INFO, "Clock change version: %d\n",
-+		DVFS_CLOCK_CHANGE_VERSION);
-+	emc_dbg(emc, INFO, "DRAM type = %d\n", dram_type);
-+	emc_dbg(emc, INFO, "DRAM dev #: %u\n", emc->num_devices);
-+	emc_dbg(emc, INFO, "Next EMC clksrc: 0x%08x\n", clksrc);
-+	emc_dbg(emc, INFO, "DLL clksrc:      0x%08x\n", next->dll_clk_src);
-+	emc_dbg(emc, INFO, "last rate: %u, next rate %u\n", last->rate,
-+		next->rate);
-+	emc_dbg(emc, INFO, "last period: %u, next period: %u\n",
-+		source_clock_period, destination_clock_period);
-+	emc_dbg(emc, INFO, "  shared_zq_resistor: %d\n", !!shared_zq_resistor);
-+	emc_dbg(emc, INFO, "  num_channels: %u\n", num_channels);
-+	emc_dbg(emc, INFO, "  opt_dll_mode: %d\n", opt_dll_mode);
-+
-+	/*
-+	 * Step 1:
-+	 *   Pre DVFS SW sequence.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 1\n");
-+	emc_dbg(emc, STEPS, "Step 1.1: Disable DLL temporarily.\n");
-+	tmp = emc_readl(emc, EMC_CFG_DIG_DLL);
-+	tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_EN;
-+	emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
-+
-+	tegra210_emc_timing_update(emc, num_channels);
-+
-+	for (i = 0; i < num_channels; i++)
-+		tegra210_emc_wait_for_update(emc, i, EMC_CFG_DIG_DLL,
-+					     EMC_CFG_DIG_DLL_CFG_DLL_EN, 0);
-+
-+	emc_dbg(emc, STEPS, "Step 1.2: Disable AUTOCAL temporarily.\n");
-+	emc_auto_cal_config = next->emc_auto_cal_config;
-+	auto_cal_en = emc_auto_cal_config & EMC_AUTO_CAL_CONFIG_AUTO_CAL_ENABLE;
-+	emc_auto_cal_config &= ~EMC_AUTO_CAL_CONFIG_AUTO_CAL_START;
-+	emc_auto_cal_config |=  EMC_AUTO_CAL_CONFIG_AUTO_CAL_MEASURE_STALL;
-+	emc_auto_cal_config |=  EMC_AUTO_CAL_CONFIG_AUTO_CAL_UPDATE_STALL;
-+	emc_auto_cal_config |=  auto_cal_en;
-+	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
-+	emc_readl(emc, EMC_AUTO_CAL_CONFIG); /* Flush write. */
-+
-+	emc_dbg(emc, STEPS, "Step 1.3: Disable other power features.\n");
-+	tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+	emc_writel(emc, emc_cfg, EMC_CFG);
-+	emc_writel(emc, emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
-+	tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+
-+	if (next->periodic_training) {
-+		tegra210_emc_reset_dram_clktree_values(next);
-+
-+		for (i = 0; i < num_channels; i++)
-+			tegra210_emc_wait_for_update(emc, i, EMC_EMC_STATUS,
-+						     EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK,
-+						     0);
-+
-+		for (i = 0; i < num_channels; i++)
-+			tegra210_emc_wait_for_update(emc, i, EMC_EMC_STATUS,
-+						     EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK,
-+						     0);
-+
-+		tegra210_emc_start_periodic_compensation(emc);
-+
-+		delay = 1000 * tegra210_emc_actual_osc_clocks(last->run_clocks);
-+		udelay((delay / last->rate) + 2);
-+
-+		adel = periodic_compensation_handler(emc, DVFS_SEQUENCE,
-+						     num_channels, fake,
-+						     next);
-+		compensate_trimmer_applicable =
-+			next->periodic_training &&
-+			((adel * 128 * next_timing_rate_mhz) / 1000000) >
-+			next->tree_margin;
-+	}
-+
-+	emc_writel(emc, EMC_INTSTATUS_CLKCHANGE_COMPLETE, EMC_INTSTATUS);
-+	tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+	emc_writel(emc, emc_cfg, EMC_CFG);
-+	emc_writel(emc, emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
-+	emc_writel(emc, emc_cfg_pipe_clk_o | EMC_CFG_PIPE_CLK_CLK_ALWAYS_ON,
-+		   EMC_CFG_PIPE_CLK);
-+	emc_writel(emc, next->emc_fdpd_ctrl_cmd_no_ramp &
-+			~EMC_FDPD_CTRL_CMD_NO_RAMP_CMD_DPD_NO_RAMP_ENABLE,
-+		   EMC_FDPD_CTRL_CMD_NO_RAMP);
-+
-+	bg_regulator_mode_change =
-+		((next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		  EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD) ^
-+		 (last->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		  EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD)) ||
-+		((next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		  EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD) ^
-+		 (last->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		  EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD));
-+	enable_bglp_regulator =
-+		(next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		 EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD) == 0;
-+	enable_bg_regulator =
-+		(next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+		 EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD) == 0;
-+
-+	if (bg_regulator_mode_change) {
-+		if (enable_bg_regulator)
-+			emc_writel(emc, last->burst_regs
-+				   [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD,
-+				   EMC_PMACRO_BG_BIAS_CTRL_0);
-+
-+		if (enable_bglp_regulator)
-+			emc_writel(emc, last->burst_regs
-+				   [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+				   ~EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD,
-+				   EMC_PMACRO_BG_BIAS_CTRL_0);
-+	}
-+
-+	/* Check if we need to turn on VREF generator. */
-+	if ((((last->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
-+	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF) == 0) &&
-+	     ((next->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
-+	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF) == 1)) ||
-+	    (((last->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
-+	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) == 0) &&
-+	     ((next->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX] &
-+	       EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) != 0))) {
-+		u32 pad_tx_ctrl =
-+		    next->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX];
-+		u32 last_pad_tx_ctrl =
-+		    last->burst_regs[EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX];
-+
-+		next_dqs_e_ivref = pad_tx_ctrl &
-+				   EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF;
-+		next_dq_e_ivref = pad_tx_ctrl &
-+				  EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF;
-+		next_push = (last_pad_tx_ctrl &
-+			     ~EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF &
-+			     ~EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF) |
-+			    next_dq_e_ivref | next_dqs_e_ivref;
-+		emc_writel(emc, next_push, EMC_PMACRO_DATA_PAD_TX_CTRL);
-+		udelay(1);
-+	} else if (bg_regulator_mode_change) {
-+		udelay(1);
-+	}
-+
-+	tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+
-+	/*
-+	 * Step 2:
-+	 *   Prelock the DLL.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 2\n");
-+	if (next->burst_regs[EMC_CFG_DIG_DLL_INDEX] &
-+	    EMC_CFG_DIG_DLL_CFG_DLL_EN) {
-+		emc_dbg(emc, INFO, "Prelock enabled for target frequency.\n");
-+		dll_out = tegra210_emc_dll_prelock(emc, clksrc);
-+		emc_dbg(emc, INFO, "DLL out: 0x%03x\n", dll_out);
-+	} else {
-+		emc_dbg(emc, INFO, "Disabling DLL for target frequency.\n");
-+		tegra210_emc_dll_disable(emc, num_channels);
-+	}
-+
-+	/*
-+	 * Step 3:
-+	 *   Prepare autocal for the clock change.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 3\n");
-+	tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+	emc_writel(emc, next->emc_auto_cal_config2, EMC_AUTO_CAL_CONFIG2);
-+	emc_writel(emc, next->emc_auto_cal_config3, EMC_AUTO_CAL_CONFIG3);
-+	emc_writel(emc, next->emc_auto_cal_config4, EMC_AUTO_CAL_CONFIG4);
-+	emc_writel(emc, next->emc_auto_cal_config5, EMC_AUTO_CAL_CONFIG5);
-+	emc_writel(emc, next->emc_auto_cal_config6, EMC_AUTO_CAL_CONFIG6);
-+	emc_writel(emc, next->emc_auto_cal_config7, EMC_AUTO_CAL_CONFIG7);
-+	emc_writel(emc, next->emc_auto_cal_config8, EMC_AUTO_CAL_CONFIG8);
-+	tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+
-+	emc_auto_cal_config |= (EMC_AUTO_CAL_CONFIG_AUTO_CAL_COMPUTE_START |
-+				auto_cal_en);
-+	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
-+
-+	/*
-+	 * Step 4:
-+	 *   Update EMC_CFG. (??)
-+	 */
-+	emc_dbg(emc, STEPS, "Step 4\n");
-+	if (source_clock_period > 50000 && dram_type == DRAM_TYPE_LPDDR4)
-+		ccfifo_writel(emc, 1, EMC_SELF_REF, 0);
-+	else
-+		emc_writel(emc, next->emc_cfg_2, EMC_CFG_2);
-+
-+	/*
-+	 * Step 5:
-+	 *   Prepare reference variables for ZQCAL regs.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 5\n");
-+	emc_zcal_interval = 0;
-+	emc_zcal_wait_cnt_old = last->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX];
-+	emc_zcal_wait_cnt_new = next->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX];
-+	emc_zcal_wait_cnt_old &= ~EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK;
-+	emc_zcal_wait_cnt_new &= ~EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK;
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4)
-+		zq_wait_long = max((u32)1,
-+				   div_o3(1000000, destination_clock_period));
-+	else if (dram_type == DRAM_TYPE_LPDDR2 || is_lpddr3)
-+		zq_wait_long = max(next->min_mrs_wait,
-+				   div_o3(360000, destination_clock_period)) +
-+			       4;
-+	else if (dram_type == DRAM_TYPE_DDR3)
-+		zq_wait_long = max((u32)256,
-+				   div_o3(320000, destination_clock_period) +
-+				   2);
-+	else
-+		zq_wait_long = 0;
-+
-+	/*
-+	 * Step 6:
-+	 *   Training code - removed.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 6\n");
-+
-+	/*
-+	 * Step 7:
-+	 *   Program FSP reference registers and send MRWs to new FSPWR.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 7\n");
-+	emc_dbg(emc, SUB_STEPS, "Step 7.1: Bug 200024907 - Patch RP R2P");
-+	if (opt_war_200024907) {
-+		nRTP = 16;
-+		if (source_clock_period >= 1000000/1866) /* 535.91 ps */
-+			nRTP = 14;
-+		if (source_clock_period >= 1000000/1600) /* 625.00 ps */
-+			nRTP = 12;
-+		if (source_clock_period >= 1000000/1333) /* 750.19 ps */
-+			nRTP = 10;
-+		if (source_clock_period >= 1000000/1066) /* 938.09 ps */
-+			nRTP = 8;
-+
-+		deltaTWATM = max_t(u32, div_o3(7500, source_clock_period), 8);
-+
-+		/*
-+		 * Originally there was a + .5 in the tRPST calculation.
-+		 * However since we can't do FP in the kernel and the tRTM
-+		 * computation was in a floating point ceiling function, adding
-+		 * one to tRTP should be ok. There is no other source of non
-+		 * integer values, so the result was always going to be
-+		 * something for the form: f_ceil(N + .5) = N + 1;
-+		 */
-+		tRPST = ((last->emc_mrw & 0x80) >> 7);
-+		tRTM = fake->dram_timings[RL] +
-+		       div_o3(3600, source_clock_period) +
-+		       max_t(u32, div_o3(7500, source_clock_period), 8) +
-+		       tRPST + 1 + nRTP;
-+
-+		emc_dbg(emc, INFO, "tRTM = %u, EMC_RP = %u\n", tRTM,
-+			next->burst_regs[EMC_RP_INDEX]);
-+
-+		if (last->burst_regs[EMC_RP_INDEX] < tRTM) {
-+			if (tRTM > (last->burst_regs[EMC_R2P_INDEX] +
-+				    last->burst_regs[EMC_RP_INDEX])) {
-+				R2P_war = tRTM -
-+					  last->burst_regs[EMC_RP_INDEX];
-+				RP_war = last->burst_regs[EMC_RP_INDEX];
-+				TRPab_war = last->burst_regs[EMC_TRPAB_INDEX];
-+				if (R2P_war > 63) {
-+					RP_war = R2P_war +
-+						 last->burst_regs[EMC_RP_INDEX] - 63;
-+					if (TRPab_war < RP_war)
-+						TRPab_war = RP_war;
-+					R2P_war = 63;
-+				}
-+			} else {
-+				R2P_war = last->burst_regs[EMC_R2P_INDEX];
-+				RP_war = last->burst_regs[EMC_RP_INDEX];
-+				TRPab_war = last->burst_regs[EMC_TRPAB_INDEX];
-+			}
-+
-+			if (RP_war < deltaTWATM) {
-+				W2P_war = last->burst_regs[EMC_W2P_INDEX]
-+					  + deltaTWATM - RP_war;
-+				if (W2P_war > 63) {
-+					RP_war = RP_war + W2P_war - 63;
-+					if (TRPab_war < RP_war)
-+						TRPab_war = RP_war;
-+					W2P_war = 63;
-+				}
-+			} else {
-+				W2P_war = last->burst_regs[
-+					  EMC_W2P_INDEX];
-+			}
-+
-+			if ((last->burst_regs[EMC_W2P_INDEX] ^ W2P_war) ||
-+			    (last->burst_regs[EMC_R2P_INDEX] ^ R2P_war) ||
-+			    (last->burst_regs[EMC_RP_INDEX] ^ RP_war) ||
-+			    (last->burst_regs[EMC_TRPAB_INDEX] ^ TRPab_war)) {
-+				emc_writel(emc, RP_war, EMC_RP);
-+				emc_writel(emc, R2P_war, EMC_R2P);
-+				emc_writel(emc, W2P_war, EMC_W2P);
-+				emc_writel(emc, TRPab_war, EMC_TRPAB);
-+			}
-+
-+			tegra210_emc_timing_update(emc, 2);
-+		} else {
-+			emc_dbg(emc, INFO, "Skipped WAR\n");
-+		}
-+	}
-+
-+	if (!fsp_for_next_freq) {
-+		mr13_flip_fspwr = (next->emc_mrw3 & 0xffffff3f) | 0x80;
-+		mr13_flip_fspop = (next->emc_mrw3 & 0xffffff3f) | 0x00;
-+	} else {
-+		mr13_flip_fspwr = (next->emc_mrw3 & 0xffffff3f) | 0x40;
-+		mr13_flip_fspop = (next->emc_mrw3 & 0xffffff3f) | 0xc0;
-+	}
-+
-+	mr13_catr_enable = (mr13_flip_fspwr & 0xFFFFFFFE) | 0x01;
-+	if (emc->num_devices > 1)
-+		mr13_catr_enable = (mr13_catr_enable & 0x3fffffff) | 0x80000000;
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		emc_writel(emc, mr13_flip_fspwr, EMC_MRW3);
-+		emc_writel(emc, next->emc_mrw, EMC_MRW);
-+		emc_writel(emc, next->emc_mrw2, EMC_MRW2);
-+	}
-+
-+	/*
-+	 * Step 8:
-+	 *   Program the shadow registers.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 8\n");
-+	emc_dbg(emc, SUB_STEPS, "Writing burst_regs\n");
-+
-+	for (i = 0; i < next->num_burst; i++) {
-+		const u16 *offsets = emc->offsets->burst;
-+		u16 offset;
-+
-+		if (!offsets[i])
-+			continue;
-+
-+		value = next->burst_regs[i];
-+		offset = offsets[i];
-+
-+		if (dram_type != DRAM_TYPE_LPDDR4 &&
-+		    (offset == EMC_MRW6 || offset == EMC_MRW7 ||
-+		     offset == EMC_MRW8 || offset == EMC_MRW9 ||
-+		     offset == EMC_MRW10 || offset == EMC_MRW11 ||
-+		     offset == EMC_MRW12 || offset == EMC_MRW13 ||
-+		     offset == EMC_MRW14 || offset == EMC_MRW15 ||
-+		     offset == EMC_TRAINING_CTRL))
-+			continue;
-+
-+		/* Pain... And suffering. */
-+		if (offset == EMC_CFG) {
-+			value &= ~EMC_CFG_DRAM_ACPD;
-+			value &= ~EMC_CFG_DYN_SELF_REF;
-+			if (dram_type == DRAM_TYPE_LPDDR4) {
-+				value &= ~EMC_CFG_DRAM_CLKSTOP_SR;
-+				value &= ~EMC_CFG_DRAM_CLKSTOP_PD;
-+			}
-+		} else if (offset == EMC_MRS_WAIT_CNT &&
-+			   dram_type == DRAM_TYPE_LPDDR2 &&
-+			   opt_zcal_en_cc && !opt_cc_short_zcal &&
-+			   opt_short_zcal) {
-+			value = (value & ~(EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK <<
-+					   EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT)) |
-+				((zq_wait_long & EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK) <<
-+						 EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT);
-+		} else if (offset == EMC_ZCAL_WAIT_CNT &&
-+			   dram_type == DRAM_TYPE_DDR3 && opt_zcal_en_cc &&
-+			   !opt_cc_short_zcal && opt_short_zcal) {
-+			value = (value & ~(EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK <<
-+					   EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_SHIFT)) |
-+			        ((zq_wait_long & EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK) <<
-+						 EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT);
-+		} else if (offset == EMC_ZCAL_INTERVAL && opt_zcal_en_cc) {
-+			value = 0; /* EMC_ZCAL_INTERVAL reset value. */
-+		} else if (offset == EMC_PMACRO_AUTOCAL_CFG_COMMON) {
-+			value |= EMC_PMACRO_AUTOCAL_CFG_COMMON_E_CAL_BYPASS_DVFS;
-+		} else if (offset == EMC_PMACRO_DATA_PAD_TX_CTRL) {
-+			value &= ~(EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSP_TX_E_DCC |
-+				   EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSN_TX_E_DCC |
-+				   EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_TX_E_DCC |
-+				   EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_CMD_TX_E_DCC);
-+		} else if (offset == EMC_PMACRO_CMD_PAD_TX_CTRL) {
-+			value |= EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_DRVFORCEON;
-+			value &= ~(EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQSP_TX_E_DCC |
-+				   EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQSN_TX_E_DCC |
-+				   EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_E_DCC |
-+				   EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_CMD_TX_E_DCC);
-+		} else if (offset == EMC_PMACRO_BRICK_CTRL_RFU1) {
-+			value &= 0xf800f800;
-+		} else if (offset == EMC_PMACRO_COMMON_PAD_TX_CTRL) {
-+			value &= 0xfffffff0;
-+		}
-+
-+		emc_writel(emc, value, offset);
-+	}
-+
-+	/* SW addition: do EMC refresh adjustment here. */
-+	tegra210_emc_set_over_temp_timing(emc, next);
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		mrw_req = (23 << EMC_MRW_MRW_MA_SHIFT) |
-+			  (next->run_clocks & EMC_MRW_MRW_OP_MASK);
-+		emc_writel(emc, mrw_req, EMC_MRW);
-+	}
-+
-+	/* Per channel burst registers. */
-+	emc_dbg(emc, SUB_STEPS, "Writing burst_regs_per_ch\n");
-+	for (i = 0; i < next->num_burst_per_ch; i++) {
-+		const struct tegra210_emc_per_channel_regs *burst =
-+				emc->offsets->burst_per_channel;
-+
-+		if (!burst[i].offset)
-+			continue;
-+
-+		if (dram_type != DRAM_TYPE_LPDDR4 &&
-+		    (burst[i].offset == EMC_MRW6 ||
-+		     burst[i].offset == EMC_MRW7 ||
-+		     burst[i].offset == EMC_MRW8 ||
-+		     burst[i].offset == EMC_MRW9 ||
-+		     burst[i].offset == EMC_MRW10 ||
-+		     burst[i].offset == EMC_MRW11 ||
-+		     burst[i].offset == EMC_MRW12 ||
-+		     burst[i].offset == EMC_MRW13 ||
-+		     burst[i].offset == EMC_MRW14 ||
-+		     burst[i].offset == EMC_MRW15))
-+			continue;
-+
-+		/* Filter out second channel if not in DUAL_CHANNEL mode. */
-+		if (num_channels < 2 && burst[i].bank >= 1)
-+			continue;
-+
-+		emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+			next->burst_reg_per_ch[i], burst[i].offset);
-+		emc_channel_writel(emc, burst[i].bank,
-+				   next->burst_reg_per_ch[i],
-+				   burst[i].offset);
-+	}
-+
-+	/* Vref regs. */
-+	emc_dbg(emc, SUB_STEPS, "Writing vref_regs\n");
-+	for (i = 0; i < next->vref_num; i++) {
-+		const struct tegra210_emc_per_channel_regs *vref =
-+					emc->offsets->vref_per_channel;
-+
-+		if (!vref[i].offset)
-+			continue;
-+
-+		if (num_channels < 2 && vref[i].bank >= 1)
-+			continue;
-+
-+		emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+			next->vref_perch_regs[i], vref[i].offset);
-+		emc_channel_writel(emc, vref[i].bank, next->vref_perch_regs[i],
-+				   vref[i].offset);
-+	}
-+
-+	/* Trimmers. */
-+	emc_dbg(emc, SUB_STEPS, "Writing trim_regs\n");
-+	for (i = 0; i < next->num_trim; i++) {
-+		const u16 *offsets = emc->offsets->trim;
-+
-+		if (!offsets[i])
-+			continue;
-+
-+		if (compensate_trimmer_applicable &&
-+		    (offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2 ||
-+		     offsets[i] == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3 ||
-+		     offsets[i] == EMC_DATA_BRLSHFT_0 ||
-+		     offsets[i] == EMC_DATA_BRLSHFT_1)) {
-+			value = tegra210_emc_compensate(next, offsets[i]);
-+			emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+				value, offsets[i]);
-+			emc_dbg(emc, EMA_WRITES, "0x%08x <= 0x%08x\n",
-+				(u32)(u64)offsets[i], value);
-+			emc_writel(emc, value, offsets[i]);
-+		} else {
-+			emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+				next->trim_regs[i], offsets[i]);
-+			emc_writel(emc, next->trim_regs[i], offsets[i]);
-+		}
-+	}
-+
-+	/* Per channel trimmers. */
-+	emc_dbg(emc, SUB_STEPS, "Writing trim_regs_per_ch\n");
-+	for (i = 0; i < next->num_trim_per_ch; i++) {
-+		const struct tegra210_emc_per_channel_regs *trim =
-+				&emc->offsets->trim_per_channel[0];
-+		unsigned int offset;
-+
-+		if (!trim[i].offset)
-+			continue;
-+
-+		if (num_channels < 2 && trim[i].bank >= 1)
-+			continue;
-+
-+		offset = trim[i].offset;
-+
-+		if (compensate_trimmer_applicable &&
-+		    (offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_0 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_1 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_2 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK0_3 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_0 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_1 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_2 ||
-+		     offset == EMC_PMACRO_OB_DDLL_LONG_DQ_RANK1_3 ||
-+		     offset == EMC_DATA_BRLSHFT_0 ||
-+		     offset == EMC_DATA_BRLSHFT_1)) {
-+			value = tegra210_emc_compensate(next, offset);
-+			emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+				value, offset);
-+			emc_dbg(emc, EMA_WRITES, "0x%08x <= 0x%08x\n", offset,
-+				value);
-+			emc_channel_writel(emc, trim[i].bank, value, offset);
-+		} else {
-+			emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+				next->trim_perch_regs[i], offset);
-+			emc_channel_writel(emc, trim[i].bank,
-+					   next->trim_perch_regs[i], offset);
-+		}
-+	}
-+
-+	emc_dbg(emc, SUB_STEPS, "Writing burst_mc_regs\n");
-+	for (i = 0; i < next->num_mc_regs; i++) {
-+		const u16 *offsets = emc->offsets->burst_mc;
-+		u32 *values = next->burst_mc_regs;
-+
-+		emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+			values[i], offsets[i]);
-+		mc_writel(emc->mc, values[i], offsets[i]);
-+	}
-+
-+	/* Registers to be programmed on the faster clock. */
-+	if (next->rate < last->rate) {
-+		const u16 *la = emc->offsets->la_scale;
-+
-+		emc_dbg(emc, SUB_STEPS, "Writing la_scale_regs\n");
-+		for (i = 0; i < next->num_up_down; i++) {
-+			emc_dbg(emc, REG_LISTS, "(%u) 0x%08x => 0x%08x\n", i,
-+				next->la_scale_regs[i], la[i]);
-+			mc_writel(emc->mc, next->la_scale_regs[i], la[i]);
-+		}
-+	}
-+
-+	/* Flush all the burst register writes. */
-+	mc_readl(emc->mc, MC_EMEM_ADR_CFG);
-+
-+	/*
-+	 * Step 9:
-+	 *   LPDDR4 section A.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 9\n");
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		emc_writel(emc, emc_zcal_interval, EMC_ZCAL_INTERVAL);
-+		emc_writel(emc, emc_zcal_wait_cnt_new, EMC_ZCAL_WAIT_CNT);
-+
-+		value = emc_dbg_o | (EMC_DBG_WRITE_MUX_ACTIVE |
-+				     EMC_DBG_WRITE_ACTIVE_ONLY);
-+
-+		emc_writel(emc, value, EMC_DBG);
-+		emc_writel(emc, emc_zcal_interval, EMC_ZCAL_INTERVAL);
-+		emc_writel(emc, emc_dbg_o, EMC_DBG);
-+	}
-+
-+	/*
-+	 * Step 10:
-+	 *   LPDDR4 and DDR3 common section.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 10\n");
-+	if (opt_dvfs_mode == MAN_SR || dram_type == DRAM_TYPE_LPDDR4) {
-+		if (dram_type == DRAM_TYPE_LPDDR4)
-+			ccfifo_writel(emc, 0x101, EMC_SELF_REF, 0);
-+		else
-+			ccfifo_writel(emc, 0x1, EMC_SELF_REF, 0);
-+
-+		if (dram_type == DRAM_TYPE_LPDDR4 &&
-+		    destination_clock_period <= zqcal_before_cc_cutoff) {
-+			ccfifo_writel(emc, mr13_flip_fspwr ^ 0x40, EMC_MRW3, 0);
-+			ccfifo_writel(emc, (next->burst_regs[EMC_MRW6_INDEX] &
-+						0xFFFF3F3F) |
-+					   (last->burst_regs[EMC_MRW6_INDEX] &
-+						0x0000C0C0), EMC_MRW6, 0);
-+			ccfifo_writel(emc, (next->burst_regs[EMC_MRW14_INDEX] &
-+						0xFFFF0707) |
-+					   (last->burst_regs[EMC_MRW14_INDEX] &
-+						0x00003838), EMC_MRW14, 0);
-+
-+			if (emc->num_devices > 1) {
-+				ccfifo_writel(emc,
-+				      (next->burst_regs[EMC_MRW7_INDEX] &
-+				       0xFFFF3F3F) |
-+				      (last->burst_regs[EMC_MRW7_INDEX] &
-+				       0x0000C0C0), EMC_MRW7, 0);
-+				ccfifo_writel(emc,
-+				     (next->burst_regs[EMC_MRW15_INDEX] &
-+				      0xFFFF0707) |
-+				     (last->burst_regs[EMC_MRW15_INDEX] &
-+				      0x00003838), EMC_MRW15, 0);
-+			}
-+
-+			if (opt_zcal_en_cc) {
-+				if (emc->num_devices < 2)
-+					ccfifo_writel(emc,
-+						2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT
-+						| EMC_ZQ_CAL_ZQ_CAL_CMD,
-+						EMC_ZQ_CAL, 0);
-+				else if (shared_zq_resistor)
-+					ccfifo_writel(emc,
-+						2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT
-+						| EMC_ZQ_CAL_ZQ_CAL_CMD,
-+						EMC_ZQ_CAL, 0);
-+				else
-+					ccfifo_writel(emc,
-+						      EMC_ZQ_CAL_ZQ_CAL_CMD,
-+						      EMC_ZQ_CAL, 0);
-+			}
-+		}
-+	}
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		ccfifo_writel(emc, mr13_flip_fspop | 0x8, EMC_MRW3,
-+			      (1000 * fake->dram_timings[T_RP]) /
-+			      source_clock_period);
-+		ccfifo_writel(emc, 0, 0, tFC_lpddr4 / source_clock_period);
-+	}
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4 || opt_dvfs_mode != MAN_SR) {
-+		u32 t = 30 + (cya_allow_ref_cc ?
-+			(4000 * fake->dram_timings[T_RFC]) +
-+			((1000 * fake->dram_timings[T_RP]) /
-+			 source_clock_period) : 0);
-+
-+		ccfifo_writel(emc, emc_pin_o & ~(EMC_PIN_PIN_CKE_PER_DEV |
-+			      EMC_PIN_PIN_CKEB | EMC_PIN_PIN_CKE),
-+			      EMC_PIN, t);
-+	}
-+
-+	ref_delay_mult = 1;
-+	ref_b4_sref_en = 0;
-+	cya_issue_pc_ref = 0;
-+
-+	ref_delay_mult += ref_b4_sref_en   ? 1 : 0;
-+	ref_delay_mult += cya_allow_ref_cc ? 1 : 0;
-+	ref_delay_mult += cya_issue_pc_ref ? 1 : 0;
-+	ref_delay = ref_delay_mult *
-+		    ((1000 * fake->dram_timings[T_RP] /
-+		      source_clock_period) +
-+		     (1000 * fake->dram_timings[T_RFC] /
-+		      source_clock_period)) + 20;
-+
-+	/*
-+	 * Step 11:
-+	 *   Ramp down.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 11\n");
-+	ccfifo_writel(emc, 0x0, EMC_CFG_SYNC,
-+		      dram_type == DRAM_TYPE_LPDDR4 ? 0 : ref_delay);
-+
-+	emc_dbg_active = emc_dbg_o | (EMC_DBG_WRITE_MUX_ACTIVE |
-+			 EMC_DBG_WRITE_ACTIVE_ONLY);
-+	ccfifo_writel(emc, emc_dbg_active, EMC_DBG, 0);
-+
-+	ramp_down_wait = tegra210_emc_dvfs_power_ramp_down(emc,
-+							   source_clock_period,
-+							   0);
-+
-+	/*
-+	 * Step 12:
-+	 *   And finally - trigger the clock change.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 12\n");
-+	ccfifo_writel(emc, 1, EMC_STALL_THEN_EXE_AFTER_CLKCHANGE, 0);
-+	emc_dbg_active &= ~EMC_DBG_WRITE_ACTIVE_ONLY;
-+	ccfifo_writel(emc, emc_dbg_active, EMC_DBG, 0);
-+
-+	/*
-+	 * Step 13:
-+	 *   Ramp up.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 13\n");
-+	ramp_up_wait = tegra210_emc_dvfs_power_ramp_up(emc,
-+						       destination_clock_period,
-+						       0);
-+	ccfifo_writel(emc, emc_dbg_o, EMC_DBG, 0);
-+
-+	/*
-+	 * Step 14:
-+	 *   Bringup CKE pins.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 14\n");
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		u32 r = emc_pin_o | EMC_PIN_PIN_CKE;
-+
-+		if (emc->num_devices > 1)
-+			ccfifo_writel(emc, r | EMC_PIN_PIN_CKEB |
-+				      EMC_PIN_PIN_CKE_PER_DEV, EMC_PIN, 0);
-+		else
-+			ccfifo_writel(emc, r & ~(EMC_PIN_PIN_CKEB |
-+				      EMC_PIN_PIN_CKE_PER_DEV), EMC_PIN, 0);
-+	}
-+
-+	/*
-+	 * Step 15: (two step 15s ??)
-+	 *   Calculate zqlatch wait time; has dependency on ramping times.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 15\n");
-+
-+	if (destination_clock_period <= zqcal_before_cc_cutoff) {
-+		s32 t = (s32)(ramp_up_wait + ramp_down_wait) /
-+			(s32)destination_clock_period;
-+		zq_latch_dvfs_wait_time = (s32)tZQCAL_lpddr4_fc_adj - t;
-+	} else {
-+		zq_latch_dvfs_wait_time = tZQCAL_lpddr4_fc_adj -
-+			div_o3(1000 * next->dram_timings[T_PDEX],
-+			       destination_clock_period);
-+	}
-+
-+	emc_dbg(emc, INFO, "tZQCAL_lpddr4_fc_adj = %u\n", tZQCAL_lpddr4_fc_adj);
-+	emc_dbg(emc, INFO, "destination_clock_period = %u\n",
-+		destination_clock_period);
-+	emc_dbg(emc, INFO, "next->dram_timings[T_PDEX] = %u\n",
-+		next->dram_timings[T_PDEX]);
-+	emc_dbg(emc, INFO, "zq_latch_dvfs_wait_time = %d\n",
-+		max_t(s32, 0, zq_latch_dvfs_wait_time));
-+
-+	if (dram_type == DRAM_TYPE_LPDDR4 && opt_zcal_en_cc) {
-+		if (emc->num_devices < 2) {
-+			if (destination_clock_period > zqcal_before_cc_cutoff)
-+				ccfifo_writel(emc,
-+					      2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+					      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL,
-+					      div_o3(1000 *
-+						     next->dram_timings[T_PDEX],
-+						     destination_clock_period));
-+
-+			ccfifo_writel(emc, (mr13_flip_fspop & 0xFFFFFFF7) |
-+				      0x0C000000, EMC_MRW3,
-+				      div_o3(1000 *
-+					     next->dram_timings[T_PDEX],
-+					     destination_clock_period));
-+			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
-+			ccfifo_writel(emc, 0, EMC_REF, 0);
-+			ccfifo_writel(emc, 2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+				      EMC_ZQ_CAL_ZQ_LATCH_CMD,
-+				      EMC_ZQ_CAL,
-+				      max_t(s32, 0, zq_latch_dvfs_wait_time));
-+		} else if (shared_zq_resistor) {
-+			if (destination_clock_period > zqcal_before_cc_cutoff)
-+				ccfifo_writel(emc,
-+					      2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+					      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL,
-+					      div_o3(1000 *
-+						     next->dram_timings[T_PDEX],
-+						     destination_clock_period));
-+
-+			ccfifo_writel(emc, 2UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+				      EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
-+				      max_t(s32, 0, zq_latch_dvfs_wait_time) +
-+				      div_o3(1000 *
-+					     next->dram_timings[T_PDEX],
-+					     destination_clock_period));
-+			ccfifo_writel(emc, 1UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+				      EMC_ZQ_CAL_ZQ_LATCH_CMD,
-+				      EMC_ZQ_CAL, 0);
-+
-+			ccfifo_writel(emc, (mr13_flip_fspop & 0xfffffff7) |
-+				      0x0c000000, EMC_MRW3, 0);
-+			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
-+			ccfifo_writel(emc, 0, EMC_REF, 0);
-+
-+			ccfifo_writel(emc, 1UL << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+				      EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
-+				      tZQCAL_lpddr4 / destination_clock_period);
-+		} else {
-+			if (destination_clock_period > zqcal_before_cc_cutoff)
-+				ccfifo_writel(emc, EMC_ZQ_CAL_ZQ_CAL_CMD,
-+					      EMC_ZQ_CAL,
-+					      div_o3(1000 *
-+						     next->dram_timings[T_PDEX],
-+						     destination_clock_period));
-+
-+			ccfifo_writel(emc, (mr13_flip_fspop & 0xfffffff7) |
-+				      0x0c000000, EMC_MRW3,
-+				      div_o3(1000 *
-+					     next->dram_timings[T_PDEX],
-+					     destination_clock_period));
-+			ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
-+			ccfifo_writel(emc, 0, EMC_REF, 0);
-+
-+			ccfifo_writel(emc, EMC_ZQ_CAL_ZQ_LATCH_CMD, EMC_ZQ_CAL,
-+				      max_t(s32, 0, zq_latch_dvfs_wait_time));
-+		}
-+	}
-+
-+	/* WAR: delay for zqlatch */
-+	ccfifo_writel(emc, 0, 0, 10);
-+
-+	/*
-+	 * Step 16:
-+	 *   LPDDR4 Conditional Training Kickoff. Removed.
-+	 */
-+
-+	/*
-+	 * Step 17:
-+	 *   MANSR exit self refresh.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 17\n");
-+	if (opt_dvfs_mode == MAN_SR && dram_type != DRAM_TYPE_LPDDR4)
-+		ccfifo_writel(emc, 0, EMC_SELF_REF, 0);
-+
-+	/*
-+	 * Step 18:
-+	 *   Send MRWs to LPDDR3/DDR3.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 18\n");
-+	if (dram_type == DRAM_TYPE_LPDDR2) {
-+		ccfifo_writel(emc, next->emc_mrw2, EMC_MRW2, 0);
-+		ccfifo_writel(emc, next->emc_mrw,  EMC_MRW,  0);
-+		if (is_lpddr3)
-+			ccfifo_writel(emc, next->emc_mrw4, EMC_MRW4, 0);
-+	} else if (dram_type == DRAM_TYPE_DDR3) {
-+		if (opt_dll_mode)
-+			ccfifo_writel(emc, next->emc_emrs &
-+				      ~EMC_EMRS_USE_EMRS_LONG_CNT, EMC_EMRS, 0);
-+		ccfifo_writel(emc, next->emc_emrs2 &
-+			      ~EMC_EMRS2_USE_EMRS2_LONG_CNT, EMC_EMRS2, 0);
-+		ccfifo_writel(emc, next->emc_mrs |
-+			      EMC_EMRS_USE_EMRS_LONG_CNT, EMC_MRS, 0);
-+	}
-+
-+	/*
-+	 * Step 19:
-+	 *   ZQCAL for LPDDR3/DDR3
-+	 */
-+	emc_dbg(emc, STEPS, "Step 19\n");
-+	if (opt_zcal_en_cc) {
-+		if (dram_type == DRAM_TYPE_LPDDR2) {
-+			u32 r;
-+
-+			zq_op = opt_cc_short_zcal  ? 0x56 : 0xAB;
-+			zcal_wait_time_ps = opt_cc_short_zcal  ? 90000 : 360000;
-+			zcal_wait_time_clocks = div_o3(zcal_wait_time_ps,
-+						destination_clock_period);
-+			r = zcal_wait_time_clocks <<
-+			    EMC_MRS_WAIT_CNT2_MRS_EXT2_WAIT_CNT_SHIFT |
-+			    zcal_wait_time_clocks <<
-+			    EMC_MRS_WAIT_CNT2_MRS_EXT1_WAIT_CNT_SHIFT;
-+			ccfifo_writel(emc, r, EMC_MRS_WAIT_CNT2, 0);
-+			ccfifo_writel(emc, 2 << EMC_MRW_MRW_DEV_SELECTN_SHIFT |
-+				      EMC_MRW_USE_MRW_EXT_CNT |
-+				      10 << EMC_MRW_MRW_MA_SHIFT |
-+				      zq_op << EMC_MRW_MRW_OP_SHIFT,
-+				      EMC_MRW, 0);
-+			if (emc->num_devices > 1) {
-+				r = 1 << EMC_MRW_MRW_DEV_SELECTN_SHIFT |
-+				    EMC_MRW_USE_MRW_EXT_CNT |
-+				    10 << EMC_MRW_MRW_MA_SHIFT |
-+				    zq_op << EMC_MRW_MRW_OP_SHIFT;
-+				ccfifo_writel(emc, r, EMC_MRW, 0);
-+			}
-+		} else if (dram_type == DRAM_TYPE_DDR3) {
-+			zq_op = opt_cc_short_zcal ? 0 : EMC_ZQ_CAL_LONG;
-+			ccfifo_writel(emc, zq_op | 2 <<
-+				      EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+				      EMC_ZQ_CAL_ZQ_CAL_CMD, EMC_ZQ_CAL, 0);
-+			if (emc->num_devices > 1)
-+				ccfifo_writel(emc, zq_op |
-+					      1 << EMC_ZQ_CAL_DEV_SEL_SHIFT |
-+					      EMC_ZQ_CAL_ZQ_CAL_CMD,
-+					      EMC_ZQ_CAL, 0);
-+		}
-+	}
-+
-+	if (bg_regulator_mode_change) {
-+		tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+		bg_regulator_switch_complete_wait_clks =
-+			ramp_up_wait > 1250000 ? 0 :
-+			(1250000 - ramp_up_wait) / destination_clock_period;
-+		ccfifo_writel(emc, next->burst_regs
-+			      [EMC_PMACRO_BG_BIAS_CTRL_0_INDEX],
-+			      EMC_PMACRO_BG_BIAS_CTRL_0,
-+			      bg_regulator_switch_complete_wait_clks);
-+		tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+	}
-+
-+	/*
-+	 * Step 20:
-+	 *   Issue ref and optional QRST.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 20\n");
-+	if (dram_type != DRAM_TYPE_LPDDR4)
-+		ccfifo_writel(emc, 0, EMC_REF, 0);
-+
-+	if (opt_do_sw_qrst) {
-+		ccfifo_writel(emc, 1, EMC_ISSUE_QRST, 0);
-+		ccfifo_writel(emc, 0, EMC_ISSUE_QRST, 2);
-+	}
-+
-+	/*
-+	 * Step 21:
-+	 *   Restore ZCAL and ZCAL interval.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 21\n");
-+	if (save_restore_clkstop_pd || opt_zcal_en_cc) {
-+		ccfifo_writel(emc, emc_dbg_o | EMC_DBG_WRITE_MUX_ACTIVE,
-+			      EMC_DBG, 0);
-+		if (opt_zcal_en_cc && dram_type != DRAM_TYPE_LPDDR4)
-+			ccfifo_writel(emc, next->burst_regs[EMC_ZCAL_INTERVAL_INDEX],
-+				      EMC_ZCAL_INTERVAL, 0);
-+
-+		if (save_restore_clkstop_pd)
-+			ccfifo_writel(emc, next->burst_regs[EMC_CFG_INDEX] &
-+						~EMC_CFG_DYN_SELF_REF,
-+				      EMC_CFG, 0);
-+		ccfifo_writel(emc, emc_dbg_o, EMC_DBG, 0);
-+	}
-+
-+	/*
-+	 * Step 22:
-+	 *   Restore EMC_CFG_PIPE_CLK.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 22\n");
-+	ccfifo_writel(emc, emc_cfg_pipe_clk_o, EMC_CFG_PIPE_CLK, 0);
-+
-+	if (bg_regulator_mode_change) {
-+		if (enable_bg_regulator)
-+			emc_writel(emc,
-+				   next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+					~EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD,
-+				   EMC_PMACRO_BG_BIAS_CTRL_0);
-+		else
-+			emc_writel(emc,
-+				   next->burst_regs[EMC_PMACRO_BG_BIAS_CTRL_0_INDEX] &
-+					~EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD,
-+				   EMC_PMACRO_BG_BIAS_CTRL_0);
-+	}
-+
-+	/*
-+	 * Step 23:
-+	 */
-+	emc_dbg(emc, STEPS, "Step 23\n");
-+
-+	tmp = emc_readl(emc, EMC_CFG_DIG_DLL);
-+	tmp |= EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_TRAFFIC;
-+	tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_RW_UNTIL_LOCK;
-+	tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK;
-+	tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_EN;
-+	tmp = (tmp & ~EMC_CFG_DIG_DLL_CFG_DLL_MODE_MASK) |
-+		(2 << EMC_CFG_DIG_DLL_CFG_DLL_MODE_SHIFT);
-+	emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
-+
-+	tegra210_emc_do_clock_change(emc, clksrc);
-+
-+	/*
-+	 * Step 24:
-+	 *   Save training results. Removed.
-+	 */
-+
-+	/*
-+	 * Step 25:
-+	 *   Program MC updown registers.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 25\n");
-+
-+	if (next->rate > last->rate) {
-+		for (i = 0; i < next->num_up_down; i++)
-+			mc_writel(emc->mc, next->la_scale_regs[i],
-+				  emc->offsets->la_scale[i]);
-+
-+		tegra210_emc_timing_update(emc, num_channels);
-+	}
-+
-+	/*
-+	 * Step 26:
-+	 *   Restore ZCAL registers.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 26\n");
-+	if (dram_type == DRAM_TYPE_LPDDR4) {
-+		tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+		emc_writel(emc, next->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX],
-+			   EMC_ZCAL_WAIT_CNT);
-+		emc_writel(emc, next->burst_regs[EMC_ZCAL_INTERVAL_INDEX],
-+			   EMC_ZCAL_INTERVAL);
-+		tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+	}
-+
-+	if (dram_type != DRAM_TYPE_LPDDR4 && opt_zcal_en_cc &&
-+	    !opt_short_zcal && opt_cc_short_zcal) {
-+		udelay(2);
-+
-+		tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+		if (dram_type == DRAM_TYPE_LPDDR2)
-+			emc_writel(emc, next->burst_regs[EMC_MRS_WAIT_CNT_INDEX],
-+				   EMC_MRS_WAIT_CNT);
-+		else if (dram_type == DRAM_TYPE_DDR3)
-+			emc_writel(emc, next->burst_regs[EMC_ZCAL_WAIT_CNT_INDEX],
-+				   EMC_ZCAL_WAIT_CNT);
-+		tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+	}
-+
-+	/*
-+	 * Step 27:
-+	 *   Restore EMC_CFG, FDPD registers.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 27\n");
-+	tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+	emc_writel(emc, next->burst_regs[EMC_CFG_INDEX], EMC_CFG);
-+	tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+	emc_writel(emc, next->emc_fdpd_ctrl_cmd_no_ramp,
-+		   EMC_FDPD_CTRL_CMD_NO_RAMP);
-+	emc_writel(emc, next->emc_sel_dpd_ctrl, EMC_SEL_DPD_CTRL);
-+
-+	/*
-+	 * Step 28:
-+	 *   Training recover. Removed.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 28\n");
-+
-+	tegra210_emc_set_shadow_bypass(emc, ACTIVE);
-+	emc_writel(emc,
-+		   next->burst_regs[EMC_PMACRO_AUTOCAL_CFG_COMMON_INDEX],
-+		   EMC_PMACRO_AUTOCAL_CFG_COMMON);
-+	tegra210_emc_set_shadow_bypass(emc, ASSEMBLY);
-+
-+	/*
-+	 * Step 29:
-+	 *   Power fix WAR.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 29\n");
-+	emc_writel(emc, EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE0 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE1 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE2 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE3 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE4 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE5 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE6 |
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE7,
-+		   EMC_PMACRO_CFG_PM_GLOBAL_0);
-+	emc_writel(emc, EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR,
-+		   EMC_PMACRO_TRAINING_CTRL_0);
-+	emc_writel(emc, EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR,
-+		   EMC_PMACRO_TRAINING_CTRL_1);
-+	emc_writel(emc, 0, EMC_PMACRO_CFG_PM_GLOBAL_0);
-+
-+	/*
-+	 * Step 30:
-+	 *   Re-enable autocal.
-+	 */
-+	emc_dbg(emc, STEPS, "Step 30: Re-enable DLL and AUTOCAL\n");
-+	if (next->burst_regs[EMC_CFG_DIG_DLL_INDEX] & EMC_CFG_DIG_DLL_CFG_DLL_EN) {
-+		tmp = emc_readl(emc, EMC_CFG_DIG_DLL);
-+		tmp |=  EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_TRAFFIC;
-+		tmp |=  EMC_CFG_DIG_DLL_CFG_DLL_EN;
-+		tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_RW_UNTIL_LOCK;
-+		tmp &= ~EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK;
-+		tmp =  (tmp & ~EMC_CFG_DIG_DLL_CFG_DLL_MODE_MASK) |
-+		       (2 << EMC_CFG_DIG_DLL_CFG_DLL_MODE_SHIFT);
-+		emc_writel(emc, tmp, EMC_CFG_DIG_DLL);
-+		tegra210_emc_timing_update(emc, num_channels);
-+	}
-+
-+	emc_auto_cal_config = next->emc_auto_cal_config;
-+	emc_writel(emc, emc_auto_cal_config, EMC_AUTO_CAL_CONFIG);
-+
-+	/* Done! Yay. */
-+}
-+
-+const struct tegra210_emc_sequence tegra210_emc_r21021 = {
-+	.revision = 0x7,
-+	.set_clock = tegra210_emc_r21021_set_clock,
-+	.periodic_compensation = tegra210_emc_r21021_periodic_compensation,
-+};
-diff --git a/drivers/memory/tegra/tegra210-emc.c b/drivers/memory/tegra/tegra210-emc.c
-index 4ea8fb70a4fd..67f8c4519eb8 100644
---- a/drivers/memory/tegra/tegra210-emc.c
-+++ b/drivers/memory/tegra/tegra210-emc.c
-@@ -80,6 +80,7 @@
- 	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
- 
- static const struct tegra210_emc_sequence *tegra210_emc_sequences[] = {
-+	&tegra210_emc_r21021,
- };
- 
- static const struct tegra210_emc_table_register_offsets
-diff --git a/drivers/memory/tegra/tegra210-emc.h b/drivers/memory/tegra/tegra210-emc.h
-index e022c319f37f..8020974c2102 100644
---- a/drivers/memory/tegra/tegra210-emc.h
-+++ b/drivers/memory/tegra/tegra210-emc.h
-@@ -82,7 +82,16 @@
- #define EMC_INTSTATUS_CLKCHANGE_COMPLETE			BIT(4)
- #define EMC_DBG							0x8
- #define EMC_DBG_WRITE_MUX_ACTIVE				BIT(1)
-+#define EMC_DBG_WRITE_ACTIVE_ONLY				BIT(30)
- #define EMC_CFG							0xc
-+#define EMC_CFG_DRAM_CLKSTOP_PD					BIT(31)
-+#define EMC_CFG_DRAM_CLKSTOP_SR					BIT(30)
-+#define EMC_CFG_DRAM_ACPD					BIT(29)
-+#define EMC_CFG_DYN_SELF_REF					BIT(28)
-+#define EMC_PIN							0x24
-+#define EMC_PIN_PIN_CKE						BIT(0)
-+#define EMC_PIN_PIN_CKEB					BIT(1)
-+#define EMC_PIN_PIN_CKE_PER_DEV					BIT(2)
- #define EMC_TIMING_CONTROL					0x28
- #define EMC_RC							0x2c
- #define EMC_RFC							0x30
-@@ -122,6 +131,8 @@
- #define EMC_WEXT						0xb8
- #define EMC_RFC_SLR						0xc0
- #define EMC_MRS_WAIT_CNT2					0xc4
-+#define EMC_MRS_WAIT_CNT2_MRS_EXT2_WAIT_CNT_SHIFT		16
-+#define EMC_MRS_WAIT_CNT2_MRS_EXT1_WAIT_CNT_SHIFT		0
- #define EMC_MRS_WAIT_CNT					0xc8
- #define EMC_MRS_WAIT_CNT_SHORT_WAIT_SHIFT			0
- #define EMC_MRS_WAIT_CNT_SHORT_WAIT_MASK			\
-@@ -158,14 +169,34 @@
- #define EMC_PDEX2CKE						0x118
- #define EMC_CKE2PDEN						0x11c
- #define EMC_MPC							0x128
-+#define EMC_EMRS2						0x12c
-+#define EMC_EMRS2_USE_EMRS2_LONG_CNT				BIT(26)
-+#define EMC_MRW2						0x134
-+#define EMC_MRW3						0x138
-+#define EMC_MRW4						0x13c
- #define EMC_R2R							0x144
- #define EMC_EINPUT						0x14c
- #define EMC_EINPUT_DURATION					0x150
- #define EMC_PUTERM_EXTRA					0x154
- #define EMC_TCKESR						0x158
- #define EMC_TPD							0x15c
-+#define EMC_AUTO_CAL_CONFIG					0x2a4
-+#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_COMPUTE_START		BIT(0)
-+#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_MEASURE_STALL		BIT(9)
-+#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_UPDATE_STALL		BIT(10)
-+#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_ENABLE			BIT(29)
-+#define EMC_AUTO_CAL_CONFIG_AUTO_CAL_START			BIT(31)
- #define EMC_EMC_STATUS						0x2b4
-+#define EMC_EMC_STATUS_MRR_DIVLD				BIT(20)
- #define EMC_EMC_STATUS_TIMING_UPDATE_STALLED			BIT(23)
-+#define EMC_EMC_STATUS_DRAM_IN_POWERDOWN_SHIFT			4
-+#define EMC_EMC_STATUS_DRAM_IN_POWERDOWN_MASK			\
-+	(0x3 << EMC_EMC_STATUS_DRAM_IN_POWERDOWN_SHIFT)
-+#define EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_SHIFT		8
-+#define EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_MASK		\
-+	(0x3 << EMC_EMC_STATUS_DRAM_IN_SELF_REFRESH_SHIFT)
-+
-+#define EMC_CFG_2						0x2b8
- #define EMC_CFG_DIG_DLL						0x2bc
- #define EMC_CFG_DIG_DLL_CFG_DLL_EN				BIT(0)
- #define EMC_CFG_DIG_DLL_CFG_DLL_STALL_ALL_UNTIL_LOCK		BIT(1)
-@@ -191,8 +222,17 @@
- #define EMC_WDV_MASK						0x2d0
- #define EMC_RDV_EARLY_MASK					0x2d4
- #define EMC_RDV_EARLY						0x2d8
-+#define EMC_AUTO_CAL_CONFIG8					0x2dc
- #define EMC_ZCAL_INTERVAL					0x2e0
- #define EMC_ZCAL_WAIT_CNT					0x2e4
-+#define EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_MASK			0x7ff
-+#define EMC_ZCAL_WAIT_CNT_ZCAL_WAIT_CNT_SHIFT			0
-+
-+#define EMC_ZQ_CAL						0x2ec
-+#define EMC_ZQ_CAL_DEV_SEL_SHIFT				30
-+#define EMC_ZQ_CAL_LONG						BIT(4)
-+#define EMC_ZQ_CAL_ZQ_LATCH_CMD					BIT(1)
-+#define EMC_ZQ_CAL_ZQ_CAL_CMD					BIT(0)
- #define EMC_FDPD_CTRL_DQ					0x310
- #define EMC_FDPD_CTRL_CMD					0x314
- #define EMC_PMACRO_CMD_BRICK_CTRL_FDPD				0x318
-@@ -202,6 +242,13 @@
- #define EMC_TR_TIMING_0						0x3b4
- #define EMC_TR_CTRL_1						0x3bc
- #define EMC_TR_RDV						0x3c4
-+#define EMC_STALL_THEN_EXE_AFTER_CLKCHANGE			0x3cc
-+#define EMC_SEL_DPD_CTRL					0x3d8
-+#define EMC_SEL_DPD_CTRL_DATA_SEL_DPD_EN			BIT(8)
-+#define EMC_SEL_DPD_CTRL_ODT_SEL_DPD_EN				BIT(5)
-+#define EMC_SEL_DPD_CTRL_RESET_SEL_DPD_EN			BIT(4)
-+#define EMC_SEL_DPD_CTRL_CA_SEL_DPD_EN				BIT(3)
-+#define EMC_SEL_DPD_CTRL_CLK_SEL_DPD_EN				BIT(2)
- #define EMC_PRE_REFRESH_REQ_CNT					0x3dc
- #define EMC_DYN_SELF_REF_CONTROL				0x3e0
- #define EMC_TXSRDLL						0x3e4
-@@ -214,6 +261,9 @@
- #define EMC_TR_RDV_MASK						0x3f8
- #define EMC_TR_QSAFE						0x3fc
- #define EMC_TR_QRST						0x400
-+#define EMC_ISSUE_QRST						0x428
-+#define EMC_AUTO_CAL_CONFIG2					0x458
-+#define EMC_AUTO_CAL_CONFIG3					0x45c
- #define EMC_TR_DVFS						0x460
- #define EMC_AUTO_CAL_CHANNEL					0x464
- #define EMC_IBDLY						0x468
-@@ -227,19 +277,26 @@
- #define EMC_MRW6						0x4a4
- #define EMC_MRW7						0x4a8
- #define EMC_MRW8						0x4ac
-+#define EMC_MRW9						0x4b0
- #define EMC_MRW10						0x4b4
- #define EMC_MRW11						0x4b8
- #define EMC_MRW12						0x4bc
- #define EMC_MRW13						0x4c0
- #define EMC_MRW14						0x4c4
- #define EMC_MRW15						0x4d0
-+#define EMC_CFG_SYNC						0x4d4
-+#define EMC_FDPD_CTRL_CMD_NO_RAMP				0x4d8
-+#define EMC_FDPD_CTRL_CMD_NO_RAMP_CMD_DPD_NO_RAMP_ENABLE	BIT(0)
- #define EMC_WDV_CHK						0x4e0
- #define EMC_CFG_PIPE_2						0x554
-+#define EMC_CFG_PIPE_CLK					0x558
-+#define EMC_CFG_PIPE_CLK_CLK_ALWAYS_ON				BIT(0)
- #define EMC_CFG_PIPE_1						0x55c
- #define EMC_CFG_PIPE						0x560
- #define EMC_QPOP						0x564
- #define EMC_QUSE_WIDTH						0x568
- #define EMC_PUTERM_WIDTH					0x56c
-+#define EMC_AUTO_CAL_CONFIG7					0x574
- #define EMC_REFCTRL2						0x580
- #define EMC_FBIO_CFG7						0x584
- #define EMC_FBIO_CFG7_CH0_ENABLE				BIT(1)
-@@ -304,10 +361,13 @@
- #define EMC_CMD_BRLSHFT_2					0x5a4
- #define EMC_CMD_BRLSHFT_3					0x5a8
- #define EMC_QUSE_BRLSHFT_0					0x5ac
-+#define EMC_AUTO_CAL_CONFIG4					0x5b0
-+#define EMC_AUTO_CAL_CONFIG5					0x5b4
- #define EMC_QUSE_BRLSHFT_1					0x5b8
- #define EMC_QUSE_BRLSHFT_2					0x5bc
- #define EMC_CCDMW						0x5c0
- #define EMC_QUSE_BRLSHFT_3					0x5c4
-+#define EMC_AUTO_CAL_CONFIG6					0x5cc
- #define EMC_DLL_CFG_0						0x5e4
- #define EMC_DLL_CFG_1						0x5e8
- #define EMC_DLL_CFG_1_DDLLCAL_CTRL_START_TRIM_SHIFT		10
-@@ -315,6 +375,11 @@
- 	(0x7ff << EMC_DLL_CFG_1_DDLLCAL_CTRL_START_TRIM_SHIFT)
- 
- #define EMC_CONFIG_SAMPLE_DELAY					0x5f0
-+#define EMC_CFG_UPDATE						0x5f4
-+#define EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT		9
-+#define EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_MASK		\
-+	(0x3 << EMC_CFG_UPDATE_UPDATE_DLL_IN_UPDATE_SHIFT)
-+
- #define EMC_PMACRO_QUSE_DDLL_RANK0_0				0x600
- #define EMC_PMACRO_QUSE_DDLL_RANK0_1				0x604
- #define EMC_PMACRO_QUSE_DDLL_RANK0_2				0x608
-@@ -623,9 +688,20 @@
- #define EMC_PMACRO_DDLL_SHORT_CMD_0				0xc20
- #define EMC_PMACRO_DDLL_SHORT_CMD_1				0xc24
- #define EMC_PMACRO_DDLL_SHORT_CMD_2				0xc28
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0				0xc30
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE0		BIT(16)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE1		BIT(17)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE2		BIT(18)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE3		BIT(19)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE4		BIT(20)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE5		BIT(21)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE6		BIT(22)
-+#define EMC_PMACRO_CFG_PM_GLOBAL_0_DISABLE_CFG_BYTE7		BIT(23)
- #define EMC_PMACRO_VTTGEN_CTRL_0				0xc34
- #define EMC_PMACRO_VTTGEN_CTRL_1				0xc38
- #define EMC_PMACRO_BG_BIAS_CTRL_0				0xc3c
-+#define EMC_PMACRO_BG_BIAS_CTRL_0_BG_E_PWRD			BIT(0)
-+#define EMC_PMACRO_BG_BIAS_CTRL_0_BGLP_E_PWRD			BIT(2)
- #define EMC_PMACRO_PAD_CFG_CTRL					0xc40
- #define EMC_PMACRO_ZCTRL					0xc44
- #define EMC_PMACRO_CMD_PAD_RX_CTRL				0xc50
-@@ -640,15 +716,22 @@
- #define EMC_PMACRO_CMD_PAD_TX_CTRL_CMD_DQ_TX_DRVFORCEON		BIT(26)
- 
- #define EMC_PMACRO_DATA_PAD_TX_CTRL				0xc64
-+#define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_E_IVREF		BIT(0)
- #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQ_TX_E_DCC		BIT(1)
-+#define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQS_E_IVREF		BIT(8)
- #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSP_TX_E_DCC		BIT(9)
- #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_DQSN_TX_E_DCC		BIT(16)
- #define EMC_PMACRO_DATA_PAD_TX_CTRL_DATA_CMD_TX_E_DCC		BIT(24)
- 
- #define EMC_PMACRO_COMMON_PAD_TX_CTRL				0xc68
- #define EMC_PMACRO_AUTOCAL_CFG_COMMON				0xc78
-+#define EMC_PMACRO_AUTOCAL_CFG_COMMON_E_CAL_BYPASS_DVFS		BIT(16)
- #define EMC_PMACRO_VTTGEN_CTRL_2				0xcf0
- #define EMC_PMACRO_IB_RXRT					0xcf4
-+#define EMC_PMACRO_TRAINING_CTRL_0				0xcf8
-+#define EMC_PMACRO_TRAINING_CTRL_0_CH0_TRAINING_E_WRPTR		BIT(3)
-+#define EMC_PMACRO_TRAINING_CTRL_1				0xcfc
-+#define EMC_PMACRO_TRAINING_CTRL_1_CH1_TRAINING_E_WRPTR		BIT(3)
- #define EMC_TRAINING_CTRL					0xe04
- #define EMC_TRAINING_QUSE_CORS_CTRL				0xe0c
- #define EMC_TRAINING_QUSE_FINE_CTRL				0xe10
-@@ -674,15 +757,31 @@
- #define EMC_COPY_TABLE_PARAM_TRIM_REGS				BIT(1)
- 
- enum burst_regs_list {
-+	EMC_RP_INDEX = 6,
-+	EMC_R2P_INDEX = 9,
-+	EMC_W2P_INDEX,
-+	EMC_MRW6_INDEX = 31,
- 	EMC_REFRESH_INDEX = 41,
- 	EMC_PRE_REFRESH_REQ_CNT_INDEX = 43,
-+	EMC_TRPAB_INDEX = 59,
-+	EMC_MRW7_INDEX = 62,
- 	EMC_FBIO_CFG5_INDEX = 65,
-+	EMC_FBIO_CFG7_INDEX,
-+	EMC_CFG_DIG_DLL_INDEX,
-+	EMC_ZCAL_INTERVAL_INDEX = 139,
-+	EMC_ZCAL_WAIT_CNT_INDEX,
-+	EMC_MRS_WAIT_CNT_INDEX = 141,
- 	EMC_DLL_CFG_0_INDEX = 144,
-+	EMC_PMACRO_AUTOCAL_CFG_COMMON_INDEX = 146,
-+	EMC_CFG_INDEX = 148,
- 	EMC_DYN_SELF_REF_CONTROL_INDEX = 150,
- 	EMC_PMACRO_CMD_PAD_TX_CTRL_INDEX = 161,
- 	EMC_PMACRO_DATA_PAD_TX_CTRL_INDEX,
- 	EMC_PMACRO_COMMON_PAD_TX_CTRL_INDEX,
- 	EMC_PMACRO_BRICK_CTRL_RFU1_INDEX = 167,
-+	EMC_PMACRO_BG_BIAS_CTRL_0_INDEX = 171,
-+	EMC_MRW14_INDEX = 199,
-+	EMC_MRW15_INDEX = 220,
- };
- 
- enum trim_regs_list {
-@@ -935,6 +1034,9 @@ static inline u32 div_o3(u32 a, u32 b)
- 	return result;
- }
- 
-+/* from tegra210-emc-r21021.c */
-+extern const struct tegra210_emc_sequence tegra210_emc_r21021;
-+
- void tegra210_emc_do_clock_change(struct tegra210_emc *emc, u32 clksrc);
- void tegra210_emc_set_shadow_bypass(struct tegra210_emc *emc, int set);
- void tegra210_emc_timing_update(struct tegra210_emc *emc,
--- 
-2.24.1
+default MIPS_BAIKAL_T1?
 
+> +       help
+> +         Enable this to support the PLLs embedded into the Baikal-T1 SoC=
+s.
+> +         These are five PLLs placed at the root of the clocks hierarchy,
+> +         right after the external reference osciallator (normally of 25M=
+Hz).
+> +         They are used to generate a high frequency signals, which are
+
+s/generate a high/generate high/
+
+> +         either directly wired to the consumers (like CPUs, DDR) or pass=
+ed
+> +         over the clock dividers to be only then used as an individual
+> +         reference clocks of a target device.
+
+s/clocks/clock/
+
+> +
+> +endif
+> diff --git a/drivers/clk/baikal-t1/ccu-pll.c b/drivers/clk/baikal-t1/ccu-=
+pll.c
+> new file mode 100644
+> index 000000000000..f2087a80b64d
+> --- /dev/null
+> +++ b/drivers/clk/baikal-t1/ccu-pll.c
+> @@ -0,0 +1,474 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
+> + *
+> + * Authors:
+> + *   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> + *   Dmitry Dunaev <dmitry.dunaev@baikalelectronics.ru>
+> + *
+> + * Baikal-T1 CCU PLL interface driver.
+> + */
+> +
+> +#define pr_fmt(fmt) "bt1-ccu-pll: " fmt
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/printk.h>
+> +#include <linux/limits.h>
+> +#include <linux/bits.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/delay.h>
+> +#include <linux/time64.h>
+> +#include <linux/rational.h>
+> +#include <linux/debugfs.h>
+> +
+> +#include "ccu-pll.h"
+> +#include "common.h"
+> +
+> +#define CCU_PLL_CTL                    0x00
+> +#define CCU_PLL_CTL_EN                 BIT(0)
+> +#define CCU_PLL_CTL_RST                        BIT(1)
+> +#define CCU_PLL_CTL_CLKR_FLD           2
+> +#define CCU_PLL_CTL_CLKR_MASK          GENMASK(7, CCU_PLL_CTL_CLKR_FLD)
+> +#define CCU_PLL_CTL_CLKF_FLD           8
+> +#define CCU_PLL_CTL_CLKF_MASK          GENMASK(20, CCU_PLL_CTL_CLKF_FLD)
+> +#define CCU_PLL_CTL_CLKOD_FLD          21
+> +#define CCU_PLL_CTL_CLKOD_MASK         GENMASK(24, CCU_PLL_CTL_CLKOD_FLD)
+> +#define CCU_PLL_CTL_BYPASS             BIT(30)
+> +#define CCU_PLL_CTL_LOCK               BIT(31)
+> +#define CCU_PLL_CTL1                   0x04
+> +#define CCU_PLL_CTL1_BWADJ_FLD         3
+> +#define CCU_PLL_CTL1_BWADJ_MASK                GENMASK(14, CCU_PLL_CTL1_=
+BWADJ_FLD)
+> +
+> +#define CCU_PLL_RST_DELAY_US           5
+> +#define CCU_PLL_LOCK_DELAY_US(_ref_rate, _nr) ({       \
+> +       uint64_t _n =3D 500ULL * (_nr) * USEC_PER_SEC;    \
+> +       do_div(_n, _ref_rate);                          \
+> +       _n;                                             \
+> +})
+
+Can this be a static inline function? We get to learn what the types are
+then.
+
+> +#define CCU_PLL_LOCK_CHECK_RETRIES     50
+> +
+> +#define CCU_PLL_NR_MAX \
+> +       ((CCU_PLL_CTL_CLKR_MASK >> CCU_PLL_CTL_CLKR_FLD) + 1)
+> +#define CCU_PLL_NF_MAX \
+> +       ((CCU_PLL_CTL_CLKF_MASK >> (CCU_PLL_CTL_CLKF_FLD + 1)) + 1)
+> +#define CCU_PLL_OD_MAX \
+> +       ((CCU_PLL_CTL_CLKOD_MASK >> CCU_PLL_CTL_CLKOD_FLD) + 1)
+> +#define CCU_PLL_NB_MAX \
+> +       ((CCU_PLL_CTL1_BWADJ_MASK >> CCU_PLL_CTL1_BWADJ_FLD) + 1)
+> +#define CCU_PLL_FDIV_MIN               427000UL
+> +#define CCU_PLL_FDIV_MAX               3500000000UL
+> +#define CCU_PLL_FOUT_MIN               200000000UL
+> +#define CCU_PLL_FOUT_MAX               2500000000UL
+> +#define CCU_PLL_FVCO_MIN               700000000UL
+> +#define CCU_PLL_FVCO_MAX               3500000000UL
+> +#define CCU_PLL_CLKOD_FACTOR           2
+> +
+> +#define CCU_PLL_CALC_FREQ(_ref_rate, _nr, _nf, _od) \
+> +       ((_ref_rate) / (_nr) * (_nf) / (_od))
+
+Static inline function please. Does this need to be 64-bit math?
+
+> +
+> +static int ccu_pll_reset(struct ccu_pll *pll, unsigned long ref_clk,
+> +                        unsigned long nr)
+> +{
+> +       unsigned long ud;
+> +       int count;
+> +       u32 val;
+> +
+> +       ud =3D CCU_PLL_LOCK_DELAY_US(ref_clk, nr);
+> +
+> +       ccu_update(pll->regs + CCU_PLL_CTL, CCU_PLL_CTL_RST, CCU_PLL_CTL_=
+RST);
+> +
+> +       count =3D CCU_PLL_LOCK_CHECK_RETRIES;
+> +       do {
+> +               udelay(ud);
+> +               val =3D ccu_read(pll->regs + CCU_PLL_CTL);
+> +       } while (!(val & CCU_PLL_CTL_LOCK) && --count);
+> +
+> +       return (val & CCU_PLL_CTL_LOCK) ? 0 : -ETIMEDOUT;
+
+Looks like readl_poll_timeout().
+
+> +}
+> +
+> +static int ccu_pll_enable(struct clk_hw *hw)
+> +{
+> +       struct clk_hw *parent_hw =3D clk_hw_get_parent(hw);
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       unsigned long flags;
+> +       int ret;
+> +       u32 val;
+> +
+> +       if (!parent_hw) {
+> +               pr_err("Can't enable '%s' with no parent", clk_hw_get_nam=
+e(hw));
+> +               return -EINVAL;
+> +       }
+> +
+> +       val =3D ccu_read(pll->regs + CCU_PLL_CTL);
+> +       if (val & CCU_PLL_CTL_EN)
+> +               return 0;
+> +
+> +       spin_lock_irqsave(&pll->regs_lock, flags);
+> +       ccu_write(pll->regs + CCU_PLL_CTL, val | CCU_PLL_CTL_EN);
+> +       ret =3D ccu_pll_reset(pll, clk_hw_get_rate(parent_hw),
+> +                           CCU_GET_FLD(CCU_PLL_CTL_CLKR, val) + 1);
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);
+> +       if (ret)
+> +               pr_err("PLL '%s' reset timed out\n", clk_hw_get_name(hw));
+> +
+> +       return ret;
+> +}
+> +
+> +static void ccu_pll_disable(struct clk_hw *hw)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&pll->regs_lock, flags);
+> +       ccu_update(pll->regs + CCU_PLL_CTL, CCU_PLL_CTL_EN, 0);
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);
+> +}
+> +
+> +static int ccu_pll_is_enabled(struct clk_hw *hw)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +
+> +       return !!(ccu_read(pll->regs + CCU_PLL_CTL) & CCU_PLL_CTL_EN);
+> +}
+> +
+> +static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       unsigned long nr, nf, od;
+> +       u32 val;
+> +
+> +       val =3D ccu_read(pll->regs + CCU_PLL_CTL);
+> +       nr =3D CCU_GET_FLD(CCU_PLL_CTL_CLKR, val) + 1;
+
+We have FIELD_GET macros for this. Please use them instead of creating
+your own.
+
+> +       nf =3D CCU_GET_FLD(CCU_PLL_CTL_CLKF, val) + 1;
+> +       od =3D CCU_GET_FLD(CCU_PLL_CTL_CLKOD, val) + 1;
+> +
+> +       return CCU_PLL_CALC_FREQ(parent_rate, nr, nf, od);
+> +}
+> +
+> +static void ccu_pll_calc_factors(unsigned long rate, unsigned long paren=
+t_rate,
+> +                                unsigned long *nr, unsigned long *nf,
+> +                                unsigned long *od)
+> +{
+> +       unsigned long err, freq, min_err =3D ULONG_MAX;
+> +       unsigned long num, denom, n1, d1, nri;
+> +       unsigned long nr_max, nf_max, od_max;
+> +
+> +       /*
+> +        * Make sure PLL is working with valid input signal (Fdiv). If
+> +        * you want to speed the function up just reduce CCU_PLL_NR_MAX.
+> +        * This will cause a worse approximation though.
+> +        */
+> +       nri =3D (parent_rate / CCU_PLL_FDIV_MAX) + 1;
+> +       nr_max =3D min(parent_rate / CCU_PLL_FDIV_MIN, CCU_PLL_NR_MAX);
+> +
+> +       /*
+> +        * Find a closest [nr;nf;od] vector taking into account the
+> +        * limitations like: 1) 700MHz <=3D Fvco <=3D 3.5GHz, 2) PLL Od is
+> +        * either 1 or even number within the acceptable range (alas 1s
+> +        * is also excluded by the next loop).
+> +        */
+> +       for (; nri <=3D nr_max; ++nri) {
+> +               /* Use Od factor to fulfill the limitation 2). */
+> +               num =3D CCU_PLL_CLKOD_FACTOR * rate;
+> +               denom =3D parent_rate / nri;
+> +
+> +               /*
+> +                * Make sure Fvco is within the acceptable range to fulfi=
+ll
+> +                * the condition 1). Note due to the CCU_PLL_CLKOD_FACTOR=
+ value
+> +                * the actual upper limit is also divided by that factor.
+> +                * It's not big problem for us since practically there is=
+ no
+> +                * need in clocks with that high frequency.
+> +                */
+> +               nf_max =3D min(CCU_PLL_FVCO_MAX / denom, CCU_PLL_NF_MAX);
+> +               od_max =3D CCU_PLL_OD_MAX / CCU_PLL_CLKOD_FACTOR;
+> +
+> +               /*
+> +                * Bypass the out-of-bound values, which can't be properly
+> +                * handled by the rational fraction approximation algorit=
+hm.
+> +                */
+> +               if (num / denom >=3D nf_max) {
+> +                       n1 =3D nf_max;
+> +                       d1 =3D 1;
+> +               } else if (denom / num >=3D od_max) {
+> +                       n1 =3D 1;
+> +                       d1 =3D od_max;
+> +               } else {
+> +                       rational_best_approximation(num, denom, nf_max, o=
+d_max,
+> +                                                   &n1, &d1);
+> +               }
+> +
+> +               /* Select the best approximation of the target rate. */
+> +               freq =3D (((parent_rate / nri) * n1) / d1);
+
+Please drop extra parenthesis.
+
+> +               err =3D abs((int64_t)freq - num);
+> +               if (err < min_err) {
+> +                       min_err =3D err;
+> +                       *nr =3D nri;
+> +                       *nf =3D n1;
+> +                       *od =3D CCU_PLL_CLKOD_FACTOR * d1;
+> +               }
+> +       }
+> +}
+> +
+> +static long ccu_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+> +                              unsigned long *parent_rate)
+> +{
+> +       unsigned long nr =3D 1, nf =3D 1, od =3D 1;
+> +
+> +       ccu_pll_calc_factors(rate, *parent_rate, &nr, &nf, &od);
+> +
+> +       return CCU_PLL_CALC_FREQ(*parent_rate, nr, nf, od);
+> +}
+> +
+> +/*
+> + * This method is used for PLLs, which support the on-the-fly dividers
+> + * adjustment. So there is no need in gating such clocks.
+> + */
+> +static int ccu_pll_set_rate_reset(struct clk_hw *hw, unsigned long rate,
+> +                                 unsigned long parent_rate)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       unsigned long nr, nf, od;
+> +       unsigned long flags;
+> +       u32 mask, val;
+> +       int ret;
+> +
+> +       ccu_pll_calc_factors(rate, parent_rate, &nr, &nf, &od);
+> +
+> +       mask =3D CCU_PLL_CTL_CLKR_MASK | CCU_PLL_CTL_CLKF_MASK |
+> +              CCU_PLL_CTL_CLKOD_MASK;
+> +       val =3D CCU_SET_FLD(CCU_PLL_CTL_CLKR, 0, nr - 1) |
+> +             CCU_SET_FLD(CCU_PLL_CTL_CLKF, 0, nf - 1) |
+> +             CCU_SET_FLD(CCU_PLL_CTL_CLKOD, 0, od - 1);
+> +
+> +       spin_lock_irqsave(&pll->regs_lock, flags);
+> +       ccu_update(pll->regs + CCU_PLL_CTL, mask, val);
+> +       ret =3D ccu_pll_reset(pll, parent_rate, nr);
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);
+> +       if (ret)
+> +               pr_err("PLL '%s' reset timed out\n", clk_hw_get_name(hw));
+> +
+> +       return ret;
+> +}
+> +
+> +/*
+> + * This method is used for PLLs, which don't support the on-the-fly divi=
+ders
+> + * adjustment. So the corresponding clocks are supposed to be gated firs=
+t.
+> + */
+> +static int ccu_pll_set_rate_norst(struct clk_hw *hw, unsigned long rate,
+> +                                 unsigned long parent_rate)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       unsigned long nr, nf, od;
+> +       unsigned long flags;
+> +       u32 mask, val;
+> +
+> +       ccu_pll_calc_factors(rate, parent_rate, &nr, &nf, &od);
+> +
+> +       /*
+> +        * Disable PLL if it was enabled by default or left enabled by the
+> +        * system bootloader.
+> +        */
+> +       mask =3D CCU_PLL_CTL_CLKR_MASK | CCU_PLL_CTL_CLKF_MASK |
+> +              CCU_PLL_CTL_CLKOD_MASK | CCU_PLL_CTL_EN;
+> +       val =3D CCU_SET_FLD(CCU_PLL_CTL_CLKR, 0, nr - 1) |
+> +             CCU_SET_FLD(CCU_PLL_CTL_CLKF, 0, nf - 1) |
+> +             CCU_SET_FLD(CCU_PLL_CTL_CLKOD, 0, od - 1);
+> +
+> +       spin_lock_irqsave(&pll->regs_lock, flags);
+> +       ccu_update(pll->regs + CCU_PLL_CTL, mask, val);
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +#ifdef CONFIG_DEBUG_FS
+> +
+> +#define CCU_PLL_DBGFS_BIT_ATTR(_name, _reg, _mask)                     \
+> +static int ccu_pll_dbgfs_##_name##_get(void *priv, u64 *val)           \
+> +{                                                                      \
+> +       struct ccu_pll *pll =3D priv;                                    =
+ \
+> +                                                                       \
+> +       *val =3D !!(ccu_read(pll->regs + (_reg)) & (_mask));             =
+ \
+> +                                                                       \
+> +       return 0;                                                       \
+> +}                                                                      \
+> +static int ccu_pll_dbgfs_##_name##_set(void *priv, u64 val)            \
+> +{                                                                      \
+> +       struct ccu_pll *pll =3D priv;                                    =
+ \
+> +       unsigned long flags;                                            \
+> +                                                                       \
+> +       spin_lock_irqsave(&pll->regs_lock, flags);                      \
+> +       ccu_update(pll->regs + (_reg), (_mask), val ? (_mask) : 0);     \
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);                 \
+> +                                                                       \
+> +       return 0;                                                       \
+> +}                                                                      \
+> +DEFINE_DEBUGFS_ATTRIBUTE(ccu_pll_dbgfs_##_name##_fops,                 \
+> +       ccu_pll_dbgfs_##_name##_get, ccu_pll_dbgfs_##_name##_set, "%llu\n=
+")
+> +
+> +#define CCU_PLL_DBGFS_FLD_ATTR(_name, _reg, _fld, _min, _max)          \
+> +static int ccu_pll_dbgfs_##_name##_get(void *priv, u64 *val)           \
+> +{                                                                      \
+> +       struct ccu_pll *pll =3D priv;                                    =
+ \
+> +       u32 data;                                                       \
+> +                                                                       \
+> +       data =3D ccu_read(pll->regs + (_reg));                           =
+ \
+> +       *val =3D CCU_GET_FLD(_fld, data) + 1;                            =
+ \
+> +                                                                       \
+> +       return 0;                                                       \
+> +}                                                                      \
+> +static int ccu_pll_dbgfs_##_name##_set(void *priv, u64 val)            \
+> +{                                                                      \
+> +       struct ccu_pll *pll =3D priv;                                    =
+ \
+> +       unsigned long flags;                                            \
+> +       u32 data;                                                       \
+> +                                                                       \
+> +       val =3D clamp_t(u64, val, _min, _max);                           =
+ \
+> +       data =3D CCU_SET_FLD(_fld, 0, val - 1);                          =
+ \
+> +                                                                       \
+> +       spin_lock_irqsave(&pll->regs_lock, flags);                      \
+> +       ccu_update(pll->regs + (_reg), _fld ## _MASK, data);            \
+> +       spin_unlock_irqrestore(&pll->regs_lock, flags);                 \
+> +                                                                       \
+> +       return 0;                                                       \
+> +}                                                                      \
+> +DEFINE_DEBUGFS_ATTRIBUTE(ccu_pll_dbgfs_##_name##_fops,                 \
+> +       ccu_pll_dbgfs_##_name##_get, ccu_pll_dbgfs_##_name##_set, "%llu\n=
+")
+> +
+> +CCU_PLL_DBGFS_BIT_ATTR(en, CCU_PLL_CTL, CCU_PLL_CTL_EN);
+> +CCU_PLL_DBGFS_BIT_ATTR(rst, CCU_PLL_CTL, CCU_PLL_CTL_RST);
+> +CCU_PLL_DBGFS_FLD_ATTR(nr, CCU_PLL_CTL, CCU_PLL_CTL_CLKR, 1, CCU_PLL_NR_=
+MAX);
+> +CCU_PLL_DBGFS_FLD_ATTR(nf, CCU_PLL_CTL, CCU_PLL_CTL_CLKF, 1, CCU_PLL_NF_=
+MAX);
+> +CCU_PLL_DBGFS_FLD_ATTR(od, CCU_PLL_CTL, CCU_PLL_CTL_CLKOD, 1, CCU_PLL_OD=
+_MAX);
+> +CCU_PLL_DBGFS_BIT_ATTR(bypass, CCU_PLL_CTL, CCU_PLL_CTL_BYPASS);
+> +CCU_PLL_DBGFS_BIT_ATTR(lock, CCU_PLL_CTL, CCU_PLL_CTL_LOCK);
+> +CCU_PLL_DBGFS_FLD_ATTR(nb, CCU_PLL_CTL1, CCU_PLL_CTL1_BWADJ, 1, CCU_PLL_=
+NB_MAX);
+> +
+> +static const struct debugfs_reg32 ccu_pll_dbgfs_regs[] =3D {
+> +       CCU_DBGFS_REG("ctl", CCU_PLL_CTL),
+> +       CCU_DBGFS_REG("ctl1", CCU_PLL_CTL1)
+> +};
+> +
+> +static void ccu_pll_debug_init(struct clk_hw *hw, struct dentry *dentry)
+> +{
+> +       struct ccu_pll *pll =3D to_ccu_pll(hw);
+> +       struct debugfs_regset32 *regset;
+> +
+> +       regset =3D kzalloc(sizeof(*regset), GFP_KERNEL);
+> +       if (!regset)
+> +               return;
+> +
+> +       regset->regs =3D ccu_pll_dbgfs_regs;
+> +       regset->nregs =3D ARRAY_SIZE(ccu_pll_dbgfs_regs);
+> +       regset->base =3D pll->regs;
+> +       debugfs_create_regset32("registers", 0400, dentry, regset);
+> +
+> +       debugfs_create_file_unsafe("en", 0600, dentry, pll,
+
+Why unsafe?
+
+> +                                  &ccu_pll_dbgfs_en_fops);
+> +       debugfs_create_file_unsafe("rst", 0200, dentry, pll,
+> +                                  &ccu_pll_dbgfs_rst_fops);
+> +       debugfs_create_file_unsafe("nr", 0600, dentry, pll,
+> +                                  &ccu_pll_dbgfs_nr_fops);
+> +       debugfs_create_file_unsafe("nf", 0600, dentry, pll,
+> +                                  &ccu_pll_dbgfs_nf_fops);
+> +       debugfs_create_file_unsafe("od", 0600, dentry, pll,
+> +                                  &ccu_pll_dbgfs_od_fops);
+> +       debugfs_create_file_unsafe("bypass", 0600, dentry, pll,
+> +                                  &ccu_pll_dbgfs_bypass_fops);
+> +       debugfs_create_file_unsafe("lock", 0400, dentry, pll,
+> +                                  &ccu_pll_dbgfs_lock_fops);
+> +       debugfs_create_file_unsafe("nb", 0600, dentry, pll,
+> +                                  &ccu_pll_dbgfs_nb_fops);
+> +}
+
+Is there any usage of these outside of development of this driver? I'd
+rather not see us expose blanket register write access with code in
+debugfs. If you're interested in poking register why not use /dev/mem?
+
+> +
+> +#else /* !CONFIG_DEBUG_FS */
+> +
+> +#define ccu_pll_debug_init NULL
+> +
+> +#endif /* !CONFIG_DEBUG_FS */
+> +
+> +static const struct clk_ops ccu_pll_gate_to_set_ops =3D {
+> +       .enable =3D ccu_pll_enable,
+> +       .disable =3D ccu_pll_disable,
+> +       .is_enabled =3D ccu_pll_is_enabled,
+> +       .recalc_rate =3D ccu_pll_recalc_rate,
+> +       .round_rate =3D ccu_pll_round_rate,
+> +       .set_rate =3D ccu_pll_set_rate_norst,
+> +       .debug_init =3D ccu_pll_debug_init
+> +};
+> +
+> +static const struct clk_ops ccu_pll_straight_set_ops =3D {
+> +       .enable =3D ccu_pll_enable,
+> +       .disable =3D ccu_pll_disable,
+> +       .is_enabled =3D ccu_pll_is_enabled,
+> +       .recalc_rate =3D ccu_pll_recalc_rate,
+> +       .round_rate =3D ccu_pll_round_rate,
+> +       .set_rate =3D ccu_pll_set_rate_reset,
+> +       .debug_init =3D ccu_pll_debug_init
+> +};
+> +
+> +struct ccu_pll *ccu_pll_hw_register(struct ccu_pll_init_data *pll_init)
+
+Can pll_init be const?
+
+> +{
+> +       struct clk_parent_data parent_data =3D {0};
+> +       struct clk_init_data hw_init =3D {0};
+> +       struct ccu_pll *pll;
+> +       int ret;
+> +
+> +       if (!pll_init)
+> +               return ERR_PTR(-EINVAL);
+> +
+> +       pll =3D kzalloc(sizeof(*pll), GFP_KERNEL);
+> +       if (!pll)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       pll->hw.init =3D &hw_init;
+> +       pll->id =3D pll_init->id;
+> +       pll->regs =3D pll_init->regs;
+> +       spin_lock_init(&pll->regs_lock);
+> +
+> +       hw_init.name =3D pll_init->name;
+> +       hw_init.flags =3D CLK_IGNORE_UNUSED;
+
+Why ignore unused? Please have a comment.
+
+> +
+> +       if (pll_init->flags & CCU_PLL_GATE_TO_SET) {
+> +               hw_init.flags |=3D CLK_SET_RATE_GATE;
+> +               hw_init.ops =3D &ccu_pll_gate_to_set_ops;
+> +       } else {
+> +               hw_init.ops =3D &ccu_pll_straight_set_ops;
+> +       }
+> +
+> +       if (pll_init->flags & CCU_PLL_CRITICAL)
+> +               hw_init.flags |=3D CLK_IS_CRITICAL;
+> +
+> +       if (!pll_init->parent_name) {
+> +               ret =3D -EINVAL;
+> +               goto err_free_pll;
+> +       }
+> +       parent_data.fw_name =3D pll_init->parent_name;
+> +       hw_init.parent_data =3D &parent_data;
+> +       hw_init.num_parents =3D 1;
+> +
+> +       ret =3D of_clk_hw_register(pll_init->np, &pll->hw);
+> +       if (ret)
+> +               goto err_free_pll;
+> +
+> +       return pll;
+> +
+> +err_free_pll:
+> +       kfree(pll);
+> +
+> +       return ERR_PTR(ret);
+> +}
+> +
+> +void ccu_pll_hw_unregister(struct ccu_pll *pll)
+> +{
+> +       if (!pll)
+> +               return;
+
+That would be quite bad. Just let that blow up if so.
+
+> +
+> +       clk_hw_unregister(&pll->hw);
+> +
+> +       kfree(pll);
+> +}
+> diff --git a/drivers/clk/baikal-t1/ccu-pll.h b/drivers/clk/baikal-t1/ccu-=
+pll.h
+> new file mode 100644
+> index 000000000000..6921516311fb
+> --- /dev/null
+> +++ b/drivers/clk/baikal-t1/ccu-pll.h
+> @@ -0,0 +1,73 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
+> + *
+> + * Baikal-T1 CCU PLL interface driver.
+> + */
+> +#ifndef __CLK_BT1_CCU_PLL_H__
+> +#define __CLK_BT1_CCU_PLL_H__
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/spinlock.h>
+> +#include <linux/bits.h>
+> +#include <linux/of.h>
+> +
+> +/*
+> + * CCU PLL private flags.
+> + * @CCU_PLL_GATE_TO_SET: Some PLLs output clock can't be changed on-the-=
+fly,
+> + *                      so according to documentation they need to be ga=
+ted
+> + *                      first.
+> + * @CCU_PLL_CRITICAL: Even though there is a way to switch any PLL off, =
+there
+> + *                   might be some, which shouldn't be in any case.
+> + */
+> +#define CCU_PLL_GATE_TO_SET            BIT(0)
+> +#define CCU_PLL_CRITICAL               BIT(1)
+> +
+> +/*
+> + * struct ccu_pll_init_data - CCU PLL initialization data.
+> + * @id: Clock private identifier.
+> + * @regs: PLL registers base address.
+> + * @name: Clocks name.
+> + * @parent_name: Clocks parent name in a fw node.
+> + * @np: Pointer to the node describing the CCU PLLs.
+> + * @flags: PLL private flags.
+> + */
+> +struct ccu_pll_init_data {
+> +       unsigned int id;
+> +       void __iomem *regs;
+> +       const char *name;
+> +       const char *parent_name;
+> +       struct device_node *np;
+> +       unsigned long flags;
+> +};
+> +
+> +/*
+> + * struct ccu_pll - CCU PLL descriptor.
+
+Please drop the full stop on title
+
+> + * @hw: clk_hw of the PLL.
+> + * @id: Clock private identifier.
+> + * @regs: PLL registers base address.
+> + * @regs_lock: The registers exclusive access spin-lock.
+> + */
+> +struct ccu_pll {
+> +       struct clk_hw hw;
+> +       unsigned int id;
+> +       void __iomem *regs;
+> +       spinlock_t regs_lock;
+> +};
+> +#define to_ccu_pll(_hw) container_of(_hw, struct ccu_pll, hw)
+> +
+> +static inline struct clk_hw *ccu_pll_get_clk_hw(struct ccu_pll *pll)
+> +{
+> +       return pll ? &pll->hw : NULL;
+> +}
+> +
+> +static inline unsigned int ccu_pll_get_clk_id(struct ccu_pll *pll)
+> +{
+> +       return pll ? pll->id : -1;
+
+It's unsigned return value, but return -1? Can this be inlined in the
+one call site and if !pll just continue instead of having to turn it
+into a negative value returned through an unsigned int?
+
+> +}
+> +
+> +extern struct ccu_pll *ccu_pll_hw_register(struct ccu_pll_init_data *ini=
+t);
+> +
+> +extern void ccu_pll_hw_unregister(struct ccu_pll *pll);
+> +
+> +#endif /* __CLK_BT1_CCU_PLL_H__ */
+> diff --git a/drivers/clk/baikal-t1/clk-ccu-pll.c b/drivers/clk/baikal-t1/=
+clk-ccu-pll.c
+> new file mode 100644
+> index 000000000000..990f0a4a12f9
+> --- /dev/null
+> +++ b/drivers/clk/baikal-t1/clk-ccu-pll.c
+> @@ -0,0 +1,217 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
+> + *
+> + * Authors:
+> + *   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> + *   Dmitry Dunaev <dmitry.dunaev@baikalelectronics.ru>
+> + *
+> + * Baikal-T1 CCU PLL clocks driver.
+> + */
+> +
+> +#define pr_fmt(fmt) "bt1-ccu-pll: " fmt
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/printk.h>
+> +#include <linux/slab.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/ioport.h>
+> +
+> +#include <dt-bindings/clock/bt1-ccu.h>
+> +
+> +#include "ccu-pll.h"
+> +
+> +#define CCU_CPU_PLL_BASE               0x000
+> +#define CCU_SATA_PLL_BASE              0x008
+> +#define CCU_DDR_PLL_BASE               0x010
+> +#define CCU_PCIE_PLL_BASE              0x018
+> +#define CCU_ETH_PLL_BASE               0x020
+> +
+> +#define CCU_PLL_INFO(_id, _name, _pname, _base, _flags)        \
+> +       {                                               \
+> +               .id =3D _id,                              \
+> +               .name =3D _name,                          \
+> +               .parent_name =3D _pname,                  \
+> +               .base =3D _base,                          \
+> +               .flags =3D _flags                         \
+> +       }
+> +
+> +#define CCU_PLL_NUM                    ARRAY_SIZE(pll_info)
+> +
+> +struct ccu_pll_info {
+> +       unsigned int id;
+> +       const char *name;
+> +       const char *parent_name;
+> +       unsigned int base;
+> +       unsigned long flags;
+> +};
+> +
+> +static const struct ccu_pll_info pll_info[] =3D {
+> +       CCU_PLL_INFO(CCU_CPU_PLL, "cpu_pll", "ref_clk", CCU_CPU_PLL_BASE,
+> +                    CCU_PLL_CRITICAL),
+> +       CCU_PLL_INFO(CCU_SATA_PLL, "sata_pll", "ref_clk", CCU_SATA_PLL_BA=
+SE,
+> +                    CCU_PLL_CRITICAL | CCU_PLL_GATE_TO_SET),
+
+Please comment all CLK_IS_CRITICAL usage and don't make your own version
+of the same flags in the common clk framework. Just use the ones in the
+framework.
+
+> +       CCU_PLL_INFO(CCU_DDR_PLL, "ddr_pll", "ref_clk", CCU_DDR_PLL_BASE,
+> +                    CCU_PLL_CRITICAL | CCU_PLL_GATE_TO_SET),
+> +       CCU_PLL_INFO(CCU_PCIE_PLL, "pcie_pll", "ref_clk", CCU_PCIE_PLL_BA=
+SE,
+> +                    CCU_PLL_CRITICAL),
+> +       CCU_PLL_INFO(CCU_ETH_PLL, "eth_pll", "ref_clk", CCU_ETH_PLL_BASE,
+> +                    CCU_PLL_GATE_TO_SET)
+> +};
+> +
+> +struct ccu_pll_data {
+> +       struct device_node *np;
+> +       void __iomem *regs;
+> +       struct ccu_pll *plls[CCU_PLL_NUM];
+> +};
+> +
+> +static struct ccu_pll *ccu_pll_find_desc(struct ccu_pll_data *data,
+> +                                        unsigned int clk_id)
+> +{
+> +       struct ccu_pll *pll;
+> +       int idx;
+> +
+> +       for (idx =3D 0; idx < CCU_PLL_NUM; ++idx) {
+> +               pll =3D data->plls[idx];
+> +               if (clk_id =3D=3D ccu_pll_get_clk_id(pll))
+> +                       return pll;
+> +       }
+> +
+> +       return ERR_PTR(-EINVAL);
+> +}
+> +
+> +static struct ccu_pll_data *ccu_pll_create_data(struct device_node *np)
+> +{
+> +       struct ccu_pll_data *data;
+> +
+> +       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
+> +       if (!data)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       data->np =3D np;
+> +
+> +       return data;
+> +}
+> +
+> +static void ccu_pll_free_data(struct ccu_pll_data *data)
+> +{
+> +       kfree(data);
+> +}
+> +
+> +static int ccu_pll_request_regs(struct ccu_pll_data *data)
+> +{
+> +       data->regs =3D of_io_request_and_map(data->np, 0,
+> +                                          of_node_full_name(data->np));
+> +       if (IS_ERR(data->regs)) {
+> +               pr_err("Failed to request PLLs '%s' regs\n",
+> +                       of_node_full_name(data->np));
+> +               return PTR_ERR(data->regs);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void ccu_pll_release_regs(struct ccu_pll_data *data)
+> +{
+> +       struct resource res;
+> +
+> +       iounmap(data->regs);
+> +
+> +       /* Try to release the resource as well. */
+> +       if (of_address_to_resource(data->np, 0, &res))
+> +               return;
+> +
+> +       (void)release_mem_region(res.start, resource_size(&res));
+> +}
+
+Instead of having these three functions please inline them at the one call
+site.
+
+> +
+> +static struct clk_hw *ccu_pll_of_clk_hw_get(struct of_phandle_args *clks=
+pec,
+> +                                           void *priv)
+> +{
+> +       struct ccu_pll_data *data =3D priv;
+> +       struct ccu_pll *pll;
+> +       unsigned int clk_id;
+> +
+> +       clk_id =3D clkspec->args[0];
+> +       pll =3D ccu_pll_find_desc(data, clk_id);
+> +       if (IS_ERR(pll)) {
+> +               pr_info("Invalid PLL clock ID %d specified\n", clk_id);
+> +               return ERR_CAST(pll);
+> +       }
+> +
+> +       return ccu_pll_get_clk_hw(pll);
+> +}
+> +
+> +static int ccu_pll_clk_register(struct ccu_pll_data *data)
+> +{
+> +       int idx, ret;
+> +
+> +       for (idx =3D 0; idx < CCU_PLL_NUM; ++idx) {
+> +               const struct ccu_pll_info *info =3D &pll_info[idx];
+> +               struct ccu_pll_init_data init =3D {0};
+> +
+> +               init.id =3D info->id;
+> +               init.regs =3D data->regs + info->base;
+> +               init.parent_name =3D info->parent_name;
+> +               init.np =3D data->np;
+> +               init.flags =3D info->flags;
+> +
+> +               ret =3D of_property_read_string_index(data->np,
+> +                       "clock-output-names", init.id, &init.name);
+
+Do you need this property ever? It would be nice to not have it if
+possible.
+
+> +               if (ret)
+> +                       init.name =3D info->name;
+> +
+> +               data->plls[idx] =3D ccu_pll_hw_register(&init);
+> +               if (IS_ERR(data->plls[idx])) {
+> +                       ret =3D PTR_ERR(data->plls[idx]);
+> +                       pr_err("Couldn't register PLL hw '%s'\n",
+> +                               init.name);
+> +                       goto err_hw_unregister;
+> +               }
+> +       }
+> +
+> +       ret =3D of_clk_add_hw_provider(data->np, ccu_pll_of_clk_hw_get, d=
+ata);
+> +       if (ret) {
+> +               pr_err("Couldn't register PLL provider of '%s'\n",
+> +                       of_node_full_name(data->np));
+> +               goto err_hw_unregister;
+> +       }
+> +
+> +       return 0;
+> +
+> +err_hw_unregister:
+> +       for (--idx; idx >=3D 0; --idx)
+> +               ccu_pll_hw_unregister(data->plls[idx]);
+> +
+> +       return ret;
+> +}
+> +
+> +static __init void ccu_pll_init(struct device_node *np)
+> +{
+> +       struct ccu_pll_data *data;
+> +       int ret;
+> +
+> +       data =3D ccu_pll_create_data(np);
+> +       if (IS_ERR(data))
+> +               return;
+> +
+> +       ret =3D ccu_pll_request_regs(data);
+> +       if (ret)
+> +               goto err_free_data;
+> +
+> +       ret =3D ccu_pll_clk_register(data);
+> +       if (ret)
+> +               goto err_release_regs;
+> +
+> +       pr_info("CCU CPU/SATA/DDR/PCIe/Ethernet PLLs are initialized\n");
+
+Please don't have I'm alive probe messages at info level. Just slows
+down boot for developer comfort.
+
+> +
+> +       return;
+> +
+> +err_release_regs:
+> +       ccu_pll_release_regs(data);
+> +
+> +err_free_data:
+> +       ccu_pll_free_data(data);
+> +}
+> +CLK_OF_DECLARE(ccu_pll, "be,bt1-ccu-pll", ccu_pll_init);
+
+Any reason this can't be a platform device driver?
+
+> diff --git a/drivers/clk/baikal-t1/common.h b/drivers/clk/baikal-t1/commo=
+n.h
+> new file mode 100644
+> index 000000000000..07c8d67f5275
+> --- /dev/null
+> +++ b/drivers/clk/baikal-t1/common.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (C) 2019 BAIKAL ELECTRONICS, JSC
+> + *
+> + * Baikal-T1 CCU common methods.
+> + */
+> +#ifndef __CLK_BT1_COMMON_H__
+> +#define __CLK_BT1_COMMON_H__
+> +
+> +#include <linux/debugfs.h>
+> +#include <linux/io.h>
+> +
+> +#define CCU_GET_FLD(_name, _data) \
+> +       (((u32)(_data) & _name ## _MASK) >> _name ## _FLD)
+> +
+> +#define CCU_SET_FLD(_name, _data, _val) \
+> +       (((u32)(_data) & ~_name ## _MASK) | \
+> +       (((u32)(_val) << _name ## _FLD) & _name ## _MASK))
+> +
+> +#define CCU_DBGFS_REG(_name, _off)     \
+> +{                                      \
+> +       .name =3D _name,                  \
+> +       .offset =3D _off                  \
+> +}
+> +
+> +static inline u32 ccu_read(void __iomem *reg)
+> +{
+> +       return readl(reg);
+> +}
+> +
+> +static inline void ccu_write(void __iomem *reg, u32 data)
+> +{
+> +       writel(data, reg);
+> +}
+> +
+> +static inline void ccu_update(void __iomem *reg, u32 mask, u32 data)
+> +{
+> +       u32 old;
+> +
+> +       old =3D readl_relaxed(reg);
+> +       writel((old & ~mask) | (data & mask), reg);
+> +}
+
+Please just write the code in line as readl/writel/etc. This whole file
+doesn't look necessary.
