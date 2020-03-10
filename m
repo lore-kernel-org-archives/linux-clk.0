@@ -2,41 +2,76 @@ Return-Path: <SRS0=pXcS=43=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6429CC10F27
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 13:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B85C18E5A
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 14:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F7A21D7E
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 13:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54038208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Mar 2020 14:38:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TmPjz/lh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726390AbgCJNzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Mar 2020 09:55:10 -0400
-Received: from mga11.intel.com ([192.55.52.93]:1647 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbgCJNzK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Mar 2020 09:55:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 10 Mar 2020 06:55:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,537,1574150400"; 
-   d="scan'208";a="443171684"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga006.fm.intel.com with ESMTP; 10 Mar 2020 06:55:08 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D7525193; Tue, 10 Mar 2020 15:55:07 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1] clk: Fix trivia typo in comment exlusive => exclusive
-Date:   Tue, 10 Mar 2020 15:55:07 +0200
-Message-Id: <20200310135507.87959-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726622AbgCJOiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Mar 2020 10:38:10 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55800 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbgCJOiK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Mar 2020 10:38:10 -0400
+Received: by mail-wm1-f67.google.com with SMTP id 6so1669853wmi.5;
+        Tue, 10 Mar 2020 07:38:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TjTCBST6cpMsAppV8JBTTv+T9QV8G6JLefGJ8DTMePs=;
+        b=TmPjz/lhjnZcVRNn4y7bnt8Dk07ZJMZgLzzwpZhO0PigzBsVHOzApOPqb8iS68o/0k
+         68Pfb1OWY6pUMqTmla/Xpx059WGaOz7mrx3lZaN0Jc/Cww2Weu/4QuCe5D7IKW9wyapS
+         9bMaFcqPftQSMlzmOoApEsG8MtVqdbJPC8wuvEfiNcpXcJw4AJMnruYO4sHW6HiZy+W5
+         YP9bCAMQUnJQLxUnb57Xb/lZHz18dPYCVVBwQdPS/UOSTshMrArQpZYkI5UCmu3ubPwh
+         gdpLBWrqe6AU88bYyLlXipVH8XOjZKei/9XNKnWOY94jeRRHYHhFMUCFMs2qGWKFKtzc
+         L3WA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TjTCBST6cpMsAppV8JBTTv+T9QV8G6JLefGJ8DTMePs=;
+        b=YssoY7dhfl3vop8VPmwE/ozv1QW1CuJJuKfJIZSbGTHJCle7VZyJ2yZG0VOyKN8tZK
+         zZZocc/3VUmPcbVGT2meDBxw99NgNDws9jkSZVtgH9A9zBtsEyNzfoQMcFr2XdcUAX7E
+         NSZDiymUuL493XwVd60Ic4E0jt6aDXJ7bS8gBKGlOVMflAscuYrV3cBBjWqYJVvUim0B
+         GXsE922HKDmXmwtO4AQW1dwIYaPzkWM0TSHKWLmwZhyKQTo4V8vY1nF5gHK9/Vx+CzjI
+         +eFGUfT7VJZPtwRgRUuRmkf/yuYaOMyilws7br5vYmNOKuTf64wJmfRLohLNhEFzdety
+         vS3A==
+X-Gm-Message-State: ANhLgQ0rz23wpK8gOaM3iUB2gt2UPOh2hYG+6MBEutvuBAhlhv+GHp2m
+        kze4u/CBn7ZHBSgUMJJUvq4=
+X-Google-Smtp-Source: ADFU+vtljeoEU+yem2iyDmCFuSh/4804c3cfqoE81CpBPKgnGi1igq3KI2mh2HhVQsq/asf+qr2lkw==
+X-Received: by 2002:a7b:cb97:: with SMTP id m23mr1992564wmi.140.1583851087374;
+        Tue, 10 Mar 2020 07:38:07 -0700 (PDT)
+Received: from Ansuel-XPS.localdomain (host218-254-dynamic.53-79-r.retail.telecomitalia.it. [79.53.254.218])
+        by smtp.googlemail.com with ESMTPSA id c23sm4516611wme.39.2020.03.10.07.38.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Mar 2020 07:38:06 -0700 (PDT)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     sboyd@kernel.org
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: clk-rpm: add missing rpm clk for ipq806x
+Date:   Tue, 10 Mar 2020 15:37:56 +0100
+Message-Id: <20200310143756.244-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <sboyd@kernel.org>
+References: <sboyd@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -44,26 +79,94 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix trivia typo in comment exlusive => exclusive.
+Add missing definition of rpm clk for ipq806x soc
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+Acked-by: John Crispin <john@phrozen.org>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+ drivers/clk/qcom/clk-rpm.c                    | 35 +++++++++++++++++++
+ include/dt-bindings/clock/qcom,rpmcc.h        |  4 +++
+ 3 files changed, 40 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index f122e9911b57..39c59f063aa0 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -774,7 +774,7 @@ static void clk_core_rate_restore_protect(struct clk_core *core, int count)
-  * clk_rate_exclusive_get - get exclusivity over the clk rate control
-  * @clk: the clk over which the exclusity of rate control is requested
-  *
-- * clk_rate_exlusive_get() begins a critical section during which a clock
-+ * clk_rate_exclusive_get() begins a critical section during which a clock
-  * consumer cannot tolerate any other consumer making any operation on the
-  * clock which could result in a rate change or rate glitch. Exclusive clocks
-  * cannot have their rate changed, either directly or indirectly due to changes
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+index 944719bd586f..4bb2cbeff2b4 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmcc.txt
+@@ -15,6 +15,7 @@ Required properties :
+ 			"qcom,rpmcc-msm8916", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8974", "qcom,rpmcc"
+ 			"qcom,rpmcc-apq8064", "qcom,rpmcc"
++			"qcom,rpmcc-ipq806x", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8996", "qcom,rpmcc"
+ 			"qcom,rpmcc-msm8998", "qcom,rpmcc"
+ 			"qcom,rpmcc-qcs404", "qcom,rpmcc"
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index 9e3110a71f12..f71d228fd6bd 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -543,10 +543,45 @@ static const struct rpm_clk_desc rpm_clk_apq8064 = {
+ 	.num_clks = ARRAY_SIZE(apq8064_clks),
+ };
+ 
++/* ipq806x */
++DEFINE_CLK_RPM(ipq806x, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
++DEFINE_CLK_RPM(ipq806x, cfpb_clk, cfpb_a_clk, QCOM_RPM_CFPB_CLK);
++DEFINE_CLK_RPM(ipq806x, daytona_clk, daytona_a_clk, QCOM_RPM_DAYTONA_FABRIC_CLK);
++DEFINE_CLK_RPM(ipq806x, ebi1_clk, ebi1_a_clk, QCOM_RPM_EBI1_CLK);
++DEFINE_CLK_RPM(ipq806x, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
++DEFINE_CLK_RPM(ipq806x, sfpb_clk, sfpb_a_clk, QCOM_RPM_SFPB_CLK);
++DEFINE_CLK_RPM(ipq806x, nss_fabric_0_clk, nss_fabric_0_a_clk, QCOM_RPM_NSS_FABRIC_0_CLK);
++DEFINE_CLK_RPM(ipq806x, nss_fabric_1_clk, nss_fabric_1_a_clk, QCOM_RPM_NSS_FABRIC_1_CLK);
++
++static struct clk_rpm *ipq806x_clks[] = {
++	[RPM_APPS_FABRIC_CLK] = &ipq806x_afab_clk,
++	[RPM_APPS_FABRIC_A_CLK] = &ipq806x_afab_a_clk,
++	[RPM_CFPB_CLK] = &ipq806x_cfpb_clk,
++	[RPM_CFPB_A_CLK] = &ipq806x_cfpb_a_clk,
++	[RPM_DAYTONA_FABRIC_CLK] = &ipq806x_daytona_clk,
++	[RPM_DAYTONA_FABRIC_A_CLK] = &ipq806x_daytona_a_clk,
++	[RPM_EBI1_CLK] = &ipq806x_ebi1_clk,
++	[RPM_EBI1_A_CLK] = &ipq806x_ebi1_a_clk,
++	[RPM_SYS_FABRIC_CLK] = &ipq806x_sfab_clk,
++	[RPM_SYS_FABRIC_A_CLK] = &ipq806x_sfab_a_clk,
++	[RPM_SFPB_CLK] = &ipq806x_sfpb_clk,
++	[RPM_SFPB_A_CLK] = &ipq806x_sfpb_a_clk,
++	[RPM_NSS_FABRIC_0_CLK] = &ipq806x_nss_fabric_0_clk,
++	[RPM_NSS_FABRIC_0_A_CLK] = &ipq806x_nss_fabric_0_a_clk,
++	[RPM_NSS_FABRIC_1_CLK] = &ipq806x_nss_fabric_1_clk,
++	[RPM_NSS_FABRIC_1_A_CLK] = &ipq806x_nss_fabric_1_a_clk,
++};
++
++static const struct rpm_clk_desc rpm_clk_ipq806x = {
++	.clks = ipq806x_clks,
++	.num_clks = ARRAY_SIZE(ipq806x_clks),
++};
++
+ static const struct of_device_id rpm_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8660", .data = &rpm_clk_msm8660 },
+ 	{ .compatible = "qcom,rpmcc-apq8060", .data = &rpm_clk_msm8660 },
+ 	{ .compatible = "qcom,rpmcc-apq8064", .data = &rpm_clk_apq8064 },
++	{ .compatible = "qcom,rpmcc-ipq806x", .data = &rpm_clk_ipq806x },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, rpm_clk_match_table);
+diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
+index 8e3095720552..ae74c43c485d 100644
+--- a/include/dt-bindings/clock/qcom,rpmcc.h
++++ b/include/dt-bindings/clock/qcom,rpmcc.h
+@@ -37,6 +37,10 @@
+ #define RPM_XO_A0				27
+ #define RPM_XO_A1				28
+ #define RPM_XO_A2				29
++#define RPM_NSS_FABRIC_0_CLK			30
++#define RPM_NSS_FABRIC_0_A_CLK			31
++#define RPM_NSS_FABRIC_1_CLK			32
++#define RPM_NSS_FABRIC_1_A_CLK			33
+ 
+ /* SMD RPM clocks */
+ #define RPM_SMD_XO_CLK_SRC				0
 -- 
-2.25.1
+2.25.0
 
