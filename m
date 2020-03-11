@@ -2,70 +2,95 @@ Return-Path: <SRS0=7WK/=44=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6C1C10F25
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 07:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D212C10F27
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 08:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30B96208E4
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 07:12:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1583910771;
-	bh=c86VT5FpHpio5aGVvnNUNSuNXdICskgx/YVnnbeBvYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BMZuFQOzvOcQE/EJsZrqkby8NV8aI8YR8DK5iSOy6A/dxkrpcp/oycMajAZPTdeKV
-	 GXaz3cbLQIMhwn/qicyvFVMU3NICiSwwpqL1mCjBCvr7HH857tEQynOzb5MDiKJHDt
-	 aR42ajCIP6AZcACz9piPkDPgZtH9R8XvQSJTMMss=
+	by mail.kernel.org (Postfix) with ESMTP id 3787820873
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 08:08:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728146AbgCKHMu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Mar 2020 03:12:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbgCKHMu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Mar 2020 03:12:50 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64FAF21655;
-        Wed, 11 Mar 2020 07:12:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1583910770;
-        bh=c86VT5FpHpio5aGVvnNUNSuNXdICskgx/YVnnbeBvYs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jXbnu6+TTEJZqPKG4EjBUyEhzRF4u40qvs9WeYqHMGOTZgQkr/kwVIaJjcU/o3FGl
-         PTWzoUmJqHN3QMNfA3HR5pLY/QaQoqdMYjytG+ZbwUL9mh8YJpmbN72Q0cXpsGAUTy
-         w78Jnxaaj4J19EiLgOlTZohVkJjHn2bgf6TlFqRA=
-Date:   Wed, 11 Mar 2020 15:12:42 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
-        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH 1/4] clk: imx8mn: A53 core clock no need to be critical
-Message-ID: <20200311071241.GJ29269@dragon>
-References: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
+        id S1728584AbgCKII0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Mar 2020 04:08:26 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:38739 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728578AbgCKIIZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Mar 2020 04:08:25 -0400
+Received: by mail-ot1-f65.google.com with SMTP id i14so1013593otp.5;
+        Wed, 11 Mar 2020 01:08:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1ZCSe7QWfMOzQQ3PCkmW4sMD3ngbByjQtOhyC6jqIEY=;
+        b=iM3roAG2M2ins5K6ZLqiLBLvKa8k6suyJuAo7A90VOQsCzDRjDwAhI0aDL9nCdLY/O
+         xLrA+wqYix1XWO14tT5l+HDYMPd1/dJ1F4ghEwmRUPsxa4bYQAlUSFCmYEGIVZ7gxyMO
+         VshHOQ4cNHmPMTtKfSn6FkM404fAXTdpQRvbUlfDSfuwvNYpsafL+MBDiJxTY3b2LyJH
+         tvvcIXRp01xlbm9E5zyMYkIx5cWWaXHZznIhuUi5jIVQMT2fWMIonYl066qyY1RZr537
+         nO66+l2JthpIZ/bKL5RPOCcLqabIbyUR+GGwhIlSXXWA/dUtPqFVr/7YhIvaSobpKB0O
+         o/nQ==
+X-Gm-Message-State: ANhLgQ2rej+SaabC4LTQBohO1EKplV3lK3ZOQsFowp97CLctMyVbSTDR
+        HX7VzrV2DgDExJ0BfVkDwuA8CNhZpHwX3RqQjKA=
+X-Google-Smtp-Source: ADFU+vtdA3bMWi79K8mxJuFPVQLhN8IjOjgpxHdBtcYZn6uR2DlMZ9emkM1RqnXxSoanwu5YiJmYje8PvUuFj2dXYlY=
+X-Received: by 2002:a9d:1708:: with SMTP id i8mr1416001ota.250.1583914104997;
+ Wed, 11 Mar 2020 01:08:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200303094848.23670-1-geert+renesas@glider.be> <20200310205504.GA27288@bogus>
+In-Reply-To: <20200310205504.GA27288@bogus>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 11 Mar 2020 09:08:13 +0100
+Message-ID: <CAMuHMdXMSQtmJjmTnph5cKBLStCidzBij8giwvJszNxy1_yt9g@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Feb 25, 2020 at 04:49:11PM +0800, Anson Huang wrote:
-> 'A53_CORE' is just a mux and no need to be critical, being critical
-> will cause its parent clock always ON which does NOT make sense,
-> to make sure CPU's hardware clock source NOT being disabled during
-> clock tree setup, need to move the 'A53_SRC'/'A53_CORE' reparent
-> operations to after critical clock 'ARM_CLK' setup finished.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+On Tue, Mar 10, 2020 at 9:55 PM Rob Herring <robh@kernel.org> wrote:
+> On Tue,  3 Mar 2020 10:48:48 +0100, Geert Uytterhoeven wrote:
+> > Convert the Renesas Clock Pulse Generator / Module Standby and Software
+> > Reset Device Tree binding documentation to json-schema.
+> >
+> > Note that #reset-cells was incorrecty marked a required property for
+> > RZ/A2 before.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > To be queued in clk-renesas-for-v5.7.
+> >
+> > v2:
+> >   - Remove complex if-construct implementing per-SoC clocks/clock-names
+> >     constraints; list all possible clock-names upfront instead,
+> >   - Drop Clock Domain member example.
+> > ---
+> >  .../bindings/clock/renesas,cpg-mssr.txt       | 100 ---------------
+> >  .../bindings/clock/renesas,cpg-mssr.yaml      | 119 ++++++++++++++++++
+> >  2 files changed, 119 insertions(+), 100 deletions(-)
+> >  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+> >  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Applied all, thanks.
+Thanks, queued in renesas-devel for v5.7.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
