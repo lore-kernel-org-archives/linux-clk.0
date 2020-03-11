@@ -2,97 +2,116 @@ Return-Path: <SRS0=7WK/=44=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98D9DC10F27
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 05:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7867C10F25
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 06:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B42F2146E
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 05:13:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E754222C3
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Mar 2020 06:40:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1583908815;
+	bh=pmJS1KPAVu0tCjnfh13UknbuRkIWI610a6eXK2eKvFU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HmGEoo9aE3mpBxdRPXNgqrMnLRIiL3W1E70AlJjwrdYmjdkM2p8PUn6qA1ck78tHp
+	 tY/Ez4fnjLJ39MK1SWlk2rMVFYKqRbMkB99OEWF8pA6DXWhvhSVYscyS2o9rzHhgQz
+	 5Yu4Qg281UN6TMMl4M82VHhgyfnviRNv5vKeXDU0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbgCKFNy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Mar 2020 01:13:54 -0400
-Received: from smtprelay0019.hostedemail.com ([216.40.44.19]:42930 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726855AbgCKFNy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Mar 2020 01:13:54 -0400
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id 096A6180477B5;
-        Wed, 11 Mar 2020 05:07:04 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 9D5DF837F24C;
-        Wed, 11 Mar 2020 05:07:00 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: shake20_1fd8a6d1c3425
-X-Filterd-Recvd-Size: 2655
-Received: from joe-laptop.perches.com (unknown [47.151.143.254])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 11 Mar 2020 05:06:58 +0000 (UTC)
-From:   Joe Perches <joe@perches.com>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: [PATCH -next 010/491] ARM/SAMSUNG EXYNOS ARM ARCHITECTURES: Use fallthrough;
-Date:   Tue, 10 Mar 2020 21:51:24 -0700
-Message-Id: <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <cover.1583896344.git.joe@perches.com>
-References: <cover.1583896344.git.joe@perches.com>
+        id S1728247AbgCKGkP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Mar 2020 02:40:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55744 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725976AbgCKGkP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Mar 2020 02:40:15 -0400
+Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E2DB2192A;
+        Wed, 11 Mar 2020 06:40:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1583908814;
+        bh=pmJS1KPAVu0tCjnfh13UknbuRkIWI610a6eXK2eKvFU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=din59zveAKkT42o8gjyMV9c31EJn1iJ/B75t1hHffEOkhU4QFIcVZ6M7l40ltYyD0
+         4/axfTn//VT63Z/66gWFkte+SDZP2uiUoQdnywhYphWU3+2O7XRmpKd7YKwfnpVSew
+         hrKlx4q9/mJ8sfF1bHt4Mo7YHXlN+82wH0w214Wg=
+Date:   Wed, 11 Mar 2020 14:40:05 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        abel.vesa@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        fugang.duan@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH 1/4] clk: imx8mn: A53 core clock no need to be critical
+Message-ID: <20200311064005.GE29269@dragon>
+References: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1582620554-32689-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the various uses of fallthrough comments to fallthrough;
+On Tue, Feb 25, 2020 at 04:49:11PM +0800, Anson Huang wrote:
+> 'A53_CORE' is just a mux and no need to be critical, being critical
+> will cause its parent clock always ON which does NOT make sense,
 
-Done via script
-Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.1582230379.git.joe.com/
+I do not quite understand what problem this patch is trying to fix.  In
+the end, all the ancestor clocks of "arm", including "arm_a53_core" will
+still be ON, as "arm" has CLK_IS_CRITICAL flag.  What is the difference
+you are trying to make here?
 
-Signed-off-by: Joe Perches <joe@perches.com>
----
- drivers/clk/samsung/clk-s3c2443.c | 2 +-
- drivers/i2c/busses/i2c-s3c2410.c  | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Shawn
 
-diff --git a/drivers/clk/samsung/clk-s3c2443.c b/drivers/clk/samsung/clk-s3c2443.c
-index 5f30fe7..c7aba1e 100644
---- a/drivers/clk/samsung/clk-s3c2443.c
-+++ b/drivers/clk/samsung/clk-s3c2443.c
-@@ -387,7 +387,7 @@ void __init s3c2443_common_clk_init(struct device_node *np, unsigned long xti_f,
- 				ARRAY_SIZE(s3c2450_gates));
- 		samsung_clk_register_alias(ctx, s3c2450_aliases,
- 				ARRAY_SIZE(s3c2450_aliases));
--		/* fall through - as s3c2450 extends the s3c2416 clocks */
-+		fallthrough;	/* as s3c2450 extends the s3c2416 clocks */
- 	case S3C2416:
- 		samsung_clk_register_div(ctx, s3c2416_dividers,
- 				ARRAY_SIZE(s3c2416_dividers));
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index c98ef4c..dd1264 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -435,8 +435,7 @@ static int i2c_s3c_irq_nextbyte(struct s3c24xx_i2c *i2c, unsigned long iicstat)
- 		 * fall through to the write state, as we will need to
- 		 * send a byte as well
- 		 */
--		/* Fall through */
--
-+		fallthrough;
- 	case STATE_WRITE:
- 		/*
- 		 * we are writing data to the device... check for the
--- 
-2.24.0
-
+> to make sure CPU's hardware clock source NOT being disabled during
+> clock tree setup, need to move the 'A53_SRC'/'A53_CORE' reparent
+> operations to after critical clock 'ARM_CLK' setup finished.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx8mn.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+> index 83618af..0bc7070 100644
+> --- a/drivers/clk/imx/clk-imx8mn.c
+> +++ b/drivers/clk/imx/clk-imx8mn.c
+> @@ -428,7 +428,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+>  	hws[IMX8MN_CLK_GPU_SHADER_DIV] = hws[IMX8MN_CLK_GPU_SHADER];
+>  
+>  	/* CORE SEL */
+> -	hws[IMX8MN_CLK_A53_CORE] = imx_clk_hw_mux2_flags("arm_a53_core", base + 0x9880, 24, 1, imx8mn_a53_core_sels, ARRAY_SIZE(imx8mn_a53_core_sels), CLK_IS_CRITICAL);
+> +	hws[IMX8MN_CLK_A53_CORE] = imx_clk_hw_mux2("arm_a53_core", base + 0x9880, 24, 1, imx8mn_a53_core_sels, ARRAY_SIZE(imx8mn_a53_core_sels));
+>  
+>  	/* BUS */
+>  	hws[IMX8MN_CLK_MAIN_AXI] = imx8m_clk_hw_composite_critical("main_axi", imx8mn_main_axi_sels, base + 0x8800);
+> @@ -559,15 +559,15 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+>  
+>  	hws[IMX8MN_CLK_DRAM_ALT_ROOT] = imx_clk_hw_fixed_factor("dram_alt_root", "dram_alt", 1, 4);
+>  
+> -	clk_hw_set_parent(hws[IMX8MN_CLK_A53_SRC], hws[IMX8MN_SYS_PLL1_800M]);
+> -	clk_hw_set_parent(hws[IMX8MN_CLK_A53_CORE], hws[IMX8MN_ARM_PLL_OUT]);
+> -
+>  	hws[IMX8MN_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
+>  					   hws[IMX8MN_CLK_A53_CORE]->clk,
+>  					   hws[IMX8MN_CLK_A53_CORE]->clk,
+>  					   hws[IMX8MN_ARM_PLL_OUT]->clk,
+>  					   hws[IMX8MN_CLK_A53_DIV]->clk);
+>  
+> +	clk_hw_set_parent(hws[IMX8MN_CLK_A53_SRC], hws[IMX8MN_SYS_PLL1_800M]);
+> +	clk_hw_set_parent(hws[IMX8MN_CLK_A53_CORE], hws[IMX8MN_ARM_PLL_OUT]);
+> +
+>  	imx_check_clk_hws(hws, IMX8MN_CLK_END);
+>  
+>  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
+> -- 
+> 2.7.4
+> 
