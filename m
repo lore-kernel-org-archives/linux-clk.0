@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB21EC10DCE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0FDC10DCE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:20:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7651720716
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 903D820716
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584055074;
-	bh=QepFjxAZCdw4rXsCdCvk71ljF1gNrapkk/Ira5TscFM=;
+	s=default; t=1584055243;
+	bh=9E35KCRd/EfzCrttVB5IYp7B65h+vEFgqukjywwzyhE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ogRH/NqLrVdMF0v/rR+89eQIOQpnKviD1fXfpyV8G3NDhmK0geBu36QEV4h6aLw1N
-	 biLcsMswsFF4m6Iv4H6sSkTi21821YlEuPkWMsH/DpUsTm26CtagjQTLS4TcuzREbk
-	 2kgpUXqpWqwqrG8ykqgzaOMB2JSpMd9Pd2ttxnqc=
+	b=flqM90Sb+9T47ajb0rddiaCBt1GtzoEZEeeKvC3FkUwM9byNOjjVAoAP7DNH7wavQ
+	 PQn0ZEP97nvff7r5ybfqW5g2fHxa8DDcxREq7LxJBxFdc56B2relh8fp0ySDwhsvVV
+	 w2cc3+V/D+cl52xc0/ZH2oHhxSYgknHyoiOxifNU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbgCLXRy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 19:17:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60288 "EHLO mail.kernel.org"
+        id S1726749AbgCLXUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 19:20:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgCLXRy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 19:17:54 -0400
+        id S1726710AbgCLXUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 19:20:42 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85E8520637;
-        Thu, 12 Mar 2020 23:17:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 578EF20637;
+        Thu, 12 Mar 2020 23:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584055073;
-        bh=QepFjxAZCdw4rXsCdCvk71ljF1gNrapkk/Ira5TscFM=;
+        s=default; t=1584055242;
+        bh=9E35KCRd/EfzCrttVB5IYp7B65h+vEFgqukjywwzyhE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OrSejX72s2mt+UCjcjs8je8y7xAEnQCUR0GLcQcvO9Y34/g+JnXjtwETDdF+ccoNZ
-         N5eBxqY77EtNebU2RteYBBDHDFUkEMPC9f5cx0FD86iGsJtY95jtrzzHqttpXuh7+J
-         kyU007r5eukTSF+SnR4t1fzcrtBOP6b98stixg10=
+        b=IyvxfZYLS+HqSOIrCJs0mPn4vekZmm9XxasVT4/u2/voEtUDKdQunMgRhgtoCatKt
+         e9cGgHN7rPYhUQ0hadh9iTwcB7SR3BAQB0+unexyt7Dz/jLY8mgeEwn8sdUIvRa/qo
+         yq84dhFrEV0RIqvGie0EEkw0pSp3+XvJzTJ3fe1I=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1c47c839fda93460994d37b4c851d805a3282d5f.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <1c47c839fda93460994d37b4c851d805a3282d5f.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 09/89] clk: bcm: rpi: Use clk_hw_register for pllb_arm
+In-Reply-To: <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH 11/89] clk: bcm: rpi: Make sure pllb_arm is removed
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
@@ -56,24 +56,22 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org
 To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 16:17:52 -0700
-Message-ID: <158405507267.149997.9253782069794352377@swboyd.mtv.corp.google.com>
+Date:   Thu, 12 Mar 2020 16:20:41 -0700
+Message-ID: <158405524157.149997.3910944815982950564@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:11)
-> The pllb_arm clock is defined as a fixed factor clock with the pllb clock
-> as a parent. However, all its configuration is entirely static, and thus =
-we
-> don't really need to call clk_hw_register_fixed_factor but can simply call
-> clk_hw_register with a static clk_fixed_factor structure.
-
-Please add () to things like clk_hw_register_fixed_factor() and
-clk_hw_register().
-
+Quoting Maxime Ripard (2020-02-24 01:06:13)
+> The pllb_arm clock was created at probe time, but was never removed if
+> something went wrong later in probe, or if the driver was ever removed fr=
+om
+> the system.
+>=20
+> Now that we are using clk_hw_register, we can just use its managed variant
+> to take care of that for us.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
