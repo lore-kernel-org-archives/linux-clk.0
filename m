@@ -6,135 +6,117 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C64CC10DCE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 128C5C1975A
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5263E20716
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:13:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA4152072F
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584054838;
-	bh=KdJ376DrupqSBe4hSilpFPULBV8+maazUojKqMfa2Hs=;
+	s=default; t=1584054889;
+	bh=9wDFf+oPT1U99O9sM6O9KnkAPcMBEuhgp2SaIbrm4eE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Dc8PtJPQnTGn3ncng9w4aYmYZJK/PyioixPDgnMGbCtJodEnejaIICWG0gUVP+PcO
-	 6xFDmIefk4VVwpxBpOnDeQ5tDaIRk6+gcNiKY1WYiJe9UwOawYw1qzbjVsgCMx1lCS
-	 LWsLEQd3oS+zD+f+IifF4mDPHigM+ai5n9cqkdho=
+	b=stTYEcCv5oP0lUQGSMW7JX6aQJhdDL6WdWO84SRgSnQv8HYRDZbmFLcOl0g+W+xUW
+	 npHxgWLJCF2lvnt7qnii6LDunschaSyfh3eHPB2K+H1zRYqvfPqxJEGSDP5QGnrIgp
+	 quEAIjF+qFyVeLgWMyEC8wjCl1vg/9t+yMdckjXA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgCLXN6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 19:13:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59326 "EHLO mail.kernel.org"
+        id S1726814AbgCLXOt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 19:14:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726608AbgCLXN5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 19:13:57 -0400
+        id S1726608AbgCLXOt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 19:14:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC2D3206F7;
-        Thu, 12 Mar 2020 23:13:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6984B20637;
+        Thu, 12 Mar 2020 23:14:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584054837;
-        bh=KdJ376DrupqSBe4hSilpFPULBV8+maazUojKqMfa2Hs=;
+        s=default; t=1584054888;
+        bh=9wDFf+oPT1U99O9sM6O9KnkAPcMBEuhgp2SaIbrm4eE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OPQZ9/crlt1D8ScrMECNiBOu3Ewxf1OnMJkB6zbrAZUkT4KA0/XSQZ7E+XiLRoIfV
-         CtME35UK548pS59QOb5MmyuPCYA7AxrPTGjW6qQ6ZPj2wTNFRaQY4DFbg0bNE2EKMr
-         AGmSq5wEHbayZYhgGVSng7s7xs0zFYDuiL3S8eZI=
+        b=eBjMpPYNRMtMMOO+Je+Uv9X+IIIE/u9hx+i+qeMpUqYR0USWNjiHUCPdOnXJmifhY
+         8CEgsN6jvV0Xl1MU+3wXgqt6Nh6+OKLhkwAiSoR9Zx7XJ6fycaasZgA5tueX31XFWb
+         kPu34sZ/q/rBoiU42hawDEleNmQOjM4HUqz/sdWU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ab03d578775df76c12e1dcff5d5cc5c1eb4d6fa7.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <ab03d578775df76c12e1dcff5d5cc5c1eb4d6fa7.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 05/89] clk: Return error code when of provider pointer is NULL
+In-Reply-To: <20200225181654.GA694@bogus>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <9166f3acdc2a64e3f3ca1cd2e283005ee2df37c9.1582533919.git-series.maxime@cerno.tech> <20200225181654.GA694@bogus>
+Subject: Re: [PATCH 06/89] dt-bindings: clock: Add a binding for the RPi Firmware clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>, devicetree@vger.kernel.org,
         Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 16:13:56 -0700
-Message-ID: <158405483605.149997.16173757299414738003@swboyd.mtv.corp.google.com>
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+To:     Maxime Ripard <maxime@cerno.tech>, Rob Herring <robh@kernel.org>
+Date:   Thu, 12 Mar 2020 16:14:47 -0700
+Message-ID: <158405488765.149997.7323586314054590516@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:07)
-> The clock framework DT provider helpers don't check the pointers in the
-> array registered by the clock provider before returning it.
+Quoting Rob Herring (2020-02-25 10:16:54)
+> On Mon, Feb 24, 2020 at 10:06:08AM +0100, Maxime Ripard wrote:
+> > The firmare running on the RPi VideoCore can be used to discover and
+> > change the various clocks running in the BCM2711. Since devices will
+> > need to use them through the DT, let's add a pretty simple binding.
+> >=20
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  Documentation/devicetree/bindings/clock/raspberrypi,firmware-clocks.ya=
+ml | 39 +++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 39 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/raspberrypi=
+,firmware-clocks.yaml
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/clock/raspberrypi,firmwa=
+re-clocks.yaml b/Documentation/devicetree/bindings/clock/raspberrypi,firmwa=
+re-clocks.yaml
+> > new file mode 100644
+> > index 000000000000..d37bc311321d
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/raspberrypi,firmware-cloc=
+ks.yaml
+> > @@ -0,0 +1,39 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/raspberrypi,firmware-clocks.y=
+aml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: RaspberryPi Firmware Clocks Device Tree Bindings
+> > +
+> > +maintainers:
+> > +  - Maxime Ripard <mripard@kernel.org>
+> > +
+> > +properties:
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  compatible:
+> > +    const: raspberrypi,firmware-clocks
+> > +
+> > +  raspberrypi,firmware:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description: >
+> > +      Phandle to the mailbox node to communicate with the firmware.
 >=20
-> This means that if the array is sparse, we will end up returning a NULL
-> pointer while the caller expects an error pointer, resulting in a crash.
->=20
-> Let's test the pointer returned and properly return an error if the point=
-er
-> is NULL.
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/clk.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index f0f2b599fd7e..8532b5ed1060 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4318,13 +4318,18 @@ struct clk *of_clk_src_onecell_get(struct of_phan=
-dle_args *clkspec, void *data)
->  {
->         struct clk_onecell_data *clk_data =3D data;
->         unsigned int idx =3D clkspec->args[0];
-> +       struct clk *clk;
-> =20
->         if (idx >=3D clk_data->clk_num) {
->                 pr_err("%s: invalid clock index %u\n", __func__, idx);
->                 return ERR_PTR(-EINVAL);
->         }
-> =20
-> -       return clk_data->clks[idx];
-> +       clk =3D clk_data->clks[idx];
-> +       if (!clk)
+> Can't this be a child node of the phandle instead? Or just add=20
+> '#clock-cells' to the firmware node.
 
-NULL is a valid clk. That should keep working and not be overriden with
-an error pointer. If you want to return an error pointer either fill it
-in with an error pointer or write your own version of this.
-
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       return clk;
->  }
->  EXPORT_SYMBOL_GPL(of_clk_src_onecell_get);
-> =20
-> @@ -4333,13 +4338,18 @@ of_clk_hw_onecell_get(struct of_phandle_args *clk=
-spec, void *data)
->  {
->         struct clk_hw_onecell_data *hw_data =3D data;
->         unsigned int idx =3D clkspec->args[0];
-> +       struct clk_hw *hw;
-> =20
->         if (idx >=3D hw_data->num) {
->                 pr_err("%s: invalid index %u\n", __func__, idx);
->                 return ERR_PTR(-EINVAL);
->         }
-> =20
-> -       return hw_data->hws[idx];
-> +       hw =3D hw_data->hws[idx];
-> +       if (!hw)
-
-And this one is the same. We let NULL be returned so that it can be
-returned as a NULL pointer to the caller if desired. That indicates a
-clk that does nothing when used.
-
-> +               return ERR_PTR(-ENODEV);
-> +
-> +       return hw;
->  }
->  EXPORT_SYMBOL_GPL(of_clk_hw_onecell_get);
+Yeah, just add the clock-cells to the firmware node unless that doesn't
+work for some reason?
