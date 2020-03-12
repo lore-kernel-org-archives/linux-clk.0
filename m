@@ -2,116 +2,104 @@ Return-Path: <SRS0=t6+W=45=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8A51C2BB1D
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 15:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A0BC1975A
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 19:09:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE9B2073B
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 15:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584026530;
-	bh=ClseKSeZkNswqOfyPP5fB9Bz024dxAKohS7j7Z+0eMA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Z2+AQtPeM4K9zJA4zt8h4215WK2VHwFVMbRZT/zuSs7Wot3HvtxfIyhzHps//Q2qS
-	 9mzpWZNjQZscmRj8zQzpXGpNl8ubvIhPduDTRweFTdPRa99Y/pmKsHRRsHXdytynA6
-	 d6hlInEDkLkTsZ9K08NlwEyGWJ2fH+vQsQJAL+ro=
+	by mail.kernel.org (Postfix) with ESMTP id C1312206EB
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 19:09:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbgCLPWH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 11:22:07 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36030 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbgCLPWH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Mar 2020 11:22:07 -0400
-Received: by mail-oi1-f194.google.com with SMTP id k18so5847911oib.3;
-        Thu, 12 Mar 2020 08:22:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=a6WnhHW3Np3QbKKjKxFHHPr40yxHHv0stzGtOBzaVLc=;
-        b=Ajzy88o1z1uZ1QmCTbV542KMoeGco9C9ZSSv6fE9nqI2LVzGy6N5CMGl4g+NSw78S9
-         zpTcFXe8LmZnprcYyLd2Ab6cAMZuvP9gWTb1L5BOO6tW9dx5HnVP5fSJ7j03bl93T2Ln
-         tmhns6S13/C14644ahuAWCdmiIL8LJ5mB/gOz9AIj+NfmyLXqhbLOmJCqxZehg1bY+2c
-         gT1K867oAoR8wFhgwW2wN2w+2TCMDsLZAQt3AwabTDXwyt2QTDVgYZvR1wrznU3THEuV
-         t5gNCT/GnHFuDznuRp+3QsNMZCGmW0HiV4nuKugnvHvda2RHIVW0ppmvvLxLcQKUD5/z
-         Dr+w==
-X-Gm-Message-State: ANhLgQ1WsTo4pVhUWwaxqjDJy4A9MnZG7JPoKBQHKq9OdO3Oee37S9yQ
-        GwmyYPMIWHcACnKNUm/5yw==
-X-Google-Smtp-Source: ADFU+vsZYyNPazIaY4y6ozlG69lisQb63cqMqP+Ill41cx5dK6OIRcqAtvQNyW37X+H801eBMb1U7g==
-X-Received: by 2002:a05:6808:b1c:: with SMTP id s28mr3046470oij.2.1584026526006;
-        Thu, 12 Mar 2020 08:22:06 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a22sm10865950oto.45.2020.03.12.08.22.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Mar 2020 08:22:05 -0700 (PDT)
-Received: (nullmailer pid 17075 invoked by uid 1000);
-        Thu, 12 Mar 2020 15:22:03 -0000
-Date:   Thu, 12 Mar 2020 10:22:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     mark.rutland@arm.com, ck.hu@mediatek.com, p.zabel@pengutronix.de,
-        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
-        Allison Randal <allison@lohutok.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>, wens@csie.org,
-        linux-media@vger.kernel.org, sean.wang@mediatek.com,
-        hsinyi@chromium.org, rdunlap@infradead.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Seiya Wang <seiya.wang@mediatek.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-arm-kernel@lists.infradead.org, matthias.bgg@kernel.org,
-        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-        frank-w@public-files.de, devicetree@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        linux-kernel@vger.kernel.org, mtk01761 <wendell.lin@mediatek.com>,
-        Richard Fontana <rfontana@redhat.com>
-Subject: Re: [PATCH v12 2/5] dt-bindings: mediatek: Update mmsys binding to
- reflect it is a system controller
-Message-ID: <20200312152203.GA15635@bogus>
-References: <20200311165322.1594233-1-enric.balletbo@collabora.com>
- <20200311165322.1594233-3-enric.balletbo@collabora.com>
+        id S1726469AbgCLTJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 15:09:13 -0400
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:59557 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725268AbgCLTJN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Mar 2020 15:09:13 -0400
+Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 12 Mar 2020 12:09:12 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg02-sd.qualcomm.com with ESMTP; 12 Mar 2020 12:09:12 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 8E90D4B3B; Thu, 12 Mar 2020 12:09:12 -0700 (PDT)
+Date:   Thu, 12 Mar 2020 12:09:12 -0700
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 01/12] clk: pwm: Use 64-bit division function
+Message-ID: <20200312190859.GA19605@codeaurora.org>
+References: <cover.1583889178.git.gurus@codeaurora.org>
+ <338966686a673c241905716c90049993e7bb7d6a.1583889178.git.gurus@codeaurora.org>
+ <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
+ <20200312020938.GA14827@codeaurora.org>
+ <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200311165322.1594233-3-enric.balletbo@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 11, 2020 at 05:53:19PM +0100, Enric Balletbo i Serra wrote:
-> The mmsys system controller is not only a pure clock controller, so
-> update the binding documentation to reflect that apart from providing
-> clocks, it also provides routing and miscellaneous control registers.
+On Thu, Mar 12, 2020 at 09:14:09AM +0000, David Laight wrote:
+> From: Guru Das Srinagesh
+> > Sent: 12 March 2020 02:10
+> > On Wed, Mar 11, 2020 at 04:58:24PM +0000, David Laight wrote:
+> > > From: Guru Das Srinagesh
+> > > > Sent: 11 March 2020 01:41
+> > > >
+> > > > Since the PWM framework is switching struct pwm_args.period's datatype
+> > > > to u64, prepare for this transition by using div64_u64 to handle a
+> > > > 64-bit divisor.
+> > > >
+> ...
+> > > > --- a/drivers/clk/clk-pwm.c
+> > > > +++ b/drivers/clk/clk-pwm.c
+> > > > @@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
+> > > >  	}
+> > > >
+> > > >  	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+> > > > -		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
+> > > > +		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
+> > >
+> > > That cannot be needed, a 32 bit division is fine.
+> > 
+> > Could you please explain why? I think the use of this function is
+> > warranted in order to handle the division properly with a 64-bit
+> > divisor.
+> ...
+> > > I'd assign pargs.period to an 'unsigned int' variable
+> > > prior to the division (I hate casts - been bitten by them in the past.).
+> > 
+> > Wouldn't this truncate the 64-bit value? The intention behind this patch
+> > is to allow the processing of 64-bit values in full.
 > 
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Reviewed-by: CK Hu <ck.hu@mediatek.com>
-> ---
-> 
-> Changes in v12: None
-> Changes in v10:
-> - Update the binding documentation for the mmsys system controller.
-> 
-> Changes in v9: None
-> Changes in v8: None
-> Changes in v7: None
-> 
->  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt    | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
+> You are dividing a 32bit constant by a value.
+> If pargs.period is greater than 2^32 the result is zero.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks for the explanation. 
+
+> I think you divide by 'fixed_rate' a bit later on - better not be zero.
+
+Good point, but this issue exists with or without this patch, and fixing
+it is beyond this patch's scope.
+
+Just to check if this patch can be dropped, I tested out compilation
+with this patch reverted and there were no errors, so I'm leaning
+towards dropping this patch unless you have any further comments on how
+to proceed.
+
+Thank you.
+
+Guru Das.
