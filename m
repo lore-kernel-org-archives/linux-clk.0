@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0FDC10DCE
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66684C1975A
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903D820716
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E8C8206F1
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 23:21:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584055243;
-	bh=9E35KCRd/EfzCrttVB5IYp7B65h+vEFgqukjywwzyhE=;
+	s=default; t=1584055266;
+	bh=sjbzlgfG0M7ByXrwtWMDuZpQMY36kbz6RtWjf+35/zI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=flqM90Sb+9T47ajb0rddiaCBt1GtzoEZEeeKvC3FkUwM9byNOjjVAoAP7DNH7wavQ
-	 PQn0ZEP97nvff7r5ybfqW5g2fHxa8DDcxREq7LxJBxFdc56B2relh8fp0ySDwhsvVV
-	 w2cc3+V/D+cl52xc0/ZH2oHhxSYgknHyoiOxifNU=
+	b=WXUGMQHBiR89Sser+0QfBpuQ8eG9Y31Yi7DrLLFUXXYQEtUPTRv8cyUV2Pz4T7fbF
+	 yZzZ4laND0xQy1ugy2jEKoLImFnRRtMg4ILWBl8NDBGypT3os3W5vjXgfxKKlwAS3h
+	 0LNf7ftlCXR5oGqjKK8+Cx8nP1dSJ+zhldfNtBaQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbgCLXUn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 19:20:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33748 "EHLO mail.kernel.org"
+        id S1726832AbgCLXVG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 19:21:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbgCLXUm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 19:20:42 -0400
+        id S1726710AbgCLXVF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 19:21:05 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 578EF20637;
-        Thu, 12 Mar 2020 23:20:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DB3020637;
+        Thu, 12 Mar 2020 23:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584055242;
-        bh=9E35KCRd/EfzCrttVB5IYp7B65h+vEFgqukjywwzyhE=;
+        s=default; t=1584055265;
+        bh=sjbzlgfG0M7ByXrwtWMDuZpQMY36kbz6RtWjf+35/zI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IyvxfZYLS+HqSOIrCJs0mPn4vekZmm9XxasVT4/u2/voEtUDKdQunMgRhgtoCatKt
-         e9cGgHN7rPYhUQ0hadh9iTwcB7SR3BAQB0+unexyt7Dz/jLY8mgeEwn8sdUIvRa/qo
-         yq84dhFrEV0RIqvGie0EEkw0pSp3+XvJzTJ3fe1I=
+        b=LdQA6bv+ggc65ar4RKV9KiEkNkg8VfUntIZxoeg89qMN7G9jB8yZQ+iCfxZOs04Yk
+         2+Dz8rnMx+V94kttfsjdsiIyqJmYGkgPB7QdXNWYz2gLnlFesOvI095Z4PCzh5Zbmq
+         o4nbWepq7FwftmfJLWN/TodqrZB1SvFEuFSAXxQ4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <5571315e0aa8c8af02ad61cb396137707d4b6da4.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 11/89] clk: bcm: rpi: Make sure pllb_arm is removed
+In-Reply-To: <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH 12/89] clk: bcm: rpi: Remove pllb_arm_lookup global pointer
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
@@ -56,22 +56,20 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org
 To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 16:20:41 -0700
-Message-ID: <158405524157.149997.3910944815982950564@swboyd.mtv.corp.google.com>
+Date:   Thu, 12 Mar 2020 16:21:04 -0700
+Message-ID: <158405526432.149997.18229341448233214911@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:13)
-> The pllb_arm clock was created at probe time, but was never removed if
-> something went wrong later in probe, or if the driver was ever removed fr=
-om
-> the system.
+Quoting Maxime Ripard (2020-02-24 01:06:14)
+> The pllb_arm_lookup pointer in the struct raspberrypi_clk is not used for
+> anything but to store the returned pointer to clkdev_hw_create, and is not
+> used anywhere else in the driver.
 >=20
-> Now that we are using clk_hw_register, we can just use its managed variant
-> to take care of that for us.
+> Let's remove that global pointer from the structure.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
