@@ -5,47 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAE0C1975A
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 10:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C268AC10DCE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 10:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C24B72072F
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 10:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93ABF2072F
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Mar 2020 10:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ezAXEEuO"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="g2wAdDm3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbgCLK1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 06:27:14 -0400
-Received: from mail-eopbgr60061.outbound.protection.outlook.com ([40.107.6.61]:27203
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        id S1726851AbgCLK1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 06:27:34 -0400
+Received: from mail-db8eur05on2068.outbound.protection.outlook.com ([40.107.20.68]:47311
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726841AbgCLK1N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 06:27:13 -0400
+        id S1727036AbgCLK1d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 06:27:33 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Be7Jej0sWiogwxVVLTJD30mY2k8yUPR1EnHgmxR2uw3yo4iY+FLW3ky4semrOesiTXcePovhAOiUxPkTgzXnurpGSFmG+urU9vZYPUyp7rW0idsg+v8TQUBZ5tIKPMH2WeNMAJJhDLlSCk0iuKwFePGMFl3lfzj8yXf+6doqRZHVsZnMeeTTrmfrTBPLQQu2TrmZy0qB6B4DdlQdai4/j0nRlIC8YBYlPYsvOLtxFAj0R7NeJg749zi/yZxNV65XcUAJf4wa9J3QXUxInxmy1dPg92V0jWlKPeJ9dLqV5HZRSErh9GzcVQoYbg3lNRtwWhotZ3Ul4ZtpYyEKREeaXA==
+ b=fkfieCfh6kv9Xp4uM0D6L+IEKCHazi/edjttLOgbYOrHLiSePQXAaGaD9Aa9HYlxpSl+14y3kMtBOUvjFamEhlYh7LfT7BGKwUP/ayGyB0thkExVJWJtUwYGUHcr2+v7jshxroB3t9BWZajDy+PwZIsRlFr1ELvNyG8NCUuG7/ZjN92ugpJE25s95WMvFUVnwEgPbk8s0ohbfMgzoTrXVIQWRbybFyiIODhooBfmpdReR0R4I3cpwgk0eHRsz/+CsiIiLeTsKvWw8t6towjDUxA9zBVoH7LG2qzAIEHmpEURt+eYngR2PIGqpBa9RYjJrvfVhyOZuLZjI2hdWHNhvA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPM1nbgdwcb8xtaL+MbpVwbLO8aYAEbl3CkZO/v7p+A=;
- b=PGxMDTGmnH55nls58Hv60fx3kYmXSpAPfnz3Q8BKtOFGZHfKE/HJpn9p5DWtmKhPn0hYKPxSv2ohbvLF7X+hWtRn7hosIJBPwyua4T60JOLKBluIJ0z8ciOpbRM5xcWNDf6rbk6geFwwfeZDcFAw9aW7BLOzHWgdKk0C6LDqr4tMleHQHIoBJvKc2xX+tzSzzAJJHa8FVDJAM91pD66B0ZcDCqDNSa+0mI3NPPUdVn9YA8UV3p/BFRySbdUHIYxuse98hs4M9oPUXpRGEk4RdbhN601e/I/4ucNdg1hotIV2d72hO4t7hBet04EZ4cyF+rtzmQEhAMSDU6mdXJRcQg==
+ bh=XitpZMODXlBhzhhdUcIvaO6eQ0Sq0BCK7S0mQufagZY=;
+ b=h4pxOm1IvU6wqqFuuquhZOFqI4cphxFKgxZc803Jrx+cefUWaIWQC/87/lsMyxNPFNtogWYmFQzHi3MZE6hvwtiP9nY0kGsaouThbeH7JBbGtXIIR1hT1Klq16X5aZWAoz2t2d+gekiHYwGsIvkDfdsabrLAQc1Xkyz0MqNDLYf+zxGgxQDSFt2m573PO72SIyagIy0ckHafWYSELMCuTIa942otT+ZIIAiUTqku21M9ePm/xjIXlRrgJUCAKtdCzbFjdoWY/TTnS1yYIRJff5hRxfi+MNKeXlKqsfyheD+FJUpkHVk3a9h4s1mSNt0OAJ4tdeCMCrnTXzI6UAosTQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IPM1nbgdwcb8xtaL+MbpVwbLO8aYAEbl3CkZO/v7p+A=;
- b=ezAXEEuOb0T9EfDNlqhdCVe1dOqzj7cmqwB0bTf/iMvnBElVBdeI1qFzUEIlERTtP60bEKd69XMsWnofAVT5/nd7kxzpO2ImqkLMjx7+IfokSBGzWq6hMZvl9Q31meipMAUCIEpK1rJbiefabvkskE1GEwm9S5rteRLXldGc7Zs=
+ bh=XitpZMODXlBhzhhdUcIvaO6eQ0Sq0BCK7S0mQufagZY=;
+ b=g2wAdDm3e89k4diM+BfS5sOzkqJr0OLeahi5t08s2unPh6luDj3JW24sALDdcRTJZ2WV5WidyNfyRtjkUvXVUYoGL/TS+14hbuDlrRqy/HK3n5JNTP/5uPC01oSMvf5iuVYWwGPgk+/9DZhH2q37Og/fDP4dpyPb3pSP0MPIUew=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=peng.fan@nxp.com; 
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4195.eurprd04.prod.outlook.com (52.134.92.151) with Microsoft SMTP
+ AM0PR04MB7171.eurprd04.prod.outlook.com (10.186.130.205) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.14; Thu, 12 Mar 2020 10:26:45 +0000
+ 15.20.2793.15; Thu, 12 Mar 2020 10:27:27 +0000
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Thu, 12 Mar 2020
- 10:26:45 +0000
+ 10:27:27 +0000
 From:   peng.fan@nxp.com
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
         leonard.crestez@nxp.com, sboyd@kernel.org, abel.vesa@nxp.com
@@ -56,9 +56,9 @@ Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
         andrew.smirnov@gmail.com, agx@sigxcpu.org, angus@akkea.ca,
         heiko@sntech.de, fugang.duan@nxp.com, linux-clk@vger.kernel.org,
         Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 02/10] clk: imx8m: drop clk_hw_set_parent for A53
-Date:   Thu, 12 Mar 2020 18:19:36 +0800
-Message-Id: <1584008384-11578-3-git-send-email-peng.fan@nxp.com>
+Subject: [PATCH V2 08/10] clk: imx: add imx8m_clk_hw_composite_bus
+Date:   Thu, 12 Mar 2020 18:19:42 +0800
+Message-Id: <1584008384-11578-9-git-send-email-peng.fan@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
 References: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
@@ -68,33 +68,33 @@ X-ClientProxiedBy: SG2PR03CA0113.apcprd03.prod.outlook.com
  (2603:10a6:208:70::15)
 MIME-Version: 1.0
 X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0113.apcprd03.prod.outlook.com (2603:1096:4:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 10:26:38 +0000
+Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0113.apcprd03.prod.outlook.com (2603:1096:4:91::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2835.7 via Frontend Transport; Thu, 12 Mar 2020 10:27:19 +0000
 X-Mailer: git-send-email 2.7.4
 X-Originating-IP: [119.31.174.66]
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 703d7b1d-f90c-49a4-5e88-08d7c66fdcfa
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4195:|AM0PR04MB4195:
+X-MS-Office365-Filtering-Correlation-Id: ada521f3-d97f-43f5-d811-08d7c66ff53c
+X-MS-TrafficTypeDiagnostic: AM0PR04MB7171:|AM0PR04MB7171:
 X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB4195AD49576751F8C3F7401F88FD0@AM0PR04MB4195.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:2582;
+X-Microsoft-Antispam-PRVS: <AM0PR04MB7171B30D2B583325B989773188FD0@AM0PR04MB7171.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4714;
 X-Forefront-PRVS: 0340850FCD
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(346002)(376002)(396003)(199004)(956004)(26005)(6512007)(9686003)(2616005)(86362001)(8676002)(186003)(6506007)(81166006)(8936002)(7416002)(6486002)(478600001)(52116002)(69590400007)(316002)(66946007)(66476007)(16526019)(5660300002)(66556008)(36756003)(81156014)(4326008)(2906002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4195;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(39860400002)(366004)(376002)(346002)(199004)(478600001)(4326008)(8676002)(5660300002)(956004)(6506007)(7416002)(2616005)(16526019)(6486002)(186003)(2906002)(9686003)(86362001)(6666004)(69590400007)(36756003)(81166006)(26005)(66476007)(8936002)(6512007)(81156014)(66946007)(66556008)(52116002)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7171;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: BFia3sLkocidA/IW/oboqiUmtdQF8ag03go2CmlKqpqhUDhJF0+i0nLEcXQXSZSbYlVf+jLCo4RiWfGl3C4YccacJ9ILcaL0BQxLLugfVEiBYmUvvygeq944qnTQc4eeJ3ziiQwvZsGu5X871jicgcwttHjiO6jaEfGBuq1Eff7GoaG8KqtmobY+dpjUBYkgWN/PPnJk0Z8UIOIra14KVS9A3zM/DSphAZe6ZmOLmSrEbQri/2j2ApJbeaaJp02PTUb2dSOMvlM1CIhrSUmXfwPaAJy1oYwfBWHga+4HBI68syiUrGwSQoQu2F83UcNDwATcPqFCrM6TLOXVdi8VK7DB6AaDRyN4RZeUL2Bruo5tERebDa7bn/SDvMjXKJP2C48lso/swvapBeogNiN/9gMFEGP3Iw9HO39Qboh2JQ5bnPN851qdL8TjcanWuNsa+YltSij/chkRq3bWzX6U/EchNXxzgSD6Lvyz3X/eHNJCEXQvspvRaM9iWjtyuhUgpQEKTbXt/bURXTZ80nHZ1A==
-X-MS-Exchange-AntiSpam-MessageData: sivi3Gaoel3t8yKYHGjyz9B1hA1dGb8KFuy6Ja/fqh+R7BK8Er5ZoaChbFxo5eLrl0ecP1UoCHTe2ggGfCGT4a/bnsAT9arG0e3qy01uUx6oGd/JQVlIOGk6JhmsHc5LK/iLH5b+qkdDcCO9CH3KRQ==
+X-Microsoft-Antispam-Message-Info: bk+gDk5kI3JbMZaUab89EhHwBzRXjRLaRSRdtlW1xQR2mYpMzBwyKhSCR47k0LDQyp9H0cyFPlVR7Rc2ZUGaBIcEF1J7QbX4ww1ht7Icfk4Hw2YkwBw1Efcf0BIy5BeLdhbS39dH/WgiB6SoeRofUGNvlPgnSCdPB24OTyOdqi7OIufN60TpWWDg8yVYOh9ue4rHBKtpgZFibGskzxFaaB/SL/OXh2qxKC5xO17X7x6imiuH4q1SB3Iaib3FATN4oiGbZxUZ+YaMHG7d3O3pgs7X6A6J3yMo4B6gY4jwRLJRZwYyeEFDxSZeY0Inx/kjbmrLu90/h38CabD2CvYfkcCM43NCaQs12HAMDEckmhl1MqUnSkR7IbGvKXQSYLiImmd5v9F66KEvaJkfNUsCl8qDQ5uRuETTt5q5uJrYukCrfUKnYU4+EaVbS1cFFnKHCInRqC9xPO9Ee8sVnbnzSpyl/Xu7xA1uQPcJn63800Pj7f0tLiOXWUnm2ElfmewU
+X-MS-Exchange-AntiSpam-MessageData: WzCOAxSQTWpaaUjXVcOm/AaZORLNACMMUwxFyHipNMFWfwqoAFRz9BkzTkJSv8zQ1e9LHPn8zJrflT6oSsfp0anZrrmFQTJbyiagSZRhDIEQ0tLctTgLmSn7JgytxzsE3Er9+GCvleoCKfeTUTtbgA==
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 703d7b1d-f90c-49a4-5e88-08d7c66fdcfa
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 10:26:44.9668
+X-MS-Exchange-CrossTenant-Network-Message-Id: ada521f3-d97f-43f5-d811-08d7c66ff53c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Mar 2020 10:27:27.5967
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7wt+wUVD6gbTz2n8q7U9/2M87Asyb6zeTdr2HqrBxnvV50GnG6vdiJnkGSd55GgBWlZ26snNZSYeiXybo2/ALQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4195
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1xO5RqXce9sZX5zCbcQyA5B8l4eoUXiDhSQT4+u2uzHSQ5AGplNT7ETkvmtnXIs/Pcj4OYoDm6rugTT+KiI/4g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7171
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -102,75 +102,57 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Peng Fan <peng.fan@nxp.com>
 
-The parent settings have been moved to dtsi, we no need to
-set parent here. And clk_hw_set_parent will trigger lockdep warning,
-because this api not have prepare_lock.
+Introduce imx8m_clk_hw_composite_bus api for bus clk root slice usage.
+Because the mux switch sequence issue, we could not reuse Peripheral
+Clock Slice code, need use composite specific mux operation.
 
-Reported-by: Leonard Crestez <leonard.crestez@nxp.com>
 Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mm.c | 3 ---
- drivers/clk/imx/clk-imx8mn.c | 3 ---
- drivers/clk/imx/clk-imx8mp.c | 3 ---
- drivers/clk/imx/clk-imx8mq.c | 3 ---
- 4 files changed, 12 deletions(-)
+ drivers/clk/imx/clk-composite-8m.c | 5 +++++
+ drivers/clk/imx/clk.h              | 7 +++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 925670438f23..5435042a06e3 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -614,9 +614,6 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MM_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MM_CLK_A53_DIV]->clk);
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+index eae02c151ced..ec28643426c2 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -216,6 +216,11 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+ 		div->width = PCG_CORE_DIV_WIDTH;
+ 		divider_ops = &clk_divider_ops;
+ 		mux_ops = &imx8m_clk_composite_mux_ops;
++	} else if (composite_flags & IMX_COMPOSITE_BUS) {
++		div->shift = PCG_PREDIV_SHIFT;
++		div->width = PCG_PREDIV_WIDTH;
++		divider_ops = &imx8m_clk_composite_divider_ops;
++		mux_ops = &imx8m_clk_composite_mux_ops;
+ 	} else {
+ 		div->shift = PCG_PREDIV_SHIFT;
+ 		div->width = PCG_PREDIV_WIDTH;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index f074dd8ec42e..d4ea1609bcb7 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -478,6 +478,7 @@ struct clk_hw *imx_clk_hw_cpu(const char *name, const char *parent_name,
+ 		struct clk *step);
  
--	clk_hw_set_parent(hws[IMX8MM_CLK_A53_SRC], hws[IMX8MM_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MM_CLK_A53_CORE], hws[IMX8MM_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MM_CLK_END);
+ #define IMX_COMPOSITE_CORE	BIT(0)
++#define IMX_COMPOSITE_BUS	BIT(1)
  
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 0bc7070235bd..6cac6ca03e12 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -565,9 +565,6 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MN_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MN_CLK_A53_DIV]->clk);
+ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+ 					    const char * const *parent_names,
+@@ -486,6 +487,12 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
+ 					    u32 composite_flags,
+ 					    unsigned long flags);
  
--	clk_hw_set_parent(hws[IMX8MN_CLK_A53_SRC], hws[IMX8MN_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MN_CLK_A53_CORE], hws[IMX8MN_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MN_CLK_END);
- 
- 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index 41469e2cc3de..e05ec56df285 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -735,9 +735,6 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 					     hws[IMX8MP_ARM_PLL_OUT]->clk,
- 					     hws[IMX8MP_CLK_A53_DIV]->clk);
- 
--	clk_hw_set_parent(hws[IMX8MP_CLK_A53_SRC], hws[IMX8MP_SYS_PLL1_800M]);
--	clk_hw_set_parent(hws[IMX8MP_CLK_A53_CORE], hws[IMX8MP_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MP_CLK_END);
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index fdc68db68de5..201c7bbb201f 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -599,9 +599,6 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 					   hws[IMX8MQ_ARM_PLL_OUT]->clk,
- 					   hws[IMX8MQ_CLK_A53_DIV]->clk);
- 
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_SRC], hws[IMX8MQ_SYS1_PLL_800M]);
--	clk_hw_set_parent(hws[IMX8MQ_CLK_A53_CORE], hws[IMX8MQ_ARM_PLL_OUT]);
--
- 	imx_check_clk_hws(hws, IMX8MQ_CLK_END);
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
++#define imx8m_clk_hw_composite_bus(name, parent_names, reg)	\
++	imx8m_clk_hw_composite_flags(name, parent_names, \
++			ARRAY_SIZE(parent_names), reg, \
++			IMX_COMPOSITE_BUS, \
++			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE)
++
+ #define imx8m_clk_hw_composite_core(name, parent_names, reg)	\
+ 	imx8m_clk_hw_composite_flags(name, parent_names, \
+ 			ARRAY_SIZE(parent_names), reg, \
 -- 
 2.16.4
 
