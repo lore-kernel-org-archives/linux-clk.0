@@ -2,90 +2,87 @@ Return-Path: <SRS0=LKfv=46=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A48D1C10DCE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 14:26:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1E9FC5ACBF
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 15:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782A5206FA
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 14:26:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B564C2074A
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 15:56:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726642AbgCMO0a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Mar 2020 10:26:30 -0400
-Received: from sauhun.de ([88.99.104.3]:52422 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbgCMO0a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Mar 2020 10:26:30 -0400
-Received: from localhost (p54B3314F.dip0.t-ipconnect.de [84.179.49.79])
-        by pokefinder.org (Postfix) with ESMTPSA id 9A2C72C1ED4;
-        Fri, 13 Mar 2020 15:26:27 +0100 (CET)
-Date:   Fri, 13 Mar 2020 15:26:27 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Joe Perches <joe@perches.com>
-Cc:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726921AbgCMP4A convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Mar 2020 11:56:00 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:57973 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbgCMP4A (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Mar 2020 11:56:00 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jCmf7-00012X-Sk; Fri, 13 Mar 2020 16:55:49 +0100
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jCmf6-00054P-27; Fri, 13 Mar 2020 16:55:48 +0100
+Message-ID: <3aedf6357f321efaf1d59a0b654300803ad51cef.camel@pengutronix.de>
+Subject: Re: [RFC 10/11] reset: imx: Add audiomix reset controller support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-Subject: Re: [PATCH -next 010/491] ARM/SAMSUNG EXYNOS ARM ARCHITECTURES: Use
- fallthrough;
-Message-ID: <20200313142627.GF1852@ninjato>
-References: <cover.1583896344.git.joe@perches.com>
- <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
+        Lee Jones <lee.jones@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Date:   Fri, 13 Mar 2020 16:55:47 +0100
+In-Reply-To: <20200313141606.euumtuizm562zghv@fsr-ub1664-175>
+References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
+         <1583226206-19758-11-git-send-email-abel.vesa@nxp.com>
+         <ac6eb54c01cce4ec52560ac622e024ab47f2136c.camel@pengutronix.de>
+         <20200313141606.euumtuizm562zghv@fsr-ub1664-175>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="NQTVMVnDVuULnIzU"
-Content-Disposition: inline
-In-Reply-To: <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 2020-03-13 at 16:16 +0200, Abel Vesa wrote:
+[...]
+> > > +	if (assert) {
+> > > +		pm_runtime_get_sync(rcdev->dev);
+> > 
+> > This seems wrong. Why is the runtime PM reference count incremented when
+> > a reset is asserted ...
+> 
+> The audiomix IP has its own power domain. 
 
---NQTVMVnDVuULnIzU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The reset controller does not control the power domain for its
+consumers. The consumer of this reset should implement runtime PM.
 
-On Tue, Mar 10, 2020 at 09:51:24PM -0700, Joe Perches wrote:
-> Convert the various uses of fallthrough comments to fallthrough;
->=20
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390=
-fa.1582230379.git.joe.com/
->=20
-> Signed-off-by: Joe Perches <joe@perches.com>
+> The way I see it, when the last deassert is done, there is no point
+> in keeping the audiomix on. So, unless the clock controller part of it does it,
+> the audiomix will be powered down.
 
-Acked-by: Wolfram Sang <wsa@the-dreams.de> # for the I2C part
+You mean when the last assert is done? Presumably the driver wants to
+use the hardware after deasserting the reset and asserts the reset when
+it is done.
 
-
---NQTVMVnDVuULnIzU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl5rmBMACgkQFA3kzBSg
-Kba47w/+Lo0vuKn419fTKoi1bZI+iu4cVPczancfBFTyBaGwu2WxMvlfsZPZaWSQ
-ZA0DwyJV/q7C5PiEXjkNhIAK9txlsUpVTcXrmki5X4Z3hG0k5D4HjP0i+6GtqsvX
-yNpn8ebcK94e7HGKwN4Qg16jrh1hy22dd+Bcs7P2wb0zOpv2+VrL8n4ORXZVdSr9
-RjSySKHXxDTTfBpQ+Fe9IHH3ObWFNH4ydniXhiDy5hAZUwYmkm4Lrv0ul5OCglwF
-08LgjIkidixle3PEylgSVE2896WnDF3EgmDrO72uPXunarBbgFz+KaYeEnTTndvO
-s2+fDykbBZye6kNZy89svJ+ljjbqLr5lIgGc/MiAIviJJ7qlq9MS7kWVCvjSROSL
-G/9S5vjw4bxJhobzBmlZbW339Ki3UJDnMYJmGC5zv2eROAKHa3Hw/JXocUvsbE+v
-LbXKVUm4cAMcL6ld0MXYBlDQasGcErb5HSk4huMr0Ye9/pyqycDrg788A2cW29/A
-GovnQqR9rjJ6ebqHAOrFqPf2PnWvfqHqz01/zMyjOW1hYVEdfkH9EjFnuPjI0Ue7
-PLlXv2NS+iSe01qRJaDCR+afknfWHEnCcEJCdua5/cvTFy6Q4MP/jGrod4ZCe7fV
-yd/yi39OamvOtixkid1R84VFKuSrufZ30TYpeoaUTL6IcAdKl0g=
-=3+s9
------END PGP SIGNATURE-----
-
---NQTVMVnDVuULnIzU--
+regards
+Philipp
