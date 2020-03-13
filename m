@@ -2,79 +2,121 @@ Return-Path: <SRS0=LKfv=46=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 507C1C10DCE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B1A9C10DCE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 03:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1BF20716
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584061985;
-	bh=sjbzlgfG0M7ByXrwtWMDuZpQMY36kbz6RtWjf+35/zI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=cEm+aeOuuPCBAhyk0OyyyQ+r1D2tAmtG8pcueVU9R+6K2oJTo4+ctVLvy20hcKRLY
-	 ZaaJ1MjREYKMWnz7h3w8npj4eeq+U53f+dH1u8n8zvLz37xfd8g4Neo419IHFY+GEf
-	 6pJiwDzL9zHyNlOFPRUAVhZveJ3OMf31IYnE6BxA=
+	by mail.kernel.org (Postfix) with ESMTP id 48E1220723
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 03:33:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TN4a6n7A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgCMBNE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 21:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36332 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbgCMBNE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:13:04 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0BBB206F7;
-        Fri, 13 Mar 2020 01:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584061984;
-        bh=sjbzlgfG0M7ByXrwtWMDuZpQMY36kbz6RtWjf+35/zI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=H73OiFfbJkL88iOLWy+qaYjJnj5qgy2HDbcFzNn7+eMPehRXfXkSBPIOqD0QmUgmg
-         vhbjAX1uG4e8Phx083IA3MG/vdEsdMdU/IJYg4Lzi6ZQMuYIXEb6lKGccD2IIKl7BF
-         MEBn1A3m9aqyplMPnJft1RvVSDHYeWVcceFwaWpI=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <703e21467f23f63acdac0e078b58040c39b852bf.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 12/89] clk: bcm: rpi: Remove pllb_arm_lookup global pointer
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
+        id S1726328AbgCMDd7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 23:33:59 -0400
+Received: from mail-eopbgr70041.outbound.protection.outlook.com ([40.107.7.41]:10052
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726254AbgCMDd6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 23:33:58 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BQeVSZF1F1NT/7iBP1LKupVTYGtDvJwyHtQFoY3Y26hKl870Bi0b5ieFyvmu/e2ZjHgqE9Bmlo9pUQEHaLDgJjHsAQ9mUiUhQsYCqBwNak7fkw2J/MCf9Di8Ohp791FQ0wyrHqRqGPGLU550iRCzB5PSTcOES4Mf72Y0M/ERGSPgzMu81jOinLkTURiNLHR+ZVCaaljxjuJK9KOheAWtuwyHIIsaJLRb/w6rutu0uX3uwebmNzoDWcZk3r5P9m7Og8Y1Cbon4KCC4zaMoybm9t7vB6+mzvVb8YKiWvOsTpber2johcx9e1EEHIf4YoSDSqcI2IP7wISzz3TGX3Y2ZQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ESkbsp3iQ8ftsnrvkaXmzzB/wsyf0tNFrkz77dQOMek=;
+ b=Uu6+2MTK1WhDmNW1gXEg+6vnV7dhWcer69pvK/mAzpPLPc1y8/I3+B06N9MH+1G3ktM5cQiZHKQ3IYgRIBQsYonXvg93/9B97GNpQ09W7CjdmASAO+b/3fHr7WpVGzriX7BFhmJvOSvsdkUYGwD+eq9JSPRAC3FZBxnp+5yoRx8BSoXQiZd88rzeEGYcOYgiTutJEnRFM4pjQrR8Jb9Czmv7PApIpsgwpW0fX6o5u+4+smVGAhNJYrdN/6qAyYKSaufH2c3AROhjpajiFlzSDjcNkbq7e3XOiRG+XYlAUOe72becPeWN+dmR0v+gpMJmqVQ4cB6nd9fbxWnTiJBI7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ESkbsp3iQ8ftsnrvkaXmzzB/wsyf0tNFrkz77dQOMek=;
+ b=TN4a6n7A5UQgj7Kn2x3ZhmWU7nuWD4w+6bUgUm7zhzBXuZiaU8BD+w4OEZkzctPC5qBpGhfTyPgHgFx11Xn/h0qNgbMtBy4TXqZAsLnL24Zu0f+/o4wn5XbbZ+kBTX+SioX5UKT37qabhQea6BM6xGvPKuHbCN+iKMgHTSVDbXk=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4979.eurprd04.prod.outlook.com (20.177.40.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2793.17; Fri, 13 Mar 2020 03:33:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
+ 03:33:54 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, sboyd@kernel.org, s.hauer@pengutronix.de,
+        linus.walleij@linaro.org, arnd@arndb.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, stefan@agner.ch, Anson.Huang@nxp.com,
+        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 18:13:03 -0700
-Message-ID: <158406198314.149997.6304400870182426373@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/3] imx: drop dependency on ARM64
+Date:   Fri, 13 Mar 2020 11:27:13 +0800
+Message-Id: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR06CA0178.apcprd06.prod.outlook.com
+ (2603:1096:1:1e::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0178.apcprd06.prod.outlook.com (2603:1096:1:1e::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2793.16 via Frontend Transport; Fri, 13 Mar 2020 03:33:49 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 31c984c1-8f8e-46fe-fc57-08d7c6ff5b1c
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4979:|AM0PR04MB4979:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB49790AC6C66C6ECCA263336788FA0@AM0PR04MB4979.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-Forefront-PRVS: 034119E4F6
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(199004)(81156014)(66476007)(478600001)(66556008)(8936002)(956004)(8676002)(52116002)(66946007)(2616005)(81166006)(4744005)(26005)(7416002)(69590400007)(86362001)(6486002)(4326008)(36756003)(6666004)(316002)(6506007)(2906002)(5660300002)(9686003)(6512007)(186003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4979;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: An9/yVWB/pYb0kRVDIU7KnbGIWmITIJ7zM0sybVvy/YiZH5o3Zur/3nYP0ddt7REnQTJWGlJXJqJQjEJVTgAcvFYDTJ4R574Mv05nVsqwdkfb2fSVH0HiWiVnf0+0Gqc8mQni6yKAgpzNbtWayyGCwemJ37bt8Lw1O8HzDnJkbbX+jJK5M3pw0QWTuLL20usy49maPZl9HZrUw9KP768Ipf5aChqpjoxdQfPkRfGSbNDysXrWbf7sbDSdKnto6PiFHVRmueZaUTfm+TTTC6MLUIpeXyvif0XQfVcSVxuY6yqy4WfPggXA96V95HRyu5UXmekCypAyINGULc1+ERy/JtGmzVHNS4rGgLo320kZIPgo63IVBe0agbFTuuqQndbFid7/w29wwbYrs+ISp4ojd/C1IEwMJGGQc1pFlpqmap6WU9odvzG91j+r4IMr5H9OwbKfEwsJ4IYNJFCb8aQ7ra/OCpumBwQkmUS/Wau6tqUKxBZMQe8JI/OeYgDHLcD
+X-MS-Exchange-AntiSpam-MessageData: Hj66Awoan8s3FwLLL3JJ7uuEktji9EJuFTMfqxNHSmVRJ02IYTuvDVwYK/mlQxDjdE3mzG8MyM3jLxMZjWWuLssm9I5nTjxs0fpaqpbjqyhLAzUvaihzbjmFO2Q4xXK2fS0J4JtLuDfzKUmhSJ9zdA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31c984c1-8f8e-46fe-fc57-08d7c6ff5b1c
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 03:33:54.6899
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +vycYaJD3a7ShMSqAibo7xOszC3htH1DIbEONUWwmofiplNgrjwIEyhpx4H6bst7dv4qDD1HUBtWmLI0f7i0yQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4979
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:14)
-> The pllb_arm_lookup pointer in the struct raspberrypi_clk is not used for
-> anything but to store the returned pointer to clkdev_hw_create, and is not
-> used anywhere else in the driver.
->=20
-> Let's remove that global pointer from the structure.
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
+From: Peng Fan <peng.fan@nxp.com>
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+It is possible to run aarch32 linux on aarch64 hardware, but
+with the ARM64 dependency, we are not able to build those drivers
+for ARM32.
+
+Select ARM_GIC_V3 for i.MX8M is to enable the gic-v3 driver for i.MX8M
+
+I did a basic boot test on i.MX8MM EVK board. A few ATF changes
+to make psci smp work still needed.
+
+Peng Fan (3):
+  pinctrl: freescale: drop the dependency on ARM64 for i.MX8M
+  clk: imx: drop the dependency on ARM64 for i.MX8M
+  soc: imx: select ARM_GIC_V3 for i.MX8M
+
+ drivers/clk/imx/Kconfig           | 8 ++++----
+ drivers/pinctrl/freescale/Kconfig | 8 ++++----
+ drivers/soc/imx/Kconfig           | 1 +
+ 3 files changed, 9 insertions(+), 8 deletions(-)
+
+-- 
+2.16.4
+
