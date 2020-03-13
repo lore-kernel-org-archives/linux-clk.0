@@ -2,48 +2,47 @@ Return-Path: <SRS0=LKfv=46=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FEAAC10DCE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:09:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00730C10DCE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F49206F7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:09:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C780020716
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584061779;
-	bh=UYPz1qlE+Zrh/CUYv1EYC2BXtJL9mTAshrMUYOFb/20=;
+	s=default; t=1584061861;
+	bh=TEhRFrpawswa0VRvFVCjf+8OILPkxfhTDLFyVjMmpEE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=09McHvnwHwyVodkpSx+P08d5guK+kyDobzOmbHrwe595idukkONO6Q9UsMBlu6IOZ
-	 vmSHjpHMym21yZ+JOA2i4Io48JTiAuph1xspCGaLmWac/NrcUqg6K9uRW5W6OnVILL
-	 iyE9w0Q0o9HwHXz+w8T3jh/74S2SX+8DNfg/cwg8=
+	b=G/DG8EqShUzMiqTy4KZHqPSbSYJEGqsbyqbuSpr1uT6eIaoD49WVCBfXvzKWB9Iq6
+	 wlwWvkkyFVN3rp8k/BJkeWar1mJIYmbcDD8iFzhmhoJeWWCtsyniR0s0/8PLzhuZSu
+	 BmeOH9rO9ptJwoIpoGUZo0cqrlvL6hSDBojbWwvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbgCMBJj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 21:09:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34446 "EHLO mail.kernel.org"
+        id S1726834AbgCMBLB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 21:11:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbgCMBJi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:09:38 -0400
+        id S1726647AbgCMBLB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:11:01 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 641AA20637;
-        Fri, 13 Mar 2020 01:09:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB4E6206EB;
+        Fri, 13 Mar 2020 01:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584061778;
-        bh=UYPz1qlE+Zrh/CUYv1EYC2BXtJL9mTAshrMUYOFb/20=;
+        s=default; t=1584061860;
+        bh=TEhRFrpawswa0VRvFVCjf+8OILPkxfhTDLFyVjMmpEE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cchNDvcp5xxo+4kktYIBl1aqjS0gJMnOJdEn09uE/82+DBNyz/X+RrSZl8jq0lPZP
-         r9l0+uvv43KujDYCuDIIy/Gj9Kal/SYN6PFHv2j+siPAqv4/S3bn01YeBUYwCBH5aL
-         XtueSHO0lPPwNI7yQWREmyFbDeAqdarMEvLibcKE=
+        b=utT4IPvSMNs5NDLHLnLyaHb5oCiakpOInlrShehr72IQLv+OXghq4Gl0JkQcP+2Hy
+         C/7QvSNiAPlkcHq/lf8HSsFnWT1iQHDlLbV/XpWtfn7LWl0BGJOmVY+4VummSTfJ5b
+         S0REST5/XBWfmlAyXmMg5XmI5ATqNK4trJBp47PQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5a02a46e899abfca7257a725678f1131490e6b11.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <5a02a46e899abfca7257a725678f1131490e6b11.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 17/89] clk: bcm: rpi: Pass the clocks data to the firmware function
+In-Reply-To: <3028e04887c7b8a6ffc150c016aa63281461b434.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <3028e04887c7b8a6ffc150c016aa63281461b434.1582533919.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH 16/89] clk: bcm: rpi: Add clock id to data
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
@@ -57,49 +56,25 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org
 To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 18:09:37 -0700
-Message-ID: <158406177763.149997.8595594316904810473@swboyd.mtv.corp.google.com>
+Date:   Thu, 12 Mar 2020 18:11:00 -0700
+Message-ID: <158406186006.149997.5509023363442666918@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:19)
-> The raspberry_clock_property only takes the clock ID as an argument, but
-> now that we have a clock data structure it makes more sense to just pass
-> that structure instead.
+Quoting Maxime Ripard (2020-02-24 01:06:18)
+> The driver has really only supported one clock so far and has hardcoded t=
+he
+> ID used in communications with the firmware in all the functions
+> implementing the clock framework hooks. Let's store that in the clock data
+> structure so that we can support more clocks later on.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
 > Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
->  drivers/clk/bcm/clk-raspberrypi.c | 29 ++++++++++++++---------------
->  1 file changed, 14 insertions(+), 15 deletions(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index e796dabbc641..3b2da62a72f5 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -67,11 +67,12 @@ struct raspberrypi_firmware_prop {
->         __le32 disable_turbo;
->  } __packed;
-> =20
-> -static int raspberrypi_clock_property(struct rpi_firmware *firmware, u32=
- tag,
-> -                                     u32 clk, u32 *val)
-> +static int raspberrypi_clock_property(struct rpi_firmware *firmware,
-> +                                     struct raspberrypi_clk_data *data,
 
-Can data be const?
-
-> +                                     u32 tag, u32 *val)
->  {
->         struct raspberrypi_firmware_prop msg =3D {
-> -               .id =3D cpu_to_le32(clk),
-> +               .id =3D cpu_to_le32(data->id),
->                 .val =3D cpu_to_le32(*val),
->                 .disable_turbo =3D cpu_to_le32(1),
->         };
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
