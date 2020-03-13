@@ -2,125 +2,120 @@ Return-Path: <SRS0=LKfv=46=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEAEC2BAEE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 03:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BF60C10DCE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 04:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004F72073E
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 03:34:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="K6wE6hPv"
+	by mail.kernel.org (Postfix) with ESMTP id 6B5A420737
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 04:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584072280;
+	bh=osQjjWCTdMAe4EgsSg9BFF7PtYzlq/w6MvL4nNnI9vg=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=RaraOD2+v4hALpQJbJ1Z4rD85RknAkgjHIkaRB9+G1N+JDqZUryT/VyYd0nrFSrVB
+	 IDDCWuL82uB7No5HFcViVHD1so21W9hNY9a3cyaHVsAzo0fJluJ8yWCdXtx/XZEPA2
+	 Jz4XqOkpkVPD2CfdWI0nRbzSry+hitt1YcVChg/Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbgCMDeO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 23:34:14 -0400
-Received: from mail-eopbgr70077.outbound.protection.outlook.com ([40.107.7.77]:29806
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726254AbgCMDeO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 23:34:14 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cu8dIOVqgEnFOolf8YqFV2YxGixmHIOkBTUxS9R0PP/zFA2/xEIAti10ys4ObEJeYxNFvgdIuTrw6jnyJc9AdA8ZfFm7lAVzJA94HlURrLO3LK+TNnkdAbUQVH7ClvvqwF3DpCt7/EFNGqLH1a/3XnewgMp4v9AZ6PBd3vVW2MAaDxQa3NT6q4HNC08cpeaQa0g0ibLU+Fn7JLzylZ/MnrWctWQO2zfSRdWqfZ8Ep2t41IcdpuW32ICO2MjKsqduyf+DCKFJJieZq0kpozEaI87mSQ3jxHZ6bFZONpq3/vxInTjS7NDiY5Ju913liBFpz96ww2tdkyxd3IHekEhy5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w7YZQHG8z16cUe8rr8Z4fTVt5wMLwJRDLNyCE5kFwdo=;
- b=Bord0qL5g078dJ9WtGyuWjf8g9X67g7jWDcr4dX98JrckD1/m8cVolkVC8Bc7cYe5/ck9xt80nIv6zEw5aW+V9YCfUvcN51nCWDmpKLKkJLcSbrh9LGT8IOXiLaPGRSqUZR9ffP/TUApjPJWpZoENKI7oTF9sZBq04FXW8gkksBy2ZqQxGBc5SioYvSbBuyq61wOryhTw6pwzjP3RJEGGNK7kD1wmLP2QNty2BJWQNzYU15BgavS4ElljfoLxXndHSYfULBuDWqLeXpn9TSVqri3FKbrRd2xHf/12CuwTTSfy9x5QJuXjMa1MI5vhdrNb6/KRZIEGJcZ+d2tzghb5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w7YZQHG8z16cUe8rr8Z4fTVt5wMLwJRDLNyCE5kFwdo=;
- b=K6wE6hPvi1wvJDI2bmqTyVZq0sI67H545m5X3mjSYU7/GYAMcHKBUg/p9sZKrxdh147RrS/zRgzIE+tdLeMURq+2LRd8YWFWh22qTfNAgfYEM4TPuo4kohRmwUq9h3sBJ7OMIWnl2CZgRnTi+xc5dpE3TXxm64UUZwYCLleOU4w=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4979.eurprd04.prod.outlook.com (20.177.40.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2793.17; Fri, 13 Mar 2020 03:34:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::548f:4941:d4eb:4c11%6]) with mapi id 15.20.2793.018; Fri, 13 Mar 2020
- 03:34:10 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, sboyd@kernel.org, s.hauer@pengutronix.de,
-        linus.walleij@linaro.org, arnd@arndb.de
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        aisheng.dong@nxp.com, stefan@agner.ch, Anson.Huang@nxp.com,
-        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
-Date:   Fri, 13 Mar 2020 11:27:16 +0800
-Message-Id: <1584070036-26447-4-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
-References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR06CA0178.apcprd06.prod.outlook.com
- (2603:1096:1:1e::32) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
+        id S1725792AbgCMEEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Mar 2020 00:04:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgCMEEj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Mar 2020 00:04:39 -0400
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32E8C206FA;
+        Fri, 13 Mar 2020 04:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584072279;
+        bh=osQjjWCTdMAe4EgsSg9BFF7PtYzlq/w6MvL4nNnI9vg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=gq/8c3bDtO8gPJrUMwK2tzozSJ8EP9LT127F48GgYipyKQ+erXbyvzMpXD85BYZzS
+         IfUpQGFchhgmGlavgmZeZf+bMLxMMS8fMMYcPNyUevtBwmKBfkxU31DzHNqrFs+mYD
+         IBBzUdfBgYpOAkTbfUDdjlAFI6/KBXOer9F6Mths=
+Received: by wens.tw (Postfix, from userid 1000)
+        id 2D8335FCA3; Fri, 13 Mar 2020 12:04:37 +0800 (CST)
+Date:   Fri, 13 Mar 2020 12:04:37 +0800
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [GIT PULL] Allwinner Clock Changes for 5.7
+Message-ID: <20200313040437.GA8483@wens.csie.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR06CA0178.apcprd06.prod.outlook.com (2603:1096:1:1e::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2793.16 via Frontend Transport; Fri, 13 Mar 2020 03:34:05 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 09e29b08-9471-4dcb-6abe-08d7c6ff64a8
-X-MS-TrafficTypeDiagnostic: AM0PR04MB4979:|AM0PR04MB4979:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <AM0PR04MB497979C7838E586679E55DD688FA0@AM0PR04MB4979.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:3383;
-X-Forefront-PRVS: 034119E4F6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(39860400002)(396003)(136003)(346002)(199004)(81156014)(66476007)(478600001)(66556008)(8936002)(956004)(8676002)(52116002)(66946007)(2616005)(81166006)(4744005)(26005)(7416002)(69590400007)(86362001)(6486002)(4326008)(36756003)(6666004)(316002)(6506007)(2906002)(5660300002)(9686003)(6512007)(186003)(16526019);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4979;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: Pg/70JwQ4evkZjZlFXuNBvIzWLUTtZemd2SIjWQZphLoi6daI371+xgDBEn+BxP66+81URcRCBWHjkIpUw7GiarPMoXJsfOXOtc3K+ongPlnpalLd+J5y+LoiNVA3C7R+DUHHpvtwMIEwDD7+m39SafgX1Vlkk0IMv2SA7BIAlXQQm7VInUbePJ5qIkGfmzxBBmelM3fb51E7y5evA5yKz2A+XdlfDwqP13mgQbGCVfGlMxcU02GuIqpMtnSCbLbGjkbLeTEuOWiLl9iynjbS2Q+6ADrS7DoUP14Xyw53PHTlitcvxevi6tDZIFf1ErMM1b9sgWZopVuLnZoPAR44fryYBoeqjRM7AGx4e1HYBvFCqsyZd10mQ3DCQ+IyU9YlECg2sqEmtgpG1r17vuh7r4QrJaCtiruhPxeFHQ7RChI12bOnr/RTzPx3Ve5enyZb3DRI2AE9Wjd2JyNu50d6CKrmjf91OmqBsn0PGbHCbGw3tEX+me9r4m4Nn+87O+m
-X-MS-Exchange-AntiSpam-MessageData: QhHCb+0RYdIZ8rdcmnzf2+0OkWG4LQ7IUOeJ9eycdhs9IhMSPsUjVVI/OxOBal4Z2e47QPaEt5z/ZH20arKqHrREKeqQNpN0hq+HMqpxb3RZk79NbwxyztV8JzcMjXEC4LpalkmvYFv/qqEbCahCXA==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 09e29b08-9471-4dcb-6abe-08d7c6ff64a8
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2020 03:34:10.7421
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7MsmcOGgFttpMPqrIt5wa5EQ1OauLH9UjvSlsNc8BGyqL3VSM1PWl94Ao7iXmCl8Zmhn/+r5BjgH0fNH4waMLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4979
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
 
-Select ARM_GIC_V3, then it is able to use gic v3 driver in aarch32
-mode linux on aarch64 hardware. For aarch64 mode, it not hurts
-to select ARM_GIC_V3.
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/soc/imx/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig
-index 70019cefa617..0b69024296d5 100644
---- a/drivers/soc/imx/Kconfig
-+++ b/drivers/soc/imx/Kconfig
-@@ -21,6 +21,7 @@ config SOC_IMX8M
- 	bool "i.MX8M SoC family support"
- 	depends on ARCH_MXC || COMPILE_TEST
- 	default ARCH_MXC && ARM64
-+	select ARM_GIC_V3
- 	help
- 	  If you say yes here you get support for the NXP i.MX8M family
- 	  support, it will provide the SoC info like SoC family,
--- 
-2.16.4
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-for-5.7
+
+for you to fetch changes up to b998b75f8603c37c8a43a3d849cd2c4929adf402:
+
+  clk: sunxi-ng: sun8i-de2: Sort structures (2020-02-12 19:01:16 +0100)
+
+----------------------------------------------------------------
+Allwinner Clock Changes for 5.7
+
+Changes consist mainly of cleanups for the display engine clock driver,
+correcting clocks that don't exist. Also, the MBUS clock on the A64 is
+exported for the device tree to consume.
+
+----------------------------------------------------------------
+Jernej Skrabec (8):
+      clk: sunxi-ng: a64: Export MBUS clock
+      clk: sunxi-ng: sun8i-de2: Split out H5 definitions
+      clk: sunxi-ng: sun8i-de2: Add rotation core clocks and reset for A64
+      clk: sunxi-ng: sun8i-de2: H6 doesn't have rotate core
+      clk: sunxi-ng: sun8i-de2: Don't reuse A83T resets
+      clk: sunxi-ng: sun8i-de2: Add rotation core clocks and reset for A83T
+      clk: sunxi-ng: sun8i-de2: Add R40 specific quirks
+      clk: sunxi-ng: sun8i-de2: Sort structures
+
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.h      |   4 -
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c       | 115 +++++++++++++++++++----------
+ include/dt-bindings/clock/sun50i-a64-ccu.h |   2 +-
+ 3 files changed, 75 insertions(+), 46 deletions(-)
+
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAl5rBlQACgkQOJpUIZwP
+JDC3uA//WP7kM2xOFSsTSSJkt9HnV50JWjgUbHc98D4BQqH2RXrJS0lQhEYsTWs2
+uHFYZSIL2Rh7g+N3486SejipuJQK0oPJIvxMsAKPzcvTpjQKMU/BVO79p8Y3Vobb
+abgPmmEbv4lK2VGTV8Y5v7jTt5p+IK1KLJdQTrchbwngS8KVKC0vkBtFTfx2umRV
+GtQitSzrc607ZpSzeOAmOAAU3KhfQqaMzmMMIfAnTn7lxjU8Veu5nFiMrTyEHQ61
+lSWqxFiE7fbk7UulNPuZKMp5UMuzT/PaXuYsztTA0e4/iUzYW/97/MrH66QLE1sB
+qQehRO2lX/BT2wQui7eoRtU2xkfj0u0W3YLwsmyQVt7TTu7FbCaMba3JavrM3BIX
+xYF2BklPReDMU+Q1CyPzaG/vImo2OX8/HW4LDguYjk/jzsHGJM0b3DwjkwWRwXyy
+wFQS8I7bW0Yjfknlfiu0m0at25jGVZiGPctWAKSU7JL+nbtGQCmzr8+uk88KTqXA
+AKgly9S7H/fNqoqXfYuDmveNni/behKFBWlaXqfHX/ZSSjBZCLFaGHCMhIWlhLiN
+bQtqmVi9bGjZCfxJeIf5zouD0JKYtldpztI/PCpc9yVCr9UBdl2QcamhYvz5EZt0
+B1vw6w3cjqd+4mw6zsiAZKPNbfl/btIa+mJhx6x+WCAD3WYohH4=
+=MiDJ
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
