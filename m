@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4758C10DCE
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F31C10DCE
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6262071C
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:08:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 348AF20716
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 01:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584061710;
-	bh=GZXF1jbEMHNkWN+8nJgNpRV11roNj+xqkyTJlQsyCsg=;
+	s=default; t=1584061746;
+	bh=mWqeGuTaiZai0N4s1DzkxGkdeqfOfgnSh0u9DgPUrVk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=l4fU6QtJ1M/x3m4EpuW82pa1YEyDlc+R/C8rDw1JY7SLZBi7vNvbkqIVY6NMAq//v
-	 xp8hvcItQ1rWDyH6mFnuwFpiBtR+n0v72Iyyi4G1rfGViboycLOsExIN2JkJH9IGHz
-	 fkKljCiB0aYJd78qLBduBDoO29O8halzGAuqcew4=
+	b=pl+0Smg5kWsJMW5scXl/3wWzcDlfcgsWaCc0qjpH9HghwhnBb3Md1G9lqWLkL7Ese
+	 3LizYxMMj4Gu/Ypz5AuZdrq5HDApsorZBUVCP/ybF4HXVHdvwWH08qtyg6jRTe0QgN
+	 Mrr+4IV7V0MP9AZoPONQWkZj3er2HFQu3PLgYVSw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbgCMBIa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Mar 2020 21:08:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33972 "EHLO mail.kernel.org"
+        id S1727053AbgCMBJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Mar 2020 21:09:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbgCMBIa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Mar 2020 21:08:30 -0400
+        id S1726838AbgCMBJF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Mar 2020 21:09:05 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A039206EB;
-        Fri, 13 Mar 2020 01:08:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D266206EB;
+        Fri, 13 Mar 2020 01:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584061709;
-        bh=GZXF1jbEMHNkWN+8nJgNpRV11roNj+xqkyTJlQsyCsg=;
+        s=default; t=1584061745;
+        bh=mWqeGuTaiZai0N4s1DzkxGkdeqfOfgnSh0u9DgPUrVk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=eR6+dcJpWpjNfwnVeJzuK3xox8/tEOS1wOokhuk4NTBoQfP5Bvu0x88mdzjgBKBCX
-         uef9agDZTbZ2IJp0OZaMQxQZMQa2n6L4hHT/RVBdirmx6AVnCuxIDwlV5boXG+vsqr
-         21765VUGy9wpS57nBFY4jA2jYYpzI6dHpSIJVuIM=
+        b=H+jnZc1EoaJ35ayLCNYofkh9rUSQAgSBTGZS05+Ylij4TruMQlpFFz/jvJx/vJ26k
+         QqTto/RcDBtYQuo1Wj3+6L3NnFxNJjc5t5KAIt5bUBUdzlJ1XzQCGiN77sn5V6Y+xd
+         zrI8IERSuvKnFr1MLlJoF7C3zOFhWMKKVLLa5KyQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5a40506025566ddab97109fc0a66eb9e0c80d9ab.1582533919.git-series.maxime@cerno.tech>
-References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <5a40506025566ddab97109fc0a66eb9e0c80d9ab.1582533919.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH 19/89] clk: bcm: rpi: Split pllb clock hooks
+In-Reply-To: <cdeaa4152ac84aecc362e09153d1427777e3d933.1582533919.git-series.maxime@cerno.tech>
+References: <cover.6c896ace9a5a7840e9cec008b553cbb004ca1f91.1582533919.git-series.maxime@cerno.tech> <cdeaa4152ac84aecc362e09153d1427777e3d933.1582533919.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH 18/89] clk: bcm: rpi: Rename is_prepared function
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
@@ -56,21 +56,21 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org
 To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 12 Mar 2020 18:08:28 -0700
-Message-ID: <158406170873.149997.17369022998670776550@swboyd.mtv.corp.google.com>
+Date:   Thu, 12 Mar 2020 18:09:04 -0700
+Message-ID: <158406174449.149997.5773094595733597236@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-02-24 01:06:21)
-> The driver only supports the pllb for now and all the clock framework hoo=
-ks
-> are a mix of the generic firmware interface and the specifics of the pllb.
-> Since we will support more clocks in the future let's split the generic a=
-nd
-> specific hooks
+Quoting Maxime Ripard (2020-02-24 01:06:20)
+> The raspberrypi_fw_pll_is_on function doesn't only apply to PLL
+> registered in the driver, but any clock exposed by the firmware.
+>=20
+> Since we also implement the is_prepared hook, make the function
+> consistent with the other function names, and drop the fw from the
+> function name.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
