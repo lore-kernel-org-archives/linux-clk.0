@@ -1,138 +1,95 @@
-Return-Path: <SRS0=LKfv=46=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3qyU=47=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0666DC2BB1D
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 23:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E2DC10DCE
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32BA20637
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Mar 2020 23:47:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HNvgMOR2"
+	by mail.kernel.org (Postfix) with ESMTP id 918EB2074D
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:15:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584148524;
+	bh=K5BEDgn6puHQRO0je2cYxXMrBtW98BD3fqUabckzk5w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=jIFSWnrSmlFO7PmCDxRhunVr7J1xXZ3xrWu9mIYOdPDSqc8VZtrC6kOKmFp/EuxqP
+	 NBYVWimAOzZhzzcwOHcB1W9P19SFqbpAGDYh+aok8ywZF2cPSGttGeshPWW/ZV0b1I
+	 4fG7f+kurvUb5lTUp+HclOeRDPGHOJVmicVlyYjI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbgCMXrE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Mar 2020 19:47:04 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43896 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbgCMXrE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Mar 2020 19:47:04 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c144so6226670pfb.10
-        for <linux-clk@vger.kernel.org>; Fri, 13 Mar 2020 16:47:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=QqSV3LpUI3XKUkmQyfNi1UamAdu5bkgGpHDrMQfv4MU=;
-        b=HNvgMOR2I4lu6ZzQhLaqLLWdM+2GtFd3IZ4AuPpce/zw9p/2oX7gHoLKNpj8pDJ3Pj
-         Jij9sP4ezR342y5fuAI/xYD8IyVYpsAdH5FWh6dW9U0DC3yQUz/e9eRPDExe1KhgW0Vy
-         rO81pgsWwtIIwk0BTd+z1VJ8I3vFOlSR9xbrp8wt4bH003euw1llVcV39hsIheW0NLZH
-         3rH6dYrHUjz0+PDZvr/zh1CgPjpt1cZDRUdc3a/09XwqbDnHLO2Cgy/KP6Q7AQwDMqYy
-         lLUX9NU/nAHYdBHqteUHrygCelftfNMsp+AxKPno4amYs3qpLBSFr+4snMF5NW7uHOCj
-         kNTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QqSV3LpUI3XKUkmQyfNi1UamAdu5bkgGpHDrMQfv4MU=;
-        b=TND3xuIG75P6sFpp/++ix/7IkOodah01jqpFii9pb6g74UeaIzig2F981MxTsQMfEo
-         XHAM+D2PpoYiD8zscChs2ULdM5uvz+XfV8zB2jEqIjz/yNtc+/JlAjwdgOduakp5r8Jn
-         +RLzg03drUvir3ZYd7BIeyx6PHftOrdSav9DoT1tUjGRxCPliIpHxdBCUJ45idYSYSQJ
-         IDiisZ7B4X1jkCZ/LAylIwVtg8N0dBhRBV407QxzqXAMnPzKRmyW2JbSq1wgpXsYsgBj
-         xZ6aHwtViMR9VX1iAmgICPIH0SmpdKhcfVrq0TdVLmjKHaMZZNoAzwBRYZ2TjZ4amY8a
-         wV/A==
-X-Gm-Message-State: ANhLgQ2dnQ548//10Q2UxoR+dIDuZwKGvDiQ1uQwPuXqgdm+T/V3QLKS
-        Cw9EZmF6NZGcEPDuIb2yA7oa/Q==
-X-Google-Smtp-Source: ADFU+vsW6m1GL4wfPHL5s4jhGiDzBkhnb+8gcvRgTtKjWKHSrkQbWzNiNxyD247XMBP14NBXaEZ10A==
-X-Received: by 2002:a63:1d7:: with SMTP id 206mr13645799pgb.99.1584143221655;
-        Fri, 13 Mar 2020 16:47:01 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id o11sm10927883pjb.18.2020.03.13.16.47.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Mar 2020 16:47:00 -0700 (PDT)
-Date:   Fri, 13 Mar 2020 16:46:57 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     ansuelsmth@gmail.com
-Cc:     'Stephen Boyd' <sboyd@kernel.org>, agross@kernel.org,
-        'Mathieu Olivari' <mathieu@codeaurora.org>,
-        'Rob Herring' <robh+dt@kernel.org>,
-        'Mark Rutland' <mark.rutland@arm.com>,
-        'Michael Turquette' <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: R: [PATCH] ARM: qcom: Disable i2c device on gsbi4 for ipq806x
-Message-ID: <20200313234657.GD1214176@minitux>
-References: <20200313195816.12435-1-ansuelsmth@gmail.com>
- <158413179776.164562.8295974225127853050@swboyd.mtv.corp.google.com>
- <014101d5f987$82790c90$876b25b0$@gmail.com>
+        id S1726853AbgCNBPV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Mar 2020 21:15:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58772 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726637AbgCNBPV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Mar 2020 21:15:21 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 847142074A;
+        Sat, 14 Mar 2020 01:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584148520;
+        bh=K5BEDgn6puHQRO0je2cYxXMrBtW98BD3fqUabckzk5w=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=I1134r+WeW0fPSfteZUhZTBJUUswIxI3xGHFaFmklgV841fyHQse4/vEp2Sk/8+jN
+         /CxPMJ5i9S4NBggC2DR3/tbk1KjRCV13i55wmMW6DkdfJBr2lL4fvosAVe5b/C9Wsu
+         wk7DqbYo7OD2GPl0yi+A3BX+KZJykLpGQatOwxSA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <014101d5f987$82790c90$876b25b0$@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <00e201d5f97d$3e76a9d0$bb63fd70$@gmail.com>
+References: <20200313185406.10029-1-ansuelsmth@gmail.com> <158413140244.164562.11497203149584037524@swboyd.mtv.corp.google.com> <00e201d5f97d$3e76a9d0$bb63fd70$@gmail.com>
+Subject: Re: R: [PATCH] ipq806x: gcc: Added the enable regs and mask for PRNG
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     'Abhishek Sahu' <absahu@codeaurora.org>,
+        'Bjorn Andersson' <bjorn.andersson@linaro.org>,
+        'Michael Turquette' <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     agross@kernel.org, ansuelsmth@gmail.com
+Date:   Fri, 13 Mar 2020 18:15:19 -0700
+Message-ID: <158414851968.164562.17479742036394576642@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 13 Mar 15:34 PDT 2020, ansuelsmth@gmail.com wrote:
+Quoting ansuelsmth@gmail.com (2020-03-13 14:20:36)
+>=20
+>=20
+> > -----Messaggio originale-----
+> > Da: Stephen Boyd <sboyd@kernel.org>
+> > Inviato: venerd=C3=AC 13 marzo 2020 21:30
+> > A: Ansuel Smith <ansuelsmth@gmail.com>; agross@kernel.org
+> > Cc: Ansuel Smith <ansuelsmth@gmail.com>; Abhishek Sahu
+> > <absahu@codeaurora.org>; Bjorn Andersson
+> > <bjorn.andersson@linaro.org>; Michael Turquette
+> > <mturquette@baylibre.com>; linux-arm-msm@vger.kernel.org; linux-
+> > clk@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Oggetto: Re: [PATCH] ipq806x: gcc: Added the enable regs and mask for
+> > PRNG
+> >=20
+> > Quoting Ansuel Smith (2020-03-13 11:54:06)
+> > > kernel got hanged while reading from /dev/hwrng at the
+> > > time of PRNG clock enable
+> > >
+> > > Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+> >=20
+> > Is Abhishek the author? Otherwise the tag chain here looks wrong.
+> >=20
+>=20
+> Yes Abhishek is the author.
+>=20
+> > > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
+> >=20
+> > Is there some Fixes: tag we can get here too?
+> >=20
+>=20
+> Think  I should put the commit that added the gcc. Right?
+>=20
 
-> > Quoting Ansuel Smith (2020-03-13 12:58:16)
-> > > diff --git a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-> > b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-> > > index 554c65e7aa0e..580aec63030d 100644
-> > > --- a/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-> > > +++ b/arch/arm/boot/dts/qcom-ipq8064-ap148.dts
-> > > @@ -21,14 +21,5 @@ mux {
-> > >                                 };
-> > >                         };
-> > >                 };
-> > > -
-> > > -               gsbi@16300000 {
-> > > -                       i2c@16380000 {
-> > > -                               status = "ok";
-> > > -                               clock-frequency = <200000>;
-> > > -                               pinctrl-0 = <&i2c4_pins>;
-> > > -                               pinctrl-names = "default";
-> > > -                       };
-> > > -               };
-> > >         };
-> > >  };
-> > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-
-> > ipq806x.c
-> > > index b0eee0903807..75706807e6cf 100644
-> > > --- a/drivers/clk/qcom/gcc-ipq806x.c
-> > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> > > @@ -782,7 +782,7 @@ static struct clk_rcg gsbi4_qup_src = {
-> > >                         .parent_names = gcc_pxo_pll8,
-> > >                         .num_parents = 2,
-> > >                         .ops = &clk_rcg_ops,
-> > > -                       .flags = CLK_SET_PARENT_GATE,
-> > > +                       .flags = CLK_SET_PARENT_GATE | CLK_IGNORE_UNUSED,
-> > 
-> > A better solution is to use the protected-clocks property so we don't
-> > try to touch these clks at all on this device. So this whole patch can
-> > be routed through arm-soc and remove the i2c node and add some dt
-> > property to the gcc node.
-> > 
-> 
-> Should I add a comment where the i2c is removed or I can remove it
-> directly?
-> 
-
-It's fine that you just remove it, like you proposed above.
-
-The commit message should describe the reason and per your description I
-don't expect that anyone will miss the node...
-
-Regards,
-Bjorn
-
-> > >                 },
-> > >         },
-> > >  };
-> 
+Yes.
