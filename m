@@ -2,79 +2,101 @@ Return-Path: <SRS0=3qyU=47=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E2FC2BB1D
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 922D9C10DCE
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BA42074D
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6778A20752
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584148652;
-	bh=+OILuvouBCX8uMF/DlchLPyrx1JavU6/eR/UOXvuv8c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=q0pxz8Aq2UfhEi6KZAbR429CWVWxYBrksacg4uCeFyM37zJVLcWbZ6bg13itQP3x6
-	 F2vMo+JXTvqFwFc+yJ8t1hfceAjhzXIbfLOgRKzwzyvEzYoSzCNthwGzNkWp2outYN
-	 /9oobPqsEPuuKFSIPZz0cNrN30jwfwcOQoYDQFYk=
+	s=default; t=1584149244;
+	bh=swerRyUJxUODfmDzekCjsxd7ozDfqDISTBClgBXOfFE=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Beoy0VmRoq0Dw1EgS1LDTWu3jvdRe8lWtYDEsPdiAQfLEl0kCkDdkDCzxtHpaViyW
+	 IHWKn7tZOthFfadrOuN+0JN5gqkGPA+sNZUbSCP7TaKT8KTs6BeH2/rme7KfCxQFYT
+	 gBJ6SJx+NS3tUl/MgX6gUQJCBtF1VjYHTkHHoUCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbgCNBRc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Mar 2020 21:17:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59302 "EHLO mail.kernel.org"
+        id S1726893AbgCNB1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Mar 2020 21:27:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726591AbgCNBRc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Mar 2020 21:17:32 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726853AbgCNB1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 13 Mar 2020 21:27:23 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A13DC2074A;
-        Sat, 14 Mar 2020 01:17:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 006392074C;
+        Sat, 14 Mar 2020 01:27:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584148651;
-        bh=+OILuvouBCX8uMF/DlchLPyrx1JavU6/eR/UOXvuv8c=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=R7xvdtknuSkmlj0jrBNdhaBIycSQ2z7QKYLKtuKhx4O87Qcm/sNM8vE+OeWqk5IlB
-         Zz74RpD+G7TgqxXlffwyX6UUf506YN4U+yRzn0iS+3a8CELbDkU83dsKnanJHrok9c
-         fZimPWbrxN9BfUoGqhYBr+IUC3iseze8NpNOD/YQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-References: <cover.1583896344.git.joe@perches.com> <1d569e023b6cb7b8d0da8d1bcccd92e97fe436c8.1583896348.git.joe@perches.com>
-Subject: Re: [PATCH -next 010/491] ARM/SAMSUNG EXYNOS ARM ARCHITECTURES: Use fallthrough;
+        s=default; t=1584149243;
+        bh=swerRyUJxUODfmDzekCjsxd7ozDfqDISTBClgBXOfFE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=0UHuVr8i+OQnilm7VkRRv1BAqxlT/nxJQAuioO76UwF5jLBW8XshKQhae7T2OxRK+
+         5dFmWRdFwKVK3mFLu8doZMimwGHUJJXq0mlUGtEiM/YNIdVDmDk6x07xYWhMQg+1OZ
+         lgRrkWdAshDcgU/B+7a8eK+gno3l2yE8DGjnLc1Y=
 From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Joe Perches <joe@perches.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Date:   Fri, 13 Mar 2020 18:17:30 -0700
-Message-ID: <158414865091.164562.17682025008359421835@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.6-rc5
+Date:   Fri, 13 Mar 2020 18:27:22 -0700
+Message-Id: <20200314012722.234270-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Joe Perches (2020-03-10 21:51:24)
-> Convert the various uses of fallthrough comments to fallthrough;
->=20
-> Done via script
-> Link: https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390=
-fa.1582230379.git.joe.com/
->=20
+The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
 
-This link doesn't work for me. It leads to a redirect for=20
+  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
 
-https://lore.kernel.org/lkml/b56602fcf79f849e733e7b521bb0e17895d390fa.15822=
-30379.git.joe@perches.com/
+are available in the Git repository at:
 
->  drivers/clk/samsung/clk-s3c2443.c | 2 +-
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+for you to fetch changes up to 20055448dc1b439c87d0cb602e6d0469b0a3aaad:
+
+  Merge tag 'imx-clk-fixes-5.6' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into clk-fixes (2020-02-25 08:57:00 -0800)
+
+----------------------------------------------------------------
+A small collection of fixes. I'll make another sweep soon to look for
+more fixes for this -rc series.
+
+ - Mark device node const in of_clk_get_parent APIs to ease landing
+   changes in users later
+ - Fix flag for Qualcomm SC7180 video clocks where we thought it would
+   never turn off but actually hardware takes care of it
+ - Remove disp_cc_mdss_rscc_ahb_clk on Qualcomm SC7180 SoCs because this
+   clk is always on anyway
+ - Correct some bad dt-binding numbers for i.MX8MN SoCs
+
+----------------------------------------------------------------
+Anson Huang (1):
+      clk: imx8mn: Fix incorrect clock defines
+
+Geert Uytterhoeven (1):
+      of: clk: Make of_clk_get_parent_{count,name}() parameter const
+
+Stephen Boyd (1):
+      Merge tag 'imx-clk-fixes-5.6' of git://git.kernel.org/.../shawnguo/linux into clk-fixes
+
+Taniya Das (2):
+      clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
+      clk: qcom: dispcc: Remove support of disp_cc_mdss_rscc_ahb_clk
+
+ drivers/clk/clk.c                        |  4 ++--
+ drivers/clk/qcom/dispcc-sc7180.c         | 19 -------------------
+ drivers/clk/qcom/videocc-sc7180.c        |  2 +-
+ include/dt-bindings/clock/imx8mn-clock.h |  4 ++--
+ include/linux/of_clk.h                   |  8 ++++----
+ 5 files changed, 9 insertions(+), 28 deletions(-)
+
+-- 
+Sent by a computer, using git, on the internet
