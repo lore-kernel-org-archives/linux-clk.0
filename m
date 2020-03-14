@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE821C0044D
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A501C0044D
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFD32071B
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:42:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CA5720637
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:44:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="IkdqgW9E"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="vO8ejvz8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgCOBmv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Mar 2020 21:42:51 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:60386 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726530AbgCOBmv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 21:42:51 -0400
+        id S1726921AbgCOBoH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Mar 2020 21:44:07 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:63973 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726879AbgCOBoH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 21:44:07 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584236570; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1584236646; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=JylJ2rTy/Spa9FGV/rDNvZeuTPw7s+H4qdIzU9nL+wo=; b=IkdqgW9EWBwdeguTKrppM4RScdSL8SZ2BM5geDcB/k/H6DKMNC3sX24+ArYmohwB1YcOj1Zi
- NVZ2H58fL/+/SjWQM2Cu+WrHKVAWGzlJrIYwR30xbhyySEaMdjQ/1xvA/My4YCVEAnmvcNxJ
- Q0b6/NK1EN4LpKdl6Q02zTw2yD8=
-X-Mailgun-Sending-Ip: 104.130.122.27
+ bh=JylJ2rTy/Spa9FGV/rDNvZeuTPw7s+H4qdIzU9nL+wo=; b=vO8ejvz80rHSir/U9yEQXZe1Ag0WHcQuaJq43D76NacsuDFFwgS/cumxAxlmcx8uTYQub+k0
+ SMpdtzV4mkDdh90ak0fBtSmg2JNOp3pD1W7L11OELoTOVNnhBYq92wohecOTh9jggJSCkJ6W
+ PpvAAfDF4pYHPjRMEoU/zoXULUk=
+X-Mailgun-Sending-Ip: 104.130.122.26
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6d24e1.7f4eca242148-smtp-out-n04;
- Sat, 14 Mar 2020 18:39:29 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e6d276f.7ff632690068-smtp-out-n01;
+ Sat, 14 Mar 2020 18:50:23 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id C92AFC43637; Sat, 14 Mar 2020 18:39:27 +0000 (UTC)
+        id 86F10C433D2; Sat, 14 Mar 2020 18:50:22 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D1C9C433CB;
-        Sat, 14 Mar 2020 18:39:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D1C9C433CB
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BFDD2C433D2;
+        Sat, 14 Mar 2020 18:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BFDD2C433D2
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -54,11 +54,11 @@ Cc:     David Brown <david.brown@linaro.org>,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
 Subject: [PATCH v6 1/3] dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
-Date:   Sun, 15 Mar 2020 00:09:05 +0530
-Message-Id: <1584211147-5570-2-git-send-email-tdas@codeaurora.org>
+Date:   Sun, 15 Mar 2020 00:19:56 +0530
+Message-Id: <1584211798-10332-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584211147-5570-1-git-send-email-tdas@codeaurora.org>
-References: <1584211147-5570-1-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
+References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
