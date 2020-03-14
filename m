@@ -2,172 +2,107 @@ Return-Path: <SRS0=qW/6=5A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FAAC0044D
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BB00C0044D
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDFA720637
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF5D20637
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:41:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="oNOBgEvY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="thByE3DO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726666AbgCOBbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Mar 2020 21:31:19 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:11104 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725962AbgCOBbT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 21:31:19 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584235878; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=lXhkIBcKbtLstxQRyAkgmmBBedPpvtcrGcYCAgn01SQ=; b=oNOBgEvYWcgvpoezuj4DvwHXFKxP9HqKA5mhxmTGslJMFbtJcjKuJqJjysGHnGlrKhXTGnQd
- QpCyFxXb9PgxPzqpsrkceNoQTfZNins9dEW+d20oOrhWxLxu05NVeV2CaxAf/3FaxGrqVKgV
- wKi9OgBTXsKVB+24a+wsb/TIDpQ=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e6d2775.7fec2d82f6f8-smtp-out-n02;
- Sat, 14 Mar 2020 18:50:29 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B9F7AC432C2; Sat, 14 Mar 2020 18:50:27 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1153CC433BA;
-        Sat, 14 Mar 2020 18:50:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1153CC433BA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v6 2/3] clk: qcom: gcc: Add support for modem clocks in GCC
-Date:   Sun, 15 Mar 2020 00:19:57 +0530
-Message-Id: <1584211798-10332-3-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
-References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
+        id S1726883AbgCOBl1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Mar 2020 21:41:27 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40174 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726530AbgCOBl0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 21:41:26 -0400
+Received: by mail-ed1-f67.google.com with SMTP id a24so17326162edy.7;
+        Sat, 14 Mar 2020 18:41:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Kdlcv0vXg+e3IXgeXkwIX+UvL6hiQeQvJR6h+ymcppc=;
+        b=thByE3DO/kUnWcOoocjbLM+DQ0XCQhtyskwN5xLJyReNqZElXrdPMTTWwftzA30vW2
+         qhyGZ6G2CbXzPpst6Usf+SuTPqDumFIEc+DrV2KGmCinoKV/scRi/P8TCBoCw0VSX2qH
+         vctWR/sd4lGzsFtO+1gEQrMkr5DQh9RwU93qP+9bGbJJNfZKN/k/SQARWsK8U9kOraPt
+         dpQZ652ktMOGKM543Lc8/b4AenNllPzSTxtVewwPDanpk3RZGoLErVQFqvyXqifUinO9
+         Tf9bUTEiUEzTuvYuEHSLqZJlHdE1TgHYH+nZajGvR1PzGL7HBf31lrCNxHJY8jzYyrTf
+         h5MA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Kdlcv0vXg+e3IXgeXkwIX+UvL6hiQeQvJR6h+ymcppc=;
+        b=dWT+dQRGia3r4jzBGDm1Qzs1waRmy35YmYf2sV/MQntQsqGRr2UJydQKcG7xnqiUH7
+         YBK8zvyNX3KgHPRkUF2UHEJoqf44PqB8BgKbsGdtevWH4wJDsSEyMCnHetSSfj3cIvTB
+         3SBEvae0DNeOPAirNT9gLXeD7ZoMkFdbjR4kcktstBE9K5iXcDCfXv17h6pj7jX9jhzb
+         DcnUcF/kPSX3qHPT63zDRBVmH2uBi+nSbIXPStkEzos754v1EZyboPWYuH8ysSC8rHLA
+         Y8hi3wSm0yFFoDbZFzrASNRueSlkaLIZIvaBqg20cOprJ8EaNZLoCueAUHdgDFm6MtsK
+         QsuA==
+X-Gm-Message-State: ANhLgQ1lr3+x3FSx+puubgjL3Que6qci2fTHmXPjEi/W5RIUu2wXfvdu
+        JWmkVMoQpz2qR4kTd/a/Vno9QnPBpk2bog==
+X-Google-Smtp-Source: ADFU+vs00b+0TuPh7UK7ayrUuIskNi33PA5Zud2/5ALZ8kFWqEKnbRLGNhSAuC/yr9xghGmiwskgcQ==
+X-Received: by 2002:a05:6402:10c2:: with SMTP id p2mr6025962edu.375.1584192971411;
+        Sat, 14 Mar 2020 06:36:11 -0700 (PDT)
+Received: from Ansuel-XPS.localdomain (host129-252-dynamic.6-87-r.retail.telecomitalia.it. [87.6.252.129])
+        by smtp.googlemail.com with ESMTPSA id g5sm4066360edn.9.2020.03.14.06.36.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 14 Mar 2020 06:36:10 -0700 (PDT)
+From:   Ansuel Smith <ansuelsmth@gmail.com>
+To:     agross@kernel.org
+Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
+        Abhishek Sahu <absahu@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kumar Gala <galak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] ipq806x: gcc: Added the enable regs and mask for PRNG
+Date:   Sat, 14 Mar 2020 14:36:00 +0100
+Message-Id: <20200314133600.183-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.25.0
+In-Reply-To: <158413140244.164562.11497203149584037524@swboyd.mtv.corp.google.com>
+References: <158413140244.164562.11497203149584037524@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the required modem clocks in global clock controller which are
-required to bring the modem out of reset.
+Kernel got hanged while reading from /dev/hwrng at the
+time of PRNG clock enable
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Fixes: 24d8fba44af3 "clk: qcom: Add support for IPQ8064's global
+clock controller (GCC)"
+
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 ---
- drivers/clk/qcom/gcc-sc7180.c | 72 ++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+ drivers/clk/qcom/gcc-ipq806x.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-index 7f59fb8..6a51b5b 100644
---- a/drivers/clk/qcom/gcc-sc7180.c
-+++ b/drivers/clk/qcom/gcc-sc7180.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0-only
- /*
-- * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
-  */
-
- #include <linux/clk-provider.h>
-@@ -2165,6 +2165,71 @@ static struct clk_branch gcc_video_xo_clk = {
+diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
+index b0eee0903807..a8456e09c44d 100644
+--- a/drivers/clk/qcom/gcc-ipq806x.c
++++ b/drivers/clk/qcom/gcc-ipq806x.c
+@@ -1224,6 +1224,8 @@ static struct clk_rcg prng_src = {
+ 		.parent_map = gcc_pxo_pll8_map,
  	},
- };
+ 	.clkr = {
++		.enable_reg = 0x2e80,
++		.enable_mask = BIT(11),
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "prng_src",
+ 			.parent_names = gcc_pxo_pll8,
+-- 
+2.25.0
 
-+static struct clk_branch gcc_mss_cfg_ahb_clk = {
-+	.halt_reg = 0x8a000,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a000,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_cfg_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_mfab_axis_clk = {
-+	.halt_reg = 0x8a004,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a004,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_mfab_axis_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_nav_axi_clk = {
-+	.halt_reg = 0x8a00c,
-+	.halt_check = BRANCH_HALT_VOTED,
-+	.clkr = {
-+		.enable_reg = 0x8a00c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_nav_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_snoc_axi_clk = {
-+	.halt_reg = 0x8a150,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a150,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_snoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
-+	.halt_reg = 0x8a154,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x8a154,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_mss_q6_memnoc_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct gdsc ufs_phy_gdsc = {
- 	.gdscr = 0x77004,
- 	.pd = {
-@@ -2336,6 +2401,11 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
- 	[GPLL7] = &gpll7.clkr,
- 	[GPLL4] = &gpll4.clkr,
- 	[GPLL1] = &gpll1.clkr,
-+	[GCC_MSS_CFG_AHB_CLK] = &gcc_mss_cfg_ahb_clk.clkr,
-+	[GCC_MSS_MFAB_AXIS_CLK] = &gcc_mss_mfab_axis_clk.clkr,
-+	[GCC_MSS_NAV_AXI_CLK] = &gcc_mss_nav_axi_clk.clkr,
-+	[GCC_MSS_Q6_MEMNOC_AXI_CLK] = &gcc_mss_q6_memnoc_axi_clk.clkr,
-+	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
- };
-
- static const struct qcom_reset_map gcc_sc7180_resets[] = {
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
