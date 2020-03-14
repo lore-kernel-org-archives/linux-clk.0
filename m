@@ -1,102 +1,173 @@
-Return-Path: <SRS0=3qyU=47=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=qW/6=5A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 922D9C10DCE
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25FAAC0044D
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6778A20752
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Mar 2020 01:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584149244;
-	bh=swerRyUJxUODfmDzekCjsxd7ozDfqDISTBClgBXOfFE=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Beoy0VmRoq0Dw1EgS1LDTWu3jvdRe8lWtYDEsPdiAQfLEl0kCkDdkDCzxtHpaViyW
-	 IHWKn7tZOthFfadrOuN+0JN5gqkGPA+sNZUbSCP7TaKT8KTs6BeH2/rme7KfCxQFYT
-	 gBJ6SJx+NS3tUl/MgX6gUQJCBtF1VjYHTkHHoUCU=
+	by mail.kernel.org (Postfix) with ESMTP id EDFA720637
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 01:31:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="oNOBgEvY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgCNB1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Mar 2020 21:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726853AbgCNB1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Mar 2020 21:27:23 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726666AbgCOBbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Mar 2020 21:31:19 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:11104 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725962AbgCOBbT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 21:31:19 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584235878; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=lXhkIBcKbtLstxQRyAkgmmBBedPpvtcrGcYCAgn01SQ=; b=oNOBgEvYWcgvpoezuj4DvwHXFKxP9HqKA5mhxmTGslJMFbtJcjKuJqJjysGHnGlrKhXTGnQd
+ QpCyFxXb9PgxPzqpsrkceNoQTfZNins9dEW+d20oOrhWxLxu05NVeV2CaxAf/3FaxGrqVKgV
+ wKi9OgBTXsKVB+24a+wsb/TIDpQ=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6d2775.7fec2d82f6f8-smtp-out-n02;
+ Sat, 14 Mar 2020 18:50:29 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B9F7AC432C2; Sat, 14 Mar 2020 18:50:27 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 006392074C;
-        Sat, 14 Mar 2020 01:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584149243;
-        bh=swerRyUJxUODfmDzekCjsxd7ozDfqDISTBClgBXOfFE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=0UHuVr8i+OQnilm7VkRRv1BAqxlT/nxJQAuioO76UwF5jLBW8XshKQhae7T2OxRK+
-         5dFmWRdFwKVK3mFLu8doZMimwGHUJJXq0mlUGtEiM/YNIdVDmDk6x07xYWhMQg+1OZ
-         lgRrkWdAshDcgU/B+7a8eK+gno3l2yE8DGjnLc1Y=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.6-rc5
-Date:   Fri, 13 Mar 2020 18:27:22 -0700
-Message-Id: <20200314012722.234270-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.25.1.481.gfbce0eb801-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1153CC433BA;
+        Sat, 14 Mar 2020 18:50:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1153CC433BA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v6 2/3] clk: qcom: gcc: Add support for modem clocks in GCC
+Date:   Sun, 15 Mar 2020 00:19:57 +0530
+Message-Id: <1584211798-10332-3-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
+References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
+Add the required modem clocks in global clock controller which are
+required to bring the modem out of reset.
 
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-sc7180.c | 72 ++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 71 insertions(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index 7f59fb8..6a51b5b 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2019-2020, The Linux Foundation. All rights reserved.
+  */
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+ #include <linux/clk-provider.h>
+@@ -2165,6 +2165,71 @@ static struct clk_branch gcc_video_xo_clk = {
+ 	},
+ };
 
-for you to fetch changes up to 20055448dc1b439c87d0cb602e6d0469b0a3aaad:
++static struct clk_branch gcc_mss_cfg_ahb_clk = {
++	.halt_reg = 0x8a000,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8a000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_mss_cfg_ahb_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_mss_mfab_axis_clk = {
++	.halt_reg = 0x8a004,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x8a004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_mss_mfab_axis_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_mss_nav_axi_clk = {
++	.halt_reg = 0x8a00c,
++	.halt_check = BRANCH_HALT_VOTED,
++	.clkr = {
++		.enable_reg = 0x8a00c,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_mss_nav_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_mss_snoc_axi_clk = {
++	.halt_reg = 0x8a150,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8a150,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_mss_snoc_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
++	.halt_reg = 0x8a154,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x8a154,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_mss_q6_memnoc_axi_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct gdsc ufs_phy_gdsc = {
+ 	.gdscr = 0x77004,
+ 	.pd = {
+@@ -2336,6 +2401,11 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+ 	[GPLL7] = &gpll7.clkr,
+ 	[GPLL4] = &gpll4.clkr,
+ 	[GPLL1] = &gpll1.clkr,
++	[GCC_MSS_CFG_AHB_CLK] = &gcc_mss_cfg_ahb_clk.clkr,
++	[GCC_MSS_MFAB_AXIS_CLK] = &gcc_mss_mfab_axis_clk.clkr,
++	[GCC_MSS_NAV_AXI_CLK] = &gcc_mss_nav_axi_clk.clkr,
++	[GCC_MSS_Q6_MEMNOC_AXI_CLK] = &gcc_mss_q6_memnoc_axi_clk.clkr,
++	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
+ };
 
-  Merge tag 'imx-clk-fixes-5.6' of git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux into clk-fixes (2020-02-25 08:57:00 -0800)
-
-----------------------------------------------------------------
-A small collection of fixes. I'll make another sweep soon to look for
-more fixes for this -rc series.
-
- - Mark device node const in of_clk_get_parent APIs to ease landing
-   changes in users later
- - Fix flag for Qualcomm SC7180 video clocks where we thought it would
-   never turn off but actually hardware takes care of it
- - Remove disp_cc_mdss_rscc_ahb_clk on Qualcomm SC7180 SoCs because this
-   clk is always on anyway
- - Correct some bad dt-binding numbers for i.MX8MN SoCs
-
-----------------------------------------------------------------
-Anson Huang (1):
-      clk: imx8mn: Fix incorrect clock defines
-
-Geert Uytterhoeven (1):
-      of: clk: Make of_clk_get_parent_{count,name}() parameter const
-
-Stephen Boyd (1):
-      Merge tag 'imx-clk-fixes-5.6' of git://git.kernel.org/.../shawnguo/linux into clk-fixes
-
-Taniya Das (2):
-      clk: qcom: videocc: Update the clock flag for video_cc_vcodec0_core_clk
-      clk: qcom: dispcc: Remove support of disp_cc_mdss_rscc_ahb_clk
-
- drivers/clk/clk.c                        |  4 ++--
- drivers/clk/qcom/dispcc-sc7180.c         | 19 -------------------
- drivers/clk/qcom/videocc-sc7180.c        |  2 +-
- include/dt-bindings/clock/imx8mn-clock.h |  4 ++--
- include/linux/of_clk.h                   |  8 ++++----
- 5 files changed, 9 insertions(+), 28 deletions(-)
-
--- 
-Sent by a computer, using git, on the internet
+ static const struct qcom_reset_map gcc_sc7180_resets[] = {
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
