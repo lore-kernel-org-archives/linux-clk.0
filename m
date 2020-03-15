@@ -2,98 +2,133 @@ Return-Path: <SRS0=qW/6=5A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 709D3C0044D
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 03:31:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 803E1C10DCE
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DD9B20578
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 03:31:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47EAC206E9
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:08:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584263282;
+	bh=y6+MMKtpoEZmXy95dogV64Elb9/FiBkAOb+wY0NQTiQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
+	b=oidU76mpNkZggKph7DnSBW2HjH5rXbH92RZwI2/n47XaEfTF8YlXdVQ2Uivt6Vg7u
+	 rW/OKLcXsMumX70OFoFOiwqhULgKZ5nFoR3OZzjl+wTDtpjgWEadzHwHAlJeK1p2cK
+	 Yh/FnvnKFvAcwReNswjtFfMYDtavcawlAwWHfL48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726715AbgCODbU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Mar 2020 23:31:20 -0400
-Received: from newton.telenet-ops.be ([195.130.132.45]:38728 "EHLO
-        newton.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbgCODbU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Mar 2020 23:31:20 -0400
-X-Greylist: delayed 4199 seconds by postgrey-1.27 at vger.kernel.org; Sat, 14 Mar 2020 23:31:20 EDT
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [IPv6:2a02:1800:120:4::f00:13])
-        by newton.telenet-ops.be (Postfix) with ESMTPS id 48fdB620QrzMqmR8
-        for <linux-clk@vger.kernel.org>; Sat, 14 Mar 2020 10:51:26 +0100 (CET)
-Received: from ramsan ([84.195.182.253])
-        by baptiste.telenet-ops.be with bizsmtp
-        id E9rR2200F5USYZQ019rRem; Sat, 14 Mar 2020 10:51:25 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jD3S1-0004Wf-Ci; Sat, 14 Mar 2020 10:51:25 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jD3S1-0008P5-Ag; Sat, 14 Mar 2020 10:51:25 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.7 (take two)
-Date:   Sat, 14 Mar 2020 10:51:20 +0100
-Message-Id: <20200314095120.32262-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S1728074AbgCOJIB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 05:08:01 -0400
+Received: from mail-lj1-f180.google.com ([209.85.208.180]:39971 "EHLO
+        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728065AbgCOJIB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 05:08:01 -0400
+Received: by mail-lj1-f180.google.com with SMTP id 19so15194544ljj.7;
+        Sun, 15 Mar 2020 02:07:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=y6+MMKtpoEZmXy95dogV64Elb9/FiBkAOb+wY0NQTiQ=;
+        b=GCmgHqZu2FiKQ9x5fdyChDRTbh5m6hACNY9cSE9p+G9yst/lxtrR6fu2HirmNmqCVD
+         6ESh+qAyTC6D7/OTK9kCKHFntLtgo8FxwnZNGA+ez0uQrHBYvrh+1C+w/bMwQCdBK6Ui
+         ++C98mbgoHIG1mrw6vah91ctjecktALiI9upUbaAgCZ7dJZS3vW9JbYIRLshLoCxQSNh
+         zZMLUcI+/nA1Jn3i5LG1424xo9uSUswtciICs+Fwv6lME+7wAkKvR0biu7XYGh6DR0si
+         92Kia2rDJHNVfBREXeeuSpXhjRgfAc/IJ+5BrWej7o7kN0VoO4nMb7jHDpfHAklFu1kA
+         sv0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :date:message-id:mime-version;
+        bh=y6+MMKtpoEZmXy95dogV64Elb9/FiBkAOb+wY0NQTiQ=;
+        b=HsowH3ssfMAT8bRdXEGIGfK7IKy3BVL5mwJJbEIENtVR632pLmVKocGyo9N/Exu8C3
+         WewJ7CuCJax1UnPAFOAkWg4zgUF28sZA3696spMlaAIHD/S4LbnhfvADMihaNkewNrpx
+         xusjvzVMRS7re8fo+lL+4/8q+0Xs1aJjxeVL+BihGfGvDZHcKrxx9g/N9U8SRwo/eFpt
+         o2LK2e3PN4TAY7GjpCWuW9Njv991EYmcyvQQDwjslNQ2TWDPtf61QHHGhodHqA+1CQco
+         hCcDVprnxvWZpWZ7wwWmIOPaLfyqG83JAzwkq0B6ak6QoumyNU89BSJ0r3rQjFeJN7RF
+         zMFw==
+X-Gm-Message-State: ANhLgQ2razJgbBiiQ+r/HHkaIiB8q+l+aUbMmPhPX10OTiocQa/3uPpa
+        /t07l8P89+jdISAIHZ4VUfw=
+X-Google-Smtp-Source: ADFU+vuUSjXZF4c+u/QwxIVHdBy2Qc8AarnVKoDp5c4eZz6oJTz+TOypteEeXK400S89WyQzo08rKw==
+X-Received: by 2002:a2e:9ac5:: with SMTP id p5mr13400772ljj.200.1584263276934;
+        Sun, 15 Mar 2020 02:07:56 -0700 (PDT)
+Received: from saruman (88-113-215-213.elisa-laajakaista.fi. [88.113.215.213])
+        by smtp.gmail.com with ESMTPSA id k203sm614368lfd.7.2020.03.15.02.07.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 15 Mar 2020 02:07:55 -0700 (PDT)
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCHv3 1/5] devicetree: bindings: exynos: Add new compatible for Exynos5420 dwc3 clocks support
+In-Reply-To: <20200310194854.831-2-linux.amoon@gmail.com>
+References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-2-linux.amoon@gmail.com>
+Date:   Sun, 15 Mar 2020 11:07:50 +0200
+Message-ID: <87lfo2f0k9.fsf@kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit 068e7f85234c0b56f55cc0259ad9c05f2c64b8fb:
 
-  clk: renesas: Remove use of ARCH_R8A7795 (2020-02-21 14:01:54 +0100)
+Hi,
 
-are available in the Git repository at:
+Anand Moon <linux.amoon@gmail.com> writes:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.7-tag2
+> Add the new compatible string for Exynos5422 DWC3 to support
+> enable/disable of core and suspend clk by DWC3 driver.
+> Also updated the clock names for compatible samsung,exynos5420-dwusb3.
+>
+> Acked-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
 
-for you to fetch changes up to eeb40fda056ce2f914fff000525ca5a7b2ddec50:
+What is the dependency here?
 
-  dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema (2020-03-11 09:02:26 +0100)
+checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
+Hunk #2 FAILED at 84.
+1 out of 2 hunks FAILED
 
-----------------------------------------------------------------
-clk: renesas: Updates for v5.7 (take two)
+Applying on top of v5.6-rc5
 
-  - Improved clock/reset handling for the R-Car USB2 Clock Selector,
-  - Conversion to json-schema of the Renesas CPG/MSSR DT bindings.
+=2D-=20
+balbi
 
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      dt-bindings: clock: renesas: cpg-mssr: Convert to json-schema
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yoshihiro Shimoda (4):
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix clock[-name]s properties
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add power-domains and resets properties
-      clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
-      clk: renesas: rcar-usb2-clock-sel: Add reset_control
+-----BEGIN PGP SIGNATURE-----
 
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 100 -----------------
- .../bindings/clock/renesas,cpg-mssr.yaml           | 119 +++++++++++++++++++++
- .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  17 ++-
- drivers/clk/renesas/Kconfig                        |   1 +
- drivers/clk/renesas/rcar-usb2-clock-sel.c          |  40 ++++++-
- 5 files changed, 172 insertions(+), 105 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl5t8GYACgkQzL64meEa
+mQZ5gw//fmJazamjVuJq52Gz3zIUmYUKhW/T27bH63LVJszVMLh4qdWsfS5siOsU
+XQ5aozi1Djet7rUC8tPkW85WGs2J4/Mb8BiKZTCAX/XPVRprQHdZhUk3tkSYpdHE
+xuXowbKt1rXkSS5lkJ792SOI6SlxISKDHmS5ELzA5S9dhHgRarmMioEcVySR6O0/
+vw58f1r0jlU1MGjGOMkIeJ//tldiv+mK5gw1159zcSbj0KuLBwD0QnRG9uPYsUhg
+TjO8bfdAnjdouYZtRTaB0CDcxU1c4v4UUgnVJ8BI4ABAspn6IC+CUnQkuqs7TXy8
+Tf0f92uXywtUztxGTBGkx+IWy7aAutt+/L+FDoIc59VKibsBIOqFfZcBiHpk/oim
+adfVmFrJ+6/HOKZ+56t/Et7NkhFJd+Qj1LN9VGcUSYt+1/0wJSppCEjN8iiXR+po
+W9rdxgRROxFaxsquO09VFaFO/o35B+X7Pxa9aUQbL8Lgk5LztqxeXMS7J158WTVW
+5WZGFq8Pn6P3F9oRIgy545hK9I/42UTlLRSEdVcyBTo9XmZ9USmBVzE5SkiZwYdb
+wSbyfXxFSuu8mia3MzJIkMvjnsKpLm7MQlo35TKeGqW7TCgOmmwNLDpj2Rp7JdW3
+HtzvRCKh93ytLgrfYMLVUjVKDewQBVc7v+aofdkagMprUcrNrlI=
+=7hzO
+-----END PGP SIGNATURE-----
+--=-=-=--
