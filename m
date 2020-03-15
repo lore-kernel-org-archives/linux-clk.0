@@ -2,141 +2,120 @@ Return-Path: <SRS0=qW/6=5A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFBBC2BB1D
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE76C10DCE
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 12:54:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44449206EB
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D35206B1
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 12:54:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+ZgyUWz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVW4lwLp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbgCOJqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Mar 2020 05:46:44 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:35112 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728108AbgCOJqo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 05:46:44 -0400
-Received: by mail-io1-f68.google.com with SMTP id h8so14117216iob.2;
-        Sun, 15 Mar 2020 02:46:43 -0700 (PDT)
+        id S1728524AbgCOMyG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 08:54:06 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39512 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728522AbgCOMyG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 08:54:06 -0400
+Received: by mail-lf1-f66.google.com with SMTP id j15so11681414lfk.6;
+        Sun, 15 Mar 2020 05:54:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GNFfXHO2uILPgu0B1T3kwaBgaXjP+dlED6DVNl3sNIg=;
-        b=I+ZgyUWzIa8Yxi+0xMqH9yaVxAhiEOypJ/WXcO5ujz84CdXXQxL2d1ab/itSy71+MY
-         v1zS6OgxvE0Bn+Qa0JXfcz8RKJwprkoMCBipzhzZlHWCugVSwinT5j3lnrH2WDYlwZ01
-         eYOr9xN2OR+z2u3VNz+TrTa75FmvLhds4/9O2wY6HbEzs0xPbUZ28UtXN7LT2TXhup6Y
-         pkBRtDX0RpzM5wTDCNpUYBgBjIeYHAnSJprQYhPVixRf+4+i5CWwFDcVCSryxTo7o+n+
-         QvVX5JRwWD/Ek/EyR8q7MTRXZ3swX8IoaPhhLPo/I0oYQ9PA+4e/gT6RGNbVnejmq4aN
-         w9FA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1MwTYDSMkQGM4p1A9KGg+VT/DsDNrrQYfUwwT/ZLztU=;
+        b=PVW4lwLpvpoZzOqZEqmL2rZNklnr+mBEBTHrm1U2oQCXugYZUXMn73hg0zr7nZEt6Q
+         sa3RQTuWbDvP0p0KvC1A7Gs5Yxz+w2LZndSmver+ZGSD+6U8QK94OOo3Zo9sQahuheqp
+         xR0j1sNV3Fx/WHx2Hv0HHhtcMnfTLI2ys7PhowwjQseAHffjF8gG499vHraH5AMvGp/N
+         SPsYkIl+fr8LQywgtxdCjfRXRmzWQY21RunzhrW2Jt6y5NlZob96SiCUy8omR/uhKOl+
+         saj+Ox1dwqeHNc83t87f3Wk++i2PZcgAGKDCPGfNcxvjht9KUu+NgnkYS+FVHX7NXSbZ
+         LKzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GNFfXHO2uILPgu0B1T3kwaBgaXjP+dlED6DVNl3sNIg=;
-        b=icy7SZW6XbPVFapP/3jpqqK8cP45v9BhR5hqZv6+2LAKRg88qcGHntKcEP3RniUpm2
-         8LEX+pWrbaIZUospvcpto38IreGhQ6xer/WAe1etFMNVybjtQysb8/oteh868wW8gVD6
-         djQisSMwIE7RgIMkRyUQdUFRQxAPzMO/TGyabuDy/pH8g0mzuow9RekefDDOvIKmhFtT
-         Ql63wtn/xoKo30da9oWb1tdPIAE0IkoPw/kN0nduV4o4Uras2GMXvGGLqsh6ETjdk0or
-         wMpz1snJ3Hfx1fwq5s8YmpJtLFiLt+k82n8rmtN/grRziuuZN+E1ZkiXsZbyJxbQIgQv
-         4WmQ==
-X-Gm-Message-State: ANhLgQ2BBjXijrw6M21cpRQEQNHUxd5BN44RVqMBAnYjTMCbNGJ0a3a1
-        iYFOfYGgS3QSr5DJsQTsFZFdMMj7VjMSNlgyPPg=
-X-Google-Smtp-Source: ADFU+vsewoQ8rLqcke0ekgyn+gsES6vdYQVgDzjdOdmXOPVuxzoaksZJ3jLUICWiRwD3y5hXFyjeMrRhGfoBBlDZBWk=
-X-Received: by 2002:a6b:f311:: with SMTP id m17mr19317386ioh.128.1584265603378;
- Sun, 15 Mar 2020 02:46:43 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1MwTYDSMkQGM4p1A9KGg+VT/DsDNrrQYfUwwT/ZLztU=;
+        b=VRvmw7AMeQP8woYrKSwTUYQHC6aDTcShej1h0JLCVRGbWgF9TmaC32JECSru5FjGq0
+         stHRPt41mfnWJnfaWgZHhczhHsqngqiLOL1Af+ajLcvV1IS7Ov01mwSfJAShwsAV8s4R
+         tXozW+AZTBwNnDRJPz5tlYypuALPEqZA9St/YXBbe+ssdL++mUNM10l2+7EMOnOy1amG
+         1CqXHPPbTAvB6eNAXusWn4OOxSBe0dHcESeS1Q72jcPjUvKgExo/TiUK/gdVAnAQgVIT
+         oQgIgjwZjOBr64qA1uVX5GesHslNjsovGz78qV4NidsnHKOfMh+/B9g/AsfIsomNi+07
+         O/hg==
+X-Gm-Message-State: ANhLgQ1VKqR7NEoAkkzmRpkqt/71xXPocwKdyD8CL02cpx+l7My+0BUL
+        /ln5SudCxU5akGD/o8pgVgXcrIx2
+X-Google-Smtp-Source: ADFU+vuEFH5q0NH5MzntAYyZmI1FtKlcUtANyZyUjRv2GKKy4RBWpfNo0pevPKgB8YDmuRJlHyHK/A==
+X-Received: by 2002:a19:cbd5:: with SMTP id b204mr608821lfg.203.1584276843012;
+        Sun, 15 Mar 2020 05:54:03 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.googlemail.com with ESMTPSA id v200sm4187853lfa.48.2020.03.15.05.54.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 15 Mar 2020 05:54:02 -0700 (PDT)
+Subject: Re: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in
+ device tree
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, helen.koike@collabora.com, sboyd@kernel.org
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
+ <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
+Date:   Sun, 15 Mar 2020 15:54:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-3-linux.amoon@gmail.com>
- <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com> <20200314182010.GB17580@kozik-lap>
-In-Reply-To: <20200314182010.GB17580@kozik-lap>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Sun, 15 Mar 2020 15:16:33 +0530
-Message-ID: <CANAwSgS1+6Dzv2XbmMUR40AbJePxUzWkKkBC1W9hBMGzaMWP3w@mail.gmail.com>
-Subject: Re: [PATCHv3 2/5] ARM: dts: exynos: Add missing usbdrd3 suspend clk
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-samsung-soc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Felipe Balbi <balbi@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+15.03.2020 04:46, Sowjanya Komatineni пишет:
+> Tegra210 contains VI controller for video input capture from MIPI
+> CSI camera sensors and also supports built-in test pattern generator.
+> 
+> CSI ports can be one-to-one mapped to VI channels for capturing from
+> an external sensor or from built-in test pattern generator.
+> 
+> This patch adds support for VI and CSI and enables them in Tegra210
+> device tree.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
 
-On Sat, 14 Mar 2020 at 23:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On Sat, Mar 14, 2020 at 07:02:33PM +0530, Anand Moon wrote:
-> > Hi Krzysztof,
-> >
-> > On Wed, 11 Mar 2020 at 01:19, Anand Moon <linux.amoon@gmail.com> wrote:
-> > >
-> > > Add new compatible strings for USBDRD3 for adding missing
-> > > suspend clk, exynos5422 usbdrd3 support two clk USBD300 and
-> > > SCLK_USBD300, so add missing suspemd_clk for Exynos542x DWC3 nodes.
-> > >
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> >
-> > My assumption based on the FSYS clock source diagram below was bit wrong.
-> > [0] https://imgur.com/gallery/zAiBoyh
-> >
-> > And again re-looking into the driver source code, it turn out their
-> > are *6 clock*
-> > Here is the correct mapping as per the Exynos5420 clock driver.
-> >
-> > USB-(phy@12100000)
-> > |___________________CLK_SCLK_USBD300
-> > |___________________CLK_SCLK_USBPHY300
-> >
-> > USB-(phy@12500000)
-> > |___________________CLK_SCLK_USBD301
-> > |___________________CLK_SCLK_USBPHY301
-> >
-> > USB-(dwc3@12000000)
-> > |___________________CLK_USBD300
-> > USB-(dwc3@12400000)
-> > |___________________CLK_USBD301
-> >
-> > Note: As per Exynos 5422 user manual, There are some more USB CLK
-> > configuration missing in GATE_IP_FSYS. So we could enable another dwc3 clk,
-> > If needed I would like too add this missing clk code and enable this
-> > clk for dwc3 driver.
-> >
-> > For some reason we already use CLK_USBD300 and CLK_USBD301
-> > for PHY nodes, which lead to this confusion. So we need to update PHY clock
-> > CLK_USBD300 with CLK_SCLK_USBD300 and clock CLK_USBD301 with CLK_SCLK_USBD301.
-> >
-> > Please share your thought on linking PHY nodes above and add new DWC3 clock
-> > and enable this clock.
->
-> The real clock topology of Exynos5422 is not properly reflected in the
-> kernel. However cleaning this up is quite big task.
->
->
-> Best regards,
-> Krzysztof
->
+Hello Sowjanya,
 
-I would like to fix all my patches with new finding and submit them
-once again for review.
+...
+> +
+> +			pd_venc: venc {
+> +				clocks = <&tegra_car TEGRA210_CLK_VI>,
+> +					 <&tegra_car TEGRA210_CLK_CSI>;
+> +				resets = <&tegra_car 20>,
 
--Anand
+What is the clock #20?
+
+> +					 <&tegra_car TEGRA210_CLK_CSI>,
+> +					 <&mc TEGRA210_MC_RESET_VI>;
+
+Does this order means that memory controller will be reset *after*
+resetting the CSI/VI hardware? This is incorrect reset sequence.
+
+The memory controller reset should be kept asserted during of the time
+of the hardware resetting procedure.
+
+The correct sequence should be as follows:
+
+1. Assert MC
+2. Reset VI
+3. Deassert MC
