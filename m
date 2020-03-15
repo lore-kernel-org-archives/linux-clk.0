@@ -5,61 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 706C9C10DCE
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFBBC2BB1D
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AD2206B1
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44449206EB
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 09:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vp92DRfD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I+ZgyUWz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728099AbgCOJZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Mar 2020 05:25:31 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:43712 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728065AbgCOJZa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 05:25:30 -0400
-Received: by mail-il1-f195.google.com with SMTP id d14so12956503ilq.10;
-        Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
+        id S1728189AbgCOJqo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 05:46:44 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:35112 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728108AbgCOJqo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 05:46:44 -0400
+Received: by mail-io1-f68.google.com with SMTP id h8so14117216iob.2;
+        Sun, 15 Mar 2020 02:46:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=Vp92DRfDmGLIM/NPFDj32KHbGd5+v54Y8Qx53JAOAD18STaqvCL7NqF8E/KfcDTr1N
-         RTh37uMH8CGBwXi7s3YU7A9AqUdrD6fmecuUReY3uJ5yex7vhm+o2hnTXMKjuFBsXo8J
-         FRimVp9eYRS/Og97n7VrlGVV9giH2n3V/9MUXWgW6I3wwjkOIFXXfG78J9tNal3iQrA3
-         gO1CPPERPk/E+tzgHAp8X6rm6y76Q8xQ5fK5NSKoqHMy3CoWgMdhVBy0f55UMQT2l9Yo
-         PjFoGSXUOecROOqHn58hc8Ztnv48FZYFeTL64uCDFp58FTA2TSs3iokQUVSnB3mnnWY+
-         nyaw==
+        bh=GNFfXHO2uILPgu0B1T3kwaBgaXjP+dlED6DVNl3sNIg=;
+        b=I+ZgyUWzIa8Yxi+0xMqH9yaVxAhiEOypJ/WXcO5ujz84CdXXQxL2d1ab/itSy71+MY
+         v1zS6OgxvE0Bn+Qa0JXfcz8RKJwprkoMCBipzhzZlHWCugVSwinT5j3lnrH2WDYlwZ01
+         eYOr9xN2OR+z2u3VNz+TrTa75FmvLhds4/9O2wY6HbEzs0xPbUZ28UtXN7LT2TXhup6Y
+         pkBRtDX0RpzM5wTDCNpUYBgBjIeYHAnSJprQYhPVixRf+4+i5CWwFDcVCSryxTo7o+n+
+         QvVX5JRwWD/Ek/EyR8q7MTRXZ3swX8IoaPhhLPo/I0oYQ9PA+4e/gT6RGNbVnejmq4aN
+         w9FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=eDLn6hcaUGXN1ifnm89fP3KORlDlYvpz0bkA0oBIYGM=;
-        b=JzzcXQjSt1PiPSI277ANzrOxaWzBw8yXSgve7kyUdTFlXWUXO/+OAJvzlZmGkuxHHQ
-         ibSsqUYObdJYFpsPshMn5OFjqbYaWYLdr6T6KsTre++kN9OkDsKoH2U05lkP62z1PjBk
-         jqTtV88GU8chciFlXcqjaminV1rDIgglzut0+fxV9jCzEyi1XOyFJzL7ZMEjkMx8YEFh
-         4Ym6Pqs7FtO6h9gVSg/QHpagYE6hjeAA2FBZs1x6sTSdzKne5Qeq9f6CsCWpub8KFIbI
-         K02rz5lCAcfXGDzHybJXF6AjeWZoVu1c0TjYzCAs7NMkAa6+QfzdfnRFMBVPJhzIKn7Y
-         ia+w==
-X-Gm-Message-State: ANhLgQ2zJ5ujUn//8LzGY7Hs4R1Add0w68Q68f4kX0tP49vsvCby03qT
-        Q4qfoyn5s39SosV6h30FOiRoLdTrDoap0xipwBQ=
-X-Google-Smtp-Source: ADFU+vu2O/lxp6WbokN0oJhMae6LPLe+vhCCs071Xl1gPKo6khFDdWen7oB+9dJAe4A09kgfcbJwwxr26vMrqKvBJwk=
-X-Received: by 2002:a92:d843:: with SMTP id h3mr8319415ilq.246.1584264329583;
- Sun, 15 Mar 2020 02:25:29 -0700 (PDT)
+        bh=GNFfXHO2uILPgu0B1T3kwaBgaXjP+dlED6DVNl3sNIg=;
+        b=icy7SZW6XbPVFapP/3jpqqK8cP45v9BhR5hqZv6+2LAKRg88qcGHntKcEP3RniUpm2
+         8LEX+pWrbaIZUospvcpto38IreGhQ6xer/WAe1etFMNVybjtQysb8/oteh868wW8gVD6
+         djQisSMwIE7RgIMkRyUQdUFRQxAPzMO/TGyabuDy/pH8g0mzuow9RekefDDOvIKmhFtT
+         Ql63wtn/xoKo30da9oWb1tdPIAE0IkoPw/kN0nduV4o4Uras2GMXvGGLqsh6ETjdk0or
+         wMpz1snJ3Hfx1fwq5s8YmpJtLFiLt+k82n8rmtN/grRziuuZN+E1ZkiXsZbyJxbQIgQv
+         4WmQ==
+X-Gm-Message-State: ANhLgQ2BBjXijrw6M21cpRQEQNHUxd5BN44RVqMBAnYjTMCbNGJ0a3a1
+        iYFOfYGgS3QSr5DJsQTsFZFdMMj7VjMSNlgyPPg=
+X-Google-Smtp-Source: ADFU+vsewoQ8rLqcke0ekgyn+gsES6vdYQVgDzjdOdmXOPVuxzoaksZJ3jLUICWiRwD3y5hXFyjeMrRhGfoBBlDZBWk=
+X-Received: by 2002:a6b:f311:: with SMTP id m17mr19317386ioh.128.1584265603378;
+ Sun, 15 Mar 2020 02:46:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-2-linux.amoon@gmail.com>
- <87lfo2f0k9.fsf@kernel.org>
-In-Reply-To: <87lfo2f0k9.fsf@kernel.org>
+References: <20200310194854.831-1-linux.amoon@gmail.com> <20200310194854.831-3-linux.amoon@gmail.com>
+ <CANAwSgR4fJK0uVANv-x-=iSL_hAKD8kvazACUsY9Meu5xonuqQ@mail.gmail.com> <20200314182010.GB17580@kozik-lap>
+In-Reply-To: <20200314182010.GB17580@kozik-lap>
 From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Sun, 15 Mar 2020 14:55:19 +0530
-Message-ID: <CANAwSgQgLm623szgs5Lba-NQKySiGw5fRfjyxjfdfHxQxhri7g@mail.gmail.com>
-Subject: Re: [PATCHv3 1/5] devicetree: bindings: exynos: Add new compatible
- for Exynos5420 dwc3 clocks support
-To:     Felipe Balbi <balbi@kernel.org>
+Date:   Sun, 15 Mar 2020 15:16:33 +0530
+Message-ID: <CANAwSgS1+6Dzv2XbmMUR40AbJePxUzWkKkBC1W9hBMGzaMWP3w@mail.gmail.com>
+Subject: Re: [PATCHv3 2/5] ARM: dts: exynos: Add missing usbdrd3 suspend clk
+To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
@@ -68,49 +67,76 @@ Cc:     Linux USB Mailing List <linux-usb@vger.kernel.org>,
         "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Felipe Balbi <balbi@kernel.org>,
         Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Tomasz Figa <tomasz.figa@gmail.com>,
         Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Felipe,
+Hi Krzysztof,
 
-On Sun, 15 Mar 2020 at 14:37, Felipe Balbi <balbi@kernel.org> wrote:
+On Sat, 14 Mar 2020 at 23:50, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
->
-> Hi,
->
-> Anand Moon <linux.amoon@gmail.com> writes:
->
-> > Add the new compatible string for Exynos5422 DWC3 to support
-> > enable/disable of core and suspend clk by DWC3 driver.
-> > Also updated the clock names for compatible samsung,exynos5420-dwusb3.
+> On Sat, Mar 14, 2020 at 07:02:33PM +0530, Anand Moon wrote:
+> > Hi Krzysztof,
 > >
-> > Acked-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > On Wed, 11 Mar 2020 at 01:19, Anand Moon <linux.amoon@gmail.com> wrote:
+> > >
+> > > Add new compatible strings for USBDRD3 for adding missing
+> > > suspend clk, exynos5422 usbdrd3 support two clk USBD300 and
+> > > SCLK_USBD300, so add missing suspemd_clk for Exynos542x DWC3 nodes.
+> > >
+> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> >
+> > My assumption based on the FSYS clock source diagram below was bit wrong.
+> > [0] https://imgur.com/gallery/zAiBoyh
+> >
+> > And again re-looking into the driver source code, it turn out their
+> > are *6 clock*
+> > Here is the correct mapping as per the Exynos5420 clock driver.
+> >
+> > USB-(phy@12100000)
+> > |___________________CLK_SCLK_USBD300
+> > |___________________CLK_SCLK_USBPHY300
+> >
+> > USB-(phy@12500000)
+> > |___________________CLK_SCLK_USBD301
+> > |___________________CLK_SCLK_USBPHY301
+> >
+> > USB-(dwc3@12000000)
+> > |___________________CLK_USBD300
+> > USB-(dwc3@12400000)
+> > |___________________CLK_USBD301
+> >
+> > Note: As per Exynos 5422 user manual, There are some more USB CLK
+> > configuration missing in GATE_IP_FSYS. So we could enable another dwc3 clk,
+> > If needed I would like too add this missing clk code and enable this
+> > clk for dwc3 driver.
+> >
+> > For some reason we already use CLK_USBD300 and CLK_USBD301
+> > for PHY nodes, which lead to this confusion. So we need to update PHY clock
+> > CLK_USBD300 with CLK_SCLK_USBD300 and clock CLK_USBD301 with CLK_SCLK_USBD301.
+> >
+> > Please share your thought on linking PHY nodes above and add new DWC3 clock
+> > and enable this clock.
 >
-> What is the dependency here?
+> The real clock topology of Exynos5422 is not properly reflected in the
+> kernel. However cleaning this up is quite big task.
 >
-> checking file Documentation/devicetree/bindings/usb/exynos-usb.txt
-> Hunk #2 FAILED at 84.
-> 1 out of 2 hunks FAILED
 >
-> Applying on top of v5.6-rc5
+> Best regards,
+> Krzysztof
 >
-> --
-> balbi
 
-These patch were made on top linux next-20200306,
-And with new updates in the clk driver configuration.
-I will update these patchs later, plz drop these changes for now.
+I would like to fix all my patches with new finding and submit them
+once again for review.
 
 -Anand
