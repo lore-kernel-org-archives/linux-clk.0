@@ -2,114 +2,122 @@ Return-Path: <SRS0=qW/6=5A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D94DC18E5B
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 18:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76A05C10DCE
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 22:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32412206EB
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 18:38:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CC10206BE
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Mar 2020 22:21:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="iffeNw84"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SdjV7v5Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728240AbgCOSiM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Mar 2020 14:38:12 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:32057 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728548AbgCOSiJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 15 Mar 2020 14:38:09 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 48gSqL3yx5zrZ;
-        Sun, 15 Mar 2020 19:38:06 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1584297486; bh=s7oB26JS9ZchdHzHcNTzzpWfgKOApt1VbPLehPvmx58=;
-        h=Date:In-Reply-To:References:From:Subject:To:Cc:From;
-        b=iffeNw84c2ikZH0h+Mj+NePUWa4Xiog47wfp/vkFGUGFjHhMTPegLcVrEOz3BCFcy
-         fBOkPPmKO3stjGK9gPhtHSTeSVvXdzaqc/oMlr+t5G2WXFB7/1qOf+/nM9FkUkiins
-         9A0mwpE/rEAlS6ysvQEs9RjokFT8cP708kT1vMaHj1/cXcwJaRyyXEIYykPZ4BfQKh
-         5IJxuWnRrEhZ8qQc5HViQP2UvCAydxMS0qWe2jPForXnyjT3U4twAdrxNubzMxNDBH
-         h4v5+GOM9Em1xj9wCMQ2yjq0saxpcTuEtRUmsS5/yxqp+xNvCYrzp68LBTGplaoqd1
-         yNckkPGiF8kTQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Sun, 15 Mar 2020 19:38:06 +0100
-Message-Id: <590024802c809b02d93cb849e16a62f01963532a.1584296940.git.mirq-linux@rere.qmqm.pl>
-In-Reply-To: <cover.1584296940.git.mirq-linux@rere.qmqm.pl>
-References: <cover.1584296940.git.mirq-linux@rere.qmqm.pl>
-From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
-Subject: [PATCH 3/3] clk: at91: sama5d2: allow setting all PMC clock parents
- via DT
+        id S1729281AbgCOWVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 18:21:05 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3021 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729213AbgCOWVF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Mar 2020 18:21:05 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e6eaa200000>; Sun, 15 Mar 2020 15:20:16 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 15 Mar 2020 15:21:04 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sun, 15 Mar 2020 15:21:04 -0700
+Received: from [10.2.175.141] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 15 Mar
+ 2020 22:21:03 +0000
+Subject: Re: [RFC PATCH v4 8/8] arm64: tegra: Add Tegra VI CSI support in
+ device tree
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1584236766-24819-1-git-send-email-skomatineni@nvidia.com>
+ <1584236766-24819-9-git-send-email-skomatineni@nvidia.com>
+ <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <80805c85-a6b0-62c4-877c-6af3831bce1d@nvidia.com>
+Date:   Sun, 15 Mar 2020 15:21:36 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <b4bbcc1d-d38c-14c5-7205-2f7657ab8712@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1584310816; bh=+e0QisX1Z4jXTDX4Ud8ppSbrPDDTZh9nrZyl/tz1gm0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=SdjV7v5ZXAJPdwkJv7XrI0jhiPGdHft7NiD4UZhm5/pqMPz24r8XNJp8Yihv0QJAf
+         QKU2dskuAFdRY63eiMV4yG6PWEnK5NIiKl08W1PsGE0f3LzkLtUF1VNkDGlEZpBZtM
+         Tpc70Jc58zjcsMcAIDyWMPpz1ViDNZSOP8VWfVq6xX1qGJsqykua3J7vHG4u50RLf2
+         JpQr/Sd3x3nQHuIPY2jWU90j7Y7utSNQnkEjJGXEssCUYC4OMMD9JxFdyZi7qBpCq9
+         rojX94Td42GK0Mj7vykmBBrfqP21yQ7HvEoHLmwhKYodalibnrxOHCSgyUNKo8LK8I
+         T/QlxbfzkkzSw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We need to have clocks accessible via phandle to select them
-as peripheral clock parent using assigned-clock-parents in DT.
-PLLACK and AUDIOPLLCK were missing for sama5d2. Add them.
 
-Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
----
- drivers/clk/at91/sama5d2.c       | 6 +++++-
- include/dt-bindings/clock/at91.h | 2 ++
- 2 files changed, 7 insertions(+), 1 deletion(-)
+On 3/15/20 5:54 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 15.03.2020 04:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Tegra210 contains VI controller for video input capture from MIPI
+>> CSI camera sensors and also supports built-in test pattern generator.
+>>
+>> CSI ports can be one-to-one mapped to VI channels for capturing from
+>> an external sensor or from built-in test pattern generator.
+>>
+>> This patch adds support for VI and CSI and enables them in Tegra210
+>> device tree.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+> Hello Sowjanya,
+>
+> ...
+>> +
+>> +                     pd_venc: venc {
+>> +                             clocks =3D <&tegra_car TEGRA210_CLK_VI>,
+>> +                                      <&tegra_car TEGRA210_CLK_CSI>;
+>> +                             resets =3D <&tegra_car 20>,
+> What is the clock #20?
 
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index ae5e83cadb3d..b3fa2291ccd8 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -166,7 +166,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(regmap))
- 		return;
- 
--	sama5d2_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
-+	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
- 					nck(sama5d2_systemck),
- 					nck(sama5d2_periph32ck),
- 					nck(sama5d2_gck), 3);
-@@ -202,6 +202,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-+	sama5d2_pmc->chws[PMC_PLLACK] = hw;
-+
- 	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
- 					      "mainck");
- 	if (IS_ERR(hw))
-@@ -217,6 +219,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 	if (IS_ERR(hw))
- 		goto err_free;
- 
-+	sama5d2_pmc->chws[PMC_AUDIOPLLCK] = hw;
-+
- 	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
- 	if (IS_ERR(regmap_sfr))
- 		regmap_sfr = NULL;
-diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-index c3f4aa6a2d29..e57362e98129 100644
---- a/include/dt-bindings/clock/at91.h
-+++ b/include/dt-bindings/clock/at91.h
-@@ -21,6 +21,8 @@
- #define PMC_MCK2		4
- #define PMC_I2S0_MUX		5
- #define PMC_I2S1_MUX		6
-+#define PMC_PLLACK		7
-+#define PMC_AUDIOPLLCK		8
- 
- #ifndef AT91_PMC_MOSCS
- #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
--- 
-2.20.1
+Hi Dmitry,
 
+20 is VI_RST not defined in include/dt-bindings/reset/tegra210-car.h
+
+Will add define and will fix to use it.
+
+
+
+>> +                                      <&tegra_car TEGRA210_CLK_CSI>,
+>> +                                      <&mc TEGRA210_MC_RESET_VI>;
+> Does this order means that memory controller will be reset *after*
+> resetting the CSI/VI hardware? This is incorrect reset sequence.
+>
+> The memory controller reset should be kept asserted during of the time
+> of the hardware resetting procedure.
+>
+> The correct sequence should be as follows:
+>
+> 1. Assert MC
+> 2. Reset VI
+> 3. Deassert MC
+Right, will fix order. Thanks
