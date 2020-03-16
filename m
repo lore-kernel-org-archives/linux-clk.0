@@ -2,98 +2,119 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E9EC18E5B
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE86C0044D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 18:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47E4B20674
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F5A42071C
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 18:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584380990;
-	bh=zsKNNIKwKTr7UrxLQIlcC4JugcVMjtMOTZFacNLQx04=;
+	s=default; t=1584382374;
+	bh=spkLbBBbHUQVTZXNlMZ2J+CHChOLkAfsVcF7t9bITWY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=oI/Ebp3KfjCn3lkLxOqA/XSc4SgpJNcbA4MXNHe9z3xRHgYtRiDg3rx+Uz68ARmCB
-	 iKoEneb7yRNtdQO8BCML7vLEh+++pblgBCFmeps8hhHNXLdNCLUBqRRPNjfl9mVC1S
-	 K8dWK4QFKeJhVauipUhiwsry+cySXWTZYZD9p4D8=
+	b=P2hwk491WOrpuVsokQ7FMlI/IEXUV+zD1MILsHzQ6Sdm8UCJ8kdjy1PBXDlFYJCAi
+	 IEmKIXtFqfb5GpRWZKnBPetedur8JJM167Pdrmk57n/ndkO9l8EvYOnIy9NRPP3YOg
+	 GtuDMcJhyztopPeQqOQ1IvQpfN+ef5RFkBAVd0mw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbgCPRtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 13:49:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
+        id S1732235AbgCPSMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 14:12:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731891AbgCPRtt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:49:49 -0400
+        id S1732187AbgCPSMx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Mar 2020 14:12:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF37E20719;
-        Mon, 16 Mar 2020 17:49:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E767B20674;
+        Mon, 16 Mar 2020 18:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584380989;
-        bh=zsKNNIKwKTr7UrxLQIlcC4JugcVMjtMOTZFacNLQx04=;
+        s=default; t=1584382373;
+        bh=spkLbBBbHUQVTZXNlMZ2J+CHChOLkAfsVcF7t9bITWY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PkwmGnNvVljIuI0vpdmjup/6MQ1pCq1HtE1Iny5Z/GOIO09WBzyWysy39hD0WFU/D
-         aVPHAJNlEhAqG1JvBf5PqmhOOs8e/vnNWuGLrCsB6cmuC6Km2rqYjc2Sk75r/qfTId
-         zPKwOlfb0ZSk86Ccdpm83CEe9iUxPE15zgFriyC8=
+        b=XTfHY0fddJ4ZzE6oucJBXe1s54TU4z1WLj3RPFODGBiMRzl4uSo1MmqI4aklK6Scq
+         fP0HjkN08FW5utmzWaSZoJZbGIl5/DHN8nr9vkbaFt8MHEJXQhFKbOuew6zbu585CK
+         /+PdS7w4ZOTPZ7/5FHMIfdBF7rs0uWlM/sUG2I4c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1584356082-26769-4-git-send-email-tdas@codeaurora.org>
-References: <1584356082-26769-1-git-send-email-tdas@codeaurora.org> <1584356082-26769-4-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1 3/3] clk: qcom: gcc: Add support for Secure control source clock
+In-Reply-To: <CA+G9fYsTV66+PYY6LqHdjLx1L3i23ubDuWYg0ABoWuLQZTyL+g@mail.gmail.com>
+References: <CA+G9fYsTV66+PYY6LqHdjLx1L3i23ubDuWYg0ABoWuLQZTyL+g@mail.gmail.com>
+Subject: Re: WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:4156 __clk_put+0xfc/0x130
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 16 Mar 2020 10:49:48 -0700
-Message-ID: <158438098823.88485.2094714876575396381@swboyd.mtv.corp.google.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        mturquette@baylibre.com,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Basil Eljuse <Basil.Eljuse@arm.com>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        linux-clk@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Date:   Mon, 16 Mar 2020 11:12:52 -0700
+Message-ID: <158438237211.88485.8872594504996170580@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-03-16 03:54:42)
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index ad75847..3302f19 100644
-> --- a/drivers/clk/qcom/gcc-sc7180.c
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -817,6 +817,26 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src=
- =3D {
->         },
->  };
+Quoting Naresh Kamboju (2020-03-16 02:05:24)
+> The following kernel warning noticed on linux-next on arm64 juno-r2 devic=
+e.
 >=20
-> +static const struct freq_tbl ftbl_gcc_sec_ctrl_clk_src[] =3D {
-> +       F(4800000, P_BI_TCXO, 4, 0, 0),
-> +       F(19200000, P_BI_TCXO, 1, 0, 0),
-> +       { }
-> +};
-> +
-> +static struct clk_rcg2 gcc_sec_ctrl_clk_src =3D {
-> +       .cmd_rcgr =3D 0x3d030,
-> +       .mnd_width =3D 0,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D gcc_parent_map_3,
-> +       .freq_tbl =3D ftbl_gcc_sec_ctrl_clk_src,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "gcc_sec_ctrl_clk_src",
-> +               .parent_data =3D gcc_parent_data_3,
-> +               .num_parents =3D 3,
+> Linux version 5.6.0-rc5-next-20200316 (TuxBuild@ccdbe23f0d06) (gcc
+> version 9.2.1 20191130 (Debian 9.2.1-21)) #1 SMP PREEMPT Mon Mar 16
+> 07:40:45 UTC 2020
+>=20
+> [    0.002822] ------------[ cut here ]------------
+> [    0.002840] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:4156
+> __clk_put+0xfc/0x130
+> [    0.002846] Modules linked in:
+> [    0.002859] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+> 5.6.0-rc5-next-20200316 #1
+> [    0.002865] Hardware name: ARM Juno development board (r2) (DT)
+> [    0.002873] pstate: 20000005 (nzCv daif -PAN -UAO)
+> [    0.002882] pc : __clk_put+0xfc/0x130
+> [    0.002891] lr : clk_put+0xc/0x18
 
-ARRAY_SIZE please.
+Looks like the code is wrong. It calls of_clk_get() and then
+unconditionally calls clk_put() on whatever is returned, including an
+error pointer which we warn about.
 
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
->  static struct clk_branch gcc_aggre_ufs_phy_axi_clk =3D {
->         .halt_reg =3D 0x82024,
->         .halt_check =3D BRANCH_HALT_DELAY,
+	WARN_ON_ONCE(IS_ERR(clk))
+
+in __clk_put().
+
+> [    0.002896] sp : ffff80001003bba0
+> [    0.002902] x29: ffff80001003bba0 x28: 0000000000000000
+> [    0.002911] x27: 0000000000000000 x26: ffff800011c56000
+> [    0.002919] x25: ffff800011c56490 x24: 0000000000000001
+> [    0.002928] x23: ffff00097effdae8 x22: 0000000000000001
+> [    0.002936] x21: ffff000975cc8000 x20: fffffffffffffdfb
+> [    0.002945] x19: fffffffffffffdfb x18: 0000000000000001
+> [    0.002953] x17: 00000000e80423fd x16: 00000000e66966f2
+> [    0.002961] x15: ffffffffffffffff x14: ffffffffff000000
+> [    0.002970] x13: ffffffffffffffff x12: 0000000000000018
+> [    0.002978] x11: 0000000000000028 x10: 0101010101010101
+> [    0.002987] x9 : ffffffffffffffff x8 : 7f7f7f7f7f7f7f7f
+> [    0.002995] x7 : 6b61ff726b6b6462 x6 : 000000000080636c
+> [    0.003003] x5 : ffff00097eff3d30 x4 : 0000000000000000
+> [    0.003011] x3 : 0000000000000001 x2 : 0000000000000001
+> [    0.003019] x1 : 1989cb6049749c00 x0 : fffffffffffffdfb
+> [    0.003028] Call trace:
+> [    0.003037]  __clk_put+0xfc/0x130
+> [    0.003045]  clk_put+0xc/0x18
+> [    0.003057]  topology_parse_cpu_capacity+0x100/0x180
+
+Looks like Greg picked up this patch[1] as commit b8fe128dad8f
+("arch_topology: Adjust initial CPU capacities with current freq") from
+the list. Not sure it's correct though and I haven't looked in any more
+detail. At least, not calling clk_put() unless it is a valid pointer
+will work to quiet this warning.
+
+[1] https://lore.kernel.org/r/20200113034815.25924-1-jeffy.chen@rock-chips.=
+com
