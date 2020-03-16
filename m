@@ -2,87 +2,96 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1040C10DCE
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:25:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1143C10F29
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E2F20674
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:25:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 782DF206EB
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:47:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584318340;
-	bh=oIh/Sa6m0Gp0EyqnU/CsJD/QSJgd+E76JL1QkHOvR9k=;
+	s=default; t=1584319675;
+	bh=s6CPDhXjtVNGRU8In3e3kagDf6tr13gZhiw5JX4K0CE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dIzesfOXum+F8tS0sD9toWbmcx+WCINB7GkfSnC9SWLuI11I8gFfTyS+cg6txrUKk
-	 gbegskpqPt8k+mFZUe9SP+epZEYtbI3o1vhtv7RMUMPB48tyUhnCBVqgdY/NAdBlen
-	 bYAGoHQlJDt7mZzjyIxxxmhI3EyC/e1lrjPiPNhM=
+	b=zMiENdb0/GqdpxmaM61D5Hj/rA6mVBYK/y6/2bF25iyzTiHTyHeRpZWgZKJlUYsDo
+	 zgTAlgwn2Nm7Od/I94vsjEqckERm9QkzvKvbQJx/nY9tf5x6FpFarY97CK2j74hVkC
+	 2HW8haYxDBldDwB25pF80JTASkGMjABiZKQONebQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbgCPAZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Mar 2020 20:25:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49278 "EHLO mail.kernel.org"
+        id S1729307AbgCPArz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 20:47:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729156AbgCPAZk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 15 Mar 2020 20:25:40 -0400
+        id S1729294AbgCPAry (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 15 Mar 2020 20:47:54 -0400
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09175205ED;
-        Mon, 16 Mar 2020 00:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 482C5205C9;
+        Mon, 16 Mar 2020 00:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584318339;
-        bh=oIh/Sa6m0Gp0EyqnU/CsJD/QSJgd+E76JL1QkHOvR9k=;
+        s=default; t=1584319674;
+        bh=s6CPDhXjtVNGRU8In3e3kagDf6tr13gZhiw5JX4K0CE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZJcAzHSVaZrvJYM4TA2p2uEOIm1WoujFL/C/rw4vVBtUJ6HBnWyiiD5VbBP3YOf2h
-         5vErhIKKbcJSk5eBuywr7xipCIQqdexTZ3GbBBRTBiuKUdJ6uuqMN4Tfiv29LackQW
-         TxLwGMLJFnyrtw021IcjH64c4tlvEHgw0cXMwbOA=
-Date:   Mon, 16 Mar 2020 08:25:29 +0800
+        b=PrS1n0O2hE5xdVizU0WiA0Sw+DkXi1c4YNJff2vFXIO2Xj7F7wQRLvdFP35Vwh243
+         qLoTQivc06Fq14FXUG+O+Dmrwv6xNzEQ7CWo39tJ74VCwtH0x4E8Wr6NyzbY5fGz9W
+         RCy6SNICzkZb75Fp1K0ug7Kd5x5Rymmfl2PweuHo=
+Date:   Mon, 16 Mar 2020 08:47:46 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+To:     Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Cc:     linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stefan Agner <stefan@agner.ch>, linux-clk@vger.kernel.org,
-        Franck LENORMAND <franck.lenormand@nxp.com>,
-        linux-gpio@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2 1/8] clk: imx: Align imx sc clock msg structs to 4
-Message-ID: <20200316002527.GA16155@dragon>
-References: <cover.1582216144.git.leonard.crestez@nxp.com>
- <10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com>
- <20200224072210.GR27688@dragon>
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        Enrico Weigelt <info@metux.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: imx: gate2: Fix a few typos
+Message-ID: <20200316004745.GB17221@dragon>
+References: <20200308214927.16688-1-j.neuschaefer@gmx.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20200224072210.GR27688@dragon>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200308214927.16688-1-j.neuschaefer@gmx.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Feb 24, 2020 at 03:22:18PM +0800, Shawn Guo wrote:
-> On Thu, Feb 20, 2020 at 06:29:32PM +0200, Leonard Crestez wrote:
-> > The imx SC api strongly assumes that messages are composed out of
-> > 4-bytes words but some of our message structs have odd sizeofs.
-> > 
-> > This produces many oopses with CONFIG_KASAN=y.
-> > 
-> > Fix by marking with __aligned(4).
-> > 
-> > Fixes: fe37b4820417 ("clk: imx: add scu clock common part")
-> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> 
-> Applied, thanks.
+On Sun, Mar 08, 2020 at 10:49:26PM +0100, Jonathan Neuschäfer wrote:
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
 
-Patch #1 and #2 were dropped from my clk queue, as Stephen hasn't been
-convinced by this change.
+Sorry.  We do not take patch with empty commit log.
 
 Shawn
+
+> ---
+>  drivers/clk/imx/clk-gate2.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
+> index 7d44ce814806..a1230cc215c4 100644
+> --- a/drivers/clk/imx/clk-gate2.c
+> +++ b/drivers/clk/imx/clk-gate2.c
+> @@ -15,7 +15,7 @@
+>  #include "clk.h"
+> 
+>  /**
+> - * DOC: basic gatable clock which can gate and ungate it's ouput
+> + * DOC: basic gateable clock which can gate and ungate its output
+>   *
+>   * Traits of this clock:
+>   * prepare - clk_(un)prepare only ensures parent is (un)prepared
+> --
+> 2.20.1
+> 
