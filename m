@@ -2,183 +2,157 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 037C2C0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 06:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82FB1C0044D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 06:43:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE1520726
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 06:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584341009;
-	bh=GML3hxtvT+990HulKQpNUxDglfh7BzBN9PUEJREf6Uc=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=ZZ4WudtZD/2PNkkcGDtljD2P7YzY93fvFqqyJP10sdFCyI5OdJesQHi79l5p/crvg
-	 FKvHv2RJTB50kVy1Vots8wE2GbHK79fRXxAn96rZeUSgKKd0xvG1yi+crhX0JstoQR
-	 XIhNzGZM6QXc7wUsID1G+1pUYaMn9bUBkU4S+LKk=
+	by mail.kernel.org (Postfix) with ESMTP id 486A920722
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 06:43:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="B3oQ2vKT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbgCPGn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 02:43:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39518 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729319AbgCPGn3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 02:43:29 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2C292071C;
-        Mon, 16 Mar 2020 06:43:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584341008;
-        bh=GML3hxtvT+990HulKQpNUxDglfh7BzBN9PUEJREf6Uc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=V3GQIwuM8upML/IirHwPbltYu8aaV0D9bMqvYisAy2R/TMeUQym6dXzkfGZl+if9T
-         bnLbFn4O2SiHuUIhlGMN3AkXwqA5Z7q7Fbw8jypZpRiHhfxJfXXQMByhMPWGop3otH
-         7y9nw4d5jlh9PelI70+GdNf4Q6fvatA7ncJbshI0=
-Date:   Mon, 16 Mar 2020 14:43:23 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock drivers update for 5.7
-Message-ID: <20200316064322.GI17221@dragon>
+        id S1729476AbgCPGnf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 02:43:35 -0400
+Received: from mail-eopbgr130073.outbound.protection.outlook.com ([40.107.13.73]:64774
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729319AbgCPGne (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Mar 2020 02:43:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hrBGoGYv7AeqbOFMegiZXabALinjADW6K/yrLrzNtyrN0MdiJXF+jFcdSJ/kYtqg6SYmUPDB1FDtV16lAIifN9s5XoE1LdOlKx6my4B79z6mmy3QeU8BKw2c/B/bZRwgU/eTNDgMm3UyO3Pt1PfKE8y4Y5ta6OSWNwQulLcDHkVNOZ8d0kE+/Klqr7jVWxt1MU7rSEKkqkXs4r7DTuNtQtGF/IiPZnmBZuDwnwhKHi6SGqBZZ10zwcnXCA4H8E33LU8lQeGUe+YST3BylhxtfwxrtTuitaaCauMGJTtsxjIW24SeKwyx7rkP42sk6UrdpYjcHlfXJqHhkKkuc2wVLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tUT8u13HhTH9jOxk35JdRIjQ0WXw0R52eqxASu4Ql0=;
+ b=bp4Vk+gMMU1rYVSq+vcC/kXEqNxkrGnLyuRc94rt9orjsX/L6Yz8oDThnUbhhH7tMrWlmBI49NMPcRj2NHraQwly5i44QX8JNoV3pNO6IrOLpHDVz8kalOVx7MLKLVouISx7PYThTNH4qFlyW8owKPMUUBaSG9fekmmn7t8DrIOJR1MEC54QJ9I8euwisBgb8m6T4IJ87c9QHJUv8lASF6GUxkMbKfwv+hrraG6o4zWfN4Lfkn5LqC9fI7iyUozjntl+hvcB5YTE2fxU9jbsHte2XKxyuLcLxkDimimex3e8kqzutN4NotfH5eUTKhTTnLpiI3nkPVLsMm7grntoGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tUT8u13HhTH9jOxk35JdRIjQ0WXw0R52eqxASu4Ql0=;
+ b=B3oQ2vKTWOs4lNV8tdFkp06ViX+64cm8DFWXWE/oTnpSiYHcFEO3jKONkVVEajHziZ1VvXRUyYzoJI3gS64t7fEL3x8RLvIBtCy99Sa7ah05fRk9VX16e1H4jV/gqs26BT7GSE148R7mKSYgCYzMdc3P6b8OB4LgN7MlAlc/OHE=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4802.eurprd04.prod.outlook.com (20.176.215.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.22; Mon, 16 Mar 2020 06:43:25 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
+ 06:43:25 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+CC:     Aisheng Dong <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Stefan Agner <stefan@agner.ch>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+Thread-Topic: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+Thread-Index: AQHV+OhCoWIlKfRHBEqAZhv4+QN6jahGTaKAgAR8rgA=
+Date:   Mon, 16 Mar 2020 06:43:25 +0000
+Message-ID: <AM0PR04MB4481E7BC1DF01CFC975577A088F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
+ <1584070036-26447-4-git-send-email-peng.fan@nxp.com>
+ <CAK8P3a14BU5uHEqkVyWkeFVmxA1hJifQE+GkXFgmn59s_TL+Rw@mail.gmail.com>
+In-Reply-To: <CAK8P3a14BU5uHEqkVyWkeFVmxA1hJifQE+GkXFgmn59s_TL+Rw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [121.239.103.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2f66d9a5-719b-4f4f-e045-08d7c97553f7
+x-ms-traffictypediagnostic: AM0PR04MB4802:|AM0PR04MB4802:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4802FEAA1BD5E9CEA372654288F90@AM0PR04MB4802.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 03449D5DD1
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(199004)(478600001)(81166006)(6916009)(45080400002)(81156014)(966005)(8676002)(26005)(186003)(55016002)(8936002)(4326008)(7416002)(7696005)(52536014)(9686003)(44832011)(5660300002)(71200400001)(54906003)(33656002)(86362001)(53546011)(66556008)(66446008)(76116006)(64756008)(6506007)(66476007)(66946007)(316002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4802;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 2gOjBEGztxxhLc7iJTKK6kEJwdWQcYYWZ6oOL8sCtfxrcIZWFjtf2ACMxvyvaz7cRoV7CGnLoaUfXuFW4xJWoH468bwdY+JeiO3Y8Ueb8XDexde0/+9G6LUM8f/ugKMT6PWN9ofBlXv1Ea2ZsJ0eZCZ2SMM4+8ja27Q6OOxXbaM9c1IeBtTa/SCY+M9Q0BxFq19noBU9v2rEMCQ2N3RUg2dG5EYChKq+XXz6WXr0pS5gf4Y82F7xmSY2fRbtVyIY5MQEosNEHue5bceAptJIV583w+Q5HG5JpVv6CFMKNBzV7HU3Jy6SM0tVxmpDTlF0qN9yVs/IW29MIedRle6BXZsls9Ma8bmb1j115amEJUIv5g/e3aibsFqDAU8pBYRnSWqtqtURbRnF097ZRQXG4mabY0mnMrqwTbNHXhU+9mQL6zUX5KHv5HbBJrbHnT3SrQ/Rwx/FmK/z6AF03g+qJYX0mQa2/dnpnRcIos542JJj0i6ChKkGjz4wPv9OBNzSOb2o6jXICuhQb90dXKPLQQ==
+x-ms-exchange-antispam-messagedata: q6QSlzDH9UqiMLHtOfMpUf6NWPnRn4euaCQg02LSWkgDSbdk5fQ1t//Y6JeMehuNEQ6rdTvKz1TtL2pTq8HfwelYaq5I7cPH7+/+9/jd8xJiR5j+QrPiXA1YYPRwebd8j00yG1GJqJFLX4aRgHF8vA==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f66d9a5-719b-4f4f-e045-08d7c97553f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2020 06:43:25.2705
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: L0xxozl3MjT3NFFOm89MGOOosGZXT2PvWRku34WJxp6WE7lYJUTFCE1zlbm88KLHhggm2tZ5xogE/k9UH8AH4w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4802
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Arnd,
 
-This is i.MX clock driver update I collected for 5.7.  Please consider
-to pull.  Also, 16e71d4da799 ("clk: imx8mn: add SNVS clock to clock tree")
-was pulled into DT branch as dependency, so please keep it stable.
+> Subject: Re: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
+>=20
+> On Fri, Mar 13, 2020 at 4:34 AM <peng.fan@nxp.com> wrote:
+> >
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Select ARM_GIC_V3, then it is able to use gic v3 driver in aarch32
+> > mode linux on aarch64 hardware. For aarch64 mode, it not hurts to
+> > select ARM_GIC_V3.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+>=20
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+>=20
+> > diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig index
+> > 70019cefa617..0b69024296d5 100644
+> > --- a/drivers/soc/imx/Kconfig
+> > +++ b/drivers/soc/imx/Kconfig
+> > @@ -21,6 +21,7 @@ config SOC_IMX8M
+> >         bool "i.MX8M SoC family support"
+> >         depends on ARCH_MXC || COMPILE_TEST
+> >         default ARCH_MXC && ARM64
+> > +       select ARM_GIC_V3
+>=20
+> It would seem sensible to also drop the dependency on the 'default'
 
-Thanks!
+If drop default, we need enable this config option in ARM64 defconfig,
+I would leave it as is for now.
 
-Shawn
+Thanks,
+Peng.
 
-
-The following changes since commit bb6d3fb354c5ee8d6bde2d576eb7220ea09862b9:
-
-  Linux 5.6-rc1 (2020-02-09 16:08:48 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-5.7
-
-for you to fetch changes up to b5881e8019e0d39c43a2da56c4ae616a50615e00:
-
-  clk: imx: clk-gate2: Pass the device to the register function (2020-03-16 09:38:30 +0800)
-
-----------------------------------------------------------------
-i.MX clock drivers update for 5.7:
-
- - A series from Anson to convert i.MX8 clock bindings to json-schema.
- - Update pll14xx driver to include new frequency entries for pll1443x
-   table, and return error for invalid PLL type.
- - Clean up header includes and unnecessary code on a few clock driver.
- - Add mssing of_node_put() call for a number of clock drivers.
- - Drop flag CLK_IS_CRITICAL from 'A53_CORE' mux clock, as we already
-   have the flag on its child cpu clock.
- - Fix a53 cpu clock for i.MX8 drivers to get it source from ARM PLL
-   via CORE_SEL slice, and source from A53 CCM clk root when we need to
-   change ARM PLL frequency. Thus, we can support core running above
-   1GHz safely.
- - Update pfdv2 driver to check zero rate and use determine_rate for
-   getting the best rate.
- - Add CLKO2 for imx8mm, SNVS clock for imx8mn, and PXP clock for imx7d.
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: imx: clk-gate2: Pass the device to the register function
-
-Anson Huang (23):
-      dt-bindings: clock: Convert i.MX8MQ to json-schema
-      dt-bindings: clock: Convert i.MX8MM to json-schema
-      dt-bindings: clock: Refine i.MX8MN clock binding
-      clk: imx: pll14xx: Add new frequency entries for pll1443x table
-      clk: imx: Include clk-provider.h instead of clk.h for i.MX8M SoCs clock driver
-      clk: imx: drop redundant initialization
-      clk: imx7ulp: Include clk-provider.h instead of clk.h
-      clk: imx6sl: Add missing of_node_put()
-      clk: imx8mq: Add missing of_node_put()
-      clk: imx8mm: Add missing of_node_put()
-      clk: imx8mn: Add missing of_node_put()
-      clk: imx8mp: Add missing of_node_put()
-      clk: imx8mp: Include slab.h instead of clkdev.h
-      clk: imx8mm: Remove unused includes
-      clk: imx8mn: Remove unused includes
-      clk: imx8mp: Rename the IMX8MP_CLK_HDMI_27M clock
-      clk: imx: pll14xx: Return error if pll type is invalid
-      clk: imx: clk-sscg-pll: Drop unnecessary initialization
-      clk: imx: Fix division by zero warning on pfdv2
-      clk: imx8mn: A53 core clock no need to be critical
-      clk: imx8mm: A53 core clock no need to be critical
-      clk: imx8mp: A53 core clock no need to be critical
-      clk: imx8mq: A53 core clock no need to be critical
-
-Fabio Estevam (2):
-      clk: imx8mm: Fix the CLKO1 source select list
-      clk: imx8mm: Add CLKO2 support
-
-Horia Geantă (2):
-      dt-bindings: clock: imx8mn: add SNVS clock
-      clk: imx8mn: add SNVS clock to clock tree
-
-Laurent Pinchart (1):
-      clk: imx7d: Add PXP clock
-
-Peng Fan (12):
-      clk: imx: imx8mp: add ocotp root clk
-      clk: imx: composite-8m: add imx8m_clk_hw_composite_core
-      clk: imx: imx8mq: use imx8m_clk_hw_composite_core
-      clk: imx: imx8mm: use imx8m_clk_hw_composite_core
-      clk: imx: imx8mn: use imx8m_clk_hw_composite_core
-      clk: imx: imx8mq: fix a53 cpu clock
-      clk: imx: imx8mm: fix a53 cpu clock
-      clk: imx: imx8mn: fix a53 cpu clock
-      clk: imx: imx8mp: fix a53 cpu clock
-      clk: imx: pfdv2: switch to use determine_rate
-      clk: imx: pfdv2: determine best parent rate
-      clk: imx: pllv4: use prepare/unprepare
-
- .../devicetree/bindings/clock/imx8mm-clock.txt     | 29 ---------
- .../devicetree/bindings/clock/imx8mm-clock.yaml    | 68 ++++++++++++++++++++
- .../devicetree/bindings/clock/imx8mn-clock.yaml    | 48 +--------------
- .../devicetree/bindings/clock/imx8mq-clock.txt     | 20 ------
- .../devicetree/bindings/clock/imx8mq-clock.yaml    | 72 ++++++++++++++++++++++
- drivers/clk/imx/clk-composite-8m.c                 | 20 ++++--
- drivers/clk/imx/clk-fixup-div.c                    |  2 +-
- drivers/clk/imx/clk-fixup-mux.c                    |  2 +-
- drivers/clk/imx/clk-gate2.c                        |  8 +--
- drivers/clk/imx/clk-imx6sl.c                       |  1 +
- drivers/clk/imx/clk-imx7d.c                        |  1 +
- drivers/clk/imx/clk-imx7ulp.c                      |  2 +-
- drivers/clk/imx/clk-imx8mm.c                       | 63 ++++++++++++-------
- drivers/clk/imx/clk-imx8mn.c                       | 41 +++++++-----
- drivers/clk/imx/clk-imx8mp.c                       | 24 +++++---
- drivers/clk/imx/clk-imx8mq.c                       | 53 ++++++++++------
- drivers/clk/imx/clk-pfdv2.c                        | 61 ++++++++++++------
- drivers/clk/imx/clk-pll14xx.c                      |  4 ++
- drivers/clk/imx/clk-pllv4.c                        | 12 ++--
- drivers/clk/imx/clk-sscg-pll.c                     | 14 ++---
- drivers/clk/imx/clk.h                              | 13 +++-
- include/dt-bindings/clock/imx7d-clock.h            |  3 +-
- include/dt-bindings/clock/imx8mm-clock.h           | 11 +++-
- include/dt-bindings/clock/imx8mn-clock.h           |  8 ++-
- include/dt-bindings/clock/imx8mp-clock.h           |  5 +-
- include/dt-bindings/clock/imx8mq-clock.h           |  9 ++-
- 26 files changed, 383 insertions(+), 211 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/imx8mm-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mm-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mq-clock.yaml
+>=20
+>       Arnd
+>=20
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flists.=
+infr
+> adead.org%2Fmailman%2Flistinfo%2Flinux-arm-kernel&amp;data=3D02%7C01
+> %7Cpeng.fan%40nxp.com%7Ca28680bc024f478a8c4008d7c736ef64%7C686
+> ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637196911074143592&a
+> mp;sdata=3DjNEcrVlci7UEAhAftKBNSVc4b6%2F0Sm2aOYPIA9ajZl8%3D&amp;re
+> served=3D0
