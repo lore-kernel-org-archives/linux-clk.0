@@ -2,89 +2,71 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57812C0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 16:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2896FC0044D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E29C20736
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 16:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01DFB20719
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:01:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584374472;
-	bh=t/pIjGhuzitxvI1FhrtAZ+stJjkjYp4RVBftOt6/LV8=;
+	s=default; t=1584378086;
+	bh=g5ltHYg5EhTj2wtWCAMlXfpAqekS3BHtI2oNh/PrpZY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=jR5dR8aWfFYMCqRbN0RePLgxpY//C1romwU6IzK2Qh7PIAuNSTM+9gA5IJ2h9fAIL
-	 rlAwUd3twAxxxPmzS3hPcQBq3fV0BPooQtIqeMZM/SxqY1ux3LlaWFGYpl8ghM7gej
-	 WnkRhHbfS6PI+hNS6RVD3vQ/nRNHdfpqIIQ3qP0U=
+	b=Ny/2NPNA+3cuP4FKWyZpEd348fp/QkR1cj8DIXBTL5+jl82xqEX1bHrk8rCOYvCVD
+	 nWcOVmNuMPPUQzJaGEO3HqNhbFXvZ2Nx+7eIYlMJPXKZd4P50Vq3kuS4rR6h3AuNdy
+	 Ww+jnIydW5s0FoE6u4ll8aiKmJs/TTr7tcS+kqvQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731863AbgCPQBL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 12:01:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55700 "EHLO mail.kernel.org"
+        id S1731864AbgCPRBX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 13:01:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731636AbgCPQBL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 12:01:11 -0400
+        id S1731809AbgCPRBW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Mar 2020 13:01:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 15D1220674;
-        Mon, 16 Mar 2020 16:01:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AF852051A;
+        Mon, 16 Mar 2020 17:01:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584374471;
-        bh=t/pIjGhuzitxvI1FhrtAZ+stJjkjYp4RVBftOt6/LV8=;
+        s=default; t=1584378082;
+        bh=g5ltHYg5EhTj2wtWCAMlXfpAqekS3BHtI2oNh/PrpZY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oQbD2GjYvIqgdhQLpPxyOdcl/TRovbeSgny2LQrp4QCe7fC2wkSmbT+EdoUDZgCas
-         7iOAh8HPInfx+DepvLlUWAYVCjljT4UDjeK+0UstGO1ebjGNNcivJ3ClTJ4+hxeaqE
-         fDNer6zYMv4OvvrXr+BC2vWJTWLf0t4TDp9epktw=
+        b=PxAeOGBGGiJQ7k6yR8/Zbf65F61ub6JdO3hkQGdictEwYc2sQW+Raj9fjb9H37YRK
+         bcvxdEi1pyTDHcwxO6/7VUm3rDkaUvs0J7jXHr1o1Oux8zxGCXlO0Rv7TaOv5FJBEn
+         wlT5rqN40o1qxXGTTpNYqm5XvuKzNBbczc2e6vzU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8a863030-bf95-90c6-9f8b-2a55ad46cb03@kernel.org>
-References: <20200228203611.15507-1-dinguyen@kernel.org> <158379285687.149997.12928033376494434912@swboyd.mtv.corp.google.com> <8a863030-bf95-90c6-9f8b-2a55ad46cb03@kernel.org>
-Subject: Re: [PATCH] clk: socfpga: stratix10: use new parent data scheme
+In-Reply-To: <1584070036-26447-3-git-send-email-peng.fan@nxp.com>
+References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com> <1584070036-26447-3-git-send-email-peng.fan@nxp.com>
+Subject: Re: [PATCH 2/3] clk: imx: drop the dependency on ARM64 for i.MX8M
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Date:   Mon, 16 Mar 2020 09:01:10 -0700
-Message-ID: <158437447025.164562.7882527369683773048@swboyd.mtv.corp.google.com>
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, stefan@agner.ch, Anson.Huang@nxp.com,
+        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-gpio@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To:     arnd@arndb.de, linus.walleij@linaro.org, peng.fan@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Mon, 16 Mar 2020 10:01:21 -0700
+Message-ID: <158437808141.88485.7392377210560087656@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2020-03-09 22:55:27)
+Quoting peng.fan@nxp.com (2020-03-12 20:27:15)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
+> Moving to support aarch32 mode on aarch64 hardware, need to drop
+> the dependency on ARM64 to make the driver could be selected for
+> ARM32.
 >=20
-> On 3/9/20 5:27 PM, Stephen Boyd wrote:
-> > Quoting Dinh Nguyen (2020-02-28 12:36:11)
-> >> +
-> >> +static const struct clk_parent_data mpu_free_mux[] =3D {
-> >> +       { .name =3D "main_mpu_base_clk", },
-> >> +       { .name =3D "peri_mpu_base_clk", },
-> >> +       { .name =3D "osc1", },
-> >> +       { .name =3D "cb-intosc-hs-div2-clk", },
-> >> +       { .name =3D "f2s-free-clk", },
-> >> +};
-> >=20
-> > While this changes everything to use the new way it doesn't actually
-> > migrate anything over to using direct pointers or the .fw_name field.
-> > What's going on?
-> >=20
->=20
-> Sorry about that. I am using direct pointers to the new parent data here:
->=20
-> in drivers/clk/socfpga/clk-periph-s10.c
->=20
-> -       init.parent_names =3D parent_names;
-> +       init.parent_names =3D NULL;
-> +       init.parent_data =3D clks->parent_data;
->=20
-> The driver seems to work fine without having to add .fw_name.
->=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Yes, .fw_name would only be needed if the parent clks were external to
-the clk controller. Furthermore if they are only clk_hw pointers then we
-can use .parent_hws instead.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
