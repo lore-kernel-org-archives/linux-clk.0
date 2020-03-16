@@ -2,47 +2,47 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F88C0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E9EC18E5B
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB20B20663
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E4B20674
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 17:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584380956;
-	bh=xfZTyr5ja+RYNnMtZwetmtPv+1AaqscNKven2FfkDxo=;
+	s=default; t=1584380990;
+	bh=zsKNNIKwKTr7UrxLQIlcC4JugcVMjtMOTZFacNLQx04=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=iqc1F53rmkQGqaxa47gpPDdN1PKiIWxf5Jv4cdFKmeqtJGbsGTuZDfCrLECKcRsOD
-	 PoxDRlX/3a/ApX88M/pjqVNRr+dS7PtXN4tI0O/U3UoaAEleRgSyMOHtDHyCaoi3Kr
-	 0InbFrM9EKZsb4WUsjXZ1wXbCpZHpNpTLpqpmdtE=
+	b=oI/Ebp3KfjCn3lkLxOqA/XSc4SgpJNcbA4MXNHe9z3xRHgYtRiDg3rx+Uz68ARmCB
+	 iKoEneb7yRNtdQO8BCML7vLEh+++pblgBCFmeps8hhHNXLdNCLUBqRRPNjfl9mVC1S
+	 K8dWK4QFKeJhVauipUhiwsry+cySXWTZYZD9p4D8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbgCPRtQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 13:49:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42018 "EHLO mail.kernel.org"
+        id S1732126AbgCPRtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 13:49:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730437AbgCPRtQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 13:49:16 -0400
+        id S1731891AbgCPRtt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Mar 2020 13:49:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FEA720658;
-        Mon, 16 Mar 2020 17:49:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF37E20719;
+        Mon, 16 Mar 2020 17:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584380955;
-        bh=xfZTyr5ja+RYNnMtZwetmtPv+1AaqscNKven2FfkDxo=;
+        s=default; t=1584380989;
+        bh=zsKNNIKwKTr7UrxLQIlcC4JugcVMjtMOTZFacNLQx04=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oSKsU9SJzm/EgdmfAJYDTOlPriLwztJA85HMjiIi2sSw8r069BfrEZgsdO3OKAAJb
-         jNf1SxhN1ajEtZvk51Mb6dT8GkeMeTQCB7vItI33yfsE+L7gCgTAkkCoo4xjNNpHYJ
-         kD56b2zhaxo0WpofpKkWwAxD4yOY8VF4YUbgcVQM=
+        b=PkwmGnNvVljIuI0vpdmjup/6MQ1pCq1HtE1Iny5Z/GOIO09WBzyWysy39hD0WFU/D
+         aVPHAJNlEhAqG1JvBf5PqmhOOs8e/vnNWuGLrCsB6cmuC6Km2rqYjc2Sk75r/qfTId
+         zPKwOlfb0ZSk86Ccdpm83CEe9iUxPE15zgFriyC8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1584356082-26769-2-git-send-email-tdas@codeaurora.org>
-References: <1584356082-26769-1-git-send-email-tdas@codeaurora.org> <1584356082-26769-2-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v1 1/3] clk: qcom: gcc: Add support for a new frequency for SC7180
+In-Reply-To: <1584356082-26769-4-git-send-email-tdas@codeaurora.org>
+References: <1584356082-26769-1-git-send-email-tdas@codeaurora.org> <1584356082-26769-4-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1 3/3] clk: qcom: gcc: Add support for Secure control source clock
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -53,52 +53,47 @@ Cc:     David Brown <david.brown@linaro.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 16 Mar 2020 10:49:14 -0700
-Message-ID: <158438095454.88485.11063617239206162025@swboyd.mtv.corp.google.com>
+Date:   Mon, 16 Mar 2020 10:49:48 -0700
+Message-ID: <158438098823.88485.2094714876575396381@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-03-16 03:54:40)
-> There is a requirement to support 51.2MHz from GPLL6 for qup clocks,
-> thus update the frequency table and parent data/map to use the GPLL6
-> source PLL.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
-
-Any Fixes: tag for this? I guess the beginning of this driver being
-introduced?
-
->  drivers/clk/qcom/gcc-sc7180.c | 73 ++++++++++++++++++++++---------------=
-------
->  1 file changed, 37 insertions(+), 36 deletions(-)
->=20
+Quoting Taniya Das (2020-03-16 03:54:42)
 > diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> index 7f59fb8..ad75847 100644
+> index ad75847..3302f19 100644
 > --- a/drivers/clk/qcom/gcc-sc7180.c
 > +++ b/drivers/clk/qcom/gcc-sc7180.c
-> @@ -405,8 +406,8 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_=
-clk_src[] =3D {
->=20
->  static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init =3D {
->         .name =3D "gcc_qupv3_wrap0_s0_clk_src",
-> -       .parent_data =3D gcc_parent_data_0,
-> -       .num_parents =3D 4,
-> +       .parent_data =3D gcc_parent_data_1,
-
-This should have been done initially. We shouldn't need to describe
-"new" parents when they have always been there. Are there other clks in
-this driver that actually have more parents than we've currently
-described? If so, please fix them.
-
-> +       .num_parents =3D 5,
-
-Can you use ARRAY_SIZE(gcc_parent_data_1) instead? That way this isn't a
-hard-coded value.
-
->         .ops =3D &clk_rcg2_ops,
+> @@ -817,6 +817,26 @@ static struct clk_rcg2 gcc_usb3_prim_phy_aux_clk_src=
+ =3D {
+>         },
 >  };
->
+>=20
+> +static const struct freq_tbl ftbl_gcc_sec_ctrl_clk_src[] =3D {
+> +       F(4800000, P_BI_TCXO, 4, 0, 0),
+> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+> +       { }
+> +};
+> +
+> +static struct clk_rcg2 gcc_sec_ctrl_clk_src =3D {
+> +       .cmd_rcgr =3D 0x3d030,
+> +       .mnd_width =3D 0,
+> +       .hid_width =3D 5,
+> +       .parent_map =3D gcc_parent_map_3,
+> +       .freq_tbl =3D ftbl_gcc_sec_ctrl_clk_src,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "gcc_sec_ctrl_clk_src",
+> +               .parent_data =3D gcc_parent_data_3,
+> +               .num_parents =3D 3,
+
+ARRAY_SIZE please.
+
+> +               .ops =3D &clk_rcg2_ops,
+> +       },
+> +};
+> +
+>  static struct clk_branch gcc_aggre_ufs_phy_axi_clk =3D {
+>         .halt_reg =3D 0x82024,
+>         .halt_check =3D BRANCH_HALT_DELAY,
