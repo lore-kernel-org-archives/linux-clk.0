@@ -6,62 +6,67 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D583EC10F29
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:57:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA7EC10DCE
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 01:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C9520674
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 00:57:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD85206B1
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 01:39:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584320236;
-	bh=3piP5pwtf+r7deloTsJap8LnB9s6iAaXgkUy9VghkTk=;
+	s=default; t=1584322749;
+	bh=UQapXd6fOtM5aDx3KdLu8z/+f4elL63L3+KVbVHC6e4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eSKXwzOAMWrrHPauegbcFB2bvk/z6mqVY5LLC/IqFKyTBojVqykx4fPOsVDBZt7gU
-	 a1KIEFbDxVDeT7oyG5MPVx22TRr4Apv1Ow9iYUMTJFQrH6NVNja3ESIURCte1Dq6Dr
-	 ZBAN03GGkpOFKrZvN4BHoUezpBhutjNbzkriCXkE=
+	b=Ao5Rc+h2UgSYaL8gCWzU5Z1HhWi3xuzwOkjhq6pOwm7XVXiWre53AHearT9/70zH2
+	 JLeVZlOWJU8VihzM4zSS7M2SrIRHGnsMpCm3lZbc8yrxH6YXGWi9yzjMROLd/xGn0O
+	 MmceZX8P9qDXJC7vDUNr3UNtSZlAqHBl4O+HoKdA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729326AbgCPA5Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Mar 2020 20:57:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53604 "EHLO mail.kernel.org"
+        id S1729385AbgCPBjI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Mar 2020 21:39:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59950 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729315AbgCPA5Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 15 Mar 2020 20:57:16 -0400
+        id S1729334AbgCPBjI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 15 Mar 2020 21:39:08 -0400
 Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34375205C9;
-        Mon, 16 Mar 2020 00:57:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93F2D20674;
+        Mon, 16 Mar 2020 01:39:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584320235;
-        bh=3piP5pwtf+r7deloTsJap8LnB9s6iAaXgkUy9VghkTk=;
+        s=default; t=1584322748;
+        bh=UQapXd6fOtM5aDx3KdLu8z/+f4elL63L3+KVbVHC6e4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rr1rGYjoFDj9IDMh/8RIw+gZbJ37SB9uE87PoOATmk/1vTsIEvFsn/vy4LdYKEDzr
-         52Jnymov9DMhIjn+39YU6uDNLUHJLEhuFau2egWy08AdJOCOEprypCsDpnSFUdjovR
-         oZtlOwczAsb2ePAGMhHGSNbZps9VhKQ1jJQX9xJE=
-Date:   Mon, 16 Mar 2020 08:57:11 +0800
+        b=LkXlfBOR4O1XMj61sDC9UnxKLuJfK/5j9VbE+c3SzoEZHgzwEx4YiRT/Q5nqGyNhm
+         0WeiUtQPcOjK8qpSluQdVDpAijpgRvc4yTH2FlcQ8DG2gQVBk2Do5DPSA10kVcdAdl
+         Ou+Vkc8mmGSpWtGxhui2xsPcND60KZFb0SKlruCI=
+Date:   Mon, 16 Mar 2020 09:39:00 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>, linux-imx@nxp.com,
-        kernel@pengutronix.de, Sascha Hauer <s.hauer@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: imx7d: Add PXP clock
-Message-ID: <20200316005710.GG17221@dragon>
-References: <20200309161709.30982-1-laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH] clk: imx: clk-gate2: Pass the device to the register
+ function
+Message-ID: <20200316013859.GS17221@dragon>
+References: <1584115819-17778-1-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200309161709.30982-1-laurent.pinchart@ideasonboard.com>
+In-Reply-To: <1584115819-17778-1-git-send-email-abel.vesa@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 09, 2020 at 06:17:09PM +0200, Laurent Pinchart wrote:
-> The PXP has a single CCGR clock gate, gating both the IPG_CLK_ROOT and
-> the MAIN_AXI_CLK_ROOT. Add a single clock to cover both.
+On Fri, Mar 13, 2020 at 06:10:19PM +0200, Abel Vesa wrote:
+> The device needs to be passed on to the clk_hw_register.
 > 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Fixes: 1f9aec9662566189 ("clk: imx: clk-gate2: Switch to clk_hw based API")
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
 Applied, thanks.
