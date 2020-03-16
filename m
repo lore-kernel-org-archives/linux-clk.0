@@ -2,112 +2,175 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B1BFC0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C91F8C18E5B
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC6D20724
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:05:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9865F20719
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:39:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="G1Q3Hy0Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbgCPIFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 04:05:35 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:51631 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729745AbgCPIFe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Mar 2020 04:05:34 -0400
-Received: from mail-qt1-f170.google.com ([209.85.160.170]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MfYDO-1jpHQi43i4-00fy0Q; Mon, 16 Mar 2020 09:05:33 +0100
-Received: by mail-qt1-f170.google.com with SMTP id l13so13339604qtv.10;
-        Mon, 16 Mar 2020 01:05:32 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3SHLogusaAsBjNcX+ufaupENI1ADQCk2SLjDz+X2WSE1EEXOqx
-        laZWC0J20bnXBsrzBw6aMz58ZARaZ9k8PyP1L4I=
-X-Google-Smtp-Source: ADFU+vscHuj0T93JjgojfKfyFtbyqwhr+FzDIfyfzVkaoXDOWQcAs9KVhaCUmDBS62IUcGSpwhk7Bx9472iMoIVCU1o=
-X-Received: by 2002:ac8:5193:: with SMTP id c19mr23911589qtn.204.1584345931621;
- Mon, 16 Mar 2020 01:05:31 -0700 (PDT)
+        id S1730183AbgCPIjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 04:39:25 -0400
+Received: from mail-eopbgr150083.outbound.protection.outlook.com ([40.107.15.83]:58406
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730048AbgCPIjZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Mar 2020 04:39:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KZSSacCfuX6WRcfEEo+FJMc53jh7keySXsUxqbVtXqJXit4lhZPM5RZDtFW0UPo5vAVg+74CPbNBinzx+Uj9IZRyv0o9hiY3GprJeD8ZN78QLZ5urq4A0ZXpD2lXSL9GJWc5kJ8u1ftQ2RutwNhKBnKoNizhvOMVfwe4CePKnHF4mV3m8qfY0IoisEzPV8KSdup4yVK/RZcl7KlID7NRsndyqzoFTTsxUMgvRWF6C6JLUWlbUtskYo+tai80SHvGXV3cszVEM6ytKrjkKG9wM9tAKOo0Dtpqew+EGGcKhZ4s1izzZPM4TasURCJwqJyCvUhsZziz4XNFe0Tk1JQE1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nxXIuQfnhyjRgY1e+AmjfKOnrEZ2wrHW4yibiQrcaBI=;
+ b=InjCKC14ojADy8aQ1XMIL9cd8MDL83wZUFBzycGHnsdCuXTdUSbxKiWvY3U3HCZZSi8CVf+O3a/ZXTMX414fMMb5bHXfdMqFCHLi5t7ARTLEdtuVCgT4bqfuLxVd+P8zGTZsyjuXt/XE0yIEWQoLiA+KPxN0Zq1zQB9RbBGRziFoL0WNx29mQ8EbhRXq0UzEVAxYwoV4/yCsNWN8swiknfxm7iKd+FspKUfk+cCgzRIEDH45w5xz5yyMIFuW1ssAj+xUjX/44DAqnAXchdF4TFfts00vMlv7BQitjA2YAbbeFHX5prIk+BLJJeOl+2cRTmjef8D0l8nCPBU0OONxuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nxXIuQfnhyjRgY1e+AmjfKOnrEZ2wrHW4yibiQrcaBI=;
+ b=G1Q3Hy0Ze3g1f5TmSH6EZPPC3H+AtrMH8kajc7aE3fsHhqeqLPfR2NLRlJd1sVcxCyC47kBPTvnQe4IDhioEaMQGTEB5CeBtkFQ6HrXCLCaeuksYPkKIpzxDgHkizqqBFWeOHRc3LWdFxUzJf4S7/EqynJQLxQ9t/iKtHzG7Yfc=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4164.eurprd04.prod.outlook.com (52.134.126.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2814.19; Mon, 16 Mar 2020 08:39:19 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::ad44:6b0d:205d:f8fc%7]) with mapi id 15.20.2814.019; Mon, 16 Mar 2020
+ 08:39:19 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, sboyd@kernel.org, s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        aisheng.dong@nxp.com, abel.vesa@nxp.com, Anson.Huang@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3] clk: imx7ulp: make it easy to change ARM core clk
+Date:   Mon, 16 Mar 2020 16:32:33 +0800
+Message-Id: <1584347553-2654-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SGAP274CA0009.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::21)
+ To AM0PR04MB4481.eurprd04.prod.outlook.com (2603:10a6:208:70::15)
 MIME-Version: 1.0
-References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com>
- <1584070036-26447-4-git-send-email-peng.fan@nxp.com> <CAK8P3a14BU5uHEqkVyWkeFVmxA1hJifQE+GkXFgmn59s_TL+Rw@mail.gmail.com>
- <AM0PR04MB4481E7BC1DF01CFC975577A088F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4481E7BC1DF01CFC975577A088F90@AM0PR04MB4481.eurprd04.prod.outlook.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 16 Mar 2020 09:05:15 +0100
-X-Gmail-Original-Message-ID: <CAK8P3a2F4oREw8AgNqQo18hLfVG4GcMJ72bST6EBd_KYhsRfsA@mail.gmail.com>
-Message-ID: <CAK8P3a2F4oREw8AgNqQo18hLfVG4GcMJ72bST6EBd_KYhsRfsA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:C/9dMaP4OGvrdGP60xaL66vbJGrhUEzebMdVLmwJzaqNP/7u4m4
- QpfeAQAZU3zScueyx71GmSAHdrOR6dvyPskEUPVg1aCbh6cHKpl9tOI08z3c9l6w31gEO+P
- UaLVZxn7b0D3dhBRhyxbQxqmkqvzIKQ2LV/ArDo0lYSwC8AKyzLd08+7AjUKHF4/kqXszPQ
- MrJFRGoGY7xSS0Zm10Hug==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:K9XUUBtc12Q=:PjHFrfC0O5vPJlhc9Rhm+C
- uXPm9YvEgE10OZHHTEvGqHbHySmHpNs6ZKInsG1dVz+he0h289VJEwoHjRR6Ymi1d29Y7FsEm
- 2TTStf1doy/Y1bkeJjMcTrpxv14K8sV4VQSa4/XbNH/K4XCdBQhFsaSnhTdnH3KUcMVyQ56dP
- tCzfQ7ln2cK04IztVSTFOvsiHUerSZA7i/KjYwHTl3OkAox8pU7Gl0PcdRVjsVDXKSs5pbG6/
- FVH1W36fJeNcvUqfFfcZOTAo1abDGLMihVGlFYoNnXlIOKnixdwnar98UgBGmiHh9uC3LfJFl
- BNWRfGfjiV35WFWM9XIAcK+jDaeHDH06VAiYN3rLLvFAvFOrKos0dWtxK41jgAXiJpMuV2Q0X
- Fqi5DINDO1mn20WWxXou/9V4aSorRnFVWz/fGXLjmSSWhmmgzJGZRFT6Uqxjl+aQJXfY5UzGa
- 0PWXT4JFUarmUMhDQoDU42LUCw6ab4TIZBssZ+WirUcYOX7/94Wxi9jwh6mnFwx3xdOHbiEPQ
- rxH0xV8P6a69S/0DoWpBEa+NRWBnLgYB5VaJemp8wQaSgA77tBRp0SPhDEhgX3qbQttH2Bx3w
- cWL7OllgXsA8ra8bMUYNtGYzwsw16ngHlIhcbQmPjwN6QciXAHTefeAvZhgpZI+B6GxhUhBdL
- /UeJQbHlZSMKWuHHEGmsbE63Sa3qaP1R7drDFpRFQLOEpa4zqT6e1dcapTSi2fm/pAE3c+Nmc
- mErHbPSE4KDsIT+tcSS+sCYVl7+KZu8hK+vFTT7QQcpckayK9fXBvwS+Gyvqc0lok/MHEDn8u
- oNd+gdPNrrXro1hP3vF79VFCeCqnAxEsDXWeFXSoNgkKjI9U/c=
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SGAP274CA0009.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::21) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2814.13 via Frontend Transport; Mon, 16 Mar 2020 08:39:15 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 30631a0c-f758-4a67-bd09-08d7c98584a2
+X-MS-TrafficTypeDiagnostic: AM0PR04MB4164:|AM0PR04MB4164:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <AM0PR04MB4164FE2CD9E975B531C5CFBA88F90@AM0PR04MB4164.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:197;
+X-Forefront-PRVS: 03449D5DD1
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(39860400002)(396003)(346002)(376002)(199004)(6512007)(9686003)(966005)(186003)(8936002)(478600001)(16526019)(6666004)(4326008)(8676002)(81156014)(26005)(81166006)(6506007)(36756003)(316002)(6486002)(52116002)(66476007)(66946007)(66556008)(69590400007)(2906002)(5660300002)(956004)(86362001)(2616005)(42463001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4164;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: x4D3Ikne0ObT9hAZN7xl1cm6V0ND6a9cW35cqqhqc579pS4iLu/+gltIztjSmNKaKX8+oyJCUZwiiWVXQ0yIEpCiHPWuPhOUVIFlzpg/W4waNaqgcGETaqj4BJ+xdK60Jj23az32hW6YgKBFSX5hErMm2ZfkUP1c5REOmoVS2+mF3beBngXnkVhrExwiAMRlrgfda7dgoV6ubQGrvq6amjgvh6zrInOB7SnNGIU7WYv16QfCdFMsI2o9GuQdA+dwp+j0fVN8tkwnjOaT8pmHZwYRdq4unRHo2IDp/ebVm9SPG/W0vjnnV3nr8qT6Yo7QRyU4nRGXr5novzU9IEKr0gZjUGl7ttXa+vbtUxmmotIG1uO/zO+ruMWJf7v+gUZythH98nSZnCqADXpr8CQdeXupeL72hQNgZcYhTOkH2dEXQh8+j7PYx4ZAUajWHSkRdlIwpHbMI3PaiQoJiFtBE4ff3Ow3Mp5hseElGovjHT7c6mEDDruDhGxbtqCPPXUyEEFL+WUii95EDe6kH1HAMqbNuF8V2mVlHwlYHLytorjRvDWVT1A2u5SCEyoo9ALLfw4geBniHnZ3Dcb3jpc5MquDM9yWiZocnZz7ZPGGgKo=
+X-MS-Exchange-AntiSpam-MessageData: 2yv6+obAZ9LgmfgsNvGJyMBJFw939K4+HgfQf5hIeaDzDWGQkJYf9xjxFSJqVbw7HOrnPVcQ+BI3btkMHURdA/NWCOSbhm4b6aGYNQLWfSkzWR6P3c1fRjNL1HnNR44PeVT6tEhzanpTz3q+IkKP/w==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 30631a0c-f758-4a67-bd09-08d7c98584a2
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Mar 2020 08:39:19.1654
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VXgT1ZviNJeJh+wZSQtb9WUPA9oEMcmHn/vLpraWx3yCeZ2zMFyjOIJNoZWk0f79pFapeV4oD5J/qbOKNw1vog==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4164
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 16, 2020 at 7:43 AM Peng Fan <peng.fan@nxp.com> wrote:
-> > Subject: Re: [PATCH 3/3] soc: imx: select ARM_GIC_V3 for i.MX8M
-> >
-> > On Fri, Mar 13, 2020 at 4:34 AM <peng.fan@nxp.com> wrote:
-> > >
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Select ARM_GIC_V3, then it is able to use gic v3 driver in aarch32
-> > > mode linux on aarch64 hardware. For aarch64 mode, it not hurts to
-> > > select ARM_GIC_V3.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> >
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> > > diff --git a/drivers/soc/imx/Kconfig b/drivers/soc/imx/Kconfig index
-> > > 70019cefa617..0b69024296d5 100644
-> > > --- a/drivers/soc/imx/Kconfig
-> > > +++ b/drivers/soc/imx/Kconfig
-> > > @@ -21,6 +21,7 @@ config SOC_IMX8M
-> > >         bool "i.MX8M SoC family support"
-> > >         depends on ARCH_MXC || COMPILE_TEST
-> > >         default ARCH_MXC && ARM64
-> > > +       select ARM_GIC_V3
-> >
-> > It would seem sensible to also drop the dependency on the 'default'
->
-> If drop default, we need enable this config option in ARM64 defconfig,
-> I would leave it as is for now.
+From: Peng Fan <peng.fan@nxp.com>
 
-I meant making it 'default ARCH_MXC' so it gets enabled for both
-32-bit and 64-bit i.MX configurations, not just 64-bit.
+ARM clk could only source from divcore or hsrun_divcore.
 
-      Arnd
+Follow what we already used on i.MX7D and i.MX8M SoCs, use
+imx_clk_hw_cpu API. When ARM core is running normaly,
+whether divcore or hwrun_divcore will finally source
+from SPLL_PFD0. However SPLL_PFD0 is marked with CLK_SET_GATE,
+so we need to disable SPLL_PFD0, when configure the rate.
+So add CORE and HSRUN_CORE virtual clk to make it easy to
+configure the clk using imx_clk_hw_cpu API.
+
+Since CORE and HSRUN_CORE already marked with CLK_IS_CRITICAL, no
+need to set ARM as CLK_IS_CRITICAL. And when set the rate of ARM clk,
+prograting it the parent with CLK_SET_RATE_PARENT will finally set
+the SPLL_PFD0 clk.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+V3:
+ Update commit log. Make this a standalone patch from V2 
+V2:
+ https://patchwork.kernel.org/patch/11390595/
+ No change
+
+ drivers/clk/imx/clk-imx7ulp.c             | 6 ++++--
+ include/dt-bindings/clock/imx7ulp-clock.h | 5 ++++-
+ 2 files changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 3710aa0dee9b..634c0b6636b0 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -29,7 +29,7 @@ static const char * const ddr_sels[]		= { "apll_pfd_sel", "dummy", "dummy", "dum
+ static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+ static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+ static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+-static const char * const arm_sels[]		= { "divcore", "dummy", "dummy", "hsrun_divcore", };
++static const char * const arm_sels[]		= { "core", "dummy", "dummy", "hsrun_core", };
+ 
+ /* used by sosc/sirc/firc/ddr/spll/apll dividers */
+ static const struct clk_div_table ulp_div_table[] = {
+@@ -121,7 +121,9 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+ 	hws[IMX7ULP_CLK_DDR_SEL]	= imx_clk_hw_mux_flags("ddr_sel", base + 0x30, 24, 2, ddr_sels, ARRAY_SIZE(ddr_sels), CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE);
+ 
+ 	hws[IMX7ULP_CLK_CORE_DIV]	= imx_clk_hw_divider_flags("divcore",	"scs_sel",  base + 0x14, 16, 4, CLK_SET_RATE_PARENT);
++	hws[IMX7ULP_CLK_CORE]		= imx_clk_hw_cpu("core", "divcore", hws[IMX7ULP_CLK_CORE_DIV]->clk, hws[IMX7ULP_CLK_SYS_SEL]->clk, hws[IMX7ULP_CLK_SPLL_SEL]->clk, hws[IMX7ULP_CLK_FIRC]->clk);
+ 	hws[IMX7ULP_CLK_HSRUN_CORE_DIV] = imx_clk_hw_divider_flags("hsrun_divcore", "hsrun_scs_sel", base + 0x1c, 16, 4, CLK_SET_RATE_PARENT);
++	hws[IMX7ULP_CLK_HSRUN_CORE] = imx_clk_hw_cpu("hsrun_core", "hsrun_divcore", hws[IMX7ULP_CLK_HSRUN_CORE_DIV]->clk, hws[IMX7ULP_CLK_HSRUN_SYS_SEL]->clk, hws[IMX7ULP_CLK_SPLL_SEL]->clk, hws[IMX7ULP_CLK_FIRC]->clk);
+ 
+ 	hws[IMX7ULP_CLK_DDR_DIV]	= imx_clk_hw_divider_gate("ddr_clk", "ddr_sel", CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, base + 0x30, 0, 3,
+ 							       0, ulp_div_table, &imx_ccm_lock);
+@@ -270,7 +272,7 @@ static void __init imx7ulp_clk_smc1_init(struct device_node *np)
+ 	base = of_iomap(np, 0);
+ 	WARN_ON(!base);
+ 
+-	hws[IMX7ULP_CLK_ARM] = imx_clk_hw_mux_flags("arm", base + 0x10, 8, 2, arm_sels, ARRAY_SIZE(arm_sels), CLK_IS_CRITICAL);
++	hws[IMX7ULP_CLK_ARM] = imx_clk_hw_mux_flags("arm", base + 0x10, 8, 2, arm_sels, ARRAY_SIZE(arm_sels), CLK_SET_RATE_PARENT);
+ 
+ 	imx_check_clk_hws(hws, clk_data->num);
+ 
+diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
+index 38145bdcd975..b58370d146e2 100644
+--- a/include/dt-bindings/clock/imx7ulp-clock.h
++++ b/include/dt-bindings/clock/imx7ulp-clock.h
+@@ -58,7 +58,10 @@
+ #define IMX7ULP_CLK_HSRUN_SYS_SEL	44
+ #define IMX7ULP_CLK_HSRUN_CORE_DIV	45
+ 
+-#define IMX7ULP_CLK_SCG1_END		46
++#define IMX7ULP_CLK_CORE		46
++#define IMX7ULP_CLK_HSRUN_CORE		47
++
++#define IMX7ULP_CLK_SCG1_END		48
+ 
+ /* PCC2 */
+ #define IMX7ULP_CLK_DMA1		0
+-- 
+2.16.4
+
