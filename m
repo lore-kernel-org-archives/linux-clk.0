@@ -2,170 +2,166 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C905C0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BE8C0044D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 09:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F3420663
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 08:52:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 348D820658
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 09:05:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XKaQ1tmd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FGp9kG9/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730118AbgCPIwG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 04:52:06 -0400
-Received: from mail-eopbgr150083.outbound.protection.outlook.com ([40.107.15.83]:36782
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730075AbgCPIwG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 04:52:06 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EBi9wcMEV+apFn79Cknz49AEve4Mawbcgi6U4kllTA4h8FrXY34pEPlZ4S1cf3oA+FHxm43xJp2xMrOAOdn+6tziU2Ow/Bbcnqnfm+M9HVMI3Du+LITisyC1Ebeq5k2uEP41S2o+Fe+xuI7USnY1Zr74iwSGjHcP18iw2tFQRr4ryeYfdF+w2Q+Z0WWrjMgLjZiBVECSGz2wEB3ZQ9rY8YHGg0c6UGlSNJ7EkvtJraTP4HTxaD7ZqzBg7yDjlpE2d8OsGENmHduJcMBkzmliGtFy5m0Zj4E30oBZ2N7vqQjku7fslT2iuzi7xCyUhOmg6kYwJMegxFVDOpKLz3vd5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fyqpx1hArPMlgTojJG+OAiwvwbY9dFbVXdyvn1x5VmQ=;
- b=mAazhZjSfD9nw7I1+wNJ7y4vRG1+VI+9nyKTFK+BVb0002EJVPbL+U2P7arSktm04Yebq/o98xi3OsdsaoCA6tbnDL6fXNL/2naPh5UxXj1HgOWBnC+FYbI/sDmXuno4m427e5JxFmZLBvH+Dw9jKTa0FaC90+Pp0T+GSlF9WJUqNT9PULK0aO6a79CcLzShQuPrs4eDGDRJY5dWT1LEHUPIXc4Lfer0aANVVI2uZabVOnW7BdbgoHfXaWxcAXP3iOmrPIwFhxip51Ozl/na10zUK4WuFzr98WalAyGNwqICz54izxVafchyBHRcW77awfTjlGlkRcE0cVzDKc/FLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fyqpx1hArPMlgTojJG+OAiwvwbY9dFbVXdyvn1x5VmQ=;
- b=XKaQ1tmdUlK64lPGG0JsKZTFWiAvZQRLoymO3KTkWOAIh3JXCIlCTt1DLiloNO30IIQHKRIeIWXfeZ7er9Yy4K2RyxJ1iOrcJUbbWcSB+eEWgtCqU4hVwjyrNi6A/afQpgRlVHNmpLARfJe1MOi5kifsGkM6FAYqzyRlz4dbv4Y=
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
- AM0PR04MB4529.eurprd04.prod.outlook.com (52.135.152.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2814.18; Mon, 16 Mar 2020 08:52:01 +0000
-Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cb2:6bfa:b5bc:2ae3]) by AM0PR04MB4211.eurprd04.prod.outlook.com
- ([fe80::8cb2:6bfa:b5bc:2ae3%7]) with mapi id 15.20.2814.021; Mon, 16 Mar 2020
- 08:52:01 +0000
-From:   Aisheng Dong <aisheng.dong@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Franck Lenormand <franck.lenormand@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
-Subject: RE: [PATCH v2 1/8] clk: imx: Align imx sc clock msg structs to 4
-Thread-Topic: [PATCH v2 1/8] clk: imx: Align imx sc clock msg structs to 4
-Thread-Index: AQHV6Ar2+ns546NUFU6ZA9rx2mhDYqgsJ6+AgB7nvLA=
-Date:   Mon, 16 Mar 2020 08:52:01 +0000
-Message-ID: <AM0PR04MB42111CF54405CD3492248AF580F90@AM0PR04MB4211.eurprd04.prod.outlook.com>
-References: <cover.1582216144.git.leonard.crestez@nxp.com>
- <10e97a04980d933b2cfecb6b124bf9046b6e4f16.1582216144.git.leonard.crestez@nxp.com>
- <158264951569.54955.16797064769391310232@swboyd.mtv.corp.google.com>
-In-Reply-To: <158264951569.54955.16797064769391310232@swboyd.mtv.corp.google.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=aisheng.dong@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4e7cd80c-9c43-4b07-9893-08d7c9874b47
-x-ms-traffictypediagnostic: AM0PR04MB4529:|AM0PR04MB4529:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB45293DE16436EFBD668AB22680F90@AM0PR04MB4529.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 03449D5DD1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(39860400002)(366004)(346002)(136003)(376002)(199004)(55016002)(9686003)(26005)(478600001)(86362001)(2906002)(71200400001)(6506007)(4326008)(7696005)(66446008)(76116006)(44832011)(186003)(81156014)(8676002)(81166006)(5660300002)(54906003)(316002)(110136005)(64756008)(66476007)(66556008)(66946007)(8936002)(33656002)(52536014)(7416002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4529;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: O6Ni06P7OtXj/NWsEI8iO6W3n/fbW37AUiE48LlFlrHws04Ygeorb0FCQZqpiaX+bTW5F3mC0vPoI6vTgqlWfkju1bS7JQUJTNRGiTMzQgEkzndCfvcnU6pGXYexI9vAdyMYC9Eg8en1jX7jx9EtraKwkGFfWq/QnsDxjUI7cxCDBjZ4cMpsCPb0grKN+3o9w+n4SFIVrOTtO9fGKJNWIjzIvVRVLm3Q3RXXNYGxUA62ZIZ5iMvSCSBYZnXEZrKf+x78cZHG812VsQpmAymV1D02o5o1qaYCoo5wX3h/CAcvY5UJsm1Hy8u3QPGjP9XkC2NPaHUF8Zjzbx1T7GJ0+ffcCsUynEsz14wiq/5/HY4grC27EpzKYVTwWqmosIY6QpwAtx22uZrVCk9tITvBCzZEOJO3HuAFaFw0vi5Y4uyO84NmXNGRB3POfai/2mOY
-x-ms-exchange-antispam-messagedata: cNqN8oyw9Xez5vG8vMvB+Qc/7U0dZEut2IksI7/87gUCVBpNhm6KaKo3m+8eft/LSbXqQ4zDCU0bPJvCUmBoFMZBev37ISjXdvD4ZHEW+GiMFES3I048XfVwymYGBmNaLLnW58GYm8djjpvr+hBLRA==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1730329AbgCPJFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 05:05:38 -0400
+Received: from mail-lj1-f171.google.com ([209.85.208.171]:44490 "EHLO
+        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730075AbgCPJFi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Mar 2020 05:05:38 -0400
+Received: by mail-lj1-f171.google.com with SMTP id w4so2981846lji.11
+        for <linux-clk@vger.kernel.org>; Mon, 16 Mar 2020 02:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=3IZEkb1P02o+RMjVvZ+g2Ff/CV4LmCHwPjs3lpjnGyg=;
+        b=FGp9kG9/Lb2b7A6jQcLHYtoe0ryDsXt86a9Rvz+X9WtPvyLKzKPLhzhO2TXpOZ1be4
+         HZKfB/qNA+Iq92ps14etOG/Ahjks+a+ig9lkQ6AEwSDAJWAwPkrCeUG6NZ52rnXSfLM6
+         ydxd1LGjMIRUHUBpLJP2D1N4OBh4Uf4FX3Wce7jzEgQ3pJ1P4HXJZwEUSEzdtZiD24Ff
+         pbz3CWn5t8ZYBxnQ8b2vP6G/MYPRq6EEtN2h/OoLgrzNvWSuwRUo9sG15sGQJ7ha0awo
+         Uiwj+GAx6lf4xU9en8XZB3Upt5SwsGzaOC37LPrfNaXlJP74IoBlHbRrIf4LEuRVCz2E
+         /pfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=3IZEkb1P02o+RMjVvZ+g2Ff/CV4LmCHwPjs3lpjnGyg=;
+        b=tNA/TMw4r+NFREjaCviaWo6B3N5QMXSF90R1PPcEXjxCoQl/hGtkzyFn20uC0vGo1i
+         44q7hZjlvVPhCYNfA2Kj0PNj5qL63vr4eemxRX/Hst9xwmGbWrHrBuspGurGKjUGCCqw
+         /FiS30mjtwD5gzIh/0UiAU6wyGzT8WrYNbu0fHholV6rNnQP/Pj+WxMTM+reatfL5Wpz
+         qAE+fQxOZXby9M9+7JxtO+JKTdPD4I5wAs8elqZ5yWMFKMuJ3MUoyXbl8gY3j9/Z9lS6
+         V9t33gsNySUqv6I0F0TybjPyIfl7HFLVMeYRyAxj5O++uXhqcDpUkmX+CwSY1Sm4sSjL
+         xYHA==
+X-Gm-Message-State: ANhLgQ1C8McaYfwYv2TVH7ob972J1qAY+/DnCtYP47kLRg3uctZmo0lJ
+        dDdW6jG61ov6VXuwudvYhge7arXdFkJCzE3PZUV68mL3kDbNZg==
+X-Google-Smtp-Source: ADFU+vsc64AABzOLKi3OVfy0A2dT6lRWyVTfFSOWmE9FPZuSSe0jjEc95HZL4ITe/Cg/dGifKXlaFjxhlEfBPaIECsU=
+X-Received: by 2002:a05:651c:285:: with SMTP id b5mr9770351ljo.165.1584349535656;
+ Mon, 16 Mar 2020 02:05:35 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e7cd80c-9c43-4b07-9893-08d7c9874b47
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Mar 2020 08:52:01.6016
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: qHMW7OkFyEiq82vHOfaIu6+pHaDzpHFLYfOyUoW/WtlONxCD2ZKXpF7x6GW4vmfv4HDSaWKidYytLlydHBo34g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4529
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Mon, 16 Mar 2020 14:35:24 +0530
+Message-ID: <CA+G9fYsTV66+PYY6LqHdjLx1L3i23ubDuWYg0ABoWuLQZTyL+g@mail.gmail.com>
+Subject: WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:4156 __clk_put+0xfc/0x130
+To:     linux-clk@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, lkft-triage@lists.linaro.org,
+        Anders Roxell <anders.roxell@linaro.org>,
+        mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Basil Eljuse <Basil.Eljuse@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBGcm9tOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IFdlZG5lc2Rh
-eSwgRmVicnVhcnkgMjYsIDIwMjAgMTI6NTIgQU0gDQo+IFF1b3RpbmcgTGVvbmFyZCBDcmVzdGV6
-ICgyMDIwLTAyLTIwIDA4OjI5OjMyKQ0KPiA+IFRoZSBpbXggU0MgYXBpIHN0cm9uZ2x5IGFzc3Vt
-ZXMgdGhhdCBtZXNzYWdlcyBhcmUgY29tcG9zZWQgb3V0IG9mDQo+ID4gNC1ieXRlcyB3b3JkcyBi
-dXQgc29tZSBvZiBvdXIgbWVzc2FnZSBzdHJ1Y3RzIGhhdmUgb2RkIHNpemVvZnMuDQo+ID4NCj4g
-PiBUaGlzIHByb2R1Y2VzIG1hbnkgb29wc2VzIHdpdGggQ09ORklHX0tBU0FOPXkuDQo+ID4NCj4g
-PiBGaXggYnkgbWFya2luZyB3aXRoIF9fYWxpZ25lZCg0KS4NCj4gPg0KPiA+IEZpeGVzOiBmZTM3
-YjQ4MjA0MTcgKCJjbGs6IGlteDogYWRkIHNjdSBjbG9jayBjb21tb24gcGFydCIpDQo+ID4gU2ln
-bmVkLW9mZi1ieTogTGVvbmFyZCBDcmVzdGV6IDxsZW9uYXJkLmNyZXN0ZXpAbnhwLmNvbT4NCj4g
-PiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay1zY3UuYyB8IDYgKysrLS0tDQo+ID4gIDEg
-ZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1zY3UuYyBiL2RyaXZlcnMvY2xrL2lteC9j
-bGstc2N1LmMNCj4gPiBpbmRleCBmYmVmNzQwNzA0ZDAuLjNjNWM0MmQ4ODMzZSAxMDA2NDQNCj4g
-PiAtLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLXNjdS5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsv
-aW14L2Nsay1zY3UuYw0KPiA+IEBAIC00MSwxNiArNDEsMTYgQEAgc3RydWN0IGNsa19zY3Ugew0K
-PiA+ICBzdHJ1Y3QgaW14X3NjX21zZ19yZXFfc2V0X2Nsb2NrX3JhdGUgew0KPiA+ICAgICAgICAg
-c3RydWN0IGlteF9zY19ycGNfbXNnIGhkcjsNCj4gPiAgICAgICAgIF9fbGUzMiByYXRlOw0KPiA+
-ICAgICAgICAgX19sZTE2IHJlc291cmNlOw0KPiA+ICAgICAgICAgdTggY2xrOw0KPiA+IC19IF9f
-cGFja2VkOw0KPiA+ICt9IF9fcGFja2VkIF9fYWxpZ25lZCg0KTsNCj4gDQo+IFNvcnJ5LCB0aGlz
-IHN0aWxsIGRvZXNuJ3QgbWFrZSBzZW5zZSB0byBtZS4gSGF2aW5nIF9fYWxpZ25lZCg0KSBtZWFu
-cyB0aGF0IHRoZQ0KPiBzdHJ1Y3QgaXMgcGxhY2VkIG9uIHRoZSBzdGFjayBhdCBzb21lIGFsaWdu
-bWVudCwgZ3JlYXQsIGJ1dCBpdCBzdGlsbCBoYXMgX19wYWNrZWQgc28NCj4gdGhlIHNpemVvZiB0
-aGlzIHN0cnVjdCBpcyBzb21lIG9kZCBudW1iZXIgbGlrZSAxMQ0KDQo+IElmIHRoaXMgc3RydWN0
-IGlzIHRoZSBsYXN0IGVsZW1lbnQgb24gdGhlIHN0YWNrIGl0IHdpbGwgZW5kIGF0IHNvbWUgdW5h
-bGlnbmVkIGFkZHJlc3MNCj4gYW5kIHRoZSBtYWlsYm94IGNvZGUgd2lsbCByZWFkIGEgZmV3IGJ5
-dGVzIGJleW9uZCB0aGUgZW5kIG9mIHRoZSBzdGFjay4NCg0KSGkgTGVvbmFyZCwNCg0KQ2FuIHlv
-dSBjb25zdHJ1Y3QgdGhpcyBjYXNlIHRvIHNlZSBpZiB3ZSBjYW4gcmVwcm9kdWNlIHRoZSBpc3N1
-ZSBhcyBwb2ludGVkIGJ5IFN0ZXBoZW4/DQoNClJlZ2FyZHMNCkFpc2hlbmcNCg0KPiANCj4gSSBz
-ZWUgdGhhdCB0aGUgY2FsbGluZyBjb2RlIHB1dHMgMyBhcyB0aGUgJ3NpemUnIGZvciB0aGlzIHN0
-cnVjdCBpbiBjbGtfc2N1X3NldF9yYXRlKCkuDQo+IA0KPiAJaGRyLT5zaXplID0gMzsNCj4gDQo+
-IFRoYXQgc2VlbXMgdG8gc2F5IHRoYXQgdGhlIHN0cnVjdCBpcyAzIHdvcmRzIGxvbmcsIG9yIDEy
-IGJ5dGVzLiBUaGVuIHdlIGNhbGwNCj4gaW14X3NjdV9jYWxsX3JwYygpLCBwYXNzaW5nIHRoZSBw
-b2ludGVyIHRvIHRoaXMgc3RydWN0IG9uIHRoZSBzdGFjayBhbmQgdGhhdA0KPiBldmVudHVhbGx5
-IGdldHMgaW50byBpbXhfc2N1X2lwY193cml0ZSgpIGNhbGxpbmcNCj4gbWJveF9zZW5kX21lc3Nh
-Z2UoKSB3aXRoIHUzMiBwb2ludGVycy4NCj4gDQo+IAlmb3IgKGkgPSAwOyBpIDwgaGRyLT5zaXpl
-OyBpKyspIHsNCj4gCQlzY19jaGFuID0gJnNjX2lwYy0+Y2hhbnNbaSAlIDRdOw0KPiAJCXJldCA9
-IG1ib3hfc2VuZF9tZXNzYWdlKHNjX2NoYW4tPmNoLCAmZGF0YVtpXSk7DQo+IA0KPiBTbyB3ZSd2
-ZSB0YWtlbiB0aGUgMTEgYnl0ZSBzdHJ1Y3QgKGRhdGEgaW4gdGhpcyBjYXNlKSBhbmQgY2FzdGVk
-IGl0IHRvIGENCj4gdTMyIGFycmF5IHdpdGggMyBlbGVtZW50cywgd2hpY2ggaXMgYmFkLiBUaGlz
-IGlzIHdoYXQga2FzYW4gaXMgd2FybmluZyBhYm91dC4NCj4gQWRkaW5nIGFsaWduZWQgc29tZXRp
-bWVzIGZpeGVzIGl0IGJlY2F1c2UgdGhlIGNvbXBpbGVyIHdpbGwgcGxhY2UgdGhlIG5leHQgc3Rh
-Y2sNCj4gdmFyaWFibGUgYXQgdGhlIG5hdHVyYWxseSBhbGlnbmVkIGxvY2F0aW9uIGFuZCB0aHVz
-IHdlIGdldCB0aGUgb25lIGJ5dGUgcGFkZGluZw0KPiBidXQgSSBkb24ndCBzZWUgaG93IHRoYXQg
-d29ya3Mgd2hlbiBpdCdzIHRoZSBsYXN0IHN0YWNrIGVsZW1lbnQuIFRoZSBzdGFjayB3aWxsDQo+
-IGVuZCBhdCBzb21lIHVuYWxpZ25lZCBhZGRyZXNzLg0KPiANCj4gVGhlIGJldHRlciBzb2x1dGlv
-biB3b3VsZCBiZSB0byBkcm9wIF9fYWxpZ25lZCg0KSBhbmQgbWFrZSBhIHVuaW9uIG9mIHRoZQ0K
-PiBzdHJ1Y3Qgd2l0aCB3aGF0ZXZlciBzaXplIG51bWJlciBvZiB3b3JkcyB0aGUgbWVzc2FnZSBp
-cyBvciBkbyBhIGNvcHkgb2YgdGhlDQo+IHN0cnVjdCBpbnRvIGEgdTMyIGFycmF5IHRoYXQgaXMg
-cGFzc2VkIHRvIGlteF9zY3VfY2FsbF9ycGMoKS4NCj4gDQo+IEZvciBleGFtcGxlOg0KPiANCj4g
-CXN0cnVjdCBpbXhfc2NfbXNnX3JlcV9zZXRfY2xvY2tfcmF0ZSB7DQo+IAkJdW5pb24gew0KPiAJ
-CQlzdHJ1Y3QgcGFja2VkX21lc3NhZ2Ugew0KPiAJCQkJc3RydWN0IGlteF9zY19ycGNfbXNnIGhk
-cjsNCj4gCQkJCV9fbGUzMiByYXRlOw0KPiAJCQkJX19sZTE2IHJlc291cmNlOw0KPiAJCQkJdTgg
-Y2xrOw0KPiAJCQl9IF9fcGFja2VkOw0KPiAJCQl1MzIgZGF0YVszXTsNCj4gCQl9Ow0KPiAJfTsN
-Cj4gDQo+IElmIHRoZSB1bmlvbiBhcHByb2FjaCB3YXMgdXNlZCB0aGVuIGVhY2ggdGltZSBpbXhf
-c2N1X2NhbGxfcnBjKCkgaXMgY2FsbGVkIHdlDQo+IGNhbiBzaW1wbHkgcGFzcyB0aGUgJ2RhdGEn
-IG1lbWJlciBhbmQgbWFrZSB0aGUgc2Vjb25kIGFyZ3VtZW50ICdtc2cnDQo+IHN0cm9uZ2x5IHR5
-cGVkIHRvIGJlIGEgdTMyIHBvaW50ZXIuIGthc2FuIHNob3VsZCBiZSBoYXBweSB0b28uDQo=
+The following kernel warning noticed on linux-next on arm64 juno-r2 device.
+
+Linux version 5.6.0-rc5-next-20200316 (TuxBuild@ccdbe23f0d06) (gcc
+version 9.2.1 20191130 (Debian 9.2.1-21)) #1 SMP PREEMPT Mon Mar 16
+07:40:45 UTC 2020
+
+[    0.002822] ------------[ cut here ]------------
+[    0.002840] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:4156
+__clk_put+0xfc/0x130
+[    0.002846] Modules linked in:
+[    0.002859] CPU: 0 PID: 1 Comm: swapper/0 Not tainted
+5.6.0-rc5-next-20200316 #1
+[    0.002865] Hardware name: ARM Juno development board (r2) (DT)
+[    0.002873] pstate: 20000005 (nzCv daif -PAN -UAO)
+[    0.002882] pc : __clk_put+0xfc/0x130
+[    0.002891] lr : clk_put+0xc/0x18
+[    0.002896] sp : ffff80001003bba0
+[    0.002902] x29: ffff80001003bba0 x28: 0000000000000000
+[    0.002911] x27: 0000000000000000 x26: ffff800011c56000
+[    0.002919] x25: ffff800011c56490 x24: 0000000000000001
+[    0.002928] x23: ffff00097effdae8 x22: 0000000000000001
+[    0.002936] x21: ffff000975cc8000 x20: fffffffffffffdfb
+[    0.002945] x19: fffffffffffffdfb x18: 0000000000000001
+[    0.002953] x17: 00000000e80423fd x16: 00000000e66966f2
+[    0.002961] x15: ffffffffffffffff x14: ffffffffff000000
+[    0.002970] x13: ffffffffffffffff x12: 0000000000000018
+[    0.002978] x11: 0000000000000028 x10: 0101010101010101
+[    0.002987] x9 : ffffffffffffffff x8 : 7f7f7f7f7f7f7f7f
+[    0.002995] x7 : 6b61ff726b6b6462 x6 : 000000000080636c
+[    0.003003] x5 : ffff00097eff3d30 x4 : 0000000000000000
+[    0.003011] x3 : 0000000000000001 x2 : 0000000000000001
+[    0.003019] x1 : 1989cb6049749c00 x0 : fffffffffffffdfb
+[    0.003028] Call trace:
+[    0.003037]  __clk_put+0xfc/0x130
+[    0.003045]  clk_put+0xc/0x18
+[    0.003057]  topology_parse_cpu_capacity+0x100/0x180
+[    0.003065]  get_cpu_for_node+0x3c/0x80
+[    0.003074]  parse_cluster+0x1c8/0x2dc
+[    0.003082]  parse_cluster+0x84/0x2dc
+[    0.003091]  init_cpu_topology+0x80/0x114
+[    0.003101]  smp_prepare_cpus+0x24/0x100
+[    0.003110]  kernel_init_freeable+0xbc/0x23c
+[    0.003120]  kernel_init+0x10/0x100
+[    0.003129]  ret_from_fork+0x10/0x18
+[    0.003138] ---[ end trace 33c8be449b41381b ]---
+
+[   33.765558] ------------[ cut here ]------------
+[   33.770234] arm-smmu 2b600000.iommu: deferred probe timeout,
+ignoring dependency
+[   33.770269] WARNING: CPU: 1 PID: 331 at drivers/base/dd.c:270
+driver_deferred_probe_check_state+0x40/0x60
+[   33.787249] Modules linked in: fuse
+[   33.790744] CPU: 1 PID: 331 Comm: kworker/1:2 Tainted: G        W
+      5.6.0-rc5-next-20200316 #1
+[   33.799892] Hardware name: ARM Juno development board (r2) (DT)
+[   33.805824] Workqueue: events deferred_probe_work_func
+[   33.810969] pstate: 60000005 (nZCv daif -PAN -UAO)
+[   33.815765] pc : driver_deferred_probe_check_state+0x40/0x60
+[   33.821429] lr : driver_deferred_probe_check_state+0x40/0x60
+[   33.827092] sp : ffff80001254bac0
+[   33.830404] x29: ffff80001254bac0 x28: ffff8000119f7000
+[   33.835724] x27: 0000000000000000 x26: ffff800011db3ce8
+[   33.841043] x25: 0000000000000001 x24: ffff800011b92228
+[   33.846359] x23: ffff0009754a1410 x22: fffffffffffffffe
+[   33.851676] x21: ffff0009756d0e00 x20: ffff0009754a1410
+[   33.856992] x19: ffff0009754a1410 x18: 0000000000000010
+[   33.862308] x17: 0000000000000000 x16: 0000000000000000
+[   33.867624] x15: ffff0009756d1270 x14: 646e657065642067
+[   33.872940] x13: 6e69726f6e676920 x12: 2c74756f656d6974
+[   33.878259] x11: 2065626f72702064 x10: 6572726566656420
+[   33.883576] x9 : 3a756d6d6f692e30 x8 : 3030303036623220
+[   33.888892] x7 : 756d6d732d6d7261 x6 : ffff800011c058dc
+[   33.894207] x5 : 0000000000000000 x4 : 0000000000000000
+[   33.899523] x3 : 00000000ffffffff x2 : ffff80096d96d000
+[   33.904839] x1 : ff65453dc5583b00 x0 : 0000000000000000
+[   33.910155] Call trace:
+[   33.912605]  driver_deferred_probe_check_state+0x40/0x60
+[   33.917922]  __genpd_dev_pm_attach+0x1a0/0x1b0
+[   33.922367]  genpd_dev_pm_attach+0x58/0x68
+[   33.926466]  dev_pm_domain_attach+0x48/0x50
+[   33.930656]  platform_drv_probe+0x38/0xa0
+[   33.934668]  really_probe+0xd4/0x318
+[   33.938243]  driver_probe_device+0x54/0xe8
+[   33.942340]  __device_attach_driver+0x80/0xb8
+[   33.946699]  bus_for_each_drv+0x74/0xc0
+[   33.950535]  __device_attach+0xdc/0x138
+[   33.954371]  device_initial_probe+0x10/0x18
+[   33.958556]  bus_probe_device+0x90/0x98
+[   33.962392]  deferred_probe_work_func+0x6c/0xa0
+[   33.966926]  process_one_work+0x19c/0x320
+[   33.970936]  worker_thread+0x1f0/0x420
+[   33.974685]  kthread+0xf0/0x120
+[   33.977827]  ret_from_fork+0x10/0x18
+[   33.981402] ---[ end trace 33c8be449b41381d ]---
+
+ref:
+https://lkft.validation.linaro.org/scheduler/job/1291796#L642
+
+-- 
+Linaro LKFT
+https://lkft.linaro.org
