@@ -2,98 +2,126 @@ Return-Path: <SRS0=Lb92=5B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F95BC0044D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 18:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C7CDC0044D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 19:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE3C20738
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 18:33:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584383601;
-	bh=FNFTDbC711bD4zKJDCRdzhah0Z5BX1mcqlQex3BGMnQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ukIttWHEjdof39Dx1k3slTKagcscGc6mPs9m9GLEtMwdKmw5dHlFo8N8pxe585PSi
-	 UEbvhCtxTwn40br3yAK+zy8sR7gpe88pEloUatvDm1G/U4QImDWaekeMB1M4C+LTzh
-	 S0EQrD9T2RvYnR2NdUxhxbWhdLRcI1O8q/yy16GQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5EB382073E
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Mar 2020 19:58:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="lZwS/FSV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732341AbgCPSdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Mar 2020 14:33:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731967AbgCPSdS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Mar 2020 14:33:18 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1732366AbgCPT6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Mar 2020 15:58:20 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:35802 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732516AbgCPT6T (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Mar 2020 15:58:19 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1584388699; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=0jutu2TrYwknNeBbhpvzrOvPcmG3lvgPL/hDLeN1Qxs=; b=lZwS/FSVleKvLY49KMSW9ZJ4fHTO9Kclcg6UnADWObR7Eg3JCU9B82OK4GG6l3IGVaDjscKe
+ hdef7zRiOy7UFafsvmVDz25frkbbLcZ/3dxxnj5lxkjn6zABNx9haRz1VTyGMy0XTR4Q9cCc
+ J6zVD3APfQ/Sl6KEUstSmr1/108=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e6fda52.7fbaa5492d50-smtp-out-n03;
+ Mon, 16 Mar 2020 19:58:10 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5EF4EC433BA; Mon, 16 Mar 2020 19:58:09 +0000 (UTC)
+Received: from [192.168.1.9] (cpe-75-80-185-151.san.res.rr.com [75.80.185.151])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E5FB20674;
-        Mon, 16 Mar 2020 18:33:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584383598;
-        bh=FNFTDbC711bD4zKJDCRdzhah0Z5BX1mcqlQex3BGMnQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=MwC1Iwj9v+6hWSPEFBT0jJ1XSZSHjALVOrY91LV7+Cujyn0l6PoCwq/NWfQQ1NHHN
-         I5Z/I+4pfDMaWfuMYHsrh+hWIiJxIL0vRtWOZQntJny3yBu2PzzuoHIwiHJ0dJhKmq
-         eOK9mPpVFDB5urtCQs3fTpz3/8SBxR8o+t9taseQ=
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: wcheng)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 53466C433CB;
+        Mon, 16 Mar 2020 19:58:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 53466C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
+Subject: Re: [PATCH 2/3] clk: qcom: gcc: Add USB3 PIPE clock operations
+To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1584172319-24843-1-git-send-email-wcheng@codeaurora.org>
+ <1584172319-24843-3-git-send-email-wcheng@codeaurora.org>
+ <158437819409.88485.6326749791923076608@swboyd.mtv.corp.google.com>
+From:   Wesley Cheng <wcheng@codeaurora.org>
+Message-ID: <9707b6f5-89d4-9800-bee2-825877b535ac@codeaurora.org>
+Date:   Mon, 16 Mar 2020 12:58:07 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c6b19bac-b018-28a0-421f-f40f85245bee@codeaurora.org>
-References: <1581423236-21341-1-git-send-email-tdas@codeaurora.org> <1581423236-21341-2-git-send-email-tdas@codeaurora.org> <20200303201629.GP24720@google.com> <f0529793-c51d-4baf-5217-173c552f4cbe@codeaurora.org> <20200304170939.GR24720@google.com> <158412246142.149997.5548337390525905687@swboyd.mtv.corp.google.com> <c6b19bac-b018-28a0-421f-f40f85245bee@codeaurora.org>
-Subject: Re: [PATCH v1 2/2] clk: qcom: dispcc: Remove support of disp_cc_mdss_rscc_ahb_clk
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>, robh@kernel.org,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, Doug Anderson <dianders@chromium.org>
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Mon, 16 Mar 2020 11:33:17 -0700
-Message-ID: <158438359728.88485.9249991203602274851@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+In-Reply-To: <158437819409.88485.6326749791923076608@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-03-14 04:08:47)
-> I would require you suggestion on the below.
->=20
-> On 3/13/2020 11:31 PM, Stephen Boyd wrote:
-> > Quoting Matthias Kaehlcke (2020-03-04 09:09:39)
-> >> Hi Taniya,
-> >>
-> >> On Wed, Mar 04, 2020 at 09:05:20AM +0530, Taniya Das wrote:
-> >>>
-> >>> Hi Matthias,
-> >>>
-> >>> The display device node is not present and we encounter this crash, w=
-ould it
-> >>> be possible to add ALWAYS_ON for the MDSS GDSC and give it a try.
-> >>
-> >> It still crashes when ALWAYS_ON is set for the MDSS GDSC.
-> >=20
-> > Any updates here? I'm about to send this patch off to Linus and I'm
-> > wondering if there will be a resolution besides reverting it.
-> >=20
->=20
-> Looks like the AHB clock needs to be left enabled till the last clocks=20
-> get disabled. I need to add a new dependency o n this clock.
->=20
-> Hi Stephen,
->=20
->=20
-> Any way to keep this dependency using the framework  or I need to split=20
-> the probes to register them independently?
->=20
+Hi Stephen,
 
-Sorry, I don't understand the problem fully. This AHB clk is left on in
-the bootloader? Why do we need to touch it if it's always left enabled?
-Is it actually the case that the bootloader hasn't turned this clk on
-and we're getting lucky having it marked here as CLK_IS_CRITICAL? Can we
-force it on in driver probe and then ignore it after that?
+Thanks for the feedback.
+
+On 3/16/2020 10:03 AM, Stephen Boyd wrote:
+> Quoting Wesley Cheng (2020-03-14 00:51:58)
+>> Add the USB3 PIPE clock structures, so that the USB driver can
+>> vote for the GCC to enable/disable it when required.  This clock
+>> is needed for SSUSB operation.
+>>
+>> Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
+>> ---
+>>  drivers/clk/qcom/gcc-sm8150.c | 26 ++++++++++++++++++++++++++
+> 
+> Can you please combine these two patches and add sm8150 in the subject?
+> 
+
+Sure, I'll combine the two patches into one and include the SM8150 tag
+in the subject on the next patch series.
+
+>>  1 file changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+>> index d0cd03d..ef98fdc 100644
+>> --- a/drivers/clk/qcom/gcc-sm8150.c
+>> +++ b/drivers/clk/qcom/gcc-sm8150.c
+>> @@ -3172,6 +3172,18 @@ enum {
+>>         },
+>>  };
+>>  
+>> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
+>> +       .halt_check = BRANCH_HALT_SKIP,
+>> +       .clkr = {
+>> +               .enable_reg = 0xf058,
+>> +               .enable_mask = BIT(0),
+>> +               .hw.init = &(struct clk_init_data){
+>> +                       .name = "gcc_usb3_prim_phy_pipe_clk",
+>> +                       .ops = &clk_branch2_ops,
+>> +               },
+>> +       },
+>> +};
+>> +
+>>  static struct clk_branch gcc_usb3_sec_clkref_clk = {
+>>         .halt_reg = 0x8c028,
+>>         .halt_check = BRANCH_HALT,
+>> @@ -3219,6 +3231,18 @@ enum {
+>>         },
+>>  };
+>>  
+>> +static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+>> +       .halt_check = BRANCH_HALT_SKIP,
+> 
+> Sad to see that we'll never resolve this.
+> 
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
