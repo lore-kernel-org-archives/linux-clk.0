@@ -2,57 +2,96 @@ Return-Path: <SRS0=cR9G=5C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD4EC10F29
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 15:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED27C10F29
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 16:10:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3BF20738
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 15:13:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61532073E
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 16:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584461428;
+	bh=TE0OALslBnAglDc0PbW0+eztUT4bhEdyvuy67q7ODsA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=lUPbKQ1ygYCdGEUSrvEqYU3vxg/PZfYe5ZDp43PjVwB6E4/5dW6hL77YUchDl8C1n
+	 1h8+4tA7BZZNdfYdTLhog8UVZJ1MUmRiU15X+I3Lx/7kTVfpBkROCSY88NImfzCD9N
+	 vN7xGX6JmdOPgOeXEpkweDv0VH9/aw18BxPqEUho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726016AbgCQPNv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Mar 2020 11:13:51 -0400
-Received: from out28-220.mail.aliyun.com ([115.124.28.220]:60628 "EHLO
-        out28-220.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbgCQPNv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Mar 2020 11:13:51 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2034004|-1;CH=green;DM=||false|;DS=CONTINUE|ham_system_inform|0.0742784-0.00260228-0.923119;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03296;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=9;RT=9;SR=0;TI=SMTPD_---.H0zKH5l_1584457917;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.H0zKH5l_1584457917)
-          by smtp.aliyun-inc.com(10.147.42.241);
-          Tue, 17 Mar 2020 23:13:13 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
+        id S1726616AbgCQQK2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Mar 2020 12:10:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35858 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726016AbgCQQK2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Mar 2020 12:10:28 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 880D420724;
+        Tue, 17 Mar 2020 16:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584461427;
+        bh=TE0OALslBnAglDc0PbW0+eztUT4bhEdyvuy67q7ODsA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=t8O7crINsA3AtuGuMMK+pePvF5aF7Fb0BIZ1zxo4crz2S9zepUdiZ303EtOl0nAfm
+         4DZKRihRj8Xp/JbUwFFLy7LidMQ5YRnCmhfg6NdhMC2SAILL8Db8Y/bncOQIHfzaV6
+         XNTFBaPv+ie6KQcXKLng6/sY+pKK3hCkVDBZ4/10=
+From:   Dinh Nguyen <dinguyen@kernel.org>
 To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, paul@crapouillou.net,
-        dongsheng.qiu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH RESEND] Add support for TCU of X1000.
-Date:   Tue, 17 Mar 2020 23:11:32 +0800
-Message-Id: <1584457893-40418-2-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584457893-40418-1-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1584457893-40418-1-git-send-email-zhouyanjie@wanyeetech.com>
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: [PATCHv3 0/5] clk: agilex: add clock driver
+Date:   Tue, 17 Mar 2020 11:10:17 -0500
+Message-Id: <20200317161022.11181-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for TCU of X1000 from Ingenic. X1000 has a different TCU,
-since X1000 OST has been independent of TCU. This patch is add TCU
-support of X1000, and prepare for later OST driver.
+Hi,
 
-周琰杰 (Zhou Yanjie) (1):
-  clk: Ingenic: Add support for TCU of X1000.
+This is version 3 of the patchset to add a clock driver to the Agilex
+platform.
 
- drivers/clk/ingenic/tcu.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This version adds 2 new patches that was a result from comments received
+in v2.
+
+Patch 2/5: clk: socfpga: remove clk_ops enable/disable methods
+Patch 3/5: clk: socfpga: add const to _ops data structures
+
+Thanks,
+Dinh
+
+
+Dinh Nguyen (5):
+  clk: socfpga: stratix10: use new parent data scheme
+  clk: socfpga: remove clk_ops enable/disable methods
+  clk: socfpga: add const to _ops data structures
+  dt-bindings: documentation: add clock bindings information for Agilex
+  clk: socfpga: agilex: add clock driver for the Agilex platform
+
+ .../bindings/clock/intel,agilex.yaml          |  36 ++
+ drivers/clk/Makefile                          |   3 +-
+ drivers/clk/socfpga/Makefile                  |   2 +
+ drivers/clk/socfpga/clk-agilex.c              | 454 ++++++++++++++++++
+ drivers/clk/socfpga/clk-gate-s10.c            |   5 +-
+ drivers/clk/socfpga/clk-periph-s10.c          |  10 +-
+ drivers/clk/socfpga/clk-pll-a10.c             |   4 +-
+ drivers/clk/socfpga/clk-pll-s10.c             |  78 ++-
+ drivers/clk/socfpga/clk-pll.c                 |   4 +-
+ drivers/clk/socfpga/clk-s10.c                 | 160 ++++--
+ drivers/clk/socfpga/stratix10-clk.h           |  10 +-
+ include/dt-bindings/clock/agilex-clock.h      |  70 +++
+ 12 files changed, 784 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+ create mode 100644 drivers/clk/socfpga/clk-agilex.c
+ create mode 100644 include/dt-bindings/clock/agilex-clock.h
 
 -- 
-2.7.4
+2.25.1
 
