@@ -2,82 +2,109 @@ Return-Path: <SRS0=cR9G=5C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4CEC5ACDA
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 20:53:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC09C2BB1D
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 21:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F5420714
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 20:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EAC2051A
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Mar 2020 21:13:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="S+z0ItYu"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t7xU/aen"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgCQUxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Mar 2020 16:53:45 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:35793 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726730AbgCQUxn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Mar 2020 16:53:43 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584478423; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=0FuWCaiIeZ+dC3cNZQsIBNBHz1QAlcLwuEg7g1HMh0o=; b=S+z0ItYuK2WAr2OpHCNk0zwS/7g+SAPSn1oJ+G80HUf/owZGzADSnNQV/hnymkAkyfT4BLmt
- mODDCQJxSiyesaZp6JbcBsYSB3GtmAvjOuOwnmqbjxf5/ENkmLUD2h3h94KHbo1aPMqvL4/Z
- tTJgt693gwKFYrGFseoiQPVvkec=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7138d2.7f859b99af80-smtp-out-n02;
- Tue, 17 Mar 2020 20:53:38 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 39C36C44788; Tue, 17 Mar 2020 20:53:38 +0000 (UTC)
-Received: from wcheng-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 51595C433D2;
-        Tue, 17 Mar 2020 20:53:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 51595C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
-From:   Wesley Cheng <wcheng@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Wesley Cheng <wcheng@codeaurora.org>
-Subject: [PATCH v2 0/2] Enable SS/HS USB support on SM8150
-Date:   Tue, 17 Mar 2020 13:53:30 -0700
-Message-Id: <1584478412-7798-1-git-send-email-wcheng@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        id S1726765AbgCQVNs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Mar 2020 17:13:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33066 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726388AbgCQVNs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Mar 2020 17:13:48 -0400
+Received: by mail-lj1-f196.google.com with SMTP id f13so24645272ljp.0;
+        Tue, 17 Mar 2020 14:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LARHXuaKUkUDUGOK/jHk/g5Im0xzFquLTlHFxXm0daM=;
+        b=t7xU/aenX4xqSWnjdQPZN30yZ/IjtmHuiFKftszZqzwhQWL8TRlOqqDYY2SwOL5+I/
+         qQQPKX0PFV/6+99DGDQ6pfyVXCNEvOPtcZ6yIMdxkn3rMT1VonrudSTSx0X8Ckv28ry5
+         Fx4Uv/CcSo6k0iskVK3ZsZn33unZQzzGpHKtlOExLnDT3euQjXcSevzg9HxgqysxlxvR
+         G17Ikijijdpn/COzDMczpwkds4lCXoH4gXCjOlSwOLEjROcZWM9tshGGpsh0qPbvos/a
+         v2i0ZjqJaFpemIEzgTnnWIgKAucfWHQhccIuf8YRJBDNj4kJXvXT1sIkRPDr/hoFkney
+         LoHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LARHXuaKUkUDUGOK/jHk/g5Im0xzFquLTlHFxXm0daM=;
+        b=QB5SG+vPrn3O+lIK3nAgkuOkQGZNPGllOVuYdGll3GJ7qOm8eJwG3SxQPyiA9A3+KF
+         d43R0ETNtZ6r+q/PKUsgN5VScK21vtU70+e8a2WK+WBJgdFAtymNY77puYuQkQB7nge9
+         If5T3ufcvVezEWgVSMA5+1PsQojLV/y98keOFl+pGIGNGpEYlr4WqzJPjl+cU+WDFSgT
+         7c6dFL8o5t6M4ZhYrwsttLXxUVUP4BBz2kBrmXPlCoqNyUhTJCXOIc0uiOhCvvZchcbS
+         rgrdxrr1S2hbYGI1PsFgtzBbto4rDxmI9Mbys6Gfv1X7YbmrRS3fXyCxIv7/WURnZ+Vr
+         y3VQ==
+X-Gm-Message-State: ANhLgQ2KCnkCsWmcbm6CXEKWggRt54v3XpUOxqseg631F7R8zIJx0esn
+        /Cntyb2ECtvjscujXFdt8rjF9OD5MQU=
+X-Google-Smtp-Source: ADFU+vuyM49tC3h/AoMvCI49PxDJ6dQ5ze4WGJnrp9JpPJcDjaJwpK77nRLAOABktoWj2YSKBvJ4dA==
+X-Received: by 2002:a2e:818e:: with SMTP id e14mr435422ljg.104.1584479625500;
+        Tue, 17 Mar 2020 14:13:45 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-186-78.NA.cust.bahnhof.se. [158.174.186.78])
+        by smtp.gmail.com with ESMTPSA id 23sm3341652lfa.28.2020.03.17.14.13.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Mar 2020 14:13:44 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH RESEND] clk: sunxi: Fix incorrect usage of round_down()
+Date:   Tue, 17 Mar 2020 22:13:32 +0100
+Message-Id: <20200317211333.2597793-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add required device tree nodes to enable the USB SS and HS
-paths on the primary USB controller on SM8150.  In addition,
-implement missing resources from the SM8150 GCC driver, which
-includes the USB GDSC and the USB PIPE clocks.
+round_down() can only round to powers of 2. If round_down() is asked
+to round to something that is not a power of 2, incorrect results are
+produced. The incorrect results can be both too large and too small.
 
-Changes in v2:
- - Combine GDSC and USB PIPE clock changes.
- - Re-order DTS nodes based on address
+Instead, use rounddown() which can round to any number.
 
-Jack Pham (1):
-  arm64: dts: qcom: sm8150: Add USB and PHY device nodes
+Fixes: 6a721db180a2 ("clk: sunxi: Add A31 clocks support")
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+---
+Resend to include lists, appologies for missing that.
 
-Wesley Cheng (1):
-  clk: qcom: gcc: Add USB3 PIPE clock and GDSC for SM8150
+Patch has only been compile tested, I don't have the hardware.
 
- arch/arm64/boot/dts/qcom/sm8150-mtp.dts     | 17 ++++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi        | 92 +++++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-sm8150.c               | 52 ++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sm8150.h |  4 ++
- 4 files changed, 165 insertions(+)
+ drivers/clk/sunxi/clk-sunxi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 27201fd26e44..e1aa1fbac48a 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -90,7 +90,7 @@ static void sun6i_a31_get_pll1_factors(struct factors_request *req)
+ 	 * Round down the frequency to the closest multiple of either
+ 	 * 6 or 16
+ 	 */
+-	u32 round_freq_6 = round_down(freq_mhz, 6);
++	u32 round_freq_6 = rounddown(freq_mhz, 6);
+ 	u32 round_freq_16 = round_down(freq_mhz, 16);
+ 
+ 	if (round_freq_6 > round_freq_16)
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.25.1
+
