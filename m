@@ -4,99 +4,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4B17C4332D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 22:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6C96C43332
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 22:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B107120754
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 22:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC58720773
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 22:40:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584569086;
-	bh=MtsLKAcKSatPHkT/xTuGpEEzgXJV4ETKAZof7HlpnP0=;
+	s=default; t=1584571250;
+	bh=JYLTD5cxDvSBSg++epIJgz0861zLlU3qBpM9i4/mDa0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=glWZwdDKnBTgdldJKV1gKrJdb0Nzxdpd2XVmHGj0+WByt3yEcasus8AtLyc++RZcn
-	 tONxh6WXyQHAeoyjB9WwrUM4fDDnmMCJKNFqyyRxcKggwPoQ1Mmtv5RDRdQX+KoCjM
-	 nbsryXaCoSfi/N+G8qfE9eGsE2OUEeMb9YsoH7tE=
+	b=2ImtwRjeTFjkR2oOmhpZiGY1SkGaBKgXWC+gmMh6uU/S5SEf2qFYlyEDKHqnudFT8
+	 B7lvSdEdCaXXV/1OZ0Mop4VzYwkNt5Zf5znIkPXrNeIcMBE8ayi3wIWXGSYdF1Wcnf
+	 k6f5nmib07kvetI5Xee1PtahQyJXXpMUZIt3dzUc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbgCRWEq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Mar 2020 18:04:46 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:34968 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726663AbgCRWEq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Mar 2020 18:04:46 -0400
-Received: by mail-il1-f194.google.com with SMTP id v6so369791ilq.2;
-        Wed, 18 Mar 2020 15:04:45 -0700 (PDT)
+        id S1726913AbgCRWkr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Mar 2020 18:40:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:32782 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726795AbgCRWkr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Mar 2020 18:40:47 -0400
+Received: by mail-io1-f65.google.com with SMTP id o127so295443iof.0;
+        Wed, 18 Mar 2020 15:40:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nvP10y4co7+lz1ui5VSoxULGIs1uH9GMl57cIOt93KU=;
-        b=TfGqSLGcvxRaLB/n/SEe7qM8tPG13jeJcmhPCovd/ddGpDkufRPIgJCjX6WdTxjsW6
-         nINd0rOGmMsx8wMV5VlE9sNR985z6pLXDmDE0E3cHxcj/i7IStGIB9ShNlapF06cMiSK
-         pZcKloBwDyjPnkX+JjUMD/Wg9AuDRX/bZnbjpWAML1FhXUMeKG4AGQqzvthRntSBeUPs
-         wqAKZbB7nTKgky0RALaZew68KoiwgdU5Ot1t/g11u+LAOMd9HwQt7Q8n1l6xAKxmvzE7
-         0pImvPOQAZFFAXWN3lqcWAMN+HcnnMUg1npg5dTrZRHtQnOkO50P6zlen7ZFVdS0Sx/c
-         YPbg==
-X-Gm-Message-State: ANhLgQ20llxf9dajzhQ6e2cIDbuNuj2fIjK7Tk+MwRo//CcXPNnvpyRq
-        19cC09vu+l+sMnSspOgvqg==
-X-Google-Smtp-Source: ADFU+vtrY4dt+9MXe/DeJN43InzVxlzOGFVmFX635slbQ1fD96a4nEurmq+8jIxCKSegB6jUOLy0Og==
-X-Received: by 2002:a92:7f01:: with SMTP id a1mr254571ild.132.1584569084977;
-        Wed, 18 Mar 2020 15:04:44 -0700 (PDT)
+        bh=sNmWTWISSY3HxnGdq3YlFpG87OzVoepE1NIhZFHW6Vg=;
+        b=Dd5pLMyjVNfBimEg2D9VA0zt8/yznPgyK9Lo5mVftDF2IzTLB798EqYEyh0yaVPZuv
+         2eIKCNeNED5UkHLsx/Rx30uHd1m1Zgc/Qdhp8O1LvoNWb3ZF8slTmbfyvbyM8ncjtBI6
+         ylJ3jFtjQ1X3z8TZqLWVJyrJS6EX48vECwS9UHTft/wmcGyymoc9Vc5RwmgpeNje9JKg
+         A0DkFds4X874h5nWBvOLEt6G8fLusazswXCuIOCjKPpcFWiktAA+tDvzB+VJCGag2Fco
+         j7K7HXybcBGM8DLHrNqzXlEG69b+IAYWvC9W1F/uqmbzuuqXOlvRKFR/H2lDt6TU03Iw
+         HSYQ==
+X-Gm-Message-State: ANhLgQ22tp7wyVNiayUXeeNSJOzvktFn/x0bV4v4gZ569XJlac3oh+nN
+        2+Tqb65I5Aw191jV8yX7xw==
+X-Google-Smtp-Source: ADFU+vueJ8UutJsifakMHvpGq04AYZ7HzoPPa9jyc6D+mpX3xmSiVDrOgMu8lAqgI6eznnw6v065Ag==
+X-Received: by 2002:a5d:980f:: with SMTP id a15mr34849iol.203.1584571246003;
+        Wed, 18 Mar 2020 15:40:46 -0700 (PDT)
 Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id p2sm62743iln.22.2020.03.18.15.04.43
+        by smtp.gmail.com with ESMTPSA id b62sm101487ilb.1.2020.03.18.15.40.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 15:04:44 -0700 (PDT)
-Received: (nullmailer pid 16608 invoked by uid 1000);
-        Wed, 18 Mar 2020 22:04:43 -0000
-Date:   Wed, 18 Mar 2020 16:04:43 -0600
+        Wed, 18 Mar 2020 15:40:44 -0700 (PDT)
+Received: (nullmailer pid 2596 invoked by uid 1000);
+        Wed, 18 Mar 2020 22:40:42 -0000
+Date:   Wed, 18 Mar 2020 16:40:42 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v6 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
- MSS clock bindings
-Message-ID: <20200318220443.GA16192@bogus>
-References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
- <1584211798-10332-2-git-send-email-tdas@codeaurora.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200318224042.GA32101@bogus>
+References: <20200317161022.11181-1-dinguyen@kernel.org>
+ <20200317161022.11181-5-dinguyen@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584211798-10332-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <20200317161022.11181-5-dinguyen@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 15 Mar 2020 00:19:56 +0530, Taniya Das wrote:
-> The Modem Subsystem clock provider have a bunch of generic properties
-> that are needed in a device tree. Add a YAML schemas for those.
+On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
 > 
-> Add clock ids for GCC MSS and MSS clocks which are required to bring
-> the modem out of reset.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
->  .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 ++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sc7180.h        |  7 ++-
->  include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++++
->  3 files changed, 80 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
+> v3: address comments from Stephen Boyd
+>     fix build error(tab removed in line 37)
+>     renamed to intel,agilex.yaml
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>  2 files changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
-Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/qcom,sc7180-mss.yaml#
+Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
+FATAL ERROR: Unable to parse input tree
+scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
+Makefile:1262: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
-See https://patchwork.ozlabs.org/patch/1254940
+See https://patchwork.ozlabs.org/patch/1256630
 Please check and re-submit.
