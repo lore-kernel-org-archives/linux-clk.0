@@ -4,39 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC6CC1975A
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 01:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 246F1C5ACD7
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 03:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB2B206EC
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 01:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8CC920768
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 03:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbgCRBqV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Mar 2020 21:46:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:58796 "EHLO inva021.nxp.com"
+        id S1727144AbgCRDdm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Mar 2020 23:33:42 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:37626 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726680AbgCRBqV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Mar 2020 21:46:21 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 290C620038E;
-        Wed, 18 Mar 2020 02:46:19 +0100 (CET)
+        id S1726229AbgCRDdm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Mar 2020 23:33:42 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 772C71A104F;
+        Wed, 18 Mar 2020 04:33:40 +0100 (CET)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 872B8200A1E;
-        Wed, 18 Mar 2020 02:46:12 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E95E61A1050;
+        Wed, 18 Mar 2020 04:33:32 +0100 (CET)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B590D40302;
-        Wed, 18 Mar 2020 09:46:04 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8E1A5402C1;
+        Wed, 18 Mar 2020 11:33:23 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, t-kristo@ti.com, jonas.gorski@gmail.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        allison@lohutok.net, gustavo@embeddedor.com,
+        kstewart@linuxfoundation.org, tglx@linutronix.de,
+        abel.vesa@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: clk-sscg-pll: Remove unnecessary blank lines
-Date:   Wed, 18 Mar 2020 09:39:25 +0800
-Message-Id: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH] clk: imx: clk-pllv3: Use readl_poll_timeout() for PLL lock wait
+Date:   Wed, 18 Mar 2020 11:26:44 +0800
+Message-Id: <1584502004-11349-1-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
@@ -44,81 +46,61 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Remove many unnecessary blank lines for cleanup.
+Use readl_poll_timeout() for PLL lock wait which can simplify the
+code a lot.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/imx/clk-sscg-pll.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/clk/imx/clk-pllv3.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
-index d4a2be1..773d8a5 100644
---- a/drivers/clk/imx/clk-sscg-pll.c
-+++ b/drivers/clk/imx/clk-sscg-pll.c
-@@ -72,7 +72,6 @@ struct clk_sscg_pll_setup {
- 	int divr2, divf2;
- 	int divq;
- 	int bypass;
--
- 	uint64_t vco1;
- 	uint64_t vco2;
- 	uint64_t fout;
-@@ -86,11 +85,8 @@ struct clk_sscg_pll_setup {
- struct clk_sscg_pll {
- 	struct clk_hw	hw;
- 	const struct clk_ops  ops;
--
- 	void __iomem *base;
--
- 	struct clk_sscg_pll_setup setup;
--
- 	u8 parent;
- 	u8 bypass1;
- 	u8 bypass2;
-@@ -194,7 +190,6 @@ static int clk_sscg_pll2_find_setup(struct clk_sscg_pll_setup *setup,
- 					struct clk_sscg_pll_setup *temp_setup,
- 					uint64_t ref)
+diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
+index df91a82..3dfa9c3 100644
+--- a/drivers/clk/imx/clk-pllv3.c
++++ b/drivers/clk/imx/clk-pllv3.c
+@@ -7,6 +7,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/delay.h>
+ #include <linux/io.h>
++#include <linux/iopoll.h>
+ #include <linux/slab.h>
+ #include <linux/jiffies.h>
+ #include <linux/err.h>
+@@ -25,6 +26,8 @@
+ #define IMX7_ENET_PLL_POWER	(0x1 << 5)
+ #define IMX7_DDR_PLL_POWER	(0x1 << 20)
+ 
++#define PLL_LOCK_TIMEOUT	10000
++
+ /**
+  * struct clk_pllv3 - IMX PLL clock version 3
+  * @clk_hw:	 clock source
+@@ -53,23 +56,14 @@ struct clk_pllv3 {
+ 
+ static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
  {
--
- 	int ret;
+-	unsigned long timeout = jiffies + msecs_to_jiffies(10);
+ 	u32 val = readl_relaxed(pll->base) & pll->power_bit;
  
- 	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
-@@ -253,7 +248,6 @@ static int clk_sscg_pll1_find_setup(struct clk_sscg_pll_setup *setup,
- 					struct clk_sscg_pll_setup *temp_setup,
- 					uint64_t ref)
- {
--
- 	int ret;
+ 	/* No need to wait for lock when pll is not powered up */
+ 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
+ 		return 0;
  
- 	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
-@@ -280,7 +274,6 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
- 	temp_setup.fout_request = rate;
- 
- 	switch (try_bypass) {
+-	/* Wait for PLL to lock */
+-	do {
+-		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
+-			break;
+-		if (time_after(jiffies, timeout))
+-			break;
+-		usleep_range(50, 500);
+-	} while (1);
 -
- 	case PLL_BYPASS2:
- 		if (prate == rate) {
- 			setup->bypass = PLL_BYPASS2;
-@@ -288,11 +281,9 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
- 			ret = 0;
- 		}
- 		break;
--
- 	case PLL_BYPASS1:
- 		ret = clk_sscg_pll2_find_setup(setup, &temp_setup, prate);
- 		break;
--
- 	case PLL_BYPASS_NONE:
- 		ret = clk_sscg_pll1_find_setup(setup, &temp_setup, prate);
- 		break;
-@@ -301,7 +292,6 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
- 	return ret;
+-	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
++	return readl_poll_timeout(pll->base, val, val & BM_PLL_LOCK, 500,
++				  PLL_LOCK_TIMEOUT);
  }
  
--
- static int clk_sscg_pll_is_prepared(struct clk_hw *hw)
- {
- 	struct clk_sscg_pll *pll = to_clk_sscg_pll(hw);
+ static int clk_pllv3_prepare(struct clk_hw *hw)
 -- 
 2.7.4
 
