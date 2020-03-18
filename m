@@ -2,110 +2,189 @@ Return-Path: <SRS0=GPsE=5D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URI_HEX,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765DDC5ACD7
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 13:17:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 111B2C10DCE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 16:13:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493A420773
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 13:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6C1220663
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 16:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcYMCaML"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MkFrRgcr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgCRNRP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Mar 2020 09:17:15 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45749 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbgCRNRP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Mar 2020 09:17:15 -0400
-Received: by mail-ed1-f66.google.com with SMTP id u59so2500869edc.12;
-        Wed, 18 Mar 2020 06:17:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fyMBbWwjDpTftQhmCAd3B6Ppi0nc30PtiYahkvf0nHE=;
-        b=fcYMCaMLtiWCsmQT8JbcyWQpDuScuRHajkNK7PUkjHiGzDS6udOJ9PnBp6p2mIJXB8
-         wSZA1HDCCb2ob9wALGYbn9SfrnScOpDxYpcYI1HsqTg6mNM42paITLWash5aPffl6rJ3
-         aTr/WfcG7SVkHmhZr+915q/ES6KEiAE17MSZoBVxw7df2ZV1rzIAO7iWdJSAjxd5fuqk
-         bbUwc+i1QmQ6RiIw9XB8DckfeXJ2zawZKEr/OZavn+TgUJ0L2ySegbNqbMJ42LrxBKvh
-         vmrzML9OlCxSc7nCrIuBF9cuvs+yMKZLEMpRY8sqpBRcTHvtYhmuM3PfLq7KF6hlPY5E
-         YHcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fyMBbWwjDpTftQhmCAd3B6Ppi0nc30PtiYahkvf0nHE=;
-        b=VRCPCGvnNv74bWNJ6VgPzpSJXa2NRgAr9sLLvupNWgtbbIkPEhvXxJTYihF3NTFmfg
-         VYG5zuUyxKR4FCCw0Sidwzps+M5d2BdizqUpxYqZfECwvsw2xh/U49593BC/aZlqNGJ2
-         UIEz2+3GsBcJ12sSGUX7+9RrgiXFqDrUSQzb2l+VfqPWes3OrM6pfFGbV0kSDFf9xFzL
-         7Wxf2R6UQ9xiMRS/gzHa8IB6JIaOa39m1CLczRLDeMLvHlqTVdSrCssjyJkrb6AVSZZ7
-         oe2NenilpjdRdAIUrX+yf5xCV5t+U2DqGL2revJUqAK0iJpXg02yNiqbIg4qvzMlY/Ip
-         oQMA==
-X-Gm-Message-State: ANhLgQ38x0GxrZYXKvpIZZs/fB4bM1tO8oX7bIGiG4AodwVQcenYiHLU
-        7/3H38wp37Qcw25ilRXL9Cs=
-X-Google-Smtp-Source: ADFU+vtD/ZeaAm58b/8h9UuPaw4myY7lxqf9HAWY30OoOz5vO5MYYlpfGFCjAH9ppo8JLSUCIOkJ1A==
-X-Received: by 2002:a05:6402:1757:: with SMTP id v23mr3825355edx.384.1584537433064;
-        Wed, 18 Mar 2020 06:17:13 -0700 (PDT)
-Received: from Ansuel-XPS.localdomain (host203-232-dynamic.53-79-r.retail.telecomitalia.it. [79.53.232.203])
-        by smtp.googlemail.com with ESMTPSA id ha2sm241921ejb.88.2020.03.18.06.17.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 06:17:11 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Andy Gross <agross@kernel.org>
-Cc:     Abhishek Sahu <absahu@codeaurora.org>,
-        Ansuel Smith <ansuelsmth@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kumar Gala <galak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ipq806x: gcc: Added the enable regs and mask for PRNG
-Date:   Wed, 18 Mar 2020 14:16:56 +0100
-Message-Id: <20200318131657.345-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726866AbgCRQNI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Mar 2020 12:13:08 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17015 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726733AbgCRQNI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Mar 2020 12:13:08 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e7248320000>; Wed, 18 Mar 2020 09:11:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 18 Mar 2020 09:13:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 18 Mar 2020 09:13:07 -0700
+Received: from [10.2.175.141] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 18 Mar
+ 2020 16:13:06 +0000
+Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
+ <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
+ <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
+ <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
+ <b3933aa1-0717-183d-f00c-2d5fd6836a18@nvidia.com>
+ <12a36c2a-593c-e555-d44e-e2e6c4c1a562@nvidia.com>
+ <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <19081d90-62cc-e6eb-0337-f108fb6ca9bc@nvidia.com>
+Date:   Wed, 18 Mar 2020 09:14:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1584547890; bh=tIHZbQLtSkJ53RrtKu9vilUV11m0jEsmcYMmUk3NErg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=MkFrRgcrqQAzQJcI2+1Q40+Pr9qGESvro4Iislxt2Izw1pDw9+uxYindJKOuhauPP
+         9TnHwD3EhYiI9hppup43ZWHvkPwGzWf67CXtKZSkssNgDM3QHbkyRu4XknC4xIkJy7
+         0VRO3RaUv2p+fnA2Kajs5enDYxis8R1g8z7tPlWDF3k7kRjOE3LkpGyu+5G8+/bdcC
+         ueokh3NujrDWrfILfiHFTGU7F7JTdXIZY/aE/vkbfUQBaLofWMZ6Dbm81SZRzCUkjt
+         LbstXrBXFK4BuI8wySVdDQHWo/JL1vu0Nq7eKTKkHG4j+nzsKG8kZDPLJ05SKHrEMk
+         jVKoZVqhUP0IQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Abhishek Sahu <absahu@codeaurora.org>
 
-Kernel got hanged while reading from /dev/hwrng at the
-time of PRNG clock enable
+On 3/18/20 4:48 AM, Hans Verkuil wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> On 2/24/20 5:45 AM, Sowjanya Komatineni wrote:
+>> On 2/20/20 11:11 AM, Sowjanya Komatineni wrote:
+>>> On 2/20/20 5:33 AM, Hans Verkuil wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> (Replying to myself so I can explain this a bit more)
+>>>>
+>>>> On 2/20/20 1:44 PM, Hans Verkuil wrote:
+>>>>>> +
+>>>>>> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
+>>>>>> +{
+>>>>>> +    struct device_node *node = csi->dev->of_node;
+>>>>>> +    unsigned int port_num;
+>>>>>> +    int ret;
+>>>>>> +    struct tegra_csi_channel *item;
+>>>>>> +    unsigned int tpg_channels = csi->soc->csi_max_channels;
+>>>>>> +
+>>>>>> +    /* allocate CSI channel for each CSI x2 ports */
+>>>>>> +    for (port_num = 0; port_num < tpg_channels; port_num++) {
+>>>>>> +            item = devm_kzalloc(csi->dev, sizeof(*item), GFP_KERNEL);
+>>>>> Using devm_*alloc can be dangerous. If someone unbinds the driver, then
+>>>>> all memory allocated with devm_ is immediately freed. But if an
+>>>>> application
+>>>>> still has a filehandle open, then when it closes it it might still
+>>>>> reference
+>>>>> this already-freed memory.
+>>>>>
+>>>>> I recommend that you avoid using devm_*alloc for media drivers.
+>>>> A good test is to unbind & bind the driver:
+>>>>
+>>>> cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
+>>>> echo -n 54080000.vi >unbind
+>>>> echo -n 54080000.vi >bind
+>>>>
+>>>> First just do this without the driver being used. That already
+>>>> gives me 'list_del corruption' kernel messages (list debugging
+>>>> is turned on in my kernel).
+>> Will fix in v4 to use kzalloc and also proper release v4l2 to make sure
+>> unbind/bind works properly.
+>>
+>> BTW, tegra vi and csi are registered as clients to host1x video driver.
+>>
+>> So, unbind and bind should be done with host1x video driver "tegra-video"
+>>
+>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+>> echo -n tegra-video > unbind
+>> echo -n tegra-video > bind
+> This still crashes with v4, at least if I am streaming with v4l2-ctl --stream-mmap.
+> Is that known?
+>
+> It's not a big deal at this moment, just want to know if this will be looked
+> at later.
+>
+> Regards,
+>
+>          Hans
 
-Fixes: 24d8fba44af3 "clk: qcom: Add support for IPQ8064's global
-clock controller (GCC)"
+Weird, I tested streaming after unbind and bind as well and don't see 
+crash. Did below steps and tried several times unbind/bind as well.
 
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
-v2:
- * Fix wrong authorship
+./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
+cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+echo -n tegra-video > unbind
+sleep 1
+echo -n tegra-video > bind
+cd /home/ubuntu
+./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
 
- drivers/clk/qcom/gcc-ipq806x.c | 2 ++
- 1 file changed, 2 insertions(+)
+Can you post call trace when you saw crash?
 
-diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-index b0eee0903807..a8456e09c44d 100644
---- a/drivers/clk/qcom/gcc-ipq806x.c
-+++ b/drivers/clk/qcom/gcc-ipq806x.c
-@@ -1224,6 +1224,8 @@ static struct clk_rcg prng_src = {
- 		.parent_map = gcc_pxo_pll8_map,
- 	},
- 	.clkr = {
-+		.enable_reg = 0x2e80,
-+		.enable_mask = BIT(11),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "prng_src",
- 			.parent_names = gcc_pxo_pll8,
--- 
-2.25.0
-
+>>>> Note that this first test is basically identical to a rmmod/modprobe
+>>>> of the driver. But when I compiled the driver as a module it didn't
+>>>> create any video device nodes! Nor did I see any errors in the kernel
+>>>> log. I didn't pursue this, and perhaps I did something wrong, but it's
+>>>> worth taking a look at.
+>>>>
+>>>> The next step would be to have a video node open with:
+>>>>
+>>>> v4l2-ctl --sleep 10
+>>>>
+>>>> then while it is sleeping unbind the driver and see what happens
+>>>> when v4l2-ctl exits.
+>>>>
+>>>> Worst case is when you are streaming:
+>>>>
+>>>> v4l2-ctl --stream-mmap
+>>>>
+>>>> and then unbind.
+>>>>
+>>>> In general, the best way to get this to work correctly is:
+>>>>
+>>>> 1) don't use devm_*alloc
+>>>> 2) set the release callback of struct v4l2_device and do all freeing
+>>>> there.
+>>>> 3) in the platform remove() callback you call media_device_unregister()
+>>>>      and video_unregister_device().
+>>> Reg 3, in current patch, media_device_unregister is called in
+>>> host1x_video_remove
+>>> video_unregister_device happens during host1x_video_remove ->
+>>> host1x_device_exit -> tegra_vi_exit -> tegra_vi_channels_cleanup
+>>>
+>>>> It's worth getting this right in this early stage, rather than fixing it
+>>>> in the future.
+>>>>
+>>>> Regards,
+>>>>
+>>>>           Hans
