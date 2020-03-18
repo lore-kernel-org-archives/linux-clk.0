@@ -6,44 +6,42 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CF2C5ACD6
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 11:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E37C5ACD6
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 11:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3DC920770
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 11:14:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E74432076D
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Mar 2020 11:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgCRLOC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Mar 2020 07:14:02 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41134 "EHLO inva021.nxp.com"
+        id S1727758AbgCRLOc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Mar 2020 07:14:32 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:41696 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727764AbgCRLOC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Mar 2020 07:14:02 -0400
+        id S1727113AbgCRLOc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Mar 2020 07:14:32 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E43852003C6;
-        Wed, 18 Mar 2020 12:14:00 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CF602201204;
+        Wed, 18 Mar 2020 12:14:30 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D4F96201205;
-        Wed, 18 Mar 2020 12:14:00 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C1E1E200F02;
+        Wed, 18 Mar 2020 12:14:30 +0100 (CET)
 Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id BA35820506;
-        Wed, 18 Mar 2020 12:14:00 +0100 (CET)
-Date:   Wed, 18 Mar 2020 13:14:00 +0200
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id ACE2820506;
+        Wed, 18 Mar 2020 12:14:30 +0100 (CET)
+Date:   Wed, 18 Mar 2020 13:14:30 +0200
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Anson Huang <Anson.Huang@nxp.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        allison@lohutok.net, gustavo@embeddedor.com,
-        kstewart@linuxfoundation.org, tglx@linutronix.de,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx: clk-pllv3: Use readl_poll_timeout() for PLL
- lock wait
-Message-ID: <20200318111400.ynpazqpzmeyhuyy3@fsr-ub1664-175>
-References: <1584502004-11349-1-git-send-email-Anson.Huang@nxp.com>
+        t-kristo@ti.com, jonas.gorski@gmail.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH] clk: imx: clk-sscg-pll: Remove unnecessary blank lines
+Message-ID: <20200318111430.ugbcekyk75yg7jh4@fsr-ub1664-175>
+References: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1584502004-11349-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
 User-Agent: NeoMutt/20180622
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
@@ -51,65 +49,85 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-03-18 11:26:44, Anson Huang wrote:
-> Use readl_poll_timeout() for PLL lock wait which can simplify the
-> code a lot.
+On 20-03-18 09:39:25, Anson Huang wrote:
+> Remove many unnecessary blank lines for cleanup.
 > 
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
 Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
 > ---
->  drivers/clk/imx/clk-pllv3.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
+>  drivers/clk/imx/clk-sscg-pll.c | 10 ----------
+>  1 file changed, 10 deletions(-)
 > 
-> diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-> index df91a82..3dfa9c3 100644
-> --- a/drivers/clk/imx/clk-pllv3.c
-> +++ b/drivers/clk/imx/clk-pllv3.c
-> @@ -7,6 +7,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> +#include <linux/iopoll.h>
->  #include <linux/slab.h>
->  #include <linux/jiffies.h>
->  #include <linux/err.h>
-> @@ -25,6 +26,8 @@
->  #define IMX7_ENET_PLL_POWER	(0x1 << 5)
->  #define IMX7_DDR_PLL_POWER	(0x1 << 20)
->  
-> +#define PLL_LOCK_TIMEOUT	10000
-> +
->  /**
->   * struct clk_pllv3 - IMX PLL clock version 3
->   * @clk_hw:	 clock source
-> @@ -53,23 +56,14 @@ struct clk_pllv3 {
->  
->  static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
->  {
-> -	unsigned long timeout = jiffies + msecs_to_jiffies(10);
->  	u32 val = readl_relaxed(pll->base) & pll->power_bit;
->  
->  	/* No need to wait for lock when pll is not powered up */
->  	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
->  		return 0;
->  
-> -	/* Wait for PLL to lock */
-> -	do {
-> -		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
-> -			break;
-> -		if (time_after(jiffies, timeout))
-> -			break;
-> -		usleep_range(50, 500);
-> -	} while (1);
+> diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
+> index d4a2be1..773d8a5 100644
+> --- a/drivers/clk/imx/clk-sscg-pll.c
+> +++ b/drivers/clk/imx/clk-sscg-pll.c
+> @@ -72,7 +72,6 @@ struct clk_sscg_pll_setup {
+>  	int divr2, divf2;
+>  	int divq;
+>  	int bypass;
 > -
-> -	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
-> +	return readl_poll_timeout(pll->base, val, val & BM_PLL_LOCK, 500,
-> +				  PLL_LOCK_TIMEOUT);
+>  	uint64_t vco1;
+>  	uint64_t vco2;
+>  	uint64_t fout;
+> @@ -86,11 +85,8 @@ struct clk_sscg_pll_setup {
+>  struct clk_sscg_pll {
+>  	struct clk_hw	hw;
+>  	const struct clk_ops  ops;
+> -
+>  	void __iomem *base;
+> -
+>  	struct clk_sscg_pll_setup setup;
+> -
+>  	u8 parent;
+>  	u8 bypass1;
+>  	u8 bypass2;
+> @@ -194,7 +190,6 @@ static int clk_sscg_pll2_find_setup(struct clk_sscg_pll_setup *setup,
+>  					struct clk_sscg_pll_setup *temp_setup,
+>  					uint64_t ref)
+>  {
+> -
+>  	int ret;
+>  
+>  	if (ref < PLL_STAGE1_MIN_FREQ || ref > PLL_STAGE1_MAX_FREQ)
+> @@ -253,7 +248,6 @@ static int clk_sscg_pll1_find_setup(struct clk_sscg_pll_setup *setup,
+>  					struct clk_sscg_pll_setup *temp_setup,
+>  					uint64_t ref)
+>  {
+> -
+>  	int ret;
+>  
+>  	if (ref < PLL_REF_MIN_FREQ || ref > PLL_REF_MAX_FREQ)
+> @@ -280,7 +274,6 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
+>  	temp_setup.fout_request = rate;
+>  
+>  	switch (try_bypass) {
+> -
+>  	case PLL_BYPASS2:
+>  		if (prate == rate) {
+>  			setup->bypass = PLL_BYPASS2;
+> @@ -288,11 +281,9 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
+>  			ret = 0;
+>  		}
+>  		break;
+> -
+>  	case PLL_BYPASS1:
+>  		ret = clk_sscg_pll2_find_setup(setup, &temp_setup, prate);
+>  		break;
+> -
+>  	case PLL_BYPASS_NONE:
+>  		ret = clk_sscg_pll1_find_setup(setup, &temp_setup, prate);
+>  		break;
+> @@ -301,7 +292,6 @@ static int clk_sscg_pll_find_setup(struct clk_sscg_pll_setup *setup,
+>  	return ret;
 >  }
 >  
->  static int clk_pllv3_prepare(struct clk_hw *hw)
+> -
+>  static int clk_sscg_pll_is_prepared(struct clk_hw *hw)
+>  {
+>  	struct clk_sscg_pll *pll = to_clk_sscg_pll(hw);
 > -- 
 > 2.7.4
 > 
