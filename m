@@ -2,66 +2,93 @@ Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B325C4332B
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 220FBC4332B
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 20:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4085520752
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584647950;
-	bh=YVwv4E2Ut/NpWXxwh42s1vlrFtIvX7XJV7XAJ8Urwac=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=loI+zSzi6t2pdsMnsf9/hStkbrC8sHekQkVYZnJoViDSJheQD1L4DqFvQwDtIsEKs
-	 EpvmEtS3Blv22YO5qlg4YPxFtiAdUS/p2c6zj2bARchUI70y92ny1ULNAE7DRIxT8l
-	 sX/84E3Gie5qSIDSlvHZCeA0Iv9CdiileiHJbuI8=
+	by mail.kernel.org (Postfix) with ESMTP id EC7F620774
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 20:50:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbgCST7J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 15:59:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbgCST7J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Mar 2020 15:59:09 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BCAE206D7;
-        Thu, 19 Mar 2020 19:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584647949;
-        bh=YVwv4E2Ut/NpWXxwh42s1vlrFtIvX7XJV7XAJ8Urwac=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bLZFQRE2m4crqagFo1jQGa1OhV7nQ/fVZav6Xsr+O3gWbVYixldKSvf210VyOnxJP
-         9IlEhmUnBAraujJYKEBQHhenhNk+84ifOD4jtFv/lgVnuERcMuVy96JuRFV5pVGICU
-         5tlpRdpmfdTSK+KkovvguqmD3JUtM6z06XdVaHRU=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
-References: <1584495566-15110-1-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH] clk: imx: clk-sscg-pll: Remove unnecessary blank lines
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
-        festevam@gmail.com, jonas.gorski@gmail.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org, t-kristo@ti.com
-Date:   Thu, 19 Mar 2020 12:59:08 -0700
-Message-ID: <158464794846.152100.11284882735806407657@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        id S1727291AbgCSUub (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 16:50:31 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:27920 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727297AbgCSUuW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 16:50:22 -0400
+Received: from unknown (HELO ironmsg04-sd.qualcomm.com) ([10.53.140.144])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 19 Mar 2020 13:50:19 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg04-sd.qualcomm.com with ESMTP; 19 Mar 2020 13:50:19 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 2D6D74B48; Thu, 19 Mar 2020 13:50:19 -0700 (PDT)
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Guru Das Srinagesh <gurus@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        David Laight <David.Laight@ACULAB.COM>
+Subject: [PATCH v10 11/12] clk: pwm: Assign u64 divisor to unsigned int before use
+Date:   Thu, 19 Mar 2020 13:50:14 -0700
+Message-Id: <2009030fe415c02cc92f0189d3e79de34982536c.1584650604.git.gurus@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1584650604.git.gurus@codeaurora.org>
+References: <cover.1584650604.git.gurus@codeaurora.org>
+In-Reply-To: <cover.1584650604.git.gurus@codeaurora.org>
+References: <cover.1584650604.git.gurus@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-03-17 18:39:25)
-> Remove many unnecessary blank lines for cleanup.
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
+Since the PWM framework is switching struct pwm_args.period's datatype
+to u64, prepare for this transition by assigning the 64-bit divisor to
+an unsigned int variable to use as the divisor. This is being done
+because the divisor is a 32-bit constant and the quotient will be zero
+if the divisor exceeds 2^32.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: David Laight <David.Laight@ACULAB.COM>
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
+---
+ drivers/clk/clk-pwm.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index 87fe0b0e..c0b5da3 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -72,6 +72,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 	struct pwm_device *pwm;
+ 	struct pwm_args pargs;
+ 	const char *clk_name;
++	unsigned int period;
+ 	int ret;
+ 
+ 	clk_pwm = devm_kzalloc(&pdev->dev, sizeof(*clk_pwm), GFP_KERNEL);
+@@ -88,8 +89,9 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
++	period = pargs.period;
+ 	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+-		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
++		clk_pwm->fixed_rate = NSEC_PER_SEC / period;
+ 
+ 	if (pargs.period != NSEC_PER_SEC / clk_pwm->fixed_rate &&
+ 	    pargs.period != DIV_ROUND_UP(NSEC_PER_SEC, clk_pwm->fixed_rate)) {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
