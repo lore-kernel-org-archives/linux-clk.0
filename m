@@ -2,70 +2,71 @@ Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64444C4332D
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:40:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ADA7C4332E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37D4A2072D
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:40:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2353820724
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:40:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DEClMfOt"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RvT93Q2H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727011AbgCSFkm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 01:40:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40245 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbgCSFkm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 01:40:42 -0400
-Received: by mail-pf1-f196.google.com with SMTP id l184so803340pfl.7
-        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2020 22:40:41 -0700 (PDT)
+        id S1727060AbgCSFkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 01:40:46 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45028 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbgCSFkp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 01:40:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h11so558179plr.11
+        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2020 22:40:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5dFv7/70FKhDKgZsv7z5MRkFYJ6r4vLqdadhMT5bcVs=;
-        b=DEClMfOtnRcUSt/Yj3j7ZFjx+OzidFY/dj2fl7OnWDpSQZemsOdE5BmIXK5wIIm9Cs
-         q9l76oPFb7v6POI8ur1cBXFfBWlKSVDuE7g6S5mIy/RTq1WXCnPFO3/gzp9+SgDbqUEM
-         li+MjvzVXH5Z0KYBsfycUMoTMvFvAujJLJt5/fG5vEY8HZnGjYyK8LSZHiDdoq4VE/Ov
-         rg8N3tj36/Xu3JoNHW5N+q7i+pUOnHYU0QmgXqj0t3OVuzEpiGgKZZh2Dqs2ufCnMFzG
-         ItpOTGZGzt0fMlbNjj4PL4RJw4JkJ+chhx9XzUWXCsZmkpg+Nc/Qh58yCxIl63Fmmt/B
-         pIMw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=cyCIYRiG58oI2Jq7ZJtWmwccOTnDPz2E+ahBUJwhepg=;
+        b=RvT93Q2HIVa2wQjAavOrQcjjvBzoTD2d/Vi0v4ILPVwAzX0dg8fy+LstszJeJ9LYsG
+         h9Urt8EI4rk4+e+JOpzUihNvclfFm64LFGjzHeJcniNPXN0peBt+C/ibQMaALx8sQD57
+         3PRx+NHS2yn3f097HiMTm8+qbDWAyTyHFLatvInITefZQ3pMOrsrYk7Oj++eHChUG5tD
+         +KN0ICuFOTKxbEUJIGQmAsNH6J0MBbMjRdAXsvjYCye+2g0ymTjeM3oqw6cXinUmNni3
+         Nma7XDkNIdwNBj70L4W7Ro3j8nxaMs8rq2kOlT0ehEWqTQhq8eelvuXlDq1su585cyIo
+         cXHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5dFv7/70FKhDKgZsv7z5MRkFYJ6r4vLqdadhMT5bcVs=;
-        b=mI9RYhpD6hnkGnVgS0RJekwoMDy0SVzAQcpF2C7ne6vNlIjNkhPVlGwKnlGxm9XP2v
-         DCvuRXZdicFbVp5vGA/0SAvFoW1EAsZo9f9EnZeR1/z3mls33oRXPKMx9Yc2GFN43tXV
-         Y0M2yLFQLyXgKb3aUWoxiY4yCKmgJFjhBwD4l41l58xfrXZwhLFQmvphVBvWcJO6aTKf
-         8vByMovPuwAoofR3ZAcpRD39z7BhzLUR34mbGV2iTiIFa9UNbiheClY2edBTbzElPsFq
-         p7o8SGIG3fpmQAozzaNYlRhYUgW/P8vZU9/WdYT8h8BVUWVkh38gemlzGZybIobv20da
-         gJtA==
-X-Gm-Message-State: ANhLgQ2hzC8uJZFoMFzJkEdr8PBff/ICdLFDZjDsmQoPXAxTnw+WjxQx
-        14XQyFLN8LM+7LH5D5MyoXN6Bw==
-X-Google-Smtp-Source: ADFU+vt+jLntul6FGkobwwASG/5WIX4bgXPG687fd+93UVN/ITFrGOV3ahed94A7k0lgV6aBkV+s7g==
-X-Received: by 2002:a62:30c3:: with SMTP id w186mr2111437pfw.245.1584596441255;
-        Wed, 18 Mar 2020 22:40:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=cyCIYRiG58oI2Jq7ZJtWmwccOTnDPz2E+ahBUJwhepg=;
+        b=EqqU1pLXr+fJa9i1EpfyumzmjF0aPOF0NfMZI77BPMcPPTrVIjKrdG4H4xtLiqKq4R
+         mUIpqy29WPAp95ogk4fkzpMS+mKy4vqrVbo9KmSw/rUBY4Dq4F1zq5ezu8omiQ6WMwvE
+         AmqwDho/x/DbFvF9ZKKv44vb2/WWNt4K0gVdQphUMIMhBlHPS2slo2Q6qe+e5KaPCsEd
+         NQg44e8lXwIKdZP7zm6TKDWdSh9XEzqUNU+2uKouuAiJSxQKRq2a04XkCKkbkVas+amm
+         DEg0+qAC6qJlXU/lYHGTEOi/loleIOPfKLWrM2/Etc0A7dnBt0Ss+GPLF6UNv5Hvw9mP
+         kmuA==
+X-Gm-Message-State: ANhLgQ0UHXubBbPfWL89h+SCJUQy/RatAF86b+Af9Lhrm5Itt/yYaDDT
+        n6SWYVfgWUGyoHaKHT+rhP5S7Q==
+X-Google-Smtp-Source: ADFU+vsVQv/9+mfD/f1ED3jkHlTd7vOGHMk8SR9Qw3XEQH2G5U8b3qmKmp8Edz2JQuozbGE0tbBmxg==
+X-Received: by 2002:a17:90a:2663:: with SMTP id l90mr1852159pje.188.1584596443916;
+        Wed, 18 Mar 2020 22:40:43 -0700 (PDT)
 Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.39
+        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 22:40:40 -0700 (PDT)
+        Wed, 18 Mar 2020 22:40:43 -0700 (PDT)
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 0/4] clk: qcom: gdsc: Handle supply regulators
-Date:   Wed, 18 Mar 2020 22:38:58 -0700
-Message-Id: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 2/4] clk: qcom: mmcc-msm8996: Properly describe GPU_GX gdsc
+Date:   Wed, 18 Mar 2020 22:39:00 -0700
+Message-Id: <20200319053902.3415984-3-bjorn.andersson@linaro.org>
 X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -73,27 +74,45 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Handle supply regulators for GDSCs to allow probe deferral when regulators are
-not yet present/enabled and to allow the GDSC to enable/disable dependencies as
-needed.
+The GPU_GX GDSC depends on both GPU GDSC being enabled and that the
+VDD_GX rail is powered, so update the description of the node to cover
+these requirements.
 
-Bjorn Andersson (3):
-  clk: qcom: gdsc: Handle GDSC regulator supplies
-  clk: qcom: mmcc-msm8996: Properly describe GPU_GX gdsc
-  arm64: dts: qcom: msm8996: Make GPU node control GPU_GX GDSC
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,mmcc.yaml | 4 ++++
+ drivers/clk/qcom/mmcc-msm8996.c                        | 2 ++
+ 2 files changed, 6 insertions(+)
 
-Rajendra Nayak (1):
-  arm64: dts: qcom: db820c: Add s2 regulator in pmi8994
-
- .../devicetree/bindings/clock/qcom,mmcc.yaml  |  4 ++++
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi  | 14 +++++++++++
- arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
- arch/arm64/boot/dts/qcom/pmi8994.dtsi         |  6 +++++
- drivers/clk/qcom/gdsc.c                       | 24 +++++++++++++++++++
- drivers/clk/qcom/gdsc.h                       |  4 ++++
- drivers/clk/qcom/mmcc-msm8996.c               |  2 ++
- 7 files changed, 55 insertions(+), 1 deletion(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+index 85518494ce43..65d9aa790581 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+@@ -67,6 +67,10 @@ properties:
+     description:
+        Protected clock specifier list as per common clock binding
+ 
++  vdd_gfx-supply:
++    description:
++      Regulator supply for the GPU_GX GDSC
++
+ required:
+   - compatible
+   - reg
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 6c7592ddf8bb..fd43a35db13b 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -3064,7 +3064,9 @@ static struct gdsc gpu_gx_gdsc = {
+ 		.name = "gpu_gx",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.parent = &gpu_gdsc.pd,
+ 	.flags = CLAMP_IO,
++	.supply = "vdd_gfx",
+ };
+ 
+ static struct clk_regmap *mmcc_msm8996_clocks[] = {
 -- 
 2.24.0
 
