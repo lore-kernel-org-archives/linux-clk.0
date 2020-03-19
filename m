@@ -2,254 +2,193 @@ Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URI_HEX,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4985FC4332E
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 18:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D411FC4332B
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19CB820789
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 18:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E08B2070A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SVLsdmXr"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uQM7ZfU3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgCSSsX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 14:48:23 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:7492 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbgCSSsW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 14:48:22 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e73be430001>; Thu, 19 Mar 2020 11:47:31 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 19 Mar 2020 11:48:21 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 19 Mar 2020 11:48:21 -0700
-Received: from [10.2.175.141] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 19 Mar
- 2020 18:48:21 +0000
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
- <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
- <b3933aa1-0717-183d-f00c-2d5fd6836a18@nvidia.com>
- <12a36c2a-593c-e555-d44e-e2e6c4c1a562@nvidia.com>
- <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
- <19081d90-62cc-e6eb-0337-f108fb6ca9bc@nvidia.com>
- <061eabf1-4b6f-83c0-6851-df8a193a84e8@nvidia.com>
- <a5377068-3c70-1af4-6398-630d205e794b@nvidia.com>
- <bc571308-93e5-e720-1cac-eb3effe1acdd@xs4all.nl>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <6be84f2c-12d7-3077-73af-55301c24627b@nvidia.com>
-Date:   Thu, 19 Mar 2020 11:49:41 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727148AbgCSTEJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 15:04:09 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36020 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726589AbgCSTEJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 15:04:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s1so2571895lfd.3;
+        Thu, 19 Mar 2020 12:04:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sgZCorxsVnTvMnes1NBcLuKHRh0Qa0L3u8aGTG6FYwc=;
+        b=uQM7ZfU3n6b37nTVfw5pkFRD9VUrTf5REPsD7In3xwXkR4rR+XfhCdyWywKLG4jkp7
+         bzEBrzvzXE9eQfCE7os7IBlQy2vmgMKk8r4bErZJ3WOtmTs4NgXK2QCpZ+OP8wZd25bM
+         xwFRItXPV+iheXNXbWafVHQWFtVOiZK7KzeYs2hAEYGdJKFfUfHJI8xd1Uerj1Y5oI4t
+         4DmZ1MF4MpjjGFS9xqab1u9uur0l966Iv8v1K5qAHM+X6Z08LLIf/ab/OP+/5CLC/+bK
+         fW4Hr62cmiRG2N2GlpK6d15o01jvGQsdRW+EFLoq7VnvZZaxbXU67SS0wexdqAU4pArz
+         jX+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=sgZCorxsVnTvMnes1NBcLuKHRh0Qa0L3u8aGTG6FYwc=;
+        b=r7VyICMWwyWOTFXJ+CresqiGaLThH/9AAx979q5Y3Yb/XlZYo0nguKt0TXiz+xrF5K
+         xUNGf1iy8pYEWR6Kgz/IwhQziYgMRf2Tx1F5GmjhUu+WcRZjdNyMXGyOl62D8bS9KGaS
+         HYTEuxKpldjMOSdfkBF9eAbVGfC6l/Erh6AqziR/oSCb6Njuv8ktl+SoUQjbjypVSS3l
+         ILRk4szJqaaJ5BBo/12RLD/OZMDk1HVRbXEIct5yG5ipznaZGre5MomwO4Uyj6pNt1yn
+         y45AjtHhnOf6nEocWJQDhLzi+xHr4V7g63nsr++3sG5JgnMf6PHEGCPcYtJjI362d7Ix
+         Upkg==
+X-Gm-Message-State: ANhLgQ22d1E2tontaYWY7jQUcCn0FFYBgEzOePTwj4tyUZGUdaijOaFn
+        mDtDyeYykSLD4Jg2xFJ2lpo=
+X-Google-Smtp-Source: ADFU+vv9qm41IoQ1F0DtI3bwr/YdLm8G9mCfDH78R2ugb73eNTXYC86SoKiRm6tO4+5o2V7MdCbSQQ==
+X-Received: by 2002:a05:6512:10d2:: with SMTP id k18mr2928860lfg.72.1584644646595;
+        Thu, 19 Mar 2020 12:04:06 -0700 (PDT)
+Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
+        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 12:04:05 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        Jasper Korten <jja2000@gmail.com>,
+        David Heidelberg <david@ixit.cz>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v8 00/12] NVIDIA Tegra20 CPUFreq driver major update
+Date:   Thu, 19 Mar 2020 22:02:17 +0300
+Message-Id: <20200319190229.32200-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <bc571308-93e5-e720-1cac-eb3effe1acdd@xs4all.nl>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584643651; bh=PxupzcuW7ZMqezNCkpHo/442CvyUUHdXbp9nBekxA8s=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=SVLsdmXr0WHfrf0hgtzDisiZAxfyuyHfFUYHMSE5yS6u/4Se6YF/kjPJI36XBgV7C
-         sWjIv8li/pz/2v5oEe1pZa+biz6i+bsXx0WxOnyjHYQTTScsU8sA/ziPPGwWCCymH2
-         Dq6yudjoWcmcAf7teraxlh0uM0xKVcl3bNqBSGVGBW6B+eGVoLC0tuf8n1m4UsXTZy
-         Ph9oQldvv2ByWsz1SME8kS2BEQ2gkhwAXEYEFbI2zfZO/zPoPt5qceKvJnnGv4JVMj
-         TXes3AVdpajZMP7mIv3694rgWIWkphycqj4EEJWK427vojqHgKmJyo8G94xygZpdFe
-         xOSGV/UEkPiAQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello,
 
-On 3/19/20 7:29 AM, Hans Verkuil wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 3/18/20 6:17 PM, Sowjanya Komatineni wrote:
->> On 3/18/20 9:25 AM, Sowjanya Komatineni wrote:
->>> On 3/18/20 9:14 AM, Sowjanya Komatineni wrote:
->>>> On 3/18/20 4:48 AM, Hans Verkuil wrote:
->>>>> External email: Use caution opening links or attachments
->>>>>
->>>>>
->>>>> On 2/24/20 5:45 AM, Sowjanya Komatineni wrote:
->>>>>> On 2/20/20 11:11 AM, Sowjanya Komatineni wrote:
->>>>>>> On 2/20/20 5:33 AM, Hans Verkuil wrote:
->>>>>>>> External email: Use caution opening links or attachments
->>>>>>>>
->>>>>>>>
->>>>>>>> (Replying to myself so I can explain this a bit more)
->>>>>>>>
->>>>>>>> On 2/20/20 1:44 PM, Hans Verkuil wrote:
->>>>>>>>>> +
->>>>>>>>>> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
->>>>>>>>>> +{
->>>>>>>>>> +    struct device_node *node =3D csi->dev->of_node;
->>>>>>>>>> +    unsigned int port_num;
->>>>>>>>>> +    int ret;
->>>>>>>>>> +    struct tegra_csi_channel *item;
->>>>>>>>>> +    unsigned int tpg_channels =3D csi->soc->csi_max_channels;
->>>>>>>>>> +
->>>>>>>>>> +    /* allocate CSI channel for each CSI x2 ports */
->>>>>>>>>> +    for (port_num =3D 0; port_num < tpg_channels; port_num++) {
->>>>>>>>>> +            item =3D devm_kzalloc(csi->dev, sizeof(*item),
->>>>>>>>>> GFP_KERNEL);
->>>>>>>>> Using devm_*alloc can be dangerous. If someone unbinds the
->>>>>>>>> driver, then
->>>>>>>>> all memory allocated with devm_ is immediately freed. But if an
->>>>>>>>> application
->>>>>>>>> still has a filehandle open, then when it closes it it might stil=
-l
->>>>>>>>> reference
->>>>>>>>> this already-freed memory.
->>>>>>>>>
->>>>>>>>> I recommend that you avoid using devm_*alloc for media drivers.
->>>>>>>> A good test is to unbind & bind the driver:
->>>>>>>>
->>>>>>>> cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
->>>>>>>> echo -n 54080000.vi >unbind
->>>>>>>> echo -n 54080000.vi >bind
->>>>>>>>
->>>>>>>> First just do this without the driver being used. That already
->>>>>>>> gives me 'list_del corruption' kernel messages (list debugging
->>>>>>>> is turned on in my kernel).
->>>>>> Will fix in v4 to use kzalloc and also proper release v4l2 to make
->>>>>> sure
->>>>>> unbind/bind works properly.
->>>>>>
->>>>>> BTW, tegra vi and csi are registered as clients to host1x video
->>>>>> driver.
->>>>>>
->>>>>> So, unbind and bind should be done with host1x video driver
->>>>>> "tegra-video"
->>>>>>
->>>>>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
->>>>>> echo -n tegra-video > unbind
->>>>>> echo -n tegra-video > bind
->>>>> This still crashes with v4, at least if I am streaming with v4l2-ctl
->>>>> --stream-mmap.
->>>>> Is that known?
->>>>>
->>>>> It's not a big deal at this moment, just want to know if this will
->>>>> be looked
->>>>> at later.
->>>>>
->>>>> Regards,
->>>>>
->>>>>           Hans
->>>> Weird, I tested streaming after unbind and bind as well and don't see
->>>> crash. Did below steps and tried several times unbind/bind as well.
->>>>
->>>> ./v4l2-ctl --stream-mmap --stream-count=3D1 -d /dev/video3
->>>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
->>>> echo -n tegra-video > unbind
->>>> sleep 1
->>>> echo -n tegra-video > bind
->>>> cd /home/ubuntu
->>>> ./v4l2-ctl --stream-mmap --stream-count=3D1 -d /dev/video3
->>>>
->>>> Can you post call trace when you saw crash?
->>> Tried unbind when  node is open with v4l2-ctl --sleep 10 as well and
->>> bind back.
->>>
->>> I don't see crash. Will confirm on doing unbind/bind with stream-mmap..=
-.
->>>
->> Able to repro when unbind/bind happens while stream-mmap.
-> That's indeed what I did. I don't want to try it again since I'm working =
-from home
-> and the Jetson is in the office. And once it crashes I need someone in th=
-e office
-> to press the reset button. I hope I can pick it up next week to keep it a=
-t home as
-> that will make testing a lot easier.
+This series moves intermediate-clk handling from tegra20-cpufreq into
+tegra-clk driver. This allows us to switch to generic cpufreq-dt driver
+which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+of the box. All boards need to adopt CPU OPPs in their device-trees in
+order to get cpufreq support.
 
-Hi Hans, no problem. I repro'd and fixed it. Will include the fix in v5.
+Changelog:
 
-Tested fix to make sure of no crash with unbind/bind during sleep and=20
-also during streaming.
+v8: - Rebased on a recent linux-next because Thierry merged the cpuidle
+      series first and now there is one minor conflict.
 
-during sleep, after specified time it shows below info but no crash.
+    - Added tested-by from Nicolas Chauvet who was one of the first
+      testers of the series.
 
-Test VIDIOC_QUERYCAP:
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 VIDIOC_QUERYCAP returned -1 (No such device)
-VIDIOC_QUERYCAP: No such device
+v7: - Added acks from Peter De Schrijver.
 
-Thanks
+    - Added tested-by from Marcel Ziswiler, Peter Geis, Jasper Korten and
+      David Heidelberg who tested these patches on Apalis/Colibri devboards,
+      Ouya, TF300T and Nexus 7 devices respectively.
 
-Sowjanya
+    - Rebased series on top of recent linux-next.
 
->
->> Will look and have fix in v5.
-> Nice!
->
-> Thank you,
->
->          Hans
->
->> Thanks Hans.
->>
->>>>>>>> Note that this first test is basically identical to a rmmod/modpro=
-be
->>>>>>>> of the driver. But when I compiled the driver as a module it didn'=
-t
->>>>>>>> create any video device nodes! Nor did I see any errors in the
->>>>>>>> kernel
->>>>>>>> log. I didn't pursue this, and perhaps I did something wrong, but
->>>>>>>> it's
->>>>>>>> worth taking a look at.
->>>>>>>>
->>>>>>>> The next step would be to have a video node open with:
->>>>>>>>
->>>>>>>> v4l2-ctl --sleep 10
->>>>>>>>
->>>>>>>> then while it is sleeping unbind the driver and see what happens
->>>>>>>> when v4l2-ctl exits.
->>>>>>>>
->>>>>>>> Worst case is when you are streaming:
->>>>>>>>
->>>>>>>> v4l2-ctl --stream-mmap
->>>>>>>>
->>>>>>>> and then unbind.
->>>>>>>>
->>>>>>>> In general, the best way to get this to work correctly is:
->>>>>>>>
->>>>>>>> 1) don't use devm_*alloc
->>>>>>>> 2) set the release callback of struct v4l2_device and do all freei=
-ng
->>>>>>>> there.
->>>>>>>> 3) in the platform remove() callback you call
->>>>>>>> media_device_unregister()
->>>>>>>>       and video_unregister_device().
->>>>>>> Reg 3, in current patch, media_device_unregister is called in
->>>>>>> host1x_video_remove
->>>>>>> video_unregister_device happens during host1x_video_remove ->
->>>>>>> host1x_device_exit -> tegra_vi_exit -> tegra_vi_channels_cleanup
->>>>>>>
->>>>>>>> It's worth getting this right in this early stage, rather than
->>>>>>>> fixing it
->>>>>>>> in the future.
->>>>>>>>
->>>>>>>> Regards,
->>>>>>>>
->>>>>>>>            Hans
+v6: - Dropped "cpufreq: dt-platdev: Blacklist NVIDIA Tegra20 and Tegra30 SoCs"
+      patch from the series since Viresh picked up that patch separately.
+
+    - Added two new patches to this series:
+
+        ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+        ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
+
+      Previously these patches were sent out separately from this series,
+      but it should be more consistent to include them into the series since
+      they directly relate to enabling of the cpufreq driver on Tegra30.
+
+v5: - The "Use generic cpufreq-dt driver (Tegra30 supported now)" patch
+      is separated now into two patches by factoring out the blacklisting
+      of cpufreq-dt-platdev into a standalone patch. This is done in a
+      response to request from Jon Hunter to fix the warning splats during
+      boot that are coming from OPP core because OPPs are unavailable. The
+      OPPs will become available once tegra20-cpufreq driver will be updated
+      to support the cpufreq-dt.
+
+v4: - Updated CCLK diagram in the "Add custom CCLK implementation" patch.
+
+    - <linux/cpu.h> is now included in the "Use generic cpufreq-dt driver"
+      patch, for consistency.
+
+    - Returned value of get_cpu_device() is now checked in the "Use generic
+      cpufreq-dt driver" patch, for consistency as well.
+
+v3: - The "Add custom CCLK implementation" patch was updated in accordance
+      to the comments from Peter De Schrijver. We will not use the clock
+      skipper.
+
+    - Re added OPPs for T30 Beaver board because Thierry has that board ;)
+
+    - Added r-b for the "DT binding" patch from Rob Herring.
+
+v2: - Kept modularity of the tegra20-cpufreq as was requested by Viresh Kumar
+      in a review comment to v1.
+
+    - Added acks from Viresh Kumar.
+
+    - Added tested-by from Nicolas Chauvet to the "trimslice" patch.
+      Nicolas told me on IRC that it works fine.
+
+    - Fixed compilation of the "Add custom CCLK implementation" patch. The
+      error happened because v1 was based on top of yet unreviewed/unapplied
+      patch "clk: tegra: divider: Support enable-bit for Super clocks".
+      Thanks to Peter Geis for reporting the problem.
+
+    - Replaced Tegra30 "beaver" board with "cardhu-a04" because turned out
+      that's what NVIDIA uses in the testing farm.
+
+Dmitry Osipenko (12):
+  clk: tegra: Add custom CCLK implementation
+  clk: tegra: pll: Add pre/post rate-change hooks
+  clk: tegra: cclk: Add helpers for handling PLLX rate changes
+  clk: tegra20: Use custom CCLK implementation
+  clk: tegra30: Use custom CCLK implementation
+  ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+  ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
+  dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+  cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported
+    now)
+  ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+  ARM: dts: tegra30: beaver: Set up voltage regulators for DVFS
+  ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
+
+ .../cpufreq/nvidia,tegra20-cpufreq.txt        |  56 +++++
+ arch/arm/boot/dts/tegra30-beaver.dts          |  40 +++-
+ arch/arm/mach-tegra/sleep-tegra30.S           |  16 +-
+ arch/arm/mach-tegra/tegra.c                   |   4 +
+ drivers/clk/tegra/Makefile                    |   1 +
+ drivers/clk/tegra/clk-pll.c                   |  12 +-
+ drivers/clk/tegra/clk-tegra-super-cclk.c      | 212 +++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c               |   7 +-
+ drivers/clk/tegra/clk-tegra30.c               |   6 +-
+ drivers/clk/tegra/clk.h                       |  19 +-
+ drivers/cpufreq/Kconfig.arm                   |   6 +-
+ drivers/cpufreq/tegra20-cpufreq.c             | 217 +++++-------------
+ 12 files changed, 415 insertions(+), 181 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
+
+-- 
+2.25.1
+
