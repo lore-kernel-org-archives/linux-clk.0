@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142A4C43332
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDE7C4332B
 	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE7620663
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C52AA20663
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oSCaS/SY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="feeFqaI4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbgCSTE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 15:04:26 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34432 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727532AbgCSTEU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 15:04:20 -0400
-Received: by mail-lj1-f195.google.com with SMTP id s13so3803315ljm.1;
-        Thu, 19 Mar 2020 12:04:19 -0700 (PDT)
+        id S1727699AbgCSTEZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 15:04:25 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36054 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727279AbgCSTEY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 15:04:24 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s1so2572595lfd.3;
+        Thu, 19 Mar 2020 12:04:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6NDM3y718xZuy8aOtgXuzMNzfqLpqznJlVGk7yDXVsI=;
-        b=oSCaS/SYuXxnhdgHKyWrJhoZyTBX5rU/amUONz2Ljsi/UiU7X9UhOb6QOCdMI9hK7Z
-         Eg3hP/HymfYWM547Fz875jonQgbas/3ZQDC5ZoVellGkCAKC6iMxYLEZy2J7oCaiNMfO
-         UH4+I/++JolujZGrZ3u0P+NaL0MOs+O3UH/4W41YsdjdP1mZUck7aEbkFrKmt4kg3fnB
-         2jashczYx/oyzhIf+uB/NYO8Tg0tUBEML5MWUDykUxQUfPDf9IHYoI+AHBCMt/kHYmjr
-         vx/lyT/ODByTEil/EPM2sM0/6PQi+94rfHaMEwPA5tI7OD+29A1P2F3RZQ9M0GSYohnw
-         TdNQ==
+        bh=mrx6enxmE5rGr1bvvcfpjzqZxRZxQ6z8sM9vbLY+H/I=;
+        b=feeFqaI46hVNYGlFk9z5z8b8cY+jQXz/JovqRmRA5Y/CQe1uu3pwO+f5l3joj3c4zE
+         2TglVxKJ20Wj0TGqnXUSNqH9lTlXHneovS2C7AJBT5uEkxnFDfv7Eq1h7RzoQF2QxapU
+         Bylr0doMH17gs67TxYqxTe6fpyvA0a3W6ZDT3VGA7L8JwcxZ1LgAgG37cFurV7C782gS
+         Dszu/KoD7oSpvAsrBbp5JhAfVm6FGUqWCZrI+vGjxKFnNTRyAx8l314BM1S47o9fOMEZ
+         zL+lPmzDwBb1Cw0p/GBvk6rvQNEBzTUFS33lXROlnOqNmcSv/RcpO8KfgU+2CXRr22ay
+         FiRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6NDM3y718xZuy8aOtgXuzMNzfqLpqznJlVGk7yDXVsI=;
-        b=USLp0Dj/KUc5kAXvkiCGWeoVwZ/TmDqEfeqkYMmoc9dR/x/d1dsL/Fls0eV3CYIvnJ
-         ngv9rrHN73I4yu1nY3qT/CuMP3R+/WdOdPklMhkEbHdgD2jGwyqWY1+EYAjVPgGrANza
-         HWFADgzF37GZXNsTY5xFlRJPh5Cb/IHUxi0aTzwMwnj2xZat8vRrXU2rZdSmQGoqEL7c
-         dUOQAQVrCdMN5IMNO7T9NMGjgWZ8y05taKEUsBiiFFQAQUY3JJNqSLsEbrgpSB8/kitW
-         G4tbbPgMYAO0tCtWBtDktRpAhgiApP/cMiErnLWmUm1r/SDT2Hp93H1ycW0KVYUpyNot
-         d+Vg==
-X-Gm-Message-State: ANhLgQ3ZBGjC3CMQZRrV63OjFrwm1uwDXIjT54tiQ1k/o5ZwcYgQWNQj
-        q3/mWv3SLm5tM6eL5NbIt9Q=
-X-Google-Smtp-Source: ADFU+vsT7jEftmMyIkFi6InTDoQcYx/pXDz1dObMgQwcHj/ITyzMDqlO3CNcFOHP4By0rSwhidK8Pg==
-X-Received: by 2002:a2e:860e:: with SMTP id a14mr2934829lji.218.1584644658471;
-        Thu, 19 Mar 2020 12:04:18 -0700 (PDT)
+        bh=mrx6enxmE5rGr1bvvcfpjzqZxRZxQ6z8sM9vbLY+H/I=;
+        b=QHTJnkr3tYC+6GCJUOpEaaJpUi5lTWxc+3BpYpKx6RxjkDTFjqYEkG8CepWQQHLX9z
+         BfeNcFM6R30vg9ThP3lamuU0rom1mKrD1Lxc3ZJSj3zqo1aywkU6MoiRuyf+F9W+lluy
+         ZJC3AJC94tXYXN/ChkuHxoFsCL+YfKRFMHGlV5TtJFhBJ9xLkgWvsjW0vDr7j0hZpG8B
+         oXtlJSvBMe3cyRu6KXm8TijsU0J33BqP4sVHum9DPxNGXG4vOBFBqdmzYYbw20zuPgaE
+         bLVxPmxB0eyls++UBj5XQmNx84Hp89mOKRSsqJhGhusTHzV0snDoGfRPeDYNmyUsZyOe
+         wXAA==
+X-Gm-Message-State: ANhLgQ0V3zZoket7Yx6IjYoVbbZS77esbmNzxQtyoXScuPThO7mRkXY+
+        XBqDOkwcsS4yGsDUYPH1pcA=
+X-Google-Smtp-Source: ADFU+vtxnrQyRT7PRmc8o2TVUmUf9rkCCQABxJ6M4QeuS21nsc7NRq2i/38MAs9/zAkrZgDeGzCXjA==
+X-Received: by 2002:a19:4350:: with SMTP id m16mr2981697lfj.67.1584644661668;
+        Thu, 19 Mar 2020 12:04:21 -0700 (PDT)
 Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.16
+        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 12:04:17 -0700 (PDT)
+        Thu, 19 Mar 2020 12:04:21 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -72,9 +72,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         David Heidelberg <david@ixit.cz>
 Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 08/12] dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
-Date:   Thu, 19 Mar 2020 22:02:25 +0300
-Message-Id: <20200319190229.32200-9-digetx@gmail.com>
+Subject: [PATCH v8 10/12] ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+Date:   Thu, 19 Mar 2020 22:02:27 +0300
+Message-Id: <20200319190229.32200-11-digetx@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200319190229.32200-1-digetx@gmail.com>
 References: <20200319190229.32200-1-digetx@gmail.com>
@@ -85,80 +85,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device-tree binding that describes CPU frequency-scaling hardware
-found on NVIDIA Tegra20/30 SoCs.
+The tegra20-cpufreq now instantiates cpufreq-dt and Tegra30 is fully
+supported by that driver.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Tested-by: Peter Geis <pgwipeout@gmail.com>
+Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
+Tested-by: Jasper Korten <jja2000@gmail.com>
+Tested-by: David Heidelberg <david@ixit.cz>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+ arch/arm/mach-tegra/tegra.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-new file mode 100644
-index 000000000000..daeca6ae6b76
---- /dev/null
-+++ b/Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
-@@ -0,0 +1,56 @@
-+Binding for NVIDIA Tegra20 CPUFreq
-+==================================
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index f1ce2857a251..3882a6c66969 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -96,6 +96,10 @@ static void __init tegra_dt_init_late(void)
+ 
+ 	if (IS_ENABLED(CONFIG_ARM_TEGRA_CPUIDLE) && !psci_smp_available())
+ 		platform_device_register_simple("tegra-cpuidle", -1, NULL, 0);
 +
-+Required properties:
-+- clocks: Must contain an entry for the CPU clock.
-+  See ../clocks/clock-bindings.txt for details.
-+- operating-points-v2: See ../bindings/opp/opp.txt for details.
-+- #cooling-cells: Should be 2. See ../thermal/thermal.txt for details.
-+
-+For each opp entry in 'operating-points-v2' table:
-+- opp-supported-hw: Two bitfields indicating:
-+	On Tegra20:
-+	1. CPU process ID mask
-+	2. SoC speedo ID mask
-+
-+	On Tegra30:
-+	1. CPU process ID mask
-+	2. CPU speedo ID mask
-+
-+	A bitwise AND is performed against these values and if any bit
-+	matches, the OPP gets enabled.
-+
-+- opp-microvolt: CPU voltage triplet.
-+
-+Optional properties:
-+- cpu-supply: Phandle to the CPU power supply.
-+
-+Example:
-+	regulators {
-+		cpu_reg: regulator0 {
-+			regulator-name = "vdd_cpu";
-+		};
-+	};
-+
-+	cpu0_opp_table: opp_table0 {
-+		compatible = "operating-points-v2";
-+
-+		opp@456000000 {
-+			clock-latency-ns = <125000>;
-+			opp-microvolt = <825000 825000 1125000>;
-+			opp-supported-hw = <0x03 0x0001>;
-+			opp-hz = /bits/ 64 <456000000>;
-+		};
-+
-+		...
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			compatible = "arm,cortex-a9";
-+			clocks = <&tegra_car TEGRA20_CLK_CCLK>;
-+			operating-points-v2 = <&cpu0_opp_table>;
-+			cpu-supply = <&cpu_reg>;
-+			#cooling-cells = <2>;
-+		};
-+	};
++	if (IS_ENABLED(CONFIG_ARCH_TEGRA_3x_SOC) &&
++	    of_machine_is_compatible("nvidia,tegra30"))
++		platform_device_register_simple("tegra20-cpufreq", -1, NULL, 0);
+ }
+ 
+ static const char * const tegra_dt_board_compat[] = {
 -- 
 2.25.1
 
