@@ -2,227 +2,154 @@ Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URI_HEX,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBF4DC4332D
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 14:29:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D98C4332D
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 16:17:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA88020663
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 14:29:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="jOFwtFUm"
+	by mail.kernel.org (Postfix) with ESMTP id 3B0FC20775
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 16:17:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584634620;
+	bh=czCpJ8y0zyIMrb16loRBDNoPc3JFCft+Emc2g/RzqIw=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=GIYQn1QaQE2U/OnMQVaaSelHoB/CFa69lRgBAq7IppK76d6B5YTH1FYTCb9t1QcqX
+	 LPrNtJLHQa2nj0gX3gPL/tYeB8VTgY+NtkGbiio121Pyo63Iyv7q8bt07xO/UuZ7cv
+	 Uj1+CUzi7pmo+lBatr1KdMBj27HeuGB524FYnyO8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbgCSO37 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 10:29:59 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:50335 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726892AbgCSO37 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 10:29:59 -0400
-Received: from [192.168.2.10] ([46.9.234.233])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id EwBEju89tfHuvEwBHjebZz; Thu, 19 Mar 2020 15:29:56 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1584628196; bh=YFXiHd7nWDR8UOAdHCahZXylHN8v3bMRrzPxH24YMOw=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=jOFwtFUm2SimQr5pRDhA3uZOoXMXUFDl8T8yftyxJb0WFm0BuwkePeBU2dqVXU/ho
-         OhvqzOwAZpp6DCBpUfwRlKtxafeguEre9qeUBaU7YoCt8822pUnaXBpuDJpKIScE7s
-         hgGkuprsCwIzsf7gppDvgrkBDhloDbXnLmMDLJ8gBWGwDaQax/IPKYFO/2Wi0DxjOn
-         Rn2RnNzcJCy9cMVfRUzMT5FGluDyxGLT7Jj+5Jon0oMa6jwsVUZjE9DkBrmIt0A9Tg
-         16FmogHkRI/RdeeJoBEaTmjXuum1zKK4rkhCZyt595YTElloT1ZKaX0ldv8S26jHMP
-         vY7NbAc+jY/kg==
-Subject: Re: [RFC PATCH v3 4/6] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        helen.koike@collabora.com, sboyd@kernel.org
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1581704608-31219-1-git-send-email-skomatineni@nvidia.com>
- <1581704608-31219-5-git-send-email-skomatineni@nvidia.com>
- <b301c247-537d-d78e-b057-a3225b10de7e@xs4all.nl>
- <dc592f29-3109-d10c-7df7-ffdb2755ade0@xs4all.nl>
- <b3933aa1-0717-183d-f00c-2d5fd6836a18@nvidia.com>
- <12a36c2a-593c-e555-d44e-e2e6c4c1a562@nvidia.com>
- <5f54c018-5670-8193-7c68-969f9bde92f6@xs4all.nl>
- <19081d90-62cc-e6eb-0337-f108fb6ca9bc@nvidia.com>
- <061eabf1-4b6f-83c0-6851-df8a193a84e8@nvidia.com>
- <a5377068-3c70-1af4-6398-630d205e794b@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <bc571308-93e5-e720-1cac-eb3effe1acdd@xs4all.nl>
-Date:   Thu, 19 Mar 2020 15:29:52 +0100
+        id S1728153AbgCSQRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 12:17:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56644 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728033AbgCSQQ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Mar 2020 12:16:59 -0400
+Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A19B2072C;
+        Thu, 19 Mar 2020 16:16:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584634618;
+        bh=czCpJ8y0zyIMrb16loRBDNoPc3JFCft+Emc2g/RzqIw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=ggW2ImWE6fut/X+eJIbds8cFs5QEN295nURqqWwE0gnDEHhAHDvdeiUm9/TPSkZnz
+         rZw1syAOYzFSQH5TzOoKFxEX/UPau0CagrKTvHPJOy6ZXf83ZWKZzrSk8RIzVyDRWo
+         Zhx5pdg2W+TdLDZmTr82ex4sk2lN30/NxAD2bGhU=
+Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+References: <20200317161022.11181-1-dinguyen@kernel.org>
+ <20200317161022.11181-5-dinguyen@kernel.org> <20200318224042.GA32101@bogus>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <30180323-3c74-d04a-b715-3b1f655d6a81@kernel.org>
+Date:   Thu, 19 Mar 2020 11:16:56 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-In-Reply-To: <a5377068-3c70-1af4-6398-630d205e794b@nvidia.com>
+In-Reply-To: <20200318224042.GA32101@bogus>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfOdH5QrWWNhCYCf6J6Ms7qEEUOvIuPOpGdiEdpDygypYOns4spRU2Aj0dAuvPhDC+BDT1lq8GsYvuk/kIzlLes33OwDag0s088KBeqkAx0pC6mxxdz39
- JQdhpNkQ317FremVgnzudw4LeJEL8f+484+n/tkwD+9SvNRvFZkajP5AtVXye1nrvu/Y3tfWNxwSqC+VnpHEMjzNYvMODJQ/IhaZ01C3ZAWLsT36R7U0hlJY
- mpe4oVm7x5qhF7iOBWLkxM+sMyBjScjDpBPMgjfhVEh3oBoQBzNLv9L5aBRr2LcUtRusu7bqumddUkd+9KML6WI8cjSlF4c6ncdF/vuCl5DEIrBkUqa52PfD
- Xy2IsGIp4tQsihoRqZm4fxu3knnHYSx1GSYGqPKDV7CRNUB1aaahQnqiAVmCZDMr6uaWeEMxboqrGHEaKsa374lzMLWN1Nu/fLfCwMxwfwbCZ/fulrD2RCtI
- H+ky69uhu/D0kC5LROwNGrnFy00qfvjw7bw3CnA2CiMunN820+qWwOYxjoy/+sHu+4nlegLbRyxzyAPL
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 3/18/20 6:17 PM, Sowjanya Komatineni wrote:
-> 
-> On 3/18/20 9:25 AM, Sowjanya Komatineni wrote:
+Hi Rob,
+
+On 3/18/20 5:40 PM, Rob Herring wrote:
+> On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
+>> Document the Agilex clock bindings, and add the clock header file. The
+>> clock header is an enumeration of all the different clocks on the Agilex
+>> platform.
 >>
->> On 3/18/20 9:14 AM, Sowjanya Komatineni wrote:
->>>
->>> On 3/18/20 4:48 AM, Hans Verkuil wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> On 2/24/20 5:45 AM, Sowjanya Komatineni wrote:
->>>>> On 2/20/20 11:11 AM, Sowjanya Komatineni wrote:
->>>>>> On 2/20/20 5:33 AM, Hans Verkuil wrote:
->>>>>>> External email: Use caution opening links or attachments
->>>>>>>
->>>>>>>
->>>>>>> (Replying to myself so I can explain this a bit more)
->>>>>>>
->>>>>>> On 2/20/20 1:44 PM, Hans Verkuil wrote:
->>>>>>>>> +
->>>>>>>>> +static int tegra_csi_tpg_channels_alloc(struct tegra_csi *csi)
->>>>>>>>> +{
->>>>>>>>> +    struct device_node *node = csi->dev->of_node;
->>>>>>>>> +    unsigned int port_num;
->>>>>>>>> +    int ret;
->>>>>>>>> +    struct tegra_csi_channel *item;
->>>>>>>>> +    unsigned int tpg_channels = csi->soc->csi_max_channels;
->>>>>>>>> +
->>>>>>>>> +    /* allocate CSI channel for each CSI x2 ports */
->>>>>>>>> +    for (port_num = 0; port_num < tpg_channels; port_num++) {
->>>>>>>>> +            item = devm_kzalloc(csi->dev, sizeof(*item), 
->>>>>>>>> GFP_KERNEL);
->>>>>>>> Using devm_*alloc can be dangerous. If someone unbinds the 
->>>>>>>> driver, then
->>>>>>>> all memory allocated with devm_ is immediately freed. But if an
->>>>>>>> application
->>>>>>>> still has a filehandle open, then when it closes it it might still
->>>>>>>> reference
->>>>>>>> this already-freed memory.
->>>>>>>>
->>>>>>>> I recommend that you avoid using devm_*alloc for media drivers.
->>>>>>> A good test is to unbind & bind the driver:
->>>>>>>
->>>>>>> cd /sys/devices/platform/50000000.host1x/54080000.vi/driver
->>>>>>> echo -n 54080000.vi >unbind
->>>>>>> echo -n 54080000.vi >bind
->>>>>>>
->>>>>>> First just do this without the driver being used. That already
->>>>>>> gives me 'list_del corruption' kernel messages (list debugging
->>>>>>> is turned on in my kernel).
->>>>> Will fix in v4 to use kzalloc and also proper release v4l2 to make 
->>>>> sure
->>>>> unbind/bind works properly.
->>>>>
->>>>> BTW, tegra vi and csi are registered as clients to host1x video 
->>>>> driver.
->>>>>
->>>>> So, unbind and bind should be done with host1x video driver 
->>>>> "tegra-video"
->>>>>
->>>>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
->>>>> echo -n tegra-video > unbind
->>>>> echo -n tegra-video > bind
->>>> This still crashes with v4, at least if I am streaming with v4l2-ctl 
->>>> --stream-mmap.
->>>> Is that known?
->>>>
->>>> It's not a big deal at this moment, just want to know if this will 
->>>> be looked
->>>> at later.
->>>>
->>>> Regards,
->>>>
->>>>          Hans
->>>
->>> Weird, I tested streaming after unbind and bind as well and don't see 
->>> crash. Did below steps and tried several times unbind/bind as well.
->>>
->>> ./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
->>> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
->>> echo -n tegra-video > unbind
->>> sleep 1
->>> echo -n tegra-video > bind
->>> cd /home/ubuntu
->>> ./v4l2-ctl --stream-mmap --stream-count=1 -d /dev/video3
->>>
->>> Can you post call trace when you saw crash?
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+>> v3: address comments from Stephen Boyd
+>>     fix build error(tab removed in line 37)
+>>     renamed to intel,agilex.yaml
+>> v2: convert original document to YAML
+>> ---
+>>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
+>>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>>  2 files changed, 106 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
 >>
->> Tried unbind when  node is open with v4l2-ctl --sleep 10 as well and 
->> bind back.
->>
->> I don't see crash. Will confirm on doing unbind/bind with stream-mmap...
->>
-> Able to repro when unbind/bind happens while stream-mmap.
-
-That's indeed what I did. I don't want to try it again since I'm working from home
-and the Jetson is in the office. And once it crashes I need someone in the office
-to press the reset button. I hope I can pick it up next week to keep it at home as
-that will make testing a lot easier.
-
 > 
-> Will look and have fix in v5.
-
-Nice!
-
-Thank you,
-
-	Hans
-
+> My bot found errors running 'make dt_binding_check' on your patch:
 > 
-> Thanks Hans.
+> Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
+> FATAL ERROR: Unable to parse input tree
+> scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
+> make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
+> Makefile:1262: recipe for target 'dt_binding_check' failed
+> make: *** [dt_binding_check] Error 2
 > 
->>>
->>>>>>> Note that this first test is basically identical to a rmmod/modprobe
->>>>>>> of the driver. But when I compiled the driver as a module it didn't
->>>>>>> create any video device nodes! Nor did I see any errors in the 
->>>>>>> kernel
->>>>>>> log. I didn't pursue this, and perhaps I did something wrong, but 
->>>>>>> it's
->>>>>>> worth taking a look at.
->>>>>>>
->>>>>>> The next step would be to have a video node open with:
->>>>>>>
->>>>>>> v4l2-ctl --sleep 10
->>>>>>>
->>>>>>> then while it is sleeping unbind the driver and see what happens
->>>>>>> when v4l2-ctl exits.
->>>>>>>
->>>>>>> Worst case is when you are streaming:
->>>>>>>
->>>>>>> v4l2-ctl --stream-mmap
->>>>>>>
->>>>>>> and then unbind.
->>>>>>>
->>>>>>> In general, the best way to get this to work correctly is:
->>>>>>>
->>>>>>> 1) don't use devm_*alloc
->>>>>>> 2) set the release callback of struct v4l2_device and do all freeing
->>>>>>> there.
->>>>>>> 3) in the platform remove() callback you call 
->>>>>>> media_device_unregister()
->>>>>>>      and video_unregister_device().
->>>>>> Reg 3, in current patch, media_device_unregister is called in
->>>>>> host1x_video_remove
->>>>>> video_unregister_device happens during host1x_video_remove ->
->>>>>> host1x_device_exit -> tegra_vi_exit -> tegra_vi_channels_cleanup
->>>>>>
->>>>>>> It's worth getting this right in this early stage, rather than 
->>>>>>> fixing it
->>>>>>> in the future.
->>>>>>>
->>>>>>> Regards,
->>>>>>>
->>>>>>>           Hans
+> See https://patchwork.ozlabs.org/patch/1256630
+> Please check and re-submit.
+> 
 
+I want to be able check these errors locally before sending the next
+version. But I keep getting various errors when I try to "make
+dt_binding_check":
+
+Traceback (most recent call last):
+  File "/bin/dt-doc-validate", line 15, in <module>
+    import ruamel.yaml
+ImportError: No module named 'ruamel'
+Documentation/devicetree/bindings/Makefile:12: recipe for target
+'Documentation/devicetree/bindings/arm/l2c2x0.example.dts' failed
+
+
+Do you have a pointer on how to run the dt_binding_check?
+
+Thanks,
+Dinh
