@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB421C4332B
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 741CAC4332D
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F74620754
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 468042076C
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 19:04:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fgDbP8zs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d1qtGLvq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgCSTEZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 15:04:25 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45534 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727605AbgCSTES (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 15:04:18 -0400
-Received: by mail-lj1-f194.google.com with SMTP id y17so3738483ljk.12;
-        Thu, 19 Mar 2020 12:04:15 -0700 (PDT)
+        id S1727744AbgCSTE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 15:04:26 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43853 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727525AbgCSTEZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 15:04:25 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n20so2557022lfl.10;
+        Thu, 19 Mar 2020 12:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QuRqkZzuBA2/gmQ7xtdmACyr3vk58NcEc2vx8jtn50U=;
-        b=fgDbP8zsUAW9bA62o3tLbYLIVEbM2eTutxjzwU3WD7St4VHgYg6sc3FbITh2C1JgJ1
-         DIkXLFmvcV8rb6MQgtt2svBglbhbtkJVwK3X3rItTf6xPcPlKk6Bv6HznqLmPT3eZWkt
-         0Q+k1X62dpHvSIFnda1AdpsbIySHIrKRxEZMcnJ9Qh8pHXH3ovG464TFpb0wVFtTIX2I
-         AyYcJHwC0sExsxh2uyFX8VBDQ16yq39jEJ79q9XZ9xVCiSJyBc2Jx2BLIe1fc5qQ3wY8
-         BSusDPzzRov1m5N3QvM35ET8xF1LACtVdUjEkc3jhDZmFTMS23ak2dKVpOXxhqoRUEwY
-         GvoQ==
+        bh=NCItyd8yjMwPtwwQd4zzBNEoARaFlEvxh+OiOGd8HtY=;
+        b=d1qtGLvqLnU4YGXDa+6ltiSnOsN+uAC2wfCdh4DfRhRb4yiJlWqp3But/WMhc9h2FN
+         0vBG2xchq3N/jf0HJGpqlMPpiVF7pTM5qs78TJaAc0wsDzZ5Jx/j92qfuJi0G3n9btzk
+         GemnM26fj2voN77S85eLhsxb+n1zLB9fNGsl3gMpy5R0BwcAZNEqv0WRvwvFupg5zULG
+         xqtPJ+EzGotxRDPxuPanWXH/DsIQnBJRDgLU3v4uRb/U/4EOfWXKClTiY48+2cRcABxo
+         iRm558gtm8TVqt8gdg9Xgvyc7m23XXUznEGkc0wgstJwOf2Zj/ppbcMRvRUw3ZaIJ9//
+         +7Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QuRqkZzuBA2/gmQ7xtdmACyr3vk58NcEc2vx8jtn50U=;
-        b=H+BoippxQhAlY+EmTat5nFJcZyWk7oEdODyXrkRnIpZeV8QvoGnVRHjqpg9cu0XvWu
-         iCQf2z3j71cnvOX9B925c/3CjtVqj99ZhgXKQ908BN0FkJrJBzKQ+G0DDhNGVpQxRybw
-         KlNW/cKphg5Fvi2Guc46eapNZSrpBKwwJ77dSdABH4B/iqms4UzohCuoER95OfH+vHYg
-         9nFw8S6/YmTqY2rH4QtHOadD0n4dpMcYmwEcPtWhC4o/6YJI1jULa+EcFalsx3WHkRyi
-         xdqjHswDSlYtFpo0/ZBpgzi3pmpluEZS3LJdM2sHK/6KtSKgAyuQkQcBE4C53qRsTeBm
-         fU1w==
-X-Gm-Message-State: ANhLgQ0lAZNJj5NDfc+m5sVfg/OmhM43efcqRYa/U9J+NOofdAz0anto
-        baRxbJGxDBqQc595gS1PvLo=
-X-Google-Smtp-Source: ADFU+vsyNXvrrCmF9RHJb8MzXpeuDppLJbR+WLUOx2J32CGevDmUiS8+zyoVSdTm79PbsRfRxQS9cw==
-X-Received: by 2002:a05:651c:1190:: with SMTP id w16mr3019696ljo.119.1584644654870;
-        Thu, 19 Mar 2020 12:04:14 -0700 (PDT)
+        bh=NCItyd8yjMwPtwwQd4zzBNEoARaFlEvxh+OiOGd8HtY=;
+        b=RIdNXd1IpOGJCJA0KvaxPXHQgwGx5jxI6H5Q30cYYwemwQ5k3qbc7tRlZfCBZiRZRw
+         4vij9Kjus7xopug/wuLTJ1WqIalSY0SSgugoFrHcvX96hhUr51v2PS/cg3qEM2GW9DTZ
+         8X6U+r3rIx2KfOPnY04fZNUdmChYMwx3TqCE0zkSwI8L2FoQgOHnFKfhM+j8QtG3eTTv
+         QJ2GZUWPNZo0U6WtqdaFb62zR7AdxoxVzOLdKScB+bsL30KjN1/UeQc3c0jb4HIS0RIx
+         KxuFoeg0yjafyanj5U2prPHzSbeMurBnLS6MurqUpZHxZHnxbDglOCRbrTd+RWdYcfG7
+         cf1Q==
+X-Gm-Message-State: ANhLgQ1dFS2PDrTgCFbuEDeFlOsdl9Nu33AKGmgXQUuDcvTuV5U85gIr
+        C+hKwyg/PZ4sXf9SJCp7BdM=
+X-Google-Smtp-Source: ADFU+vvxSPaWv4tBpO5i7RMaYY3eDnGk+xIwwnnb+6Co4FNBIO7VuuPcyNLUArribUaZTbJTOeXpZA==
+X-Received: by 2002:ac2:4552:: with SMTP id j18mr3054551lfm.89.1584644663187;
+        Thu, 19 Mar 2020 12:04:23 -0700 (PDT)
 Received: from localhost.localdomain (94-29-39-224.dynamic.spd-mgts.ru. [94.29.39.224])
-        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.13
+        by smtp.gmail.com with ESMTPSA id k14sm2025380lfg.96.2020.03.19.12.04.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Mar 2020 12:04:14 -0700 (PDT)
+        Thu, 19 Mar 2020 12:04:22 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -72,9 +72,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         David Heidelberg <david@ixit.cz>
 Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v8 06/12] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
-Date:   Thu, 19 Mar 2020 22:02:23 +0300
-Message-Id: <20200319190229.32200-7-digetx@gmail.com>
+Subject: [PATCH v8 11/12] ARM: dts: tegra30: beaver: Set up voltage regulators for DVFS
+Date:   Thu, 19 Mar 2020 22:02:28 +0300
+Message-Id: <20200319190229.32200-12-digetx@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200319190229.32200-1-digetx@gmail.com>
 References: <20200319190229.32200-1-digetx@gmail.com>
@@ -85,41 +85,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The early-resume code shall not switch CPU to PLLX because PLLX
-configuration could be unstable or PLLX should be simply disabled if
-CPU enters into suspend running off some other PLL (the case if CPUFREQ
-driver is active). The actual burst policy is restored by the clock
-drivers.
+Set min/max voltage and couple CPU/CORE regulators.
 
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Tested-by: Peter Geis <pgwipeout@gmail.com>
-Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-Tested-by: Jasper Korten <jja2000@gmail.com>
-Tested-by: David Heidelberg <david@ixit.cz>
-Tested-by: Nicolas Chauvet <kwizart@gmail.com>
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/tegra30-beaver.dts | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index e7bcf7dc4675..9942265ed650 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -398,11 +398,8 @@ _pll_m_c_x_done:
- 	ldr	r4, [r5, #0x1C]		@ restore SCLK_BURST
- 	str	r4, [r0, #CLK_RESET_SCLK_BURST]
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 45ef6002b225..a143cac22340 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1806,9 +1806,14 @@ vdd2_reg: vdd2 {
  
--	cmp	r10, #TEGRA30
--	movweq	r4, #:lower16:((1 << 28) | (0x8))	@ burst policy is PLLX
--	movteq	r4, #:upper16:((1 << 28) | (0x8))
--	movwne	r4, #:lower16:((1 << 28) | (0xe))
--	movtne	r4, #:upper16:((1 << 28) | (0xe))
-+	movw	r4, #:lower16:((1 << 28) | (0x4))	@ burst policy is PLLP
-+	movt	r4, #:upper16:((1 << 28) | (0x4))
- 	str	r4, [r0, #CLK_RESET_CCLK_BURST]
+ 				vddctrl_reg: vddctrl {
+ 					regulator-name = "vdd_cpu,vdd_sys";
+-					regulator-min-microvolt = <1000000>;
+-					regulator-max-microvolt = <1000000>;
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1250000>;
++					regulator-coupled-with = <&core_vdd_reg>;
++					regulator-coupled-max-spread = <300000>;
++					regulator-max-step-microvolt = <100000>;
+ 					regulator-always-on;
++
++					nvidia,tegra-cpu-regulator;
+ 				};
  
- 	/* Restore pad power state to normal */
+ 				vio_reg: vio {
+@@ -1868,17 +1873,22 @@ ldo8_reg: ldo8 {
+ 			};
+ 		};
+ 
+-		tps62361@60 {
++		core_vdd_reg: tps62361@60 {
+ 			compatible = "ti,tps62361";
+ 			reg = <0x60>;
+ 
+ 			regulator-name = "tps62361-vout";
+ 			regulator-min-microvolt = <500000>;
+ 			regulator-max-microvolt = <1500000>;
++			regulator-coupled-with = <&vddctrl_reg>;
++			regulator-coupled-max-spread = <300000>;
++			regulator-max-step-microvolt = <100000>;
+ 			regulator-boot-on;
+ 			regulator-always-on;
+ 			ti,vsel0-state-high;
+ 			ti,vsel1-state-high;
++
++			nvidia,tegra-core-regulator;
+ 		};
+ 	};
+ 
 -- 
 2.25.1
 
