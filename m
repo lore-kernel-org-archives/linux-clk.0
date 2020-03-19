@@ -2,177 +2,130 @@ Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0245AC4332B
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B1D6C4332B
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 07:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C530A2072D
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 05:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71BF520724
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 07:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FFUErapf"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZyXeHZ6E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727136AbgCSFk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 01:40:57 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36784 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727026AbgCSFko (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 01:40:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z72so641139pgz.3
-        for <linux-clk@vger.kernel.org>; Wed, 18 Mar 2020 22:40:43 -0700 (PDT)
+        id S1725895AbgCSHoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 03:44:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45918 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbgCSHoI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 03:44:08 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i9so1364058wrx.12
+        for <linux-clk@vger.kernel.org>; Thu, 19 Mar 2020 00:44:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=VjRbI/Qcy2ZipTYHWuUTokoOEV5DVKKVy86kR+PhWiE=;
-        b=FFUErapf5Y2xQAQXCjZUnjfCRN0y0A0wXHXw/sJjUknTYFS2v99P/qu6S388LrmOBm
-         WLQv+cq5ggJaBRDLDscsPzceMAR4Ms8QpkQ2bX8IBLhuFHBxHfIPq1m2LbgMU4MM1by+
-         NUPMaf8roA6uBTCE3QIQs1E4S6LoODWGK7/yl06GM+eQ75gKvAWjElYhZ6WYdomNYDxg
-         XJHKMLQDANCKHRwGmr6mUwcaTQOpMDyIggWwmZmDx0Mesp/M8ucO9QmwOTm3oG8IUdxT
-         C+bR2+rPRQYoK3OofEwW0JSBzL1nrf90wfYGe3UDT2fWVttqFZcBgDkUAYwdb++3iwVJ
-         9JXQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=8G6ZnhC76S+a0nX3uIB0o/UbMU7oc2ekBRk4ZBzMhfk=;
+        b=ZyXeHZ6E9GgI7PQ3/JNJnGVywJvMuyEuNUPHAE0C3Hrsl2fCjTBQSYRPxZzgj0Q12y
+         jUhvnPZ9Y7L1OxpqqPQ5YUEUNzqU6oZFiflxogGT1qYVKz5l4dxn19NQZmF+op4PWyzU
+         3GEZw0OETcFOj7b7dcwEpbqRPQKJPxSo1LoJktwcRrCvHgZPvSr4QqJDRI38ZeedOKe8
+         z1GxWMcugiheSTKebig9iTziBCUOMI/nc8MsUpQBhUMbP5gWe2Ey6L7tllGwfW27pDbJ
+         PPIUhDbHXT1oxzUkqIWFdwVrVnUz9Do/0Qbikeu6Aiyi/2DyZU6BDCfjgN+h2p6qr/KZ
+         PHqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=VjRbI/Qcy2ZipTYHWuUTokoOEV5DVKKVy86kR+PhWiE=;
-        b=sxzbZsrcGrXYVK19JBNjW8vy0nJnqgzSlTpm1a2e+vRrCLQGlRoViYUo52dsTl3lL6
-         j6/utR8uQk002bxAO0Oh+GvUq7Nd+L+oQ2J7TL5KNEwnA4ZbJs2s5sHkbzQXrN1qPNdJ
-         gnYe4THs1yPUxsVwHNWsLKG8XbfnO0O7O5U/S7uY5mthKzORMErLlwB5YqhK/BhaV0Tf
-         RC4rWDMIlOkSVamfFN05Cm8nx+NNhI9BLk8pzXrGB8QMBee8Yy3kJH5rL5jUpvi13p2F
-         8OOJJ4GyzJKIFr+7ag3ZXZUt3basualp9bPImG/VmseCYhM13su0Py0uAqx7D8cQpkGs
-         7AlQ==
-X-Gm-Message-State: ANhLgQ0lzBip62APJ54jaH1FWkuEefiLNHPs+J+3ScT4HxDC/2Uu5l5A
-        ZNs8yxn9AVyeF23CDjyVBNyLJQ==
-X-Google-Smtp-Source: ADFU+vvvpauezbIT9XfVdGer93wUikobvBaeW9uRALrfaX66+M/F4eSbIFlcahvLdahCTb5waovbRA==
-X-Received: by 2002:aa7:8ec1:: with SMTP id b1mr2136428pfr.125.1584596442589;
-        Wed, 18 Mar 2020 22:40:42 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l125sm229126pgl.57.2020.03.18.22.40.41
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=8G6ZnhC76S+a0nX3uIB0o/UbMU7oc2ekBRk4ZBzMhfk=;
+        b=qcjUvdYglubyCx4q/QPaC7vPCKEe321jgz6Pl2p2H3VLGLVKIYVXvFnAWI/iYJDP7v
+         /dkl/WASz3CnSqpL9/4Nh9bFNFV/73uQxo6G306Tf2hLXcy2y4FzrMgtP9YoN4l4XdP4
+         Vyzy4x8phWteB4bG+FAgWRFLNSNIbd2PTCe4J9SV0QKQIAEpi2w3lNjaC+n9dU/tEmyT
+         lzyD7A2WJXFqCoSJdOVkA9gA6WGLS3kYA98iJmttc9N/owzw4IsKadeg2PcjWM0FNjOO
+         kMeyTsk6SYmrnwfUibltNhR+NnSPaVCPo80bKNb0M2Y4IjTyONynXcRqgTgtlJ62SCE/
+         t+UA==
+X-Gm-Message-State: ANhLgQ0Q5woraKwaQjLgTN6Me/HtycHn/CXdsw3BikREgZ3z/VByUw0/
+        toK3RLvPJtpUiVA+bVvT9GJkkEkpoOIvIg==
+X-Google-Smtp-Source: ADFU+vuKr+qEFy31VI/80gx52dPSn4WmMzXMLVRosndQlVFjNAd1HfXNRlss+zm7FNEZsfvLhA0lqg==
+X-Received: by 2002:adf:ec88:: with SMTP id z8mr2431975wrn.61.1584603844041;
+        Thu, 19 Mar 2020 00:44:04 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id g8sm1925537wmk.26.2020.03.19.00.44.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Mar 2020 22:40:41 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
-Date:   Wed, 18 Mar 2020 22:38:59 -0700
-Message-Id: <20200319053902.3415984-2-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
-References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+        Thu, 19 Mar 2020 00:44:03 -0700 (PDT)
+Date:   Thu, 19 Mar 2020 08:44:01 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
+        mturquette@baylibre.com, sboyd@kernel.org, axboe@kernel.dk
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: tegra124-jetson-tk1: sata doesnt work since 5.2
+Message-ID: <20200319074401.GA4116@Red>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
-regulator supply is powered in order to be turned on.
+Hello
 
-It's not guaranteed that the bootloader will leave these supplies on and
-the driver core will attempt to enable any GDSCs before allowing the
-individual drivers to probe defer on the PMIC regulator driver not yet
-being present.
+sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+[    0.492810] +5V_SATA: supplied by +5V_SYS
+[    0.493230] +12V_SATA: supplied by +VDD_MUX
+[    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+[    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+[    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+[    5.310270] phy phy-sata.6: phy poweron failed --> -110
+[    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+[    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+[   35.694269] +5V_SATA: disabling
+[   35.697438] +12V_SATA: disabling
 
-So the gdsc driver needs to be made aware of supplying regulators and
-probe defer on their absence, and it needs to enable and disable the
-regulator accordingly.
+I have bisected this problem:
+git bisect start
+# bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
+# good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
+git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
+# good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+# good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
+# bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
+git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
+# good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
+# bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
+# bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
+# good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
+git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
+# bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
+git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
+# good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
+git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
+# good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
+git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
+# bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
+git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
+# bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
+git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
+# bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
+# bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
+# first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
 
-Voltage adjustments of the supplying regulator are deferred to the
-client drivers themselves.
+Basic reverting of this patch is impossible.
 
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
- drivers/clk/qcom/gdsc.h |  4 ++++
- 2 files changed, 28 insertions(+)
-
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a250f59708d8..3528789cc9d0 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -13,6 +13,7 @@
- #include <linux/regmap.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
-+#include <linux/regulator/consumer.h>
- #include "gdsc.h"
- 
- #define PWR_ON_MASK		BIT(31)
-@@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
- 	int ret;
- 	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
- 
-+	if (status == GDSC_ON && sc->rsupply) {
-+		ret = regulator_enable(sc->rsupply);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
- 	if (ret)
- 		return ret;
-@@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
- 
- 	ret = gdsc_poll_status(sc, status);
- 	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
-+
-+	if (!ret && status == GDSC_OFF && sc->rsupply) {
-+		ret = regulator_disable(sc->rsupply);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	return ret;
- }
- 
-@@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
- 	if (!data->domains)
- 		return -ENOMEM;
- 
-+	/* Resolve any regulator supplies */
-+	for (i = 0; i < num; i++) {
-+		if (!scs[i] || !scs[i]->supply)
-+			continue;
-+
-+		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
-+		if (IS_ERR(scs[i]->rsupply))
-+			return PTR_ERR(scs[i]->rsupply);
-+	}
-+
- 	data->num_domains = num;
- 	for (i = 0; i < num; i++) {
- 		if (!scs[i])
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 64cdc8cf0d4d..c36fc26dcdff 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -10,6 +10,7 @@
- #include <linux/pm_domain.h>
- 
- struct regmap;
-+struct regulator;
- struct reset_controller_dev;
- 
- /**
-@@ -52,6 +53,9 @@ struct gdsc {
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
-+
-+	const char 			*supply;
-+	struct regulator		*rsupply;
- };
- 
- struct gdsc_desc {
--- 
-2.24.0
-
+Regards
