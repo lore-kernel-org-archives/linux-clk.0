@@ -6,121 +6,108 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFDAC4332D
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 16:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9ABAC4332D
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 17:21:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786D8207FC
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 16:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC462070A
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 17:21:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584637013;
-	bh=qITxEULM5Ncg7snJOgrBb4YMWUJLNiO6B7ZZfpryEbQ=;
+	s=default; t=1584638495;
+	bh=Wa5WhY7NV/amydUQxKZOOUXAC72lGMcK0NhEdS62D74=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=H3t+/qngW85p3R/bRzOf4YVJRajvvQ7vtlgRe4VArL0oR8GTKRYL/s3h79kS4Dw8M
-	 iCwHRATVy6cDzms/4yYa5eVCxtCe/y4/hdYpsAqK31lWNO4hf7k2D9SBzq6aNYD2H5
-	 HdjT0A3h8KcY6R/PNDjUFFUSjh5X3xiWKxQJDNyY=
+	b=MayZReimSqzIhXcdrNJ8lyj5v9q3+HfEi1rPiNDPv5ornbfDDABRjmaU1BmrndfNM
+	 /lzdX0Lva5S2PXsi56OLkx00B6uywXyus+iuHRSGqJHYoJcYFOJJlpoTlF6V8dMwxB
+	 zPuPtAhfslFPioQHWZJvVP/CuUwEkNcn0bHofYuU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbgCSQ4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 12:56:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44978 "EHLO mail.kernel.org"
+        id S1727189AbgCSRVf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 13:21:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728180AbgCSQ4s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Mar 2020 12:56:48 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        id S1727146AbgCSRVf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Mar 2020 13:21:35 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A22292173E;
-        Thu, 19 Mar 2020 16:56:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F51520836;
+        Thu, 19 Mar 2020 17:21:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584637007;
-        bh=qITxEULM5Ncg7snJOgrBb4YMWUJLNiO6B7ZZfpryEbQ=;
+        s=default; t=1584638494;
+        bh=Wa5WhY7NV/amydUQxKZOOUXAC72lGMcK0NhEdS62D74=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UyYhI+DOShWfNvcnPDbFix/e0gh/N8C7iwifqyq1jDDihFHxTuscSm0U4oofGLj5X
-         UVPq4WctqBAv/mUis4FoXDdz7yFea4kuyFzcdjkBorvsOtaVzxkuohLqxztP31vqVa
-         6X/6hr2UGimZf5kdwnL6xWl+kMH/gNXhMjW7bSiw=
-Received: by mail-qk1-f169.google.com with SMTP id j4so3759654qkc.11;
-        Thu, 19 Mar 2020 09:56:47 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ3OB01vbwXwcIngFf6NE16U9U2HNys37m3IZ47wbxAjSFie3PaA
-        0LXTKNYq2cn9Dt5fp/e7N7PhBsO20gV3j92Ulg==
-X-Google-Smtp-Source: ADFU+vvx8Mto3b9ke4GB11bW5X8+6B732oYjPwoYLyKyoRcPOIqC6jH4W9EiQR64yH6UJnmnfxtJF04ZJlr3JwvgH1k=
-X-Received: by 2002:a37:4a85:: with SMTP id x127mr4018507qka.152.1584637006758;
- Thu, 19 Mar 2020 09:56:46 -0700 (PDT)
+        b=ft7/kE4yvSeKvAW7bbRrolP0UaF4xWVzoUrxHpX0nmu8GiUwsWuPjC9AXv1rRvqzH
+         sVRiUQ2587taXsEXy1sB2Zk5TBLyJLMygLxbHZVX7XO/h+r/38lcGeiLC0wZaFDnYu
+         Y4lX75HTJ+SSMrlihdhmMBdXg2cJ2f851/tEqHBo=
+Received: by mail-qk1-f174.google.com with SMTP id c145so3855298qke.12;
+        Thu, 19 Mar 2020 10:21:34 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ13TX7m3D5QlSqmEd7vWKhcYbGOigfeWKTOCs/0JJzHGkIJY/Gp
+        gOrbfhLp3rgKSUMWL67AMN7RGw+g8gqZeHXyEw==
+X-Google-Smtp-Source: ADFU+vulofMsciR5pLApGaBb0QXCqdfQARLGVOuL0yu914G08i7K943mRV5VQl5ypvWeXQ6VTH6kM8/ISVQqrL9dm34=
+X-Received: by 2002:a37:8502:: with SMTP id h2mr4136038qkd.223.1584638493344;
+ Thu, 19 Mar 2020 10:21:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200317161022.11181-1-dinguyen@kernel.org> <20200317161022.11181-5-dinguyen@kernel.org>
- <20200318224042.GA32101@bogus> <30180323-3c74-d04a-b715-3b1f655d6a81@kernel.org>
-In-Reply-To: <30180323-3c74-d04a-b715-3b1f655d6a81@kernel.org>
+References: <1584211798-10332-1-git-send-email-tdas@codeaurora.org>
+ <1584211798-10332-2-git-send-email-tdas@codeaurora.org> <20200318220443.GA16192@bogus>
+ <2ceccbac-b289-03d0-665b-6e9ca57b4333@codeaurora.org>
+In-Reply-To: <2ceccbac-b289-03d0-665b-6e9ca57b4333@codeaurora.org>
 From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 19 Mar 2020 10:56:35 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ-c5tvWUMGKu4scy85cGdYHzPxR7NTzEd9V5RQHveW0g@mail.gmail.com>
-Message-ID: <CAL_JsqJ-c5tvWUMGKu4scy85cGdYHzPxR7NTzEd9V5RQHveW0g@mail.gmail.com>
-Subject: Re: [PATCHv3 4/5] dt-bindings: documentation: add clock bindings
- information for Agilex
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+Date:   Thu, 19 Mar 2020 11:21:21 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKOTRzvtTjHPmOR60tpxUoPsoaB5ZbLdPG0VrN-NnFxWg@mail.gmail.com>
+Message-ID: <CAL_JsqKOTRzvtTjHPmOR60tpxUoPsoaB5ZbLdPG0VrN-NnFxWg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Mar 19, 2020 at 10:16 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
+On Wed, Mar 18, 2020 at 11:37 PM Taniya Das <tdas@codeaurora.org> wrote:
 >
-> Hi Rob,
 >
-> On 3/18/20 5:40 PM, Rob Herring wrote:
-> > On Tue, 17 Mar 2020 11:10:21 -0500, Dinh Nguyen wrote:
-> >> Document the Agilex clock bindings, and add the clock header file. The
-> >> clock header is an enumeration of all the different clocks on the Agilex
-> >> platform.
+>
+> On 3/19/2020 3:34 AM, Rob Herring wrote:
+> > On Sun, 15 Mar 2020 00:19:56 +0530, Taniya Das wrote:
+> >> The Modem Subsystem clock provider have a bunch of generic properties
+> >> that are needed in a device tree. Add a YAML schemas for those.
 > >>
-> >> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> >> Add clock ids for GCC MSS and MSS clocks which are required to bring
+> >> the modem out of reset.
+> >>
+> >> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > >> ---
-> >> v3: address comments from Stephen Boyd
-> >>     fix build error(tab removed in line 37)
-> >>     renamed to intel,agilex.yaml
-> >> v2: convert original document to YAML
-> >> ---
-> >>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
-> >>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
-> >>  2 files changed, 106 insertions(+)
-> >>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
-> >>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> >>   .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 ++++++++++++++++++++++
+> >>   include/dt-bindings/clock/qcom,gcc-sc7180.h        |  7 ++-
+> >>   include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++++
+> >>   3 files changed, 80 insertions(+), 1 deletion(-)
+> >>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
+> >>   create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
 > >>
 > >
 > > My bot found errors running 'make dt_binding_check' on your patch:
 > >
-> > Error: Documentation/devicetree/bindings/clock/intel,agilex.example.dts:17.3-4 syntax error
-> > FATAL ERROR: Unable to parse input tree
-> > scripts/Makefile.lib:311: recipe for target 'Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml' failed
-> > make[1]: *** [Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml] Error 1
-> > Makefile:1262: recipe for target 'dt_binding_check' failed
-> > make: *** [dt_binding_check] Error 2
+> > Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml: $id: relative path/filename doesn't match actual path or filename
+> >       expected: http://devicetree.org/schemas/clock/qcom,sc7180-mss.yaml#
 > >
-> > See https://patchwork.ozlabs.org/patch/1256630
+> > See https://patchwork.ozlabs.org/patch/1254940
 > > Please check and re-submit.
 > >
+> Hi Rob,
 >
-> I want to be able check these errors locally before sending the next
-> version. But I keep getting various errors when I try to "make
-> dt_binding_check":
+> Thanks, I have fixed it in the next patch series.
 >
-> Traceback (most recent call last):
->   File "/bin/dt-doc-validate", line 15, in <module>
->     import ruamel.yaml
-> ImportError: No module named 'ruamel'
-> Documentation/devicetree/bindings/Makefile:12: recipe for target
-> 'Documentation/devicetree/bindings/arm/l2c2x0.example.dts' failed
->
->
-> Do you have a pointer on how to run the dt_binding_check?
+> Is there a way to catch these before submitting? As I do not see these
+> errors on my machine.
 
-Documentation/devicetree/writing-schema.rst
-
-ruamel should get installed automatically when you run pip3. If you
-just cloned dt-schema, then you still need to run pip on the project
-directory. That's documented in the project readme.
+If you ran 'make dt_binding_check' already, then update dt-schema with pip.
 
 Rob
