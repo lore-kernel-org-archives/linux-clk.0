@@ -1,108 +1,97 @@
-Return-Path: <SRS0=iEFu=5E=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22456C4332B
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 23:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F69AC4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 01:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E25C120753
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Mar 2020 23:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10BFE20754
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 01:04:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584666282;
+	bh=WBVJxUkyMG39O9bERsyKy1MDzmUe4i57hlRhXu1Pqqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=01eKdtlHIE2bZ+8rDvc+RR4jZIcOqYs90HAXinLE93y9QoQ9RS1LgtnqiCDiHndC2
+	 SRLwpLwP64GconxQHuj8N3l1R8lCFBk2x86BwM0JG7KMEvN84knyrQgPgqpYM8luB3
+	 li9ZqEazALSe/x8yCUmbwBA2X8gLgXkAkCoYbQvE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbgCSXvG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Mar 2020 19:51:06 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:34732 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726663AbgCSXvG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Mar 2020 19:51:06 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0A8EA1A0121;
-        Fri, 20 Mar 2020 00:51:04 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F09191A0058;
-        Fri, 20 Mar 2020 00:50:56 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5E1464029F;
-        Fri, 20 Mar 2020 07:50:48 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        gustavo@embeddedor.com, gregkh@linuxfoundation.org,
-        tglx@linutronix.de, abel.vesa@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V2] clk: imx: clk-pllv3: Use readl_relaxed_poll_timeout() for PLL lock wait
-Date:   Fri, 20 Mar 2020 07:44:03 +0800
-Message-Id: <1584661443-12032-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727313AbgCTBEi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Mar 2020 21:04:38 -0400
+Received: from mail-il1-f196.google.com ([209.85.166.196]:35752 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbgCTBEi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Mar 2020 21:04:38 -0400
+Received: by mail-il1-f196.google.com with SMTP id o16so1522008ilm.2;
+        Thu, 19 Mar 2020 18:04:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UGCAb9wVeglaPfbrAhPUQDDVEQ1klnV38624n1QkmF0=;
+        b=aMLW+xSh5GQWE77JUbvhLyi4VGwx03gpx1tk2OnjrFoXyuTh48RZa544oIZAdTd8Yb
+         vNDYEN9lseERtpJpYpZDxrNy7MfBwJel4QCtYeupXxxnb8zQ1kh3FP4nMpL0Y9zbiiCR
+         FY2kSIkzBjc64lUjvofEOdrVBPes0W7p89tvfyAKRkD2s3fyxORxBmdWi6khPRoNP3M7
+         uPQnRuFCy9n646t3iIEm5TGzY9BIwZNzlf+V8RkSQgcjyFXhmVeYWld2fPieAOtuHkQo
+         4bbPAsfvKaRYAh/cTIM0Oh6LnJFdBf+WyuDCpzQPKDo8fH9NpwAkeFbV88HDZIpAr48o
+         wD8w==
+X-Gm-Message-State: ANhLgQ18i4FNm6Lfm60qNar3iN8TEUrkVqBSkQfWX5caYc38dqqeL4hw
+        TQ2LF0kp7YDyYf3Q11NK/Q==
+X-Google-Smtp-Source: ADFU+vvlv+TFuLos9es6ZMHJJts1Of92KuSp8Lj8FMdYp0zS7O9szteFdC1O/KDhibPp0NlG1HYhAQ==
+X-Received: by 2002:a92:a192:: with SMTP id b18mr5903577ill.199.1584666277084;
+        Thu, 19 Mar 2020 18:04:37 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id j18sm1497075ila.56.2020.03.19.18.04.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Mar 2020 18:04:36 -0700 (PDT)
+Received: (nullmailer pid 23247 invoked by uid 1000);
+        Fri, 20 Mar 2020 01:04:34 -0000
+Date:   Thu, 19 Mar 2020 19:04:34 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+Message-ID: <20200320010434.GA23155@bogus>
+References: <1584596131-22741-1-git-send-email-tdas@codeaurora.org>
+ <1584596131-22741-2-git-send-email-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1584596131-22741-2-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use readl_relaxed_poll_timeout() for PLL lock wait which can simplify the
-code a lot.
+On Thu, 19 Mar 2020 11:05:29 +0530, Taniya Das wrote:
+> The Modem Subsystem clock provider have a bunch of generic properties
+> that are needed in a device tree. Add a YAML schemas for those.
+> 
+> Add clock ids for GCC MSS and MSS clocks which are required to bring
+> the modem out of reset.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,sc7180-mss.yaml | 62 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sc7180.h        |  7 ++-
+>  include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++++
+>  3 files changed, 80 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-mss.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
+> 
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
----
-Changes since V1:
-	- Use readl_relaxed_poll_timeout() instead of readl_poll_timeout().
----
- drivers/clk/imx/clk-pllv3.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index df91a82..a7db930 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -7,6 +7,7 @@
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-+#include <linux/iopoll.h>
- #include <linux/slab.h>
- #include <linux/jiffies.h>
- #include <linux/err.h>
-@@ -25,6 +26,8 @@
- #define IMX7_ENET_PLL_POWER	(0x1 << 5)
- #define IMX7_DDR_PLL_POWER	(0x1 << 20)
- 
-+#define PLL_LOCK_TIMEOUT	10000
-+
- /**
-  * struct clk_pllv3 - IMX PLL clock version 3
-  * @clk_hw:	 clock source
-@@ -53,23 +56,14 @@ struct clk_pllv3 {
- 
- static int clk_pllv3_wait_lock(struct clk_pllv3 *pll)
- {
--	unsigned long timeout = jiffies + msecs_to_jiffies(10);
- 	u32 val = readl_relaxed(pll->base) & pll->power_bit;
- 
- 	/* No need to wait for lock when pll is not powered up */
- 	if ((pll->powerup_set && !val) || (!pll->powerup_set && val))
- 		return 0;
- 
--	/* Wait for PLL to lock */
--	do {
--		if (readl_relaxed(pll->base) & BM_PLL_LOCK)
--			break;
--		if (time_after(jiffies, timeout))
--			break;
--		usleep_range(50, 500);
--	} while (1);
--
--	return readl_relaxed(pll->base) & BM_PLL_LOCK ? 0 : -ETIMEDOUT;
-+	return readl_relaxed_poll_timeout(pll->base, val, val & BM_PLL_LOCK,
-+					  500, PLL_LOCK_TIMEOUT);
- }
- 
- static int clk_pllv3_prepare(struct clk_hw *hw)
--- 
-2.7.4
-
+Reviewed-by: Rob Herring <robh@kernel.org>
