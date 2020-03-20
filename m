@@ -2,262 +2,472 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AE0C4332B
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 06:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E288C4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 08:43:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C506C20773
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 06:42:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vdqILdi3"
+	by mail.kernel.org (Postfix) with ESMTP id 7EE8920773
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 08:43:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbgCTGm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 02:42:57 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:36114 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726602AbgCTGm5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 02:42:57 -0400
-Received: by mail-il1-f194.google.com with SMTP id h3so4633123ils.3;
-        Thu, 19 Mar 2020 23:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=06zGBj/ssS7PvnHG1KI/b5iGxZdt6EvTjuawiNHIYq4=;
-        b=vdqILdi3RNjmq0KpeuSIapBq2fVmztThPONxiwnjJcjko8rcMRz8SQMlpdUCMzwZ4w
-         JR8qOfBgDzz5a8YrmPdkBZQfsC3M4OJYhOs14w8/BL7A3Ln/tpeHkHC74ji23ZB4QvEc
-         OVG/h0fkQEeWh9RawyDPM0TYP7P0X3fvBhq67MWIHuV+G6PdRv6Ax2S5qv8yE+g0LAtJ
-         YV8/jKOZ8w9zu00EwMa9M768bM7pTxy0W4oytC7o3Mc312jJHtUyh4pL3kJd1TkGA9Fn
-         ApbPkzdhDkf8ajBO+19LlKfNuoQ6tMg3sNw7u7cpyS2A9i/Wd2UIfY/ALFmIYkk4k2Ka
-         zJng==
+        id S1726527AbgCTIno (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 04:43:44 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33402 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726232AbgCTInn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 04:43:43 -0400
+Received: by mail-oi1-f193.google.com with SMTP id r7so5736978oij.0;
+        Fri, 20 Mar 2020 01:43:41 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=06zGBj/ssS7PvnHG1KI/b5iGxZdt6EvTjuawiNHIYq4=;
-        b=fM704rdkqptXT+47a3xMLnC8nt/60yC2bNr1zqY0TQSaeFPsCtKfVA2MkwuaBPUWII
-         zW9E73CnK3BsrxyRvx1ibtDbDBqcozwr7m2gQ/ORKAP28cJwALgEh0LbOe0KCxGUpici
-         ZhYnu6lbJQmlKCEiQ3DPPAJm/hq4zyZDF+jNC9++7b/332iVCIcLs5CRO0tRyXT41bt7
-         IxMyTs/jdX93GVofFZh9NiPwa5SusmMsRZq7Pr/8Zp7oDNrH5pIWowXLFUPgY2DiVyaj
-         bj5rzC5a7zNWLtzGxVMkP25AQzFjmbAAMvEGpxv7MDobutzEkKKxUGvDxXZR2FAJRCYk
-         otlQ==
-X-Gm-Message-State: ANhLgQ2dM4Zw5X3dpZrTd5Fpc3S72TB/jGxcj+d8SmVyOP5tH7U6tRus
-        1f517NR2rjeQ3NcpRgZmfkBBvB7yL3VopybZBY4=
-X-Google-Smtp-Source: ADFU+vstvv6BY/bMlQ65uNn29myG7Af6LLODAPzrr62gDuWVPyo+vryjRqUrwyygLTJdrUYAmZ/8qDhhoqmRqbBluPg=
-X-Received: by 2002:a92:d843:: with SMTP id h3mr6469852ilq.246.1584686575330;
- Thu, 19 Mar 2020 23:42:55 -0700 (PDT)
+        bh=+P765H39wM9m+abyGE0nl8gMB3A8ga2ms+iMRowiZ8k=;
+        b=g1eDUwWUjjsUSnOE6iHtTvigzWwALw8QL7AzobAj+zd8brftEfXA9+yd8KPPlpot+y
+         DuXR/wJxU7seIlObmYaLgFoGiQXFuBKjb4ZbSsM5c0o7rrdSEiy+11db/ReiBuL5uqK4
+         Jw77etFXuV24IHq+TntYsOUauBJlS28NV4IA4IFzo5QCWJgQX/7pzajqQMs7Pc74yaqr
+         Si/yHq8pjhkqw7lTzkQ747f9LPIHLPz51BBKvL4LsvHo3HPK6ew0RLsM6r5jdFnfaPU7
+         ifVfAeFHDfamxd0jpB6wHMAT7WcJq1+uzSLu9FGrLi0cNC0qFmfE3MABXRuICZa5opAP
+         lY4Q==
+X-Gm-Message-State: ANhLgQ3VnoyL2KxtPuuy3a/F0pspUb8rn8UlgtR2Fghvti9tAb/K2RjA
+        d1y3wltybqYIUoMoe7V5DXvMp0g1LzRCHv/fU4w=
+X-Google-Smtp-Source: ADFU+vv04HuiaDqBvziE4RdKS2mt/DGa83Te8DpzwucVswld+IotS8nnMQ6rX0cqkPagKXH3xdy8kJQWpk2rrOT2mz8=
+X-Received: by 2002:aca:5ed4:: with SMTP id s203mr5753865oib.102.1584693820681;
+ Fri, 20 Mar 2020 01:43:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200302125310.742-1-linux.amoon@gmail.com> <20200302125310.742-3-linux.amoon@gmail.com>
- <7hlfoir8rj.fsf@baylibre.com> <CAFBinCB2WXZNRg4wdFD0RJ5k4hHqcfAOCHemvHzZE42-Mo5vzA@mail.gmail.com>
-In-Reply-To: <CAFBinCB2WXZNRg4wdFD0RJ5k4hHqcfAOCHemvHzZE42-Mo5vzA@mail.gmail.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Fri, 20 Mar 2020 12:12:43 +0530
-Message-ID: <CANAwSgSefoxPqDcFG5jhW2iGbwUDkZ0bo4ebo63oKA73KKdn_w@mail.gmail.com>
-Subject: Re: [PATCHv2 2/2] clk: meson: g12a: set cpub_clk flags to CLK_IS_CRITICAL
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
+References: <cover.1584639664.git.alexander.riesen@cetitec.com> <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
+In-Reply-To: <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Mar 2020 09:43:29 +0100
+Message-ID: <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] media: adv748x: add support for HDMI audio
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>
-Content-Type: multipart/mixed; boundary="00000000000067518905a14398c7"
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---00000000000067518905a14398c7
-Content-Type: text/plain; charset="UTF-8"
+Hi Alex,
 
-Hi Martin / Kevin,
+CC linux-clk for the clock provider.
 
-On Fri, 20 Mar 2020 at 05:09, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Thu, Mar 19, 2020 at 6:42 PM Alex Riesen
+<alexander.riesen@cetitec.com> wrote:
+> This adds an implemention of SoC DAI driver which provides access to the
+> I2S port of the device.
 >
-> Hi Kevin,
->
-> On Mon, Mar 2, 2020 at 6:01 PM Kevin Hilman <khilman@baylibre.com> wrote:
-> [...]
-> > > updating flags to CLK_IS_CRITICAL which help enable all the parent for
-> > > cpub_clk.
-> >
-> > With current mainline, I've tested DVFS using CPUfreq on both clusters
-> > on odroid-n2, and both clusters are booting, so I don't understand the
-> > need for this patch.
-> I *think* there is a race condition at kernel boot between cpufreq and
-> disabling orphaned clocks
-> I'm not sure I fully understand it though and I don't have any G12B
-> board to verify it
->
-> my understanding is that u-boot runs Linux off CPU0 which is clocked by cpub_clk
-> this means we need to keep cpub_clk enabled as long as Linux wants the
-> CPU0 processor to be enabled (on 32-bit ARM platforms that would be
-> smp_operations.cpu_{kill,die})
-> cpufreq does not call clk_prepare_enable on the CPU clocks so this
-> means that the orphaned clock cleanup mechanism can disable it "at any
-> time", killing everything running on CPU0 and CPU1 (which are both
-> clocked by cpub_clk)
->
-> I have no explanation why this depends on booting from SD or eMMC.
->
-> for the 32-bit SoCs we have CLK_IS_CRITICAL on the CPU clock as well
-> since commit 0dad1ec65bc30a
-> on G12A we have CLK_IS_CRITICAL on the sys_pll clocks, however my
-> understanding is that cpub_clk could also be fed by one of the
-> fixed_pll derived clocks (which have a gate as well, which may or may
-> not be turned off by the orphaned clock cleanup - that is pure
-> speculation from my side though).
->
->
-> Martin
+> Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
 
-Thanks for this new input I will carefully check these details once again.
+Thanks for your patch!
 
-I am attaching small scripts on how I build the image with mainline
-u-boot and mainline kernel.
-So I am able to reproduce this issue on SD card.
-Hoping some body could reproduce this issue at their end and share the feedback.
-If their is some issue from my side please let me know.
+One comment below.
 
--Anand
+> ---
+>  drivers/media/i2c/adv748x/Makefile       |   3 +-
+>  drivers/media/i2c/adv748x/adv748x-core.c |   9 +-
+>  drivers/media/i2c/adv748x/adv748x-dai.c  | 256 +++++++++++++++++++++++
+>  drivers/media/i2c/adv748x/adv748x.h      |  16 +-
+>  4 files changed, 281 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/media/i2c/adv748x/adv748x-dai.c
+>
+> diff --git a/drivers/media/i2c/adv748x/Makefile b/drivers/media/i2c/adv748x/Makefile
+> index 93844f14cb10..6e7a302ef199 100644
+> --- a/drivers/media/i2c/adv748x/Makefile
+> +++ b/drivers/media/i2c/adv748x/Makefile
+> @@ -3,6 +3,7 @@ adv748x-objs    := \
+>                 adv748x-afe.o \
+>                 adv748x-core.o \
+>                 adv748x-csi2.o \
+> -               adv748x-hdmi.o
+> +               adv748x-hdmi.o \
+> +               adv748x-dai.o
+>
+>  obj-$(CONFIG_VIDEO_ADV748X)    += adv748x.o
+> diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+> index 36164a254d7b..2c0bd58038e6 100644
+> --- a/drivers/media/i2c/adv748x/adv748x-core.c
+> +++ b/drivers/media/i2c/adv748x/adv748x-core.c
+> @@ -765,8 +765,14 @@ static int adv748x_probe(struct i2c_client *client)
+>                 goto err_cleanup_txa;
+>         }
+>
+> +       ret = adv748x_dai_init(&state->dai);
+> +       if (ret) {
+> +               adv_err(state, "Failed to probe DAI\n");
+> +               goto err_cleanup_txb;
+> +       }
+>         return 0;
+> -
+> +err_cleanup_txb:
+> +       adv748x_csi2_cleanup(&state->txb);
+>  err_cleanup_txa:
+>         adv748x_csi2_cleanup(&state->txa);
+>  err_cleanup_afe:
+> @@ -787,6 +793,7 @@ static int adv748x_remove(struct i2c_client *client)
+>  {
+>         struct adv748x_state *state = i2c_get_clientdata(client);
+>
+> +       adv748x_dai_cleanup(&state->dai);
+>         adv748x_afe_cleanup(&state->afe);
+>         adv748x_hdmi_cleanup(&state->hdmi);
+>
+> diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/adv748x/adv748x-dai.c
+> new file mode 100644
+> index 000000000000..4775a0c7ed7f
+> --- /dev/null
+> +++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+> @@ -0,0 +1,256 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Driver for Analog Devices ADV748X HDMI receiver with AFE
+> + * The implementation of DAI.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clk-provider.h>
+> +#include <sound/pcm_params.h>
+> +
+> +#include "adv748x.h"
+> +
+> +#define state_of(soc_dai) \
+> +       adv748x_dai_to_state(container_of((soc_dai)->driver, \
+> +                                         struct adv748x_dai, \
+> +                                         drv))
+> +
+> +static const char ADV748X_DAI_NAME[] = "adv748x-i2s";
+> +
+> +static int set_audio_pads_state(struct adv748x_state *state, int on)
+> +{
+> +       return io_update(state, ADV748X_IO_PAD_CONTROLS,
+> +                        ADV748X_IO_PAD_CONTROLS_TRI_AUD |
+> +                        ADV748X_IO_PAD_CONTROLS_PDN_AUD,
+> +                        on ? 0 : 0xff);
+> +}
+> +
+> +static int set_dpll_mclk_fs(struct adv748x_state *state, int fs)
+> +{
+> +       return dpll_update(state, ADV748X_DPLL_MCLK_FS,
+> +                          ADV748X_DPLL_MCLK_FS_N_MASK, (fs / 128) - 1);
+> +}
+> +
+> +static int set_i2s_format(struct adv748x_state *state, uint outmode,
+> +                         uint bitwidth)
+> +{
+> +       return hdmi_update(state, ADV748X_HDMI_I2S,
+> +                          ADV748X_HDMI_I2SBITWIDTH_MASK |
+> +                          ADV748X_HDMI_I2SOUTMODE_MASK,
+> +                          (outmode << ADV748X_HDMI_I2SOUTMODE_SHIFT) |
+> +                          bitwidth);
+> +}
+> +
+> +static int set_i2s_tdm_mode(struct adv748x_state *state, int is_tdm)
+> +{
+> +       int ret;
+> +
+> +       ret = hdmi_update(state, ADV748X_HDMI_AUDIO_MUTE_SPEED,
+> +                         ADV748X_MAN_AUDIO_DL_BYPASS |
+> +                         ADV748X_AUDIO_DELAY_LINE_BYPASS,
+> +                         is_tdm ? 0xff : 0);
+> +       if (ret < 0)
+> +               return ret;
+> +       ret = hdmi_update(state, ADV748X_HDMI_REG_6D,
+> +                         ADV748X_I2S_TDM_MODE_ENABLE,
+> +                         is_tdm ? 0xff : 0);
+> +       return ret;
+> +}
+> +
+> +static int set_audio_mute(struct adv748x_state *state, int enable)
+> +{
+> +       return hdmi_update(state, ADV748X_HDMI_MUTE_CTRL,
+> +                          ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO,
+> +                          enable ? 0xff : 0);
+> +}
+> +
+> +static int adv748x_dai_set_sysclk(struct snd_soc_dai *dai,
+> +                                 int clk_id, unsigned int freq, int dir)
+> +{
+> +       struct adv748x_state *state = state_of(dai);
+> +
+> +       /* currently supporting only one fixed rate clock */
+> +       if (clk_id != 0 || freq != clk_get_rate(state->dai.mclk)) {
+> +               dev_err(dai->dev, "invalid clock (%d) or frequency (%u, dir %d)\n",
+> +                       clk_id, freq, dir);
+> +               return -EINVAL;
+> +       }
+> +       state->dai.freq = freq;
+> +       return 0;
+> +}
+> +
+> +static int adv748x_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+> +{
+> +       struct adv748x_state *state = state_of(dai);
+> +       int ret = 0;
+> +
+> +       if ((fmt & SND_SOC_DAIFMT_MASTER_MASK) != SND_SOC_DAIFMT_CBM_CFM) {
+> +               dev_err(dai->dev, "only I2S master clock mode supported\n");
+> +               ret = -EINVAL;
+> +               goto done;
+> +       }
+> +       switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+> +       case SND_SOC_DAI_FORMAT_I2S:
+> +               state->dai.tdm = 0;
+> +               state->dai.fmt = ADV748X_I2SOUTMODE_I2S;
+> +               break;
+> +       case SND_SOC_DAI_FORMAT_RIGHT_J:
+> +               state->dai.tdm = 1;
+> +               state->dai.fmt = ADV748X_I2SOUTMODE_RIGHT_J;
+> +               break;
+> +       case SND_SOC_DAI_FORMAT_LEFT_J:
+> +               state->dai.tdm = 1;
+> +               state->dai.fmt = ADV748X_I2SOUTMODE_LEFT_J;
+> +               break;
+> +       default:
+> +               dev_err(dai->dev, "only i2s, left_j and right_j supported\n");
+> +               ret = -EINVAL;
+> +               goto done;
+> +       }
+> +       if ((fmt & SND_SOC_DAIFMT_INV_MASK) != SND_SOC_DAIFMT_NB_NF) {
+> +               dev_err(dai->dev, "only normal bit clock + frame supported\n");
+> +               ret = -EINVAL;
+> +       }
+> +done:
+> +       return ret;
+> +}
+> +
+> +static int adv748x_dai_startup(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
+> +{
+> +       struct adv748x_state *state = state_of(dai);
+> +
+> +       if (sub->stream != SNDRV_PCM_STREAM_CAPTURE)
+> +               return -EINVAL;
+> +       return set_audio_pads_state(state, 1);
+> +}
+> +
+> +static int adv748x_dai_hw_params(struct snd_pcm_substream *sub,
+> +                                struct snd_pcm_hw_params *params,
+> +                                struct snd_soc_dai *dai)
+> +{
+> +       int ret;
+> +       struct adv748x_state *state = state_of(dai);
+> +       uint fs = state->dai.freq / params_rate(params);
+> +
+> +       dev_dbg(dai->dev, "dai %s substream %s rate=%u (fs=%u), channels=%u sample width=%u(%u)\n",
+> +               dai->name, sub->name,
+> +               params_rate(params), fs,
+> +               params_channels(params),
+> +               params_width(params),
+> +               params_physical_width(params));
+> +       switch (fs) {
+> +       case 128:
+> +       case 256:
+> +       case 384:
+> +       case 512:
+> +       case 640:
+> +       case 768:
+> +               break;
+> +       default:
+> +               ret = -EINVAL;
+> +               dev_err(dai->dev, "invalid clock frequency (%u) or rate (%u)\n",
+> +                       state->dai.freq, params_rate(params));
+> +               goto done;
+> +       }
+> +       ret = set_dpll_mclk_fs(state, fs);
+> +       if (ret)
+> +               goto done;
+> +       ret = set_i2s_tdm_mode(state, state->dai.tdm);
+> +       if (ret)
+> +               goto done;
+> +       ret = set_i2s_format(state, state->dai.fmt, params_width(params));
+> +done:
+> +       return ret;
+> +}
+> +
+> +static int adv748x_dai_mute_stream(struct snd_soc_dai *dai, int mute, int dir)
+> +{
+> +       struct adv748x_state *state = state_of(dai);
+> +
+> +       return set_audio_mute(state, mute);
+> +}
+> +
+> +static void adv748x_dai_shutdown(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
+> +{
+> +       struct adv748x_state *state = state_of(dai);
+> +
+> +       set_audio_pads_state(state, 0);
+> +}
+> +
+> +static const struct snd_soc_dai_ops adv748x_dai_ops = {
+> +       .set_sysclk = adv748x_dai_set_sysclk,
+> +       .set_fmt = adv748x_dai_set_fmt,
+> +       .startup = adv748x_dai_startup,
+> +       .hw_params = adv748x_dai_hw_params,
+> +       .mute_stream = adv748x_dai_mute_stream,
+> +       .shutdown = adv748x_dai_shutdown,
+> +};
+> +
+> +static int adv748x_of_xlate_dai_name(struct snd_soc_component *component,
+> +                                     struct of_phandle_args *args,
+> +                                     const char **dai_name)
+> +{
+> +       if (dai_name)
+> +               *dai_name = ADV748X_DAI_NAME;
+> +       return 0;
+> +}
+> +
+> +static const struct snd_soc_component_driver adv748x_codec = {
+> +       .of_xlate_dai_name = adv748x_of_xlate_dai_name,
+> +};
+> +
+> +int adv748x_dai_init(struct adv748x_dai *dai)
+> +{
+> +       int ret;
+> +       struct adv748x_state *state = adv748x_dai_to_state(dai);
+> +
+> +       dai->mclk = clk_register_fixed_rate(state->dev,
+> +                                           "adv748x-hdmi-i2s-mclk",
 
---00000000000067518905a14398c7
-Content-Type: text/plain; charset="US-ASCII"; name="build_odroidn2.txt"
-Content-Disposition: attachment; filename="build_odroidn2.txt"
-Content-Transfer-Encoding: base64
-Content-ID: <f_k7zscmr70>
-X-Attachment-Id: f_k7zscmr70
+I assume there can be multiple adv748x instances in the system?
+Hence the clock name should be unique for each instance.
 
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KU3RlcCAxIDogU2NyaXB0IHRvIGJ1aWxkIHRo
-ZSBwcmVwYXJlIHRoZSBpbWFnZS4NCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIyEvYmlu
-L2Jhc2ggK3gNCg0Kd2dldCBodHRwOi8vb3MuYXJjaGxpbnV4YXJtLm9yZy9vcy9BcmNoTGludXhB
-Uk0tYWFyY2g2NC1sYXRlc3QudGFyLmd6DQoNCkZJTEU9L2Rldi9tbWNibGswcDENCmlmIFsgLWIg
-IiRGSUxFIiBdOyB0aGVuDQogICAgICAgIGV4cG9ydCBESVNLPS9kZXYvbW1jYmxrMA0KICAgICAg
-ICBzdWRvIHN1ZG8gd2lwZWZzIC1hICR7RElTS31wMQ0KICAgICAgICBzdWRvIGRkIGlmPS9kZXYv
-emVybyBvZj0ke0RJU0t9IGJzPTFNIGNvdW50PTUxMg0KDQogICAgICAgIHN1ZG8gc2ZkaXNrICR7
-RElTS30gPDwtX19FT0ZfXw0KICAgICAgICAxNk0sLEwsKg0KICAgICAgICBfX0VPRl9fDQoNCiAg
-ICAgICAgc3VkbyBta2ZzLmV4dDQgJHtESVNLfXAxDQogICAgICAgIHN5bmMNCg0KICAgICAgICBz
-dWRvIG1vdW50ICR7RElTS31wMSByb290DQogICAgICAgIHN5bmMNCiAgICAgICAgc3VkbyBic2R0
-YXIgLXhwZiBBcmNoTGludXhBUk0tYWFyY2g2NC1sYXRlc3QudGFyLmd6IC1DIHJvb3QNCiAgICAg
-ICAgc3luYw0KDQogICAgICAgICMgY3JlYXRlIGN1c3RvbSBib290LnNjcg0KICAgICAgICBta2lt
-YWdlIC1BIGFybSAtTyBsaW51eCAtVCBzY3JpcHQgLUMgbm9uZSAtbiAiQXJjaCBVLUJvb3QgYm9v
-dCBzY3JpcHQgT2Ryb2lkIE4yIiAtZCBib290LW9kcm9pZG4yLnR4dCBib290LnNjcg0KICAgICAg
-ICBzdWRvIGNwIC12IGJvb3Quc2NyICAgICByb290L2Jvb3QvDQogICAgICAgIHN5bmMNCiAgICAg
-ICAgc3VkbyB1bW91bnQgcm9vdA0KZWxzZQ0KICAgICAgICBlY2hvICIkRklMRSBkb2VzIG5vdCBl
-eGlzdCINCmZpDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0NCm15IGJvb3Qtb2Ryb2lkbjIudHh0
-IGNvbnZlcnRlZCB0byBib290LnNjcg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KIyBBZnRlciBt
-b2RpZnlpbmcsIHJ1biAuL21rc2NyDQoNCnRlc3QgLW4gIiR7ZGlzdHJvX2Jvb3RwYXJ0fSIgfHwg
-c2V0ZW52IGRpc3Ryb19ib290cGFydCAxDQpwYXJ0IHV1aWQgJHtkZXZ0eXBlfSAke2Rldm51bX06
-JHtkaXN0cm9fYm9vdHBhcnR9IHV1aWQNCnNldGVudiBib290YXJncyAiY29uc29sZT10dHlBTUww
-LDExNTIwMG44IHJvb3Q9UEFSVFVVSUQ9JHt1dWlkfSBydyByb290d2FpdCBlYXJseWNvbiBub19j
-b25zb2xlX3N1c3BlbmQiDQoNCmlmIGxvYWQgJHtkZXZ0eXBlfSAke2Rldm51bX06JHtkaXN0cm9f
-Ym9vdHBhcnR9ICR7a2VybmVsX2FkZHJfcn0gL2Jvb3QvSW1hZ2U7IHRoZW4NCiAgaWYgbG9hZCAk
-e2RldnR5cGV9ICR7ZGV2bnVtfToke2Rpc3Ryb19ib290cGFydH0gJHtmZHRfYWRkcl9yfSAvYm9v
-dC9kdGJzLyR7ZmR0ZmlsZX07IHRoZW4NCiAgICBpZiBsb2FkICR7ZGV2dHlwZX0gJHtkZXZudW19
-OiR7ZGlzdHJvX2Jvb3RwYXJ0fSAke3JhbWRpc2tfYWRkcl9yfSAvYm9vdC9pbml0cmFtZnMtbGlu
-dXguaW1nOyB0aGVuDQogICAgICBib290aSAke2tlcm5lbF9hZGRyX3J9ICR7cmFtZGlza19hZGRy
-X3J9OiR7ZmlsZXNpemV9ICR7ZmR0X2FkZHJfcn07DQogICAgZWxzZQ0KICAgICAgYm9vdGkgJHtr
-ZXJuZWxfYWRkcl9yfSAtICR7ZmR0X2FkZHJfcn07DQogICAgZmk7DQogIGZpOw0KZmkNCg0KLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpTdGVwIDI6IEJ1aWxkIGFuZCBmbGFzaCB0aGUgbWFpbmxp
-bmUgdS1ib290IHRvIHRoZSBzZGNhcmQgLyBlTU1DLg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-DQojIS9iaW4vYmFzaA0Kc2V0ICt4DQoNCiMgVS1Cb290IGZvciBPRFJPSUQtTjINCnJtIHUtYm9v
-dC1uMi9maXAvdS1ib290LmJpbi5zZC5iaW4NCg0KZ2l0IGNsb25lIGh0dHBzOi8vZ2l0bGFiLmRl
-bnguZGUvdS1ib290L3UtYm9vdC5naXQgdS1ib290LW4yDQpjZCB1LWJvb3QtbjINCg0KIyB1LWJv
-b3QgY29tcGlsYXRpb24NCiMgPT09PT09PT09PT09PT09PT09DQoNCmdpdCBwdWxsIG9yaWdpbiBt
-YXN0ZXINCmV4cG9ydCBBUkNIPWFybTY0DQpleHBvcnQgQ1JPU1NfQ09NUElMRT1hYXJjaDY0LWxp
-bnV4LWdudS0NCm1ha2UgZGlzdGNsZWFuDQptYWtlIG9kcm9pZC1uMl9kZWZjb25maWcgYWxsDQoN
-CiMgPT09PT09PT09PT09PT0NCmNkIC4uDQp3Z2V0IGh0dHBzOi8vcmVsZWFzZXMubGluYXJvLm9y
-Zy9hcmNoaXZlLzEzLjExL2NvbXBvbmVudHMvdG9vbGNoYWluL2JpbmFyaWVzL2djYy1saW5hcm8t
-YWFyY2g2NC1ub25lLWVsZi00LjgtMjAxMy4xMV9saW51eC50YXIueHoNCndnZXQgaHR0cHM6Ly9y
-ZWxlYXNlcy5saW5hcm8ub3JnL2FyY2hpdmUvMTMuMTEvY29tcG9uZW50cy90b29sY2hhaW4vYmlu
-YXJpZXMvZ2NjLWxpbmFyby1hcm0tbm9uZS1lYWJpLTQuOC0yMDEzLjExX2xpbnV4LnRhci54eg0K
-dGFyIHh2ZkogZ2NjLWxpbmFyby1hYXJjaDY0LW5vbmUtZWxmLTQuOC0yMDEzLjExX2xpbnV4LnRh
-ci54eg0KdGFyIHh2ZkogZ2NjLWxpbmFyby1hcm0tbm9uZS1lYWJpLTQuOC0yMDEzLjExX2xpbnV4
-LnRhci54eg0KZXhwb3J0IFBBVEg9JFBXRC9nY2MtbGluYXJvLWFhcmNoNjQtbm9uZS1lbGYtNC44
-LTIwMTMuMTFfbGludXgvYmluOiRQV0QvZ2NjLWxpbmFyby1hcm0tbm9uZS1lYWJpLTQuOC0yMDEz
-LjExX2xpbnV4L2JpbjokUEFUSA0KDQpESVI9b2Ryb2lkLW4yDQpnaXQgY2xvbmUgLS1kZXB0aCAx
-IFwNCiAgICBodHRwczovL2dpdGh1Yi5jb20vaGFyZGtlcm5lbC91LWJvb3QuZ2l0IC1iIG9kcm9p
-ZG4yLXYyMDE1LjAxIFwNCiAgICAkRElSDQoNCmNkIG9kcm9pZC1uMg0KZ2l0IHB1bGwgb3JpZ2lu
-IG1hc3Rlcg0KbWFrZSBkaXN0Y2xlYW4NCm1ha2Ugb2Ryb2lkbjJfZGVmY29uZmlnDQptYWtlDQpl
-eHBvcnQgVUJPT1RESVI9JFBXRA0KDQojIEdvIGJhY2sgdG8gbWFpbmxpbmUgVS1Cb290IHNvdXJj
-ZSB0cmVlIHRoZW4gOg0KY2QgLi4vdS1ib290LW4yDQpta2RpciBmaXANCg0Kd2dldCBodHRwczov
-L2dpdGh1Yi5jb20vQmF5TGlicmUvdS1ib290L3JlbGVhc2VzL2Rvd25sb2FkL3YyMDE3LjExLWxp
-YnJldGVjaC1jYy9ibHhfZml4X2cxMmEuc2ggLU8gZmlwL2JseF9maXguc2gNCmNwIC12ICRVQk9P
-VERJUi9idWlsZC9zY3BfdGFzay9ibDMwMS5iaW4gZmlwLw0KY3AgLXYgJFVCT09URElSL2J1aWxk
-L2JvYXJkL2hhcmRrZXJuZWwvb2Ryb2lkbjIvZmlybXdhcmUvYWNzLmJpbiBmaXAvDQpjcCAtdiAk
-VUJPT1RESVIvZmlwL2cxMmIvYmwyLmJpbiBmaXAvDQpjcCAtdiAkVUJPT1RESVIvZmlwL2cxMmIv
-YmwzMC5iaW4gZmlwLw0KY3AgLXYgJFVCT09URElSL2ZpcC9nMTJiL2JsMzEuaW1nIGZpcC8NCmNw
-IC12ICRVQk9PVERJUi9maXAvZzEyYi9kZHIzXzFkLmZ3IGZpcC8NCmNwIC12ICRVQk9PVERJUi9m
-aXAvZzEyYi9kZHI0XzFkLmZ3IGZpcC8NCmNwIC12ICRVQk9PVERJUi9maXAvZzEyYi9kZHI0XzJk
-LmZ3IGZpcC8NCmNwIC12ICRVQk9PVERJUi9maXAvZzEyYi9kaWFnX2xwZGRyNC5mdyBmaXAvDQpj
-cCAtdiAkVUJPT1RESVIvZmlwL2cxMmIvbHBkZHI0XzFkLmZ3IGZpcC8NCmNwIC12ICRVQk9PVERJ
-Ui9maXAvZzEyYi9scGRkcjRfMmQuZncgZmlwLw0KY3AgLXYgJFVCT09URElSL2ZpcC9nMTJiL3Bp
-ZWkuZncgZmlwLw0KY3AgLXYgJFVCT09URElSL2ZpcC9nMTJiL2FtbF9kZHIuZncgZmlwLw0KY3Ag
-LXYgdS1ib290LmJpbiBmaXAvYmwzMy5iaW4NCg0KYmFzaCBmaXAvYmx4X2ZpeC5zaCBcDQogICAg
-IGZpcC9ibDMwLmJpbiBcDQogICAgIGZpcC96ZXJvX3RtcCBcDQogICAgIGZpcC9ibDMwX3plcm8u
-YmluIFwNCiAgICAgZmlwL2JsMzAxLmJpbiBcDQogICAgIGZpcC9ibDMwMV96ZXJvLmJpbiBcDQog
-ICAgIGZpcC9ibDMwX25ldy5iaW4gXA0KICAgICBibDMwDQoNCmJhc2ggZmlwL2JseF9maXguc2gg
-XA0KICAgICBmaXAvYmwyLmJpbiBcDQogICAgIGZpcC96ZXJvX3RtcCBcDQogICAgIGZpcC9ibDJf
-emVyby5iaW4gXA0KICAgICBmaXAvYWNzLmJpbiBcDQogICAgIGZpcC9ibDIxX3plcm8uYmluIFwN
-CiAgICAgZmlwL2JsMl9uZXcuYmluIFwNCiAgICAgYmwyDQoNCiRVQk9PVERJUi9maXAvZzEyYi9h
-bWxfZW5jcnlwdF9nMTJiIC0tYmwzMHNpZyAtLWlucHV0IGZpcC9ibDMwX25ldy5iaW4gXA0KICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLW91dHB1dCBmaXAvYmwzMF9uZXcuYmluLmcx
-MmEuZW5jIFwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS1sZXZlbCB2Mw0KJFVC
-T09URElSL2ZpcC9nMTJiL2FtbF9lbmNyeXB0X2cxMmIgLS1ibDNzaWcgLS1pbnB1dCBmaXAvYmwz
-MF9uZXcuYmluLmcxMmEuZW5jIFwNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgLS1v
-dXRwdXQgZmlwL2JsMzBfbmV3LmJpbi5lbmMgXA0KICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAtLWxldmVsIHYzIC0tdHlwZSBibDMwDQokVUJPT1RESVIvZmlwL2cxMmIvYW1sX2VuY3J5
-cHRfZzEyYiAtLWJsM3NpZyAtLWlucHV0IGZpcC9ibDMxLmltZyBcDQogICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIC0tb3V0cHV0IGZpcC9ibDMxLmltZy5lbmMgXA0KICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAtLWxldmVsIHYzIC0tdHlwZSBibDMxDQokVUJPT1RESVIvZmlw
-L2cxMmIvYW1sX2VuY3J5cHRfZzEyYiAtLWJsM3NpZyAtLWlucHV0IGZpcC9ibDMzLmJpbiAtLWNv
-bXByZXNzIGx6NCBcDQogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIC0tb3V0cHV0IGZp
-cC9ibDMzLmJpbi5lbmMgXA0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAtLWxldmVs
-IHYzIC0tdHlwZSBibDMzIC0tY29tcHJlc3MgbHo0DQokVUJPT1RESVIvZmlwL2cxMmIvYW1sX2Vu
-Y3J5cHRfZzEyYiAtLWJsMnNpZyAtLWlucHV0IGZpcC9ibDJfbmV3LmJpbiBcDQogICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIC0tb3V0cHV0IGZpcC9ibDIubi5iaW4uc2lnDQokVUJPT1RE
-SVIvZmlwL2cxMmIvYW1sX2VuY3J5cHRfZzEyYiAtLWJvb3RtayBcDQogICAgICAgIC0tb3V0cHV0
-IGZpcC91LWJvb3QuYmluIFwNCiAgICAgICAgLS1ibDIgZmlwL2JsMi5uLmJpbi5zaWcgXA0KICAg
-ICAgICAtLWJsMzAgZmlwL2JsMzBfbmV3LmJpbi5lbmMgXA0KICAgICAgICAtLWJsMzEgZmlwL2Js
-MzEuaW1nLmVuYyBcDQogICAgICAgIC0tYmwzMyBmaXAvYmwzMy5iaW4uZW5jIFwNCiAgICAgICAg
-LS1kZHJmdzEgZmlwL2RkcjRfMWQuZncgXA0KICAgICAgICAtLWRkcmZ3MiBmaXAvZGRyNF8yZC5m
-dyBcDQogICAgICAgIC0tZGRyZnczIGZpcC9kZHIzXzFkLmZ3IFwNCiAgICAgICAgLS1kZHJmdzQg
-ZmlwL3BpZWkuZncgXA0KICAgICAgICAtLWRkcmZ3NSBmaXAvbHBkZHI0XzFkLmZ3IFwNCiAgICAg
-ICAgLS1kZHJmdzYgZmlwL2xwZGRyNF8yZC5mdyBcDQogICAgICAgIC0tZGRyZnc3IGZpcC9kaWFn
-X2xwZGRyNC5mdyBcDQogICAgICAgIC0tZGRyZnc4IGZpcC9hbWxfZGRyLmZ3IFwNCiAgICAgICAg
-LS1sZXZlbCB2Mw0KDQoNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpTdGVw
-IDM6IEZsYXNoIHRoZSB1LWJvb3QgaW1hZ2UNCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tDQpGSUxFPS9kZXYvbW1jYmxrMA0KaWYgWyAtYiAiJEZJTEUiIF07IHRoZW4NCiAgICAg
-ICAgREVWPS9kZXYvbW1jYmxrMA0KICAgICAgICBzdWRvIGRkIGlmPWZpcC91LWJvb3QuYmluLnNk
-LmJpbiBvZj0kREVWIGNvbnY9ZnN5bmMsbm90cnVuYyBicz01MTIgc2tpcD0xIHNlZWs9MQ0KICAg
-ICAgICBzdWRvIGRkIGlmPWZpcC91LWJvb3QuYmluLnNkLmJpbiBvZj0kREVWIGNvbnY9ZnN5bmMs
-bm90cnVuYyBicz0xIGNvdW50PTQ0NA0KZWxzZQ0KICAgICAgIGVjaG8gIiRGSUxFIGRvZXMgbm90
-IGV4aXN0Ig0KZmkNCg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpXaXRoIHRo
-aXMgc3RlcCB5b3Ugd2lsbCBoYXZlIHdvcmtpbmcgYnVpbGQgaW1hZ2UgdG8gYm9vdCB0aGUga2Vy
-bmVsLg0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNCi0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpTdGVwIDQ6IEZvciBjbG9zcyBjb21waWxlIGFuZCBi
-dWlsZCB0aGUga2VybmVsDQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-DQpleHBvcnQgR0NDX0NPTE9SUz1hdXRvDQoNCm1ha2UgQVJDSD1hcm02NCBtcnByb3Blcg0KbWFr
-ZSBBUkNIPWFybTY0IENST1NTX0NPTVBJTEU9YWFyY2g2NC1saW51eC1nbnUtIGRlZmNvbmZpZw0K
-bWFrZSBBUkNIPWFybTY0IENST1NTX0NPTVBJTEU9YWFyY2g2NC1saW51eC1nbnUtIC1qJChucHJv
-YykgZHRicyBJbWFnZSBtb2R1bGVzDQoNCm1rZGlyIC1wIG1lZGlhDQpzdWRvIG1vdW50IC9kZXYv
-bW1jYmxrMHAxIC4vbWVkaWENCnN1ZG8gY3AgLXYgYXJjaC9hcm02NC9ib290L0ltYWdlIC4vbWVk
-aWEvYm9vdC8NCnN1ZG8gY3AgLXYgYXJjaC9hcm02NC9ib290L2R0cy9hbWxvZ2ljL21lc29uLWd4
-YmItb2Ryb2lkYzIuZHRiIC4vbWVkaWEvYm9vdC9kdGJzL2FtbG9naWMvbWVzb24tZ3hiYi1vZHJv
-aWRjMi5kdGINCnN1ZG8gY3AgLXYgYXJjaC9hcm02NC9ib290L2R0cy9hbWxvZ2ljL21lc29uLWcx
-MmItb2Ryb2lkLW4yLmR0YiAuL21lZGlhL2Jvb3QvZHRicy9hbWxvZ2ljL21lc29uLWcxMmItb2Ry
-b2lkLW4yLmR0Yg0Kc3VkbyBtYWtlIEFSQ0g9YXJtNjQgTE9DQUxWRVJTSU9OPS14bWx0IG1vZHVs
-ZXNfaW5zdGFsbCBJTlNUQUxMX01PRF9QQVRIPS4vbWVkaWEgJiYgc3luYyAmJiBzdWRvIHVtb3Vu
-dCAuL21lZGlhICYmIHN1ZG8gcm0gLXJmIC4vbWVkaWENCg==
---00000000000067518905a14398c7--
+> +                                           NULL /* parent_name */,
+> +                                           0 /* flags */,
+> +                                           12288000 /* rate */);
+> +       if (IS_ERR_OR_NULL(dai->mclk)) {
+> +               ret = PTR_ERR(dai->mclk);
+> +               adv_err(state, "Failed to register MCLK (%d)\n", ret);
+> +               goto fail;
+> +       }
+> +       ret = of_clk_add_provider(state->dev->of_node, of_clk_src_simple_get,
+> +                                 dai->mclk);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to add MCLK provider (%d)\n", ret);
+> +               goto unreg_mclk;
+> +       }
+> +       dai->drv.name = ADV748X_DAI_NAME;
+> +       dai->drv.ops = &adv748x_dai_ops;
+> +       dai->drv.capture = (struct snd_soc_pcm_stream){
+> +               .stream_name    = "Capture",
+> +               .channels_min   = 8,
+> +               .channels_max   = 8,
+> +               .rates = SNDRV_PCM_RATE_48000,
+> +               .formats = SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_U24_LE,
+> +       };
+> +
+> +       ret = devm_snd_soc_register_component(state->dev, &adv748x_codec,
+> +                                             &dai->drv, 1);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to register the codec (%d)\n", ret);
+> +               goto cleanup_mclk;
+> +       }
+> +       return 0;
+> +
+> +cleanup_mclk:
+> +       of_clk_del_provider(state->dev->of_node);
+> +unreg_mclk:
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +fail:
+> +       return ret;
+> +}
+> +
+> +void adv748x_dai_cleanup(struct adv748x_dai *dai)
+> +{
+> +       struct adv748x_state *state = adv748x_dai_to_state(dai);
+> +
+> +       of_clk_del_provider(state->dev->of_node);
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +}
+> +
+> diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+> index 7bc1bb0b3756..af70632926b5 100644
+> --- a/drivers/media/i2c/adv748x/adv748x.h
+> +++ b/drivers/media/i2c/adv748x/adv748x.h
+> @@ -19,6 +19,7 @@
+>   */
+>
+>  #include <linux/i2c.h>
+> +#include <sound/soc.h>
+>  #include <media/v4l2-ctrls.h>
+>  #include <media/v4l2-device.h>
+>
+> @@ -63,7 +64,8 @@ enum adv748x_ports {
+>         ADV748X_PORT_TTL = 9,
+>         ADV748X_PORT_TXA = 10,
+>         ADV748X_PORT_TXB = 11,
+> -       ADV748X_PORT_MAX = 12,
+> +       ADV748X_PORT_I2S = 12,
+> +       ADV748X_PORT_MAX = 13,
+>  };
+>
+>  enum adv748x_csi2_pads {
+> @@ -166,6 +168,12 @@ struct adv748x_afe {
+>         container_of(ctrl->handler, struct adv748x_afe, ctrl_hdl)
+>  #define adv748x_sd_to_afe(sd) container_of(sd, struct adv748x_afe, sd)
+>
+> +struct adv748x_dai {
+> +       struct snd_soc_dai_driver drv;
+> +       struct clk *mclk;
+> +       unsigned int freq, fmt, tdm;
+> +};
+> +
+>  /**
+>   * struct adv748x_state - State of ADV748X
+>   * @dev:               (OF) device
+> @@ -182,6 +190,7 @@ struct adv748x_afe {
+>   * @afe:               state of AFE receiver context
+>   * @txa:               state of TXA transmitter context
+>   * @txb:               state of TXB transmitter context
+> + * @mclk:              MCLK clock of the I2S port
+>   */
+>  struct adv748x_state {
+>         struct device *dev;
+> @@ -197,10 +206,12 @@ struct adv748x_state {
+>         struct adv748x_afe afe;
+>         struct adv748x_csi2 txa;
+>         struct adv748x_csi2 txb;
+> +       struct adv748x_dai dai;
+>  };
+>
+>  #define adv748x_hdmi_to_state(h) container_of(h, struct adv748x_state, hdmi)
+>  #define adv748x_afe_to_state(a) container_of(a, struct adv748x_state, afe)
+> +#define adv748x_dai_to_state(p) container_of(p, struct adv748x_state, dai)
+>
+>  #define adv_err(a, fmt, arg...)        dev_err(a->dev, fmt, ##arg)
+>  #define adv_info(a, fmt, arg...) dev_info(a->dev, fmt, ##arg)
+> @@ -485,4 +496,7 @@ int adv748x_csi2_set_pixelrate(struct v4l2_subdev *sd, s64 rate);
+>  int adv748x_hdmi_init(struct adv748x_hdmi *hdmi);
+>  void adv748x_hdmi_cleanup(struct adv748x_hdmi *hdmi);
+>
+> +int adv748x_dai_init(struct adv748x_dai *);
+> +void adv748x_dai_cleanup(struct adv748x_dai *);
+> +
+>  #endif /* _ADV748X_H_ */
+> --
+> 2.25.1.25.g9ecbe7eb18
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
