@@ -2,47 +2,47 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A43C43333
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 23:27:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0A1C4332B
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 23:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0127820739
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 23:27:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 187FA20752
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 23:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584746872;
-	bh=ASS//GvAtVvdHk6mIdTRDSE9uGqREpyDkhRDo0uFdus=;
+	s=default; t=1584746894;
+	bh=ykWZh+Tk8bWW5j7uIhsqhIW62DYIpWKBd42c+3N3r3g=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=njXR1Ia38/IynGXVmSxo2Vcc2DSdTjMj6ygR0D+yFpGfW/qWcGU4Y8JSDI1n0xa1S
-	 GIjHCTjoe6DZs1slDreqkwWwHu1qHV6MhgP+XdEwut9ruhjo/7tp+X3rw4Rh6qDi5F
-	 NXCyvNt/EerH84D/N14cZj3OkKcVm9XfxfcDmvtY=
+	b=XVJfopHL7KltfF4JDhGSssper3lP70xSmhQvaiKOShijeQlGAXSWDDJeZwuRSzr3q
+	 OSaxuUGCJUhPpRVhrlYU4WDmee/zCmpd+SXAIR1jT8+Naoo3nUAM8dddoLWHYUHb8Q
+	 7B2k4xv8or5KGrVHLe8YrmcMW3ZyC4B5yi+YcxEk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgCTX1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 19:27:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42644 "EHLO mail.kernel.org"
+        id S1727264AbgCTX2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 19:28:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbgCTX1s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 19:27:48 -0400
+        id S1726738AbgCTX2N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 19:28:13 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 853812072D;
-        Fri, 20 Mar 2020 23:27:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5FFE2072D;
+        Fri, 20 Mar 2020 23:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584746867;
-        bh=ASS//GvAtVvdHk6mIdTRDSE9uGqREpyDkhRDo0uFdus=;
+        s=default; t=1584746893;
+        bh=ykWZh+Tk8bWW5j7uIhsqhIW62DYIpWKBd42c+3N3r3g=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kOOtWUuijfJYu4AZjrCwsPeC7JIG9KTRzkz72veEvssf4XQjy285RzhzNTvtYWIlr
-         10XrkZAR5ZXJldw2rfVI4HwRZvGADH7F6NRhU9OcSEdAg5omvBuvobP2HQ++2A06Qk
-         7EvHdQh+cTfn5HB26jj59KeBVgRaQ2uV7MjduX3s=
+        b=eP+E00FtIw386mQ0z4SrVpLTcPvP6BngS4QD/jOzAEv49EAQwzufrz/jGYy5kDcwe
+         PsB4zMnynaI8IMQUZuODxfpvjOD9KwicgaXndtiDgg3aRDvtF5udUOr9pMGd+pMDJ+
+         MVDKJUAm6VhjHvSL8BwdGe7hViPNvEPHNr4wN8Wo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1584596131-22741-1-git-send-email-tdas@codeaurora.org>
-References: <1584596131-22741-1-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v7 0/3] Add modem Clock controller (MSS CC) driver for SC7180
+In-Reply-To: <1584596131-22741-2-git-send-email-tdas@codeaurora.org>
+References: <1584596131-22741-1-git-send-email-tdas@codeaurora.org> <1584596131-22741-2-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -53,16 +53,22 @@ Cc:     David Brown <david.brown@linaro.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Fri, 20 Mar 2020 16:27:46 -0700
-Message-ID: <158474686671.125146.6056513234853643003@swboyd.mtv.corp.google.com>
+Date:   Fri, 20 Mar 2020 16:28:12 -0700
+Message-ID: <158474689202.125146.13129713803655600343@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-03-18 22:35:28)
-> [v7]
->  * Fix Documentation YAML issues reported.
+Quoting Taniya Das (2020-03-18 22:35:29)
+> The Modem Subsystem clock provider have a bunch of generic properties
+> that are needed in a device tree. Add a YAML schemas for those.
+>=20
+> Add clock ids for GCC MSS and MSS clocks which are required to bring
+> the modem out of reset.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
 
-Please pick up Sibi's tested-by tag next time.
+Applied to clk-next
