@@ -2,166 +2,146 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44C5C4332D
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536B3C4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 808642072D
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:34:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4uXw8Pf"
+	by mail.kernel.org (Postfix) with ESMTP id 31BBE20788
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:59:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbgCTKez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 06:34:55 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38290 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbgCTKez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 06:34:55 -0400
-Received: by mail-wm1-f65.google.com with SMTP id l20so5708337wmi.3;
-        Fri, 20 Mar 2020 03:34:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=A9LMr0UXcZSEqVnqNAwLyFiSr+kmUdRM1J1fT1cXn5U=;
-        b=Z4uXw8PfRFLJlofHFGW41vrqoGwlAIqRACj+uRDYvGpB8tWq7q1Li9OwTmu9kmT7sS
-         VJ3g8sAmUG2NSBqkCPDsohe7yIgPn3QYHTtZLkdZRYvvKEXiboau8buIhpjAzyNF7evV
-         x8vRSxGYM0NmnHdGYBjFzdCkQW3RfOZeutJgCiimnqdA8Gdqu2ANQvtjli+HGCLBzz+Q
-         v0Iyv/TwBHXbwA0m9jSHsI9Ks5ouiTq8po/U26UqHCZnOeITzTRNSvu2ha6JxopKmf12
-         RFvRFeqsQMqfbXmM1nUgVOsBp1+1zkx3fMIeAvg8fRKJqvRrmtmPrKcw2aY5p9exuglM
-         TKWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=A9LMr0UXcZSEqVnqNAwLyFiSr+kmUdRM1J1fT1cXn5U=;
-        b=DEqEfb6zAW0+TDZe3TilMZPW6snb29jO5GeFIPWRU1lsD9zx5eISvt1RWt7raR7wVh
-         4KrIsUumEtGiZY2ROifrW83enC1QT2IrXkGQkPDPecCct8kSsie0s2Jxt7rAwlASqQaG
-         zumWjoQi1KVh1OJZuFtHbZoTrLFt3mW5X+zcOJXps7MZJJuErl/vguONiHM7JcVJ7lMg
-         SAcFOvzQTwkT6XJmYMcOH4HLYcTc6GqYk8daIPXvg6XS+hmogTJt3UXeJKd7a+UGHQ3h
-         h0F1qXr7kIGzS0am8sNHCpnXBHvaylHdq626cSIC2ocDbE1wg+BbYvFcApxFCiYUozH5
-         SBEw==
-X-Gm-Message-State: ANhLgQ0QO8eVj8ICyHdT6Jhao+nhywn1tyRzzi5+pOwEITvgg8d35zbI
-        3V4NK+IBnW22iDqMN7PZhRJytHpTX/1nKiFGMTZWJQ7M
-X-Google-Smtp-Source: ADFU+vvRrvOiPU9AK3wSD6H8a7LzgOUg2SrSTLcnrfXfsiTSvivvRS4XrMnjiu3ESR+V0DJhpgTVgiItLeoY1EdIvVU=
-X-Received: by 2002:a7b:c92a:: with SMTP id h10mr9145899wml.26.1584700492517;
- Fri, 20 Mar 2020 03:34:52 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200304072730.9193-1-zhang.lyra@gmail.com>
-In-Reply-To: <20200304072730.9193-1-zhang.lyra@gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Fri, 20 Mar 2020 18:34:16 +0800
-Message-ID: <CAAfSe-sWv1mrx1GPgO8ZRhSs9vbAy_PY_BA4BkHrE5FghsX7nA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/7] Add clocks for Unisoc's SC9863A
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1727005AbgCTK7D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 06:59:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:41897 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbgCTK7C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 06:59:02 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MPXta-1itszl3gFW-00Meet; Fri, 20 Mar 2020 11:58:47 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id E62146501DB;
+        Fri, 20 Mar 2020 10:58:46 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id iWOs4ZaNJtNh; Fri, 20 Mar 2020 11:58:46 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 9777564F45C;
+        Fri, 20 Mar 2020 11:58:46 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.41) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Fri, 20 Mar 2020 11:58:46 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id 09B4B8050D; Fri, 20 Mar 2020 11:58:46 +0100 (CET)
+Date:   Fri, 20 Mar 2020 11:58:46 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 05/10] media: adv748x: add support for HDMI audio
+Message-ID: <20200320105846.GG4344@pflmari>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        driverdevel <devel@driverdev.osuosl.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <cover.1584639664.git.alexander.riesen@cetitec.com>
+ <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
+ <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com>
+X-Originating-IP: [10.8.5.41]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D776A
+X-Provags-ID: V03:K1:gtuij3dAJiYujWnkoDtooYsdCMWO9pBYd9dPTTa/FSGo8gecAfC
+ URld0b8m+Rp/auU0krCrDaaXNorutl+DDrafS3dPrrUAUOLw7JXbbvI1mVibbmCOQXKYIvk
+ ezIQmWEASa/+6YHZ8Nfa+MiLM9ojp8w1V24gfWxek7ZCKQc2SYBW8lqtwAlfUqUNBAHSTiF
+ EN9Z693r2b9T7rDM9t6vg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yiw+bxjplYU=:Ewjxxm0gcp4ntRvEsGYeZV
+ 7zsQK2sxjP4AvCducAmfHAokJ7y7uzrkl94oaECFh2BrRJAu3ejMBZF/xGwQ6mEU6ch2eF3ai
+ +e5+DXZKEnwPks+ue3r3fdoivP8aHalIYyPyU985b9l6MxYUwD+HCH6pmXJCjxUs+lUM/eNnR
+ FL2gELpL5xDn+LSoxgshN4HtlUsVsbdA0O/j/I6+SLmzLUmUVT6mRYa4pAuk7xcGnGyPecIfA
+ GLa4+oKFgR8O7bUD82KNyDd6tpBW8XR1x7SveaCTuseqNhPh3AOcrjbg/wF/SOsTcRWzZW+OS
+ U0o1JKMpS3kl/tiOK1422h1IhlIJrm9HrXpaGgNYbdZlduKP+ca3K0TG7CfSzY9ktakOwvz+j
+ 56qmx28b5g2RRObGPwhBroXwwoPgc3gTPkKe3ry9Df8Q8OgdFhUFoXtUOpXvMh/r1zDFcHHjt
+ q3kYsrP0V1jK8wgyDLeXUwcpXIMhtKQqPLHDax5JQKry9aROE1ZHnYYE/Ry/l7TeXPsDAiJk9
+ P1Z2Mj03clbdY7v+q8Sr6OrUv8A+DctE3EWGIl+O3NBTTPgW4qMXJdP0mPEySD8/6Ril78eRB
+ M9F7a9Jsvx+KRD0PYuHlsFHbOCO/L03+TIq9h/QqGSy3iJJk2Rq9A3mrF424z5RPQMexoaDkH
+ ZLjACeKiLhLL9c+q3He+e7JtW9U0VpcRFOhf83VZLB7a2sLRDBVGkAw4/GgxsEk9LtLLrlbeN
+ p7bVmEDYKxkPIf0ma4MYQTesQoacvZBurF3+V7+He138APayDX/wotHV3s/4bHVjLeyxL2fCY
+ 2k6hd/GA7rcIiLAvEWHiGy6CD+6IB45WQRwnTx/P8sAoSTnzaiPEtJ9qEsR4B2aKBJLTW2X
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Geert,
 
-Could you please take this patch-set to your tree if there are no
-further comments.
+Geert Uytterhoeven, Fri, Mar 20, 2020 09:43:29 +0100:
+> CC linux-clk for the clock provider.
+> 
+> On Thu, Mar 19, 2020 at 6:42 PM Alex Riesen <alexander.riesen@cetitec.com> wrote:
+> > This adds an implemention of SoC DAI driver which provides access to the
+> > I2S port of the device.
 
-Thanks,
-Chunyan
+I just noticed I don't do clk_prepare_enable anywhere.
+Shouldn't the clock master enable its clocks somewhere?
 
-On Wed, 4 Mar 2020 at 15:28, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
->
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
->
-> Add SC9863A specific clock driver and devicetree bindings for it,
-> this patch add to support the new way of specifying parents
-> without name strings of clocks.
->
-> Also this patchset added support gate clock for pll which need to
-> wait a certain time for stable after being switched on.
->
-> Changes from v5:
-> * Addressed comments from Rob:
-> - Removed description from "clock-names" and "reg" properties;
-> - Added maxItem to "reg" property.
-> * Modified the descriptions for those clocks which are a child node of
->   a syscon.
->
-> Changes from v4:
-> * Fixed dt_binding_check warnings.
->
-> Changes from v3:
-> * Rebased onto v5.6-rc1.
->
-> Changes from v2:
-> * Addressed comments from Stephen:
-> - Remove ununsed header file from sc9863a-clk.c;
-> - Added comments for clocks which were marked with CLK_IGNORE_UNUSED,
->   and removed some unnecessary CLK_IGNORE_UNUSED;
-> - Added error checking for sprd_clk_regmap_init().
->
-> * Addressed comments from Rob:
-> - Put some clocks under syscon nodes, since these clocks have the same
->   physical address base with the syscon;
-> - Added clocks maxItems and listed out clock-names.
->
-> * Added Rob's reviewed-by on patch 4.
->
-> Changes from v1:
-> * Addressed comments:
-> - Removed redefine things;
-> - Switched DT bindings to yaml schema;
-> - Added macros for the new way of specifying clk parents;
-> - Switched to use the new way of specifying clk parents;
-> - Clean CLK_IGNORE_UNUSED flags for some SC9863A clocks;
-> - Dropped the module alias;
-> - Use device_get_match_data() instead of of_match_node();
->
-> * Added Rob's Acked-by on patch 2.
->
-> Chunyan Zhang (6):
->   dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
->     specific
->   dt-bindings: clk: sprd: add bindings for sc9863a clock controller
->   clk: sprd: Add dt-bindings include file for SC9863A
->   clk: sprd: Add macros for referencing parents without strings
->   clk: sprd: support to get regmap from parent node
->   clk: sprd: add clocks support for SC9863A
->
-> Xiaolong Zhang (1):
->   clk: sprd: add gate for pll clocks
->
->  .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
->  .../bindings/clock/sprd,sc9863a-clk.yaml      |  105 +
->  drivers/clk/sprd/Kconfig                      |    8 +
->  drivers/clk/sprd/Makefile                     |    1 +
->  drivers/clk/sprd/common.c                     |   10 +-
->  drivers/clk/sprd/composite.h                  |   39 +-
->  drivers/clk/sprd/div.h                        |   20 +-
->  drivers/clk/sprd/gate.c                       |   17 +
->  drivers/clk/sprd/gate.h                       |  120 +-
->  drivers/clk/sprd/mux.h                        |   28 +-
->  drivers/clk/sprd/pll.h                        |   55 +-
->  drivers/clk/sprd/sc9863a-clk.c                | 1772 +++++++++++++++++
->  include/dt-bindings/clock/sprd,sc9863a-clk.h  |  334 ++++
->  13 files changed, 2457 insertions(+), 54 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
->  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
->  create mode 100644 drivers/clk/sprd/sc9863a-clk.c
->  create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
->
-> --
-> 2.20.1
->
+> > diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/adv748x/adv748x-dai.c
+> > new file mode 100644
+> > index 000000000000..4775a0c7ed7f
+> > --- /dev/null
+> > +++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+...
+> > +static int adv748x_dai_startup(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
+> > +{
+> > +       struct adv748x_state *state = state_of(dai);
+> > +
+> > +       if (sub->stream != SNDRV_PCM_STREAM_CAPTURE)
+> > +               return -EINVAL;
+> > +       return set_audio_pads_state(state, 1);
+> > +}
+
+For example, here, after activation of the lines succeeded?
+
+> > +static void adv748x_dai_shutdown(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
+> > +{
+> > +       struct adv748x_state *state = state_of(dai);
+> > +
+> > +       set_audio_pads_state(state, 0);
+> > +}
+
+And clk_disable_unprepare here, before shutting down the pads?
+
+Regards,
+Alex
+
