@@ -2,99 +2,166 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF30C4332D
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 09:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B44C5C4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF48920767
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 09:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 808642072D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 10:34:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4uXw8Pf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726806AbgCTJKq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 05:10:46 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42033 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbgCTJKq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 05:10:46 -0400
-Received: by mail-ot1-f67.google.com with SMTP id a2so5258855otq.9;
-        Fri, 20 Mar 2020 02:10:45 -0700 (PDT)
+        id S1726726AbgCTKez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 06:34:55 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38290 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbgCTKez (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 06:34:55 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l20so5708337wmi.3;
+        Fri, 20 Mar 2020 03:34:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=A9LMr0UXcZSEqVnqNAwLyFiSr+kmUdRM1J1fT1cXn5U=;
+        b=Z4uXw8PfRFLJlofHFGW41vrqoGwlAIqRACj+uRDYvGpB8tWq7q1Li9OwTmu9kmT7sS
+         VJ3g8sAmUG2NSBqkCPDsohe7yIgPn3QYHTtZLkdZRYvvKEXiboau8buIhpjAzyNF7evV
+         x8vRSxGYM0NmnHdGYBjFzdCkQW3RfOZeutJgCiimnqdA8Gdqu2ANQvtjli+HGCLBzz+Q
+         v0Iyv/TwBHXbwA0m9jSHsI9Ks5ouiTq8po/U26UqHCZnOeITzTRNSvu2ha6JxopKmf12
+         RFvRFeqsQMqfbXmM1nUgVOsBp1+1zkx3fMIeAvg8fRKJqvRrmtmPrKcw2aY5p9exuglM
+         TKWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=Tg5BjS+sqoKmcQ+42q9TxLcAJmVp9TX8V+2Cw9tSbTc=;
-        b=aTcVktbEX8rrXl/LM4BLIEi3AcDdULW8imP+UQd+83ol927lkqqyFhnxPmFXYO7PxW
-         FEy2nLzIk4gIaGzlxosaQ5JYaG+DJAczIxAHBhe9hmUtYP/7wQTo7AQACPMdQvPrffQo
-         s1IovBhLxhO3/IyvayndMiWkXq72qjebMieBhaRUP+1fiMHfals4sZCZLLzOJ13YuCLX
-         Am/S83dgH8ovyRAKTBqjLS05LhxCsYd92+0XQs0ytYmsK/oiAA8aax1PgRXkw4yc+TML
-         IwOw0P6gDPp8kGFdOjEVtrq91Q+z06VMxEDRE/jcog/fxAHjajc3HiqDvq1B9CX2i9rT
-         Ealg==
-X-Gm-Message-State: ANhLgQ0Zc2jfbB5Sn1Rn/8vFxmFYqrDEpDrj19Afnqq5gyMAxtdzm6nu
-        vrodkNfTcy1W4oDkPDF5iXpQlGhT2Htk/V7bQhBzNQ==
-X-Google-Smtp-Source: ADFU+vsUtq7aKxlPk7a6wmuKLwOjxCxHK6YYdo8yUXNmA1Av41cm11S+ggWl9zkA56I5lN+TzJt+7vYyBdanbV3/AIo=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr5844474otk.145.1584695445126;
- Fri, 20 Mar 2020 02:10:45 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=A9LMr0UXcZSEqVnqNAwLyFiSr+kmUdRM1J1fT1cXn5U=;
+        b=DEqEfb6zAW0+TDZe3TilMZPW6snb29jO5GeFIPWRU1lsD9zx5eISvt1RWt7raR7wVh
+         4KrIsUumEtGiZY2ROifrW83enC1QT2IrXkGQkPDPecCct8kSsie0s2Jxt7rAwlASqQaG
+         zumWjoQi1KVh1OJZuFtHbZoTrLFt3mW5X+zcOJXps7MZJJuErl/vguONiHM7JcVJ7lMg
+         SAcFOvzQTwkT6XJmYMcOH4HLYcTc6GqYk8daIPXvg6XS+hmogTJt3UXeJKd7a+UGHQ3h
+         h0F1qXr7kIGzS0am8sNHCpnXBHvaylHdq626cSIC2ocDbE1wg+BbYvFcApxFCiYUozH5
+         SBEw==
+X-Gm-Message-State: ANhLgQ0QO8eVj8ICyHdT6Jhao+nhywn1tyRzzi5+pOwEITvgg8d35zbI
+        3V4NK+IBnW22iDqMN7PZhRJytHpTX/1nKiFGMTZWJQ7M
+X-Google-Smtp-Source: ADFU+vvRrvOiPU9AK3wSD6H8a7LzgOUg2SrSTLcnrfXfsiTSvivvRS4XrMnjiu3ESR+V0DJhpgTVgiItLeoY1EdIvVU=
+X-Received: by 2002:a7b:c92a:: with SMTP id h10mr9145899wml.26.1584700492517;
+ Fri, 20 Mar 2020 03:34:52 -0700 (PDT)
 MIME-Version: 1.0
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
- <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com> <20200320085748.GC4344@pflmari>
-In-Reply-To: <20200320085748.GC4344@pflmari>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 20 Mar 2020 10:10:24 +0100
-Message-ID: <CAMuHMdUvLGx41631HD-jOrpiw7Nyode-iXk0hxDhBHZ9JEqy7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] media: adv748x: add support for HDMI audio
-To:     Alex Riesen <alexander.riesen@cetitec.com>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+References: <20200304072730.9193-1-zhang.lyra@gmail.com>
+In-Reply-To: <20200304072730.9193-1-zhang.lyra@gmail.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Fri, 20 Mar 2020 18:34:16 +0800
+Message-ID: <CAAfSe-sWv1mrx1GPgO8ZRhSs9vbAy_PY_BA4BkHrE5FghsX7nA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] Add clocks for Unisoc's SC9863A
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Alex,
+Hi Stephen,
 
-On Fri, Mar 20, 2020 at 9:58 AM Alex Riesen
-<alexander.riesen@cetitec.com> wrote:
-> Geert Uytterhoeven, Fri, Mar 20, 2020 09:43:29 +0100:
-> > > +int adv748x_dai_init(struct adv748x_dai *dai)
-> > > +{
-> > > +       int ret;
-> > > +       struct adv748x_state *state = adv748x_dai_to_state(dai);
-> > > +
-> > > +       dai->mclk = clk_register_fixed_rate(state->dev,
-> > > +                                           "adv748x-hdmi-i2s-mclk",
-> >
-> > I assume there can be multiple adv748x instances in the system?
-> > Hence the clock name should be unique for each instance.
+Could you please take this patch-set to your tree if there are no
+further comments.
+
+Thanks,
+Chunyan
+
+On Wed, 4 Mar 2020 at 15:28, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
 >
-> I think that can happen.
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 >
-> Is it alright to derive the clock name from the device name? E.g.:
-> adv748x.4-0070-mclk? Where "adv748x.4-0070" is a struct device->name.
-
-Yes, that's the idea.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Add SC9863A specific clock driver and devicetree bindings for it,
+> this patch add to support the new way of specifying parents
+> without name strings of clocks.
+>
+> Also this patchset added support gate clock for pll which need to
+> wait a certain time for stable after being switched on.
+>
+> Changes from v5:
+> * Addressed comments from Rob:
+> - Removed description from "clock-names" and "reg" properties;
+> - Added maxItem to "reg" property.
+> * Modified the descriptions for those clocks which are a child node of
+>   a syscon.
+>
+> Changes from v4:
+> * Fixed dt_binding_check warnings.
+>
+> Changes from v3:
+> * Rebased onto v5.6-rc1.
+>
+> Changes from v2:
+> * Addressed comments from Stephen:
+> - Remove ununsed header file from sc9863a-clk.c;
+> - Added comments for clocks which were marked with CLK_IGNORE_UNUSED,
+>   and removed some unnecessary CLK_IGNORE_UNUSED;
+> - Added error checking for sprd_clk_regmap_init().
+>
+> * Addressed comments from Rob:
+> - Put some clocks under syscon nodes, since these clocks have the same
+>   physical address base with the syscon;
+> - Added clocks maxItems and listed out clock-names.
+>
+> * Added Rob's reviewed-by on patch 4.
+>
+> Changes from v1:
+> * Addressed comments:
+> - Removed redefine things;
+> - Switched DT bindings to yaml schema;
+> - Added macros for the new way of specifying clk parents;
+> - Switched to use the new way of specifying clk parents;
+> - Clean CLK_IGNORE_UNUSED flags for some SC9863A clocks;
+> - Dropped the module alias;
+> - Use device_get_match_data() instead of of_match_node();
+>
+> * Added Rob's Acked-by on patch 2.
+>
+> Chunyan Zhang (6):
+>   dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
+>     specific
+>   dt-bindings: clk: sprd: add bindings for sc9863a clock controller
+>   clk: sprd: Add dt-bindings include file for SC9863A
+>   clk: sprd: Add macros for referencing parents without strings
+>   clk: sprd: support to get regmap from parent node
+>   clk: sprd: add clocks support for SC9863A
+>
+> Xiaolong Zhang (1):
+>   clk: sprd: add gate for pll clocks
+>
+>  .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
+>  .../bindings/clock/sprd,sc9863a-clk.yaml      |  105 +
+>  drivers/clk/sprd/Kconfig                      |    8 +
+>  drivers/clk/sprd/Makefile                     |    1 +
+>  drivers/clk/sprd/common.c                     |   10 +-
+>  drivers/clk/sprd/composite.h                  |   39 +-
+>  drivers/clk/sprd/div.h                        |   20 +-
+>  drivers/clk/sprd/gate.c                       |   17 +
+>  drivers/clk/sprd/gate.h                       |  120 +-
+>  drivers/clk/sprd/mux.h                        |   28 +-
+>  drivers/clk/sprd/pll.h                        |   55 +-
+>  drivers/clk/sprd/sc9863a-clk.c                | 1772 +++++++++++++++++
+>  include/dt-bindings/clock/sprd,sc9863a-clk.h  |  334 ++++
+>  13 files changed, 2457 insertions(+), 54 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+>  create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+>  create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+>
+> --
+> 2.20.1
+>
