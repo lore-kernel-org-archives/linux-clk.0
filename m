@@ -2,143 +2,90 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D17C4332E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 11:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F301C4332B
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 12:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9748D20754
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 11:12:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 545F320776
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 12:59:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ikoMFAkV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbgCTLMT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 07:12:19 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:52011 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726726AbgCTLMS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 07:12:18 -0400
-Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MwQGj-1jVx2Q3zC1-00sR4z; Fri, 20 Mar 2020 12:12:00 +0100
-Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
-        by mail.cetitecgmbh.com (Postfix) with ESMTP id D346464D8E7;
-        Fri, 20 Mar 2020 11:11:58 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at cetitec.com
-Received: from mail.cetitecgmbh.com ([127.0.0.1])
-        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hbhxwVzTYJeb; Fri, 20 Mar 2020 12:11:58 +0100 (CET)
-Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
-        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 7E4DC64BDF2;
-        Fri, 20 Mar 2020 12:11:58 +0100 (CET)
-Received: from pflmari.corp.cetitec.com (10.8.5.41) by
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
- id 15.0.1497.2; Fri, 20 Mar 2020 12:11:58 +0100
-Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
-        id DDC578050D; Fri, 20 Mar 2020 12:11:57 +0100 (CET)
-Date:   Fri, 20 Mar 2020 12:11:57 +0100
-From:   Alex Riesen <alexander.riesen@cetitec.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 05/10] media: adv748x: add support for HDMI audio
-Message-ID: <20200320111157.GH4344@pflmari>
-Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        driverdevel <devel@driverdev.osuosl.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <cover.1584639664.git.alexander.riesen@cetitec.com>
- <252bb433f47b0ccb61bb077abdbd892091abc550.1584639664.git.alexander.riesen@cetitec.com>
- <CAMuHMdXOAQtuxCAfb=sZKodyJWwSrf-GO-pdV3HYkOytQW4ENg@mail.gmail.com>
- <20200320105846.GG4344@pflmari>
- <CAMuHMdVRJZ+RLSxeFdXXPntVxCUMd-Ai+=vizFrvN-CHNW=kjA@mail.gmail.com>
+        id S1727020AbgCTM7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 08:59:25 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39982 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbgCTM7Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 08:59:24 -0400
+Received: by mail-vs1-f65.google.com with SMTP id o25so164294vsp.7
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020 05:59:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=a/PA0xQtIa/KcGdiAZZ8ZKVn8tYCpZzJCJwJTWlA7Dk=;
+        b=ikoMFAkV50AaMHNBsHXRmMPCoqo4+icXRv1EcOLTdMsVEOSVAVor/nrpG9warG04Uh
+         zjvngy0GbjXFSkPjIrbvjWWTqf+51a3Bn33vcazqyfKReeoXoGffzm9JtQDp/r7ZQr1+
+         ugLS6gsiNtw99p7aa591lMBUnosilHIOTkhziYIZMWSOhUrMUENa5ZrjKWZtE5GUhhP/
+         o7+n8Ho0N6llC/ilPUoUztfF+LjT/WJ8SZaNpQb7Hfl43mW1Jw8rRs9sVkyhXPUMR9HF
+         Piol+s1u72VMGCoQLJOynQGn0jysf99Jj5VIWbTjyQhzHs2TBvwWVa4OKmgg+zifhpqH
+         BEbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=a/PA0xQtIa/KcGdiAZZ8ZKVn8tYCpZzJCJwJTWlA7Dk=;
+        b=g/kT80VxbkyfKRW63fpuki2cLVHpnfRB2MyjwN/xrjwothefW+cIz0j3A7I71r0qZ5
+         0HgMVi5iqeO3MZGZzxxqKZGmovb07O5QbM/bA3WKjUjklrpRAgHQVM/b5jL5OGs9zR8L
+         5YDy1Lc25qzvcg8CQG1g5WscnBTA264MsWHzhYx3QlqC6AyomZyZ4UuL4vWzi7S3nYrS
+         Rm4EzZi7cWb6FkFKBlLkyui2Mx/q2Gy9U8lkNh18ZCHFPHIi/EUQr1PBOXN7irWCzmTa
+         u2rxmEAhuz8b8IJ/JnjjnjKAVln4sW6bmJgAw7RSCnDDAVZDfurcMJCJn6JwFgn+80Wv
+         N8rA==
+X-Gm-Message-State: ANhLgQ0WIOnoT8LsGPMylTrFIMFX5alBU2GZ8SatEiI+hWkc8FHfZ2k1
+        /EiMKB2c81irzQ1QhLpQp9yuqIrCz2TjyJMiP+qbdw==
+X-Google-Smtp-Source: ADFU+vtoUYUwiEbMlA3Hxw9sMfTyaMEcKTfT/kB72V0ZL17XGTtM+KubJHfc9nJD2EfNKgEUEo5N96/g90IVMB7kq2Y=
+X-Received: by 2002:a05:6102:8f:: with SMTP id t15mr5606873vsp.115.1584709163527;
+ Fri, 20 Mar 2020 05:59:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVRJZ+RLSxeFdXXPntVxCUMd-Ai+=vizFrvN-CHNW=kjA@mail.gmail.com>
-X-Originating-IP: [10.8.5.41]
-X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
- PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A290D7F536A6D776A
-X-Provags-ID: V03:K1:YmOpyUa1MX2lar3B2/y59QLL71WDNBwoqzE32XfFiajWx1ZGlRb
- n0Eu/6ecTjm7w+oQXq5gUy4REoDz0ZOaz3lXwPFzceyx6i7mL99o2f0ImAoZCEkYuLakZuR
- GW6GdLy7a4CbkUqoEzP8MjkSf5f9JpKK+OS77rsxVyJ4VH7QTOPXsk/OnQthu0g7y/dP482
- p0UYIgjNFGv/Sk0tSyKfA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u/NT0LgJThw=:vTOcMP6mPnOiUJk3sPV2D6
- PPwbPAoPvfmF8jrgslYHjumhiEy9NIQNL7LUhRo0RmsC8CXbpAxhZUXU9pAg4Uv4SM+mkL1S0
- WQAYI5jFCgHWbk+FpTgBChzx7xD2WB5kiNvcVInp9fy/IGUnavrsgAH4SXs5nY7L78WTceQoB
- m2HAeXIjGF8y6EXKGL5j/nw7ik2miuvsVvkLUH+v7Zeuuv+ncyspaXaVbqxhvvTXWhL6671qS
- bexNOEWYOFeawVs62Fax4KoLGVtHHZDK3qRFD7mCUXLPMhSJ3HoDvcWX946YFPrRQUBCiC8Ze
- BxFuYYYCTQu7bKqLufipPxeJ7wX/5Cmsr7h28wBq4m54cDsg5KRXZgZ8ZvoYny0DrMa8dbz/B
- RWBXsEQQoraQeAR6KXtht7dySHtafFRg1m134QLqoZiwGlLNVcmKa+nnLJZ0YUpjX1RUu3rcn
- gV+s0txu7tJLbk0+N0lFEuvdXp3fuQGVQfmV7fFq4Yns9iIsc3HaGvXmm96wNsy7jJmkfK0ba
- yv8oKhKcbAMK1cBnZlAupU60+IwegjFM/WWwKtzPMtu9kZqHpNj4/gq+hvwhn5FEamMWnpl1S
- EVowToSwyOu+ShGWHxAPSXIokoQf4nSCpBrp/pxeLHmSDAoXpvy4iEJpPQ52BWGjFNZgYK6gX
- F8sp8mQKhRn2rgS5loGD/7Z+QXBR05UYm9OXcrGIN1CLDI4eQ3CW+QQq4rIDyQkf842NQ1Ma8
- HeJ0hIdSWwOHyIR7uSWFpJ7o3exySMgGAJaUl5LnEfHUVc59aNZGF7lAjh7GjCypwV8LaCoiO
- h1uVdSsu6t+PgwFH6l/GH2OT3SlaqUgmEeNswRE11n7kdNNH2aWq1Tx5l2/B4i40XggL7fI
+References: <20200219103326.81120-1-linus.walleij@linaro.org>
+In-Reply-To: <20200219103326.81120-1-linus.walleij@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 20 Mar 2020 13:59:12 +0100
+Message-ID: <CACRpkdafW8UsLXXXAvLzKZKr_R-dZbueyaAuo0GHupGXzstJ6A@mail.gmail.com>
+Subject: Re: [PATCH 1/3 v3] dt-bindings: clock: Create YAML schema for ICST clocks
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Wed, Feb 19, 2020 at 11:33 AM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Geert Uytterhoeven, Fri, Mar 20, 2020 12:05:20 +0100:
-> On Fri, Mar 20, 2020 at 11:58 AM Alex Riesen <alexander.riesen@cetitec.com> wrote:
-> > Geert Uytterhoeven, Fri, Mar 20, 2020 09:43:29 +0100:
-> > > On Thu, Mar 19, 2020 at 6:42 PM Alex Riesen <alexander.riesen@cetitec.com> wrote:
-> > > > This adds an implemention of SoC DAI driver which provides access to the
-> > > > I2S port of the device.
-> >
-> > I just noticed I don't do clk_prepare_enable anywhere.
-> > Shouldn't the clock master enable its clocks somewhere?
-> 
-> Usually the consumer is responsible for doing that.
-> Does the rcar-sound driver do that?
+> The ICST clocks used in the ARM Integrator, Versatile and
+> RealView platforms are updated to use YAML schema, and two
+> new ICST clocks used by the Integrator IM-PD1 logical module
+> are added in the process.
+>
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
+> ChangeLog v2->v3:
+> - Actually merge in the fix fixing the literal |
+> ChangeLog v1->v2:
+> - Add a literal | to preserve formatting in the bindings
+> - Collect Rob's review tag
 
-No, it does not (verified by /sys/kernel/debug/clk/clk_summary during
-transfer).
+It's been a month, is it possible to merge this v3 patch set
+so we can get some rotation in linux-next?
 
-> But in this case, perhaps the clock should be enabled implicitly in response
-> to a request from the audio subsystem, like you do below.
-
-Ok...
-
-> Note that you register a fixed-rate clock, which is assumed to be always
-> enabled. Perhaps a gateable clock type is more appropriate?
-
-The gated clock implementation requires use of an I/O register, which I don't
-have in this case (an I2C connected device).
-
-I considered implementing full clk_hw set of operations, but decided against
-it: it's a lot for this simple configuration. Few other drivers do that, too.
-
-Regards,
-Alex
-
-
+Yours,
+Linus Walleij
