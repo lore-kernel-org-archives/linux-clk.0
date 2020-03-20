@@ -2,90 +2,497 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F301C4332B
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 12:59:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857B0C4332B
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 16:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545F320776
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 12:59:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ikoMFAkV"
+	by mail.kernel.org (Postfix) with ESMTP id 503E62076F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 16:30:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbgCTM7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 08:59:25 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:39982 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727194AbgCTM7Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 08:59:24 -0400
-Received: by mail-vs1-f65.google.com with SMTP id o25so164294vsp.7
-        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020 05:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a/PA0xQtIa/KcGdiAZZ8ZKVn8tYCpZzJCJwJTWlA7Dk=;
-        b=ikoMFAkV50AaMHNBsHXRmMPCoqo4+icXRv1EcOLTdMsVEOSVAVor/nrpG9warG04Uh
-         zjvngy0GbjXFSkPjIrbvjWWTqf+51a3Bn33vcazqyfKReeoXoGffzm9JtQDp/r7ZQr1+
-         ugLS6gsiNtw99p7aa591lMBUnosilHIOTkhziYIZMWSOhUrMUENa5ZrjKWZtE5GUhhP/
-         o7+n8Ho0N6llC/ilPUoUztfF+LjT/WJ8SZaNpQb7Hfl43mW1Jw8rRs9sVkyhXPUMR9HF
-         Piol+s1u72VMGCoQLJOynQGn0jysf99Jj5VIWbTjyQhzHs2TBvwWVa4OKmgg+zifhpqH
-         BEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=a/PA0xQtIa/KcGdiAZZ8ZKVn8tYCpZzJCJwJTWlA7Dk=;
-        b=g/kT80VxbkyfKRW63fpuki2cLVHpnfRB2MyjwN/xrjwothefW+cIz0j3A7I71r0qZ5
-         0HgMVi5iqeO3MZGZzxxqKZGmovb07O5QbM/bA3WKjUjklrpRAgHQVM/b5jL5OGs9zR8L
-         5YDy1Lc25qzvcg8CQG1g5WscnBTA264MsWHzhYx3QlqC6AyomZyZ4UuL4vWzi7S3nYrS
-         Rm4EzZi7cWb6FkFKBlLkyui2Mx/q2Gy9U8lkNh18ZCHFPHIi/EUQr1PBOXN7irWCzmTa
-         u2rxmEAhuz8b8IJ/JnjjnjKAVln4sW6bmJgAw7RSCnDDAVZDfurcMJCJn6JwFgn+80Wv
-         N8rA==
-X-Gm-Message-State: ANhLgQ0WIOnoT8LsGPMylTrFIMFX5alBU2GZ8SatEiI+hWkc8FHfZ2k1
-        /EiMKB2c81irzQ1QhLpQp9yuqIrCz2TjyJMiP+qbdw==
-X-Google-Smtp-Source: ADFU+vtoUYUwiEbMlA3Hxw9sMfTyaMEcKTfT/kB72V0ZL17XGTtM+KubJHfc9nJD2EfNKgEUEo5N96/g90IVMB7kq2Y=
-X-Received: by 2002:a05:6102:8f:: with SMTP id t15mr5606873vsp.115.1584709163527;
- Fri, 20 Mar 2020 05:59:23 -0700 (PDT)
+        id S1727415AbgCTQak (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 12:30:40 -0400
+Received: from mout.kundenserver.de ([212.227.126.187]:39287 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbgCTQak (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 12:30:40 -0400
+Received: from mail.cetitecgmbh.com ([87.190.42.90]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1MjjSt-1jiZLK3wr5-00lBfN for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020
+ 17:30:37 +0100
+Received: from pflvmailgateway.corp.cetitec.com (unknown [127.0.0.1])
+        by mail.cetitecgmbh.com (Postfix) with ESMTP id C3C7664FAEC
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020 16:30:37 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at cetitec.com
+Received: from mail.cetitecgmbh.com ([127.0.0.1])
+        by pflvmailgateway.corp.cetitec.com (pflvmailgateway.corp.cetitec.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Dfmrbv3dQYbu for <linux-clk@vger.kernel.org>;
+        Fri, 20 Mar 2020 17:30:37 +0100 (CET)
+Received: from pfwsexchange.corp.cetitec.com (unknown [10.10.1.99])
+        by mail.cetitecgmbh.com (Postfix) with ESMTPS id 2656B64C7C8
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020 17:30:37 +0100 (CET)
+Received: from pflmari.corp.cetitec.com (10.8.5.41) by
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1497.2; Fri, 20 Mar 2020 17:30:37 +0100
+Received: by pflmari.corp.cetitec.com (Postfix, from userid 1000)
+        id D50EA80502; Fri, 20 Mar 2020 17:12:00 +0100 (CET)
+Date:   Fri, 20 Mar 2020 17:12:00 +0100
+From:   Alex Riesen <alexander.riesen@cetitec.com>
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
+CC:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        "Laurent Pinchart" <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        <devel@driverdev.osuosl.org>, <linux-media@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: [PATCH v3 05/11] media: adv748x: add support for HDMI audio
+Message-ID: <82828e89ccf4173de4e5e52dcecacc4d5168315c.1584720678.git.alexander.riesen@cetitec.com>
+Mail-Followup-To: Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <cover.1584720678.git.alexander.riesen@cetitec.com>
 MIME-Version: 1.0
-References: <20200219103326.81120-1-linus.walleij@linaro.org>
-In-Reply-To: <20200219103326.81120-1-linus.walleij@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 20 Mar 2020 13:59:12 +0100
-Message-ID: <CACRpkdafW8UsLXXXAvLzKZKr_R-dZbueyaAuo0GHupGXzstJ6A@mail.gmail.com>
-Subject: Re: [PATCH 1/3 v3] dt-bindings: clock: Create YAML schema for ICST clocks
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <cover.1584720678.git.alexander.riesen@cetitec.com>
+X-Originating-IP: [10.8.5.41]
+X-ClientProxiedBy: PFWSEXCHANGE.corp.cetitec.com (10.10.1.99) To
+ PFWSEXCHANGE.corp.cetitec.com (10.10.1.99)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A290D7F536A6D7660
+X-Provags-ID: V03:K1:PaICmHUF4L/rcqVQJNf5br+dPsa2DrgSAQkM6z6WFJnYF3Ns5V9
+ M2Iw59MflZFbPOD/YflJwr3AtD8oVZMRSeRl7VCHRmNMc0kHRZiktgQWaDJG7NBJ9wy7Mt+
+ R9LVKmhxiYYUnFYBycfe84gWBF8tiwS4Ant63httSb/cbfYz8nUYrV7CPLPKw8DQ3K6W8Iu
+ t6i1ZoryVeGRE2rHs6/lA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/B2BAp6V+y8=:0T0K7TsCgwicdp/Ck1vQOS
+ vMNRX7hLJFOJOi6FywFmRwZVvom9uTw2G4zYPmaB8ool1WBiNmk9cyv3BkUhCZz26eesY3MYI
+ iSsQFOikWzfwPW1frFLvOnKCVhC7fFPPGY5D4lvkQ0dMQzQ2fPBfiN7lfNVQEZQHi8gP6wP9H
+ +nMlnRZsD3LX7MohpZN03dDPG4C//7YV+w3nw5crwWtPTa1L/uroGaCKX99uJOMfI8KVEVJgQ
+ TjyXtunK3ze7n+1oFF5EW9JMzkajzmdsvZceAkR7SNwIwJaCdX8WRlPCmXlYjATaSplHuL3F0
+ kLvgxHq/pfy079N9UeTQyjywzzAd1QB9vgeyAoQzuKbDmppmX6i1ZI0U4ABrDPJRpVxJzhKD7
+ DgrukSyvAPDJ8CGLGfQfIhaJoJcizLcH/fDQSAKFU/5ayu93twmazjFYYlc5EG+uRtV8Zevtg
+ d7ZSxX9Oa3U9fQ/q6MCz8vBoy6CakS95VyRdYiMkUbbQdPQU7p7+BnX/e9855np1EMIE+pv4T
+ HK5xZdCoHJqy+Gc1lPQQBgbhS6xBQAajsbTYMexQdLFet+ab9k/84+Uas8IH32YqWEjxFtjAd
+ swIZUCC8505imOa+pmVOcawe1cKyuSe3jl5dGttNLtuGMyrClDoPhhOhsPIozCrve9tu7obc0
+ Gx2aeQx8jO85MeN8L+0PoMQ5K7+eT+dPVecTQDabkSspY7otC33/PwQDc6j1R8bfIe8yZK6fe
+ I7dJSb1gSPc0160w6yenYUIiIWf8JrBOqJGkUOqEZ5mf2pmglHULIkve4CWJXLuYE/ktAcujW
+ vFQ7bK/RjVSLVYYO5r+7yDt/Nv0kwbMBuzuFuF6qh1hLLdv/4tgunAcUQciYanGzSMZ6Fof
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Feb 19, 2020 at 11:33 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+This adds an implemention of SoC DAI driver which provides access to the
+I2S port of the device.
 
-> The ICST clocks used in the ARM Integrator, Versatile and
-> RealView platforms are updated to use YAML schema, and two
-> new ICST clocks used by the Integrator IM-PD1 logical module
-> are added in the process.
->
-> Cc: devicetree@vger.kernel.org
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> ChangeLog v2->v3:
-> - Actually merge in the fix fixing the literal |
-> ChangeLog v1->v2:
-> - Add a literal | to preserve formatting in the bindings
-> - Collect Rob's review tag
+Signed-off-by: Alexander Riesen <alexander.riesen@cetitec.com>
+--
 
-It's been a month, is it possible to merge this v3 patch set
-so we can get some rotation in linux-next?
+v3: fix clock registration in case of multiple adv748x devices
+    Suggested-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+ drivers/media/i2c/adv748x/Makefile       |   3 +-
+ drivers/media/i2c/adv748x/adv748x-core.c |   9 +-
+ drivers/media/i2c/adv748x/adv748x-dai.c  | 265 +++++++++++++++++++++++
+ drivers/media/i2c/adv748x/adv748x.h      |  17 +-
+ 4 files changed, 291 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/media/i2c/adv748x/adv748x-dai.c
 
-Yours,
-Linus Walleij
+diff --git a/drivers/media/i2c/adv748x/Makefile b/drivers/media/i2c/adv748x/Makefile
+index 93844f14cb10..6e7a302ef199 100644
+--- a/drivers/media/i2c/adv748x/Makefile
++++ b/drivers/media/i2c/adv748x/Makefile
+@@ -3,6 +3,7 @@ adv748x-objs	:= \
+ 		adv748x-afe.o \
+ 		adv748x-core.o \
+ 		adv748x-csi2.o \
+-		adv748x-hdmi.o
++		adv748x-hdmi.o \
++		adv748x-dai.o
+ 
+ obj-$(CONFIG_VIDEO_ADV748X)	+= adv748x.o
+diff --git a/drivers/media/i2c/adv748x/adv748x-core.c b/drivers/media/i2c/adv748x/adv748x-core.c
+index 8580e6624276..3513ca138e53 100644
+--- a/drivers/media/i2c/adv748x/adv748x-core.c
++++ b/drivers/media/i2c/adv748x/adv748x-core.c
+@@ -765,8 +765,14 @@ static int adv748x_probe(struct i2c_client *client)
+ 		goto err_cleanup_txa;
+ 	}
+ 
++	ret = adv748x_dai_init(&state->dai);
++	if (ret) {
++		adv_err(state, "Failed to probe DAI\n");
++		goto err_cleanup_txb;
++	}
+ 	return 0;
+-
++err_cleanup_txb:
++	adv748x_csi2_cleanup(&state->txb);
+ err_cleanup_txa:
+ 	adv748x_csi2_cleanup(&state->txa);
+ err_cleanup_afe:
+@@ -787,6 +793,7 @@ static int adv748x_remove(struct i2c_client *client)
+ {
+ 	struct adv748x_state *state = i2c_get_clientdata(client);
+ 
++	adv748x_dai_cleanup(&state->dai);
+ 	adv748x_afe_cleanup(&state->afe);
+ 	adv748x_hdmi_cleanup(&state->hdmi);
+ 
+diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/adv748x/adv748x-dai.c
+new file mode 100644
+index 000000000000..6fce7d000423
+--- /dev/null
++++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+@@ -0,0 +1,265 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Driver for Analog Devices ADV748X HDMI receiver with AFE
++ * The implementation of DAI.
++ */
++
++#include "adv748x.h"
++
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <sound/pcm_params.h>
++
++#define state_of(soc_dai) \
++	adv748x_dai_to_state(container_of((soc_dai)->driver, \
++					  struct adv748x_dai, \
++					  drv))
++
++static const char ADV748X_DAI_NAME[] = "adv748x-i2s";
++
++static int set_audio_pads_state(struct adv748x_state *state, int on)
++{
++	return io_clrset(state, ADV748X_IO_PAD_CONTROLS,
++			 ADV748X_IO_PAD_CONTROLS_TRI_AUD |
++			 ADV748X_IO_PAD_CONTROLS_PDN_AUD,
++			 on ? 0 : 0xff);
++}
++
++static int set_dpll_mclk_fs(struct adv748x_state *state, int fs)
++{
++	return dpll_clrset(state, ADV748X_DPLL_MCLK_FS,
++			   ADV748X_DPLL_MCLK_FS_N_MASK, (fs / 128) - 1);
++}
++
++static int set_i2s_format(struct adv748x_state *state, uint outmode,
++			  uint bitwidth)
++{
++	return hdmi_clrset(state, ADV748X_HDMI_I2S,
++			   ADV748X_HDMI_I2SBITWIDTH_MASK |
++			   ADV748X_HDMI_I2SOUTMODE_MASK,
++			   (outmode << ADV748X_HDMI_I2SOUTMODE_SHIFT) |
++			   bitwidth);
++}
++
++static int set_i2s_tdm_mode(struct adv748x_state *state, int is_tdm)
++{
++	int ret;
++
++	ret = hdmi_clrset(state, ADV748X_HDMI_AUDIO_MUTE_SPEED,
++			  ADV748X_MAN_AUDIO_DL_BYPASS |
++			  ADV748X_AUDIO_DELAY_LINE_BYPASS,
++			  is_tdm ? 0xff : 0);
++	if (ret < 0)
++		return ret;
++	ret = hdmi_clrset(state, ADV748X_HDMI_REG_6D,
++			  ADV748X_I2S_TDM_MODE_ENABLE,
++			  is_tdm ? 0xff : 0);
++	return ret;
++}
++
++static int set_audio_mute(struct adv748x_state *state, int enable)
++{
++	return hdmi_clrset(state, ADV748X_HDMI_MUTE_CTRL,
++			   ADV748X_HDMI_MUTE_CTRL_MUTE_AUDIO,
++			   enable ? 0xff : 0);
++}
++
++static int adv748x_dai_set_sysclk(struct snd_soc_dai *dai,
++				  int clk_id, unsigned int freq, int dir)
++{
++	struct adv748x_state *state = state_of(dai);
++
++	/* currently supporting only one fixed rate clock */
++	if (clk_id != 0 || freq != clk_get_rate(state->dai.mclk)) {
++		dev_err(dai->dev, "invalid clock (%d) or frequency (%u, dir %d)\n",
++			clk_id, freq, dir);
++		return -EINVAL;
++	}
++	state->dai.freq = freq;
++	return 0;
++}
++
++static int adv748x_dai_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct adv748x_state *state = state_of(dai);
++	int ret = 0;
++
++	if ((fmt & SND_SOC_DAIFMT_MASTER_MASK) != SND_SOC_DAIFMT_CBM_CFM) {
++		dev_err(dai->dev, "only I2S master clock mode supported\n");
++		ret = -EINVAL;
++		goto done;
++	}
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAI_FORMAT_I2S:
++		state->dai.tdm = 0;
++		state->dai.fmt = ADV748X_I2SOUTMODE_I2S;
++		break;
++	case SND_SOC_DAI_FORMAT_RIGHT_J:
++		state->dai.tdm = 1;
++		state->dai.fmt = ADV748X_I2SOUTMODE_RIGHT_J;
++		break;
++	case SND_SOC_DAI_FORMAT_LEFT_J:
++		state->dai.tdm = 1;
++		state->dai.fmt = ADV748X_I2SOUTMODE_LEFT_J;
++		break;
++	default:
++		dev_err(dai->dev, "only i2s, left_j and right_j supported\n");
++		ret = -EINVAL;
++		goto done;
++	}
++	if ((fmt & SND_SOC_DAIFMT_INV_MASK) != SND_SOC_DAIFMT_NB_NF) {
++		dev_err(dai->dev, "only normal bit clock + frame supported\n");
++		ret = -EINVAL;
++	}
++done:
++	return ret;
++}
++
++static int adv748x_dai_startup(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
++{
++	struct adv748x_state *state = state_of(dai);
++
++	if (sub->stream != SNDRV_PCM_STREAM_CAPTURE)
++		return -EINVAL;
++	return set_audio_pads_state(state, 1);
++}
++
++static int adv748x_dai_hw_params(struct snd_pcm_substream *sub,
++				 struct snd_pcm_hw_params *params,
++				 struct snd_soc_dai *dai)
++{
++	int ret;
++	struct adv748x_state *state = state_of(dai);
++	uint fs = state->dai.freq / params_rate(params);
++
++	dev_dbg(dai->dev, "dai %s substream %s rate=%u (fs=%u), channels=%u sample width=%u(%u)\n",
++		dai->name, sub->name,
++		params_rate(params), fs,
++		params_channels(params),
++		params_width(params),
++		params_physical_width(params));
++	switch (fs) {
++	case 128:
++	case 256:
++	case 384:
++	case 512:
++	case 640:
++	case 768:
++		break;
++	default:
++		ret = -EINVAL;
++		dev_err(dai->dev, "invalid clock frequency (%u) or rate (%u)\n",
++			state->dai.freq, params_rate(params));
++		goto done;
++	}
++	ret = set_dpll_mclk_fs(state, fs);
++	if (ret)
++		goto done;
++	ret = set_i2s_tdm_mode(state, state->dai.tdm);
++	if (ret)
++		goto done;
++	ret = set_i2s_format(state, state->dai.fmt, params_width(params));
++done:
++	return ret;
++}
++
++static int adv748x_dai_mute_stream(struct snd_soc_dai *dai, int mute, int dir)
++{
++	struct adv748x_state *state = state_of(dai);
++
++	return set_audio_mute(state, mute);
++}
++
++static void adv748x_dai_shutdown(struct snd_pcm_substream *sub, struct snd_soc_dai *dai)
++{
++	struct adv748x_state *state = state_of(dai);
++
++	set_audio_pads_state(state, 0);
++}
++
++static const struct snd_soc_dai_ops adv748x_dai_ops = {
++	.set_sysclk = adv748x_dai_set_sysclk,
++	.set_fmt = adv748x_dai_set_fmt,
++	.startup = adv748x_dai_startup,
++	.hw_params = adv748x_dai_hw_params,
++	.mute_stream = adv748x_dai_mute_stream,
++	.shutdown = adv748x_dai_shutdown,
++};
++
++static	int adv748x_of_xlate_dai_name(struct snd_soc_component *component,
++				      struct of_phandle_args *args,
++				      const char **dai_name)
++{
++	if (dai_name)
++		*dai_name = ADV748X_DAI_NAME;
++	return 0;
++}
++
++static const struct snd_soc_component_driver adv748x_codec = {
++	.of_xlate_dai_name = adv748x_of_xlate_dai_name,
++};
++
++int adv748x_dai_init(struct adv748x_dai *dai)
++{
++	int ret;
++	struct adv748x_state *state = adv748x_dai_to_state(dai);
++
++	dai->mclk_name = kasprintf(GFP_KERNEL, "%s.%s-i2s-mclk",
++				   state->dev->driver->name,
++				   dev_name(state->dev));
++	if (!dai->mclk_name) {
++		ret = -ENOMEM;
++		adv_err(state, "No memory for MCLK\n");
++		goto fail;
++	}
++	dai->mclk = clk_register_fixed_rate(state->dev,
++					    dai->mclk_name,
++					    NULL /* parent_name */,
++					    0 /* flags */,
++					    12288000 /* rate */);
++	if (IS_ERR_OR_NULL(dai->mclk)) {
++		ret = PTR_ERR(dai->mclk);
++		adv_err(state, "Failed to register MCLK (%d)\n", ret);
++		goto fail;
++	}
++	ret = of_clk_add_provider(state->dev->of_node, of_clk_src_simple_get,
++				  dai->mclk);
++	if (ret < 0) {
++		adv_err(state, "Failed to add MCLK provider (%d)\n", ret);
++		goto unreg_mclk;
++	}
++	dai->drv.name = ADV748X_DAI_NAME;
++	dai->drv.ops = &adv748x_dai_ops;
++	dai->drv.capture = (struct snd_soc_pcm_stream){
++		.stream_name	= "Capture",
++		.channels_min	= 8,
++		.channels_max	= 8,
++		.rates = SNDRV_PCM_RATE_48000,
++		.formats = SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_U24_LE,
++	};
++
++	ret = devm_snd_soc_register_component(state->dev, &adv748x_codec,
++					      &dai->drv, 1);
++	if (ret < 0) {
++		adv_err(state, "Failed to register the codec (%d)\n", ret);
++		goto cleanup_mclk;
++	}
++	return 0;
++
++cleanup_mclk:
++	of_clk_del_provider(state->dev->of_node);
++unreg_mclk:
++	clk_unregister_fixed_rate(dai->mclk);
++fail:
++	return ret;
++}
++
++void adv748x_dai_cleanup(struct adv748x_dai *dai)
++{
++	struct adv748x_state *state = adv748x_dai_to_state(dai);
++
++	of_clk_del_provider(state->dev->of_node);
++	clk_unregister_fixed_rate(dai->mclk);
++	kfree(dai->mclk_name);
++}
++
+diff --git a/drivers/media/i2c/adv748x/adv748x.h b/drivers/media/i2c/adv748x/adv748x.h
+index 1a1ea70086c6..b0735de0ced5 100644
+--- a/drivers/media/i2c/adv748x/adv748x.h
++++ b/drivers/media/i2c/adv748x/adv748x.h
+@@ -19,6 +19,7 @@
+  */
+ 
+ #include <linux/i2c.h>
++#include <sound/soc.h>
+ #include <media/v4l2-ctrls.h>
+ #include <media/v4l2-device.h>
+ 
+@@ -63,7 +64,8 @@ enum adv748x_ports {
+ 	ADV748X_PORT_TTL = 9,
+ 	ADV748X_PORT_TXA = 10,
+ 	ADV748X_PORT_TXB = 11,
+-	ADV748X_PORT_MAX = 12,
++	ADV748X_PORT_I2S = 12,
++	ADV748X_PORT_MAX = 13,
+ };
+ 
+ enum adv748x_csi2_pads {
+@@ -166,6 +168,13 @@ struct adv748x_afe {
+ 	container_of(ctrl->handler, struct adv748x_afe, ctrl_hdl)
+ #define adv748x_sd_to_afe(sd) container_of(sd, struct adv748x_afe, sd)
+ 
++struct adv748x_dai {
++	struct snd_soc_dai_driver drv;
++	struct clk *mclk;
++	char *mclk_name;
++	unsigned int freq, fmt, tdm;
++};
++
+ /**
+  * struct adv748x_state - State of ADV748X
+  * @dev:		(OF) device
+@@ -182,6 +191,7 @@ struct adv748x_afe {
+  * @afe:		state of AFE receiver context
+  * @txa:		state of TXA transmitter context
+  * @txb:		state of TXB transmitter context
++ * @mclk:		MCLK clock of the I2S port
+  */
+ struct adv748x_state {
+ 	struct device *dev;
+@@ -197,10 +207,12 @@ struct adv748x_state {
+ 	struct adv748x_afe afe;
+ 	struct adv748x_csi2 txa;
+ 	struct adv748x_csi2 txb;
++	struct adv748x_dai dai;
+ };
+ 
+ #define adv748x_hdmi_to_state(h) container_of(h, struct adv748x_state, hdmi)
+ #define adv748x_afe_to_state(a) container_of(a, struct adv748x_state, afe)
++#define adv748x_dai_to_state(p) container_of(p, struct adv748x_state, dai)
+ 
+ #define adv_err(a, fmt, arg...)	dev_err(a->dev, fmt, ##arg)
+ #define adv_info(a, fmt, arg...) dev_info(a->dev, fmt, ##arg)
+@@ -484,4 +496,7 @@ int adv748x_csi2_set_pixelrate(struct v4l2_subdev *sd, s64 rate);
+ int adv748x_hdmi_init(struct adv748x_hdmi *hdmi);
+ void adv748x_hdmi_cleanup(struct adv748x_hdmi *hdmi);
+ 
++int adv748x_dai_init(struct adv748x_dai *);
++void adv748x_dai_cleanup(struct adv748x_dai *);
++
+ #endif /* _ADV748X_H_ */
+-- 
+2.25.1.25.g9ecbe7eb18
+
+
