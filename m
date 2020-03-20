@@ -2,115 +2,113 @@ Return-Path: <SRS0=Hf8G=5F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07786C10DCE
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 17:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5C6AC4332D
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 18:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2DB32078A
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 17:03:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584723797;
-	bh=nGNWNe4gb5SNLtQ25FhIgpIFgzRIf+L0AGCdRSLeuP4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NUqonjlgIR3gftHra+hnxJ3pQIzu85lA7IbLkG474tsYxBSSbJcNkQO2/HpyWf8fi
-	 otgXfdQpDoXpsVGv8iee6M6C5SSR9Ozats1aTb0lVt4i56YNxhQZkhVJ8OIj19wBgl
-	 mknffgwvQq0yUNzxIzCPirNiL2Azvt1ZflS45X6s=
+	by mail.kernel.org (Postfix) with ESMTP id A064120775
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Mar 2020 18:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCTRDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 13:03:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727550AbgCTRDA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 13:03:00 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BA3C2076F;
-        Fri, 20 Mar 2020 17:02:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584723779;
-        bh=nGNWNe4gb5SNLtQ25FhIgpIFgzRIf+L0AGCdRSLeuP4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A3ZmPKVIQtj8lobfxYDECKYDuHJ4J7xjtiXmwVCtZa6w86HHju4vFQGQN0OzrQpFd
-         Iv5Nl67LumeKcNUjLL5Tk53XyzTPesPxRc94TlfSlfQ8aYqu3BwmvJx++wTh9IIiX0
-         QgzrNSyJBcy2aTCZeTzcQL3nwygAowu50uOrAhDs=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        Dinh Nguyen <dinh.nguyen@intel.com>
-Subject: [PATCH 2/5] clk: socfpga: remove clk_ops enable/disable methods
-Date:   Fri, 20 Mar 2020 12:02:08 -0500
-Message-Id: <20200320170212.21523-3-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200320170212.21523-1-dinguyen@kernel.org>
-References: <20200320170212.21523-1-dinguyen@kernel.org>
+        id S1726970AbgCTSmo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 14:42:44 -0400
+Received: from eu-smtp-delivery-151.mimecast.com ([146.101.78.151]:41435 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726878AbgCTSmo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 14:42:44 -0400
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-175-Rpihu1x7PlGFiVtSHu5gzQ-1; Fri, 20 Mar 2020 18:42:40 +0000
+X-MC-Unique: Rpihu1x7PlGFiVtSHu5gzQ-1
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Fri, 20 Mar 2020 18:42:39 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 20 Mar 2020 18:42:39 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Arnd Bergmann' <arnd@arndb.de>,
+        Guru Das Srinagesh <gurus@codeaurora.org>
+CC:     Linux PWM List <linux-pwm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH v11 11/12] clk: pwm: Assign u64 divisor to unsigned int
+ before use
+Thread-Topic: [PATCH v11 11/12] clk: pwm: Assign u64 divisor to unsigned int
+ before use
+Thread-Index: AQHV/tkrw1kYAaX6uEKWXuZ3TfBb1KhR0DSQ
+Date:   Fri, 20 Mar 2020 18:42:39 +0000
+Message-ID: <9943d663c74046d798f4614343f25187@AcuMS.aculab.com>
+References: <cover.1584667964.git.gurus@codeaurora.org>
+ <ab7b568b1d287949276b3b1c9efdb1cad1f92004.1584667964.git.gurus@codeaurora.org>
+ <CAK8P3a0XrYGYBQ_hTKF4fVBr7DDZsLnR+8o=09cig_gAje=v3w@mail.gmail.com>
+In-Reply-To: <CAK8P3a0XrYGYBQ_hTKF4fVBr7DDZsLnR+8o=09cig_gAje=v3w@mail.gmail.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dinh Nguyen <dinh.nguyen@intel.com>
-
-The enable/disable clock ops are already defined in the standard clock
-ops, so we don't need to assign them.
-
-Signed-off-by: Dinh Nguyen <dinh.nguyen@intel.com>
----
-v4: no change
-v3: introduced
----
- drivers/clk/socfpga/clk-pll-a10.c | 2 --
- drivers/clk/socfpga/clk-pll-s10.c | 2 --
- drivers/clk/socfpga/clk-pll.c     | 2 --
- 3 files changed, 6 deletions(-)
-
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 3816fc04b274..6d9395106c0c 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -102,8 +102,6 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
- 	pll_clk->hw.hw.init = &init;
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
--	clk_pll_ops.enable = clk_gate_ops.enable;
--	clk_pll_ops.disable = clk_gate_ops.disable;
- 
- 	clk = clk_register(NULL, &pll_clk->hw.hw);
- 	if (WARN_ON(IS_ERR(clk))) {
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index bcd3f14e9145..9faa80ff3b53 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -138,8 +138,6 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
- 	pll_clk->hw.hw.init = &init;
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
--	clk_pll_ops.enable = clk_gate_ops.enable;
--	clk_pll_ops.disable = clk_gate_ops.disable;
- 
- 	clk = clk_register(NULL, &pll_clk->hw.hw);
- 	if (WARN_ON(IS_ERR(clk))) {
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index dc65cc0fd3bd..a001641b2f42 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -105,8 +105,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
- 	pll_clk->hw.hw.init = &init;
- 
- 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
--	clk_pll_ops.enable = clk_gate_ops.enable;
--	clk_pll_ops.disable = clk_gate_ops.disable;
- 
- 	clk = clk_register(NULL, &pll_clk->hw.hw);
- 	if (WARN_ON(IS_ERR(clk))) {
--- 
-2.25.1
+RnJvbTogQXJuZCBCZXJnbWFubg0KPiBTZW50OiAyMCBNYXJjaCAyMDIwIDE3OjAxDQo+IE9uIEZy
+aSwgTWFyIDIwLCAyMDIwIGF0IDI6NDIgQU0gR3VydSBEYXMgU3JpbmFnZXNoIDxndXJ1c0Bjb2Rl
+YXVyb3JhLm9yZz4gd3JvdGU6DQo+ID4NCj4gPiBTaW5jZSB0aGUgUFdNIGZyYW1ld29yayBpcyBz
+d2l0Y2hpbmcgc3RydWN0IHB3bV9hcmdzLnBlcmlvZCdzIGRhdGF0eXBlDQo+ID4gdG8gdTY0LCBw
+cmVwYXJlIGZvciB0aGlzIHRyYW5zaXRpb24gYnkgYXNzaWduaW5nIHRoZSA2NC1iaXQgZGl2aXNv
+ciB0bw0KPiA+IGFuIHVuc2lnbmVkIGludCB2YXJpYWJsZSB0byB1c2UgYXMgdGhlIGRpdmlzb3Iu
+IFRoaXMgaXMgYmVpbmcgZG9uZQ0KPiA+IGJlY2F1c2UgdGhlIGRpdmlzb3IgaXMgYSAzMi1iaXQg
+Y29uc3RhbnQgYW5kIHRoZSBxdW90aWVudCB3aWxsIGJlIHplcm8NCj4gPiBpZiB0aGUgZGl2aXNv
+ciBleGNlZWRzIDJeMzIuDQo+ID4NCj4gPiBDYzogTWljaGFlbCBUdXJxdWV0dGUgPG10dXJxdWV0
+dGVAYmF5bGlicmUuY29tPg0KPiA+IENjOiBTdGVwaGVuIEJveWQgPHNib3lkQGtlcm5lbC5vcmc+
+DQo+ID4gQ2M6IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmcNCj4gPiBDYzogRGF2aWQgTGFpZ2h0
+IDxEYXZpZC5MYWlnaHRAQUNVTEFCLkNPTT4NCj4gPg0KPiA+IFJlcG9ydGVkLWJ5OiBrYnVpbGQg
+dGVzdCByb2JvdCA8bGtwQGludGVsLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBHdXJ1IERhcyBT
+cmluYWdlc2ggPGd1cnVzQGNvZGVhdXJvcmEub3JnPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Ns
+ay9jbGstcHdtLmMgfCA0ICsrKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay1w
+d20uYyBiL2RyaXZlcnMvY2xrL2Nsay1wd20uYw0KPiA+IGluZGV4IDg3ZmUwYjBlLi5jMGI1ZGEz
+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2Nsay1wd20uYw0KPiA+ICsrKyBiL2RyaXZl
+cnMvY2xrL2Nsay1wd20uYw0KPiA+IEBAIC03Miw2ICs3Miw3IEBAIHN0YXRpYyBpbnQgY2xrX3B3
+bV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAgICAgICAgc3RydWN0
+IHB3bV9kZXZpY2UgKnB3bTsNCj4gPiAgICAgICAgIHN0cnVjdCBwd21fYXJncyBwYXJnczsNCj4g
+PiAgICAgICAgIGNvbnN0IGNoYXIgKmNsa19uYW1lOw0KPiA+ICsgICAgICAgdW5zaWduZWQgaW50
+IHBlcmlvZDsNCj4gPiAgICAgICAgIGludCByZXQ7DQo+ID4NCj4gPiAgICAgICAgIGNsa19wd20g
+PSBkZXZtX2t6YWxsb2MoJnBkZXYtPmRldiwgc2l6ZW9mKCpjbGtfcHdtKSwgR0ZQX0tFUk5FTCk7
+DQo+ID4gQEAgLTg4LDggKzg5LDkgQEAgc3RhdGljIGludCBjbGtfcHdtX3Byb2JlKHN0cnVjdCBw
+bGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4gICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFM
+Ow0KPiA+ICAgICAgICAgfQ0KPiA+DQo+ID4gKyAgICAgICBwZXJpb2QgPSBwYXJncy5wZXJpb2Q7
+DQo+ID4gICAgICAgICBpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIobm9kZSwgImNsb2NrLWZyZXF1
+ZW5jeSIsICZjbGtfcHdtLT5maXhlZF9yYXRlKSkNCj4gPiAtICAgICAgICAgICAgICAgY2xrX3B3
+bS0+Zml4ZWRfcmF0ZSA9IE5TRUNfUEVSX1NFQyAvIHBhcmdzLnBlcmlvZDsNCj4gPiArICAgICAg
+ICAgICAgICAgY2xrX3B3bS0+Zml4ZWRfcmF0ZSA9IE5TRUNfUEVSX1NFQyAvIHBlcmlvZDsNCj4g
+Pg0KPiA+ICAgICAgICAgaWYgKHBhcmdzLnBlcmlvZCAhPSBOU0VDX1BFUl9TRUMgLyBjbGtfcHdt
+LT5maXhlZF9yYXRlICYmDQo+ID4gICAgICAgICAgICAgcGFyZ3MucGVyaW9kICE9IERJVl9ST1VO
+RF9VUChOU0VDX1BFUl9TRUMsIGNsa19wd20tPmZpeGVkX3JhdGUpKSB7DQo+IA0KPiBEb2Vzbid0
+IHRoaXMgb25lIG5lZWQgYSBjaGVjayBmb3IgInBhcmdzLnBlcmlvZD5VSU5UX01BWCIgb3INCj4g
+InBhcmdzLnBlcmlvZCA+IE5TRUNfUEVSX1NFQyI/DQo+IA0KPiBJdCBsb29rcyBsaWtlIHRydW5j
+YXRpbmcgdGhlIDY0LWJpdCB2YWx1ZSB0byBhIDMyLWJpdCB0eXBlIGNhbiByZXN1bHQgaW4NCj4g
+dW5leHBlY3RlZCBiZWhhdmlvci4NCg0KSSBhbHNvIHN1c3BlY3QgdGhlIGxhc3QgdHdvIGxpbmVz
+IG91Z2h0IHRvIHVzZSB0aGUgMzJiaXQgY29weS4NCkFuZCB0aGVyZSBpcyBhIGNoYW5jZSB0aGF0
+IHRoZSBkaXZpc2lvbiB3aWxsIGV4cGxvZGUuDQoNClRoaXMgd2hvbGUgc2VyaWVzIGlzIGZhaWxp
+bmcgdG8gZGlmZmVyZW50aWF0ZSBiZXR3ZWVuIHRoZSB0eXBlIG9mDQp0aGUgdmFyaWFibGVzIGFu
+ZCB0aGUgZG9tYWluIG9uIHRoZSB2YWxpZCB2YWx1ZXMuDQoNCglEYXZpZA0KDQotDQpSZWdpc3Rl
+cmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtl
+eW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
 
