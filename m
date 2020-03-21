@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 779CDC4332D
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A927C4332B
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F21120732
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA1A2076C
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584753628;
-	bh=PKwRe7u86A+QwaW2mIzR2r5lUuReYhr5HBypXEYk/+Y=;
+	s=default; t=1584753872;
+	bh=b2JbIbLu1vzPlTM1xcky55IFGUKce44Xpwaq1wYIoPg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=UfzI6xd7bXVJUBA51eUozxhOjLXvKZcoH07zGd3D0tGEfN+OTvIe84E2KC/YXnx2l
-	 M0XZJkQ8MGMnOO1es/T/E5Gz+SQhduAxFv2JFF7/E1Y9zQ99ECE6G8XqjqQGy5/Zw9
-	 FY5TGGBxYr8YHq+2sPawIz0Qqgh0Aa7ollKRu/TQ=
+	b=yrXnuaVXCECDnlGqsUBn5Ckd5r2DcYt5JisXJvaKM+OI3zyoakxADg1CTeoNc8Rkq
+	 8KEIW7XxmrHA/1R81qJI1DN/Z8SzMHKVc2KhFsm2NqTsacNSaDeomForXN76S6AFnY
+	 oVXIjHTdAW1zJQyWz7JbaalffvsSx5FqfqEmvy6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbgCUBUZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 21:20:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44660 "EHLO mail.kernel.org"
+        id S1727772AbgCUBYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 21:24:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726851AbgCUBUZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 21:20:25 -0400
+        id S1727763AbgCUBYb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 21:24:31 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAE2720732;
-        Sat, 21 Mar 2020 01:20:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D26B220732;
+        Sat, 21 Mar 2020 01:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584753625;
-        bh=PKwRe7u86A+QwaW2mIzR2r5lUuReYhr5HBypXEYk/+Y=;
+        s=default; t=1584753870;
+        bh=b2JbIbLu1vzPlTM1xcky55IFGUKce44Xpwaq1wYIoPg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vvKUbJTXpLMRO+4QAVCgX6Bpl7T1beAdx2weTIZJdSie4VPuGBsj3hzcfVq6SCqS5
-         tQI8icPrdzB76QfnpHb2Yf/REase2uvUsKrK0A2+SMc9/+vE/qJfcQ9bWzDbj8f35u
-         GIj951rrvLqgc2hH98vsVDcjOhKJPLawsgBVct64=
+        b=as16LPAWLiq2GGQWpg88bWepte1CiqKsdWHlK5e56VYNpk/5EEiZY8+EoaXHpEWl3
+         xirLPIPJhFkTfIbKiHpYNbxQQDwwD3LQdjF0yUwj1CIcokGrATXDV+bkAgeJq5pZDk
+         cdtCFPpud0JTtxdYphuWZczKaSO2/mBMAzkDQG9Q=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200309194254.29009-11-lkundrak@v3.sk>
-References: <20200309194254.29009-1-lkundrak@v3.sk> <20200309194254.29009-11-lkundrak@v3.sk>
-Subject: Re: [PATCH v2 10/17] ARM: dts: mmp3: Use the MMP3 compatible string for /clocks
+In-Reply-To: <20200309194254.29009-2-lkundrak@v3.sk>
+References: <20200309194254.29009-1-lkundrak@v3.sk> <20200309194254.29009-2-lkundrak@v3.sk>
+Subject: Re: [PATCH v2 01/17] clk: mmp2: Remove a unused prototype
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -51,20 +51,18 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
 To:     Lubomir Rintel <lkundrak@v3.sk>
-Date:   Fri, 20 Mar 2020 18:20:24 -0700
-Message-ID: <158475362408.125146.4406419142833020130@swboyd.mtv.corp.google.com>
+Date:   Fri, 20 Mar 2020 18:24:30 -0700
+Message-ID: <158475387003.125146.14218245508304103071@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2020-03-09 12:42:47)
-> Clocks are in fact slightly different on MMP3. In particular, PLL2 is
-> fixed to a different frequency, there's an extra PLL3, and the GPU
-> clocks are configured differently.
+Quoting Lubomir Rintel (2020-03-09 12:42:38)
+> There is no mmp_clk_register_pll2() routine.
 >=20
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
 
-This should go through arm-soc.
+Applied to clk-next
