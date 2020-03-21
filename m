@@ -6,71 +6,65 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3940FC4332B
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEB9C4332D
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F303720777
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C6B20787
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584749173;
-	bh=aqc1nwxD2JVKkvrOl3kWSCll9YVmqSIDMks9uATyyG8=;
+	s=default; t=1584749343;
+	bh=yny377WRpK4XlQfnYzqXIGeWNNtWOQJguIJuybA0pMs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=qB2NypPJh7B7QC9WPdBa+DQyNPTz7RibL4HGRDNDYosU9QZdBaYj/8L6rHzts5/p2
-	 M7hIEAOB0pF9GQXakdeFWA/u+QtKiBAWjj7QL7cBu+RwTqL2DdTMP97uJ+5xmHrEpP
-	 g3hK9oGO/nORhztewPAy+b8vpFO5N7Q0o3+d5VfE=
+	b=ap+qfy/hA+fIEm0vNCgMHATMdkgY0P7UYFtV9Kkz/5Ak5Il9LBMnv0w8eH1klA5tV
+	 ndRcnpqCqg4r4IQqXd0TuOGO3NQhmjJeZfoeHPsHOhYtouL3X/szP+SASC0UNQ5g8j
+	 aFIrTqyZlwdglxkwwu7WQX8Z7FlWcTM+xcdCfqoE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727692AbgCUAGJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 20:06:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50106 "EHLO mail.kernel.org"
+        id S1727649AbgCUAI7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 20:08:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbgCUAGI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:06:08 -0400
+        id S1726773AbgCUAI7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:08:59 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CFA020777;
-        Sat, 21 Mar 2020 00:06:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0634320787;
+        Sat, 21 Mar 2020 00:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584749168;
-        bh=aqc1nwxD2JVKkvrOl3kWSCll9YVmqSIDMks9uATyyG8=;
+        s=default; t=1584749339;
+        bh=yny377WRpK4XlQfnYzqXIGeWNNtWOQJguIJuybA0pMs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ClC5dOV8QR9KK+Zq8oUQh5C/7iRhf3yloDptsKdGBEQcWDFezB3p2RzDsnmdslXkR
-         SuD884ExJU2+R1qXwTIrZV0BmIblCO3FXG2zMi/CJosLX106gYIzZXRXethR6rQif+
-         WY6vfmoTq5jRudWWCCyDMc+VzE26TLfsidQWTlZ0=
+        b=L59xcugjt3afJmpVpvTC0rRLoLmLc4TEkzDEMY//UNGHsLFsStgfEv+yBI44EDSv7
+         hYbBi7mBuri4x6AnjcdL6S4gO1NEVTD3hpIbAYcub3cHU7Ph8kCGvkBMZZa3gthBOV
+         Oxoiap51KmcCjwbsVkMEXJ2WWAMBzRlT9kdYZrEQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200227053529.16479-3-vigneshr@ti.com>
-References: <20200227053529.16479-1-vigneshr@ti.com> <20200227053529.16479-3-vigneshr@ti.com>
-Subject: Re: [PATCH v4 2/2] clk: keystone: Add new driver to handle syscon based clocks
+In-Reply-To: <20200213161952.37460-2-paul@crapouillou.net>
+References: <20200213161952.37460-1-paul@crapouillou.net> <20200213161952.37460-2-paul@crapouillou.net>
+Subject: Re: [PATCH v2 2/2] clk: ingenic/TCU: Fix round_rate returning error
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>
-Date:   Fri, 20 Mar 2020 17:06:07 -0700
-Message-ID: <158474916743.125146.2512565488728319970@swboyd.mtv.corp.google.com>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        stable@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Fri, 20 Mar 2020 17:08:58 -0700
+Message-ID: <158474933803.125146.5323486613310408237@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vignesh Raghavendra (2020-02-26 21:35:29)
-> On TI's AM654/J721e SoCs, certain clocks can be gatemld/ungated by settin=
-g a
-> single bit in SoC's System Control Module registers. Sometime more than
-> one clock control can be in the same register.
-> Add a driver to support such clocks using syscon framework.
-> Driver currently supports controlling EHRPWM's TimeBase clock(TBCLK) for
-> AM654 SoC.
+Quoting Paul Cercueil (2020-02-13 08:19:52)
+> When requesting a rate superior to the parent's rate, it would return
+> -EINVAL instead of simply returning the parent's rate like it should.
 >=20
-> Signed-off-by: Vignesh Raghavendra <vigneshr@ti.com>
+> Fixes: 4f89e4b8f121 ("clk: ingenic: Add driver for the TCU clocks")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 > ---
 
 Applied to clk-next
