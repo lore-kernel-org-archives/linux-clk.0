@@ -2,83 +2,86 @@ Return-Path: <SRS0=7yfQ=5G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C64C4332D
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 18:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9999C4332B
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 21:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEC62076E
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 18:43:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584816197;
-	bh=TuwfuUTLsIiC41Ku4BtjHbWONlHCrlEleOBEtJOmKuU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=fo13iK8dm7Vz5kYZVoqlY4qByCOPVUwOyh9Dhfgu7U3mruiSUP9dQBhMQjuAVY61H
-	 /lb4evGp8iupzfifNxxtz+k2JJGE4Xle6tEv2vnT9VV8fcu2TDRBfqz8CHFvOtGcRW
-	 diDV+WaMGkcAkBrbGLyRSEC+zuU4PJ4UtNwshKfU=
+	by mail.kernel.org (Postfix) with ESMTP id 77D222076E
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 21:18:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="hfTkc95H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbgCUSnO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Mar 2020 14:43:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33872 "EHLO mail.kernel.org"
+        id S1727224AbgCUVSF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Mar 2020 17:18:05 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:45580 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727028AbgCUSnO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 21 Mar 2020 14:43:14 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C31520724;
-        Sat, 21 Mar 2020 18:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584816193;
-        bh=TuwfuUTLsIiC41Ku4BtjHbWONlHCrlEleOBEtJOmKuU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DXUcGFj5ncUXdFUsONtObkvRjSvHMeV+B0kN2e9sFsLqlmgf0Qq9UB5fVpjQ40ieE
-         A3edJHNJn1KYYmMhlwjIlnsp9dyYxI5ZVk/KjhHevHOBgtQ2VMoTxVtz+YP/PtxvlL
-         ID10Q7e/QraS6gnKNB8rRS5J6ugAITv8wjPimPz8=
-Content-Type: text/plain; charset="utf-8"
+        id S1726366AbgCUVSE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 21 Mar 2020 17:18:04 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48lD565Dt6z7N;
+        Sat, 21 Mar 2020 22:18:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1584825483; bh=uG8aosJL5ouyUREof74CuX6hBY1SWsaHGPF4NrQsGn8=;
+        h=Date:From:Subject:To:Cc:From;
+        b=hfTkc95HFjrRy6kS08dw/JjI0BYN3l3wiuvOBufcE51H7NvabA8UoRjEV0O4S0bMM
+         F/njOBvncUzfse+mPYkMY5Z13/nwsS95uoSiBCfk8UGYe49DA+FopbUjVMXlmMvmAN
+         W+/eFa4sV87dwadqyLwE8GKVTetQvx8gLQ8un9Kn1qekmeLTCIdOYykRiLkChdJNDC
+         vfSa/oIMNwqQmnBUu9u/IXGjtmJAZLp8fStKjASMk56PWPJHwmKyzHeiFalu7T5CD1
+         1kwmmUMLO5KuAZDtfKriZ/MUdtzCeMFJGtplshBR3ZQp4i3wuyZ1FE5l1LlVsn5dVK
+         nj1+nZUMlI7qg==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+Date:   Sat, 21 Mar 2020 22:18:02 +0100
+Message-Id: <cover.1584825247.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v3 0/3] clk: at91: support configuring more clock parents via DT
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200321051612.GA5063@builder>
-References: <20200319053902.3415984-1-bjorn.andersson@linaro.org> <20200319053902.3415984-3-bjorn.andersson@linaro.org> <158474710844.125146.15515925711513283888@swboyd.mtv.corp.google.com> <20200321051612.GA5063@builder>
-Subject: Re: [PATCH 2/4] clk: qcom: mmcc-msm8996: Properly describe GPU_GX gdsc
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Date:   Sat, 21 Mar 2020 11:43:12 -0700
-Message-ID: <158481619279.125146.6917548675896981321@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-03-20 22:16:12)
-> On Fri 20 Mar 16:31 PDT 2020, Stephen Boyd wrote:
->=20
-> > Quoting Bjorn Andersson (2020-03-18 22:39:00)
-> > > diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b=
-/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > index 85518494ce43..65d9aa790581 100644
-> > > --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > @@ -67,6 +67,10 @@ properties:
-> > >      description:
-> > >         Protected clock specifier list as per common clock binding
-> > > =20
-> > > +  vdd_gfx-supply:
-> >=20
-> > Why not vdd-gfx-supply? What's with the underscore?
-> >=20
->=20
-> The pad is named "VDD_GFX" in the datasheet and the schematics. I see
-> that we've started y/_/-/ in some of the newly added bindings, would you
-> prefer I follow this?
+This series extends AT91 with clock references to PCKx and
+PLLA/AUDIOPLL (for sama5d2).
 
-If the datasheet has this then I guess it's fine. I'll wait for Rob to
-ack.
+First patch simplifies clock table allocation. Next two update the table
+with missing clock pointers and IDs.
+
+---
+v2: rebased against current clk/clk-at91 tree
+v3: non-functional changes + rebase
+---
+Michał Mirosław (3):
+  clk: at91: optimize pmc data allocation
+  clk: at91: allow setting PCKx parent via DT
+  clk: at91: sama5d2: allow setting all PMC clock parents via DT
+
+ drivers/clk/at91/at91rm9200.c    |  6 +++--
+ drivers/clk/at91/at91sam9260.c   |  7 +++--
+ drivers/clk/at91/at91sam9g45.c   |  6 +++--
+ drivers/clk/at91/at91sam9n12.c   |  6 +++--
+ drivers/clk/at91/at91sam9rl.c    |  6 +++--
+ drivers/clk/at91/at91sam9x5.c    |  6 +++--
+ drivers/clk/at91/pmc.c           | 44 ++++++++++++--------------------
+ drivers/clk/at91/pmc.h           |  8 ++++--
+ drivers/clk/at91/sam9x60.c       |  6 +++--
+ drivers/clk/at91/sama5d2.c       | 12 ++++++---
+ drivers/clk/at91/sama5d3.c       |  6 +++--
+ drivers/clk/at91/sama5d4.c       |  6 +++--
+ include/dt-bindings/clock/at91.h |  3 +++
+ 13 files changed, 72 insertions(+), 50 deletions(-)
+
+-- 
+2.20.1
+
