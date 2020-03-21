@@ -6,68 +6,60 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA09CC3F2CD
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 323DCC4332B
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92E7920787
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:09:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44E120753
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:12:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584749343;
-	bh=BwR1A0LR4kSGnvfTTmFx0nWVw51KQHZYZJj7qIvL188=;
+	s=default; t=1584749575;
+	bh=DnhPbWzQwKroX7nBdWFxqbUk1n4HZdjpIAK0tlR+kEE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=sjN8jh0ngpBmoH73eGzu5z0vBVvNM9ecNFCUbOpMjDzcnFsgcAYTQBVKZy+yWvGDq
-	 1uBTGt+iK/SMkYRFAmccjyqP7fhxgNNcGl1OhF3fnA9alcN5wF4IaYhgItg5ErGLSq
-	 wmpSqEKpKrO8UySrQNugnIfpXNL/QsLyi0JSmOhM=
+	b=ay0IdwECKp21Z5wyQleOcEa2Zt7kQ/Fo+Qh4D8AKwa9WKDee03w0jw9oroYAaa9/R
+	 94DZsLwZm/HE95mAKEzM8WtR4QUHPcyZeHK3QrXSjUW1FWF5+T+/bDpUUzkYroPHzx
+	 7mihDCiBbejeHrKGvfMTGumKQm6WWJWK2G9ucok8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbgCUAI4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 20:08:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50932 "EHLO mail.kernel.org"
+        id S1726773AbgCUAMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 20:12:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgCUAI4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:08:56 -0400
+        id S1726738AbgCUAMy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:12:54 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 843B72076E;
-        Sat, 21 Mar 2020 00:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB4C720753;
+        Sat, 21 Mar 2020 00:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584749335;
-        bh=BwR1A0LR4kSGnvfTTmFx0nWVw51KQHZYZJj7qIvL188=;
+        s=default; t=1584749574;
+        bh=DnhPbWzQwKroX7nBdWFxqbUk1n4HZdjpIAK0tlR+kEE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lHMA/IdtyWk6BevCXweklo6NBit2XzYMm6/rufxTgug66xoBm+c5MVhb89OOcdrtW
-         U5FReYFgVaP00VPGp6yGqM3xqzszCBLILZUkWNPBKUIKTeGdTl84xqw/Bnk/1Xmhm4
-         +dUtw81U4aelKaM1NaiqKEVv6ePknOBegQNDN5jA=
+        b=zqlaoCwA7nXfDw2SkB5hDp8OKPJrAZhKd24EIaj+OQSkQlsRTFf5bUg5iiy8ZQK/z
+         iRlUu3zDT0SXHzg3b30OW/dCW6uoczGfroRGm0TjnpMHy9LieEaPmntBfSHNtul0pe
+         bNJ1bErDB5xTkplAI8S+Sl9T1ITaLDsVcIJX2WYE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200213161952.37460-1-paul@crapouillou.net>
-References: <20200213161952.37460-1-paul@crapouillou.net>
-Subject: Re: [PATCH v2 1/2] clk: ingenic/jz4770: Exit with error if CGU init failed
+In-Reply-To: <20200310135507.87959-1-andriy.shevchenko@linux.intel.com>
+References: <20200310135507.87959-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1] clk: Fix trivia typo in comment exlusive => exclusive
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
-        stable@vger.kernel.org, kbuild test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Date:   Fri, 20 Mar 2020 17:08:54 -0700
-Message-ID: <158474933477.125146.7017462796685890112@swboyd.mtv.corp.google.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Date:   Fri, 20 Mar 2020 17:12:53 -0700
+Message-ID: <158474957303.125146.849596024736449322@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2020-02-13 08:19:51)
-> Exit jz4770_cgu_init() if the 'cgu' pointer we get is NULL, since the
-> pointer is passed as argument to functions later on.
+Quoting Andy Shevchenko (2020-03-10 06:55:07)
+> Fix trivia typo in comment exlusive =3D> exclusive.
 >=20
-> Fixes: 7a01c19007ad ("clk: Add Ingenic jz4770 CGU driver")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 > ---
 
 Applied to clk-next
