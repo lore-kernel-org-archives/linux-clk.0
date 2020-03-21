@@ -2,100 +2,69 @@ Return-Path: <SRS0=7yfQ=5G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FE1C4332D
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E58C43333
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:44:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B79262076C
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:25:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BfqNNxhX"
+	by mail.kernel.org (Postfix) with ESMTP id 269222076E
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:44:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584751451;
+	bh=ZMNS9Vcri4AEpW6rcNqodcFPTHKCyMBNpdd0Dq4G9W0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=AOw3qm7X6JiDINJPOuwBIL0AD3hZNiYW3k09+u5T7A2pfrsqvR0f+nbP/uvoGpzxS
+	 dPMAgXxRqRCbPZYZbrR8g8dCuvRkfVzJ5r1Ywq8KOkw56eC2sHYxanmKCFLieAhzoT
+	 XkOPVGMKjAQ2qOt5w8yUn6ebaoptl0zooyyA2JIg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbgCUAZz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 20:25:55 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:15172 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726867AbgCUAZz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Mar 2020 20:25:55 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1584750354; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=RFDAvUQyVdRVN+shAEUn6F8OxkZUxxHr+I+3F0JOpSo=; b=BfqNNxhXfR50HV6SOlQr0DcWxLaKsJLgqgcpzMOrHwHTfOaH4voIcuDnLTOksVjEpVQ4bDXV
- FFXcWr38I1ZrBsCVpj8Yjl5L2G2KjgDVX6YkIoLn0gvxdPfFsSAIzgiAlFOovrEn/yMbdb+X
- or/rH8GLLwc9umDP5+Oyi7p+BVs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e755f04.7f4e12ba9768-smtp-out-n05;
- Sat, 21 Mar 2020 00:25:40 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D6420C43636; Sat, 21 Mar 2020 00:25:38 +0000 (UTC)
-Received: from [10.110.28.154] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727856AbgCUAoH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 20:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59270 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726773AbgCUAoG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 20:44:06 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D1F87C433D2;
-        Sat, 21 Mar 2020 00:25:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D1F87C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
-Subject: Re: [PATCH v2 1/2] clk: qcom: gcc: Add USB3 PIPE clock and GDSC for
- SM8150
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1584478412-7798-1-git-send-email-wcheng@codeaurora.org>
- <1584478412-7798-2-git-send-email-wcheng@codeaurora.org>
- <158474728076.125146.11401827374115414324@swboyd.mtv.corp.google.com>
-From:   Wesley Cheng <wcheng@codeaurora.org>
-Message-ID: <83787def-4ea5-d38d-d745-ea30a914a05f@codeaurora.org>
-Date:   Fri, 20 Mar 2020 17:25:37 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 6AC0D20753;
+        Sat, 21 Mar 2020 00:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1584751446;
+        bh=ZMNS9Vcri4AEpW6rcNqodcFPTHKCyMBNpdd0Dq4G9W0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=XSPkj0VBd9Ugt2BA+SaJplHfUGCHq092vs9sYUpML/EthYqIxQerBKgCxuAosC9Gc
+         q2O48XDokrFqf164YBZcmShNXOgYY90UqaaNk46YMaUng2wp0MIvf9P8O4QnHQHTVq
+         ghwVpvOD0g51NQA/AvxZ7ajulFUXVhVS+LL29kP4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <158474728076.125146.11401827374115414324@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1584661443-12032-1-git-send-email-Anson.Huang@nxp.com>
+References: <1584661443-12032-1-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH V2] clk: imx: clk-pllv3: Use readl_relaxed_poll_timeout() for PLL lock wait
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        festevam@gmail.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org, tglx@linutronix.de
+Date:   Fri, 20 Mar 2020 17:44:05 -0700
+Message-ID: <158475144559.125146.12057905431193979940@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Anson Huang (2020-03-19 16:44:03)
+> Use readl_relaxed_poll_timeout() for PLL lock wait which can simplify the
+> code a lot.
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
 
-
-On 3/20/2020 4:34 PM, Stephen Boyd wrote:
-> Quoting Wesley Cheng (2020-03-17 13:53:31)
->> diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
->> index 90d60ef..3e1a918 100644
->> --- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
->> +++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
->> @@ -240,4 +240,8 @@
->>  #define GCC_USB30_SEC_BCR                                      27
->>  #define GCC_USB_PHY_CFG_AHB2PHY_BCR                            28
->>  
->> +/* GCC GDSCRs */
->> +#define USB30_PRIM_GDSC                     4
->> +#define USB30_SEC_GDSC                                         5
-> 
-> BTW, should we expect more GDSCs at 0,1,2,3 here? Why wasn't that done
-> initially?
-> 
-
-Hi Stephen,
-
-Yes, I assume there should be more GDSCs being introduced, and I have
-notified Taniya (our GCC POC) to upload the rest of the GDSC changes.  I
-decided to keep it with values 4 and 5 in order to be consistent with
-previous chipsets, but if you feel we should shuffle these values, then
-I am OK with that as well.
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
