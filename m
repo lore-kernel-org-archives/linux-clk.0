@@ -2,67 +2,198 @@ Return-Path: <SRS0=7yfQ=5G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D3FCC4332B
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFAEC4332B
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B2920B80
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 00:56:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3143A2080C
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584752177;
-	bh=IQX1YjLnbhrv4UbjVL16ZTihWmyyk8E2S7LF3aN/Yxc=;
+	s=default; t=1584752976;
+	bh=1TMSACbNS6snXsOh2chfn6p2kjbS1jSTgaqql6DheHw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ftIG28YDlpE4p/qvsUtNG6MAP1YkPqNQIQGoHbOOa687YShbNUaWubysFgVh8Lkz+
-	 Tn9XHo5r1yN3Ngu9aZ48blxff2X2liHAaxMMFXueaB7UJPTNYsBP18X5w/6qbp18tm
-	 e0SXvh2FTorQUAOXTiL2Loe6PhlL6L9d1I20xRss=
+	b=KimrEchkY2c1zTWxL27UGXeYF5/UagrzXFlms4x+AFs7wpL8zi+7ba41exuTHqvPr
+	 o/UHblVmK3Jg0Go8zk4E9CsLDehdaR3QW8na5iwk9ifUbz29LukcgJ9JXVKGaM+4zK
+	 LZ3CLjJ1U0PKsntzXv1T7UniY11g7tu1zdkiLU64=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726840AbgCUA4R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 20:56:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38992 "EHLO mail.kernel.org"
+        id S1727113AbgCUBJe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Mar 2020 21:09:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726773AbgCUA4R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 20:56:17 -0400
+        id S1726840AbgCUBJd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Mar 2020 21:09:33 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB447208DB;
-        Sat, 21 Mar 2020 00:56:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 120862072C;
+        Sat, 21 Mar 2020 01:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584752176;
-        bh=IQX1YjLnbhrv4UbjVL16ZTihWmyyk8E2S7LF3aN/Yxc=;
+        s=default; t=1584752972;
+        bh=1TMSACbNS6snXsOh2chfn6p2kjbS1jSTgaqql6DheHw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=xqbrp4J7oyGpE4uvFRyonFVCMKD97AD06EyG4uj/Dcc9dGCvEtq0SDJc+wUSsntay
-         tSKDQjazowz3WqPH930nxAZRaDkgjgcdqxAn6oMeUCCa1W5eN8pnOiZ0HqBIeBj6Fw
-         NOgUX33qg2e+AlzmHcrDtHukOq1WPklokmO9VNEo=
+        b=yeIm/T7/7y1KH1Gbu+UR/1UIDDnUApqSCB7y14Yi+8X2cQl3dY9W9sm2U07WBj0uS
+         YZhyyKsgTUn+hlTiw1pI5dvaYofvwEaMovHPdIpHnq6KqA+eB9sN61MicN5adBFcez
+         YR7zPDRPAXKXRrhzra4E66H0cDSb5fXLTf7R80S4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200219103326.81120-3-linus.walleij@linaro.org>
-References: <20200219103326.81120-1-linus.walleij@linaro.org> <20200219103326.81120-3-linus.walleij@linaro.org>
-Subject: Re: [PATCH 3/3 v3] clk: versatile: Add device tree probing for IM-PD1 clocks
+In-Reply-To: <82828e89ccf4173de4e5e52dcecacc4d5168315c.1584720678.git.alexander.riesen@cetitec.com>
+References: <cover.1584720678.git.alexander.riesen@cetitec.com> <82828e89ccf4173de4e5e52dcecacc4d5168315c.1584720678.git.alexander.riesen@cetitec.com>
+Subject: Re: [PATCH v3 05/11] media: adv748x: add support for HDMI audio
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 20 Mar 2020 17:56:16 -0700
-Message-ID: <158475217607.125146.14794957853451322086@swboyd.mtv.corp.google.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        devel@driverdev.osuosl.org, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>
+To:     Alex Riesen <alexander.riesen@cetitec.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>
+Date:   Fri, 20 Mar 2020 18:09:31 -0700
+Message-ID: <158475297119.125146.8177273856843293558@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Linus Walleij (2020-02-19 02:33:26)
-> As we want to move these clocks over to probe from the device
-> tree we add a device tree probing path.
->=20
-> The old platform data path will be deleted once we have the
-> device tree overall code in place.
->=20
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
+Quoting Alex Riesen (2020-03-20 09:12:00)
+> diff --git a/drivers/media/i2c/adv748x/adv748x-dai.c b/drivers/media/i2c/=
+adv748x/adv748x-dai.c
+> new file mode 100644
+> index 000000000000..6fce7d000423
+> --- /dev/null
+> +++ b/drivers/media/i2c/adv748x/adv748x-dai.c
+> @@ -0,0 +1,265 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Driver for Analog Devices ADV748X HDMI receiver with AFE
+> + * The implementation of DAI.
+> + */
+> +
+> +#include "adv748x.h"
+> +
+> +#include <linux/clk.h>
 
-Applied to clk-next
+Is this include used? Please try to make a clk provider or a clk
+consumer and not both unless necessary.
+
+> +#include <linux/clk-provider.h>
+> +#include <sound/pcm_params.h>
+> +
+> +#define state_of(soc_dai) \
+> +       adv748x_dai_to_state(container_of((soc_dai)->driver, \
+> +                                         struct adv748x_dai, \
+> +                                         drv))
+> +
+> +static const char ADV748X_DAI_NAME[] =3D "adv748x-i2s";
+> +
+[...]
+> +       .set_sysclk =3D adv748x_dai_set_sysclk,
+> +       .set_fmt =3D adv748x_dai_set_fmt,
+> +       .startup =3D adv748x_dai_startup,
+> +       .hw_params =3D adv748x_dai_hw_params,
+> +       .mute_stream =3D adv748x_dai_mute_stream,
+> +       .shutdown =3D adv748x_dai_shutdown,
+> +};
+> +
+> +static int adv748x_of_xlate_dai_name(struct snd_soc_component *component,
+> +                                     struct of_phandle_args *args,
+> +                                     const char **dai_name)
+> +{
+> +       if (dai_name)
+> +               *dai_name =3D ADV748X_DAI_NAME;
+> +       return 0;
+> +}
+> +
+> +static const struct snd_soc_component_driver adv748x_codec =3D {
+> +       .of_xlate_dai_name =3D adv748x_of_xlate_dai_name,
+> +};
+> +
+> +int adv748x_dai_init(struct adv748x_dai *dai)
+> +{
+> +       int ret;
+> +       struct adv748x_state *state =3D adv748x_dai_to_state(dai);
+> +
+> +       dai->mclk_name =3D kasprintf(GFP_KERNEL, "%s.%s-i2s-mclk",
+> +                                  state->dev->driver->name,
+> +                                  dev_name(state->dev));
+> +       if (!dai->mclk_name) {
+> +               ret =3D -ENOMEM;
+> +               adv_err(state, "No memory for MCLK\n");
+> +               goto fail;
+> +       }
+> +       dai->mclk =3D clk_register_fixed_rate(state->dev,
+
+Please register with clk_hw_register_fixed_rate() instead.
+
+> +                                           dai->mclk_name,
+> +                                           NULL /* parent_name */,
+> +                                           0 /* flags */,
+> +                                           12288000 /* rate */);
+
+Not sure these comments are useful.
+
+> +       if (IS_ERR_OR_NULL(dai->mclk)) {
+> +               ret =3D PTR_ERR(dai->mclk);
+> +               adv_err(state, "Failed to register MCLK (%d)\n", ret);
+> +               goto fail;
+> +       }
+> +       ret =3D of_clk_add_provider(state->dev->of_node, of_clk_src_simpl=
+e_get,
+> +                                 dai->mclk);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to add MCLK provider (%d)\n", ret);
+> +               goto unreg_mclk;
+> +       }
+> +       dai->drv.name =3D ADV748X_DAI_NAME;
+> +       dai->drv.ops =3D &adv748x_dai_ops;
+> +       dai->drv.capture =3D (struct snd_soc_pcm_stream){
+
+Can this be const?
+
+> +               .stream_name    =3D "Capture",
+> +               .channels_min   =3D 8,
+> +               .channels_max   =3D 8,
+> +               .rates =3D SNDRV_PCM_RATE_48000,
+> +               .formats =3D SNDRV_PCM_FMTBIT_S24_LE | SNDRV_PCM_FMTBIT_U=
+24_LE,
+> +       };
+> +
+> +       ret =3D devm_snd_soc_register_component(state->dev, &adv748x_code=
+c,
+> +                                             &dai->drv, 1);
+> +       if (ret < 0) {
+> +               adv_err(state, "Failed to register the codec (%d)\n", ret=
+);
+> +               goto cleanup_mclk;
+> +       }
+> +       return 0;
+> +
+> +cleanup_mclk:
+> +       of_clk_del_provider(state->dev->of_node);
+> +unreg_mclk:
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +fail:
+> +       return ret;
+> +}
+> +
+> +void adv748x_dai_cleanup(struct adv748x_dai *dai)
+> +{
+> +       struct adv748x_state *state =3D adv748x_dai_to_state(dai);
+> +
+> +       of_clk_del_provider(state->dev->of_node);
+> +       clk_unregister_fixed_rate(dai->mclk);
+> +       kfree(dai->mclk_name);
+> +}
+> +
+
+Please drop extra newline at end of file.
