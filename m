@@ -2,70 +2,108 @@ Return-Path: <SRS0=7yfQ=5G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DDCC4332B
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:25:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2D3C4332E
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 05:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D1220752
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 01:25:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1584753942;
-	bh=oAJ8P7kfcTRF3VUPHD9jiZM2Uu8T5UeR/9sCfYxFsAo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=XN03/m3xFGJm7EyRmgjVOO5MQXpiz+Wbp2R0m/HwIVDjOVVn8tDBi/hMgu+EQC5QQ
-	 H3JNF0RhO6K1w13XDg1/lXO/c9a8XrHk0MgJzUXj6x2B2RCRvClyTNRcLfkHtAqAUx
-	 TJhEa1wZrI3wIUYli3OmK69LHdhTHRhkb1E2eJHQ=
+	by mail.kernel.org (Postfix) with ESMTP id 891A220757
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Mar 2020 05:16:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jq8uYH4K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbgCUBZi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Mar 2020 21:25:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46774 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727778AbgCUBZh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Mar 2020 21:25:37 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AFEC20753;
-        Sat, 21 Mar 2020 01:25:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1584753937;
-        bh=oAJ8P7kfcTRF3VUPHD9jiZM2Uu8T5UeR/9sCfYxFsAo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=o44fhJwJH8lHLGrll/d9AkF6QoSeNJzJ9jl4Ywmv9eBTFlx+3Ws4qQJjr5TEcRvIF
-         rLl6i6ra7iJPysT4HN2c2p2EsJtTgzWePopgoDsv0I9mXK14Og9DWA4m/GX3Ogf/Ll
-         /iQET8XVx/qEWMM2laDYdaWfQA4zFM/WqXZ/N+tc=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200309194254.29009-18-lkundrak@v3.sk>
-References: <20200309194254.29009-1-lkundrak@v3.sk> <20200309194254.29009-18-lkundrak@v3.sk>
-Subject: Re: [PATCH v2 17/17] clk: mmp2: Fix bit masks for LCDC I/O and pixel clocks
-From:   Stephen Boyd <sboyd@kernel.org>
+        id S1725440AbgCUFQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Mar 2020 01:16:17 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45715 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727961AbgCUFQR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Mar 2020 01:16:17 -0400
+Received: by mail-pg1-f194.google.com with SMTP id m15so4121687pgv.12
+        for <linux-clk@vger.kernel.org>; Fri, 20 Mar 2020 22:16:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XNi67lxb8U8NV5u7Vn404GtWj+hZ0U+9yVzYkz6He6c=;
+        b=jq8uYH4KlVRzXv1z55n7X7m51bZgjDN7PaeFcN5NkEvGni89YjKSeIk1kY1qugZ2EW
+         A2oUo07JhAZvwb6/Awi0TCpenPbNi8CujHTpna1iApfqArhDl0pHhWMY/zX20I+ZTfMV
+         wYGuRj0e+22DUP2xtisJw0EabKIUIZ90TprLg087ujThJ0CTRoxsqE2/tNrzcEzT3SLw
+         naQSXNKV23pdQ5DBrd+B64G5uOajpwStBJOPChgD7/VDf4jb1bbbZ8k+gFFFVnlv/mlY
+         6R8BcXlqX8wcYF0H4m7kpMAD4q4jZcg4zM+6vHjBScFw8RLaVTvdzN+5RkZAoGwqBPbc
+         9N4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XNi67lxb8U8NV5u7Vn404GtWj+hZ0U+9yVzYkz6He6c=;
+        b=Mh6kqxKLLgKqlPJPeKzqet/9NPvH5MljmOxn4sIGGiuVD6+lTMcoEq60EDYZWwsloy
+         j0AB3lGYrjf+eLzK6qN/VOUpiqfBb1fodDT6spraudGL9k1QT967wDgr6pdvTBi7JgcQ
+         72UZ6I0SD7Woz5N471xGlqAK2m8TuCLbqSReG3BN27fPMqEatNRtzYLyRPSZu7JEamkD
+         vG6X1AiT7Irb0z3eY8UBDO1HaajzYyqupdFJwRHnApeJEJgK23w/I4clzgbZcozM5Fga
+         R4VzJ1fvLweRQYYq3AMkKchWPlM7PqJZ6DNwvo6lDGV/7NEJVVQij5A3HFhWsxASISb6
+         BcYg==
+X-Gm-Message-State: ANhLgQ20QCVlHUojCTd27gjDDOMMekQPrtjm3D/AxEaYQVvfVJckI334
+        T0uZLuSMTvcNvWImzIc3iGSOPQ==
+X-Google-Smtp-Source: ADFU+vs2kNydDTd3Wn+dEAvpwU9bUvPxix2ypzpJD/vmL+TvIzEbcNGfc+1iSt2ank04tWaOQaCaVQ==
+X-Received: by 2002:a63:18b:: with SMTP id 133mr2609937pgb.422.1584767775753;
+        Fri, 20 Mar 2020 22:16:15 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i11sm6170637pje.30.2020.03.20.22.16.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Mar 2020 22:16:15 -0700 (PDT)
+Date:   Fri, 20 Mar 2020 22:16:12 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Date:   Fri, 20 Mar 2020 18:25:36 -0700
-Message-ID: <158475393645.125146.318461661270082621@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH 2/4] clk: qcom: mmcc-msm8996: Properly describe GPU_GX
+ gdsc
+Message-ID: <20200321051612.GA5063@builder>
+References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+ <20200319053902.3415984-3-bjorn.andersson@linaro.org>
+ <158474710844.125146.15515925711513283888@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158474710844.125146.15515925711513283888@swboyd.mtv.corp.google.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2020-03-09 12:42:54)
-> They were reversed because I read the datasheet upside down.
-> Actually there is no datasheet, but I ended up understanding the
-> comments in Open Firmware driver wrong.
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
->=20
-> ---
+On Fri 20 Mar 16:31 PDT 2020, Stephen Boyd wrote:
 
-Applied to clk-next
+> Quoting Bjorn Andersson (2020-03-18 22:39:00)
+> > diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+> > index 85518494ce43..65d9aa790581 100644
+> > --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+> > @@ -67,6 +67,10 @@ properties:
+> >      description:
+> >         Protected clock specifier list as per common clock binding
+> >  
+> > +  vdd_gfx-supply:
+> 
+> Why not vdd-gfx-supply? What's with the underscore?
+> 
+
+The pad is named "VDD_GFX" in the datasheet and the schematics. I see
+that we've started y/_/-/ in some of the newly added bindings, would you
+prefer I follow this?
+
+Regards,
+Bjorn
+
+> > +    description:
+> > +      Regulator supply for the GPU_GX GDSC
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
