@@ -2,252 +2,253 @@ Return-Path: <SRS0=AVA3=5I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F711C4332E
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 10:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34221C4332B
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 10:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 663862077D
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 10:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF41220769
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 10:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="KBhRMnzt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1smXx7hq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BD8PkINo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727781AbgCWKBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Mar 2020 06:01:19 -0400
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:52105 "EHLO
-        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727761AbgCWKBS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Mar 2020 06:01:18 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A8F83580412;
-        Mon, 23 Mar 2020 06:01:16 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 23 Mar 2020 06:01:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=/WvqdoYz5hLKl3XQDGdtoCAHQbJ
-        /DVnk5Lp+j1NoVJE=; b=KBhRMnztT4+zGwbGOT27ZJcocQCf5IbbatGFS2Ix4AK
-        i7UqTad3VvN9/BxpXfO1/bLnSWq4tnWdMsCVs3vVE+hYxxREvS4uajvOs5mDJWwx
-        wF4W9E4hScT+Ry9Py2bipyjor1hy2Ne5/qi22p/uazJhi5gHiEF6XdSHVASfEmnr
-        RWEVl9oR7kbGQTXTmq5RDMqH1YQnuVWwO4Y/ORqOs1ZovzK+R1gZuvhXH13hMTAb
-        041VhBrMmMvCCquYaWoH55EBYM6YOQHkkX01cnct9CSBQav7+LWRoI4DskoUI5HS
-        Lx5sxxY2UQztjdFTJOfB0O0ESqHlqA5I39100sQP6rw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/Wvqdo
-        Yz5hLKl3XQDGdtoCAHQbJ/DVnk5Lp+j1NoVJE=; b=1smXx7hqCAppWfSH8INChc
-        YQlJcPEg6EaCt+52hhKKFwg/NHLcjvUuvCNrrlxh2vVyRg4S7qFY+EVhiLTZEfLq
-        wI8q28R+egn8YoNtK5L5eQH/ow9D4naTWg59HjwiwKiVpvIqP+llEAguk8gh48Oy
-        f8YJV0paTKAc5+VnBBAnfsbGcN9UQsStV+wAV/QV4RifgXdTu97ersaCqT9OMv9M
-        AeIolZ3t2PihtRWKLXa6FJA552COQdyXb4XBs73dPgY4U+G/LtG/iQd/KBEbnQtK
-        oFVIpMheYYHWr8hva72DenuJ/0oDhomLox0/Up2IYVKf5Wy2PlghWYQB0Y74Ks3Q
-        ==
-X-ME-Sender: <xms:54h4XrziilQ979XEEhoaeyyofL9igG3NuXqU2XjQUhKd_Vcw5gYbKA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudegkedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:54h4Xrko6pOn_bmge1a73E1F0VmZP_VNmHU1_i1Pz-qcng4k0XGuNg>
-    <xmx:54h4XvUTPNd-RbEAQ3X9l38Ep1FUnvVJGOHoRgUqP5QcREhM7BFfmQ>
-    <xmx:54h4XjWHxpNML3VV6lX08dN6aRcjHpTELuak6RjodvjD6suT4ZVJBQ>
-    <xmx:7Ih4XpIBrcNGc3zZckpXGzpxM9HhuDaoqrON_j7rJ1hUdkSs2lD0BQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CF1B8328005D;
-        Mon, 23 Mar 2020 06:01:10 -0400 (EDT)
-Date:   Mon, 23 Mar 2020 11:01:09 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Sergey.Semin@baikalelectronics.ru
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
+        id S1727894AbgCWKfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Mar 2020 06:35:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42227 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727810AbgCWKfG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Mar 2020 06:35:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id h15so4116034wrx.9;
+        Mon, 23 Mar 2020 03:35:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kb4Lv5bsGKOyoT35RNZwsybhTbpTu7j4N2rAcNXDNjg=;
+        b=BD8PkINofqM+2m3ljrhp7yyLB4gF36LGhIrA52TPmuqRz0G59NwZy12isw2AmuAkgT
+         v1uLLWoZSRvMasjsy8uKNF1Hu/kk5qGBU3q2CGhw4seK3Knar8a5iQnTX7yNci8hfppf
+         WI+Un9B884eetXV5FLPsRWuumF76GmRa9te6j1Sfp1f1mdRHiSD+C0YCKGZKZDb1Itst
+         kn47xmcDWasykdGVnEgTFj7Of6f5w8fnqGS6xEs4ux3XtSEShuObXS1CHOHuifSmjejf
+         TtkZCmyyTyP4E1irDmE+RQM3LHjE/isJjmvWa49a4Ajlp/BboCr/UTRWXcSVoiIB1JB5
+         lclA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kb4Lv5bsGKOyoT35RNZwsybhTbpTu7j4N2rAcNXDNjg=;
+        b=Bs6K3hpPZ0R7i0ZqTyJ0RTRUuQl2Nr/amj6b0jlzB+h+1BoFZ1YDP8F+apxIW/Ug9R
+         Nw7Uv8eSP8w4J9p7kPuzD6TRIGByw0TOi/UEpuksmn9eWpbFr1+Mo4KHuP6nJn5qYrRK
+         YbO0BQ+XkVXvdbcxDczRyPi2JIrA46yadTCxJDmd5wYjutILmQlG3ta88ceS1aFYpXFE
+         i57wpgKIr++Ob2dnGIaIzF7QbWfW4/kDqbC3ukBAUI4NJAKaF0JMt7M3/vGy8KIybs3C
+         6vqp8QYVBdtZUAnTHglvaBtp496s4yo0/1J3YFbhCHg9RU/9DgzxnAIzFDxl57VMo3Au
+         t06w==
+X-Gm-Message-State: ANhLgQ18OPuwvSYdKPcggmJfgi6H1nTndZYwDk43GK1iBVoL41lO6XzA
+        slj1+dkO6HjDXhYErh94lPY=
+X-Google-Smtp-Source: ADFU+vu/O7sXCEcT5dR6Bauzu227GwJoOsPijCPDK2NrevZ8tRNghbiM0ipWULUPYcDi3HppdykmAQ==
+X-Received: by 2002:a5d:6289:: with SMTP id k9mr28615174wru.36.1584959702716;
+        Mon, 23 Mar 2020 03:35:02 -0700 (PDT)
+Received: from localhost (pD9E51CDC.dip0.t-ipconnect.de. [217.229.28.220])
+        by smtp.gmail.com with ESMTPSA id w67sm20085951wmb.41.2020.03.23.03.35.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 03:35:01 -0700 (PDT)
+Date:   Mon, 23 Mar 2020 11:35:00 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race
- condition
-Message-ID: <20200323100109.k2gckdyneyzo23fb@gilmour.lan>
-References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru>
- <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
+        Stephen Boyd <sboyd@kernel.org>,
+        Joseph Lo <josephl@nvidia.com>, devicetree@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v5 4/8] dt-bindings: memory: tegra: Add external memory
+ controller binding for Tegra210
+Message-ID: <20200323103500.GA3883508@ulmo>
+References: <20200310152003.2945170-1-thierry.reding@gmail.com>
+ <20200310152003.2945170-5-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="sxpqz3afj6jojk4c"
+        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
 Content-Disposition: inline
-In-Reply-To: <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20200310152003.2945170-5-thierry.reding@gmail.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---sxpqz3afj6jojk4c
+--1yeeQ81UyVL57Vl7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Mon, Mar 23, 2020 at 05:46:09AM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
->
-> There are races possible in the dw8250_set_termios() callback method
-> and while the device is in PM suspend state. A race condition may
-> happen if the baudrate clock source device is shared with some other
-> device (in our machine it's another DW UART port). In this case if that
-> device changes the clock rate while serial console is using it the
-> DW 8250 UART port might not only end up with an invalid uartclk value
-> saved, but may also experience a distorted output data since baud-clock
-> could have been changed. In order to fix this lets enable an exclusive
-> reference clock rate access in case if "baudclk" device is specified.
->
-> So if some other device also acquires the rate exclusivity during the
-> time of a DW UART 8250 port being opened, then DW UART 8250 driver
-> won't be able to alter the baud-clock. It shall just use the available
-> clock rate. Similarly another device also won't manage to change the
-> rate at that time. If nothing else have the exclusive rate access
-> acquired except DW UART 8250 driver, then the driver will be able to
-> alter the rate as much as it needs to in accordance with the currently
-> implemented logic.
->
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
-> Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
-> Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
-> Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
-> Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
-> Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-> Cc: Paul Burton <paulburton@kernel.org>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Maxime Ripard <mripard@kernel.org>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> CC: Ray Jui <rjui@broadcom.com>
-> Cc: Scott Branden <sbranden@broadcom.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Wei Xu <xuwei5@hisilicon.com>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Andrew Lunn <andrew@lunn.ch>
-> Cc: Gregory Clement <gregory.clement@bootlin.com>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
->
+On Tue, Mar 10, 2020 at 04:19:59PM +0100, Thierry Reding wrote:
+> From: Joseph Lo <josephl@nvidia.com>
+>=20
+> Add the binding document for the external memory controller (EMC) which
+> communicates with external LPDDR4 devices. It includes the bindings of
+> the EMC node and a sub-node of EMC table which under the reserved memory
+> node. The EMC table contains the data of the rates that EMC supported.
+>=20
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
->
-> Changelog v2:
-> - Move exclusive ref clock lock/unlock precudures to the 8250 port
->   startup/shutdown methods.
-> - The changelog message has also been slightly modified due to the
->   alteration.
-> - Remove Alexey' SoB tag.
-> - Cc someone from ARM who might be concerned regarding this change.
-> - Cc someone from Clocks Framework to get their comments on this patch.
-> ---
->  drivers/tty/serial/8250/8250_dw.c | 36 +++++++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->
-> diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
-> index aab3cccc6789..08f3f745ed54 100644
-> --- a/drivers/tty/serial/8250/8250_dw.c
-> +++ b/drivers/tty/serial/8250/8250_dw.c
-> @@ -319,6 +319,40 @@ static void dw8250_set_ldisc(struct uart_port *p, struct ktermios *termios)
->  	serial8250_do_set_ldisc(p, termios);
->  }
->
-> +static int dw8250_startup(struct uart_port *p)
-> +{
-> +	struct dw8250_data *d = to_dw8250_data(p->private_data);
+> Changes in v5:
+> - convert to dt-schema
+>=20
+>  .../nvidia,tegra210-emc.yaml                  | 83 +++++++++++++++++++
+>  1 file changed, 83 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/=
+nvidia,tegra210-emc.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/memory-controllers/nvidia,=
+tegra210-emc.yaml b/Documentation/devicetree/bindings/memory-controllers/nv=
+idia,tegra210-emc.yaml
+> new file mode 100644
+> index 000000000000..caf21c08f9cc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/memory-controllers/nvidia,tegra21=
+0-emc.yaml
+> @@ -0,0 +1,83 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/memory-controllers/nvidia,tegra210-em=
+c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +	/*
-> +	 * Some platforms may provide a reference clock shared between several
-> +	 * devices. In this case before using the serial port first we have to
-> +	 * make sure nothing will change the rate behind our back and second
-> +	 * the tty/serial subsystem knows the actual reference clock rate of
-> +	 * the port.
-> +	 */
-> +	if (clk_rate_exclusive_get(d->clk)) {
-> +		dev_warn(p->dev, "Couldn't lock the clock rate\n");
-> +	} else if (d->clk) {
-> +		p->uartclk = clk_get_rate(d->clk);
-> +		if (!p->uartclk) {
-> +			clk_rate_exclusive_put(d->clk);
-> +			dev_err(p->dev, "Clock rate not defined\n");
-> +			return -EINVAL;
-> +		}
-> +	}
+> +title: NVIDIA Tegra210 SoC External Memory Controller
 > +
-> +	return serial8250_do_startup(p);
-> +}
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Jon Hunter <jonathanh@nvidia.com>
+> +
+> +description: |
+> +  The EMC interfaces with the off-chip SDRAM to service the request stre=
+am
+> +  sent from the memory controller.
+> +
+> +properties:
+> +  compatible:
+> +    const: nvidia,tegra210-emc
+> +
+> +  reg:
+> +    maxItems: 3
+> +
+> +  clocks:
+> +    items:
+> +      - description: external memory clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: emc
+> +
+> +  interrupts:
+> +    items:
+> +      - description: EMC general interrupt
+> +
+> +  memory-region:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to a reserved memory region describing the table of EMC
+> +      frequencies trained by the firmware
 
-I've been facing that issue, so it would be great to get it fixed, but
-I'm not sure this is the right solution.
+Hi Rob,
 
-clk_rate_exclusive_get is pretty intrusive, and due to the usual
-topology of clock trees, this will lock down 3-4 parent clocks to
-their current rate as well. In the Allwinner SoCs case for example,
-this will lock down the same PLL than the one used by the CPU,
-preventing cpufreq from running.
+the dt_binding_check error aside, do you have any feedback on this
+particular property? This is a replacement for what we used to do on
+earlier chips where each frequency had its own device tree node, and
+each such node had a bunch of properties, which made it not very
+readable and cumbersome to parse.
 
-However, the 8250 has a pretty wide range of dividers and can adapt to
-any reasonable parent clock rate, so we don't really need to lock the
-rate either, we can simply react to a parent clock rate change using
-the clock notifiers, just like the SiFive UART is doing.
+The reason I ask about this specifically is because there are two
+levels of bootloaders involved here to pass the information to the
+kernel and I'd like to get those patches merged into the bootloaders
+while I'm finishing up the Linux kernel support.
 
-I tried to do that, but given that I don't really have an extensive
-knowledge of the 8250, I couldn't find a way to stop the TX of chars
-while we change the clock rate. I'm not sure if this is a big deal or
-not, the SiFive UART doesn't seem to care.
+Dmitry asked whether the format of this table would need to be
+documented in the bindings. I'm on the fence about this. On one hand
+we don't have this documented anywhere, but on the other hand, the table
+has things like revision fields and so on, so it could technically
+change, even though it's very unlikely that it will.
 
-Maxime
+If you do want it formatted, do you have any suggestions on what that
+should look like? Should I simply dump the C struct definition into the
+bindings document?
 
---sxpqz3afj6jojk4c
+Thierry
+
+> +
+> +  nvidia,memory-controller:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle of the memory controller node
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - nvidia,memory-controller
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra210-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    #
+> +    reserved-memory {
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <2>;
+> +        ranges;
+> +
+> +        emc_table: emc-table@83400000 {
+> +            compatible =3D "nvidia,tegra210-emc-table";
+> +            reg =3D <0x0 0x83400000 0x0 0x10000>;
+> +            status =3D "okay";
+> +        };
+> +    };
+> +
+> +    external-memory-controller@7001b000 {
+> +        compatible =3D "nvidia,tegra210-emc";
+> +        reg =3D <0x0 0x7001b000 0x0 0x1000>,
+> +              <0x0 0x7001e000 0x0 0x1000>,
+> +              <0x0 0x7001f000 0x0 0x1000>;
+> +        clocks =3D <&tegra_car TEGRA210_CLK_EMC>;
+> +        clock-names =3D "emc";
+> +        interrupts =3D <GIC_SPI 78 IRQ_TYPE_LEVEL_HIGH>;
+> +        memory-region =3D <&emc_table>;
+> +        nvidia,memory-controller =3D <&mc>;
+> +    };
+> --=20
+> 2.24.1
+>=20
+
+--1yeeQ81UyVL57Vl7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXniI5AAKCRDj7w1vZxhR
-xaAzAP9ZTOKvBcrPgQQ/+/TFF/Xyv1hvtNQylv3vEF/K9DeEuQEAjtCTjoyYyltZ
-86dRkGN6b2RHWNb6uaZbW0Kr/LH/4wE=
-=AtVK
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl54kNEACgkQ3SOs138+
+s6HGbw/8D3FMkRoHso29aJcXd+/hiG0qdIcibTe1TKRxxTnhKsgvv2OmUza/erFr
+LdSaPpSnQh0oJmhy0AJErTuyIBXlunn4cT1uaLTs/0fWQ/gWvKS53lvPpJMctjU9
+baut4xlJRxEtZCjofZXb1+elMvSvbt/25D/rS7a/fiCQ2ycKkWtDe5s96X1/Unsp
+o7IHFnpb6b/QoNxrj/Oe/As/VLlEYm/7qpGcM9FYWGF/pTM/deaUT55leK+5+Ivz
+CaS02xPMvcWW/bW1Ra72d0Wkox/1Q/phXiHS7D2LMfT5UFHE0x7ge3hFo/abkuAo
+0OgKDB+5xeRKPxtDSfcI8P6B4KczVxHOMqxDOP/KiENt5ALJ3+ziykm013eqd65H
+CZHKSbXvsRK44bknU3pOW1xcc1aZaqwl3tkW0Lcn5DIZkwQoV4/HVAt2CNgjPuNt
+kTLiA4r4ihpZCpDNWubV3os5gs8AaaZnS/8Ww14FsQW5zD9NH3toEITLaWCn0UMO
+UeIfgxCGQ2RgKaKRszXsMDC6R7i4X0kO+675PiIixsL5LlwEhOcbPp/+dkaU5q+Z
+W2c5c3xwFez6FbcuLoYOez9Mcj5p5pFbrFPQknFmyk4Nqb9fBQtU5wwsxD53mGO2
+r8Bpz30EBRWsYibJsB2mpnfE+R2GWpV9TIXbmLPAHfR/mwQqmD8=
+=jRIY
 -----END PGP SIGNATURE-----
 
---sxpqz3afj6jojk4c--
+--1yeeQ81UyVL57Vl7--
