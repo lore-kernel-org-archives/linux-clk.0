@@ -2,94 +2,85 @@ Return-Path: <SRS0=AVA3=5I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA326C54FD3
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 17:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9EEC4332B
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 20:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EA3B2072E
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 17:53:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="D+lp2bsH"
+	by mail.kernel.org (Postfix) with ESMTP id E70B62076E
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 20:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1584997175;
+	bh=+TA7KQ2sMUdn5SzkG4qlg9H4PAhYDaW1bNYEm5pMLj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eY9WdvNq+v5cAvE7hJNWGnxIfmf+p8ooxJRINbQAH23Kws4hk5dqrhjH/4Tt1hm8F
+	 Z06hZSlbtAK0Y9PKJgWLh+BYuxCtrZ7pThp/0nADs+DN3rUKrgxl9Ro4alfBdhN0wr
+	 ZGheWKk887tMG9cMnNclJLJ+7baK8eUmLo3uClOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbgCWRwk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Mar 2020 13:52:40 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15183 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726991AbgCWRwj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Mar 2020 13:52:39 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e78f7590000>; Mon, 23 Mar 2020 10:52:25 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 23 Mar 2020 10:52:38 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 23 Mar 2020 10:52:38 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 23 Mar
- 2020 17:52:37 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Mon, 23 Mar 2020 17:52:38 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.160.78]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e78f7650000>; Mon, 23 Mar 2020 10:52:37 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v5 2/9] arm64: tegra: Add reset-cells to mc
-Date:   Mon, 23 Mar 2020 10:52:28 -0700
-Message-ID: <1584985955-19101-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726177AbgCWU7e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Mar 2020 16:59:34 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35254 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725830AbgCWU7e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Mar 2020 16:59:34 -0400
+Received: by mail-io1-f65.google.com with SMTP id h8so15911345iob.2;
+        Mon, 23 Mar 2020 13:59:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8IyE6MoEtawQWc+ii3p8qF/jfUchyUm7Ryk1+Vf5LdA=;
+        b=IP5X6FRCRGm8+9p2Iq4guk4gQvXnsANr5kg2TlVStCucFpL/qq2UHusz8YYLmS1emC
+         JluzMvVh06YS+ToVcF4sREg4wwBVv/DsM2ecNx9hOpwr33dkUyH32QqeXrjN2rxKkKw0
+         LDxUdnK2hI5fSPGt+kzx++/FougPZQtpIw4FhcGF6ha040uaGuukhx4tPhBxmUYr7fiS
+         h2V35/alxpeHGUQxVagjOaCGA0DBc+kPpUYc+Qer0bmL6XTOSm+1mnOjU21AajObphFa
+         N+eooBGiTjpSwt1wL/poduGoox1loAsRTuEN58hW7R+MC2Xy/xl2NQr5054K+vPgNkeT
+         A46w==
+X-Gm-Message-State: ANhLgQ2l1nsdRrsp5uEFDDR5uD5g9sadTkPTcknzSgeyr7CXV05Z+Yvv
+        PA0BpD2sETt9TpnY9oV2NA==
+X-Google-Smtp-Source: ADFU+vskTGdXLQiJKIPM4lcX/9O07zGAs8eCCyBftML/Gf9uUcnYeYoJjSFudfYbwa0nSAnpdxuPhw==
+X-Received: by 2002:a05:6602:2439:: with SMTP id g25mr14723488iob.142.1584997173185;
+        Mon, 23 Mar 2020 13:59:33 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id s69sm2130679ild.70.2020.03.23.13.59.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Mar 2020 13:59:32 -0700 (PDT)
+Received: (nullmailer pid 11750 invoked by uid 1000);
+        Mon, 23 Mar 2020 20:59:31 -0000
+Date:   Mon, 23 Mar 2020 14:59:31 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Giulio Benetti <giulio.benetti@benettiengineering.com>
+Cc:     Giulio Benetti <giulio.benetti@benettiengineering.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: fix example for single-output provider
+Message-ID: <20200323205931.GA11658@bogus>
+References: <20200309235722.26278-1-giulio.benetti@benettiengineering.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1584985945; bh=fypsljnYXUQBk09pkBuzFp0S2nxT0B9eauugx/SlCBI=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=D+lp2bsHUM0j1Mooa5iWCSWjI+AJKFKJDy/CcMi9+rIVh6sOTQBtWiTsjdc1pgEK8
-         Zmu7vUJqY2JUndCkSmyO0/tufGtzTt9A7p4B27bhfnWGkDJkon+KCDYw8t0IxF/mmd
-         NY8CZX+G+a6+zO30g8MlPqx27lpP19KVowgWMvVT0woigrnv6Zie3bbtMoFSI168J4
-         adbQfaUBDLrBioOVqHV3J2GWxRtbPoX8v2QpMKFFZhnN07dRszzYm94SGQXiYa45BB
-         9zePh7f7xvgBAQHU8mJYYv8ag2gBSYKAgx0v9Ka9cgSRp1CiII1dWfkimeXQq9FToK
-         DDE0Dw2/JPZ3g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200309235722.26278-1-giulio.benetti@benettiengineering.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 device tree is missing reset-cells property for mc node.
+On Tue, 10 Mar 2020 00:57:22 +0100, Giulio Benetti wrote:
+> As described above single-output clock provider should have
+> 0 cells number, so let's fix it by using 0 as cells number.
+> 
+> Signed-off-by: Giulio Benetti <giulio.benetti@benettiengineering.com>
+> ---
+>  Documentation/devicetree/bindings/clock/clock-bindings.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-This patch fixes it.
+Applied, thanks.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index d0eff92..5b1dfd8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -894,6 +894,7 @@
- 		interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
- 
- 		#iommu-cells = <1>;
-+		#reset-cells = <1>;
- 	};
- 
- 	sata@70020000 {
--- 
-2.7.4
-
+Rob
