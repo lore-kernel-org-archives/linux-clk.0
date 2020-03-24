@@ -2,178 +2,113 @@ Return-Path: <SRS0=xU5Q=5J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F393AC4332B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 10:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8967C41621
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 15:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A9F20775
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 10:12:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFDB720788
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 15:37:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="WJ19pKRi";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gBbVxrhQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbgCXKM4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Mar 2020 06:12:56 -0400
-Received: from mga12.intel.com ([192.55.52.136]:51859 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbgCXKM4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Mar 2020 06:12:56 -0400
-IronPort-SDR: ONy+KHuQnvhIFMBxhlt4bGuEMyvF3G5xn1lhLM4Qmj/Zr7YikQP71n3jidde7+Bjxid2g/2ffs
- b1ev65+LXj/Q==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Mar 2020 03:12:55 -0700
-IronPort-SDR: H1G/Zvt1jaTSGbi+Yl2JDyCmzkOd2vLqEQ+npdJn5EvBgeUUvy7jdmCw8AJIOFp+tVH24c7yXm
- 69TYpwV1Ya4g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,300,1580803200"; 
-   d="scan'208";a="249996635"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga006.jf.intel.com with ESMTP; 24 Mar 2020 03:12:42 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jGgY7-00CUuU-F9; Tue, 24 Mar 2020 12:12:43 +0200
-Date:   Tue, 24 Mar 2020 12:12:43 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
+        id S1728527AbgCXPhq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Mar 2020 11:37:46 -0400
+Received: from wout3-smtp.messagingengine.com ([64.147.123.19]:34175 "EHLO
+        wout3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728783AbgCXPhq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Mar 2020 11:37:46 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.west.internal (Postfix) with ESMTP id D33087E1;
+        Tue, 24 Mar 2020 11:37:44 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 24 Mar 2020 11:37:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=/8GGCfjSDSOcyCzU/fE+Iy8ZyVZ
+        xms/k45jF55KNAxo=; b=WJ19pKRiEIaAXaeehQTWMZ6VLS1+ll8gJWvaPC2tkLl
+        XEMD/BqcgYtsa+3l3XNNFQ1iBkNrGG8mBeY4crczeaaQrGxHkMVR+h+/GTRVIKKe
+        ssAF5k7PSfDo4SMqvKB7Lgpc8ov7EuiNlkeXwjG6hJRSG0Ql3QfEFY20y85XTU7P
+        OZnJBpIcaee4PlVbuzmfUMoCjwYyUdoYDsSGOfhcVV/GbV8ldW194i8/zoJJZJ42
+        SbHW5pKLc2mB4Bh0mw5upRi25Eu3KdX6YyW5Q/W3+oxaHPMLbPxJ/Ok/ob614tYg
+        XPqC5Rg/Buk3oW6m8zuApC+fuhzQokYGsxLWRjiSxJQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=/8GGCf
+        jSDSOcyCzU/fE+Iy8ZyVZxms/k45jF55KNAxo=; b=gBbVxrhQXOK8FAkMp5Ows5
+        lRajk1ZPTs6ItDc8Le9JDUUmXjSy4OvfMFuFWViVgn5sxfBeVVnxM/QbrYjqHJoD
+        Io+9BdV+Z+KpRI/CzK/BUSVYLvJVaqGwxKmx7lbQoIR74RnwkYSxAHlRmdiTmfg2
+        nfGuO3WxBKgWonfA4J9xoLFxe/oYGG1oz6ELFmutShR0LzM5fob1iR+ThJMW9/3D
+        xqywP2nJKCP2DZf7uuAanlgvVbtijz063mKwDpBaYQfEwtZuC9jyVQuHWxyPiplY
+        GHcWTo1Hh2yWD3wg4SHVys+ENmCVi/nDsZ7S+wm7OekKiV9aybUE221YzQSdjcXQ
+        ==
+X-ME-Sender: <xms:Ryl6XtXnp7C2olFE8f6_A00PYCJj_hoeqmAvUfWCK1JduUXG4tBNGw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehuddggeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:Ryl6XoQgvcBUJKlflXshJpxZjllKlRTyrrejaSXnTteUeHbbh2Ci7Q>
+    <xmx:Ryl6Xl3R7doO7hxE58iR8Tb_OBjZ0JySI4O-EqnMc6i3SsA6wB3gVQ>
+    <xmx:Ryl6XmWF6DIrrLppP3g2drl5Us6eM57P_TNmYPgJ82_5pZtW1t7MZQ>
+    <xmx:SCl6XsqanWQS_PVX593aPxHhsNOMQcO1Rdxo3okOMx8V5Rp53P_Oew>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D5E443280059;
+        Tue, 24 Mar 2020 11:37:42 -0400 (EDT)
+Date:   Tue, 24 Mar 2020 16:37:41 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race
- condition
-Message-ID: <20200324101243.GG1922688@smile.fi.intel.com>
-References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru>
- <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
- <20200323100109.k2gckdyneyzo23fb@gilmour.lan>
- <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int>
+        Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>
+Subject: Re: [PATCH RESEND] clk: sunxi: Fix incorrect usage of round_down()
+Message-ID: <20200324153741.cduhe54zya3dfn3z@gilmour.lan>
+References: <20200317211333.2597793-1-rikard.falkeborn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="qd23x4pcu2qxe5pk"
 Content-Disposition: inline
-In-Reply-To: <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20200317211333.2597793-1-rikard.falkeborn@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Mar 23, 2020 at 04:50:17PM +0300, Sergey Semin wrote:
-> On Mon, Mar 23, 2020 at 11:01:09AM +0100, Maxime Ripard wrote:
-> > On Mon, Mar 23, 2020 at 05:46:09AM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > >
-> > > There are races possible in the dw8250_set_termios() callback method
-> > > and while the device is in PM suspend state. A race condition may
-> > > happen if the baudrate clock source device is shared with some other
-> > > device (in our machine it's another DW UART port). In this case if that
-> > > device changes the clock rate while serial console is using it the
-> > > DW 8250 UART port might not only end up with an invalid uartclk value
-> > > saved, but may also experience a distorted output data since baud-clock
-> > > could have been changed. In order to fix this lets enable an exclusive
-> > > reference clock rate access in case if "baudclk" device is specified.
-> > >
-> > > So if some other device also acquires the rate exclusivity during the
-> > > time of a DW UART 8250 port being opened, then DW UART 8250 driver
-> > > won't be able to alter the baud-clock. It shall just use the available
-> > > clock rate. Similarly another device also won't manage to change the
-> > > rate at that time. If nothing else have the exclusive rate access
-> > > acquired except DW UART 8250 driver, then the driver will be able to
-> > > alter the rate as much as it needs to in accordance with the currently
-> > > implemented logic.
 
-> > clk_rate_exclusive_get is pretty intrusive, and due to the usual
-> > topology of clock trees, this will lock down 3-4 parent clocks to
-> > their current rate as well. In the Allwinner SoCs case for example,
-> > this will lock down the same PLL than the one used by the CPU,
-> > preventing cpufreq from running.
-> 
-> Speaking about weak design of a SoC' clock tree. Our problems are nothing
-> with respect to the Allwinner SoC, in which case of changing the
-> CPU-frequency may cause the UART glitches subsequently causing data
-> transfer artefacts.) Moreover as I can see the same issue may raise for
-> I2C, QSPI, PWM devices there.
-> 
-> Anyway your concern does make sense.
-> 
-> > However, the 8250 has a pretty wide range of dividers and can adapt to
-> > any reasonable parent clock rate, so we don't really need to lock the
-> > rate either, we can simply react to a parent clock rate change using
-> > the clock notifiers, just like the SiFive UART is doing.
-> > 
-> > I tried to do that, but given that I don't really have an extensive
-> > knowledge of the 8250, I couldn't find a way to stop the TX of chars
-> > while we change the clock rate. I'm not sure if this is a big deal or
-> > not, the SiFive UART doesn't seem to care.
-> 
-> Yes, your solution is also possible, but even in case of stopping Tx/Rx it
-> doesn't lack drawbacks. First of all AFAIK there is no easy way to just
-> pause the transfers. We'd have to first wait for the current transfers
-> to be completed, then somehow lock the port usage (both Tx and Rx
-> traffic), permit the reference clock rate change, accordingly adjust the
-> UART clock divider, and finally unlock the port. While if we don't mind
-> to occasionally have UART data glitches, we can just adjust the UART ref
-> divider synchronously with ref clock rate change as you and SiFive UART
-> driver suggest.
-> 
-> So we are now at a zugzwang - a fork to three not that good solutions:
-> 1) lock the whole clock branch and provide a glitchless interfaces. But
-> by doing so we may (in case of Allwinner SoCs we will) lockup some very
-> important functionality like CPU-frequency change while the UART port is
-> started up. In this case we won't have the data glitches.
-> 2) just adjust the UART clock divider in case of reference clock rate
-> change (use the SiFive UART driver approach). In this case we may have the
-> data corruption.
-> 3) somehow implement the algo: wait for the transfers to be completed,
-> lock UART interface (it's possible for Tx, but for Rx in case of no handshake
-> enabled it's simply impossible), permit the ref clock rate change,
-> adjust the UART divider, then unlock the UART interface. In this case the data
-> glitches still may happen (if no modem control is available or
-> handshakes are disabled).
-> 
-> As for the cases of Baikal-T1 UARTs the first solutions is the most suitable.
-> We don't lock anything valuable, since a base PLL output isn't directly
-> connected to any device and it's rate once setup isn't changed during the
-> system running. On the other hand I don't mind to implement the second
-> solution, even though it's prone to data glitches. Regarding the solution
-> 3) I won't even try. It's too complicated, I don't have time and
-> test-infrastructure for this.
-> 
-> So Andy what do you think?
+--qd23x4pcu2qxe5pk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From Intel HW perspective the first two are okay, but since Maxime is against
-first, you have the only option from your list. Perhaps somebody may give
-option 4) here...
+On Tue, Mar 17, 2020 at 10:13:32PM +0100, Rikard Falkeborn wrote:
+> round_down() can only round to powers of 2. If round_down() is asked
+> to round to something that is not a power of 2, incorrect results are
+> produced. The incorrect results can be both too large and too small.
+>
+> Instead, use rounddown() which can round to any number.
+>
+> Fixes: 6a721db180a2 ("clk: sunxi: Add A31 clocks support")
+> Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
+Queued for 5.8, thanks!
+Maxime
 
+--qd23x4pcu2qxe5pk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnopRQAKCRDj7w1vZxhR
+xbsDAP9HNPJgJv/i/PES34txFREPG9WzuLhxYhExZ+57Dfp4bgEAoMRzRRzGl9/L
+zvgAgAVuBVoC83GhKIqHFx4eFO8iqgo=
+=KHLP
+-----END PGP SIGNATURE-----
+
+--qd23x4pcu2qxe5pk--
