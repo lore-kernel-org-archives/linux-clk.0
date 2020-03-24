@@ -1,128 +1,148 @@
-Return-Path: <SRS0=AVA3=5I=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=xU5Q=5J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7455FC10DCE
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 21:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B2CEC10DCE
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 04:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E2F32070A
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Mar 2020 21:16:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Qr8sK+An"
+	by mail.kernel.org (Postfix) with ESMTP id EFC1D2073E
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Mar 2020 04:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727107AbgCWVQb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Mar 2020 17:16:31 -0400
-Received: from mail-dm6nam10on2071.outbound.protection.outlook.com ([40.107.93.71]:29889
-        "EHLO NAM10-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726203AbgCWVQb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Mar 2020 17:16:31 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Pbl7Lht4e+GFZvqeVzwgYZHM3xeoxlza2AgZ3IfXMzyQ5Nw41Rzi6VLQiT3TZqeggXFmKhxInR8NNjfi5GH9mfaPKRkXfF4NUW1QhV0t+G3bA9gTyzBEFEK9CBExT04tpfhbB7ygRbVz44TFbQyaOJd20cyPPv6dvSUO9JMr1OftKxnmpESg2teZH/dcQdvOtXFKmt5DvMjvN6l/xxmee6sNv8dtYkuewvemNNX+SWH+Flm0RkgcPNYDQ+v0JzScWcNL8JFOJHoOiP3TK1VmJtb/IS9tZvOXh+zGoTVNddTVxSns0xhQoA2NQ0IvCzRiSbOwolPe96RIGbW6321KeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=20lVPwhvzXnT+Qilevzt9aXlpfe+TdahCub9ADBuvnc=;
- b=YSQD5R4RyiGK3/A8vDMllHkk04rouODmCAfN2IL9bfWw5/zV7j9Zx7oUh670KiVy9h4ljnNzHZQ12Tij5t1h1YZqzsSmV/3yONASFdSslSM4IYoo0w+2KIGzwy0B0dfeSIZ3q43qgS4SEstl+GFO7pvTL0DQ6pfTWvLcUKz/h8MTD7wM5fdJmFUedK2hRuNGPhIaVgUtQjpH+oylSy4mfmVyqfCcHMwKeKSX3ronnNyhbAoKpy5cJvoijLUiH+0akNgjVV/Tg73Zp9Wnc/CJ/i2DgcovwV+Bdwwv9r418xXgl++2I3FSzyCNQqW3Ut1Kr/7uPGG2/h7EjHzIJjoX1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
- dkim=pass header.d=xilinx.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=20lVPwhvzXnT+Qilevzt9aXlpfe+TdahCub9ADBuvnc=;
- b=Qr8sK+An1DdwQuBYTg7qYScvDOcoql8X8TCctHWA/k/PXkij7tObpbmKLSAJIKQpL1yDnTOPdq5D0GOs3VoJh5fIWgPUdmWxwgpLAeCfOIpuxerPWFV5K7T2NXPBHbvCt+atVvyQfiLNw9NTtaJp5A6Gw6TKjmsC5kQl+1kAbtA=
-Received: from BYAPR02MB5992.namprd02.prod.outlook.com (2603:10b6:a03:127::16)
- by BYAPR02MB4423.namprd02.prod.outlook.com (2603:10b6:a03:5f::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2835.20; Mon, 23 Mar
- 2020 21:16:29 +0000
-Received: from BYAPR02MB5992.namprd02.prod.outlook.com
- ([fe80::653c:fb1e:61b9:8f00]) by BYAPR02MB5992.namprd02.prod.outlook.com
- ([fe80::653c:fb1e:61b9:8f00%6]) with mapi id 15.20.2835.021; Mon, 23 Mar 2020
- 21:16:29 +0000
-From:   Jolly Shah <JOLLYS@xilinx.com>
-To:     "olof@lixom.net" <olof@lixom.net>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Michal Simek <michals@xilinx.com>,
-        "arm@kernel.org" <arm@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-CC:     Rajan Vaja <RAJANV@xilinx.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/4] Clock driver fixes
-Thread-Topic: [PATCH 0/4] Clock driver fixes
-Thread-Index: AQHV8NuptlXrLfHfkk+i2Lx5IRh3SahWWNoAgAAAuIA=
-Date:   Mon, 23 Mar 2020 21:16:29 +0000
-Message-ID: <B07D6193-CB81-409D-BB63-606E3C69E7E9@xilinx.com>
-References: <1583185414-20106-1-git-send-email-jolly.shah@xilinx.com>
- <D2A3DCE1-1514-445D-B58E-E2EA31BAB0C2@xilinx.com>
-In-Reply-To: <D2A3DCE1-1514-445D-B58E-E2EA31BAB0C2@xilinx.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-user-agent: Microsoft-MacOutlook/10.1a.0.190609
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=JOLLYS@xilinx.com; 
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 0884b011-54c4-4d23-760a-08d7cf6f7473
-x-ms-traffictypediagnostic: BYAPR02MB4423:|BYAPR02MB4423:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR02MB4423A3C8E5E8233B1DD15EB5B8F00@BYAPR02MB4423.namprd02.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 0351D213B3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(396003)(136003)(39860400002)(346002)(54906003)(26005)(2616005)(8676002)(36756003)(76116006)(81166006)(81156014)(478600001)(33656002)(5660300002)(6486002)(66446008)(66556008)(64756008)(66946007)(66476007)(86362001)(53546011)(6506007)(4744005)(71200400001)(8936002)(110136005)(186003)(4326008)(2906002)(6512007)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4423;H:BYAPR02MB5992.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: GEpgewJkVAcoJo6MR6UhSiibcdbF6gh2AxFoNWlccc4bDS1otjd45mEN0yW7mk/pjjKQLVqKm5m7TNy3iNdfey133PFnt61EiTTS4RRp9YWaO3n9Iw2qFQz9mpabe99OxZ0vShDtMyyqgzM00BkTyNFd73CrByRssyQ/HIokCfr8t/l2OMcsQ91M1UIbMUKaMVFAueAemzzK5qoO1pQQkKPGD3YkCWaTVlHgHL9ogqahy+AroMCwa57pEmAkt5eEEGYxnQ/fwvnkvkWTX7KmLwYMu14d66ykNIzR3408+34PtfjKF/sRUHzJOGWsqLHhiLnSCcyDJt31Yv0WLIzTvRUfx+GaqmfmFefLeUmFckDX5oBLvGKZ+ALno68VMtZ0DZfxB17ISrqLTwoZCARnvj2XevE0TpfsxmFNOGCnyJvA8Hp1zigBk5rBnyoh4Uj1
-x-ms-exchange-antispam-messagedata: b7wZeR+JW7Pv6F+a8bViFpxrGsW3TMarbFsXNOh9HOhRs8KJ4cv3e3MpE5/nwur9od6Ybpqpmo38A39I3OzUROWC39nddQYMLJWINKU6AkHWLU4SvQo8CFSw4LEqBE0gMPBhpWLHBptd3+VLTlryAg==
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <2D9A4891323C4F448936884B99E3A477@namprd02.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0884b011-54c4-4d23-760a-08d7cf6f7473
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Mar 2020 21:16:29.6868
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZeWaVa0AeTYGDeBpAS4EfMNZCFVZB6rXPNZU92CpH9FTuBUfdqgbLKXo+iyzv1YIriTgeqYUwkW7xYpDIhiT+g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4423
+        id S1725847AbgCXEFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Mar 2020 00:05:32 -0400
+Received: from mga09.intel.com ([134.134.136.24]:8266 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725798AbgCXEFc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Mar 2020 00:05:32 -0400
+IronPort-SDR: PxgIeo+r0z/ZnIrsUNeTCH0R0NOrSK71Lxd2jPg3RectfrZoolWTVF9QMcBEc0EgchqKE5YmLH
+ gMI2tCTjb4Iw==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Mar 2020 21:05:31 -0700
+IronPort-SDR: PpdCBlINHM3+WZ7PxOIlNJLREDri9LOsRR0Uvbt57FK0d3q1E9Sy8Cv0bZV4K7CmyB8MxOIFoO
+ FTQHS+WSwJ7w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,298,1580803200"; 
+   d="scan'208";a="357298982"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga001.fm.intel.com with ESMTP; 23 Mar 2020 21:05:28 -0700
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Cc:     robh@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v7 0/2] clk: intel: Add a new driver for a new clock controller IP
+Date:   Tue, 24 Mar 2020 12:05:23 +0800
+Message-Id: <cover.1585022347.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-UGxlYXNlIGlnbm9yZSBiZWxvdyBlbWFpbC4gVjIgcGF0Y2hzZXQgbmVlZHMgdG8gYmUgcmV2aWV3
-ZWQgbm90IGJlbG93IG9uZS4NCg0KVGhhbmtzLA0KSm9sbHkgU2hhaA0KDQrvu79PbiAzLzIzLzIw
-LCAyOjEzIFBNLCAiSm9sbHkgU2hhaCIgPEpPTExZU0B4aWxpbnguY29tPiB3cm90ZToNCg0KICAg
-IEEgZ2VudGxlIHJlbWluZGVyIGZvciByZXZpZXcuDQogICAgDQogICAgT24gMy8yLzIwLCAxOjQz
-IFBNLCAiSm9sbHkgU2hhaCIgPGpvbGx5LnNoYWhAeGlsaW54LmNvbT4gd3JvdGU6DQogICAgDQog
-ICAgICAgIFRoaXMgcGF0Y2hzZXQgaW5jbHVkZXMgYmVsb3cgZml4ZXMgZm9yIGNsb2NrIGRyaXZl
-cg0KICAgICAgICAxPiBGaXggRGl2aWRlcjIgY2FsY3VsYXRpb24gDQogICAgICAgIDI+IE1lbW9y
-eSBsZWFrIGluIGNsb2NrIHJlZ2lzdHJhdGlvbg0KICAgICAgICAzPiBGaXggaW52YWxpZCBuYW1l
-IHF1ZXJpZXMNCiAgICAgICAgND4gTGltaXQgYmVzdGRpdiB3aXRoIG1heGRpdg0KICAgICAgICAN
-CiAgICAgICAgUXVhbnlhbmcgV2FuZyAoMSk6DQogICAgICAgICAgY2xrOiB6eW5xbXA6IGZpeCBt
-ZW1vcnkgbGVhayBpbiB6eW5xbXBfcmVnaXN0ZXJfY2xvY2tzDQogICAgICAgIA0KICAgICAgICBS
-YWphbiBWYWphICgyKToNCiAgICAgICAgICBjbGs6IHp5bnFtcDogTGltaXQgYmVzdGRpdiB3aXRo
-IG1heGRpdg0KICAgICAgICAgIGRyaXZlcnM6IGNsazogRml4IGludmFsaWQgY2xvY2sgbmFtZSBx
-dWVyaWVzDQogICAgICAgIA0KICAgICAgICBUZWphcyBQYXRlbCAoMSk6DQogICAgICAgICAgZHJp
-dmVyczogY2xrOiB6eW5xbXA6IEZpeCBkaXZpZGVyMiBjYWxjdWxhdGlvbg0KICAgICAgICANCiAg
-ICAgICAgIGRyaXZlcnMvY2xrL3p5bnFtcC9jbGtjLmMgICAgfCAyMCArKysrKysrKysrKysrKy0t
-LS0tLQ0KICAgICAgICAgZHJpdmVycy9jbGsvenlucW1wL2RpdmlkZXIuYyB8IDE5ICsrKysrKysr
-KysrKysrLS0tLS0NCiAgICAgICAgIDIgZmlsZXMgY2hhbmdlZCwgMjggaW5zZXJ0aW9ucygrKSwg
-MTEgZGVsZXRpb25zKC0pDQogICAgICAgIA0KICAgICAgICAtLSANCiAgICAgICAgMi43LjQNCiAg
-ICAgICAgDQogICAgICAgIA0KICAgIA0KICAgIA0KDQo=
+Hi,
+
+This series adds clock driver for Clock Generation Unit(CGU) of
+Lightning Mountain(LGM) SoC.
+
+Patch 1 adds bindings document & include file for CGU.
+Patch 2 adds common clock framework based clock driver for CGU.
+
+These patches are baselined upon Linux 5.6-rc1 at below Git link:
+git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+
+v7:
+- Fix a mistake in comments explaining structure fields.
+
+v6:
+- Resolve Kconfig dependencies issues (Randy Dunlap)
+
+v5:
+- Address review concerns - mainly below mentioned. (Stephen Boyd)
+- Improve commit message, add COMPILE_TEST in KConfig dependency.
+- Remove unused header include files, drop unnecessary casts.
+- Switch to using readl_poll_timeout() instead of implementing timeout routine.
+- Avoid using small functions which are called just once. Inline them or
+  remove them.
+- const static --> static const
+- Fix coding style/convention related review concerns.
+- Use __iomem for all IO addresses variables.
+- Consolidate clk_enable & clk_disable ops into a common clk_enable_disable
+  routine to avoid redundant code.
+- Remove unnecessary dev pointers for clk data structures.
+- Redesign code to use new way of specifying clk_parents i.e. use
+  clk_parent_data.fw_name instead of older parent_name strings.
+- Switch from raw_spin_locks() to normal spin_locks() and realign locking.
+- Drop __initconst, __init, __refdata.
+- Reorder patch series - make dt-binding patch as first patch.
+- Add pointer to include file in dt-bindings document.
+- Remove CLK_IS_CRITICAL flag for clks for which IGNORE_UNUSED flag is enough.
+  Add comments for clks which are marked as CRITICAL.
+- Fix $id path in dt-bindings - drop bindings. (Rob Herring).
+- Add Reviewed-by tag from Rob Herring. Thanks Rob.
+
+v4:
+- Add drivers/clk/x86/Kconfig file which got missed in v3 by mistake.
+
+v3:
+- Address review concerns:
+  Add Kconfig entry in x86 folder instead of modifying clk/Kconfig. (Andy Shevchenko)
+  Fix coding style/convention related concerns. (Andy Shevchenko)
+  Improve description, licensing info, rename node name correctly in dt bindings
+  document & remove CLK_NR_CLKS from dt-bindings header file. (Stephen Boyd)
+  Fix a build warning reported by kbuild test robot & Nathan Chancellor
+- Add few new clocks & rename few existing clocks.
+- Add more ops for ddiv & divider clk_ops.
+- Fix few minor bugs.
+- Use CLK_IS_CRITICAL flag for clocks which shall never be disabled.
+
+v2:
+- Move the driver to x86 folder.
+- Remove syscon usage.
+- Remove regmap based access. Use direct readl()/write() instead. Add spinlocks.
+- Change all enum values to capitals.
+- Rename all data structures & functions from intel_* to lgm_*.
+- Remove multiple header files. Keep only one header file.
+- Make probe fail when any of the clk/pll registration fails.
+- Fix few bugs with clk_init_data assignement.
+- Address review concerns for code quality/style/convention.
+
+v1:
+- Initial version.
+
+
+Rahul Tanwar (1):
+  dt-bindings: clk: intel: Add bindings document & header file for CGU
+
+rtanwar (1):
+  clk: intel: Add CGU clock driver for a new SoC
+
+ .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  44 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/x86/Kconfig                            |   8 +
+ drivers/clk/x86/Makefile                           |   1 +
+ drivers/clk/x86/clk-cgu-pll.c                      | 156 +++++
+ drivers/clk/x86/clk-cgu.c                          | 636 +++++++++++++++++++++
+ drivers/clk/x86/clk-cgu.h                          | 335 +++++++++++
+ drivers/clk/x86/clk-lgm.c                          | 492 ++++++++++++++++
+ include/dt-bindings/clock/intel,lgm-clk.h          | 165 ++++++
+ 9 files changed, 1838 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+ create mode 100644 drivers/clk/x86/Kconfig
+ create mode 100644 drivers/clk/x86/clk-cgu-pll.c
+ create mode 100644 drivers/clk/x86/clk-cgu.c
+ create mode 100644 drivers/clk/x86/clk-cgu.h
+ create mode 100644 drivers/clk/x86/clk-lgm.c
+ create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
+
+-- 
+2.11.0
+
