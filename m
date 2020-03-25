@@ -7,88 +7,88 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6FAC2D0E8
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F027C43331
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C1F20848
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E0332073E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:34:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WsSMMtpK"
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="BPWtzEWe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727395AbgCYXXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 19:23:42 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41395 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727399AbgCYXXk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 19:23:40 -0400
-Received: by mail-lj1-f196.google.com with SMTP id n17so4445434lji.8
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2020 16:23:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pzH05cCCMpVmHYF3oKcpm8etu/QybMtAIGeitvxhj1Q=;
-        b=WsSMMtpKb0V9yha9xppOQV22HjAGLYImHQyE8yg9neTuzz/nvoNw5ji+hwqqFg6hr3
-         eB9INx4p4jfTld8Qe4C3ld7jai8lFsCq83RgddMC5yJrwE7wfIr0lRqucaUWViadoI33
-         WeTPrKbBBJvypG6oTC976eAJ/thZPFgWF3kyc1psAcc9B2BmC+xrz2nl6YmZRDh93dbv
-         1XYDlZbOgU1OttNHAL+wQWA07ngBhdFag18MwBQxk/oY/Lv1oehlKCkjLaAErvNTAQaY
-         FEgiaNA/t/3AXYRG3PyOV+a048N0obhrQg6f6Dqpxa74yd3yC0LactbyPwxxruNChYqM
-         VVOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pzH05cCCMpVmHYF3oKcpm8etu/QybMtAIGeitvxhj1Q=;
-        b=q6leFCfSFbf4LhafDrx23twzDy2PRwx6MiGI6/61pvi0rPO4NduTheOzD1aBBX7PYL
-         kuatgHawJak6dXXYD9Vx7ajGBtNPlfBAHvGKVhHs69DngFwAugmnV1f19txPKylXxLM9
-         O01977BOYI2lQlYce9DDKhc06IuO+omeCzvyK+8NJcVDLgZ1t0aCgyBc9mKlLdXYsnBU
-         vqoHK6sHpjitiI2sTrcxCSm4eRPHr4o17zGhpufL+4a1LROWnj/bcBsMFg6p9hHB8am2
-         Kx7+w74fKGE+FJux5tI9g+7hH0BPGmyEweYMzXVNpn64H/B+z8BwpzRGPSfeRbfD/w+B
-         QPkA==
-X-Gm-Message-State: ANhLgQ2VyOYp6jBRWRu8EZ11lnnlqSxu6ux9XlGqpc2EeT9gFxqqOOCr
-        lCdu6OnYV5J2IDJwakLdFVvri58+AHtudiinZG5BVA==
-X-Google-Smtp-Source: APiQypITGq57Kb/lzahVkrlExUhwLPINcscG+bHPEiaOYa6DIp+J67M4OUdwol6kgmk28bTrywFON1xEgyHN3jB+qx8=
-X-Received: by 2002:a2e:9a90:: with SMTP id p16mr3485374lji.277.1585178616927;
- Wed, 25 Mar 2020 16:23:36 -0700 (PDT)
+        id S1727420AbgCYXeN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 19:34:13 -0400
+Received: from onstation.org ([52.200.56.107]:42750 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727395AbgCYXeM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Mar 2020 19:34:12 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id D9ADB3E993;
+        Wed, 25 Mar 2020 23:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1585179251;
+        bh=UmMfQfL2Dh6nfn2syBX2sC1MPLmcaAcwUvfWVe3vkpM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BPWtzEWeaE0xPqB52s39r4KFFu9CAc2XWbyWEeiYjMFFp4zI3Jnc7Ce1qomgad3+i
+         Zssb5erETKV/5tFlC9CDhOpLk9pnxg2NCChpeKVZIiBN8eTPwpTU1e5qXBz7i2qmMi
+         ohX+2HrLcdpwIAUyrpKCZpDJiGxTBey+OAukZuAo=
+Date:   Wed, 25 Mar 2020 19:34:09 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 2/4] dt-bindings: sram: qcom: Clean-up 'ranges' and child
+ node names
+Message-ID: <20200325233409.GB16767@onstation.org>
+References: <20200325220542.19189-1-robh@kernel.org>
+ <20200325220542.19189-3-robh@kernel.org>
 MIME-Version: 1.0
-References: <1584070036-26447-1-git-send-email-peng.fan@nxp.com> <1584070036-26447-2-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1584070036-26447-2-git-send-email-peng.fan@nxp.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 26 Mar 2020 00:23:25 +0100
-Message-ID: <CACRpkdakXz2QCsbAqN0AxXJ2o8ZWzJ9_h0b4w8SCvtME4Uk_3g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: freescale: drop the dependency on ARM64 for i.MX8M
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200325220542.19189-3-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 13, 2020 at 4:34 AM <peng.fan@nxp.com> wrote:
+On Wed, Mar 25, 2020 at 04:05:39PM -0600, Rob Herring wrote:
+> The regex for child nodes doesn't match the example. This wasn't flagged
+> with 'additionalProperties: false' missing. The child node schema was also
+> incorrect with 'ranges' property as it applies to child nodes and should
+> be moved up to the parent node.
+> 
+> Fixes: 957fd69d396b ("dt-bindings: soc: qcom: add On Chip MEMory (OCMEM) bindings")
+> Cc: Brian Masney <masneyb@onstation.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Moving to support aarch32 mode on aarch64 hardware, need to drop
-> the dependency on ARM64 to make the driver could be selected for
-> ARM32.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-Patch applied with Arnd's ACK.
-
-Yours,
-Linus Walleij
+Reviewed-by: Brian Masney <masneyb@onstation.org>
