@@ -2,96 +2,121 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0D44C54FD0
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 13:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A7CC1975A
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 13:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A746A2078E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 13:13:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17681207FF
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 13:40:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZfvdjM/Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbgCYNNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 09:13:00 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37152 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727259AbgCYNNA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 09:13:00 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w13so2011718oih.4;
-        Wed, 25 Mar 2020 06:12:59 -0700 (PDT)
+        id S1727518AbgCYNkI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 09:40:08 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33087 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727498AbgCYNkI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 09:40:08 -0400
+Received: by mail-wr1-f66.google.com with SMTP id a25so3186159wrd.0
+        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2020 06:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=9Tmx/q/z1h228maidx+B+W5v7B2DB3ULOBj1YoNCmLQ=;
+        b=ZfvdjM/QWPkvRF4aZhOMcGD8uAaEa3a9z57/KDQQUDHSC5P6ju2LOZ5Jrvope2JRFg
+         0t4jUSopz0kgg8yni93HOKWxANCNEhS+wzzpLW31vWacTB2yGwp9K4aYnZuR6ql8kwqM
+         PJN/YYBp6zqIXe8QtdYJSA3SBRofZafeVTnocx4ShsyzD/UtfGeLIFFJSOwEZ+FrpOYX
+         /F1QLqE+LzxAhvecrCZh7vTtvNpzam/ERoF39ewr5jl0S0W2N2IaT7ohXE0l18Cuerf0
+         mzwgDsVO3s5tZrhb7QHR4apjCaECxh/LYTdT89JLtWulr6uDVoi2Ef8jnZaHvasErlCJ
+         uJYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NMFbpqQtr7cfA8P6JMOVPRMI4YeodTSgPu+QdwEFvgg=;
-        b=SpRe6ctjhassD2q+8ECHoUH2OLIvWeUCUvgiMNRBgknSpksCh95lPROGdvqL3VQ8ep
-         GOlBdN+a0jDKFJBp4HWqMm4H/uMwkN6ASdxb/JoAXH3xvdxz662HTOv3/iS28Apx+N6+
-         SlJx4l/szbMnSPN5OK/oD3b/ivknrloLMUH04qIcUAzYBTAMemmcxnJ6EaNhGxILKEF3
-         PWz3+J+CMt58L26AjN568VsUENQgHrED5bVKVY3Wzw/lKzgQHQ5QkRrf0B7c/m5PngKZ
-         6OKNNt7NemUCvfXF0wGEWlmosjoGVic2D+gOmNScwvpModjS7ZQ2AoqIXgZ7/Plkalme
-         GZKg==
-X-Gm-Message-State: ANhLgQ279Z/MsjxJHAZqGy9FIt6CMyqTtaDFEvR2mwfNqTC6d8oox/LJ
-        IkiY516VRGkmQOKW+EBP3Uke/AQPPxOJkDLH2Qj7dZKQ
-X-Google-Smtp-Source: ADFU+vsNDEdg1F8hPijvsLFyvHHitKA4ory4nZVXRl1S+hm/OicpNrMFCepOYg3jm26hpjKSAqk5h51lFwvkOjEFSFc=
-X-Received: by 2002:aca:4e57:: with SMTP id c84mr2320356oib.148.1585141979523;
- Wed, 25 Mar 2020 06:12:59 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=9Tmx/q/z1h228maidx+B+W5v7B2DB3ULOBj1YoNCmLQ=;
+        b=Ty0XTKrOaTZEPC8G/2BW5XAT4GtFsJhplKM9bUWxZcuCGdI6s7kHDP3Q4lE4kQRuHJ
+         Fu3kyw0iyJpkq2rgRgwzejz6/OMqNatTbN0cSyjK5DdnvxePlA4mHrrKmaC79Vl3ADRB
+         0mBaH2EWYfPmw4WZ50Nx0tfy8NQXy7cpo3EpAlkt423TK4YPLf8yWOkK02rtpQpuGJM7
+         GUnIkp95r3K1KtMSP+hcPpUe5wU4DOUOlZ3sVpVxRQyJYITwkKJ1Z00YPeB2T/RYoNq3
+         kJmV1cX8p++Kdcw7D3W4UlTFFodEGkBQjkjlAkLsam+E6uPbaWnjIgtIQPpEzY2frzFb
+         wC3Q==
+X-Gm-Message-State: ANhLgQ0QhWP4XT4P5CVYHoxiz/sIIO4Zg6w0tDRabnXEz1ADKKj3U8Nc
+        Lor9TnPefPaEaJJ967AK3soBWw==
+X-Google-Smtp-Source: ADFU+vvUFo5VyLEdXlLvP4jxG7ZFn8D4rnGgV0PvYjNl6zV+qg4FIS+krg5jIfgSc0QpMaFDiUqtFw==
+X-Received: by 2002:a5d:55c2:: with SMTP id i2mr3397860wrw.133.1585143606663;
+        Wed, 25 Mar 2020 06:40:06 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id b11sm22503149wrq.26.2020.03.25.06.40.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Mar 2020 06:40:05 -0700 (PDT)
+Date:   Wed, 25 Mar 2020 14:40:03 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Nicolas Chauvet <kwizart@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        pdeschrijver@nvidia.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        axboe@kernel.dk, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-ide@vger.kernel.org
+Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
+Message-ID: <20200325134003.GA27961@Red>
+References: <20200319074401.GA4116@Red>
+ <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <1585117204-8469-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-In-Reply-To: <1585117204-8469-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 25 Mar 2020 14:12:48 +0100
-Message-ID: <CAMuHMdXopMkeBwAQRpphCUXOLeCVRaDEFi-fQzy8_8jzD=MNEw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas,rcar-usb2-clock-sel: add
- r8a77961 support
-To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Shimoda-san,
+On Thu, Mar 19, 2020 at 08:55:38AM +0100, Nicolas Chauvet wrote:
+> Le jeu. 19 mars 2020 à 08:44, LABBE Corentin <clabbe@baylibre.com> a écrit :
+> >
+> > Hello
+> >
+> > sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+> > [    0.492810] +5V_SATA: supplied by +5V_SYS
+> > [    0.493230] +12V_SATA: supplied by +VDD_MUX
+> > [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+> > [    5.310270] phy phy-sata.6: phy poweron failed --> -110
+> > [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+> > [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+> > [   35.694269] +5V_SATA: disabling
+> > [   35.697438] +12V_SATA: disabling
+> 
+> It looks strange, because (on same device) , I have sata working as
+> appropriate, but ethernet fails with me.
+> https://bugzilla.kernel.org/show_bug.cgi?id=206217
+> 
+> It might worth to have another report.
+> 
 
-On Wed, Mar 25, 2020 at 7:20 AM Yoshihiro Shimoda
-<yoshihiro.shimoda.uh@renesas.com> wrote:
-> This patch adds support for r8a77961 (R-Car M3-W+).
->
-> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Hello
 
-Thanks for your patch!
+Mine has ethernet works well. But I hit many problem with it and older kernel.
+Perhaps the 5.1.21, were I am stuck, does not have it.
 
-> --- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-> @@ -28,6 +28,8 @@ Required properties:
->               an R8A7795 SoC.
->               "renesas,r8a7796-rcar-usb2-clock-sel" if the device if a part of
->               an R8A7796 SoC.
+Anyway, the tegra of kerneci has the same SATA problem.
+https://storage.kernelci.org/next/master/next-20200325/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-8/lab-baylibre/boot-tegra124-jetson-tk1.txt
 
-While at it, you may want to update "R8A7796 SoC" to "R8A77960 SoC", to
-avoid confusion between R-Car M3-W (R8A77960) and M3-W+ (R8A77961).
+Maintainers, any idea on this sata issue ?
 
-> +             "renesas,r8a77961-rcar-usb2-clock-sel" if the device if a part of
-> +             an R8A77961 SoC.
->               "renesas,rcar-gen3-usb2-clock-sel" for a generic R-Car Gen3
->               compatible device.
-
-With the above fixed:
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards
