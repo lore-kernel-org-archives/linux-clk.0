@@ -2,124 +2,123 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B55C54FCF
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 880B8C54FD0
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:37:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D118F20740
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:32:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="AsXsybJQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v7VLUHqz"
+	by mail.kernel.org (Postfix) with ESMTP id 5F2F220740
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:37:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585150628;
+	bh=oFXULYKX2minzKx5vxHtI63XAdjYTOaBbYv6XpZTy8U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=QatLdKQuBI76h1bpbdEhfh0yWMDlgPefGddTfx7bQDskeEPm1aRN1oSKts70WpNT5
+	 RaZcG5lSvDjsYLr8yWgwG6sbS2pn2VK/+cb8tRWMk4WwajfuDyFVEvOBm7tWFqd5KJ
+	 d6gWoCKu/wdOLOp+cL9ROjV9AJhzywzp/wa/If5w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727560AbgCYPcE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 11:32:04 -0400
-Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43399 "EHLO
-        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727491AbgCYPcE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 11:32:04 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1FC0A5C031C;
-        Wed, 25 Mar 2020 11:32:03 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 25 Mar 2020 11:32:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=bn9u5SBogt3E/ylsE/CTdHc+JD6
-        shpx66LJUZbSMFcw=; b=AsXsybJQfnHOui4Zb2mb/51Vdp2JF97Pt8VJrkA6M7i
-        gRG7qOooyKb/Vzue6M20B0yuwmtHJpCmNZ2MyU4y7NsS4B/WKyjd6SuNtuDjvxgG
-        L+voviXm5qPDPHYM2FboGHUYhZYzhpJykKxuRWF3HMIo4VGNggl6E0/QFCk8tDSa
-        x0Hen17ud9BEcqwFgnqsVdJF1kUKPH57duP551BfuxJjvRhPRfVeDgFNh0Ic8y8u
-        3Bcmar2igSHTgRF2eVeB/r0ONa5PJhkjOa/bzg30SOgbtq4LyfOWRi9Glmw1ACKi
-        9A/eT9o9WMMMO5yeDSDZOLhcUTFA5ln6NJKrFt6ro2w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=bn9u5S
-        Bogt3E/ylsE/CTdHc+JD6shpx66LJUZbSMFcw=; b=v7VLUHqzSNIFVRZI2973oI
-        JDiYoR4TxFP/YxzuIVKQi/jr4yIVz6zOKvNLwh+3P2wi33rdKN5cxZRtmf8nTg7q
-        tu5MFGqayww0mehaNDqHzZTGEnVl1wVNQj5jL4O4C08aRboXPdz4wgrPSlJECtPB
-        6kO5USbZr0zW2y7dzmJmflWmVpXMOlK0qQodN1UEw8BYHJvUtjUHxKhAsMsCnROu
-        MXkr9zLqawYXDxCUiScfSjIbKJsfbyzf6/+oGndhGvnkvXBTwo1okpKAaMG3WxSZ
-        RscYg/B2+NTmFv8Gm6XeIbPVf1gZfgwiKJcnYQLsOKV1OASoUn6xObyo/61aG+HQ
-        ==
-X-ME-Sender: <xms:cnl7XlDS54mcdvQjp9-yZqDIzjAXi0b13RjGJxdnUv2Eu8a-NWFxiQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehgedgheefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
-    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:cnl7XqS0nY8uPGLeNf41JaJGMygZCB-TGEDEIn27HL7Fv5zVe5axew>
-    <xmx:cnl7XpZOARaWlG6GzdJiH6h0x3RwC7dxuIE3LOvVb3WjSiZf1gnvFQ>
-    <xmx:cnl7Xkdn8nTZayqVmyy7ND3AM7d1X1w0fsq3ebQ7HZWVh7qxoFsJBw>
-    <xmx:c3l7Xhqo97uK8oJzT63UONilD8xzY8_eKGAhwWgNLmagrEj-3K0MlQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4F5843280067;
-        Wed, 25 Mar 2020 11:32:02 -0400 (EDT)
-Date:   Wed, 25 Mar 2020 16:32:00 +0100
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk: Pass correct arguments to __clk_hw_register_gate()
-Message-ID: <20200325153200.6vdgglrirhpl4yh6@gilmour.lan>
-References: <20200325022257.148244-1-sboyd@kernel.org>
- <158510329289.125146.2737057581185153152@swboyd.mtv.corp.google.com>
+        id S1727689AbgCYPhI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 11:37:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42216 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727598AbgCYPhH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Mar 2020 11:37:07 -0400
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7E3F207FC;
+        Wed, 25 Mar 2020 15:37:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585150627;
+        bh=oFXULYKX2minzKx5vxHtI63XAdjYTOaBbYv6XpZTy8U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EmXJ2ROEV4uIH8BVYnhJow+4A1BNHgFJhRUt9XQCD6kAaBxpBQ9HUZgP/XrSHK5bj
+         h411zoPSO8xwuCbPMBajeLkGTqC6LflkOK0k89zrhsMNcNwB79zSWQ8gkX1NCxcuMl
+         UqyaakkDQgHMStjvRjvEPxTPWKjs7WOVKBmfOH8Y=
+Received: by mail-ed1-f51.google.com with SMTP id de14so2921639edb.4;
+        Wed, 25 Mar 2020 08:37:06 -0700 (PDT)
+X-Gm-Message-State: ANhLgQ2B6uIAJpvwbNRha58/NuFm5VlXCKDbgu5vvcB5/RS7aFH/4A1p
+        DyGGDf1Arg9V3t+2FrsEm2zNB5UlbiHqWXnaZg==
+X-Google-Smtp-Source: ADFU+vvSoNJiU20ECt+7uu1vArut7MOjxMslvG/4PUR+3ZtOhd8DgCxmMnQcFYZJdkJa/fK+7IMDcrBp7ZaC6D/3Es4=
+X-Received: by 2002:a50:9f07:: with SMTP id b7mr3556024edf.148.1585150625023;
+ Wed, 25 Mar 2020 08:37:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i3tk6gopaxtqqbfj"
-Content-Disposition: inline
-In-Reply-To: <158510329289.125146.2737057581185153152@swboyd.mtv.corp.google.com>
+References: <20200311165322.1594233-1-enric.balletbo@collabora.com>
+ <20200311165322.1594233-4-enric.balletbo@collabora.com> <158474603935.125146.14986079780178656133@swboyd.mtv.corp.google.com>
+In-Reply-To: <158474603935.125146.14986079780178656133@swboyd.mtv.corp.google.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Wed, 25 Mar 2020 23:36:52 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8jPkOrdUx7iH=q7kTH2+nPE8igX5-p6ZzwC7aHkQwF+A@mail.gmail.com>
+Message-ID: <CAAOTY_8jPkOrdUx7iH=q7kTH2+nPE8igX5-p6ZzwC7aHkQwF+A@mail.gmail.com>
+Subject: Re: [PATCH v12 3/5] clk / soc: mediatek: Move mt8173 MMSYS to
+ platform driver
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        David Airlie <airlied@linux.ie>, CK Hu <ck.hu@mediatek.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mark Rutland <mark.rutland@arm.com>, mturquette@baylibre.com,
+        p.zabel@pengutronix.de, Rob Herring <robh+dt@kernel.org>,
+        ulrich.hecht+renesas@gmail.com,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        hat.com@freedesktop.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Fabien Parent <fparent@baylibre.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, Nicolas Boichat <drinkcat@chromium.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>, wens@csie.org,
+        Allison Randal <allison@lohutok.net>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        frank-w@public-files.de, Seiya Wang <seiya.wang@mediatek.com>,
+        sean.wang@mediatek.com, Houlong Wei <houlong.wei@mediatek.com>,
+        linux-mediatek@lists.infradead.org, hsinyi@chromium.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Matthias Brugger <mbrugger@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        matthias.bgg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---i3tk6gopaxtqqbfj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Mar 24, 2020 at 07:28:12PM -0700, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2020-03-24 19:22:57)
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index 952ac035bab9..95cc8a4f6e39 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -539,10 +539,10 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
-> >   * @clk_gate_flags: gate-specific flags for this clock
-> >   * @lock: shared register lock for this clock
-> >   */
-> > -#define clk_hw_register_gate_parent_data(dev, name, parent_name, flags, reg,  \
-> > +#define clk_hw_register_gate_parent_data(dev, name, parent_data, flags, reg,  \
-> >                                        bit_idx, clk_gate_flags, lock)         \
-> > -       __clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-> > -                              NULL, (flags), (reg), (bit_idx),               \
-> > +       __clk_hw_register_gate((dev), NULL, (name), NULL, NULL, (parent_data) \
+Stephen Boyd <sboyd@kernel.org> =E6=96=BC 2020=E5=B9=B43=E6=9C=8821=E6=97=
+=A5 =E9=80=B1=E5=85=AD =E4=B8=8A=E5=8D=887:14=E5=AF=AB=E9=81=93=EF=BC=9A
 >
-> And this needs a comma after it.
+> Quoting Enric Balletbo i Serra (2020-03-11 09:53:20)
+> > From: Matthias Brugger <mbrugger@suse.com>
+> >
+> > There is no strong reason for this to use CLK_OF_DECLARE instead of
+> > being a platform driver. Plus, MMSYS provides clocks but also a shared
+> > register space for the mediatek-drm and the mediatek-mdp
+> > driver. So move the MMSYS clocks to a new platform driver and also
+> > create a new MMSYS platform driver in drivers/soc/mediatek that
+> > instantiates the clock driver.
+> >
+> > Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+> > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> > ---
 >
-> I'll apply this to clk-fixes and send to Linus in the next few days.
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Unless you want me to pick this up by itself?
 
-With that fix,
-Tested-by: Maxime Ripard <mripard@kernel.org>
+I would like Matthias to pick up this series together.
 
-Maxime
-
---i3tk6gopaxtqqbfj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnt5cAAKCRDj7w1vZxhR
-xaDYAP9mtPJPssMoYYNICOo+TW6sVSKpiScbo2O4Di9iL3g+ggEA3M0Koz2MxzdS
-tcLof290E1B6Vqlw963sCIvP8aNhxAI=
-=usaU
------END PGP SIGNATURE-----
-
---i3tk6gopaxtqqbfj--
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
