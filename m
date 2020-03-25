@@ -2,117 +2,113 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC70DC43331
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 09:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2CF7C43331
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 11:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C759220772
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 09:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A60D20836
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 11:09:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="tzGy0N9y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726225AbgCYJzT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 05:55:19 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:50535 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbgCYJzT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 05:55:19 -0400
-Received: from localhost (lfbn-lyo-1-9-35.w86-202.abo.wanadoo.fr [86.202.105.35])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 73404200004;
-        Wed, 25 Mar 2020 09:55:16 +0000 (UTC)
-Date:   Wed, 25 Mar 2020 10:55:16 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        id S1727499AbgCYLJr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 07:09:47 -0400
+Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:43879 "EHLO
+        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726043AbgCYLJr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 07:09:47 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id H3umjbcsrfHuvH3upjwsDV; Wed, 25 Mar 2020 12:09:44 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1585134584; bh=aeOdGZ6OgFt69qgvqx7eLLn3NGTxKw+2xezfTroXWTA=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=tzGy0N9y8M4l52nouIG4+WU6Z4gkn/Mdp1HQBA9tAkgNVOaG8GPhh1aetpvt4kiks
+         /YQCaHbme2Sc6/8N+gXYTd3b0XVe6ZPOP3K7+71sUKaUGWlpAgg+6dL94jRqcBweed
+         Sq9ci3BsuGd3kycMJhAEuo3pxnjBGoXZ1RE/d0z/5Y9V4QFB7ywXSHKd+34alM31a2
+         dw7rWlK1pBcy8D2hsO+j+Gabu1ZZS60UJ+DPRCqLzIHk20AG9GlRbS+KJvUxMxyt82
+         mmfrNDYqpG3Jasx3wFv1sOJctAaKM5vitwzRNo8Uk41bieJCCmlmRf/E86bJlF+nDP
+         Ea9T3arrgpYsA==
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sakari Ailus <sakari.ailus@iki.fi>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] clk: at91: sama5d2: allow setting all PMC clock
- parents via DT
-Message-ID: <20200325095516.GT5504@piout.net>
-References: <cover.1584825247.git.mirq-linux@rere.qmqm.pl>
- <135082dfafaa8bc106286dfbe7dd94b708c33f4b.1584825247.git.mirq-linux@rere.qmqm.pl>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <20200325110358.GB853@valkosipuli.retiisi.org.uk>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <af710b95-55a5-8f20-6617-c1e6f9a3fe79@xs4all.nl>
+Date:   Wed, 25 Mar 2020 12:09:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
+In-Reply-To: <20200325110358.GB853@valkosipuli.retiisi.org.uk>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <135082dfafaa8bc106286dfbe7dd94b708c33f4b.1584825247.git.mirq-linux@rere.qmqm.pl>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfASr57v1HrYBEDdTrXofqBhy5OyWTJt9e1V2D9AsPGRLMdFLfrHk4JYIO/wJ8mCWc1kRrmVkRa3VMq/uRJjL99iLl7N3BQCHPjDmyAQvJl8GwbmviRpJ
+ 2kUGLaETo3kWiJv6ySSmQWBpkKYrmuwcB2EMoZ1mW0Qm292OoTclC422cdpsXmO/WqAkjyyS0k4XkBHIHL0HAip25nzPrTG0jiH+FxVB68S0kpJOKPet4AX4
+ cKqSYUcpP8ilU8Y6A+FI0PYh2Kfa2Rntk2bTiDE6vyD164N4lGNuSCoxAMD3m3aI2c0Y8yVM1DzRtpfaJZRdKVJpXnzGUWe8hxruHe3nC1G78tAB4xuyXFCs
+ LZEvgsPZFojuOcunPRJllbqYEwItiTzawgSVgy7f5W4JzIeI9hwNjCexX/E3bRrMAia56iDlLuWNvv3GdagGtJvjLr3cCaWJGyT7YK64pilWc8V8d9L8GTx0
+ XMEjizaV/E3frWDaNwoQVml+qXb9HziBMu4vg6K7qXG1i7HwcEFNO+MrZ4b+IBRCHv2lQWTR6xAoUmdTTWDWTZwki51tM9JQdsORcSH7huS5XfzcBKp5ZDnD
+ XGk=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/03/2020 22:18:04+0100, Michał Mirosław wrote:
-> We need to have clocks accessible via phandle to select them
-> as peripheral clock parent using assigned-clock-parents in DT.
-> PLLACK and AUDIOPLLCK were missing for sama5d2. Add them.
+On 3/25/20 12:03 PM, Sakari Ailus wrote:
+> Hi Sowjanya,
 > 
-
-If we go this route, because PLLA is available on all the SoC then it
-makes sense adding it in all the PMC drivers instead of just the
-sama5d2.
-
-> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-> ---
-> v2: rebase to clk/clk-at91 branch
-> v3: no changes
-> ---
->  drivers/clk/at91/sama5d2.c       | 6 +++++-
->  include/dt-bindings/clock/at91.h | 2 ++
->  2 files changed, 7 insertions(+), 1 deletion(-)
+> Thanks for the patchset.
 > 
-> diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-> index ae5e83cadb3d..b3fa2291ccd8 100644
-> --- a/drivers/clk/at91/sama5d2.c
-> +++ b/drivers/clk/at91/sama5d2.c
-> @@ -166,7 +166,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  	if (IS_ERR(regmap))
->  		return;
->  
-> -	sama5d2_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
-> +	sama5d2_pmc = pmc_data_allocate(PMC_AUDIOPLLCK + 1,
->  					nck(sama5d2_systemck),
->  					nck(sama5d2_periph32ck),
->  					nck(sama5d2_gck), 3);
-> @@ -202,6 +202,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> +	sama5d2_pmc->chws[PMC_PLLACK] = hw;
-> +
->  	hw = at91_clk_register_audio_pll_frac(regmap, "audiopll_fracck",
->  					      "mainck");
->  	if (IS_ERR(hw))
-> @@ -217,6 +219,8 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
->  	if (IS_ERR(hw))
->  		goto err_free;
->  
-> +	sama5d2_pmc->chws[PMC_AUDIOPLLCK] = hw;
-> +
->  	regmap_sfr = syscon_regmap_lookup_by_compatible("atmel,sama5d2-sfr");
->  	if (IS_ERR(regmap_sfr))
->  		regmap_sfr = NULL;
-> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-> index c3f4aa6a2d29..e57362e98129 100644
-> --- a/include/dt-bindings/clock/at91.h
-> +++ b/include/dt-bindings/clock/at91.h
-> @@ -21,6 +21,8 @@
->  #define PMC_MCK2		4
->  #define PMC_I2S0_MUX		5
->  #define PMC_I2S1_MUX		6
-> +#define PMC_PLLACK		7
-> +#define PMC_AUDIOPLLCK		8
->  
->  #ifndef AT91_PMC_MOSCS
->  #define AT91_PMC_MOSCS		0		/* MOSCS Flag */
-> -- 
-> 2.20.1
+> On Mon, Mar 23, 2020 at 10:52:32AM -0700, Sowjanya Komatineni wrote:
+>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>> which can support up to 6 MIPI CSI camera sensors.
+>>
+>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>> capture from an external camera sensor connected to CSI or from
+>> built-in test pattern generator.
+>>
+>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>
+>> This patch adds a V4L2 media controller and capture driver support
+>> for Tegra210 built-in CSI to VI test pattern generator.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/staging/media/Kconfig              |    2 +
+>>  drivers/staging/media/Makefile             |    1 +
+>>  drivers/staging/media/tegra/Kconfig        |   10 +
+>>  drivers/staging/media/tegra/Makefile       |    8 +
+>>  drivers/staging/media/tegra/TODO           |   10 +
+>>  drivers/staging/media/tegra/tegra-common.h |  263 +++++++
+>>  drivers/staging/media/tegra/tegra-csi.c    |  522 ++++++++++++++
+>>  drivers/staging/media/tegra/tegra-csi.h    |  118 ++++
+>>  drivers/staging/media/tegra/tegra-vi.c     | 1058 ++++++++++++++++++++++++++++
+>>  drivers/staging/media/tegra/tegra-vi.h     |   83 +++
+>>  drivers/staging/media/tegra/tegra-video.c  |  129 ++++
+>>  drivers/staging/media/tegra/tegra-video.h  |   32 +
+>>  drivers/staging/media/tegra/tegra210.c     |  754 ++++++++++++++++++++
+>>  drivers/staging/media/tegra/tegra210.h     |  192 +++++
 > 
+> Why staging? Are there reasons not to aim this to the kernel proper right
+> away? If you only support TPG, the driver may not have too many (if any)
+> real users anyway.
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+A TPG-only driver is not very useful, and I do not believe that belongs in
+the kernel proper. The next phase will add sensor support, and that's a good
+time to move it in the kernel itself.
+
+Regards,
+
+	Hans
