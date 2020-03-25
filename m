@@ -2,178 +2,192 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A89EC54FD0
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 17:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D34E4C1975A
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 17:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB01D20772
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 17:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77E42077D
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 17:31:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbgCYRLY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 13:11:24 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:47610 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727236AbgCYRLY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 13:11:24 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 0127F80307C2;
-        Wed, 25 Mar 2020 17:11:21 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Vflws-kvy9oy; Wed, 25 Mar 2020 20:11:20 +0300 (MSK)
-Date:   Wed, 25 Mar 2020 20:11:09 +0300
-From:   Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-CC:     Maxime Ripard <maxime@cerno.tech>,
+        id S1727399AbgCYRbh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 13:31:37 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37006 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727129AbgCYRbh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 13:31:37 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 24ED229699D
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
+        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
+        laurent.pinchart@ideasonboard.com
+Cc:     linux-mediatek@lists.infradead.org,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        rdunlap@infradead.org, frank-w@public-files.de, wens@csie.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        devicetree@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Richard Fontana <rfontana@redhat.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race
- condition
-Message-ID: <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
-References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru>
- <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru>
- <20200323100109.k2gckdyneyzo23fb@gilmour.lan>
- <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int>
- <20200324101243.GG1922688@smile.fi.intel.com>
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        matthias.bgg@kernel.org, Allison Randal <allison@lohutok.net>,
+        linux-kernel@vger.kernel.org, hsinyi@chromium.org,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        linux-clk@vger.kernel.org, mtk01761 <wendell.lin@mediatek.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Matthias Brugger <mbrugger@suse.com>, sean.wang@mediatek.com,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        Fabien Parent <fparent@baylibre.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [RESEND PATCH v12 0/5] arm/arm64: mediatek: Fix mt8173 mmsys device probing
+Date:   Wed, 25 Mar 2020 18:31:18 +0100
+Message-Id: <20200325173123.3569606-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20200324101243.GG1922688@smile.fi.intel.com>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 24, 2020 at 12:12:43PM +0200, Andy Shevchenko wrote:
-> On Mon, Mar 23, 2020 at 04:50:17PM +0300, Sergey Semin wrote:
-> > On Mon, Mar 23, 2020 at 11:01:09AM +0100, Maxime Ripard wrote:
-> > > On Mon, Mar 23, 2020 at 05:46:09AM +0300, Sergey.Semin@baikalelectronics.ru wrote:
-> > > > From: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> > > >
-> > > > There are races possible in the dw8250_set_termios() callback method
-> > > > and while the device is in PM suspend state. A race condition may
-> > > > happen if the baudrate clock source device is shared with some other
-> > > > device (in our machine it's another DW UART port). In this case if that
-> > > > device changes the clock rate while serial console is using it the
-> > > > DW 8250 UART port might not only end up with an invalid uartclk value
-> > > > saved, but may also experience a distorted output data since baud-clock
-> > > > could have been changed. In order to fix this lets enable an exclusive
-> > > > reference clock rate access in case if "baudclk" device is specified.
-> > > >
-> > > > So if some other device also acquires the rate exclusivity during the
-> > > > time of a DW UART 8250 port being opened, then DW UART 8250 driver
-> > > > won't be able to alter the baud-clock. It shall just use the available
-> > > > clock rate. Similarly another device also won't manage to change the
-> > > > rate at that time. If nothing else have the exclusive rate access
-> > > > acquired except DW UART 8250 driver, then the driver will be able to
-> > > > alter the rate as much as it needs to in accordance with the currently
-> > > > implemented logic.
-> 
-> > > clk_rate_exclusive_get is pretty intrusive, and due to the usual
-> > > topology of clock trees, this will lock down 3-4 parent clocks to
-> > > their current rate as well. In the Allwinner SoCs case for example,
-> > > this will lock down the same PLL than the one used by the CPU,
-> > > preventing cpufreq from running.
-> > 
-> > Speaking about weak design of a SoC' clock tree. Our problems are nothing
-> > with respect to the Allwinner SoC, in which case of changing the
-> > CPU-frequency may cause the UART glitches subsequently causing data
-> > transfer artefacts.) Moreover as I can see the same issue may raise for
-> > I2C, QSPI, PWM devices there.
-> > 
-> > Anyway your concern does make sense.
-> > 
-> > > However, the 8250 has a pretty wide range of dividers and can adapt to
-> > > any reasonable parent clock rate, so we don't really need to lock the
-> > > rate either, we can simply react to a parent clock rate change using
-> > > the clock notifiers, just like the SiFive UART is doing.
-> > > 
-> > > I tried to do that, but given that I don't really have an extensive
-> > > knowledge of the 8250, I couldn't find a way to stop the TX of chars
-> > > while we change the clock rate. I'm not sure if this is a big deal or
-> > > not, the SiFive UART doesn't seem to care.
-> > 
-> > Yes, your solution is also possible, but even in case of stopping Tx/Rx it
-> > doesn't lack drawbacks. First of all AFAIK there is no easy way to just
-> > pause the transfers. We'd have to first wait for the current transfers
-> > to be completed, then somehow lock the port usage (both Tx and Rx
-> > traffic), permit the reference clock rate change, accordingly adjust the
-> > UART clock divider, and finally unlock the port. While if we don't mind
-> > to occasionally have UART data glitches, we can just adjust the UART ref
-> > divider synchronously with ref clock rate change as you and SiFive UART
-> > driver suggest.
-> > 
-> > So we are now at a zugzwang - a fork to three not that good solutions:
-> > 1) lock the whole clock branch and provide a glitchless interfaces. But
-> > by doing so we may (in case of Allwinner SoCs we will) lockup some very
-> > important functionality like CPU-frequency change while the UART port is
-> > started up. In this case we won't have the data glitches.
-> > 2) just adjust the UART clock divider in case of reference clock rate
-> > change (use the SiFive UART driver approach). In this case we may have the
-> > data corruption.
-> > 3) somehow implement the algo: wait for the transfers to be completed,
-> > lock UART interface (it's possible for Tx, but for Rx in case of no handshake
-> > enabled it's simply impossible), permit the ref clock rate change,
-> > adjust the UART divider, then unlock the UART interface. In this case the data
-> > glitches still may happen (if no modem control is available or
-> > handshakes are disabled).
-> > 
-> > As for the cases of Baikal-T1 UARTs the first solutions is the most suitable.
-> > We don't lock anything valuable, since a base PLL output isn't directly
-> > connected to any device and it's rate once setup isn't changed during the
-> > system running. On the other hand I don't mind to implement the second
-> > solution, even though it's prone to data glitches. Regarding the solution
-> > 3) I won't even try. It's too complicated, I don't have time and
-> > test-infrastructure for this.
-> > 
-> > So Andy what do you think?
-> 
-> From Intel HW perspective the first two are okay, but since Maxime is against
-> first, you have the only option from your list. Perhaps somebody may give
-> option 4) here...
-> 
+[Patches rebased on top of a clean 5.6-rc1 branch]
 
-Ok then. I'll implement the option 2) in v3 if noone gives any alternatives
-before that.
+Dear all,
 
-Regards,
--Sergey
+These patches are intended to solve an old standing issue on some
+Mediatek devices (mt8173, mt2701 and mt2712 are affected by this issue).
 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver gets probed, which in effect breaks
+graphics on those devices.
+
+The MMSYS (Multimedia subsystem) in Mediatek SoCs has some registers to
+control clock gates (which is used in the clk driver) and some registers
+to set the routing and enable the differnet blocks of the display
+and MDP (Media Data Path) subsystem. On this series the clk driver is
+not a pure clock controller but a system controller that can provide
+access to the shared registers between the different drivers that need
+it (mediatek-drm and mediatek-mdp). Hence the MMSYS clk driver was moved
+to drivers/soc/mediatek and is the entry point (parent) which will trigger
+the probe of the corresponding mediatek-drm driver.
+
+**IMPORTANT** This series only fixes the issue on mt8173 to make it
+simple and as is the only platform I can test. Similar changes should be
+applied for mt2701 and mt2712 to have display working.
+
+These patches apply on top of linux-next.
+
+For reference, here are the links to the old discussions:
+* v11: https://patchwork.kernel.org/project/linux-mediatek/list/?series=249871
+* v10: https://patchwork.kernel.org/project/linux-mediatek/list/?series=248505
+* v9: https://patchwork.kernel.org/project/linux-clk/list/?series=247591
+* v8: https://patchwork.kernel.org/project/linux-mediatek/list/?series=244891
+* v7: https://patchwork.kernel.org/project/linux-mediatek/list/?series=241217
+* v6: https://patchwork.kernel.org/project/linux-mediatek/list/?series=213219
+* v5: https://patchwork.kernel.org/project/linux-mediatek/list/?series=44063
+* v4:
+  * https://patchwork.kernel.org/patch/10530871/
+  * https://patchwork.kernel.org/patch/10530883/
+  * https://patchwork.kernel.org/patch/10530885/
+  * https://patchwork.kernel.org/patch/10530911/
+  * https://patchwork.kernel.org/patch/10530913/
+* v3:
+  * https://patchwork.kernel.org/patch/10367857/
+  * https://patchwork.kernel.org/patch/10367861/
+  * https://patchwork.kernel.org/patch/10367877/
+  * https://patchwork.kernel.org/patch/10367875/
+  * https://patchwork.kernel.org/patch/10367885/
+  * https://patchwork.kernel.org/patch/10367883/
+  * https://patchwork.kernel.org/patch/10367889/
+  * https://patchwork.kernel.org/patch/10367907/
+  * https://patchwork.kernel.org/patch/10367909/
+  * https://patchwork.kernel.org/patch/10367905/
+* v2: No relevant discussion, see v3
+* v1:
+  * https://patchwork.kernel.org/patch/10016497/
+  * https://patchwork.kernel.org/patch/10016499/
+  * https://patchwork.kernel.org/patch/10016505/
+  * https://patchwork.kernel.org/patch/10016507/
+
+Best regards,
+ Enric
+
+Changes in v12:
+- Leave the clocks part in drivers/clk (clk-mt8173-mm)
+- Instantiate the clock driver from the mtk-mmsys driver.
+- Add default config option to not break anything.
+- Removed the Reviewed-by CK tag as changed the organization.
+
+Changes in v10:
+- Update the binding documentation for the mmsys system controller.
+- Renamed to be generic mtk-mmsys
+- Add driver data support to be able to support diferent SoCs
+- Select CONFIG_MTK_MMSYS (CK)
+- Pass device pointer of mmsys device instead of config regs (CK)
+- Match driver data to get display routing.
+
+Changes in v9:
+- Move mmsys to drivers/soc/mediatek (CK)
+- Introduced a new patch to move routing control into mmsys driver.
+- Removed the patch to use regmap as is not needed anymore.
+- Do not move the display routing from the drm driver (CK)
+
+Changes in v8:
+- Be a builtin_platform_driver like other mediatek mmsys drivers.
+- New patch introduced in this series.
+
+Changes in v7:
+- Free clk_data->clks as well
+- Get rid of private data structure
+
+Enric Balletbo i Serra (3):
+  dt-bindings: mediatek: Update mmsys binding to reflect it is a system
+    controller
+  soc / drm: mediatek: Move routing control to mmsys device
+  soc / drm: mediatek: Fix mediatek-drm device probing
+
+Matthias Brugger (2):
+  drm/mediatek: Omit warning on probe defers
+  clk / soc: mediatek: Move mt8173 MMSYS to platform driver
+
+ .../bindings/arm/mediatek/mediatek,mmsys.txt  |   7 +-
+ drivers/clk/mediatek/Kconfig                  |   7 +
+ drivers/clk/mediatek/Makefile                 |   1 +
+ drivers/clk/mediatek/clk-mt8173-mm.c          | 146 ++++++++
+ drivers/clk/mediatek/clk-mt8173.c             | 104 ------
+ drivers/gpu/drm/mediatek/Kconfig              |   1 +
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |   5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |   5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            |  12 +-
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  19 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 259 +-------------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |   7 -
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        |  45 +--
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |   2 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |   8 +-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |   4 +-
+ drivers/soc/mediatek/Kconfig                  |   8 +
+ drivers/soc/mediatek/Makefile                 |   1 +
+ drivers/soc/mediatek/mtk-mmsys.c              | 335 ++++++++++++++++++
+ include/linux/soc/mediatek/mtk-mmsys.h        |  20 ++
+ 21 files changed, 590 insertions(+), 411 deletions(-)
+ create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
+ create mode 100644 drivers/soc/mediatek/mtk-mmsys.c
+ create mode 100644 include/linux/soc/mediatek/mtk-mmsys.h
+
+-- 
+2.25.1
+
