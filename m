@@ -2,32 +2,31 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48E76C54FD5
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5C5C1975A
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3172A208D5
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C271520774
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgCYPj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1727720AbgCYPj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Wed, 25 Mar 2020 11:39:26 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:52820 "EHLO inva020.nxp.com"
+Received: from inva021.nxp.com ([92.121.34.21]:53318 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727702AbgCYPj0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726838AbgCYPj0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Wed, 25 Mar 2020 11:39:26 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DA4AE1A04EA;
-        Wed, 25 Mar 2020 16:39:24 +0100 (CET)
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 61699200558;
+        Wed, 25 Mar 2020 16:39:23 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CD1571A00F9;
-        Wed, 25 Mar 2020 16:39:24 +0100 (CET)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 52D672000D4;
+        Wed, 25 Mar 2020 16:39:23 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 244D8203CE;
-        Wed, 25 Mar 2020 16:39:24 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id A1DFD203CE;
+        Wed, 25 Mar 2020 16:39:22 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -43,68 +42,71 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 02/13] Documentation: mfd: Add DT bindings for i.MX Audiomix
-Date:   Wed, 25 Mar 2020 17:38:40 +0200
-Message-Id: <1585150731-3354-3-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v2 00/13] Add generic MFD i.MX mix and audiomix support
+Date:   Wed, 25 Mar 2020 17:38:38 +0200
+Message-Id: <1585150731-3354-1-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585150731-3354-1-git-send-email-abel.vesa@nxp.com>
-References: <1585150731-3354-1-git-send-email-abel.vesa@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The i.MX Audiomix is a mix of clock gates, reset bits
-and some other i.MX audio specific functionalities.
-Add information for the MFD, its clock and reset controllers.
+The i.MX8MP has some new IPs called mixes. They are formed usually by some
+GPRs that can be split into different functionalities. The first example
+here is the audiomix which has dedicated registers that can be registered
+as a clock controller and some other registers that can be registered as
+a reset controller, plus some dedicated ones that will be registered as
+syscon and used by each dedicated audio IP.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- .../devicetree/bindings/mfd/fsl,imx-audiomix.txt   | 34 ++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+More mixes to be following the same structure are to come, like hdmimix,
+dispmix and mediamix. They will all be populated and registered by the MFD
+imx-mix generic driver.
+
+Changes since RFC:
+ * changed the gate2 to work as shared with single bit,
+   therefor avoiding to add the new clk-gate-shared clock type.
+ * implemented all Stephen's comments
+ * implemented all Peng's comments
+ * documented the DT bindings 
+
+Abel Vesa (13):
+  mfd: Add i.MX generic mix support
+  Documentation: mfd: Add DT bindings for i.MX Audiomix
+  arm64: dts: imx8mp: Add AIPS 4 and 5
+  arm64: dts: imx8mp: Add audiomix node
+  clk: imx: gate2: Allow single bit gating clock
+  clk: imx: pll14xx: Add the device as argument when registering
+  clk: imx: Add helpers for passing the device as argument
+  dt-bindings: clocks: imx8mp: Add ids for audiomix clocks
+  clk: imx: Add audiomix clock controller support
+  arm64: dts: imx8mp: Add audiomix clock controller node
+  dt-bindings: reset: imx8mp: Add ids for audiomix reset
+  reset: imx: Add audiomix reset controller support
+  arm64: dts: imx8mp: Add audiomix reset controller node
+
+ .../devicetree/bindings/mfd/fsl,imx-audiomix.txt   |  34 +++
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi          |  41 +++-
+ drivers/clk/imx/Makefile                           |   2 +-
+ drivers/clk/imx/clk-audiomix.c                     | 228 +++++++++++++++++++++
+ drivers/clk/imx/clk-gate2.c                        |  31 ++-
+ drivers/clk/imx/clk-pll14xx.c                      |   8 +-
+ drivers/clk/imx/clk.h                              |  55 ++++-
+ drivers/mfd/Kconfig                                |  11 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/imx-mix.c                              |  48 +++++
+ drivers/reset/Kconfig                              |   7 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-imx-audiomix.c                 | 122 +++++++++++
+ include/dt-bindings/clock/imx8mp-clock.h           |  62 ++++++
+ include/dt-bindings/reset/imx-audiomix-reset.h     |  15 ++
+ 15 files changed, 648 insertions(+), 18 deletions(-)
  create mode 100644 Documentation/devicetree/bindings/mfd/fsl,imx-audiomix.txt
+ create mode 100644 drivers/clk/imx/clk-audiomix.c
+ create mode 100644 drivers/mfd/imx-mix.c
+ create mode 100644 drivers/reset/reset-imx-audiomix.c
+ create mode 100644 include/dt-bindings/reset/imx-audiomix-reset.h
 
-diff --git a/Documentation/devicetree/bindings/mfd/fsl,imx-audiomix.txt b/Documentation/devicetree/bindings/mfd/fsl,imx-audiomix.txt
-new file mode 100644
-index 00000000..1622818
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/fsl,imx-audiomix.txt
-@@ -0,0 +1,34 @@
-+Freescale i.MX Audiomix
-+======================================
-+
-+Audiomix is a conglomerate of different functionalities.
-+
-+Required properties:
-+- compatible: Should be "fsl,<chip>-mix" for the MFD device
-+	Should be"fsl,<chip>-audiomix-clk" for the clock controller
-+	Should be"fsl,<chip>-audiomix-reset" for the reset controller
-+	Some functionalities of the audiomix will be registered as syscon.
-+- reg: should be register base and length as documented in the
-+  datasheet
-+
-+example:
-+	audiomix: audiomix@30e20000 {
-+		compatible = "fsl,imx8mp-mix";
-+		reg = <0x30e20000 0x10000>;
-+
-+		audiomix_clk: clock-controller {
-+			compatible = "fsl,imx8mp-audiomix-clk";
-+			#clock-cells = <1>;
-+			clocks = <&clk IMX8MP_CLK_AUDIO_ROOT>,
-+				 <&clk IMX8MP_CLK_AUDIO_AHB>,
-+				 <&clk IMX8MP_CLK_AUDIO_AXI_DIV>;
-+			clock-names = "audio_root",
-+				      "audio_ahb",
-+				      "audio_axi_div";
-+		};
-+
-+		audiomix_reset: reset-controller {
-+			compatible = "fsl,imx8mp-audiomix-reset";
-+			#reset-cells = <1>;
-+		};
-+	};
 -- 
 2.7.4
 
