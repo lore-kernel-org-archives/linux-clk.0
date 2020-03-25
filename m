@@ -2,304 +2,232 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CEDC43331
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 21:27:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13E83C2D0E7
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 22:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72B22082E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 21:27:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OupybIii"
+	by mail.kernel.org (Postfix) with ESMTP id D5C932082E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 22:05:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585173947;
+	bh=o9kTsTDvzX6XRBskyx/3cnGfmJvD3krgA4ezWk/YKKo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ce4c++i2lzV+njNjwz/51L9agUUpajoo8I6bQnQ7N5aULcIJpbJ48LKYkoDxbEi70
+	 0VwqZQUuxD9KYh6TVzPijN+YBhfWciOlJmXPFB71Ys5i2nNGQWSPeEvN3YOnMrF065
+	 HWol/jMVqUT8efZb/md2vm601uwCCfXZKsHNcDGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727374AbgCYV1P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 17:27:15 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39364 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727351AbgCYV1P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 17:27:15 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a9so4740070wmj.4;
-        Wed, 25 Mar 2020 14:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j2/1Dbn9ytplycMiraI7qSjXKdTbS/HlaoeByMQZV30=;
-        b=OupybIii4o5OC8/8iCCIWB8RYTtd2SRNfJChHHgxLUrgHbSQpANM3JuPbDY8cmDsWO
-         L9TSkrUeJRAFB7N8w1wIqkflf5ZnE8TFGPZKJsNIhBVFxyY2fP65Y1Rf+fuRpFDF6BhZ
-         780f4HuCXjqsdoJI4Zc0LmlaNjocvXu0m8jjJkcah8rekQ0h4Q0Iuj/YvIjWBL/bxtfI
-         +a6bwoK8LexzG87oMU9rS6Z+25UQRe/9kkDmIFksKZ8jjLNPnUafYVSvIUtCnivYCryY
-         opNjZ8UpQcux8KjwuZ0DOsBVGcRcQzLIKpvEOmBk8gfWVq0zkbWzonUETRfeuZm1/zBH
-         I/rQ==
+        id S1727374AbgCYWFr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 18:05:47 -0400
+Received: from mail-il1-f175.google.com ([209.85.166.175]:43780 "EHLO
+        mail-il1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgCYWFr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 18:05:47 -0400
+Received: by mail-il1-f175.google.com with SMTP id g15so3465753ilj.10;
+        Wed, 25 Mar 2020 15:05:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j2/1Dbn9ytplycMiraI7qSjXKdTbS/HlaoeByMQZV30=;
-        b=rJhhxy/mtcBjpQ9FBTu+7yh703hoJlPQ5kkAoMmUdfZBU1CpDWw9xfOvcwwOv5rLBl
-         vJzkJD7P1Skatx4cXiS4I8v5CGnFP3+AUDU5VnE5N+d725dezy6zR17FvV4K9eqFlO04
-         xghONIfxatR5yITIqU+rlZxrVOW7WrTFSE8xTzvNh+v1bpGlQboIDOgOxQNhHAngq4IC
-         yL8kZkuLM1FxD66boIFA/pr1qBRYoQGjCXCoDwVJF5bjKyTBgIiDdVXOG/iP0qOu6bg6
-         yMJ/wEuB0pwsECwnuCZSX1HJCqjyTcKsSh2AItX0iOmXEybpeLv76HagCY62SN7aQ7nN
-         uRYg==
-X-Gm-Message-State: ANhLgQ0W5Qh3gXSnuNcCG6GYxB8qNyU5ATnwdF9+YpAgpptRJ9aYKdhb
-        ogPbuzm+WLhc4HQ1h1ZccmY=
-X-Google-Smtp-Source: ADFU+vuCKeFMo1LEunZD98eUjX6VM0bC6khR8nzBxytY1ME/zCO9aGl5H0izZ8Hh2thLagL4h9kYsQ==
-X-Received: by 2002:a7b:ce81:: with SMTP id q1mr5654579wmj.156.1585171631851;
-        Wed, 25 Mar 2020 14:27:11 -0700 (PDT)
-Received: from localhost (p200300E41F4A9B0076D02BFFFE273F51.dip0.t-ipconnect.de. [2003:e4:1f4a:9b00:76d0:2bff:fe27:3f51])
-        by smtp.gmail.com with ESMTPSA id b82sm401960wmb.46.2020.03.25.14.27.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=b/UNNUiqZNH/+Iv9VGZJuE2UKU7Uzk2Xjaa2yHi3k54=;
+        b=h8YVqz004LvjsagR0EJUS0EuPZ3qLqxgEqYyDMivOMaWbrCU8E7pdyi9N4YIdg8OTX
+         3tWrkESOi1CqPE1qEe+Z8nQaSdrAqf1fAsAFgL4Al+HS2vrqjLK1XboLDsNXhkx0ev6+
+         0EZZ1UKqC1T5cMTOnIKLyvkt7RtlEhtjfMP9NOWwi+MkCZFC6Y5qyuIUUtL5NhYTYEVZ
+         Q1EXNLNspmTlPRpT1q51dMo4o/k7vpdl0uRI2fGD+KPVdQZBnDZ4YdP25DXwvGkd5T+t
+         /4TKrSZxtqZcjSgwNlngRlpGr2Bjw5wpdXxAkxOR3qZWFdfqYT72ssOzvRYmZeOobfg6
+         52/A==
+X-Gm-Message-State: ANhLgQ2E+MW6/mXKRRpf8ikFfyNvihMLGQ68XAOCjJDRRsehoMtdGkTN
+        6HCStjWnRRwNi8P4jfI+4AMsPik=
+X-Google-Smtp-Source: ADFU+vt2kokrkcEpGRLO2UvFmwmQbT400vUIkyFS/Pwj5bVyFFr+iqUWdZpWVM9WT6gFsFQdf7TdIQ==
+X-Received: by 2002:a92:83ca:: with SMTP id p71mr5277381ilk.278.1585173944474;
+        Wed, 25 Mar 2020 15:05:44 -0700 (PDT)
+Received: from xps15.herring.priv ([64.188.179.250])
+        by smtp.googlemail.com with ESMTPSA id v8sm102390ioh.40.2020.03.25.15.05.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 14:27:09 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 22:27:08 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        perex@perex.cz, tiwai@suse.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/22] Move PMC clocks into Tegra PMC driver
-Message-ID: <20200325212708.GA836215@ulmo>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+        Wed, 25 Mar 2020 15:05:43 -0700 (PDT)
+From:   Rob Herring <robh@kernel.org>
+To:     devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 0/4] dt-bindings: additionalProperties clean-up
+Date:   Wed, 25 Mar 2020 16:05:37 -0600
+Message-Id: <20200325220542.19189-1-robh@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Setting 'additionalProperties: false' is frequently omitted, but is
+important in order to check that there aren't extra undocumented
+properties in a binding.
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series is a bunch of fixes in patches 1-3 found by setting
+'additionalProperties: false' and then patch 4 sets additionalProperties
+on a bunch of schema.
 
-On Mon, Jan 13, 2020 at 11:24:05PM -0800, Sowjanya Komatineni wrote:
-> This patch series moves Tegra PMC clocks from clock driver to pmc driver
-> along with the device trees changes and audio driver which uses one of
-> the pmc clock for audio mclk.
->=20
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-> are currently registered by Tegra clock driver using clk_regiser_mux and
-> clk_register_gate which performs direct Tegra PMC register access.
->=20
-> When Tegra PMC is in secure mode, any access from non-secure world will
-> not go through.
->=20
-> This patch series adds these Tegra PMC clocks and blink controls to Tegra
-> PMC driver with PMC as clock provider and removes them from Tegra clock
-> driver.
->=20
-> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
-> and clock driver does inital parent configuration for it and enables them.
-> But this clock should be taken care by audio driver as there is no need
-> to have this clock pre enabled.
->=20
-> So, this series also includes patch that updates ASoC utils to take
-> care of parent configuration for mclk if device tree don't specify
-> initial parent configuration using assigned-clock-parents and enable
-> audio mclk during utils init.
->=20
-> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
->=20
-> This series also includes a patch for mclk fallback to extern1 when
-> retrieving mclk fails to have this backward compatible of new DT with
-> old kernels.
->=20
-> [v8]:	Changes between v7 and v8 are
-> 	- v7 minor feedback
->=20
-> 	- Audio mclk is needed only for audio, but there is some unknown
-> 	  dependency of audio mclk and suspend-resume on Tegra30 where when
-> 	  mclk is disable, suspend-resume doesn't work.
-> 	  So v8 undoes v7 change of mclk enable and disable during machine
-> 	  startup and shutdown and keeps audio mclk enabled in ASoC driver
-> 	  tegra_asoc_utils_init.
->=20
-> 	- change in the patches order.
->=20
-> 	  Note:
-> 	  - Patches 1 thru 5 are to change CLK_M_DIV clocks to OSC_DIV clocks.
-> 	    OSC_DIV clocks uses same ID as CLK_M_DIV clocks during the
-> 	    transition to replace CLK_M_DIV with OSC_DIV.
-> 	  - Patches 8 and 10 registers pmc clocks as pmc_clk_out_1/2/3, and
-> 	    pmc_blink to avoid using same clock names as pmc clocks from
-> 	    tegra_car provider to have them functionally work with all the
-> 	    transition patches.
-> 	  - Patch 11 adds audio mclk fallback to extern1 to have new DT work
-> 	    with old kernels. This patch need to be back-ported.
-> 	  - Patch 18 adds audio mclk parent configuration when DT doesn't
-> 	    specify parent configs. This patch retrieves pmc_clk_out_1 as audio
-> 	    mclk so added this patch after all DT updates to use pmc clocks
-> 	    from tegra_pmc.
-> 	  - Patch 19 does audio mclk enable during utils init to have it
-> 	    enabled all the time.
-> 	  - Patch 20 and 21 removes PMC clocks from clock driver and their IDs
-> 	    at the end of PMC clocks transition to tegra_pmc.
-> =09
->=20
-> [v7]:	Changes between v6 and v7 are
-> 	- v6 minor feedback
-> 	- Added DT id for Tegra OSC to use in device tree for pmc clock
-> 	  parent.
->=20
-> [v6]:	Changes between v5 and v6 are
-> 	- v5 feedback
-> 	- Added ASoC machine startup and shutdown callbacks to control audio
-> 	  mclk enable/disable and removed default mclk enable from clock driver.
-> 	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
-> 	  rate change and removed disabling PLLA as its already taken care by
-> 	  pll clock driver.
-> 	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
-> 	  is set during machine hw_params and during utils_init mclk is
-> 	  already in disabled state and this causes warning during mclk disable
-> 	  in utils_set_rate.
->=20
-> [v5]:	Changes between v4 and v5 are
-> 	- v4 feedback
-> 	- updated dt-binding pmc YAML schema with more description on power
-> 	  gate nodes and pad configuration state nodes.
-> 	- update tegra_asoc_utils_set_rate to disable audio mclk only if
-> 	  its in enable state.
->=20
-> [v4]:	Changes between v3 and v4 are
-> 	- v3 Feedback
-> 	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
-> 	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
-> 	  be osc_div2 and osc_div4 clocks from osc pads.
-> 	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
-> 	  This is not a functional bug fix but correction to use proper parent
-> 	  name.
-> 	- Register each PMC clock as single clock rather than separate
-> 	  mux and gate clocks.
-> 	- Update ASoC utils to use resource managed APIs rather than
-> 	  using clk_get and clk_put.
-> 	- Updated device tree and ASoC driver to use clk_out_1 instead of
-> 	  clk_out_1_mux as PMC clocks are registered as single clock.
-> 	- Update clock driver init_table to not enable audio related clocks
-> 	  as ASoC utils will do audio clock enables.
->=20
-> [v3]:	Changes between v2 and v3 are
-> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
-> 	  extern1 from the clock driver.
-> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
-> 	- Updates ASoC driver to take care of audio mclk parent
-> 	  configuration incase if device tree don't specify assigned
-> 	  clock parent properties and enables mclk using both clk_out_1
-> 	  and extern1.
-> 	- updates all device trees using extern1 as mclk in sound node
-> 	  to use clk_out_1 from pmc.
-> 	- patch for YAML format pmc dt-binding
-> 	- Includes v2 feedback
->=20
-> [v2]:	Changes between v1 and v2 are
-> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-> 	- feedback related to pmc clocks in Tegra PMC driver from v1
-> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-> 	  by the clock driver using helper functions from Tegra PMC.
->=20
->  	  Note:
-> 	  To use helper functions from PMC driver, PMC early init need to
-> 	  happen prior to using helper functions and these helper functions are
-> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-> 	  clock registration which happen in clock_init prior to Tegra PMC
-> 	  probe.
-> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-> 	  tegra_mc_init.
-> 	  This implementation of configuring PMC registers thru helper
-> 	  functions in clock driver needs proper changes across PMC, Clock,
-> 	  EMC and MC inits to have it work across all Tegra platforms.
->=20
-> 	  Currently PLLM Override is not enabled in the bootloader so proper
-> 	  patches for this fix will be taken care separately.
->=20
-> [v1]:	v1 includes patches for below fixes.
-> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-> 	  driver and removing clk-tegra-pmc.
-> 	- updated clock provider from tegra_car to pmc in the device tree
-> 	  tegra210-smaug.dts that uses clk_out_2.
-> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-> 	  IDDQ programming to use by clock driver and updated clock driver to
-> 	  use these helper functions and removed direct PMC access from clock
-> 	  driver and all pmc base address references in clock driver.
->=20
-> Sowjanya Komatineni (22):
->   dt-bindings: clock: tegra: Add IDs for OSC clocks
->   clk: tegra: Add support for OSC_DIV fixed clocks
->   clk: tegra: Add Tegra OSC to clock lookup
->   clk: tegra: Fix Tegra PMC clock out parents
->   clk: tegra: Remove CLK_M_DIV fixed clocks
->   dt-bindings: tegra: Convert Tegra PMC bindings to YAML
->   dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
->   soc: tegra: Add Tegra PMC clocks registration into PMC driver
->   dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
->   soc: tegra: Add support for 32KHz blink clock
->   ASoC: tegra: Add fallback implementation for audio mclk
->   ASoC: tegra: Use device managed resource APIs to get the clock
->   ARM: dts: tegra: Add clock-cells property to pmc
->   arm64: tegra: Add clock-cells property to Tegra PMC node
->   ARM: tegra: Update sound node clocks in device tree
->   arm64: tegra: smaug: Change clk_out_2 provider to pmc
->   ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
->   ASoC: tegra: Add audio mclk parent configuration
->   ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init
->   clk: tegra: Remove tegra_pmc_clk_init along with clk ids
->   dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
->   clk: tegra: Remove audio clocks configuration from clock driver
+Rob
 
-Liam, Mark,
 
-there's a few runtime dependencies between the various patches in this
-series, so I think it'd probably be best if I picked up the ASoC patches
-into the Tegra tree and let them soak for a day or two in linux-next to
-make sure everything is there and in the right order.
+Rob Herring (4):
+  dt-bindings: iio/accel: Drop duplicate adi,adxl345/6 from
+    trivial-devices.yaml
+  dt-bindings: sram: qcom: Clean-up 'ranges' and child node names
+  dt-bindings: Clean-up schema errors due to missing
+    'addtionalProperties: false'
+  dt-bindings: Add missing 'additionalProperties: false'
 
-Do you mind if I pick them up and send to you as a pull request in the
-next few days?
+ .../arm/altera/socfpga-clk-manager.yaml       |  2 ++
+ .../amlogic/amlogic,meson-gx-ao-secure.yaml   |  2 ++
+ .../bindings/arm/msm/qcom,llcc.yaml           |  2 ++
+ .../devicetree/bindings/arm/renesas,prr.yaml  |  2 ++
+ .../bindings/arm/samsung/exynos-chipid.yaml   |  2 ++
+ .../devicetree/bindings/arm/samsung/pmu.yaml  |  2 ++
+ .../arm/samsung/samsung-secure-firmware.yaml  |  2 ++
+ .../bindings/arm/stm32/st,stm32-syscon.yaml   |  2 ++
+ .../devicetree/bindings/clock/fsl,plldig.yaml |  5 ++++
+ .../bindings/clock/imx8mn-clock.yaml          |  2 ++
+ .../bindings/clock/imx8mp-clock.yaml          |  2 ++
+ .../bindings/clock/milbeaut-clock.yaml        |  2 ++
+ .../bindings/clock/qcom,gcc-apq8064.yaml      |  2 ++
+ .../bindings/clock/qcom,gcc-ipq8074.yaml      |  2 ++
+ .../bindings/clock/qcom,gcc-msm8996.yaml      |  2 ++
+ .../bindings/clock/qcom,gcc-msm8998.yaml      |  2 ++
+ .../bindings/clock/qcom,gcc-qcs404.yaml       |  2 ++
+ .../bindings/clock/qcom,gcc-sc7180.yaml       |  2 ++
+ .../bindings/clock/qcom,gcc-sm8150.yaml       |  2 ++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |  2 ++
+ .../devicetree/bindings/clock/qcom,mmcc.yaml  |  2 ++
+ .../bindings/clock/qcom,msm8998-gpucc.yaml    |  2 ++
+ .../bindings/clock/qcom,rpmhcc.yaml           |  2 ++
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    |  2 ++
+ .../bindings/clock/qcom,sc7180-gpucc.yaml     |  2 ++
+ .../bindings/clock/qcom,sc7180-videocc.yaml   |  2 ++
+ .../bindings/clock/qcom,sdm845-dispcc.yaml    |  2 ++
+ .../bindings/clock/qcom,sdm845-gpucc.yaml     |  2 ++
+ .../bindings/clock/qcom,sdm845-videocc.yaml   |  2 ++
+ .../bindings/display/amlogic,meson-vpu.yaml   |  2 ++
+ .../bindings/dma/sifive,fu540-c000-pdma.yaml  |  2 ++
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      |  2 ++
+ .../devicetree/bindings/eeprom/at24.yaml      |  2 ++
+ ...ntel,ixp4xx-network-processing-engine.yaml |  3 +++
+ .../bindings/gpio/brcm,xgs-iproc-gpio.yaml    |  2 ++
+ .../gpio/socionext,uniphier-gpio.yaml         |  4 +++
+ .../bindings/gpio/xylon,logicvc-gpio.yaml     |  2 ++
+ .../bindings/gpu/arm,mali-bifrost.yaml        |  8 +++---
+ .../bindings/gpu/arm,mali-midgard.yaml        |  5 ++++
+ .../bindings/gpu/arm,mali-utgard.yaml         |  2 ++
+ .../bindings/gpu/samsung-rotator.yaml         |  2 ++
+ .../bindings/hwmon/adi,adm1177.yaml           |  2 ++
+ .../bindings/hwmon/adi,ltc2947.yaml           |  2 ++
+ .../bindings/hwmon/pmbus/ti,ucd90320.yaml     |  2 ++
+ .../devicetree/bindings/hwmon/ti,tmp513.yaml  |  2 ++
+ .../bindings/iio/accel/adi,adxl345.yaml       | 10 +++++---
+ .../bindings/iio/accel/bosch,bma400.yaml      |  2 ++
+ .../bindings/iio/adc/adi,ad7192.yaml          |  1 -
+ .../bindings/iio/adc/adi,ad7780.yaml          |  2 ++
+ .../bindings/iio/adc/avia-hx711.yaml          |  2 ++
+ .../bindings/iio/adc/lltc,ltc2496.yaml        |  2 ++
+ .../bindings/iio/adc/microchip,mcp3911.yaml   |  2 ++
+ .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  |  2 ++
+ .../iio/chemical/plantower,pms7003.yaml       |  2 ++
+ .../iio/chemical/sensirion,sps30.yaml         |  2 ++
+ .../bindings/iio/dac/lltc,ltc1660.yaml        |  2 ++
+ .../bindings/iio/light/adux1020.yaml          |  2 ++
+ .../devicetree/bindings/iio/light/bh1750.yaml |  2 ++
+ .../bindings/iio/light/isl29018.yaml          |  2 ++
+ .../bindings/iio/light/noa1305.yaml           |  2 ++
+ .../bindings/iio/light/stk33xx.yaml           |  2 ++
+ .../bindings/iio/light/tsl2583.yaml           |  2 ++
+ .../bindings/iio/light/tsl2772.yaml           |  2 ++
+ .../bindings/iio/light/veml6030.yaml          |  2 ++
+ .../bindings/iio/pressure/asc,dlhl60d.yaml    |  2 ++
+ .../bindings/iio/pressure/bmp085.yaml         |  5 ++++
+ .../iio/proximity/devantech-srf04.yaml        |  2 ++
+ .../bindings/iio/proximity/parallax-ping.yaml |  2 ++
+ .../bindings/iio/temperature/adi,ltc2983.yaml |  2 ++
+ .../bindings/input/gpio-vibrator.yaml         |  2 ++
+ .../bindings/input/max77650-onkey.yaml        |  3 +++
+ .../intel,ixp4xx-interrupt.yaml               |  2 ++
+ .../bindings/iommu/samsung,sysmmu.yaml        |  2 ++
+ .../bindings/leds/leds-max77650.yaml          |  3 +++
+ .../bindings/leds/rohm,bd71828-leds.yaml      |  3 +++
+ .../mailbox/amlogic,meson-gxbb-mhu.yaml       |  2 ++
+ .../bindings/media/amlogic,gx-vdec.yaml       |  2 ++
+ .../media/amlogic,meson-gx-ao-cec.yaml        | 11 +++++---
+ .../bindings/media/renesas,ceu.yaml           |  2 ++
+ .../devicetree/bindings/mfd/max77650.yaml     |  2 ++
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       |  5 ++++
+ .../misc/intel,ixp4xx-ahb-queue-manager.yaml  |  2 ++
+ .../bindings/net/ti,cpsw-switch.yaml          | 25 +++++++++++++------
+ .../phy/allwinner,sun50i-h6-usb3-phy.yaml     |  2 ++
+ .../phy/amlogic,meson-g12a-usb3-pcie-phy.yaml |  2 ++
+ .../bindings/phy/intel,lgm-emmc-phy.yaml      |  2 ++
+ .../bindings/phy/marvell,mmp3-hsic-phy.yaml   |  2 ++
+ .../bindings/phy/ti,phy-j721e-wiz.yaml        |  2 ++
+ .../pinctrl/aspeed,ast2400-pinctrl.yaml       |  2 ++
+ .../pinctrl/aspeed,ast2500-pinctrl.yaml       |  2 ++
+ .../pinctrl/aspeed,ast2600-pinctrl.yaml       |  2 ++
+ .../bindings/pinctrl/st,stm32-pinctrl.yaml    |  2 ++
+ .../bindings/power/amlogic,meson-ee-pwrc.yaml |  2 ++
+ .../bindings/power/reset/syscon-poweroff.yaml |  2 ++
+ .../bindings/power/reset/syscon-reboot.yaml   |  2 ++
+ .../power/supply/max77650-charger.yaml        |  3 +++
+ .../devicetree/bindings/ptp/ptp-idtcm.yaml    |  2 ++
+ .../regulator/max77650-regulator.yaml         |  5 +++-
+ .../bindings/reset/amlogic,meson-reset.yaml   |  2 ++
+ .../reset/brcm,bcm7216-pcie-sata-rescal.yaml  |  2 ++
+ .../bindings/rng/amlogic,meson-rng.yaml       |  2 ++
+ .../devicetree/bindings/rng/brcm,bcm2835.yaml |  2 ++
+ .../bindings/rtc/renesas,sh-rtc.yaml          |  2 ++
+ .../devicetree/bindings/rtc/st,stm32-rtc.yaml |  2 ++
+ .../bindings/serial/amlogic,meson-uart.yaml   |  2 ++
+ .../bindings/soc/amlogic/amlogic,canvas.yaml  |  2 ++
+ .../bindings/sound/adi,adau7118.yaml          |  2 ++
+ .../bindings/sound/qcom,wcd934x.yaml          |  2 ++
+ .../bindings/sound/renesas,fsi.yaml           |  2 ++
+ .../bindings/sound/samsung,odroid.yaml        |  2 ++
+ .../bindings/sound/samsung-i2s.yaml           |  2 ++
+ .../devicetree/bindings/sram/qcom,ocmem.yaml  | 14 ++++++-----
+ .../bindings/thermal/amlogic,thermal.yaml     |  4 +++
+ .../bindings/timer/arm,arch_timer.yaml        |  2 ++
+ .../bindings/timer/arm,arch_timer_mmio.yaml   |  4 +++
+ .../bindings/timer/arm,global_timer.yaml      |  2 ++
+ .../bindings/timer/intel,ixp4xx-timer.yaml    |  2 ++
+ .../timer/samsung,exynos4210-mct.yaml         |  2 ++
+ .../devicetree/bindings/trivial-devices.yaml  |  6 ++---
+ 119 files changed, 296 insertions(+), 29 deletions(-)
 
-If you'd prefer to pick these up yourself that should be fine as well.
-They've all got acks from me and the runtime dependencies are causing
-annoying, though harmless, warnings during boot, so I think it'd be fine
-as long as all the patches end up getting merged for v5.7-rc1.
-
-If you do decide to pick these up yourselves, please omit patch 11 in
-the series since that doesn't do what it's expected to.
-
-Thierry
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl57zKkACgkQ3SOs138+
-s6Eofg/6AzZGzQ4CTqgVrFQ5zZqjgotIQAHd6yuXPYMhMdnhO+DavwWbTbXUjRCu
-qlGM5mkAiuHFDyDYYWvH0QoEGATbsQL4rUABTHMi39p9pE+oOXqoLbDy7RvPiJs3
-c7Fmt47VKnhC/yEH6a/Z+Pw9lWkPk08ee220O+oqEUqXCRJKwpHt2YVFAMVpCiH2
-kvPd3s8iQpMPBv2WxKBfl/9wky8jYVkkrczLbHfg74p+lcyvOGXbhbvvjCg/W0XA
-XwgFXXMaJZ0p4GHqPZj3MLQAzBsWaDLLCbjhAVVsUyfjtS43BOl37Yt95XfASBDF
-yqVL25+L71lOWC5paPK0Os/chaA8uyaNEE9mNR9EMiA8hxyXwXxhtwhfg0OkXWKR
-AYDamsQjllCQOcpB+YuX+cRtyzthRkeYOsnBPf6HZn8pdKa4ZqybP4OaTSnOe0KV
-4pPYzMbUnJafaX5dVXa8WCC/dTCNsSP9vznbXiVvqaN+zH+TmbTDT6biReoOO6io
-+Ce7iBCm7HTQeLVD8pTsjSGsHskR89x6ZZGTQqARjfJpqIN5BWeO7hXzQSP/S0zp
-bsF8YMgJyL2bd9r6HM1pYAUYagIyI1h8z9vzuXbB3lDTZFWIRrI9JuREmTg2Ydby
-7mTrmUyNWiYstLA4hlsoQzwKe6IX/t2WPzeFSyYdKPBGsHPshH0=
-=RTq4
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+--
+2.20.1
