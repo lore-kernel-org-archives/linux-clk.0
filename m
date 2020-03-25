@@ -2,150 +2,124 @@ Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66C5C43331
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 14:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B55C54FCF
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAE7D20B80
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 14:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D118F20740
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 15:32:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fhol/5lM"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="AsXsybJQ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="v7VLUHqz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbgCYOXM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 10:23:12 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40972 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727538AbgCYOXM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 10:23:12 -0400
-Received: by mail-wr1-f66.google.com with SMTP id h9so3327742wrc.8
-        for <linux-clk@vger.kernel.org>; Wed, 25 Mar 2020 07:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NR2RALCfd8rSS/oDIEHAtXd82vJW7Hsk6ulYdw+wc04=;
-        b=fhol/5lM5IvZRvcSRcYglAhotMmsx+h7Mdx0iKzllcDwdCj0ONi8mneAd+IQViE4PP
-         Ez/ELSeS5qVugsR0bopiA1WCjg32V8+5lqXuGfSLDIvvMLqBE02nB7zH+PW3U9VVGF0e
-         A9nkhBGwhElsFWlPPMYvfy2INjM71FPl54tNoXiZ6ct73rcmb/oKJtaFXKlX09dmcw2Z
-         YqknhxJwJtM6WF8DysisY4HcJn5V2aL9h67yq6Do/iYlqsWapzDIyW27+WBjUrnXOrPp
-         ekTS+j9OlYylXYSa+c2b0Nbxwj//rcF3QpIqfrnOADMtui8QXENj/1Zcp3L0bjavMmpr
-         adog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NR2RALCfd8rSS/oDIEHAtXd82vJW7Hsk6ulYdw+wc04=;
-        b=cQejxdIK7dUCyrL/TCxnwg1AepFxzHkRuGvlk0q3J4GRA0lkdTJlrBrpelVrmbHT/d
-         Nx9TLAOd1wV7g0Xo76ut5/HZqVYc6yx2LeadxaCQOZGIbrW9T3AcwoDBue9YVXN90drH
-         Gdev/WU2UgcFVwu3wVELaXvU4Ybxp2eNGPlJlIxiBLRp7hZ82TLSAlCjW2ygBfAFD8MJ
-         RxSEq+OcFsWHhA0n8XqHblphKlLDIxCMmLQPHQnYpaOCHIIzuHB9eSJOxPvIOpcwZxhC
-         a62IqP3WGXNrSuTVOehpMeCs35jIkOMOq1a+Aj6Z/EXHKvre5eG3WXRBCO2yXJTVjQ8V
-         MpBw==
-X-Gm-Message-State: ANhLgQ3imbX+MpcadhCjtdJdyUWA6jb1m9Kk4iRvuCn8PBEd8fPTgL1+
-        2ijqXXb9o4xirunFBNWKDeU7MA==
-X-Google-Smtp-Source: ADFU+vtTF9vR+W3wWj+2sDb6HXmAtIEH5sqlH6cy58JofmUBn2Cpva5yr3B5Ye5ldkU3jc3+WXdOiA==
-X-Received: by 2002:adf:dd86:: with SMTP id x6mr3688680wrl.169.1585146189020;
-        Wed, 25 Mar 2020 07:23:09 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id k18sm33137543wru.94.2020.03.25.07.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Mar 2020 07:23:08 -0700 (PDT)
-Date:   Wed, 25 Mar 2020 15:23:06 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     Nicolas Chauvet <kwizart@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        pdeschrijver@nvidia.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        axboe@kernel.dk, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-ide@vger.kernel.org
-Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
-Message-ID: <20200325142306.GB27961@Red>
-References: <20200319074401.GA4116@Red>
- <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
- <20200325134003.GA27961@Red>
- <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
+        id S1727560AbgCYPcE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 11:32:04 -0400
+Received: from out4-smtp.messagingengine.com ([66.111.4.28]:43399 "EHLO
+        out4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727491AbgCYPcE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Mar 2020 11:32:04 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 1FC0A5C031C;
+        Wed, 25 Mar 2020 11:32:03 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 25 Mar 2020 11:32:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=bn9u5SBogt3E/ylsE/CTdHc+JD6
+        shpx66LJUZbSMFcw=; b=AsXsybJQfnHOui4Zb2mb/51Vdp2JF97Pt8VJrkA6M7i
+        gRG7qOooyKb/Vzue6M20B0yuwmtHJpCmNZ2MyU4y7NsS4B/WKyjd6SuNtuDjvxgG
+        L+voviXm5qPDPHYM2FboGHUYhZYzhpJykKxuRWF3HMIo4VGNggl6E0/QFCk8tDSa
+        x0Hen17ud9BEcqwFgnqsVdJF1kUKPH57duP551BfuxJjvRhPRfVeDgFNh0Ic8y8u
+        3Bcmar2igSHTgRF2eVeB/r0ONa5PJhkjOa/bzg30SOgbtq4LyfOWRi9Glmw1ACKi
+        9A/eT9o9WMMMO5yeDSDZOLhcUTFA5ln6NJKrFt6ro2w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=bn9u5S
+        Bogt3E/ylsE/CTdHc+JD6shpx66LJUZbSMFcw=; b=v7VLUHqzSNIFVRZI2973oI
+        JDiYoR4TxFP/YxzuIVKQi/jr4yIVz6zOKvNLwh+3P2wi33rdKN5cxZRtmf8nTg7q
+        tu5MFGqayww0mehaNDqHzZTGEnVl1wVNQj5jL4O4C08aRboXPdz4wgrPSlJECtPB
+        6kO5USbZr0zW2y7dzmJmflWmVpXMOlK0qQodN1UEw8BYHJvUtjUHxKhAsMsCnROu
+        MXkr9zLqawYXDxCUiScfSjIbKJsfbyzf6/+oGndhGvnkvXBTwo1okpKAaMG3WxSZ
+        RscYg/B2+NTmFv8Gm6XeIbPVf1gZfgwiKJcnYQLsOKV1OASoUn6xObyo/61aG+HQ
+        ==
+X-ME-Sender: <xms:cnl7XlDS54mcdvQjp9-yZqDIzjAXi0b13RjGJxdnUv2Eu8a-NWFxiQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedugedrudehgedgheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecukfhppeeltd
+    drkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:cnl7XqS0nY8uPGLeNf41JaJGMygZCB-TGEDEIn27HL7Fv5zVe5axew>
+    <xmx:cnl7XpZOARaWlG6GzdJiH6h0x3RwC7dxuIE3LOvVb3WjSiZf1gnvFQ>
+    <xmx:cnl7Xkdn8nTZayqVmyy7ND3AM7d1X1w0fsq3ebQ7HZWVh7qxoFsJBw>
+    <xmx:c3l7Xhqo97uK8oJzT63UONilD8xzY8_eKGAhwWgNLmagrEj-3K0MlQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4F5843280067;
+        Wed, 25 Mar 2020 11:32:02 -0400 (EDT)
+Date:   Wed, 25 Mar 2020 16:32:00 +0100
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: Pass correct arguments to __clk_hw_register_gate()
+Message-ID: <20200325153200.6vdgglrirhpl4yh6@gilmour.lan>
+References: <20200325022257.148244-1-sboyd@kernel.org>
+ <158510329289.125146.2737057581185153152@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i3tk6gopaxtqqbfj"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <158510329289.125146.2737057581185153152@swboyd.mtv.corp.google.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 02:00:25PM +0000, Jon Hunter wrote:
-> 
-> On 25/03/2020 13:40, LABBE Corentin wrote:
-> > On Thu, Mar 19, 2020 at 08:55:38AM +0100, Nicolas Chauvet wrote:
-> >> Le jeu. 19 mars 2020 à 08:44, LABBE Corentin <clabbe@baylibre.com> a écrit :
-> >>>
-> >>> Hello
-> >>>
-> >>> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
-> >>> [    0.492810] +5V_SATA: supplied by +5V_SYS
-> >>> [    0.493230] +12V_SATA: supplied by +VDD_MUX
-> >>> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >>> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >>> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
-> >>> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
-> >>> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
-> >>> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
-> >>> [   35.694269] +5V_SATA: disabling
-> >>> [   35.697438] +12V_SATA: disabling
-> >>
-> >> It looks strange, because (on same device) , I have sata working as
-> >> appropriate, but ethernet fails with me.
-> >> https://bugzilla.kernel.org/show_bug.cgi?id=206217
-> >>
-> >> It might worth to have another report.
-> >>
-> > 
-> > Hello
-> > 
-> > Mine has ethernet works well. But I hit many problem with it and older kernel.
-> > Perhaps the 5.1.21, were I am stuck, does not have it.
-> > 
-> > Anyway, the tegra of kerneci has the same SATA problem.
-> > https://storage.kernelci.org/next/master/next-20200325/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-8/lab-baylibre/boot-tegra124-jetson-tk1.txt
-> > 
-> > Maintainers, any idea on this sata issue ?
-> 
-> I have checked our bootlogs for v5.6-rc7 and don't see the issue with
-> either the tegra_defconfig or the multi_v7_defconfig. I am wondering if
-> this could be due a difference in the bootloader version. Currently we
-> are testing with a v2019.07 u-boot bootloader. Looks like the kernelci
-> board is using an older u-boot. Obviously it should still work, but
-> would be good to know if the reason why were are not seeing this is
-> because of the bootloader.
-> 
-> Another thing to check would be the pll_e clock frequency on a working
-> build and non-working build to see if there is a difference in the pll
-> frequency that is causing this.
-> 
-> Cheers
-> Jon
-> 
 
-Hello
+--i3tk6gopaxtqqbfj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-My uboot is 2016.01-rc4-00002-g3861d78, so a bit old.
-I have a mainline uboot build for this tegra, but still didnt find a clear way to update it.
-Did you have a good documentation on how to update it ?
-If possible some clear uboot commands to update it via tftp.
+On Tue, Mar 24, 2020 at 07:28:12PM -0700, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2020-03-24 19:22:57)
+> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > index 952ac035bab9..95cc8a4f6e39 100644
+> > --- a/include/linux/clk-provider.h
+> > +++ b/include/linux/clk-provider.h
+> > @@ -539,10 +539,10 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+> >   * @clk_gate_flags: gate-specific flags for this clock
+> >   * @lock: shared register lock for this clock
+> >   */
+> > -#define clk_hw_register_gate_parent_data(dev, name, parent_name, flags, reg,  \
+> > +#define clk_hw_register_gate_parent_data(dev, name, parent_data, flags, reg,  \
+> >                                        bit_idx, clk_gate_flags, lock)         \
+> > -       __clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
+> > -                              NULL, (flags), (reg), (bit_idx),               \
+> > +       __clk_hw_register_gate((dev), NULL, (name), NULL, NULL, (parent_data) \
+>
+> And this needs a comma after it.
+>
+> I'll apply this to clk-fixes and send to Linus in the next few days.
 
-Thanks
-Regards
+With that fix,
+Tested-by: Maxime Ripard <mripard@kernel.org>
+
+Maxime
+
+--i3tk6gopaxtqqbfj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXnt5cAAKCRDj7w1vZxhR
+xaDYAP9mtPJPssMoYYNICOo+TW6sVSKpiScbo2O4Di9iL3g+ggEA3M0Koz2MxzdS
+tcLof290E1B6Vqlw963sCIvP8aNhxAI=
+=usaU
+-----END PGP SIGNATURE-----
+
+--i3tk6gopaxtqqbfj--
