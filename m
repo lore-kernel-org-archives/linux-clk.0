@@ -2,126 +2,95 @@ Return-Path: <SRS0=aVCd=5L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16B0C43331
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:04:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB073C43331
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B67820714
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:04:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 817142074D
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:19:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gs3bJfO5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kxTPia0S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbgCZREF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Mar 2020 13:04:05 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8681 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgCZREF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 13:04:05 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e7ce0760004>; Thu, 26 Mar 2020 10:03:50 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 26 Mar 2020 10:04:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 26 Mar 2020 10:04:04 -0700
-Received: from [10.2.160.81] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 26 Mar
- 2020 17:04:03 +0000
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <helen.koike@collabora.com>, <digetx@gmail.com>,
-        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
- <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
- <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <a219aeb2-3d00-016e-eed9-503a9fbd0d13@nvidia.com>
- <20200326144820.GB2394@valkosipuli.retiisi.org.uk>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <927e0263-38b4-4502-f2ad-ab76f31412e4@nvidia.com>
-Date:   Thu, 26 Mar 2020 10:04:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200326144820.GB2394@valkosipuli.retiisi.org.uk>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585242231; bh=ArIq0uQfFAe5fhuSNbr2KiN+eIVzFbu+br9BrixrP1c=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=gs3bJfO5d/ogtrFvlXEV5q+y4otlWnnyxl0dWXESAteNwOC1RBhxufltT7vcZEN88
-         80RtkFvKzwrl2YYayEd0D6EccKh0YhjMphzjaETqAaXH4iBuC4H5rmJu9Y1WXbT2E1
-         VH0axj8t8rrswd7X8q3qN+QbEp9YgSGZxQsDSJ5s62UkdZnRPvgwsfnZUon4bXMU1o
-         uu1Uv2FbYosRYtDrIJs3LMWZoOQ8Fi+gEyajt/ilcvPexEItxvyrPK1Ukat6R9x2EJ
-         YZVIT6o4YaWC1MSaP+OFaK+vlARoy27UaqhUpBAymErZGk1rPreU8a5EJvHu886Qks
-         L+R7mhOHtQojQ==
+        id S1726163AbgCZRTm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Mar 2020 13:19:42 -0400
+Received: from mail-qv1-f65.google.com ([209.85.219.65]:37219 "EHLO
+        mail-qv1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725994AbgCZRTm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 13:19:42 -0400
+Received: by mail-qv1-f65.google.com with SMTP id n1so3427359qvz.4;
+        Thu, 26 Mar 2020 10:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JCcFv+VtQkOFOzCdOp/d+4xlelZn6o7lJvfIJY7gw+o=;
+        b=kxTPia0SE/nPUfDNdNFLyxWLpirImLkHe3HlF1cxWqdFUKQOJPsseGVl1YzUAEIv5t
+         AbtcssT8WH4sJM8YkpMBeYGAApTEUMhOrNkTT++rBuFTeOuoFQAvwdO97V6JEaiTRK5y
+         SUm5ST3aIJDUtdQxSC75qLMxKz8f2AJVRAgdbGSqWKfcxa2R5LFeWSi55nNw/A3J9sq8
+         viqKnoEGA6hs49M7qomlK92JcxB3emRnduXqF/3miXLveM0WY8/7hV2BXRGJMtDjWKxR
+         qZJMe3YCuciLoQAU7SLFWzjAQ3jaiL50JGySPiBry/buNLKP2HR2DRMOTuTLcRje5idx
+         v5Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JCcFv+VtQkOFOzCdOp/d+4xlelZn6o7lJvfIJY7gw+o=;
+        b=ZdySumc3rGYy2Xm0JTFE6puiJfyx7cSi95LxVOKJ7eIsOZSI7jiBSuuQO0o2hfgjmg
+         6aRd1B/o5XgAO5Mtfb1A5O+N8Gq3tuxs1lvoU5o1bzNWle6flXDXz/Zbw4Rd5awlMzp1
+         rSP/SiuJ1o1ItGBTxCAbrdnx+5HMl4WedmNKzJ1SyETrtqQFrZQTN+bG7PzBPepgruYB
+         5eiqBgKUPHYbolL8cQkylnDUwa2J8tLUaGg5t689RXBqK3dc592XWR0XRLO1EDqkbYSh
+         NqscMk6TWkdYtznkbck7u+J7BvVBk6VCD8oXt0ti7zgmh8HospEOKnYAW8UKtW5QOepk
+         z6bA==
+X-Gm-Message-State: ANhLgQ2jpLZ4kSdxT3ud/eacwYYksY3FYhwGgua/C9hU355C5C1aYYRX
+        xvM3C7VbMrq3XrxxOMrVO3Q=
+X-Google-Smtp-Source: ADFU+vsLTa/30dh93pB1pVwQXfzJN2mtdQ9XLJmYQ/0IRGzW9SKd3i7SjXGGYZRLuYbmJ5pc1k7qdQ==
+X-Received: by 2002:ad4:5808:: with SMTP id dd8mr8943897qvb.191.1585243180791;
+        Thu, 26 Mar 2020 10:19:40 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14c:482:5bb::4])
+        by smtp.gmail.com with ESMTPSA id d2sm1792498qkl.98.2020.03.26.10.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 10:19:39 -0700 (PDT)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     shawnguo@kernel.org
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, sboyd@kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH 1/2] dt-bindings: imx8mq-clock: Fix the file path
+Date:   Thu, 26 Mar 2020 14:19:32 -0300
+Message-Id: <20200326171933.13394-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Currently the following warning is seen with 'make dt_binding_check':
 
-On 3/26/20 7:48 AM, Sakari Ailus wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sowjanya,
->
-> On Wed, Mar 25, 2020 at 11:30:18PM -0700, Sowjanya Komatineni wrote:
->> On 3/25/20 4:03 AM, Sakari Ailus wrote:
->>>> +static int tegra_channel_enum_input(struct file *file, void *fh,
->>>> +                                 struct v4l2_input *inp)
->>>> +{
->>>> +     /* currently driver supports internal TPG only */
->>>> +     if (inp->index)
->>>> +             return -EINVAL;
->>>> +
->>>> +     inp->type = V4L2_INPUT_TYPE_CAMERA;
->>>> +     strscpy(inp->name, "Tegra TPG", sizeof(inp->name));
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +static int tegra_channel_g_input(struct file *file, void *priv,
->>>> +                              unsigned int *i)
->>>> +{
->>>> +     *i = 0;
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +static int tegra_channel_s_input(struct file *file, void *priv,
->>>> +                              unsigned int input)
->>>> +{
->>>> +     if (input > 0)
->>>> +             return -EINVAL;
->>>> +
->>>> +     return 0;
->>>> +}
->>> Please see patchset on topic "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on
->>> linux-media; it's relevant here, too.
->> Can update in v6 to add device caps V4L2_CAP_IO_MC and remove enum/g/s_input
->> ioctls.
->>
->> But, I don't see this patch "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on latest
->> linux-next
-> It's not merged yet but likely will be very soon.
->
-> --
-> Sakari Ailus
+Documentation/devicetree/bindings/clock/imx8mq-clock.yaml: $id: relative path/filename doesn't match actual path or filename
 
-OK, Will wait and send v6 once I see that patch merged. Thanks Sakari.
+Fix it by removing the "bindings" directory from the file path.
+
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/imx8mq-clock.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/imx8mq-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mq-clock.yaml
+index 77790f0fdcd3..05d7d1471e0c 100644
+--- a/Documentation/devicetree/bindings/clock/imx8mq-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8mq-clock.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/bindings/clock/imx8mq-clock.yaml#
++$id: http://devicetree.org/schemas/clock/imx8mq-clock.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: NXP i.MX8M Quad Clock Control Module Binding
+-- 
+2.17.1
 
