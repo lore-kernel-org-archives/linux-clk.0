@@ -5,95 +5,137 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B4CC2D0E5
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5A0C43331
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 21:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243DF20737
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 17:19:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA642074D
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 21:33:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VrFV+t4C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lxH+GGmF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbgCZRTp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Mar 2020 13:19:45 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44488 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbgCZRTp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 13:19:45 -0400
-Received: by mail-qk1-f196.google.com with SMTP id j4so7480643qkc.11;
-        Thu, 26 Mar 2020 10:19:44 -0700 (PDT)
+        id S1726330AbgCZVdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Mar 2020 17:33:16 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40788 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726067AbgCZVdQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 17:33:16 -0400
+Received: by mail-qk1-f194.google.com with SMTP id l25so8688823qki.7;
+        Thu, 26 Mar 2020 14:33:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=p7bQLCgIYLXK4DQMP7VYY3o870Na9G8sVcbg53M45/k=;
-        b=VrFV+t4CLrnRwK+8ZqvSGluOBagbdY9wvhjWx80QuMRBUmerKVR4ALptBbfHY81S/b
-         MsjfHPcBPikQP2b6RFe7z6aM7m1Zb7QXBTw+xwlFFI1WmAEXF9vccbzElxgv2ROJb4DW
-         VcYyhReUR8niqzzfTp7PEbUAcaJdEBgRE+ubTTKMKUBeynRjg+nHqynsSdMYGHsAqlNU
-         F8C/RsPUxKu/GCzkCp3xf03TRQ4dOBHPX8xJxIglHS0lQAJqz5a3NyCjyumRVmWdUNd8
-         uQy12035jxerf38iiHhwHepcpQKTUMEE5Yn9Zbuu+MOexFuHt/lCHR3MHh+GW24wsI6/
-         0p9w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+Ng6NKbIQ7UH3Fnc48aHdWJ3D471uKUieydIRfZ614w=;
+        b=lxH+GGmFX0wL7NEqN1O4gbB6ll8ceOy96u0EDOjFkzyYSPNSMooflVnL0LYq2eDdve
+         pIyAuRztz0hDq0jS+Dm5y+G4qqs+2YItdKIeGyeKDRQlKkkXLWqjmY2FN30LxaGExg2K
+         9HC/SRWABTzD3dwtho1G8lRmsgb0yucRK71Y+ud5Lw06G9rhInWiZxT5faln4HUYVaRJ
+         FfAAQ4RJb0NhamOtZ82R5NOpEseJP2QV5AA9QABLfdRmyN1aUCndkrCQbxbtqFTJqnm/
+         OIQtnlDR7vQ2WLCBtkhcMfSfmNKebDARjuVZ9h5n27fP+NIiiU7hNuadKjqGxdxRmVEV
+         Vk/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=p7bQLCgIYLXK4DQMP7VYY3o870Na9G8sVcbg53M45/k=;
-        b=aqPrmGj7py9BBNj2ePfWpYbZth9KTQ6ucJn3M8eOJ6vqBPW/MxKpIGbFV9A8CXGTWW
-         iizUEGoLns82XPF1X7xc/Mes+oj1Yr4fefFpqiPmC2gh4CqOtuIubSbhcyCIWWYx6IRd
-         Pp0cHH0HbXcACn8cbrFo02QGkGL/Q10KQ5ro8lhYp1eJMsmdC/tgFmk1Xs6opfhXKoz3
-         DMG2mEdMPIrl03OPZv006P77MUKtUQlWbRnyYdZOfIIYJnZYLq5OVq8G9Qs3BFt+dsze
-         LJNYGkBBGD/tFhtsiEBjjwVjAzEATbFUGyXPwTUQiKPWGA8eBV7YYeiQVCYcr2VW+59O
-         NUrw==
-X-Gm-Message-State: ANhLgQ2vk3jmmYhhOGoCoUIdpkLWtBtjLiV788W1stIKynxh8U3YluE2
-        9DppQGkzkmVfUmkrs8TqZc8=
-X-Google-Smtp-Source: ADFU+vu1qwf6nPqkkrv7ZqwNe+SoKOvBDAcscTLitoOR5+o/cEXV2P6QBUwDHMHKaL16qBtga6bM9g==
-X-Received: by 2002:a37:5044:: with SMTP id e65mr8758105qkb.294.1585243184341;
-        Thu, 26 Mar 2020 10:19:44 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14c:482:5bb::4])
-        by smtp.gmail.com with ESMTPSA id d2sm1792498qkl.98.2020.03.26.10.19.41
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+Ng6NKbIQ7UH3Fnc48aHdWJ3D471uKUieydIRfZ614w=;
+        b=iH9YMMAxn7G7ZIhNcExjvwzWg404CGkI21NpNsz/pyvVUQAD0uxjFV5mKpMFaQjeOV
+         qoPbE2VvJqWCn98NE7SGxC+frwYEJ7NkO2K3J6r3119bSqOJSlpdsF21VvflS4YJMTSy
+         l7SESeB2U4BO01sn+HiZaUg4rrR4sJ+cwT1ppktdu/fy6EFPJYaOde+PpVggkNq+B3iD
+         CIV59aaDlvHT7DV8aekfHoo07JmbtD4pp2TPh3bKnKhvhY2u7TpXLAoKlYo4dTB8LxOI
+         eS6NBMWlRnDAR16pJiyp4apwXvz/5LxD7zXGi1wh5kCNt/IxlhmoRTjSW6Vsp/cfGYyv
+         iP1g==
+X-Gm-Message-State: ANhLgQ22akVcn7NtSC3NpsTfSEoid2GVRU/Cy1KQ1WV0YUtB8p0hYaxn
+        /Tg6Kt3uKbapVWhPHAMwSai9DHL1pps=
+X-Google-Smtp-Source: ADFU+vvdIQ9lpvc4Gl+88YADLGqhvIcb51g8/gKUmpNuNw8n4MhXlTE/jl0iFENafg08bPhVeBD6Zg==
+X-Received: by 2002:a37:4902:: with SMTP id w2mr9908921qka.13.1585258393619;
+        Thu, 26 Mar 2020 14:33:13 -0700 (PDT)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id a11sm2271488qto.57.2020.03.26.14.33.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Mar 2020 10:19:43 -0700 (PDT)
-From:   Fabio Estevam <festevam@gmail.com>
-To:     shawnguo@kernel.org
-Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, sboyd@kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, Fabio Estevam <festevam@gmail.com>
-Subject: [PATCH 2/2] dt-bindings: imx8mm-clock: Fix the file path
-Date:   Thu, 26 Mar 2020 14:19:33 -0300
-Message-Id: <20200326171933.13394-2-festevam@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200326171933.13394-1-festevam@gmail.com>
-References: <20200326171933.13394-1-festevam@gmail.com>
+        Thu, 26 Mar 2020 14:33:12 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     devicetree@vger.kernel.org
+Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC] clk: vc5: Add bindings for output configurations
+Date:   Thu, 26 Mar 2020 16:32:51 -0500
+Message-Id: <20200326213251.54457-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently the following warning is seen with 'make dt_binding_check':
+The Versaclock can be purchased in a non-programmed configuration.
+If that is the case, the driver needs to configure the chip to
+output the correct signal type, voltage and slew.
 
-Documentation/devicetree/bindings/clock/imx8mm-clock.yaml: $id: relative path/filename doesn't match actual path or filename
+This RFC is proposing an additional binding to allow non-programmed
+chips to be configured beyond their default configuration.
 
-Fix it by removing the "bindings" directory from the file path.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
----
- Documentation/devicetree/bindings/clock/imx8mm-clock.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/clock/imx8mm-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mm-clock.yaml
-index f5be181bd21d..ec830db1367b 100644
---- a/Documentation/devicetree/bindings/clock/imx8mm-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/imx8mm-clock.yaml
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- %YAML 1.2
- ---
--$id: http://devicetree.org/schemas/bindings/clock/imx8mm-clock.yaml#
-+$id: http://devicetree.org/schemas/clock/imx8mm-clock.yaml#
- $schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+index 05a245c9df08..4bc46ed9ba4a 100644
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+@@ -30,6 +30,25 @@ Required properties:
+ 		- 5p49v5933 and
+ 		- 5p49v5935: (optional) property not present or "clkin".
  
- title: NXP i.MX8M Mini Clock Control Module Binding
++For all output ports, an option child node can be used to specify:
++
++- mode: can be one of
++		  - LVPECL: Low-voltage positive/psuedo emitter-coupled logic
++		  - CMOS
++		  - HCSL 
++		  - LVDS: Low voltage differential signal
++
++- voltage-level:  can be one of the following microvolts
++		  - 1800000
++		  - 2500000
++		  - 3300000
++-  slew: Percent of normal, can be one of 
++		  - P80 
++		  - P85
++		  - P90
++		  - P100 
++
++
+ ==Mapping between clock specifier and physical pins==
+ 
+ When referencing the provided clock in the DT using phandle and
+@@ -62,6 +81,8 @@ clock specifier, the following mapping applies:
+ 
+ ==Example==
+ 
++#include <dt-bindings/versaclock.h>
++
+ /* 25MHz reference crystal */
+ ref25: ref25m {
+ 	compatible = "fixed-clock";
+@@ -80,6 +101,13 @@ i2c-master-node {
+ 		/* Connect XIN input to 25MHz reference */
+ 		clocks = <&ref25m>;
+ 		clock-names = "xin";
++
++		ports@1 {
++			reg = <1>;
++			mode = <CMOS>;
++			pwr_sel = <1800000>;
++			slew = <P80>;
++		};
+ 	};
+ };
+ 
 -- 
-2.17.1
+2.25.1
 
