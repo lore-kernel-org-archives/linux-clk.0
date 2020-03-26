@@ -1,94 +1,197 @@
-Return-Path: <SRS0=DzNW=5K=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=aVCd=5L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F027C43331
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99084C43331
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 01:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0332073E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Mar 2020 23:34:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="BPWtzEWe"
+	by mail.kernel.org (Postfix) with ESMTP id 5838720719
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 01:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585187096;
+	bh=8LbJ1rOzX1zYoBejYpdC7F7zcKGB/JvH0asXD8eYU9E=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=qD89llv/uyoug8Jm+64sHnJN09IlrWIIrRpz9iavrFs8VTeQrfbsQ3O9O45tjrZBR
+	 Ra33z6uH/hYkBgJeU0RffUD6bIuVn8Z7FcH/unJ2dsUffbTPEPsSwmVxXn7zkZuxIi
+	 yiNVNTj4hjADMDZG3sRXoQwouSLlHThwvcp71980=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgCYXeN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 19:34:13 -0400
-Received: from onstation.org ([52.200.56.107]:42750 "EHLO onstation.org"
+        id S1727575AbgCZBo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 21:44:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727395AbgCYXeM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 25 Mar 2020 19:34:12 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        id S1727561AbgCZBoz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Mar 2020 21:44:55 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id D9ADB3E993;
-        Wed, 25 Mar 2020 23:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1585179251;
-        bh=UmMfQfL2Dh6nfn2syBX2sC1MPLmcaAcwUvfWVe3vkpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BPWtzEWeaE0xPqB52s39r4KFFu9CAc2XWbyWEeiYjMFFp4zI3Jnc7Ce1qomgad3+i
-         Zssb5erETKV/5tFlC9CDhOpLk9pnxg2NCChpeKVZIiBN8eTPwpTU1e5qXBz7i2qmMi
-         ohX+2HrLcdpwIAUyrpKCZpDJiGxTBey+OAukZuAo=
-Date:   Wed, 25 Mar 2020 19:34:09 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zhang Rui <rui.zhang@intel.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH 2/4] dt-bindings: sram: qcom: Clean-up 'ranges' and child
- node names
-Message-ID: <20200325233409.GB16767@onstation.org>
-References: <20200325220542.19189-1-robh@kernel.org>
- <20200325220542.19189-3-robh@kernel.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1027020714;
+        Thu, 26 Mar 2020 01:44:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585187094;
+        bh=8LbJ1rOzX1zYoBejYpdC7F7zcKGB/JvH0asXD8eYU9E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=oEs++OaVBTcEmslMsPj+RGYKdfCXHQLyvbzyViFcH0FvbwO86DXYq9nSqLVoiaSmz
+         kb/33HUX8VTBtuxqpFrP/iAt11KpyvSCYr8VQ9qIXcG1uK3odHz6cjL7t7AThk7OVq
+         GDwsJgi7Nl64caeYnTF2AUaC1UX1J5j+SB+Mulrc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325220542.19189-3-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
+References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru> <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru> <20200323100109.k2gckdyneyzo23fb@gilmour.lan> <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int> <20200324101243.GG1922688@smile.fi.intel.com> <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
+Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race condition
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Maxime Ripard <maxime@cerno.tech>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Catalin Marina s <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sergey Semin <Sergey.Semin@baikalelectronics.ru>
+Date:   Wed, 25 Mar 2020 18:44:53 -0700
+Message-ID: <158518709322.125146.10069235641747677647@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 04:05:39PM -0600, Rob Herring wrote:
-> The regex for child nodes doesn't match the example. This wasn't flagged
-> with 'additionalProperties: false' missing. The child node schema was also
-> incorrect with 'ranges' property as it applies to child nodes and should
-> be moved up to the parent node.
-> 
-> Fixes: 957fd69d396b ("dt-bindings: soc: qcom: add On Chip MEMory (OCMEM) bindings")
-> Cc: Brian Masney <masneyb@onstation.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: linux-arm-msm@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Quoting Sergey Semin (2020-03-25 10:11:09)
+> On Tue, Mar 24, 2020 at 12:12:43PM +0200, Andy Shevchenko wrote:
+> > On Mon, Mar 23, 2020 at 04:50:17PM +0300, Sergey Semin wrote:
+> > > On Mon, Mar 23, 2020 at 11:01:09AM +0100, Maxime Ripard wrote:
+> >=20
+> > > > clk_rate_exclusive_get is pretty intrusive, and due to the usual
+> > > > topology of clock trees, this will lock down 3-4 parent clocks to
+> > > > their current rate as well. In the Allwinner SoCs case for example,
+> > > > this will lock down the same PLL than the one used by the CPU,
+> > > > preventing cpufreq from running.
+> > >=20
+> > > Speaking about weak design of a SoC' clock tree. Our problems are not=
+hing
+> > > with respect to the Allwinner SoC, in which case of changing the
+> > > CPU-frequency may cause the UART glitches subsequently causing data
+> > > transfer artefacts.) Moreover as I can see the same issue may raise f=
+or
+> > > I2C, QSPI, PWM devices there.
+> > >=20
+> > > Anyway your concern does make sense.
+> > >=20
+> > > > However, the 8250 has a pretty wide range of dividers and can adapt=
+ to
+> > > > any reasonable parent clock rate, so we don't really need to lock t=
+he
+> > > > rate either, we can simply react to a parent clock rate change using
+> > > > the clock notifiers, just like the SiFive UART is doing.
+> > > >=20
+> > > > I tried to do that, but given that I don't really have an extensive
+> > > > knowledge of the 8250, I couldn't find a way to stop the TX of chars
+> > > > while we change the clock rate. I'm not sure if this is a big deal =
+or
+> > > > not, the SiFive UART doesn't seem to care.
+> > >=20
+> > > Yes, your solution is also possible, but even in case of stopping Tx/=
+Rx it
+> > > doesn't lack drawbacks. First of all AFAIK there is no easy way to ju=
+st
+> > > pause the transfers. We'd have to first wait for the current transfers
+> > > to be completed, then somehow lock the port usage (both Tx and Rx
+> > > traffic), permit the reference clock rate change, accordingly adjust =
+the
+> > > UART clock divider, and finally unlock the port. While if we don't mi=
+nd
+> > > to occasionally have UART data glitches, we can just adjust the UART =
+ref
+> > > divider synchronously with ref clock rate change as you and SiFive UA=
+RT
+> > > driver suggest.
+> > >=20
+> > > So we are now at a zugzwang - a fork to three not that good solutions:
+> > > 1) lock the whole clock branch and provide a glitchless interfaces. B=
+ut
+> > > by doing so we may (in case of Allwinner SoCs we will) lockup some ve=
+ry
+> > > important functionality like CPU-frequency change while the UART port=
+ is
+> > > started up. In this case we won't have the data glitches.
+> > > 2) just adjust the UART clock divider in case of reference clock rate
+> > > change (use the SiFive UART driver approach). In this case we may hav=
+e the
+> > > data corruption.
+> > > 3) somehow implement the algo: wait for the transfers to be completed,
+> > > lock UART interface (it's possible for Tx, but for Rx in case of no h=
+andshake
+> > > enabled it's simply impossible), permit the ref clock rate change,
+> > > adjust the UART divider, then unlock the UART interface. In this case=
+ the data
+> > > glitches still may happen (if no modem control is available or
+> > > handshakes are disabled).
+> > >=20
+> > > As for the cases of Baikal-T1 UARTs the first solutions is the most s=
+uitable.
+> > > We don't lock anything valuable, since a base PLL output isn't direct=
+ly
+> > > connected to any device and it's rate once setup isn't changed during=
+ the
+> > > system running. On the other hand I don't mind to implement the second
+> > > solution, even though it's prone to data glitches. Regarding the solu=
+tion
+> > > 3) I won't even try. It's too complicated, I don't have time and
+> > > test-infrastructure for this.
+> > >=20
+> > > So Andy what do you think?
+> >=20
+> > From Intel HW perspective the first two are okay, but since Maxime is a=
+gainst
+> > first, you have the only option from your list. Perhaps somebody may gi=
+ve
+> > option 4) here...
+> >=20
+>=20
+> Ok then. I'll implement the option 2) in v3 if noone gives any alternativ=
+es
+> before that.
+>=20
 
-Reviewed-by: Brian Masney <masneyb@onstation.org>
+Sorry, I haven't really read the thread but I'll quickly reply with
+this.
+
+Maybe option 4 is to make the uart driver a clk provider that consumes
+the single reference clk like it is already doing today? Then when the
+rate changes up above for the clk implemented here the clk set rate op
+for the newly implemented clk can go poke the uart registers to maintain
+the baud or whatever?
+
+That is close to how the notifier design would work, but it avoids
+keeping the notifiers around given that the notifiers are not preferred.
+It is also closer to reality, the uart has a divider or mux internally
+that we don't model as a clk, but we could just as easily model as such.
