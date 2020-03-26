@@ -2,196 +2,120 @@ Return-Path: <SRS0=aVCd=5L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99084C43331
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 01:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FB7C2D0E9
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 02:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5838720719
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 01:44:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585187096;
-	bh=8LbJ1rOzX1zYoBejYpdC7F7zcKGB/JvH0asXD8eYU9E=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=qD89llv/uyoug8Jm+64sHnJN09IlrWIIrRpz9iavrFs8VTeQrfbsQ3O9O45tjrZBR
-	 Ra33z6uH/hYkBgJeU0RffUD6bIuVn8Z7FcH/unJ2dsUffbTPEPsSwmVxXn7zkZuxIi
-	 yiNVNTj4hjADMDZG3sRXoQwouSLlHThwvcp71980=
+	by mail.kernel.org (Postfix) with ESMTP id C5C932073E
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 02:21:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="FfqhlXa5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727575AbgCZBo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Mar 2020 21:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727561AbgCZBoz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 25 Mar 2020 21:44:55 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1027020714;
-        Thu, 26 Mar 2020 01:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585187094;
-        bh=8LbJ1rOzX1zYoBejYpdC7F7zcKGB/JvH0asXD8eYU9E=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=oEs++OaVBTcEmslMsPj+RGYKdfCXHQLyvbzyViFcH0FvbwO86DXYq9nSqLVoiaSmz
-         kb/33HUX8VTBtuxqpFrP/iAt11KpyvSCYr8VQ9qIXcG1uK3odHz6cjL7t7AThk7OVq
-         GDwsJgi7Nl64caeYnTF2AUaC1UX1J5j+SB+Mulrc=
+        id S1727674AbgCZCVZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Mar 2020 22:21:25 -0400
+Received: from mail-eopbgr1400100.outbound.protection.outlook.com ([40.107.140.100]:36153
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727639AbgCZCVZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Mar 2020 22:21:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=c3FCjrMUSLBhMObsjh7ovFP/8qwF6E0JjbNsGJ3+tC3PH1MF6pFAxi+h5qoMe2SasO0SITocBIccOET+8Ie55ceqJocq4YO94YSHHQ8op+hX2MjnviO/B6iOzHuLYwFLHkw255cyyInPeXHFywPI4bNtm4sVLmS1LH3fMVR6Ntn5ZbCLsEwrcgXfATn/HLtWyxmueMYT7+/Z0jK8bTbXkZJA2HQFe3uvadUrQTUrybjYe+vEIEgmBBUq6k/uxVP1vgXgXockZfyMEjFsNSV22K17KQt2hqE0Hwe/fEyWrLfZ/Ms02XFin//nRoYDWeGTZSQZBIa9UrPQQsmkx/MOzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K8BPDDPAGH817QHMlajsjIMLl3PDOgXwhbsiKSEPGwA=;
+ b=IBR3zhnbpHPPblKzeYHvphFHz720rpXuTMUbyGK5q4s9UwlCrRWI8AAzaXH67UkK1SWDtVMLYzq6+ceA+bAXN5kY0pu3X1fgRiA4PyntEiHqzdddFsbDFsJ40FjfOaBWDUqnDsiSm2afS0pR04QJRPxGYBMd70dhb+f7HpCfnabaIl9QVjhRYFhgUq2TAcAHCSEZcSU5JEvP8qUPWd/X5qLhtacOfF5utjKt6Nnz+3Lx90rwe+nozAkkMIXFShHFERkCdAawHHS+0koSigx433YDb/ZzDj+qnpBmEnpU6H0jCUdHQqGyrOlkZMU410AnGEcv/wy2SSKxoJofSlFH6A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=K8BPDDPAGH817QHMlajsjIMLl3PDOgXwhbsiKSEPGwA=;
+ b=FfqhlXa5YuP1GMUDG130FOwLELfPTpE0zTSfHHM4oBBumkX1FVYPK+6M+gu1X5lLhQVEDSFdyjA5Eu76rntdmzVsm7TUsk1vSqv4rd54ytgslBk6JKLca+CMGa2MrSX0I/nEgGyutOe4EM4f+Nv0SZwrbsvZY9/Dy3t9ZR0ytQY=
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
+ TYAPR01MB3327.jpnprd01.prod.outlook.com (20.178.140.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2835.20; Thu, 26 Mar 2020 02:21:21 +0000
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::ed7f:1268:55a9:fc06%4]) with mapi id 15.20.2835.023; Thu, 26 Mar 2020
+ 02:21:21 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: clock: renesas,rcar-usb2-clock-sel: add
+ r8a77961 support
+Thread-Topic: [PATCH] dt-bindings: clock: renesas,rcar-usb2-clock-sel: add
+ r8a77961 support
+Thread-Index: AQHWAm1vWB0P+WDCRki1fIvs5IYm+KhZSU4AgADb/3A=
+Date:   Thu, 26 Mar 2020 02:21:21 +0000
+Message-ID: <TYAPR01MB454437073AE445BF608ECB2ED8CF0@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+References: <1585117204-8469-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <CAMuHMdXopMkeBwAQRpphCUXOLeCVRaDEFi-fQzy8_8jzD=MNEw@mail.gmail.com>
+In-Reply-To: <CAMuHMdXopMkeBwAQRpphCUXOLeCVRaDEFi-fQzy8_8jzD=MNEw@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [124.210.22.195]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 0ca0f539-e6e5-4b1b-d76c-08d7d12c6011
+x-ms-traffictypediagnostic: TYAPR01MB3327:
+x-microsoft-antispam-prvs: <TYAPR01MB33275BD68042F6FB10939435D8CF0@TYAPR01MB3327.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0354B4BED2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(376002)(346002)(366004)(396003)(39860400002)(5660300002)(86362001)(316002)(6916009)(64756008)(55236004)(33656002)(4744005)(186003)(6506007)(55016002)(76116006)(9686003)(8936002)(8676002)(2906002)(4326008)(52536014)(26005)(81156014)(66946007)(54906003)(66556008)(66476007)(66446008)(81166006)(7696005)(71200400001)(478600001)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3327;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Nx80PoNYKYjOihAEj5CF7BQLsrb+6Rq+YOZS53TdYIDQcoBheJ3Ig3pu0DRguaK9WPdTOiI35MhzbUz+f7ryJy+RoGbzbrCq72onPO61aQdy1l4jU3ZnMMFcYs1ztRNCq0KRJUqFk2CAVGXFf9BJfJSMl2HBEN0pXhj61tBXdLhAW+b2jUZEnFa1qjHk8VtReWIeuptOwGkqK5ZBpxI5KlaGeClGwbhSaj7zwWaNy9O6RAP9MUET/eBcTqPl0P2x6x/47NaD/FFCBBT252/YkbFKMCgME13vdlYPwZ3RQMCmQ4WAVTfUAwfmrZHLzpP9Yn12jD8rvYo/49t3Rwg1mvs6LbZ5ZAxB97beBwUSw1SpncgEMe2exRVyYXcllWprg3tZD7+gr4Fuw8SVYLKUf2Pk/lbxouUenzKoRCt2BkBeSFwl0G/FdhZLGtoF6GDu4zs8Hngc9QOyiNa8YYbcfIwKdQICJjLORlPpbEFgSXEpb7uM8r7vRkaMk9Uvjp8L
+x-ms-exchange-antispam-messagedata: xVh4kwBIn4Imxnzg3trrxk0n2+2+nWtnT7uTLV30Wwx7yDEDTfJnF8LeDvTJnlI3meQYMdzvdJ7H0zMKNya4zWStpTo1xPUKrt6mHJdrjecna1rnaQRLCaGVQRhZxjMPOZwQ9o6QXB4ap5sHuyQEJQ==
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
-References: <20200306130231.05BBC8030795@mail.baikalelectronics.ru> <20200323024611.16039-1-Sergey.Semin@baikalelectronics.ru> <20200323100109.k2gckdyneyzo23fb@gilmour.lan> <20200323135017.4vi5nwam2rlpepgn@ubsrv2.baikal.int> <20200324101243.GG1922688@smile.fi.intel.com> <20200325171109.cohnsw3s57ckaqud@ubsrv2.baikal.int>
-Subject: Re: [PATCH v2] serial: 8250_dw: Fix common clocks usage race condition
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <maxime@cerno.tech>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
-        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
-        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
-        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
-        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Chen-Yu Tsai <wens@csie.org>, Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Wei Xu <xuwei5@hisilicon.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marina s <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sergey Semin <Sergey.Semin@baikalelectronics.ru>
-Date:   Wed, 25 Mar 2020 18:44:53 -0700
-Message-ID: <158518709322.125146.10069235641747677647@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ca0f539-e6e5-4b1b-d76c-08d7d12c6011
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Mar 2020 02:21:21.4633
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zgC9Qcn73ScmigvWx3xaIu3sQdgX1C9hZOlum2+cfB5Z38rzVXPFz2DHHhutNfG0NmgdsgafXOm9rvQI2G9yeDVfzpdMQy4EMH0SE7cRdEm9ZB/Gg9Eoa5G1z/IE92mS
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3327
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sergey Semin (2020-03-25 10:11:09)
-> On Tue, Mar 24, 2020 at 12:12:43PM +0200, Andy Shevchenko wrote:
-> > On Mon, Mar 23, 2020 at 04:50:17PM +0300, Sergey Semin wrote:
-> > > On Mon, Mar 23, 2020 at 11:01:09AM +0100, Maxime Ripard wrote:
-> >=20
-> > > > clk_rate_exclusive_get is pretty intrusive, and due to the usual
-> > > > topology of clock trees, this will lock down 3-4 parent clocks to
-> > > > their current rate as well. In the Allwinner SoCs case for example,
-> > > > this will lock down the same PLL than the one used by the CPU,
-> > > > preventing cpufreq from running.
-> > >=20
-> > > Speaking about weak design of a SoC' clock tree. Our problems are not=
-hing
-> > > with respect to the Allwinner SoC, in which case of changing the
-> > > CPU-frequency may cause the UART glitches subsequently causing data
-> > > transfer artefacts.) Moreover as I can see the same issue may raise f=
-or
-> > > I2C, QSPI, PWM devices there.
-> > >=20
-> > > Anyway your concern does make sense.
-> > >=20
-> > > > However, the 8250 has a pretty wide range of dividers and can adapt=
- to
-> > > > any reasonable parent clock rate, so we don't really need to lock t=
-he
-> > > > rate either, we can simply react to a parent clock rate change using
-> > > > the clock notifiers, just like the SiFive UART is doing.
-> > > >=20
-> > > > I tried to do that, but given that I don't really have an extensive
-> > > > knowledge of the 8250, I couldn't find a way to stop the TX of chars
-> > > > while we change the clock rate. I'm not sure if this is a big deal =
-or
-> > > > not, the SiFive UART doesn't seem to care.
-> > >=20
-> > > Yes, your solution is also possible, but even in case of stopping Tx/=
-Rx it
-> > > doesn't lack drawbacks. First of all AFAIK there is no easy way to ju=
-st
-> > > pause the transfers. We'd have to first wait for the current transfers
-> > > to be completed, then somehow lock the port usage (both Tx and Rx
-> > > traffic), permit the reference clock rate change, accordingly adjust =
-the
-> > > UART clock divider, and finally unlock the port. While if we don't mi=
-nd
-> > > to occasionally have UART data glitches, we can just adjust the UART =
-ref
-> > > divider synchronously with ref clock rate change as you and SiFive UA=
-RT
-> > > driver suggest.
-> > >=20
-> > > So we are now at a zugzwang - a fork to three not that good solutions:
-> > > 1) lock the whole clock branch and provide a glitchless interfaces. B=
-ut
-> > > by doing so we may (in case of Allwinner SoCs we will) lockup some ve=
-ry
-> > > important functionality like CPU-frequency change while the UART port=
- is
-> > > started up. In this case we won't have the data glitches.
-> > > 2) just adjust the UART clock divider in case of reference clock rate
-> > > change (use the SiFive UART driver approach). In this case we may hav=
-e the
-> > > data corruption.
-> > > 3) somehow implement the algo: wait for the transfers to be completed,
-> > > lock UART interface (it's possible for Tx, but for Rx in case of no h=
-andshake
-> > > enabled it's simply impossible), permit the ref clock rate change,
-> > > adjust the UART divider, then unlock the UART interface. In this case=
- the data
-> > > glitches still may happen (if no modem control is available or
-> > > handshakes are disabled).
-> > >=20
-> > > As for the cases of Baikal-T1 UARTs the first solutions is the most s=
-uitable.
-> > > We don't lock anything valuable, since a base PLL output isn't direct=
-ly
-> > > connected to any device and it's rate once setup isn't changed during=
- the
-> > > system running. On the other hand I don't mind to implement the second
-> > > solution, even though it's prone to data glitches. Regarding the solu=
-tion
-> > > 3) I won't even try. It's too complicated, I don't have time and
-> > > test-infrastructure for this.
-> > >=20
-> > > So Andy what do you think?
-> >=20
-> > From Intel HW perspective the first two are okay, but since Maxime is a=
-gainst
-> > first, you have the only option from your list. Perhaps somebody may gi=
-ve
-> > option 4) here...
-> >=20
->=20
-> Ok then. I'll implement the option 2) in v3 if noone gives any alternativ=
-es
-> before that.
->=20
-
-Sorry, I haven't really read the thread but I'll quickly reply with
-this.
-
-Maybe option 4 is to make the uart driver a clk provider that consumes
-the single reference clk like it is already doing today? Then when the
-rate changes up above for the clk implemented here the clk set rate op
-for the newly implemented clk can go poke the uart registers to maintain
-the baud or whatever?
-
-That is close to how the notifier design would work, but it avoids
-keeping the notifiers around given that the notifiers are not preferred.
-It is also closer to reality, the uart has a divider or mux internally
-that we don't model as a clk, but we could just as easily model as such.
+SGkgR2VlcnQtc2FuLA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgcmV2aWV3IQ0KDQo+IEZyb206IEdl
+ZXJ0IFV5dHRlcmhvZXZlbiwgU2VudDogV2VkbmVzZGF5LCBNYXJjaCAyNSwgMjAyMCAxMDoxMyBQ
+TQ0KPHNuaXA+DQo+ID4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Ns
+b2NrL3JlbmVzYXMscmNhci11c2IyLWNsb2NrLXNlbC50eHQNCj4gPiArKysgYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svcmVuZXNhcyxyY2FyLXVzYjItY2xvY2stc2Vs
+LnR4dA0KPiA+IEBAIC0yOCw2ICsyOCw4IEBAIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ID4gICAg
+ICAgICAgICAgICBhbiBSOEE3Nzk1IFNvQy4NCj4gPiAgICAgICAgICAgICAgICJyZW5lc2FzLHI4
+YTc3OTYtcmNhci11c2IyLWNsb2NrLXNlbCIgaWYgdGhlIGRldmljZSBpZiBhIHBhcnQgb2YNCj4g
+PiAgICAgICAgICAgICAgIGFuIFI4QTc3OTYgU29DLg0KPiANCj4gV2hpbGUgYXQgaXQsIHlvdSBt
+YXkgd2FudCB0byB1cGRhdGUgIlI4QTc3OTYgU29DIiB0byAiUjhBNzc5NjAgU29DIiwgdG8NCj4g
+YXZvaWQgY29uZnVzaW9uIGJldHdlZW4gUi1DYXIgTTMtVyAoUjhBNzc5NjApIGFuZCBNMy1XKyAo
+UjhBNzc5NjEpLg0KDQpJIGdvdCBpdC4gSSdsbCBmaXggaXQuDQoNCj4gPiArICAgICAgICAgICAg
+ICJyZW5lc2FzLHI4YTc3OTYxLXJjYXItdXNiMi1jbG9jay1zZWwiIGlmIHRoZSBkZXZpY2UgaWYg
+YSBwYXJ0IG9mDQo+ID4gKyAgICAgICAgICAgICBhbiBSOEE3Nzk2MSBTb0MuDQo+ID4gICAgICAg
+ICAgICAgICAicmVuZXNhcyxyY2FyLWdlbjMtdXNiMi1jbG9jay1zZWwiIGZvciBhIGdlbmVyaWMg
+Ui1DYXIgR2VuMw0KPiA+ICAgICAgICAgICAgICAgY29tcGF0aWJsZSBkZXZpY2UuDQo+IA0KPiBX
+aXRoIHRoZSBhYm92ZSBmaXhlZDoNCj4gUmV2aWV3ZWQtYnk6IEdlZXJ0IFV5dHRlcmhvZXZlbiA8
+Z2VlcnQrcmVuZXNhc0BnbGlkZXIuYmU+DQoNClRoYW5rcyENCg0KQmVzdCByZWdhcmRzLA0KWW9z
+aGloaXJvIFNoaW1vZGENCg0K
