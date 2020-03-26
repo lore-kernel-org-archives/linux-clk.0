@@ -2,549 +2,181 @@ Return-Path: <SRS0=aVCd=5L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B004EC43331
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 11:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC92C43331
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 12:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8074A2070A
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 11:56:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wnqDOMJY"
+	by mail.kernel.org (Postfix) with ESMTP id 299D320409
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 12:30:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728065AbgCZL4Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Mar 2020 07:56:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35498 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728120AbgCZL4Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 07:56:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d5so7449984wrn.2
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2020 04:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=h5V84dig7xOL1AyiKcdgVcY57+dpP4X3nAOl48YFq8A=;
-        b=wnqDOMJYVFf8jJceFlspBqsWltNAULFjb3tQ3Vlpl+Zbd2ODLoNGxgjt/7wZVD4ePL
-         1WGCIebmwBAuvZRNciZF5xFdsAIRHyEzKiZIqewv80HLUs0MrA3BUoFINzv8vrAYRwWU
-         XBQq1yRR0xj7vC2hiAfgevK12zjVcmcz5HfcfIAeN4Wohd0IIuD0SWG3F1oaAPmBXmTD
-         YXLMBcQxyhT67mJXyacq7+5J5moQBqmjrPpgK4klFmcqtrZjqTH7fynOdY7W4+ZoFLGF
-         exU4KwbzBbPZNcdJQDqulHtuIw33AmfUxK1lQ+j9+R7lyQouxcMnpPuXvv3jAr9hzSDA
-         Ufzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=h5V84dig7xOL1AyiKcdgVcY57+dpP4X3nAOl48YFq8A=;
-        b=pXL5k/mUr4cjpfqnfqszkj450OHsEDkREI84l6ZcXntGcbtTI79Tp29aDIj4ytt5kC
-         e1x9dpZrvvZQ+csqQjDeiUqgOI7T0sBdNLyKVzgcFAlGyS1+E+wq9fwupsV9AFuF1Dm0
-         XT9ZoP1HhvVIsCaKGuDInx2Ox1YMmT4sK2i09OVpam+8Oqj+lTaeTZYl/m6vt/sdPgWg
-         7glWTMuKRY4MlTB80in76yK+tuyIgzeSZShMd+95NTXTZlnSjqXVC4eEws1LCQxv2Ihr
-         OXJkwq9+9BqU3AdttF2zGn/+DrlSCLWxdqyJeElFuG2Zb+7QwmcJzjBGmaLHRNbziQ74
-         nxMg==
-X-Gm-Message-State: ANhLgQ3D5ToqEttHReZLGpvpuHRut3nQVCU88YA33KkFwKRm43w/nV9y
-        3+pmnLV9KkfnbkBRp9Gxoe3Dkg==
-X-Google-Smtp-Source: ADFU+vta4p4kYdrA4CN1MK9obrQfbjEFxpgPh0MlPq16cA2A1WGm3xoEafJSY1ZqXFKoYfFnnlw62Q==
-X-Received: by 2002:adf:8165:: with SMTP id 92mr9512537wrm.217.1585223771859;
-        Thu, 26 Mar 2020 04:56:11 -0700 (PDT)
-Received: from localhost.localdomain ([88.122.66.28])
-        by smtp.gmail.com with ESMTPSA id o14sm3103270wmh.22.2020.03.26.04.56.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 26 Mar 2020 04:56:11 -0700 (PDT)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     bjorn.andersson@linaro.org, mturquette@baylibre.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Ilia Lin <ilialin@codeaurora.org>
-Subject: [PATCH 4/4] arch: arm64: dts: msm8996: Add opp and thermal
-Date:   Thu, 26 Mar 2020 13:00:08 +0100
-Message-Id: <1585224008-15730-5-git-send-email-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585224008-15730-1-git-send-email-loic.poulain@linaro.org>
-References: <1585224008-15730-1-git-send-email-loic.poulain@linaro.org>
+        id S1727990AbgCZMag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Mar 2020 08:30:36 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:48680 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727781AbgCZMag (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Mar 2020 08:30:36 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0302F1A09B1;
+        Thu, 26 Mar 2020 13:30:34 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E970B1A090A;
+        Thu, 26 Mar 2020 13:30:33 +0100 (CET)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CA67320564;
+        Thu, 26 Mar 2020 13:30:33 +0100 (CET)
+Date:   Thu, 26 Mar 2020 14:30:33 +0200
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC 01/11] mfd: Add i.MX generic mix support
+Message-ID: <20200326123033.vi7l5mixgre2caon@fsr-ub1664-175>
+References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com>
+ <1583226206-19758-2-git-send-email-abel.vesa@nxp.com>
+ <20200326110306.GE603801@dell>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200326110306.GE603801@dell>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 338 ++++++++++++++++++++++++++++++++--
- 1 file changed, 323 insertions(+), 15 deletions(-)
+On 20-03-26 11:03:06, Lee Jones wrote:
+> On Tue, 03 Mar 2020, Abel Vesa wrote:
+> 
+> > Some of the i.MX SoCs have a IP for interfacing the dedicated IPs with
+> > clocks, resets and interrupts, plus some other specific control registers.
+> > To allow the functionality to be split between drivers, this MFD driver is
+> > added that has only two purposes: register the devices and map the entire
+> > register addresses. Everything else is left to the dedicated drivers that will
+> > bind to the registered devices.
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > ---
+> >  drivers/mfd/Kconfig   | 11 +++++++++++
+> >  drivers/mfd/Makefile  |  1 +
+> >  drivers/mfd/imx-mix.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 60 insertions(+)
+> >  create mode 100644 drivers/mfd/imx-mix.c
+> > 
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 3c547ed..3c89288 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -460,6 +460,17 @@ config MFD_MX25_TSADC
+> >  	  i.MX25 processors. They consist of a conversion queue for general
+> >  	  purpose ADC and a queue for Touchscreens.
+> >  
+> > +config MFD_IMX_MIX
+> > +	tristate "NXP i.MX Generic Mix Control Driver"
+> > +	depends on OF || COMPILE_TEST
+> > +	help
+> > +	  Enable generic mixes support. On some i.MX platforms, there are
+> > +	  devices that are a mix of multiple functionalities like reset
+> > +	  controllers, clock controllers and some others. In order to split
+> > +	  those functionalities between the right drivers, this MFD populates
+> > +	  with virtual devices based on what's found in the devicetree node,
+> > +	  leaving the rest of the behavior control to the dedicated driver.
+> > +
+> >  config MFD_HI6421_PMIC
+> >  	tristate "HiSilicon Hi6421 PMU/Codec IC"
+> >  	depends on OF
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index f935d10..5b2ae5d 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -113,6 +113,7 @@ obj-$(CONFIG_MFD_TWL4030_AUDIO)	+= twl4030-audio.o
+> >  obj-$(CONFIG_TWL6040_CORE)	+= twl6040.o
+> >  
+> >  obj-$(CONFIG_MFD_MX25_TSADC)	+= fsl-imx25-tsadc.o
+> > +obj-$(CONFIG_MFD_IMX_MIX)	+= imx-mix.o
+> >  
+> >  obj-$(CONFIG_MFD_MC13XXX)	+= mc13xxx-core.o
+> >  obj-$(CONFIG_MFD_MC13XXX_SPI)	+= mc13xxx-spi.o
+> > diff --git a/drivers/mfd/imx-mix.c b/drivers/mfd/imx-mix.c
+> > new file mode 100644
+> > index 00000000..d3f8c71
+> > --- /dev/null
+> > +++ b/drivers/mfd/imx-mix.c
+> > @@ -0,0 +1,48 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright 2019 NXP.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/spinlock.h>
+> > +#include <linux/types.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/of_platform.h>
+> > +
+> > +#include <linux/mfd/core.h>
+> > +
+> > +static int imx_audiomix_probe(struct platform_device *pdev)
+> > +{
+> > +	struct device *dev = &pdev->dev;
+> > +	struct resource *res;
+> > +	void __iomem *base;
+> > +
+> > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +	base = devm_ioremap_resource(dev, res);
+> > +	if (IS_ERR(base))
+> > +		return PTR_ERR(base);
+> > +
+> > +	dev_set_drvdata(dev, base);
+> > +
+> > +	return devm_of_platform_populate(dev);
+> > +}
+> > +
+> > +static const struct of_device_id imx_audiomix_of_match[] = {
+> > +	{ .compatible = "fsl,imx8mp-audiomix" },
+> > +	{ /* Sentinel */ },
+> > +};
+> > +MODULE_DEVICE_TABLE(of, imx_audiomix_of_match);
+> 
+> This needs DT binding documentation.
+> 
+> Do the sub-device memory ranges overlap?
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 7ae082e..951c53a 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/soc/qcom,apr.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -43,6 +44,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -57,6 +64,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -67,6 +80,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -81,6 +100,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -424,7 +449,7 @@
- 				bits = <1 4>;
- 			};
- 
--			gpu_speed_bin: gpu_speed_bin@133 {
-+			speedbin_efuse: speedbin@133 {
- 				reg = <0x133 0x1>;
- 				bits = <5 3>;
- 			};
-@@ -639,7 +664,7 @@
- 			power-domains = <&mmcc GPU_GDSC>;
- 			iommus = <&adreno_smmu 0>;
- 
--			nvmem-cells = <&gpu_speed_bin>;
-+			nvmem-cells = <&speedbin_efuse>;
- 			nvmem-cell-names = "speed_bin";
- 
- 			qcom,gpu-quirk-two-pass-use-wfi;
-@@ -1690,8 +1715,9 @@
- 				};
- 			};
- 		};
-+
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom,msm8996-apcc";
- 			reg = <0x06400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
-@@ -2157,6 +2183,229 @@
- 	sound: sound {
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2-kryo-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		/* Nominal fmax for now */
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <  422400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <  844800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <  960000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 < 1228800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 < 1593600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2-kryo-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		/* Nominal fmax for now */
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <  403200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <  806400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <  883200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <  940800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 < 1248000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 < 1555200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 < 1632000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 < 1708800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 < 1785600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 < 1824000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 < 1920000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 < 1996800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 < 2073600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 < 2150400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu0-thermal {
- 			polling-delay-passive = <250>;
-@@ -2165,18 +2414,33 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu0_alert0: trip-point@0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu0_crit: cpu_crit {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu1-thermal {
-@@ -2186,18 +2450,33 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu1_alert0: trip-point@0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu1_crit: cpu_crit {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu2-thermal {
-@@ -2207,18 +2486,32 @@
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
--				cpu2_alert0: trip-point@0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu2_crit: cpu_crit {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu3-thermal {
-@@ -2228,18 +2521,33 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu3_alert0: trip-point@0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu3_crit: cpu_crit {
-+				cpu_crit3: trip1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		gpu-thermal-top {
--- 
-2.7.4
+Yes, they do.
 
+Resent another version of this series yesterday.
+
+> > +static struct platform_driver imx_audiomix_driver = {
+> > +	.probe = imx_audiomix_probe,
+> > +	.driver = {
+> > +		.name = "imx-audiomix",
+> > +		.of_match_table = of_match_ptr(imx_audiomix_of_match),
+> > +	},
+> > +};
+> > +module_platform_driver(imx_audiomix_driver);
+> 
+> -- 
+> Lee Jones [李琼斯]
+> Linaro Services Technical Lead
+> Linaro.org │ Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
