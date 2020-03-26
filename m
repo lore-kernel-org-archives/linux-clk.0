@@ -2,1933 +2,729 @@ Return-Path: <SRS0=aVCd=5L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8199EC2D0EF
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 13:28:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D345C2D0E8
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 13:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518712073E
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 13:28:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3410720748
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Mar 2020 13:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wcghrVVK"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UGCPsOx5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726359AbgCZN2S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Mar 2020 09:28:18 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:41327 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726401AbgCZN2S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 09:28:18 -0400
-Received: by mail-qk1-f196.google.com with SMTP id q188so6293614qke.8
-        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2020 06:28:14 -0700 (PDT)
+        id S1727666AbgCZNdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Mar 2020 09:33:38 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39365 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727647AbgCZNdi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Mar 2020 09:33:38 -0400
+Received: by mail-wr1-f66.google.com with SMTP id p10so7806359wrt.6
+        for <linux-clk@vger.kernel.org>; Thu, 26 Mar 2020 06:33:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=BUYYK3rI/J7AIiF9MH5Ik3vfaCaUNhpHForO9Ru5Zzs=;
-        b=wcghrVVKANqQ+71hBa1DPneHhmgRB5n0SiESvnPjKMWGrlabzu/g2I1yo8f8lTCz31
-         hriW5Vgys3yhkRfMSzA7bL0V3eIq81Tnc6FiXzi1A81LN8OXMsBQStOA5I1X+DL0WTF6
-         D+vUULv2j3t/P4n1/rm+bBXbgH4/SI3LwcFgQKk+wZKb6Uw+clvNBpdNqfInCwYdum5w
-         S0MCkpzVNvbl5fZ9+2KeuX0qVBFrMSCbyzhy9sm0CabTgC0bzyOlueNIy2q3hjSmznA+
-         8e0bWVrNx9D6ok5N6T83H77dccTJb4dz6dD0VaQOqJ0dIPTvStFaInauglIbczOLsM27
-         6H/w==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=tM6k8Fj2XI4jxMf4gSkaCKamkuF33gpbY1KQZ0hgoFw=;
+        b=UGCPsOx5jnQ2Ux+sRSgo6aTg0cPtMC0qzVGNTx6Nch0MnvTYMf4a1KNzhTYOrLWOoI
+         5QcEj4/RjpnUC0DCksZyT3A3Q+OOhM4th7qK+dFbikV6IdzKIuridAtEVgeRCWr6gR6u
+         ufx7a1c+gDHIv6eyLCac6A2StIo4XSkY1FxXDkQDeGS8aL2X65zYLF89bMVTh4GTWf2n
+         G2IX1GigwZCxjw76p5XSxHNuJDAG2m7bj4TEde3m4nRS9zKO0mB83yyP5yAIbBywLNcW
+         wMDTj5BXxot+Onx8ZMd7nVtNoiXjoYcFfiDVVChfqhcoU8PWk4oni8Pnkd00SDx6sdBy
+         xvXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=BUYYK3rI/J7AIiF9MH5Ik3vfaCaUNhpHForO9Ru5Zzs=;
-        b=qttAqc7+t0enu7f4umHJa6Os/G+yYb58yMX2Z371tVQ/HOHdPhGgiXK5GitaP86J4l
-         NdG5ii0Ed/JmzjHUA/pPDACZDdjirdzKJI6cMTGb/njtK3jJomNJ6sjc974+DNnh0LSz
-         baf9530dAxMcaZjubsNfAsXVcqOSBnChi3ANxOTC9IOvOzr8xitE8dyN75Nqk29+p0PU
-         QA59hV3emwYL8mkSHP1qw7TQMJ1veI2cKlsFccSuOdU6/DuiKNqfAByUdqTmfsT81acH
-         Ov774FaOY0bQd5qtObHIUTHVBszWR46RwfydADp5wySMyjnCdqb1n2zLVOVDkVwVvIRK
-         6kEw==
-X-Gm-Message-State: ANhLgQ2baI3CkL9zDjVP9LXma3M++dd65L2T8brmWj9UXflbqbZaa//8
-        XLAa0FM+9N3hvvyog2heAZqb4taJV+2KPodYdzdZbA==
-X-Google-Smtp-Source: ADFU+vuK1nOkqDqRb9JsLOiD3nL7zoy8hZ3WlhlqX1cmh/optUTbEhIBrQEnQXJ5OUiXvCWdPi2mLl6+QW07As74sF8=
-X-Received: by 2002:a37:4901:: with SMTP id w1mr7125242qka.427.1585229291849;
- Thu, 26 Mar 2020 06:28:11 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=tM6k8Fj2XI4jxMf4gSkaCKamkuF33gpbY1KQZ0hgoFw=;
+        b=HmYBfLdyt+VZKEl+ZVp/D1iHBUkLJkKCHSVQFIW77LikmCj7EYOq4kjH+Ms6yn1L7h
+         jo7Y3YrRONVKnftVBA2+pntHv97iheqSeDddpn4r7BoOGeCGMeSPvdfSM1Wja9XP/SUG
+         dItArS9Z0xYMK048cSH4nuImYuotOCE0lSvjQ7/mU2ku8MdzTK7PcKJ7BvkMzlKgB/2D
+         cyH50Fli/BQfoyxoIm46LjMnxrt28rtmWCejh4tUEsLVI5ZjY45zFTZTaVx77I/CS5Fz
+         qAJvBRP3a42rDi0qDtOCz9zdd+Dno4/jyHpTEZbZFcfwFjlf/xziwGBMgu+8lnyjBNwe
+         z35w==
+X-Gm-Message-State: ANhLgQ21IIfet8aLjj9Jsh8EO8uWzm/1VdAYHzBolYc/Nl3FzV7w/9rW
+        U+uLBKCVWxbAZa0E+dbG9PZ9Sg==
+X-Google-Smtp-Source: ADFU+vuAG/qcMqec7ejMoYEcbRmLvtNENpLIfQtBH+S4zQor/iwINluL1SgJixPZ8XiANB53bI9sdg==
+X-Received: by 2002:adf:e650:: with SMTP id b16mr8998804wrn.328.1585229611431;
+        Thu, 26 Mar 2020 06:33:31 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id i8sm3628053wrb.41.2020.03.26.06.33.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Mar 2020 06:33:30 -0700 (PDT)
+Date:   Thu, 26 Mar 2020 14:33:28 +0100
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        pdeschrijver@nvidia.com,
+        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        axboe@kernel.dk, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-ide@vger.kernel.org
+Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
+Message-ID: <20200326133328.GA30045@Red>
+References: <20200319074401.GA4116@Red>
+ <CABr+WTnBmJsDZPjUxYkG98dTneDD1p8G=uRftVduTGYbY0ruqQ@mail.gmail.com>
+ <20200325134003.GA27961@Red>
+ <cf63d40c-7b84-60f6-76be-a13255e69c99@nvidia.com>
+ <20200325142306.GB27961@Red>
+ <20200325201125.GA832965@ulmo>
 MIME-Version: 1.0
-References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-5-robh@kernel.org>
-In-Reply-To: <20200325220542.19189-5-robh@kernel.org>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Thu, 26 Mar 2020 14:27:58 +0100
-Message-ID: <CA+M3ks7Y9YEUP_pc_Hyffj5EaLFGEA5_91vH0QcPUCbkwz4VYw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties: false'
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-iio@vger.kernel.org,
-        ML dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-amlogic@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>, linux-media@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200325201125.GA832965@ulmo>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le mer. 25 mars 2020 =C3=A0 23:06, Rob Herring <robh@kernel.org> a =C3=A9cr=
-it :
->
-> Setting 'additionalProperties: false' is frequently omitted, but is
-> important in order to check that there aren't extra undocumented
-> properties in a binding.
->
-> Ideally, we'd just add this automatically and make this the default, but
-> there's some cases where it doesn't work. For example, if a common
-> schema is referenced, then properties in the common schema aren't part
-> of what's considered for 'additionalProperties'. Also, sometimes there
-> are bus specific properties such as 'spi-max-frequency' that go into
-> bus child nodes, but aren't defined in the child node's schema.
->
-> So let's stick with the json-schema defined default and add
-> 'additionalProperties: false' where needed. This will be a continual
-> review comment and game of wack-a-mole.
+On Wed, Mar 25, 2020 at 09:15:56PM +0100, Thierry Reding wrote:
+> On Wed, Mar 25, 2020 at 03:23:06PM +0100, LABBE Corentin wrote:
+> > On Wed, Mar 25, 2020 at 02:00:25PM +0000, Jon Hunter wrote:
+> > > 
+> > > On 25/03/2020 13:40, LABBE Corentin wrote:
+> > > > On Thu, Mar 19, 2020 at 08:55:38AM +0100, Nicolas Chauvet wrote:
+> > > >> Le jeu. 19 mars 2020 à 08:44, LABBE Corentin <clabbe@baylibre.com> a écrit :
+> > > >>>
+> > > >>> Hello
+> > > >>>
+> > > >>> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+> > > >>> [    0.492810] +5V_SATA: supplied by +5V_SYS
+> > > >>> [    0.493230] +12V_SATA: supplied by +VDD_MUX
+> > > >>> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > > >>> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > > >>> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > > >>> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > > >>> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> > > >>> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> > > >>> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+> > > >>> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
+> > > >>> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+> > > >>> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+> > > >>> [   35.694269] +5V_SATA: disabling
+> > > >>> [   35.697438] +12V_SATA: disabling
+> > > >>
+> > > >> It looks strange, because (on same device) , I have sata working as
+> > > >> appropriate, but ethernet fails with me.
+> > > >> https://bugzilla.kernel.org/show_bug.cgi?id=206217
+> > > >>
+> > > >> It might worth to have another report.
+> > > >>
+> > > > 
+> > > > Hello
+> > > > 
+> > > > Mine has ethernet works well. But I hit many problem with it and older kernel.
+> > > > Perhaps the 5.1.21, were I am stuck, does not have it.
+> > > > 
+> > > > Anyway, the tegra of kerneci has the same SATA problem.
+> > > > https://storage.kernelci.org/next/master/next-20200325/arm/multi_v7_defconfig+CONFIG_SMP=n/gcc-8/lab-baylibre/boot-tegra124-jetson-tk1.txt
+> > > > 
+> > > > Maintainers, any idea on this sata issue ?
+> > > 
+> > > I have checked our bootlogs for v5.6-rc7 and don't see the issue with
+> > > either the tegra_defconfig or the multi_v7_defconfig. I am wondering if
+> > > this could be due a difference in the bootloader version. Currently we
+> > > are testing with a v2019.07 u-boot bootloader. Looks like the kernelci
+> > > board is using an older u-boot. Obviously it should still work, but
+> > > would be good to know if the reason why were are not seeing this is
+> > > because of the bootloader.
+> > > 
+> > > Another thing to check would be the pll_e clock frequency on a working
+> > > build and non-working build to see if there is a difference in the pll
+> > > frequency that is causing this.
+> > > 
+> > > Cheers
+> > > Jon
+> > > 
+> > 
+> > Hello
+> > 
+> > My uboot is 2016.01-rc4-00002-g3861d78, so a bit old.
+> > I have a mainline uboot build for this tegra, but still didnt find a clear way to update it.
+> > Did you have a good documentation on how to update it ?
+> > If possible some clear uboot commands to update it via tftp.
+> 
+> Not sure about TFTP, but you can find the standard flashing scripts for
+> various devices here:
+> 
+> 	https://github.com/NVIDIA/tegra-uboot-flasher-scripts
+> 
+> Those work by uploading the image via RCM and then running the commands
+> to flash it.
+> 
+> I think those scripts will also create the images that they will flash,
+> so you should be able to download that image via TFTP and then flash it
+> using the command that the tool would normally use.
+> 
 
-for stm32 bindings:
-Reviewed-by Benjamin Gaignard <benjamin.gaignard@st.com>
+Hello
 
+I have upgrade uboot to 2019.07 with it thanks.
 
+But this do not change the SATA behavour:
+And with today next, lots of newer warning for the clk appeared.
 
->
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/arm/altera/socfpga-clk-manager.yaml    | 2 ++
->  .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml       | 2 ++
->  Documentation/devicetree/bindings/arm/msm/qcom,llcc.yaml       | 2 ++
->  Documentation/devicetree/bindings/arm/renesas,prr.yaml         | 2 ++
->  .../devicetree/bindings/arm/samsung/exynos-chipid.yaml         | 2 ++
->  Documentation/devicetree/bindings/arm/samsung/pmu.yaml         | 2 ++
->  .../bindings/arm/samsung/samsung-secure-firmware.yaml          | 2 ++
->  .../devicetree/bindings/arm/stm32/st,stm32-syscon.yaml         | 2 ++
->  Documentation/devicetree/bindings/clock/fsl,plldig.yaml        | 2 ++
->  Documentation/devicetree/bindings/clock/imx8mn-clock.yaml      | 2 ++
->  Documentation/devicetree/bindings/clock/imx8mp-clock.yaml      | 2 ++
->  Documentation/devicetree/bindings/clock/milbeaut-clock.yaml    | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml  | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml  | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml  | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml  | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml   | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml   | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml   | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,gcc.yaml          | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml         | 2 ++
->  .../devicetree/bindings/clock/qcom,msm8998-gpucc.yaml          | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml       | 2 ++
->  .../devicetree/bindings/clock/qcom,sc7180-dispcc.yaml          | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml | 2 ++
->  .../devicetree/bindings/clock/qcom,sc7180-videocc.yaml         | 2 ++
->  .../devicetree/bindings/clock/qcom,sdm845-dispcc.yaml          | 2 ++
->  Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml | 2 ++
->  .../devicetree/bindings/clock/qcom,sdm845-videocc.yaml         | 2 ++
->  .../devicetree/bindings/display/amlogic,meson-vpu.yaml         | 2 ++
->  .../devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml        | 2 ++
->  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml             | 2 ++
->  Documentation/devicetree/bindings/eeprom/at24.yaml             | 2 ++
->  .../firmware/intel,ixp4xx-network-processing-engine.yaml       | 3 +++
->  .../devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml          | 2 ++
->  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
->  Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.yaml | 2 ++
->  Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml    | 2 ++
->  Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml    | 2 ++
->  Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml     | 2 ++
->  Documentation/devicetree/bindings/gpu/samsung-rotator.yaml     | 2 ++
->  Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml       | 2 ++
->  Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml       | 2 ++
->  Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.yaml | 2 ++
->  Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml         | 2 ++
->  Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml  | 2 ++
->  Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml      | 2 ++
->  Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml      | 2 ++
->  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 2 ++
->  .../devicetree/bindings/iio/adc/microchip,mcp3911.yaml         | 2 ++
->  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml        | 2 ++
->  .../devicetree/bindings/iio/chemical/plantower,pms7003.yaml    | 2 ++
->  .../devicetree/bindings/iio/chemical/sensirion,sps30.yaml      | 2 ++
->  Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml    | 2 ++
->  Documentation/devicetree/bindings/iio/light/adux1020.yaml      | 2 ++
->  Documentation/devicetree/bindings/iio/light/bh1750.yaml        | 2 ++
->  Documentation/devicetree/bindings/iio/light/isl29018.yaml      | 2 ++
->  Documentation/devicetree/bindings/iio/light/noa1305.yaml       | 2 ++
->  Documentation/devicetree/bindings/iio/light/stk33xx.yaml       | 2 ++
->  Documentation/devicetree/bindings/iio/light/tsl2583.yaml       | 2 ++
->  Documentation/devicetree/bindings/iio/light/tsl2772.yaml       | 2 ++
->  Documentation/devicetree/bindings/iio/light/veml6030.yaml      | 2 ++
->  .../devicetree/bindings/iio/pressure/asc,dlhl60d.yaml          | 2 ++
->  Documentation/devicetree/bindings/iio/pressure/bmp085.yaml     | 2 ++
->  .../devicetree/bindings/iio/proximity/devantech-srf04.yaml     | 2 ++
->  .../devicetree/bindings/iio/proximity/parallax-ping.yaml       | 2 ++
->  .../devicetree/bindings/iio/temperature/adi,ltc2983.yaml       | 2 ++
->  Documentation/devicetree/bindings/input/gpio-vibrator.yaml     | 2 ++
->  Documentation/devicetree/bindings/input/max77650-onkey.yaml    | 3 +++
->  .../bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml  | 2 ++
->  Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml    | 2 ++
->  Documentation/devicetree/bindings/leds/leds-max77650.yaml      | 3 +++
->  Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml  | 3 +++
->  .../devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml    | 2 ++
->  Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml   | 2 ++
->  .../devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml     | 2 ++
->  Documentation/devicetree/bindings/media/renesas,ceu.yaml       | 2 ++
->  Documentation/devicetree/bindings/mfd/max77650.yaml            | 2 ++
->  Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml   | 2 ++
->  .../bindings/misc/intel,ixp4xx-ahb-queue-manager.yaml          | 2 ++
->  Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml      | 2 ++
->  .../devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.yaml  | 2 ++
->  .../bindings/phy/amlogic,meson-g12a-usb3-pcie-phy.yaml         | 2 ++
->  Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml  | 2 ++
->  .../devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml         | 2 ++
->  Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml    | 2 ++
->  .../devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.yaml    | 2 ++
->  .../devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.yaml    | 2 ++
->  .../devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.yaml    | 2 ++
->  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml          | 2 ++
->  .../devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml       | 2 ++
->  .../devicetree/bindings/power/reset/syscon-poweroff.yaml       | 2 ++
->  .../devicetree/bindings/power/reset/syscon-reboot.yaml         | 2 ++
->  .../devicetree/bindings/power/supply/max77650-charger.yaml     | 3 +++
->  Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml           | 2 ++
->  .../devicetree/bindings/regulator/max77650-regulator.yaml      | 3 +++
->  .../devicetree/bindings/reset/amlogic,meson-reset.yaml         | 2 ++
->  .../bindings/reset/brcm,bcm7216-pcie-sata-rescal.yaml          | 2 ++
->  Documentation/devicetree/bindings/rng/amlogic,meson-rng.yaml   | 2 ++
->  Documentation/devicetree/bindings/rng/brcm,bcm2835.yaml        | 2 ++
->  Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml      | 2 ++
->  Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml        | 2 ++
->  .../devicetree/bindings/serial/amlogic,meson-uart.yaml         | 2 ++
->  .../devicetree/bindings/soc/amlogic/amlogic,canvas.yaml        | 2 ++
->  Documentation/devicetree/bindings/sound/adi,adau7118.yaml      | 2 ++
->  Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml      | 2 ++
->  Documentation/devicetree/bindings/sound/renesas,fsi.yaml       | 2 ++
->  Documentation/devicetree/bindings/sound/samsung,odroid.yaml    | 2 ++
->  Documentation/devicetree/bindings/sound/samsung-i2s.yaml       | 2 ++
->  Documentation/devicetree/bindings/sram/qcom,ocmem.yaml         | 2 ++
->  Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml | 2 ++
->  Documentation/devicetree/bindings/timer/arm,arch_timer.yaml    | 2 ++
->  .../devicetree/bindings/timer/arm,arch_timer_mmio.yaml         | 2 ++
->  Documentation/devicetree/bindings/timer/arm,global_timer.yaml  | 2 ++
->  .../devicetree/bindings/timer/intel,ixp4xx-timer.yaml          | 2 ++
->  .../devicetree/bindings/timer/samsung,exynos4210-mct.yaml      | 2 ++
->  Documentation/devicetree/bindings/trivial-devices.yaml         | 2 ++
->  117 files changed, 240 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-man=
-ager.yaml b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manage=
-r.yaml
-> index e4131fa42b26..572381306681 100644
-> --- a/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/arm/altera/socfpga-clk-manager.ya=
-ml
-> @@ -21,6 +21,8 @@ properties:
->  required:
->    - compatible
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      clkmgr@ffd04000 {
-> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-=
-gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,m=
-eson-gx-ao-secure.yaml
-> index 853d7d2b56f5..66213bd95e6e 100644
-> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
-ecure.yaml
-> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-s=
-ecure.yaml
-> @@ -43,6 +43,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      ao-secure@140 {
-> diff --git a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.yaml b/D=
-ocumentation/devicetree/bindings/arm/msm/qcom,llcc.yaml
-> index 79902f470e4b..c3a8604dfa80 100644
-> --- a/Documentation/devicetree/bindings/arm/msm/qcom,llcc.yaml
-> +++ b/Documentation/devicetree/bindings/arm/msm/qcom,llcc.yaml
-> @@ -43,6 +43,8 @@ required:
->    - reg-names
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> diff --git a/Documentation/devicetree/bindings/arm/renesas,prr.yaml b/Doc=
-umentation/devicetree/bindings/arm/renesas,prr.yaml
-> index 7f8d17f33983..dd087643a9f8 100644
-> --- a/Documentation/devicetree/bindings/arm/renesas,prr.yaml
-> +++ b/Documentation/devicetree/bindings/arm/renesas,prr.yaml
-> @@ -27,6 +27,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      prr: chipid@ff000044 {
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.=
-yaml b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> index afcd70803c12..0425d333b50d 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.yaml
-> @@ -30,6 +30,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      chipid@10000000 {
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml b/Doc=
-umentation/devicetree/bindings/arm/samsung/pmu.yaml
-> index 73b56fc5bf58..c9651892710e 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/pmu.yaml
-> @@ -89,6 +89,8 @@ required:
->    - clock-names
->    - clocks
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/exynos5250.h>
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/samsung-secure=
--firmware.yaml b/Documentation/devicetree/bindings/arm/samsung/samsung-secu=
-re-firmware.yaml
-> index 51d23b6f8a94..3d9abad3c749 100644
-> --- a/Documentation/devicetree/bindings/arm/samsung/samsung-secure-firmwa=
-re.yaml
-> +++ b/Documentation/devicetree/bindings/arm/samsung/samsung-secure-firmwa=
-re.yaml
-> @@ -23,6 +23,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      firmware@203f000 {
-> diff --git a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.=
-yaml b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> index 0dedf94c8578..baff80197d5a 100644
-> --- a/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> +++ b/Documentation/devicetree/bindings/arm/stm32/st,stm32-syscon.yaml
-> @@ -29,6 +29,8 @@ required:
->    - reg
->    - clocks
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/stm32mp1-clks.h>
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Do=
-cumentation/devicetree/bindings/clock/fsl,plldig.yaml
-> index d1c040228cf7..a203d5d498db 100644
-> --- a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> +++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> @@ -44,6 +44,8 @@ required:
->    - clocks
->    - '#clock-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Display PIXEL Clock node:
->    - |
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/=
-Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> index cd0b8a341321..03386b0861a2 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-> @@ -52,6 +52,8 @@ required:
->    - clock-names
->    - '#clock-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Clock Control Module node:
->    - |
-> diff --git a/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml b/=
-Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> index 89aee63c9019..4351a1dbb4f7 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
-> @@ -52,6 +52,8 @@ required:
->    - clock-names
->    - '#clock-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Clock Control Module node:
->    - |
-> diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml =
-b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> index f0b804a7f096..0e8b07710451 100644
-> --- a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
-> @@ -35,6 +35,8 @@ required:
->    - clocks
->    - '#clock-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Clock controller node:
->    - |
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> index 3647007f82ca..eacccc88bbf6 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
-> @@ -68,6 +68,8 @@ required:
->    - nvmem-cell-names
->    - '#thermal-sensor-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      clock-controller@900000 {
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
-> index 89c6e070e7ac..98572b4a9b60 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
-> @@ -40,6 +40,8 @@ required:
->    - '#clock-cells'
->    - '#reset-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      clock-controller@1800000 {
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
-> index 18e4e77b8cfa..5a5b2214f0ca 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
-> @@ -56,6 +56,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      clock-controller@300000 {
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-> index 1d3cae980471..a0bb713929b0 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
-> @@ -66,6 +66,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmcc.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-> index 8cdece395eba..ce06f3f8c3e3 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
-> @@ -40,6 +40,8 @@ required:
->    - '#clock-cells'
->    - '#reset-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      clock-controller@1800000 {
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
-> index ee4f968e2909..a345320e0e49 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
-> @@ -58,6 +58,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmh.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> index 888e9a708390..36f3b3668ced 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
-> @@ -56,6 +56,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmh.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Docu=
-mentation/devicetree/bindings/clock/qcom,gcc.yaml
-> index d18f8ab9eeee..e533bb0cfd2b 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> @@ -74,6 +74,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Example for GCC for MSM8960:
->    - |
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Doc=
-umentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> index 85518494ce43..f684fe67db84 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> @@ -74,6 +74,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  if:
->    properties:
->      compatible:
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.y=
-aml b/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
-> index 7d853c1a85e5..d747bb58f0a7 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
-> @@ -50,6 +50,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/D=
-ocumentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> index 2cd158f13bab..c9fd748b4d7c 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
-> @@ -35,6 +35,8 @@ required:
->    - compatible
->    - '#clock-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    # Example for GCC for SDM845: The below node should be defined inside
->    # &apps_rsc node.
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.y=
-aml b/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
-> index 0429062f1585..58cdfd5924d3 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
-> @@ -58,6 +58,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.ya=
-ml b/Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
-> index 5785192cc4be..8635e35fd3f0 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
-> @@ -52,6 +52,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.=
-yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
-> index 31df901884ac..0071b9701960 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
-> @@ -48,6 +48,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmh.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.y=
-aml b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-> index 89269ddfbdcd..ad47d747a3e4 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
-> @@ -67,6 +67,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.ya=
-ml b/Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
-> index bac04f1c5d79..7a052ac5dc00 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
-> @@ -52,6 +52,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.=
-yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
-> index 9d216c0f11d4..2a6a81ab0318 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
-> @@ -48,6 +48,8 @@ required:
->    - '#reset-cells'
->    - '#power-domain-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/qcom,rpmh.h>
-> diff --git a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.=
-yaml b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-> index d1205a6697a0..d8e573eeb5ec 100644
-> --- a/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-> +++ b/Documentation/devicetree/bindings/display/amlogic,meson-vpu.yaml
-> @@ -107,6 +107,8 @@ required:
->    - "#address-cells"
->    - "#size-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      vpu: vpu@d0100000 {
-> diff --git a/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma=
-.yaml b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-> index 2ca3ddbe1ff4..e7f2ad7dab5e 100644
-> --- a/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-> +++ b/Documentation/devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml
-> @@ -43,6 +43,8 @@ required:
->    - interrupts
->    - '#dma-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      dma@3000000 {
-> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documen=
-tation/devicetree/bindings/dsp/fsl,dsp.yaml
-> index f04870d84542..a5dc070d0ca7 100644
-> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
-> @@ -68,6 +68,8 @@ required:
->    - mbox-names
->    - memory-region
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/firmware/imx/rsrc.h>
-> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Documen=
-tation/devicetree/bindings/eeprom/at24.yaml
-> index 0f6d8db18d6c..a15787e504f0 100644
-> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
-> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
-> @@ -172,6 +172,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/firmware/intel,ixp4xx-netw=
-ork-processing-engine.yaml b/Documentation/devicetree/bindings/firmware/int=
-el,ixp4xx-network-processing-engine.yaml
-> index 878a2079ebb6..1bd2870c3a9c 100644
-> --- a/Documentation/devicetree/bindings/firmware/intel,ixp4xx-network-pro=
-cessing-engine.yaml
-> +++ b/Documentation/devicetree/bindings/firmware/intel,ixp4xx-network-pro=
-cessing-engine.yaml
-> @@ -34,9 +34,12 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      npe@c8006000 {
->           compatible =3D "intel,ixp4xx-network-processing-engine";
->           reg =3D <0xc8006000 0x1000>, <0xc8007000 0x1000>, <0xc8008000 0=
-x1000>;
->      };
-> +...
-> diff --git a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.y=
-aml b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
-> index 64e279a4bc10..5f1ed20e43ee 100644
-> --- a/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml
-> @@ -47,6 +47,8 @@ required:
->    - "#gpio-cells"
->    - gpio-controller
->
-> +additionalProperties: false
-> +
->  dependencies:
->    interrupt-controller: [ interrupts ]
->
-> diff --git a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gp=
-io.yaml b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.ya=
-ml
-> index c58ff9a94f45..1a54db04f29d 100644
-> --- a/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/socionext,uniphier-gpio.yaml
-> @@ -64,6 +64,8 @@ required:
->    - gpio-ranges
->    - socionext,interrupt-ranges
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.ya=
-ml b/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.yaml
-> index d102888c1be7..a36aec27069c 100644
-> --- a/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.yaml
-> @@ -49,6 +49,8 @@ required:
->    - "#gpio-cells"
->    - gpio-controller
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      logicvc: logicvc@43c00000 {
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml =
-b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-> index 05fd9a404ff7..0b229a7d4a98 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
-> @@ -53,6 +53,8 @@ required:
->    - interrupt-names
->    - clocks
->
-> +additionalProperties: false
-> +
->  allOf:
->    - if:
->        properties:
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml =
-b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> index 6819cde050df..0407e45eb8c4 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
-> @@ -94,6 +94,8 @@ required:
->    - interrupt-names
->    - clocks
->
-> +additionalProperties: false
-> +
->  allOf:
->    - if:
->        properties:
-> diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml b=
-/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> index afde81be3c29..f5401cc8de4a 100644
-> --- a/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
-> @@ -115,6 +115,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  allOf:
->    - if:
->        properties:
-> diff --git a/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml b=
-/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
-> index f4dfa6fc724c..665c6e3b31d3 100644
-> --- a/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/samsung-rotator.yaml
-> @@ -36,6 +36,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      rotator@12810000 {
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml b/D=
-ocumentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> index 2a9822075b36..154bee851139 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml
-> @@ -47,6 +47,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml b/D=
-ocumentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> index 6a742a51e2f9..44a63fffb4be 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml
-> @@ -87,6 +87,8 @@ required:
->    - reg
->
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      spi {
-> diff --git a/Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.ya=
-ml b/Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.yaml
-> index 5d42e1304202..e8feee38c76c 100644
-> --- a/Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.yaml
-> @@ -32,6 +32,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml b/Doc=
-umentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-> index 168235ad5d81..3f043e943668 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml
-> @@ -76,6 +76,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yam=
-l b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
-> index c1c6d6f223cf..8723a336229e 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
-> +++ b/Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml
-> @@ -36,6 +36,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> index 9acde6d2e2d9..a67ba67dab51 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml
-> @@ -67,6 +67,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml b/=
-Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
-> index 91ab9c842273..77605f17901c 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
-> @@ -53,6 +53,8 @@ required:
->    - dout-gpios
->    - avdd-supply
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml =
-b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> index 59009997dca0..118809a03279 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> @@ -32,6 +32,8 @@ required:
->    - vref-supply
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      spi {
-> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.=
-yaml b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> index 0ce290473fb0..8ffeceb6abae 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> @@ -52,6 +52,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      spi {
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc=
-.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> index acf36eef728b..b1627441a0b2 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> @@ -69,6 +69,8 @@ required:
->    - "#address-cells"
->    - "#size-cells"
->
-> +additionalProperties: false
-> +
->  patternProperties:
->    "^filter@[0-9]+$":
->      type: object
-> diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms=
-7003.yaml b/Documentation/devicetree/bindings/iio/chemical/plantower,pms700=
-3.yaml
-> index 19e53930ebf6..1fe561574019 100644
-> --- a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.ya=
-ml
-> @@ -38,6 +38,8 @@ required:
->    - compatible
->    - vcc-supply
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      serial {
-> diff --git a/Documentation/devicetree/bindings/iio/chemical/sensirion,sps=
-30.yaml b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.ya=
-ml
-> index 50a50a0d7070..a93d1972a5c2 100644
-> --- a/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.yaml
-> +++ b/Documentation/devicetree/bindings/iio/chemical/sensirion,sps30.yaml
-> @@ -24,6 +24,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml =
-b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> index a285eaba7125..e51a585bd5a3 100644
-> --- a/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> +++ b/Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml
-> @@ -34,6 +34,8 @@ required:
->    - reg
->    - vref-supply
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      spi {
-> diff --git a/Documentation/devicetree/bindings/iio/light/adux1020.yaml b/=
-Documentation/devicetree/bindings/iio/light/adux1020.yaml
-> index 69bd5c06319d..d7d14f2f1c20 100644
-> --- a/Documentation/devicetree/bindings/iio/light/adux1020.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/adux1020.yaml
-> @@ -28,6 +28,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/light/bh1750.yaml b/Do=
-cumentation/devicetree/bindings/iio/light/bh1750.yaml
-> index 1cc60d7ecfa0..1a88b3c253d5 100644
-> --- a/Documentation/devicetree/bindings/iio/light/bh1750.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/bh1750.yaml
-> @@ -28,6 +28,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/iio/light/isl29018.yaml b/=
-Documentation/devicetree/bindings/iio/light/isl29018.yaml
-> index cbb00be8f359..0ea278b07d1c 100644
-> --- a/Documentation/devicetree/bindings/iio/light/isl29018.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/isl29018.yaml
-> @@ -38,6 +38,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/light/noa1305.yaml b/D=
-ocumentation/devicetree/bindings/iio/light/noa1305.yaml
-> index 17e7f140b69b..fe7bfe1adbda 100644
-> --- a/Documentation/devicetree/bindings/iio/light/noa1305.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/noa1305.yaml
-> @@ -29,6 +29,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/iio/light/stk33xx.yaml b/D=
-ocumentation/devicetree/bindings/iio/light/stk33xx.yaml
-> index aae8a6d627c9..f92bf7b2b7f0 100644
-> --- a/Documentation/devicetree/bindings/iio/light/stk33xx.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/stk33xx.yaml
-> @@ -30,6 +30,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/light/tsl2583.yaml b/D=
-ocumentation/devicetree/bindings/iio/light/tsl2583.yaml
-> index e86ef64ecf03..7b92ba8cbb9f 100644
-> --- a/Documentation/devicetree/bindings/iio/light/tsl2583.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/tsl2583.yaml
-> @@ -32,6 +32,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/iio/light/tsl2772.yaml b/D=
-ocumentation/devicetree/bindings/iio/light/tsl2772.yaml
-> index ed2c3d5eadf5..e8f7d1ada57b 100644
-> --- a/Documentation/devicetree/bindings/iio/light/tsl2772.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/tsl2772.yaml
-> @@ -62,6 +62,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/light/veml6030.yaml b/=
-Documentation/devicetree/bindings/iio/light/veml6030.yaml
-> index 0ff9b11f9d18..fb19a2d7a849 100644
-> --- a/Documentation/devicetree/bindings/iio/light/veml6030.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/veml6030.yaml
-> @@ -45,6 +45,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/asc,dlhl60d.y=
-aml b/Documentation/devicetree/bindings/iio/pressure/asc,dlhl60d.yaml
-> index 9f5ca9c42025..64c18f1693f0 100644
-> --- a/Documentation/devicetree/bindings/iio/pressure/asc,dlhl60d.yaml
-> +++ b/Documentation/devicetree/bindings/iio/pressure/asc,dlhl60d.yaml
-> @@ -33,6 +33,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml b=
-/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> index 5d4aec0e0d24..49257f9251e8 100644
-> --- a/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> +++ b/Documentation/devicetree/bindings/iio/pressure/bmp085.yaml
-> @@ -52,6 +52,8 @@ required:
->    - vddd-supply
->    - vdda-supply
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/devantech-sr=
-f04.yaml b/Documentation/devicetree/bindings/iio/proximity/devantech-srf04.=
-yaml
-> index 4e80ea7c1475..7ac5eb7560e0 100644
-> --- a/Documentation/devicetree/bindings/iio/proximity/devantech-srf04.yam=
-l
-> +++ b/Documentation/devicetree/bindings/iio/proximity/devantech-srf04.yam=
-l
-> @@ -56,6 +56,8 @@ required:
->    - trig-gpios
->    - echo-gpios
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/proximity/parallax-pin=
-g.yaml b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
-> index a079c9921af6..ada55f186f3c 100644
-> --- a/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
-> +++ b/Documentation/devicetree/bindings/iio/proximity/parallax-ping.yaml
-> @@ -42,6 +42,8 @@ required:
->    - compatible
->    - ping-gpios
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/adi,ltc298=
-3.yaml b/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> index d4922f9f0376..acc030c1b20e 100644
-> --- a/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> +++ b/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> @@ -398,6 +398,8 @@ required:
->    - reg
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml b=
-/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> index b98bf9363c8f..2384465eaa19 100644
-> --- a/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> +++ b/Documentation/devicetree/bindings/input/gpio-vibrator.yaml
-> @@ -26,6 +26,8 @@ required:
->    - compatible
->    - enable-gpios
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/input/max77650-onkey.yaml =
-b/Documentation/devicetree/bindings/input/max77650-onkey.yaml
-> index 2f2e0b6ebbbd..3a2ad6ec64db 100644
-> --- a/Documentation/devicetree/bindings/input/max77650-onkey.yaml
-> +++ b/Documentation/devicetree/bindings/input/max77650-onkey.yaml
-> @@ -33,3 +33,6 @@ properties:
->
->  required:
->    - compatible
-> +additionalProperties: false
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/intel=
-,ixp4xx-interrupt.yaml b/Documentation/devicetree/bindings/interrupt-contro=
-ller/intel,ixp4xx-interrupt.yaml
-> index 507c141ea760..ccc507f384d2 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx=
--interrupt.yaml
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/intel,ixp4xx=
--interrupt.yaml
-> @@ -44,6 +44,8 @@ required:
->    - interrupt-controller
->    - '#interrupt-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      intcon: interrupt-controller@c8003000 {
-> diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml =
-b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-> index 7cdd3aaa2ba4..0e33cd9e010e 100644
-> --- a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-> +++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-> @@ -80,6 +80,8 @@ required:
->    - clock-names
->    - "#iommu-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/exynos5250.h>
-> diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.yaml b/=
-Documentation/devicetree/bindings/leds/leds-max77650.yaml
-> index 8c43f1e1bf7d..c6f96cabd4d1 100644
-> --- a/Documentation/devicetree/bindings/leds/leds-max77650.yaml
-> +++ b/Documentation/devicetree/bindings/leds/leds-max77650.yaml
-> @@ -49,3 +49,6 @@ required:
->    - compatible
->    - "#address-cells"
->    - "#size-cells"
-> +additionalProperties: false
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yam=
-l b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-> index b50f4bcc98f1..90edf9d33b33 100644
-> --- a/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-> +++ b/Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
-> @@ -50,3 +50,6 @@ patternProperties:
->
->  required:
->    - compatible
-> +additionalProperties: false
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb=
--mhu.yaml b/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mh=
-u.yaml
-> index 319280563648..aa2b3bf56b57 100644
-> --- a/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.ya=
-ml
-> @@ -41,6 +41,8 @@ required:
->    - interrupts
->    - "#mbox-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      mailbox@c883c404 {
-> diff --git a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml=
- b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
-> index 335717e15970..37d77e065491 100644
-> --- a/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
-> +++ b/Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml
-> @@ -124,6 +124,8 @@ required:
->    - amlogic,ao-sysctrl
->    - amlogic,canvas
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      vdec: video-decoder@c8820000 {
-> diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-=
-cec.yaml b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.=
-yaml
-> index e8ce37fcbfec..95ffa8bc0533 100644
-> --- a/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yam=
-l
-> +++ b/Documentation/devicetree/bindings/media/amlogic,meson-gx-ao-cec.yam=
-l
-> @@ -82,6 +82,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      cec_AO: cec@100 {
-> diff --git a/Documentation/devicetree/bindings/media/renesas,ceu.yaml b/D=
-ocumentation/devicetree/bindings/media/renesas,ceu.yaml
-> index 8e9251a0f9ef..fcb5f13704a5 100644
-> --- a/Documentation/devicetree/bindings/media/renesas,ceu.yaml
-> +++ b/Documentation/devicetree/bindings/media/renesas,ceu.yaml
-> @@ -59,6 +59,8 @@ required:
->    - interrupts
->    - port
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/arm-gic.h>
-> diff --git a/Documentation/devicetree/bindings/mfd/max77650.yaml b/Docume=
-ntation/devicetree/bindings/mfd/max77650.yaml
-> index 480385789394..b0a0f0d3d9d4 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77650.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/max77650.yaml
-> @@ -73,6 +73,8 @@ required:
->    - gpio-controller
->    - "#gpio-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml=
- b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> index 38dc4f8b0ceb..3a6a1a26e2b3 100644
-> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> @@ -77,6 +77,8 @@ required:
->    - gpio-controller
->    - "#gpio-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/misc/intel,ixp4xx-ahb-queu=
-e-manager.yaml b/Documentation/devicetree/bindings/misc/intel,ixp4xx-ahb-qu=
-eue-manager.yaml
-> index 0ea21a6f70b4..38ab0499102d 100644
-> --- a/Documentation/devicetree/bindings/misc/intel,ixp4xx-ahb-queue-manag=
-er.yaml
-> +++ b/Documentation/devicetree/bindings/misc/intel,ixp4xx-ahb-queue-manag=
-er.yaml
-> @@ -38,6 +38,8 @@ required:
->    - reg
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml b/=
-Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> index b9e9696da5be..976f139bb66e 100644
-> --- a/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> +++ b/Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml
-> @@ -167,6 +167,8 @@ required:
->    - '#address-cells'
->    - '#size-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-us=
-b3-phy.yaml b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb=
-3-phy.yaml
-> index e5922b427342..c03b83103e87 100644
-> --- a/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.=
-yaml
-> +++ b/Documentation/devicetree/bindings/phy/allwinner,sun50i-h6-usb3-phy.=
-yaml
-> @@ -34,6 +34,8 @@ required:
->    - resets
->    - "#phy-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/sun50i-h6-ccu.h>
-> diff --git a/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb=
-3-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-=
-usb3-pcie-phy.yaml
-> index 346f9c35427c..453c083cf44c 100644
-> --- a/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb3-pcie-=
-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/amlogic,meson-g12a-usb3-pcie-=
-phy.yaml
-> @@ -44,6 +44,8 @@ required:
->    - reset-names
->    - "#phy-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      phy@46000 {
-> diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yam=
-l b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> index 0ccee64c6962..9a346d6290d9 100644
-> --- a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-> @@ -40,6 +40,8 @@ required:
->    - reg
->    - clocks
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      sysconf: chiptop@e0200000 {
-> diff --git a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.=
-yaml b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-> index 5ab436189f3b..00609ace677c 100644
-> --- a/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-> +++ b/Documentation/devicetree/bindings/phy/marvell,mmp3-hsic-phy.yaml
-> @@ -31,6 +31,8 @@ required:
->    - reset-gpios
->    - "#phy-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/gpio/gpio.h>
-> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml =
-b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> index 452cee1aed32..fd1982c56104 100644
-> --- a/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> +++ b/Documentation/devicetree/bindings/phy/ti,phy-j721e-wiz.yaml
-> @@ -159,6 +159,8 @@ required:
->    - "#reset-cells"
->    - ranges
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/soc/ti,sci_pm_domain.h>
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pin=
-ctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctr=
-l.yaml
-> index 135c7dfbc180..7651a675ab2d 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2400-pinctrl.ya=
-ml
-> @@ -57,6 +57,8 @@ patternProperties:
->  required:
->    - compatible
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      syscon: scu@1e6e2000 {
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pin=
-ctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctr=
-l.yaml
-> index 824f7fd1d51b..36feaf5e2dff 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2500-pinctrl.ya=
-ml
-> @@ -70,6 +70,8 @@ required:
->    - compatible
->    - aspeed,external-nodes
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      apb {
-> diff --git a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pin=
-ctrl.yaml b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctr=
-l.yaml
-> index ac8d1c30a8ed..45af29bc3202 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.ya=
-ml
-> +++ b/Documentation/devicetree/bindings/pinctrl/aspeed,ast2600-pinctrl.ya=
-ml
-> @@ -92,6 +92,8 @@ patternProperties:
->  required:
->    - compatible
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      syscon: scu@1e6e2000 {
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.y=
-aml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> index ef4de32cb17c..46a0478cb924 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> @@ -194,6 +194,8 @@ required:
->    - ranges
->    - pins-are-numbered
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/pinctrl/stm32-pinfunc.h>
-> diff --git a/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwr=
-c.yaml b/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
-> index d3098c924b25..6c6079fe1351 100644
-> --- a/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
-> +++ b/Documentation/devicetree/bindings/power/amlogic,meson-ee-pwrc.yaml
-> @@ -68,6 +68,8 @@ required:
->    - "#power-domain-cells"
->    - amlogic,ao-sysctrl
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      pwrc: power-controller {
-> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-powerof=
-f.yaml b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
-> index 520e07e6f21b..3412fe7e1e80 100644
-> --- a/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/syscon-poweroff.yaml
-> @@ -41,6 +41,8 @@ required:
->    - regmap
->    - offset
->
-> +additionalProperties: false
-> +
->  allOf:
->    - if:
->        not:
-> diff --git a/Documentation/devicetree/bindings/power/reset/syscon-reboot.=
-yaml b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-> index d38006b1f1f4..b80772cb9f06 100644
-> --- a/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-> +++ b/Documentation/devicetree/bindings/power/reset/syscon-reboot.yaml
-> @@ -41,6 +41,8 @@ required:
->    - regmap
->    - offset
->
-> +additionalProperties: false
-> +
->  allOf:
->    - if:
->        not:
-> diff --git a/Documentation/devicetree/bindings/power/supply/max77650-char=
-ger.yaml b/Documentation/devicetree/bindings/power/supply/max77650-charger.=
-yaml
-> index deef010ec535..62eeddb65aed 100644
-> --- a/Documentation/devicetree/bindings/power/supply/max77650-charger.yam=
-l
-> +++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.yam=
-l
-> @@ -32,3 +32,6 @@ properties:
->
->  required:
->    - compatible
-> +additionalProperties: false
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml b/Docum=
-entation/devicetree/bindings/ptp/ptp-idtcm.yaml
-> index 9e21b83d717e..239b49fad805 100644
-> --- a/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
-> +++ b/Documentation/devicetree/bindings/ptp/ptp-idtcm.yaml
-> @@ -55,6 +55,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c@1 {
-> diff --git a/Documentation/devicetree/bindings/regulator/max77650-regulat=
-or.yaml b/Documentation/devicetree/bindings/regulator/max77650-regulator.ya=
-ml
-> index 50690487edc8..ce0a4021ae7f 100644
-> --- a/Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
-> +++ b/Documentation/devicetree/bindings/regulator/max77650-regulator.yaml
-> @@ -29,3 +29,6 @@ patternProperties:
->
->  required:
->    - compatible
-> +additionalProperties: false
-> +
-> +...
-> diff --git a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.=
-yaml b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> index b3f57d81f007..92922d3afd14 100644
-> --- a/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> +++ b/Documentation/devicetree/bindings/reset/amlogic,meson-reset.yaml
-> @@ -29,6 +29,8 @@ required:
->    - reg
->    - "#reset-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      reset-controller@c884404 {
-> diff --git a/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sa=
-ta-rescal.yaml b/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-=
-sata-rescal.yaml
-> index 411bd76f1b64..512a33bdb208 100644
-> --- a/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-resc=
-al.yaml
-> +++ b/Documentation/devicetree/bindings/reset/brcm,bcm7216-pcie-sata-resc=
-al.yaml
-> @@ -28,6 +28,8 @@ required:
->    - reg
->    - "#reset-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      reset-controller@8b2c800 {
-> diff --git a/Documentation/devicetree/bindings/rng/amlogic,meson-rng.yaml=
- b/Documentation/devicetree/bindings/rng/amlogic,meson-rng.yaml
-> index a9ff3cb35c5e..444be32a8a29 100644
-> --- a/Documentation/devicetree/bindings/rng/amlogic,meson-rng.yaml
-> +++ b/Documentation/devicetree/bindings/rng/amlogic,meson-rng.yaml
-> @@ -29,6 +29,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      rng@c8834000 {
-> diff --git a/Documentation/devicetree/bindings/rng/brcm,bcm2835.yaml b/Do=
-cumentation/devicetree/bindings/rng/brcm,bcm2835.yaml
-> index 42d9a38e4e1a..89ab67f20a7f 100644
-> --- a/Documentation/devicetree/bindings/rng/brcm,bcm2835.yaml
-> +++ b/Documentation/devicetree/bindings/rng/brcm,bcm2835.yaml
-> @@ -35,6 +35,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      rng {
-> diff --git a/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml b/=
-Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-> index dcff573cbdb1..b95cb017f469 100644
-> --- a/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/renesas,sh-rtc.yaml
-> @@ -51,6 +51,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/r7s72100-clock.h>
-> diff --git a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml b/Do=
-cumentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> index 0a54296d7218..48c6cafca90c 100644
-> --- a/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> +++ b/Documentation/devicetree/bindings/rtc/st,stm32-rtc.yaml
-> @@ -111,6 +111,8 @@ required:
->    - clocks
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/mfd/stm32f4-rcc.h>
-> diff --git a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.=
-yaml b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> index 214fe8beddc3..d4178ab0d675 100644
-> --- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> +++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.yaml
-> @@ -62,6 +62,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      serial@84c0 {
-> diff --git a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas=
-.yaml b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-> index f548594d020b..cb008fd188d8 100644
-> --- a/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-> +++ b/Documentation/devicetree/bindings/soc/amlogic/amlogic,canvas.yaml
-> @@ -40,6 +40,8 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      canvas: video-lut@48 {
-> diff --git a/Documentation/devicetree/bindings/sound/adi,adau7118.yaml b/=
-Documentation/devicetree/bindings/sound/adi,adau7118.yaml
-> index 75e0cbe6be70..76ee695097bf 100644
-> --- a/Documentation/devicetree/bindings/sound/adi,adau7118.yaml
-> +++ b/Documentation/devicetree/bindings/sound/adi,adau7118.yaml
-> @@ -59,6 +59,8 @@ required:
->    - iovdd-supply
->    - dvdd-supply
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      i2c {
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml b/=
-Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-> index 38eaf0c028f9..a495d5fc0d23 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd934x.yaml
-> @@ -139,6 +139,8 @@ required:
->    - "#address-cells"
->    - "#size-cells"
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      codec@1,0{
-> diff --git a/Documentation/devicetree/bindings/sound/renesas,fsi.yaml b/D=
-ocumentation/devicetree/bindings/sound/renesas,fsi.yaml
-> index 140a37fc3c0b..d1b65554e681 100644
-> --- a/Documentation/devicetree/bindings/sound/renesas,fsi.yaml
-> +++ b/Documentation/devicetree/bindings/sound/renesas,fsi.yaml
-> @@ -63,6 +63,8 @@ required:
->    - reg
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      sh_fsi2: sound@ec230000 {
-> diff --git a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml =
-b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-> index c6b244352d05..8ff2d39e7d17 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung,odroid.yaml
-> @@ -69,6 +69,8 @@ required:
->    - cpu
->    - codec
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      sound {
-> diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml b/D=
-ocumentation/devicetree/bindings/sound/samsung-i2s.yaml
-> index 53e3bad4178c..b2ad093d94df 100644
-> --- a/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.yaml
-> @@ -115,6 +115,8 @@ required:
->    - clocks
->    - clock-names
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/clock/exynos-audss-clk.h>
-> diff --git a/Documentation/devicetree/bindings/sram/qcom,ocmem.yaml b/Doc=
-umentation/devicetree/bindings/sram/qcom,ocmem.yaml
-> index 469cec133647..930188bc5e6a 100644
-> --- a/Documentation/devicetree/bindings/sram/qcom,ocmem.yaml
-> +++ b/Documentation/devicetree/bindings/sram/qcom,ocmem.yaml
-> @@ -56,6 +56,8 @@ required:
->    - '#size-cells'
->    - ranges
->
-> +additionalProperties: false
-> +
->  patternProperties:
->    "-sram@[0-9a-f]+$":
->      type: object
-> diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.ya=
-ml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> index 93fe7b10a82e..e43ec50bda37 100644
-> --- a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> +++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> @@ -42,6 +42,8 @@ required:
->    - clocks
->    - amlogic,ao-secure
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->          cpu_temp: temperature-sensor@ff634800 {
-> diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml =
-b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> index 6deead07728e..fa255672e8e5 100644
-> --- a/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/arm,arch_timer.yaml
-> @@ -82,6 +82,8 @@ properties:
->  required:
->    - compatible
->
-> +additionalProperties: false
-> +
->  oneOf:
->    - required:
->        - interrupts
-> diff --git a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.=
-yaml b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
-> index f7ef6646bade..582bbef62b95 100644
-> --- a/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
-> +++ b/Documentation/devicetree/bindings/timer/arm,arch_timer_mmio.yaml
-> @@ -95,6 +95,8 @@ required:
->    - '#address-cells'
->    - '#size-cells'
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      timer@f0000000 {
-> diff --git a/Documentation/devicetree/bindings/timer/arm,global_timer.yam=
-l b/Documentation/devicetree/bindings/timer/arm,global_timer.yaml
-> index 21c24a8e28fd..4956c8f409d2 100644
-> --- a/Documentation/devicetree/bindings/timer/arm,global_timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/arm,global_timer.yaml
-> @@ -35,6 +35,8 @@ required:
->    - reg
->    - clocks
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      timer@2c000600 {
-> diff --git a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.y=
-aml b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> index 2807225db902..1a721d8af67a 100644
-> --- a/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/intel,ixp4xx-timer.yaml
-> @@ -32,6 +32,8 @@ required:
->    - reg
->    - interrupts
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> diff --git a/Documentation/devicetree/bindings/timer/samsung,exynos4210-m=
-ct.yaml b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.ya=
-ml
-> index 273e359854dd..37bd01a62c52 100644
-> --- a/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> +++ b/Documentation/devicetree/bindings/timer/samsung,exynos4210-mct.yaml
-> @@ -52,6 +52,8 @@ required:
->    - interrupts
->    - reg
->
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      // In this example, the IP contains two local timers, using separate
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Doc=
-umentation/devicetree/bindings/trivial-devices.yaml
-> index 51d1f6e43c02..bcae5f9b1d7f 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -369,4 +369,6 @@ required:
->    - compatible
->    - reg
->
-> +additionalProperties: false
-> +
->  ...
-> --
-> 2.20.1
->
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 (compile@Red) (gcc version 8.3.0 (Gentoo 8.3.0-r1 p1.1)) #4 SMP PREEMPT Thu Mar 26 10:56:25 CET 2020
+[    0.000000] CPU: ARMv7 Processor [413fc0f3] revision 3 (ARMv7), cr=10c5387d
+[    0.000000] CPU: div instructions available: patching division code
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, PIPT instruction cache
+[    0.000000] OF: fdt: Machine model: NVIDIA Tegra124 Jetson TK1
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] cma: Reserved 64 MiB at 0xfbc00000
+[    0.000000] percpu: Embedded 20 pages/cpu s50072 r8192 d23656 u81920
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 522496
+[    0.000000] Kernel command line: console=ttyS0,115200 root=/dev/ram0
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes, linear)
+[    0.000000] mem auto-init: stack:off, heap alloc:off, heap free:off
+[    0.000000] Memory: 1972328K/2096128K available (10240K kernel code, 983K rwdata, 4172K rodata, 1024K init, 286K bss, 58264K reserved, 65536K cma-reserved, 1244160K highmem)
+[    0.000000] rcu: Preemptible hierarchical RCU implementation.
+[    0.000000] rcu: 	RCU event tracing is enabled.
+[    0.000000] 	Trampoline variant of Tasks RCU enabled.
+[    0.000000] rcu: RCU calculated value of scheduler-enlistment delay is 10 jiffies.
+[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+[    0.000000] /interrupt-controller@60004000: 160 interrupts forwarded to /interrupt-controller@50041000
+[    0.000000] random: get_random_bytes called from start_kernel+0x320/0x4c4 with crng_init=0
+[    0.000000] Tegra clk 127: register failed with -17
+[    0.000009] sched_clock: 32 bits at 1000kHz, resolution 1000ns, wraps every 2147483647500ns
+[    0.000030] clocksource: timer_us: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275 ns
+[    0.000045] Switching to timer-based delay loop, resolution 1000ns
+[    0.000728] clocksource: tegra_suspend_timer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.001319] arch_timer: cp15 timer(s) running at 12.00MHz (virt).
+[    0.001339] clocksource: arch_sys_counter: mask: 0xffffffffffffff max_cycles: 0x2c47f4ee7, max_idle_ns: 440795202497 ns
+[    0.001359] sched_clock: 56 bits at 12MHz, resolution 83ns, wraps every 4398046511096ns
+[    0.001373] Switching to timer-based delay loop, resolution 83ns
+[    0.002050] Console: colour dummy device 80x30
+[    0.002089] Calibrating delay loop (skipped), value calculated using timer frequency.. 24.00 BogoMIPS (lpj=120000)
+[    0.002106] pid_max: default: 32768 minimum: 301
+[    0.002459] Mount-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.002476] Mountpoint-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.003481] CPU: Testing write buffer coherency: ok
+[    0.003529] CPU0: Spectre v2: using ICIALLU workaround
+[    0.003779] /cpus/cpu@0 missing clock-frequency property
+[    0.003813] /cpus/cpu@1 missing clock-frequency property
+[    0.003846] /cpus/cpu@2 missing clock-frequency property
+[    0.003880] /cpus/cpu@3 missing clock-frequency property
+[    0.003894] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.004624] Setting up static identity map for 0x80100000 - 0x801000ac
+[    0.004765] rcu: Hierarchical SRCU implementation.
+[    0.005629] Tegra Revision: A01 SKU: 129 CPU Process: 1 SoC Process: 1
+[    0.006754] smp: Bringing up secondary CPUs ...
+[    0.007985] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.007994] CPU1: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.012496] CPU2: thread -1, cpu 2, socket 0, mpidr 80000002
+[    0.012504] CPU2: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.022513] CPU3: thread -1, cpu 3, socket 0, mpidr 80000003
+[    0.022522] CPU3: Spectre v2: firmware did not set auxiliary control register IBE bit, system vulnerable
+[    0.031339] smp: Brought up 1 node, 4 CPUs
+[    0.031352] SMP: Total of 4 processors activated (96.00 BogoMIPS).
+[    0.031362] CPU: All CPU(s) started in SVC mode.
+[    0.032210] devtmpfs: initialized
+[    0.052953] VFP support v0.3: implementor 41 architecture 4 part 30 variant f rev 0
+[    0.053437] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 19112604462750000 ns
+[    0.053459] futex hash table entries: 1024 (order: 4, 65536 bytes, linear)
+[    0.054801] pinctrl core: initialized pinctrl subsystem
+[    0.056228] NET: Registered protocol family 16
+[    0.057789] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.059463] cpuidle: using governor menu
+[    0.142794] No ATAGs?
+[    0.142931] hw-breakpoint: found 5 (+1 reserved) breakpoint and 4 watchpoint registers.
+[    0.142948] hw-breakpoint: maximum watchpoint size is 8 bytes.
+[    0.154204] platform 50000000.host1x: Adding to iommu group 0
+[    0.154294] platform 54200000.dc: Adding to iommu group 1
+[    0.154359] platform 54240000.dc: Adding to iommu group 1
+[    0.154435] platform 54340000.vic: Adding to iommu group 1
+[    0.154495] platform 57000000.gpu: Adding to iommu group 1
+[    0.206365] +5V_SYS: supplied by +VDD_MUX
+[    0.207925] +3.3V_SYS: supplied by +VDD_MUX
+[    0.211111] +USB0_VBUS_SW: supplied by +5V_SYS
+[    0.212750] +5V_USB_HS: supplied by +5V_SYS
+[    0.214472] +5V_HDMI_CON: supplied by +5V_SYS
+[    0.216052] +5V_SATA: supplied by +5V_SYS
+[    0.217598] reg-fixed-voltage regulators:regulator@14: nonexclusive access to GPIO for regulators:regulator@14
+[    0.217631] +12V_SATA: supplied by +VDD_MUX
+[    0.220159] iommu: Default domain type: Translated 
+[    0.221420] vgaarb: loaded
+[    0.222530] SCSI subsystem initialized
+[    0.223287] usbcore: registered new interface driver usbfs
+[    0.223372] usbcore: registered new interface driver hub
+[    0.223499] usbcore: registered new device driver usb
+[    0.223753] videodev: Linux video capture interface: v2.00
+[    0.223843] pps_core: LinuxPPS API ver. 1 registered
+[    0.223853] pps_core: Software ver. 5.3.6 - Copyright 2005-2007 Rodolfo Giometti <giometti@linux.it>
+[    0.223903] PTP clock support registered
+[    0.225716] Advanced Linux Sound Architecture Driver Initialized.
+[    0.229333] clocksource: Switched to clocksource arch_sys_counter
+[    1.027370] NET: Registered protocol family 2
+[    1.028345] tcp_listen_portaddr_hash hash table entries: 512 (order: 1, 12288 bytes, linear)
+[    1.028404] TCP established hash table entries: 8192 (order: 3, 32768 bytes, linear)
+[    1.028510] TCP bind hash table entries: 8192 (order: 5, 163840 bytes, linear)
+[    1.028735] TCP: Hash tables configured (established 8192 bind 8192)
+[    1.029273] UDP hash table entries: 512 (order: 2, 24576 bytes, linear)
+[    1.029372] UDP-Lite hash table entries: 512 (order: 2, 24576 bytes, linear)
+[    1.029676] NET: Registered protocol family 1
+[    1.030543] RPC: Registered named UNIX socket transport module.
+[    1.030556] RPC: Registered udp transport module.
+[    1.030566] RPC: Registered tcp transport module.
+[    1.030575] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    1.032334] PCI: CLS 0 bytes, default 64
+[    1.033073] Trying to unpack rootfs image as initramfs...
+[    2.767171] Freeing initrd memory: 22848K
+[    2.768142] hw perfevents: enabled with armv7_cortex_a15 PMU driver, 7 counters available
+[    2.783926] Initialise system trusted keyrings
+[    2.784179] workingset: timestamp_bits=30 max_order=19 bucket_order=0
+[    2.785269] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    2.785982] NFS: Registering the id_resolver key type
+[    2.786011] Key type id_resolver registered
+[    2.786022] Key type id_legacy registered
+[    2.826372] Key type asymmetric registered
+[    2.826387] Asymmetric key parser 'x509' registered
+[    2.826532] bounce: pool size: 64 pages
+[    2.826606] io scheduler mq-deadline registered
+[    2.826617] io scheduler kyber registered
+[    2.869168] tegra-apbdma 60020000.dma: Tegra20 APB DMA driver registered 32 channels
+[    2.871898] tegra-pmc 7000e400.pmc: emergency thermal reset enabled
+[    2.874090] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+[    2.881471] printk: console [ttyS0] disabled
+[    2.881529] 70006300.serial: ttyS0 at MMIO 0x70006300 (irq = 78, base_baud = 25500000) is a Tegra
+[    3.636824] printk: console [ttyS0] enabled
+[    3.643635] 70006000.serial: ttyTHS1 at MMIO 0x70006000 (irq = 76, base_baud = 0) is a TEGRA_UART
+[    3.654055] 70006040.serial: ttyTHS2 at MMIO 0x70006040 (irq = 77, base_baud = 0) is a TEGRA_UART
+[    3.734807] brd: module loaded
+[    3.769212] loop: module loaded
+[    3.779490] libphy: Fixed MDIO Bus: probed
+[    3.784165] CAN device driver interface
+[    3.787997] igb: Intel(R) Gigabit Ethernet Network Driver - version 5.6.0-k
+[    3.795002] igb: Copyright (c) 2007-2014 Intel Corporation.
+[    3.800740] pegasus: v0.9.3 (2013/04/25), Pegasus/Pegasus II USB Ethernet driver
+[    3.808186] usbcore: registered new interface driver pegasus
+[    3.813934] usbcore: registered new interface driver asix
+[    3.819418] usbcore: registered new interface driver ax88179_178a
+[    3.825561] usbcore: registered new interface driver cdc_ether
+[    3.831502] usbcore: registered new interface driver smsc75xx
+[    3.837314] usbcore: registered new interface driver smsc95xx
+[    3.843133] usbcore: registered new interface driver net1080
+[    3.848854] usbcore: registered new interface driver cdc_subset
+[    3.854844] usbcore: registered new interface driver zaurus
+[    3.860509] usbcore: registered new interface driver cdc_ncm
+[    3.866589] tegra-phy 7d000000.usb-phy: supply vbus not found, using dummy regulator
+[    3.874672] tegra-phy 7d004000.usb-phy: supply vbus not found, using dummy regulator
+[    3.882984] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[    3.889524] ehci-pci: EHCI PCI platform driver
+[    3.894037] tegra-ehci: Tegra EHCI driver
+[    3.902429] tegra-ehci 7d004000.usb: EHCI Host Controller
+[    3.907858] tegra-ehci 7d004000.usb: new USB bus registered, assigned bus number 1
+[    3.915874] tegra-ehci 7d004000.usb: irq 98, io mem 0x7d004000
+[    3.949360] tegra-ehci 7d004000.usb: USB 2.0 started, EHCI 1.10
+[    3.958474] hub 1-0:1.0: USB hub found
+[    3.962291] hub 1-0:1.0: 1 port detected
+[    3.972167] tegra-ehci 7d008000.usb: EHCI Host Controller
+[    3.977583] tegra-ehci 7d008000.usb: new USB bus registered, assigned bus number 2
+[    3.985416] tegra-ehci 7d008000.usb: irq 99, io mem 0x7d008000
+[    4.019366] tegra-ehci 7d008000.usb: USB 2.0 started, EHCI 1.10
+[    4.028423] hub 2-0:1.0: USB hub found
+[    4.032241] hub 2-0:1.0: 1 port detected
+[    4.040495] usbcore: registered new interface driver cdc_acm
+[    4.046148] cdc_acm: USB Abstract Control Model driver for USB modems and ISDN adapters
+[    4.054230] usbcore: registered new interface driver cdc_wdm
+[    4.060013] usbcore: registered new interface driver usb-storage
+[    4.078692] i2c /dev entries driver
+[    4.089060] at24 0-0056: supply vcc not found, using dummy regulator
+[    4.097396] at24 0-0056: 256 byte 24c02 EEPROM, writable, 8 bytes/write
+[    4.117688] as3722 4-0040: AS3722 with revision 0x1 found
+[    4.130938] as3722-sd2: supplied by +5V_SYS
+[    4.135641] as3722-sd3: supplied by +5V_SYS
+[    4.140240] +1.35V_LP0(sd3): Bringing 0uV into 1350000-1350000uV
+[    4.146661] as3722-sd4: supplied by +5V_SYS
+[    4.151388] as3722-sd5: supplied by +5V_SYS
+[    4.157591] as3722-ldo0: supplied by +1.35V_LP0(sd2)
+[    4.163786] +1.8V_RUN_CAM: Bringing 0uV into 1800000-1800000uV
+[    4.170094] as3722-ldo2: supplied by +1.8V_VDDIO
+[    4.176066] as3722-ldo3: supplied by +3.3V_SYS
+[    4.180608] +1.05V_LP0_VDD_RTC: Bringing 1100000uV into 1000000-1000000uV
+[    4.188437] as3722-ldo4: supplied by +3.3V_SYS
+[    4.193168] +2.8V_RUN_CAM: Bringing 0uV into 2800000-2800000uV
+[    4.199479] as3722-ldo5: supplied by +1.8V_VDDIO
+[    4.204340] +1.2V_RUN_CAM_FRONT: Bringing 0uV into 1200000-1200000uV
+[    4.211331] +VDDIO_SDMMC3: bypassed regulator has no supply!
+[    4.216984] +VDDIO_SDMMC3: failed to get the current voltage(-517)
+[    4.223188] as3722-regulator as3722-regulator: regulator 13 register failed -517
+[    4.236456] as3722-rtc as3722-rtc: registered as rtc0
+[    4.241887] as3722-rtc as3722-rtc: setting system clock to 2000-01-01T00:01:28 UTC (946684888)
+[    4.250515] as3722-rtc as3722-rtc: RTC interrupt 377
+[    4.258635] usbcore: registered new interface driver uvcvideo
+[    4.264435] USB Video Class driver (1.1.1)
+[    4.268525] gspca_main: v2.14.0 registered
+[    4.273540] lm90 0-004c: supply vcc not found, using dummy regulator
+[    4.283455] sdhci: Secure Digital Host Controller Interface driver
+[    4.289653] sdhci: Copyright(c) Pierre Ossman
+[    4.294003] sdhci-pltfm: SDHCI platform and OF driver helper
+[    4.300064] sdhci-tegra 700b0400.sdhci: Got CD GPIO
+[    4.304971] sdhci-tegra 700b0400.sdhci: Got WP GPIO
+[    4.309900] mmc0: Missing autocal timeout 3v3-pad drvs
+[    4.315031] mmc0: Missing autocal timeout 3v3-pad drvs
+[    4.320179] mmc0: Missing autocal timeout 1v8-pad drvs
+[    4.325309] mmc0: Missing autocal timeout 1v8-pad drvs
+[    4.338814] mmc0: Missing autocal timeout 3v3-pad drvs
+[    4.343972] mmc0: Missing autocal timeout 3v3-pad drvs
+[    4.349103] mmc0: Missing autocal timeout 1v8-pad drvs
+[    4.354250] mmc0: Missing autocal timeout 1v8-pad drvs
+[    4.367583] mmc0: Invalid maximum block size, assuming 512 bytes
+[    4.405147] mmc0: SDHCI controller on 700b0600.sdhci [700b0600.sdhci] using ADMA 64-bit
+[    4.414361] usbcore: registered new interface driver usbhid
+[    4.419985] usbhid: USB HID core driver
+[    4.434262] input: tegra-hda HDMI/DP,pcm=3 as /devices/soc0/70030000.hda/sound/card0/input0
+[    4.489657] mmc0: new high speed MMC card at address 0001
+[    4.496619] mmcblk0: mmc0:0001 SEM16G 14.7 GiB 
+[    4.502328] mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
+[    4.509415] mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
+[    4.515631] mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB, chardev (247:0)
+[    4.842518] random: fast init done
+[    4.857450] tegra30-i2s 70301100.i2s: DMA channels sourced from device 70300000.ahub
+[    4.865785] ------------[ cut here ]------------
+[    4.870411] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:954 clk_core_disable+0xf4/0x300
+[    4.878402] pmc_clk_out_1 already disabled
+[    4.882491] Modules linked in:
+[    4.885550] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    4.894668] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    4.900946] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    4.908686] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    4.915908] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    4.922779] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    4.930256] [<c0123bac>] (warn_slowpath_fmt) from [<c04e5e44>] (clk_core_disable+0xf4/0x300)
+[    4.938688] [<c04e5e44>] (clk_core_disable) from [<c04e6068>] (clk_core_disable_lock+0x18/0x24)
+[    4.947384] [<c04e6068>] (clk_core_disable_lock) from [<c0837f5c>] (tegra_asoc_utils_set_rate+0xa4/0x2b0)
+[    4.956945] [<c0837f5c>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    4.966506] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    4.975545] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    4.984151] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    4.992411] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    5.000671] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    5.009536] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    5.018055] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    5.026228] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    5.034401] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    5.042486] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    5.050659] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    5.059354] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    5.067525] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    5.075083] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    5.080129] 1fa0:                                     00000000 00000000 00000000 00000000
+[    5.088297] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    5.096464] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    5.103074] ---[ end trace 94155ca1eb3f2299 ]---
+[    5.107724] ------------[ cut here ]------------
+[    5.112362] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:813 clk_core_unprepare+0x10c/0x2b0
+[    5.120627] pmc_clk_out_1 already unprepared
+[    5.124888] Modules linked in:
+[    5.127945] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    5.138449] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    5.144718] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    5.152455] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    5.159672] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    5.166542] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    5.174020] [<c0123bac>] (warn_slowpath_fmt) from [<c04e9650>] (clk_core_unprepare+0x10c/0x2b0)
+[    5.182711] [<c04e9650>] (clk_core_unprepare) from [<c04e9818>] (clk_unprepare+0x24/0x2c)
+[    5.190884] [<c04e9818>] (clk_unprepare) from [<c0837f64>] (tegra_asoc_utils_set_rate+0xac/0x2b0)
+[    5.199751] [<c0837f64>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    5.209309] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    5.218345] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    5.226949] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    5.235208] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    5.243467] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    5.252333] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    5.260852] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    5.269021] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    5.277193] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    5.285279] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    5.293449] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    5.302141] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    5.310311] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    5.317868] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    5.322916] 1fa0:                                     00000000 00000000 00000000 00000000
+[    5.331084] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    5.339251] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    5.345926] ---[ end trace 94155ca1eb3f229a ]---
+[    5.350552] ------------[ cut here ]------------
+[    5.355169] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:954 clk_core_disable+0xf4/0x300
+[    5.363158] pll_a_out0 already disabled
+[    5.366987] Modules linked in:
+[    5.370042] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    5.380545] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    5.386813] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    5.394551] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    5.401768] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    5.408638] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    5.416113] [<c0123bac>] (warn_slowpath_fmt) from [<c04e5e44>] (clk_core_disable+0xf4/0x300)
+[    5.424542] [<c04e5e44>] (clk_core_disable) from [<c04e6068>] (clk_core_disable_lock+0x18/0x24)
+[    5.433235] [<c04e6068>] (clk_core_disable_lock) from [<c0837f70>] (tegra_asoc_utils_set_rate+0xb8/0x2b0)
+[    5.442796] [<c0837f70>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    5.452354] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    5.461390] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    5.469994] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    5.478253] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    5.486511] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    5.495378] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    5.503898] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    5.512069] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    5.520241] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    5.528326] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    5.536496] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    5.545187] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    5.553357] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    5.560915] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    5.565961] 1fa0:                                     00000000 00000000 00000000 00000000
+[    5.574129] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    5.582295] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    5.588899] ---[ end trace 94155ca1eb3f229b ]---
+[    5.593538] ------------[ cut here ]------------
+[    5.598156] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:813 clk_core_unprepare+0x10c/0x2b0
+[    5.606422] pll_a_out0 already unprepared
+[    5.610438] Modules linked in:
+[    5.613493] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    5.623996] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    5.630264] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    5.638001] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    5.645217] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    5.652087] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    5.659566] [<c0123bac>] (warn_slowpath_fmt) from [<c04e9650>] (clk_core_unprepare+0x10c/0x2b0)
+[    5.668257] [<c04e9650>] (clk_core_unprepare) from [<c04e9818>] (clk_unprepare+0x24/0x2c)
+[    5.676431] [<c04e9818>] (clk_unprepare) from [<c0837f78>] (tegra_asoc_utils_set_rate+0xc0/0x2b0)
+[    5.685298] [<c0837f78>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    5.694857] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    5.703892] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    5.712497] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    5.720756] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    5.729015] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    5.737881] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    5.746399] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    5.754571] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    5.762743] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    5.770828] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    5.778999] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    5.787691] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    5.795862] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    5.803418] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    5.808464] 1fa0:                                     00000000 00000000 00000000 00000000
+[    5.816632] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    5.824799] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    5.831425] ---[ end trace 94155ca1eb3f229c ]---
+[    5.836035] ------------[ cut here ]------------
+[    5.840651] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:954 clk_core_disable+0xf4/0x300
+[    5.848639] pll_a already disabled
+[    5.852033] Modules linked in:
+[    5.855087] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    5.865590] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    5.871856] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    5.879593] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    5.886809] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    5.893679] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    5.901156] [<c0123bac>] (warn_slowpath_fmt) from [<c04e5e44>] (clk_core_disable+0xf4/0x300)
+[    5.909584] [<c04e5e44>] (clk_core_disable) from [<c04e6068>] (clk_core_disable_lock+0x18/0x24)
+[    5.918277] [<c04e6068>] (clk_core_disable_lock) from [<c0837f84>] (tegra_asoc_utils_set_rate+0xcc/0x2b0)
+[    5.927837] [<c0837f84>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    5.937395] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    5.946430] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    5.955036] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    5.963295] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    5.971555] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    5.980421] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    5.988939] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    5.997110] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    6.005283] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    6.013367] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    6.021538] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    6.030230] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    6.038400] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    6.045956] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    6.051001] 1fa0:                                     00000000 00000000 00000000 00000000
+[    6.059169] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    6.067335] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    6.073939] ---[ end trace 94155ca1eb3f229d ]---
+[    6.078577] ------------[ cut here ]------------
+[    6.083213] WARNING: CPU: 0 PID: 1 at drivers/clk/clk.c:813 clk_core_unprepare+0x10c/0x2b0
+[    6.091985] pll_a already unprepared
+[    6.095556] Modules linked in:
+[    6.098611] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         5.6.0-rc7-next-20200326-00073-ge3021b91dbe2 #4
+[    6.109113] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
+[    6.115382] [<c0111d20>] (unwind_backtrace) from [<c010bc74>] (show_stack+0x10/0x14)
+[    6.123118] [<c010bc74>] (show_stack) from [<c0a99ddc>] (dump_stack+0xc0/0xd4)
+[    6.130335] [<c0a99ddc>] (dump_stack) from [<c01237b8>] (__warn+0xd0/0xf8)
+[    6.137205] [<c01237b8>] (__warn) from [<c0123bac>] (warn_slowpath_fmt+0x98/0xbc)
+[    6.144683] [<c0123bac>] (warn_slowpath_fmt) from [<c04e9650>] (clk_core_unprepare+0x10c/0x2b0)
+[    6.153375] [<c04e9650>] (clk_core_unprepare) from [<c04e9818>] (clk_unprepare+0x24/0x2c)
+[    6.161550] [<c04e9818>] (clk_unprepare) from [<c0837f8c>] (tegra_asoc_utils_set_rate+0xd4/0x2b0)
+[    6.170417] [<c0837f8c>] (tegra_asoc_utils_set_rate) from [<c08381fc>] (tegra_asoc_utils_init+0x94/0x180)
+[    6.179975] [<c08381fc>] (tegra_asoc_utils_init) from [<c083b2c0>] (tegra_rt5640_probe+0x108/0x178)
+[    6.189011] [<c083b2c0>] (tegra_rt5640_probe) from [<c05de864>] (platform_drv_probe+0x48/0x98)
+[    6.197616] [<c05de864>] (platform_drv_probe) from [<c05dc774>] (really_probe+0x1e0/0x344)
+[    6.205875] [<c05dc774>] (really_probe) from [<c05dca14>] (driver_probe_device+0x60/0x16c)
+[    6.214135] [<c05dca14>] (driver_probe_device) from [<c05dccc0>] (device_driver_attach+0x58/0x60)
+[    6.223001] [<c05dccc0>] (device_driver_attach) from [<c05dcd20>] (__driver_attach+0x58/0xcc)
+[    6.231519] [<c05dcd20>] (__driver_attach) from [<c05dab90>] (bus_for_each_dev+0x78/0xb8)
+[    6.239690] [<c05dab90>] (bus_for_each_dev) from [<c05dbb1c>] (bus_add_driver+0xf8/0x1dc)
+[    6.247863] [<c05dbb1c>] (bus_add_driver) from [<c05dd890>] (driver_register+0x74/0x108)
+[    6.255947] [<c05dd890>] (driver_register) from [<c010206c>] (do_one_initcall+0x50/0x2b0)
+[    6.264117] [<c010206c>] (do_one_initcall) from [<c1000fa4>] (kernel_init_freeable+0x188/0x200)
+[    6.272811] [<c1000fa4>] (kernel_init_freeable) from [<c0ab19d8>] (kernel_init+0x8/0x110)
+[    6.280981] [<c0ab19d8>] (kernel_init) from [<c01001a8>] (ret_from_fork+0x14/0x2c)
+[    6.288538] Exception stack(0xee8d1fb0 to 0xee8d1ff8)
+[    6.293583] 1fa0:                                     00000000 00000000 00000000 00000000
+[    6.301752] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+[    6.309918] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+[    6.316548] ---[ end trace 94155ca1eb3f229e ]---
+[    6.329641] tegra-snd-rt5640 sound: rt5640-aif1 <-> 70301100.i2s mapping ok
+[    6.340720] input: NVIDIA Tegra Jetson TK1 Headphones as /devices/soc0/sound/sound/card1/input1
+[    6.351932] NET: Registered protocol family 10
+[    6.357741] Segment Routing with IPv6
+[    6.361579] mip6: Mobile IPv6
+[    6.364545] sit: IPv6, IPv4 and MPLS over IPv4 tunneling driver
+[    6.372221] NET: Registered protocol family 17
+[    6.376687] NET: Registered protocol family 15
+[    6.381175] can: controller area network core (rev 20170425 abi 9)
+[    6.387543] NET: Registered protocol family 29
+[    6.392036] can: raw protocol (rev 20170425)
+[    6.396301] can: broadcast manager protocol (rev 20170425 t)
+[    6.401984] can: netlink gateway (rev 20190810) max_hops=1
+[    6.407748] Key type dns_resolver registered
+[    6.413087] Registering SWP/SWPB emulation handler
+[    6.418146] Loading compiled-in X.509 certificates
+[    6.458497] +3.3V_RUN: supplied by +3.3V_SYS
+[    6.464078] +3.3V_LP0: supplied by +3.3V_SYS
+[    6.468822] +3.3V_AVDD_HDMI_AP_GATED: supplied by +3.3V_RUN
+[    6.475276] tegra-xusb-padctl 7009f000.padctl: failed to get regulators: -517
+[    6.482887] tegra-pcie 1003000.pcie: host bridge /pcie@1003000 ranges:
+[    6.489459] tegra-pcie 1003000.pcie:      MEM 0x0001000000..0x0001001fff -> 0x0001000000
+[    6.497556] tegra-pcie 1003000.pcie:       IO 0x0012000000..0x001200ffff -> 0x0000000000
+[    6.505674] tegra-pcie 1003000.pcie:      MEM 0x0013000000..0x001fffffff -> 0x0013000000
+[    6.513790] tegra-pcie 1003000.pcie:      MEM 0x0020000000..0x003fffffff -> 0x0020000000
+[    6.522074] tegra-pcie 1003000.pcie: 2x1, 1x1 configuration
+[    6.529486] tegra-ahci 70027000.sata: supply ahci not found, using dummy regulator
+[    6.537159] tegra-ahci 70027000.sata: supply phy not found, using dummy regulator
+[    6.545607] as3722-regulator as3722-regulator: DMA mask not set
+[    6.553831] as3722-sd2: supplied by +5V_SYS
+[    6.558376] as3722-sd3: supplied by +5V_SYS
+[    6.563045] as3722-sd4: supplied by +5V_SYS
+[    6.567595] as3722-sd5: supplied by +5V_SYS
+[    6.573459] as3722-ldo0: supplied by +1.35V_LP0(sd2)
+[    6.578979] as3722-ldo1: supplied by +3.3V_RUN
+[    6.583833] as3722-ldo2: supplied by +1.8V_VDDIO
+[    6.589518] as3722-ldo3: supplied by +3.3V_SYS
+[    6.594938] as3722-ldo4: supplied by +3.3V_SYS
+[    6.599781] as3722-ldo5: supplied by +1.8V_VDDIO
+[    6.604756] as3722-ldo6: supplied by +3.3V_RUN
+[    6.609667] as3722-ldo7: supplied by +1.8V_VDDIO
+[    6.615110] +1.05V_RUN_CAM_REAR: Bringing 0uV into 1050000-1050000uV
+[    6.622271] as3722-ldo9: supplied by +5V_SYS
+[    6.627323] +3.3V_RUN_TOUCH: Bringing 0uV into 2800000-2800000uV
+[    6.634559] as3722-ldo10: supplied by +5V_SYS
+[    6.639706] +2.8V_RUN_CAM_AF: Bringing 0uV into 2800000-2800000uV
+[    6.646573] as3722-ldo11: supplied by +3.3V_RUN
+[    6.651928] +1.8V_RUN_VPP_FUSE: Bringing 0uV into 1800000-1800000uV
+[    6.659784] sdhci-tegra 700b0400.sdhci: Got CD GPIO
+[    6.664695] sdhci-tegra 700b0400.sdhci: Got WP GPIO
+[    6.669643] mmc1: Missing autocal timeout 3v3-pad drvs
+[    6.674775] mmc1: Missing autocal timeout 3v3-pad drvs
+[    6.679922] mmc1: Missing autocal timeout 1v8-pad drvs
+[    6.685053] mmc1: Missing autocal timeout 1v8-pad drvs
+[    6.698706] mmc1: Invalid maximum block size, assuming 512 bytes
+[    6.740348] mmc1: SDHCI controller on 700b0400.sdhci [700b0400.sdhci] using ADMA 64-bit
+[    6.750650]  usb2-1: supply vbus not found, using dummy regulator
+[    6.757114]  usb3-0: supply vbus not found, using dummy regulator
+[    6.764033] tegra-pcie 1003000.pcie: host bridge /pcie@1003000 ranges:
+[    6.770865] tegra-pcie 1003000.pcie:      MEM 0x0001000000..0x0001001fff -> 0x0001000000
+[    6.779031] tegra-pcie 1003000.pcie:       IO 0x0012000000..0x001200ffff -> 0x0000000000
+[    6.787197] tegra-pcie 1003000.pcie:      MEM 0x0013000000..0x001fffffff -> 0x0013000000
+[    6.795347] tegra-pcie 1003000.pcie:      MEM 0x0020000000..0x003fffffff -> 0x0020000000
+[    6.803702] tegra-pcie 1003000.pcie: 2x1, 1x1 configuration
+[    6.811601] tegra-pcie 1003000.pcie: probing port 0, using 2 lanes
+[    6.819521] tegra-pcie 1003000.pcie: probing port 1, using 1 lanes
+[    6.916426] mmc1: new high speed SDHC card at address 1388
+[    6.923995] mmcblk1: mmc1:1388 NCard 7.32 GiB 
+[    6.932600]  mmcblk1: p1 p2 p3 < p5 >
+[    8.039456] tegra-pcie 1003000.pcie: link 0 down, ignoring
+[    8.049460] tegra-pcie 1003000.pcie: PCI host bridge to bus 0000:00
+[    8.055729] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    8.061233] pci_bus 0000:00: root bus resource [mem 0x01000000-0x01001fff]
+[    8.068109] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    8.074302] pci_bus 0000:00: root bus resource [mem 0x13000000-0x1fffffff]
+[    8.081185] pci_bus 0000:00: root bus resource [mem 0x20000000-0x3fffffff pref]
+[    8.088881] pci 0000:00:02.0: [10de:0e13] type 01 class 0x060400
+[    8.094927] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x4 may corrupt adjacent RW1C bits
+[    8.104589] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x4 may corrupt adjacent RW1C bits
+[    8.114286] pci 0000:00:02.0: enabling Extended Tags
+[    8.119250] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x88 may corrupt adjacent RW1C bits
+[    8.129003] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x3e may corrupt adjacent RW1C bits
+[    8.138772] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x52 may corrupt adjacent RW1C bits
+[    8.148561] pci 0000:00:02.0: PME# supported from D0 D1 D2 D3hot D3cold
+[    8.155188] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x4c may corrupt adjacent RW1C bits
+[    8.169512] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x3e may corrupt adjacent RW1C bits
+[    8.179245] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x4 may corrupt adjacent RW1C bits
+[    8.188907] pci_bus 0000:00: 1-byte config write to 0000:00:02.0 offset 0xc may corrupt adjacent RW1C bits
+[    8.198562] PCI: bus0: Fast back to back transfers disabled
+[    8.204148] pci 0000:00:02.0: bridge configuration invalid ([bus 00-00]), reconfiguring
+[    8.212160] pci_bus 0000:00: 2-byte config write to 0000:00:02.0 offset 0x3e may corrupt adjacent RW1C bits
+[    8.222146] pci 0000:01:00.0: [10ec:8168] type 00 class 0x020000
+[    8.228195] pci 0000:01:00.0: reg 0x10: [io  0x0000-0x00ff]
+[    8.233819] pci 0000:01:00.0: reg 0x18: [mem 0x00000000-0x00000fff 64bit]
+[    8.240638] pci 0000:01:00.0: reg 0x20: [mem 0x00000000-0x00003fff 64bit pref]
+[    8.248031] pci 0000:01:00.0: supports D1 D2
+[    8.252317] pci 0000:01:00.0: PME# supported from D0 D1 D2 D3hot D3cold
+[    8.284058] PCI: bus1: Fast back to back transfers disabled
+[    8.289665] pci_bus 0000:01: busn_res: [bus 01-ff] end is updated to 01
+[    8.296301] pci 0000:00:02.0: BAR 8: assigned [mem 0x13000000-0x130fffff]
+[    8.303105] pci 0000:00:02.0: BAR 9: assigned [mem 0x20000000-0x200fffff 64bit pref]
+[    8.310856] pci 0000:00:02.0: BAR 7: assigned [io  0x1000-0x1fff]
+[    8.316955] pci 0000:01:00.0: BAR 4: assigned [mem 0x20000000-0x20003fff 64bit pref]
+[    8.324727] pci 0000:01:00.0: BAR 2: assigned [mem 0x13000000-0x13000fff 64bit]
+[    8.332066] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
+[    8.338161] pci 0000:00:02.0: PCI bridge to [bus 01]
+[    8.343139] pci 0000:00:02.0:   bridge window [io  0x1000-0x1fff]
+[    8.349232] pci 0000:00:02.0:   bridge window [mem 0x13000000-0x130fffff]
+[    8.356029] pci 0000:00:02.0:   bridge window [mem 0x20000000-0x200fffff 64bit pref]
+[    8.363812] pci 0000:00:02.0: nv_msi_ht_cap_quirk didn't locate host bridge
+[    8.370925] pcieport 0000:00:02.0: enabling device (0140 -> 0143)
+[    8.377212] pcieport 0000:00:02.0: PME: Signaling with IRQ 25
+[    8.383738] pcieport 0000:00:02.0: AER: enabled with IRQ 25
+[    8.390057] r8169 0000:01:00.0: enabling device (0140 -> 0143)
+[    8.427492] libphy: r8169: probed
+[    8.431973] r8169 0000:01:00.0 eth0: RTL8168g/8111g, 00:04:4b:2f:50:23, XID 4c0, IRQ 393
+[    8.440122] r8169 0000:01:00.0 eth0: jumbo features [frames: 9200 bytes, tx checksumming: ko]
+[    8.459061] +1.05V_RUN_AVDD_HDMI_PLL: supplied by +1.05V_RUN
+[    8.467881] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    8.474698] drm drm: [drm] Cannot find any crtc or sizes
+[    8.480606] drm drm: [drm] Cannot find any crtc or sizes
+[    8.487085] [drm] Initialized tegra 0.0.0 20120330 for drm on minor 0
+[    8.494155] tegra-ahci 70027000.sata: supply ahci not found, using dummy regulator
+[    8.501937] tegra-ahci 70027000.sata: supply phy not found, using dummy regulator
+[    8.509692] tegra-ahci 70027000.sata: supply target not found, using dummy regulator
+[    8.559410] phy phy-sata.6: phy poweron failed --> -110
+[    8.564759] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+[    8.572789] tegra-ahci: probe of 70027000.sata failed with error -110
+[    8.581468] phy phy-usb2.0: no port found for USB2 lane 0
+[    8.586866] phy phy-usb2.0: phy poweron failed --> -19
+[    8.592062] tegra-xusb 70090000.usb: failed to enable PHYs: -19
+[    8.599590] cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 696000 KHz
+[    8.606922] cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed to: 714000 KHz
+[    8.615832] input: gpio-keys as /devices/soc0/gpio-keys/input/input2
+[    8.622774] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    8.638560] cfg80211: Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    8.647744] ALSA device list:
+[    8.650758]   #0: tegra-hda at 0x70038000 irq 88
+[    8.655361]   #1: NVIDIA Tegra Jetson TK1
+[    8.660056] Freeing unused kernel memory: 1024K
+
+for the value of pll_e:
+working 5.1.21
+pll_e                          4        4        0   100000000          0     0  50000
+non working 5.6
+pll_e                          2        2        0   100000000          0     0  50000
