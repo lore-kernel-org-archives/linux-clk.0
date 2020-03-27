@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE609C2D0E8
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 19:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8565FC43331
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 19:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99B072073B
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 19:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D331206F1
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 19:48:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Jpnh8bGV"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="MAsDt7l2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbgC0Tsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Mar 2020 15:48:36 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:32046 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727352AbgC0Tsg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Mar 2020 15:48:36 -0400
+        id S1727732AbgC0Tsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Mar 2020 15:48:47 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:30934 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727701AbgC0Tsn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Mar 2020 15:48:43 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585338515; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1585338523; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=cBzmOpIXo+p+MJmJiQwsp1Cu75W4RQYYRS/tHQwBdbc=; b=Jpnh8bGVu4XNBn5FRsakn4ckcMFoWLGzS/nuwfuNqzsKTCu0hXlK7ZpNOV/BBoe8BGYvTDXW
- QNFb8XBu7wktXunDg00/ldP4VjoteNhlG8ul8QGT8AP5AdfmtuM3IRIdtSxaecyCDpC+2xAN
- OUq21vTJhKOrTh5bIDy8CiAoMuc=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ bh=882+yZT0YykGOV7uLr1o6RvdKnz+5INgLfgvg8X1Jr8=; b=MAsDt7l2wyD3YTLYxx9TtQ1PuWqK7ow0PeE48KgVNaWlB6gZ8A2+qsYoOPVRr2xi/m2vdEep
+ KrKg31mmy+Z3DRgwSTy1Ma1Hkvlf+DmwePIWmFJDBtXwkTUMkpDYRlZshwTMWggC02EJu49T
+ 6biPi3LilUFsNgn9S/STc71yo9M=
+X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e7e5889.7f3acda30b58-smtp-out-n03;
- Fri, 27 Mar 2020 19:48:25 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e7e5892.7fec77ce9810-smtp-out-n01;
+ Fri, 27 Mar 2020 19:48:34 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6A745C43636; Fri, 27 Mar 2020 19:48:25 +0000 (UTC)
+        id 95441C433BA; Fri, 27 Mar 2020 19:48:34 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC2B6C433F2;
-        Fri, 27 Mar 2020 19:48:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC2B6C433F2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1E611C433D2;
+        Fri, 27 Mar 2020 19:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E611C433D2
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -53,9 +53,9 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 1/4] clk: qcom: gdsc: Add support to enable retention of GSDCR
-Date:   Sat, 28 Mar 2020 01:18:02 +0530
-Message-Id: <1585338485-31820-2-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v1 3/4] clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
+Date:   Sat, 28 Mar 2020 01:18:04 +0530
+Message-Id: <1585338485-31820-4-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1585338485-31820-1-git-send-email-tdas@codeaurora.org>
 References: <1585338485-31820-1-git-send-email-tdas@codeaurora.org>
@@ -64,65 +64,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the RETAIN_FF_ENABLE feature which enables the
-usage of retention registers. These registers maintain their
-state after disabling and re-enabling a GDSC.
+Add the GCC lpass clock which is required to access the LPASS core
+clocks.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 ---
- drivers/clk/qcom/gdsc.c | 12 ++++++++++++
- drivers/clk/qcom/gdsc.h |  1 +
- 2 files changed, 13 insertions(+)
+ drivers/clk/qcom/gcc-sc7180.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-index a250f59..cfe908f 100644
---- a/drivers/clk/qcom/gdsc.c
-+++ b/drivers/clk/qcom/gdsc.c
-@@ -28,6 +28,7 @@
- /* CFG_GDSCR */
- #define GDSC_POWER_UP_COMPLETE		BIT(16)
- #define GDSC_POWER_DOWN_COMPLETE	BIT(15)
-+#define GDSC_RETAIN_FF_ENABLE		BIT(11)
- #define CFG_GDSCR_OFFSET		0x4
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index 6a51b5b..d970647 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -2230,6 +2230,19 @@ static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
+ 	},
+ };
 
- /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
-@@ -202,6 +203,14 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
- 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
- 			   GMEM_RESET_MASK, 0);
- }
++static struct clk_branch gcc_lpass_cfg_noc_sway_clk = {
++	.halt_reg = 0x47018,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0x47018,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_cfg_noc_sway_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
 +
-+static inline void gdsc_retain_ff_on(struct gdsc *sc)
-+{
-+	u32 mask = RETAIN_FF_ENABLE;
-+
-+	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
-+}
-+
- static int gdsc_enable(struct generic_pm_domain *domain)
- {
- 	struct gdsc *sc = domain_to_gdsc(domain);
-@@ -254,6 +263,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
- 		udelay(1);
- 	}
+ static struct gdsc ufs_phy_gdsc = {
+ 	.gdscr = 0x77004,
+ 	.pd = {
+@@ -2406,6 +2419,7 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+ 	[GCC_MSS_NAV_AXI_CLK] = &gcc_mss_nav_axi_clk.clkr,
+ 	[GCC_MSS_Q6_MEMNOC_AXI_CLK] = &gcc_mss_q6_memnoc_axi_clk.clkr,
+ 	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
++	[GCC_LPASS_CFG_NOC_SWAY_CLK] = &gcc_lpass_cfg_noc_sway_clk.clkr,
+ };
 
-+	if (sc->flags & RETAIN_FF_ENABLE)
-+		gdsc_retain_ff_on(sc);
-+
- 	return 0;
- }
-
-diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-index 64cdc8c..8604d44 100644
---- a/drivers/clk/qcom/gdsc.h
-+++ b/drivers/clk/qcom/gdsc.h
-@@ -49,6 +49,7 @@ struct gdsc {
- #define AON_RESET	BIT(4)
- #define POLL_CFG_GDSCR	BIT(5)
- #define ALWAYS_ON	BIT(6)
-+#define RETAIN_FF_ENABLE	BIT(7)
- 	struct reset_controller_dev	*rcdev;
- 	unsigned int			*resets;
- 	unsigned int			reset_count;
+ static const struct qcom_reset_map gcc_sc7180_resets[] = {
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
