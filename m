@@ -2,117 +2,209 @@ Return-Path: <SRS0=mPu9=5M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF989C43331
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 06:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28D6AC2D0EE
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 08:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA34B20716
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 06:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006A92073B
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 08:31:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Re9nh7mY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbgC0GUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Mar 2020 02:20:13 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:57206 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726215AbgC0GUN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Mar 2020 02:20:13 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: myjosserand)
-        with ESMTPSA id 8D9F6290B99
-Subject: Re: [PATCH 1/2] ARM: Rockchip: Handle rk3288/rk3288w revision
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        id S1726758AbgC0IbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Mar 2020 04:31:11 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35763 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725946AbgC0IbL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Mar 2020 04:31:11 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d5so10386609wrn.2
+        for <linux-clk@vger.kernel.org>; Fri, 27 Mar 2020 01:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=7qMxcUuECzy6UW7EY22DAqOxFR3J+yYatNeUV89Utj0=;
+        b=Re9nh7mY7E2XnsoW7UqnE/ZbPpu/RAKnPlkcHVa+kmfTNDW7Q8B+tS5p7UHi+5cQzr
+         BoVPWRVPSDacWjh56gaT78/RFhIEV+yvCIrnphWAOihwXMbTJ3wEJabJ9p/kvd359VZW
+         DHiulHb5HIhXw2KzkMMZ/m6cgb0duHKD+TrVUQa4iTBBFWqefNuYnKCdHNTIOS8awbKW
+         ElPVI6HDUuw7o2+SI6O/SoB/QrV4uSimO/Lht54lGbHc5r0Jr0thhgokUFlgR3yS/VBV
+         LJQVP8XMaQrc+enAiFb6qurB13hn5fbTUYDDiEfWMdTFHH579thoAdWbrBFW7mHhF5DR
+         nkaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=7qMxcUuECzy6UW7EY22DAqOxFR3J+yYatNeUV89Utj0=;
+        b=Lr4Aw94Ec1/v+ari1wPzI71gJvU9ZIvy5YcX78BvPJIX5Eh0ZfVFzP8epluqVPVFTT
+         yoicZjmixXmPFu51tAxDscMe/g3gvYDerreHEgbNdzkzssmlKaChsoJipTkZqygJuopx
+         9e0K30d3RIAw2gM0VMk+OQaWO7AXq02RnosDoxT4VKP2xAyBY3ht+iuJPLWhumw6vm0k
+         8twHTTKSGBKrIW4UYwVP98C7fuJcDkFiV65U0hFKNFYnzu17JwDGUdqSnLORizUpb5TJ
+         BEZw00qLhlq3scrvcYvB3poq9VprH+Ezelx+Su6dOXtbUqhMITbpJdmqpY+wTGFq9vcn
+         hx1g==
+X-Gm-Message-State: ANhLgQ2xjXUT6r3D4S+5LYJv7thQkvQnYn6AKTvr1og5zdubT80ruaRJ
+        6QAQzOe18GkjgBRlz4ZZ4zDEmA==
+X-Google-Smtp-Source: ADFU+vsnkuuXK5PCN3CGLGb7k6BWdwMd/4riN9BWBlsjaqEq6fO9cPeQcvyc9vM82ENDj4wZ1oJO+A==
+X-Received: by 2002:a5d:5141:: with SMTP id u1mr12997224wrt.146.1585297868413;
+        Fri, 27 Mar 2020 01:31:08 -0700 (PDT)
+Received: from dell ([95.149.164.95])
+        by smtp.gmail.com with ESMTPSA id q3sm7373231wru.87.2020.03.27.01.31.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Mar 2020 01:31:07 -0700 (PDT)
+Date:   Fri, 27 Mar 2020 08:31:57 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-References: <20200302155703.278421-1-mylene.josserand@collabora.com>
- <20200302155703.278421-2-mylene.josserand@collabora.com>
- <2221545.2vEflg7qi2@diego>
- <CAMuHMdXJQqaCcMko9GUAeUiYQzmy3vnX42yVQNPzhj5ijtFuYA@mail.gmail.com>
- <5802ec08-5e6a-8547-ee8e-dde630791235@collabora.com>
- <CAMuHMdVKFT7eNK0RUi3miJ08O9FMAVs5Qz=YmbHH5-9UUzLNPw@mail.gmail.com>
-From:   Mylene Josserand <mylene.josserand@collabora.com>
-Message-ID: <5efe50ad-a88e-bc8c-de08-3be355ad9e53@collabora.com>
-Date:   Fri, 27 Mar 2020 07:20:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties:
+ false'
+Message-ID: <20200327083157.GI603801@dell>
+References: <20200325220542.19189-1-robh@kernel.org>
+ <20200325220542.19189-5-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdVKFT7eNK0RUi3miJ08O9FMAVs5Qz=YmbHH5-9UUzLNPw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200325220542.19189-5-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+On Wed, 25 Mar 2020, Rob Herring wrote:
 
-On 3/26/20 4:31 PM, Geert Uytterhoeven wrote:
-> Hi Mylene,
+> Setting 'additionalProperties: false' is frequently omitted, but is
+> important in order to check that there aren't extra undocumented
+> properties in a binding.
 > 
-> On Thu, Mar 26, 2020 at 2:50 PM Mylene Josserand
-> <mylene.josserand@collabora.com> wrote:
->> On 3/6/20 11:45 AM, Geert Uytterhoeven wrote:
->>> On Wed, Mar 4, 2020 at 12:00 PM Heiko Stübner <heiko@sntech.de> wrote:
->>>> Am Montag, 2. März 2020, 16:57:02 CET schrieb Mylène Josserand:
->>>>> Determine which revision of rk3288 by checking the HDMI version.
->>>>> According to the Rockchip BSP kernel, on rk3288w, the HDMI
->>>>> revision equals 0x1A which is not the case for the rk3288 [1].
->>>>>
->>>>> As these SOC have some differences, the new function
->>>>> 'soc_is_rk3288w' will help us to know on which revision
->>>>> we are.
->>>>
->>>> what happened to just having a different compatible in the dts?
->>>> Aka doing a
->>>>
->>>> rk3288w.dtsi with
->>>>
->>>> #include "rk3288.dtsi"
->>>>
->>>> &cru {
->>>>           compatible = "rockchip,rk3288w-cru";
->>>> }
->>>>
->>>> I somehow don't expect boards to just switch between soc variants
->>>> on the fly.
->>>>
->>>> Also, doing things in mach-rockchip is not very future-proof:
->>>>
->>>> (1) having random soc-specific APIs spanning the kernel feels wrong,
->>>>       especially as at some point it might not be contained to our own special
->>>>       drivers like the cru. I cannot really see people being enthusiastic if
->>>>       something like this would be needed in say the core Analogix-DP bridge ;-)
->>>
->>> Indeed.  You're better of registering an soc_device_attribute using
->>> soc_device_register(), after which any driver can use soc_device_match()
->>> to differentiate based on the SoC revision.
->>
->> Thank you for this suggestion. The issue is that clocks are registered
->> at an early stage of the boot so using initcalls is too late for the
->> clock differentiation :(
+> Ideally, we'd just add this automatically and make this the default, but
+> there's some cases where it doesn't work. For example, if a common
+> schema is referenced, then properties in the common schema aren't part
+> of what's considered for 'additionalProperties'. Also, sometimes there
+> are bus specific properties such as 'spi-max-frequency' that go into
+> bus child nodes, but aren't defined in the child node's schema.
 > 
-> IC, rk388 is still using CLK_OF_DECLARE().
-> What about converting it to a platform driver, registered from e.g.
-> subsys_initcall()?
-> If you need some clocks early (e.g. for timers), you can do split
-> registration, with the early part still using CLK_OF_DECLARE().
-> That should work, assumed the timer clocks don't need differentiation.
+> So let's stick with the json-schema defined default and add
+> 'additionalProperties: false' where needed. This will be a continual
+> review comment and game of wack-a-mole.
 > 
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  .../devicetree/bindings/arm/altera/socfpga-clk-manager.yaml    | 2 ++
+>  .../bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml       | 2 ++
+>  Documentation/devicetree/bindings/arm/msm/qcom,llcc.yaml       | 2 ++
+>  Documentation/devicetree/bindings/arm/renesas,prr.yaml         | 2 ++
+>  .../devicetree/bindings/arm/samsung/exynos-chipid.yaml         | 2 ++
+>  Documentation/devicetree/bindings/arm/samsung/pmu.yaml         | 2 ++
+>  .../bindings/arm/samsung/samsung-secure-firmware.yaml          | 2 ++
+>  .../devicetree/bindings/arm/stm32/st,stm32-syscon.yaml         | 2 ++
+>  Documentation/devicetree/bindings/clock/fsl,plldig.yaml        | 2 ++
+>  Documentation/devicetree/bindings/clock/imx8mn-clock.yaml      | 2 ++
+>  Documentation/devicetree/bindings/clock/imx8mp-clock.yaml      | 2 ++
+>  Documentation/devicetree/bindings/clock/milbeaut-clock.yaml    | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml  | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml  | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml  | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml  | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml   | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml   | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml   | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,gcc.yaml          | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,mmcc.yaml         | 2 ++
+>  .../devicetree/bindings/clock/qcom,msm8998-gpucc.yaml          | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml       | 2 ++
+>  .../devicetree/bindings/clock/qcom,sc7180-dispcc.yaml          | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml | 2 ++
+>  .../devicetree/bindings/clock/qcom,sc7180-videocc.yaml         | 2 ++
+>  .../devicetree/bindings/clock/qcom,sdm845-dispcc.yaml          | 2 ++
+>  Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml | 2 ++
+>  .../devicetree/bindings/clock/qcom,sdm845-videocc.yaml         | 2 ++
+>  .../devicetree/bindings/display/amlogic,meson-vpu.yaml         | 2 ++
+>  .../devicetree/bindings/dma/sifive,fu540-c000-pdma.yaml        | 2 ++
+>  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml             | 2 ++
+>  Documentation/devicetree/bindings/eeprom/at24.yaml             | 2 ++
+>  .../firmware/intel,ixp4xx-network-processing-engine.yaml       | 3 +++
+>  .../devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml          | 2 ++
+>  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
+>  Documentation/devicetree/bindings/gpio/xylon,logicvc-gpio.yaml | 2 ++
+>  Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml    | 2 ++
+>  Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml    | 2 ++
+>  Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml     | 2 ++
+>  Documentation/devicetree/bindings/gpu/samsung-rotator.yaml     | 2 ++
+>  Documentation/devicetree/bindings/hwmon/adi,adm1177.yaml       | 2 ++
+>  Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml       | 2 ++
+>  Documentation/devicetree/bindings/hwmon/pmbus/ti,ucd90320.yaml | 2 ++
+>  Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml         | 2 ++
+>  Documentation/devicetree/bindings/iio/accel/bosch,bma400.yaml  | 2 ++
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7780.yaml      | 2 ++
+>  Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml      | 2 ++
+>  Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml    | 2 ++
+>  .../devicetree/bindings/iio/adc/microchip,mcp3911.yaml         | 2 ++
+>  .../devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml        | 2 ++
+>  .../devicetree/bindings/iio/chemical/plantower,pms7003.yaml    | 2 ++
+>  .../devicetree/bindings/iio/chemical/sensirion,sps30.yaml      | 2 ++
+>  Documentation/devicetree/bindings/iio/dac/lltc,ltc1660.yaml    | 2 ++
+>  Documentation/devicetree/bindings/iio/light/adux1020.yaml      | 2 ++
+>  Documentation/devicetree/bindings/iio/light/bh1750.yaml        | 2 ++
+>  Documentation/devicetree/bindings/iio/light/isl29018.yaml      | 2 ++
+>  Documentation/devicetree/bindings/iio/light/noa1305.yaml       | 2 ++
+>  Documentation/devicetree/bindings/iio/light/stk33xx.yaml       | 2 ++
+>  Documentation/devicetree/bindings/iio/light/tsl2583.yaml       | 2 ++
+>  Documentation/devicetree/bindings/iio/light/tsl2772.yaml       | 2 ++
+>  Documentation/devicetree/bindings/iio/light/veml6030.yaml      | 2 ++
+>  .../devicetree/bindings/iio/pressure/asc,dlhl60d.yaml          | 2 ++
+>  Documentation/devicetree/bindings/iio/pressure/bmp085.yaml     | 2 ++
+>  .../devicetree/bindings/iio/proximity/devantech-srf04.yaml     | 2 ++
+>  .../devicetree/bindings/iio/proximity/parallax-ping.yaml       | 2 ++
+>  .../devicetree/bindings/iio/temperature/adi,ltc2983.yaml       | 2 ++
+>  Documentation/devicetree/bindings/input/gpio-vibrator.yaml     | 2 ++
+>  Documentation/devicetree/bindings/input/max77650-onkey.yaml    | 3 +++
+>  .../bindings/interrupt-controller/intel,ixp4xx-interrupt.yaml  | 2 ++
+>  Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml    | 2 ++
+>  Documentation/devicetree/bindings/leds/leds-max77650.yaml      | 3 +++
+>  Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml  | 3 +++
+>  .../devicetree/bindings/mailbox/amlogic,meson-gxbb-mhu.yaml    | 2 ++
+>  Documentation/devicetree/bindings/media/amlogic,gx-vdec.yaml   | 2 ++
+>  .../devicetree/bindings/media/amlogic,meson-gx-ao-cec.yaml     | 2 ++
+>  Documentation/devicetree/bindings/media/renesas,ceu.yaml       | 2 ++
 
-oh, nice, thanks for the help!
-I will try that and send a new version if it is working fine.
+>  Documentation/devicetree/bindings/mfd/max77650.yaml            | 2 ++
+>  Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml   | 2 ++
 
-Best regards,
-Mylène
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
