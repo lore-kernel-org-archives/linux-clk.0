@@ -1,152 +1,97 @@
-Return-Path: <SRS0=mPu9=5M=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=U96O=5N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0FCC2D0EE
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 20:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDCEC2D0EC
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Mar 2020 18:50:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 895712073E
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Mar 2020 20:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260CD2074A
+	for <linux-clk@archiver.kernel.org>; Sat, 28 Mar 2020 18:50:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZ4gMSbs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbgC0UWO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Mar 2020 16:22:14 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:38568 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbgC0UWN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Mar 2020 16:22:13 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 14C2B804E5;
-        Fri, 27 Mar 2020 21:22:01 +0100 (CET)
-Date:   Fri, 27 Mar 2020 21:21:59 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-iio@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        Kevin Hilman <khilman@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-gpio@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-amlogic@lists.infradead.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>, netdev@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>, linux-media@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH 1/4] dt-bindings: iio/accel: Drop duplicate adi,
- adxl345/6 from trivial-devices.yaml
-Message-ID: <20200327202159.GA12749@ravnborg.org>
-References: <20200325220542.19189-1-robh@kernel.org>
- <20200325220542.19189-2-robh@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200325220542.19189-2-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=XpTUx2N9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=gAnH3GRIAAAA:8
-        a=VwQbUJbxAAAA:8 a=DN42nk9sAAAA:8 a=e5mUnYsNAAAA:8 a=KWDWuRJ9IF3UujpQpV0A:9
-        a=CjuIK1q_8ugA:10 a=oVHKYsEdi7-vN-J5QA_j:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=ee1JA_unvF1TMR62yWF-:22 a=Vxmtnl_E_bksehYqCbjh:22
+        id S1727199AbgC1SuT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 28 Mar 2020 14:50:19 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33663 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727144AbgC1SuT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Mar 2020 14:50:19 -0400
+Received: by mail-qt1-f194.google.com with SMTP id c14so11693108qtp.0;
+        Sat, 28 Mar 2020 11:50:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=oYwocgoq6qpXm64s+/hBCAU65wjBcJ1aR6NQoL8J8es=;
+        b=aZ4gMSbstNOrjAg0zQnPKVEmNM3bkh196iXVjD4xX1pjQOJUp+qyZ1KXaI8h7u3GLE
+         l+Ax8Rpy/IpjAvMQHtAeRR+3DIhPjfvrw7ripSCO3v6pI4jEkRevUaAZ7t8E11fILTCo
+         xMmNkFPHz4+kLaKYanpsvfh/CLs1wGpmU16kiKHprwmjqh0YOAbduneAwBUNjhJSHUFh
+         vXDSsBRMxAWZeK2bIPicIZAFR4ZfewYtTPt9p1vZkY+fBqF5cJP/ql/3TwU4J1ATrvBj
+         V/1Vrf//SAwGs5QoEVbfZ86gYRN3Xc4bASBwSRVvI2ieEJ7p/d4/VbEMJHV4tGeNxiDX
+         K7gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=oYwocgoq6qpXm64s+/hBCAU65wjBcJ1aR6NQoL8J8es=;
+        b=aYB6MbdryAO9lDKmmNMgv1YSmY7cpUonfe2R0ufBSWRU6qJOt8X9uIglDsFBxEfV8E
+         JvT6RKO4Bqe1VrI2rrXZQl2sy5R6vqqMyfPMyH5TnHgx/RjVO0p2T3GK3zSe6wFwlaiW
+         t8cHRDOUJIjX38/YWGWR5gwbQFLdE14Ecg/meCh/ConiBP0AE1YuMiRr04OoJRn+CcmT
+         VWCmPDfgFku9N2T7zhUr0rFVj0jJIaTjgd+LSCmne42yJ29Z+gYA6CJqHdilQYxlOkBc
+         bPh3cbHYU1SuUrZjAKQqqlaF+uwC8zH7RV75npFo9TqQiPnw8bHo0ODax1BAJUFBXhja
+         fKqg==
+X-Gm-Message-State: ANhLgQ0Djjx3dkHQpS4Z68w2KUx9a95eC7S4cT4wSW1Jjtyl6k3Pwhk0
+        VcleB/sjCLzCqGwo1zesKcI6NTc1/00=
+X-Google-Smtp-Source: ADFU+vs08RNWXBoXfG+YYCM3oqNKXcwjgcCPu9eafdq2sjdF0D6h4DNPnv9KOfPWrrz4sihL1ajRfQ==
+X-Received: by 2002:ac8:312e:: with SMTP id g43mr5241102qtb.360.1585421418495;
+        Sat, 28 Mar 2020 11:50:18 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14c:482:5bb::4])
+        by smtp.gmail.com with ESMTPSA id g29sm7051336qte.0.2020.03.28.11.50.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 28 Mar 2020 11:50:17 -0700 (PDT)
+From:   Fabio Estevam <festevam@gmail.com>
+To:     sboyd@kernel.org
+Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH] dt-bindings: clock: dac: syscon-icst: Remove unneeded unit name
+Date:   Sat, 28 Mar 2020 15:49:58 -0300
+Message-Id: <20200328184958.16134-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob.
+The following warnings are seen with 'make dt_binding_check':
 
-On Wed, Mar 25, 2020 at 04:05:38PM -0600, Rob Herring wrote:
-> The 'adi,adxl345' definition is a duplicate as there's a full binding in:
-> Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> 
-> The trivial-devices binding doesn't capture that 'adi,adxl346' has a
-> fallback compatible 'adi,adxl345', so let's add it to adi,adxl345.yaml.
-> 
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Cc: Jonathan Cameron <jic23@kernel.org>
-> Cc: Hartmut Knaack <knaack.h@gmx.de>
-> Cc: Lars-Peter Clausen <lars@metafoo.de>
-> Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> Cc: linux-iio@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/iio/accel/adi,adxl345.yaml     | 10 +++++++---
->  Documentation/devicetree/bindings/trivial-devices.yaml |  4 ----
->  2 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> index c602b6fe1c0c..d124eba1ce54 100644
-> --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> @@ -17,9 +17,13 @@ description: |
->  
->  properties:
->    compatible:
-> -    enum:
-> -      - adi,adxl345
-> -      - adi,adxl375
-> +    oneOf:
-> +      - items:
-> +          - const: adi,adxl346
-> +          - const: adi,adxl345
-> +      - enum:
-> +          - adi,adxl345
-> +          - adi,adxl375
+Documentation/devicetree/bindings/clock/arm,syscon-icst.example.dts:17.16-24.11: Warning (unit_address_vs_reg): /example-0/clock@00: node has a unit name, but no reg or ranges property
+Documentation/devicetree/bindings/clock/arm,syscon-icst.example.dts:17.16-24.11: Warning (unit_address_format): /example-0/clock@00: unit name should not have leading 0s
 
-I assume it is my schema understanding that is poor.
-But I cannot parse the above.
+Fix them by removing the unneeded clock unit name.
 
-The mix of items, enum and const confuses me.
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+---
+ Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I guess that if I am confused then others may end in the same situation.
-Can we improve readability here or amybe add a comment?
+diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+index de9a465096db..444aeea27db8 100644
+--- a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
++++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+@@ -91,7 +91,7 @@ required:
+ 
+ examples:
+   - |
+-    vco1: clock@00 {
++    vco1: clock {
+       compatible = "arm,impd1-vco1";
+       #clock-cells = <0>;
+       lock-offset = <0x08>;
+-- 
+2.17.1
 
-	Sam
-
->  
->    reg:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-> index 978de7d37c66..51d1f6e43c02 100644
-> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
-> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-> @@ -42,10 +42,6 @@ properties:
->            - adi,adt7476
->              # +/-1C TDM Extended Temp Range I.C
->            - adi,adt7490
-> -            # Three-Axis Digital Accelerometer
-> -          - adi,adxl345
-> -            # Three-Axis Digital Accelerometer (backward-compatibility value "adi,adxl345" must be listed too)
-> -          - adi,adxl346
->              # AMS iAQ-Core VOC Sensor
->            - ams,iaq-core
->              # i2c serial eeprom  (24cxx)
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
