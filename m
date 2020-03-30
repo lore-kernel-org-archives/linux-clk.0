@@ -2,134 +2,163 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A883BC43331
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 07:31:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7208C43331
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 08:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1A12073B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 07:31:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ulhlK3QD"
+	by mail.kernel.org (Postfix) with ESMTP id B88DD2073B
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 08:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1585557492;
+	bh=BkHx8NFiQ75YGJGHV3YLzUBEEQCGCQ6ZgXds5RE21G4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=VFqiFS56eO9rEkK48neHqiI3RTwlgmXpa2ekzms8Xi/hBj+znh3cpOyQQbUf43R3l
+	 4qO+DVCoBBCl8Us4DuDwr+w3E5tC2bTsVv0LmMnWSz7W6R5fJDHZFI2jUhaZcUg6bU
+	 lGLh6M5Eyf7SBvY6OmXWRF0Spi8AHVitNeoW+nyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbgC3HbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 03:31:17 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41107 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729344AbgC3HbR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 03:31:17 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a24so1337561pfc.8;
-        Mon, 30 Mar 2020 00:31:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SEwlVyEv36eeIRNWATF1aFQ5BBswo3YJxEpbUEmPHfo=;
-        b=ulhlK3QDhORQq7j8zyNINp8aFMjGg4QklBE2Ocb/P/cRQVp98/JNMkMYa8ZPASSR5a
-         p2OKwOT8slo+Zm5wpjFiDY+RJJTjsbIiHMUPY7WxxI0mQwzeIYrw8G+Qcg3S2qQAKuvs
-         yi5X2sFwEJnuwxP09ETYhRcKkTZj0Ykk1wgjaQ/hRAymHRlljvO89nf5KMlC9s0kxh0s
-         pQF9gT2oJOs6JmMofg3z+9MAshfvsM2O7VGn9QZfVUvY3iW8aT5/mc1zkuVcZrQnY1px
-         x4TuNTEvtDzR1s1MiEOR6ojUcpOjNtpppW+BPLIUNf38+yiqCm0b6aAD+6VQ570LBR7c
-         iPww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SEwlVyEv36eeIRNWATF1aFQ5BBswo3YJxEpbUEmPHfo=;
-        b=syBFb/rpb3m6cfxedrd2fsjbCpKWfSAzwbRiJ+RHB5s4MLlDw+1Y3mE5ejv0c6BaiI
-         /mceGhoyxpKTjIj3b47Txrt5tiWyT4TQKET7s7rIgOiond/p81i+N6vENt9zlC0wVlvz
-         DPlEMsvKzFv+mMd0T+lK2zzCOIIcI6KV2JLSd5DveX6xO0bxn2CfcmtxEUFgvQH6MOeG
-         /aWZA2rruYjnTvT9IJjZ2iPXUKp4BzExgWFWkLzMorBLJ691s6fH1XYw8MoxHzl55pjw
-         PDmm9Ix8tBULGN3wxaxq+FG0Tlf4T/66VKd+lrdmCZVYdhyHvDgC06MAPWRxWS0gAIKG
-         qCPA==
-X-Gm-Message-State: ANhLgQ1g3rh6XuJFK6HtSL3rceeQNRDsq0umZGFjqjg9/CTfS++6Oeaq
-        yqPODmDEmvf0ADyNnBVad8g=
-X-Google-Smtp-Source: ADFU+vvZhDfj+ZP7g9wtM/Cs/lguG9sQbIRc/a/b3v4CzDuWHLhq26abeNCo5nQjVkZd/YaXdbA/5w==
-X-Received: by 2002:a65:6855:: with SMTP id q21mr10003864pgt.188.1585553475645;
-        Mon, 30 Mar 2020 00:31:15 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id r186sm9648935pfc.181.2020.03.30.00.31.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 00:31:15 -0700 (PDT)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH 1/4] clk: sprd: check its parent status before reading gate clock
-Date:   Mon, 30 Mar 2020 15:31:07 +0800
-Message-Id: <20200330073107.14180-1-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200330071451.7899-2-zhang.lyra@gmail.com>
-References: <20200330071451.7899-2-zhang.lyra@gmail.com>
+        id S1729648AbgC3IiM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 04:38:12 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:56073 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726017AbgC3IiM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 04:38:12 -0400
+X-Greylist: delayed 5280 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 04:38:09 EDT
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id 02U8bmN8026273;
+        Mon, 30 Mar 2020 17:37:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 02U8bmN8026273
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1585557470;
+        bh=PxRmu3HuDIYTqEJxiJ5PqE2LXmQuo3D9zlavzY5jVI4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=brVEPKJScKZunXMPy14SQD8gmdtXfD/Z7CL8ZRWvjqvg8UYOEXDjY45m6LQp+Upry
+         SgIqRIt+Vbfvxsnbg1Sa4ESbah6Ht4e+ygLsb2zMtFxzxi6m+CL+3akLM9W4IRUtrC
+         8IrkWOugyFCF6k+q9DWaJ/RylMYkLVAXmcO1Y053y79in1DJ1SYDKl6QryZcJvymZW
+         zhUI92s1QDExgPzlgqMqS+2VzRW+Hf/0CueUJkv89pUXdRGkEy/yT1U57PQSLpZHL5
+         dpuemg5XzFyFNtnhwxT9TEaThfuk/wESfJfRmQy4YDPJPK/eWz1pRIvn+23Xa8wREx
+         iiOBT5PkS+9Hg==
+X-Nifty-SrcIP: [209.85.222.47]
+Received: by mail-ua1-f47.google.com with SMTP id r47so5951861uad.11;
+        Mon, 30 Mar 2020 01:37:49 -0700 (PDT)
+X-Gm-Message-State: AGi0PuYfI1t4jOABvMJbBeheO5K31RVjKrp+v3PMdlyhGrfyx/pJ5lj8
+        56rX/6bnMc6mi60tJtnMdm1005lbsmAaPgRPoO8=
+X-Google-Smtp-Source: APiQypJeTOypTow5s/orWLiqA+luxDBNhpwR1xE86uZ7tA8NnJnWdBsJgIswlbl89EaZoapGrF/J2WDHqcRU1fH6V1M=
+X-Received: by 2002:a9f:28c5:: with SMTP id d63mr6911883uad.25.1585557468135;
+ Mon, 30 Mar 2020 01:37:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-5-robh@kernel.org>
+ <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
+In-Reply-To: <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Mon, 30 Mar 2020 17:37:11 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
+Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties: false'
+To:     Rob Herring <robh@kernel.org>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Guillaume La Roque <glaroque@baylibre.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-iio@vger.kernel.org,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux PM mailing list <linux-pm@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Hi Rob,
 
-Some clocks only can be accessed if their parent is enabled. mipi_csi_xx
-clocks on SC9863A are examples. We have to ensure the parent clock is
-enabled when reading those clocks.
+On Mon, Mar 30, 2020 at 4:09 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
+>
+> On Thu, Mar 26, 2020 at 7:06 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > Setting 'additionalProperties: false' is frequently omitted, but is
+> > important in order to check that there aren't extra undocumented
+> > properties in a binding.
+> >
+> > Ideally, we'd just add this automatically and make this the default, but
+> > there's some cases where it doesn't work. For example, if a common
+> > schema is referenced, then properties in the common schema aren't part
+> > of what's considered for 'additionalProperties'. Also, sometimes there
+> > are bus specific properties such as 'spi-max-frequency' that go into
+> > bus child nodes, but aren't defined in the child node's schema.
+> >
+> > So let's stick with the json-schema defined default and add
+> > 'additionalProperties: false' where needed. This will be a continual
+> > review comment and game of wack-a-mole.
+> >
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > ---
+>
+>
+> >  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
+>
+>
+> You may have already queue this up, but just in case.
+>
+> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/clk/sprd/gate.c | 7 +++++++
- drivers/clk/sprd/gate.h | 9 +++++++++
- 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
-index 574cfc116bbc..56e1714b541e 100644
---- a/drivers/clk/sprd/gate.c
-+++ b/drivers/clk/sprd/gate.c
-@@ -94,8 +94,15 @@ static int sprd_gate_is_enabled(struct clk_hw *hw)
- {
- 	struct sprd_gate *sg = hw_to_sprd_gate(hw);
- 	struct sprd_clk_common *common = &sg->common;
-+	struct clk_hw *parent;
- 	unsigned int reg;
- 
-+	if (sg->flags & SPRD_GATE_NON_AON) {
-+		parent = clk_hw_get_parent(hw);
-+		if (!parent || !clk_hw_is_enabled(parent))
-+			return 0;
-+	}
-+
- 	regmap_read(common->regmap, common->reg, &reg);
- 
- 	if (sg->flags & CLK_GATE_SET_TO_DISABLE)
-diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
-index b55817869367..aa4d72381788 100644
---- a/drivers/clk/sprd/gate.h
-+++ b/drivers/clk/sprd/gate.h
-@@ -19,6 +19,15 @@ struct sprd_gate {
- 	struct sprd_clk_common	common;
- };
- 
-+/*
-+ * sprd_gate->flags is used for:
-+ * CLK_GATE_SET_TO_DISABLE	BIT(0)
-+ * CLK_GATE_HIWORD_MASK		BIT(1)
-+ * CLK_GATE_BIG_ENDIAN		BIT(2)
-+ * so we define new flags from	BIT(3)
-+ */
-+#define SPRD_GATE_NON_AON BIT(3) /* not alway on, need to check before read */
-+
- #define SPRD_SC_GATE_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,	\
- 				    _sc_offset, _enable_mask, _flags,	\
- 				    _gate_flags, _udelay, _ops, _fn)	\
+
+I take back Ack for socionext,uniphier-gpio.yaml
+
+
+
+Now "make dt_binding_check" produces a new warning.
+
+gpio@55000000: 'interrupt-parent' does not match any of the regexes:
+'pinctrl-[0-9]+'
+
+
+This binding uses 'interrupt-parent'
+without 'interrupts'.
+
+Instead, the mapping of the interrupt numbers
+is specified by the vendor-specific property
+socionext,interrupt-ranges
+
+
+
+I cannot add   "interrupt-parent: true" because
+dt-schema/meta-schemas/interrupts.yaml
+has "interrupt-parent: false".
+
+
+Is there any solution?
+
+
+
 -- 
-2.20.1
-
+Best Regards
+Masahiro Yamada
