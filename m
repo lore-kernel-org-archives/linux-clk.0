@@ -2,106 +2,109 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E667C2D0F0
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B1BC43331
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22129207FF
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585609842;
-	bh=ROdBNHhnJVXCziLb01Nl9Ab43spOVxD41Kiwd8Dl5lk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aJfdcHOI0k4ChhZbfwRNWA817Bzv4NIYKxZuiGw9Rcav9D15bRBmNEJ9HZcaY7KO9
-	 ZjKXKUqWb5WmolYv3XZp+rjn1waGx12gMSdcBQ/BMLgrry6yTiz6zZkJTp7vcy6k7S
-	 fjPKohvtqm9/JkG088ox5zUPA6jDXB6Dn/kk2HFs=
+	by mail.kernel.org (Postfix) with ESMTP id 81D852078B
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBoARub8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbgC3XKi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 19:10:38 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:39452 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728876AbgC3XKi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:10:38 -0400
-Received: by mail-il1-f194.google.com with SMTP id r5so17612122ilq.6;
-        Mon, 30 Mar 2020 16:10:37 -0700 (PDT)
+        id S1729422AbgC3XUL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 19:20:11 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38181 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728880AbgC3XUK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:20:10 -0400
+Received: by mail-lj1-f194.google.com with SMTP id w1so19985406ljh.5;
+        Mon, 30 Mar 2020 16:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
+        b=QBoARub8KAADOXu16KRfIrYxWSYJPJxny8zQJqUx5TWyKDx7Rl5lqGkpZ7fRmRQ5k2
+         u2L/X2gOIW3uHGoq2AG/Vzs+RCdQ1o0VDP4RBd8b7oIe9JDj1Sa4ZSSqHzHQVMbn9zVn
+         IJgsbDLH2TI/CQ7V8lqcD1WBqiEuqaNsXnmMgHlMnUqQrhcepiigtN3LqM9ZfoniLc+B
+         dL/RsqQ3wBv1nbCl2L51IkumLx57cPNEHssWxhTayVBVLT0DRPHFPxDbGOoXbZy0mYJD
+         wZ+2fSmBNUCGyQ832yeJ8leecDzKOj/zgWg1fe8AF6Z9xSxZXgwW80ZrwXgZi+GTwzpj
+         m44Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wMjPI/yKnzx8ZMDThBLvU02BMUS49h8m8pE+Plt4TKQ=;
-        b=n+RqRSub53/uR57yrWT1VP0iQvGH13Qn7uvTO7HZt4npKBL0wOSKwLbEjp4jcKUDQi
-         TTwZxSRqRZbscWGeUZG1q7af/4lH5XAg/UGXTASql4ipPXjr3uoFeN5IsQSn8iCyNysa
-         noeDVi2D6K1q0ThqCuwV5zBrnYzd+lx3sYGrTJZ+dPqlNtY2HEzm1Mhq8jgTmqZ/02+a
-         XBHjQolntBOIEudPA/Aatq6uq2ckBuen4+SqhG+rd9tioTFma1T4diFvA3dmlT67Ktnz
-         hiEIJ9x8Vy8UhK0tv/xSrtG7N7Ck/kSxzjcQ25h4apckBB+AW7TVwjvcRU/W1djWmQY8
-         eg/g==
-X-Gm-Message-State: ANhLgQ1Z0sG8tt16ox8Qg74ltE5tnw15HKF9u+VfWAIuKJiVGa6p2lDy
-        pV6Pfqgy0vnnvWxSTk89OQ==
-X-Google-Smtp-Source: ADFU+vvNWYK99dPlPx1tH5tSkAkRlbi7ycuFHhKOo8RHSuWD6/khgAo9a9iHkP/WdAVAeNcl7HZ98w==
-X-Received: by 2002:a92:8fdd:: with SMTP id r90mr13516679ilk.29.1585609837170;
-        Mon, 30 Mar 2020 16:10:37 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id k1sm4532088iob.48.2020.03.30.16.10.36
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
+        b=EyAcuMCzlK3WAMBfeo+3bu9Yc/OD0/dlbt/jaUa0vVurOU+ZVfvHY5awP/JyTp0qYa
+         AY0ZDyP93Ml3ylInE8jI6rxzuhd41WiQh+R+TTH9I9dYzAh58Cm/loQ8Ebb03RBuwV2y
+         sAvLtZRKzufB+ZH+PZuOHM8W1yb2n9Jbp51/bV4com9wdXL2ycBi/iMBxcVfQG3W1GWQ
+         MJhn4ryLBYhbzXyZfngAwLvD2wHHrWU6Cj/is3hBeF07NwR9Fm4moVhh2ROmZp7EBzU0
+         up1GJdsDagG3yycbedLNGleFfn84tzUAJqONHfJcii9qMj0iEkFDRtSDQwiZjiE/8O9x
+         5gDw==
+X-Gm-Message-State: AGi0PuZOAtVynqY0MsSB9G72D5Wb2Zd2zaNOXBnMMrwzPY57qNc5TT1C
+        x9TKjJZDLctad5jSVP3jfLw=
+X-Google-Smtp-Source: APiQypLdU3aIWu9z86/NX1JqxLKQ+dBdMwQ2HRs5P+XZUJ86A5j43R6srXcrdFpxTzks4w0GObR7fQ==
+X-Received: by 2002:a2e:81cc:: with SMTP id s12mr8513672ljg.90.1585610406263;
+        Mon, 30 Mar 2020 16:20:06 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.gmail.com with ESMTPSA id h3sm8773187lfk.30.2020.03.30.16.20.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:10:36 -0700 (PDT)
-Received: (nullmailer pid 2557 invoked by uid 1000);
-        Mon, 30 Mar 2020 23:10:35 -0000
-Date:   Mon, 30 Mar 2020 17:10:35 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mon, 30 Mar 2020 16:20:05 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 2/4] clk: qcom: mmcc-msm8996: Properly describe GPU_GX
- gdsc
-Message-ID: <20200330231035.GA326@bogus>
-References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
- <20200319053902.3415984-3-bjorn.andersson@linaro.org>
- <158474710844.125146.15515925711513283888@swboyd.mtv.corp.google.com>
- <20200321051612.GA5063@builder>
- <158481619279.125146.6917548675896981321@swboyd.mtv.corp.google.com>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v1 0/5] NVIDIA Tegra devfreq drivers improvements
+Date:   Tue, 31 Mar 2020 02:16:12 +0300
+Message-Id: <20200330231617.17079-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158481619279.125146.6917548675896981321@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Mar 21, 2020 at 11:43:12AM -0700, Stephen Boyd wrote:
-> Quoting Bjorn Andersson (2020-03-20 22:16:12)
-> > On Fri 20 Mar 16:31 PDT 2020, Stephen Boyd wrote:
-> > 
-> > > Quoting Bjorn Andersson (2020-03-18 22:39:00)
-> > > > diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > > index 85518494ce43..65d9aa790581 100644
-> > > > --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > > +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
-> > > > @@ -67,6 +67,10 @@ properties:
-> > > >      description:
-> > > >         Protected clock specifier list as per common clock binding
-> > > >  
-> > > > +  vdd_gfx-supply:
-> > > 
-> > > Why not vdd-gfx-supply? What's with the underscore?
-> > > 
-> > 
-> > The pad is named "VDD_GFX" in the datasheet and the schematics. I see
-> > that we've started y/_/-/ in some of the newly added bindings, would you
-> > prefer I follow this?
-> 
-> If the datasheet has this then I guess it's fine. I'll wait for Rob to
-> ack.
+Hello,
 
-vddgfx or vdd-gfx.
+This series contains minor patches that I was going to send out a month or
+two ago, but completely forgot about. More importantly, it also contains new
+patches that are needed in order to address an upcoming problem in regards
+to adding interconnect API support for NVIDIA Tegra [1].
 
-Rob
+[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=167480
+
+The problem lies in clk_round_rate(), which rounds clock rate based on the
+min/max clk limits imposed by active clk users. This is not suitable for
+the Tegra devfreq drivers because they use clk_round_rate() for building
+OPP table, and thus, nothing should limit the clk rate, otherwise the OPP
+table values are erroneously getting limited to the clk's limits.
+
+Dmitry Osipenko (5):
+  PM / devfreq: tegra: Add Dmitry as a maintainer
+  clk: Introduce clk_round_rate_unboundly()
+  PM / devfreq: tegra20: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Use clk_round_rate_unboundly()
+  PM / devfreq: tegra30: Make CPUFreq notifier to take into account
+    boosting
+
+ MAINTAINERS                       |  9 ++++++
+ drivers/clk/clk.c                 | 49 ++++++++++++++++++++++++-------
+ drivers/devfreq/tegra20-devfreq.c |  4 +--
+ drivers/devfreq/tegra30-devfreq.c |  6 ++--
+ include/linux/clk.h               | 18 ++++++++++++
+ 5 files changed, 70 insertions(+), 16 deletions(-)
+
+-- 
+2.25.1
 
