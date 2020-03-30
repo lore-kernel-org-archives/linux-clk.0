@@ -2,217 +2,186 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44498C43331
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 16:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42C02C43331
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 20:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A8E72072E
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 16:17:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 180FC20733
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 20:41:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rDPyTh0G"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AGTm306R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727148AbgC3QRU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 12:17:20 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:4053 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728165AbgC3QRU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 12:17:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e821b5a0000>; Mon, 30 Mar 2020 09:16:26 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 30 Mar 2020 09:16:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 30 Mar 2020 09:16:39 -0700
-Received: from [10.2.160.81] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 30 Mar
- 2020 16:16:38 +0000
-Subject: Re: [RFC PATCH v5 0/9] Add Tegra driver for video capture
-To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
- <4bb6a3b8-3332-014b-e763-bce9076179dd@xs4all.nl>
- <5ca1583a-889e-abd0-f823-eab93f09a365@xs4all.nl>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <28ab0071-2e04-d14b-9215-db421e71b6af@nvidia.com>
-Date:   Mon, 30 Mar 2020 09:16:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1728385AbgC3Ulx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 16:41:53 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35799 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727750AbgC3Ulx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 16:41:53 -0400
+Received: by mail-pl1-f193.google.com with SMTP id c12so4379496plz.2
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2020 13:41:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=gXEgQyqWtKi/deTewfCdJW+6ZT9gmXPBY4cz60z4Xy8=;
+        b=AGTm306RJBiq5wiPFYYs+svTnvzhqu8DEigXSeSwdj1zoVBse4dqbtUOYKdltzDXqz
+         p4vvvr7IShB+YHYr5KXFPGYkym6x9qpuivr42F00SQVzjCMVRcfOonGa7MWLjNy8U3/q
+         vbMvPM5LyFPT5fWdps4R3EBDBordMJKu7f/8xsWgCjyJtAQB5rc1yhvneDrAmbozsAXT
+         u6DRqPdRNCCK/yT5/3dsHdVLRPvEMKu4IU1SXoaXAW6fjXatvZSL0SQnCcVXMMfqDtno
+         mxvssvsxOKx2ESRz9yN1fyUa/JbWWj8QzEeZ0EsTYDNlmRVIifKslkKIUpalekX02QT7
+         4vkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=gXEgQyqWtKi/deTewfCdJW+6ZT9gmXPBY4cz60z4Xy8=;
+        b=ADO7FDqIErbWRiXP8TtfsFp4XQoZyocCvvDCNueLhpGSDG0AR9PL4aLZ8eeowXV5Hv
+         7EzGmk0P0cO+zxXqGZrKYaubGmvCalAPCY2cmQ3fZDWHyQh4Q9IsT2m0g0lUHnCTMB2p
+         xdfpvShJU6CbEb2iCiq2yV4hUMdyT9zlePJmWxvrWgIJYCVde9VpNLunwtZZfB7SSlCF
+         +5JGJaQgr7Pm8xRprLFLwwX6mRkbPSfpf75rUx8ylw/KWxT6x6ZmGaeoTA7rEpoBOfJO
+         ay0ftAXKs+1fbrENowP4dGb6Bv5fvcDVlNTTObMWFoR+zErogWtGXRD+b7xxrL3Ju7Al
+         77WQ==
+X-Gm-Message-State: ANhLgQ1vL7OS0Mh2+eSTFH7S9DewhC4asKjUy4Msz41T5hzs4CyV0qR5
+        dNxr6WPO1YZC+OCAqy8LOTl1Bg==
+X-Google-Smtp-Source: ADFU+vtRCLcMPMcubA8fte342DE9ReO2pbWBwxx+giULxWdYaHRK2nOzSEa0w9mTNXIoG6UmIXTTFg==
+X-Received: by 2002:a17:902:ec03:: with SMTP id l3mr12435349pld.73.1585600912095;
+        Mon, 30 Mar 2020 13:41:52 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id h198sm10837425pfe.76.2020.03.30.13.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 13:41:51 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 13:41:49 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: qcom: msm8916: Fix the address location of
+ pll->config_reg
+Message-ID: <20200330204149.GA215915@minitux>
+References: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <5ca1583a-889e-abd0-f823-eab93f09a365@xs4all.nl>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585584986; bh=BDyZjLsZvX08sNWD83Q2/gdH9KJJfTOHcfzKdDEXKXk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=rDPyTh0GtJW05IFO5iIH7jX+2ODsOj93OyBhcaFZx+w3/KiE7aTA0YABNVRxE/Xt0
-         FAhI5GAKg1hvZtculLzdFordQWyKCOqsvF4nTUpk7v0v2tsuIfwQYldWDQHw+5Gof4
-         grL50aKwTXXxNYs2fmFxx446P7OwLQjGi78iepmTFm5DzBCdDajQNrqIFGtYArra8w
-         s5c5rr6GrSsJApWMZ8mPKif8/ZHBsHfJLGa97ciz02PD2Ux0UOPzeIE150dnZbW6hY
-         GSMlq/GAUG7Ydv3MB0LsrlGoL3dNdSvVBCVJCi3fuETnQY4yvHosyDBC4bzKMKWfYs
-         c5lIAoLV+6uCw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Sun 29 Mar 05:41 PDT 2020, Bryan O'Donoghue wrote:
 
-On 3/30/20 4:02 AM, Hans Verkuil wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 3/30/20 12:04 PM, Hans Verkuil wrote:
->> Hi Sowjanya,
->>
->> On 3/23/20 6:52 PM, Sowjanya Komatineni wrote:
->>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>> generator (TPG) capture.
->>>
->>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>> CSI port is one-to-one mapped to VI channel for video capture.
->>>
->>> This series has TPG support only where it creates hard media links
->>> between CSI subdevice and VI video device without device graphs.
->>>
->>> v4l2-compliance results are available below the patch diff.
->>>
->>> [v5]:        Includes,
->>>       - v4 feedback
->>>       - fix for venc powergate mc reset order.
->>>       - fix to have unbind and bind work during v4l2-ctl sleep and streaming.
->> Unfortunately, I still crash on this.
->>
->> I do the following:
->>
->> Run: v4l2-ctl --stream-mmap
->>
->> Then, from another shell as root:
->>
->> cd /sys/devices/platform/50000000.host1x/tegra-video/driver
->> echo -n tegra-video > unbind
->>
->> I get this crash:
->>
->> [  315.691971] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b0
->> [  315.700749] Mem abort info:
->> [  315.703536]   ESR = 0x96000004
->> [  315.706587]   EC = 0x25: DABT (current EL), IL = 32 bits
->> [  315.711886]   SET = 0, FnV = 0
->> [  315.714933]   EA = 0, S1PTW = 0
->> [  315.718064] Data abort info:
->> [  315.720936]   ISV = 0, ISS = 0x00000004
->> [  315.724763]   CM = 0, WnR = 0
->> [  315.727726] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000178ee8000
->> [  315.734152] [00000000000000b0] pgd=0000000000000000
->> [  315.739024] Internal error: Oops: 96000004 [#1] PREEMPT SMP
->> [  315.744584] Modules linked in: r8152 nouveau lp855x_bl tegra_drm ttm
->> [  315.750942] CPU: 3 PID: 2206 Comm: bash Tainted: G        W         5.6.0-rc1-arm64 #118
->> [  315.759017] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
->> [  315.764927] pstate: 20000085 (nzCv daIf -PAN -UAO)
->> [  315.769718] pc : _raw_write_lock_irqsave+0xb0/0x2b8
->> [  315.774590] lr : ida_free+0x48/0x158
->> [  315.778155] sp : ffff800011d8bba0
->> [  315.781462] x29: ffff800011d8bba0 x28: ffff0000f4095400
->> [  315.786766] x27: 0000000000000000 x26: 0000000000000000
->> [  315.792070] x25: 0000000000000000 x24: 0000000000000000
->> [  315.797372] x23: ffff0000f21ad400 x22: ffff0000f5c93000
->> [  315.802674] x21: ffff0000f4095400 x20: ffff0000f86b5540
->> [  315.807975] x19: 0000000000000000 x18: 0000000000000000
->> [  315.813276] x17: 0000000000000001 x16: 0000000000000019
->> [  315.818578] x15: 000000148ccdabe2 x14: 0000000000000136
->> [  315.823879] x13: 0000000000000001 x12: 00000000000003f8
->> [  315.829180] x11: 0000000000000000 x10: 0000000000000000
->> [  315.834482] x9 : ffff0000ff899990 x8 : ffff0000ff899000
->> [  315.839784] x7 : 0000000040000000 x6 : 0000000000210d00
->> [  315.845085] x5 : 0000000000000001 x4 : 0000000000000000
->> [  315.850386] x3 : 00000000000000b0 x2 : 0000000000000001
->> [  315.855687] x1 : 0000000000000000 x0 : 0000000000000001
->> [  315.860988] Call trace:
->> [  315.863432]  _raw_write_lock_irqsave+0xb0/0x2b8
->> [  315.867956]  ida_free+0x48/0x158
->> [  315.871184]  __media_device_unregister_entity+0x28/0xf0
->> [  315.876402]  media_device_unregister+0x6c/0x148
->> [  315.880927]  host1x_video_remove+0x20/0x48
->> [  315.885021]  host1x_device_remove+0x1c/0x30
->> [  315.889198]  device_release_driver_internal+0xf4/0x1c0
->> [  315.894325]  device_driver_detach+0x14/0x20
->> [  315.898503]  unbind_store+0xd4/0xf8
->> [  315.901986]  drv_attr_store+0x20/0x30
->> [  315.905645]  sysfs_kf_write+0x40/0x50
->> [  315.909301]  kernfs_fop_write+0xf8/0x210
->> [  315.913219]  __vfs_write+0x18/0x40
->> [  315.916616]  vfs_write+0xdc/0x1c8
->> [  315.919926]  ksys_write+0x68/0xf0
->> [  315.923235]  __arm64_sys_write+0x18/0x20
->> [  315.927154]  el0_svc_common.constprop.0+0x68/0x160
->> [  315.931936]  do_el0_svc+0x20/0x80
->> [  315.935246]  el0_sync_handler+0x10c/0x180
->> [  315.939246]  el0_sync+0x140/0x180
->> [  315.942560] Code: 8803fc02 35ffffa3 17fffda6 f9800071 (885ffc60)
->> [  315.948644] ---[ end trace e42b943f3c1af06c ]---
->>
->> The following diff fixes this:
->>
->> ------------------ cut here ------------------
->> diff --git a/drivers/staging/media/tegra/tegra-vi.c b/drivers/staging/media/tegra/tegra-vi.c
->> index 9714152aa6a7..53cf37af9602 100644
->> --- a/drivers/staging/media/tegra/tegra-vi.c
->> +++ b/drivers/staging/media/tegra/tegra-vi.c
->> @@ -583,7 +583,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
->>        /* initialize the video_device */
->>        chan->video->fops = &tegra_channel_fops;
->>        chan->video->v4l2_dev = &vid->v4l2_dev;
->> -     chan->video->release = video_device_release_empty;
->> +     chan->video->release = video_device_release;
->>        chan->video->queue = &chan->queue;
->>        snprintf(chan->video->name, sizeof(chan->video->name), "%s-%s-%u",
->>                 dev_name(vi->dev), "output", chan->portno);
->> @@ -647,6 +647,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
->>        media_entity_cleanup(&chan->video->entity);
->>   release_vdev:
->>        video_device_release(chan->video);
->> +     chan->video = NULL;
->>        return ret;
->>   }
->>
->> @@ -707,7 +708,6 @@ static void tegra_vi_channels_cleanup(struct tegra_vi *vi)
->>                        mutex_lock(&chan->video_lock);
->>                        vb2_queue_release(&chan->queue);
->>                        mutex_unlock(&chan->video_lock);
->> -                     video_device_release(chan->video);
->>                }
->>
->>                if (chan->frame_start_sp)
->> ------------------ cut here ------------------
-> Note: Sakari suggested to embed struct video_device into struct tegra_vi_channel.
-> In that case chan->video->release should remain video_device_release_empty and
-> all video_device_alloc()/release() calls would have to be dropped.
+> During the process of debugging a processor derived from the msm8916 which
+> we found the new processor was not starting one of its PLLs.
+> 
+> After tracing the addresses and writes that downstream was doing and
+> comparing to upstream it became obvious that we were writing to a different
+> register location than downstream when trying to configure the PLL.
+> 
 
-Thanks Hans. Tried several unbind/unbind not sure why it did not repro 
-during my testing.
+Good catch.
 
-video device is also part of tegra_vi_channel. So, v6 will remove 
-video_device_alloc and use video_device_release_empty like I had in v3.
+> This error is also present in upstream msm8916.
+> 
+> As an example clk-pll.c::clk_pll_recalc_rate wants to write to
+> pll->config_reg updating the bit-field POST_DIV_RATIO. That bit-field is
+> defined in PLL_USER_CTL not in PLL_CONFIG_CTL. Taking the BIMC PLL as an
+> example
+> 
 
-This should help fix crash during unbind.
+For some reason we don't specify pll->post_div_width for anything but
+ipq806x, so the post_div is not considered for other platforms. This
+might be a bug, but in addition to updating the config_reg address
+post_div_width would have to be specified for the change to affect
+clk_pll_recalc_rate().
 
->
-> Regards,
->
->          Hans
+More disturbing though is the clk_pll_set_rate() implementation, which
+just writes ibits to the entire config_reg. But given that we don't have
+a freq_tbl for any of these plls the function will return -EINVAL
+earlier.
+
+Lastly is clk_pll_configure() which would need this, but we don't call
+it from msm8916 at this point.
+
+
+So while your change is correct, afaict it's a nop unless you fill out
+the other fields as well.
+
+Regards,
+Bjorn
+
+> lm80-p0436-13_c_qc_snapdragon_410_processor_hrd.pdf
+> 
+> 0x01823010 GCC_BIMC_PLL_USER_CTL
+> 0x01823014 GCC_BIMC_PLL_CONFIG_CTL
+> 
+> This pattern is repeated for gpll0, gpll1, gpll2 and bimc_pll.
+> 
+> This error is likely not apparent since the bootloader will already have
+> initialized these PLLs.
+> 
+> This patch corrects the location of config_reg from PLL_CONFIG_CTL to
+> PLL_USER_CTL for all relevant PLLs on msm8916.
+> 
+> Fixes commit 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
+> 
+> Cc: Georgi Djakov <georgi.djakov@linaro.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-msm8916.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+> index 4e329a7baf2b..17e4a5a2a9fd 100644
+> --- a/drivers/clk/qcom/gcc-msm8916.c
+> +++ b/drivers/clk/qcom/gcc-msm8916.c
+> @@ -260,7 +260,7 @@ static struct clk_pll gpll0 = {
+>  	.l_reg = 0x21004,
+>  	.m_reg = 0x21008,
+>  	.n_reg = 0x2100c,
+> -	.config_reg = 0x21014,
+> +	.config_reg = 0x21010,
+>  	.mode_reg = 0x21000,
+>  	.status_reg = 0x2101c,
+>  	.status_bit = 17,
+> @@ -287,7 +287,7 @@ static struct clk_pll gpll1 = {
+>  	.l_reg = 0x20004,
+>  	.m_reg = 0x20008,
+>  	.n_reg = 0x2000c,
+> -	.config_reg = 0x20014,
+> +	.config_reg = 0x20010,
+>  	.mode_reg = 0x20000,
+>  	.status_reg = 0x2001c,
+>  	.status_bit = 17,
+> @@ -314,7 +314,7 @@ static struct clk_pll gpll2 = {
+>  	.l_reg = 0x4a004,
+>  	.m_reg = 0x4a008,
+>  	.n_reg = 0x4a00c,
+> -	.config_reg = 0x4a014,
+> +	.config_reg = 0x4a010,
+>  	.mode_reg = 0x4a000,
+>  	.status_reg = 0x4a01c,
+>  	.status_bit = 17,
+> @@ -341,7 +341,7 @@ static struct clk_pll bimc_pll = {
+>  	.l_reg = 0x23004,
+>  	.m_reg = 0x23008,
+>  	.n_reg = 0x2300c,
+> -	.config_reg = 0x23014,
+> +	.config_reg = 0x23010,
+>  	.mode_reg = 0x23000,
+>  	.status_reg = 0x2301c,
+>  	.status_bit = 17,
+> -- 
+> 2.25.1
+> 
