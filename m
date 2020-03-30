@@ -2,75 +2,68 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D182CC2D0F1
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BED7DC43331
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24FF20784
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E42620771
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NrxMUjkw"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ABb6LM8T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbgC3XU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 19:20:29 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44732 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729421AbgC3XUM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:20:12 -0400
-Received: by mail-lf1-f65.google.com with SMTP id j188so15709213lfj.11;
-        Mon, 30 Mar 2020 16:20:10 -0700 (PDT)
+        id S1729021AbgC3Xpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 19:45:50 -0400
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:44736 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728537AbgC3Xpt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:45:49 -0400
+Received: by mail-wr1-f46.google.com with SMTP id m17so23722912wrw.11;
+        Mon, 30 Mar 2020 16:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wQq+QxtzNjE/EJiMAC6ATxubC+X+EZVUzsWLxM6NceQ=;
-        b=NrxMUjkwmImgyUTl5qRgdSMu08UoO9c982K4nBQEknn83NqOxeWk4PScIBdyL9DN2x
-         rXwNIFqdLxuLXDMJZ9Ifw8Qv63zZdo/zLFsCzLVlzm7fDwZaKGkkjiEiQyziXuwBwSTz
-         b/hiSA9nO7dB19ubxjg9UkEBVQ6zR9OwKXUfJNDun35SJ7GpexWHgIAgKkjVInYgaKLy
-         NvI6DM2TJMb1taxA0/SYgnioOlGP8IbgM9j4kEEjUKuWpgkMs2pV5JmAI/aqWJWQHmHw
-         crNWCuLD53uTbyCNw6J8P11xaH2fS6aKOj/h4yjLpZC72j2la0vnwbvj0E1d8wcpMo6Q
-         7kKQ==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GDnGHW3qNkgvLRDgu5vu6hawny2amkhzRWQ0FmPc35g=;
+        b=ABb6LM8ToMRg6Yrah5JleJW/rhbs3rC5+MnLM5ss4L9Xfh1nULPqhBYzglKJ13bYnM
+         GeMRq2+Nae3IN7gnVkDxuLoCOSqaXmP3MXm2UxG5mWjL36W+Ya2eqTCk4NFSwP0k2SYN
+         WxuwWXZV1tzZ0bydrILV8rQTb4H1n7CLzuxE1H0slY4VXo+0N8gIVUNCsGhMgxSQ9euT
+         k6aFpVUbFO3hYCImRqCGFZOWn8Ua52XZPtsPRe2hRh1FcsqWqJf1lcdnDgyDnU5XjZVz
+         7f9PE5gLJi+8GIpORxYMWz6v3qCnGsJZLirxmsBijnz7AqnYcccjMG3WmJDP/+FkHeYi
+         ocOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wQq+QxtzNjE/EJiMAC6ATxubC+X+EZVUzsWLxM6NceQ=;
-        b=eqAXdUi/s+KVUQcxBr8YcgwaIeUzp3fngxbdDjaZhQbTxJHjt9DLcfp2bHTGLROJBz
-         ucKN7mPbKjF1yaQKQaoSm3sn2yIn3rZ0Qdz+xN0GA+a0gNPXbYQfhcdEHYc85aA0JTav
-         Ipi2wzgEAQHifz0+lBzvOA01ygS8K9UzKc9br0LnMKhZlIp4oVRtyIU3t+flN8mgeGCD
-         cDVzMrV5UZNGXAvbnibIp09SU/F1U1BXpXyl/IEgGUuMjzv7TA2mZTjUu1hyzRwH5CJE
-         z/5SvKMzOaAMdcfMWrV6sKwwlmDh0Z59cMt9uCjLZ3GQAMA4TiKj8oXNNROukC/l3diX
-         xT6g==
-X-Gm-Message-State: AGi0Puazima4Swv8tRAacflxkdVlzHNC39GrPCwTmtLwpB8XLzaY0tW6
-        sGo5BDAUYZKBInMarCdZFTI=
-X-Google-Smtp-Source: APiQypL0Mzbqohu2BKii5CfejZZEmHzmTR6LuLXcqmuU4DiwUBOmIbUVMfpowI815cwo9lQb/XgB1A==
-X-Received: by 2002:a05:6512:3127:: with SMTP id p7mr9306654lfd.108.1585610409582;
-        Mon, 30 Mar 2020 16:20:09 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.gmail.com with ESMTPSA id h3sm8773187lfk.30.2020.03.30.16.20.08
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GDnGHW3qNkgvLRDgu5vu6hawny2amkhzRWQ0FmPc35g=;
+        b=WUl4lWyd5zoGRFptE/XMXHJlSAii31xUHyrO/lop7KzhF0/bjX/MNEWZgZKsHprbeO
+         i5C0o5yQAlGYMPb3rqgcYAZXJ2ZAJLT1c4YDTVk/h5HaNNtxvJsy8iX53LAqTlDWUIex
+         DZWo/GAzAjvvAwE7rJysSAMY/0pLnycEvQbPx6dL8AeWUKvfd5FCaYcgh0pODeV9qXww
+         yeWN5rOo/G40c6tUfms/PmH7uUDiJoENrWiVafA6mQSitMjpz3UCBgD0a5lfcIMjIsvr
+         ZC0z++62nv2iwAFJHHLaZjYEaxtP2Y622pGSzj7Ofuznqspcy5/i5AAWe4OiFnt4ywAK
+         xGKw==
+X-Gm-Message-State: ANhLgQ1xRIaU//3pyhnr2OVmFMiAwcJdjE6sdFMKotylfDv0995QMaXb
+        EjYdatlVPeO+wWTBm1Mza6s=
+X-Google-Smtp-Source: ADFU+vsRAJpOrFH+eER9+kJfJgrHjQ2G/YBnZW8feggG/5Lyp88bIurZ3HekKzw9sQpYyAPLoBJuvA==
+X-Received: by 2002:a5d:60ca:: with SMTP id x10mr11321086wrt.372.1585611947798;
+        Mon, 30 Mar 2020 16:45:47 -0700 (PDT)
+Received: from localhost.localdomain (p200300F13710ED00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3710:ed00:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id v186sm1392953wme.24.2020.03.30.16.45.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:20:09 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 3/5] PM / devfreq: tegra20: Use clk_round_rate_unboundly()
-Date:   Tue, 31 Mar 2020 02:16:15 +0300
-Message-Id: <20200330231617.17079-4-digetx@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200330231617.17079-1-digetx@gmail.com>
-References: <20200330231617.17079-1-digetx@gmail.com>
+        Mon, 30 Mar 2020 16:45:47 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        narmstrong@baylibre.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 0/2] clk: meson8b: allow the HDMI driver to manage "hdmi_sys"
+Date:   Tue, 31 Mar 2020 01:45:33 +0200
+Message-Id: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -78,42 +71,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_round_rate() doesn't work for us properly if clock rate is bounded
-by a min/max rate that is requested by some other clk-user because we're
-building devfreq's OPP table based on the rounding.
+The "hdmi_sys" clock is driving the HDMI TX controller. The
+controller's IP seems to use this clock for example to derived the DDC
+clock.
 
-In particular this becomes a problem if display driver is probed earlier
-than devfreq, and thus, display adds a memory bandwidth request using
-interconnect API, which results in a minimum clock-rate being set for
-the memory clk. In a result, the lowest devfreq OPP rate is getting
-limited to the minimum rate imposed by the display driver.
+Testing has shown that we can disable this clock without locking up the
+system (as long as we don't read the HDMI TX registers while this clock
+is disabled - this can't happen as we don't have a driver yet and once
+we have one that driver will enable this clock).
 
-Let's use new clk_round_rate_unboundly() that resolves the problem by
-rounding clock rate without taking into account min/max limits imposed by
-active clk users.
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/devfreq/tegra20-devfreq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Martin Blumenstingl (2):
+  clk: meson8b: export the HDMI system clock
+  clk: meson: meson8b: make the hdmi_sys clock tree mutable
 
-diff --git a/drivers/devfreq/tegra20-devfreq.c b/drivers/devfreq/tegra20-devfreq.c
-index ff82bac9ee4e..1bb10ef11dfe 100644
---- a/drivers/devfreq/tegra20-devfreq.c
-+++ b/drivers/devfreq/tegra20-devfreq.c
-@@ -149,10 +149,10 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
- 
- 	tegra->regs = mc->regs;
- 
--	max_rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
-+	max_rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
- 
- 	for (rate = 0; rate <= max_rate; rate++) {
--		rate = clk_round_rate(tegra->emc_clock, rate);
-+		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
- 
- 		err = dev_pm_opp_add(&pdev->dev, rate, 0);
- 		if (err) {
+ drivers/clk/meson/meson8b.c              | 6 +++---
+ drivers/clk/meson/meson8b.h              | 1 -
+ include/dt-bindings/clock/meson8b-clkc.h | 1 +
+ 3 files changed, 4 insertions(+), 4 deletions(-)
+
 -- 
-2.25.1
+2.26.0
 
