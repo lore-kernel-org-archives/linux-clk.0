@@ -2,58 +2,59 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B1BC43331
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDCEDC43331
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D852078B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE06A20784
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBoARub8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQqyEmao"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbgC3XUL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 19:20:11 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:38181 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728880AbgC3XUK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:20:10 -0400
-Received: by mail-lj1-f194.google.com with SMTP id w1so19985406ljh.5;
-        Mon, 30 Mar 2020 16:20:07 -0700 (PDT)
+        id S1729918AbgC3XUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 19:20:16 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:46998 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729866AbgC3XUO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:20:14 -0400
+Received: by mail-lj1-f196.google.com with SMTP id r7so12330979ljg.13;
+        Mon, 30 Mar 2020 16:20:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
-        b=QBoARub8KAADOXu16KRfIrYxWSYJPJxny8zQJqUx5TWyKDx7Rl5lqGkpZ7fRmRQ5k2
-         u2L/X2gOIW3uHGoq2AG/Vzs+RCdQ1o0VDP4RBd8b7oIe9JDj1Sa4ZSSqHzHQVMbn9zVn
-         IJgsbDLH2TI/CQ7V8lqcD1WBqiEuqaNsXnmMgHlMnUqQrhcepiigtN3LqM9ZfoniLc+B
-         dL/RsqQ3wBv1nbCl2L51IkumLx57cPNEHssWxhTayVBVLT0DRPHFPxDbGOoXbZy0mYJD
-         wZ+2fSmBNUCGyQ832yeJ8leecDzKOj/zgWg1fe8AF6Z9xSxZXgwW80ZrwXgZi+GTwzpj
-         m44Q==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=eWJ17QgfjQfYiVMNjS2RpFaBaWnfXYsQ7FwOrGsFKas=;
+        b=EQqyEmao78riDA6NReH2DsSK7cavfmOdi1B49u8sq6YJVWVdAF0ti65/n3Ro/AO6q9
+         aEOeJHVyR4u1JEPVahsssJbZPFuDUmX8J0FwF3FLZxd0B69c5BF/QmhxiGssVUIHssd1
+         qVfSG0pbwWQ/bWG5f5YkNLJuxYrA4ZywlH09s7eHrudjcZUaotsKt5Asce51mSK5GH/u
+         qdUJhqv8cWPzO8i//mVej3l/WW2qiY6x45D3fB2+zT3dWtLxzClu/6S8G0EiA/PY38oW
+         CQ7msb/t7VED1S4AMxs3EBXyvc22658JPC5CYMoXo3dqluZymECNEEzAB4jVblXXgnlS
+         GXvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=bE6xbA64+4/+ypbO6EikqEyAaX3P7FX1UfeFwnlD2zU=;
-        b=EyAcuMCzlK3WAMBfeo+3bu9Yc/OD0/dlbt/jaUa0vVurOU+ZVfvHY5awP/JyTp0qYa
-         AY0ZDyP93Ml3ylInE8jI6rxzuhd41WiQh+R+TTH9I9dYzAh58Cm/loQ8Ebb03RBuwV2y
-         sAvLtZRKzufB+ZH+PZuOHM8W1yb2n9Jbp51/bV4com9wdXL2ycBi/iMBxcVfQG3W1GWQ
-         MJhn4ryLBYhbzXyZfngAwLvD2wHHrWU6Cj/is3hBeF07NwR9Fm4moVhh2ROmZp7EBzU0
-         up1GJdsDagG3yycbedLNGleFfn84tzUAJqONHfJcii9qMj0iEkFDRtSDQwiZjiE/8O9x
-         5gDw==
-X-Gm-Message-State: AGi0PuZOAtVynqY0MsSB9G72D5Wb2Zd2zaNOXBnMMrwzPY57qNc5TT1C
-        x9TKjJZDLctad5jSVP3jfLw=
-X-Google-Smtp-Source: APiQypLdU3aIWu9z86/NX1JqxLKQ+dBdMwQ2HRs5P+XZUJ86A5j43R6srXcrdFpxTzks4w0GObR7fQ==
-X-Received: by 2002:a2e:81cc:: with SMTP id s12mr8513672ljg.90.1585610406263;
-        Mon, 30 Mar 2020 16:20:06 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=eWJ17QgfjQfYiVMNjS2RpFaBaWnfXYsQ7FwOrGsFKas=;
+        b=trqStLzJ4gnWibUUV0N+dC8p1EjyI7XOiuc1OgAQF4/QS7LHCC7JMTK3tRPuq07Hdb
+         6GL5rXE6uc/gNVEbMpM/3znyw4WjR/djxuwfb/tgj6q9WVuRT/RPlnRGW3mQKDbge2/H
+         a6qNEB28uR55vqGdlMecC5XSGW6S6QweBg0ZHCpOIPzlAPXqt8wDnuVKsIcLcpUJDHGE
+         BS9+x60PdwDCJWQrSyhM0/wd9QevAZMvPyaX+n1T4KQpBm2HtU94BA8qdF7rDatkeyLk
+         vK+ZqvQ/z5PiMkwatHEJho5n7C57X0cSQWUsM8UKyhcOr6yf0etGawuuycnlTkrpoVtW
+         gymA==
+X-Gm-Message-State: AGi0PubUm9aYm9va3m+HSjZ5la+qQLlLP8eW7UgN2b7WvqaQIRav/9gs
+        u1GBWMxPrDXNoKENuaPKjUA=
+X-Google-Smtp-Source: APiQypKc1S6eO3KhpVEEF2gpYXrf5kNQ9F72l1NV6q4EuPc+dFdAPBfecepxyHyWrWW2xk5fLNSN5g==
+X-Received: by 2002:a2e:8290:: with SMTP id y16mr8412523ljg.186.1585610410601;
+        Mon, 30 Mar 2020 16:20:10 -0700 (PDT)
 Received: from localhost.localdomain (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.gmail.com with ESMTPSA id h3sm8773187lfk.30.2020.03.30.16.20.04
+        by smtp.gmail.com with ESMTPSA id h3sm8773187lfk.30.2020.03.30.16.20.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:20:05 -0700 (PDT)
+        Mon, 30 Mar 2020 16:20:10 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
@@ -64,10 +65,12 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v1 0/5] NVIDIA Tegra devfreq drivers improvements
-Date:   Tue, 31 Mar 2020 02:16:12 +0300
-Message-Id: <20200330231617.17079-1-digetx@gmail.com>
+Subject: [PATCH v1 4/5] PM / devfreq: tegra30: Use clk_round_rate_unboundly()
+Date:   Tue, 31 Mar 2020 02:16:16 +0300
+Message-Id: <20200330231617.17079-5-digetx@gmail.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200330231617.17079-1-digetx@gmail.com>
+References: <20200330231617.17079-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -75,36 +78,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+The clk_round_rate() doesn't work for us properly if clock rate is bounded
+by a min/max rate that is requested by some other clk-user because we're
+building devfreq's OPP table based on the rounding.
 
-This series contains minor patches that I was going to send out a month or
-two ago, but completely forgot about. More importantly, it also contains new
-patches that are needed in order to address an upcoming problem in regards
-to adding interconnect API support for NVIDIA Tegra [1].
+In particular this becomes a problem if display driver is probed earlier
+than devfreq, and thus, display adds a memory bandwidth request using
+interconnect API, which results in a minimum clock-rate being set for
+the memory clk. In a result, the lowest devfreq OPP rate is getting
+limited to the minimum rate imposed by the display driver.
 
-[1] https://patchwork.ozlabs.org/project/linux-tegra/list/?series=167480
+Let's use new clk_round_rate_unboundly() that resolves the problem by
+rounding clock rate without taking into account min/max limits imposed by
+active clk users.
 
-The problem lies in clk_round_rate(), which rounds clock rate based on the
-min/max clk limits imposed by active clk users. This is not suitable for
-the Tegra devfreq drivers because they use clk_round_rate() for building
-OPP table, and thus, nothing should limit the clk rate, otherwise the OPP
-table values are erroneously getting limited to the clk's limits.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/devfreq/tegra30-devfreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Dmitry Osipenko (5):
-  PM / devfreq: tegra: Add Dmitry as a maintainer
-  clk: Introduce clk_round_rate_unboundly()
-  PM / devfreq: tegra20: Use clk_round_rate_unboundly()
-  PM / devfreq: tegra30: Use clk_round_rate_unboundly()
-  PM / devfreq: tegra30: Make CPUFreq notifier to take into account
-    boosting
-
- MAINTAINERS                       |  9 ++++++
- drivers/clk/clk.c                 | 49 ++++++++++++++++++++++++-------
- drivers/devfreq/tegra20-devfreq.c |  4 +--
- drivers/devfreq/tegra30-devfreq.c |  6 ++--
- include/linux/clk.h               | 18 ++++++++++++
- 5 files changed, 70 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
+index 28b2c7ca416e..34f6291e880c 100644
+--- a/drivers/devfreq/tegra30-devfreq.c
++++ b/drivers/devfreq/tegra30-devfreq.c
+@@ -834,7 +834,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 
+ 	reset_control_deassert(tegra->reset);
+ 
+-	rate = clk_round_rate(tegra->emc_clock, ULONG_MAX);
++	rate = clk_round_rate_unboundly(tegra->emc_clock, ULONG_MAX);
+ 	if (rate < 0) {
+ 		dev_err(&pdev->dev, "Failed to round clock rate: %ld\n", rate);
+ 		return rate;
+@@ -849,7 +849,7 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	for (rate = 0; rate <= tegra->max_freq * KHZ; rate++) {
+-		rate = clk_round_rate(tegra->emc_clock, rate);
++		rate = clk_round_rate_unboundly(tegra->emc_clock, rate);
+ 
+ 		if (rate < 0) {
+ 			dev_err(&pdev->dev,
 -- 
 2.25.1
 
