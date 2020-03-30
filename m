@@ -2,163 +2,190 @@ Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7208C43331
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 08:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28AC6C2D0EB
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 10:04:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88DD2073B
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 08:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585557492;
-	bh=BkHx8NFiQ75YGJGHV3YLzUBEEQCGCQ6ZgXds5RE21G4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VFqiFS56eO9rEkK48neHqiI3RTwlgmXpa2ekzms8Xi/hBj+znh3cpOyQQbUf43R3l
-	 4qO+DVCoBBCl8Us4DuDwr+w3E5tC2bTsVv0LmMnWSz7W6R5fJDHZFI2jUhaZcUg6bU
-	 lGLh6M5Eyf7SBvY6OmXWRF0Spi8AHVitNeoW+nyg=
+	by mail.kernel.org (Postfix) with ESMTP id 0090420733
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 10:04:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="EC2zPH68"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729648AbgC3IiM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 04:38:12 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:56073 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726017AbgC3IiM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 04:38:12 -0400
-X-Greylist: delayed 5280 seconds by postgrey-1.27 at vger.kernel.org; Mon, 30 Mar 2020 04:38:09 EDT
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id 02U8bmN8026273;
-        Mon, 30 Mar 2020 17:37:49 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com 02U8bmN8026273
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1585557470;
-        bh=PxRmu3HuDIYTqEJxiJ5PqE2LXmQuo3D9zlavzY5jVI4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=brVEPKJScKZunXMPy14SQD8gmdtXfD/Z7CL8ZRWvjqvg8UYOEXDjY45m6LQp+Upry
-         SgIqRIt+Vbfvxsnbg1Sa4ESbah6Ht4e+ygLsb2zMtFxzxi6m+CL+3akLM9W4IRUtrC
-         8IrkWOugyFCF6k+q9DWaJ/RylMYkLVAXmcO1Y053y79in1DJ1SYDKl6QryZcJvymZW
-         zhUI92s1QDExgPzlgqMqS+2VzRW+Hf/0CueUJkv89pUXdRGkEy/yT1U57PQSLpZHL5
-         dpuemg5XzFyFNtnhwxT9TEaThfuk/wESfJfRmQy4YDPJPK/eWz1pRIvn+23Xa8wREx
-         iiOBT5PkS+9Hg==
-X-Nifty-SrcIP: [209.85.222.47]
-Received: by mail-ua1-f47.google.com with SMTP id r47so5951861uad.11;
-        Mon, 30 Mar 2020 01:37:49 -0700 (PDT)
-X-Gm-Message-State: AGi0PuYfI1t4jOABvMJbBeheO5K31RVjKrp+v3PMdlyhGrfyx/pJ5lj8
-        56rX/6bnMc6mi60tJtnMdm1005lbsmAaPgRPoO8=
-X-Google-Smtp-Source: APiQypJeTOypTow5s/orWLiqA+luxDBNhpwR1xE86uZ7tA8NnJnWdBsJgIswlbl89EaZoapGrF/J2WDHqcRU1fH6V1M=
-X-Received: by 2002:a9f:28c5:: with SMTP id d63mr6911883uad.25.1585557468135;
- Mon, 30 Mar 2020 01:37:48 -0700 (PDT)
+        id S1728722AbgC3KEn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Mar 2020 06:04:43 -0400
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:39431 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728594AbgC3KEm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 06:04:42 -0400
+Received: from [192.168.2.10] ([46.9.234.233])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id IrHYjFxo2Br2bIrHbjbrcw; Mon, 30 Mar 2020 12:04:40 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1585562680; bh=pBQdu7TnN1u+LW6UJce1qhQz4FpBtFfXBHt2IBDpk5g=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=EC2zPH68oY4QgQDRAuI4Bb/7czsx5nRWTcoz47/TtQBVROa/emCgkBpQYiayndxM6
+         K07+G5AghboG70iPWNLaA1Z6S8rlVKfflgZfSLCQG9lJEDyUCDeSAcB7giPsSTu+US
+         hYLcslPNbPP9voFtqML1bCJUn6BMpWPRdwqnD5l+gRN0nRNtI7jNSzoIpRDbVl3Yr8
+         S/JwO/NIK9Rj3xWyd1FGpbMn2gKXXIawDBReKGwrqwD/DKRcwcKBZmkbqesH9FNJeh
+         BJmbiDQ7YCTT5DVk0afoaXJek55yal73Rz5bqXTpl4dv6uYk94jko/gkxoiSqVhREB
+         aHazZ09pCHYcQ==
+Subject: Re: [RFC PATCH v5 0/9] Add Tegra driver for video capture
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        helen.koike@collabora.com
+Cc:     digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <4bb6a3b8-3332-014b-e763-bce9076179dd@xs4all.nl>
+Date:   Mon, 30 Mar 2020 12:04:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-5-robh@kernel.org>
- <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
-In-Reply-To: <CAK7LNARJn4uugHxcjK+WOWBs0gPVZQsCu4y6M8hkNK1U5FehRA@mail.gmail.com>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Mon, 30 Mar 2020 17:37:11 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
-Message-ID: <CAK7LNARXj3=1VPWL4kFmGkZuvV=yKb7gVaX2nbeiO54f-zWeHQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] dt-bindings: Add missing 'additionalProperties: false'
-To:     Rob Herring <robh@kernel.org>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Zhang Rui <rui.zhang@intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-iio@vger.kernel.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux PM mailing list <linux-pm@vger.kernel.org>,
-        Networking <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfObvoIsiesmyNvsfanDi5WzjSAOuV1CfYPiSDZTpKWi2lvpeUXEbWg5bFkTawJL2aiWa7tndefzxPa4wEvbikncfGhAH3jLRtoMnSEIw8n5ZXjN5p7Ht
+ hKHhxbWIU/iDwQyZODfbQR4Z/jZAk2koFIkUhT7SA+vNR62fSY0wMaZpt9L+3kPkvRwP0j4ltJbrnPiwF2IU0gd6qdXACu1YNdqWPq8M2LSo52N6uvCHEedA
+ 27ic33PTNqF7Hi2orAGSkLJZsh27MjS6o5WT3w6sCQ/tc9XV/NMfz94K0BgaVlZ5WYbknnF962Qy127oYSwHRlpbGUjAyw7ExCg6fCyKhHYJ5C4SaVpHJqWq
+ d4EQfuCIRrVKDEMkBaRBnRSdfw29kWLRzsrv9oy7ALaop240jQ1JyTBv7XPpgp7HCc1n5rIIjmV+zIfLMnC+gaG0Nawt/nc9yJkOZhsWfKpTGx1c8leuBaph
+ HpSUHZ6iCYJO9qK2/SXog64PJ4vDBEH4amNpE6KNs1dDoq12RISa56di3BHFHo27xBstjviK56IxqEu/v6t+Vf3Z+Jo4aXuG+8n8UA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+Hi Sowjanya,
 
-On Mon, Mar 30, 2020 at 4:09 PM Masahiro Yamada <masahiroy@kernel.org> wrote:
->
-> On Thu, Mar 26, 2020 at 7:06 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > Setting 'additionalProperties: false' is frequently omitted, but is
-> > important in order to check that there aren't extra undocumented
-> > properties in a binding.
-> >
-> > Ideally, we'd just add this automatically and make this the default, but
-> > there's some cases where it doesn't work. For example, if a common
-> > schema is referenced, then properties in the common schema aren't part
-> > of what's considered for 'additionalProperties'. Also, sometimes there
-> > are bus specific properties such as 'spi-max-frequency' that go into
-> > bus child nodes, but aren't defined in the child node's schema.
-> >
-> > So let's stick with the json-schema defined default and add
-> > 'additionalProperties: false' where needed. This will be a continual
-> > review comment and game of wack-a-mole.
-> >
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
->
->
-> >  .../devicetree/bindings/gpio/socionext,uniphier-gpio.yaml      | 2 ++
->
->
-> You may have already queue this up, but just in case.
->
-> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 3/23/20 6:52 PM, Sowjanya Komatineni wrote:
+> This series adds Tegra210 VI and CSI driver for built-in test pattern
+> generator (TPG) capture.
+> 
+> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+> CSI port is one-to-one mapped to VI channel for video capture.
+> 
+> This series has TPG support only where it creates hard media links
+> between CSI subdevice and VI video device without device graphs.
+> 
+> v4l2-compliance results are available below the patch diff.
+> 
+> [v5]:	Includes,
+> 	- v4 feedback
+> 	- fix for venc powergate mc reset order.
+> 	- fix to have unbind and bind work during v4l2-ctl sleep and streaming.
 
+Unfortunately, I still crash on this.
 
+I do the following:
 
-I take back Ack for socionext,uniphier-gpio.yaml
+Run: v4l2-ctl --stream-mmap
 
+Then, from another shell as root:
 
+cd /sys/devices/platform/50000000.host1x/tegra-video/driver
+echo -n tegra-video > unbind
 
-Now "make dt_binding_check" produces a new warning.
+I get this crash:
 
-gpio@55000000: 'interrupt-parent' does not match any of the regexes:
-'pinctrl-[0-9]+'
+[  315.691971] Unable to handle kernel NULL pointer dereference at virtual address 00000000000000b0
+[  315.700749] Mem abort info:
+[  315.703536]   ESR = 0x96000004
+[  315.706587]   EC = 0x25: DABT (current EL), IL = 32 bits
+[  315.711886]   SET = 0, FnV = 0
+[  315.714933]   EA = 0, S1PTW = 0
+[  315.718064] Data abort info:
+[  315.720936]   ISV = 0, ISS = 0x00000004
+[  315.724763]   CM = 0, WnR = 0
+[  315.727726] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000178ee8000
+[  315.734152] [00000000000000b0] pgd=0000000000000000
+[  315.739024] Internal error: Oops: 96000004 [#1] PREEMPT SMP
+[  315.744584] Modules linked in: r8152 nouveau lp855x_bl tegra_drm ttm
+[  315.750942] CPU: 3 PID: 2206 Comm: bash Tainted: G        W         5.6.0-rc1-arm64 #118
+[  315.759017] Hardware name: NVIDIA Jetson TX1 Developer Kit (DT)
+[  315.764927] pstate: 20000085 (nzCv daIf -PAN -UAO)
+[  315.769718] pc : _raw_write_lock_irqsave+0xb0/0x2b8
+[  315.774590] lr : ida_free+0x48/0x158
+[  315.778155] sp : ffff800011d8bba0
+[  315.781462] x29: ffff800011d8bba0 x28: ffff0000f4095400
+[  315.786766] x27: 0000000000000000 x26: 0000000000000000
+[  315.792070] x25: 0000000000000000 x24: 0000000000000000
+[  315.797372] x23: ffff0000f21ad400 x22: ffff0000f5c93000
+[  315.802674] x21: ffff0000f4095400 x20: ffff0000f86b5540
+[  315.807975] x19: 0000000000000000 x18: 0000000000000000
+[  315.813276] x17: 0000000000000001 x16: 0000000000000019
+[  315.818578] x15: 000000148ccdabe2 x14: 0000000000000136
+[  315.823879] x13: 0000000000000001 x12: 00000000000003f8
+[  315.829180] x11: 0000000000000000 x10: 0000000000000000
+[  315.834482] x9 : ffff0000ff899990 x8 : ffff0000ff899000
+[  315.839784] x7 : 0000000040000000 x6 : 0000000000210d00
+[  315.845085] x5 : 0000000000000001 x4 : 0000000000000000
+[  315.850386] x3 : 00000000000000b0 x2 : 0000000000000001
+[  315.855687] x1 : 0000000000000000 x0 : 0000000000000001
+[  315.860988] Call trace:
+[  315.863432]  _raw_write_lock_irqsave+0xb0/0x2b8
+[  315.867956]  ida_free+0x48/0x158
+[  315.871184]  __media_device_unregister_entity+0x28/0xf0
+[  315.876402]  media_device_unregister+0x6c/0x148
+[  315.880927]  host1x_video_remove+0x20/0x48
+[  315.885021]  host1x_device_remove+0x1c/0x30
+[  315.889198]  device_release_driver_internal+0xf4/0x1c0
+[  315.894325]  device_driver_detach+0x14/0x20
+[  315.898503]  unbind_store+0xd4/0xf8
+[  315.901986]  drv_attr_store+0x20/0x30
+[  315.905645]  sysfs_kf_write+0x40/0x50
+[  315.909301]  kernfs_fop_write+0xf8/0x210
+[  315.913219]  __vfs_write+0x18/0x40
+[  315.916616]  vfs_write+0xdc/0x1c8
+[  315.919926]  ksys_write+0x68/0xf0
+[  315.923235]  __arm64_sys_write+0x18/0x20
+[  315.927154]  el0_svc_common.constprop.0+0x68/0x160
+[  315.931936]  do_el0_svc+0x20/0x80
+[  315.935246]  el0_sync_handler+0x10c/0x180
+[  315.939246]  el0_sync+0x140/0x180
+[  315.942560] Code: 8803fc02 35ffffa3 17fffda6 f9800071 (885ffc60)
+[  315.948644] ---[ end trace e42b943f3c1af06c ]---
 
+The following diff fixes this:
 
-This binding uses 'interrupt-parent'
-without 'interrupts'.
+------------------ cut here ------------------
+diff --git a/drivers/staging/media/tegra/tegra-vi.c b/drivers/staging/media/tegra/tegra-vi.c
+index 9714152aa6a7..53cf37af9602 100644
+--- a/drivers/staging/media/tegra/tegra-vi.c
++++ b/drivers/staging/media/tegra/tegra-vi.c
+@@ -583,7 +583,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ 	/* initialize the video_device */
+ 	chan->video->fops = &tegra_channel_fops;
+ 	chan->video->v4l2_dev = &vid->v4l2_dev;
+-	chan->video->release = video_device_release_empty;
++	chan->video->release = video_device_release;
+ 	chan->video->queue = &chan->queue;
+ 	snprintf(chan->video->name, sizeof(chan->video->name), "%s-%s-%u",
+ 		 dev_name(vi->dev), "output", chan->portno);
+@@ -647,6 +647,7 @@ static int tegra_channel_init(struct tegra_vi_channel *chan)
+ 	media_entity_cleanup(&chan->video->entity);
+ release_vdev:
+ 	video_device_release(chan->video);
++	chan->video = NULL;
+ 	return ret;
+ }
 
-Instead, the mapping of the interrupt numbers
-is specified by the vendor-specific property
-socionext,interrupt-ranges
+@@ -707,7 +708,6 @@ static void tegra_vi_channels_cleanup(struct tegra_vi *vi)
+ 			mutex_lock(&chan->video_lock);
+ 			vb2_queue_release(&chan->queue);
+ 			mutex_unlock(&chan->video_lock);
+-			video_device_release(chan->video);
+ 		}
 
+ 		if (chan->frame_start_sp)
+------------------ cut here ------------------
 
+Regards,
 
-I cannot add   "interrupt-parent: true" because
-dt-schema/meta-schemas/interrupts.yaml
-has "interrupt-parent: false".
-
-
-Is there any solution?
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+	Hans
