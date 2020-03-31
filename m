@@ -7,21 +7,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AA0C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2FAC2D0EE
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E4D2080C
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:46:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E933208FE
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:46:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728245AbgCaVqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 17:46:20 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:50362 "EHLO
+        id S1731426AbgCaVq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 17:46:27 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50432 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730014AbgCaVqU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 17:46:20 -0400
+        with ESMTP id S1731511AbgCaVqZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 17:46:25 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 25A652970A8
+        with ESMTPSA id 80572297179
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     mark.rutland@arm.com, ck.hu@mediatek.com, sboyd@kernel.org,
         ulrich.hecht+renesas@gmail.com
@@ -31,11 +31,14 @@ Cc:     matthias.bgg@kernel.org, linux-arm-kernel@lists.infradead.org,
         Matthias Brugger <mbrugger@suse.com>,
         linux-clk@vger.kernel.org, matthias.bgg@gmail.com,
         drinkcat@chromium.org, hsinyi@chromium.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH 1/4] soc: mediatek: Enable mmsys driver by default if Mediatek arch is selected
-Date:   Tue, 31 Mar 2020 23:46:06 +0200
-Message-Id: <20200331214609.1742152-1-enric.balletbo@collabora.com>
+        linux-mediatek@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH 4/4] arm64: dts: mt8173: Fix mmsys node name
+Date:   Tue, 31 Mar 2020 23:46:09 +0200
+Message-Id: <20200331214609.1742152-4-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200331214609.1742152-1-enric.balletbo@collabora.com>
+References: <20200331214609.1742152-1-enric.balletbo@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -43,34 +46,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The mmsys driver supports only MT8173 device for now, but like other system
-controllers is an important piece for other Mediatek devices. Actually
-it depends on the mt8173 clock specific driver but that dependency is
-not real as it can build without the clock driver. Instead of depends on
-a specific model, make the driver depends on the generic ARCH_MEDIATEK and
-enable by default so other Mediatek devices can start using it without
-flood the Kconfig.
+Node names are supposed to match the class of the device, mmsys is a
+system controller (syscon) not a clock controller, so change the node
+name accordingly.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
- drivers/soc/mediatek/Kconfig | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
-index e84513318725..59a56cd790ec 100644
---- a/drivers/soc/mediatek/Kconfig
-+++ b/drivers/soc/mediatek/Kconfig
-@@ -46,8 +46,7 @@ config MTK_SCPSYS
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index 8b4e806d5119..a55e8c177832 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -908,7 +908,7 @@ u2port1: usb-phy@11291000 {
+ 			};
+ 		};
  
- config MTK_MMSYS
- 	bool "MediaTek MMSYS Support"
--	depends on COMMON_CLK_MT8173_MMSYS
--	default COMMON_CLK_MT8173_MMSYS
-+	default ARCH_MEDIATEK
- 	help
- 	  Say yes here to add support for the MediaTek Multimedia
- 	  Subsystem (MMSYS).
+-		mmsys: clock-controller@14000000 {
++		mmsys: syscon@14000000 {
+ 			compatible = "mediatek,mt8173-mmsys", "syscon";
+ 			reg = <0 0x14000000 0 0x1000>;
+ 			power-domains = <&scpsys MT8173_POWER_DOMAIN_MM>;
 -- 
 2.25.1
 
