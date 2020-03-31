@@ -2,184 +2,201 @@ Return-Path: <SRS0=I1Rz=5Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF56C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 05:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF9C43331
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 06:08:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6D1206EB
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 05:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E04820748
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 06:08:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Nyi/opZX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSjVD2wV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726216AbgCaFfd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 01:35:33 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:50655 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726001AbgCaFfd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 01:35:33 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1585632932; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=fes4q3BYaybrvlgVDtBeVWule4OgaJcrX3+0iF8Z4cw=; b=Nyi/opZXctbl/B6m+MhrI6Ouq7w+dWNsniNcYd8kVxUipSOJhWjXTDgp1bRZzS3nR934Yb10
- qYYQEOpi/ZcyLY6JX7JoVyM7obum7dMj+/gEUkKveRQ1DVOgR5ph2KRqhpTj4o3m5iXYRm72
- 5Ij3ABjHltDQiFMUl/wwDR2GGC0=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e82d69c.7f59d0ebf928-smtp-out-n02;
- Tue, 31 Mar 2020 05:35:24 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B9B0FC433BA; Tue, 31 Mar 2020 05:35:24 +0000 (UTC)
-Received: from [192.168.0.104] (unknown [183.82.140.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F2464C433F2;
-        Tue, 31 Mar 2020 05:35:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2464C433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        id S1726236AbgCaGIy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 02:08:54 -0400
+Received: from mail-pj1-f65.google.com ([209.85.216.65]:52013 "EHLO
+        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726299AbgCaGIy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 02:08:54 -0400
+Received: by mail-pj1-f65.google.com with SMTP id w9so636507pjh.1
+        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2020 23:08:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=OpQKiggADNEam9j1IF1ZgKCFxLfApWFsR5KbZ1C+nBs=;
+        b=VSjVD2wV10lTVvj6HTTeoet5y8V8krcWRYwc6hXafNeAUq7SCc7y3tr4WGyeTC6oLL
+         I6oY0/HFBEB7zPN9e+C0wNSVibWi0OnZfTqxetkck/B5JXkZDu3Y0m5TZ13hwXEkKhYu
+         2mmIP6hkPsm/n8XrJjFOvbxyV3SntlQopq02k/DxfOJLxdPvdvOq3wrVCjUFVPLujD8c
+         cbwGVYlq2JJlU6Na9rsppS7NDQpBIrzzZmnHUkPJq5LuSnftQNIg/yT8GrH30NSce0M4
+         Y16tU+hFSRAs1vl/R0DuGyWjcnjsQvgPlkvNZSCM4OBMc+DoXpLbfNsW5TsRc2F9pefO
+         5djg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=OpQKiggADNEam9j1IF1ZgKCFxLfApWFsR5KbZ1C+nBs=;
+        b=JE6CMu7n4nw36shx15EFJn4+eSYIGAN+uLeM+jFEwzmAP0BLe3/BCqDn7edF6QbOHl
+         r+sNYXCMpHWpnsV2QY2kwVj5/aBjAoyrLrRb1fP0hXdjkFEKnv4ATq4uFqY3VAy5amSR
+         er98QJkYitgwR4U8tNSWPcv3c05sceyaaYPVT2WLtCe7rIsFkH951vm6bBA66iEhYfLs
+         jGl5NyyL345kmpyqbeazDcIWjt3ohEzK4bH/CvPnO3U/MuonDidJLkWDmhl8dTCft4sd
+         ET6Rj72NgtmHwAiQcdbwLoqpEFJmBL+fiXTZWVWRNKcyOWlRwazIetN/FeRyj/IRDJiI
+         zkgg==
+X-Gm-Message-State: AGi0PubQ7FtmsZ53Ge/vDZ6V7n+Mmjwop9ylPzIx4u5cVNPw11/2bGRa
+        cSPMBnTAO1B4BX+mEhH1lbVbAQ==
+X-Google-Smtp-Source: APiQypI37mArLqJb3kpr8kgCNB7T0c03vWdQcOiyYbzHcdpgd5de0iK7DZWllc8CctrFEMVI2AM7AA==
+X-Received: by 2002:a17:90b:3556:: with SMTP id lt22mr2010864pjb.138.1585634932111;
+        Mon, 30 Mar 2020 23:08:52 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id m2sm1015301pjl.21.2020.03.30.23.08.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Mar 2020 23:08:51 -0700 (PDT)
+Date:   Mon, 30 Mar 2020 23:08:49 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
+Message-ID: <20200331060849.GC246874@minitux>
 References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
  <20200319053902.3415984-2-bjorn.andersson@linaro.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
-Date:   Tue, 31 Mar 2020 11:05:17 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+ <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200319053902.3415984-2-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Mon 30 Mar 22:35 PDT 2020, Taniya Das wrote:
 
-I think the upstream design always wanted the client/consumer to enable 
-the GPU Rail and then turn ON the GDSC?
-
-Why are we going ahead with adding the support of regulator in the GDSC 
-driver?
-
-On 3/19/2020 11:08 AM, Bjorn Andersson wrote:
-> Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
-> regulator supply is powered in order to be turned on.
+> Hi Stephen,
 > 
-> It's not guaranteed that the bootloader will leave these supplies on and
-> the driver core will attempt to enable any GDSCs before allowing the
-> individual drivers to probe defer on the PMIC regulator driver not yet
-> being present.
+> I think the upstream design always wanted the client/consumer to enable the
+> GPU Rail and then turn ON the GDSC?
 > 
-> So the gdsc driver needs to be made aware of supplying regulators and
-> probe defer on their absence, and it needs to enable and disable the
-> regulator accordingly.
-> 
-> Voltage adjustments of the supplying regulator are deferred to the
-> client drivers themselves.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->   drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
->   drivers/clk/qcom/gdsc.h |  4 ++++
->   2 files changed, 28 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index a250f59708d8..3528789cc9d0 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -13,6 +13,7 @@
->   #include <linux/regmap.h>
->   #include <linux/reset-controller.h>
->   #include <linux/slab.h>
-> +#include <linux/regulator/consumer.h>
->   #include "gdsc.h"
->   
->   #define PWR_ON_MASK		BIT(31)
-> @@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->   	int ret;
->   	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
->   
-> +	if (status == GDSC_ON && sc->rsupply) {
-> +		ret = regulator_enable(sc->rsupply);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
->   	if (ret)
->   		return ret;
-> @@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
->   
->   	ret = gdsc_poll_status(sc, status);
->   	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
-> +
-> +	if (!ret && status == GDSC_OFF && sc->rsupply) {
-> +		ret = regulator_disable(sc->rsupply);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->   	return ret;
->   }
->   
-> @@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
->   	if (!data->domains)
->   		return -ENOMEM;
->   
-> +	/* Resolve any regulator supplies */
-> +	for (i = 0; i < num; i++) {
-> +		if (!scs[i] || !scs[i]->supply)
-> +			continue;
-> +
-> +		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
-> +		if (IS_ERR(scs[i]->rsupply))
-> +			return PTR_ERR(scs[i]->rsupply);
-> +	}
-> +
->   	data->num_domains = num;
->   	for (i = 0; i < num; i++) {
->   		if (!scs[i])
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index 64cdc8cf0d4d..c36fc26dcdff 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -10,6 +10,7 @@
->   #include <linux/pm_domain.h>
->   
->   struct regmap;
-> +struct regulator;
->   struct reset_controller_dev;
->   
->   /**
-> @@ -52,6 +53,9 @@ struct gdsc {
->   	struct reset_controller_dev	*rcdev;
->   	unsigned int			*resets;
->   	unsigned int			reset_count;
-> +
-> +	const char 			*supply;
-> +	struct regulator		*rsupply;
->   };
->   
->   struct gdsc_desc {
+> Why are we going ahead with adding the support of regulator in the GDSC
+> driver?
 > 
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+As I (partially) describe below the mdss driver on 8996 doesn't probe
+because the GDSC fails to enable, because the upstream supply is not
+enabled, so the mdss driver can't turn on the regulator needed by the
+GDSC.
 
---
+I don't see any other way to handle this than extending the gdsc
+implementation, hence my proposal to change the design.
+Suggestions/feedback are welcome though.
+
+Regards,
+Bjorn
+
+> On 3/19/2020 11:08 AM, Bjorn Andersson wrote:
+> > Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
+> > regulator supply is powered in order to be turned on.
+> > 
+> > It's not guaranteed that the bootloader will leave these supplies on and
+> > the driver core will attempt to enable any GDSCs before allowing the
+> > individual drivers to probe defer on the PMIC regulator driver not yet
+> > being present.
+> > 
+> > So the gdsc driver needs to be made aware of supplying regulators and
+> > probe defer on their absence, and it needs to enable and disable the
+> > regulator accordingly.
+> > 
+> > Voltage adjustments of the supplying regulator are deferred to the
+> > client drivers themselves.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >   drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
+> >   drivers/clk/qcom/gdsc.h |  4 ++++
+> >   2 files changed, 28 insertions(+)
+> > 
+> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> > index a250f59708d8..3528789cc9d0 100644
+> > --- a/drivers/clk/qcom/gdsc.c
+> > +++ b/drivers/clk/qcom/gdsc.c
+> > @@ -13,6 +13,7 @@
+> >   #include <linux/regmap.h>
+> >   #include <linux/reset-controller.h>
+> >   #include <linux/slab.h>
+> > +#include <linux/regulator/consumer.h>
+> >   #include "gdsc.h"
+> >   #define PWR_ON_MASK		BIT(31)
+> > @@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+> >   	int ret;
+> >   	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+> > +	if (status == GDSC_ON && sc->rsupply) {
+> > +		ret = regulator_enable(sc->rsupply);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> >   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+> >   	if (ret)
+> >   		return ret;
+> > @@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+> >   	ret = gdsc_poll_status(sc, status);
+> >   	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+> > +
+> > +	if (!ret && status == GDSC_OFF && sc->rsupply) {
+> > +		ret = regulator_disable(sc->rsupply);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	}
+> > +
+> >   	return ret;
+> >   }
+> > @@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
+> >   	if (!data->domains)
+> >   		return -ENOMEM;
+> > +	/* Resolve any regulator supplies */
+> > +	for (i = 0; i < num; i++) {
+> > +		if (!scs[i] || !scs[i]->supply)
+> > +			continue;
+> > +
+> > +		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
+> > +		if (IS_ERR(scs[i]->rsupply))
+> > +			return PTR_ERR(scs[i]->rsupply);
+> > +	}
+> > +
+> >   	data->num_domains = num;
+> >   	for (i = 0; i < num; i++) {
+> >   		if (!scs[i])
+> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> > index 64cdc8cf0d4d..c36fc26dcdff 100644
+> > --- a/drivers/clk/qcom/gdsc.h
+> > +++ b/drivers/clk/qcom/gdsc.h
+> > @@ -10,6 +10,7 @@
+> >   #include <linux/pm_domain.h>
+> >   struct regmap;
+> > +struct regulator;
+> >   struct reset_controller_dev;
+> >   /**
+> > @@ -52,6 +53,9 @@ struct gdsc {
+> >   	struct reset_controller_dev	*rcdev;
+> >   	unsigned int			*resets;
+> >   	unsigned int			reset_count;
+> > +
+> > +	const char 			*supply;
+> > +	struct regulator		*rsupply;
+> >   };
+> >   struct gdsc_desc {
+> > 
+> 
+> -- 
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation.
+> 
+> --
