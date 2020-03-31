@@ -2,96 +2,145 @@ Return-Path: <SRS0=I1Rz=5Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EB2C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 09:30:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C6CC2D0F3
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 10:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66EC4208E0
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 09:30:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TCvC8Ipl"
+	by mail.kernel.org (Postfix) with ESMTP id 13DD320838
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 10:32:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730217AbgCaJa0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 05:30:26 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39491 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730235AbgCaJaZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 05:30:25 -0400
-Received: by mail-ed1-f65.google.com with SMTP id a43so24259643edf.6
-        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2020 02:30:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cRf4XSMOaFJMe4go+8/QY1e2A8UYJy3i4Zzxrup/Gvo=;
-        b=TCvC8IplBOkkC30T28VopRqymYOm2EFbGBHCP3eLUbu602822NIwK4+4dLt2mqYDTi
-         w+kQjpM1NkbPdazJD9AhAZs5U737ydDNfX4/zSgrVMK9klM0YaPIIdCfy1wyfP2vZAgB
-         U0kuWggt4Yldeb3LCZidaaAJW5VmrGPPLXthzX5AsNHP8jU0oIDlcmCiKwfaOTqnyqwW
-         caCTpIc6iDfy9tQd0qpaIkPWyMYC0pnuKneKPzPO+UpJCS+eFtCXi1S+QYCrmrXezLat
-         7buOEnP6awrLxpXkcnh5EKIIl6phVhG1mfn8gWhRCBJ8odlBJHcnBWwMLxLrZKKlfqBx
-         hqWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cRf4XSMOaFJMe4go+8/QY1e2A8UYJy3i4Zzxrup/Gvo=;
-        b=Oh4eT2+5EB6Xfy1qIdDc3drnFqkkiKyyLi8V/hvv8YnO8DWhpwy2NjS6cMw8H+zbpw
-         3vSPp9EY7cUS4BPCxdl1X1PkLp84Z/yLX/TNwhWlG5nmGNeWCOFlkS8JgcOFqktNzmWE
-         vVELfofgAqPbLHYqvJiV0US/94Juv8O7t/rIkrRE9JSfePWgtChPvlwbvRIQg3tWARsI
-         46fYe3CXwwoC4zVRDRkKGKA8DFUSeTbL0Q6ywF8qSfQ47AaxdpENzPx/Otzy1TYy/gTC
-         UrKOspQkpb7/8alYF59HCRR2Of8Bmum/f+TBYahS4KRPY4wfbe5osVQhVyO7xrgORBEt
-         tX6Q==
-X-Gm-Message-State: ANhLgQ3i6Cl0Cb3WN7YseFqS1kax60g5EUHKKdsJxKaUxDRr04dKqjUV
-        iAiwMRtUluI8xcvFPnlwq8YlqA==
-X-Google-Smtp-Source: ADFU+vvGYvR25pBE8ZqwnJMdn+n24oyddUIhZdPZjNWvdjL9iMK/eUeZkt/q7655brjEjlcis9v7Sw==
-X-Received: by 2002:a50:d613:: with SMTP id x19mr14653371edi.61.1585647021690;
-        Tue, 31 Mar 2020 02:30:21 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id u29sm2200201edd.47.2020.03.31.02.30.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 31 Mar 2020 02:30:21 -0700 (PDT)
-Subject: Re: [PATCH] clk: qcom: msm8916: Fix the address location of
- pll->config_reg
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
- <20200330204149.GA215915@minitux>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <b542e78a-9fa2-c7f8-460c-6cffa47d4ef6@linaro.org>
-Date:   Tue, 31 Mar 2020 10:30:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1730238AbgCaKcz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 06:32:55 -0400
+Received: from retiisi.org.uk ([95.216.213.190]:48102 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729925AbgCaKcz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 06:32:55 -0400
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2a01:4f9:c010:4572::80:2])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 47818634C87;
+        Tue, 31 Mar 2020 13:32:16 +0300 (EEST)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.92)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1jJEBr-0001Gy-Bd; Tue, 31 Mar 2020 13:32:15 +0300
+Date:   Tue, 31 Mar 2020 13:32:15 +0300
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        helen.koike@collabora.com, digetx@gmail.com, sboyd@kernel.org,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+Message-ID: <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <20200325110358.GB853@valkosipuli.retiisi.org.uk>
+ <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
 MIME-Version: 1.0
-In-Reply-To: <20200330204149.GA215915@minitux>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 30/03/2020 21:41, Bjorn Andersson wrote:
-> So while your change is correct, afaict it's a nop unless you fill out
-> the other fields as well.
+Hi Hans,
 
-Yes it shouldn't be a problem.
+On Mon, Mar 30, 2020 at 12:59:15PM +0200, Hans Verkuil wrote:
+> On 3/25/20 12:03 PM, Sakari Ailus wrote:
+> > Hi Sowjanya,
+> > 
+> > Thanks for the patchset.
+> > 
+> > On Mon, Mar 23, 2020 at 10:52:32AM -0700, Sowjanya Komatineni wrote:
+> >> Tegra210 contains a powerful Video Input (VI) hardware controller
+> >> which can support up to 6 MIPI CSI camera sensors.
+> >>
+> >> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+> >> capture from an external camera sensor connected to CSI or from
+> >> built-in test pattern generator.
+> >>
+> >> Tegra210 supports built-in test pattern generator from CSI to VI.
+> >>
+> >> This patch adds a V4L2 media controller and capture driver support
+> >> for Tegra210 built-in CSI to VI test pattern generator.
+> >>
+> >> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> >> ---
+> >>  drivers/staging/media/Kconfig              |    2 +
+> >>  drivers/staging/media/Makefile             |    1 +
+> >>  drivers/staging/media/tegra/Kconfig        |   10 +
+> >>  drivers/staging/media/tegra/Makefile       |    8 +
+> >>  drivers/staging/media/tegra/TODO           |   10 +
+> >>  drivers/staging/media/tegra/tegra-common.h |  263 +++++++
+> >>  drivers/staging/media/tegra/tegra-csi.c    |  522 ++++++++++++++
+> >>  drivers/staging/media/tegra/tegra-csi.h    |  118 ++++
+> >>  drivers/staging/media/tegra/tegra-vi.c     | 1058 ++++++++++++++++++++++++++++
+> >>  drivers/staging/media/tegra/tegra-vi.h     |   83 +++
+> >>  drivers/staging/media/tegra/tegra-video.c  |  129 ++++
+> >>  drivers/staging/media/tegra/tegra-video.h  |   32 +
+> >>  drivers/staging/media/tegra/tegra210.c     |  754 ++++++++++++++++++++
+> >>  drivers/staging/media/tegra/tegra210.h     |  192 +++++
+> > 
+> > Why staging? Are there reasons not to aim this to the kernel proper right
+> > away? If you only support TPG, the driver may not have too many (if any)
+> > real users anyway.
+> > 
+> >>  14 files changed, 3182 insertions(+)
+> >>  create mode 100644 drivers/staging/media/tegra/Kconfig
+> >>  create mode 100644 drivers/staging/media/tegra/Makefile
+> >>  create mode 100644 drivers/staging/media/tegra/TODO
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-common.h
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-csi.h
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-video.c
+> >>  create mode 100644 drivers/staging/media/tegra/tegra-video.h
+> >>  create mode 100644 drivers/staging/media/tegra/tegra210.c
+> >>  create mode 100644 drivers/staging/media/tegra/tegra210.h
+> >>
+> 
+> <snip>
+> 
+> >> +static int tegra_channel_g_input(struct file *file, void *priv,
+> >> +				 unsigned int *i)
+> >> +{
+> >> +	*i = 0;
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int tegra_channel_s_input(struct file *file, void *priv,
+> >> +				 unsigned int input)
+> >> +{
+> >> +	if (input > 0)
+> >> +		return -EINVAL;
+> >> +
+> >> +	return 0;
+> >> +}
+> > 
+> > Please see patchset on topic "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on
+> > linux-media; it's relevant here, too.
+> 
+> No, it isn't. The pipeline is controlled by the driver, not by userspace.
+> This is a regular video capture driver, not an ISP driver.
 
-We cloned the 8196 driver and then started adding bits. In our case we 
-need to start PLL3 and PLL4 from Linux, similar to line 3452 here
+I don't think that really makes a difference, whether a device is an ISP or
+not, but instead what does is whether there is something to control in its
+pipeline that cannot be generally done through the regular V4L2 interface.
+Even plain CSI-2 receiver drivers should be media device centric these days
+as doing otherwise excludes using a range of sensor drivers with them,
+including any possible future support for e.g. sensor embedded data.
 
-https://source.codeaurora.org/quic/la/kernel/msm-3.10/tree/drivers/clk/qcom/clock-gcc-8936.c?h=APSS.FSM.3.0
+-- 
+Kind regards,
 
-which does end up calling into the PLL recalc logic.
-
----
-bod
+Sakari Ailus
