@@ -2,201 +2,359 @@ Return-Path: <SRS0=I1Rz=5Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CEF9C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 06:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30EC5C2D0E8
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 07:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E04820748
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 06:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE44120B80
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 07:45:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VSjVD2wV"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="HMPl0nI9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726236AbgCaGIy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 02:08:54 -0400
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:52013 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726299AbgCaGIy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 02:08:54 -0400
-Received: by mail-pj1-f65.google.com with SMTP id w9so636507pjh.1
-        for <linux-clk@vger.kernel.org>; Mon, 30 Mar 2020 23:08:52 -0700 (PDT)
+        id S1726636AbgCaHpC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 03:45:02 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40716 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726397AbgCaHpB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 03:45:01 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a81so1402758wmf.5
+        for <linux-clk@vger.kernel.org>; Tue, 31 Mar 2020 00:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OpQKiggADNEam9j1IF1ZgKCFxLfApWFsR5KbZ1C+nBs=;
-        b=VSjVD2wV10lTVvj6HTTeoet5y8V8krcWRYwc6hXafNeAUq7SCc7y3tr4WGyeTC6oLL
-         I6oY0/HFBEB7zPN9e+C0wNSVibWi0OnZfTqxetkck/B5JXkZDu3Y0m5TZ13hwXEkKhYu
-         2mmIP6hkPsm/n8XrJjFOvbxyV3SntlQopq02k/DxfOJLxdPvdvOq3wrVCjUFVPLujD8c
-         cbwGVYlq2JJlU6Na9rsppS7NDQpBIrzzZmnHUkPJq5LuSnftQNIg/yT8GrH30NSce0M4
-         Y16tU+hFSRAs1vl/R0DuGyWjcnjsQvgPlkvNZSCM4OBMc+DoXpLbfNsW5TsRc2F9pefO
-         5djg==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:autocrypt:organization:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Mle85YP+rDckZryHYT1DsaIY/T30NdXKh8r9XNQQ1KM=;
+        b=HMPl0nI9TzPcawnrnoiN5u0qufpBFwSXdRw5WNqgnuqr+t+BbwwHI5jFJkfZgS026L
+         /xN0/4B0PiwQh7xRM7aIhj66zdVJoRfncXIJ7PC9CNXV5SApHuzKGmaZvKiouoMfq3rk
+         R+V+QAHEgAWHbbLkqcLZzZhUWFu34ry4d9J/MAHErZLlpQpUU2Eiw/xtfZTagYKW4LkZ
+         gBtRZO4Ol/u9nK5AwZld17YKt8QYDYx+SPhNBO664lQHI/7B9PUfQpwFtQKqXu7oO36g
+         TlGHo1ctiRJGxpYYMEIWuZmo50MUz/EroCi8TQZt/UQh0a8aGlKWAniS3Kp0oqTqRci2
+         dzew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OpQKiggADNEam9j1IF1ZgKCFxLfApWFsR5KbZ1C+nBs=;
-        b=JE6CMu7n4nw36shx15EFJn4+eSYIGAN+uLeM+jFEwzmAP0BLe3/BCqDn7edF6QbOHl
-         r+sNYXCMpHWpnsV2QY2kwVj5/aBjAoyrLrRb1fP0hXdjkFEKnv4ATq4uFqY3VAy5amSR
-         er98QJkYitgwR4U8tNSWPcv3c05sceyaaYPVT2WLtCe7rIsFkH951vm6bBA66iEhYfLs
-         jGl5NyyL345kmpyqbeazDcIWjt3ohEzK4bH/CvPnO3U/MuonDidJLkWDmhl8dTCft4sd
-         ET6Rj72NgtmHwAiQcdbwLoqpEFJmBL+fiXTZWVWRNKcyOWlRwazIetN/FeRyj/IRDJiI
-         zkgg==
-X-Gm-Message-State: AGi0PubQ7FtmsZ53Ge/vDZ6V7n+Mmjwop9ylPzIx4u5cVNPw11/2bGRa
-        cSPMBnTAO1B4BX+mEhH1lbVbAQ==
-X-Google-Smtp-Source: APiQypI37mArLqJb3kpr8kgCNB7T0c03vWdQcOiyYbzHcdpgd5de0iK7DZWllc8CctrFEMVI2AM7AA==
-X-Received: by 2002:a17:90b:3556:: with SMTP id lt22mr2010864pjb.138.1585634932111;
-        Mon, 30 Mar 2020 23:08:52 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m2sm1015301pjl.21.2020.03.30.23.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 23:08:51 -0700 (PDT)
-Date:   Mon, 30 Mar 2020 23:08:49 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
-Message-ID: <20200331060849.GC246874@minitux>
-References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
- <20200319053902.3415984-2-bjorn.andersson@linaro.org>
- <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Mle85YP+rDckZryHYT1DsaIY/T30NdXKh8r9XNQQ1KM=;
+        b=Q72v4JBLCP67b4U5uJOywRanrfwBXVkgx6E5QLEfAdRGmQwFe6k2FbCPBrfDuTuKye
+         y3/yZBirsc1+gKoqUguL0HAo82wpko9awLtuOfXZJmdt6LUJgl6G55nrW9wCx7mr9g3t
+         QnEf1cCXBSbw0PXDqpBZtrw6tWw0eYKWDaFptJZXFt8bU/Du90nCYKq9D89rSQGxTSG1
+         dcGbiSZhY81ibAkWxaUj2JCmPQAAlgpIkLgB1t6cuRazZ1oxJu4Z1gnw7RSQwFnwaGig
+         bBfOU+WvrFk3k7oZflJP53y+wZDRyFuB1fcFIvPx0hcrgVoXGEYcauExN8rnz94I3ICO
+         U+lA==
+X-Gm-Message-State: ANhLgQ1Xh89m0xhJUn2jTycR5HQjwiTnmbw4Ejhfq4iOCppM4Y8YuezW
+        7WJRhEy7LIw4wlSeTg4KotGTIA==
+X-Google-Smtp-Source: ADFU+vsD8LfwcGS5334AtS4GaZsZiNiMDvsXvl5GX4AHw2tuxAat2LUN+GwURQUspYtgY5st5oix9A==
+X-Received: by 2002:a1c:7707:: with SMTP id t7mr1969720wmi.173.1585640696624;
+        Tue, 31 Mar 2020 00:44:56 -0700 (PDT)
+Received: from ?IPv6:2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2? ([2a01:e35:2ec0:82b0:5c5f:613e:f775:b6a2])
+        by smtp.gmail.com with ESMTPSA id y189sm2767742wmb.26.2020.03.31.00.44.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 31 Mar 2020 00:44:56 -0700 (PDT)
+Subject: Re: [RFC v1 3/5] arm64: dts: amlogic: meson-gx: add the Mali-450 OPP
+ table and use DVFS
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, khilman@baylibre.com,
+        jbrunet@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+References: <20200330221104.3163788-1-martin.blumenstingl@googlemail.com>
+ <20200330221104.3163788-4-martin.blumenstingl@googlemail.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwU0EVid/pAEQAND7AFhr
+ 5faf/EhDP9FSgYd/zgmb7JOpFPje3uw7jz9wFb28Cf0Y3CcncdElYoBNbRlesKvjQRL8mozV
+ 9RN+IUMHdUx1akR/A4BPXNdL7StfzKWOCxZHVS+rIQ/fE3Qz/jRmT6t2ZkpplLxVBpdu95qJ
+ YwSZjuwFXdC+A7MHtQXYi3UfCgKiflj4+/ITcKC6EF32KrmIRqamQwiRsDcUUKlAUjkCLcHL
+ CQvNsDdm2cxdHxC32AVm3Je8VCsH7/qEPMQ+cEZk47HOR3+Ihfn1LEG5LfwsyWE8/JxsU2a1
+ q44LQM2lcK/0AKAL20XDd7ERH/FCBKkNVzi+svYJpyvCZCnWT0TRb72mT+XxLWNwfHTeGALE
+ +1As4jIS72IglvbtONxc2OIid3tR5rX3k2V0iud0P7Hnz/JTdfvSpVj55ZurOl2XAXUpGbq5
+ XRk5CESFuLQV8oqCxgWAEgFyEapI4GwJsvfl/2Er8kLoucYO1Id4mz6N33+omPhaoXfHyLSy
+ dxD+CzNJqN2GdavGtobdvv/2V0wukqj86iKF8toLG2/Fia3DxMaGUxqI7GMOuiGZjXPt/et/
+ qeOySghdQ7Sdpu6fWc8CJXV2mOV6DrSzc6ZVB4SmvdoruBHWWOR6YnMz01ShFE49pPucyU1h
+ Av4jC62El3pdCrDOnWNFMYbbon3vABEBAAHCwn4EGAECAAkFAlYnf6QCGwICKQkQFpq3saTP
+ +K7BXSAEGQECAAYFAlYnf6QACgkQd9zb2sjISdGToxAAkOjSfGxp0ulgHboUAtmxaU3viucV
+ e2Hl1BVDtKSKmbIVZmEUvx9D06IijFaEzqtKD34LXD6fjl4HIyDZvwfeaZCbJbO10j3k7FJE
+ QrBtpdVqkJxme/nYlGOVzcOiKIepNkwvnHVnuVDVPcXyj2wqtsU7VZDDX41z3X4xTQwY3SO1
+ 9nRO+f+i4RmtJcITgregMa2PcB0LvrjJlWroI+KAKCzoTHzSTpCXMJ1U/dEqyc87bFBdc+DI
+ k8mWkPxsccdbs4t+hH0NoE3Kal9xtAl56RCtO/KgBLAQ5M8oToJVatxAjO1SnRYVN1EaAwrR
+ xkHdd97qw6nbg9BMcAoa2NMc0/9MeiaQfbgW6b0reIz/haHhXZ6oYSCl15Knkr4t1o3I2Bqr
+ Mw623gdiTzotgtId8VfLB2Vsatj35OqIn5lVbi2ua6I0gkI6S7xJhqeyrfhDNgzTHdQVHB9/
+ 7jnM0ERXNy1Ket6aDWZWCvM59dTyu37g3VvYzGis8XzrX1oLBU/tTXqo1IFqqIAmvh7lI0Se
+ gCrXz7UanxCwUbQBFjzGn6pooEHJYRLuVGLdBuoApl/I4dLqCZij2AGa4CFzrn9W0cwm3HCO
+ lR43gFyz0dSkMwNUd195FrvfAz7Bjmmi19DnORKnQmlvGe/9xEEfr5zjey1N9+mt3//geDP6
+ clwKBkq0JggA+RTEAELzkgPYKJ3NutoStUAKZGiLOFMpHY6KpItbbHjF2ZKIU1whaRYkHpB2
+ uLQXOzZ0d7x60PUdhqG3VmFnzXSztA4vsnDKk7x2xw0pMSTKhMafpxaPQJf494/jGnwBHyi3
+ h3QGG1RjfhQ/OMTX/HKtAUB2ct3Q8/jBfF0hS5GzT6dYtj0Ci7+8LUsB2VoayhNXMnaBfh+Q
+ pAhaFfRZWTjUFIV4MpDdFDame7PB50s73gF/pfQbjw5Wxtes/0FnqydfId95s+eej+17ldGp
+ lMv1ok7K0H/WJSdr7UwDAHEYU++p4RRTJP6DHWXcByVlpNQ4SSAiivmWiwOt490+Ac7ATQRN
+ WQbPAQgAvIoM384ZRFocFXPCOBir5m2J+96R2tI2XxMgMfyDXGJwFilBNs+fpttJlt2995A8
+ 0JwPj8SFdm6FBcxygmxBBCc7i/BVQuY8aC0Z/w9Vzt3Eo561r6pSHr5JGHe8hwBQUcNPd/9l
+ 2ynP57YTSE9XaGJK8gIuTXWo7pzIkTXfN40Wh5jeCCspj4jNsWiYhljjIbrEj300g8RUT2U0
+ FcEoiV7AjJWWQ5pi8lZJX6nmB0lc69Jw03V6mblgeZ/1oTZmOepkagwy2zLDXxihf0GowUif
+ GphBDeP8elWBNK+ajl5rmpAMNRoKxpN/xR4NzBg62AjyIvigdywa1RehSTfccQARAQABwsBf
+ BBgBAgAJBQJNWQbPAhsMAAoJEBaat7Gkz/iuteIH+wZuRDqK0ysAh+czshtG6JJlLW6eXJJR
+ Vi7dIPpgFic2LcbkSlvB8E25Pcfz/+tW+04Urg4PxxFiTFdFCZO+prfd4Mge7/OvUcwoSub7
+ ZIPo8726ZF5/xXzajahoIu9/hZ4iywWPAHRvprXaim5E/vKjcTeBMJIqZtS4u/UK3EpAX59R
+ XVxVpM8zJPbk535ELUr6I5HQXnihQm8l6rt9TNuf8p2WEDxc8bPAZHLjNyw9a/CdeB97m2Tr
+ zR8QplXA5kogS4kLe/7/JmlDMO8Zgm9vKLHSUeesLOrjdZ59EcjldNNBszRZQgEhwaarfz46
+ BSwxi7g3Mu7u5kUByanqHyA=
+Organization: Baylibre
+Message-ID: <05c15e30-3e20-6fce-d2ca-87b8762d0fef@baylibre.com>
+Date:   Tue, 31 Mar 2020 09:44:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
+In-Reply-To: <20200330221104.3163788-4-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 30 Mar 22:35 PDT 2020, Taniya Das wrote:
+Hi,
 
-> Hi Stephen,
+On 31/03/2020 00:11, Martin Blumenstingl wrote:
+> Add the OPP table for the Mali-450 GPU and drop the hardcoded initial
+> clock configuration. This enables GPU DVFS and thus saves power when the
+> GPU is not in use while still being able switch to a higher clock on
+> demand.
 > 
-> I think the upstream design always wanted the client/consumer to enable the
-> GPU Rail and then turn ON the GDSC?
+> While here, make most of meson-gxl-mali re-usable to reduce the amount
+> of duplicate code between GXBB and GXL. This is more important now as we
+> don't want to duplicate the GPU OPP table.
+
+Looks good, but please add comment about the CLKID_GP0_PLL assigned clock rate.
+
+I'll ask LibreELEC people to have a run on these patches (including the clk changes) with Kodi.
+
+Neil
+
 > 
-> Why are we going ahead with adding the support of regulator in the GDSC
-> driver?
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../boot/dts/amlogic/meson-gx-mali450.dtsi    | 61 +++++++++++++++++++
+>  arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi   | 51 ++++------------
+>  .../boot/dts/amlogic/meson-gxl-mali.dtsi      | 46 +++-----------
+>  3 files changed, 81 insertions(+), 77 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gx-mali450.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gx-mali450.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx-mali450.dtsi
+> new file mode 100644
+> index 000000000000..f9771b51c852
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gx-mali450.dtsi
+> @@ -0,0 +1,61 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2017 BayLibre SAS
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + */
+> +
+> +/ {
+> +	gpu_opp_table: opp-table {
+> +		compatible = "operating-points-v2";
+> +
+> +		opp-125000000 {
+> +			opp-hz = /bits/ 64 <125000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-250000000 {
+> +			opp-hz = /bits/ 64 <250000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-285714285 {
+> +			opp-hz = /bits/ 64 <285714285>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-400000000 {
+> +			opp-hz = /bits/ 64 <400000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-500000000 {
+> +			opp-hz = /bits/ 64 <500000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-666666666 {
+> +			opp-hz = /bits/ 64 <666666666>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +		opp-744000000 {
+> +			opp-hz = /bits/ 64 <744000000>;
+> +			opp-microvolt = <950000>;
+> +		};
+> +	};
+> +};
+> +
+> +&apb {
+> +	mali: gpu@c0000 {
+> +		compatible = "arm,mali-450";
+> +		reg = <0x0 0xc0000 0x0 0x40000>;
+> +		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-names = "gp", "gpmmu", "pp", "pmu",
+> +			"pp0", "ppmmu0", "pp1", "ppmmu1",
+> +			"pp2", "ppmmu2";
+> +		operating-points-v2 = <&gpu_opp_table>;
+> +	};
+> +};
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> index 0cb40326b0d3..e43b330129c7 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include "meson-gx.dtsi"
+> +#include "meson-gx-mali450.dtsi"
+>  #include <dt-bindings/gpio/meson-gxbb-gpio.h>
+>  #include <dt-bindings/reset/amlogic,meson-gxbb-reset.h>
+>  #include <dt-bindings/clock/gxbb-clkc.h>
+> @@ -241,46 +242,6 @@ mux {
+>  	};
+>  };
+>  
+> -&apb {
+> -	mali: gpu@c0000 {
+> -		compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
+> -		reg = <0x0 0xc0000 0x0 0x40000>;
+> -		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> -		interrupt-names = "gp", "gpmmu", "pp", "pmu",
+> -			"pp0", "ppmmu0", "pp1", "ppmmu1",
+> -			"pp2", "ppmmu2";
+> -		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> -		clock-names = "bus", "core";
+> -
+> -		/*
+> -		 * Mali clocking is provided by two identical clock paths
+> -		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> -		 * free mux to safely change frequency while running.
+> -		 */
+> -		assigned-clocks = <&clkc CLKID_GP0_PLL>,
+> -				  <&clkc CLKID_MALI_0_SEL>,
+> -				  <&clkc CLKID_MALI_0>,
+> -				  <&clkc CLKID_MALI>; /* Glitch free mux */
+> -		assigned-clock-parents = <0>, /* Do Nothing */
+> -					 <&clkc CLKID_GP0_PLL>,
+> -					 <0>, /* Do Nothing */
+> -					 <&clkc CLKID_MALI_0>;
+> -		assigned-clock-rates = <744000000>,
+> -				       <0>, /* Do Nothing */
+> -				       <744000000>,
+> -				       <0>; /* Do Nothing */
+> -	};
+> -};
+> -
+>  &cbus {
+>  	spifc: spi@8c80 {
+>  		compatible = "amlogic,meson-gxbb-spifc";
+> @@ -362,6 +323,16 @@ &i2c_C {
+>  	clocks = <&clkc CLKID_I2C>;
+>  };
+>  
+> +&mali {
+> +	compatible = "amlogic,meson-gxbb-mali", "arm,mali-450";
+> +
+> +	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> +	clock-names = "bus", "core";
+> +
+> +	assigned-clocks = <&clkc CLKID_GP0_PLL>;
+> +	assigned-clock-rates = <744000000>;
+> +};
+> +
+>  &periphs {
+>  	pinctrl_periphs: pinctrl@4b0 {
+>  		compatible = "amlogic,meson-gxbb-periphs-pinctrl";
+> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> index 6aaafff674f9..478e755cc87c 100644
+> --- a/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-mali.dtsi
+> @@ -4,42 +4,14 @@
+>   * Author: Neil Armstrong <narmstrong@baylibre.com>
+>   */
+>  
+> -&apb {
+> -	mali: gpu@c0000 {
+> -		compatible = "amlogic,meson-gxl-mali", "arm,mali-450";
+> -		reg = <0x0 0xc0000 0x0 0x40000>;
+> -		interrupts = <GIC_SPI 160 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 162 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 165 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 168 IRQ_TYPE_LEVEL_HIGH>,
+> -			     <GIC_SPI 169 IRQ_TYPE_LEVEL_HIGH>;
+> -		interrupt-names = "gp", "gpmmu", "pp", "pmu",
+> -			"pp0", "ppmmu0", "pp1", "ppmmu1",
+> -			"pp2", "ppmmu2";
+> -		clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> -		clock-names = "bus", "core";
+> +#include "meson-gx-mali450.dtsi"
+>  
+> -		/*
+> -		 * Mali clocking is provided by two identical clock paths
+> -		 * MALI_0 and MALI_1 muxed to a single clock by a glitch
+> -		 * free mux to safely change frequency while running.
+> -		 */
+> -		assigned-clocks = <&clkc CLKID_GP0_PLL>,
+> -				  <&clkc CLKID_MALI_0_SEL>,
+> -				  <&clkc CLKID_MALI_0>,
+> -				  <&clkc CLKID_MALI>; /* Glitch free mux */
+> -		assigned-clock-parents = <0>, /* Do Nothing */
+> -					 <&clkc CLKID_GP0_PLL>,
+> -					 <0>, /* Do Nothing */
+> -					 <&clkc CLKID_MALI_0>;
+> -		assigned-clock-rates = <744000000>,
+> -				       <0>, /* Do Nothing */
+> -				       <744000000>,
+> -				       <0>; /* Do Nothing */
+> -	};
+> +&mali {
+> +	compatible = "amlogic,meson-gxl-mali", "arm,mali-450";
+> +
+> +	clocks = <&clkc CLKID_CLK81>, <&clkc CLKID_MALI>;
+> +	clock-names = "bus", "core";
+> +
+> +	assigned-clocks = <&clkc CLKID_GP0_PLL>;
+> +	assigned-clock-rates = <744000000>;
+>  };
 > 
 
-As I (partially) describe below the mdss driver on 8996 doesn't probe
-because the GDSC fails to enable, because the upstream supply is not
-enabled, so the mdss driver can't turn on the regulator needed by the
-GDSC.
-
-I don't see any other way to handle this than extending the gdsc
-implementation, hence my proposal to change the design.
-Suggestions/feedback are welcome though.
-
-Regards,
-Bjorn
-
-> On 3/19/2020 11:08 AM, Bjorn Andersson wrote:
-> > Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
-> > regulator supply is powered in order to be turned on.
-> > 
-> > It's not guaranteed that the bootloader will leave these supplies on and
-> > the driver core will attempt to enable any GDSCs before allowing the
-> > individual drivers to probe defer on the PMIC regulator driver not yet
-> > being present.
-> > 
-> > So the gdsc driver needs to be made aware of supplying regulators and
-> > probe defer on their absence, and it needs to enable and disable the
-> > regulator accordingly.
-> > 
-> > Voltage adjustments of the supplying regulator are deferred to the
-> > client drivers themselves.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >   drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
-> >   drivers/clk/qcom/gdsc.h |  4 ++++
-> >   2 files changed, 28 insertions(+)
-> > 
-> > diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> > index a250f59708d8..3528789cc9d0 100644
-> > --- a/drivers/clk/qcom/gdsc.c
-> > +++ b/drivers/clk/qcom/gdsc.c
-> > @@ -13,6 +13,7 @@
-> >   #include <linux/regmap.h>
-> >   #include <linux/reset-controller.h>
-> >   #include <linux/slab.h>
-> > +#include <linux/regulator/consumer.h>
-> >   #include "gdsc.h"
-> >   #define PWR_ON_MASK		BIT(31)
-> > @@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
-> >   	int ret;
-> >   	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
-> > +	if (status == GDSC_ON && sc->rsupply) {
-> > +		ret = regulator_enable(sc->rsupply);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	}
-> > +
-> >   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
-> >   	if (ret)
-> >   		return ret;
-> > @@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
-> >   	ret = gdsc_poll_status(sc, status);
-> >   	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
-> > +
-> > +	if (!ret && status == GDSC_OFF && sc->rsupply) {
-> > +		ret = regulator_disable(sc->rsupply);
-> > +		if (ret < 0)
-> > +			return ret;
-> > +	}
-> > +
-> >   	return ret;
-> >   }
-> > @@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
-> >   	if (!data->domains)
-> >   		return -ENOMEM;
-> > +	/* Resolve any regulator supplies */
-> > +	for (i = 0; i < num; i++) {
-> > +		if (!scs[i] || !scs[i]->supply)
-> > +			continue;
-> > +
-> > +		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
-> > +		if (IS_ERR(scs[i]->rsupply))
-> > +			return PTR_ERR(scs[i]->rsupply);
-> > +	}
-> > +
-> >   	data->num_domains = num;
-> >   	for (i = 0; i < num; i++) {
-> >   		if (!scs[i])
-> > diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> > index 64cdc8cf0d4d..c36fc26dcdff 100644
-> > --- a/drivers/clk/qcom/gdsc.h
-> > +++ b/drivers/clk/qcom/gdsc.h
-> > @@ -10,6 +10,7 @@
-> >   #include <linux/pm_domain.h>
-> >   struct regmap;
-> > +struct regulator;
-> >   struct reset_controller_dev;
-> >   /**
-> > @@ -52,6 +53,9 @@ struct gdsc {
-> >   	struct reset_controller_dev	*rcdev;
-> >   	unsigned int			*resets;
-> >   	unsigned int			reset_count;
-> > +
-> > +	const char 			*supply;
-> > +	struct regulator		*rsupply;
-> >   };
-> >   struct gdsc_desc {
-> > 
-> 
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation.
-> 
-> --
