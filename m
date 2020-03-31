@@ -2,155 +2,245 @@ Return-Path: <SRS0=I1Rz=5Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C938C2D0EE
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 14:48:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE1EC43331
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 16:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 732BA2137B
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 14:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585666130;
-	bh=e/7jTSv5Ln/7N2erMxSAhTPfQO0mGgov7i4pB0Kxz8M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Hh/ttHPjGt40fuLrI1OXLf8IH2ecPNIVvPFTgUvkWjiYbS+jiSy90d9jVzN/YjT8a
-	 76dIbJjkGN0Pps7Ae9GLHIU1A6zL+hnIhLLDyJ4lCDUvBqIhYpnH3sXmd0ArPwLuLa
-	 toJcq7lY2nuySUuoNfeoLPj2maetcKSV3VJiq87M=
+	by mail.kernel.org (Postfix) with ESMTP id 26F56214DB
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 16:40:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WSwKkEA8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbgCaOst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 10:48:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57552 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730574AbgCaOst (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 31 Mar 2020 10:48:49 -0400
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98470214DB;
-        Tue, 31 Mar 2020 14:48:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1585666128;
-        bh=e/7jTSv5Ln/7N2erMxSAhTPfQO0mGgov7i4pB0Kxz8M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=EbrJxT9+qQ4vbmfQodNUZ75MqmrVy3/2NQDxPg4GsBywCzjeqIw2fq6lj3s7435X2
-         NIM+7Ydop9wv5/4CkHGw9c7dOJtPBA/zSDJDrPe+DungVFsSYeZaSpNvpWfCUq24L2
-         R+q388+xL8Vgv6ukYJr671hgBiLOn4kma+Cvp9Ro=
-Received: by mail-qv1-f41.google.com with SMTP id p60so10971550qva.5;
-        Tue, 31 Mar 2020 07:48:48 -0700 (PDT)
-X-Gm-Message-State: ANhLgQ1vMtCY640U90YBDNmS9RLEHsh5XJbMHUiAIrRTnM79TJ+N1F3y
-        F6fi44rWk2ybm3rFmqdCCAJmx/+EFr9IetQppQ==
-X-Google-Smtp-Source: ADFU+vsm7QnLg9VC47OO+I8GiU3/k2tefVEY+Sy39Kwt/VBNT1kmLS6ih/sV4b6JI7vayYbVNykmFae5IwQbSwKy9fk=
-X-Received: by 2002:ad4:4bc3:: with SMTP id l3mr16286378qvw.79.1585666127545;
- Tue, 31 Mar 2020 07:48:47 -0700 (PDT)
+        id S1730617AbgCaQk6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 12:40:58 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8855 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730543AbgCaQk6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 12:40:58 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e8372370000>; Tue, 31 Mar 2020 09:39:19 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 31 Mar 2020 09:40:56 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 31 Mar 2020 09:40:56 -0700
+Received: from [10.2.164.193] (172.20.13.39) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 31 Mar
+ 2020 16:40:55 +0000
+Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+CC:     Sakari Ailus <sakari.ailus@iki.fi>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
+        <helen.koike@collabora.com>, <digetx@gmail.com>,
+        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
+ <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
+ <20200325110358.GB853@valkosipuli.retiisi.org.uk>
+ <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
+ <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
+ <ba37eb84-392c-3767-57f6-d297b0ab79a3@xs4all.nl>
+ <20200331111018.GJ2394@valkosipuli.retiisi.org.uk>
+ <a1145ee4-2991-a958-1225-090c57fec533@xs4all.nl>
+ <20200331115221.GA4767@pendragon.ideasonboard.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <6aa7d86c-3943-d508-ccf6-5ac46546abe9@nvidia.com>
+Date:   Tue, 31 Mar 2020 09:40:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200325220542.19189-1-robh@kernel.org> <20200325220542.19189-2-robh@kernel.org>
- <20200327202159.GA12749@ravnborg.org>
-In-Reply-To: <20200327202159.GA12749@ravnborg.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 31 Mar 2020 08:48:36 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+zFGvJ+3CmKw3OzgEWi-p4Uz9+nmnS5ax0J9ewoz5qZg@mail.gmail.com>
-Message-ID: <CAL_Jsq+zFGvJ+3CmKw3OzgEWi-p4Uz9+nmnS5ax0J9ewoz5qZg@mail.gmail.com>
-Subject: Re: [PATCH 1/4] dt-bindings: iio/accel: Drop duplicate adi, adxl345/6
- from trivial-devices.yaml
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Guillaume La Roque <glaroque@baylibre.com>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Cameron <jic23@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200331115221.GA4767@pendragon.ideasonboard.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1585672759; bh=n5rCh0ywbFIhHesuUxzU3UQlrboysZ9JKTcQuxA/lrQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=WSwKkEA8W+oKdlxW8t1sWCcXEehJ82dxwkCuiw3e/AdtV9waMw1P1Yn0j/P0MoGkF
+         l5kMKqtXgaXX8PCqsSoGss32YjhV8jXk22reBqNLI8NzmTdA3WWaxsAzgeWRRxgWg8
+         5YlVkzidylDfUO7oWd0gIx/MnB+AKX5qjMuTcvwBBC4c8ZXWEpWK73yTnlyNg2VM7z
+         q8YYSY8Aeit4q/BqOq3zjxtBOBYliTYu2uHN/FtNHCTL/9WL+i1Lo08uJHxeyNjxpn
+         ZbEM5UdbEYh86yKAV+07Cu4ftV0u/Qdh1XYeiHYFfCqclbtsOZxG8oSgxLo70jgLuM
+         X3YS7O2A9uIEQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 27, 2020 at 2:22 PM Sam Ravnborg <sam@ravnborg.org> wrote:
+
+On 3/31/20 4:52 AM, Laurent Pinchart wrote:
+> External email: Use caution opening links or attachments
 >
-> Hi Rob.
 >
-> On Wed, Mar 25, 2020 at 04:05:38PM -0600, Rob Herring wrote:
-> > The 'adi,adxl345' definition is a duplicate as there's a full binding in:
-> > Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> >
-> > The trivial-devices binding doesn't capture that 'adi,adxl346' has a
-> > fallback compatible 'adi,adxl345', so let's add it to adi,adxl345.yaml.
-> >
-> > Cc: Michael Hennerich <michael.hennerich@analog.com>
-> > Cc: Jonathan Cameron <jic23@kernel.org>
-> > Cc: Hartmut Knaack <knaack.h@gmx.de>
-> > Cc: Lars-Peter Clausen <lars@metafoo.de>
-> > Cc: Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-> > Cc: linux-iio@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
-> > ---
-> >  .../devicetree/bindings/iio/accel/adi,adxl345.yaml     | 10 +++++++---
-> >  Documentation/devicetree/bindings/trivial-devices.yaml |  4 ----
-> >  2 files changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> > index c602b6fe1c0c..d124eba1ce54 100644
-> > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> > @@ -17,9 +17,13 @@ description: |
-> >
-> >  properties:
-> >    compatible:
-> > -    enum:
-> > -      - adi,adxl345
-> > -      - adi,adxl375
-> > +    oneOf:
-> > +      - items:
-> > +          - const: adi,adxl346
-> > +          - const: adi,adxl345
-> > +      - enum:
-> > +          - adi,adxl345
-> > +          - adi,adxl375
+> Hello,
 >
-> I assume it is my schema understanding that is poor.
-> But I cannot parse the above.
+> On Tue, Mar 31, 2020 at 01:27:19PM +0200, Hans Verkuil wrote:
+>> On 3/31/20 1:10 PM, Sakari Ailus wrote:
+>>> On Tue, Mar 31, 2020 at 12:56:57PM +0200, Hans Verkuil wrote:
+>>>> On 3/31/20 12:32 PM, Sakari Ailus wrote:
+>>>>> On Mon, Mar 30, 2020 at 12:59:15PM +0200, Hans Verkuil wrote:
+>>>>>> On 3/25/20 12:03 PM, Sakari Ailus wrote:
+>>>>>>> On Mon, Mar 23, 2020 at 10:52:32AM -0700, Sowjanya Komatineni wrote:
+>>>>>>>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>>>>>>>> which can support up to 6 MIPI CSI camera sensors.
+>>>>>>>>
+>>>>>>>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>>>>>>>> capture from an external camera sensor connected to CSI or from
+>>>>>>>> built-in test pattern generator.
+>>>>>>>>
+>>>>>>>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>>>>>>>
+>>>>>>>> This patch adds a V4L2 media controller and capture driver support
+>>>>>>>> for Tegra210 built-in CSI to VI test pattern generator.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>> ---
+>>>>>>>>   drivers/staging/media/Kconfig              |    2 +
+>>>>>>>>   drivers/staging/media/Makefile             |    1 +
+>>>>>>>>   drivers/staging/media/tegra/Kconfig        |   10 +
+>>>>>>>>   drivers/staging/media/tegra/Makefile       |    8 +
+>>>>>>>>   drivers/staging/media/tegra/TODO           |   10 +
+>>>>>>>>   drivers/staging/media/tegra/tegra-common.h |  263 +++++++
+>>>>>>>>   drivers/staging/media/tegra/tegra-csi.c    |  522 ++++++++++++++
+>>>>>>>>   drivers/staging/media/tegra/tegra-csi.h    |  118 ++++
+>>>>>>>>   drivers/staging/media/tegra/tegra-vi.c     | 1058 ++++++++++++++++++++++++++++
+>>>>>>>>   drivers/staging/media/tegra/tegra-vi.h     |   83 +++
+>>>>>>>>   drivers/staging/media/tegra/tegra-video.c  |  129 ++++
+>>>>>>>>   drivers/staging/media/tegra/tegra-video.h  |   32 +
+>>>>>>>>   drivers/staging/media/tegra/tegra210.c     |  754 ++++++++++++++++++++
+>>>>>>>>   drivers/staging/media/tegra/tegra210.h     |  192 +++++
+>>>>>>> Why staging? Are there reasons not to aim this to the kernel proper right
+>>>>>>> away? If you only support TPG, the driver may not have too many (if any)
+>>>>>>> real users anyway.
+>>>>>>>
+>>>>>>>>   14 files changed, 3182 insertions(+)
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/Kconfig
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/Makefile
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/TODO
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-common.h
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-csi.h
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-video.c
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra-video.h
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra210.c
+>>>>>>>>   create mode 100644 drivers/staging/media/tegra/tegra210.h
+>>>>>>>>
+>>>>>> <snip>
+>>>>>>
+>>>>>>>> +static int tegra_channel_g_input(struct file *file, void *priv,
+>>>>>>>> +                               unsigned int *i)
+>>>>>>>> +{
+>>>>>>>> +      *i = 0;
+>>>>>>>> +      return 0;
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>> +static int tegra_channel_s_input(struct file *file, void *priv,
+>>>>>>>> +                               unsigned int input)
+>>>>>>>> +{
+>>>>>>>> +      if (input > 0)
+>>>>>>>> +              return -EINVAL;
+>>>>>>>> +
+>>>>>>>> +      return 0;
+>>>>>>>> +}
+>>>>>>> Please see patchset on topic "v4l2-dev/ioctl: Add V4L2_CAP_IO_MC" on
+>>>>>>> linux-media; it's relevant here, too.
+>>>>>> No, it isn't. The pipeline is controlled by the driver, not by userspace.
+>>>>>> This is a regular video capture driver, not an ISP driver.
+>>>>> I don't think that really makes a difference, whether a device is an ISP or
+>>>>> not, but instead what does is whether there is something to control in its
+>>>>> pipeline that cannot be generally done through the regular V4L2 interface.
+>>>>> Even plain CSI-2 receiver drivers should be media device centric these days
+>>>>> as doing otherwise excludes using a range of sensor drivers with them,
+>>>>> including any possible future support for e.g. sensor embedded data.
+>>>>>
+>>>> We've been back and forth on this before for this driver. I see no reason to make things
+>>>> complicated, these are simple video pipelines for video capture. Making this media
+>>>> device centric means that existing software using the BSP version of this driver require
+>>>> a full rewrite, which is not desirable.
+>>>>
+>>>> If we are going to require CSI receiver drivers to be media centric, then that's a
+>>>> major departure of existing practice. And something that needs to be discussed first,
+>>> I'd be happy to discuss that.
+>>>
+>>> Either way, the current design is problematic as it excludes a range of
+>>> camera sensors being used with the driver --- addressing of which requires
+>>> converting the driver MC centric. If the driver is merged to mainline, then
+>>> the user might face a Kconfig option or a module parameter to choose
+>>> between the two --- this defines uAPI behaviour after all.
+>>>
+>>> The only way to avoid that in the future is to make it MC-centric right
+>>> away.
+>>>
+>>>> since that will require that support for each csi receiver driver is added to libcamera.
+>>>> Is libcamera ready for that? Are common applications using libcamera yet?
+>>>>
+>>>> Obviously, if NVIDIA decides that this is worth the effort, then I have no objection.
+>>>> But I don't think it is something we should require at this stage.
+>>> Works for me. But in that case NVIDIA should also be aware that doing so
+>>> has consequences.
+>>>
+>>> We also haven't discussed what to do with old V4L2-centric drivers which
+>>> you'd use with sensors that expose their own subdevs. The proportion of all
+>>> sensors might not be large currently but it is almost certainly bound to
+>>> grow in the future.
+>>>
+>>> FWIW, Intel ipu3-cio2 CSI-2 receiver driver is MC-centric e.g. for the
+>>> above reasons. Libcamera supports it currently. I'll let Laurent (cc'd)
+>>> comment on the details.
+>> I think it would be good to at least describe in some detail what you gain
+>> by taking the media centric route, and what the obstacles are (loss of compatibility
+>> with existing applications, requiring libcamera support).
+> In this case the main gain is control of the camera sensor. Sensors can
+> appear as simple when you don't look too closely at them, but many
+> sensors (especially the ones modelled after SMIA++ and the now standard
+> - and open! - MIPI CCS specification) have 3 locations to perform
+> cropping (analog, digital and output), and 3 locations to perform
+> scaling (binning, skipping, and full-featured scaler). All of these need
+> to be controlled by userspace one way or another if you want to
+> implement proper camera algorithms, which those platforms target.
+Thanks Laurent/Sakari/Hans.
+
+Based on discussion, seems like its good to change driver now to 
+media-centric rather than later.
+
+As Jetson is devkit and custom camera sensor module meeting spec can be 
+used, its good to let sensor control to user space.
+
+Will look into and update to use media-centric APIs.
 >
-> The mix of items, enum and const confuses me.
-
-compatible can be one of 3 possibilities:
-"adi,adxl346", "adi,adxl345"
-"adi,adxl345"
-"adi,adxl375"
-
-For a single entry, 'items' can be omitted.
-
-> I guess that if I am confused then others may end in the same situation.
-> Can we improve readability here or amybe add a comment?
-
-example-schema.yaml explains this to some extent. I'd rather improve that.
-
-Rob
+>> My personal feeling has always been that for ISP drivers the pros of making
+>> a media-centric driver outweigh the cons, but that for a standard video capture
+>> pipeline without complex processing blocks the cons outweigh the pros.
+>>
+>> This might change if libcamera becomes widely used, but we're not there yet.
+>>
+>> To be honest, I am not opposed to having a kernel config option for drivers
+>> like this that select the media-centric API vs a regular API, if that can be
+>> done without too much work. If you need full control for your embedded system,
+>> then you enable the option. If you want full compatibility with existing
+>> applications, then disable it.
+> How would distributions be supposed to handle those ? That could in the
+> end need to be a per-driver option, and it would be very messy. Maybe
+> it's unavoidable, I'm trying to figure out a way to avoid such an option
+> for sensor drivers, to decide to expose them as a single subdev or
+> multiple subdevs in order to support multiple streams CSI-2 streams, and
+> I'm not sure I'll succeed.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
