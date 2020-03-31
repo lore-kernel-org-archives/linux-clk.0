@@ -1,112 +1,185 @@
-Return-Path: <SRS0=0f1i=5P=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=I1Rz=5Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2776C2D0EE
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:46:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CF56C43331
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 05:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9549B20771
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Mar 2020 23:46:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6D1206EB
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 05:35:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iRUVjpwz"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Nyi/opZX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729373AbgC3Xpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Mar 2020 19:45:53 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45679 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728901AbgC3Xpv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Mar 2020 19:45:51 -0400
-Received: by mail-wr1-f65.google.com with SMTP id t7so23731636wrw.12;
-        Mon, 30 Mar 2020 16:45:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DxK6o0d762Zl57HAnhWXL/U279uSuVK4xM7r8LkbtfU=;
-        b=iRUVjpwzhUgZWdAu9OhKc2QrrebME/a6PvPbBtwpO/QXWfNUP1cSPkUM8V1DPCppIt
-         Z0CsUnSr4EEZfJad+Btd6XHnDBMRP0GI8ZTpVMapuFzv5XRwEEIU8okXXnQAIoQdKHTN
-         duUcuETE1GDEw9Nn502Kkhi6wH0qt1RwFhCwRHDtTc2gzJjwnJmkea/Da0961UmhzFgA
-         y5f4Cf0DpkYBQ38YboNqsrC+1nAJHojyvjbzoPmKhCsSj+NICy/l0vSgyNMCc4jI/k1b
-         UR59ucu7S1ftnBnyzj5iz64c7qaPFhta83VUfxkG3KsUDL1Qyot2jVqBY8ubtcm7/kwD
-         yAKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DxK6o0d762Zl57HAnhWXL/U279uSuVK4xM7r8LkbtfU=;
-        b=YlRZUURfuNwrMwgGirfhFrIGrzj+TQiWXeIJCxOGj26RBERerqtYAaF0Scx612pFtB
-         TSz6q9Vx0fpS36K8w/eZvWuJyqadHG+UYgrUE4jDfKT9JX5t3sP1hRPXznNRhpShkpnZ
-         bB761td5mk/TTdmXzGAqCgmYqLm1icLalPu5dCxYazEqsxDNbBKU15ZRsBcIsPo3KkIm
-         tTq5afK/Fa4jyMiUJWIHAUKQ3ZqiFl9UtiknipEgaRCADQeumieGHeUo7L8btV7l8VH8
-         VTDl9dIRVNrjlgdOA+9Q7qQN1MuoNoo0wyli5rp8fWn7Sn3MqqVNcmzyQWgP46Lr8TGd
-         Xqdw==
-X-Gm-Message-State: ANhLgQ1mx828oC8VxIUCF06Lowe6WH4NNNPUd0ZYJ7yC165OWH8T2tZr
-        FT1YQboutyBp9GbE7kHIyVO9qKL1
-X-Google-Smtp-Source: ADFU+vviGdVjMK+SeAP3YtjOZuI2rOV6Ly+eqgrfC2ttV2VBMynT39e3PrONu63IHkoumJXpawRGWA==
-X-Received: by 2002:a5d:4d07:: with SMTP id z7mr17767249wrt.92.1585611948819;
-        Mon, 30 Mar 2020 16:45:48 -0700 (PDT)
-Received: from localhost.localdomain (p200300F13710ED00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3710:ed00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id v186sm1392953wme.24.2020.03.30.16.45.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 30 Mar 2020 16:45:48 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        narmstrong@baylibre.com
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/2] clk: meson8b: export the HDMI system clock
-Date:   Tue, 31 Mar 2020 01:45:34 +0200
-Message-Id: <20200330234535.3327513-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.26.0
-In-Reply-To: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
-References: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
+        id S1726216AbgCaFfd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 01:35:33 -0400
+Received: from mail26.static.mailgun.info ([104.130.122.26]:50655 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726001AbgCaFfd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 01:35:33 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1585632932; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=fes4q3BYaybrvlgVDtBeVWule4OgaJcrX3+0iF8Z4cw=; b=Nyi/opZXctbl/B6m+MhrI6Ouq7w+dWNsniNcYd8kVxUipSOJhWjXTDgp1bRZzS3nR934Yb10
+ qYYQEOpi/ZcyLY6JX7JoVyM7obum7dMj+/gEUkKveRQ1DVOgR5ph2KRqhpTj4o3m5iXYRm72
+ 5Ij3ABjHltDQiFMUl/wwDR2GGC0=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e82d69c.7f59d0ebf928-smtp-out-n02;
+ Tue, 31 Mar 2020 05:35:24 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B9B0FC433BA; Tue, 31 Mar 2020 05:35:24 +0000 (UTC)
+Received: from [192.168.0.104] (unknown [183.82.140.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F2464C433F2;
+        Tue, 31 Mar 2020 05:35:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F2464C433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rob Clark <robdclark@gmail.com>
+References: <20200319053902.3415984-1-bjorn.andersson@linaro.org>
+ <20200319053902.3415984-2-bjorn.andersson@linaro.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <5dbd8e67-cc9f-631b-0b4f-b45389be83cd@codeaurora.org>
+Date:   Tue, 31 Mar 2020 11:05:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.6.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200319053902.3415984-2-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Export the HDMI system clock (used by the HDMI transmitter) so it can be
-used in the dt-bindings.
+Hi Stephen,
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.h              | 1 -
- include/dt-bindings/clock/meson8b-clkc.h | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
+I think the upstream design always wanted the client/consumer to enable 
+the GPU Rail and then turn ON the GDSC?
 
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index c889fbeec30f..94ce3ef0c1d5 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -146,7 +146,6 @@
- #define CLKID_CTS_VDAC0		171
- #define CLKID_HDMI_SYS_SEL	172
- #define CLKID_HDMI_SYS_DIV	173
--#define CLKID_HDMI_SYS		174
- #define CLKID_MALI_0_SEL	175
- #define CLKID_MALI_0_DIV	176
- #define CLKID_MALI_0		177
-diff --git a/include/dt-bindings/clock/meson8b-clkc.h b/include/dt-bindings/clock/meson8b-clkc.h
-index 68862aaf977e..4c5965ae1df4 100644
---- a/include/dt-bindings/clock/meson8b-clkc.h
-+++ b/include/dt-bindings/clock/meson8b-clkc.h
-@@ -107,6 +107,7 @@
- #define CLKID_PERIPH		126
- #define CLKID_AXI		128
- #define CLKID_L2_DRAM		130
-+#define CLKID_HDMI_SYS		174
- #define CLKID_VPU		190
- #define CLKID_VDEC_1		196
- #define CLKID_VDEC_HCODEC	199
+Why are we going ahead with adding the support of regulator in the GDSC 
+driver?
+
+On 3/19/2020 11:08 AM, Bjorn Andersson wrote:
+> Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
+> regulator supply is powered in order to be turned on.
+> 
+> It's not guaranteed that the bootloader will leave these supplies on and
+> the driver core will attempt to enable any GDSCs before allowing the
+> individual drivers to probe defer on the PMIC regulator driver not yet
+> being present.
+> 
+> So the gdsc driver needs to be made aware of supplying regulators and
+> probe defer on their absence, and it needs to enable and disable the
+> regulator accordingly.
+> 
+> Voltage adjustments of the supplying regulator are deferred to the
+> client drivers themselves.
+> 
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>   drivers/clk/qcom/gdsc.c | 24 ++++++++++++++++++++++++
+>   drivers/clk/qcom/gdsc.h |  4 ++++
+>   2 files changed, 28 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a250f59708d8..3528789cc9d0 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -13,6 +13,7 @@
+>   #include <linux/regmap.h>
+>   #include <linux/reset-controller.h>
+>   #include <linux/slab.h>
+> +#include <linux/regulator/consumer.h>
+>   #include "gdsc.h"
+>   
+>   #define PWR_ON_MASK		BIT(31)
+> @@ -112,6 +113,12 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>   	int ret;
+>   	u32 val = (status == GDSC_ON) ? 0 : SW_COLLAPSE_MASK;
+>   
+> +	if (status == GDSC_ON && sc->rsupply) {
+> +		ret = regulator_enable(sc->rsupply);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>   	ret = regmap_update_bits(sc->regmap, sc->gdscr, SW_COLLAPSE_MASK, val);
+>   	if (ret)
+>   		return ret;
+> @@ -143,6 +150,13 @@ static int gdsc_toggle_logic(struct gdsc *sc, enum gdsc_status status)
+>   
+>   	ret = gdsc_poll_status(sc, status);
+>   	WARN(ret, "%s status stuck at 'o%s'", sc->pd.name, status ? "ff" : "n");
+> +
+> +	if (!ret && status == GDSC_OFF && sc->rsupply) {
+> +		ret = regulator_disable(sc->rsupply);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>   	return ret;
+>   }
+>   
+> @@ -371,6 +385,16 @@ int gdsc_register(struct gdsc_desc *desc,
+>   	if (!data->domains)
+>   		return -ENOMEM;
+>   
+> +	/* Resolve any regulator supplies */
+> +	for (i = 0; i < num; i++) {
+> +		if (!scs[i] || !scs[i]->supply)
+> +			continue;
+> +
+> +		scs[i]->rsupply = devm_regulator_get(dev, scs[i]->supply);
+> +		if (IS_ERR(scs[i]->rsupply))
+> +			return PTR_ERR(scs[i]->rsupply);
+> +	}
+> +
+>   	data->num_domains = num;
+>   	for (i = 0; i < num; i++) {
+>   		if (!scs[i])
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 64cdc8cf0d4d..c36fc26dcdff 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -10,6 +10,7 @@
+>   #include <linux/pm_domain.h>
+>   
+>   struct regmap;
+> +struct regulator;
+>   struct reset_controller_dev;
+>   
+>   /**
+> @@ -52,6 +53,9 @@ struct gdsc {
+>   	struct reset_controller_dev	*rcdev;
+>   	unsigned int			*resets;
+>   	unsigned int			reset_count;
+> +
+> +	const char 			*supply;
+> +	struct regulator		*rsupply;
+>   };
+>   
+>   struct gdsc_desc {
+> 
+
 -- 
-2.26.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
