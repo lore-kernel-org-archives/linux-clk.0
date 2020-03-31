@@ -7,114 +7,184 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88582C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADEC7C43331
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:56:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B4652080C
-	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DAFE20842
+	for <linux-clk@archiver.kernel.org>; Tue, 31 Mar 2020 21:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1585691730;
-	bh=NYHCE3c5CXGlnkIoemabE4su/VP+jFPsrCZJSRDeq/Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VmTWpLiZrWGaG/m+SkYes0amX2Ne3UTJkmFkUXWl9rPyptkmSBHRmDUe3Yh1U9T20
-	 RyVuBCZ9ksk0vrgZiEUM6gSv96h84w7OuDW4IXiHVW/6Ov/3xt3tQy9+ic+mYY7u1a
-	 s8OI9wJuGj07VV1aeAvXsWeL6cfte1wleIkZ6kPg=
+	s=default; t=1585691775;
+	bh=I7g82WOn2+w62dXVYLDS5KJARvjoUM1nFMd8ENdLyAM=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=K4YhNneBdRGtpmjhvWSm1X/WMYH105PG/O2VkpFeJy8NoaCnC5/C6CDYg2TxFgBas
+	 WwLpzBpRFVDMrgaTtYjLQX2D2UNwLmpA5uzfBxTRL+z7vCOkUThLcHO4chQssz00AU
+	 m3S4UalIQTpO8kkozokIv2XonwB/n3CBd99FrCec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728893AbgCaVza (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 31 Mar 2020 17:55:30 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41408 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728840AbgCaVz3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 31 Mar 2020 17:55:29 -0400
-Received: by mail-io1-f65.google.com with SMTP id b12so7240073ion.8;
-        Tue, 31 Mar 2020 14:55:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yCr0rURC7Raa50CQ8IdO6e5tVecgPPHvPYdeIVC6eiE=;
-        b=sLyR6I0Pqt/wA85K3A+uNB0MnGz0dbuAezGiwgonycwJxRa8tJuUNmzPWfQcOd/cZd
-         KoZTaF94txCrkZCbvFpVjEA0ayeTrHax2H+en0Bag8mGZvXsTJsR6yAe3oZ7TF/qocDM
-         9rgNE+9oghWZofU2mfJDTSk8E/rHOh9g3zBREyPsGajDvHfhrkjnHBgUXxDxN/jb2dUv
-         pQQM0LtcIsYG30+XbminrswSiiAEvmnsTLpp3l910qi5uf4LFgnrz92DnjzRsq2qfH1U
-         YZnoe+W94Pybwv1dbRppln6nqdbHuvnMQxYhnz1bUN1zGgW1+7jHUTW4kOXBaRbcX0Gj
-         qnhg==
-X-Gm-Message-State: ANhLgQ3L5JQuvr0sqZkHBeCCuVIO7/vx8B0BGcpkK9aoT30GGgjbLuN/
-        K+bxrwfqdYH3lUSamRUYiQ==
-X-Google-Smtp-Source: ADFU+vvwC0cEsQ2oSXhexAgioMtQjUohEsChYpbThieBRSP3Bx530D2FSjD7OC59CJBYMoRtXq4J0A==
-X-Received: by 2002:a6b:4905:: with SMTP id u5mr12392280iob.134.1585691728741;
-        Tue, 31 Mar 2020 14:55:28 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id l12sm38432ils.55.2020.03.31.14.55.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 31 Mar 2020 14:55:28 -0700 (PDT)
-Received: (nullmailer pid 8706 invoked by uid 1000);
-        Tue, 31 Mar 2020 21:55:25 -0000
-Date:   Tue, 31 Mar 2020 15:55:25 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 11/13] dt-bindings: reset: imx8mp: Add ids for
- audiomix reset
-Message-ID: <20200331215525.GA8176@bogus>
-References: <1585150731-3354-1-git-send-email-abel.vesa@nxp.com>
- <1585150731-3354-12-git-send-email-abel.vesa@nxp.com>
+        id S1731319AbgCaV4P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 31 Mar 2020 17:56:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49516 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727955AbgCaV4P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 31 Mar 2020 17:56:15 -0400
+Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E505E2080C;
+        Tue, 31 Mar 2020 21:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1585691773;
+        bh=I7g82WOn2+w62dXVYLDS5KJARvjoUM1nFMd8ENdLyAM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=rLVhJzgGct7D8QUiQUCK1fbc0Awb7iJWxjKn9+cY0GRUR9KYSdgx67iH8Mp1xJdKN
+         T4NpYlYf+hIGlB5923i5gqpPxNFmXMRVmrcJbWMDCvgTX8RyW45oYyrKZQWfjuysgT
+         9abL0Zllin7FiYYTuB+m4tiH1AIOhzVfs7KPVp6s=
+Subject: Re: [PATCH 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, mark.rutland@arm.com
+References: <20200320170212.21523-1-dinguyen@kernel.org>
+ <20200320170212.21523-5-dinguyen@kernel.org> <20200331172356.GA17436@bogus>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <1904132c-9211-6c23-028a-45788a55e420@kernel.org>
+Date:   Tue, 31 Mar 2020 16:56:11 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1585150731-3354-12-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200331172356.GA17436@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Mar 25, 2020 at 05:38:49PM +0200, Abel Vesa wrote:
-> Add all the reset ids for the audiomix reset.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  include/dt-bindings/reset/imx-audiomix-reset.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->  create mode 100644 include/dt-bindings/reset/imx-audiomix-reset.h
 
-This goes in the binding patch.
 
+On 3/31/20 12:23 PM, Rob Herring wrote:
+> On Fri, Mar 20, 2020 at 12:02:10PM -0500, Dinh Nguyen wrote:
+>> Document the Agilex clock bindings, and add the clock header file. The
+>> clock header is an enumeration of all the different clocks on the Agilex
+>> platform.
+>>
+>> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+>> ---
+>> v4: really fix build error(comment formatting was wrong)
+>> v3: address comments from Stephen Boyd
+>>     fix build error(tab removed in line 37)
+>>     renamed to intel,agilex.yaml
+>> v2: convert original document to YAML
+>> ---
+>>  .../bindings/clock/intel,agilex.yaml          | 36 ++++++++++
+>>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>>  2 files changed, 106 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>> new file mode 100644
+>> index 000000000000..5cf2ee5d6fcc
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>> @@ -0,0 +1,36 @@
+>> +# SPDX-License-Identifier: GPL-2.0
 > 
-> diff --git a/include/dt-bindings/reset/imx-audiomix-reset.h b/include/dt-bindings/reset/imx-audiomix-reset.h
-> new file mode 100644
-> index 00000000..571cacf
-> --- /dev/null
-> +++ b/include/dt-bindings/reset/imx-audiomix-reset.h
-> @@ -0,0 +1,15 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright 2019 NXP.
-> + */
-> +
-> +#ifndef DT_BINDING_RESET_IMX_AUDIOMIX_H
-> +#define DT_BINDING_RESET_IMX_AUDIOMIX_H
-> +
-> +#define IMX_AUDIOMIX_EARC_RESET		0x0
-> +#define IMX_AUDIOMIX_EARC_PHY_RESET	0x1
-> +
-> +#define IMX_AUDIOMIX_RESET_NUM		2
-> +
-> +#endif
-> +
-> -- 
-> 2.7.4
+> Dual license new bindings please:
 > 
+> (GPL-2.0-only OR BSD-2-Clause)
+> 
+
+Okay...
+
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Intel SoCFPGA Agilex platform clock controller binding
+>> +
+>> +maintainers:
+>> +  - Dinh Nguyen <dinguyen@kernel.org>
+>> +
+>> +description:
+>> +  The Intel Agilex Clock controller is an integrated clock controller, which
+>> +  generates and supplies to all modules.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: intel,agilex-clkmgr
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+> 
+> Add:
+> 
+> additionalProperties: false
+> 
+
+Okay..
+
+>> +
+>> +examples:
+>> +  # Clock controller node:
+>> +  - |
+>> +    clkmgr: clock-controller@ffd10000 {
+>> +      compatible = "intel,agilex-clkmgr";
+>> +      reg = <0xffd10000 0x1000>;
+>> +      #clock-cells = <1>;
+> 
+> No clock inputs?
+> 
+
+The clock controller is fed the onboard OSC1. So yes, I'll update it.
+
+Dinh
