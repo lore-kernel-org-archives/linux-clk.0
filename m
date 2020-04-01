@@ -2,255 +2,150 @@ Return-Path: <SRS0=i0xl=5R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23032C2D0F0
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC7FC43331
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03EE2206E9
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A94FC2063A
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:57:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388660AbgDAQea convert rfc822-to-8bit (ORCPT
+        id S1733272AbgDAQ5I convert rfc822-to-8bit (ORCPT
         <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Apr 2020 12:34:30 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:40862 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbgDAQe3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 Apr 2020 12:34:29 -0400
-Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1jJgJl-0003TS-Fj; Wed, 01 Apr 2020 18:34:17 +0200
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@collabora.com>
-Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
-        kernel@collabora.com, kever.yang@rock-chips.com,
-        geert@linux-m68k.org
-Subject: Re: [PATCH v2 1/2] soc: rockchip: Register a soc_device to retrieve revision
-Date:   Wed, 01 Apr 2020 18:34:16 +0200
-Message-ID: <5143930.cPWVAAQKI9@diego>
-In-Reply-To: <20200401153513.423683-2-mylene.josserand@collabora.com>
-References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-2-mylene.josserand@collabora.com>
+        Wed, 1 Apr 2020 12:57:08 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41323 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733269AbgDAQ5I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 12:57:08 -0400
+Received: by mail-ot1-f68.google.com with SMTP id f52so237893otf.8;
+        Wed, 01 Apr 2020 09:57:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ZyTZQ9ScLYyXr8uy25TVZM268D8wsSCH+8ypLUnJOFM=;
+        b=gRytOR6k+DyXweCVLepsCqlAVbnAwqt7RTLVhahoDIJXA1Hm3kdZE3UyDTjNPqNsI1
+         MFBI0/O5sCtjIpogBMNtp0at4CYx00dYBGzvOWDCDNy7iX+6q+gH7ebWh5W3JQfRuG6/
+         1ei3x3pDwHthqTQZe4gvJKkq088yd0ViPuasSfhvLO7NpyFGh98tGJAoCP+xtlmM/aGI
+         TVu+E5wXfROB/cKQ5eLdJTBulrLsexoJqQY5zFgRz+G9On+B1PvHPnmkMxNoUeqBv2Al
+         n5FXSgGrooVcnQ1g7mk1kUsU5te/CO7jJhHPIB9f/5qviHh2U3ZY/+H5eQefilja3MMk
+         5fDA==
+X-Gm-Message-State: ANhLgQ0V8D0fe16BD0lYqPnFZVQVJYJi00RXlU3mc3AuDUAKyLaZpg+u
+        PzOvQUGMAL6LrRNt6PCDC90v9Doo6ACp+b/abPM=
+X-Google-Smtp-Source: ADFU+vufihEvibArYWJjTrCmDu7dXZgc3PqH8LVxCwqiESC/QDCUaa5LpicQzIvHFS3WT4dVXp+EAe0ygrg1OSHe3UQ=
+X-Received: by 2002:a9d:76c7:: with SMTP id p7mr6414778otl.145.1585760227154;
+ Wed, 01 Apr 2020 09:57:07 -0700 (PDT)
 MIME-Version: 1.0
+References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-3-mylene.josserand@collabora.com>
+In-Reply-To: <20200401153513.423683-3-mylene.josserand@collabora.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 1 Apr 2020 18:56:55 +0200
+Message-ID: <CAMuHMdXvFOKqmZ-MLJV4SAeLN-PDzqPvMvbVpcD=jyip9tbdnA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: rockchip: rk3288: Handle clock tree for rk3288w
+To:     =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@collabora.com>
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        kever.yang@rock-chips.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi MylËne,
+Hi Myl√®ne,
 
-Am Mittwoch, 1. April 2020, 17:35:12 CEST schrieb MylËne Josserand:
-> Determine which revision of rk3288 by checking the HDMI version.
-> According to the Rockchip BSP kernel/u-boot, on rk3288w, the HDMI
-> revision equals 0x1A which is not the case for the rk3288.
-> 
-> As these SOC have some differences, this driver will help us
-> to know on which revision we are by using 'soc_device' registration
-> to be able to use 'soc_device_match' to detect rk3288/rk3288w.
-> 
-> Signed-off-by: MylËne Josserand <mylene.josserand@collabora.com>
+On Wed, Apr 1, 2020 at 5:35 PM Myl√®ne Josserand
+<mylene.josserand@collabora.com> wrote:
+> The revision rk3288w has a different clock tree about
+> "hclk_vio" clock, according to the BSP kernel code.
+>
+> This patch handles this difference by detecting which SOC it is
+> and creating the div accordingly. Because we are using
+> soc_device_match function, we need to delay the registration
+> of this clock later than others to have time to get SoC revision.
+>
+> Otherwise, because of CLK_OF_DECLARE uses, clock tree will be
+> created too soon to have time to detect SoC's revision.
+>
+> Signed-off-by: Myl√®ne Josserand <mylene.josserand@collabora.com>
 
-I like your new approach quite a lot :-)
+Thanks for your patch!
 
-There are some things we need to take into account though, see below.
-
-
-> ---
->  drivers/soc/rockchip/Makefile |   1 +
->  drivers/soc/rockchip/rk3288.c | 125 ++++++++++++++++++++++++++++++++++
->  2 files changed, 126 insertions(+)
->  create mode 100644 drivers/soc/rockchip/rk3288.c
-> 
-> diff --git a/drivers/soc/rockchip/Makefile b/drivers/soc/rockchip/Makefile
-> index afca0a4c4b72..9dbf12913512 100644
-> --- a/drivers/soc/rockchip/Makefile
-> +++ b/drivers/soc/rockchip/Makefile
-> @@ -2,5 +2,6 @@
->  #
->  # Rockchip Soc drivers
->  #
-> +obj-$(CONFIG_ARCH_ROCKCHIP) += rk3288.o
->  obj-$(CONFIG_ROCKCHIP_GRF) += grf.o
->  obj-$(CONFIG_ROCKCHIP_PM_DOMAINS) += pm_domains.o
-> diff --git a/drivers/soc/rockchip/rk3288.c b/drivers/soc/rockchip/rk3288.c
-
-I'd really like this to be a soc.c instead of rk3288.c ;-)
-
-
-> new file mode 100644
-> index 000000000000..83379ba2b31b
-> --- /dev/null
-> +++ b/drivers/soc/rockchip/rk3288.c
-> @@ -0,0 +1,125 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2020 Collabora Ltd
-> + * Author: Mylene Josserand <mylene.josserand@collabora.com>
-> + */
-> +
-> +#include <linux/init.h>
-> +#include <linux/io.h>
-> +#include <linux/of_address.h>
-> +#include <linux/sys_soc.h>
-> +#include <linux/slab.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +
-> +#define RK3288_HDMI_REV_REG	0x04
-> +#define RK3288W_HDMI_REV	0x1A
-> +
-> +enum rk3288_soc_rev {
-> +	RK3288_SOC_REV_NOT_DETECT,
-> +	RK3288_SOC_REV_RK3288,
-> +	RK3288_SOC_REV_RK3288W,
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -914,10 +923,15 @@ static struct syscore_ops rk3288_clk_syscore_ops = {
+>         .resume = rk3288_clk_resume,
+>  };
+>
+> +static const struct soc_device_attribute rk3288w[] = {
+> +       { .soc_id = "RK32xx", .revision = "RK3288w" },
+> +       { /* sentinel */ }
 > +};
 > +
-> +static int rk3288_revision(void)
+> +static struct rockchip_clk_provider *ctx;
+> +
+>  static void __init rk3288_clk_init(struct device_node *np)
+>  {
+> -       struct rockchip_clk_provider *ctx;
+> -
+>         rk3288_cru_base = of_iomap(np, 0);
+>         if (!rk3288_cru_base) {
+>                 pr_err("%s: could not map cru region\n", __func__);
+> @@ -955,3 +969,17 @@ static void __init rk3288_clk_init(struct device_node *np)
+>         rockchip_clk_of_add_provider(np, ctx);
+>  }
+>  CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
+> +
+> +static int __init rk3288_hclkvio_register(void)
 > +{
-> +	static int revision = RK3288_SOC_REV_NOT_DETECT;
-> +	struct device_node *dn;
-> +	void __iomem *hdmi_base;
-> +
-> +	if (revision != RK3288_SOC_REV_NOT_DETECT)
-> +		return revision;
-> +
-> +	dn = of_find_compatible_node(NULL, NULL, "rockchip,rk3288-dw-hdmi");
-> +	if (!dn) {
-> +		pr_err("%s: Couldn't find HDMI node\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	hdmi_base = of_iomap(dn, 0);
-> +	of_node_put(dn);
-> +
-> +	if (!hdmi_base) {
-> +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
-> +		       hdmi_base);
-> +		return -ENXIO;
-> +	}
 
-The possible problem I see here is clocking and power-domain of the hdmi
-controller in corner-cases. In the past we already had a lot of fun with
-kexec, which also indicates that people actually use kexec productively.
+This function will always be called, even when running a (multi-platform)
+kernel on a non-rk3288 platform.  So you need some protection against
+that.
 
-So while all clocks are ungated and all power-domains are powered on first
-boot, on a system without graphics the pclk+power-domain could be off when
-doing a kexec into a second kernel, which then would probably hang here.
+> +       /* Check for the rk3288w revision as clock tree is different */
+> +       if (soc_device_match(rk3288w))
+> +               rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
+> +                                              ARRAY_SIZE(rk3288w_hclkvio_branch));
+> +       else
+> +               rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
+> +                                              ARRAY_SIZE(rk3288_hclkvio_branch));
 
+Note that soc_device_match() returns a struct soc_device_attribute
+pointer.  If you would store the rockchip_clk_branch array pointer and
+size in rk3288w[...].data (i.e. a pointer to a struct containing that
+info), for both the r83288w and normal rk3288 variants, you could
+simplify this to:
 
-Of course with the hdmi-pclk being sourced from hclk_vio we run into a
-chicken-egg-problem, as we need pclk_hdmi_ctrl to register hclk_vio at all.
+    attr = soc_device_match(rk3288w);
+    if (attr) {
+            struct rk3288_branch_array *p = attr->data;
+            rockchip_clk_register_branches(ctx, p->branches, p->len);
+    }
 
-So I guess one way out of this could be to
-- amend rk3288_clk_shutdown() to also ungate the hdmi-pclk on shutdown
-- add a shutdown mechanism to the power-domain driver so that it can
-  enable PD_VIO on shutdown
+That would handle the not-running-on-rk3288 issue as well.
 
 > +
-> +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG)
-> +	    == RK3288W_HDMI_REV)
-
-nit: a nicer look would be something like
-	val = readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG);
-	if (val == RK3288W_HDMI_REV)
-
-> +		revision = RK3288_SOC_REV_RK3288W;
-> +	else
-> +		revision = RK3288_SOC_REV_RK3288;
-> +
-> +	iounmap(hdmi_base);
-> +
-> +	return revision;
+> +       return 0;
 > +}
-> +
-> +static const char *rk3288_socinfo_revision(u32 rev)
-> +{
-> +	const char *soc_rev;
-> +
-> +	switch (rev) {
-> +	case RK3288_SOC_REV_RK3288:
-> +		soc_rev = "RK3288";
-> +		break;
-> +
-> +	case RK3288_SOC_REV_RK3288W:
-> +		soc_rev = "RK3288w";
+> +subsys_initcall(rk3288_hclkvio_register);
 
-can we maybe use lower-case letters for all here?
+Gr{oetje,eeting}s,
 
-> +		break;
-> +
-> +	case RK3288_SOC_REV_NOT_DETECT:
-> +		soc_rev = "";
-> +		break;
-> +
-> +	default:
-> +		soc_rev = "unknown";
-> +		break;
-> +	}
-> +
-> +	return kstrdup_const(soc_rev, GFP_KERNEL);
-> +}
-> +
-> +static const struct of_device_id rk3288_soc_match[] = {
-> +	{ .compatible = "rockchip,rk3288", },
-> +	{ }
-> +};
-> +
-> +static int __init rk3288_soc_init(void)
+                        Geert
 
-as noted at the top, I'd really like to see this more generalized so that
-other socs can just hook in there with a revision callback in a
-rockchip_soc_data struct.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
-> +{
-> +	struct soc_device_attribute *soc_dev_attr;
-> +	struct soc_device *soc_dev;
-> +	struct device_node *np;
-> +
-> +	np = of_find_matching_node(NULL, rk3288_soc_match);
-> +	if (!np)
-> +		return -ENODEV;
-> +
-> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
-> +	if (!soc_dev_attr)
-> +		return -ENOMEM;
-> +
-> +	soc_dev_attr->family = "Rockchip";
-> +	soc_dev_attr->soc_id = "RK32xx";
-
-nit: rk3288 instead of "32xx" please
-
-> +
-> +	np = of_find_node_by_path("/");
-> +	of_property_read_string(np, "model", &soc_dev_attr->machine);
-> +	of_node_put(np);
-> +
-> +	soc_dev_attr->revision = rk3288_socinfo_revision(rk3288_revision());
-> +
-> +	soc_dev = soc_device_register(soc_dev_attr);
-> +	if (IS_ERR(soc_dev)) {
-> +		kfree_const(soc_dev_attr->revision);
-> +		kfree_const(soc_dev_attr->soc_id);
-> +		kfree(soc_dev_attr);
-> +		return PTR_ERR(soc_dev);
-> +	}
-> +
-> +	dev_info(soc_device_to_device(soc_dev), "Rockchip %s %s detected\n",
-> +		 soc_dev_attr->soc_id, soc_dev_attr->revision);
-
-nit: dev_dbg should be enough, that information doesn't really matter for
-most people, as it's only relevant to clock internals.
-
-
-Heiko
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
