@@ -2,105 +2,76 @@ Return-Path: <SRS0=i0xl=5R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FC5C43331
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6218CC43331
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 20:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 789BC206F5
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:53:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6gySMu1"
+	by mail.kernel.org (Postfix) with ESMTP id 3802420784
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 20:17:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732337AbgDASxL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Apr 2020 14:53:11 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37492 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbgDASxL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 14:53:11 -0400
-Received: by mail-lf1-f65.google.com with SMTP id t11so611339lfe.4;
-        Wed, 01 Apr 2020 11:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VQyVAIIzutwqkyfYTNBDUtxgmiM5XluCAPUUzt8tYzA=;
-        b=f6gySMu1/KZQldaiJU0HZJUMHNrOnxP9JYzubf0ZtdqHGg17TYXOEPnL2zzm6i60z+
-         fyvd+zeJaDcjjpP063I5iap8UpVQ/W6MlvDFoz5f3Pqu3bVS2ILx5LlQcy8vv8BqFgGe
-         P8e59Mx99j2zmRknwfwagy6FdFytVtcFDuZwl33FQY0hQo7yxEK2iabBX4JPOJK8naoz
-         3mAnrOUHLaPHKH3zkGwpDDrwP8DaKxRum47ipUBYKF4ZFrdDUFwqj8Xu9ZBZZJqk56UJ
-         G/EvoiOxAA9DA6YC6QpSaa0i3U85CfZtWtxWUxyUIoRYNjIAHbmHmr+jmpC/39TtX6gI
-         cVFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VQyVAIIzutwqkyfYTNBDUtxgmiM5XluCAPUUzt8tYzA=;
-        b=oxVEsRdxDSsuvnJlSRvLlpRKSRq9iAICd9dm9vqSTZo5Wr8hyHqoskF/Rm0A3kLVqV
-         LEgqRku+mhdQgp37/Ci63l5wROlE5astNjLr/AXG8FikMvlDUeISbvSqfgVvYZuIb8U1
-         t4cogiZmgjq22l/Bv6W6U0C0E8R/lVkYsA5kdecK62ymlL991xgvtHJcbLpd0YdZfWT1
-         z/3xE1SqYs15x/KsXO/L+EoSSTRQX/rHiw9sbH9jOmpSp3j/2JZicW/nM2mIlqFnqd9q
-         aUHRCJKGPAy80jg5BSnkjoa0muyY427hqkvbsAc0ZXea4W/8jiYRKI3E3ifjYKsp3RUp
-         LCMQ==
-X-Gm-Message-State: AGi0PuZVlTlCY8Fct5/ypKloHrFUsEu2wp2anu47X4C1l/6ffZVurGKX
-        5lOp/3RWB3H/6gxpRokJVRGSCiY/
-X-Google-Smtp-Source: APiQypIV05zgsqDTXLVW5bZguap7w/VMZhzPsGkTPE9hu+3T5hqetEJ2wZ/8yhmmfTcgVkqrD50d/Q==
-X-Received: by 2002:a05:6512:66:: with SMTP id i6mr15684865lfo.48.1585767188616;
-        Wed, 01 Apr 2020 11:53:08 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id t144sm2224533lff.94.2020.04.01.11.53.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Apr 2020 11:53:08 -0700 (PDT)
-Subject: Re: [PATCH v1 5/5] PM / devfreq: tegra30: Make CPUFreq notifier to
- take into account boosting
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200330231617.17079-1-digetx@gmail.com>
- <CGME20200330232026epcas1p2234ae241b9693555b4df74aab3d8aee9@epcas1p2.samsung.com>
- <20200330231617.17079-6-digetx@gmail.com>
- <afcc9f80-c102-da42-8f7f-9b66417a9d4d@samsung.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9b79b19d-3cd2-6ea1-1e86-dd008ded3d3f@gmail.com>
-Date:   Wed, 1 Apr 2020 21:53:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1732720AbgDAURx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Apr 2020 16:17:53 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:33810 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732385AbgDAURw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 16:17:52 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id E5E5E297612
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     mark.rutland@arm.com, ck.hu@mediatek.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com
+Cc:     linux-kernel@vger.kernel.org, matthias.bgg@gmail.com,
+        drinkcat@chromium.org, hsinyi@chromium.org,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>, matthias.bgg@kernel.org
+Subject: [PATCH v2 1/4] soc: mediatek: Enable mmsys driver by default if Mediatek arch is selected
+Date:   Wed,  1 Apr 2020 22:17:33 +0200
+Message-Id: <20200401201736.2980433-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <afcc9f80-c102-da42-8f7f-9b66417a9d4d@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-01.04.2020 02:29, Chanwoo Choi пишет:
-> Hi Dmitry,
-> 
-> On 3/31/20 8:16 AM, Dmitry Osipenko wrote:
->> MCCPU frequency boosting needs to be taken into account in order to avoid
->> scheduling of unnecessary devfreq updates.
-> 
-> "in order to avoid scheduling of unnecessary devfreq updates."
-> I don't understand the correct meaning of following description.
-> Could you explain it more detailed?
+The mmsys driver supports only MT8173 device for now, but like other system
+controllers is an important piece for other Mediatek devices. Actually
+it depends on the mt8173 clock specific driver but that dependency is
+not real as it can build without the clock driver. Instead of depends on
+a specific model, make the driver depends on the generic ARCH_MEDIATEK and
+enable by default so other Mediatek devices can start using it without
+flood the Kconfig.
 
-Hello Chanwoo,
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+---
 
-I'll update the commit message with a more detailed description and make
-this patch standalone in v2. Thank you very much for taking a look at
-the patches.
+Changes in v2: None
 
-BTW, please also take a look at this patch
-https://patchwork.kernel.org/patch/11409037/
+ drivers/soc/mediatek/Kconfig | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/soc/mediatek/Kconfig b/drivers/soc/mediatek/Kconfig
+index e84513318725..59a56cd790ec 100644
+--- a/drivers/soc/mediatek/Kconfig
++++ b/drivers/soc/mediatek/Kconfig
+@@ -46,8 +46,7 @@ config MTK_SCPSYS
+ 
+ config MTK_MMSYS
+ 	bool "MediaTek MMSYS Support"
+-	depends on COMMON_CLK_MT8173_MMSYS
+-	default COMMON_CLK_MT8173_MMSYS
++	default ARCH_MEDIATEK
+ 	help
+ 	  Say yes here to add support for the MediaTek Multimedia
+ 	  Subsystem (MMSYS).
+-- 
+2.25.1
+
