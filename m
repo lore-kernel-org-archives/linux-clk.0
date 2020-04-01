@@ -2,162 +2,132 @@ Return-Path: <SRS0=i0xl=5R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEA8C2BA12
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8920C43331
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:53:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A7320784
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DEC0206F5
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 18:53:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lXHTsCYC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xy87xPSe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732997AbgDASYK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Apr 2020 14:24:10 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6574 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732842AbgDASYI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 14:24:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e84dc3a0001>; Wed, 01 Apr 2020 11:23:54 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 01 Apr 2020 11:24:07 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 01 Apr 2020 11:24:07 -0700
-Received: from [10.2.164.193] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 1 Apr
- 2020 18:24:07 +0000
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@iki.fi>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>, <digetx@gmail.com>,
-        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
- <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
- <ba37eb84-392c-3767-57f6-d297b0ab79a3@xs4all.nl>
- <20200331111018.GJ2394@valkosipuli.retiisi.org.uk>
- <a1145ee4-2991-a958-1225-090c57fec533@xs4all.nl>
- <20200331115221.GA4767@pendragon.ideasonboard.com>
- <6aa7d86c-3943-d508-ccf6-5ac46546abe9@nvidia.com>
- <3b00a559-992a-2da9-92b1-bee44e137ba2@nvidia.com>
- <1c60491b-1bb2-6291-80a6-c0fa14094077@nvidia.com>
- <20200401165805.GE4876@pendragon.ideasonboard.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <e3b437c6-76e1-d407-e81d-c05912ffcd0b@nvidia.com>
-Date:   Wed, 1 Apr 2020 11:24:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1732214AbgDASw5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Apr 2020 14:52:57 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45218 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732208AbgDASw5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 14:52:57 -0400
+Received: by mail-lj1-f195.google.com with SMTP id t17so553844ljc.12;
+        Wed, 01 Apr 2020 11:52:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8rKHOvC+1viKsJ66KVDF6/jPm8HDlsQUVycgY4SH8Vg=;
+        b=Xy87xPSeXhAJ78Ro5x2ym5wq7taSoRucC8rpa56D3dTwhb7ye6tJVkadZODi0TaX2Z
+         FGXZw6RPux0GrE/o66bM/xQYb+Vap0+pPRUnbA6NDPDcVYBJL0X6cHOzPKyd3E74IGy7
+         p8+waYyIQKantfIUZx38hnSy8NdzBUVq3pLyTWyurw5atx7FFZRvqC3o0M7P01fJCgNO
+         p+W1GyRS96+LHVEfl57gxUZzBdD9RsDFXMujkPH1v00cjx6JsgdAS3hDWCFsZQUMisFD
+         lkftZJHjGRnd4c8pVq6eatMy3AV6nZQD4MWorpNOb3sZjs3xGvbpkXs5KpApt4rPuEPT
+         y3sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8rKHOvC+1viKsJ66KVDF6/jPm8HDlsQUVycgY4SH8Vg=;
+        b=UnPoWxslIkyLXLBpbhIUFuOgXnrb7eVGAri6zMTs/2gW29Vepx8VacYH8PghE7wa+7
+         RqiPsPCj6lyT2Xi9CwPaVlq1MZ69Z2vvC2v2gA4zH/jQuL5fuL9ptLEvOapiDr/azD0S
+         xbcQAHVILmBuqs/ZigK9bKPhCRoT2hZNNrzzD2oSk1dXhKL8w0SzCGeb7BTheRTFFQ0/
+         WrRi+4O/7DT+FAy/tRjI4CdvsxWFYDz762ilXnnFHfzQ8ktz07TrBvNrLWy3eLkslapK
+         0RRtd1X/q2xyMm++RXpg4rE76Z6Ex1Um5c7DlRk6Y5LuEopzGRV4gri1I3AYrrNpGSrE
+         RZng==
+X-Gm-Message-State: AGi0PuZLgzuBiTdsotM1Vl3RgEX7nVsYuPiI7XIt4HuzW4ywg/CGo1KW
+        046kc64lzOwmM2R9jxdlloRrFutF
+X-Google-Smtp-Source: APiQypK5HeIv37wFzYRlQ/paJfNLfRBhpQdfPZ64QlP0lqXYSx4R/I4wafisjCg1FffMpWgC33CQsw==
+X-Received: by 2002:a2e:9959:: with SMTP id r25mr13930691ljj.200.1585767173779;
+        Wed, 01 Apr 2020 11:52:53 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id c22sm2153008lfi.41.2020.04.01.11.52.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 01 Apr 2020 11:52:53 -0700 (PDT)
+Subject: Re: [PATCH v1 1/5] PM / devfreq: tegra: Add Dmitry as a maintainer
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200330231617.17079-1-digetx@gmail.com>
+ <CGME20200330232036epcas1p2cba89238a41fa0941d0abcaf2b457072@epcas1p2.samsung.com>
+ <20200330231617.17079-2-digetx@gmail.com>
+ <db4883d4-18b7-238a-798b-ad45aad978fc@samsung.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <cfaf5c1c-51e7-2b5c-dcfa-65546674ca95@gmail.com>
+Date:   Wed, 1 Apr 2020 21:52:51 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <20200401165805.GE4876@pendragon.ideasonboard.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <db4883d4-18b7-238a-798b-ad45aad978fc@samsung.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585765434; bh=wuMn7wVJU3FgOIzl/GEIXEsEfIt24oALd2phqNyAMuU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=lXHTsCYCf9kAi+an+1CCXN4D5DsUO8HiWJpzEgXYoxpziUI5/YXGAyI1Ng63tZNCn
-         sDs0BJ9TjF3gdM8GN3A+9bqGkrIkA6Z8AiNmuZfGC10Z6nWbFdiVzJnMn1r63JLe3H
-         izLR++U3RQSfNX9oj0Hb9pXt+v6ZtuM7+RiRkS1glZ0lBj8qFD5pcDE78s6exDSfBg
-         lEGGdM0Yt5F1eYR1AUSBFTNop+am26CRmaRpRqG/BODaiokrYxyD/IVYzDTLjyRXMI
-         JZOrPsF+nU/7t7J09CKhH2wutN99cHMXyekMHIMjxRUiq7dUxPk7yzT6skCSAp3RJJ
-         yUeiQGyxpgTlA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-On 4/1/20 9:58 AM, Laurent Pinchart wrote:
-> External email: Use caution opening links or attachments
->
->
-> Hi Sowjanya,
->
-> On Wed, Apr 01, 2020 at 09:36:03AM -0700, Sowjanya Komatineni wrote:
->> Hi Sakari/Laurent,
+01.04.2020 02:13, Chanwoo Choi пишет:
+> On 3/31/20 8:16 AM, Dmitry Osipenko wrote:
+>> I was contributing to the NVIDIA Tegra20+ devfreq drivers recently and
+>> want to help keep them working and evolving in the future.
 >>
->> Few questions to confirm my understanding on below discussion.
+>> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>  MAINTAINERS | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
 >>
->> 1. Some sensors that you are referring as don't work with single devnode
->> controlling pipeline devices are ISP built-in sensors where setup of
->> pipeline and subdevices happen separately?
-> Sensors that include ISPs could indeed require to be exposed as multiple
-> subdevs, but I was mostly referring to raw Bayer sensors with hardware
-> architectures similar to the SMIA++ and MIPI CCS specifications. Those
-> sensors can perform cropping in up to three different locations (analog
-> crop, digital crop, output crop), and can also scale in up to three
-> different locations (binning, skipping and filter-based scaling).
->
-> Furthermore, with the V4L2 support for multiplexed streams that we are
-> working on, a sensor that can produce both image data and embedded data
-> would also need to be split in multiple subdevs.
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index 8b8abe756ae0..9e8b0779f6df 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -10931,6 +10931,15 @@ F:	include/linux/memblock.h
+>>  F:	mm/memblock.c
+>>  F:	Documentation/core-api/boot-time-mm.rst
+>>  
+>> +MEMORY FREQUENCY SCALING DRIVERS FOR NVIDIA TEGRA
+>> +M:	Dmitry Osipenko <digetx@gmail.com>
+>> +L:	linux-pm@vger.kernel.org
+>> +L:	linux-tegra@vger.kernel.org
+>> +T:	git git://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git
+> 
+> Need to update it as following:
+> git git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git
 
-Thanks Laurent.
+Indeed, good catch!
 
-For sensors with meta/embedded data along with image in same frame, 
-Tegra VI HW extracts based on programmed embedded data size info.
+>> +S:	Maintained
+>> +F:	drivers/devfreq/tegra20-devfreq.c
+>> +F:	drivers/devfreq/tegra30-devfreq.c
+>> +
+>>  MEMORY MANAGEMENT
+>>  M:	Andrew Morton <akpm@linux-foundation.org>
+>>  L:	linux-mm@kvack.org
+>>
+> 
+> I already agreed it. To prevent the merge conflict of MAINTAINERS,
+> better to be merged it to linux-pm.git maintainer. On next time,
+> please add Rafael J. Wysocki to To list.
 
-So in our driver we capture this as separate buffer as embedded data is 
-part of frame.
-
-You above comment on multiplexed streams is for sensors using different 
-virutal channels for diff streams?
-
-
->> 2. With driver supporting single device node control of entire pipeline
->> devices compared to MC-based, limitation is with userspace apps for only
->> these complex camera sensors?
-> In those cases, several policy decisions on how to configure the sensor
-> (whether to use binning, skipping and/or filter-based scaling for
-> instance, or how much cropping and scaling to apply to achieve a certain
-> output resolution) will need to be implemented in the kernel, and
-> userspace will not have any control on them.
->
->> 3. Does all upstream video capture drivers eventually will be moved to
->> support MC-based?
-> I think we'll see a decrease of the video-node-centric drivers in the
-> future for embedded systems, especially the ones that include an ISP.
-> When a system has an ISP, even if the ISP is implemented as a
-> memory-to-memory device separate from the CSI-2 capture side, userspace
-> will likely have a need for fine-grained control of the camera sensor.
->
->> 4. Based on libcamera doc looks like it will work with both types of
->> MC-based and single devnode based pipeline setup drivers for normal
->> sensors and limitation is when we use ISP built-in sensor or ISP HW
->> block. Is my understanding correct?
-> libcamera supports both, it doesn't put any restriction in that area.
-> The pipeline handler (the device-specific code in libcamera that
-> configures and control the hardware pipeline) is responsible for
-> interfacing with the kernel drivers, and is free to use an MC-centric or
-> video-node-centric API depending on what the kernel drivers offer.
->
-> The IPA (image processing algorithms) module is also vendor-specific.
-> Although it will not interface directly with kernel drivers, it will
-> have requirements on how fine-grained control of the sensor is required.
-> For systems that have an ISP in the SoC, reaching a high image quality
-> level requires fine-grained control of the sensor, or at the very least
-> being able to retrieve fine-grained sensor configuration information
-> from the kernel. For systems using a camera sensor with an integrated
-> ISP and a CSI-2 receiver without any further processing on the SoC side,
-> there will be no such fine-grained control of the sensor by the IPA (and
-> there could even be no IPA module at all).
->
-> --
-> Regards,
->
-> Laurent Pinchart
+I'll update and re-send this patch separately from the rest of the
+patches, thank you.
