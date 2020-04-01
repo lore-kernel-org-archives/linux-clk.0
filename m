@@ -2,346 +2,255 @@ Return-Path: <SRS0=i0xl=5R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E66DC2D0F2
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23032C2D0F0
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6129B20714
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZUe4FqCA"
+	by mail.kernel.org (Postfix) with ESMTP id 03EE2206E9
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 16:52:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388647AbgDAQgI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Apr 2020 12:36:08 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13573 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388529AbgDAQgH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 12:36:07 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e84c2940006>; Wed, 01 Apr 2020 09:34:28 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 01 Apr 2020 09:36:05 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 01 Apr 2020 09:36:05 -0700
-Received: from [10.2.164.193] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 1 Apr
- 2020 16:36:05 +0000
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-CC:     Sakari Ailus <sakari.ailus@iki.fi>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>, <digetx@gmail.com>,
-        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1584985955-19101-1-git-send-email-skomatineni@nvidia.com>
- <1584985955-19101-7-git-send-email-skomatineni@nvidia.com>
- <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
- <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
- <ba37eb84-392c-3767-57f6-d297b0ab79a3@xs4all.nl>
- <20200331111018.GJ2394@valkosipuli.retiisi.org.uk>
- <a1145ee4-2991-a958-1225-090c57fec533@xs4all.nl>
- <20200331115221.GA4767@pendragon.ideasonboard.com>
- <6aa7d86c-3943-d508-ccf6-5ac46546abe9@nvidia.com>
- <3b00a559-992a-2da9-92b1-bee44e137ba2@nvidia.com>
-Message-ID: <1c60491b-1bb2-6291-80a6-c0fa14094077@nvidia.com>
-Date:   Wed, 1 Apr 2020 09:36:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388660AbgDAQea convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Apr 2020 12:34:30 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40862 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732532AbgDAQe3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Apr 2020 12:34:29 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1jJgJl-0003TS-Fj; Wed, 01 Apr 2020 18:34:17 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@collabora.com>
+Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        kernel@collabora.com, kever.yang@rock-chips.com,
+        geert@linux-m68k.org
+Subject: Re: [PATCH v2 1/2] soc: rockchip: Register a soc_device to retrieve revision
+Date:   Wed, 01 Apr 2020 18:34:16 +0200
+Message-ID: <5143930.cPWVAAQKI9@diego>
+In-Reply-To: <20200401153513.423683-2-mylene.josserand@collabora.com>
+References: <20200401153513.423683-1-mylene.josserand@collabora.com> <20200401153513.423683-2-mylene.josserand@collabora.com>
 MIME-Version: 1.0
-In-Reply-To: <3b00a559-992a-2da9-92b1-bee44e137ba2@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585758868; bh=jHwXLqC0kgYzsezG911Dkh+Vm7Ms3kIpbjomQTfOJPY=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ZUe4FqCAuAQ4PHLX44ZPmfZCfH6X+TRJhdpjJZ61tgV8QT2tqgvKPQJsEWJEQCcbY
-         fzN/Ime7wqMvgNmMO31yt2YwmcZ+WfJsHGxpI5x+BV66lHndcN7bjWNLukJo7dsWPE
-         vzzFP25NhAFj+FbuDpsM3bzvVkO+KBqBh1BAh1j/vZDPS9XqO1LecPi+eAKKtWw+MP
-         t1r8qAdKF0n6ZUox/5mB/MjGfEVqn2+xVyraECpWOLmt7PNMkVwDY0VsiM2Et03gDP
-         MJjEdrflJjrxElxQSa3P7yvbvExnt89harTpOAdRPyc3tezLiQ9R7RPdedu+h1IKni
-         7rAoV/Yj3/W+g==
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sakari/Laurent,
+Hi Mylène,
 
-Few questions to confirm my understanding on below discussion.
+Am Mittwoch, 1. April 2020, 17:35:12 CEST schrieb Mylène Josserand:
+> Determine which revision of rk3288 by checking the HDMI version.
+> According to the Rockchip BSP kernel/u-boot, on rk3288w, the HDMI
+> revision equals 0x1A which is not the case for the rk3288.
+> 
+> As these SOC have some differences, this driver will help us
+> to know on which revision we are by using 'soc_device' registration
+> to be able to use 'soc_device_match' to detect rk3288/rk3288w.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
 
-1. Some sensors that you are referring as don't work with single devnode=20
-controlling pipeline devices are ISP built-in sensors where setup of=20
-pipeline and subdevices happen separately?
+I like your new approach quite a lot :-)
 
-2. With driver supporting single device node control of entire pipeline=20
-devices compared to MC-based, limitation is with userspace apps for only=20
-these complex camera sensors?
-
-3. Does all upstream video capture drivers eventually will be moved to=20
-support MC-based?
-
-4. Based on libcamera doc looks like it will work with both types of=20
-MC-based and single devnode based pipeline setup drivers for normal=20
-sensors and limitation is when we use ISP built-in sensor or ISP HW=20
-block. Is my understanding correct?
-
-Thanks
-
-Sowjanya
+There are some things we need to take into account though, see below.
 
 
-On 3/31/20 11:33 AM, Sowjanya Komatineni wrote:
->
-> On 3/31/20 9:40 AM, Sowjanya Komatineni wrote:
->>
->> On 3/31/20 4:52 AM, Laurent Pinchart wrote:
->>> External email: Use caution opening links or attachments
->>>
->>>
->>> Hello,
->>>
->>> On Tue, Mar 31, 2020 at 01:27:19PM +0200, Hans Verkuil wrote:
->>>> On 3/31/20 1:10 PM, Sakari Ailus wrote:
->>>>> On Tue, Mar 31, 2020 at 12:56:57PM +0200, Hans Verkuil wrote:
->>>>>> On 3/31/20 12:32 PM, Sakari Ailus wrote:
->>>>>>> On Mon, Mar 30, 2020 at 12:59:15PM +0200, Hans Verkuil wrote:
->>>>>>>> On 3/25/20 12:03 PM, Sakari Ailus wrote:
->>>>>>>>> On Mon, Mar 23, 2020 at 10:52:32AM -0700, Sowjanya Komatineni=20
->>>>>>>>> wrote:
->>>>>>>>>> Tegra210 contains a powerful Video Input (VI) hardware=20
->>>>>>>>>> controller
->>>>>>>>>> which can support up to 6 MIPI CSI camera sensors.
->>>>>>>>>>
->>>>>>>>>> Each Tegra CSI port can be one-to-one mapped to VI channel=20
->>>>>>>>>> and can
->>>>>>>>>> capture from an external camera sensor connected to CSI or from
->>>>>>>>>> built-in test pattern generator.
->>>>>>>>>>
->>>>>>>>>> Tegra210 supports built-in test pattern generator from CSI to=20
->>>>>>>>>> VI.
->>>>>>>>>>
->>>>>>>>>> This patch adds a V4L2 media controller and capture driver=20
->>>>>>>>>> support
->>>>>>>>>> for Tegra210 built-in CSI to VI test pattern generator.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>> ---
->>>>>>>>>> =C2=A0 drivers/staging/media/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 +
->>>>>>>>>> =C2=A0 drivers/staging/media/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/Kconfig=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 | 10 +
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/Makefile=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 8 +
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/TODO=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 10 +
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-common.h | 263 +++++++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-csi.c=C2=A0=C2=A0=C2=A0=
- | 522=20
->>>>>>>>>> ++++++++++++++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-csi.h=C2=A0=C2=A0=C2=A0=
- | 118 ++++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-vi.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 1058=20
->>>>>>>>>> ++++++++++++++++++++++++++++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-vi.h=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 83 +++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-video.c=C2=A0 | 129 +++=
-+
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra-video.h=C2=A0 | 32 +
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra210.c=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 754=20
->>>>>>>>>> ++++++++++++++++++++
->>>>>>>>>> =C2=A0 drivers/staging/media/tegra/tegra210.h=C2=A0=C2=A0=C2=A0=
-=C2=A0 | 192 +++++
->>>>>>>>> Why staging? Are there reasons not to aim this to the kernel=20
->>>>>>>>> proper right
->>>>>>>>> away? If you only support TPG, the driver may not have too=20
->>>>>>>>> many (if any)
->>>>>>>>> real users anyway.
->>>>>>>>>
->>>>>>>>>> =C2=A0 14 files changed, 3182 insertions(+)
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Kconfig
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/Makefile
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/TODO
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-comm=
-on.h
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.=
-c
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-csi.=
-h
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.c
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vi.h
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vide=
-o.c
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra-vide=
-o.h
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.c
->>>>>>>>>> =C2=A0 create mode 100644 drivers/staging/media/tegra/tegra210.h
->>>>>>>>>>
->>>>>>>> <snip>
->>>>>>>>
->>>>>>>>>> +static int tegra_channel_g_input(struct file *file, void *priv,
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int *i)
->>>>>>>>>> +{
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *i =3D 0;
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static int tegra_channel_s_input(struct file *file, void *priv,
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned int input)
->>>>>>>>>> +{
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (input > 0)
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 return -EINVAL;
->>>>>>>>>> +
->>>>>>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
->>>>>>>>>> +}
->>>>>>>>> Please see patchset on topic "v4l2-dev/ioctl: Add=20
->>>>>>>>> V4L2_CAP_IO_MC" on
->>>>>>>>> linux-media; it's relevant here, too.
->>>>>>>> No, it isn't. The pipeline is controlled by the driver, not by=20
->>>>>>>> userspace.
->>>>>>>> This is a regular video capture driver, not an ISP driver.
->>>>>>> I don't think that really makes a difference, whether a device=20
->>>>>>> is an ISP or
->>>>>>> not, but instead what does is whether there is something to=20
->>>>>>> control in its
->>>>>>> pipeline that cannot be generally done through the regular V4L2=20
->>>>>>> interface.
->>>>>>> Even plain CSI-2 receiver drivers should be media device centric=20
->>>>>>> these days
->>>>>>> as doing otherwise excludes using a range of sensor drivers with=20
->>>>>>> them,
->>>>>>> including any possible future support for e.g. sensor embedded=20
->>>>>>> data.
->>>>>>>
->>>>>> We've been back and forth on this before for this driver. I see=20
->>>>>> no reason to make things
->>>>>> complicated, these are simple video pipelines for video capture.=20
->>>>>> Making this media
->>>>>> device centric means that existing software using the BSP version=20
->>>>>> of this driver require
->>>>>> a full rewrite, which is not desirable.
->>>>>>
->>>>>> If we are going to require CSI receiver drivers to be media=20
->>>>>> centric, then that's a
->>>>>> major departure of existing practice. And something that needs to=20
->>>>>> be discussed first,
->>>>> I'd be happy to discuss that.
->>>>>
->>>>> Either way, the current design is problematic as it excludes a=20
->>>>> range of
->>>>> camera sensors being used with the driver --- addressing of which=20
->>>>> requires
->>>>> converting the driver MC centric. If the driver is merged to=20
->>>>> mainline, then
->>>>> the user might face a Kconfig option or a module parameter to choose
->>>>> between the two --- this defines uAPI behaviour after all.
->>>>>
->>>>> The only way to avoid that in the future is to make it MC-centric=20
->>>>> right
->>>>> away.
->>>>>
->>>>>> since that will require that support for each csi receiver driver=20
->>>>>> is added to libcamera.
->>>>>> Is libcamera ready for that? Are common applications using=20
->>>>>> libcamera yet?
->>>>>>
->>>>>> Obviously, if NVIDIA decides that this is worth the effort, then=20
->>>>>> I have no objection.
->>>>>> But I don't think it is something we should require at this stage.
->>>>> Works for me. But in that case NVIDIA should also be aware that=20
->>>>> doing so
->>>>> has consequences.
->>>>>
->>>>> We also haven't discussed what to do with old V4L2-centric drivers=20
->>>>> which
->>>>> you'd use with sensors that expose their own subdevs. The=20
->>>>> proportion of all
->>>>> sensors might not be large currently but it is almost certainly=20
->>>>> bound to
->>>>> grow in the future.
->>>>>
->>>>> FWIW, Intel ipu3-cio2 CSI-2 receiver driver is MC-centric e.g. for=20
->>>>> the
->>>>> above reasons. Libcamera supports it currently. I'll let Laurent=20
->>>>> (cc'd)
->>>>> comment on the details.
->>>> I think it would be good to at least describe in some detail what=20
->>>> you gain
->>>> by taking the media centric route, and what the obstacles are (loss=20
->>>> of compatibility
->>>> with existing applications, requiring libcamera support).
->>> In this case the main gain is control of the camera sensor. Sensors can
->>> appear as simple when you don't look too closely at them, but many
->>> sensors (especially the ones modelled after SMIA++ and the now standard
->>> - and open! - MIPI CCS specification) have 3 locations to perform
->>> cropping (analog, digital and output), and 3 locations to perform
->>> scaling (binning, skipping, and full-featured scaler). All of these=20
->>> need
->>> to be controlled by userspace one way or another if you want to
->>> implement proper camera algorithms, which those platforms target.
->> Thanks Laurent/Sakari/Hans.
->>
->> Based on discussion, seems like its good to change driver now to=20
->> media-centric rather than later.
->>
->> As Jetson is devkit and custom camera sensor module meeting spec can=20
->> be used, its good to let sensor control to user space.
->>
->> Will look into and update to use media-centric APIs.
-> Will discuss this internally and will get back on this...
->>>
->>>> My personal feeling has always been that for ISP drivers the pros=20
->>>> of making
->>>> a media-centric driver outweigh the cons, but that for a standard=20
->>>> video capture
->>>> pipeline without complex processing blocks the cons outweigh the pros.
->>>>
->>>> This might change if libcamera becomes widely used, but we're not=20
->>>> there yet.
->>>>
->>>> To be honest, I am not opposed to having a kernel config option for=20
->>>> drivers
->>>> like this that select the media-centric API vs a regular API, if=20
->>>> that can be
->>>> done without too much work. If you need full control for your=20
->>>> embedded system,
->>>> then you enable the option. If you want full compatibility with=20
->>>> existing
->>>> applications, then disable it.
->>> How would distributions be supposed to handle those ? That could in the
->>> end need to be a per-driver option, and it would be very messy. Maybe
->>> it's unavoidable, I'm trying to figure out a way to avoid such an=20
->>> option
->>> for sensor drivers, to decide to expose them as a single subdev or
->>> multiple subdevs in order to support multiple streams CSI-2 streams,=20
->>> and
->>> I'm not sure I'll succeed.
->>>
->>> --=20
->>> Regards,
->>>
->>> Laurent Pinchart
+> ---
+>  drivers/soc/rockchip/Makefile |   1 +
+>  drivers/soc/rockchip/rk3288.c | 125 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 126 insertions(+)
+>  create mode 100644 drivers/soc/rockchip/rk3288.c
+> 
+> diff --git a/drivers/soc/rockchip/Makefile b/drivers/soc/rockchip/Makefile
+> index afca0a4c4b72..9dbf12913512 100644
+> --- a/drivers/soc/rockchip/Makefile
+> +++ b/drivers/soc/rockchip/Makefile
+> @@ -2,5 +2,6 @@
+>  #
+>  # Rockchip Soc drivers
+>  #
+> +obj-$(CONFIG_ARCH_ROCKCHIP) += rk3288.o
+>  obj-$(CONFIG_ROCKCHIP_GRF) += grf.o
+>  obj-$(CONFIG_ROCKCHIP_PM_DOMAINS) += pm_domains.o
+> diff --git a/drivers/soc/rockchip/rk3288.c b/drivers/soc/rockchip/rk3288.c
+
+I'd really like this to be a soc.c instead of rk3288.c ;-)
+
+
+> new file mode 100644
+> index 000000000000..83379ba2b31b
+> --- /dev/null
+> +++ b/drivers/soc/rockchip/rk3288.c
+> @@ -0,0 +1,125 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright 2020 Collabora Ltd
+> + * Author: Mylene Josserand <mylene.josserand@collabora.com>
+> + */
+> +
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/sys_soc.h>
+> +#include <linux/slab.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of.h>
+> +
+> +#define RK3288_HDMI_REV_REG	0x04
+> +#define RK3288W_HDMI_REV	0x1A
+> +
+> +enum rk3288_soc_rev {
+> +	RK3288_SOC_REV_NOT_DETECT,
+> +	RK3288_SOC_REV_RK3288,
+> +	RK3288_SOC_REV_RK3288W,
+> +};
+> +
+> +static int rk3288_revision(void)
+> +{
+> +	static int revision = RK3288_SOC_REV_NOT_DETECT;
+> +	struct device_node *dn;
+> +	void __iomem *hdmi_base;
+> +
+> +	if (revision != RK3288_SOC_REV_NOT_DETECT)
+> +		return revision;
+> +
+> +	dn = of_find_compatible_node(NULL, NULL, "rockchip,rk3288-dw-hdmi");
+> +	if (!dn) {
+> +		pr_err("%s: Couldn't find HDMI node\n", __func__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	hdmi_base = of_iomap(dn, 0);
+> +	of_node_put(dn);
+> +
+> +	if (!hdmi_base) {
+> +		pr_err("%s: Couldn't map %pOF regs\n", __func__,
+> +		       hdmi_base);
+> +		return -ENXIO;
+> +	}
+
+The possible problem I see here is clocking and power-domain of the hdmi
+controller in corner-cases. In the past we already had a lot of fun with
+kexec, which also indicates that people actually use kexec productively.
+
+So while all clocks are ungated and all power-domains are powered on first
+boot, on a system without graphics the pclk+power-domain could be off when
+doing a kexec into a second kernel, which then would probably hang here.
+
+
+Of course with the hdmi-pclk being sourced from hclk_vio we run into a
+chicken-egg-problem, as we need pclk_hdmi_ctrl to register hclk_vio at all.
+
+So I guess one way out of this could be to
+- amend rk3288_clk_shutdown() to also ungate the hdmi-pclk on shutdown
+- add a shutdown mechanism to the power-domain driver so that it can
+  enable PD_VIO on shutdown
+
+> +
+> +	if (readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG)
+> +	    == RK3288W_HDMI_REV)
+
+nit: a nicer look would be something like
+	val = readl_relaxed(hdmi_base + RK3288_HDMI_REV_REG);
+	if (val == RK3288W_HDMI_REV)
+
+> +		revision = RK3288_SOC_REV_RK3288W;
+> +	else
+> +		revision = RK3288_SOC_REV_RK3288;
+> +
+> +	iounmap(hdmi_base);
+> +
+> +	return revision;
+> +}
+> +
+> +static const char *rk3288_socinfo_revision(u32 rev)
+> +{
+> +	const char *soc_rev;
+> +
+> +	switch (rev) {
+> +	case RK3288_SOC_REV_RK3288:
+> +		soc_rev = "RK3288";
+> +		break;
+> +
+> +	case RK3288_SOC_REV_RK3288W:
+> +		soc_rev = "RK3288w";
+
+can we maybe use lower-case letters for all here?
+
+> +		break;
+> +
+> +	case RK3288_SOC_REV_NOT_DETECT:
+> +		soc_rev = "";
+> +		break;
+> +
+> +	default:
+> +		soc_rev = "unknown";
+> +		break;
+> +	}
+> +
+> +	return kstrdup_const(soc_rev, GFP_KERNEL);
+> +}
+> +
+> +static const struct of_device_id rk3288_soc_match[] = {
+> +	{ .compatible = "rockchip,rk3288", },
+> +	{ }
+> +};
+> +
+> +static int __init rk3288_soc_init(void)
+
+as noted at the top, I'd really like to see this more generalized so that
+other socs can just hook in there with a revision callback in a
+rockchip_soc_data struct.
+
+
+> +{
+> +	struct soc_device_attribute *soc_dev_attr;
+> +	struct soc_device *soc_dev;
+> +	struct device_node *np;
+> +
+> +	np = of_find_matching_node(NULL, rk3288_soc_match);
+> +	if (!np)
+> +		return -ENODEV;
+> +
+> +	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+> +	if (!soc_dev_attr)
+> +		return -ENOMEM;
+> +
+> +	soc_dev_attr->family = "Rockchip";
+> +	soc_dev_attr->soc_id = "RK32xx";
+
+nit: rk3288 instead of "32xx" please
+
+> +
+> +	np = of_find_node_by_path("/");
+> +	of_property_read_string(np, "model", &soc_dev_attr->machine);
+> +	of_node_put(np);
+> +
+> +	soc_dev_attr->revision = rk3288_socinfo_revision(rk3288_revision());
+> +
+> +	soc_dev = soc_device_register(soc_dev_attr);
+> +	if (IS_ERR(soc_dev)) {
+> +		kfree_const(soc_dev_attr->revision);
+> +		kfree_const(soc_dev_attr->soc_id);
+> +		kfree(soc_dev_attr);
+> +		return PTR_ERR(soc_dev);
+> +	}
+> +
+> +	dev_info(soc_device_to_device(soc_dev), "Rockchip %s %s detected\n",
+> +		 soc_dev_attr->soc_id, soc_dev_attr->revision);
+
+nit: dev_dbg should be enough, that information doesn't really matter for
+most people, as it's only relevant to clock internals.
+
+
+Heiko
+
+
