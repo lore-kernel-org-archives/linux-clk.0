@@ -1,130 +1,90 @@
-Return-Path: <SRS0=i0xl=5R=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=uRKV=5S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0E3C2BA12
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 20:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D96C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Apr 2020 00:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3672F207FF
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Apr 2020 20:18:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17D782077D
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Apr 2020 00:33:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="SHzbpWP7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733043AbgDAUR6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Apr 2020 16:17:58 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:33868 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733024AbgDAUR6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Apr 2020 16:17:58 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id CB035297613
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-To:     mark.rutland@arm.com, ck.hu@mediatek.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com
-Cc:     linux-kernel@vger.kernel.org, matthias.bgg@gmail.com,
-        drinkcat@chromium.org, hsinyi@chromium.org,
-        Collabora Kernel ML <kernel@collabora.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>, matthias.bgg@kernel.org,
-        Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-        Allison Randal <allison@lohutok.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        id S1732285AbgDBAdo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Apr 2020 20:33:44 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:64472 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732385AbgDBAdo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Apr 2020 20:33:44 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 48t3vn20Xyz89;
+        Thu,  2 Apr 2020 02:33:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1585787622; bh=g5oktEpziHDxOpMYAK40bYCrnaceF9EuhgSDmuCb+tQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SHzbpWP7YLBof2cEB7+K3kdEh4KmkQL60ONggM5hLT/9YesMPMLT0blDz7juIG7WM
+         f8T8kAygAhTn3jyA+X4EjNrzWsqHlhUuumx5ARR5GxWuueqfcWvfVvAb7cMVuEf31Q
+         5hEDpWZdGwpoLFJyOeE6aaaKRAyz+AKW7TJZMAwF+vzizTCfAzBiGR9OeYHNMVmpbh
+         9+V09Rv7tMlhnH9DLFF7es4GmWqoWW1axAQW2WZyP6lC/ihdGBg8WxAeXkbWCQ5wBT
+         VyRutW5p2nt/5XLnV2XDP3wXwrSpI2pnvEiVZb+14t9Uec93v65x1PAGT0UQXNN6cm
+         69yQ1vi/qPTPw==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.102.2 at mail
+Date:   Thu, 2 Apr 2020 02:33:40 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Richard Fontana <rfontana@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v2 3/4] clk / soc: mediatek: Bind clock and gpu driver for mt2701
-Date:   Wed,  1 Apr 2020 22:17:35 +0200
-Message-Id: <20200401201736.2980433-3-enric.balletbo@collabora.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200401201736.2980433-1-enric.balletbo@collabora.com>
-References: <20200401201736.2980433-1-enric.balletbo@collabora.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/5] clk: Introduce clk_round_rate_unboundly()
+Message-ID: <20200402003339.GA11124@qmqm.qmqm.pl>
+References: <20200330231617.17079-1-digetx@gmail.com>
+ <20200330231617.17079-3-digetx@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200330231617.17079-3-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that the mmsys driver is the top-level entry point for the
-multimedia subsystem, we could bind the clock and the gpu driver on
-those devices that is expected to work, so the drm driver is
-intantiated by the mmsys driver and display, hopefully, working again.
+On Tue, Mar 31, 2020 at 02:16:14AM +0300, Dmitry Osipenko wrote:
+[...]
+> +/**
+> + * clk_round_rate_unboundly - unboundly round the given rate for a clk
 
-Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
----
-If you have this hardware, please kindly provide your tested tag. Only
-build tested.
+Just grammar nits:
 
-Changes in v2:
-- Remove of_match_table
+clk_round_rate_unbounded - round the given rate for a clk, ignoring users' min/max constraints
 
- drivers/clk/mediatek/clk-mt2701-mm.c | 9 ++-------
- drivers/soc/mediatek/mtk-mmsys.c     | 8 ++++++++
- 2 files changed, 10 insertions(+), 7 deletions(-)
+> + * @clk: the clk for which we are rounding a rate
+> + * @rate: the rate which is to be rounded
+> + *
+> + * Takes in a rate as input and rounds it to a rate that the clk can use
+> + * which is then returned.  The given rate isn't bounded by clk users min-max
 
-diff --git a/drivers/clk/mediatek/clk-mt2701-mm.c b/drivers/clk/mediatek/clk-mt2701-mm.c
-index 054b597d4a73..cb18e1849492 100644
---- a/drivers/clk/mediatek/clk-mt2701-mm.c
-+++ b/drivers/clk/mediatek/clk-mt2701-mm.c
-@@ -79,16 +79,12 @@ static const struct mtk_gate mm_clks[] = {
- 	GATE_DISP1(CLK_MM_TVE_FMM, "mm_tve_fmm", "mm_sel", 14),
- };
- 
--static const struct of_device_id of_match_clk_mt2701_mm[] = {
--	{ .compatible = "mediatek,mt2701-mmsys", },
--	{}
--};
--
- static int clk_mt2701_mm_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
-+	struct device_node *node = dev->parent->of_node;
- 	struct clk_onecell_data *clk_data;
- 	int r;
--	struct device_node *node = pdev->dev.of_node;
- 
- 	clk_data = mtk_alloc_clk_data(CLK_MM_NR);
- 
-@@ -108,7 +104,6 @@ static struct platform_driver clk_mt2701_mm_drv = {
- 	.probe = clk_mt2701_mm_probe,
- 	.driver = {
- 		.name = "clk-mt2701-mm",
--		.of_match_table = of_match_clk_mt2701_mm,
- 	},
- };
- 
-diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
-index c7d3b7bcfa32..cacafe23c823 100644
---- a/drivers/soc/mediatek/mtk-mmsys.c
-+++ b/drivers/soc/mediatek/mtk-mmsys.c
-@@ -80,6 +80,10 @@ struct mtk_mmsys_driver_data {
- 	const char *clk_driver;
- };
- 
-+static const struct mtk_mmsys_driver_data mt2701_mmsys_driver_data = {
-+	.clk_driver = "clk-mt2701-mm",
-+};
-+
- static const struct mtk_mmsys_driver_data mt2712_mmsys_driver_data = {
- 	.clk_driver = "clk-mt2712-mm",
- };
-@@ -323,6 +327,10 @@ static int mtk_mmsys_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id of_match_mtk_mmsys[] = {
-+	{
-+		.compatible = "mediatek,mt2701-mmsys",
-+		.data = &mt2701_mmsys_driver_data,
-+	},
- 	{
- 		.compatible = "mediatek,mt2712-mmsys",
- 		.data = &mt2712_mmsys_driver_data,
--- 
-2.25.1
+s/bounded/limited/ ?
 
+> + * rates, unlike in a case of clk_round_rate().  If clk doesn't support
+
+"... unlike in clk_round_rate()."
+
+> + * round_rate operation then the parent rate is returned.
+> + */
+[...]
+
+Best Regards,
+Micha³ Miros³aw
