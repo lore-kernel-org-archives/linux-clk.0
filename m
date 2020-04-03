@@ -2,180 +2,74 @@ Return-Path: <SRS0=pQOJ=5T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEF5C2BA15
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Apr 2020 07:36:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A351DC43331
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Apr 2020 08:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B1021473
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Apr 2020 07:36:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aCJmbHts"
+	by mail.kernel.org (Postfix) with ESMTP id 7FB1D2080C
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Apr 2020 08:31:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388977AbgDCHgP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Apr 2020 03:36:15 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:5388 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730759AbgDCHgP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Apr 2020 03:36:15 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e86e73c0000>; Fri, 03 Apr 2020 00:35:24 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 03 Apr 2020 00:36:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 03 Apr 2020 00:36:14 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 3 Apr
- 2020 07:36:14 +0000
-Received: from [10.2.164.193] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 3 Apr 2020
- 07:36:13 +0000
-Subject: Re: [RFC PATCH v5 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@iki.fi>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>,
-        <helen.koike@collabora.com>, <digetx@gmail.com>,
-        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20200325110358.GB853@valkosipuli.retiisi.org.uk>
- <8bc44545-7d1e-0e37-db27-d37784679574@xs4all.nl>
- <20200331103215.GI2394@valkosipuli.retiisi.org.uk>
- <ba37eb84-392c-3767-57f6-d297b0ab79a3@xs4all.nl>
- <20200331111018.GJ2394@valkosipuli.retiisi.org.uk>
- <a1145ee4-2991-a958-1225-090c57fec533@xs4all.nl>
- <20200331115221.GA4767@pendragon.ideasonboard.com>
- <6aa7d86c-3943-d508-ccf6-5ac46546abe9@nvidia.com>
- <3b00a559-992a-2da9-92b1-bee44e137ba2@nvidia.com>
- <1c60491b-1bb2-6291-80a6-c0fa14094077@nvidia.com>
- <20200401165805.GE4876@pendragon.ideasonboard.com>
- <e3b437c6-76e1-d407-e81d-c05912ffcd0b@nvidia.com>
-Message-ID: <f80dfa8f-0188-a733-bde6-e3210977d910@nvidia.com>
-Date:   Fri, 3 Apr 2020 00:36:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2390424AbgDCIbG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Apr 2020 04:31:06 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:32980 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727774AbgDCIbC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Apr 2020 04:31:02 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 16B74FABA60339C7C46C;
+        Fri,  3 Apr 2020 16:30:57 +0800 (CST)
+Received: from localhost (10.173.223.234) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.487.0; Fri, 3 Apr 2020
+ 16:30:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <michal.simek@xilinx.com>, <rajan.vaja@xilinx.com>,
+        <tejas.patel@xilinx.com>, <m.tretter@pengutronix.de>,
+        <yuehaibing@huawei.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] clk: zynqmp: Make zynqmp_clk_get_max_divisor static
+Date:   Fri, 3 Apr 2020 16:30:40 +0800
+Message-ID: <20200403083040.37748-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <e3b437c6-76e1-d407-e81d-c05912ffcd0b@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585899324; bh=lH8VCoTnCQfzYg8lxheGj9jbRYQX28Pk6wDY+1bd1Lc=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=aCJmbHtsc4d/J4y6wxxvtxPdp8AB1QyHvod3IkYmiYOFmNqRKzkoO4l4xehzZLMNN
-         HciKMWr46UM+naKvToV2stzzX9PdWPMx4AIVUrBCxI/BDYPaGEEB9iyN1aT+d0iHP6
-         lWU4h7sEP2wi0FLerEJpqXt1cnt5khCLapxZ/1tXVzyNkfEJCppASvxjcID5mzAauM
-         FNMkg3nG2Jdvl9gTDoveadA1PqSeMIPxzu+owU/zY+fOkicByGSu6uTgeeOskEALIn
-         bmNFWfEDYEYKPWlfkD9L9vnpfAltTR75ArZq8+fZ6XqcBr6p5Ly4MBXQL9GiEU2c6E
-         ewNJyE76dqBUg==
+Content-Type: text/plain
+X-Originating-IP: [10.173.223.234]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-As we don't need have MC based for tegra internal TPG, will continue 
-with video node based for CSI sub-device in this series.
+Fix sparse warning:
 
-Next series will include sensor support, will discuss internally by then 
-and will implement accordingly.
+drivers/clk/zynqmp/divider.c:259:5: warning:
+ symbol 'zynqmp_clk_get_max_divisor' was not declared. Should it be static?
 
-Thanks
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/zynqmp/divider.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sowjanya
+diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+index 4be2cc76aa2e..1e93a4d32fa9 100644
+--- a/drivers/clk/zynqmp/divider.c
++++ b/drivers/clk/zynqmp/divider.c
+@@ -256,7 +256,7 @@ static const struct clk_ops zynqmp_clk_divider_ops = {
+  * Return: Maximum divisor of a clock if query data is successful
+  *	   U16_MAX in case of query data is not success
+  */
+-u32 zynqmp_clk_get_max_divisor(u32 clk_id, u32 type)
++static u32 zynqmp_clk_get_max_divisor(u32 clk_id, u32 type)
+ {
+ 	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+ 	struct zynqmp_pm_query_data qdata = {0};
+-- 
+2.17.1
 
 
-On 4/1/20 11:24 AM, Sowjanya Komatineni wrote:
->
-> On 4/1/20 9:58 AM, Laurent Pinchart wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> Hi Sowjanya,
->>
->> On Wed, Apr 01, 2020 at 09:36:03AM -0700, Sowjanya Komatineni wrote:
->>> Hi Sakari/Laurent,
->>>
->>> Few questions to confirm my understanding on below discussion.
->>>
->>> 1. Some sensors that you are referring as don't work with single 
->>> devnode
->>> controlling pipeline devices are ISP built-in sensors where setup of
->>> pipeline and subdevices happen separately?
->> Sensors that include ISPs could indeed require to be exposed as multiple
->> subdevs, but I was mostly referring to raw Bayer sensors with hardware
->> architectures similar to the SMIA++ and MIPI CCS specifications. Those
->> sensors can perform cropping in up to three different locations (analog
->> crop, digital crop, output crop), and can also scale in up to three
->> different locations (binning, skipping and filter-based scaling).
->>
->> Furthermore, with the V4L2 support for multiplexed streams that we are
->> working on, a sensor that can produce both image data and embedded data
->> would also need to be split in multiple subdevs.
->
-> Thanks Laurent.
->
-> For sensors with meta/embedded data along with image in same frame, 
-> Tegra VI HW extracts based on programmed embedded data size info.
->
-> So in our driver we capture this as separate buffer as embedded data 
-> is part of frame.
->
-> You above comment on multiplexed streams is for sensors using 
-> different virutal channels for diff streams?
->
->
->>> 2. With driver supporting single device node control of entire pipeline
->>> devices compared to MC-based, limitation is with userspace apps for 
->>> only
->>> these complex camera sensors?
->> In those cases, several policy decisions on how to configure the sensor
->> (whether to use binning, skipping and/or filter-based scaling for
->> instance, or how much cropping and scaling to apply to achieve a certain
->> output resolution) will need to be implemented in the kernel, and
->> userspace will not have any control on them.
->>
->>> 3. Does all upstream video capture drivers eventually will be moved to
->>> support MC-based?
->> I think we'll see a decrease of the video-node-centric drivers in the
->> future for embedded systems, especially the ones that include an ISP.
->> When a system has an ISP, even if the ISP is implemented as a
->> memory-to-memory device separate from the CSI-2 capture side, userspace
->> will likely have a need for fine-grained control of the camera sensor.
->>
->>> 4. Based on libcamera doc looks like it will work with both types of
->>> MC-based and single devnode based pipeline setup drivers for normal
->>> sensors and limitation is when we use ISP built-in sensor or ISP HW
->>> block. Is my understanding correct?
->> libcamera supports both, it doesn't put any restriction in that area.
->> The pipeline handler (the device-specific code in libcamera that
->> configures and control the hardware pipeline) is responsible for
->> interfacing with the kernel drivers, and is free to use an MC-centric or
->> video-node-centric API depending on what the kernel drivers offer.
->>
->> The IPA (image processing algorithms) module is also vendor-specific.
->> Although it will not interface directly with kernel drivers, it will
->> have requirements on how fine-grained control of the sensor is required.
->> For systems that have an ISP in the SoC, reaching a high image quality
->> level requires fine-grained control of the sensor, or at the very least
->> being able to retrieve fine-grained sensor configuration information
->> from the kernel. For systems using a camera sensor with an integrated
->> ISP and a CSI-2 receiver without any further processing on the SoC side,
->> there will be no such fine-grained control of the sensor by the IPA (and
->> there could even be no IPA module at all).
->>
->> -- 
->> Regards,
->>
->> Laurent Pinchart
