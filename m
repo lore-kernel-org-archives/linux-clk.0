@@ -2,108 +2,133 @@ Return-Path: <SRS0=Gv6H=5U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C6AC2BA19
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 01:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 352EFC2BA18
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 16:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B617420737
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 01:25:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DF822071C
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 16:15:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RxZ9kZil"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PITs6j2o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726208AbgDDBZN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Apr 2020 21:25:13 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:18787 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgDDBZN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Apr 2020 21:25:13 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e87e1eb0000>; Fri, 03 Apr 2020 18:24:59 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 03 Apr 2020 18:25:12 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 03 Apr 2020 18:25:12 -0700
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 4 Apr
- 2020 01:25:12 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Sat, 4 Apr 2020 01:25:11 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.193]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e87e1f6000b>; Fri, 03 Apr 2020 18:25:11 -0700
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v6 1/9] arm64: tegra: Fix sor powergate clocks and reset
-Date:   Fri, 3 Apr 2020 18:24:59 -0700
-Message-ID: <1585963507-12610-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726294AbgDDQPy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Apr 2020 12:15:54 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34508 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726197AbgDDQPy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 12:15:54 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 14so8943018qtp.1;
+        Sat, 04 Apr 2020 09:15:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GET/abLarLGWrJ/MA6cxRPWMhupz6y/cS44XtSN8P1Q=;
+        b=PITs6j2oMJ94bhpMMf1H3BqUuhd7dJBQ7tNZLaOPASETEFGlBsTBTvv/VjpX1wljdc
+         TI4OpRHn3OdDW+HvlYeEV8MahPpuRgBpGyHi/nQHlxWvZIGN+IPpEPC9rtkfA283KBcs
+         6Kc5IK4H5qLdfrQDvViuKJg/KnUjEKnXewzzh3Xq8MgLA5iV8GgJzHORhBAdrGibo6VU
+         EXVBlEoxnXSykLuS/AH/rAqCeE2Q+clyju7NH2zRT/CpkNtJ5l7IicQL1/x3qQAtFABM
+         FLhA4MBj7ClvkGg6UDeNq3+seAh4kFvnmPlVg5Q1RCb4P1brviqg+bhnzWJe19o7ZWKD
+         IrmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GET/abLarLGWrJ/MA6cxRPWMhupz6y/cS44XtSN8P1Q=;
+        b=Ks12LQ8I8zkRUtB2wy20rrPEKk8fo/HNojNyHlaHh+ZBVgSGE4jz21ueBvFxwVMa73
+         hybR+1aSr4BxFSZ0M9S4R777TDANonjwnUGwg5Hk9268+Hnz467lUam+CuPttSYnN9Az
+         wKRRBkrO3pcAIPF/VmDjrgePzRc+gCcuZknMlbIUdNjQq3OltCMWRXLW91LJK/mjUCz3
+         OftJILaP768cIZdtLEA8N7R7Xm2LhNy/oVNP0tMczVFlEK+111qsZ/exqP5CEXyf0LcH
+         6zGhFbPhU+DdQJpRdevTeYzcXMb5OGqSt+69kbGLSzVGQBRn1wWJX5tQMS+Zg/LSYsNR
+         ETAA==
+X-Gm-Message-State: AGi0PuYEWiHlLfVKC2hqa4TSEibWiIBCuMFxqFEg6TwehWZiObJYw1SJ
+        Tpi/QyERJ8xp8Om2h2qgf3VJ7RQm1eQ=
+X-Google-Smtp-Source: APiQypIqmrIQsN+B5vp2y+ZGCzobEJI6V/qWweRvWnzLs0lYY//84LnNyNJvfLEqHbKDxIZNGFwMOQ==
+X-Received: by 2002:aed:208e:: with SMTP id 14mr13326211qtb.335.1586016950961;
+        Sat, 04 Apr 2020 09:15:50 -0700 (PDT)
+Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id n67sm9213534qte.79.2020.04.04.09.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Apr 2020 09:15:50 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V6965
+Date:   Sat,  4 Apr 2020 11:15:35 -0500
+Message-Id: <20200404161537.2312297-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1585963499; bh=PTc2SyRS9NP+68XdMh+c6cj6nLmKTNHZwxALx6dnzdM=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=RxZ9kZilAvLU0T7pW369ksPl8UROCjEXvIeS0O0c6jYP7BFD/A7hUIW5SHLdpOkxj
-         mf+LloQsP2k8Xr1andjD+me+7MNaqHjnvwbMpHV2WRVlh4eyrz/qln+MzoR9VXXapV
-         6k9Mu73A3urHwn0tihiUNP7zrDFJzW2g9GfE1ol9F88dieXlI30vRiIhZTwJzH7HBW
-         TKeA2sfRrqLNRcGcAPKEnp58KQ+lHrKxJKsiNpkwZKXJL+HVVlHEJMk9DraMuSSjjr
-         fOWL+x7ZYmBkkigDPC3rXHw31+R0oVXhq0LjsYLpc/ZyvPQuI+VUIDZSlP+xEn4J0g
-         JfQ3yWIxAy6Uw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 device tree lists csi clock and reset under SOR powergate
-node.
+Update IDT VersaClock 5 driver to support 5P49V6965.
 
-But Tegra210 has csicil in SOR partition and csi in VENC partition.
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
-So, this patch includes fix for sor powergate node.
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 64c46ce..d0eff92 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -796,7 +796,9 @@
- 			pd_sor: sor {
- 				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
- 					 <&tegra_car TEGRA210_CLK_SOR1>,
--					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_CILAB>,
-+					 <&tegra_car TEGRA210_CLK_CILCD>,
-+					 <&tegra_car TEGRA210_CLK_CILE>,
- 					 <&tegra_car TEGRA210_CLK_DSIA>,
- 					 <&tegra_car TEGRA210_CLK_DSIB>,
- 					 <&tegra_car TEGRA210_CLK_DPAUX>,
-@@ -804,7 +806,6 @@
- 					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
- 				resets = <&tegra_car TEGRA210_CLK_SOR0>,
- 					 <&tegra_car TEGRA210_CLK_SOR1>,
--					 <&tegra_car TEGRA210_CLK_CSI>,
- 					 <&tegra_car TEGRA210_CLK_DSIA>,
- 					 <&tegra_car TEGRA210_CLK_DSIB>,
- 					 <&tegra_car TEGRA210_CLK_DPAUX>,
+index 24fef51fbcb5..fa96659f8023
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -124,6 +124,7 @@ enum vc5_model {
+ 	IDT_VC5_5P49V5933,
+ 	IDT_VC5_5P49V5935,
+ 	IDT_VC6_5P49V6901,
++	IDT_VC6_5P49V6965,
+ };
+ 
+ /* Structure to describe features of a particular VC5 model */
+@@ -683,6 +684,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 	case IDT_VC5_5P49V5925:
+ 	case IDT_VC5_5P49V5935:
+ 	case IDT_VC6_5P49V6901:
++	case IDT_VC6_5P49V6965:
+ 	default:
+ 		return n;
+ 	}
+@@ -956,12 +958,20 @@ static const struct vc5_chip_info idt_5p49v6901_info = {
+ 	.flags = VC5_HAS_PFD_FREQ_DBL,
+ };
+ 
++static const struct vc5_chip_info idt_5p49v6965_info = {
++	.model = IDT_VC6_5P49V6965,
++	.clk_fod_cnt = 4,
++	.clk_out_cnt = 5,
++	.flags = 0,
++};
++
+ static const struct i2c_device_id vc5_id[] = {
+ 	{ "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
+ 	{ "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+ 	{ "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+ 	{ "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+ 	{ "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
++	{ "5p49v6965", .driver_data = IDT_VC6_5P49V6965 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, vc5_id);
+@@ -972,6 +982,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
+ 	{ .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+ 	{ .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+ 	{ .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
++	{ .compatible = "idt,5p49v6965", .data = &idt_5p49v6965_info },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
 -- 
-2.7.4
+2.25.1
 
