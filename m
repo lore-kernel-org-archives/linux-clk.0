@@ -2,97 +2,108 @@ Return-Path: <SRS0=Gv6H=5U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5323EC4332B
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 16:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1340AC4332B
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 17:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3B320659
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 16:15:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E97Soa8D"
+	by mail.kernel.org (Postfix) with ESMTP id DCCAB206C3
+	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 17:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586019669;
+	bh=5OFmxiVoCmVBqy5diJ09G/GGUCSa1tSBI7WL/e1C9WE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=htiF6vIDTcmv+FICiAkEmYh7qdr5/b+ykFFghMXaIljsEGuFXDnlx+s4FSo+S5/h0
+	 WuHc1zGFtAgsLrJ+PEqyOUNtg5kWh/PXLuCIZJZWVMhwl4XM83HoiLPHO/lLKs4k68
+	 bN4k/fDkg9DMetn5o9XNDAOVYXypVve15IYytoWI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgDDQP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Apr 2020 12:15:56 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:43210 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgDDQP4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 12:15:56 -0400
-Received: by mail-qk1-f194.google.com with SMTP id o10so11475793qki.10;
-        Sat, 04 Apr 2020 09:15:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=h517eIrXfumVfl/Ir6NGKlk9+2KSVqM6SBkwQdKGP1E=;
-        b=E97Soa8DpIZZlQFbHSK7gIU5zfy9IaRAzThGzVwS3zKqrwPQk0gW9VfOSdaijxQ685
-         JlhYBxEfwbeqvw5V8ZW9b8GsrjSmn9qEdXs7iBTcD4sImnC72K1nR8LTunxNs2GsF4sw
-         bkv3zaSakehfFDMAscKPYF4wnDrATu79zrNrptTP4suBzP3VkNLkzPU5hoKrA4vu8Y4Q
-         hMHKZMvgNhcfbsBXliM/89GmRYaEN6EXDW7322O2lOaZEZTXSVXM4qEt1hVqqCRceP6t
-         JtrgVdrFweKSUKiVbxYoL4EwGasp3yL7h1KBDTrZFDb3eChi18UyfPvWGAG2+aC8NCKN
-         pzbw==
+        id S1726057AbgDDRBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Apr 2020 13:01:07 -0400
+Received: from mail-io1-f43.google.com ([209.85.166.43]:44595 "EHLO
+        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726066AbgDDRBH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 13:01:07 -0400
+Received: by mail-io1-f43.google.com with SMTP id h6so1224045iok.11;
+        Sat, 04 Apr 2020 10:01:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=h517eIrXfumVfl/Ir6NGKlk9+2KSVqM6SBkwQdKGP1E=;
-        b=GF0GrASYQ7ry/UCRKzjJ6hakufODFSAnXFLk28UoUUiSKGA1AUJEPeRSdRTldGUx/j
-         X8gGJJCvfDRFNqeqtcHzMrKGlhxnzs0THH7BvCcM8Qgw9Ewv8pLcExIkTcRwfYpZa8vS
-         kGqsdDttH6cM/GBPeG1Z/VvCBRIlNl4aCYVOrxr8CAHsV9oUQKGnTcQxOqZpGYaAkfzU
-         qoHxoXZJTkGUZAcS+JKQU8pz8ECVR9N2HZ0LI6y11sK2JkUtJNoQWRAdRVgkW+dFS4cQ
-         t9R93sV22IBzrMqpSg+ElmOFxdivcwgB/O1snrmezCFQvQRF6peGohq3yyJOPfGUwD8B
-         Lnpg==
-X-Gm-Message-State: AGi0PubZoSM0ZsYIC9gn7ZGsNXHya5PDVQYBO+l+/GY/uBrEk3y/t9Jh
-        xiGzlkc5pLnj/nZMqNA7bLalSHpDzCo=
-X-Google-Smtp-Source: APiQypLXz4aA51rzNXQUddjVESGHlr5mqRv9glbZgOLOSdip/bhk4+yp0bFLL48u/SiwcAkjCLBKIw==
-X-Received: by 2002:ae9:dd83:: with SMTP id r125mr14520880qkf.105.1586016953017;
-        Sat, 04 Apr 2020 09:15:53 -0700 (PDT)
-Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id n67sm9213534qte.79.2020.04.04.09.15.51
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W3QnbCRQ+OMyJ5TR+NLbh/l1h0t7JzVwEHPSm6WoW2A=;
+        b=MS/YNzu0fOA3xASyLUOCH4oMoW3CxmN6JjV05M9JmdYIobpmDpwUTV86+Hz1mbWkvq
+         B/JdmwqEXFhmFwWDczewcOsHlK3X7C9b9XhMron12UzUf1+T0dJtB9nQUVPjtSkfbG5K
+         HmwN52gZXt0G3jZyauV5c92W812vHENduACOc5t1wiSiGSaLTdQxfSF0acL7ldoydiFh
+         sd7s6DpIBbOpv++zUmyZsG8f7MLQzDQ4jplP1yfjjqXTK5Uq8cwhYjxyQjS43m1KyAfY
+         95FVAyT5oFOxTD52uyJR3gITBUfSuPK8sSX9anCEoHNQgouIQyM5OH500bAHYCAm5oLV
+         xy1w==
+X-Gm-Message-State: AGi0PuZsLDrc37yaW2GrSbb59Iml1WeOwT6bpNJdU9al4glL7SQw72jT
+        tQtfgW32CHuAO2S1CJtx/A==
+X-Google-Smtp-Source: APiQypKwYcyLwX0Wb9G7R8uv+u7P+MQBJY18WS53VRC/llom69e5hbwh4TiXP7skB+jS0vodAp0mBA==
+X-Received: by 2002:a02:c85b:: with SMTP id r27mr13256182jao.83.1586019665982;
+        Sat, 04 Apr 2020 10:01:05 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id l70sm4072094ili.81.2020.04.04.10.01.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Apr 2020 09:15:52 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-Date:   Sat,  4 Apr 2020 11:15:36 -0500
-Message-Id: <20200404161537.2312297-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200404161537.2312297-1-aford173@gmail.com>
-References: <20200404161537.2312297-1-aford173@gmail.com>
+        Sat, 04 Apr 2020 10:01:05 -0700 (PDT)
+Received: (nullmailer pid 25897 invoked by uid 1000);
+        Sat, 04 Apr 2020 17:01:04 -0000
+Date:   Sat, 4 Apr 2020 11:01:04 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCHv5 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200404170104.GA25196@bogus>
+References: <20200403235403.13990-1-dinguyen@kernel.org>
+ <20200403235403.13990-5-dinguyen@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200403235403.13990-5-dinguyen@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IDT VersaClock 5 5P49V6965 has 5 clock outputs, 4 fractional dividers.
+On Fri,  3 Apr 2020 18:54:02 -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v5: update license to GPL-2.0-only
+>     Add additionalProperties
+>     Add clock input for clkmgr
+> v4: really fix build error(comment formatting was wrong)
+> v3: address comments from Stephen Boyd
+>     fix build error(tab removed in line 37)
+>     renamed to intel,agilex.yaml
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intel,agilex.yaml          | 40 +++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>  2 files changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> 
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 05a245c9df08..bcff681a4bd0 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -12,6 +12,7 @@ Required properties:
- 		"idt,5p49v5933"
- 		"idt,5p49v5935"
- 		"idt,5p49v6901"
-+		"idt,5p49v6965"
- - reg:		i2c device address, shall be 0x68 or 0x6a.
- - #clock-cells:	from common clock binding; shall be set to 1.
- - clocks:	from common clock binding; list of parent clock handles,
--- 
-2.25.1
+/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml: clock-controller@ffd10000: 'clocks', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
 
+See https://patchwork.ozlabs.org/patch/1266287
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
