@@ -2,171 +2,233 @@ Return-Path: <SRS0=s02A=5V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E881CC2BA15
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 01:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0669DC2BA15
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 02:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41FC206C3
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 01:38:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHRT0D7x"
+	by mail.kernel.org (Postfix) with ESMTP id B75882070E
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 02:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586052591;
+	bh=qLQNJ3mFpgXqbKBKnIiMGtL8wAOhGmCZvB0KGY6dhnw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zWzdA4GfZ8eMj0Ntv6JApgGQREfMJt0iH/2KODIeXzfi/jStkw6hcacUFJN3LD530
+	 lrxzbwdfeBRRnwajnxJPmkd9p2yzzX8iK6v/osmMswu7TeLlzRy7+QigjnPZdbL82/
+	 tZryAuFpdUU0Bq8LZbFfZKESlZgbIDpNsObouXrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726300AbgDEBi2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Apr 2020 21:38:28 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45936 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbgDEBi2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 21:38:28 -0400
-Received: by mail-il1-f195.google.com with SMTP id x16so11314515ilp.12;
-        Sat, 04 Apr 2020 18:38:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mh9zpylJzlWDVxe0NhErymJEwgRkNRnBRUgqFg4D0kw=;
-        b=bHRT0D7xl4KLso6fT3W9GM+6sM/WVJvc+7au4NYzjD7ZT4i5eaRDaOK07So7BQ1ChB
-         a0Igrh/z6iqj+q0my9BsOa8KF5FYDhJS/xOdLG6/cKS0JEhSNrCFsBt7nQidqrFgQr+Y
-         CViuy2eshZ9VJWxyeiWd47fcxVaNwB0UiNj8dAz4MGktN7zxSZDRnB7wzVc1sECTSxGm
-         9D+8E2bpEyMcIv6ZGC/teZWJeCsGbM+PJgAEcrtOvvrtj9gcSrCWmE3tteBcKB/wfeCN
-         yr294/EaDV5YqSmLrq0W4rdSRQ+qbErwIyuNyuQhyUTx1LtI3PgvRv56pXV8xs6f9TTA
-         Mb1w==
+        id S1726371AbgDECJv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Apr 2020 22:09:51 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35559 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726283AbgDECJv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 22:09:51 -0400
+Received: by mail-io1-f67.google.com with SMTP id o3so12036033ioh.2;
+        Sat, 04 Apr 2020 19:09:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mh9zpylJzlWDVxe0NhErymJEwgRkNRnBRUgqFg4D0kw=;
-        b=EwSBDmA8UpSQw8uPdrHryI1VkTstU2qRXJtk7QcdAbCjTYL8xVXwzULC6sYmLeCWYp
-         jQ3gi40yTXaQARGCSBxMjtlK2TpGKcDp3dosHNVFpGsToSE1zsNILsSIu8TIuHZcBQHs
-         dLxHqXZzcrS9oRO6mQTGKDc1l0IPeJ7al0y4u+yH9ro+86hSJd9FxYI23Vhl3f85XIea
-         I73FnRJ/NwQ0Dp+oe46ZoK5E2IL2xBLKSD1Ko4yk8MctGzeqWVH1mC3q787vAgKX8o3a
-         y3pMXr8zIw//Sb0pQ5e5TFpPpufy69pyaA0MFUk21QnEg01b8yGXavAkzAyfJjWOb7fd
-         zhkQ==
-X-Gm-Message-State: AGi0PubOwSRz77w+IHzfc/1XzHosrKyVn6Cx3SwRXcyCzS+1HVaoWDqL
-        5YEkykF+H+3sdPTlynpUfjOj+KpPKGz5f4Oikpg=
-X-Google-Smtp-Source: APiQypKP8pJNWAA8Ga4oZcUxieGSF1zYC+6BeM++CKdq038kwvsC2fC+xSMzJ87j0rz4ZUfBM0ORex1cQ2ziHZec9Oc=
-X-Received: by 2002:a92:5dc7:: with SMTP id e68mr15684229ilg.205.1586050706698;
- Sat, 04 Apr 2020 18:38:26 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HGvGldYqzcPwlD+W1QgZLducQvHDHG5zRE8/3hy9qmE=;
+        b=ZGiWJcKk5rA0RoQ9U4nQaFTbO/P84py6g8caDWaiK3W6urNUEKd44N0aZbaVt80AsY
+         aAqSZVzAZT7vROPohdF3K5YkZmfYjT0PuawPgXGa9M+MdHveUW5X2Z/6LR0Ad/cm3Wjj
+         nnJDl6npYLFfQJIKQM76y0BmSayv/LEBuP1XtHLU8Af2G8FA1zd0wOWjjTpbQUlbbygd
+         0+efNSCOseJznNB/OViPMONEPGT0e3XdrZSi+iuAbrMCXXoXST/X6d6sBmOw7shohKOj
+         1HVCQMf2eEjufXsbKJQhAVy3sGyRauZRQWhwTbSpuMZ9XOjOE1gj9fyJB6oDa+xUDLn3
+         Ukmw==
+X-Gm-Message-State: AGi0PuYcTzOB+aByDcGLXblKjkJDcBhOnQh7PwF7/g/B2btUmpdSA1/p
+        9mLYXBLWi0GVF2odDoYdVg==
+X-Google-Smtp-Source: APiQypLR+L4TyzsQ18uH/T8q5XIdKfhiVKmP6auhisbFB8B7HRQkYCMpG4OowZonWrf8jyvc8VdSIQ==
+X-Received: by 2002:a02:2a47:: with SMTP id w68mr3890967jaw.76.1586052589693;
+        Sat, 04 Apr 2020 19:09:49 -0700 (PDT)
+Received: from rob-hp-laptop ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id b6sm3770146iok.19.2020.04.04.19.09.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Apr 2020 19:09:48 -0700 (PDT)
+Received: (nullmailer pid 11718 invoked by uid 1000);
+        Sun, 05 Apr 2020 02:09:46 -0000
+Date:   Sat, 4 Apr 2020 20:09:46 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: Add YAML schemas for LPASS
+ clocks on SC7180
+Message-ID: <20200405020946.GA6110@bogus>
+References: <1585338485-31820-1-git-send-email-tdas@codeaurora.org>
+ <1585338485-31820-3-git-send-email-tdas@codeaurora.org>
 MIME-Version: 1.0
-References: <20200326213251.54457-1-aford173@gmail.com> <20200405012847.GA5234@bogus>
-In-Reply-To: <20200405012847.GA5234@bogus>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Sat, 4 Apr 2020 20:38:15 -0500
-Message-ID: <CAHCN7xLoGUSOMtMC+uHMNbA+5MGT0dzTrwbL8J0RSMjmQ7G59g@mail.gmail.com>
-Subject: Re: [RFC] clk: vc5: Add bindings for output configurations
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Charles Stevens <charles.stevens@logicpd.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1585338485-31820-3-git-send-email-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 4, 2020 at 8:28 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Mar 26, 2020 at 04:32:51PM -0500, Adam Ford wrote:
-> > The Versaclock can be purchased in a non-programmed configuration.
-> > If that is the case, the driver needs to configure the chip to
-> > output the correct signal type, voltage and slew.
-> >
-> > This RFC is proposing an additional binding to allow non-programmed
-> > chips to be configured beyond their default configuration.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > index 05a245c9df08..4bc46ed9ba4a 100644
-> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > @@ -30,6 +30,25 @@ Required properties:
-> >               - 5p49v5933 and
-> >               - 5p49v5935: (optional) property not present or "clkin".
-> >
-> > +For all output ports, an option child node can be used to specify:
-> > +
-> > +- mode: can be one of
-> > +               - LVPECL: Low-voltage positive/psuedo emitter-coupled logic
-> > +               - CMOS
-> > +               - HCSL
-> > +               - LVDS: Low voltage differential signal
-> > +
-> > +- voltage-level:  can be one of the following microvolts
-> > +               - 1800000
-> > +               - 2500000
-> > +               - 3300000
-> > +-  slew: Percent of normal, can be one of
-> > +               - P80
-> > +               - P85
-> > +               - P90
-> > +               - P100
-> > +
-> > +
-> >  ==Mapping between clock specifier and physical pins==
-> >
-> >  When referencing the provided clock in the DT using phandle and
-> > @@ -62,6 +81,8 @@ clock specifier, the following mapping applies:
-> >
-> >  ==Example==
-> >
-> > +#include <dt-bindings/versaclock.h>
-> > +
-> >  /* 25MHz reference crystal */
-> >  ref25: ref25m {
-> >       compatible = "fixed-clock";
-> > @@ -80,6 +101,13 @@ i2c-master-node {
-> >               /* Connect XIN input to 25MHz reference */
-> >               clocks = <&ref25m>;
-> >               clock-names = "xin";
-> > +
-> > +             ports@1 {
->
-> 'ports' is already taken as a node name.
-Rob,
+On Sat, Mar 28, 2020 at 01:18:03AM +0530, Taniya Das wrote:
+> The LPASS(Low Power Audio Subsystem) clock provider have a bunch of generic
+> properties that are needed in a device tree. Also add clock ids for GCC
+> LPASS and LPASS Core clock IDs for LPASS client to request for the clocks.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../bindings/clock/qcom,sc7180-lpasscorecc.yaml    | 81 ++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sc7180.h        |  1 +
+>  .../dt-bindings/clock/qcom,lpasscorecc-sc7180.h    | 28 ++++++++
+>  3 files changed, 110 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+> new file mode 100644
+> index 0000000..d040bd1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,sc7180-lpasscorecc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm LPASS Core Clock Controller Binding for SC7180
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm LPASS core clock control module which supports the clocks and
+> +  power domains on SC7180.
+> +
+> +  See also:
+> +  - dt-bindings/clock/qcom,lpasscorecc-sc7180.h
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - qcom,sc7180-lpasshm
+> +      - qcom,sc7180-lpasscorecc
+> +
+> +  clocks:
+> +    items:
+> +      - description: gcc_lpass_sway clock from GCC
+> +
+> +  clock-names:
+> +    items:
+> +      - const: gcc_lpass_sway
+> +
+> +  power-domains:
+> +    items:
+> +      - description: LPASS CORE HM GSDCR
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 2
 
-The clock chip can drive multiple clocks and each output is
-independent of the rest.  The idea is that port@1 would represent
-output 1, port@2 would represent output 2, etc.
-Is there a name you'd think we should use to represent each output?
-Different variations of this chip can have different number of
-outputs.
+Need to define what each one is when there are 2.
 
->
-> > +                     reg = <1>;
->
-> What do the reg value signify?
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#power-domain-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,gcc-sc7180.h>
+> +    #include <dt-bindings/clock/qcom,lpasscorecc-sc7180.h>
+> +    clock-controller@63000000 {
+> +      compatible = "qcom,sc7180-lpasshm";
+> +        reg = <0 0x63000000 0 0x28>;
+> +        clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>;
+> +        clock-names = "gcc_lpass_sway";
+> +        #clock-cells = <1>;
+> +        #power-domain-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    clock-controller@62d00000 {
+> +        compatible = "qcom,sc7180-lpasscorecc";
+> +        reg = <0 0x62d00000 0 0x50000>,
+> +            <0 0x62780000 0 0x30000>;
+> +        clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>;
+> +        clock-names = "gcc_lpass_sway";
+> +        power-domains = <&lpass_hm LPASS_CORE_HM_GDSCR>;
+> +        #clock-cells = <1>;
+> +        #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> index 1258fd0..439476c 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> @@ -137,6 +137,7 @@
+>  #define GCC_MSS_NAV_AXI_CLK					127
+>  #define GCC_MSS_Q6_MEMNOC_AXI_CLK				128
+>  #define GCC_MSS_SNOC_AXI_CLK					129
+> +#define GCC_LPASS_CFG_NOC_SWAY_CLK				130
+> 
+>  /* GCC resets */
+>  #define GCC_QUSB2PHY_PRIM_BCR					0
+> diff --git a/include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h b/include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
+> new file mode 100644
+> index 0000000..9466d5e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
+> @@ -0,0 +1,28 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2020, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_LPASS_CORE_CC_SC7180_H
+> +#define _DT_BINDINGS_CLK_QCOM_LPASS_CORE_CC_SC7180_H
+> +
+> +/* LPASS_CORE_CC clocks */
+> +#define LPASS_LPAAUDIO_DIG_PLL				0
+> +#define LPASS_LPAAUDIO_DIG_PLL_OUT_ODD			1
+> +#define CORE_CLK_SRC					2
+> +#define EXT_MCLK0_CLK_SRC				3
+> +#define LPAIF_PRI_CLK_SRC				4
+> +#define LPAIF_SEC_CLK_SRC				5
+> +#define LPASS_AUDIO_CORE_CORE_CLK			6
+> +#define LPASS_AUDIO_CORE_EXT_MCLK0_CLK			7
+> +#define LPASS_AUDIO_CORE_LPAIF_PRI_IBIT_CLK		8
+> +#define LPASS_AUDIO_CORE_LPAIF_SEC_IBIT_CLK		9
+> +#define LPASS_AUDIO_CORE_SYSNOC_MPORT_CORE_CLK		10
+> +
+> +/* LPASS power domains */
+> +#define LPASS_CORE_HM_GDSCR				0
+> +
+> +#define LPASS_AUDIO_HM_GDSCR				0
 
-I am fine if we drop we drop it. I was under the assumption that reg
-=<1> had to correspond to the port@1 and that it was required since
-other devices with port sub-nodes use the reg entry.
+Kind of odd that 2 are the same value.
 
->
-> > +                     mode = <CMOS>;
-> > +                     pwr_sel = <1800000>;
->
-> Not documented. Don't use '-' in property names.
-
-Do you have a preference to what name or convention you want us to use?
->
-
-Thanks for the review.
-
-
-adam
-
-> > +                     slew = <P80>;
-> > +             };
-> >       };
-> >  };
-> >
-> > --
-> > 2.25.1
-> >
+> +#define LPASS_PDC_HM_GDSCR				1
+> +
+> +#endif
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
