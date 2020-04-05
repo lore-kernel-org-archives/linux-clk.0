@@ -1,109 +1,148 @@
-Return-Path: <SRS0=Gv6H=5U=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=s02A=5V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1340AC4332B
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 17:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D6AC2BA15
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 01:28:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCCAB206C3
-	for <linux-clk@archiver.kernel.org>; Sat,  4 Apr 2020 17:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BFEF2071C
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Apr 2020 01:28:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586019669;
-	bh=5OFmxiVoCmVBqy5diJ09G/GGUCSa1tSBI7WL/e1C9WE=;
+	s=default; t=1586050132;
+	bh=c0Mf3mvWyNHHAmvgmHxxzKG+n2Io+Yk07t3s0UuBuD4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=htiF6vIDTcmv+FICiAkEmYh7qdr5/b+ykFFghMXaIljsEGuFXDnlx+s4FSo+S5/h0
-	 WuHc1zGFtAgsLrJ+PEqyOUNtg5kWh/PXLuCIZJZWVMhwl4XM83HoiLPHO/lLKs4k68
-	 bN4k/fDkg9DMetn5o9XNDAOVYXypVve15IYytoWI=
+	b=ONXesrfth5hVwpzEYc5AHUZ+MLRpfKK0FPscvxbl6lZo3RuSV0hjyrVN+M3U4qtXv
+	 1F5fYzI8JVCxXQR1SBCA+SPQ3/wrotLoX5TEiBXhsKE0LkNcSMisxTPKYRZkcwpRQ/
+	 7OTi8Q7vBhLNIPWBMPYk5IC5ZMhKr6lf1Vga88CI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726057AbgDDRBH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 4 Apr 2020 13:01:07 -0400
-Received: from mail-io1-f43.google.com ([209.85.166.43]:44595 "EHLO
-        mail-io1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbgDDRBH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 13:01:07 -0400
-Received: by mail-io1-f43.google.com with SMTP id h6so1224045iok.11;
-        Sat, 04 Apr 2020 10:01:06 -0700 (PDT)
+        id S1726388AbgDEB2v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 4 Apr 2020 21:28:51 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:37496 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726307AbgDEB2v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 4 Apr 2020 21:28:51 -0400
+Received: by mail-il1-f194.google.com with SMTP id a6so11337397ilr.4;
+        Sat, 04 Apr 2020 18:28:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W3QnbCRQ+OMyJ5TR+NLbh/l1h0t7JzVwEHPSm6WoW2A=;
-        b=MS/YNzu0fOA3xASyLUOCH4oMoW3CxmN6JjV05M9JmdYIobpmDpwUTV86+Hz1mbWkvq
-         B/JdmwqEXFhmFwWDczewcOsHlK3X7C9b9XhMron12UzUf1+T0dJtB9nQUVPjtSkfbG5K
-         HmwN52gZXt0G3jZyauV5c92W812vHENduACOc5t1wiSiGSaLTdQxfSF0acL7ldoydiFh
-         sd7s6DpIBbOpv++zUmyZsG8f7MLQzDQ4jplP1yfjjqXTK5Uq8cwhYjxyQjS43m1KyAfY
-         95FVAyT5oFOxTD52uyJR3gITBUfSuPK8sSX9anCEoHNQgouIQyM5OH500bAHYCAm5oLV
-         xy1w==
-X-Gm-Message-State: AGi0PuZsLDrc37yaW2GrSbb59Iml1WeOwT6bpNJdU9al4glL7SQw72jT
-        tQtfgW32CHuAO2S1CJtx/A==
-X-Google-Smtp-Source: APiQypKwYcyLwX0Wb9G7R8uv+u7P+MQBJY18WS53VRC/llom69e5hbwh4TiXP7skB+jS0vodAp0mBA==
-X-Received: by 2002:a02:c85b:: with SMTP id r27mr13256182jao.83.1586019665982;
-        Sat, 04 Apr 2020 10:01:05 -0700 (PDT)
+        bh=WGbgIdmOv5Wc5UUMJfMtgDqF41fZaw2KceIkWNuOtOQ=;
+        b=kyvXX7GCvZ66SP5U25XORmkfSYg2FfJx57yWv9Kt/407Ruy2weDbkU3sYqN+SmKLJT
+         jpOJrbRqQhE9STp6lVxUzcpVprZEeck9wFg4aryki5bUeFmfgefrUfCENrP/Smz8fjeU
+         mTQQzgoDqwcRbyDFHeBMnA7wk0SkcWGvfDV/KXAdXMMlxriRQA9J2iCwiQrG8Eqy7kcm
+         bAU661DXvZI+jzpG/bHqt7LTOc/hfdVsjAbWFSXAS3U+zoBSiWzzaJG4iz7WXLYKWaSA
+         lYiCs6A1jKh3cOKb40cFBZxq6G3TLcxVdAEEpxsaGYO+8pqPUm7zIdfRQCvJiMFblDrH
+         KFtw==
+X-Gm-Message-State: AGi0PubWCxKxeX7yFxQ3bwFxlpluEokCSLuFiYyu83yc3LLlDK3FpnVj
+        KcvCiWNI8jIjc/vU4c+cMA==
+X-Google-Smtp-Source: APiQypI6PbdotC9mrYE+CpW9fKH4YceucS0Yef5Gf0KZGyBkpO4RhQk/A/AMbdgA32TOlTBSGy2JIw==
+X-Received: by 2002:a05:6e02:6cd:: with SMTP id p13mr14925447ils.150.1586050130495;
+        Sat, 04 Apr 2020 18:28:50 -0700 (PDT)
 Received: from rob-hp-laptop ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id l70sm4072094ili.81.2020.04.04.10.01.04
+        by smtp.gmail.com with ESMTPSA id k81sm4425517ilf.44.2020.04.04.18.28.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Apr 2020 10:01:05 -0700 (PDT)
-Received: (nullmailer pid 25897 invoked by uid 1000);
-        Sat, 04 Apr 2020 17:01:04 -0000
-Date:   Sat, 4 Apr 2020 11:01:04 -0600
+        Sat, 04 Apr 2020 18:28:49 -0700 (PDT)
+Received: (nullmailer pid 18915 invoked by uid 1000);
+        Sun, 05 Apr 2020 01:28:47 -0000
+Date:   Sat, 4 Apr 2020 19:28:47 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCHv5 4/5] dt-bindings: documentation: add clock bindings
- information for Agilex
-Message-ID: <20200404170104.GA25196@bogus>
-References: <20200403235403.13990-1-dinguyen@kernel.org>
- <20200403235403.13990-5-dinguyen@kernel.org>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     devicetree@vger.kernel.org, aford@beaconembedded.com,
+        charles.stevens@logicpd.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] clk: vc5: Add bindings for output configurations
+Message-ID: <20200405012847.GA5234@bogus>
+References: <20200326213251.54457-1-aford173@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200403235403.13990-5-dinguyen@kernel.org>
+In-Reply-To: <20200326213251.54457-1-aford173@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri,  3 Apr 2020 18:54:02 -0500, Dinh Nguyen wrote:
-> Document the Agilex clock bindings, and add the clock header file. The
-> clock header is an enumeration of all the different clocks on the Agilex
-> platform.
+On Thu, Mar 26, 2020 at 04:32:51PM -0500, Adam Ford wrote:
+> The Versaclock can be purchased in a non-programmed configuration.
+> If that is the case, the driver needs to configure the chip to
+> output the correct signal type, voltage and slew.
 > 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
-> v5: update license to GPL-2.0-only
->     Add additionalProperties
->     Add clock input for clkmgr
-> v4: really fix build error(comment formatting was wrong)
-> v3: address comments from Stephen Boyd
->     fix build error(tab removed in line 37)
->     renamed to intel,agilex.yaml
-> v2: convert original document to YAML
-> ---
->  .../bindings/clock/intel,agilex.yaml          | 40 +++++++++++
->  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
->  2 files changed, 110 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
->  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> This RFC is proposing an additional binding to allow non-programmed
+> chips to be configured beyond their default configuration.
 > 
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> index 05a245c9df08..4bc46ed9ba4a 100644
+> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> @@ -30,6 +30,25 @@ Required properties:
+>  		- 5p49v5933 and
+>  		- 5p49v5935: (optional) property not present or "clkin".
+>  
+> +For all output ports, an option child node can be used to specify:
+> +
+> +- mode: can be one of
+> +		  - LVPECL: Low-voltage positive/psuedo emitter-coupled logic
+> +		  - CMOS
+> +		  - HCSL 
+> +		  - LVDS: Low voltage differential signal
+> +
+> +- voltage-level:  can be one of the following microvolts
+> +		  - 1800000
+> +		  - 2500000
+> +		  - 3300000
+> +-  slew: Percent of normal, can be one of 
+> +		  - P80 
+> +		  - P85
+> +		  - P90
+> +		  - P100 
+> +
+> +
+>  ==Mapping between clock specifier and physical pins==
+>  
+>  When referencing the provided clock in the DT using phandle and
+> @@ -62,6 +81,8 @@ clock specifier, the following mapping applies:
+>  
+>  ==Example==
+>  
+> +#include <dt-bindings/versaclock.h>
+> +
+>  /* 25MHz reference crystal */
+>  ref25: ref25m {
+>  	compatible = "fixed-clock";
+> @@ -80,6 +101,13 @@ i2c-master-node {
+>  		/* Connect XIN input to 25MHz reference */
+>  		clocks = <&ref25m>;
+>  		clock-names = "xin";
+> +
+> +		ports@1 {
 
-My bot found errors running 'make dt_binding_check' on your patch:
+'ports' is already taken as a node name.
 
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/intel,agilex.example.dt.yaml: clock-controller@ffd10000: 'clocks', 'reg' do not match any of the regexes: 'pinctrl-[0-9]+'
+> +			reg = <1>;
 
-See https://patchwork.ozlabs.org/patch/1266287
+What do the reg value signify?
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
+> +			mode = <CMOS>;
+> +			pwr_sel = <1800000>;
 
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+Not documented. Don't use '-' in property names.
 
-Please check and re-submit.
+> +			slew = <P80>;
+> +		};
+>  	};
+>  };
+>  
+> -- 
+> 2.25.1
+> 
