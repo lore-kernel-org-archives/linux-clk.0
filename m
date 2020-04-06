@@ -2,108 +2,211 @@ Return-Path: <SRS0=pe6Q=5W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99469C2BA1B
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 15:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E144C2BA80
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70AC7248C6
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 15:41:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="UhuyLID1"
+	by mail.kernel.org (Postfix) with ESMTP id 4158B21D94
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:04:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586189079;
+	bh=gQdqucc4dxWILTE6ZDvj+HdZv20J06MYXGTeea2OLWI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=TqMvfrdA6EjJ2hmcaQ0+3la61D8rc07MqKCUV8rvOoZ19GtjseCI0UpfemD64zvV+
+	 08w1/NK4t1xAvk11bOlrWwPvIOmh3HJU7Kb3U0LP3kIfiNp1zmP5gwWk8/+MBOr/6K
+	 aNBg5dUbeRujIxZHOOHUxsGUvoJgxE1c2rne6MOs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729039AbgDFPlc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Apr 2020 11:41:32 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8227 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726723AbgDFPlb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Apr 2020 11:41:31 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e8b4d450000>; Mon, 06 Apr 2020 08:39:49 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 06 Apr 2020 08:41:30 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 06 Apr 2020 08:41:30 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 Apr
- 2020 15:41:30 +0000
-Received: from [10.2.164.193] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 6 Apr 2020
- 15:41:29 +0000
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
- <40102767-ecdb-e958-66f4-45d11464069c@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <b7b77258-6309-7ed2-489d-337cf273ba1e@nvidia.com>
-Date:   Mon, 6 Apr 2020 08:41:28 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1729301AbgDFQEf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Apr 2020 12:04:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36218 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729282AbgDFQEe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Apr 2020 12:04:34 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A40022B49;
+        Mon,  6 Apr 2020 16:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586189073;
+        bh=gQdqucc4dxWILTE6ZDvj+HdZv20J06MYXGTeea2OLWI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=nakduFTc+GIqlJJXh14dgF8nqSmK5cjRC6sY6oEBL63ImQ2AGrl/sjkSJ1UpbfLYv
+         Z6W26e8raoiVtWSQyd1cDnMkrAkTQumXYbPARnA+wEfYbx0mWHdOBBd+Lc0fkV+O3t
+         rQ8dc+f0WqHKHNNCTKkUJfzopiJl+VEIqOOeqBS4=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: [PATCHv6 4/5] dt-bindings: documentation: add clock bindings information for Agilex
+Date:   Mon,  6 Apr 2020 11:04:17 -0500
+Message-Id: <20200406160418.27476-5-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200406160418.27476-1-dinguyen@kernel.org>
+References: <20200406160418.27476-1-dinguyen@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <40102767-ecdb-e958-66f4-45d11464069c@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1586187589; bh=yaEffBsy3QjkHNhjq0LUVqspbBmXRTztsEwoU5cqhXY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=UhuyLID18HHRqhwyeddyzNGO/WYE7hdtJAQ4IVcQfKq5mtaUAkjrezIfV6vonRB7S
-         FKC03gRUrQHdm3V7EIBaz4Qjm2rlNoVz5je12uwC/KvmylAiNcE0QlOIeGJzzZWFeQ
-         T3svN4g6UdJh+XlKVdWxBmx0g+X8KRZsUfykrs3RbLbx/vMtycBhBqFMNvYNMU2FXj
-         DA744DeWWukiUhDzilOoyjo+VbIAOB6KBLwseOif4UnIsAwOLmk2KONGuag3lsA7zA
-         XCeXJfdOYYY/wmkrK1J3rKQrxAI4jp68X+opCtLPzW2K1KcDhfDK/gsFMZH8FGHYDG
-         FUoChbmg8bLHw==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Document the Agilex clock bindings, and add the clock header file. The
+clock header is an enumeration of all the different clocks on the Agilex
+platform.
 
-On 4/5/20 2:11 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 04.04.2020 04:25, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> +static int tegra_vi_tpg_channels_alloc(struct tegra_vi *vi)
->> +{
->> +     struct tegra_vi_channel *chan, *tmp;
->> +     unsigned int port_num;
->> +     unsigned int nchannels =3D vi->soc->vi_max_channels;
->> +     int ret =3D 0;
->> +
->> +     for (port_num =3D 0; port_num < nchannels; port_num++) {
->> +             /*
->> +              * Do not use devm_kzalloc as memory is freed immediately
->> +              * when device instance is unbound but application might s=
-till
->> +              * be holding the device node open. Channel memory allocat=
-ed
->> +              * with kzalloc is freed during video device release callb=
-ack.
->> +              */
->> +             chan =3D kzalloc(sizeof(*chan), GFP_KERNEL);
-> Why anyone would want to unbind this driver in practice?
->
-> I think it should make more sense to set suppress_bind_attrs=3Dtrue.
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v6: fix build error by adding descriptions for clocks and reg in
+    properties
+v5: update license to GPL-2.0-only
+    Add additionalProperties
+    Add clock input for clkmgr
+v4: really fix build error(comment formatting was wrong)
+v3: address comments from Stephen Boyd
+    fix build error(tab removed in line 37)
+    renamed to intel,agilex.yaml
+v2: convert original document to YAML
+---
+ .../bindings/clock/intel,agilex.yaml          | 46 ++++++++++++
+ include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+ 2 files changed, 116 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+ create mode 100644 include/dt-bindings/clock/agilex-clock.h
 
- From the previous feedback of patch series, we need to support=20
-unbind/bind and looks like this driver should also support to built as a=20
-module.
+diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+new file mode 100644
+index 000000000000..83bca2661ec3
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+@@ -0,0 +1,46 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Intel SoCFPGA Agilex platform clock controller binding
++
++maintainers:
++  - Dinh Nguyen <dinguyen@kernel.org>
++
++description:
++  The Intel Agilex Clock controller is an integrated clock controller, which
++  generates and supplies to all modules.
++
++properties:
++  compatible:
++    const: intel,agilex-clkmgr
++
++  '#clock-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  # Clock controller node:
++  - |
++    clkmgr: clock-controller@ffd10000 {
++      compatible = "intel,agilex-clkmgr";
++      reg = <0xffd10000 0x1000>;
++      clocks = <&osc1>;
++      #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+new file mode 100644
+index 000000000000..f19cf8ccbdd2
+--- /dev/null
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2019, Intel Corporation
++ */
++
++#ifndef __AGILEX_CLOCK_H
++#define __AGILEX_CLOCK_H
++
++/* fixed rate clocks */
++#define AGILEX_OSC1			0
++#define AGILEX_CB_INTOSC_HS_DIV2_CLK	1
++#define AGILEX_CB_INTOSC_LS_CLK		2
++#define AGILEX_L4_SYS_FREE_CLK		3
++#define AGILEX_F2S_FREE_CLK		4
++
++/* PLL clocks */
++#define AGILEX_MAIN_PLL_CLK		5
++#define AGILEX_MAIN_PLL_C0_CLK		6
++#define AGILEX_MAIN_PLL_C1_CLK		7
++#define AGILEX_MAIN_PLL_C2_CLK		8
++#define AGILEX_MAIN_PLL_C3_CLK		9
++#define AGILEX_PERIPH_PLL_CLK		10
++#define AGILEX_PERIPH_PLL_C0_CLK	11
++#define AGILEX_PERIPH_PLL_C1_CLK	12
++#define AGILEX_PERIPH_PLL_C2_CLK	13
++#define AGILEX_PERIPH_PLL_C3_CLK	14
++#define AGILEX_MPU_FREE_CLK		15
++#define AGILEX_MPU_CCU_CLK		16
++#define AGILEX_BOOT_CLK			17
++
++/* fixed factor clocks */
++#define AGILEX_L3_MAIN_FREE_CLK		18
++#define AGILEX_NOC_FREE_CLK		19
++#define AGILEX_S2F_USR0_CLK		20
++#define AGILEX_NOC_CLK			21
++#define AGILEX_EMAC_A_FREE_CLK		22
++#define AGILEX_EMAC_B_FREE_CLK		23
++#define AGILEX_EMAC_PTP_FREE_CLK	24
++#define AGILEX_GPIO_DB_FREE_CLK		25
++#define AGILEX_SDMMC_FREE_CLK		26
++#define AGILEX_S2F_USER0_FREE_CLK	27
++#define AGILEX_S2F_USER1_FREE_CLK	28
++#define AGILEX_PSI_REF_FREE_CLK		29
++
++/* Gate clocks */
++#define AGILEX_MPU_CLK			30
++#define AGILEX_MPU_L2RAM_CLK		31
++#define AGILEX_MPU_PERIPH_CLK		32
++#define AGILEX_L4_MAIN_CLK		33
++#define AGILEX_L4_MP_CLK		34
++#define AGILEX_L4_SP_CLK		35
++#define AGILEX_CS_AT_CLK		36
++#define AGILEX_CS_TRACE_CLK		37
++#define AGILEX_CS_PDBG_CLK		38
++#define AGILEX_CS_TIMER_CLK		39
++#define AGILEX_S2F_USER0_CLK		40
++#define AGILEX_EMAC0_CLK		41
++#define AGILEX_EMAC1_CLK		43
++#define AGILEX_EMAC2_CLK		44
++#define AGILEX_EMAC_PTP_CLK		45
++#define AGILEX_GPIO_DB_CLK		46
++#define AGILEX_NAND_CLK			47
++#define AGILEX_PSI_REF_CLK		48
++#define AGILEX_S2F_USER1_CLK		49
++#define AGILEX_SDMMC_CLK		50
++#define AGILEX_SPI_M_CLK		51
++#define AGILEX_USB_CLK			52
++#define AGILEX_NUM_CLKS			53
++
++#endif	/* __AGILEX_CLOCK_H */
+-- 
+2.25.1
 
