@@ -2,165 +2,138 @@ Return-Path: <SRS0=pe6Q=5W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AA1C2BA1E
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8DE3C2BA17
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BEB24952
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586189545;
-	bh=GVYsMfinsR8g/zIfP0f+/JnCqupV0DlPI3YA/qjQXDQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=R2k0Ll0qyAcK/nLHpdY+9JUR9MGpr6oQX8goMxLhMPSYj5bQtUEia+G/j2+K4Tet3
-	 sN6KT4WDWQ9J83Tq8W7tkQwLs94W74Hliov3IHrtXLeRjBLTG6Xkmk+LAZalXQv/Nt
-	 HcTfHJj+1c3xTkdHjpRgCQWBUM/GwYobnjNAwwW0=
+	by mail.kernel.org (Postfix) with ESMTP id 68B7D22273
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Apr 2020 16:30:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LSprrJcm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729214AbgDFQMY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Apr 2020 12:12:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729460AbgDFQMY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Apr 2020 12:12:24 -0400
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9AA624942;
-        Mon,  6 Apr 2020 16:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586189544;
-        bh=GVYsMfinsR8g/zIfP0f+/JnCqupV0DlPI3YA/qjQXDQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GR/zEuixadXHyK9EYI6p/14VWTYdRuxjwohtZp2qg156UQg20yk1N+EZ3DE5LtAVQ
-         tNBGlDZBV9IfY7WcTHU1VoyjEdHtX91s1aprUJbW7ZnWDcpXI/2PxLLRDX3uRDmrq8
-         6+Jb82i+rXAFL8lHmZmA4k7QBRi1LnPGe6Q6qnos=
-Received: by mail-yb1-f176.google.com with SMTP id a5so127951ybo.7;
-        Mon, 06 Apr 2020 09:12:23 -0700 (PDT)
-X-Gm-Message-State: AGi0PuYHGaRKLV3wNSouBwY/T6CXxknznsQeStJbO9yJ3+TtU2r6Y9cT
-        vpoAk0mnNZDYlYyKVXKNM6fOsKMciA2++QtoQQ==
-X-Google-Smtp-Source: APiQypIYwpnlMa5Ygcs/VtizsI4ZStmf0I0qUuQo8f6ibr2ljHP/sSlm07OxHpCgUGHI4QHbGPm2cFzN94YqXmtWAnU=
-X-Received: by 2002:a25:b950:: with SMTP id s16mr35290019ybm.255.1586189543020;
- Mon, 06 Apr 2020 09:12:23 -0700 (PDT)
+        id S1729211AbgDFQaB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Apr 2020 12:30:01 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39500 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728789AbgDFQaA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Apr 2020 12:30:00 -0400
+Received: by mail-lf1-f66.google.com with SMTP id m2so1083985lfo.6;
+        Mon, 06 Apr 2020 09:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=6s1RomBLaAaLYjYEtNzLrGXH4D7zjKQWtC32MsL6TUY=;
+        b=LSprrJcm3y6O68ykXfq0AwAcOXpXeo3pGt4YLZBoeWDaR66qrtXxzAelikL6s/AXDu
+         FGHPtdNoSflFkLVTLd8QGYdiDg6euW5aBbWHTixMjNECj2/+fyKXqZUyr1q35+D3Y8LV
+         jAzi3i9rcDH5CWJmpU1cvSgb8e4GhesT4mDs2vwz7UZCsIk/zRwij2GhEr3osByaaPP8
+         7AQuK+sVZow8NUK7mYPS5k0deg3BerX6FOWDd5wkrtmgjcFTxSJA9wOPtbJS/1sCGh71
+         f2cSYUOfE16Mm7B4ko6/HUTwI71+jGkY325iGIgz+0Ps6jznZnqGTBNBKf3YNoFx/Q9y
+         HKhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=6s1RomBLaAaLYjYEtNzLrGXH4D7zjKQWtC32MsL6TUY=;
+        b=YO2drf//51T4IKoyFtBJ/3iHhkbw2tBJQufwREBCRMC4mJgbTrchdSw88+e4KxCTSR
+         VqEeWgB1FUOOkZkDRPTQLR7x186hBtlWJ7SrkgF4IIWVMVt3dNKgJn0JjoNxRU0gLo8b
+         4RmAoEqjWjU2q5DkFhrjbHDvBwoL1NjWrlR048VHBw2+fBfZ4ZU/OvAsaZTmNEHwx9Xq
+         fItD1Ana3/pCojh2YO6RvUMaObcptLOeRGwApko+oVYqGPIv5hKzhCUeuXxRsdhcABCW
+         4bi+pxTT8Cez3ZVT6VSJ8goVktw7TQ4hs0j9JpB9TpvWhc+3LUnWcp5iFP9h/Ys/FHMj
+         od4A==
+X-Gm-Message-State: AGi0PuZS7kSo+y2slepDjApV4tfei7OeCS0QI66d9Mkpc1uodjYTxvjR
+        jE6y1dPpStvVRBRmVPz8yTbBwiVc
+X-Google-Smtp-Source: APiQypJbe1lJWnXFExH2l4+Uev/fYbSRZkAaZ/gonD7P6gbu5LIxn7YaRhzchCFdPfJWvG/UV5o85g==
+X-Received: by 2002:a19:c8cf:: with SMTP id y198mr9870475lff.197.1586190596953;
+        Mon, 06 Apr 2020 09:29:56 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id j19sm11701904lfe.17.2020.04.06.09.29.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 Apr 2020 09:29:54 -0700 (PDT)
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
+ <38d921a7-5cdf-8d0a-2772-4399dd1a96a0@gmail.com>
+ <9b8cf37b-d2ad-9df2-aad8-216c2c954e69@nvidia.com>
+ <1a12974a-7cc7-2c3a-3995-076b9956714d@gmail.com>
+ <66cc8646-43d3-3fc8-c31d-d0d2efac505f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f000f6b9-0f05-b2a5-6dad-37b09803711d@gmail.com>
+Date:   Mon, 6 Apr 2020 19:29:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200326213251.54457-1-aford173@gmail.com> <20200405012847.GA5234@bogus>
- <CAHCN7xLoGUSOMtMC+uHMNbA+5MGT0dzTrwbL8J0RSMjmQ7G59g@mail.gmail.com>
-In-Reply-To: <CAHCN7xLoGUSOMtMC+uHMNbA+5MGT0dzTrwbL8J0RSMjmQ7G59g@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 6 Apr 2020 10:12:11 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL2F3_QPEgG89X_nNgcUDW1Q8tSPBbqVr319T5N0bBiSw@mail.gmail.com>
-Message-ID: <CAL_JsqL2F3_QPEgG89X_nNgcUDW1Q8tSPBbqVr319T5N0bBiSw@mail.gmail.com>
-Subject: Re: [RFC] clk: vc5: Add bindings for output configurations
-To:     Adam Ford <aford173@gmail.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Charles Stevens <charles.stevens@logicpd.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <66cc8646-43d3-3fc8-c31d-d0d2efac505f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Apr 4, 2020 at 7:38 PM Adam Ford <aford173@gmail.com> wrote:
->
-> On Sat, Apr 4, 2020 at 8:28 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Thu, Mar 26, 2020 at 04:32:51PM -0500, Adam Ford wrote:
-> > > The Versaclock can be purchased in a non-programmed configuration.
-> > > If that is the case, the driver needs to configure the chip to
-> > > output the correct signal type, voltage and slew.
-> > >
-> > > This RFC is proposing an additional binding to allow non-programmed
-> > > chips to be configured beyond their default configuration.
-> > >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > > index 05a245c9df08..4bc46ed9ba4a 100644
-> > > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> > > @@ -30,6 +30,25 @@ Required properties:
-> > >               - 5p49v5933 and
-> > >               - 5p49v5935: (optional) property not present or "clkin".
-> > >
-> > > +For all output ports, an option child node can be used to specify:
-> > > +
-> > > +- mode: can be one of
-> > > +               - LVPECL: Low-voltage positive/psuedo emitter-coupled logic
-> > > +               - CMOS
-> > > +               - HCSL
-> > > +               - LVDS: Low voltage differential signal
-> > > +
-> > > +- voltage-level:  can be one of the following microvolts
-> > > +               - 1800000
-> > > +               - 2500000
-> > > +               - 3300000
-> > > +-  slew: Percent of normal, can be one of
-> > > +               - P80
-> > > +               - P85
-> > > +               - P90
-> > > +               - P100
-> > > +
-> > > +
-> > >  ==Mapping between clock specifier and physical pins==
-> > >
-> > >  When referencing the provided clock in the DT using phandle and
-> > > @@ -62,6 +81,8 @@ clock specifier, the following mapping applies:
-> > >
-> > >  ==Example==
-> > >
-> > > +#include <dt-bindings/versaclock.h>
-> > > +
-> > >  /* 25MHz reference crystal */
-> > >  ref25: ref25m {
-> > >       compatible = "fixed-clock";
-> > > @@ -80,6 +101,13 @@ i2c-master-node {
-> > >               /* Connect XIN input to 25MHz reference */
-> > >               clocks = <&ref25m>;
-> > >               clock-names = "xin";
-> > > +
-> > > +             ports@1 {
-> >
-> > 'ports' is already taken as a node name.
-> Rob,
->
-> The clock chip can drive multiple clocks and each output is
-> independent of the rest.  The idea is that port@1 would represent
-> output 1, port@2 would represent output 2, etc.
-> Is there a name you'd think we should use to represent each output?
+06.04.2020 19:12, Sowjanya Komatineni пишет:
+> 
+> On 4/6/20 9:05 AM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 06.04.2020 18:35, Sowjanya Komatineni пишет:
+>> ...
+>>>>> +     /* wait for syncpt counter to reach frame start event
+>>>>> threshold */
+>>>>> +     err = host1x_syncpt_wait(chan->frame_start_sp, thresh,
+>>>>> +                              TEGRA_VI_SYNCPT_WAIT_TIMEOUT, &value);
+>>>>> +     if (err) {
+>>>>> +             dev_err(&chan->video.dev,
+>>>>> +                     "frame start syncpt timeout: %d\n", err);
+>>>>> +             /* increment syncpoint counter for timedout events */
+>>>>> +             host1x_syncpt_incr(chan->frame_start_sp);
+>>>> Why incrementing is done while hardware is still active?
+>>>>
+>>>> The sync point's state needs to be completely reset after resetting
+>>>> hardware. But I don't think that the current upstream host1x driver
+>>>> supports doing that, it's one of the known-long-standing problems of
+>>>> the
+>>>> host1x driver.
+>>>>
+>>>> At least the sp->max_val incrementing should be done based on the
+>>>> actual
+>>>> syncpoint value and this should be done after resetting hardware.
+>>> upstream host1x driver don't have API to reset or to equalize max value
+>>> with min/load value.
+>>>
+>>> So to synchronize missed event, incrementing HW syncpt counter.
+>>>
+>>> This should not impact as we increment this in case of missed events
+>>> only.
+>> It's wrong to touch sync point while hardware is active and it's active
+>> until being reset.
+>>
+>> You should re-check the timeout after hw resetting and manually put the
+>> syncpoint counter back into sync only if needed.
+> 
+> There is possibility of timeout to happen any time even during the
+> capture also and is not related to hw reset.
+> 
+> Manual synchronization is needed when timeout of any frame events happen
+> otherwise all subsequence frames will timeout due to mismatch in event
+> counters.
 
-clock-output@...?
+My point is that hardware is stopped only after being reset, until then
+you should assume that sync point could be incremented by HW at any time.
 
-> Different variations of this chip can have different number of
-> outputs.
->
-> >
-> > > +                     reg = <1>;
-> >
-> > What do the reg value signify?
->
-> I am fine if we drop we drop it. I was under the assumption that reg
-> =<1> had to correspond to the port@1 and that it was required since
-> other devices with port sub-nodes use the reg entry.
-
-I wasn't suggesting dropping it. Just what 0, 1, 2, etc. corresponds
-to as you explained above. Just put that into the 'reg' description.
-
-> > > +                     mode = <CMOS>;
-> > > +                     pwr_sel = <1800000>;
-> >
-> > Not documented. Don't use '-' in property names.
->
-> Do you have a preference to what name or convention you want us to use?
-
-Errr, that was supposed to say '_'. Using hyphens is fine.
-
-Also, needs a vendor prefix and if that's in microvolts needs a unit suffix.
-
-Rob
+And if this happens that HW increments sync point after the timeout,
+then the sync point counter should become out-of-sync in yours case,
+IIUC. Because host1x_syncpt_incr() doesn't update the cached counter.
