@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE42C2BB54
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CC6C2BB54
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8078920719
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:24:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09A2620730
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:24:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="QJwEpTh0"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Z2miYVQB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726386AbgDGWY0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 18:24:26 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:18638 "EHLO
+        id S1726709AbgDGWYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 18:24:42 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:17486 "EHLO
         mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726495AbgDGWYA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 18:24:00 -0400
+        by vger.kernel.org with ESMTP id S1726495AbgDGWYl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 18:24:41 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586298239; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=zb9gBubLqpCRCY9HKdRqpmX1NGtX4V5sdNkRDWjR9R0=; b=QJwEpTh0LnKJz5TsjLtxfgL5fc6jMf7HyiYHFIcV/bSTJMIXvipBgd/3oQZcevW+CQaFjYq8
- yQlR50C3nLvaJ7SI1oJ05lim69zuSlzjoENcX6CWCia63hOqfZu9TYkDb3CL0YOIHPgBprlG
- yUH3U58Rk24MFwxIFCa4fxm0ACA=
+ s=smtp; t=1586298281; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=dx666URRqJLgHx/92TiYUOVZjVVrAvoOpoacNAgGDDg=; b=Z2miYVQBoOVrt/fWoel5lZc+xxH8UDVlu0zvBneEdMND8yuNeRVp2DaXz/71BcP2paBOzJRx
+ x81UmsMF4u5DZl/9KkvtlmIEfHCrNfxKIdrSjwoLCmdJcEpVCCaV8SUcfqigOKv2fHTsXeL2
+ 78luR1/nSJtpDGnvMZmxnElUj0s=
 X-Mailgun-Sending-Ip: 104.130.122.27
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e8cfd6a.7f90da0bbce0-smtp-out-n05;
- Tue, 07 Apr 2020 22:23:38 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e8cfda8.7f235810db90-smtp-out-n01;
+ Tue, 07 Apr 2020 22:24:40 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 55505C43637; Tue,  7 Apr 2020 22:23:38 +0000 (UTC)
+        id E882DC43637; Tue,  7 Apr 2020 22:24:39 +0000 (UTC)
 Received: from wcheng-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5246BC433F2;
-        Tue,  7 Apr 2020 22:23:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5246BC433F2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BF6BBC433D2;
+        Tue,  7 Apr 2020 22:24:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BF6BBC433D2
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
 From:   Wesley Cheng <wcheng@codeaurora.org>
@@ -48,45 +48,38 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         vinod.koul@linaro.org, Wesley Cheng <wcheng@codeaurora.org>
-Subject: [PATCH v3 0/4] Add SS/HS-USB changes for Qualcomm SM8150 chipset
-Date:   Tue,  7 Apr 2020 15:23:25 -0700
-Message-Id: <1586298209-4589-1-git-send-email-wcheng@codeaurora.org>
+Subject: [PATCH v3 0/2] Enable SS/HS USB support on SM8150
+Date:   Tue,  7 Apr 2020 15:24:25 -0700
+Message-Id: <1586298267-4722-1-git-send-email-wcheng@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds support for the Synopsis 7nm HSPHY USB driver being
-used in QCOM chipsets.  The HSPHY register map differs compared to 
-other PHY revisions.  In addition, modifications and updates are done
-to the QMP driver to add new registers/offsets, and to update the
-initialization sequence for enabling the SSUSB path on SM8150.
+Add required device tree nodes to enable the USB SS and HS
+paths on the primary USB controller on SM8150.  In addition,
+implement missing resources from the SM8150 GCC driver, which
+includes the USB GDSC and the USB PIPE clocks.
 
 Changes in v3:
- - Use devm_reset_control_get_exclusive instead of referencing index for
-   reset handle
+ - Set dr_mode to "peripheral" on the SM8150 MTP DTSI file.
 
 Changes in v2:
- - Fixed YAML errors caught by dt_binding_check
+ - Combine GDSC and USB PIPE clock changes.
+ - Re-order DTS nodes based on address
 
 Jack Pham (1):
-  phy: qcom-qmp: Add SM8150 QMP USB3 PHY support
+  arm64: dts: qcom: sm8150: Add USB and PHY device nodes
 
-Wesley Cheng (3):
-  dt-bindings: phy: Add binding for qcom,usb-hs-7nm
-  phy: qcom-snps: Add SNPS USB PHY driver for QCOM based SOCs
-  phy: qcom-qmp: Use proper PWRDOWN offset for sm8150 USB
+Wesley Cheng (1):
+  clk: qcom: gcc: Add USB3 PIPE clock and GDSC for SM8150
 
- .../devicetree/bindings/phy/qcom,usb-hs-7nm.yaml   |  76 ++++++
- drivers/phy/qualcomm/Kconfig                       |  10 +
- drivers/phy/qualcomm/Makefile                      |   1 +
- drivers/phy/qualcomm/phy-qcom-qmp.c                | 157 +++++++++++
- drivers/phy/qualcomm/phy-qcom-qmp.h                | 198 +++++++++++++-
- drivers/phy/qualcomm/phy-qcom-snps-7nm.c           | 294 +++++++++++++++++++++
- 6 files changed, 734 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-hs-7nm.yaml
- create mode 100644 drivers/phy/qualcomm/phy-qcom-snps-7nm.c
+ arch/arm64/boot/dts/qcom/sm8150-mtp.dts     | 21 +++++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi        | 92 +++++++++++++++++++++++++++++
+ drivers/clk/qcom/gcc-sm8150.c               | 52 ++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sm8150.h |  4 ++
+ 4 files changed, 169 insertions(+)
 
 -- 
 The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
