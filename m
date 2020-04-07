@@ -2,110 +2,130 @@ Return-Path: <SRS0=wIso=5X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEB2C2BB86
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B073AC2BB55
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB732082D
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 22:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BC1320747
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:12:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="cBxyq4N4"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITb0PCiL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726668AbgDGW3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 18:29:47 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:43527 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726622AbgDGW3r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 18:29:47 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586298586; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=Y51llxo6V8hgiVIDqT1dGRczqJHThRU0itOQaSw5CeI=; b=cBxyq4N4LwGUYzAOBVyRaZJLObmpBuZnCoZUURdeDcLqzVKVvu8I/5cFqwsYhX8XMb1RYZ8M
- ISdh2nlMbZ4Q9VjsRQsgRB419i7xiJQItEd1se6sldItHoECIUcfCg8mrt7txM2QqiMVV2zN
- qJ3Mg9O5ULlCNuAAAyofuNzrybI=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e8cfed9.7fa01118d928-smtp-out-n01;
- Tue, 07 Apr 2020 22:29:45 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 220DFC44788; Tue,  7 Apr 2020 22:29:44 +0000 (UTC)
-Received: from [10.110.111.40] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C548BC433F2;
-        Tue,  7 Apr 2020 22:29:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C548BC433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
-Subject: Re: [PATCH v3 0/4] Add SS/HS-USB changes for Qualcomm SM8150 chipset
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vinod.koul@linaro.org
-References: <1586298209-4589-1-git-send-email-wcheng@codeaurora.org>
-From:   Wesley Cheng <wcheng@codeaurora.org>
-Message-ID: <a1328e98-fb97-3fff-913e-45ad85f44532@codeaurora.org>
-Date:   Tue, 7 Apr 2020 15:29:41 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726421AbgDGXMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 19:12:32 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46583 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726380AbgDGXMc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 19:12:32 -0400
+Received: by mail-lf1-f68.google.com with SMTP id m19so1677410lfq.13;
+        Tue, 07 Apr 2020 16:12:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RwBDvU/d/RuyuOicf+LMSeUuB7FpaSGPCFNY8uUMcT8=;
+        b=ITb0PCiLvFvAVN7bpWpJlckTjQ8s/wjqbxLsbWXCFsj+XrR6vru92/JlT6lzOgpb0u
+         GvSyCbY86jIPTEp7Rr6UG3CpHXhrlyN6C7QMfn9hGHT5V94hmDalVuuw6l9Uj+jhnEpL
+         0w+zGOx2K4nyKvpPS1itml53GKUo/T2CDvs+jNKP83LXgAiqyUEMkQukAExr3FGhUMK0
+         /q2xBHo/iw98t6r1GJ1gaaC8/QbQZmkYgHikswey901fj0KneeQkZ/8Oq6B4+5lXpTPy
+         QCx3IlR4i1XwPUTGs2RiyEngHTxoZVbLXWuUTpGiGD93wuoUcU/BPwTEWWiry2rngf2P
+         dYpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RwBDvU/d/RuyuOicf+LMSeUuB7FpaSGPCFNY8uUMcT8=;
+        b=A8cj4Mm/6m7HBUghxwF8KyDY8QfJD5MoDA5jW8IJuOMEmFWCA6o3ihf2QRPynMe/9r
+         Hy9a1L7ur3XRdLN21rzampW7+uxxC+jypwsQe49wK4ZYGXEkMsfN5g50G9qBk/D+O27r
+         fT8j/ExA6jz8VSiE14WfNBACgYMY6471MnSbv+sRlU9aS1oP3wc6q7P4SgQNDCH39zEP
+         tDwkVeK9THQ0iv9o3nY8euBNmGokrOGuGm1v994Ckn613Gc7vzyrq5wgwNzcllPGynZM
+         qHhycVQ8jStsP3pay3g35A7mWT7LEJXZgSg1c2712EgsqlV3m7DTG/4hu3JhY7idIrCe
+         vDYw==
+X-Gm-Message-State: AGi0PuatZMcSzG14cIesifDWQDDJG8I2gc48bLlbKibvskhFrwa7tQZI
+        IyGILgnDNkiIXiD2dJRrKh4zTns6
+X-Google-Smtp-Source: APiQypLgfZ7BpY4nMrnJrXTT3z+5gBIe2iOt5bl8wLbbK0kgy8mwEcvrUJhccF8GU5G5Zh9WGlI4uw==
+X-Received: by 2002:ac2:5607:: with SMTP id v7mr2758744lfd.212.1586301148120;
+        Tue, 07 Apr 2020 16:12:28 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id c2sm14650894lfb.43.2020.04.07.16.12.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 Apr 2020 16:12:27 -0700 (PDT)
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
+ <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
+ <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
+ <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
+ <08cd31d5-e8b9-4d3a-fb0e-0e4462947d96@nvidia.com>
+ <12a834ac-52b1-6dc0-7d3a-3e6a1fa85a2a@gmail.com>
+ <e3712e7b-b335-b35b-a94f-24eb85122dca@nvidia.com>
+ <b1726d33-0d35-9323-a747-407148d0104e@gmail.com>
+ <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
+ <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
+ <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
+ <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
+ <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
+ <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
+ <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
+ <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+ <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+Date:   Wed, 8 Apr 2020 02:12:26 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <1586298209-4589-1-git-send-email-wcheng@codeaurora.org>
+In-Reply-To: <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi All,
-
-Sorry for the confusion, please disregard these patches.  I sent the
-incorrect patch series update.
-
-Thanks
-Wesley
-
-On 4/7/2020 3:23 PM, Wesley Cheng wrote:
-> This series adds support for the Synopsis 7nm HSPHY USB driver being
-> used in QCOM chipsets.  The HSPHY register map differs compared to 
-> other PHY revisions.  In addition, modifications and updates are done
-> to the QMP driver to add new registers/offsets, and to update the
-> initialization sequence for enabling the SSUSB path on SM8150.
+08.04.2020 01:22, Sowjanya Komatineni пишет:
 > 
-> Changes in v3:
->  - Use devm_reset_control_get_exclusive instead of referencing index for
->    reset handle
+> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 08.04.2020 00:08, Sowjanya Komatineni пишет:
+>> ...
+>>>>> I think you need a semaphore with resource count = 2.
+>>>> we hold on to issuing capture if more than 2 buffers are queued and it
+>>>> continues only after fifo has min 1 slot empty
+>>>
+>>> Just want to close on this part of feedback. Hope above explanation is
+>>> clear regarding triggering/issuing at max 2 frame capture to VI HW and
+>>> also regarding capture threads where they use wait_event_interruptible
+>>> to prevent blocking waiting for buffers to be available for captures.
+>>>
+>>> So no changes related to this part are needed in v7.
+>>  From what I see in the code, you "hold on" by making kthread to spin in
+>> a busy-loop while caps_inflight >= SYNCPT_FIFO_DEPTH. So some change
+>> should be needed to prevent this.
+>>
+>> The wait_event_interruptible seems should be okay.
 > 
-> Changes in v2:
->  - Fixed YAML errors caught by dt_binding_check
+> We don't want to prevent that as we already have buffers available for
+> capture so as soon as VI HW issuing single shot is done and when min 1
+> slot is empty we should continue with issuing for another capture.
 > 
-> Jack Pham (1):
->   phy: qcom-qmp: Add SM8150 QMP USB3 PHY support
-> 
-> Wesley Cheng (3):
->   dt-bindings: phy: Add binding for qcom,usb-hs-7nm
->   phy: qcom-snps: Add SNPS USB PHY driver for QCOM based SOCs
->   phy: qcom-qmp: Use proper PWRDOWN offset for sm8150 USB
-> 
->  .../devicetree/bindings/phy/qcom,usb-hs-7nm.yaml   |  76 ++++++
->  drivers/phy/qualcomm/Kconfig                       |  10 +
->  drivers/phy/qualcomm/Makefile                      |   1 +
->  drivers/phy/qualcomm/phy-qcom-qmp.c                | 157 +++++++++++
->  drivers/phy/qualcomm/phy-qcom-qmp.h                | 198 +++++++++++++-
->  drivers/phy/qualcomm/phy-qcom-snps-7nm.c           | 294 +++++++++++++++++++++
->  6 files changed, 734 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom,usb-hs-7nm.yaml
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-snps-7nm.c
+> As long as buffers are available, we should continue to capture and
+> should not hold
 > 
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+I suppose that taking a shot takes at least few milliseconds, which
+should be unacceptable to waste.
