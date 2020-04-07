@@ -2,47 +2,56 @@ Return-Path: <SRS0=wIso=5X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CBAAC2BABC
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 05:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C84FC2BA16
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 07:08:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2042072A
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 05:07:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2485206F5
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 07:08:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726631AbgDGFHH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 01:07:07 -0400
-Received: from hfcrelay.icp-osb-irony-out6.external.iinet.net.au ([203.59.1.86]:8292
-        "EHLO hfcrelay.icp-osb-irony-out6.external.iinet.net.au"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726399AbgDGFHG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Apr 2020 01:07:06 -0400
-X-Greylist: delayed 558 seconds by postgrey-1.27 at vger.kernel.org; Tue, 07 Apr 2020 01:07:03 EDT
-X-SMTP-MATCH: 0
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2AqAACBB4xe/yqY3MsNWRwBAQEBAQc?=
- =?us-ascii?q?BAREBBAQBAYFpBQEBCwGERYQbj0oBAQEBAQEGgQoIJYl+j1CBewoBAQEBAQE?=
- =?us-ascii?q?BAQE3BAEBhEQCgm02Bw4CEAEBAQUBAQEBAQUDAYV3hkkBAQEDIxVBEAsSBgI?=
- =?us-ascii?q?CJgICSQ4GAQwGAgEBgyKCWK9hdYEyhUuDVYE/gQ4qAYxMeYEHgTgMgi8uPoQ?=
- =?us-ascii?q?lgzuCXgSQRYdfmHoIgj+XJCOcAo83niYKgX8zGggoCIMkUCWcd2KNCYJDAQE?=
-X-IPAS-Result: =?us-ascii?q?A2AqAACBB4xe/yqY3MsNWRwBAQEBAQcBAREBBAQBAYFpB?=
- =?us-ascii?q?QEBCwGERYQbj0oBAQEBAQEGgQoIJYl+j1CBewoBAQEBAQEBAQE3BAEBhEQCg?=
- =?us-ascii?q?m02Bw4CEAEBAQUBAQEBAQUDAYV3hkkBAQEDIxVBEAsSBgICJgICSQ4GAQwGA?=
- =?us-ascii?q?gEBgyKCWK9hdYEyhUuDVYE/gQ4qAYxMeYEHgTgMgi8uPoQlgzuCXgSQRYdfm?=
- =?us-ascii?q?HoIgj+XJCOcAo83niYKgX8zGggoCIMkUCWcd2KNCYJDAQE?=
-X-IronPort-AV: E=Sophos;i="5.72,353,1580745600"; 
-   d="scan'208";a="234957621"
-Received: from 203-220-152-42.tpgi.com.au (HELO [192.168.1.108]) ([203.220.152.42])
-  by icp-osb-irony-out6.iinet.net.au with ESMTP; 07 Apr 2020 12:57:41 +0800
+        id S1726937AbgDGHII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 03:08:08 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43095 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726393AbgDGHII (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 03:08:08 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k5so600627oiw.10;
+        Tue, 07 Apr 2020 00:08:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9KPwW6gv1QSgTyaBqvuvuccR22yt8OHERtZtZ45QV20=;
+        b=WwSt2cfwloWFmAvZ4cKIWi95qAqUchfj3HUVgIOvUTpElpqq/n76tW7VnZqhh9d6Iy
+         FIfYV4M0yuMGym13r86/PIVYozv0HUYKC4nzvmRFCiTQCqXvvRD8FWogedPewwkXPlr5
+         JSzcg1QD41/V32E0EXrvAcFGs4pwVLrg95ts4Nh/o9+YvtcoLMLVlO5h7+1p4+fwEFUp
+         E334smNjM+MpZ7UlcLQhG+J5+FZlw5WpB5n7Ohby1OWtbYo33/SF5RL926aMqZCpfsrs
+         GCgp/N0ZG59umQBW8zSk5aofNMCKrmPPa0NP64+gkSeNc4LrdTpwkvCn+UNJSuWzNJdf
+         NJMg==
+X-Gm-Message-State: AGi0PubMLaG7PnzPg0IIpJA2bKW5B9SCBi8pM+qf0o1hpKT83dT4lP2N
+        oSvv93W+urB5DVUUMfDErPzgcBOlrLNlIU5BzAo=
+X-Google-Smtp-Source: APiQypJUPzMxv/4MrgNefdxeLOoU32bKKGVhjV9FcAL8pAgR+GgzTWByrZ8jvfBkCgjZ21+HvYrOL/5ps9Lu0L/nTBE=
+X-Received: by 2002:aca:cdd1:: with SMTP id d200mr591205oig.153.1586243287374;
+ Tue, 07 Apr 2020 00:08:07 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200405025123.154688-1-sboyd@kernel.org> <20200405025123.154688-7-sboyd@kernel.org>
+ <CAK8P3a2M54quhRNK4xvwjz9O9oZwgrobc_wtkGaeA2PMYwOUdg@mail.gmail.com>
+ <158614207114.88454.6776609424163493475@swboyd.mtv.corp.google.com>
+ <CAK8P3a3Yt2woG2LMcQ0jNPGuHdMtFbBmLvtBbrWFQ4J6x3v9aQ@mail.gmail.com> <8a2a142a-106a-4241-fca5-5ef12e66cd41@linux-m68k.org>
+In-Reply-To: <8a2a142a-106a-4241-fca5-5ef12e66cd41@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 7 Apr 2020 09:07:56 +0200
+Message-ID: <CAMuHMdV=rqpfmxtS+_kFeSiPs7cg6h2nTw4YmBKb=4kn0PuGgg@mail.gmail.com>
 Subject: Re: [PATCH 6/9] clk: Allow the common clk framework to be selectable
-To:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
         Mark Salter <msalter@redhat.com>,
         Aurelien Jacquiot <jacquiot.aurelien@gmail.com>,
         Jiaxun Yang <jiaxun.yang@flygoat.com>,
@@ -56,104 +65,76 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-m68k <linux-m68k@lists.linux-m68k.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux-sh list <linux-sh@vger.kernel.org>
-References: <20200405025123.154688-1-sboyd@kernel.org>
- <20200405025123.154688-7-sboyd@kernel.org>
- <CAK8P3a2M54quhRNK4xvwjz9O9oZwgrobc_wtkGaeA2PMYwOUdg@mail.gmail.com>
- <158614207114.88454.6776609424163493475@swboyd.mtv.corp.google.com>
- <CAK8P3a3Yt2woG2LMcQ0jNPGuHdMtFbBmLvtBbrWFQ4J6x3v9aQ@mail.gmail.com>
-From:   Greg Ungerer <gerg@linux-m68k.org>
-Message-ID: <8a2a142a-106a-4241-fca5-5ef12e66cd41@linux-m68k.org>
-Date:   Tue, 7 Apr 2020 14:57:39 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
-MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Yt2woG2LMcQ0jNPGuHdMtFbBmLvtBbrWFQ4J6x3v9aQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Arnd, Stephen
+Hi Greg,
 
-On 6/4/20 5:35 pm, Arnd Bergmann wrote:
-> On Mon, Apr 6, 2020 at 5:01 AM Stephen Boyd <sboyd@kernel.org> wrote:
->> Quoting Arnd Bergmann (2020-04-05 05:45:20)
->>> On Sun, Apr 5, 2020 at 4:51 AM Stephen Boyd <sboyd@kernel.org> wrote:
->>>> There's one snag with doing this, and that's making sure that randconfig
->>>> builds don't select this option when some architecture or platform
->>>> implements 'struct clk' outside of the common clk framework. Introduce a
->>>> new config option 'HAVE_LEGACY_CLK' to indicate those platforms that
->>>> haven't migrated to the common clk framework and therefore shouldn't be
->>>> allowed to select this new config option. Also add a note that we hope
->>>> one day to remove this config entirely.
->>>
->>> Good idea!
->>>
->>> I've looked through the individual ones and commented a bit on
->>> what I think may or may not happen with them.
->>>
->>> ralink SOC_MT7621 is the only one that I think you got wrong,
->>> as it already has common-clk support.
->>
->> Ah I missed that it was inside a big if RALINK. Thanks. I suppose I
->> should just remove the select then for that config and not worry about
->> the duplication of clkdev and common clk configs.
-> 
-> Won't that cause build failures in those configurations that have
-> both implementations?
-> 
-> According to the Makefile, the clk.c file is built whenever CONFIG_MIPS_GIC
-> is unset, so I think we need
-> 
->           select HAVE_LEGACY_CLK if !MIPS_GIC
-> 
-> or maybe move the select into the per-chip configs that need it:
-> RT288X, RT305X, RT3883, and MT7620.
-> 
->>>> diff --git a/arch/m68k/Kconfig.cpu b/arch/m68k/Kconfig.cpu
->>>> index 60ac1cd8b96f..bd2d29c22a10 100644
->>>> --- a/arch/m68k/Kconfig.cpu
->>>> +++ b/arch/m68k/Kconfig.cpu
->>>
->>>     text    data     bss     dec     hex filename
->>> 1934726 263616   83284 2281626 22d09a obj/vmlinux-before
->>> 1971989 266192   83308 2321489 236c51 obj/vmlinux-after
->>>
->>> The coldfire clock implementation looks rather simple compared
->>> to chips from the 2010s: most chips have only fixed clocks,
->>> and three of them have one of two registers of clock gates.
->>>
->>> It shouldn't be hard to convert, but enabling common-clk will
->>> cause a noticeable kernel size increase on the fairly limited
->>> hardware.
->>>
->>> Simply enabling COMMON_CLK in m5475evb_defconfig
->>> results in a 1.7% or 40KB growth in kernel size, plus there
->>> would be additional dynamic memory usage:
->> There could certainly be some work done to reduce the code size of the
->> CCF. I haven't looked but perhaps we could save some memory by making
->> the basic types selectable too and then push a bunch of kconfig updates
->> through for that.
-> 
-> Right, that might help. Another possibility would be to support both
-> the common clk layer and the custom clk implementation on coldfire
-> until we remove the other custom implementations, by which point
-> even fewer people will care about coldfire.
-> 
-> Let's see what Geert and Greg think would be the best path for coldfire,
-> maybe the added 40KB is less of a problem after all.
+On Tue, Apr 7, 2020 at 6:57 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
+> On 6/4/20 5:35 pm, Arnd Bergmann wrote:
+> > On Mon, Apr 6, 2020 at 5:01 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >> Quoting Arnd Bergmann (2020-04-05 05:45:20)
+> >>> On Sun, Apr 5, 2020 at 4:51 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> >>>> There's one snag with doing this, and that's making sure that randconfig
+> >>>> builds don't select this option when some architecture or platform
+> >>>> implements 'struct clk' outside of the common clk framework. Introduce a
+> >>>> new config option 'HAVE_LEGACY_CLK' to indicate those platforms that
+> >>>> haven't migrated to the common clk framework and therefore shouldn't be
+> >>>> allowed to select this new config option. Also add a note that we hope
+> >>>> one day to remove this config entirely.
 
-Losing another 40k is not ideal, but not the end of the world.
-It would not stop me running it on any platforms I regularly
-run on. For sure some of the really old hardware just doesn't
-have the RAM to spare.
+> >>>> --- a/arch/m68k/Kconfig.cpu
+> >>>> +++ b/arch/m68k/Kconfig.cpu
+> >>>
+> >>>     text    data     bss     dec     hex filename
+> >>> 1934726 263616   83284 2281626 22d09a obj/vmlinux-before
+> >>> 1971989 266192   83308 2321489 236c51 obj/vmlinux-after
+> >>>
+> >>> The coldfire clock implementation looks rather simple compared
+> >>> to chips from the 2010s: most chips have only fixed clocks,
+> >>> and three of them have one of two registers of clock gates.
+> >>>
+> >>> It shouldn't be hard to convert, but enabling common-clk will
+> >>> cause a noticeable kernel size increase on the fairly limited
+> >>> hardware.
+> >>>
+> >>> Simply enabling COMMON_CLK in m5475evb_defconfig
+> >>> results in a 1.7% or 40KB growth in kernel size, plus there
+> >>> would be additional dynamic memory usage:
+> >> There could certainly be some work done to reduce the code size of the
+> >> CCF. I haven't looked but perhaps we could save some memory by making
+> >> the basic types selectable too and then push a bunch of kconfig updates
+> >> through for that.
+> >
+> > Right, that might help. Another possibility would be to support both
+> > the common clk layer and the custom clk implementation on coldfire
+> > until we remove the other custom implementations, by which point
+> > even fewer people will care about coldfire.
+> >
+> > Let's see what Geert and Greg think would be the best path for coldfire,
+> > maybe the added 40KB is less of a problem after all.
+>
+> Losing another 40k is not ideal, but not the end of the world.
+> It would not stop me running it on any platforms I regularly
+> run on. For sure some of the really old hardware just doesn't
+> have the RAM to spare.
+>
+> Any way, I say we have to move forward and and move to using
+> the common clock framework for ColdFire sooner than later.
 
-Any way, I say we have to move forward and and move to using
-the common clock framework for ColdFire sooner than later.
+Fine for me.
 
-Regards
-Greg
+Gr{oetje,eeting}s,
 
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
