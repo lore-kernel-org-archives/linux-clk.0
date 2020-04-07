@@ -2,68 +2,47 @@ Return-Path: <SRS0=wIso=5X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B073AC2BB55
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FA3C2D0EC
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:38:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC1320747
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:12:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C196206C0
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 23:38:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITb0PCiL"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="G4QUu/SW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726421AbgDGXMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 19:12:32 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46583 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726380AbgDGXMc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 19:12:32 -0400
-Received: by mail-lf1-f68.google.com with SMTP id m19so1677410lfq.13;
-        Tue, 07 Apr 2020 16:12:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=RwBDvU/d/RuyuOicf+LMSeUuB7FpaSGPCFNY8uUMcT8=;
-        b=ITb0PCiLvFvAVN7bpWpJlckTjQ8s/wjqbxLsbWXCFsj+XrR6vru92/JlT6lzOgpb0u
-         GvSyCbY86jIPTEp7Rr6UG3CpHXhrlyN6C7QMfn9hGHT5V94hmDalVuuw6l9Uj+jhnEpL
-         0w+zGOx2K4nyKvpPS1itml53GKUo/T2CDvs+jNKP83LXgAiqyUEMkQukAExr3FGhUMK0
-         /q2xBHo/iw98t6r1GJ1gaaC8/QbQZmkYgHikswey901fj0KneeQkZ/8Oq6B4+5lXpTPy
-         QCx3IlR4i1XwPUTGs2RiyEngHTxoZVbLXWuUTpGiGD93wuoUcU/BPwTEWWiry2rngf2P
-         dYpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=RwBDvU/d/RuyuOicf+LMSeUuB7FpaSGPCFNY8uUMcT8=;
-        b=A8cj4Mm/6m7HBUghxwF8KyDY8QfJD5MoDA5jW8IJuOMEmFWCA6o3ihf2QRPynMe/9r
-         Hy9a1L7ur3XRdLN21rzampW7+uxxC+jypwsQe49wK4ZYGXEkMsfN5g50G9qBk/D+O27r
-         fT8j/ExA6jz8VSiE14WfNBACgYMY6471MnSbv+sRlU9aS1oP3wc6q7P4SgQNDCH39zEP
-         tDwkVeK9THQ0iv9o3nY8euBNmGokrOGuGm1v994Ckn613Gc7vzyrq5wgwNzcllPGynZM
-         qHhycVQ8jStsP3pay3g35A7mWT7LEJXZgSg1c2712EgsqlV3m7DTG/4hu3JhY7idIrCe
-         vDYw==
-X-Gm-Message-State: AGi0PuatZMcSzG14cIesifDWQDDJG8I2gc48bLlbKibvskhFrwa7tQZI
-        IyGILgnDNkiIXiD2dJRrKh4zTns6
-X-Google-Smtp-Source: APiQypLgfZ7BpY4nMrnJrXTT3z+5gBIe2iOt5bl8wLbbK0kgy8mwEcvrUJhccF8GU5G5Zh9WGlI4uw==
-X-Received: by 2002:ac2:5607:: with SMTP id v7mr2758744lfd.212.1586301148120;
-        Tue, 07 Apr 2020 16:12:28 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id c2sm14650894lfb.43.2020.04.07.16.12.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Apr 2020 16:12:27 -0700 (PDT)
+        id S1726520AbgDGXiL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 19:38:11 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5899 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbgDGXiL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 19:38:11 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e8d0e7c0000>; Tue, 07 Apr 2020 16:36:28 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 07 Apr 2020 16:38:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 07 Apr 2020 16:38:10 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Apr
+ 2020 23:38:10 +0000
+Received: from [10.2.171.175] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Apr 2020
+ 23:38:08 +0000
 Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
  <200bb96e-2d07-764f-9e14-55538dc742fd@gmail.com>
  <23bfab09-b464-6e51-9843-06d13000e9b9@nvidia.com>
  <be77b0ef-d605-8357-4180-f40b2886d07a@gmail.com>
@@ -80,52 +59,82 @@ References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
  <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
  <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
  <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
-Date:   Wed, 8 Apr 2020 02:12:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+ <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+ <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+Message-ID: <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
+Date:   Tue, 7 Apr 2020 16:38:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1586302588; bh=X8IJFWDnQAbnf1aSpLJmy4TiOpGQ753NFIkPWM15bII=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=G4QUu/SWOKZrVd9ZdM8wMOi4dimJpCxB55TLA8YWXoMwreB64M4HhIW8FjAQyXx4J
+         YZzkqbDWP+nkEsL6W03TUKutts/HBpsJyLt1lxAsHRCgEvI1mTpUGpNf8nIwRjqACi
+         9Cj2GejpW9ZmcWPZpFc09Al1qRRKcpJ6wfvGX8puwTywyZ+eWYVwSQNsxV/tJHBcJr
+         HHzRZykCtlqUMhpH089DpBCia375rPeGkFB0cF0bQCVfBPcu2UBnE1ldAKIWDfUJwb
+         1KGSlwap9yygrXYa0BORKSZa2cAbq0L2AY3/T0Foq0IfBibmIlJrG0Ja/a8KBVsPgX
+         J7kx9aK/A09lQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-08.04.2020 01:22, Sowjanya Komatineni пишет:
-> 
-> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+
+On 4/7/20 4:36 PM, Sowjanya Komatineni wrote:
+>
+> On 4/7/20 4:12 PM, Dmitry Osipenko wrote:
 >> External email: Use caution opening links or attachments
 >>
 >>
->> 08.04.2020 00:08, Sowjanya Komatineni пишет:
->> ...
->>>>> I think you need a semaphore with resource count = 2.
->>>> we hold on to issuing capture if more than 2 buffers are queued and it
->>>> continues only after fifo has min 1 slot empty
+>> 08.04.2020 01:22, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> On 4/7/20 3:08 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 08.04.2020 00:08, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> ...
+>>>>>>> I think you need a semaphore with resource count =3D 2.
+>>>>>> we hold on to issuing capture if more than 2 buffers are queued=20
+>>>>>> and it
+>>>>>> continues only after fifo has min 1 slot empty
+>>>>> Just want to close on this part of feedback. Hope above=20
+>>>>> explanation is
+>>>>> clear regarding triggering/issuing at max 2 frame capture to VI HW=20
+>>>>> and
+>>>>> also regarding capture threads where they use=20
+>>>>> wait_event_interruptible
+>>>>> to prevent blocking waiting for buffers to be available for captures.
+>>>>>
+>>>>> So no changes related to this part are needed in v7.
+>>>> =C2=A0 From what I see in the code, you "hold on" by making kthread to=
+=20
+>>>> spin in
+>>>> a busy-loop while caps_inflight >=3D SYNCPT_FIFO_DEPTH. So some change
+>>>> should be needed to prevent this.
+>>>>
+>>>> The wait_event_interruptible seems should be okay.
+>>> We don't want to prevent that as we already have buffers available for
+>>> capture so as soon as VI HW issuing single shot is done and when min 1
+>>> slot is empty we should continue with issuing for another capture.
 >>>
->>> Just want to close on this part of feedback. Hope above explanation is
->>> clear regarding triggering/issuing at max 2 frame capture to VI HW and
->>> also regarding capture threads where they use wait_event_interruptible
->>> to prevent blocking waiting for buffers to be available for captures.
+>>> As long as buffers are available, we should continue to capture and
+>>> should not hold
 >>>
->>> So no changes related to this part are needed in v7.
->>  From what I see in the code, you "hold on" by making kthread to spin in
->> a busy-loop while caps_inflight >= SYNCPT_FIFO_DEPTH. So some change
->> should be needed to prevent this.
->>
->> The wait_event_interruptible seems should be okay.
-> 
-> We don't want to prevent that as we already have buffers available for
-> capture so as soon as VI HW issuing single shot is done and when min 1
-> slot is empty we should continue with issuing for another capture.
-> 
-> As long as buffers are available, we should continue to capture and
-> should not hold
-> 
-
-I suppose that taking a shot takes at least few milliseconds, which
-should be unacceptable to waste.
+>> I suppose that taking a shot takes at least few milliseconds, which
+>> should be unacceptable to waste.
+> As long as buffers are in queue we have to keep processing each buffer=20
+> and between buffers obviously we have to wait for previous frames to=20
+> finish and this why we have separate thread for frame finish where we=20
+> can have next buffer capture ready and issue while previous frame=20
+> memory write happens
