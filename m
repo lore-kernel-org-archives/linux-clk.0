@@ -2,88 +2,81 @@ Return-Path: <SRS0=wIso=5X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E4CC2D0EC
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 19:42:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D09C2D0EC
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 20:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F2020730
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 19:42:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="TBxmEao1"
+	by mail.kernel.org (Postfix) with ESMTP id 9820B2075E
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Apr 2020 20:34:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586291690;
+	bh=YRABWMvwvHV0PmDLsBbttXpDhy97LPhtP+IKmrC+GN4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=VEqLGL2hP+loUHCDRn7Rask1oUgZo0EGAkuo07+9Dx48C71i5N6ANFlQSYHsxfYLS
+	 tGp/hGQMLNXxqc4KlexFSjmqBGql7PXwX5eD73ooyfq8dL79TA9mpRfMxPaC4avQ39
+	 UDvU2l3/rSg1cnhtJzXAAhLzd9ex0K1YNNbd12Bw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726773AbgDGTm1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 15:42:27 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12898 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726760AbgDGTm1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 15:42:27 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e8cd73c0001>; Tue, 07 Apr 2020 12:40:44 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Apr 2020 12:42:26 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Apr 2020 12:42:26 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Apr
- 2020 19:42:26 +0000
-Received: from [10.2.171.175] (172.20.13.39) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Apr 2020
- 19:42:25 +0000
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <1585963507-12610-7-git-send-email-skomatineni@nvidia.com>
- <430efa4e-5435-7e2a-fe07-c3a0d0dc967e@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <4e076538-fe8a-7dae-e82c-663288e78b79@nvidia.com>
-Date:   Tue, 7 Apr 2020 12:42:23 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726416AbgDGUeu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 16:34:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41408 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbgDGUeu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Apr 2020 16:34:50 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC62C2074B;
+        Tue,  7 Apr 2020 20:34:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586291689;
+        bh=YRABWMvwvHV0PmDLsBbttXpDhy97LPhtP+IKmrC+GN4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=myOh01Dmx+KkdWrwz40Cn7g/n00RxRMho1HYuUNqGKXOcalbV/rv3vk/Ni5UOFIMf
+         wjSfQFrDMjiu+Kpe0IwkQFz09Dx/Ah2ANqDryLaB5RDYetyY4DoKURVSBQ5BgWy9ux
+         oXBEvtnVgLj4JdHZEFyUDi4buGHDcpmErypEZF5Q=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <430efa4e-5435-7e2a-fe07-c3a0d0dc967e@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1586288444; bh=gwStW42iTjtYuWG2APVBmVs9+lmbI/E4j67xiFEJvKc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=TBxmEao1mD+DfVVt4FCqB9Idyfsci+Oe1byYlOSXQDBEtdOTYofw2EiBYrwnCc6E1
-         9XJeTWWGLmYz9+L1DVH8ZqGsLdmIu9qqdogAcAhmo2WWx97KvWAXGtMMiym5rJ46xT
-         1AKL9M59t5o0X5tFLbC9/ECwf4R0GXB55IYHVssUbe4gXxJkfiqzy2l7TM6cjIDJtz
-         jl93iUOJWR19gzIA6tcvisKwuk/+ZUmihr42egj3+kuBg54L1/wsQf9aHDUmfLULL4
-         f3+72gcPpYH2WGfRdPKDIPxyKC1GDbALtDubUbiQyD2LGGhXJz4bZw3FOxIMSEpefa
-         SEhOSo91YOLug==
+In-Reply-To: <CAAfSe-u1VNDiY0MXGwrUqsNLBiai8zivxoPiyLnkJMZ7hcX+Eg@mail.gmail.com>
+References: <20200331104532.12698-1-chunyan.zhang@unisoc.com> <158605608663.158626.7732167785990086489@swboyd.mtv.corp.google.com> <CAAfSe-u1VNDiY0MXGwrUqsNLBiai8zivxoPiyLnkJMZ7hcX+Eg@mail.gmail.com>
+Subject: Re: [PATCH] clk: sprd: don't gate uart console clock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Tue, 07 Apr 2020 13:34:48 -0700
+Message-ID: <158629168890.88454.8918367547173437575@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Chunyan Zhang (2020-04-06 19:02:38)
+> On Sun, 5 Apr 2020 at 11:08, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Chunyan Zhang (2020-03-31 03:45:32)
+> > > Don't gate uart1_eb which provides console clock, gating that clock w=
+ould
+> > > make serial stop working if serial driver didn't enable that explicit=
+ly.
+> > >
+> > > Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> > > ---
+> >
+> > Do you have a Fixes: tag?
+>=20
+> I didn't leave a Fixed tag since that commit [1] will be merged into v5.7=
+-rc1
+>=20
+> [1] https://www.spinics.net/lists/linux-clk/msg46430.html
 
-On 4/7/20 12:39 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 04.04.2020 04:25, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
->> +static const struct dev_pm_ops tegra_vi_pm_ops =3D {
->> +     SET_RUNTIME_PM_OPS(vi_runtime_suspend, vi_runtime_resume, NULL)
->> +};
-> Aren't the suspend/resume ops needed?
-Complete driver suspend/resume will be implemented later after next=20
-series of sensor support
+Please still provide a Fixes tag. It helps track what commit is fixed
+regardless.
