@@ -2,605 +2,71 @@ Return-Path: <SRS0=5O0r=5Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 197ECC2D0F4
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 03:56:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C921C2D0EA
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 04:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD6502080C
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 03:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1621420771
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 04:30:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586318200;
-	bh=Unyf0gb7uQ2s9ZRaDRE+7kEFjvuE3W3lCvCDOO+M5fA=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=GC7dM94Gglfps6D2QYIWmAQ8gSHAdmXdbdKA6ZJieIoD9p7wNVcbwrO95B/JeAOi6
-	 Tb0zqmtu5VA+JS7owjisas0/EtE3BU0AiKzYpNb5ZinauXQrEC5ZgQIE0jy3oQdGhI
-	 CYME5BSaHMzX376mtx/4AWI44WDXcF2jndDYsiAw=
+	s=default; t=1586320240;
+	bh=3leDYa1AeE862sOerDhOdNbm1duD9dAtRdqfXgT7+v0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=gNGgNge83FTlDx4GClBwGLr/4FThjDE1DjW6Ga0cZFxhEAFpWFpJgf3n9vpdiryPh
+	 p2B6rjNNC+gCpnUttIAuaBDkde/gEa3bpvfbEtKU9O1YK7JSosu3enqIAswrxjhC2v
+	 QP1sCtAQCOPrKj5BNUyNNGy2VR+7LimFmhTQiJso=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726475AbgDHD4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 23:56:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43922 "EHLO mail.kernel.org"
+        id S1726469AbgDHEaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Apr 2020 00:30:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726467AbgDHD4k (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Apr 2020 23:56:40 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725763AbgDHEaj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Apr 2020 00:30:39 -0400
+Received: from localhost (unknown [122.181.202.227])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44AE02078C;
-        Wed,  8 Apr 2020 03:56:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B885A20747;
+        Wed,  8 Apr 2020 04:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586318198;
-        bh=Unyf0gb7uQ2s9ZRaDRE+7kEFjvuE3W3lCvCDOO+M5fA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b1/JaD8JVBCTcuWP16cx+lb4QqMG0RrgcAAT9T/TVsuirzCLS+p4XHbzd/k6jZwIq
-         N338MKgpr5bjHXe/8kr2Sp4KR2UUnWX926nE24WG2YbqlMjFJEFV0HZMu2iTvJKt8U
-         Qq/e6z/wSy2a+lDHBMhxeqd7cTWPbtgw/WzH5g+4=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        kunit-dev@googlegroups.com
-Subject: [PATCH/RFC] clk: gate: Add some kunit test suites
-Date:   Tue,  7 Apr 2020 20:56:37 -0700
-Message-Id: <20200408035637.110858-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.26.0.292.g33ef6b2f38-goog
+        s=default; t=1586320238;
+        bh=3leDYa1AeE862sOerDhOdNbm1duD9dAtRdqfXgT7+v0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gapYNRjIgpGQFa/zxW/WDLGxway4CMHUpQuePVPsAZ3tqeErsujuorqGRL+l1cOzw
+         /eRV9vp2NiEOijeVsN2PdjaW3lXCtVbYV8y6WM8+vYHSIbKT92OnyD5cQRAE5XMWe9
+         E049tsCJ0C79o5LiXOq3hIy+K1iycrURyK0pcKA4=
+Date:   Wed, 8 Apr 2020 10:00:27 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Wesley Cheng <wcheng@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] Enable SS/HS USB support on SM8150
+Message-ID: <20200408043027.GV72691@vkoul-mobl>
+References: <1586298267-4722-1-git-send-email-wcheng@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586298267-4722-1-git-send-email-wcheng@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Test various parts of the clk gate implementation with the kunit testing
-framework.
+On 07-04-20, 15:24, Wesley Cheng wrote:
+> Add required device tree nodes to enable the USB SS and HS
+> paths on the primary USB controller on SM8150.  In addition,
+> implement missing resources from the SM8150 GCC driver, which
+> includes the USB GDSC and the USB PIPE clocks.
 
-Cc: Brendan Higgins <brendanhiggins@google.com>
-Cc: <kunit-dev@googlegroups.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+lgtm:
 
-This patch is on top of this series[1] that allows the clk
-framework to be selected by Kconfig language.
+Tested-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
 
-[1] https://lore.kernel.org/r/20200405025123.154688-1-sboyd@kernel.org
-
- drivers/clk/Kconfig         |   8 +
- drivers/clk/Makefile        |   1 +
- drivers/clk/clk-gate-test.c | 481 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 490 insertions(+)
- create mode 100644 drivers/clk/clk-gate-test.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 6ea0631e3956..66193673bcdf 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -377,4 +377,12 @@ source "drivers/clk/ti/Kconfig"
- source "drivers/clk/uniphier/Kconfig"
- source "drivers/clk/zynqmp/Kconfig"
- 
-+# Kunit test cases
-+config CLK_GATE_TEST
-+	tristate "Basic gate type Kunit test"
-+	depends on KUNIT
-+	default KUNIT
-+	help
-+	  Kunit test for the basic clk gate type.
-+
- endif
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..0785092880fd 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -7,6 +7,7 @@ obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-rate.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-gate.o
-+obj-$(CONFIG_CLK_GATE_TEST)	+= clk-gate-test.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-multiplier.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-mux.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-composite.o
-diff --git a/drivers/clk/clk-gate-test.c b/drivers/clk/clk-gate-test.c
-new file mode 100644
-index 000000000000..b1d6c21e9698
---- /dev/null
-+++ b/drivers/clk/clk-gate-test.c
-@@ -0,0 +1,481 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * KUnit test for clk gate basic type
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/platform_device.h>
-+
-+#include <kunit/test.h>
-+
-+static void clk_gate_register_test_dev(struct kunit *test)
-+{
-+	struct clk_hw *ret;
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_simple("test_gate_device", -1, NULL, 0);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
-+
-+	ret = clk_hw_register_gate(&pdev->dev, "test_gate", NULL, 0, NULL,
-+				   0, 0, NULL);
-+	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_STREQ(test, "test_gate", clk_hw_get_name(ret));
-+	KUNIT_EXPECT_EQ(test, 0UL, clk_hw_get_flags(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	platform_device_put(pdev);
-+}
-+
-+static void clk_gate_register_test_parent_names(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ret = clk_hw_register_gate(NULL, "test_gate", "test_parent", 0, NULL,
-+				   0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_data(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+	struct clk_parent_data pdata = { };
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+	pdata.hw = parent;
-+
-+	ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
-+					       NULL, 0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_data_legacy(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+	struct clk_parent_data pdata = { };
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+	pdata.name = "test_parent";
-+
-+	ret = clk_hw_register_gate_parent_data(NULL, "test_gate", &pdata, 0,
-+					       NULL, 0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_parent_hw(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *ret;
-+
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    1000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ret = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0, NULL,
-+					     0, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
-+	KUNIT_EXPECT_PTR_EQ(test, parent, clk_hw_get_parent(ret));
-+
-+	clk_hw_unregister_gate(ret);
-+	clk_hw_unregister_fixed_rate(parent);
-+}
-+
-+static void clk_gate_register_test_hiword_invalid(struct kunit *test)
-+{
-+	struct clk_hw *ret;
-+
-+	ret = clk_hw_register_gate(NULL, "test_gate", NULL, 0, NULL,
-+				   20, CLK_GATE_HIWORD_MASK, NULL);
-+
-+	KUNIT_EXPECT_TRUE(test, IS_ERR(ret));
-+}
-+
-+static struct kunit_case clk_gate_register_test_cases[] = {
-+	KUNIT_CASE(clk_gate_register_test_dev),
-+	KUNIT_CASE(clk_gate_register_test_parent_names),
-+	KUNIT_CASE(clk_gate_register_test_parent_data),
-+	KUNIT_CASE(clk_gate_register_test_parent_data_legacy),
-+	KUNIT_CASE(clk_gate_register_test_parent_hw),
-+	KUNIT_CASE(clk_gate_register_test_hiword_invalid),
-+	{}
-+};
-+
-+static struct kunit_suite clk_gate_register_test_suite = {
-+	.name = "clk-gate-register-test",
-+	.test_cases = clk_gate_register_test_cases,
-+};
-+
-+struct clk_gate_test_context {
-+	void __iomem *fake_mem;
-+	struct clk_hw *hw;
-+	struct clk_hw *parent;
-+	u32 fake_reg; /* Keep at end, KASAN can detect out of bounds */
-+};
-+
-+static struct clk_gate_test_context *clk_gate_test_alloc_ctx(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx;
-+
-+	test->priv = ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ctx);
-+	ctx->fake_mem = (void __force __iomem *)&ctx->fake_reg;
-+
-+	return ctx;
-+}
-+
-+static void clk_gate_test_parent_rate(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	unsigned long prate = clk_hw_get_rate(parent);
-+	unsigned long rate = clk_hw_get_rate(hw);
-+
-+	KUNIT_EXPECT_EQ(test, prate, rate);
-+}
-+
-+static void clk_gate_test_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = BIT(5);
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = BIT(5);
-+	u32 disable_val = 0;
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_cases[] = {
-+	KUNIT_CASE(clk_gate_test_parent_rate),
-+	KUNIT_CASE(clk_gate_test_enable),
-+	KUNIT_CASE(clk_gate_test_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 5, 0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static void clk_gate_test_exit(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+
-+	clk_hw_unregister_gate(ctx->hw);
-+	clk_hw_unregister_fixed_rate(ctx->parent);
-+	kfree(ctx);
-+}
-+
-+static struct kunit_suite clk_gate_test_suite = {
-+	.name = "clk-gate-test",
-+	.init = clk_gate_test_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_cases,
-+};
-+
-+static void clk_gate_test_invert_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = 0;
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_invert_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = 0;
-+	u32 disable_val = BIT(15);
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_invert_cases[] = {
-+	KUNIT_CASE(clk_gate_test_invert_enable),
-+	KUNIT_CASE(clk_gate_test_invert_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_invert_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	ctx->fake_reg = BIT(15); /* Default to off */
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 15,
-+					    CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static struct kunit_suite clk_gate_test_invert_suite = {
-+	.name = "clk-gate-invert-test",
-+	.init = clk_gate_test_invert_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_invert_cases,
-+};
-+
-+static void clk_gate_test_hiword_enable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = BIT(9) | BIT(9 + 16);
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+
-+	KUNIT_EXPECT_EQ(test, enable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_TRUE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static void clk_gate_test_hiword_disable(struct kunit *test)
-+{
-+	struct clk_gate_test_context *ctx = test->priv;
-+	struct clk_hw *parent = ctx->parent;
-+	struct clk_hw *hw = ctx->hw;
-+	struct clk *clk = hw->clk;
-+	int ret;
-+	u32 enable_val = BIT(9) | BIT(9 + 16);
-+	u32 disable_val = BIT(9 + 16);
-+
-+	ret = clk_prepare_enable(clk);
-+	KUNIT_ASSERT_EQ(test, ret, 0);
-+	KUNIT_ASSERT_EQ(test, enable_val, ctx->fake_reg);
-+
-+	clk_disable_unprepare(clk);
-+	KUNIT_EXPECT_EQ(test, disable_val, ctx->fake_reg);
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(hw));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_enabled(parent));
-+	KUNIT_EXPECT_FALSE(test, clk_hw_is_prepared(parent));
-+}
-+
-+static struct kunit_case clk_gate_test_hiword_cases[] = {
-+	KUNIT_CASE(clk_gate_test_hiword_enable),
-+	KUNIT_CASE(clk_gate_test_hiword_disable),
-+	{}
-+};
-+
-+static int clk_gate_test_hiword_init(struct kunit *test)
-+{
-+	struct clk_hw *parent;
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	parent = clk_hw_register_fixed_rate(NULL, "test_parent", NULL, 0,
-+					    2000000);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, parent);
-+
-+	hw = clk_hw_register_gate_parent_hw(NULL, "test_gate", parent, 0,
-+					    ctx->fake_mem, 9,
-+					    CLK_GATE_HIWORD_MASK, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+
-+	ctx->hw = hw;
-+	ctx->parent = parent;
-+
-+	return 0;
-+}
-+
-+static struct kunit_suite clk_gate_test_hiword_suite = {
-+	.name = "clk-gate-hiword-test",
-+	.init = clk_gate_test_hiword_init,
-+	.exit = clk_gate_test_exit,
-+	.test_cases = clk_gate_test_hiword_cases,
-+};
-+
-+static void clk_gate_test_is_enabled(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(7);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 7,
-+				  0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_TRUE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_disabled(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(4);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 7,
-+				  0, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_FALSE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_enabled_inverted(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(31);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 2,
-+				  CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_TRUE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static void clk_gate_test_is_disabled_inverted(struct kunit *test)
-+{
-+	struct clk_hw *hw;
-+	struct clk_gate_test_context *ctx;
-+
-+	ctx = clk_gate_test_alloc_ctx(test);
-+	ctx->fake_reg = BIT(29);
-+	hw = clk_hw_register_gate(NULL, "test_gate", NULL, 0, ctx->fake_mem, 29,
-+				  CLK_GATE_SET_TO_DISABLE, NULL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, hw);
-+	KUNIT_ASSERT_FALSE(test, clk_hw_is_enabled(hw));
-+
-+	clk_hw_unregister_gate(hw);
-+	kfree(ctx);
-+}
-+
-+static struct kunit_case clk_gate_test_enabled_cases[] = {
-+	KUNIT_CASE(clk_gate_test_is_enabled),
-+	KUNIT_CASE(clk_gate_test_is_disabled),
-+	KUNIT_CASE(clk_gate_test_is_enabled_inverted),
-+	KUNIT_CASE(clk_gate_test_is_disabled_inverted),
-+	{}
-+};
-+
-+static struct kunit_suite clk_gate_test_enabled_suite = {
-+	.name = "clk-gate-is_enabled-test",
-+	.test_cases = clk_gate_test_enabled_cases,
-+};
-+
-+kunit_test_suites(
-+	&clk_gate_register_test_suite,
-+	&clk_gate_test_suite,
-+	&clk_gate_test_invert_suite,
-+	&clk_gate_test_hiword_suite,
-+	&clk_gate_test_enabled_suite
-+);
-+MODULE_LICENSE("GPL v2");
-
-base-commit: 7111951b8d4973bda27ff663f2cf18b663d15b48
-prerequisite-patch-id: e066e74d3e3848a69239083647017b9e4b2a7b87
-prerequisite-patch-id: ab1cc18da4a59b8973b4c8d85b6ea90eb6200df0
-prerequisite-patch-id: 5608c2059c4ad2d76aae62cd9897862a1f447cfb
-prerequisite-patch-id: 3a2300fc681af075232bfe62dbd1eb81290ca5a1
-prerequisite-patch-id: 6268382cce3446e3eb3cec7fec86973ab3dc9e7c
-prerequisite-patch-id: 57b540a6a65ffb9cc53bb4b9c3fd8c4f55a4ce05
-prerequisite-patch-id: 2ec56bc3f971534850ebe7253d5ae023dfc87410
-prerequisite-patch-id: 9500860f59b801c734ab22f18737ca0ceff8208c
-prerequisite-patch-id: 09a4d90ae718ab61fc9423862b1c2044ea898e3e
 -- 
-Sent by a computer, using git, on the internet
-
+~Vinod
