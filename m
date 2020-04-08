@@ -2,183 +2,132 @@ Return-Path: <SRS0=5O0r=5Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33336C2BA1B
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 16:05:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CFCCC2D0F4
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 17:45:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 117BC20730
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 16:05:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB86D20768
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 17:45:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZvHdKxmu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729684AbgDHQFY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Apr 2020 12:05:24 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:45971 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729667AbgDHQFY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 12:05:24 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue108 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MRTIx-1jgkLy459p-00NSSK; Wed, 08 Apr 2020 18:05:20 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: mmp2: fix link error without mmp2
-Date:   Wed,  8 Apr 2020 18:05:07 +0200
-Message-Id: <20200408160518.2798571-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.26.0
+        id S1728620AbgDHRpo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Apr 2020 13:45:44 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6896 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727028AbgDHRpo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 13:45:44 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e8e0dba0001>; Wed, 08 Apr 2020 10:45:30 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 08 Apr 2020 10:45:43 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 08 Apr 2020 10:45:43 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Apr
+ 2020 17:45:43 +0000
+Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Apr 2020
+ 17:45:41 +0000
+Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
+ <12a834ac-52b1-6dc0-7d3a-3e6a1fa85a2a@gmail.com>
+ <e3712e7b-b335-b35b-a94f-24eb85122dca@nvidia.com>
+ <b1726d33-0d35-9323-a747-407148d0104e@gmail.com>
+ <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
+ <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
+ <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
+ <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
+ <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
+ <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
+ <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
+ <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
+ <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
+ <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
+ <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
+ <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
+ <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
+ <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
+ <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <15d8b525-67b5-b437-f7fd-89f80cd0d9f6@nvidia.com>
+Date:   Wed, 8 Apr 2020 10:45:39 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:AuM2suQHykgHS5D/xLsz57DkmpokZxSKpa3CrAaWZr9hEAviZEX
- /1tHgL5uEfw1Kp5K4TxsivZZnogtp+GYLCzukoayaVGHZirX3YMvgTvKKt9QFt5bT7/C7Cm
- +awhXEIiQfoHopxWq42bVJwzeV1StBQr1XDKoSjwuDYX3jtVMWzyXwoVGqAL9Jfy5lhsjUT
- jOiwLE0XJYNHp3GIljNtA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:z8dGqNu2G1I=:Y5quJ1/zpfJv2YFSKiJ7Rm
- ALVHEFbOz0jyNDFt+rmKyrWKoY+6ELtxXZssG+tPFfVn+zQ4GsaQLR3Vzwz2VPvv0yhEFpGor
- 4UUpysNu0xdRvGZuylztWqAGpWLQuPQHt3EOCvuW/9CLcqkxvTk6q6rEN+E8co7fdMlrdeHyf
- q5iNTZZVJHSDI9lqGjDFYtsyGTK1nj/B0DRgbW14WTLMZnUhymXUdPQe+AhD3Glf5WCh2KtBo
- FqiUGkvQugYsLLgqY2oX02Ed+aUH06T71+j+htA0F8ELcvLieGkqvTLJWNNEkbaKrv4Dl++jk
- Qr5sWGm2XSOgUa5csEtsjbbp+Dl0dC8uXVoLz4Bz8oHpiIEQvegQAR8OxEAKDWDr+JxkUe0Js
- iFrxnxaAijUR9EnZhGzz98t980e0mRs1ZXIM7SkL5sl5fJ9inKo/eLvlOSX9yRQKUzVaFkZXm
- ToDde/uE9Zw1SqHh7sFZLNcn5oXKFJMurOQZzGdldngBGx6o8J65YHlBELRFpnnTypPOjni7y
- OOBxw9HW5z3Yfe5ge6vuqNbIU45YBnxQ4h0VJDIBduj3RH2MmAsmKlq3nrHvN+k/mWkmZzqNl
- c6TKQiTEDwcZiju74y1LAM0bdhJ/61PQcj2wI6ZvRJMNrdRgFE8+LekfdcxTlc8xyFOeaDhlo
- i+WHfRWxSm1Wd5UtbFH8Z/vNiPMK/vqYVc9RzDOWXLaIDpSv0Dcz77kiEg+gysK2WlIX/ZC2E
- 05PtCMtf0Q8QH8Nbyuz48tw3hL3sDpl7iTzukCLUElulxzhE9DZn7ZeUghcxM76QmRlS5VeO2
- PpV8BNSATSrg4UrxYOIWN/oQUhQNeq/Q0yFahKFvhSYObV1FyU=
+In-Reply-To: <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1586367930; bh=C3x4vYXHJ49cie7cETLtHeDW7HBZDN9Aik/bGZg6QYs=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ZvHdKxmuJM+G+XgaYTT347VCzFcHYhPRZYubc1sEmcwwkzb/6vxZLBQLs1qf0saEl
+         6g1DkgpIVIiIRIlPleTIEdK2W8I2QMcGy2gFG2lKwPYZgiRLIxi0EmbgIlQukDbNv9
+         pigO87uX7/ZwSLy8dG3gyc3pT4LPDU58fBAxEyr2dZVZzsVGZ4Ykcm7RGH7+mfYUqc
+         yTXwxcbAqAQbajJzvlygoSnbR7hCbHR8gTEFeLMRPrm9Q0QX9eRe9o6snDdVVBuPKh
+         +KG+dJrXb8paWXblRpjIQ4R72jZRDPT4WGHIk4zE78b2p0K1mSQdjW/2jUXCO/KQql
+         3om9KO0W/JBtg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The newly added function is only built into the kernel if mmp2
-is enabled, causing a link error otherwise.
 
-arm-linux-gnueabi-ld: drivers/clk/mmp/clk.o: in function `mmp_register_pll_clks':
-clk.c:(.text+0x6dc): undefined reference to `mmp_clk_register_pll'
+On 4/8/20 7:21 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 08.04.2020 03:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>>>>>> I suppose that taking a shot takes at least few milliseconds, which
+>>>>>> should be unacceptable to waste.
+>>>>> As long as buffers are in queue we have to keep processing each
+>>>>> buffer and between buffers obviously we have to wait for previous
+>>>>> frames to finish and this why we have separate thread for frame
+>>>>> finish where we can have next buffer capture ready and issue while
+>>>>> previous frame memory write happens
+>>> Also we specified numbers buffers as 3 to vb2 queue. So this is rare
+>>> case but to prevent issuing more than 2 at a time as VI HW is only
+>>> double buffered and syncpt fifo max depth is 2 added this to be safer.
+>> To be more clear, when more buffers are enqueued from userspace always
+>> capture list will be full and thread will be busy in capture till either
+>> error or stop stream request happens.
+>>
+> If kthreads take more than 1% of CPU time during capture (video) with
+> more than 2 buffers in queue, then it's not good and I think you should
+> do something about it. If kthreads stay at ~0%, then it should be okay
+> as-is.
 
-Move it to a different file to get it to link.
+VI outstanding requests max can only be 2=C2=A0 as syncpt fifo depth is 2=
+=C2=A0=20
+and waiting to issue next capture when already 2 captures are inflight=20
+happens only during beginning of streaming where buffers allocated go=20
+thru capture for first time after queuing.
 
-Fixes: 5d34d0b32d6c ("clk: mmp2: Add support for PLL clock sources")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/mmp/clk-pll.c | 33 ++++++++++++++++++++++++++++++++-
- drivers/clk/mmp/clk.c     | 31 -------------------------------
- drivers/clk/mmp/clk.h     |  7 -------
- 3 files changed, 32 insertions(+), 39 deletions(-)
+same buffers are returned to userspace after capture and same allocated=20
+buffers will be queued back for subsequent captures.
 
-diff --git a/drivers/clk/mmp/clk-pll.c b/drivers/clk/mmp/clk-pll.c
-index 7077be293871..962014cfdc44 100644
---- a/drivers/clk/mmp/clk-pll.c
-+++ b/drivers/clk/mmp/clk-pll.c
-@@ -97,7 +97,7 @@ static const struct clk_ops mmp_clk_pll_ops = {
- 	.recalc_rate = mmp_clk_pll_recalc_rate,
- };
- 
--struct clk *mmp_clk_register_pll(char *name,
-+static struct clk *mmp_clk_register_pll(char *name,
- 			unsigned long default_rate,
- 			void __iomem *enable_reg, u32 enable,
- 			void __iomem *reg, u8 shift,
-@@ -137,3 +137,34 @@ struct clk *mmp_clk_register_pll(char *name,
- 
- 	return clk;
- }
-+
-+void mmp_register_pll_clks(struct mmp_clk_unit *unit,
-+			struct mmp_param_pll_clk *clks,
-+			void __iomem *base, int size)
-+{
-+	struct clk *clk;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		void __iomem *reg = NULL;
-+
-+		if (clks[i].offset)
-+			reg = base + clks[i].offset;
-+
-+		clk = mmp_clk_register_pll(clks[i].name,
-+					clks[i].default_rate,
-+					base + clks[i].enable_offset,
-+					clks[i].enable,
-+					reg, clks[i].shift,
-+					clks[i].input_rate,
-+					base + clks[i].postdiv_offset,
-+					clks[i].postdiv_shift);
-+		if (IS_ERR(clk)) {
-+			pr_err("%s: failed to register clock %s\n",
-+			       __func__, clks[i].name);
-+			continue;
-+		}
-+		if (clks[i].id)
-+			unit->clk_table[clks[i].id] = clk;
-+	}
-+}
-diff --git a/drivers/clk/mmp/clk.c b/drivers/clk/mmp/clk.c
-index 317123641d1e..ca7d37e2c7be 100644
---- a/drivers/clk/mmp/clk.c
-+++ b/drivers/clk/mmp/clk.c
-@@ -176,37 +176,6 @@ void mmp_register_div_clks(struct mmp_clk_unit *unit,
- 	}
- }
- 
--void mmp_register_pll_clks(struct mmp_clk_unit *unit,
--			struct mmp_param_pll_clk *clks,
--			void __iomem *base, int size)
--{
--	struct clk *clk;
--	int i;
--
--	for (i = 0; i < size; i++) {
--		void __iomem *reg = NULL;
--
--		if (clks[i].offset)
--			reg = base + clks[i].offset;
--
--		clk = mmp_clk_register_pll(clks[i].name,
--					clks[i].default_rate,
--					base + clks[i].enable_offset,
--					clks[i].enable,
--					reg, clks[i].shift,
--					clks[i].input_rate,
--					base + clks[i].postdiv_offset,
--					clks[i].postdiv_shift);
--		if (IS_ERR(clk)) {
--			pr_err("%s: failed to register clock %s\n",
--			       __func__, clks[i].name);
--			continue;
--		}
--		if (clks[i].id)
--			unit->clk_table[clks[i].id] = clk;
--	}
--}
--
- void mmp_clk_add(struct mmp_clk_unit *unit, unsigned int id,
- 			struct clk *clk)
- {
-diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
-index 971b4d6d992f..20dc1e5dd756 100644
---- a/drivers/clk/mmp/clk.h
-+++ b/drivers/clk/mmp/clk.h
-@@ -238,13 +238,6 @@ void mmp_register_pll_clks(struct mmp_clk_unit *unit,
- 			struct mmp_param_pll_clk *clks,
- 			void __iomem *base, int size);
- 
--extern struct clk *mmp_clk_register_pll(char *name,
--			unsigned long default_rate,
--			void __iomem *enable_reg, u32 enable,
--			void __iomem *reg, u8 shift,
--			unsigned long input_rate,
--			void __iomem *postdiv_reg, u8 postdiv_shift);
--
- #define DEFINE_MIX_REG_INFO(w_d, s_d, w_m, s_m, fc)	\
- {							\
- 	.width_div = (w_d),				\
--- 
-2.26.0
+So this case of holding to issue single shot when already single shot is=20
+issue for 2 frames simultaneous happens only during beginning of start=20
+stream and also we set num_buffers to allocate for queue as 3 although 2=20
+is good enough where we will not hit this case even during streaming=20
+start with 2 buffers
 
