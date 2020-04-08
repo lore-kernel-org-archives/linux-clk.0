@@ -8,53 +8,53 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33981C2D0EC
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 02:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 408BEC2D0EC
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 02:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBEA22074F
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 02:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC892074F
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 02:02:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTRNh18A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9N8Wf/L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726504AbgDHCAL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Apr 2020 22:00:11 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46114 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726523AbgDHCAL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 22:00:11 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k191so2600633pgc.13;
-        Tue, 07 Apr 2020 19:00:09 -0700 (PDT)
+        id S1726477AbgDHCCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Apr 2020 22:02:42 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35757 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726436AbgDHCCm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Apr 2020 22:02:42 -0400
+Received: by mail-pf1-f195.google.com with SMTP id a13so1691929pfa.2;
+        Tue, 07 Apr 2020 19:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
         bh=43YEEm544JLvl88YSTAStWDg2Ul956CWKc/PiTEpGVI=;
-        b=TTRNh18APZ7kwJsD6yO1dJJ4bzXp2l0P2/sY2u+gdWCtl9q8EqZ0ljb+tguI3oC7Sv
-         zIDtuY4TQSaSrIrIl7Kpjewx2iFRXNOtDs9VsmDRjvpfut+ItC+c0hberuM2a4596tNJ
-         FgNIJ7xDhnwj6WeITB3sw7JTL8opIsEAPlzEwqS7XD6wekMgM/3+4TqF51OSVfWhiHk8
-         QDeDbrKJ/S7nx7rVu0+6lwX3PCVv18tDQoUh0Dua8FOjJTHxLE1zkyTRs+GbstBitZGu
-         NhTZADSqfgvwdyrNoLvVt8EPbW0gbzOfWyAL9EBBZGyHXpNIAbWtTQ2T6d7SrmXMqVV+
-         ipzw==
+        b=i9N8Wf/LJH+2amaHGUiKYbQG0OzdWkX+FHFhPwtQbnDCAGscXjkCIUSZ/bvLwLZUM7
+         Y09QKB2U7xK+46L6iNOflb1NnRHy+TLKU6U1EWKckDow9FpWmQLr9nqlNQtNwr2WaDpV
+         DbD2KFqMUc0MY2NJk2GSmWtiNFrXNXCT0nJmKQsrbkdG1weGQ42zj2Tbw+m5jHwI7rfE
+         5Gsc3CzqOLAYuaxMySb5zPOQiwEXskkJ18mv6mtlgQztdpOgpZhLUDweerlIAf99sdh6
+         cIQV/mjzBMe7ikw9bVlfZ+I94AkRw/NVJ0FjaiwBEIgUZ15dzT5FisHDN9wa+dbFrSWT
+         CHnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
         bh=43YEEm544JLvl88YSTAStWDg2Ul956CWKc/PiTEpGVI=;
-        b=sIkSnCa7rNWjIPL+RvkjrBHHH+pH7Y5dFEdumIPBsTqMyGZFLBjsU/Uif5KriO6dih
-         s/55/UqH0WSB3BSTytfR6P/SxZKyPBqptIuG0TAGBEsXIqlMYxi29CVBhyOu5fYsXmuP
-         cp6k9ubiyu3JQeew3kt1RT+bRaKlqKjaMY6EU2QErUfXhjS+llv+cYbwmXeeMUxQSab8
-         lZVAB1AYi33DSiLBtgvSrQ/S4hmvhf9BnTxK3wgDscVqnAXSmnLjEQ/SWwPxL3Z896CH
-         XdIruqXH+jlawtzpaN1gZ0Rovp9Eob8Q79z/gICO0ysTaQuRzfa6/gT+A7sh2JNJnqyj
-         QyiQ==
-X-Gm-Message-State: AGi0PuZUJxMECkg4bchV+o0YLOidyN2SaDOSOR2bA9y/s6F6IGKg1cRC
-        b/n4PAtUr95r/m+cGO/9ATI=
-X-Google-Smtp-Source: APiQypLCeXhvzEj+hIJCgRGaz/Q1qEPnTyoQ7uiHBwZSbiOtF7MkvcBFXsAi/VunoA3EY0c+PsxK5w==
-X-Received: by 2002:a62:8247:: with SMTP id w68mr5455549pfd.146.1586311208938;
-        Tue, 07 Apr 2020 19:00:08 -0700 (PDT)
+        b=PN26A1vvLhDUT8ZkxjJ3DWIO3Mq0IJC80G3+RPg+N2aMR8C10cn81g60xX10k4eypD
+         tfciPq6hL2cH2z7S+U9jdhIEAEadGYnUrujDsdgdrzi3JuyFG+S9CgWD6ZKyX3SQLPUy
+         6PklqlMDgcNoPpuu/rGhR0bSaa4QQIkDCCBcNZYdZoS0ZbvAio8i0zzVbXX+Uufijay1
+         8yZOxXbpz+6QgaeKxplpF3IlX9bvFTgK8L8vRlgujk5jPrbU/f4epMKJT2nsp3rQ8Ird
+         j8LgEDKqzeWK7PljC3/FIHd0x8TWQ1SO/za37+ND4ItVbwIUWGr3rTnyOyI6S5OBFU35
+         VgJg==
+X-Gm-Message-State: AGi0PuYq1wDPuA8ykH0r/JTFUed80LKiO+i0BzWmiRfF8yFijHlGot66
+        y83CYj24e0pMd077ngA7gzQ=
+X-Google-Smtp-Source: APiQypIcZc9Lpo17buZl6AcMBw+5coHXSfyBhG5ebLrCzeKCH7p0zTmAUWlhbLB6thuzxcU2Fjt6Tw==
+X-Received: by 2002:a63:cc03:: with SMTP id x3mr4933088pgf.28.1586311361541;
+        Tue, 07 Apr 2020 19:02:41 -0700 (PDT)
 Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id g4sm15248070pfb.169.2020.04.07.19.00.05
+        by smtp.gmail.com with ESMTPSA id r14sm3007912pjj.48.2020.04.07.19.02.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Apr 2020 19:00:08 -0700 (PDT)
+        Tue, 07 Apr 2020 19:02:40 -0700 (PDT)
 From:   Chunyan Zhang <zhang.lyra@gmail.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
@@ -64,11 +64,11 @@ Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Chunyan Zhang <zhang.lyra@gmail.com>,
         Chunyan Zhang <chunyan.zhang@unisoc.com>
 Subject: [PATCH] clk: sprd: don't gate uart console clock
-Date:   Wed,  8 Apr 2020 10:00:01 +0800
-Message-Id: <20200408020001.31631-1-zhang.lyra@gmail.com>
+Date:   Wed,  8 Apr 2020 10:02:34 +0800
+Message-Id: <20200408020234.31764-1-zhang.lyra@gmail.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200330021640.14133-1-zhang.lyra@gmail.com>
-References: <20200330021640.14133-1-zhang.lyra@gmail.com>
+In-Reply-To: <20200331104532.12698-1-chunyan.zhang@unisoc.com>
+References: <20200331104532.12698-1-chunyan.zhang@unisoc.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
