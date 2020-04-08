@@ -2,119 +2,93 @@ Return-Path: <SRS0=5O0r=5Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C124C2D0EA
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 14:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD80C2D0EA
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 15:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5240420BED
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 14:21:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOgb6KT/"
+	by mail.kernel.org (Postfix) with ESMTP id C83F7208E4
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 15:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728610AbgDHOVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Apr 2020 10:21:47 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:44884 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727486AbgDHOVr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 10:21:47 -0400
-Received: by mail-lf1-f67.google.com with SMTP id 131so5226841lfh.11;
-        Wed, 08 Apr 2020 07:21:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jf0MyvNrfZeSllBWGHedtbc9gbfyY6waAa4WK3aei6c=;
-        b=BOgb6KT/XVKYSez/v8+1A9WWPBbubsoob5g6qXsuZVeNs532Z9I6fM8sF6fB8xghkY
-         qP+dEBTK3mVa/tcTlHZM3L5qk2jePUvTQe1EPBVKBd33p1Xhlj+y6CbsghxHEgOzv94M
-         ZbYM+/4LONvDQQCWBTTnaHppKB2T4SUourtCjXjhuDoaaWfkOlIwK1zkdJGHcvQl6w9h
-         Rspvj2ZULbLC2F7ZLyhVDwX0sfTOrnJp23EJi2YOYjm80+kmfuPFnz/CUVaRvR+Xc7gB
-         I+96QbxW8VNPc3bqnM6bQlwDWYsGuGiW8f+Wp3F7wyZ6Jv/bkjTyplevyjSjtwaJV+I9
-         nh+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jf0MyvNrfZeSllBWGHedtbc9gbfyY6waAa4WK3aei6c=;
-        b=WTayKLloEeaC3ujWOb43MQ5a3oojmf4c9rNljAT6aLJm+mtjwVlXoTu0L/t8OKnra+
-         P6ERGX2U7F7X8kOnqGiKrsTSlPx64tao/Zj1/bqpxsCKXh5AqJIBFlQ58xwf232kYaVJ
-         JKwSfp9M6uQ5qATcdyD0P0irk0xPeazDZ1YX9czzzhr6wQHJyg+b9gpft2+u6Qu+xa2z
-         twvWljQDLapS7I7a9G4PBJRd821LjNKWX0u5aQEcGxSnsmHGlLSwFqDIlvAH5PLBUfLi
-         BlOgI3xTUstb6rB+34E4NKzx2Jm1kEHShRMHjduP0MFtZkeUoQasbJKQ1pFaTAdaSaSN
-         0y3Q==
-X-Gm-Message-State: AGi0Pub+E6AL4WNq+9zipRmww28Qv2974nn9LoSa7anUUC8KxzZDZ2Wa
-        yEyD2/Ew/iUlF2mA4Exq9cdXSBXg
-X-Google-Smtp-Source: APiQypI0mxuc5luIqiw00spdsT9+ePChmhF5+4Scec0luiKkg51AuPK0pfMQqpfnOGXrQXb29jk1/A==
-X-Received: by 2002:ac2:58d7:: with SMTP id u23mr4817315lfo.182.1586355701563;
-        Wed, 08 Apr 2020 07:21:41 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id v9sm13821994ljv.82.2020.04.08.07.21.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 08 Apr 2020 07:21:40 -0700 (PDT)
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <08cd31d5-e8b9-4d3a-fb0e-0e4462947d96@nvidia.com>
- <12a834ac-52b1-6dc0-7d3a-3e6a1fa85a2a@gmail.com>
- <e3712e7b-b335-b35b-a94f-24eb85122dca@nvidia.com>
- <b1726d33-0d35-9323-a747-407148d0104e@gmail.com>
- <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
- <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
- <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
- <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
- <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
- <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
- <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
- <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
- <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
- <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
- <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
- <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
- <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
- <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
-Date:   Wed, 8 Apr 2020 17:21:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1729821AbgDHPyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Apr 2020 11:54:08 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:49277 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729566AbgDHPyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 11:54:07 -0400
+Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
+ (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 1MXYEr-1jns7o1mmd-00YvPf; Wed, 08 Apr 2020 17:54:03 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: asm9260: fix __clk_hw_register_fixed_rate_with_accuracy typo
+Date:   Wed,  8 Apr 2020 17:53:43 +0200
+Message-Id: <20200408155402.2138446-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-In-Reply-To: <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:TilCS4/VbuvG1KlVdP8CC9XcCXl56DTAeZrXFyWtCRJQJbt3WQY
+ vL1y7YQYEAAEDItmxZwDm1hXg0BmmuqZRGqZ4m8wZ5SK0YYxn9p/oQc8ChpBQEsm0NTEpht
+ UGK5R7q3GcdWN6iNhlwUrBMzGBCYmY34XVELclaI0VWqLnD10cpoxJvsIhIHVTXl7VVZSJC
+ EvMK3h9sJ8jqoLMGHsRmA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:oBHlDLZYRwo=:dNKCojhrR5uxAPhnQyNh0S
+ 5Vet3C2JOoi9r5zsd+vx8DicDLfqbkS1NUR0I7NMIWz6yagR1dWAbOZVJ6Lg8koGbQCHc34EU
+ VcehZAHy1RucDAPRs+i7KVUtiPME6o2w6sgasZWA7mMznt3/gEROYbguGHMXVE7yVspnEjbX1
+ UZc1kexz1lYuN0dwDEulAfq/H2Ceknc8XW7aGeRkX7WmTTn/L/znhNA4Gpr/Jf9jgWODLUM1v
+ 0ew9uvvy2WV5WAhADSd7GMPdZYEUByx9yem32RKeYp3A9M4hFuuQ/rKhJXhe7Ch1/MGSwqGcb
+ ea2hAKsEjLG3NnkYrUqUqtmURl9DCxvPhS5lpVnPP/8o3FhagjSgEi/2LCTignL+fOEo8NVZw
+ UqH7TJPHesiMO4a060dqTatQp0c2OFEt5c0labJqWKXqdUxj4UUt7h//e+o1zYnZLXhBw9OE1
+ 8A02Vh3KHqP5qKFDJFsIJ0vFGAO5Mwt6J3IT57lBgbAbScBAAHZCghgl4/ipi6iPEYxN/XRXj
+ qsDteNiDDDMdF0RPtDiJgOdDOvmSCKk/mHvvHTnUZK9QXr2K1JZtXZVw0QVV8suYswqRhrfX+
+ 94ZB25cbszWZ8VkS1hB28bm5O0wkpfgBZDCvGR6CkZ6S7NiNUDFD8IL/qKtD5klpew5oeo4/T
+ z83euCQOUov2rUyYpzmAxUxWnSKTJqMYsLFFvy+Uie9pdFzXZBf0szyx8JZIb70Q0+srnv8EZ
+ pD+Ii+lOtvDIG5EZKg8jKGONIdQzvEtRt/qzGYEdLl+MBlltTIHqXPWgRgpIBOzQwinUL/FxR
+ wYKFNaBLxR33rI5/X0w04H+zaYg78DiXMjqhZGkdPvlEOdo6Go=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-08.04.2020 03:00, Sowjanya Komatineni пишет:
-...
->>>>> I suppose that taking a shot takes at least few milliseconds, which
->>>>> should be unacceptable to waste.
->>>> As long as buffers are in queue we have to keep processing each
->>>> buffer and between buffers obviously we have to wait for previous
->>>> frames to finish and this why we have separate thread for frame
->>>> finish where we can have next buffer capture ready and issue while
->>>> previous frame memory write happens
->> Also we specified numbers buffers as 3 to vb2 queue. So this is rare
->> case but to prevent issuing more than 2 at a time as VI HW is only
->> double buffered and syncpt fifo max depth is 2 added this to be safer.
-> 
-> To be more clear, when more buffers are enqueued from userspace always
-> capture list will be full and thread will be busy in capture till either
-> error or stop stream request happens.
-> 
+The __clk_hw_register_fixed_rate_with_accuracy() function (with two '_')
+does not exist, and apparently never did:
 
-If kthreads take more than 1% of CPU time during capture (video) with
-more than 2 buffers in queue, then it's not good and I think you should
-do something about it. If kthreads stay at ~0%, then it should be okay
-as-is.
+drivers/clk/clk-asm9260.c: In function 'asm9260_acc_init':
+drivers/clk/clk-asm9260.c:279:7: error: implicit declaration of function '__clk_hw_register_fixed_rate_with_accuracy'; did you mean 'clk_hw_register_fixed_rate_with_accuracy'? [-Werror=implicit-function-declaration]
+  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      |       clk_hw_register_fixed_rate_with_accuracy
+drivers/clk/clk-asm9260.c:279:5: error: assignment to 'struct clk_hw *' from 'int' makes pointer from integer without a cast [-Werror=int-conversion]
+  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
+      |     ^
+
+From what I can tell, __clk_hw_register_fixed_rate() is the correct
+API here, so use that instead.
+
+Fixes: 728e3096741a ("clk: asm9260: Use parent accuracy in fixed rate clk")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/clk-asm9260.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
+index 536b59aabd2c..bacebd457e6f 100644
+--- a/drivers/clk/clk-asm9260.c
++++ b/drivers/clk/clk-asm9260.c
+@@ -276,7 +276,7 @@ static void __init asm9260_acc_init(struct device_node *np)
+ 
+ 	/* TODO: Convert to DT parent scheme */
+ 	ref_clk = of_clk_get_parent_name(np, 0);
+-	hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
++	hw = __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
+ 			ref_clk, NULL, NULL, 0, rate, 0,
+ 			CLK_FIXED_RATE_PARENT_ACCURACY);
+ 
+-- 
+2.26.0
+
