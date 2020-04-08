@@ -6,89 +6,119 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD80C2D0EA
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 15:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31556C2D0EA
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 16:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C83F7208E4
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 15:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 130142082F
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 16:01:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729821AbgDHPyI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Apr 2020 11:54:08 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:49277 "EHLO
+        id S1729897AbgDHQBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Apr 2020 12:01:22 -0400
+Received: from mout.kundenserver.de ([217.72.192.73]:39259 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729566AbgDHPyH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 11:54:07 -0400
+        with ESMTP id S1729808AbgDHQBW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 12:01:22 -0400
 Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MXYEr-1jns7o1mmd-00YvPf; Wed, 08 Apr 2020 17:54:03 +0200
+ 1MnqbU-1iyNtW0WDK-00pLyR; Wed, 08 Apr 2020 18:00:52 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: asm9260: fix __clk_hw_register_fixed_rate_with_accuracy typo
-Date:   Wed,  8 Apr 2020 17:53:43 +0200
-Message-Id: <20200408155402.2138446-1-arnd@arndb.de>
+To:     catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, chunyan.zhang@unisoc.com
+Cc:     gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] [RFC] clk: sprd: fix compile-testing
+Date:   Wed,  8 Apr 2020 18:00:44 +0200
+Message-Id: <20200408160044.2550437-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:TilCS4/VbuvG1KlVdP8CC9XcCXl56DTAeZrXFyWtCRJQJbt3WQY
- vL1y7YQYEAAEDItmxZwDm1hXg0BmmuqZRGqZ4m8wZ5SK0YYxn9p/oQc8ChpBQEsm0NTEpht
- UGK5R7q3GcdWN6iNhlwUrBMzGBCYmY34XVELclaI0VWqLnD10cpoxJvsIhIHVTXl7VVZSJC
- EvMK3h9sJ8jqoLMGHsRmA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:oBHlDLZYRwo=:dNKCojhrR5uxAPhnQyNh0S
- 5Vet3C2JOoi9r5zsd+vx8DicDLfqbkS1NUR0I7NMIWz6yagR1dWAbOZVJ6Lg8koGbQCHc34EU
- VcehZAHy1RucDAPRs+i7KVUtiPME6o2w6sgasZWA7mMznt3/gEROYbguGHMXVE7yVspnEjbX1
- UZc1kexz1lYuN0dwDEulAfq/H2Ceknc8XW7aGeRkX7WmTTn/L/znhNA4Gpr/Jf9jgWODLUM1v
- 0ew9uvvy2WV5WAhADSd7GMPdZYEUByx9yem32RKeYp3A9M4hFuuQ/rKhJXhe7Ch1/MGSwqGcb
- ea2hAKsEjLG3NnkYrUqUqtmURl9DCxvPhS5lpVnPP/8o3FhagjSgEi/2LCTignL+fOEo8NVZw
- UqH7TJPHesiMO4a060dqTatQp0c2OFEt5c0labJqWKXqdUxj4UUt7h//e+o1zYnZLXhBw9OE1
- 8A02Vh3KHqP5qKFDJFsIJ0vFGAO5Mwt6J3IT57lBgbAbScBAAHZCghgl4/ipi6iPEYxN/XRXj
- qsDteNiDDDMdF0RPtDiJgOdDOvmSCKk/mHvvHTnUZK9QXr2K1JZtXZVw0QVV8suYswqRhrfX+
- 94ZB25cbszWZ8VkS1hB28bm5O0wkpfgBZDCvGR6CkZ6S7NiNUDFD8IL/qKtD5klpew5oeo4/T
- z83euCQOUov2rUyYpzmAxUxWnSKTJqMYsLFFvy+Uie9pdFzXZBf0szyx8JZIb70Q0+srnv8EZ
- pD+Ii+lOtvDIG5EZKg8jKGONIdQzvEtRt/qzGYEdLl+MBlltTIHqXPWgRgpIBOzQwinUL/FxR
- wYKFNaBLxR33rI5/X0w04H+zaYg78DiXMjqhZGkdPvlEOdo6Go=
+X-Provags-ID: V03:K1:J6BJpZg6tGsBXqhtv/w/5/oW9Rnzup92xQ0SjE2vxeldApZgQj9
+ QjIHkGAG9aQIQmH9wpdSxYOE8QHIrmRca7klY5BYRWNRjv+M/rvK7ySHuCj78C/tBmbdtvC
+ FS3jMKblE2ms/X1TDRHMo8xVheCVUPLzBh57wOq6D1AkTFaAVPQ9YI/CwhmuU7H1O+zlmTr
+ FkuoYSJHEbhujCgRBWFNg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:a5QNQCaQT/k=:DSU4RMPmXjdaZVRs5KjWyf
+ 1YJwTvHrV2NqGLbVw5DcrdAOeBpKGdP6kedqM9Wcaeq5NLG7tK6HzfyMRmn4e2DO4uiAdYU3R
+ HT1hK+gqGMHIpgm60ILZCLXhXQhKTrq4SIy/C4C0UcUx28SjA+UJ3oQDNb/0Rzn3LRCj1w4Lv
+ 5h/cj50kjyCi2pMrd1Ll3x/1kXvKVaL2gi2/35dLlUQUF4bK7N9Sn+Y17zq2NzFvaXlP6X0aU
+ PWieHwNI70NWitkFoOHjnjMq7UK70LlkWfFaIJJwg8fQu4FBTn2WJPl3RAGGB9v7NzHy9Fv6a
+ AhZMFMbARBMtfvxO+k6A9Rb+x+uFTuQSgvkWXUV5zjpIPLQXRQhGYskWtFbZCg+jc4xGJ1wld
+ ukvUrn4CNR25sIC48g19/lvgF0bnnYKQdHwofRfYybe41F5X+pERcRR2bXz6BK7Aw2OBt8nhB
+ qQOpQm3lwdYvfJWe3+9r0MiUlTu9uIyTO2i20UF611jY8g1FyH0q/fwjSsXDpowRZF86/1gsG
+ mFiR8/iocQl4wH1y/PAocYHiVwTFSGx4x5aF/HnQUxAPzqB5JRppW/AsAKdofh2xrN5iN0Zwu
+ e3zo0yvYEuaSowf22S9SnFRNPotXKcFz7R/5Wx/0HrnYK5Ly805H7MkqnrRRbZ5K59JjTA6k/
+ WlBveSvQ8dpe0mEs7CFRr4CfXpEDzssdl7afxlBI3krwXX5ieaCeap7im2BZH7vYWz4yJeqb+
+ VLIklPNdmo1cVMamOWG+bWw+Rf6UxN6N9VGIFhpUgfZwF2k6RnQcvgquIRqeKfVlxfJTZGkVX
+ on5K/cARIyGjlSCw3WWM2LPwOt1GjCCPYEwSK9Y1jC3JaNZFoM=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The __clk_hw_register_fixed_rate_with_accuracy() function (with two '_')
-does not exist, and apparently never did:
+I got a build failure with CONFIG_ARCH_SPRD=m when the
+main portion of the clock driver failed to get linked into
+the kernel:
 
-drivers/clk/clk-asm9260.c: In function 'asm9260_acc_init':
-drivers/clk/clk-asm9260.c:279:7: error: implicit declaration of function '__clk_hw_register_fixed_rate_with_accuracy'; did you mean 'clk_hw_register_fixed_rate_with_accuracy'? [-Werror=implicit-function-declaration]
-  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |       clk_hw_register_fixed_rate_with_accuracy
-drivers/clk/clk-asm9260.c:279:5: error: assignment to 'struct clk_hw *' from 'int' makes pointer from integer without a cast [-Werror=int-conversion]
-  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-      |     ^
+ERROR: modpost: "sprd_pll_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_comp_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_clk_probe" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_clk_regmap_init" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
 
-From what I can tell, __clk_hw_register_fixed_rate() is the correct
-API here, so use that instead.
+This is a combination of two trivial bugs:
 
-Fixes: 728e3096741a ("clk: asm9260: Use parent accuracy in fixed rate clk")
+- A platform should not be 'tristate', it should be a 'bool' symbol
+  like the other platforms, if only for consistency, and to avoid
+  surprises like this one.
+
+- The clk Makefile does not traverse into the sprd subdirectory
+  if the platform is disabled but the drivers are enabled for
+  compile-testing.
+
+Fixing either of the two would be sufficient to address the link failure,
+but for correctness, both need to be changed.
+
+Fixes: 2b1b799d7630 ("arm64: change ARCH_SPRD Kconfig to tristate")
+Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/clk/clk-asm9260.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/Kconfig.platforms | 2 +-
+ drivers/clk/Makefile         | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-index 536b59aabd2c..bacebd457e6f 100644
---- a/drivers/clk/clk-asm9260.c
-+++ b/drivers/clk/clk-asm9260.c
-@@ -276,7 +276,7 @@ static void __init asm9260_acc_init(struct device_node *np)
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 55d70cfe0f9e..3c7e310fd8bf 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -248,7 +248,7 @@ config ARCH_TEGRA
+ 	  This enables support for the NVIDIA Tegra SoC family.
  
- 	/* TODO: Convert to DT parent scheme */
- 	ref_clk = of_clk_get_parent_name(np, 0);
--	hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-+	hw = __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
- 			ref_clk, NULL, NULL, 0, rate, 0,
- 			CLK_FIXED_RATE_PARENT_ACCURACY);
+ config ARCH_SPRD
+-	tristate "Spreadtrum SoC platform"
++	bool "Spreadtrum SoC platform"
+ 	help
+ 	  Support for Spreadtrum ARM based SoCs
  
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f4169cc2fd31..60e811d3f226 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -105,7 +105,7 @@ obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
+ obj-$(CONFIG_ARCH_SIRF)			+= sirf/
+ obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
+ obj-$(CONFIG_PLAT_SPEAR)		+= spear/
+-obj-$(CONFIG_ARCH_SPRD)			+= sprd/
++obj-y					+= sprd/
+ obj-$(CONFIG_ARCH_STI)			+= st/
+ obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
+ obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
 -- 
 2.26.0
 
