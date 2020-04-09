@@ -2,164 +2,157 @@ Return-Path: <SRS0=MLis=5Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7DD4C2BB54
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 03:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4DDC2D0EA
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFDE620768
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 03:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083372075E
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="V/lySZED"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6Ydmy5J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbgDIDir (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Apr 2020 23:38:47 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14454 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbgDIDir (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 23:38:47 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e8e98910000>; Wed, 08 Apr 2020 20:37:53 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 08 Apr 2020 20:38:46 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 08 Apr 2020 20:38:46 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Apr
- 2020 03:38:46 +0000
-Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Apr 2020
- 03:38:45 +0000
-Subject: Re: [RFC PATCH v6 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1585963507-12610-1-git-send-email-skomatineni@nvidia.com>
- <eb80178f-30f4-8f46-51cd-ea3f4914b81d@nvidia.com>
- <dd16c560-ba8f-e7df-5dc4-5227e0043196@nvidia.com>
- <fea4f0a1-4a20-34d4-9eda-e4a599eeeffc@nvidia.com>
- <760d071e-0cbc-b3eb-9231-fb9f9ecb44a6@nvidia.com>
- <9e317f65-8a02-3b15-cfec-8e0d8374130e@gmail.com>
- <97b35910-4c93-123a-43a0-eb14476ed0f3@nvidia.com>
- <84ad4e2d-6ac1-e1f4-1c55-5edaae850631@nvidia.com>
- <15a879b3-8fb9-6821-3cdc-104ba583ac12@gmail.com>
- <0c425505-347f-7418-af7e-d121fe0d06dc@nvidia.com>
- <db7c7051-5674-cdb9-0aa4-ee94125b3024@gmail.com>
- <1a31cd60-739f-0660-1c45-31487d2f2128@nvidia.com>
- <603084a5-249a-4fe2-3646-e9335ef9ab43@nvidia.com>
- <7895b9c6-f27d-8939-73d7-67d785e1a8b7@nvidia.com>
- <ea60b489-990e-4b15-e215-d93381a1371e@nvidia.com>
- <b2405c2a-73c0-ad69-ccea-0388caf8045c@gmail.com>
- <15d8b525-67b5-b437-f7fd-89f80cd0d9f6@nvidia.com>
- <a638bb8e-bb50-7aa5-05a0-8de1c6207ba7@nvidia.com>
- <ced73258-6f4b-e970-4ca5-ecdf1808a4c3@nvidia.com>
-Message-ID: <ad646fde-2eed-eeeb-4d85-ec36d6613eb1@nvidia.com>
-Date:   Wed, 8 Apr 2020 20:38:43 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725825AbgDIGJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 02:09:29 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34495 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725785AbgDIGJ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 02:09:28 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 14so1968854qtp.1;
+        Wed, 08 Apr 2020 23:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MxEhGz5UyIPVusyT6gNiVGR9tTVUKwc52tZdZCq8MK0=;
+        b=a6Ydmy5JKYTw5OOcKe6O8mQC0kpMXmZ8iP0WuwzotU7b1kni7pBqZQ20c7JNP7LAmr
+         0UsXEdQaGYzSF9tebFBJvaQs/By6+7f0Fnuc9K6nfKwtG6rFdMJDSBgkzvyEQIcZNC/d
+         sgbgGIeRfl/QeapZ66gJm0yoY6Ss1iuVDPii+rBxeAC0GBuK7qzkDzY73/KfdSGDVC+x
+         5irQz7Ls80+3Vf9Z/FfTof+NKJZlCLsE74SdMFSKV58IP0VLHlmuJC8NizNP1L4s0OMF
+         R7GnY59c53Zqd2gO4JVqzz1e9anupipR+kVjh0oyGKGr0TpkgW1UyHcTeAagbKwRFRCx
+         wcEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MxEhGz5UyIPVusyT6gNiVGR9tTVUKwc52tZdZCq8MK0=;
+        b=Dk8QS5hdw6AZaMwQVxwOIqFt8d7/LmTzfr1eKaLh0zSjtSUeqZfrCmGFuUSE6iEmXX
+         e15xV3VYd4n+grD0jBuN3ZUkOUgRHJBz901G4WYd7qAx39qd5ceEo87hPw9GeJIZAB5g
+         ii6niaPR3hlIPSUsaH2Qgs4EbOyMOG92WBu7FV90HvGfQfYxmbbL4DMGCLUtZlnjYCY2
+         roojwZUpe2wWc39tUddhseNL4bJy6n5EyMUvqm/s3yVpLB+4MrzWgCsn5fHewZWtfrl0
+         VQF7K83tt4C+3rM2uANtvej2zBHXfMC6SiA7OKdDqKIUlB9ZmeH6RI9sFWdOIzcCcqJH
+         Ye1Q==
+X-Gm-Message-State: AGi0PuYjN6nRrNqNIIr0qkQUlhHRW1Lx9ucMCYsrutkAJerwr30hqKKL
+        RBRL17BSUhui/HCwHiENZfDOnxPEDuTlOv+Uz+r+kWgh
+X-Google-Smtp-Source: APiQypJDJKVPaiW2osqATHrnNzQrZDeGLTK3uOxKyZ8S4iPvkFtam8Xzjq8h9Aq8GBl72G+WAkd1j1MzyeeAiT6W8xs=
+X-Received: by 2002:ac8:888:: with SMTP id v8mr3065428qth.194.1586412567849;
+ Wed, 08 Apr 2020 23:09:27 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ced73258-6f4b-e970-4ca5-ecdf1808a4c3@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1586403473; bh=F3HaYrMPuOWwgOrFNUyJnJrQiX8sKdxipOmM0RTMENg=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=V/lySZEDTrNKSUloen7q5QCbi5mqLHaFQ6Y2gcCm/EPx4ZVA0Ml2r/KrvN5qdkA0Y
-         gjw1nZhoHHvu/lQNnDeIcWjV/iouQHEx1u72vmggPBb7jx5fMtqFXkXeachsDRBh6v
-         tIImffl66CeV/sMm6yfOZ1AKgy0i0AVSv/2HOPYrQF8ldIILMwAZzkgBW1y76AAJWq
-         5x3IiqGODYBo7qF3jjByJMCluRc9sx4gmcTqzYkxuHM97ZCjCJI8fVJsI0nyDYvbEY
-         PB9HNjUIjr3yR0wF7l42smtzt0CZJnSaYEKWGLLYTT8QcdFpDmYTQrr780vxRXbdt/
-         pOYd4LQkJ/qZw==
+References: <20200408160044.2550437-1-arnd@arndb.de>
+In-Reply-To: <20200408160044.2550437-1-arnd@arndb.de>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Thu, 9 Apr 2020 14:09:16 +0800
+Message-ID: <CABOV4+UocLs3jLi7-vTi8muiFqACVdxH7Td8=U1ABveLnmyCuw@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] clk: sprd: fix compile-testing
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     catalin.marinas@arm.com, will@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        orson.zhai@unisoc.com, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Arnd,
 
-On 4/8/20 12:38 PM, Sowjanya Komatineni wrote:
->
-> On 4/8/20 11:58 AM, Sowjanya Komatineni wrote:
->>
->> On 4/8/20 10:45 AM, Sowjanya Komatineni wrote:
->>>
->>> On 4/8/20 7:21 AM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 08.04.2020 03:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> ...
->>>>>>>>> I suppose that taking a shot takes at least few milliseconds,=20
->>>>>>>>> which
->>>>>>>>> should be unacceptable to waste.
->>>>>>>> As long as buffers are in queue we have to keep processing each
->>>>>>>> buffer and between buffers obviously we have to wait for previous
->>>>>>>> frames to finish and this why we have separate thread for frame
->>>>>>>> finish where we can have next buffer capture ready and issue while
->>>>>>>> previous frame memory write happens
->>>>>> Also we specified numbers buffers as 3 to vb2 queue. So this is rare
->>>>>> case but to prevent issuing more than 2 at a time as VI HW is only
->>>>>> double buffered and syncpt fifo max depth is 2 added this to be=20
->>>>>> safer.
->>>>> To be more clear, when more buffers are enqueued from userspace=20
->>>>> always
->>>>> capture list will be full and thread will be busy in capture till=20
->>>>> either
->>>>> error or stop stream request happens.
->>>>>
->>>> If kthreads take more than 1% of CPU time during capture (video) with
->>>> more than 2 buffers in queue, then it's not good and I think you=20
->>>> should
->>>> do something about it. If kthreads stay at ~0%, then it should be okay
->>>> as-is.
->>>
->>> VI outstanding requests max can only be 2=C2=A0 as syncpt fifo depth is=
-=20
->>> 2=C2=A0 and waiting to issue next capture when already 2 captures are=20
->>> inflight happens only during beginning of streaming where buffers=20
->>> allocated go thru capture for first time after queuing.
->>>
->>> same buffers are returned to userspace after capture and same=20
->>> allocated buffers will be queued back for subsequent captures.
->>>
->>> So this case of holding to issue single shot when already single=20
->>> shot is issue for 2 frames simultaneous happens only during=20
->>> beginning of start stream and also we set num_buffers to allocate=20
->>> for queue as 3 although 2 is good enough where we will not hit this=20
->>> case even during streaming start with 2 buffers
->>>
->> As 2 buffers are good enough to be clear will update in v7 to use 2=20
->> buffers so we don't need to check for more than 2 outstanding buffers.
->
-> correction: With 3 buffers, as soon as buffer is available capture=20
-> starts. So right most times I see it waiting for few ms before 3rd=20
-> capture to get through.
->
-> As only 2 frames single shot can be issued in sequence (inflight=20
-> requests), instead of waiting for 1 of the request to finish, we can=20
-> use 2 buffers and avoid waiting as 2 buffers are good enough. Will=20
-> change this in v7.
->
->
->
-Tested with 3 buffers and by checking outstanding buffers in process by=20
-VI hw and holding to start capture till one outstanding buffer in=20
-process by HW.
-Also tested with 2 buffers without checking for outstanding buffers.
+Thanks for finding out this and fixing it, but we have a minor concern
+for changing ARCH_APRD back to bool.
 
-In both cases, I see same %CPU for the kthreads and is < 1%
+On Thu, Apr 9, 2020 at 2:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> I got a build failure with CONFIG_ARCH_SPRD=m when the
+> main portion of the clock driver failed to get linked into
+> the kernel:
+>
+> ERROR: modpost: "sprd_pll_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_comp_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_clk_probe" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_clk_regmap_init" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+> ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+> ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+>
+> This is a combination of two trivial bugs:
+>
+> - A platform should not be 'tristate', it should be a 'bool' symbol
+>   like the other platforms, if only for consistency, and to avoid
+>   surprises like this one.
 
+After a discussion, we decided to change ARCH_SPRD to tristate, the
+idea was that we hope we can simply switch all sprd drivers' configs
+(whose default is ARCH_SPRD) to 'm' by setting ARCH_SPRD=m, or switch
+all them to 'y' by setting ARCH_SPRD=y, instead of changing them one
+by one. This requirement originally came from that Google GKI project
+asks all vendor drivers to be built as modules.
+
+Thanks,
+Chunyan
+
+>
+> - The clk Makefile does not traverse into the sprd subdirectory
+>   if the platform is disabled but the drivers are enabled for
+>   compile-testing.
+>
+> Fixing either of the two would be sufficient to address the link failure,
+> but for correctness, both need to be changed.
+>
+> Fixes: 2b1b799d7630 ("arm64: change ARCH_SPRD Kconfig to tristate")
+> Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/arm64/Kconfig.platforms | 2 +-
+>  drivers/clk/Makefile         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 55d70cfe0f9e..3c7e310fd8bf 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -248,7 +248,7 @@ config ARCH_TEGRA
+>           This enables support for the NVIDIA Tegra SoC family.
+>
+>  config ARCH_SPRD
+> -       tristate "Spreadtrum SoC platform"
+> +       bool "Spreadtrum SoC platform"
+>         help
+>           Support for Spreadtrum ARM based SoCs
+>
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f4169cc2fd31..60e811d3f226 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -105,7 +105,7 @@ obj-$(CONFIG_CLK_SIFIVE)            += sifive/
+>  obj-$(CONFIG_ARCH_SIRF)                        += sirf/
+>  obj-$(CONFIG_ARCH_SOCFPGA)             += socfpga/
+>  obj-$(CONFIG_PLAT_SPEAR)               += spear/
+> -obj-$(CONFIG_ARCH_SPRD)                        += sprd/
+> +obj-y                                  += sprd/
+>  obj-$(CONFIG_ARCH_STI)                 += st/
+>  obj-$(CONFIG_ARCH_STRATIX10)           += socfpga/
+>  obj-$(CONFIG_ARCH_SUNXI)               += sunxi/
+> --
+> 2.26.0
+>
