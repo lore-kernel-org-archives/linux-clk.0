@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9441BC2BB85
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 17:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06720C2BB86
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 17:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F72E206F5
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 17:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D70B12084D
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 17:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVQ7LmkP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="icsrGpdR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725970AbgDIRws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Apr 2020 13:52:48 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35890 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726470AbgDIRws (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 13:52:48 -0400
-Received: by mail-wm1-f67.google.com with SMTP id d202so655556wmd.1;
-        Thu, 09 Apr 2020 10:52:47 -0700 (PDT)
+        id S1726654AbgDIRww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 13:52:52 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36273 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbgDIRwv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 13:52:51 -0400
+Received: by mail-wr1-f67.google.com with SMTP id k1so12954108wrm.3;
+        Thu, 09 Apr 2020 10:52:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iJCxIfL1xux7zbow1yR6sLNUuWJFlrPO5LaLJSAKCAk=;
-        b=bVQ7LmkPJGtTRlNPDLKIQb59onG7LSnqeJl1ASqMJMHKbA0EDo6Wiwn2BturZnvBuv
-         sqrMtvbCrZex9KbS9hD/nfMXlaYTcrQqv0NCHynmWjgvEPey7rCvx2q7lGOZVj30MGh7
-         s2gauaDO/NQM+OvIjoA26rp3O5uK6m16MSDhKUvNNTvYfnUoYUAIT1g3JZ05kk8vjUUN
-         //Ai5CrbUS43fRN37X7WHh3mEyzoUOWBwCljOnUp2wag3g6ILU1eJnEmHmVhz6/bb6Kl
-         LdLlriKZPzikvDFbw3LwLfqsSstjye0K3oeSc0nFbbcgSt8nO3vryfrblxExfBSNMfV3
-         BcoQ==
+        bh=+npoMRH1DogTx3QRDDmEwhJHjrDR5km4V6W1qEq1dIw=;
+        b=icsrGpdRQJY9lszK58AQnbiy670BvHRajERyWY4p4p9uE5zH9pW+2+DWyU6grB83Q3
+         oXn9h9KkLl36xZ9HU5i/vD8C5L9dRVSgBxB5pK8u/j20zUz/USaWrS01RNGUnyp/bDMJ
+         tfPlemKjaYbjFXXugxm0hX6D0okBg5t6w5kskS64s7hQHXHtr6drjuDyWE9S9eKL1mNU
+         YYG6TPJFD4lgcR9Lw7Z3uQcU6LcndAAWKLem9hgj9fnBIMqWVeQTAU1oW4oyXy3N45Hb
+         Xs4FMgcTTISlc6WLt5O+MuC6ckB72wflNMeFgIP+pI8veVsMZ9YKhfbWw2OWkgIgbKP4
+         v1MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iJCxIfL1xux7zbow1yR6sLNUuWJFlrPO5LaLJSAKCAk=;
-        b=rFP2V58tGmP+6iGkR+VWikEp+yUmjjLvfx42+jKy2ILDDf1ZbPOBON+KEqqwt2yVqu
-         qFMJAVIUdvW8jsxKSzRHPpav4eSJ4U+z6SxqO7kazI2ul1CMcSzYvZ9h1TnLnjb/PLwS
-         CuSJVmjsO1GihIGWLGHVz12u7tFZiEsQNB9jTgDhgr449kyh04N28R4Z0Y/enqOI7dA7
-         VUZksz7k46r1u6NxBna5eIqbCzb6GE1NGYpBsFOSkLd9qcHpZ8fPXLFgC3+OYp/zT4Yd
-         Pvy9NQa1pT+6nS8icoS/EF9TpfGB28fO/wBWoy8LlNWDYvYtx4X3fd5yGB+Ux4ixrnLx
-         1/3g==
-X-Gm-Message-State: AGi0PuaAz6aYN9YDaAS5EJPGVXODzeGZCZwQa/BjodBYx9Yf77vbSA74
-        hh3SBqDkRjTzKZ4PqRNHcQE=
-X-Google-Smtp-Source: APiQypJdSEVqF3BY/HTP1GDyrgQPW7P2au5kkjIrbfzEK04mt9L+lD88qeAW+eNAzT34vBWW79XuWQ==
-X-Received: by 2002:a05:600c:2c47:: with SMTP id r7mr997554wmg.50.1586454766564;
-        Thu, 09 Apr 2020 10:52:46 -0700 (PDT)
+        bh=+npoMRH1DogTx3QRDDmEwhJHjrDR5km4V6W1qEq1dIw=;
+        b=GuTPzB48MN0jceFRj72IjtUq7ugNhIS+YD6NckoqFi4yk1zGl+mM/rHnUfRKbS3VP2
+         icZah5vXal0nKSXBKzCxdrdrPnESn1rJMzCtskXEo4geDlSP06rbtvewoin2OuQOoAsc
+         PYGmkdwSkN4VDZU2KFru+CJaX5eyBvP196y7nQ/omcWZyQ8uHF1YMnT28jVtFFJJCfje
+         qCrKpLGUGjWCxIU0B3KeaQLN1CuCbyolKwg7uViaQ7Q471bw8kJpjjssOtx/FXaKPH4N
+         IQGYYGqDDSJLfw2N/Rnj1GpsbYISAalw2GL353fKRBVbVz32PO5ZLtAUs9VEz0BMd5wp
+         Ttbw==
+X-Gm-Message-State: AGi0PubaCfB8R37w3DK/Dk/trJQRlleq4+/AC4W43p2j0D20d4RFM7sQ
+        F2D8Tw582f9+qHLd+FXWKrU=
+X-Google-Smtp-Source: APiQypLkNEMayEReLKHpNAw3KW7p+Ln/jI3qzu1rsT25+Lx1TXXou8ePxrBQpRZ8TpLH/DlfeODV3g==
+X-Received: by 2002:adf:fe4b:: with SMTP id m11mr341985wrs.20.1586454770160;
+        Thu, 09 Apr 2020 10:52:50 -0700 (PDT)
 Received: from localhost (pD9E51D62.dip0.t-ipconnect.de. [217.229.29.98])
-        by smtp.gmail.com with ESMTPSA id w18sm18194561wrn.55.2020.04.09.10.52.45
+        by smtp.gmail.com with ESMTPSA id k3sm4437176wmf.16.2020.04.09.10.52.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Apr 2020 10:52:45 -0700 (PDT)
+        Thu, 09 Apr 2020 10:52:49 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>
@@ -65,9 +65,9 @@ Cc:     Jon Hunter <jonathanh@nvidia.com>,
         Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v6 01/14] dt-bindings: reserved-memory: Introduce memory-region-names
-Date:   Thu,  9 Apr 2020 19:52:25 +0200
-Message-Id: <20200409175238.3586487-2-thierry.reding@gmail.com>
+Subject: [PATCH v6 03/14] of: reserved-memory: Support multiple regions per device
+Date:   Thu,  9 Apr 2020 19:52:27 +0200
+Message-Id: <20200409175238.3586487-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.24.1
 In-Reply-To: <20200409175238.3586487-1-thierry.reding@gmail.com>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
@@ -80,32 +80,58 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-In order to make the reserved-memory bindings more consistent with other
-existing bindings, add a memory-region-names property that contains an
-array of strings that name the entries of the memory-region property and
-allows these regions to be looked up by name.
+While the lookup/initialization code already supports multiple memory
+regions per device, the release code will only ever release the first
+matching memory region.
+
+Enhance the code to release all matching regions. Each attachment of
+a region to a device is uniquely identifiable using a struct device
+pointer and a pointer to the memory region's struct reserved_mem.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
-Changes in v6:
-- drop addition of memory-regions alias
+ drivers/of/of_reserved_mem.c | 22 ++++++++++------------
+ 1 file changed, 10 insertions(+), 12 deletions(-)
 
- .../devicetree/bindings/reserved-memory/reserved-memory.txt     | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-index bac4afa3b197..4dd20de6977f 100644
---- a/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-+++ b/Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
-@@ -77,6 +77,8 @@ Regions in the /reserved-memory node may be referenced by other device
- nodes by adding a memory-region property to the device node.
+diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+index ed2ff6f01d32..f61e8739502a 100644
+--- a/drivers/of/of_reserved_mem.c
++++ b/drivers/of/of_reserved_mem.c
+@@ -385,24 +385,22 @@ EXPORT_SYMBOL_GPL(of_reserved_mem_device_init_by_name);
+  */
+ void of_reserved_mem_device_release(struct device *dev)
+ {
+-	struct rmem_assigned_device *rd;
+-	struct reserved_mem *rmem = NULL;
++	struct rmem_assigned_device *rd, *tmp;
++	LIST_HEAD(release_list);
  
- memory-region (optional) - phandle, specifier pairs to children of /reserved-memory
-+memory-region-names (optional) - a list of names, one for each corresponding
-+  entry in the memory-region property
+ 	mutex_lock(&of_rmem_assigned_device_mutex);
+-	list_for_each_entry(rd, &of_rmem_assigned_device_list, list) {
+-		if (rd->dev == dev) {
+-			rmem = rd->rmem;
+-			list_del(&rd->list);
+-			kfree(rd);
+-			break;
+-		}
++	list_for_each_entry_safe(rd, tmp, &of_rmem_assigned_device_list, list) {
++		if (rd->dev == dev)
++			list_move_tail(&rd->list, &release_list);
+ 	}
+ 	mutex_unlock(&of_rmem_assigned_device_mutex);
  
- Example
- -------
+-	if (!rmem || !rmem->ops || !rmem->ops->device_release)
+-		return;
++	list_for_each_entry_safe(rd, tmp, &release_list, list) {
++		if (rd->rmem && rd->rmem->ops && rd->rmem->ops->device_release)
++			rd->rmem->ops->device_release(rd->rmem, dev);
+ 
+-	rmem->ops->device_release(rmem, dev);
++		kfree(rd);
++	}
+ }
+ EXPORT_SYMBOL_GPL(of_reserved_mem_device_release);
+ 
 -- 
 2.24.1
 
