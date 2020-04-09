@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79667C2BB86
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94174C2BB85
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 475032082D
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 605042082D
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586414685;
-	bh=kqQXaKXcW2eZZvO7tXIHCzJAD9OrkfQ2Pb5eypMAIIU=;
+	s=default; t=1586414692;
+	bh=wpjYeJaRX+oFDpCf/IvH1JwOqqMijMUQvvWWiKeoI9s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FMbPSMLAHXLUCMm0N6aphSB33UIFQxfE0nPl1qn/i9390JIpcf9ftbf30TINWOf9f
-	 tAnGj7pe6XANMPdCY2UEQLsLfeAMrXu3yuiRB8Ti2rEglGLpCE7CK/xtt0i9PjPCmz
-	 ifu6aKqP6S0HPk9+otQFbSawILqn5zVfef/vWQH0=
+	b=Eig+7+drMqwOBrcjKaWWt39NZHyFQFhUB4d1XbeZJDdxPjiptDn7w7NsPLWf9ugd3
+	 lAkOhGSXfbtE//CE14BiUXUyEMNCT9wNKYk2820PMtvhr98r6bdEUETgeMirsclAvN
+	 FyHIHOHuZmb8VkCzEftYx2Lcg0R4Y9GOYRqD1Xnw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725985AbgDIGoT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Apr 2020 02:44:19 -0400
+        id S1726766AbgDIGor (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 02:44:47 -0400
 Received: from mail.kernel.org ([198.145.29.99]:37938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726595AbgDIGoT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1726561AbgDIGoT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Thu, 9 Apr 2020 02:44:19 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D444C2084D;
+        by mail.kernel.org (Postfix) with ESMTPSA id 6631420771;
         Thu,  9 Apr 2020 06:44:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586414660;
-        bh=kqQXaKXcW2eZZvO7tXIHCzJAD9OrkfQ2Pb5eypMAIIU=;
+        s=default; t=1586414659;
+        bh=wpjYeJaRX+oFDpCf/IvH1JwOqqMijMUQvvWWiKeoI9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f19YeHzQtSsKwFfeN5uvHwXjeK4edNxUbHBG/gqUYhCc1n7HTx2b7kIGTSbEw6CT+
-         7o4n2vK59myk+N51QiIFVn8/9/AZm0WJ45PfpYbueIrQzFlESPsccGAdkBC2Ag2Dvc
-         IR971p90Zt2IkHS77EhPXMANk19AbKyzX/Cfqov4=
+        b=hP5yP9BRPMqbNFCc2VoqiuxeeypKB7c4NTSMVMzFLZYmQiPNB7n8DYZe/XLrJi4/9
+         NxB9tM5vULN+bgPKeHgBiR4uwsA7N2VluUF1fGOoT2CGEcqtnugZDkAwwUAc9PDESl
+         UCEhFedk312390MObPJYeKjaIyb6hwBJc6t90yvc=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 04/10] h8300: Remove redundant CLKDEV_LOOKUP selects
-Date:   Wed,  8 Apr 2020 23:44:10 -0700
-Message-Id: <20200409064416.83340-5-sboyd@kernel.org>
+        Paul Walmsley <paul@pwsan.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH v2 03/10] arm64: tegra: Remove redundant CLKDEV_LOOKUP selects
+Date:   Wed,  8 Apr 2020 23:44:09 -0700
+Message-Id: <20200409064416.83340-4-sboyd@kernel.org>
 X-Mailer: git-send-email 2.26.0.292.g33ef6b2f38-goog
 In-Reply-To: <20200409064416.83340-1-sboyd@kernel.org>
 References: <20200409064416.83340-1-sboyd@kernel.org>
@@ -58,30 +60,33 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The h8300 architecture selects COMMON_CLK already, and the COMMON_CLK
-config option already selects CLKDEV_LOOKUP so it's redundant to have
-this selected again.
+The arm64 architecture selects COMMON_CLK at the toplevel ARM64 config.
+The COMMON_CLK config option already selects CLKDEV_LOOKUP so it's
+redundant to have this selected again for the Tegra specific config.
 
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: uclinux-h8-devel@lists.sourceforge.jp
+Cc: Paul Walmsley <paul@pwsan.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: <linux-arm-kernel@lists.infradead.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- arch/h8300/Kconfig | 1 -
+ arch/arm64/Kconfig.platforms | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
-index ec800e9d5aad..d11666d538fe 100644
---- a/arch/h8300/Kconfig
-+++ b/arch/h8300/Kconfig
-@@ -13,7 +13,6 @@ config H8300
- 	select GENERIC_CPU_DEVICES
- 	select MODULES_USE_ELF_RELA
- 	select GENERIC_CLOCKEVENTS
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index b2b504ea6fd6..5d5d91feca44 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -236,7 +236,6 @@ config ARCH_TEGRA
+ 	bool "NVIDIA Tegra SoC Family"
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select ARM_GIC_PM
 -	select CLKDEV_LOOKUP
- 	select COMMON_CLK
- 	select ARCH_WANT_FRAME_POINTERS
- 	select OF
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF
+ 	select GENERIC_CLOCKEVENTS
 -- 
 Sent by a computer, using git, on the internet
 
