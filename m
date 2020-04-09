@@ -2,118 +2,88 @@ Return-Path: <SRS0=MLis=5Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70816C2D0EA
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DFCC2BB54
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B4262082D
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586414694;
-	bh=J+GeXfiCzFFO7mDslriUKKDucExeUS2dHChanjrxLIk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XYGaJKIgKEAtay4+ommVLoMFxuGVkJV9egCDyqZhR5iln9FOs2yNnFMdzIfnIwwnZ
-	 wMO6MN8Yh9cF542YiBLmQnWDTMv0vqqB6pQ0yZGrJQ/BULJPpVgP69puj41y5/wlpf
-	 pvIJkpdUeHILL4EN35hE03ewwPDiXVQrp3CPmUQ0=
+	by mail.kernel.org (Postfix) with ESMTP id B75972173E
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 06:53:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbgDIGox (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Apr 2020 02:44:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37928 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725987AbgDIGoT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Apr 2020 02:44:19 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05BB420B1F;
-        Thu,  9 Apr 2020 06:44:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586414659;
-        bh=J+GeXfiCzFFO7mDslriUKKDucExeUS2dHChanjrxLIk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gisbdcRg0Zj7k1O4uKiNFoKUUSGs0uWX4AC/Xk372PjhTEF+AThaoex5uMHlonZei
-         1MHWLxJ5pa8o3Pl2Lgg/sd2U1xeXRNNwEmZ6m9A4gRfCvzq9DX6h1GeS+D9OKgguGU
-         cfFC/r9lX7PvbeFkRHq9hsP3k2SBBl8q7tc179tA=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Tony Prisk <linux@prisktech.co.nz>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH v2 02/10] ARM: Remove redundant CLKDEV_LOOKUP selects
-Date:   Wed,  8 Apr 2020 23:44:08 -0700
-Message-Id: <20200409064416.83340-3-sboyd@kernel.org>
-X-Mailer: git-send-email 2.26.0.292.g33ef6b2f38-goog
-In-Reply-To: <20200409064416.83340-1-sboyd@kernel.org>
-References: <20200409064416.83340-1-sboyd@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726641AbgDIGw5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 02:52:57 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:47343 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726470AbgDIGw4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 02:52:56 -0400
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 08 Apr 2020 23:52:54 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg01-sd.qualcomm.com with ESMTP; 08 Apr 2020 23:52:54 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id 74AC64BF6; Wed,  8 Apr 2020 23:52:54 -0700 (PDT)
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     linux-pwm@vger.kernel.org
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        David Collins <collinsd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Guru Das Srinagesh <gurus@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v12 10/11] clk: pwm: Use 64-bit division function
+Date:   Wed,  8 Apr 2020 23:52:39 -0700
+Message-Id: <d5127aa19a128edf7c3dd437291b366b77be4ac5.1586414867.git.gurus@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <cover.1586414867.git.gurus@codeaurora.org>
+References: <cover.1586414867.git.gurus@codeaurora.org>
+In-Reply-To: <cover.1586414867.git.gurus@codeaurora.org>
+References: <cover.1586414867.git.gurus@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These platforms select COMMON_CLK indirectly through use of the
-ARCH_MULTIPLATFORM config option that they depend on implicitly via some
-V7/V6/V5 multi platform config option. The COMMON_CLK config option
-already selects CLKDEV_LOOKUP so it's redundant to have this selected
-again.
+Since the PWM framework is switching struct pwm_args.period's datatype
+to u64, prepare for this transition by using div64_u64 to handle a
+64-bit divisor.
 
-Cc: Tony Prisk <linux@prisktech.co.nz>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: <linux-arm-kernel@lists.infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Also ensure that divide-by-zero (with fixed_rate as denominator) does
+not happen with an explicit check with probe failure as a consequence.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+
+Signed-off-by: Guru Das Srinagesh <gurus@codeaurora.org>
 ---
- arch/arm/Kconfig             | 3 ---
- arch/arm/mach-vt8500/Kconfig | 1 -
- 2 files changed, 4 deletions(-)
+ drivers/clk/clk-pwm.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 97864aabc2a6..eeabdc5a3dd2 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -435,7 +435,6 @@ config ARCH_PXA
- 	select ARM_CPU_SUSPEND if PM
- 	select AUTO_ZRELADDR
- 	select COMMON_CLK
--	select CLKDEV_LOOKUP
- 	select CLKSRC_PXA
- 	select CLKSRC_MMIO
- 	select TIMER_OF
-@@ -474,7 +473,6 @@ config ARCH_SA1100
- 	bool "SA1100-based"
- 	select ARCH_MTD_XIP
- 	select ARCH_SPARSEMEM_ENABLE
--	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select CLKSRC_PXA
- 	select TIMER_OF if OF
-@@ -495,7 +493,6 @@ config ARCH_SA1100
- config ARCH_S3C24XX
- 	bool "Samsung S3C24XX SoCs"
- 	select ATAGS
--	select CLKDEV_LOOKUP
- 	select CLKSRC_SAMSUNG_PWM
- 	select GENERIC_CLOCKEVENTS
- 	select GPIO_SAMSUNG
-diff --git a/arch/arm/mach-vt8500/Kconfig b/arch/arm/mach-vt8500/Kconfig
-index 8841199058ea..d01cdd9ad9c7 100644
---- a/arch/arm/mach-vt8500/Kconfig
-+++ b/arch/arm/mach-vt8500/Kconfig
-@@ -2,7 +2,6 @@
- config ARCH_VT8500
- 	bool
- 	select GPIOLIB
--	select CLKDEV_LOOKUP
- 	select VT8500_TIMER
- 	select PINCTRL
- 	help
+diff --git a/drivers/clk/clk-pwm.c b/drivers/clk/clk-pwm.c
+index 87fe0b0e..86f2e2d 100644
+--- a/drivers/clk/clk-pwm.c
++++ b/drivers/clk/clk-pwm.c
+@@ -89,7 +89,12 @@ static int clk_pwm_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+-		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
++		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
++
++	if (!clk_pwm->fixed_rate) {
++		dev_err(&pdev->dev, "fixed_rate cannot be zero\n");
++		return -EINVAL;
++	}
+ 
+ 	if (pargs.period != NSEC_PER_SEC / clk_pwm->fixed_rate &&
+ 	    pargs.period != DIV_ROUND_UP(NSEC_PER_SEC, clk_pwm->fixed_rate)) {
 -- 
-Sent by a computer, using git, on the internet
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
