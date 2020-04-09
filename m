@@ -1,139 +1,103 @@
-Return-Path: <SRS0=5O0r=5Y=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=MLis=5Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE18C2D0F4
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 20:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2861C2BB1D
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 02:40:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE9C206F7
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Apr 2020 20:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CB7208E4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 02:40:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbgDHUgb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Apr 2020 16:36:31 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57288 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726891AbgDHUga (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 16:36:30 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 038KXpKi050590;
-        Wed, 8 Apr 2020 16:36:27 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 3092098vwh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Apr 2020 16:36:26 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id 038KUfd6004457;
-        Wed, 8 Apr 2020 20:36:25 GMT
-Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
-        by ppma03wdc.us.ibm.com with ESMTP id 3091mdyus2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 08 Apr 2020 20:36:25 +0000
-Received: from b01ledav001.gho.pok.ibm.com (b01ledav001.gho.pok.ibm.com [9.57.199.106])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 038KaPBd52101450
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 8 Apr 2020 20:36:25 GMT
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 70BF628059;
-        Wed,  8 Apr 2020 20:36:25 +0000 (GMT)
-Received: from b01ledav001.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A7D7E28058;
-        Wed,  8 Apr 2020 20:36:24 +0000 (GMT)
-Received: from ghost4.ibm.com (unknown [9.211.136.102])
-        by b01ledav001.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed,  8 Apr 2020 20:36:24 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, joel@jms.id.au,
-        Eddie James <eajames@linux.ibm.com>
-Subject: [PATCH] clk: ast2600: Fix AHB clock divider for A1
-Date:   Wed,  8 Apr 2020 15:36:16 -0500
-Message-Id: <20200408203616.4031-1-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726574AbgDICkq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Apr 2020 22:40:46 -0400
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:26320 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726523AbgDICkq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Apr 2020 22:40:46 -0400
+Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 08 Apr 2020 19:40:46 -0700
+Received: from gurus-linux.qualcomm.com ([10.46.162.81])
+  by ironmsg05-sd.qualcomm.com with ESMTP; 08 Apr 2020 19:40:46 -0700
+Received: by gurus-linux.qualcomm.com (Postfix, from userid 383780)
+        id D817A4C51; Wed,  8 Apr 2020 19:40:45 -0700 (PDT)
+Date:   Wed, 8 Apr 2020 19:40:45 -0700
+From:   Guru Das Srinagesh <gurus@codeaurora.org>
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Subbaraman Narayanamurthy <subbaram@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v8 01/12] clk: pwm: Use 64-bit division function
+Message-ID: <20200409024045.GA1147@codeaurora.org>
+References: <cover.1583889178.git.gurus@codeaurora.org>
+ <338966686a673c241905716c90049993e7bb7d6a.1583889178.git.gurus@codeaurora.org>
+ <7506bc2972324fd286dac6327ec73a3a@AcuMS.aculab.com>
+ <20200312020938.GA14827@codeaurora.org>
+ <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.138,18.0.676
- definitions=2020-04-08_08:2020-04-07,2020-04-08 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 mlxlogscore=999
- lowpriorityscore=0 mlxscore=0 suspectscore=1 clxscore=1011 phishscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2003020000 definitions=main-2004080143
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fea86a43b28f4493abe0826654369513@AcuMS.aculab.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The latest specs for the AST2600 A1 chip include some different bit
-definitions for calculating the AHB clock divider. Implement these in
-order to get the correct AHB clock value in Linux.
+On Thu, Mar 12, 2020 at 09:14:09AM +0000, David Laight wrote:
+> From: Guru Das Srinagesh
+> > Sent: 12 March 2020 02:10
+> > On Wed, Mar 11, 2020 at 04:58:24PM +0000, David Laight wrote:
+> > > From: Guru Das Srinagesh
+> > > > Sent: 11 March 2020 01:41
+> > > >
+> > > > Since the PWM framework is switching struct pwm_args.period's datatype
+> > > > to u64, prepare for this transition by using div64_u64 to handle a
+> > > > 64-bit divisor.
+> > > >
+> ...
+> > > > --- a/drivers/clk/clk-pwm.c
+> > > > +++ b/drivers/clk/clk-pwm.c
+> > > > @@ -89,7 +89,7 @@ static int clk_pwm_probe(struct platform_device *pdev)
+> > > >  	}
+> > > >
+> > > >  	if (of_property_read_u32(node, "clock-frequency", &clk_pwm->fixed_rate))
+> > > > -		clk_pwm->fixed_rate = NSEC_PER_SEC / pargs.period;
+> > > > +		clk_pwm->fixed_rate = div64_u64(NSEC_PER_SEC, pargs.period);
+> > >
+> > > That cannot be needed, a 32 bit division is fine.
+> > 
+> > Could you please explain why? I think the use of this function is
+> > warranted in order to handle the division properly with a 64-bit
+> > divisor.
+> ...
+> > > I'd assign pargs.period to an 'unsigned int' variable
+> > > prior to the division (I hate casts - been bitten by them in the past.).
+> > 
+> > Wouldn't this truncate the 64-bit value? The intention behind this patch
+> > is to allow the processing of 64-bit values in full.
+> 
+> You are dividing a 32bit constant by a value.
+> If pargs.period is greater than 2^32 the result is zero.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/clk/clk-ast2600.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+Correction: if pargs.period is greater than NSEC_PER_SEC, not 2^32.
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 392d01705b97..99afc949925f 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -642,14 +642,22 @@ static const u32 ast2600_a0_axi_ahb_div_table[] = {
- 	2, 2, 3, 5,
- };
- 
--static const u32 ast2600_a1_axi_ahb_div_table[] = {
--	4, 6, 2, 4,
-+static const u32 ast2600_a1_axi_ahb_div0_tbl[] = {
-+	3, 2, 3, 4,
-+};
-+
-+static const u32 ast2600_a1_axi_ahb_div1_tbl[] = {
-+	3, 4, 6, 8,
-+};
-+
-+static const u32 ast2600_a1_axi_ahb200_tbl[] = {
-+	3, 4, 3, 4, 2, 2, 2, 2,
- };
- 
- static void __init aspeed_g6_cc(struct regmap *map)
- {
- 	struct clk_hw *hw;
--	u32 val, div, chip_id, axi_div, ahb_div;
-+	u32 val, div, divbits, chip_id, axi_div, ahb_div;
- 
- 	clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, 25000000);
- 
-@@ -679,11 +687,22 @@ static void __init aspeed_g6_cc(struct regmap *map)
- 	else
- 		axi_div = 2;
- 
-+	divbits = (val >> 11) & 0x3;
- 	regmap_read(map, ASPEED_G6_SILICON_REV, &chip_id);
--	if (chip_id & BIT(16))
--		ahb_div = ast2600_a1_axi_ahb_div_table[(val >> 11) & 0x3];
--	else
-+	if (chip_id & BIT(16)) {
-+		if (!divbits) {
-+			ahb_div = ast2600_a1_axi_ahb200_tbl[(val >> 8) & 0x3];
-+			if (val & BIT(16))
-+				ahb_div *= 2;
-+		} else {
-+			if (val & BIT(16))
-+				ahb_div = ast2600_a1_axi_ahb_div1_tbl[divbits];
-+			else
-+				ahb_div = ast2600_a1_axi_ahb_div0_tbl[divbits];
-+		}
-+	} else {
- 		ahb_div = ast2600_a0_axi_ahb_div_table[(val >> 11) & 0x3];
-+	}
- 
- 	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, axi_div * ahb_div);
- 	aspeed_g6_clk_data->hws[ASPEED_CLK_AHB] = hw;
--- 
-2.24.0
+> I think you divide by 'fixed_rate' a bit later on - better not be zero.
 
+I am adding an explicit check in v12 to ensure fixed_rate is not zero. If
+during the calculation it is found to be zero, probing will fail.
+
+I think with this modification, this v8 version of this change makes
+sense to use.
+
+Thank you.
+
+Guru Das.
