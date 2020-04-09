@@ -2,100 +2,98 @@ Return-Path: <SRS0=MLis=5Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75F7BC2BB86
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 23:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FA5C2BA19
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 23:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48662206C0
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 23:00:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586473247;
-	bh=IgOjn/GxRtasyphIYkYZcdySwxtAL+ZzkL4NiA03h0U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Rl7Ing5xTiuuk1GDcy5TMtlIN7vyaBnkMysYS+GzIXgv6ukohjBsft4SbXXh+sA5I
-	 7VVh6t5uZMuCmvPIn8fPJJfVD3FilEzxXGJGTDYp0dWDqb0aKN9JtYA5ml4+ACID2H
-	 S7YRk6eNnZQWthue0WXUxoqms5JZy3pRnJ0ZmPpE=
+	by mail.kernel.org (Postfix) with ESMTP id B6A06206E9
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 23:44:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z+OFqTSE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgDIXAq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Apr 2020 19:00:46 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:36342 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726875AbgDIXAq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 19:00:46 -0400
-Received: by mail-il1-f193.google.com with SMTP id p13so355435ilp.3;
-        Thu, 09 Apr 2020 16:00:46 -0700 (PDT)
+        id S1726858AbgDIXoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 19:44:21 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43195 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbgDIXoV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Apr 2020 19:44:21 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h25so343169lja.10;
+        Thu, 09 Apr 2020 16:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eplP7HigK8Ewza+SjO81i9tb9swgjSdpeTM2vE+t2FI=;
+        b=Z+OFqTSEtWD+OR0/pzr+dM8ugXHWeikyhxm/KgbzcPr0hpv7bgSSKGq1REFh393r9Y
+         +cjiNaten3HWmd7TxIHO3zqw54SrSOcpfrZFCIrd6ZPeX8z3tuYZGZybmwKgVsYzYMZv
+         eaHQahH+nMqmL8ymsrSYu0pUiacrioYnJ+jb4B6zLDyFv07S2Qenm395qW5Z3Ua0fx6y
+         zL6ESY9Mh8/zrOc1NJEE1+dZEp9WaL/bG8glG3/JD0+fyAPuMQSuHsCUVj0MRqVMxj9o
+         VmddSw5J9OruFahcTsOUaNrxs4X1GoXvMZIfHrSbUf+tKQtQIkzoFZvCZDQ5jUc14PLx
+         nViw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uc46kdVNduykSvXO5lVtxr8veYg7KgzN/ssrZ47l1hg=;
-        b=qRk/AmNRkiM64e9flKAXC/e8RiPLXo2PZgzorxNcPH9k2kN/nRo9gHLZvSYP4Jab4J
-         7/F2srfnI4nBlTYsxmmj/MPxs4W2/m6FtfuTyRRwbeoK+2zObh8OrPt6PJyezsqjit+g
-         2FWp/l0UTXScdOBgR8FiQGXLBZvYI6qVbxLT830dMVsAE6L7vSOaHjSW10BPd90U1LmQ
-         X1Vc1ZL4Niy54WrdhMjVr0QlHlPkIRy/F4SMoPO9DfSGwEYiFY7hbcvCUrvP44tdMmdY
-         z2QS3kwfzqX0H3mF6gfAVyGYspwg7fS3Auut/kx7DaM0H9xAbShH3bAsiZ9+k5E0ahIZ
-         /wtA==
-X-Gm-Message-State: AGi0PuaG3XddwGEcF9w/kzqijGL81lCYygcrBrxbyOrpCSH0HrnEkloa
-        mMVbDEydj/cu8m2HFm3+jQ==
-X-Google-Smtp-Source: APiQypILccj1GZ4l+HD6IM1kuuB93JyalMoaWIKBSZb2y88Xpbg2XvHKiX5upl96mrxT+spAIxQLZA==
-X-Received: by 2002:a92:359b:: with SMTP id c27mr2249082ilf.148.1586473245487;
-        Thu, 09 Apr 2020 16:00:45 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.248])
-        by smtp.gmail.com with ESMTPSA id e11sm147208ilr.30.2020.04.09.16.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Apr 2020 16:00:44 -0700 (PDT)
-Received: (nullmailer pid 5080 invoked by uid 1000);
-        Thu, 09 Apr 2020 23:00:40 -0000
-Date:   Thu, 9 Apr 2020 17:00:40 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sivaprak@codeaurora.org
-Subject: Re: [PATCH V2 2/8] dt-bindings: clock: Add YAML schemas for QCOM A53
- PLL
-Message-ID: <20200409230040.GA1782@bogus>
-References: <1586086165-19426-1-git-send-email-sivaprak@codeaurora.org>
- <1586086165-19426-3-git-send-email-sivaprak@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eplP7HigK8Ewza+SjO81i9tb9swgjSdpeTM2vE+t2FI=;
+        b=EOnMeZe7c9xA2nP2VytTEEU3JPgaHLGV2ZEpRo2Hc6gfVeHJy1Ad5h3vmbEXg+m5J8
+         5nJaPXUuobpIgh6UVB3zyZ7fNMKm88tkMoXK1g8B2RUo/io3YWqgQj0cy47IZDEqJR3x
+         EMyePe8wGGSmFyuhSLMEJJl0kaRfMJjBHBd87H4qgHUP861v5DZxqQO3vp3+TpAbYjPx
+         nKEjE6Ark+3aFgWCJMo940P6xR0Y7wUYplAiHJoUaSh01yulmkHJP+nKUdFImQGMyO00
+         SMVVYdsn/Ghfse57Y12+KtazSuAkYeGT/Pm0pRl9Qpt2GSlXDX7bGdnwFBlsF86dGyOi
+         AKfg==
+X-Gm-Message-State: AGi0PuaEQF5Vi8aC0E7bfXrGubTANfFSuWM9W4wjZhj/QYfrf7yBw3JX
+        EyGTHfYF56gnhHlEm+qWGkM=
+X-Google-Smtp-Source: APiQypKOjhusE3Y7SNrXp1CXEoE/mqfoQN6rYgf5UIc2VAPmQ3PefCXTqRsbwrmhttzvDhBHDOpurA==
+X-Received: by 2002:a2e:8511:: with SMTP id j17mr1356714lji.292.1586475858785;
+        Thu, 09 Apr 2020 16:44:18 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id 64sm283254lfh.32.2020.04.09.16.44.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Apr 2020 16:44:17 -0700 (PDT)
+Subject: Re: [PATCH v6 11/14] memory: tegra: Support derated timings on
+ Tegra210
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-12-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <7f23f140-4c56-3d9a-946e-f29bc569f40c@gmail.com>
+Date:   Fri, 10 Apr 2020 02:44:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1586086165-19426-3-git-send-email-sivaprak@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200409175238.3586487-12-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun,  5 Apr 2020 16:59:19 +0530, Sivaprakash Murugesan wrote:
-> This patch adds schema for primary CPU PLL found on few Qualcomm
-> platforms.
-> 
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,a53pll.txt      | 22 --------
->  .../devicetree/bindings/clock/qcom,a53pll.yaml     | 60 ++++++++++++++++++++++
->  2 files changed, 60 insertions(+), 22 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-> 
+09.04.2020 20:52, Thierry Reding пишет:
+...
+>  	tegra210_emc_debugfs_init(emc);
+>  
+> +	cd = devm_thermal_of_cooling_device_register(emc->dev, np, "emc", emc,
+> +						     &tegra210_emc_cd_ops);
+> +	if (IS_ERR(cd)) {
+> +		err = PTR_ERR(cd);
+> +		dev_err(emc->dev, "failed to register cooling device: %d\n",
+> +			err);
 
-My bot found errors running 'make dt_binding_check' on your patch:
+> +		goto detach;
 
-Documentation/devicetree/bindings/clock/qcom,a53pll.yaml: $id: relative path/filename doesn't match actual path or filename
-	expected: http://devicetree.org/schemas/clock/qcom,a53pll.yaml#
-
-See https://patchwork.ozlabs.org/patch/1266526
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
-
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-
-Please check and re-submit.
+I think it's not really worthwhile to fail whole EMC driver because of
+the failed CDEV.
