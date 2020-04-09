@@ -2,116 +2,123 @@ Return-Path: <SRS0=MLis=5Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68ABDC2BA19
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 19:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D52C2BB55
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 20:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0282072F
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 19:59:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7093D2082D
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Apr 2020 20:07:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586462820;
+	bh=nSw3fUKbe9A+uOfnXkK+h2BbfLi5hDRgEXe0czQ71ug=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=tu898yRESKjcxYQcpPc0BDDhPUOlW9aC1Lkv8jZWnSLWPOX0R7zGTFHf2CGOkc6uV
+	 Y9L9iw95cquk+XqUD9lF9H6UkyIiCPo/X/LBmJ2xzE9fBhxesgUYng8eJUC+gqEKP9
+	 1WUeBmj8EXMwK56BlwX03pYz0HIq2hF/ROUdYjg0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbgDIT7b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Apr 2020 15:59:31 -0400
-Received: from mga14.intel.com ([192.55.52.115]:22248 "EHLO mga14.intel.com"
+        id S1727002AbgDIUG4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Apr 2020 16:06:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726638AbgDIT7b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Apr 2020 15:59:31 -0400
-IronPort-SDR: gnnFFZJquEtQHae3vkpxxboQlCtSYwtq5QdhsSDsCdpov5pNez193mxLXB4QX/ctyXK1srj2AI
- F5ki5/bHdi1A==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2020 12:59:31 -0700
-IronPort-SDR: G2/Ajg69GcgfbXqhZHW6iacCWEtQftjM4PBIf8MySIWVELQOsp14yx595KU0tR47zClAZh4eKG
- dUqCnwa2wunQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,363,1580803200"; 
-   d="scan'208";a="242745426"
-Received: from davidadu-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.amr.corp.intel.com) ([10.212.151.218])
-  by fmsmga007.fm.intel.com with ESMTP; 09 Apr 2020 12:59:29 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     tiwai@suse.de, broonie@kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [RFC PATCH 16/16] ASoC: dt-bindings: add document for Hifiberry DAC+ PRO clock
-Date:   Thu,  9 Apr 2020 14:58:41 -0500
-Message-Id: <20200409195841.18901-17-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+        id S1726819AbgDIUG4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Apr 2020 16:06:56 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D1D220730;
+        Thu,  9 Apr 2020 20:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586462816;
+        bh=nSw3fUKbe9A+uOfnXkK+h2BbfLi5hDRgEXe0czQ71ug=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=1Qpn+b1agEH8hbIik8e1kXczOfzvnMN7DD+aM1LL1vgnk/8w39IGwoth91wsEUfhc
+         5GA3RvVynClZXrH/t+ZIgPuxUMzYONBaTfY+QoiDjavW8C5yHTwz8bijbNs9L+NMU3
+         SbNPS9Z3j+ooo8OWmp7SPL7eXB8mEwyHxqJjIh3s=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1585338485-31820-2-git-send-email-tdas@codeaurora.org>
+References: <1585338485-31820-1-git-send-email-tdas@codeaurora.org> <1585338485-31820-2-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v1 1/4] clk: qcom: gdsc: Add support to enable retention of GSDCR
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Thu, 09 Apr 2020 13:06:55 -0700
+Message-ID: <158646281555.77611.13094729241703720869@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Hifiberry DAC+ PRO relies on two local audio oscillators exposed
-with the clock framework.
+Quoting Taniya Das (2020-03-27 12:48:02)
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index a250f59..cfe908f 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -28,6 +28,7 @@
+>  /* CFG_GDSCR */
+>  #define GDSC_POWER_UP_COMPLETE         BIT(16)
+>  #define GDSC_POWER_DOWN_COMPLETE       BIT(15)
+> +#define GDSC_RETAIN_FF_ENABLE          BIT(11)
+>  #define CFG_GDSCR_OFFSET               0x4
+>=20
+>  /* Wait 2^n CXO cycles between all states. Here, n=3D2 (4 cycles). */
+> @@ -202,6 +203,14 @@ static inline void gdsc_assert_reset_aon(struct gdsc=
+ *sc)
+>         regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+>                            GMEM_RESET_MASK, 0);
+>  }
+> +
+> +static inline void gdsc_retain_ff_on(struct gdsc *sc)
 
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- .../bindings/sound/hifiberry-dacpro.yaml      | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/hifiberry-dacpro.yaml
+Drop inline please.
 
-diff --git a/Documentation/devicetree/bindings/sound/hifiberry-dacpro.yaml b/Documentation/devicetree/bindings/sound/hifiberry-dacpro.yaml
-new file mode 100644
-index 000000000000..9305a1a0ccd7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/hifiberry-dacpro.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/hifiberry-dacpro.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Hifiberry DAC+ Pro clock driver
-+
-+maintainers:
-+  - Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-+
-+description: |
-+  The Hifiberry DAC+ PRO provides two oscillators for enhanced audio
-+  quality. The clk driver allow for select and configuration of the
-+  clock source.
-+
-+properties:
-+  "#clock-cells":
-+    const: 0
-+
-+  compatible:
-+    items:
-+      - const: hifiberry,dacpro-clk
-+  reg:
-+    maxItems: 1
-+
-+required:
-+  - "#clock-cells"
-+  - compatible
-+
-+examples:
-+  - |
-+    dacpro_osc: dacpro_osc {
-+        compatible = "hifiberry,dacpro-clk";
-+        #clock-cells = <0>;
-+    };
-+
-+...
--- 
-2.20.1
+> +{
+> +       u32 mask =3D RETAIN_FF_ENABLE;
 
+Is this supposed to be GDSC_RETAIN_FF_ENABLE?
+
+> +
+> +       regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
+> +}
+> +
+>  static int gdsc_enable(struct generic_pm_domain *domain)
+>  {
+>         struct gdsc *sc =3D domain_to_gdsc(domain);
+> @@ -254,6 +263,9 @@ static int gdsc_enable(struct generic_pm_domain *doma=
+in)
+>                 udelay(1);
+>         }
+>=20
+> +       if (sc->flags & RETAIN_FF_ENABLE)
+> +               gdsc_retain_ff_on(sc);
+> +
+>         return 0;
+>  }
+>=20
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 64cdc8c..8604d44 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -49,6 +49,7 @@ struct gdsc {
+>  #define AON_RESET      BIT(4)
+>  #define POLL_CFG_GDSCR BIT(5)
+>  #define ALWAYS_ON      BIT(6)
+> +#define RETAIN_FF_ENABLE       BIT(7)
+
+This is a flag, not a register bit presumably.
+
+>         struct reset_controller_dev     *rcdev;
+>         unsigned int                    *resets;
+>         unsigned int                    reset_count;
