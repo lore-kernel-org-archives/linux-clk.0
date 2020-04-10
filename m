@@ -2,97 +2,89 @@ Return-Path: <SRS0=ckIi=52=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA428C2BA2B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 14:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA3BC2D0EC
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C302145D
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 14:28:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vb+IEAC9"
+	by mail.kernel.org (Postfix) with ESMTP id E8C0C2078E
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586540199;
+	bh=aY96hvBXNhiT65QU9KqPZPHlSXnFEDlVxamdD7LFtAo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=j0dn7v6hp1p67KxssH0XsFeV1oOx9td1D4l1VWpilS9czWyiN58YAKtXUs0nl0qGN
+	 gMntryOJbjcDLSn4Tte9AG+Knco3b6ybG86QJ/LpM6D29nIRkqAJ6njgy6adtnNC2P
+	 CpyoeS9GwD996xOiQxEtGZp9cNYVIX9Ja2nJfr+o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbgDJO20 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Apr 2020 10:28:26 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34086 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgDJO20 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 10:28:26 -0400
-Received: by mail-lf1-f66.google.com with SMTP id x23so1502440lfq.1;
-        Fri, 10 Apr 2020 07:28:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=114DepywJbkKU/kNK8ifxFxs4xFQzPNOTcqxhW01gig=;
-        b=vb+IEAC9JkmoBHpGwKsz0ASSJblQcwkss5tbEZrtPTg9+AUTqKOuJ45fe1+AnyMYL5
-         Tc0TT8YjluJfHOZk6aHSWSIt6J2lwEFAzns+Z26BNdGZo50LlLEy+nte46mBQYq9XlR4
-         Erh2NVUxmWuLIlA0WGNEuKx4P7G1fWFKNUAwxZHaaqMddS9wt29OKkwNuBQlqLab9W2K
-         AJzFosMzctfnHY0/kJpgNgKU8VniE0FScHP4SPYJX9l8R5a5qBdjtJrHaPNY7u9Q6f1O
-         4PiwFumFlLTF/S43L+8hGL2dmZqHy00kHSed3woKNhL12tlGBRDCEaTqqhwyWkeIOkl+
-         n36A==
+        id S1726695AbgDJRge (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Apr 2020 13:36:34 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40866 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726234AbgDJRge (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 13:36:34 -0400
+Received: by mail-ot1-f66.google.com with SMTP id q2so2488335otk.7;
+        Fri, 10 Apr 2020 10:36:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=114DepywJbkKU/kNK8ifxFxs4xFQzPNOTcqxhW01gig=;
-        b=NuMLRHDq1W6Mtnw2xmDRjiXgAjSHcMsshwOweCkpkKpd0joYSSDr9R3aOUkFU9ARGI
-         KMYgtJEjSKZQWFJk3EjpVczWkqrND3V0ddkUflPlrCXwJXxsQye+5Fj71cWtda8jTixn
-         tDc5GtSdo9fBYYI9AQWsCgJJr7sedlNF7Ykd0DjGRfmvZ8C8EqPhWa0+mV6zNjLCqSXv
-         W2jadipmFfOqZ8L7qdfrkpLyEWKn48AxNjrfGlyI/lsBVLM1EWIdZK4hkuogedCLOJBR
-         bwQ71/e1tYp3AWNUReK8D/m8eBRn3J/ygW/y8AUodJPAZ6fx1SiJOd65rckOQ/qJrfEo
-         OJUg==
-X-Gm-Message-State: AGi0Pub01PNR/pR91ybA07wLhDUCu3wsS+0f7G4BvNi8JuODUPtVpCTr
-        kGlQRTCw+TU1hsqKZtuo0cs=
-X-Google-Smtp-Source: APiQypK+DeCHy8Q90LIm8WJtFHRQdsbxGiBMPZhDXTTciugISnAqkYYnxNBFX0eNC3l+386WkJSWwA==
-X-Received: by 2002:a19:d84:: with SMTP id 126mr2840495lfn.35.1586528904234;
-        Fri, 10 Apr 2020 07:28:24 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id k4sm1351793lfo.47.2020.04.10.07.28.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Apr 2020 07:28:23 -0700 (PDT)
-Subject: Re: [PATCH v6 11/14] memory: tegra: Support derated timings on
- Tegra210
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kssj1wITYRFq+YYk9S6XmdagGwSQwnZ2pdBZ58b9W2U=;
+        b=umFyUYpLw848vZCa6db7JAOfh4RXh3/Jvlt/FLTvoUUh3Rb3on1+InRe16oSiU7AYN
+         wrMBP2oq++AzlYXXUzbsSY2gtWZq26E6i6oYval66gFggctbWMPAZjck5L8mofqSsWpD
+         v1jLzKpcQi3BMNoOrS2dfHXC0YtCdvP0lfo/IUMorYOyjf1v0jCMPNlD0w5JWnCdQEhy
+         LfyoDDTbq0mZc8M3LXT8w4HoQYq8W9Nm/+k6Rznj3BfXyCXS8DVOf3N6ULVyZIlsA5YA
+         bwpQQIiK/ebyMHnW3hxKPL0T5L7B+yVzCgpg0Uxqpu28qUCBLzRoS+PEDUPfVJS/8mVF
+         736g==
+X-Gm-Message-State: AGi0Pub1Ym/661Hoz1cBu+2Mf3u+ONxcooUDGK/+98tP25Su4/zhd7rB
+        btazZJOqc5PkuP1Y7SvLQw==
+X-Google-Smtp-Source: APiQypJRsXEEAdg3zxrOIYnNN3A/bp6+1SPF81f8l0UyoKWAhK5Elh8UzZPnGRQfKpe/JCDOyYnsdQ==
+X-Received: by 2002:a9d:6ac3:: with SMTP id m3mr4647264otq.175.1586540194370;
+        Fri, 10 Apr 2020 10:36:34 -0700 (PDT)
+Received: from rob-hp-laptop (ip-99-203-29-27.pools.cgn.spcsdns.net. [99.203.29.27])
+        by smtp.gmail.com with ESMTPSA id o128sm1536880oih.41.2020.04.10.10.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2020 10:36:33 -0700 (PDT)
+Received: (nullmailer pid 7240 invoked by uid 1000);
+        Fri, 10 Apr 2020 17:11:02 -0000
+Date:   Fri, 10 Apr 2020 12:11:02 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-12-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <937a1aa6-473a-f6c5-729a-4f34e4ee3abb@gmail.com>
-Date:   Fri, 10 Apr 2020 17:28:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clk: sprd: add mipi_csi_xx clocks for
+ SC9863A
+Message-ID: <20200410171102.GA7186@bogus>
+References: <20200330071451.7899-1-zhang.lyra@gmail.com>
+ <20200330071451.7899-3-zhang.lyra@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200409175238.3586487-12-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200330071451.7899-3-zhang.lyra@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-09.04.2020 20:52, Thierry Reding пишет:
-> -enum tegra210_emc_dram_over_temp_state {
-> -	TEGRA210_EMC_DRAM_OVER_TEMP_NONE = 0,
-> -	TEGRA210_EMC_DRAM_OVER_TEMP_REFRESH_X2,
-> -	TEGRA210_EMC_DRAM_OVER_TEMP_REFRESH_X4,
-> -	TEGRA210_EMC_DRAM_OVER_TEMP_THROTTLE, /* 4x Refresh + derating. */
-> +enum tegra210_emc_refresh {
-> +	TEGRA210_EMC_REFRESH_NOMINAL = 0,
-> +	TEGRA210_EMC_REFRESH_2X,
-> +	TEGRA210_EMC_REFRESH_4X,
-> +	TEGRA210_EMC_REFRESH_THROTTLE, /* 4x Refresh + derating. */
->  };
+On Mon, 30 Mar 2020 15:14:49 +0800, Chunyan Zhang wrote:
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> 
+> mipi_csi_xx clocks are used by camera sensors.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
+>  Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-What about to avoid all the unnecessary renamings?
+Acked-by: Rob Herring <robh@kernel.org>
