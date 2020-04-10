@@ -6,84 +6,80 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2C8C2BB1D
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAC45C2D0EC
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 392942082D
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83A25207FF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Apr 2020 17:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586540252;
-	bh=QTkeAz7Da+BrY5tMV+Y1E48T1EvzwgeoUaFZF/CKCyk=;
+	s=default; t=1586540821;
+	bh=e4T6wr8Q4Nw+PsS/Yni6kuiQWpNyp462Qaw7cdynGDU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=x1Ugrtr77XKFLSOB5krC3hezDd6btobUbr9z05iCxOav1cJ/bRkTAKN2UxQtLmEAg
-	 4lcSZ58Yyinm0rfLW9lNHkXAaXh3asS9Q6Z/Cg6LWXd4aWoQ7nAbPdgxR9EjiaQc+n
-	 s9uLizajFd4WNicJPk22MtFemCYuoVgy1vCw8XKs=
+	b=g5xlsdnbUDZn1Wry46qJAY6auGGnVgYWXyMw1y+NQTz5JB3ym6kXURxsuxB6/0aWh
+	 CncO7vf96Z8daCgjTXqo6DZw4zZvwP+lBDs8E8RsKxlEXgwqHPBL3O+dWWbOVqSWKr
+	 n1z74njAUOEX2yXggc5PBB5kktdhaH5NB45mp0U0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726694AbgDJRhb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Apr 2020 13:37:31 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33682 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbgDJRhb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 13:37:31 -0400
-Received: by mail-ot1-f66.google.com with SMTP id 103so2538737otv.0;
-        Fri, 10 Apr 2020 10:37:31 -0700 (PDT)
+        id S1726598AbgDJRrA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Apr 2020 13:47:00 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40560 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726203AbgDJRrA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 13:47:00 -0400
+Received: by mail-oi1-f194.google.com with SMTP id a7so1979135oid.7;
+        Fri, 10 Apr 2020 10:47:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XTbeyk/8MKUbxThUiws/BIz7+fn9OO+aZs86k0WtGEY=;
-        b=ne27CzQQbFbdiYpC+4xn98RuYZU8ADRPOm2qSuUQuVgLgDRNaYNly5ZoeI3B6/1DIJ
-         0dFsY+oNiDMAooX/XbePl46yspFipCX/haEnHHcTcWnIp6WP3PVxeBtog/GxnyfBonKt
-         S2LDGmPWo97rRes0/gRummb6eK97ymf+pkR0BDKMqD4xfNPF8EEp12DFBfmhu7w1yI7K
-         ITLDVuxVXAprfqEgZxUMNfXe+2/LFRmFNsKPtlz434+6yZ570KtjkC+ZeNBYULR2kGXz
-         GqYM0gLs1DlKrGtU9LGFCSDS2sOwUK2un4/GKMJ0/N6McR/fNRBxqh2TTY2xF4VxG822
-         e/VA==
-X-Gm-Message-State: AGi0PuZhklkEk2qjFiN/qvD/qUrequuxfhAiDIULJsSaCG8T2/YNl/Vj
-        wNMhUcZgbU8iS5YchGopWw==
-X-Google-Smtp-Source: APiQypIQx5fHf44Txa8QJaaNIJN+7pFohmFjr9Mc3XNnK9fxeikXH/pi6ykdhl/2VVzOFtQI1UOCsw==
-X-Received: by 2002:a05:6830:3151:: with SMTP id c17mr5188684ots.310.1586540250772;
-        Fri, 10 Apr 2020 10:37:30 -0700 (PDT)
-Received: from rob-hp-laptop (ip-99-203-29-27.pools.spcsdns.net. [99.203.29.27])
-        by smtp.gmail.com with ESMTPSA id a5sm1673876oot.5.2020.04.10.10.37.26
+        bh=YOlnayCpN0x6fsTC4gjjNKTPcCx7CoULGGzJuytpQFg=;
+        b=AiHs1HaJ2/kw4hHO9LuAUOnrosulrYIWvSYs5qRKMH/JdpHJfSOfdYHyURpP/dEbTj
+         ek7o4TH+GfurmIc5cDnWrjmsIuXMOdw9twGP5ccMTXXRj80jEZkDxI/e0xATq5kL6Cwu
+         RWPfLqSyhiOHnrL8fA/nCssRu6I5UKx2V5IAhi3Y2qM8Qj4w1OTQK0fF941xaSwLjKcy
+         9v/lBvBx8jZSUmZ9blqGTd1Z0NdC6ztciFoJu3QHpf+zpO/hh+dPCPO7gpMlbMDG5gka
+         wkFSLYXYymDvchvL4XiTLagyOwO3xQZpG+xQJsqjvrvKqoaDTqaQIavidwxEdTu9J9b6
+         hsLA==
+X-Gm-Message-State: AGi0PuZ1oYmGK5zlipIF2/FBBJzWTh+jLoSHGRfcfE8HjzUQouQ9Ho93
+        THoFUfAwrNpr8lIjUqbhxGQsuDk=
+X-Google-Smtp-Source: APiQypI+q90EcJYQgIP5foBVizKnUwxg5NykGbL2hgbN/7Z9tebeDhCVPgGy4H9xSz9z9wr3rhbSRQ==
+X-Received: by 2002:a54:4519:: with SMTP id l25mr4255258oil.92.1586540819869;
+        Fri, 10 Apr 2020 10:46:59 -0700 (PDT)
+Received: from rob-hp-laptop (ip-173-126-55-226.ftwttx.spcsdns.net. [173.126.55.226])
+        by smtp.gmail.com with ESMTPSA id d3sm1596066oib.15.2020.04.10.10.46.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 10:37:30 -0700 (PDT)
-Received: (nullmailer pid 8169 invoked by uid 1000);
-        Fri, 10 Apr 2020 17:11:38 -0000
-Date:   Fri, 10 Apr 2020 12:11:38 -0500
+        Fri, 10 Apr 2020 10:46:59 -0700 (PDT)
+Received: (nullmailer pid 25668 invoked by uid 1000);
+        Fri, 10 Apr 2020 17:46:58 -0000
+Date:   Fri, 10 Apr 2020 12:46:58 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH 3/4] clk: sprd: add dt-bindings include for mipi_csi_xx
- clocks
-Message-ID: <20200410171138.GA8130@bogus>
-References: <20200330071451.7899-1-zhang.lyra@gmail.com>
- <20200330071451.7899-4-zhang.lyra@gmail.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        narmstrong@baylibre.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 1/2] clk: meson8b: export the HDMI system clock
+Message-ID: <20200410174658.GA25608@bogus>
+References: <20200330234535.3327513-1-martin.blumenstingl@googlemail.com>
+ <20200330234535.3327513-2-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200330071451.7899-4-zhang.lyra@gmail.com>
+In-Reply-To: <20200330234535.3327513-2-martin.blumenstingl@googlemail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 30 Mar 2020 15:14:50 +0800, Chunyan Zhang wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+On Tue, 31 Mar 2020 01:45:34 +0200, Martin Blumenstingl wrote:
+> Export the HDMI system clock (used by the HDMI transmitter) so it can be
+> used in the dt-bindings.
 > 
-> mipi_csi_xx clocks are used by camera sensors.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
->  include/dt-bindings/clock/sprd,sc9863a-clk.h | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/clk/meson/meson8b.h              | 1 -
+>  include/dt-bindings/clock/meson8b-clkc.h | 1 +
+>  2 files changed, 1 insertion(+), 1 deletion(-)
 > 
 
 Acked-by: Rob Herring <robh@kernel.org>
