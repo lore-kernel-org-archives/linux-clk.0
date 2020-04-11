@@ -2,213 +2,228 @@ Return-Path: <SRS0=IWo4=53=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F46C2BB1D
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 00:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4550C2BB1D
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 01:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A85D62083E
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 00:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D1492083E
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 01:01:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="BqiXbqDF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AfK1WVnx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726822AbgDKAxB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Apr 2020 20:53:01 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:44368 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726819AbgDKAxB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 20:53:01 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586566381; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=tXgJHnruTE7JJJpQBKFjjW9EiDNiUmdUuus915BuRfU=; b=BqiXbqDFwMxp2GN26rw5UjkgSDmqZo/fwpSabIMTrGNGP4mU+oIGk8sTj2q70OjHIPRJLtSC
- fqUfhwpN7kNHKmimL9JbZJnCWyhdfbu+HjUhFXOi//igJFp0vv3T54TpqRYTSbiKT2z2LSwS
- uUj1ZaNyLfnKnOxN32QcfZ4tUMs=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e9114e5.7ff692243b58-smtp-out-n02;
- Sat, 11 Apr 2020 00:52:53 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B6F29C43637; Sat, 11 Apr 2020 00:52:52 +0000 (UTC)
-Received: from wcheng-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2ADF7C43636;
-        Sat, 11 Apr 2020 00:52:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2ADF7C43636
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
-From:   Wesley Cheng <wcheng@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        id S1726671AbgDKBBf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Apr 2020 21:01:35 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37834 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbgDKBBf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 21:01:35 -0400
+Received: by mail-pl1-f193.google.com with SMTP id m16so1201849pls.4
+        for <linux-clk@vger.kernel.org>; Fri, 10 Apr 2020 18:01:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=JnweRSJzbFA/HZJs3MpjVTk2omd0xC4ncUbfKrlGFuw=;
+        b=AfK1WVnxwG7uZsgDtL5AKGrzGbqbYwkb8OQZXU/szpAPWTNX6mXt+fKCDUlEzTSfiU
+         mLTrYajKIcfrWwHNlBUDmjK+Se8AzofhAE6/K6QCFv+rXvBaAUetqsAw3Hb1ILyYwV0J
+         x8IwGn2qVx0vwZJQubgBtUcJCxVwk/filqEKSGbYjn9yHHdxJRKAvpdjHNd++IC48jPK
+         1iZ44mTgC9JT79eoM1jiZ84QDPlHHVaiVXmzMcMRF/W7t0BiihsGiPGztaQR8p0t+UEM
+         5VFMARXC+qvLvhXpjtvErOQUPmh1STEAp24Ci59/RVXQBOtHvzuOxwgeEPXQCL8Vy48P
+         QkYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=JnweRSJzbFA/HZJs3MpjVTk2omd0xC4ncUbfKrlGFuw=;
+        b=tfh/t0VU0AJDKFdJxPzBQ//I7ZmP0G9mRvBjxfVivBmoQkOtQd+gHk57/fc8Y/pBV8
+         HzyiRhfbzuilYVAMFxm6/D0tC6JWpoBIpL3blakzy7f6NSgO1CVCQdhowU9Sfj4pFb0b
+         1k5DYWiyEfIcGeqT1bKd1Yl06FYgEiZ2YdtvN9y3tufbtFBOgvo3wAX7zhmUYHmYb9sj
+         1PKEvAQ6tqNBRUb04ov2yV8c/FZvDeKDiumudFZ7uGQ/et61d3uxCGjsInHMiH36JmC3
+         MUSrqqp1mcuMIVl6XmYEf4E7B6TAG9+fmsL8kOnS4ZDFYePXZK/Ispe/C7Vy+MEApcmA
+         hP/g==
+X-Gm-Message-State: AGi0PuakK6RgyOl4SkDCjFmy+7FCbSM5zuhf4j0AXbyFHqd9fPADFCjH
+        2MLAFiOK9nPJopKP+3cdWNxLvw==
+X-Google-Smtp-Source: APiQypJdhHrHpSQZULqAtlQ5+75We8n8BQ7hLwWMFPX17WGan0vJQ+38ci68Rc0D56ubTYTUgx+RnQ==
+X-Received: by 2002:a17:902:8b87:: with SMTP id ay7mr7208355plb.281.1586566894101;
+        Fri, 10 Apr 2020 18:01:34 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i190sm823811pfc.119.2020.04.10.18.01.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Apr 2020 18:01:33 -0700 (PDT)
+Date:   Fri, 10 Apr 2020 18:01:43 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Wesley Cheng <wcheng@codeaurora.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vinod.koul@linaro.org, Jack Pham <jackp@codeaurora.org>,
-        Wesley Cheng <wcheng@codeaurora.org>
-Subject: [PATCH v4 2/2] arm64: dts: qcom: sm8150: Add USB and PHY device nodes
-Date:   Fri, 10 Apr 2020 17:52:42 -0700
-Message-Id: <1586566362-21450-3-git-send-email-wcheng@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1586566362-21450-1-git-send-email-wcheng@codeaurora.org>
+        vinod.koul@linaro.org
+Subject: Re: [PATCH v4 1/2] clk: qcom: gcc: Add USB3 PIPE clock and GDSC for
+ SM8150
+Message-ID: <20200411010143.GF20625@builder.lan>
 References: <1586566362-21450-1-git-send-email-wcheng@codeaurora.org>
+ <1586566362-21450-2-git-send-email-wcheng@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586566362-21450-2-git-send-email-wcheng@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jack Pham <jackp@codeaurora.org>
+On Fri 10 Apr 17:52 PDT 2020, Wesley Cheng wrote:
 
-Add device nodes for the USB3 controller, QMP SS PHY and
-SNPS HS PHY.
+> This adds the USB3 PIPE clock and GDSC structures, so
+> that the USB driver can vote for these resources to be
+> enabled/disabled when required.  Both are needed for SS
+> and HS USB paths to operate properly.  The GDSC will
+> allow the USB system to be brought out of reset, while
+> the PIPE clock is needed for data transactions between
+> the PHY and controller.
+> 
+> Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
-Signed-off-by: Jack Pham <jackp@codeaurora.org>
-Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Vinod Koul <vkoul@kernel.org>
-Tested-by: Vinod Koul <vinod.koul@linaro.org>
----
- arch/arm64/boot/dts/qcom/sm8150-mtp.dts | 21 ++++++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi    | 92 +++++++++++++++++++++++++++++++++
- 2 files changed, 113 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-index 8ab1661..6c6325c 100644
---- a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-@@ -408,3 +408,24 @@
- 	vdda-pll-supply = <&vreg_l3c_1p2>;
- 	vdda-pll-max-microamp = <19000>;
- };
-+
-+&usb_1_hsphy {
-+	status = "okay";
-+	vdda-pll-supply = <&vdd_usb_hs_core>;
-+	vdda33-supply = <&vdda_usb_hs_3p1>;
-+	vdda18-supply = <&vdda_usb_hs_1p8>;
-+};
-+
-+&usb_1_qmpphy {
-+	status = "okay";
-+	vdda-phy-supply = <&vreg_l3c_1p2>;
-+	vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
-+};
-+
-+&usb_1 {
-+	status = "okay";
-+};
-+
-+&usb_1_dwc3 {
-+	dr_mode = "peripheral";
-+};
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 141c21d..a36512d 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -621,6 +621,98 @@
- 			};
- 		};
- 
-+		usb_1_hsphy: phy@88e2000 {
-+			compatible = "qcom,sm8150-usb-hs-phy",
-+							"qcom,usb-snps-hs-7nm-phy";
-+			reg = <0 0x088e2000 0 0x400>;
-+			status = "disabled";
-+			#phy-cells = <0>;
-+
-+			clocks = <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "ref";
-+
-+			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
-+		};
-+
-+		usb_1_qmpphy: phy@88e9000 {
-+			compatible = "qcom,sm8150-qmp-usb3-phy";
-+			reg = <0 0x088e9000 0 0x18c>,
-+			      <0 0x088e8000 0 0x10>;
-+			reg-names = "reg-base", "dp_com";
-+			status = "disabled";
-+			#clock-cells = <1>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_USB3_PRIM_CLKREF_CLK>,
-+				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
-+			clock-names = "aux", "ref_clk_src", "ref", "com_aux";
-+
-+			resets = <&gcc GCC_USB3_DP_PHY_PRIM_BCR>,
-+				 <&gcc GCC_USB3_PHY_PRIM_BCR>;
-+			reset-names = "phy", "common";
-+
-+			usb_1_ssphy: lanes@88e9200 {
-+				reg = <0 0x088e9200 0 0x200>,
-+				      <0 0x088e9400 0 0x200>,
-+				      <0 0x088e9c00 0 0x218>,
-+				      <0 0x088e9600 0 0x200>,
-+				      <0 0x088e9800 0 0x200>,
-+				      <0 0x088e9a00 0 0x100>;
-+				#phy-cells = <0>;
-+				clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
-+				clock-names = "pipe0";
-+				clock-output-names = "usb3_phy_pipe_clk_src";
-+			};
-+		};
-+
-+		usb_1: usb@a6f8800 {
-+			compatible = "qcom,sm8150-dwc3", "qcom,dwc3";
-+			reg = <0 0x0a6f8800 0 0x400>;
-+			status = "disabled";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+			dma-ranges;
-+
-+			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
-+				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-+				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
-+				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
-+				 <&gcc GCC_USB3_SEC_CLKREF_CLK>;
-+			clock-names = "cfg_noc", "core", "iface", "mock_utmi",
-+				      "sleep", "xo";
-+
-+			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
-+					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
-+			assigned-clock-rates = <19200000>, <150000000>;
-+
-+			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 486 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 488 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 489 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hs_phy_irq", "ss_phy_irq",
-+					  "dm_hs_phy_irq", "dp_hs_phy_irq";
-+
-+			power-domains = <&gcc USB30_PRIM_GDSC>;
-+
-+			resets = <&gcc GCC_USB30_PRIM_BCR>;
-+
-+			usb_1_dwc3: dwc3@a600000 {
-+				compatible = "snps,dwc3";
-+				reg = <0 0x0a600000 0 0xcd00>;
-+				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
-+				phys = <&usb_1_hsphy>, <&usb_1_ssphy>;
-+				phy-names = "usb2-phy", "usb3-phy";
-+			};
-+		};
-+
- 		aoss_qmp: power-controller@c300000 {
- 			compatible = "qcom,sm8150-aoss-qmp";
- 			reg = <0x0 0x0c300000 0x0 0x100000>;
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Stephen, let me know when you take this patch and I'll take the dts one.
+
+Regards,
+Bjorn
+
+> ---
+>  drivers/clk/qcom/gcc-sm8150.c               | 52 +++++++++++++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sm8150.h |  4 +++
+>  2 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> index 2087721..ef98fdc 100644
+> --- a/drivers/clk/qcom/gcc-sm8150.c
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> @@ -21,6 +21,7 @@
+>  #include "clk-rcg.h"
+>  #include "clk-regmap.h"
+>  #include "reset.h"
+> +#include "gdsc.h"
+>  
+>  enum {
+>  	P_BI_TCXO,
+> @@ -3171,6 +3172,18 @@ enum {
+>  	},
+>  };
+>  
+> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
+> +	.halt_check = BRANCH_HALT_SKIP,
+> +	.clkr = {
+> +		.enable_reg = 0xf058,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_usb3_prim_phy_pipe_clk",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_branch gcc_usb3_sec_clkref_clk = {
+>  	.halt_reg = 0x8c028,
+>  	.halt_check = BRANCH_HALT,
+> @@ -3218,6 +3231,18 @@ enum {
+>  	},
+>  };
+>  
+> +static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+> +	.halt_check = BRANCH_HALT_SKIP,
+> +	.clkr = {
+> +		.enable_reg = 0x10058,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_usb3_sec_phy_pipe_clk",
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  /*
+>   * Clock ON depends on external parent 'config noc', so cant poll
+>   * delay and also mark as crtitical for video boot
+> @@ -3292,6 +3317,24 @@ enum {
+>  	},
+>  };
+>  
+> +static struct gdsc usb30_prim_gdsc = {
+> +		.gdscr = 0xf004,
+> +		.pd = {
+> +			.name = "usb30_prim_gdsc",
+> +		},
+> +		.pwrsts = PWRSTS_OFF_ON,
+> +		.flags = POLL_CFG_GDSCR,
+> +};
+> +
+> +static struct gdsc usb30_sec_gdsc = {
+> +		.gdscr = 0x10004,
+> +		.pd = {
+> +			.name = "usb30_sec_gdsc",
+> +		},
+> +		.pwrsts = PWRSTS_OFF_ON,
+> +		.flags = POLL_CFG_GDSCR,
+> +};
+> +
+>  static struct clk_regmap *gcc_sm8150_clocks[] = {
+>  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
+>  	[GCC_AGGRE_UFS_CARD_AXI_CLK] = &gcc_aggre_ufs_card_axi_clk.clkr,
+> @@ -3480,10 +3523,12 @@ enum {
+>  	[GCC_USB3_PRIM_PHY_AUX_CLK] = &gcc_usb3_prim_phy_aux_clk.clkr,
+>  	[GCC_USB3_PRIM_PHY_AUX_CLK_SRC] = &gcc_usb3_prim_phy_aux_clk_src.clkr,
+>  	[GCC_USB3_PRIM_PHY_COM_AUX_CLK] = &gcc_usb3_prim_phy_com_aux_clk.clkr,
+> +	[GCC_USB3_PRIM_PHY_PIPE_CLK] = &gcc_usb3_prim_phy_pipe_clk.clkr,
+>  	[GCC_USB3_SEC_CLKREF_CLK] = &gcc_usb3_sec_clkref_clk.clkr,
+>  	[GCC_USB3_SEC_PHY_AUX_CLK] = &gcc_usb3_sec_phy_aux_clk.clkr,
+>  	[GCC_USB3_SEC_PHY_AUX_CLK_SRC] = &gcc_usb3_sec_phy_aux_clk_src.clkr,
+>  	[GCC_USB3_SEC_PHY_COM_AUX_CLK] = &gcc_usb3_sec_phy_com_aux_clk.clkr,
+> +	[GCC_USB3_SEC_PHY_PIPE_CLK] = &gcc_usb3_sec_phy_pipe_clk.clkr,
+>  	[GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
+>  	[GCC_VIDEO_AXI0_CLK] = &gcc_video_axi0_clk.clkr,
+>  	[GCC_VIDEO_AXI1_CLK] = &gcc_video_axi1_clk.clkr,
+> @@ -3527,6 +3572,11 @@ enum {
+>  	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
+>  };
+>  
+> +static struct gdsc *gcc_sm8150_gdscs[] = {
+> +	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
+> +	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
+> +};
+> +
+>  static const struct regmap_config gcc_sm8150_regmap_config = {
+>  	.reg_bits	= 32,
+>  	.reg_stride	= 4,
+> @@ -3541,6 +3591,8 @@ enum {
+>  	.num_clks = ARRAY_SIZE(gcc_sm8150_clocks),
+>  	.resets = gcc_sm8150_resets,
+>  	.num_resets = ARRAY_SIZE(gcc_sm8150_resets),
+> +	.gdscs = gcc_sm8150_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(gcc_sm8150_gdscs),
+>  };
+>  
+>  static const struct of_device_id gcc_sm8150_match_table[] = {
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> index 90d60ef..3e1a918 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
+> @@ -240,4 +240,8 @@
+>  #define GCC_USB30_SEC_BCR					27
+>  #define GCC_USB_PHY_CFG_AHB2PHY_BCR				28
+>  
+> +/* GCC GDSCRs */
+> +#define USB30_PRIM_GDSC                     4
+> +#define USB30_SEC_GDSC						5
+> +
+>  #endif
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
