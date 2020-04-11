@@ -3,70 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC16AC2D0EC
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79388C2D0EC
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAEF32082D
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8A02082D
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586571666;
-	bh=9FXFgoWgktV3YzcubxYjcxavPodS9HRGdrHbO04bwv0=;
+	s=default; t=1586572048;
+	bh=HUi2hrUBSigypj7OLb4O+ntBuDmB4tsP4LR2Q8kzRy8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=tadJSzdhGJ0DiDzf5kCUVuR1PLj/TsjYhX313XmX1SfOlYMpUHmP9I3d5fERx5nAS
-	 1pzXzwWYGwnWxnnD/YtSevDbMLQVep3KoOyBrKJOysw0mrTJ+Y2+CLcQ4yCjxOEUIY
-	 PvXRAj91zgnqVvvib0Z/uL107kQXKsLI2xUIUf1A=
+	b=xN26MtvcqXCskCZ8CgShlVzF67aimr0CYmnyWxRNz+r/Mb0mKj/TWVfCUrAFij+BC
+	 fxPPHp9+qaE7RuJzSZCoGTnX2RFOgEAi4Fq03qt5FCqrmnkiTscEySCXaMVJadaN5x
+	 pDyB7Pq03jWTM08a3xhntsynnEWCjhQijFxJYk8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726650AbgDKCVF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Apr 2020 22:21:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46838 "EHLO mail.kernel.org"
+        id S1726657AbgDKC11 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Apr 2020 22:27:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbgDKCVF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Apr 2020 22:21:05 -0400
+        id S1726648AbgDKC11 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Apr 2020 22:27:27 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC16D206A1;
-        Sat, 11 Apr 2020 02:21:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 004E0206A1;
+        Sat, 11 Apr 2020 02:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586571665;
-        bh=9FXFgoWgktV3YzcubxYjcxavPodS9HRGdrHbO04bwv0=;
+        s=default; t=1586572047;
+        bh=HUi2hrUBSigypj7OLb4O+ntBuDmB4tsP4LR2Q8kzRy8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TFt33anl8qdBEz00Cs6WAqt2RGnbP4oHNDorno+yXiSJ+ouo92cimWPsnINvMnhDI
-         DvwwCOMxZ8GRdD/dAAimAuj+rLJ2MF0/BXl1qmE8OjyilWaW6UGEPZyp3IzIHezY3R
-         JAyQxn27YSwSnP5/vFSamEAyFDeH/JXHePp90Yv0=
+        b=p74Y9fw4spXP8pf4T5VF32/bLgWuuZPiqXJ+qwE6TdU3spWHWZoocPJZCScu098NO
+         mdzxubA+o7uu/V75cIWSMbkFN8o6UIgFacDnbNELRUcunPHJiZoPFA9aV7E7Z/fX0x
+         osRc40ASzj49v7Fz/0J96Bm8nLJO7F0FQJIkLfNs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200408020234.31764-1-zhang.lyra@gmail.com>
-References: <20200331104532.12698-1-chunyan.zhang@unisoc.com> <20200408020234.31764-1-zhang.lyra@gmail.com>
-Subject: Re: [PATCH] clk: sprd: don't gate uart console clock
+In-Reply-To: <CAAfSe-s=dZe=6y7UH8CBcddL1BKoLOAvi24RekgdmVv0StxTTA@mail.gmail.com>
+References: <20200408160044.2550437-1-arnd@arndb.de> <CABOV4+UocLs3jLi7-vTi8muiFqACVdxH7Td8=U1ABveLnmyCuw@mail.gmail.com> <CA+nhYX0H-czfJ6Kg+FK7X2=hHQK185UOLGoPdEP3nqWQWcA+bg@mail.gmail.com> <CAAfSe-s=dZe=6y7UH8CBcddL1BKoLOAvi24RekgdmVv0StxTTA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] clk: sprd: fix compile-testing
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Orson Zhai <orson.zhai@unisoc.com>,
+        Android Kernel Team <kernel-team@android.com>
 To:     Chunyan Zhang <zhang.lyra@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 10 Apr 2020 19:21:04 -0700
-Message-ID: <158657166498.199533.13770774815921736950@swboyd.mtv.corp.google.com>
+        Sandeep Patil <sspatil@android.com>
+Date:   Fri, 10 Apr 2020 19:27:26 -0700
+Message-ID: <158657204622.199533.16589832598336244320@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chunyan Zhang (2020-04-07 19:02:34)
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Quoting Chunyan Zhang (2020-04-09 20:45:16)
+> We see this broken because I shouldn't leave clk Makefile a tristate
+> compile [1] after changing ARCH_SPRD to be tristate.
 >=20
-> Don't gate uart1_eb which provides console clock, gating that clock would
-> make serial stop working if serial driver didn't enable that explicitly.
+> If we will make ARCH_SPRD tristate-able in the future and you all
+> aggree that, I would like to do it now, and pay more attention to
+> Makefiles and dependencies.
 >=20
-> Fixes: 0e4b8a2349f3 ("clk: sprd: add clocks support for SC9863A")
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
+> I can also make a change like below:
+>=20
+> diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
+> index e18c80fbe804..9f7d9d8899a5 100644
+> --- a/drivers/clk/sprd/Kconfig
+> +++ b/drivers/clk/sprd/Kconfig
+> @@ -2,6 +2,7 @@
+>  config SPRD_COMMON_CLK
+>         tristate "Clock support for Spreadtrum SoCs"
+>         depends on ARCH_SPRD || COMPILE_TEST
+> +       depends on m || ARCH_SPRD !=3D m
+>         default ARCH_SPRD
+>         select REGMAP_MMIO
+>=20
+> Arnd, Stephen, Sandeep, what do you think? Does that make sense?
 
-Applied to clk-fixes
+Sorry, doesn't make any sense to me. The ARCH_FOO configs for various
+platforms are intended to be used to limit the configuration space of
+various other Kconfig symbols for the code that only matters to those
+platforms. The usage of depends and default is correct here already. The
+ARCH_FOO configs should always be bool. Any code bloat problems seen by
+config symbols enabling because they're 'default ARCH_FOO' can be
+resolved by explicitly disabling those configs.
