@@ -2,65 +2,80 @@ Return-Path: <SRS0=IWo4=53=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F03DC2BA19
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 04:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95BEC2BA19
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 20:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C885020753
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 04:13:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B794620708
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 20:39:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="EGOJ35Fp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p6IKm4P6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725866AbgDKENO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Apr 2020 00:13:14 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:55183 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725869AbgDKENO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Apr 2020 00:13:14 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1586578393; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=+sUFNmPugrx9OCnG3P/MWDj5UgVIIwaTrn/1HJ/r+Us=; b=EGOJ35FpEyhTzNxM7ZIajHdiSuI43Ubmux8CIjT+WeVT6pFhyK0huyYm4uX3WSz8T6aFF6qu
- hAyrf+7+Aq5uHVzyZXWpNXitmkG6HVlQNvYbpa9ZSoudgkT+vaWfP0nr1arj2doGv5ljnDov
- 5dXJYrFzOHDwiTdPPge9SAWcvWQ=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e9143d3.7f17cdb3c298-smtp-out-n03;
- Sat, 11 Apr 2020 04:13:07 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8B27CC432C2; Sat, 11 Apr 2020 04:13:07 +0000 (UTC)
-Received: from [10.110.2.190] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wcheng)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BEBAAC433CB;
-        Sat, 11 Apr 2020 04:13:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BEBAAC433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=wcheng@codeaurora.org
-Subject: Re: [PATCH v3 2/4] phy: qcom-snps: Add SNPS USB PHY driver for QCOM
- based SOCs
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vinod.koul@linaro.org
-References: <1586298209-4589-1-git-send-email-wcheng@codeaurora.org>
- <1586298209-4589-3-git-send-email-wcheng@codeaurora.org>
- <158657149111.199533.2451403004745553390@swboyd.mtv.corp.google.com>
-From:   Wesley Cheng <wcheng@codeaurora.org>
-Message-ID: <16fa7780-8901-f2f4-7633-b43f0e9ada90@codeaurora.org>
-Date:   Fri, 10 Apr 2020 21:13:04 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.6.0
+        id S1726836AbgDKUjN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Apr 2020 16:39:13 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45074 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbgDKUjN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Apr 2020 16:39:13 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f8so3714112lfe.12;
+        Sat, 11 Apr 2020 13:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=dUvGhh7rtUygLtFL6NkahS3nxFZQQQrd2UgQKXcfbs8=;
+        b=p6IKm4P6WSbEAcbj6S3ltnZ2NHV2t8qTSW0NL2+R1TTGZLa2zbXXAMYSPOg3HVBLlL
+         B0yFCzrnvUvMCA115IQVPj0FnoUHUGTnoN2E9xgDUJlhqT2ELFNVI2zKmxrqx1KgPA44
+         UM48pJIiGIqE+sZgpbvelQmutKABl6UJE8DP+wwgnfTiamSfHHZu7Cbaxqj0makocRSi
+         Gib5ayNACzWZla1dCsAZi0BHo0ltCbFGSQw8nxkcsvEE61nImKKS9veEH2g+6hrXjGwb
+         Dc9V+WHNF7ldjSXauscKvQNCzhQMlN4G6jUkSRkXs0C5elMngQ+xd/8Kx+av69ix8NH8
+         d1BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=dUvGhh7rtUygLtFL6NkahS3nxFZQQQrd2UgQKXcfbs8=;
+        b=EBcr89trwDBhipjacftYPV4nu1ShuduBdAEM+z4j7Wnn8PN2/ues6b2uZ0NX2UP9hJ
+         Kv7d8nRtrj/X94dglN5yCYxjs51l+fLVkH2oiE77veLw79t+qBNRtDT0IQvSlacF1inw
+         UDTTF9iJc6iBCO2KXmXdewhZgw85QqRC24Z0K1JkaORJhwIPWMiIpxLGgGsmuws8qHIQ
+         f/biw4WPkavS/R0NGH4r+5CeIs/pQWgxZaQcjdKac5u8IIXIHS1T4FSJI8m8HRhWxKjL
+         2/s3jRIRhgwXbOzhSxcpr5kLeqLi5pPczqeP4s/4lGeNrXhDO2bs57DRrQiT5oCyqVOK
+         QdzA==
+X-Gm-Message-State: AGi0PuYwmXixWnDyshg/pVB41CSq8RvcJKP9TvwnP4vRu4hpWJV1Afnn
+        ETLm/VDYrHj5MPOuf41Bad0=
+X-Google-Smtp-Source: APiQypITUq6qdmf7TaiDE8oKDktp99wvNTm7FyxMm+PVWG07LwV9SMzTF9rfMVSJnQ9VQ9hHrT6pog==
+X-Received: by 2002:ac2:43b1:: with SMTP id t17mr6149082lfl.9.1586637550065;
+        Sat, 11 Apr 2020 13:39:10 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id u19sm2435448lji.61.2020.04.11.13.39.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 Apr 2020 13:39:09 -0700 (PDT)
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
+Message-ID: <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
+Date:   Sat, 11 Apr 2020 23:39:08 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <158657149111.199533.2451403004745553390@swboyd.mtv.corp.google.com>
+In-Reply-To: <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,337 +84,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+> ...
+>> +#define TRIM_REG(chan, rank, reg, byte)					\
+>> +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
+>> +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
+>> +				 rank ## _ ## reg ## _INDEX]) >>	\
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
+>> +	 +								\
+>> +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+>> +	    byte ## _DATA_BRLSHFT_MASK &				\
+>> +	    next->trim_perch_regs[EMC ## chan ##			\
+>> +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
+>> +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
+>> +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
+>> +
+>> +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
+>> +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
+>> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT) & \
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
+>> +	 |								\
+>> +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
+>> +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT) & \
+>> +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
+>> +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
 
+What about replacing those barely readable concatenated macros with a
+raw values?
 
-On 4/10/2020 7:18 PM, Stephen Boyd wrote:
-> Quoting Wesley Cheng (2020-04-07 15:23:27)
->> diff --git a/drivers/phy/qualcomm/Kconfig b/drivers/phy/qualcomm/Kconfig
->> index e46824d..3158c14 100644
->> --- a/drivers/phy/qualcomm/Kconfig
->> +++ b/drivers/phy/qualcomm/Kconfig
->> @@ -85,6 +85,16 @@ config PHY_QCOM_USB_HS
->>           Support for the USB high-speed ULPI compliant phy on Qualcomm
->>           chipsets.
->>  
->> +config PHY_QCOM_USB_SNPS_HS_7NM
->> +       tristate "Qualcomm 7nm USB HS PHY module"
->> +       depends on OF && (ARCH_QCOM || COMPILE_TEST)
->> +       select GENERIC_PHY
->> +       help
->> +         Enable support for the USB high-speed SNPS phy on Qualcomm 7nm
->> +         chipsets.  This PHY has differences in the register map compared
->> +         to the 28nm variant.  The PHY is paired with a Synopsys DWC3 USB
->> +         controller on MSM SOCs.
-> 
-> s/MSM/Qualcomm/?
->
+Like:
 
-Hi Stephen,
-
-Thanks for the catch.  Will replace with Qualcomm.
-
->> +
->>  config PHY_QCOM_USB_HSIC
->>         tristate "Qualcomm USB HSIC ULPI PHY module"
->>         depends on USB_ULPI_BUS
->> diff --git a/drivers/phy/qualcomm/phy-qcom-snps-7nm.c b/drivers/phy/qualcomm/phy-qcom-snps-7nm.c
->> new file mode 100644
->> index 0000000..00a46cd
->> --- /dev/null
->> +++ b/drivers/phy/qualcomm/phy-qcom-snps-7nm.c
->> @@ -0,0 +1,294 @@
-> [...]
->> +
->> +/**
->> + * struct qcom_snps_hsphy - structure holding snps hs phy attributes
-> 
-> snps hs phy attributes
-> 
-> structure and holding are redundant.
-> 
-
-Understood.
-
->> + *
->> + * @phy: generic phy
->> + * @base: iomapped memory space for qubs2 phy
->> + *
->> + * @cfg_ahb_clk: AHB2PHY interface clock
->> + * @ref_clk: phy reference clock
->> + * @iface_clk: phy interface clock
->> + * @phy_reset: phy reset control
->> + * @vregs: regulator supplies bulk data
->> +
->> + * @phy_initialized: if PHY has been initialized correctly
-> 
-> Please drop space between members in the kernel-doc.
-> 
-
-Vinod actually pointed this out already, and I fixed this in v6.
-
->> + *
->> + */
->> +struct qcom_snps_hsphy {
->> +       struct phy *phy;
->> +       void __iomem *base;
->> +
->> +       struct clk *cfg_ahb_clk;
->> +       struct clk *ref_clk;
->> +       struct reset_control *phy_reset;
->> +       struct regulator_bulk_data vregs[SNPS_HS_NUM_VREGS];
->> +
->> +       bool phy_initialized;
->> +};
->> +
->> +static inline void qcom_snps_hsphy_write_mask(void __iomem *base, u32 offset,
->> +                                   u32 mask, u32 val)
->> +{
->> +       u32 reg;
->> +
->> +       reg = readl(base + offset);
->> +       reg &= ~mask;
->> +       reg |= val & mask;
->> +       writel(reg, base + offset);
-> 
-> Make these relaxed?
-> 
->> +
->> +       /* Ensure above write is completed */
->> +       readl(base + offset);
-> 
-> And this one too?
-> 
-
-Agreed, using the _relaxed() variant for these will be fine.  I'll
-replace them in the next revision.
-
->> +}
->> +
->> +static int qcom_snps_hsphy_init(struct phy *phy)
->> +{
->> +       struct qcom_snps_hsphy *hsphy = phy_get_drvdata(phy);
->> +       int ret;
->> +
->> +       dev_vdbg(&phy->dev, "%s(): Initializing SNPS HS phy\n", __func__);
->> +
->> +       /* turn on regulator supplies */
-> 
-> These comments don't tell us anything besides what the code is doing so
-> they don't seem useful.
-> 
-
-Will remove the comments.
-
->> +       ret = regulator_bulk_enable(ARRAY_SIZE(hsphy->vregs), hsphy->vregs);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* enable ahb interface clock to program phy */
->> +       ret = clk_prepare_enable(hsphy->cfg_ahb_clk);
->> +       if (ret) {
->> +               dev_err(&phy->dev, "failed to enable cfg ahb clock, %d\n", ret);
->> +               goto poweroff_phy;
->> +       }
->> +
->> +       /* Perform phy reset */
->> +       ret = reset_control_assert(hsphy->phy_reset);
->> +       if (ret) {
->> +               dev_err(&phy->dev, "failed to assert phy_reset, %d\n", ret);
->> +               goto disable_ahb_clk;
->> +       }
->> +
->> +       /* 100 us delay to keep PHY in reset mode */
->> +       usleep_range(100, 150);
->> +
->> +       ret = reset_control_deassert(hsphy->phy_reset);
->> +       if (ret) {
->> +               dev_err(&phy->dev, "failed to de-assert phy_reset, %d\n", ret);
->> +               goto disable_ahb_clk;
->> +       }
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_CFG0,
->> +                                                       UTMI_PHY_CMN_CTRL_OVERRIDE_EN,
->> +                                                       UTMI_PHY_CMN_CTRL_OVERRIDE_EN);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_UTMI_CTRL5,
->> +                                                       POR, POR);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL_COMMON0,
->> +                                                       FSEL_MASK, 0);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL_COMMON1,
->> +                                       PLLBTUNE, PLLBTUNE);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_REFCLK_CTRL,
->> +                                       REFCLK_SEL_DEFAULT, REFCLK_SEL_MASK);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL_COMMON1,
->> +                                       VBUSVLDEXTSEL0, VBUSVLDEXTSEL0);
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL1,
->> +                                       VBUSVLDEXT0, VBUSVLDEXT0);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL_COMMON2,
->> +                                       VREGBYPASS, VREGBYPASS);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL2,
->> +                                       USB2_SUSPEND_N_SEL | USB2_SUSPEND_N,
->> +                                       USB2_SUSPEND_N_SEL | USB2_SUSPEND_N);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_UTMI_CTRL0,
->> +                                       SLEEPM, SLEEPM);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_UTMI_CTRL5,
->> +                                       POR, 0);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_HS_PHY_CTRL2,
->> +                                       USB2_SUSPEND_N_SEL, 0);
->> +
->> +       qcom_snps_hsphy_write_mask(hsphy->base, USB2_PHY_USB_PHY_CFG0,
->> +                                       UTMI_PHY_CMN_CTRL_OVERRIDE_EN, 0);
->> +
->> +       hsphy->phy_initialized = true;
->> +
->> +       return 0;
->> +
->> +disable_ahb_clk:
->> +       clk_disable_unprepare(hsphy->cfg_ahb_clk);
->> +poweroff_phy:
->> +       regulator_bulk_disable(ARRAY_SIZE(hsphy->vregs), hsphy->vregs);
->> +
->> +       return ret;
->> +}
->> +
->> +static int qcom_snps_hsphy_exit(struct phy *phy)
->> +{
->> +       struct qcom_snps_hsphy *hsphy = phy_get_drvdata(phy);
->> +
->> +       reset_control_assert(hsphy->phy_reset);
->> +       clk_disable_unprepare(hsphy->cfg_ahb_clk);
->> +       regulator_bulk_disable(ARRAY_SIZE(hsphy->vregs), hsphy->vregs);
->> +       hsphy->phy_initialized = false;
->> +
->> +       return 0;
->> +}
->> +
->> +static const struct phy_ops qcom_snps_hsphy_gen_ops = {
->> +       .init           = qcom_snps_hsphy_init,
->> +       .exit           = qcom_snps_hsphy_exit,
->> +       .owner          = THIS_MODULE,
->> +};
->> +
->> +static const struct of_device_id qcom_snps_hsphy_of_match_table[] = {
->> +       {
->> +               .compatible     = "qcom,sm8150-usb-hs-phy",
->> +       },
->> +       {
->> +               .compatible     = "qcom,usb-snps-hs-7nm-phy",
->> +       },
->> +       { },
-> 
-> Can this be on one line?
-> 
->           { .compatible     = "qcom,sm8150-usb-hs-phy", },
->           { .compatible     = "qcom,usb-snps-hs-7nm-phy", },
->           { }
-> 
-> Also drop comma on the last element so nothing can follow without
-> causing compile error.
-> 
-
-Got it.
-
->> +};
->> +MODULE_DEVICE_TABLE(of, qcom_snps_hsphy_of_match_table);
->> +
->> +static int qcom_snps_hsphy_probe(struct platform_device *pdev)
->> +{
->> +       struct device *dev = &pdev->dev;
->> +       struct qcom_snps_hsphy *hsphy;
->> +       struct phy_provider *phy_provider;
->> +       struct phy *generic_phy;
->> +       struct resource *res;
->> +       int ret, i;
->> +       int num;
->> +
->> +       hsphy = devm_kzalloc(dev, sizeof(*hsphy), GFP_KERNEL);
->> +       if (!hsphy)
->> +               return -ENOMEM;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +       hsphy->base = devm_ioremap_resource(dev, res);
-> 
-> devm_platform_ioremap_resource()?
-> 
-
-Sure, will replace
-+       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+       hsphy->base = devm_ioremap_resource(dev, res);
-
-to:
-
-+	hsphy->base = devm_platform_ioremap_resource(pdev, 0);
-
->> +       if (IS_ERR(hsphy->base))
->> +               return PTR_ERR(hsphy->base);
->> +
->> +       hsphy->ref_clk = devm_clk_get(dev, "ref");
->> +       if (IS_ERR(hsphy->ref_clk)) {
->> +               ret = PTR_ERR(hsphy->ref_clk);
->> +               if (ret != -EPROBE_DEFER)
->> +                       dev_err(dev, "failed to get ref clk, %d\n", ret);
->> +               return ret;
->> +       }
->> +
->> +       hsphy->phy_reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
->> +       if (IS_ERR(hsphy->phy_reset)) {
->> +               dev_err(dev, "failed to get phy core reset\n");
->> +               return PTR_ERR(hsphy->phy_reset);
->> +       }
->> +
->> +       num = ARRAY_SIZE(hsphy->vregs);
->> +       for (i = 0; i < num; i++)
->> +               hsphy->vregs[i].supply = qcom_snps_hsphy_vreg_names[i];
->> +
->> +       ret = devm_regulator_bulk_get(dev, num, hsphy->vregs);
->> +       if (ret) {
->> +               if (ret != -EPROBE_DEFER)
->> +                       dev_err(dev, "failed to get regulator supplies: %d\n",
->> +                               ret);
->> +               return ret;
->> +       }
->> +
->> +       generic_phy = devm_phy_create(dev, NULL, &qcom_snps_hsphy_gen_ops);
->> +       if (IS_ERR(generic_phy)) {
->> +               ret = PTR_ERR(generic_phy);
->> +               dev_err(dev, "failed to create phy, %d\n", ret);
->> +               return ret;
->> +       }
->> +       hsphy->phy = generic_phy;
->> +
->> +       dev_set_drvdata(dev, hsphy);
->> +       phy_set_drvdata(generic_phy, hsphy);
->> +
->> +       phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->> +       if (!IS_ERR(phy_provider))
->> +               dev_info(dev, "Registered Qcom-SNPS HS phy\n");
-> 
-> dev_dbg()? Or just remove it?
-> 
-
-I'd like to keep some kind of print here.  Will replace with dev_dbg so
-it can be enabled when required.  Thanks again!
-
->> +
->> +       return PTR_ERR_OR_ZERO(phy_provider);
->> +}
->> +
->> +static struct platform_driver qcom_snps_hsphy_driver = {
->> +       .probe          = qcom_snps_hsphy_probe,
->> +       .driver = {
->> +               .name   = "qcom-snps-hs-7nm-phy",
->> +               .of_match_table = qcom_snps_hsphy_of_match_table,
->> +       },
->> +};
->> +
->> +module_platform_driver(qcom_snps_hsphy_driver);
->> +
->> +MODULE_DESCRIPTION("Qualcomm 7nm USB HS PHY driver");
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+TRIM_REG(brlshft_idx, ob_ddll_long_dq_rank_mask, ...)
