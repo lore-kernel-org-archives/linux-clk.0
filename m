@@ -2,228 +2,86 @@ Return-Path: <SRS0=IWo4=53=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4550C2BB1D
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 01:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72759C2D0EC
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D1492083E
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 01:01:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AfK1WVnx"
+	by mail.kernel.org (Postfix) with ESMTP id 4786B2087E
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Apr 2020 02:06:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586570809;
+	bh=cqQHICDlQYt+YHy+M5Ki3zElzEywEsrfk8xOa//FTqE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=qZ5xNMQhMCnHUjU3vGFN5bsLMTh0GGBoYxlsVy3QmzGOFQNEe+bS5VRhT0GPq3CLR
+	 vXl9Q+VVPqNdoHp1jDGp+mYLiLSoJcbjVKh30ahDd0hctCwe8q4bf8oXervBqNe0qM
+	 jfMlRuMVqNpEEfv2SaQDmAJ/qu5g+TVUDMAzkI4E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbgDKBBf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Apr 2020 21:01:35 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37834 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726701AbgDKBBf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Apr 2020 21:01:35 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m16so1201849pls.4
-        for <linux-clk@vger.kernel.org>; Fri, 10 Apr 2020 18:01:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=JnweRSJzbFA/HZJs3MpjVTk2omd0xC4ncUbfKrlGFuw=;
-        b=AfK1WVnxwG7uZsgDtL5AKGrzGbqbYwkb8OQZXU/szpAPWTNX6mXt+fKCDUlEzTSfiU
-         mLTrYajKIcfrWwHNlBUDmjK+Se8AzofhAE6/K6QCFv+rXvBaAUetqsAw3Hb1ILyYwV0J
-         x8IwGn2qVx0vwZJQubgBtUcJCxVwk/filqEKSGbYjn9yHHdxJRKAvpdjHNd++IC48jPK
-         1iZ44mTgC9JT79eoM1jiZ84QDPlHHVaiVXmzMcMRF/W7t0BiihsGiPGztaQR8p0t+UEM
-         5VFMARXC+qvLvhXpjtvErOQUPmh1STEAp24Ci59/RVXQBOtHvzuOxwgeEPXQCL8Vy48P
-         QkYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=JnweRSJzbFA/HZJs3MpjVTk2omd0xC4ncUbfKrlGFuw=;
-        b=tfh/t0VU0AJDKFdJxPzBQ//I7ZmP0G9mRvBjxfVivBmoQkOtQd+gHk57/fc8Y/pBV8
-         HzyiRhfbzuilYVAMFxm6/D0tC6JWpoBIpL3blakzy7f6NSgO1CVCQdhowU9Sfj4pFb0b
-         1k5DYWiyEfIcGeqT1bKd1Yl06FYgEiZ2YdtvN9y3tufbtFBOgvo3wAX7zhmUYHmYb9sj
-         1PKEvAQ6tqNBRUb04ov2yV8c/FZvDeKDiumudFZ7uGQ/et61d3uxCGjsInHMiH36JmC3
-         MUSrqqp1mcuMIVl6XmYEf4E7B6TAG9+fmsL8kOnS4ZDFYePXZK/Ispe/C7Vy+MEApcmA
-         hP/g==
-X-Gm-Message-State: AGi0PuakK6RgyOl4SkDCjFmy+7FCbSM5zuhf4j0AXbyFHqd9fPADFCjH
-        2MLAFiOK9nPJopKP+3cdWNxLvw==
-X-Google-Smtp-Source: APiQypJdhHrHpSQZULqAtlQ5+75We8n8BQ7hLwWMFPX17WGan0vJQ+38ci68Rc0D56ubTYTUgx+RnQ==
-X-Received: by 2002:a17:902:8b87:: with SMTP id ay7mr7208355plb.281.1586566894101;
-        Fri, 10 Apr 2020 18:01:34 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i190sm823811pfc.119.2020.04.10.18.01.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Apr 2020 18:01:33 -0700 (PDT)
-Date:   Fri, 10 Apr 2020 18:01:43 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Wesley Cheng <wcheng@codeaurora.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        vinod.koul@linaro.org
-Subject: Re: [PATCH v4 1/2] clk: qcom: gcc: Add USB3 PIPE clock and GDSC for
- SM8150
-Message-ID: <20200411010143.GF20625@builder.lan>
-References: <1586566362-21450-1-git-send-email-wcheng@codeaurora.org>
- <1586566362-21450-2-git-send-email-wcheng@codeaurora.org>
+        id S1726701AbgDKCGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Apr 2020 22:06:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726650AbgDKCGs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Apr 2020 22:06:48 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B35A2078E;
+        Sat, 11 Apr 2020 02:06:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586570808;
+        bh=cqQHICDlQYt+YHy+M5Ki3zElzEywEsrfk8xOa//FTqE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=pg77HT6z8He1VaE2NrM3WF72TCihcC55IYYroLSsU+MZIg8FFnv1erH/HtwrJCCDX
+         6O4mdR9uXpLlc1i3M3vDLetp4GhSMVkesMhjdVI7TDfo12Vv0heLZGGkg/zcr+q43W
+         7L0XiSFGF70AhQQ6rRniXpIybeC2JrIGclGvcOoc=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1586566362-21450-2-git-send-email-wcheng@codeaurora.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200408155402.2138446-1-arnd@arndb.de>
+References: <20200408155402.2138446-1-arnd@arndb.de>
+Subject: Re: [PATCH] clk: asm9260: fix __clk_hw_register_fixed_rate_with_accuracy typo
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Fri, 10 Apr 2020 19:06:47 -0700
+Message-ID: <158657080736.199533.14290297278383794385@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 10 Apr 17:52 PDT 2020, Wesley Cheng wrote:
-
-> This adds the USB3 PIPE clock and GDSC structures, so
-> that the USB driver can vote for these resources to be
-> enabled/disabled when required.  Both are needed for SS
-> and HS USB paths to operate properly.  The GDSC will
-> allow the USB system to be brought out of reset, while
-> the PIPE clock is needed for data transactions between
-> the PHY and controller.
-> 
-> Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-
-Stephen, let me know when you take this patch and I'll take the dts one.
-
-Regards,
-Bjorn
-
+Quoting Arnd Bergmann (2020-04-08 08:53:43)
+> The __clk_hw_register_fixed_rate_with_accuracy() function (with two '_')
+> does not exist, and apparently never did:
+>=20
+> drivers/clk/clk-asm9260.c: In function 'asm9260_acc_init':
+> drivers/clk/clk-asm9260.c:279:7: error: implicit declaration of function =
+'__clk_hw_register_fixed_rate_with_accuracy'; did you mean 'clk_hw_register=
+_fixed_rate_with_accuracy'? [-Werror=3Dimplicit-function-declaration]
+>   279 |  hw =3D __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pl=
+l_clk,
+>       |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>       |       clk_hw_register_fixed_rate_with_accuracy
+> drivers/clk/clk-asm9260.c:279:5: error: assignment to 'struct clk_hw *' f=
+rom 'int' makes pointer from integer without a cast [-Werror=3Dint-conversi=
+on]
+>   279 |  hw =3D __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pl=
+l_clk,
+>       |     ^
+>=20
+> From what I can tell, __clk_hw_register_fixed_rate() is the correct
+> API here, so use that instead.
+>=20
+> Fixes: 728e3096741a ("clk: asm9260: Use parent accuracy in fixed rate clk=
+")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  drivers/clk/qcom/gcc-sm8150.c               | 52 +++++++++++++++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sm8150.h |  4 +++
->  2 files changed, 56 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> index 2087721..ef98fdc 100644
-> --- a/drivers/clk/qcom/gcc-sm8150.c
-> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> @@ -21,6 +21,7 @@
->  #include "clk-rcg.h"
->  #include "clk-regmap.h"
->  #include "reset.h"
-> +#include "gdsc.h"
->  
->  enum {
->  	P_BI_TCXO,
-> @@ -3171,6 +3172,18 @@ enum {
->  	},
->  };
->  
-> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0xf058,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_usb3_prim_phy_pipe_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  static struct clk_branch gcc_usb3_sec_clkref_clk = {
->  	.halt_reg = 0x8c028,
->  	.halt_check = BRANCH_HALT,
-> @@ -3218,6 +3231,18 @@ enum {
->  	},
->  };
->  
-> +static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
-> +	.halt_check = BRANCH_HALT_SKIP,
-> +	.clkr = {
-> +		.enable_reg = 0x10058,
-> +		.enable_mask = BIT(0),
-> +		.hw.init = &(struct clk_init_data){
-> +			.name = "gcc_usb3_sec_phy_pipe_clk",
-> +			.ops = &clk_branch2_ops,
-> +		},
-> +	},
-> +};
-> +
->  /*
->   * Clock ON depends on external parent 'config noc', so cant poll
->   * delay and also mark as crtitical for video boot
-> @@ -3292,6 +3317,24 @@ enum {
->  	},
->  };
->  
-> +static struct gdsc usb30_prim_gdsc = {
-> +		.gdscr = 0xf004,
-> +		.pd = {
-> +			.name = "usb30_prim_gdsc",
-> +		},
-> +		.pwrsts = PWRSTS_OFF_ON,
-> +		.flags = POLL_CFG_GDSCR,
-> +};
-> +
-> +static struct gdsc usb30_sec_gdsc = {
-> +		.gdscr = 0x10004,
-> +		.pd = {
-> +			.name = "usb30_sec_gdsc",
-> +		},
-> +		.pwrsts = PWRSTS_OFF_ON,
-> +		.flags = POLL_CFG_GDSCR,
-> +};
-> +
->  static struct clk_regmap *gcc_sm8150_clocks[] = {
->  	[GCC_AGGRE_NOC_PCIE_TBU_CLK] = &gcc_aggre_noc_pcie_tbu_clk.clkr,
->  	[GCC_AGGRE_UFS_CARD_AXI_CLK] = &gcc_aggre_ufs_card_axi_clk.clkr,
-> @@ -3480,10 +3523,12 @@ enum {
->  	[GCC_USB3_PRIM_PHY_AUX_CLK] = &gcc_usb3_prim_phy_aux_clk.clkr,
->  	[GCC_USB3_PRIM_PHY_AUX_CLK_SRC] = &gcc_usb3_prim_phy_aux_clk_src.clkr,
->  	[GCC_USB3_PRIM_PHY_COM_AUX_CLK] = &gcc_usb3_prim_phy_com_aux_clk.clkr,
-> +	[GCC_USB3_PRIM_PHY_PIPE_CLK] = &gcc_usb3_prim_phy_pipe_clk.clkr,
->  	[GCC_USB3_SEC_CLKREF_CLK] = &gcc_usb3_sec_clkref_clk.clkr,
->  	[GCC_USB3_SEC_PHY_AUX_CLK] = &gcc_usb3_sec_phy_aux_clk.clkr,
->  	[GCC_USB3_SEC_PHY_AUX_CLK_SRC] = &gcc_usb3_sec_phy_aux_clk_src.clkr,
->  	[GCC_USB3_SEC_PHY_COM_AUX_CLK] = &gcc_usb3_sec_phy_com_aux_clk.clkr,
-> +	[GCC_USB3_SEC_PHY_PIPE_CLK] = &gcc_usb3_sec_phy_pipe_clk.clkr,
->  	[GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
->  	[GCC_VIDEO_AXI0_CLK] = &gcc_video_axi0_clk.clkr,
->  	[GCC_VIDEO_AXI1_CLK] = &gcc_video_axi1_clk.clkr,
-> @@ -3527,6 +3572,11 @@ enum {
->  	[GCC_USB_PHY_CFG_AHB2PHY_BCR] = { 0x6a000 },
->  };
->  
-> +static struct gdsc *gcc_sm8150_gdscs[] = {
-> +	[USB30_PRIM_GDSC] = &usb30_prim_gdsc,
-> +	[USB30_SEC_GDSC] = &usb30_sec_gdsc,
-> +};
-> +
->  static const struct regmap_config gcc_sm8150_regmap_config = {
->  	.reg_bits	= 32,
->  	.reg_stride	= 4,
-> @@ -3541,6 +3591,8 @@ enum {
->  	.num_clks = ARRAY_SIZE(gcc_sm8150_clocks),
->  	.resets = gcc_sm8150_resets,
->  	.num_resets = ARRAY_SIZE(gcc_sm8150_resets),
-> +	.gdscs = gcc_sm8150_gdscs,
-> +	.num_gdscs = ARRAY_SIZE(gcc_sm8150_gdscs),
->  };
->  
->  static const struct of_device_id gcc_sm8150_match_table[] = {
-> diff --git a/include/dt-bindings/clock/qcom,gcc-sm8150.h b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> index 90d60ef..3e1a918 100644
-> --- a/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> +++ b/include/dt-bindings/clock/qcom,gcc-sm8150.h
-> @@ -240,4 +240,8 @@
->  #define GCC_USB30_SEC_BCR					27
->  #define GCC_USB_PHY_CFG_AHB2PHY_BCR				28
->  
-> +/* GCC GDSCRs */
-> +#define USB30_PRIM_GDSC                     4
-> +#define USB30_SEC_GDSC						5
-> +
->  #endif
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+
+Applied to clk-fixes
