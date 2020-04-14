@@ -2,124 +2,138 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB6DC2BB85
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 337A2C3815B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EF87620656
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:48:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PamThkVb"
+	by mail.kernel.org (Postfix) with ESMTP id 1DCC320CC7
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440273AbgDNQsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 12:48:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60224 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2439869AbgDNQsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 12:48:15 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 615ABC061A0C;
-        Tue, 14 Apr 2020 09:48:15 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id j14so271311lfg.9;
-        Tue, 14 Apr 2020 09:48:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4Kw/fyFEkyNl4nhmDgy4d2CWUNDFR/R0fTw+bRmg16o=;
-        b=PamThkVbVW4+gLLvVbtvpBDc87SyAtJSlwa21DAei0japxekALaBraAxt9et9FJiCS
-         ia2ZL7HnGN6JUL1BhDZHEuyRRDFmLq1HlPzVyzDUX/0b4IWzCcPP4cUdIB0UEUz1lEfN
-         oM4uiYH0kyVMGAsyOlFUOfN/lkNr8Wy1Xa2I/liL1d/+24xBAA4JuRRd57lVFXEBxj4Z
-         n5vtAYmpamHQ9CnqBVSzUNtQq73JXTo00Id069Oi1wSotOOrQl4QFJAc9dDxHfpVnBYe
-         Qsu9tqVzpeH8QHWVGPd8qZnkwTtUXBs9Zy7nUcGANRr5AfmFgrlj28QPGQo9cHrZGFvr
-         zMfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4Kw/fyFEkyNl4nhmDgy4d2CWUNDFR/R0fTw+bRmg16o=;
-        b=e5nk2mZZRtYvmcnR2vwQPqP16HNtYDIRzMKu7fWJUZrlVWbJLMepD2diRXE3qEdcV8
-         WyeqjXERbYSJ7F4QgEIOQditk9ZcUugnJg1KCRZtnHbFruVmKrHJRsxBBGtLZodHb1PP
-         NK5MeIiB8WbFHD+Qzz9f4Zb8AJMDoWMiz9cznnq08mfwaRL52XGNZZhRMPgUcDJCQVHM
-         LoYg1b9+0KWMKRYImqTqBRvDnl7zAfUOvbfAfa8Qe+8TN3LEYNWJNhCz/wC4UHShQwJQ
-         vLbD7OXBSd2zTI2c3Jk3iT8LufmjUP9oIwBJLv9R6UU5jeYb3L1oEISGjI3dGumQWuSF
-         rtIg==
-X-Gm-Message-State: AGi0PuZTiDtcE6Y8ed4v7ovkTZ8uLLKWTOr7haTE+tNYZDhjPbPds5eQ
-        Fi9u5qTNA2k91PpRfRaAj3o=
-X-Google-Smtp-Source: APiQypLkikpgZUnOTOdp6SzcFWIX++W+faWrLSWt8Ymz5B2tCPgZUoXWJOOrOAF/DKPTCiQ5Zyeyug==
-X-Received: by 2002:a05:6512:490:: with SMTP id v16mr418834lfq.71.1586882893937;
-        Tue, 14 Apr 2020 09:48:13 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id r23sm9540512ljh.34.2020.04.14.09.48.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2020 09:48:13 -0700 (PDT)
-Subject: Re: [PATCH v6 04/14] clk: tegra: Rename Tegra124 EMC clock source
- file
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
+        id S2441020AbgDNQuZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 12:50:25 -0400
+Received: from mga17.intel.com ([192.55.52.151]:30107 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2440469AbgDNQuX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Apr 2020 12:50:23 -0400
+IronPort-SDR: 9oSKd+HRRu9JhqChL7Wopl/pveXsB9KQHXmUvumBNfDm3deh11UYstO9Kll2cVQ53hA+z8nmhE
+ VnVNEJn+urjA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 09:50:22 -0700
+IronPort-SDR: bWxEDQjuFDrDT9MygE7f1IjUi3D1Um86kZB5pVVrNCCWMQigtPOGBvd0wxbGDA6tjHzE9R1fNv
+ aENPuNPRmLAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,383,1580803200"; 
+   d="scan'208";a="245461959"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by fmsmga008.fm.intel.com with ESMTP; 14 Apr 2020 09:50:19 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jOOlS-000ZWr-5E; Tue, 14 Apr 2020 19:50:22 +0300
+Date:   Tue, 14 Apr 2020 19:50:22 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mikko Perttunen <cyndis@kapsi.fi>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-5-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a7209708-6e67-5885-5935-2db3d92174e8@gmail.com>
-Date:   Tue, 14 Apr 2020 19:48:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC PATCH 00/16] ASoC/SOF/clk/gpio/dt: add Hifiberry DAC+ PRO
+ support
+Message-ID: <20200414165022.GZ34613@smile.fi.intel.com>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20200409175238.3586487-5-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-09.04.2020 20:52, Thierry Reding пишет:
-> From: Thierry Reding <treding@nvidia.com>
+On Thu, Apr 09, 2020 at 02:58:25PM -0500, Pierre-Louis Bossart wrote:
+> The Hifiberry DAC+ / DAC+ PRO is supported in the Raspberry PI tree
+> but until now not in the mainline and not for ACPI platforms.
 > 
-> This code is only used on Tegra124, so rename it accordingly to make it
-> more consistent with other file names.
+> This patchset implements the recommendations suggested by Mark Brown
+> back in 2018: first add a gpiochip in the PCM512x codec driver, then
+> use these gpios from a clock driver and the machine driver.
 > 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->  drivers/clk/tegra/Makefile                          | 2 +-
->  drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} | 0
->  2 files changed, 1 insertion(+), 1 deletion(-)
->  rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
-> 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 1f7c30f87ece..dec508ef2ada 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -14,7 +14,6 @@ obj-y					+= clk-tegra-audio.o
->  obj-y					+= clk-tegra-periph.o
->  obj-y					+= clk-tegra-fixed.o
->  obj-y					+= clk-tegra-super-gen4.o
-> -obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-> @@ -22,6 +21,7 @@ obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
-> +obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-tegra124-emc.o
+> Since this patchset relies on different subsystems, sending as RFC for
+> now. I chose to import the original code from the Raspberry PI tree as
+> is,
 
-What about to rename CONFIG_TEGRA_CLK_EMC to CONFIG_TEGRA124_CLK_EMC as
-well?
+I don't see briefly what they are, any pointers like patch numbers in the
+series?
 
-Also.. maybe the CONFIG_TEGRA_CLK_EMC isn't really needed at all and the
-TEGRA124_EMC of memory/tegra could be re-used here?
+>	and add my changes on top. If there is a preference to squash the
+> changes that'd be fine.
+
+I guess it would be good to have.
+
+> I also don't know if I should split this
+> series in two, one for ASoC and one for clk changes?
+> 
+> This patchset does not add changes to the sound/soc/bcm machine
+> drivers, but that should be trivial once all the gpio/clock is
+> available.
+> 
+> Thanks to Andy Shevchenko for his help navigating the gpio subsystem
+> and flagging mistakes in the use of lookup tables, and to Rob Herring
+> for pointers on the DT bindings verification tools.
+
+You are welcome!
+I'm going to review them (where I understand something) as they are presented.
+
+> Daniel Matuschek (1):
+>   clk: hifiberry-dacpro: initial import
+> 
+> Pierre-Louis Bossart (15):
+>   ASoC: pcm512x: expose 6 GPIOs
+>   ASoC: pcm512x: use "sclk" string to retrieve clock
+>   ASoC: Intel: sof-pcm512x: use gpiod for LED
+>   ASoC: Intel: sof-pcm512x: detect Hifiberry DAC+ PRO
+>   ASoC: Intel: sof-pcm512x: reconfigure sclk in hw_params if needed
+>   ASoC: Intel: sof-pcm512x: select HIFIBERRY_DACPRO clk
+>   clk: hifiberry-dacpro: update SDPX/copyright
+>   clk: hifiberry-dacpro: style cleanups, use devm_
+>   clk: hifiberry-dacpro: add OF dependency
+>   clk: hifiberry-dacpro: transition to _hw functions
+>   clk: hifiberry-dacpro: add ACPI support
+>   clk: hifiberry-dacpro: add "sclk" lookup
+>   clk: hifiberry-dacpro: toggle GPIOs on prepare/unprepare
+>   clk: hifiberry-dacpro: add delay on clock prepare/deprepare
+>   ASoC: dt-bindings: add document for Hifiberry DAC+ PRO clock
+> 
+>  .../bindings/sound/hifiberry-dacpro.yaml      |  38 +++
+>  drivers/clk/Kconfig                           |   4 +
+>  drivers/clk/Makefile                          |   1 +
+>  drivers/clk/clk-hifiberry-dacpro.c            | 284 ++++++++++++++++++
+>  sound/soc/codecs/pcm512x.c                    | 134 ++++++++-
+>  sound/soc/intel/boards/Kconfig                |   2 +
+>  sound/soc/intel/boards/sof_pcm512x.c          | 190 +++++++++++-
+>  7 files changed, 635 insertions(+), 18 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/sound/hifiberry-dacpro.yaml
+>  create mode 100644 drivers/clk/clk-hifiberry-dacpro.c
+> 
+> 
+> base-commit: dd8e871d4e560eeb8d22af82dde91457ad835a63
+> -- 
+> 2.20.1
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
