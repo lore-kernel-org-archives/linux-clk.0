@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381C2C2BB1D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:40:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB8B6C352BE
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0432076B
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:40:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBEED2076C
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:46:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WpMEIu6e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qDR+lQnp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633293AbgDNUjv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 16:39:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42244 "EHLO
+        id S2633362AbgDNUqZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 16:46:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2633288AbgDNUjp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 16:39:45 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEE6C061A0C;
-        Tue, 14 Apr 2020 13:39:45 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id d8so1295239ljo.6;
-        Tue, 14 Apr 2020 13:39:45 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S2633360AbgDNUqV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 16:46:21 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63ABCC061A0C;
+        Tue, 14 Apr 2020 13:46:21 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id y4so1311500ljn.7;
+        Tue, 14 Apr 2020 13:46:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=khTmp2TYHsRQBvVJOtQBRGE8HXfWWnh3qR1G0Y1hx2w=;
-        b=WpMEIu6eM7FZWqOFDcKbvrCKcHbPw3WcuHFI4BxHyZ93xpuhcnnQYqgHNxBg4Ufyih
-         AkXXlW+huvXJV0YfhZ2g4lbnpwTOyfDGTpkiqZErm9xItkhvHL14lNZYLAD6HjqekFtK
-         QCiCWekjo3Yq7rD3OKGt7KeJ5uIdBnVsgT9kNJDkKSocvlyUdbwtrkkYJGgpA5LV4T/T
-         +Ulz7lJ1oRXDP8DxCNCfwIqr1wmQ7e/Z2xj/ci87Oot5xlkd6NZ+0gDl4BxwrYyk0gHo
-         +3WaTaMEFSGjT8XrKKlgzS44+xKAsErFDSA5gcTcrHRKMe8Uo///Ceg/LxYXN/0+Doqx
-         Q7LQ==
+        bh=askKkkxXJk/7B022tFBDjGnyvpKGiBG8K0FTOjs5euA=;
+        b=qDR+lQnp8GZU6clIRqeNTpS4EcIwSRn+r50cmd9pOX8dPjUM29BwMm7N2pZP6ElXNs
+         yIF4LVjVNZ/vdB9FY7js5QNVltWXH4WZoBiBSyY8SpIVyJzRwZWQfuyxb5IOeBvgSXo+
+         23JpPYKXdJ2N82F25cSVkBc1nPQfn1C2QmDQUrqJNXOyRAoCpxti/7C2jW2yFz4QLYFl
+         9wq/d/rTyUHbDlig1os6oOE8nD9ZK5KTQU4Yyjuo69IiDI4j7xeDvm96mzsfHfEfHNCB
+         4Dfznn9gOn7lAiW/3LGHZLCJEEevZdfYBpUMRKkgZ6tDTgLIN7sZfuL3I1Z0joCd/ftW
+         j0jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=khTmp2TYHsRQBvVJOtQBRGE8HXfWWnh3qR1G0Y1hx2w=;
-        b=koN5MU7VfBMwnZK1VHUXtj17Y5bY/Cj98bxxL0UdMtRinRr/az3l3xGC5dtnt2CKjV
-         Vft7pY8+MpNp7pqJvOjOaAt7PFyg5sJn0Bm8920fvdM7ecz5X3KQMZ00ATqAV0Cjsb2s
-         WkvPE064xNmETeQug255YGk1xN57Tvc50KdILlAEEj8KKNLudLR60LAl8I4UobUzguHs
-         XyIIUryTDC9HUGxNZwQmsM+wFfia10+XzgfdTE4Q5VEwUb8bcbEyganhz1f3j72MttM1
-         aMINJ/x6IGc/n9w2eunGfQGFDwgTI5IJjS+OhQ+NyyaDwTzJJSl4ooZ+cZNTSgNqjDAh
-         J9VA==
-X-Gm-Message-State: AGi0PuZTioRbm9nU4GNE9gF7uBHD2YcZvbO1jmrh69evXNuZXq9S/jQw
-        ivICKHpCuRZscdwKPE1CAg4=
-X-Google-Smtp-Source: APiQypLgro+dFqpUmd53bi7sLuYwFg61MWaD7404CUete81MLXi0Rc70RxWiF50erBpcVjZ61VKWeg==
-X-Received: by 2002:a2e:6c0a:: with SMTP id h10mr1090372ljc.195.1586896783990;
-        Tue, 14 Apr 2020 13:39:43 -0700 (PDT)
+        bh=askKkkxXJk/7B022tFBDjGnyvpKGiBG8K0FTOjs5euA=;
+        b=KiFyNP+un49M77mYA9uYNBizG7b8qOz8VJf2zy1hMP1cJaniQ8OPG6ncIUcbQIPQlw
+         wpXBR08S3r94KWHi+g143T6Mfe1/Q3fvDVrW9l4xwFTmqaJ+2kMx9EVmwoS3T4jYv1ul
+         r+FELQrEkGpxq1awNlgsbIw1dvhdcESZllJ2gF42njtG1wRqoJ02rfB/91gqF+JHpK2h
+         qY1gPP8TwckXwpoL1I01LU0yCdmWngzykYMcyoQAVbIGDzllTVCrHzxbdWV/5uEDhdVJ
+         1an4AwKA0r5JefOGOnlgfo03lPlOuk6HXRO5v1BQ6dzXi9zR9QtixCjFhLL7bzgmW5Pc
+         IFoA==
+X-Gm-Message-State: AGi0PuZbJjtiOnXVjYBNDNbxG2xZg1QxEdedxt0MNC50v1BRenNh53wz
+        UEY65AYzlv9iQTd1uvHTXPc=
+X-Google-Smtp-Source: APiQypLKpY4Oh1/l6cd1fcyRF3hTmivo0FLa1hS+/dsEpVS65cvkmTQCd7ECNd+sOb4FZlV1oqmO/w==
+X-Received: by 2002:a05:651c:28a:: with SMTP id b10mr1189106ljo.223.1586897179914;
+        Tue, 14 Apr 2020 13:46:19 -0700 (PDT)
 Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id r206sm11029258lff.65.2020.04.14.13.39.42
+        by smtp.googlemail.com with ESMTPSA id n9sm9637458ljo.89.2020.04.14.13.46.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2020 13:39:43 -0700 (PDT)
+        Tue, 14 Apr 2020 13:46:19 -0700 (PDT)
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
 To:     Thierry Reding <thierry.reding@gmail.com>
@@ -71,8 +71,8 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <385ad42b-ebed-1783-0dd2-dc3693aeaf6b@gmail.com>
-Date:   Tue, 14 Apr 2020 23:39:42 +0300
+Message-ID: <5616bbe7-d185-1a6a-1fc5-e4ee5d2f65e6@gmail.com>
+Date:   Tue, 14 Apr 2020 23:46:18 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
@@ -87,18 +87,39 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 09.04.2020 20:52, Thierry Reding пишет:
 ...
-> +static int tegra210_emc_set_rate(struct device *dev,
-> +				 const struct tegra210_clk_emc_config *config)
+> +static void tegra210_change_dll_src(struct tegra210_emc *emc,
+> +				    u32 clksrc)
 > +{
-> +	struct tegra210_emc *emc = dev_get_drvdata(dev);
-> +	struct tegra210_emc_timing *timing = NULL;
-> +	unsigned long rate = config->rate;
-> +	s64 last_change_delay;
-> +	unsigned long flags;
-> +	unsigned int i;
+> +	u32 dll_setting = emc->next->dll_clk_src;
+> +	u32 emc_clk_src;
+> +	u32 emc_clk_div;
 > +
-> +	if (rate == emc->last->rate * 1000UL)
-> +		return 0;
+> +	emc_clk_src = (clksrc & EMC_CLK_EMC_2X_CLK_SRC_MASK) >>
+> +		       EMC_CLK_EMC_2X_CLK_SRC_SHIFT;
+> +	emc_clk_div = (clksrc & EMC_CLK_EMC_2X_CLK_DIVISOR_MASK) >>
+> +		       EMC_CLK_EMC_2X_CLK_DIVISOR_SHIFT;
+> +
+> +	dll_setting &= ~(DLL_CLK_EMC_DLL_CLK_SRC_MASK |
+> +			 DLL_CLK_EMC_DLL_CLK_DIVISOR_MASK);
+> +	dll_setting |= emc_clk_src << DLL_CLK_EMC_DLL_CLK_SRC_SHIFT;
+> +	dll_setting |= emc_clk_div << DLL_CLK_EMC_DLL_CLK_DIVISOR_SHIFT;
+> +
+> +	dll_setting &= ~DLL_CLK_EMC_DLL_DDLL_CLK_SEL_MASK;
+> +	if (emc_clk_src == EMC_CLK_SOURCE_PLLMB_LJ)
+> +		dll_setting |= (PLLM_VCOB <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +	else if (emc_clk_src == EMC_CLK_SOURCE_PLLM_LJ)
+> +		dll_setting |= (PLLM_VCOA <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +	else
+> +		dll_setting |= (EMC_DLL_SWITCH_OUT <<
+> +				DLL_CLK_EMC_DLL_DDLL_CLK_SEL_SHIFT);
+> +
+> +	tegra210_clk_emc_dll_update_setting(dll_setting);
+> +
+> +	if (emc->next->clk_out_enb_x_0_clk_enb_emc_dll)
+> +		tegra210_clk_emc_dll_enable(true);
+> +	else
+> +		tegra210_clk_emc_dll_enable(false);
 
-Isn't it possible that parent is changed, while the rate is not? I think
-the clock change should proceed in this case.
+Isn't something like fence_udelay(1) needed after touching clk registers?
