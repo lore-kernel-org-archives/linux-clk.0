@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E39C2BA19
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 17:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15456C2BA19
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 17:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C86D92074D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 17:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD5B02076B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 17:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586886338;
-	bh=TcrgRAaCCn5C89p9zkdB+nBvjexBsT4Fl+qQqU3nKsM=;
+	s=default; t=1586886729;
+	bh=bBmFGEaWpYg8ap7AtJ78GaxoqXkZsiVqGYraG7fEbc8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XzHewy6TDodpPQIO3UUHKp/GgrefDHu2WvkoLcv6B0sIQCk/yH8A7aV4lcgdkSraE
-	 A6mZQXJmb2N7pvxvMv1Y7G1JI6zg5Q5OgrjDe86wLaiT/atGkH65eEDy/r6Hw0cjSU
-	 lybWqVfk9AUys7QrD8+dT/I9hkurngyfotWzvH6U=
+	b=oc9b0MRlTyfjVE/us9RFD47QxsHe+hPf+v1WOsJNswkHSy6+cf4ndIc74zNxly7FZ
+	 PWHbttndrJdYFUdxeItgtnT9IGm+7ITeu80Au5GpZSfnGnZ2/ku3+slxtWEOuV9GJz
+	 Qgmk8vbYqyarb1xlTxs9YIp8NwR+vHIlgKiko4pU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502535AbgDNRpf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 13:45:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54956 "EHLO mail.kernel.org"
+        id S1730395AbgDNRwJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 13:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502504AbgDNRpe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Apr 2020 13:45:34 -0400
+        id S1730007AbgDNRwI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Apr 2020 13:52:08 -0400
 Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 145392074D;
-        Tue, 14 Apr 2020 17:45:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7AD842074D;
+        Tue, 14 Apr 2020 17:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586886333;
-        bh=TcrgRAaCCn5C89p9zkdB+nBvjexBsT4Fl+qQqU3nKsM=;
+        s=default; t=1586886728;
+        bh=bBmFGEaWpYg8ap7AtJ78GaxoqXkZsiVqGYraG7fEbc8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=m3R9ysoVEbkDNXoNnHdUSYSWAxPaom9kykXJTjcElSsM3gjBKsU6VTXo4sk5l5Ckg
-         jye8BoG+8CqxCd2FahBTI8Annje94Zzz0OrSXiY8k6RG10GspQ3ZNsXgULnNTBHf8q
-         SXRiNP8nTfC/YW/vSJbtz5j/o6PUKuOGzBDWfj8Q=
-Date:   Tue, 14 Apr 2020 18:45:30 +0100
+        b=Wp6LgqVscVKq5YHlPBXE2syWWh3yNkgpqC+91VEwyp5Ovod8vI0hKx65GHf0fJ9Zj
+         NhIbdFNC3a6cI3RsqmE1jhfGca3nnr/xKgndpgQI88y7MVj5MX6jQQiJGmNmEug8zE
+         5Rq8xDU2kQrm/wrQPpZf0Ns36wk7rBj/ct3fbo8A=
+Date:   Tue, 14 Apr 2020 18:52:05 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, tiwai@suse.de,
         Daniel Matuschek <daniel@hifiberry.com>,
         Matthias Reichl <hias@horus.com>,
         Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
@@ -51,16 +51,16 @@ Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
- clock
-Message-ID: <20200414174530.GK5412@sirena.org.uk>
+Subject: Re: [RFC PATCH 03/16] ASoC: Intel: sof-pcm512x: use gpiod for LED
+Message-ID: <20200414175205.GL5412@sirena.org.uk>
 References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-4-pierre-louis.bossart@linux.intel.com>
+ <20200414171752.GC34613@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="aqWxf8ydqYKP8htK"
+        protocol="application/pgp-signature"; boundary="HLsZ5Z1opAQvdr2J"
 Content-Disposition: inline
-In-Reply-To: <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
+In-Reply-To: <20200414171752.GC34613@smile.fi.intel.com>
 X-Cookie: I've only got 12 cards.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
@@ -69,29 +69,33 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---aqWxf8ydqYKP8htK
+--HLsZ5Z1opAQvdr2J
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, Apr 09, 2020 at 02:58:27PM -0500, Pierre-Louis Bossart wrote:
-> Using devm_clk_get() with a NULL string fails on ACPI platforms, use
-> the "sclk" string as a fallback.
+On Tue, Apr 14, 2020 at 08:17:52PM +0300, Andy Shevchenko wrote:
+> On Thu, Apr 09, 2020 at 02:58:28PM -0500, Pierre-Louis Bossart wrote:
 
-Is this something that could be fixed at the ACPI level?
+> > +		GPIO_LOOKUP("pcm512x-gpio", 3, "PCM512x-GPIO4", GPIO_ACTIVE_HIGH),
 
---aqWxf8ydqYKP8htK
+> It says GPIO 4 and here is number 3.
+> Does this 4 come from hardware documentation?
+
+Yes, the first GPIO in the device is GPIO1.
+
+--HLsZ5Z1opAQvdr2J
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6V9roACgkQJNaLcl1U
-h9BjSwf+Pss0RQ4uA5Mylj+hH2CPMjVyKi4bXcMsc0WKzPqaEjAl7piwqVzzlCzr
-z1G7YxB8Azwdu5vQYLVXDBpUDUPqaxzYr5/9JkqjrXNKn2oquMs0aqpdP2Vir+In
-zUogWkOk2zrRbf8uHYwXVN85CY5b3xbf2CDkA6RNZOzAJ1M4MnIylSXNmGlEfPqS
-DPgtxVAB+7PDCN41/egJGbTmddfD/r1uHc7ePHBMdNgPvoxO4bGFzt+7dvIhPKms
-V+gTxUY6IWDXxlXrQeCV0S+iT3BM7UdNcKd6xJDbLwISy7ApTtoNtyUyMU1ZSek9
-zsjTBu467jgS9V0USWLBlD9nq9VDyw==
-=y8RE
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6V+EQACgkQJNaLcl1U
+h9AWgQf/bIQs+gv5yXrGrVTSpNHyX246/chEfkEGGW13vu7i30lHMx7WqTl2XYH8
+dxug0+PjPKNCxQqtt278m7YnB2VZw1Go9EhQg3pq1HE7nMmf5pVgzB6wHcAkst5R
+EIQB8ezHiiVoAfJzdHSC7jXNvuc7PKuqJBPqaUZrink1flI50FyPMybtKNjCHe6n
+B+2NyFFIue4/P64qCSVLUtK0GQ2xZiUGIcAbCLMZQJg/CBOvugTygvVYFmLOBIXA
+0CHH9ozBELK/ofd55JItdSSueHgQ6RmDNmDiwlfLIkqQhPFC+1l4SJIy0agz3IeQ
+tq3d+rvrTW68hHrgEsSddNeRQEXupw==
+=7ljH
 -----END PGP SIGNATURE-----
 
---aqWxf8ydqYKP8htK--
+--HLsZ5Z1opAQvdr2J--
