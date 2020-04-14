@@ -2,80 +2,212 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB47C2BA19
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 18:15:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94CBC2BA19
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 18:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EEDB20767
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 18:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586888149;
-	bh=48FNEG/P72HtY2nz+4+QNydag7T1O86OEE9LzUGX+Fc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SYqp6PONVzCWa4XI5+fGYTtgGJLePxaEkvoPWM33a0GCbVCkWExZSc4oc9g6vqOrR
-	 zgGF13yg8gGcmaob6+TLJmdplXTegtkVyXTMUkVmeXW7LSmx2b5EAs5nx9Il2nW2Fm
-	 s86gp0T0CEhU6AOeL+gqvIlUbMCdhIlfZyqPa0X8=
+	by mail.kernel.org (Postfix) with ESMTP id 9FFD720774
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 18:16:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503718AbgDNSPr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 14:15:47 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33284 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2503715AbgDNSPm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 14:15:42 -0400
-Received: by mail-oi1-f196.google.com with SMTP id m14so11278769oic.0;
-        Tue, 14 Apr 2020 11:15:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bhkTVVrUOWVaLgCOuelNNGDtyH1myTqju9jYNZEaSms=;
-        b=KlL+Jk+mY13wty9l9Fin0cUXTFeOWfnOD/z1s9bc7sb/OZc7wpl52Me6451WWT7QjH
-         GpYxSjjUluMGyXon17rz4BjC8wZlZThxxCbLEzt6BL3ksX8bgiVOunsQGmSzNSQIUD0V
-         jnkMvpo/jXPaTZky971AwqfkyeqlW+3S7T++TCvNQ6KcJYYQgdW12O4ZmEcmqvuPOjk+
-         UaEAoDhdL9iQIVJF6DgChDiljorRlqIsZ+eG5HRQLfXhJbwGaOo1NIK5tNoJV5nFe7os
-         rkLJ5esSgU0VKJ54BBukT4uBWY/A12h1TaiECiIn7T17BcrilnjWVrZ4Yp87smL32idi
-         uWUQ==
-X-Gm-Message-State: AGi0PuaF7+knPqHqwWoXUIuRibg8ZBCLQEI8FzviCgUpmzQyYpxGEzwV
-        kEoIH/3zBsknEkuXuY6FnA==
-X-Google-Smtp-Source: APiQypJhz+Cij10iNw4FM5iI4HyAhmq6Qeb2dhBZcO5cUhK6At8Krdfh0s0agGUa9KTaJkteGaSzQQ==
-X-Received: by 2002:aca:3302:: with SMTP id z2mr16715406oiz.3.1586888141956;
-        Tue, 14 Apr 2020 11:15:41 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z24sm1519586otq.75.2020.04.14.11.15.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 11:15:41 -0700 (PDT)
-Received: (nullmailer pid 20117 invoked by uid 1000);
-        Tue, 14 Apr 2020 18:15:40 -0000
-Date:   Tue, 14 Apr 2020 13:15:40 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        charles.stevens@logicpd.com, Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S2503739AbgDNSQp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 14:16:45 -0400
+Received: from mga03.intel.com ([134.134.136.65]:40953 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2503713AbgDNSQn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Apr 2020 14:16:43 -0400
+IronPort-SDR: qjORtmUYUziN2x/wWppQlws+D6uAZnySkmy0FVoFCykOdVmzMez3//8RMkxn3wbxEU8HjcVQ3W
+ LHjBJ9FnBPYA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 11:16:40 -0700
+IronPort-SDR: UTuFLX3YOUg8m9hrWrHUhi1cMN2h/wTqDRLz9NHdi6CPDlX7fPOuzVtWbxYKhaZV2FS9Ax5d7P
+ ElkvrfUZ78EA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,383,1580803200"; 
+   d="scan'208";a="253272826"
+Received: from svarahab-mobl.amr.corp.intel.com (HELO [10.212.190.40]) ([10.212.190.40])
+  by orsmga003.jf.intel.com with ESMTP; 14 Apr 2020 11:16:34 -0700
+Subject: Re: [RFC PATCH 01/16] ASoC: pcm512x: expose 6 GPIOs
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, Rob Herring <robh+dt@kernel.org>,
+        linux-gpio@vger.kernel.org, tiwai@suse.de,
+        Linus Walleij <linus.walleij@linaro.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
-Message-ID: <20200414181540.GA20033@bogus>
-References: <20200404161537.2312297-1-aford173@gmail.com>
- <20200404161537.2312297-2-aford173@gmail.com>
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        Matthias Reichl <hias@horus.com>, broonie@kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-2-pierre-louis.bossart@linux.intel.com>
+ <20200414170934.GA34613@smile.fi.intel.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <31e956de-8f62-1857-5153-b163ff7d56e1@linux.intel.com>
+Date:   Tue, 14 Apr 2020 12:52:07 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200404161537.2312297-2-aford173@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200414170934.GA34613@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat,  4 Apr 2020 11:15:36 -0500, Adam Ford wrote:
-> IDT VersaClock 5 5P49V6965 has 5 clock outputs, 4 fractional dividers.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+
+>> +static int pcm512x_gpio_get_direction(struct gpio_chip *chip,
+>> +				      unsigned int offset)
+>> +{
+>> +	struct pcm512x_priv *pcm512x = gpiochip_get_data(chip);
+>> +	unsigned int val;
+>> +	int ret;
+>> +
+>> +	ret = regmap_read(pcm512x->regmap, PCM512x_GPIO_EN, &val);
+>> +	if (ret < 0)
+>> +		return ret;
+> 
+>> +	val = (val >> offset) & 1;
+>> +
+>> +	/* val is 0 for input, 1 for output, return inverted */
+>> +	return val ? GPIO_LINE_DIRECTION_OUT : GPIO_LINE_DIRECTION_IN;
+> 
+> This better to read as simple conditional, like
+> 
+> 	if (val & BIT(offset))
+> 		return ..._OUT;
+> 	return ..._IN;
+> 
+>> +}
+
+ok
+
+> 
+> ...
+> 
+>> +static int pcm512x_gpio_direction_output(struct gpio_chip *chip,
+>> +					 unsigned int offset,
+>> +					 int value)
+>> +{
+>> +	struct pcm512x_priv *pcm512x = gpiochip_get_data(chip);
+>> +	unsigned int reg;
+>> +	int ret;
+>> +
+>> +	/* select Register GPIOx output for OUTPUT_x (1..6) */
+>> +	reg = PCM512x_GPIO_OUTPUT_1 + offset;
+> 
+>> +	ret = regmap_update_bits(pcm512x->regmap, reg, 0x0f, 0x02);
+> 
+> Magic numbers detected.
+> 
+>> +	if (ret < 0)
+> 
+> Drop unnecessary ' < 0' parts where it makes sense, like here.
+
+did you mean use  if (ret) or drop the test altogether?
+
+There's no standard style for regmap functions so I used what was used 
+in the rest of this driver.
+
+Mark?
+
+> 
+>> +		return ret;
+>> +
+> 
+>> +	/* enable output x */
+> 
+> (1)
+> 
+>> +	ret = regmap_update_bits(pcm512x->regmap, PCM512x_GPIO_EN,
+>> +				 BIT(offset), BIT(offset));
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	/* set value */
+> 
+> (2)
+> 
+> With this (1)->(2) ordering it may be a glitch. So, first set value (if
+> hardware allows you, otherwise it seems like a broken one), and then switch
+> it to output.
+
+good suggestion, thanks.
+
+> 
+>> +	return regmap_update_bits(pcm512x->regmap, PCM512x_GPIO_CONTROL_1,
+>> +				  BIT(offset), value << offset);
+> 
+> You are using many times BIT(offset) mask above, perhaps
+> 	int mask = BIT(offset);
+> 
+> Also, more robust is to use ternary here: 'value ? BIT(offset) : 0'.
+> Rationale: think what happen with value != 1 (theoretical possibility in the
+> future).
+
+ok
+
+> 
+>> +}
+> 
+> ...
+> 
+>> +static int pcm512x_gpio_get(struct gpio_chip *chip, unsigned int offset)
+>> +{
+> 
+>> +	return (val >> offset) & 1;
+> 
+> Don't forget to use BIT() macro.
+> 
+> 	return !!(val & BIT(offset));
+
+There's a point where this becomes less readable IMHO, but fine.
+The !! gives me a headache...
+
+>> +static void pcm512x_gpio_set(struct gpio_chip *chip, unsigned int offset,
+>> +			     int value)
+>> +{
+>> +	struct pcm512x_priv *pcm512x = gpiochip_get_data(chip);
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(pcm512x->regmap, PCM512x_GPIO_CONTROL_1,
+>> +				 BIT(offset), value << offset);
+> 
+> value ? BIT(offset) : 0
+
+ok
+
+> 
+>> +	if (ret < 0)
+> 
+>> +		pr_debug("%s: regmap_update_bits failed: %d\n", __func__, ret);
+> 
+> No __func__ in debug messages.
+> Use dev_dbg() when we have struct device available.
+
+Not sure we do, will look into this.
+
+>> +static const struct gpio_chip template_chip = {
+> 
+> Give better name, please. E.g. pcm512x_gpio_chip.
+
+ok
+
+>> +	/* expose 6 GPIO pins, numbered from 1 to 6 */
+>> +	pcm512x->chip = template_chip;
+>> +	pcm512x->chip.parent = dev;
+>> +
+>> +	ret = devm_gpiochip_add_data(dev, &pcm512x->chip, pcm512x);
+> 
+>> +	if (ret != 0) {
+> 
+> if (ret)
+
+ok
