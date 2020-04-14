@@ -2,139 +2,135 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC713C2BB85
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 19:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 389DBC2BB85
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:00:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A900520767
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 19:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586893962;
-	bh=AaVRnbZybz5vMRXZrxlv2ehOvw55VQ60KvRSyrqRWl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WK5g4e9+lqgA/JUpht4SULP9PkvO2n5EJguZhQ+lvLwLcs2FJujU05tvL+dNxb2h/
-	 NPJqvCu3ORDInxxnvvAlMmh8QKFy7ysMnFghjL+48gpuiCON32b90nigE+TBExDiZM
-	 HzXPVWtwZddb3KSw6GYNf/vcBIAWvErmLAcfj6Bc=
+	by mail.kernel.org (Postfix) with ESMTP id 16F1020656
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:00:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ltgZG4pY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505227AbgDNTwc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 15:52:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40486 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2440447AbgDNTui (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Apr 2020 15:50:38 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7F8B206E9;
-        Tue, 14 Apr 2020 19:50:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586893834;
-        bh=AaVRnbZybz5vMRXZrxlv2ehOvw55VQ60KvRSyrqRWl0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=T6DqFvTy/pvyT/vTpQRGMizfJxyc3EUOxpiHF8nq8wCYcvaOJRCdXubaojqlSNNQh
-         hPmW0t2zAjzkUlwTXdJladshIu1UE1tKx3bVRfCUvqpqsJZltTJPomDV1QLNTQIbyR
-         r3Cjah8psl1vMBwD8+TnpWsd6ujezLfHBAHVO0a0=
-Date:   Tue, 14 Apr 2020 20:50:31 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
- clock
-Message-ID: <20200414195031.GP5412@sirena.org.uk>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
- <20200414174530.GK5412@sirena.org.uk>
- <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
- <20200414182728.GM5412@sirena.org.uk>
- <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
+        id S2505381AbgDNUAp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 16:00:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34178 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2505371AbgDNUAe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 16:00:34 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8B77C03C1A9;
+        Tue, 14 Apr 2020 13:00:33 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id y24so15707243wma.4;
+        Tue, 14 Apr 2020 13:00:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QOT6jBh5RHTtvKF0ff1JDdUtPrhDEedCclbut6CMHz8=;
+        b=ltgZG4pYMMJ6ZY7wVTwqMRmtGMNXJXPW1JBs5huXnLLaRWqURGzP/fixWgS5H8iSrx
+         iHzXKkG0yUaEFarf2nj/Z68ZQ1wmM878ugSiUvGFF4tlyFYlh1GXKZu1CbnIfYra9r2I
+         mBORt9ezjUeq+jxZ8rL+j07j1QOX4FdUKW6k9786hy0xN5t+HTUF1OPk7Q/sQObOoo7o
+         SthNf1HbShAgFvvW3m9S1zZYlaCmc8RaOgAgkFX4F7SIo2Hc0BX6+3QZkxnI+NwClyRN
+         70Nd0zBKyecbiGpKobA8HWVeI0DX+bhgRq0oEREm7avl6tmBOBBq8unBLCT691SoWiwS
+         FDcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QOT6jBh5RHTtvKF0ff1JDdUtPrhDEedCclbut6CMHz8=;
+        b=TlKK2VoB4ly7qosrfiLYw08uYUeE1zPlgKWM4+/anJ8U5Fv9CkzBiMJm5SqCS+9C34
+         fsoy8aRz5rcTjdw/cTEAI5/Xc6D+xekB4GQ2zk25SRD35+u8FHB/ckI32E+vP3BsSGVS
+         DUqpTWfOyZaIAMYfrCouo2BhE2mNa6M/DhIaT+cXKhWZmrCSSCm7GZANVmWG+yeAkJap
+         rh5885QdpO8UWfkihhp91KhqntlLTvhn+YwOuapcYgOqr65mz3oQfDokCgzOXvAkUGMT
+         v1L0emX2qbkzffzdNOBWd0J5a7cbVYtMJ+jhGVLzyW9U30w3aAQPY/7GJLqwRnN+YACe
+         Pa6Q==
+X-Gm-Message-State: AGi0PuZD6C1/2YoJNJqbXF/nP/MTS6metegJBk52fOrjxBOOOWJxJkz2
+        LFChmgaymPExCvKzuL9lKo7l4gbCfKM=
+X-Google-Smtp-Source: APiQypJxSfupVcVY3tsTEfwY5Bo6ocg546NiCXQLE2PxKF7+H7AGFvO+rPQUNO8wobXymCcuF5vtjQ==
+X-Received: by 2002:a1c:7d4b:: with SMTP id y72mr1493618wmc.11.1586894432487;
+        Tue, 14 Apr 2020 13:00:32 -0700 (PDT)
+Received: from localhost.localdomain (p200300F13717DF00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:3717:df00:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id b4sm15540253wrv.42.2020.04.14.13.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 13:00:32 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Cc:     narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH 4/4] clk: meson: meson8b: Make the CCF use the glitch-free VPU mux
+Date:   Tue, 14 Apr 2020 22:00:17 +0200
+Message-Id: <20200414200017.226136-5-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.26.0
+In-Reply-To: <20200414200017.226136-1-martin.blumenstingl@googlemail.com>
+References: <20200414200017.226136-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="0UhZIN3Sa23/ILEd"
-Content-Disposition: inline
-In-Reply-To: <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
-X-Cookie: I've only got 12 cards.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The "vpu_0" or "vpu_1" clock trees should not be updated while the
+clock is running. Enforce this by setting CLK_SET_RATE_GATE on the
+"vpu_0" and "vpu_1" gates. This makes the CCF switch to the "vpu_1"
+tree when "vpu_0" is currently active and vice versa, which is exactly
+what the vendor driver does when updating the frequency of the VPU
+clock.
 
---0UhZIN3Sa23/ILEd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-On Tue, Apr 14, 2020 at 02:15:16PM -0500, Pierre-Louis Bossart wrote:
-> On 4/14/20 1:27 PM, Mark Brown wrote:
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index ed4b70c2d4bd..427392678fec 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -2063,7 +2063,7 @@ static struct clk_regmap meson8b_vpu_0 = {
+ 			&meson8b_vpu_0_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+@@ -2134,10 +2134,18 @@ static struct clk_regmap meson8b_vpu_1 = {
+ 			&meson8b_vpu_1_div.hw
+ 		},
+ 		.num_parents = 1,
+-		.flags = CLK_SET_RATE_PARENT,
++		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
++/*
++ * The VPU clock has two two identical clock trees (vpu_0 and vpu_1)
++ * muxed by a glitch-free switch on Meson8b and Meson8m2. The CCF can
++ * actually manage this glitch-free mux because it does top-to-bottom
++ * updates the each clock tree and switches to the "inactive" one when
++ * CLK_SET_RATE_GATE is set.
++ * Meson8 only has vpu_0 and no glitch-free mux.
++ */
+ static struct clk_regmap meson8b_vpu = {
+ 	.data = &(struct clk_regmap_mux_data){
+ 		.offset = HHI_VPU_CLK_CNTL,
+@@ -2152,7 +2160,7 @@ static struct clk_regmap meson8b_vpu = {
+ 			&meson8b_vpu_1.hw,
+ 		},
+ 		.num_parents = 2,
+-		.flags = CLK_SET_RATE_NO_REPARENT,
++		.flags = CLK_SET_RATE_PARENT,
+ 	},
+ };
+ 
+-- 
+2.26.0
 
-> > Wait, so SCLK is in the *global* namespace and the provider has to
-> > register the same name?  That doesn't sound clever.  It might be better
-> > to have the board register the connection from the clock provider to the
-> > device rather than hard code global namespace strings like this, that
-> > sounds like a recipie for misery.
-
-> I believe this change has zero impact on DT platforms.
-
-> The 'sclk' is a fallback here. If you find a clock with the NULL string,
-> it's what gets used. Likewise for the clock provider, the 'sclk' is a lookup
-> - an alias in other words. The use of the references and phandles should
-> work just fine for Device Tree.
-
-It's not just DT platforms that I'm worried about here, it's also ACPI
-systems - all it takes is for a system to have a second device and a
-name collision could happen, especially with such generic names.  We
-tried to avoid doing this for board files for the same reason.
-
-> > It is really sad that nobody involved in producing these systems that
-> > don't work with the current limitations in ACPI has been able to make
-> > progress on improving ACPI so it can cope with modern hardware and we're
-> > having to deal with this stuff.
-
-> I can't disagree but I have to live with what's available to me as an audio
-> guy...I had a solution two years ago where I could set the clock directly
-> from the machine driver. The recommendation at the time was to use the clk
-> framework, but that clk framework is limited for ACPI platforms, so we can
-> only use it with these global names.
-
-My understanding is that ACPI just doesn't have clock bindings (or audio
-bindings or...) so you're basically using board files here and board
-files can definitely do more than we're seeing here.
-
-> We had the same problem on Baytrail/Cherrytrail devices some 4 years ago and
-> we had to use an 'mclk' alias. We are going to have the same problem when we
-> expose the SSP MCLK, BLCK and FSYNC clocks - and that's also what the
-> Skylake driver did - we don't have a solution without global names.
-
-You should be able to register links between devices using the clock
-API, or add that functionality if it's not there but AFAIK clkdev still
-works.
-
---0UhZIN3Sa23/ILEd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6WFAYACgkQJNaLcl1U
-h9Byqwf9FHKLkxTXEYOkKQknonTH+2/9DiOFIk1jbin5OOzdlJzc682Clt8cCXGO
-IN2Se5PIYE0yU5nFwivSioVBRtyxjM1GSmw8B0iz6XdcF4OXa6FxNraCewLYuNoG
-+BsgxShrkzMixnTORYbOthcDHX2TsoNNBL3FkWBKvZRiG8BzObkztj+lDpRvgd+f
-I1d82Gdo9Hz6yozOskQnQDW0Dh/4uInR/V/cEzjcr+HaWJCD0aWkH+Ead4dYS0MA
-GcFLx/t86XUxXyz65R3PUh0exPZbiTCvWQPWlFBXsTTKV8pcN355Qox5zjESiz4+
-jaE33TfCTPpUXfwcwJzr0yPkBQiYHQ==
-=xvJN
------END PGP SIGNATURE-----
-
---0UhZIN3Sa23/ILEd--
