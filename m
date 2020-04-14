@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B6AC38A29
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 14:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A1BCC3815B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 14:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12A3420578
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 14:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF1D220936
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 14:54:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dH1SVmnb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pQDGtbOF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404519AbgDNOpb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 10:45:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40896 "EHLO
+        id S2405340AbgDNOys (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 10:54:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42308 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404511AbgDNOp3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 10:45:29 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B78BC061A0C;
-        Tue, 14 Apr 2020 07:45:29 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o81so7667799wmo.2;
-        Tue, 14 Apr 2020 07:45:29 -0700 (PDT)
+        with ESMTP id S2405331AbgDNOyq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 10:54:46 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38DDAC061A0C;
+        Tue, 14 Apr 2020 07:54:46 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id h9so14666316wrc.8;
+        Tue, 14 Apr 2020 07:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=S5LW6D/JcvIQbts8mNWNWJg+lFlcHdJhPjdhCsJJX+o=;
-        b=dH1SVmnbLSEtE5Nag8z/s8FzhNR23uclW3TSHMu8V+do40TBTY1Z8sGsJUANArQbG3
-         2V334Fe5n+zCW5Hq023W8cud2/enlRi6ZvMDhwNm96BF4r2uKn1N2DnHO8pa/cjI834n
-         2WIZeqtYuv8pjKHOsYXEk3KH+SCw+2VshFn3QDBtcLuH4IBK6v+9UfvUbY8WE3hZxIzN
-         dIGBwP5hMJbHBT4xwplhv25+Aqwlse4IT8/+lDPi4td0xIVZb2vt7C16AV9n0Igl2I9O
-         Vxwbyw/uRWet/5A9UDnFutVGGet1EIvbShUHBOXlRzk2+pluD27vgscnwFfbnMZwIqeW
-         iJIw==
+        bh=cx/An3FrYpvsA3Jo+TX90hd+pBWFVDPUJAu6kOERHiM=;
+        b=pQDGtbOFHglLib4MrJQ3AZdvm9iFmmTkqVo50rcVd2ZP0weofC494Uw9u2Cs87pZst
+         zLA8VKZgh2BJPGE3jmZ7RhqsK+ocgUpB/W2Z39t9Oy28epKam0ChWs3AC3NX9OZh2x54
+         l1mbvGQwC+mlkEvswNNa0GWg2APmw3QIiUKecxSfcfP9qJVZyS0P+neT6xprHQvPShxi
+         QCcauAj33LQdsb+49mMhBnyjBm9ZfQ3vnNKHlTisturVOxMMEAPnINVbFr5CciwxQUmB
+         SqS6fZJn1SvSmXZ5f4GEqd//UUptcup+XkU8E11hAAxigjQUxbETytxpOFhsnky8oYuH
+         gMfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S5LW6D/JcvIQbts8mNWNWJg+lFlcHdJhPjdhCsJJX+o=;
-        b=TFTEpOCdqCdBf3yYM/E3vowhwUIuxL6LPKakrnWLpYlOdAUU4bve5vCJ3yjyKYiEDT
-         NA753jKCQT3T6xmojmq01Qydth2Pv3YVJZBehDqfzh3IRgcgOzp0CHaSXxS4iqqC7Q9U
-         gySQK7893jhoT9w+HIzYh1Dvg5/pDAe4ht3pOvpAwXj3giXv6XYz8S7N4740ilKpaEJH
-         /K0XBLRf828WNtREWnryIMi7dlTJXsWxvDbaSH5wiRZJneCumJvZdfHSW7vcMtiZzRK+
-         fGh9Wa4Mbp5ducrGu81kqljq5xAaCgeHmI9uEQlvil6W1G3onwEWf+XqR+7XDyCIasdy
-         5TAQ==
-X-Gm-Message-State: AGi0PubiDkz1XyOZ3GF6iKF+Op2bW9vgobfHaMPNKgW353V7x8CQU5wH
-        ZXj8kH8ATCqa8gf2qxT9mWo=
-X-Google-Smtp-Source: APiQypJydRRmPqeZPePM/ORVt+TFEv+iAXAOLY9ehjv1P9T718jiOAQJnqvWZKHsT/FYkPvGrPKKsQ==
-X-Received: by 2002:a05:600c:2341:: with SMTP id 1mr175764wmq.153.1586875527952;
-        Tue, 14 Apr 2020 07:45:27 -0700 (PDT)
+        bh=cx/An3FrYpvsA3Jo+TX90hd+pBWFVDPUJAu6kOERHiM=;
+        b=KAQ2iP+tv9BDUa8ZQfIR73HN/gVzztmejxVcAywiVubp6YvHDgHn9ksNtwMD4z+0vo
+         68zwPKeacr5C6fh3qoxPtnOIYNd0Ru0tNEjMqxT3MSLlPZNkQCJyg6Ck0w5LoeKGWvyY
+         3xz7X26zQczXZQls27A/Vw8Do1htjD+IPJLCQGz1tn0Exz8KLX8wz5aCBObh0e3qLA9D
+         b3YPIb2h0nWTnNcuZ5ivtVzrkSlZjDydPx+fuV5gdcgjtrpeT9E5VlAk68Gfux5yuROz
+         JTEISEDp3o3ICIIEIylyUjZeUQid7N+yOKtJ75uDI4L950msNexQ9sdl5u6AsEJdD5xH
+         MRnA==
+X-Gm-Message-State: AGi0PuamMjqZF5QK6tpZro/RL4PPzfK32uiHCwDrpsooIcqeru+EPw7S
+        Y+jaDEWh5YtiNn9UcBf6JO0=
+X-Google-Smtp-Source: APiQypKhWP6c2ZqXCCHUc5zNd3KCJ2EYnMaDh0pr3xp87FB6fK/p/Kq9K1noTp6aNMqnCUiSbaIPjQ==
+X-Received: by 2002:a5d:49cb:: with SMTP id t11mr10499248wrs.91.1586876084678;
+        Tue, 14 Apr 2020 07:54:44 -0700 (PDT)
 Received: from localhost (pD9E51D62.dip0.t-ipconnect.de. [217.229.29.98])
-        by smtp.gmail.com with ESMTPSA id f79sm18139610wme.32.2020.04.14.07.45.26
+        by smtp.gmail.com with ESMTPSA id z11sm19615784wrv.58.2020.04.14.07.54.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 07:45:26 -0700 (PDT)
-Date:   Tue, 14 Apr 2020 16:45:25 +0200
+        Tue, 14 Apr 2020 07:54:43 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 16:54:42 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -69,15 +69,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Message-ID: <20200414144525.GI3593749@ulmo>
+Message-ID: <20200414145442.GJ3593749@ulmo>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
- <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436@gmail.com>
+ <a9afb1b5-3141-4923-c7fa-194228081e1b@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="VaKJWhUROU/xPxjb"
+        protocol="application/pgp-signature"; boundary="QxN5xOWGsmh5a4wb"
 Content-Disposition: inline
-In-Reply-To: <7b2f8a7c-94f1-08d0-b0ce-c61f4eb0a436@gmail.com>
+In-Reply-To: <a9afb1b5-3141-4923-c7fa-194228081e1b@gmail.com>
 User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -85,91 +85,114 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---VaKJWhUROU/xPxjb
+--QxN5xOWGsmh5a4wb
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 09, 2020 at 10:00:13PM +0300, Dmitry Osipenko wrote:
+On Thu, Apr 09, 2020 at 10:16:46PM +0300, Dmitry Osipenko wrote:
 > 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > ...
-> > +static void tegra210_emc_debugfs_init(struct tegra210_emc *emc)
+> > +static int tegra210_emc_set_rate(struct device *dev,
+> > +				 const struct tegra210_clk_emc_config *config)
 > > +{
-> > +	struct device *dev =3D emc->dev;
+> > +	struct tegra210_emc *emc =3D dev_get_drvdata(dev);
+> > +	struct tegra210_emc_timing *timing =3D NULL;
+> > +	unsigned long rate =3D config->rate;
+> > +	s64 last_change_delay;
+> > +	unsigned long flags;
 > > +	unsigned int i;
-> > +	int err;
 > > +
-> > +	emc->debugfs.min_rate =3D ULONG_MAX;
-> > +	emc->debugfs.max_rate =3D 0;
-> > +
+> > +	if (rate =3D=3D emc->last->rate * 1000UL)
+> > +		return 0;
+>=20
+> Couldn't all the rates be expressed in Hz? Then you won't need all these
+> multiplications by 1000.
+
+The EMC table is generated with kHz and I'd rather not change the values
+in those entries. There's only a few cases where we need to convert from
+one to the other, and they are always only when we compare a CCF rate to
+the EMC rate, so I think it's fairly explicit when it's needed.
+
 > > +	for (i =3D 0; i < emc->num_timings; i++) {
-> > +		if (emc->timings[i].rate * 1000UL < emc->debugfs.min_rate)
-> > +			emc->debugfs.min_rate =3D emc->timings[i].rate * 1000UL;
-> > +
-> > +		if (emc->timings[i].rate * 1000UL > emc->debugfs.max_rate)
-> > +			emc->debugfs.max_rate =3D emc->timings[i].rate * 1000UL;
+> > +		if (emc->timings[i].rate * 1000UL =3D=3D rate) {
+> > +			timing =3D &emc->timings[i];
+> > +			break;
+> > +		}
 > > +	}
 > > +
-> > +	if (!emc->num_timings) {
-> > +		emc->debugfs.min_rate =3D clk_get_rate(emc->clk);
-> > +		emc->debugfs.max_rate =3D emc->debugfs.min_rate;
-> > +	}
+> > +	if (!timing)
+> > +		return -EINVAL;
 > > +
-> > +	err =3D clk_set_rate_range(emc->clk, emc->debugfs.min_rate,
-> > +				 emc->debugfs.max_rate);
-> > +	if (err < 0) {
-> > +		dev_err(dev, "failed to set rate range [%lu-%lu] for %pC\n",
-> > +			emc->debugfs.min_rate, emc->debugfs.max_rate,
-> > +			emc->clk);
-> > +		return;
-> > +	}
+> > +	if (rate > 204000000 && !timing->trained)
+> > +		return -EINVAL;
 > > +
-> > +	emc->debugfs.root =3D debugfs_create_dir("emc", NULL);
-> > +	if (!emc->debugfs.root) {
-> > +		dev_err(dev, "failed to create debugfs directory\n");
-> > +		return;
-> > +	}
+> > +	emc->next =3D timing;
+> > +	last_change_delay =3D ktime_us_delta(ktime_get(), emc->clkchange_time=
+);
 > > +
-> > +	debugfs_create_file("available_rates", S_IRUGO, emc->debugfs.root, em=
-c,
-> > +			    &tegra210_emc_debug_available_rates_fops);
-> > +	debugfs_create_file("min_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> > +			    emc, &tegra210_emc_debug_min_rate_fops);
-> > +	debugfs_create_file("max_rate", S_IRUGO | S_IWUSR, emc->debugfs.root,
-> > +			    emc, &tegra210_emc_debug_max_rate_fops);
+> > +	/* XXX use non-busy-looping sleep? */
+> > +	if ((last_change_delay >=3D 0) &&
+> > +	    (last_change_delay < emc->clkchange_delay))
+> > +		udelay(emc->clkchange_delay - (int)last_change_delay);
+> > +
+> > +	spin_lock_irqsave(&emc->lock, flags);
+> > +	tegra210_emc_set_clock(emc, config->value);
+> > +	emc->clkchange_time =3D ktime_get();
+> > +	emc->last =3D timing;
+> > +	spin_unlock_irqrestore(&emc->lock, flags);
+> > +
+> > +	return 0;
+> > +}
 >=20
-> I assume you used the checkpatch before sending the patches, no?
-
-I have a pre-commit hook that runs checkpatch, but for some reason it
-was disabled. Fixed these to be numeric now.
-
-> I sent out a patch recently to make the permissions readable, please
-> take a look if you haven't seen it yet.
+> I'd suggest to check how much time invocation of ktime_get() takes, at
+> least it came to a surprise to me in a case of the tegra-cpuidle driver.
 >=20
-> https://patchwork.ozlabs.org/patch/1254301/
+> It may be well over the emc->clkchange_delay.
 
-I've applied this now.
+I assume that at least each invocation would take roughly the same
+amount of time? Since we only use the value to compute the time since
+the last clock change the result should always be valid. In the worst
+case if ktime_get() really takes that long we may be waiting longer
+than we need to, but that wouldn't be all that bad either. Changing
+the EMC clock rate isn't something that you want to do a lot.
+
+> ...
+> > +static int tegra210_emc_probe(struct platform_device *pdev)
+> > +{
+> ...
+> > +	emc->clkchange_delay =3D 100;
+> > +	emc->training_interval =3D 100;
+>=20
+> Not sure why these aren't a constant with the code.. ?
+
+The idea is to make them easily tunable without having to go hunt for
+them later on. We don't use them in a lot of computations, so making
+them constants isn't going to buy us a lot. Also, none of these code
+paths are really hot, so I like the flexibility that this gives us in
+being able to quickly tweak if we ever need to without having to worry
+that we'll forget a location.
 
 Thierry
 
---VaKJWhUROU/xPxjb
+--QxN5xOWGsmh5a4wb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6VzIUACgkQ3SOs138+
-s6FpRRAAk0TEKZBPjG+SsTHg1xIN9BMOUI9LqXdMGnagdaP0yEi/mTRNkmrsImxZ
-awLe6BQXHKI9FGW/mrjyB1d3Ly+FQSerx04N5iwg6imigOmaTXRyuy4gXuEH6+D1
-R4U84Jnx74lntZsS3aqcg/P1gNborKoirVl1xkcvn/mJ4K+BhFBq3NqbgyKJ7xGa
-51izgm0mPVSldljky86GBwHfYiyirLXF4K6+Qg3Is1m40p01z3jhrUGYXtnD0cOr
-29VnWLSpJs+Qrzs0Fy9Q66C3h5f+ZeshjDCdQJorVDbaiXp8+7YIUW1LPCZcwUrI
-tCBxKuzyi7KpFpZmno/li8nOEv+ByqEcg3fF0SrDton95JKMuK/WplZJsVisQ/lN
-8SQePeIzU005hN5GwnPfoQVMqLsMqans4M0lh+qRtdzqX4JlH1aBjHsG6UHPcwQb
-7ePg54J49LruLhrDaipx5YMZ+zfRuidiat4l5lxvtgxoKImx2iKXRS+w0X1kNVX5
-byOLywrBi5wNbAz5G4nsCwA67f3JuB+M5m6VA48MoY3NANz4AdRtE3gcsmmgK2Ac
-rM+asAhZyI3p+b1iQujqDdRBE5FvOBFEkS3CwZzZ5kl+wdFTdWPXVDwGYbCKS7NR
-bH9mSiKbX48G/8pq6m4xFteYGr91cstkAwv1o7Km4Pe1vsOZN54=
-=WHMF
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6VzrIACgkQ3SOs138+
+s6FSURAAuHIkM76l/aW376GVZabPFaDTft8S6fSnvsPAacz3OhBF4M0kAK/SjSoq
+ce97F/3HY63ernpSMN5gvmnWUi9KU7xdFYUrn3xdRGMk9art6jtN4yzut8Q8oaec
+iu6lXrNqDGY9NzngDbmz0GBLjQSxg8oA67TJ5Cl4mL8TWwFFfkUO8+VZzO/xkc3k
+rNQgmFbMOKKMecFlDRSHHXBEVOFzLfduRplsi+7bm6S2Qb0Cw2KQvAFBCgKEXgRi
+zfz17e3hP03jD3wkmW58MswKBnqvj2aDunaU+rbSxYKQVwen4M81KKt7pryc2V+z
+XzBD9DJDjmkW5Cn4AGs3oYuDfzgojT9eoS/I3HshHbACqeIIpIauUpLxtYMEsF2A
+KCcHLwZ1G8XUDG1uD8f54eJkL7VidI+vecLpiR069NfDpF6wg1jq4RFWKorUeUd9
+05wT5ZfHmzy+aOHh738jOfI6ddmNUTygueMzQKmKCUCLPeq+lxL3Yg5FVkYiQVQu
+/rqOlEZNolYcfU2x5C32i0qf0Tx4Dwzsad66wgvC0QpJmMqrVWKEXySGHF76tvvQ
+7VdSm6ThYSQNQ4Xhz71+g2hCNNu2/1U+gkpBarP+crQ7nt8zAxR6jZl9hgfDfYq5
+S0hZ8vQvEwGMLv/qXWdlQzycOFUl0dNe81DcENQGt7HMCAdRXBs=
+=NhUM
 -----END PGP SIGNATURE-----
 
---VaKJWhUROU/xPxjb--
+--QxN5xOWGsmh5a4wb--
