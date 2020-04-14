@@ -2,90 +2,137 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CDA2C2BBC7
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 02:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A073C2BA2B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 03:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 185DB2072A
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 02:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4222B20644
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 03:33:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EY8JmNgm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404308AbgDNC4r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Apr 2020 22:56:47 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:51904 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404224AbgDNCzb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Apr 2020 22:55:31 -0400
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 13 Apr 2020 19:55:29 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg03-sd.qualcomm.com with ESMTP; 13 Apr 2020 19:55:25 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 0145421634; Tue, 14 Apr 2020 08:25:23 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH V3 0/8] Add APSS clock controller support for IPQ6018
-Date:   Tue, 14 Apr 2020 08:25:14 +0530
-Message-Id: <1586832922-29191-1-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S2404775AbgDNDdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Apr 2020 23:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49750 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2404768AbgDNDdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Apr 2020 23:33:39 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A8C10C0A3BDC;
+        Mon, 13 Apr 2020 20:33:37 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id c138so5490617pfc.0;
+        Mon, 13 Apr 2020 20:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Uwxa46CvTM5ECW30BkNGZjhjXbVyQcR87+DO9oGqllg=;
+        b=EY8JmNgmW7H9htEThBUa78x9wE3NotQ2DvieTb/jrPF75Lx6DvXjOk/UrKmGo3kW2e
+         jEgX5BhdbFeuxbLfWkVOmQLUfv2V2YnDVEZffWIi6dzJvUR9ce6yzBilCf7+TW6+PVwQ
+         BlHtku8pTz3r4zs9MfCPbiP4nmyqk/1QM4pWk4owXgK65LEQTESiNM9e3tJ+iBQh7GQN
+         +W5abENv8FeC5Hr/eBUbx4Rouj0y9NHWKS1PxK+JbceKBEtLDUSuJuEPaTQKkenjQqkm
+         PGdH5tw9h1ITt5Kpd3+K/E7Z3MjW+0TkAM+CD/NokEYiAqqxN2wgx/XhFa/3sVc3Oo5y
+         2Viw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Uwxa46CvTM5ECW30BkNGZjhjXbVyQcR87+DO9oGqllg=;
+        b=PD05dg0du7uM1qIZ813cxoYbmHuK4ZHaw2d0n67qUaNfLh9Zwd5tc7CSZTjZhF5cHP
+         zFJDRWfXOIuPOfJm32Jkgo/322Oa25W9RVtcJH7SkNIvDV/f5DkM7lTpy4tR+cKnbMnm
+         hHyPLkluhcAnRb3um5rKJAS5yb/gTqiVa+j9gfmNEQSitowDHe4uUeP1yx72pwVEN8C4
+         AJfkwoMX3e1CWuMAfhhy512IuEZ6aGrc3MCLjcJygPRpWGk8zf8AiSrSflDm/ScCsDNC
+         yhiD091VWn+wiglgnIzq+dZSeB9NrIJEFsernaohDsAATbk04FbczlxHecKdx8+nCb/6
+         Wg3A==
+X-Gm-Message-State: AGi0PuaRNmKoksxEr/MMT3YonU8pSCBXXRCve0JHxO7NBN4L0Tlv3aAz
+        lBH1IYeaIyDnyViRBK/ZhLvPxk5YLmY=
+X-Google-Smtp-Source: APiQypIQNfUxVZ0FUWV2rhTkaDY9U+2PR0qRypwfUt63vnffCAnKTW2eQnfwgrpDh5mj68nhUx0Zdg==
+X-Received: by 2002:a63:1060:: with SMTP id 32mr21172267pgq.271.1586835217209;
+        Mon, 13 Apr 2020 20:33:37 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id 140sm5612440pge.49.2020.04.13.20.33.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Apr 2020 20:33:36 -0700 (PDT)
+From:   zhang.lyra@gmail.com
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH v2 1/4] clk: sprd: check its parent status before reading gate clock
+Date:   Tue, 14 Apr 2020 11:33:22 +0800
+Message-Id: <20200414033325.26536-2-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200414033325.26536-1-zhang.lyra@gmail.com>
+References: <20200414033325.26536-1-zhang.lyra@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CPU on Qualcomm's IPQ6018 devices are primarily fed by A53 PLL and XO,
-these are connected to a clock mux and enable block.
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-This patch series adds support for these clocks and inturn enables clocks
-required for CPU freq.
+Some clocks only can be accessed if their parent is enabled. mipi_csi_xx
+clocks on SC9863A are an examples. We have to ensure the parent clock is
+enabled when reading those clocks.
 
-[V3]
- * Fixed dt binding check error in patch2
-   dt-bindings: clock: Add YAML schemas for QCOM A53 PLL
-[V2]
- * Restructred the patch series as there are two different HW blocks,
-   the mux and enable belongs to the apcs block and PLL has a separate HW
-   block.
- * Converted qcom mailbox and qcom a53 pll documentation to yaml.
- * Addressed review comments from Stephen, Rob and Sibi where it is applicable.
- * Changed this cover letter to state the purpose of this patch series
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+---
+ drivers/clk/sprd/gate.c | 7 +++++++
+ drivers/clk/sprd/gate.h | 9 +++++++++
+ 2 files changed, 16 insertions(+)
 
-Sivaprakash Murugesan (8):
-  dt-bindings: mailbox: Add YAML schemas for QCOM APCS global block
-  dt-bindings: clock: Add YAML schemas for QCOM A53 PLL
-  clk: qcom: Add A53 PLL support for ipq6018 devices
-  clk: qcom: Add DT bindings for ipq6018 apss clock controller
-  clk: qcom: Add ipq apss clock controller
-  dt-bindings: mailbox: Add dt-bindings for ipq6018 apcs global block
-  mailbox: qcom: Add ipq6018 apcs compatible
-  arm64: dts: ipq6018: Add a53 pll and apcs clock
-
- .../devicetree/bindings/clock/qcom,a53pll.txt      |  22 ----
- .../devicetree/bindings/clock/qcom,a53pll.yaml     |  60 +++++++++
- .../bindings/mailbox/qcom,apcs-kpss-global.txt     |  88 -------------
- .../bindings/mailbox/qcom,apcs-kpss-global.yaml    | 101 +++++++++++++++
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  16 ++-
- drivers/clk/qcom/Kconfig                           |  10 ++
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/a53-pll.c                         | 136 +++++++++++++++++----
- drivers/clk/qcom/apss-ipq.c                        | 107 ++++++++++++++++
- drivers/mailbox/qcom-apcs-ipc-mailbox.c            |  22 ++--
- include/dt-bindings/clock/qcom,apss-ipq.h          |  12 ++
- 11 files changed, 430 insertions(+), 145 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
- delete mode 100644 Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt
- create mode 100644 Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
- create mode 100644 drivers/clk/qcom/apss-ipq.c
- create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
-
+diff --git a/drivers/clk/sprd/gate.c b/drivers/clk/sprd/gate.c
+index 574cfc116bbc..56e1714b541e 100644
+--- a/drivers/clk/sprd/gate.c
++++ b/drivers/clk/sprd/gate.c
+@@ -94,8 +94,15 @@ static int sprd_gate_is_enabled(struct clk_hw *hw)
+ {
+ 	struct sprd_gate *sg = hw_to_sprd_gate(hw);
+ 	struct sprd_clk_common *common = &sg->common;
++	struct clk_hw *parent;
+ 	unsigned int reg;
+ 
++	if (sg->flags & SPRD_GATE_NON_AON) {
++		parent = clk_hw_get_parent(hw);
++		if (!parent || !clk_hw_is_enabled(parent))
++			return 0;
++	}
++
+ 	regmap_read(common->regmap, common->reg, &reg);
+ 
+ 	if (sg->flags & CLK_GATE_SET_TO_DISABLE)
+diff --git a/drivers/clk/sprd/gate.h b/drivers/clk/sprd/gate.h
+index b55817869367..e738dafa4fe9 100644
+--- a/drivers/clk/sprd/gate.h
++++ b/drivers/clk/sprd/gate.h
+@@ -19,6 +19,15 @@ struct sprd_gate {
+ 	struct sprd_clk_common	common;
+ };
+ 
++/*
++ * sprd_gate->flags is used for:
++ * CLK_GATE_SET_TO_DISABLE	BIT(0)
++ * CLK_GATE_HIWORD_MASK		BIT(1)
++ * CLK_GATE_BIG_ENDIAN		BIT(2)
++ * so we define new flags from	BIT(3)
++ */
++#define SPRD_GATE_NON_AON BIT(3) /* not alway powered on, check before read */
++
+ #define SPRD_SC_GATE_CLK_HW_INIT_FN(_struct, _name, _parent, _reg,	\
+ 				    _sc_offset, _enable_mask, _flags,	\
+ 				    _gate_flags, _udelay, _ops, _fn)	\
 -- 
-2.7.4
+2.20.1
 
