@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E85D0C3815B
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CFDC38A29
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C69ED20768
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:18:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DB1A20578
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:33:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YIhYIz+C"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MI34FaFA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407353AbgDNPSi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 11:18:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46056 "EHLO
+        id S2439727AbgDNPdD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 11:33:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48298 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2407351AbgDNPSd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 11:18:33 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2219C061A0E;
-        Tue, 14 Apr 2020 08:18:32 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id f8so3535lfe.12;
-        Tue, 14 Apr 2020 08:18:32 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S2407370AbgDNPdA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 11:33:00 -0400
+Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 097C8C061A0C;
+        Tue, 14 Apr 2020 08:33:00 -0700 (PDT)
+Received: by mail-lf1-x144.google.com with SMTP id l11so87161lfc.5;
+        Tue, 14 Apr 2020 08:32:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=EaqdjDcz077guZZFx5utO0urvqfVvTtoCeZlyZLJ4kY=;
-        b=YIhYIz+CpSklWfCMJiTQBwpRgBV0ctYIjrrVfeiHT9KHQexJd3U4HTtPCr4YalaSor
-         Nb/P9+fWUhEsKtY7TsxML4gIPd5EAK5Ea/FBa2dXkvA/Ka/S2TcspycJTVowoi8l/lvV
-         bK0PHJg39vlv9KuSwx8jW5cpVUz2xh6WeiWBTOgDFSmo5jjUx8+nRixvPGoTu/sRCl53
-         xYmnFJQ/Dj6jC6TBu2wwg9vVcia08ijGsDcewfTfwArjgo7QZT4pzKdYLV5PCAdO/Dvg
-         fh12n66uiF5FpV8ODdEGvsRqDELFXYsEYpdgoT76TZ+yn5bYItrrl54uRhcevznrgAQW
-         Pd+g==
+        bh=4eIrItheLX7YX2ovx/taypeY8owEKNTnWW8Vad5FCew=;
+        b=MI34FaFABelIhbrwZvWxpE3BeRjE+jLVkAPgR5417k1cCJsV73RHRHbvaa84RzMxgW
+         xetz+hgEeMaQ9aO0rfNL/aOte1KsQtdBPkNlzr5dikvh/3Lig+gpmfNtfeB7GA9UJASU
+         nbmkKqX2fP7DiasP27nvBvPpo6P2xGWSqXLGirBeR6WrvSn8jCF7ZJOUQZIBGwbgrnH5
+         Rbq+AalrTIDbO3yyhvli1Qw7FejKlGpXk9qwvwwGpEQxfl4FlhhfSlTZ3bxUBPrCRmjP
+         OLqjoR1LLJqjShTkwHmyuGdWL+JU7XSJUeVHv+3YpsEdC8ONzx4MexTEHcObjT1kph/Z
+         pSaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=EaqdjDcz077guZZFx5utO0urvqfVvTtoCeZlyZLJ4kY=;
-        b=GqQ+0toOZ8vyW9tFLcR/Knkn2LgjVR3IzbDMdwI0C1lyIGPSnkOuw8eVoLwAMqfjUw
-         STpGymBaN/eiA4Dd0pAmkfIsHUf38Xx/uRE/oABlJq6kKIrAGyhDKEzzE9hb8w4f98eW
-         H2gdUdPsL0OUqPE9SwAknxTTDpdHp86mSaVMFf6+1P6K7aulQikUsQspsbB5eUw3Cy2L
-         2qI0JLdPgS1TXsV7HZALNorOAD4jiI+J9gcfF3ePY3Wx8RnqlCLFJn+gOLFiK4WLWZxN
-         ILBZYv7PG9z5n+XJ7jKAMlIRHlkCZQyOkuY86veXSnh0GmcU7ic5lWFg+p4s/yej6FDa
-         JRRA==
-X-Gm-Message-State: AGi0PubQUvAkqRl7ntjGBoN8AdI0w5UoMbTW7SCO53Ar5jEG7yhCpgYU
-        ktx0yUUUngXYlbsUjSWNqPw=
-X-Google-Smtp-Source: APiQypLUTnN9jhL1/kjbd/qXnyU7SH/YSbBa5XG5eUCrFPojjrbpHlIpRKG9PuFRu/KbkQRc6zRgEg==
-X-Received: by 2002:a19:c14e:: with SMTP id r75mr221935lff.62.1586877510987;
-        Tue, 14 Apr 2020 08:18:30 -0700 (PDT)
+        bh=4eIrItheLX7YX2ovx/taypeY8owEKNTnWW8Vad5FCew=;
+        b=XfjYxBW8n42eNO2LdkNInqa8fLA2Ikb78MPyepFk+rdPgTGvmq7v+e5l14tcmryetx
+         GL6xtD8Mdy4ERWWr7I73d9WgsoHCrWSP2gUESPZlFHAeEMpwO5/JpQk0vx3N+B8rmtrv
+         pb/lQvEez3zbHx7Uhu5uXJDy8S8Iv59v+V58iLkEHB3arYpEfVN8W1J70Grfhy4r363z
+         SVw0yDUUSkqMPdVeDTbWDVODjHOO1QCYchE38B3by8UANbMChYF4rmyxXAVFeSadulVP
+         qJVefWA78OEi7E3NkEu3VZcqQj2chNnKx46EKOUlTHxaiJosJmIkE+PBCQYAzr4Io5cR
+         bT+w==
+X-Gm-Message-State: AGi0PuaL7/Dkk5/++APA/zHkVDnHcdBLbI9vqmeFKu/+IyTNRu3up/pr
+        KhpEUlyooJfKge4TzPRoXMo=
+X-Google-Smtp-Source: APiQypKpGY5BqwvpNTlCvMY9U59k/lj+SeiqM+aeyFKz8Q5woDyVq/h4Ljj2eIGognuBJLL5rYF67g==
+X-Received: by 2002:a19:c216:: with SMTP id l22mr229478lfc.172.1586878378571;
+        Tue, 14 Apr 2020 08:32:58 -0700 (PDT)
 Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id j14sm9865266lfm.73.2020.04.14.08.18.29
+        by smtp.googlemail.com with ESMTPSA id l12sm7528500lfp.35.2020.04.14.08.32.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2020 08:18:30 -0700 (PDT)
-Subject: Re: [PATCH v6 07/14] clk: tegra: Implement Tegra210 EMC clock
+        Tue, 14 Apr 2020 08:32:57 -0700 (PDT)
+Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
+ Tegra210
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>,
@@ -68,16 +69,17 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-8-thierry.reding@gmail.com>
- <8dc000fb-8867-cf8f-8204-a9e1e79a4811@gmail.com>
- <20200414143424.GG3593749@ulmo>
+ <20200409175238.3586487-10-thierry.reding@gmail.com>
+ <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
+ <6976796c-6972-328e-3e9f-60c1737cf0e2@gmail.com>
+ <20200414150516.GL3593749@ulmo>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <92eb73ba-73e4-f9f1-bb22-9b515e32cee6@gmail.com>
-Date:   Tue, 14 Apr 2020 18:18:29 +0300
+Message-ID: <45b65baa-fd9b-3248-bc24-e226cfc8c8dc@gmail.com>
+Date:   Tue, 14 Apr 2020 18:32:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <20200414143424.GG3593749@ulmo>
+In-Reply-To: <20200414150516.GL3593749@ulmo>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -86,64 +88,23 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-14.04.2020 17:34, Thierry Reding пишет:
-> On Thu, Apr 09, 2020 at 09:24:31PM +0300, Dmitry Osipenko wrote:
->> 09.04.2020 20:52, Thierry Reding пишет:
->> ...
->>> +static long tegra210_clk_emc_round_rate(struct clk_hw *hw, unsigned long rate,
->>> +					unsigned long *prate)
->>> +{
->>> +	struct tegra210_clk_emc *emc = to_tegra210_clk_emc(hw);
->>> +	struct tegra210_clk_emc_provider *provider = emc->provider;
->>> +	unsigned int i;
->>> +
->>> +	if (!provider || !provider->configs || provider->num_configs == 0)
->>> +		return clk_hw_get_rate(hw);
+14.04.2020 18:05, Thierry Reding пишет:
+...
+>> What about replacing those barely readable concatenated macros with a
+>> raw values?
 >>
->> This still looks wrong to me. Nobody should be able to get EMC clock
->> until provider is registered.
-> 
-> The EMC clock is mostly orthogonal to the provider. The provider really
-> only allows you to actually change the frequency. The clock will still
-> remain even if the provider goes away, it just will loose the ability to
-> change rate.
-
-It's not only about changing the clock rate, but also about rounding the
-rate and etc.
-
-Besides, you won't be able to change the rate until provider is
-registered, which might be a quite big problem by itself.
-
->> This is troublesome, especially given that you're allowing the EMC
->> driver to be compiled as a loadable module. For example, this won't work
->> with the current ACTMON driver because it builds OPP table based on the
->> clk-rate rounding during the driver's probe, so it won't be able to do
->> it properly if provider is "temporarily" missing.
+>> Like:
 >>
->> ... I think that in a longer run we should stop manually building the
->> ACTMON's OPP table and instead define a proper OPP table (per-HW Speedo
->> ID, with voltages) in a device-tree. But this is just a vague plans for
->> the future for now.
+>> TRIM_REG(brlshft_idx, ob_ddll_long_dq_rank_mask, ...)
 > 
-> This code only applies to Tegra210 and we don't currently support ACTMON
-> on Tegra210. I'm also not sure we'll ever do because using interconnects
-> to describe paths to system memory and then using ICC requests for each
-> driver to submit memory bandwidth requests seems like a better way of
-> dealing with this problem than using ACTMON to monitor activity because
-> that only allows you to react, whereas we really want to be able to
-> allocate memory bandwidth upfront.
+> That's just going to move the complexity from the macros to the
+> callsites, isn't it?
+> 
+> I suppose I could spend a few cycles trying to make this a little more
+> readable, but to be frank, the complexity in this driver is already so
+> high that this doesn't really make much of a difference, in my opinion.
 
-You absolutely have to have the ACTMON support if you want to provide a
-good user experience because interconnect won't take into account the
-dynamic CPU memory traffic. Without ACTMON support CPU will turn into a
-"turtle" if memory runs on a lowest freq, while CPU needs the highest.
-
-Secondly, the interconnect could underestimate the memory BW requirement
-because memory performance depends quite a lot on the memory-accessing
-patterns and it's not possible to predict it properly. Otherwise you may
-need to always overestimate the BW, which perhaps is not what anyone
-would really want to have.
-
-I'm not sure why you're resisting to do it all properly from the start,
-it looks to me that it will take you just a few lines of code (like in a
-case of the T20/30 EMC).
+I can't guarantee that the final result will be excellent, but I'd try
+to turn that macro into the function and then use the raw HW values
+instead of the defines. It looks to me that the result at least should
+be better.
