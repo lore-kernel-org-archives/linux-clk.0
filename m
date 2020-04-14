@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28101C2BA19
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:02:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59113C2BA19
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 078E42076D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:02:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 304902078B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 15:11:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxQ2m3DR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s8K8q5iR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405539AbgDNPC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 11:02:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43476 "EHLO
+        id S2440260AbgDNPLJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 11:11:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405562AbgDNPCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 11:02:23 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F04C061A0C;
-        Tue, 14 Apr 2020 08:02:22 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id a25so14727343wrd.0;
-        Tue, 14 Apr 2020 08:02:22 -0700 (PDT)
+        with ESMTP id S2440254AbgDNPIT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 11:08:19 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EA3FC061A0C;
+        Tue, 14 Apr 2020 08:08:18 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id k11so14110403wrp.5;
+        Tue, 14 Apr 2020 08:08:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ViI/byXYkNTTv5WozqHMnLuUZ5EboqYJdzyRMLlG4+I=;
-        b=gxQ2m3DRGB6KjDN+/gGk/ABqsAvAFy8Q4jvwgUUVnBmQQPs22L+air6X+vbNaFjrG+
-         m4BazoDB9Mb8bLYUOVCrdxHbqQ1y4dzM+Pr66Ieb/1Zo6Cp8blP2LKu60alUspymuN4K
-         DsLEmtbTiR1f/OzFQAx/TLHlzhaWdB7AwFV7w3JSqpxXeAItCpkfm7mQ/16goxGzsmfe
-         E3A5W7R1FJTkBvUdq2JHuj/VvWZcGiu7gmL99+jvy3TFxDmMzqdpww2yxXj2qjxCPqxv
-         3XBMMFkQ6IJErv8H8BBWoxmdMJY+y2cihEFkFyLkZiQECDZvXuA4odCeXWYUMHqvywvv
-         QU2Q==
+        bh=k7q0i04JrV/LeWRv8qAlwGssC6S97Ez37RZ9eJFf4jw=;
+        b=s8K8q5iRtggqNP5qEoyp9NKhh1FcI+I/WpvocM2IwWOsRGN2OhmPWCtRPpKF0pSqur
+         kk6vqF/IOvEFrkaVsK25+SsTVR3Q33zsGE500TdhYf4fhtYvOROG/nhZJGYsK8vBIzQw
+         jTdQSgEfOfsUMZkimdJNkyvA2AyPfUP607BuhA2QDyUpyaTAgDwODdgJne/fIoF4Wax+
+         njNtUfZ0TJJX6fUbBlsxihKkggxTV5g+hv8GKrdrrUqpfu6QshbWFu9rtMQrmS5kxVss
+         BbkYk/46kdC1TtrT4Zte7uDcDIN0OYATpc38YKttt6+IXg1ZQFuaOdgwqY8bNqBQdBWr
+         xuZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ViI/byXYkNTTv5WozqHMnLuUZ5EboqYJdzyRMLlG4+I=;
-        b=PG1yPavt5QCPQ/U/Wp+FUMK1mjUpFRrYv4qhFl/5ObKvuEOpa5KzSxJzkWDeIMx8yD
-         j7W1B6RdWfzH2+wpndP8JY4Yib7l9+YAN4zfVcInSPJWpsqDnvglUcixAGKk14/XYwec
-         8HsW/uc3ySbJhQDYROkgL+lXPiTDNdGqRKUdp5YbQiWtxV98rw69DM0TYfHPk6HTSMPQ
-         +HcjSqdaKOdXWNucBRRLR0HdvUiJeWAlQ9Tw10m59IXwEYlACs8+dgqhqmo4ctxr0CGF
-         3o9n20ec4/LmTsNrCpAAuwTKVLTuAAB3EVEdz2R0gUn4yYDRof474410Jm8JWzNz3rUZ
-         jeOQ==
-X-Gm-Message-State: AGi0PuZKRI9AzvKL14z+reY5rKHa2XMpQwYjK0QC53HOEKdL9CFg+cIC
-        AkLMdlrf2Gm3BZQ3ngNxQZ0=
-X-Google-Smtp-Source: APiQypK4+NIRYHEoApUJZAfNPlDoh2Xh3fKIbelUsv2sesJnlhQa+MjZoKcEwDhkrZyCCyBsPmqPEQ==
-X-Received: by 2002:adf:8149:: with SMTP id 67mr25052146wrm.60.1586876541371;
-        Tue, 14 Apr 2020 08:02:21 -0700 (PDT)
+        bh=k7q0i04JrV/LeWRv8qAlwGssC6S97Ez37RZ9eJFf4jw=;
+        b=QioGmIUUQHT58s8g5U9htyI0Oifnb6KvLFEmoRzcHFs1Roe16AakPSlSr97mbOgJuZ
+         wXWyxaV6TODaG2qmeMsNFNT/RXdXVcv1YV4tD3VkD9YHoRwKkbeUWJ5KmKfIKyCk1GUC
+         H+AxaQEj/FKBQuVHMJq9b8I/WE4f9M4AFl25HDcJSuy0PjtkX9IV5cXv5WLmQ9j7t+zt
+         VWCCYp9uOsq1H+r0cBbauukHh+Tz36ZvL1tfiqVUkoL/zqFR8mLxD1y9ILEGZXScI+gO
+         1P3vTHB7mZ7zqycryYpRZptFD5IfcQuQJ+pMZt4HYcGi89RU/WtQmpKB+2KwT/UjFPIl
+         96ng==
+X-Gm-Message-State: AGi0PubG8xeHGWT8/PGOAofts4D9W7PXFDzt+gkIDVB0UCcVhzl0WvXV
+        ivdO9hQ8Z+n6CSOwquEJums=
+X-Google-Smtp-Source: APiQypLR+uWxiXs63aPjYfFPWMFe2n0Nn/f6HhopnZJbUeLcgUQfMkrWPO84Tz3WWOc4Hxo4F/dUmA==
+X-Received: by 2002:a5d:658e:: with SMTP id q14mr25214585wru.92.1586876897235;
+        Tue, 14 Apr 2020 08:08:17 -0700 (PDT)
 Received: from localhost (pD9E51D62.dip0.t-ipconnect.de. [217.229.29.98])
-        by smtp.gmail.com with ESMTPSA id y9sm18508247wmm.26.2020.04.14.08.02.19
+        by smtp.gmail.com with ESMTPSA id m14sm17431931wrs.76.2020.04.14.08.08.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 08:02:20 -0700 (PDT)
-Date:   Tue, 14 Apr 2020 17:02:19 +0200
+        Tue, 14 Apr 2020 08:08:15 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 17:08:15 +0200
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -69,15 +69,15 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         linux-arm-kernel@lists.infradead.org
 Subject: Re: [PATCH v6 09/14] memory: tegra: Add EMC scaling support code for
  Tegra210
-Message-ID: <20200414150219.GK3593749@ulmo>
+Message-ID: <20200414150815.GM3593749@ulmo>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-10-thierry.reding@gmail.com>
- <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
+ <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fLj60tP2PZ34xyqD"
+        protocol="application/pgp-signature"; boundary="75WsOQSofUOhcSOp"
 Content-Disposition: inline
-In-Reply-To: <3e518dfa-cb3d-e2ce-a9b8-5e143e02fc61@gmail.com>
+In-Reply-To: <e015e35b-3f82-56e1-2d86-ebc467eb92f7@gmail.com>
 User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -85,78 +85,55 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---fLj60tP2PZ34xyqD
+--75WsOQSofUOhcSOp
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 10, 2020 at 02:56:53AM +0300, Dmitry Osipenko wrote:
+On Fri, Apr 10, 2020 at 05:25:06PM +0300, Dmitry Osipenko wrote:
 > 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 > ...
-> > +#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC		0x19c
-> ...
-> > +#define CLK_RST_CONTROLLER_CLK_SOURCE_EMC_DLL		0x664
->=20
-> I'd suggest to double check all the macros and remove everything unused,
-> to not pollute the code.
-
-I recall checking most of these, but I'll make another pass to see if I
-can spot more that I can drop.
-
-> ...
-> > +#define TRIM_REG(chan, rank, reg, byte)					\
-> > +	(((EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> > +	   _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _MASK &	\
-> > +	   next->trim_regs[EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ##		\
-> > +				 rank ## _ ## reg ## _INDEX]) >>	\
-> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte ## _SHIFT)	\
-> > +	 +								\
-> > +	 (((EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
-> > +	    byte ## _DATA_BRLSHFT_MASK &				\
-> > +	    next->trim_perch_regs[EMC ## chan ##			\
-> > +			      _EMC_DATA_BRLSHFT_ ## rank ## _INDEX]) >>	\
-> > +	   EMC_DATA_BRLSHFT_ ## rank ## _RANK ## rank ## _BYTE ##	\
-> > +	   byte ## _DATA_BRLSHFT_SHIFT) * 64))
+> > +static int tegra210_emc_remove(struct platform_device *pdev)
+> > +{
+> > +	struct tegra210_emc *emc =3D platform_get_drvdata(pdev);
 > > +
-> > +#define CALC_TEMP(rank, reg, byte1, byte2, n)				\
-> > +	(((new[n] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##	\
-> > +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _SHIFT) =
-& \
-> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte1 ## _MASK)	\
-> > +	 |								\
-> > +	 ((new[n + 1] << EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ##\
-> > +	   reg ## _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _SHIFT) =
-& \
-> > +	  EMC_PMACRO_OB_DDLL_LONG_DQ_RANK ## rank ## _ ## reg ##	\
-> > +	  _OB_DDLL_LONG_DQ_RANK ## rank ## _BYTE ## byte2 ## _MASK))
+> > +	debugfs_remove_recursive(emc->debugfs.root);
+> > +	tegra210_clk_emc_detach(emc->clk);
 >=20
-> My eyes.. :P
+> It's great that you want to make this driver modular, but I don't think
+> that it's a good idea to suddenly rip off the EMC clock from the users.
+>=20
+> It should be better to simply disallow unloading of this driver once
+> it's loaded.
 
-Heh... yes, this is pretty bad. At least the code at the callsites is
-clean.
+That's not what we're doing. The clock is going to stay around and users
+will be able to access it. The only thing that the above does is take
+away the possibility to change the rate of the EMC clock.
+
+So I think this actually makes this really nice both for testing that
+unload/reload works and it also gives users an easy way to disable EMC
+frequency scaling by simply blacklisting the module.
 
 Thierry
 
---fLj60tP2PZ34xyqD
+--75WsOQSofUOhcSOp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0HsACgkQ3SOs138+
-s6FXCg/7B0bMQSGWtJXVBNJfMTn8M0O+JF56fTgGvLoz+9OjrduZ3flJ5t1MVTvp
-o+MoMG4zK2JjlnMcMLG5o/6hSbLU0kAKJ7BlHbwgV252liWGABe3h0xV8923aWRi
-vbm8f1v9sab2U/KJGUdZxeSZ9NfrVzCzGzBlZmynLF6fKhnymS1usyKChKqwlvv2
-PZAZKF4hNDizXxy1ZpmSJHoZRsZ94qSj2NuAvLxMjx0Hmv6jJ8D7AZuY/GKeCZPN
-ByuGMahGXXaE8JaOzgxsfHx0TEC1hKb4Y017xgHpZzMU50ck4eqFJb/nHXBVddPH
-KjYmaDzYIfSqtYRrmPVmloUBVjb9Y1EDspe+5TbQvpSwSLjNFPeM0z5dZXrZU4w0
-W4bvghLzaZvgvC9thmTZur7QTcOOco3BRTIxv8hzA/2FO/oWX9p1CGbR6Ddsg/ly
-SzhUu5CUKCrKdob6YRTpfT+5CN+zCzR7dt+XJ2LcR1lg0UnCCMnmyf2kJUNdkwZp
-lWQQTm4pFrHNRv0a8DNN6ma4fK0yyS//7bJQVM/sGJZ8hnloT6skT8hUyfre9d9f
-AzpQypnVyqMv2PTFYthPYkF6CaLHHgE/NU4yUyQHyNIBCQT4OHZZZXBlS42azM10
-6/79zjdxTiIR6C0mHgIWY6kgTNiL7RiU9ctwpI9vnCrp+YzPfy0=
-=SSdO
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V0d4ACgkQ3SOs138+
+s6GsWw/+M5/HCC6YVqevVHN5rlOJp1Ymn8G8PfobgyJaQ+IQ5YBian1VcklzBhNx
+jqEPh0NaQTMm8Lq30si3Es6lnPugjOhhsYpGP2PVQ8Fpgr33hqoileVYzHYe4uMP
+uk7SUYzZMoBAdO936koxzvfVIS86NGqzVciHH7xDQqndF1PoRShxkHA+Fmg7FuwA
+BNKrTPyYObiEZD0KO45fHkyWxrBl7lfk6Qm9gMyM5wpp80JHI/gGkmE3kUocMW/w
+zYXnGLES5NcrDgBDv1aRAlt8pafa1TrFtZIpADX2Y3q533/TEojbb3f9BtYkLCAP
+8cfmAfFdHK9gOo68OGpPFePzFZRYdxEH3xCGOsISgMoE5PRIKpLhVZW1/zlaVGHG
+yQUuKR2c/G+qlPgD1vb42B7b7cPmA3DU7KGZn7aUhDTuR8ovDd29Xzzqzvf9Gq52
+CKZFYirYrVuNF4Yu81JCQejfoOy3dah1EILZ/H4rwsIZGbNmzNt8uMPJ9/b0UAht
+9aCgJJC05SNFFeWT7PYgleJHLLl5zpdStTbZgSHdjyS7az2+hTCU/ZxEFVUbfARp
+yMauGoTgjC+Tmlo2i8u/TO91xvVVLx0jnhAT9QETnjYkTZtr1T5h8jh9u2EIguHb
+oFtPdGtkf4+73XZxomkd6XA3sThbRwKYCuzJUIupCz+fwe2ByZQ=
+=UtAs
 -----END PGP SIGNATURE-----
 
---fLj60tP2PZ34xyqD--
+--75WsOQSofUOhcSOp--
