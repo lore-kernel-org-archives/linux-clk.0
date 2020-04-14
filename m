@@ -7,60 +7,59 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EC91C2BB85
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C3DBC3815B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2D45520737
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D1120656
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 16:48:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PipUNxux"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIGVfYNJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405195AbgDNQlA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 12:41:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59096 "EHLO
+        id S2439903AbgDNQsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 12:48:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404908AbgDNQk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 12:40:58 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18597C061A0C;
-        Tue, 14 Apr 2020 09:40:58 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id l14so499900ljj.5;
-        Tue, 14 Apr 2020 09:40:58 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S2440012AbgDNQsM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 12:48:12 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1849C061A0C;
+        Tue, 14 Apr 2020 09:48:11 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id z6so14864711wml.2;
+        Tue, 14 Apr 2020 09:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=42zN/JWZMrImPOHqxaziIrOnovVE6HSOm6ZZB3qclDs=;
-        b=PipUNxuxy3Q6sLRqz5k1a/Npe7zldh+VoHciAjWwpKNErtKr8tfgneF3cIcmDBppP5
-         sbUjTK8ubc5x1aKFktL3nhoxYA4bsRwv9kRUNV+N7MRxcWwVoN+tG3mcRLq23qxfMqs/
-         N13AiKb9ZenPnaIqf2o+g1Ek7GX2F851aM7WK+VJVA2BZYBhBZ3a8bwkin052ZRUd8Za
-         pqB4djj8qbZfyY0Fx65++1zu83iPtDs71tzW0enbb/I6st1Wkzh4QMvFLW3TReiIuahJ
-         /ZgqUcEVVXnSES/SzeKljm5HMOFJ5MRjl+7Z2vUgfFS9ruNWde/KvgtcE9yUqnGYyS1A
-         wn0g==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HmHndUdYmjfvwN8+szi9UffSkAWgcwK4XPxePVLmE5E=;
+        b=cIGVfYNJIFIXzopt97czJ66YgjE7dsheWI+C8GytAm+zVbtjEemAcHk6ZdRb3V0lBT
+         4OMKcSxnkWHVz5e1UM6cU6JX9VvgoWh+pPwkfoMk2fgsbppO7XIh8ktS07sUAvoK0y/N
+         u5Ah1U9mChTMnpuuq9YNzWsfq777eO/6OjnNXuC9l18Vg+UQz7oPfnRBlSbdz9GUt6Wi
+         H6LH2heqSjvmXdyAiOmSd1lBl9DksddEfLSEy36kBKxUh2Ap0qxfRD4a7iuIieFcGEt+
+         BKY1Sj1w06gi4tptdCVbhEpu8alEO8/29tUz1srETZFJ64nRodbntvMjK6vYlm3eJH8e
+         2YSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=42zN/JWZMrImPOHqxaziIrOnovVE6HSOm6ZZB3qclDs=;
-        b=eQEsrh89vns8D0OwYeslGQBvW/GTkj3dg68qmew+PiNIR1uzZHI5iSO0sbAXTjkKHd
-         xeOYieX3TRRTHDwkqBfgKsSvJjiJpeQcpx38sonTuB/rGXjJLA9wgpmJsbFcwLUmK+xf
-         mMY3qF/9sE7YWJktr6VJ4xvhJCGNTjahAL/9DPsIHfyzBPCqLaP4CxjEPA8ykPAQ7JYR
-         m6h3dxtOCCWW6Igb3JQSve8hchxognOhm5/Sy9mBtK7CZihhfInWyJMehdOShAhZowcz
-         1fsv/YZ7k22WdNxRsa4FOJGQoKpjSWDOvSdmeNVhXHIz4QILlAE2X4egaku4ZVZMOUzH
-         1pZw==
-X-Gm-Message-State: AGi0PuafFa1l9zK9QB+ieT9MPD/Ki6XSzTWm0T4LLyh8WZbPfZncvRjZ
-        8JgLbm0jiIuQYegBJZ72FLM=
-X-Google-Smtp-Source: APiQypIsIVTReol7rZyJyAlFKw87DWeZ7xkU4PVTXTRJYLKhxkNO6FDzjCKYW+CTaMG6SrEu8MK46g==
-X-Received: by 2002:a2e:6c15:: with SMTP id h21mr635259ljc.248.1586882456643;
-        Tue, 14 Apr 2020 09:40:56 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id l13sm9448259ljc.84.2020.04.14.09.40.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Apr 2020 09:40:56 -0700 (PDT)
-Subject: Re: [PATCH v6 11/14] memory: tegra: Support derated timings on
- Tegra210
-To:     Thierry Reding <thierry.reding@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HmHndUdYmjfvwN8+szi9UffSkAWgcwK4XPxePVLmE5E=;
+        b=GEULIrOnm0/CkxAOGacRkC0sYTdPKP38AP5troBmTTzXx0Lke1lBzt9mOxg2pZN0cb
+         SwIhvJmvPgP81+f+444kIQw7UsHltBgNndqZOapFg/TnWYGLL/NqfAyMP8plb9ICepIF
+         PhE9jl9QuOWcynf07+q71AcL75+yvEmv0CF/eIuA0bG9q7VJqWIQxaiWIy2uYz/tNDt8
+         swWhOtdLudlqEsnfOJbaFTWhRXi11X4pUZmEsxifnFZwRspH64m8Lu1ytIKDKH3xKV4B
+         3atWxcOv43pPEzaugx8HS9vJhwf2pM/KhR0Na0p5+R4Sg4vHBstpdDFgpfMm6mTUD5ov
+         OT5g==
+X-Gm-Message-State: AGi0PuYYgxsJEGo147TFJYUbLQ/PCsIZFj9tiq7ozwTHC/fODSAvDLVo
+        kXBXueb0z2IHHzazwyxWrUA=
+X-Google-Smtp-Source: APiQypIHuIKA92yozOH6Ncxbv9kbJEehQ9zh8Wp/4dmg7gSGA4CMpUjWByNqYERfgv9OqDb3Yh3TEw==
+X-Received: by 2002:a7b:c010:: with SMTP id c16mr776352wmb.73.1586882890736;
+        Tue, 14 Apr 2020 09:48:10 -0700 (PDT)
+Received: from localhost (pD9E51D62.dip0.t-ipconnect.de. [217.229.29.98])
+        by smtp.gmail.com with ESMTPSA id o13sm20192640wrm.74.2020.04.14.09.48.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 Apr 2020 09:48:09 -0700 (PDT)
+Date:   Tue, 14 Apr 2020 18:48:08 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -68,30 +67,58 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 11/14] memory: tegra: Support derated timings on
+ Tegra210
+Message-ID: <20200414164808.GA15932@ulmo>
 References: <20200409175238.3586487-1-thierry.reding@gmail.com>
  <20200409175238.3586487-12-thierry.reding@gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <543bfc3b-2bb9-01d3-62da-89d1f0b18a5b@gmail.com>
-Date:   Tue, 14 Apr 2020 19:40:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ <543bfc3b-2bb9-01d3-62da-89d1f0b18a5b@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20200409175238.3586487-12-thierry.reding@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Disposition: inline
+In-Reply-To: <543bfc3b-2bb9-01d3-62da-89d1f0b18a5b@gmail.com>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-09.04.2020 20:52, Thierry Reding пишет:
-> -	/* EMC training timer */
 
-Guess this comment isn't really needed from the start, or should it be kept?
+--sm4nu43k4a2Rpi4c
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +	timer_setup(&emc->refresh_timer, tegra210_emc_poll_refresh,
-> +		    TIMER_DEFERRABLE);
-> +	atomic_set(&emc->refresh_poll, 0);
-> +	emc->refresh_poll_interval = 1000;
+On Tue, Apr 14, 2020 at 07:40:55PM +0300, Dmitry Osipenko wrote:
+> 09.04.2020 20:52, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > -	/* EMC training timer */
+>=20
+> Guess this comment isn't really needed from the start, or should it be ke=
+pt?
 
+Nope, I'll remove it since the code is already pretty explicit.
+
+Thierry
+
+--sm4nu43k4a2Rpi4c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6V6UYACgkQ3SOs138+
+s6FQnRAAwJoMauB0YUdSUVh1pXLf4jHxluqKui/zk3P9bXAk7mLipovO5mcIkkHM
+lYPBh/nhQGROQJVqOuf3JBG13bkJvK8DwONh/k6n/GFo6tR8wCid4UX4IEiErdR+
+sM/977LWhcid/wgZPtLv4vT2+M3pY3ZdqDOYIVf9ZHxD8DkLIIOKZ5IavNCfD/GF
+xA1qhkmrlAiuV3GGP5mFDeq+bYml1ZVfxV2eSFq4fIFWzCcK18AQjzdweOkRLG5t
+H3AoaiIVk9D5SnuH1zy/fsWHc0kMhhEE5iSsTL/uUM2Rm8687u9kCzjz0lxEz2Z6
+1zOIuQM5rExo+C5IXR+Z7AvVIl3uR+NxJD98JstB6NPK7jPTG7F7PX1gdXVx2VGg
+3N/9o7x17N8Ns3mM8enK2YrP605ExK8zvAlJaAbWJDzoeLoQDFsmvSmIKk8Tl5VF
+0p+lFEK/T8yIlXwd4xn4pOHmmZX4+dqJP/7v0O2egfcMBRUB48BeCPDv1H0/Lice
+taivRgUpG8GZv2VwGNywnXYhpAnvOTOmIxqcFFB8Nqp0abTwoSrYqZ1Nd3dukNHj
+7QrRkysO6p2cEA/ZZK7YAuFK3AVk1gSYLJy3hI9LM6rNWe/6jr1H1WY4SteIxvtU
+lVkvtwMHwkxbpwrLWoLHRUI+ibmblRdWJjf+1R7Kw7auKbngZEY=
+=EqDC
+-----END PGP SIGNATURE-----
+
+--sm4nu43k4a2Rpi4c--
