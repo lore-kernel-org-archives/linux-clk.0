@@ -2,105 +2,80 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACD2C2BA2B
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 03:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6FFEC352B6
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 07:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B98D2075E
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 03:34:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F03OGL1N"
+	by mail.kernel.org (Postfix) with ESMTP id B61DC206E9
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 07:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404757AbgDNDdf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Apr 2020 23:33:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49738 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2404756AbgDNDdf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Apr 2020 23:33:35 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B890BC0A3BDC;
-        Mon, 13 Apr 2020 20:33:33 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id x26so4233139pgc.10;
-        Mon, 13 Apr 2020 20:33:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e1I6YF+VJ57pEb1USvw1okp6yWunIg/IfHp9i2omTR0=;
-        b=F03OGL1NGLi1sgHbYBhEZNMP48siZFUj5XoT+Gyy9eeLJUCt7IjIoBFDkuohdy9um6
-         Z+eIV1Nnhl5f/Rnlh5TPju7t9FiEA9CEwSMr0fUw7T8C08qLMecp5YHhmb+q+y1NcCHu
-         S/50B+TqnCtl8F7vQ+Fv8B5iYXiD7en+BS0d+++VodBkLe/CUE3TEtGoXMqt6gToago6
-         Zdz2Xew+u5bc1tPNyd+sa8quuu+h2oOjv3uE5/VP5LOWd3PraeYiwvvTU1NHYusGc9wU
-         3yrJ0nFClaPnXsKw8GHk4nD7XG3iPHXOYCQdm8+g2xPiy7M3IK+QwJXW0Zg68INKG+OR
-         KvyA==
+        id S2406427AbgDNHJs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 03:09:48 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:42988 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728832AbgDNHJr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 03:09:47 -0400
+Received: by mail-oi1-f195.google.com with SMTP id d7so4558424oif.9;
+        Tue, 14 Apr 2020 00:09:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=e1I6YF+VJ57pEb1USvw1okp6yWunIg/IfHp9i2omTR0=;
-        b=g+GGFCZXEPEoV4Y9UtAlwPJOBBkMGI0mZaKcLXqvp/68jHo7EvWL8KyM5PHaZ2bz+X
-         4ippF3SjZuTz25RLq1ywEuKLGduqLIOFm4LKDC1tkoNGxu0LbjfUiV3nO59VnHo+/ggd
-         iUDtuuAR34sNNhBmuCwbRqN/ppBKUEu7FUm6n5Ls93h2U9n+Fxl/AqoJ+imKHRHmqC92
-         nJKbX7sfVS4zof/4yMi9OEBHUNPkslUPaZKmg99hhdFwlPxL3qp/nl8m2paXJbJggWd7
-         r8rep5+3Gy+f0mh9no8DgZ0Zw8fdUADXHDEoTaq9R+n2pFW5chi+vJvsQ4kP6YZ9yRqb
-         60ig==
-X-Gm-Message-State: AGi0PuZy9b7TlOOIqsf83itlWGQveakEmKbBVkb4/g6IiwgQo9lCql0o
-        /MEveZhQ865IlK0VaNqP1Lc=
-X-Google-Smtp-Source: APiQypIFuvcgiaYOp3jBFttcXV/yqL76ouid7CoBnHHhWLQBwaNNFqlAJAiN6wOhME3K7vZQuxGJWw==
-X-Received: by 2002:aa7:9f0e:: with SMTP id g14mr297123pfr.75.1586835213326;
-        Mon, 13 Apr 2020 20:33:33 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id 140sm5612440pge.49.2020.04.13.20.33.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Apr 2020 20:33:32 -0700 (PDT)
-From:   zhang.lyra@gmail.com
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH v2 0/4] add mipi_csi_xx gate clocks for SC9863A
-Date:   Tue, 14 Apr 2020 11:33:21 +0800
-Message-Id: <20200414033325.26536-1-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9Z5zt2CUahX5IsPzgShiRFj23zj/g56lthuN3s9ga2E=;
+        b=fsFjPs6Y14mHhPJvwHG2nVoLYDeiYpwPqBi643pwYF8SsT936r5ZjyTw0+nzLN8NBZ
+         bswe+kkXZn0SDEeHK/9XVIKGOBfwSLqfmYS1dj8PRhVEHMIwg/zKaAfuLZiFpW+5ZK/O
+         KN/7iWu3GIKwYlMTlkPKL/E+/90in7Sd3M89Vk80M3lzlHeNoq8n2ehSg321k79a2ryB
+         uv/88vIUAGMGWxkRZTWcbtZI0GEvxTlxAbnH5vvR9DkzUWxI5kPU3NEkmEB9b7B/Jnw4
+         ZqBZ3BWnlrJP5JK1U+4Dnmo9G1RyWDi6UXnZ41hPQu7CidyZPpU8ntDcuW1il1Es9QUp
+         zXLA==
+X-Gm-Message-State: AGi0PubIsK/GfVSGqwICoMA8o+/vfisRtQV4MnHM4RjGUpf/GrnRQUuX
+        HffUSV6qfJErxPRTp4ybrRnILZdG98eMRPf6EFA=
+X-Google-Smtp-Source: APiQypJPAEdSB0/mCpnigVvRvJ7XIRVHn8kPh4UNvKk3GhriQALdtPNdVHc6H4U6yfJQ1kTqUN+mE1pGe6RO8Ue6wUc=
+X-Received: by 2002:aca:f541:: with SMTP id t62mr257295oih.148.1586848186462;
+ Tue, 14 Apr 2020 00:09:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200413041709.3630-1-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20200413041709.3630-1-christophe.jaillet@wanadoo.fr>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 14 Apr 2020 09:09:35 +0200
+Message-ID: <CAMuHMdXoVGkRh63=H6P29JSS6yNCyKZdsAX1_qUNC_mH=aymyw@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: r9a06g032: Fix some typo in comments
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+On Mon, Apr 13, 2020 at 5:12 PM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> This file seems to be for R9A06G032 only. So replace reference to
+> R9A09G032 by R9A06G032 to avoid confusion.
+>
+> AFAIK, R9A09G032 does'nt exist.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-mipi_csi_xx clocks are used by camera sensors. These clocks cannot be
-accessed (even read) if their parent gate clock is disabled. So this
-patchset also add a check to parent clocks when reading these gate
-clocks which marked with the specific flag (SPRD_GATE_NON_AON).
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.8.
 
-changes from v1:
-* added Rob's acked-by;
+Gr{oetje,eeting}s,
 
-Chunyan Zhang (4):
-  clk: sprd: check its parent status before reading gate clock
-  dt-bindings: clk: sprd: add mipi_csi_xx clocks for SC9863A
-  clk: sprd: add dt-bindings include for mipi_csi_xx clocks
-  clk: sprd: add mipi_csi_xx gate clocks
-
- .../bindings/clock/sprd,sc9863a-clk.yaml      |  1 +
- drivers/clk/sprd/gate.c                       |  7 ++++
- drivers/clk/sprd/gate.h                       |  9 ++++++
- drivers/clk/sprd/sc9863a-clk.c                | 32 +++++++++++++++++++
- include/dt-bindings/clock/sprd,sc9863a-clk.h  |  5 +++
- 5 files changed, 54 insertions(+)
+                        Geert
 
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
