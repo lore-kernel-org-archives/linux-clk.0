@@ -2,138 +2,133 @@ Return-Path: <SRS0=/KpE=56=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1DEC2BB85
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:03:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE99C2BB85
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:13:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5D918206A2
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:03:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SklB+Vqh"
+	by mail.kernel.org (Postfix) with ESMTP id 7973A20767
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Apr 2020 20:13:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2505474AbgDNUDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Apr 2020 16:03:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2505426AbgDNUDP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Apr 2020 16:03:15 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F8ABC061A10;
-        Tue, 14 Apr 2020 13:03:15 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id d17so9071095wrg.11;
-        Tue, 14 Apr 2020 13:03:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WqVnj8IFqGFdEmOyYb2VJCmzmj0VgFnWDZJfvzhuPyg=;
-        b=SklB+VqhZ46ohUYET8E6jXmY8wW6RRrTs4SCQyaBtpwKvr7z2GXmuBvLmCfm4MQPbS
-         WSFZs1g/a6emv/+YA0Qib2Tn48Zus+tc7U23tUY7b6yhkr84CimIQ7POZDknh1Q7Dd3J
-         +8JQd9RGtv5g/jrnbKEJUrMBwiBPU4nNOIpuhA5YjHfJRAw5cLQHicTLAO3h0g13dKXx
-         owAX49kmERRtDkLaFYEHFraXX0TRNVVCUN6fbqmipxaZlXKmDyvSRK+bDscy/P137DhY
-         cuQPJOZZm1APOlFfJqiFCEm7eZa8m2nsqABdt7fJdEJKjI09tgh8q74tFSIr/Ni6f0nG
-         BYUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WqVnj8IFqGFdEmOyYb2VJCmzmj0VgFnWDZJfvzhuPyg=;
-        b=PoP71cwFRB37RBVdzy0wxxsOgkZvIdX4yN2zaeOvnw3VJci4cneyI4txFvyRx/Z4Le
-         olK3FkScP3DtFf4soH7FcNh/MjdBZavzwj4FCo+rd5RTBmoOJtfIyoiU5QT64iOw4v1s
-         2AxPXFnCMpMjpp1xL4cFTJ04mrIpECEQN3AHBj6Ej/nU1PY/cs6oM+fg5pCF8lBuVyOQ
-         PxqK27eRwPGTI0u57Qtl37DJPTXZwQkpnMhuEDRc8zQeqSbWl3hJs1I6jlFGsiutROCj
-         5s7qQhpiMbiWx9AisBUIntFxT9aqerNjZX5VQJMEgC3vVdU2+4DDumu2b5mGHKtweinD
-         2iww==
-X-Gm-Message-State: AGi0PubRrL1AUOeonKlsVUD4QBLn1GAz4DxBiE1o8Rsl4+hscM9kB9+4
-        yD1AKAKgGsg/SBWkSrGpqag=
-X-Google-Smtp-Source: APiQypKgPX3t+vOJEeyj4pvhZH15r6VnpobtlBCeEn6P8paVe6JSM3adiGxoEVtV/+jQrRn6tgcvxA==
-X-Received: by 2002:adf:92c2:: with SMTP id 60mr21461043wrn.379.1586894594044;
-        Tue, 14 Apr 2020 13:03:14 -0700 (PDT)
-Received: from localhost (pD9E51D62.dip0.t-ipconnect.de. [217.229.29.98])
-        by smtp.gmail.com with ESMTPSA id v10sm8236763wrq.45.2020.04.14.13.03.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Apr 2020 13:03:12 -0700 (PDT)
-Date:   Tue, 14 Apr 2020 22:03:11 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
+        id S1731101AbgDNUNQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Apr 2020 16:13:16 -0400
+Received: from mga17.intel.com ([192.55.52.151]:45827 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2632770AbgDNUNI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Apr 2020 16:13:08 -0400
+IronPort-SDR: FOc5uC5u7u8QogM2VdXWSHyICPKEsXxaw2RkggTPeO2ys0eq7Io+5k6lrLfC9uRUuShimHL6jj
+ JriiTSnqnDcQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Apr 2020 13:13:04 -0700
+IronPort-SDR: 2Ewn15Ji8stuoV7+I13V/tQewZwPzGnIug1GjNuXiEvj4iVvCxW72WcX6xG8aBFuF3tDZqajeY
+ 0vb5X5EmMNEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,384,1580803200"; 
+   d="scan'208";a="253299512"
+Received: from svarahab-mobl.amr.corp.intel.com (HELO [10.212.190.40]) ([10.212.190.40])
+  by orsmga003.jf.intel.com with ESMTP; 14 Apr 2020 13:13:02 -0700
+Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
+ clock
+To:     Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 10/14] memory: tegra: Add EMC scaling sequence code
- for Tegra210
-Message-ID: <20200414200311.GD15932@ulmo>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-11-thierry.reding@gmail.com>
- <682c661d-ea3a-7b9a-42f0-d5473b969aa2@gmail.com>
- <20200414154526.GP3593749@ulmo>
- <e050baee-89cb-dba1-544e-77b1662ac6b7@gmail.com>
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
+ <20200414174530.GK5412@sirena.org.uk>
+ <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
+ <20200414182728.GM5412@sirena.org.uk>
+ <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
+ <20200414195031.GP5412@sirena.org.uk>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
+Date:   Tue, 14 Apr 2020 15:13:01 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.4.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
-Content-Disposition: inline
-In-Reply-To: <e050baee-89cb-dba1-544e-77b1662ac6b7@gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <20200414195031.GP5412@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 14, 2020 at 07:27:43PM +0300, Dmitry Osipenko wrote:
-> 14.04.2020 18:45, Thierry Reding =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> ...
-> >> What about to try to replace this massive egyptian construction with a
-> >> single "u32 val;" ?
-> >=20
-> > I actually tried that after condensing what this used to look like into
-> > the above. The result was a huge failure because some of these temporary
-> > values end up being reused, so I ended up writing bogus values into some
-> > of these registers.
->=20
-> It should be fine to keep those variables that are getting re-used. It
-> looks like there are much more variables that are never re-used, and
-> thus, they could be replaced.
+On 4/14/20 2:50 PM, Mark Brown wrote:
+> On Tue, Apr 14, 2020 at 02:15:16PM -0500, Pierre-Louis Bossart wrote:
+>> On 4/14/20 1:27 PM, Mark Brown wrote:
+> 
+>>> Wait, so SCLK is in the *global* namespace and the provider has to
+>>> register the same name?  That doesn't sound clever.  It might be better
+>>> to have the board register the connection from the clock provider to the
+>>> device rather than hard code global namespace strings like this, that
+>>> sounds like a recipie for misery.
+> 
+>> I believe this change has zero impact on DT platforms.
+> 
+>> The 'sclk' is a fallback here. If you find a clock with the NULL string,
+>> it's what gets used. Likewise for the clock provider, the 'sclk' is a lookup
+>> - an alias in other words. The use of the references and phandles should
+>> work just fine for Device Tree.
+> 
+> It's not just DT platforms that I'm worried about here, it's also ACPI
+> systems - all it takes is for a system to have a second device and a
+> name collision could happen, especially with such generic names.  We
+> tried to avoid doing this for board files for the same reason.
 
-Okay, I made another pass over it and it looks slightly better now. I've
-kept a couple of the "option"-type variables that are constant but in my
-opinion make the code more readable compared to hard-coding them. In the
-cases where I kept them, I declared them constants, so the compiler will
-hopefully be able to optimize the code and their purpose should also be
-clearer.
+I am on the paranoid side but here I don't see much potential for conflicts:
 
-Thierry
+a) this only works for the Up2 board with a HAT connector
+b) this only work with the Hifiberry DAC+ PRO board.
 
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
+This codec is not used in any traditional client devices.
 
------BEGIN PGP SIGNATURE-----
+> 
+>>> It is really sad that nobody involved in producing these systems that
+>>> don't work with the current limitations in ACPI has been able to make
+>>> progress on improving ACPI so it can cope with modern hardware and we're
+>>> having to deal with this stuff.
+> 
+>> I can't disagree but I have to live with what's available to me as an audio
+>> guy...I had a solution two years ago where I could set the clock directly
+>> from the machine driver. The recommendation at the time was to use the clk
+>> framework, but that clk framework is limited for ACPI platforms, so we can
+>> only use it with these global names.
+> 
+> My understanding is that ACPI just doesn't have clock bindings (or audio
+> bindings or...) so you're basically using board files here and board
+> files can definitely do more than we're seeing here.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6WFv0ACgkQ3SOs138+
-s6FzPBAAsxspbLBGVMeeFtVE44f5t8cfCBGGqafBdGqgKya9ZWRdsHhEsusz+GxT
-aqf7mRltFdusi9G66Sc2gq/YgFkC4cZJ+jWXoaUf+GCh85/zUBobWJxuL3BAYLS+
-+1nxcoPGekN+Vux0NpGT2o1TYOFY4tF8SN7MJjm6+6dStevEerMRopmrn6YdICng
-YCbAoQhocSmmAgLOfXfwyXZqpShCrBBsW1hZnQLKZWwzCjHo20WuAqSWQtL/Izsr
-4LSK1YZc8TRKZw7P4VBVirzAIibR8NemHTCfftksjcBbKGl/ya/c5s6c5xntKYoc
-tszI33NOqlLXt3udgxcGtXUoGe9swC+oKcf5iCQIh72xazbJZrLkigvh3HzS+Ct4
-nb9IaPrik+iWv8jupxpKdbCCD/IgxR8KDCnNcLnSIOacqTpxMIPWP7L266ifOHkc
-2qmdvCD/n6I2CizHgINLaZzPcw99AdJ60lZQgelPtcMQ7gwefb8Zh4OhjuCTt4Os
-rJqhMAJ3lfK8cdK8OrcjNgDPKi1+avp9Srm10dXpyats0MPJgpNO7g6v9wwMN3zN
-cwDTJGCLezBG6oNwsxJLnCX1OflOZTa+STTOGvfndsWk7QJ5PmYXcBmY8grxSEiB
-3zhbpRaOdVtut6WAGQ8c+tgx5UXGVtj2TwmPgtySlc1jdltV3Bg=
-=ofH1
------END PGP SIGNATURE-----
+I don't understand your definition of board file, sorry. We've never had 
+one, the only thing that's board-specific is the machine driver.
 
---ZJcv+A0YCCLh2VIg--
+>> We had the same problem on Baytrail/Cherrytrail devices some 4 years ago and
+>> we had to use an 'mclk' alias. We are going to have the same problem when we
+>> expose the SSP MCLK, BLCK and FSYNC clocks - and that's also what the
+>> Skylake driver did - we don't have a solution without global names.
+> 
+> You should be able to register links between devices using the clock
+> API, or add that functionality if it's not there but AFAIK clkdev still
+> works.
+
+The machine driver has no information whatsoever on who provides the 
+clock. I just don't see how I might link stuff without at least some 
+amount of information?
+
+All I needed was to toggle 2 gpios to select 44.1 or 48kHz...Looks like 
+it's going to take two more years, oh well.
