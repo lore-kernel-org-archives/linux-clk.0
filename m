@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2748C2BB55
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7ADC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A11FC2078A
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E069208FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586951820;
-	bh=diZCH/Mg8n9hXnJ0WhmZgAaGP/vFOO2uGKOad9Enxpw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wIGxUSJVL7cNPRAFEcYk3kySMe7gjEgjR1AirS2an7wYIeXim5onNUDzfGGou6q7v
-	 jp7mGsKUdOz7CGGTrYzw/hfE33KwOJ0Yvb6GVVgb8LiSzyNkygbtVSP505HljnR/Oc
-	 2BXWPP2wHnLbXlflC0MoEufPuPI1JqNdfyt4HEkY=
+	s=default; t=1586951825;
+	bh=S6wAKXdXmDJgv7u1+X6ARKowSlSQupWIYsmGHU1DPC0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=tilXusrNQbO8QPCVd5CvIq2CPupDuFcVu68GSDgyNOMbLpq3XCQFvqjiLGt+CpKsZ
+	 8UOiueoetpC21YWrXj3MMGwi5XEsqL4ScQO6MdnTxIeUPsu8D+c7oLWhW0D33tQxcD
+	 F6izVLKdO5gQmuIeGVQSAE3cl4LqlLk0WZMhIBfA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409667AbgDOL4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:56:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
+        id S2897937AbgDOL5E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:57:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409400AbgDOLrx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:47:53 -0400
+        id S2409396AbgDOLru (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:47:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC43B2137B;
-        Wed, 15 Apr 2020 11:47:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7350820775;
+        Wed, 15 Apr 2020 11:47:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586951272;
-        bh=diZCH/Mg8n9hXnJ0WhmZgAaGP/vFOO2uGKOad9Enxpw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k6JGzRWmG059w7EXAz8TGhThLULVatYwILZgRyT/ErgKlvyYt1lPJ5jCZJmMaouQM
-         zQSVTw8m8KC/lp+WbVAkFlKA+R0YKOOsD++IeGHctvkqi3cPqa1uFv/pmPw7fjynvd
-         KELttE8vB051nYOICcKx4sjx1bkAnS4fK4OV05sM=
+        s=default; t=1586951270;
+        bh=S6wAKXdXmDJgv7u1+X6ARKowSlSQupWIYsmGHU1DPC0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=wKYUejmWZPlSF+pcIZEWH3GkpjSAmJ/52CKrW4hTqp9zhGToDUpH8VgVWztq/kQA1
+         RzjymV4Y2YKcE++JJCDackVcVTXJfDijVYyhdZ20zC+/qql4RfTkXF7Bw/BkKRFaCh
+         CoF3QL46FAtfo2OOi2wW4ZdTB/Kq2VR4lYawGxjY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
+Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 03/21] clk: tegra: Fix Tegra PMC clock out parents
-Date:   Wed, 15 Apr 2020 07:47:30 -0400
-Message-Id: <20200415114748.15713-3-sashal@kernel.org>
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 01/21] clk: at91: usb: continue if clk_hw_round_rate() return zero
+Date:   Wed, 15 Apr 2020 07:47:28 -0400
+Message-Id: <20200415114748.15713-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415114748.15713-1-sashal@kernel.org>
-References: <20200415114748.15713-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,54 +57,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Sowjanya Komatineni <skomatineni@nvidia.com>
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-[ Upstream commit 6fe38aa8cac3a5db38154331742835a4d9740788 ]
+[ Upstream commit b0ecf1c6c6e82da4847900fad0272abfd014666d ]
 
-Tegra PMC clocks clk_out_1, clk_out_2, and clk_out_3 supported parents
-are osc, osc_div2, osc_div4 and extern clock.
+clk_hw_round_rate() may call round rate function of its parents. In case
+of SAM9X60 two of USB parrents are PLLA and UPLL. These clocks are
+controlled by clk-sam9x60-pll.c driver. The round rate function for this
+driver is sam9x60_pll_round_rate() which call in turn
+sam9x60_pll_get_best_div_mul(). In case the requested rate is not in the
+proper range (rate < characteristics->output[0].min &&
+rate > characteristics->output[0].max) the sam9x60_pll_round_rate() will
+return a negative number to its caller (called by
+clk_core_round_rate_nolock()). clk_hw_round_rate() will return zero in
+case a negative number is returned by clk_core_round_rate_nolock(). With
+this, the USB clock will continue its rate computation even caller of
+clk_hw_round_rate() returned an error. With this, the USB clock on SAM9X60
+may not chose the best parent. I detected this after a suspend/resume
+cycle on SAM9X60.
 
-Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
-for PMC clocks.
-
-This patch fixes this.
-
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Link: https://lkml.kernel.org/r/1579261009-4573-2-git-send-email-claudiu.beznea@microchip.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/at91/clk-usb.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index 91377abfefa19..17a04300f93bf 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -60,16 +60,16 @@ struct pmc_clk_init_data {
- 
- static DEFINE_SPINLOCK(clk_out_lock);
- 
--static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern1",
-+static const char *clk_out1_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern1",
- };
- 
--static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern2",
-+static const char *clk_out2_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern2",
- };
- 
--static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
--	"clk_m_div4", "extern3",
-+static const char *clk_out3_parents[] = { "osc", "osc_div2",
-+	"osc_div4", "extern3",
- };
- 
- static struct pmc_clk_init_data pmc_clks[] = {
+diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
+index 791770a563fcc..6fac6383d024e 100644
+--- a/drivers/clk/at91/clk-usb.c
++++ b/drivers/clk/at91/clk-usb.c
+@@ -78,6 +78,9 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
+ 			tmp_parent_rate = req->rate * div;
+ 			tmp_parent_rate = clk_hw_round_rate(parent,
+ 							   tmp_parent_rate);
++			if (!tmp_parent_rate)
++				continue;
++
+ 			tmp_rate = DIV_ROUND_CLOSEST(tmp_parent_rate, div);
+ 			if (tmp_rate < req->rate)
+ 				tmp_diff = req->rate - tmp_rate;
 -- 
 2.20.1
 
