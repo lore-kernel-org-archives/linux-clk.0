@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D093BC2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D70C3815B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABDCF20936
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67AE3208FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586950501;
-	bh=ak3MKSqPh/TSr0rPK5DUxHnAyY73imxeaHdwafJvqA8=;
+	s=default; t=1586950502;
+	bh=P04iBLwJn0vDXHqxsvdHNKZ9hXQfsXc2NSGvEKJvR4Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yi42XChFwkrzJEIDJ3OU8JMTQyIF5JWkJ2BQvYD1wgi00rzv1GtMy8cEjVkY+MkWb
-	 iq7wGMT6w6NQwWKU3RrOI0qD8JP97TD9r4jdAY6nGZU16LhIel6Lp6cO7coMKd2SG+
-	 Yp4Xk6fxhSP9kTv1uDDmlYUlOe2c7eJXuV3xnNEU=
+	b=BaoNuAqeEsEx5k+sbL+hdqfJRu8fZ+PyxET7IIJpn2FTo9t1hAcmhfubS/0sG979u
+	 5zValDGFkzHc6C6hLTSAe4qePDJQ+nRKZZG4ZuWFI7H10PrCfaUUMBT6z5Pm0c+Ymv
+	 hWE0YHJP2kx+k/zJtuIQRD7OrO+57y3rceYNRbQA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408876AbgDOLe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:34:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54312 "EHLO mail.kernel.org"
+        id S2408881AbgDOLfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:35:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408863AbgDOLeu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:34:50 -0400
+        id S2408865AbgDOLew (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:34:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B148520775;
-        Wed, 15 Apr 2020 11:34:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B68620857;
+        Wed, 15 Apr 2020 11:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586950489;
-        bh=ak3MKSqPh/TSr0rPK5DUxHnAyY73imxeaHdwafJvqA8=;
+        s=default; t=1586950492;
+        bh=P04iBLwJn0vDXHqxsvdHNKZ9hXQfsXc2NSGvEKJvR4Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MTuuJMCPXcGFmeqzyPbu3QYS1Olh4swdhdl/hw/qccYmj+MDCClCElgkvZ2Wsr8Vg
-         Hgk2595dVJ/qZrFLXlf1iy3WJeXWbhHrGfs5RWg5qQar85G8xHGFoO/9BrMtBIyLkK
-         iQqvL5teSgEjemlHQl2XMhdPtMhvFpYibMM0BRX4=
+        b=zSWS3TgHFL5j7cDYIkDdqA7peZDpEyGB3rHouiLCTMyGpinY9PQMY3PXra0LUy4wh
+         GSVtCT6dc97Ab+rTsQfwEx3QD3vQDVUdc0VwCLiu5Y84t2zA34d7NL5TueQWwKlIns
+         sXc9K3v8wKXT1F5wSoTl+8bONLYpb/+imc7wUzpw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 003/129] clk: Don't cache errors from clk_ops::get_phase()
-Date:   Wed, 15 Apr 2020 07:32:38 -0400
-Message-Id: <20200415113445.11881-3-sashal@kernel.org>
+Cc:     Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.6 005/129] clk: imx: pll14xx: Add new frequency entries for pll1443x table
+Date:   Wed, 15 Apr 2020 07:32:40 -0400
+Message-Id: <20200415113445.11881-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
 References: <20200415113445.11881-1-sashal@kernel.org>
@@ -60,132 +59,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit f21cf9c77ee82ef8adfeb2143adfacf21ec1d5cc ]
+[ Upstream commit 57795654fb553a78f07a9f92d87fb2582379cd93 ]
 
-We don't check for errors from clk_ops::get_phase() before storing away
-the result into the clk_core::phase member. This can lead to some fairly
-confusing debugfs information if these ops do return an error. Let's
-skip the store when this op fails to fix this. While we're here, move
-the locking outside of clk_core_get_phase() to simplify callers from
-the debugfs side.
+Add new frequency entries to pll1443x table to meet different
+display settings requirement.
 
-Cc: Douglas Anderson <dianders@chromium.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20200205232802.29184-2-sboyd@kernel.org
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 32 insertions(+), 16 deletions(-)
+ drivers/clk/imx/clk-pll14xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 95adf6c6db3db..305544b68b8a7 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
- {
- 	int ret;
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index 5b0519a81a7af..37e311e1d0586 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -55,8 +55,10 @@ static const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] = {
+ };
  
--	clk_prepare_lock();
-+	lockdep_assert_held(&prepare_lock);
-+	if (!core->ops->get_phase)
-+		return 0;
-+
- 	/* Always try to update cached phase if possible */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	ret = core->phase;
--	clk_prepare_unlock();
-+	ret = core->ops->get_phase(core->hw);
-+	if (ret >= 0)
-+		core->phase = ret;
- 
- 	return ret;
- }
-@@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
-  */
- int clk_get_phase(struct clk *clk)
- {
-+	int ret;
-+
- 	if (!clk)
- 		return 0;
- 
--	return clk_core_get_phase(clk->core);
-+	clk_prepare_lock();
-+	ret = clk_core_get_phase(clk->core);
-+	clk_prepare_unlock();
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(clk_get_phase);
- 
-@@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
--	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
-+	int phase;
-+
-+	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, c->protect_count,
--		   clk_core_get_rate(c), clk_core_get_accuracy(c),
--		   clk_core_get_phase(c),
--		   clk_core_get_scaled_duty_cycle(c, 100000));
-+		   clk_core_get_rate(c), clk_core_get_accuracy(c));
-+
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "%5d", phase);
-+	else
-+		seq_puts(s, "-----");
-+
-+	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
- }
- 
- static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
-@@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
-+	int phase;
- 	unsigned long min_rate, max_rate;
- 
- 	clk_core_get_boundaries(c, &min_rate, &max_rate);
-@@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
- 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
--	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
-+	phase = clk_core_get_phase(c);
-+	if (phase >= 0)
-+		seq_printf(s, "\"phase\": %d,", phase);
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
-@@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
- 		core->accuracy = 0;
- 
- 	/*
--	 * Set clk's phase.
-+	 * Set clk's phase by clk_core_get_phase() caching the phase.
- 	 * Since a phase is by definition relative to its parent, just
- 	 * query the current clock phase, or just assume it's in phase.
- 	 */
--	if (core->ops->get_phase)
--		core->phase = core->ops->get_phase(core->hw);
--	else
--		core->phase = 0;
-+	clk_core_get_phase(core);
- 
- 	/*
- 	 * Set clk's duty cycle.
+ static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
++	PLL_1443X_RATE(1039500000U, 173, 2, 1, 16384),
+ 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+ 	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
++	PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
+ 	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
+ 	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
+ };
 -- 
 2.20.1
 
