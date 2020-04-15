@@ -2,125 +2,190 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F86C2BB55
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D093BC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C17F320775
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:07:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABDCF20936
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586948878;
-	bh=UK2YfDhi6th3yPk2HH2R+bk5vBepXBcx+kjcQDjg4ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SZf+4dEClvQhPGSGk1NF2joHCOlFS9MoVyCVOWnloTk7oawY4iJAWvUQIPkYZysgd
-	 9K7loN3c9t5RzLG5zfxdhpr6I6ha6uTnT890UFchinJor0RYfZ1GT72Hlb2u2vk2ff
-	 SgT0fdwT1TzEM9HxYUbz5tECm0uc1hPvKgnTU/fQ=
+	s=default; t=1586950501;
+	bh=ak3MKSqPh/TSr0rPK5DUxHnAyY73imxeaHdwafJvqA8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yi42XChFwkrzJEIDJ3OU8JMTQyIF5JWkJ2BQvYD1wgi00rzv1GtMy8cEjVkY+MkWb
+	 iq7wGMT6w6NQwWKU3RrOI0qD8JP97TD9r4jdAY6nGZU16LhIel6Lp6cO7coMKd2SG+
+	 Yp4Xk6fxhSP9kTv1uDDmlYUlOe2c7eJXuV3xnNEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393929AbgDOLH5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:07:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47144 "EHLO mail.kernel.org"
+        id S2408876AbgDOLe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:34:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54312 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390655AbgDOLHy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:07:54 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2408863AbgDOLeu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:34:50 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D1E720737;
-        Wed, 15 Apr 2020 11:07:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B148520775;
+        Wed, 15 Apr 2020 11:34:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586948874;
-        bh=UK2YfDhi6th3yPk2HH2R+bk5vBepXBcx+kjcQDjg4ns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wNkzIf6IsycXNBLxZcPoEvQ8q6mBrTzaO4+u1noOkWYub3+X6Mmtsf5qLANSSeXMu
-         9Toyd5nAP8MhKkzRSSzM8x1phPlseQAusbk1xtvXRFR02aQ9PsFYZ3cUmItglNdmul
-         5b2O6SNPBP5LmjwudDb0WBwLQkB5GqpL52iniCM0=
-Date:   Wed, 15 Apr 2020 12:07:51 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, Rob Herring <robh+dt@kernel.org>,
-        linux-gpio@vger.kernel.org, tiwai@suse.de,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        Matthias Reichl <hias@horus.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
- clock
-Message-ID: <20200415110751.GB5265@sirena.org.uk>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
- <20200414174530.GK5412@sirena.org.uk>
- <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
- <20200414182728.GM5412@sirena.org.uk>
- <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
- <20200414195031.GP5412@sirena.org.uk>
- <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
- <8876c7ef-89f1-b79f-c7c4-7862b9f37db1@linux.intel.com>
+        s=default; t=1586950489;
+        bh=ak3MKSqPh/TSr0rPK5DUxHnAyY73imxeaHdwafJvqA8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=MTuuJMCPXcGFmeqzyPbu3QYS1Olh4swdhdl/hw/qccYmj+MDCClCElgkvZ2Wsr8Vg
+         Hgk2595dVJ/qZrFLXlf1iy3WJeXWbhHrGfs5RWg5qQar85G8xHGFoO/9BrMtBIyLkK
+         iQqvL5teSgEjemlHQl2XMhdPtMhvFpYibMM0BRX4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.6 003/129] clk: Don't cache errors from clk_ops::get_phase()
+Date:   Wed, 15 Apr 2020 07:32:38 -0400
+Message-Id: <20200415113445.11881-3-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
+References: <20200415113445.11881-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="1LKvkjL3sHcu1TtY"
-Content-Disposition: inline
-In-Reply-To: <8876c7ef-89f1-b79f-c7c4-7862b9f37db1@linux.intel.com>
-X-Cookie: Hire the morally handicapped.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Stephen Boyd <sboyd@kernel.org>
 
---1LKvkjL3sHcu1TtY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit f21cf9c77ee82ef8adfeb2143adfacf21ec1d5cc ]
 
-On Tue, Apr 14, 2020 at 04:02:00PM -0500, Pierre-Louis Bossart wrote:
+We don't check for errors from clk_ops::get_phase() before storing away
+the result into the clk_core::phase member. This can lead to some fairly
+confusing debugfs information if these ops do return an error. Let's
+skip the store when this op fails to fix this. While we're here, move
+the locking outside of clk_core_get_phase() to simplify callers from
+the debugfs side.
 
-> Thinking a bit more on this, is the objection on the notion of using a fixed
-> string, on the way it's registered or the lack of support for clocks in
-> ACPI?
+Cc: Douglas Anderson <dianders@chromium.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20200205232802.29184-2-sboyd@kernel.org
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/clk.c | 48 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 32 insertions(+), 16 deletions(-)
 
-The issue is using a clock named in the global namespace.  Like I keep
-saying you're not using ACPI here, you're using board files and board
-files can do better.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 95adf6c6db3db..305544b68b8a7 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2660,12 +2660,14 @@ static int clk_core_get_phase(struct clk_core *core)
+ {
+ 	int ret;
+ 
+-	clk_prepare_lock();
++	lockdep_assert_held(&prepare_lock);
++	if (!core->ops->get_phase)
++		return 0;
++
+ 	/* Always try to update cached phase if possible */
+-	if (core->ops->get_phase)
+-		core->phase = core->ops->get_phase(core->hw);
+-	ret = core->phase;
+-	clk_prepare_unlock();
++	ret = core->ops->get_phase(core->hw);
++	if (ret >= 0)
++		core->phase = ret;
+ 
+ 	return ret;
+ }
+@@ -2679,10 +2681,16 @@ static int clk_core_get_phase(struct clk_core *core)
+  */
+ int clk_get_phase(struct clk *clk)
+ {
++	int ret;
++
+ 	if (!clk)
+ 		return 0;
+ 
+-	return clk_core_get_phase(clk->core);
++	clk_prepare_lock();
++	ret = clk_core_get_phase(clk->core);
++	clk_prepare_unlock();
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(clk_get_phase);
+ 
+@@ -2896,13 +2904,21 @@ static struct hlist_head *orphan_list[] = {
+ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 				 int level)
+ {
+-	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
++	int phase;
++
++	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+ 		   level * 3 + 1, "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, c->protect_count,
+-		   clk_core_get_rate(c), clk_core_get_accuracy(c),
+-		   clk_core_get_phase(c),
+-		   clk_core_get_scaled_duty_cycle(c, 100000));
++		   clk_core_get_rate(c), clk_core_get_accuracy(c));
++
++	phase = clk_core_get_phase(c);
++	if (phase >= 0)
++		seq_printf(s, "%5d", phase);
++	else
++		seq_puts(s, "-----");
++
++	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+ 
+ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+@@ -2939,6 +2955,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
+ 
+ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+ {
++	int phase;
+ 	unsigned long min_rate, max_rate;
+ 
+ 	clk_core_get_boundaries(c, &min_rate, &max_rate);
+@@ -2952,7 +2969,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+ 	seq_printf(s, "\"min_rate\": %lu,", min_rate);
+ 	seq_printf(s, "\"max_rate\": %lu,", max_rate);
+ 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+-	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
++	phase = clk_core_get_phase(c);
++	if (phase >= 0)
++		seq_printf(s, "\"phase\": %d,", phase);
+ 	seq_printf(s, "\"duty_cycle\": %u",
+ 		   clk_core_get_scaled_duty_cycle(c, 100000));
+ }
+@@ -3434,14 +3453,11 @@ static int __clk_core_init(struct clk_core *core)
+ 		core->accuracy = 0;
+ 
+ 	/*
+-	 * Set clk's phase.
++	 * Set clk's phase by clk_core_get_phase() caching the phase.
+ 	 * Since a phase is by definition relative to its parent, just
+ 	 * query the current clock phase, or just assume it's in phase.
+ 	 */
+-	if (core->ops->get_phase)
+-		core->phase = core->ops->get_phase(core->hw);
+-	else
+-		core->phase = 0;
++	clk_core_get_phase(core);
+ 
+ 	/*
+ 	 * Set clk's duty cycle.
+-- 
+2.20.1
 
-> From a quick look, the use of a fixed string is rather prevalent, see below.
-> Less than 10% of codec drivers rely on a NULL string, so is it really a
-> dangerous precedent so use "sclk" in this case? It seems to me that all clk
-> providers need to use a unique string - what am I missing here?
-
-> adau17x1.c:	adau->mclk = devm_clk_get(dev, "mclk");
-
-Notice how all the clock lookup functions take both a device and a
-string - the device is important here, the string is namespaced with the
-device in most usage (including board file usage) so if two different
-devices ask for the same name they might get different clocks.
-
-> wm8962.c:	pdata->mclk = devm_clk_get(&i2c->dev, NULL);
-
-This is how lookups that don't even specify a name can work.  You seem
-to want to rely on the name only which is very much not good practice,
-even on board files.
-
---1LKvkjL3sHcu1TtY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6W6wYACgkQJNaLcl1U
-h9D2/gf+LXkjRBEzfUWscE+SXIB9cbYvEbk/QxdKbt4nE92a9znb/4i7OhX0mL1n
-jypfnP5cV3Jwxe7W6H9DiQ/7kOkzyj0T4eeUANUrnTdO4T/2syULRbl5iEJt4Bcg
-G1Kr5copsLvu+Q4DA2dnDSGf+IHoWld/VilQjf3jYKMjQ7nB3EyCMVx2uh4T86uF
-XffW9vJJPSnceNgAEgZPBrjfRCp2VR0H0vDZuod9Hi7gbRQ9a9VLTHh0HgrjbOxx
-tu9j5y1f9ORSRgzt+i4lg9T5mTY4z+Cp7wS1PBSMSQhbsE26+sXxls+CXYYY2W94
-ZyJy69fNojmO5e1xy3kBpKozOk1PJQ==
-=Prgy
------END PGP SIGNATURE-----
-
---1LKvkjL3sHcu1TtY--
