@@ -2,129 +2,162 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC2B6C2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 23:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8053DC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 23:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98A9920774
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 23:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C25A20774
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 23:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YflXSRWW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ii7+b4Ty"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388093AbgDOXIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 19:08:22 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:6648 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387913AbgDOXIU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 19:08:20 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e9793750000>; Wed, 15 Apr 2020 16:06:29 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 15 Apr 2020 16:08:19 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 15 Apr 2020 16:08:19 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
- 2020 23:08:19 +0000
-Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
- 2020 23:08:18 +0000
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <frankc@nvidia.com>, <hverkuil@xs4all.nl>, <sakari.ailus@iki.fi>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
- <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
- <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
- <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
- <b1c78827-13ea-0c94-a575-97b5afc0ede1@nvidia.com>
- <5954a7e1-910e-7f48-56d3-e671b56ead74@nvidia.com>
- <d6a9e07c-474a-a076-8313-32f5f4ca8d64@nvidia.com>
- <786949a9-8507-7723-f29b-b91a216bfd28@nvidia.com>
- <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
- <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
-Message-ID: <31924f2b-8f85-d28d-4f5d-4e232bff94a5@nvidia.com>
-Date:   Wed, 15 Apr 2020 16:08:16 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2388466AbgDOXMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 19:12:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388104AbgDOXMo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 19:12:44 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6719C061A0C;
+        Wed, 15 Apr 2020 16:12:43 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id x18so2569668wrq.2;
+        Wed, 15 Apr 2020 16:12:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:references:in-reply-to:subject:date:message-id
+         :mime-version:content-transfer-encoding:content-language
+         :thread-index;
+        bh=Gm2Rd5l6DnoYokZ1IoTpz0zKlkvip4QX12cLk0Sh6/Y=;
+        b=Ii7+b4Ty/DtxMiNuZpivZZjQ3R8YyWC+6OAPG6Csb0Ff18LTuHK5Kc54s7zo7FopNt
+         Fjs8JVkdqkT2UHwxkraislcANwMZbYs2JoH/8TwFgA14VGFO+rXyuL8OdzFtG7k2oRGr
+         5thp0XbD6cfvool2rYkxBgVmRFH9n9NzcPmoaRmQLTelO7NZ+SY4zic/g2+/1FPM88Qg
+         BMc+1QEhXzECwfrpZVcFZxYwb8ZOyISzYLzsOaOZj5hxw7OkmRGaEdQTJFoByKu0oLO3
+         0oP7p5lAN7eB5WHVrk9QVfd/pE6ztuS3lz6bQiFMA9abRjOHcpyFFKrJ+MOrzHSAB1Iw
+         SToQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:references:in-reply-to:subject:date
+         :message-id:mime-version:content-transfer-encoding:content-language
+         :thread-index;
+        bh=Gm2Rd5l6DnoYokZ1IoTpz0zKlkvip4QX12cLk0Sh6/Y=;
+        b=Kr4jk7+0gqXr4xf1Pv1cJhaFmN8TL7P3iVQT6J31zcwQeMMqrcpY3OFHSqal6KP6cz
+         mZTlEBR3O3h8hochrVCf2fO5kpGvp1rrgKN/Ses3I13aRMODHccRH6Ih7eUiU9p4w0Vw
+         NALS9AVwbBsVHECx4ve6CtHYHFabAtw/4Q1MXLd/Ckvff4fmSTpwigiCsq3wuqPADxHZ
+         3R+OaxP6dYnL8taOVfNd4jMc7WddLlVIWqvYI8unV/3O3kPC6twK2fCzG8TP18Gf5H+N
+         FQil521dUT3UX7gCbKRIP4R8++zxRZ17T5NJPVCdGdni1HH7XcHMDcrTjEPfX8uqeMAd
+         D/WQ==
+X-Gm-Message-State: AGi0Puaoe723tFxk6dBZeLvNpDioGnIJVNjtfN7J+w0zNG2zRDyZiBcw
+        JDblhQG2RSNBISygjv0QiPsRWMpcfv+hsgnb
+X-Google-Smtp-Source: APiQypICyCFJ/9PIcka/IfQfq2zd/BrN9iZHxRR5P1Zp5e6XGgqSpT7CshecraQpcd+sI0I+m/Is9Q==
+X-Received: by 2002:a5d:6688:: with SMTP id l8mr14527286wru.179.1586992362312;
+        Wed, 15 Apr 2020 16:12:42 -0700 (PDT)
+Received: from AnsuelXPS (host93-255-dynamic.47-79-r.retail.telecomitalia.it. [79.47.255.93])
+        by smtp.gmail.com with ESMTPSA id p16sm18711418wro.21.2020.04.15.16.12.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 15 Apr 2020 16:12:41 -0700 (PDT)
+From:   <ansuelsmth@gmail.com>
+To:     "'Stephen Boyd'" <sboyd@kernel.org>,
+        "'Andy Gross'" <agross@kernel.org>
+Cc:     "'Mathieu Olivari'" <mathieu@codeaurora.org>,
+        "'Bjorn Andersson'" <bjorn.andersson@linaro.org>,
+        "'Rob Herring'" <robh+dt@kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Michael Turquette'" <mturquette@baylibre.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20200330205647.24806-1-ansuelsmth@gmail.com> <158587766752.125146.7582840761926137726@swboyd.mtv.corp.google.com> <00f701d60958$a9ed46c0$fdc7d440$@gmail.com> <158605625697.158626.12280118012638752686@swboyd.mtv.corp.google.com>
+In-Reply-To: <158605625697.158626.12280118012638752686@swboyd.mtv.corp.google.com>
+Subject: R: R: [PATCH v2] ARM: qcom: Disable i2c device on gsbi4 for ipq806x
+Date:   Thu, 16 Apr 2020 01:12:39 +0200
+Message-ID: <011701d6137b$5cc6dcd0$16549670$@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain;
+        charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1586991989; bh=bWNDLEJ+w5gMa9E53iRd9p5tkU2TJO/QPK6MrfCvJ3s=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=YflXSRWWbkvaMf+QCkVdC+sj2kwfrMlhXgM16P93X9oIuJcMLD05S2FUtqeEvceu9
-         lcIrPxdMmiI70FtBalem7oudEhLsDryvGLUGnmWKzTPJHzfp58egM3kk98GyAsZxCB
-         JdPhSNtQXe/3nWGJYxz/fS9KcqL9PsxYPnBr0AEUYyRDwyxpgwWU9y52lma4nwp6jE
-         saedVvrZNUwFH3OvKPZ81sjYL+bYJquz07Ac7DP+X6RNDk9CTYbkj1LbWDx2UtsBUD
-         TL8NJM11xdzplWo78CWedttg59n4TUMnSPjpU6OG4BAQFY0i/Mo5F231bu2q3OEYS/
-         k7UdR+/KWUpTA==
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: it
+Thread-Index: AQGo1QQgHzu0HPOv8BNyQx6G4xhnEwIGzuWZAjtxbVgBYzMGUaioH+Tg
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With minor change of not using vi reference after=20
-host1x_client_unregister and freeing vi during v4l2 device release works.
-
-For csi, we can use devm_kzalloc for now untill we decide later if we=20
-want to expose async subdev nodes during sensor support.
-
-Will have this fix in v8 with a comment in vi_remove to make sure not to=20
-use vi reference after host1x_client_unregister.
-
-Will test more and will release v8 with above fix to allow direct host1x=20
-client driver unbind.
-
-Thanks
-
-sowjanya
 
 
-On 4/15/20 12:51 PM, Sowjanya Komatineni wrote:
->
-> On 4/15/20 12:21 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 15.04.2020 21:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> ...
->>>>>>>>> Have you tried to test this driver under KASAN? I suspect that
->>>>>>>>> you just
->>>>>>>>> masked the problem, instead of fixing it.
->>> Tested with kmemleak scan and did not see any memory leaks
->> You should get use-after-free and not memleak.
-> I don't see use-after-free bugs during the testing.
->
-> But as mentioned when direct vi/csi client driver unbind happens while=20
-> video device node is kept opened, vi driver remove will free vi=20
-> structure memory but actual video device memory which is part of=20
-> channels remains but list head gets lost when vi structure is freed.
->
-> So, when device node is released and executes release callback as list=20
-> head is lost it can't free allocated channels which is not good.
->
-> This happens only with direct host1x client vi/csi driver unbind.
->
-> Need to find better place to free host1x client driver data structure=20
-> to allow direct client driver unbind->bind.
->
+> -----Messaggio originale-----
+> Da: Stephen Boyd <sboyd@kernel.org>
+> Inviato: domenica 5 aprile 2020 05:11
+> A: 'Andy Gross' <agross@kernel.org>; ansuelsmth@gmail.com
+> Cc: 'Mathieu Olivari' <mathieu@codeaurora.org>; 'Bjorn Andersson'
+> <bjorn.andersson@linaro.org>; 'Rob Herring' <robh+dt@kernel.org>; =
+'Mark
+> Rutland' <mark.rutland@arm.com>; 'Michael Turquette'
+> <mturquette@baylibre.com>; linux-arm-msm@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> clk@vger.kernel.org
+> Oggetto: Re: R: [PATCH v2] ARM: qcom: Disable i2c device on gsbi4 for
+> ipq806x
+>=20
+> Quoting ansuelsmth@gmail.com (2020-04-02 18:39:04)
+> >
+> >
+> > > -----Messaggio originale-----
+> > > Da: Stephen Boyd <sboyd@kernel.org>
+> > > Inviato: venerd=C3=AC 3 aprile 2020 03:34
+> > > A: Andy Gross <agross@kernel.org>; Ansuel Smith
+> > > <ansuelsmth@gmail.com>
+> > > Cc: Ansuel Smith <ansuelsmth@gmail.com>; Mathieu Olivari
+> > > <mathieu@codeaurora.org>; Bjorn Andersson
+> > > <bjorn.andersson@linaro.org>; Rob Herring <robh+dt@kernel.org>;
+> Mark
+> > > Rutland <mark.rutland@arm.com>; Michael Turquette
+> > > <mturquette@baylibre.com>; linux-arm-msm@vger.kernel.org;
+> > > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> > > clk@vger.kernel.org
+> > > Oggetto: Re: [PATCH v2] ARM: qcom: Disable i2c device on gsbi4 for
+> > > ipq806x
+> > >
+> > > Quoting Ansuel Smith (2020-03-30 13:56:46)
+> > > > diff --git a/drivers/clk/qcom/gcc-ipq806x.c =
+b/drivers/clk/qcom/gcc-
+> > > ipq806x.c
+> > > > index b0eee0903807..f7d7a2bc84c1 100644
+> > > > --- a/drivers/clk/qcom/gcc-ipq806x.c
+> > > > +++ b/drivers/clk/qcom/gcc-ipq806x.c
+> > > > @@ -991,6 +991,7 @@ static struct clk_branch gsbi4_h_clk =3D {
+> > > >                 .hw.init =3D &(struct clk_init_data){
+> > > >                         .name =3D "gsbi4_h_clk",
+> > > >                         .ops =3D &clk_branch_ops,
+> > > > +                       .flags =3D CLK_IGNORE_UNUSED,
+> > >
+> > > Is this necessary? Shouldn't we skip clks that are protected =
+during the
+> > > unused phase?
+> > >
+> >
+> > gsbi4_h_clk is not protected. gsbi4_h_clk needs to not be disabled =
+if
+> unused
+> > (as it's used by rpm) but can't be protected since it's used by uart =
+gsbi4.
+> > (With some test protecting also this clk cause the malfunction of =
+uart
+> gsb4)
+> >
+>=20
+> Who owns gsbi4 on this platform? Is it RPM? If so, it should be
+> protected and we shouldn't touch this clk from the kernel.
+
+Sorry for the late replay. Trying to protect gsbi4 clk cause the uart =
+serial to
+not work at all as it can't be used by the driver. If for some=20
+reason some dev decide to not use gsbi4 uart, GSBI4_CLK gets disabled=20
+(as it would be not used), this is the reason of the IGNORE_UNUSED.=20
+I really can't find another way to keep both gsbi4 protected and and =
+permit
+gsbi4 uart to use it.
+
