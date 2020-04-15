@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A949AC2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 08:04:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2A6C3815B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 08:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 920042051A
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 08:04:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1FF920775
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 08:06:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2635414AbgDOIDg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 04:03:36 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:39830 "EHLO inva020.nxp.com"
+        id S2635511AbgDOIGi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 04:06:38 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39770 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408048AbgDOID1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 04:03:27 -0400
+        id S2408045AbgDOID2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 04:03:28 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5B6AB1A07A7;
-        Wed, 15 Apr 2020 10:03:09 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5A4E61A078C;
+        Wed, 15 Apr 2020 10:03:07 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4ED131A07A3;
-        Wed, 15 Apr 2020 10:03:09 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B8731A077A;
+        Wed, 15 Apr 2020 10:03:07 +0200 (CEST)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B4AA0202B0;
-        Wed, 15 Apr 2020 10:03:08 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B19C1202B0;
+        Wed, 15 Apr 2020 10:03:06 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Lee Jones <lee.jones@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
         Peng Fan <peng.fan@nxp.com>,
@@ -40,9 +40,9 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v3 06/13] clk: imx: pll14xx: Add the device as argument when registering
-Date:   Wed, 15 Apr 2020 11:02:46 +0300
-Message-Id: <1586937773-5836-7-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v3 03/13] arm64: dts: imx8mp: Add AIPS 4 and 5
+Date:   Wed, 15 Apr 2020 11:02:43 +0300
+Message-Id: <1586937773-5836-4-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1586937773-5836-1-git-send-email-abel.vesa@nxp.com>
 References: <1586937773-5836-1-git-send-email-abel.vesa@nxp.com>
@@ -52,75 +52,59 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to allow runtime PM, the device needs to be passed on
-to the register function. Audiomix clock controller, used on
-i.MX8MP and future platforms, registers a pll14xx and has runtime
-PM support.
+There are 5 AIPS maps in total, according to the RM. Add the missing
+ones here.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/imx/clk-pll14xx.c |  8 ++++----
- drivers/clk/imx/clk.h         | 13 ++++++++++---
- 2 files changed, 14 insertions(+), 7 deletions(-)
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index a83bbbe..f9eb189 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -378,9 +378,9 @@ static const struct clk_ops clk_pll1443x_ops = {
- 	.set_rate	= clk_pll1443x_set_rate,
- };
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+index 9b1616e..c08156f 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+@@ -318,7 +318,7 @@
  
--struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
--				  void __iomem *base,
--				  const struct imx_pll14xx_clk *pll_clk)
-+struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
-+				const char *parent_name, void __iomem *base,
-+				const struct imx_pll14xx_clk *pll_clk)
- {
- 	struct clk_pll14xx *pll;
- 	struct clk_hw *hw;
-@@ -426,7 +426,7 @@ struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
+ 		aips2: bus@30400000 {
+ 			compatible = "fsl,aips-bus", "simple-bus";
+-			reg = <0x305f0000 0x400000>;
++			reg = <0x305f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -378,7 +378,7 @@
  
- 	hw = &pll->hw;
+ 		aips3: bus@30800000 {
+ 			compatible = "fsl,aips-bus", "simple-bus";
+-			reg = <0x309f0000 0x400000>;
++			reg = <0x309f0000 0x10000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+@@ -641,6 +641,22 @@
+ 			};
+ 		};
  
--	ret = clk_hw_register(NULL, hw);
-+	ret = clk_hw_register(dev, hw);
- 	if (ret) {
- 		pr_err("%s: failed to register pll %s %d\n",
- 			__func__, name, ret);
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 01ff1db..fcd9952a 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -133,9 +133,9 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
- #define imx_clk_pll14xx(name, parent_name, base, pll_clk) \
- 	to_clk(imx_clk_hw_pll14xx(name, parent_name, base, pll_clk))
- 
--struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
--				  void __iomem *base,
--				  const struct imx_pll14xx_clk *pll_clk);
-+struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
-+				const char *parent_name, void __iomem *base,
-+				const struct imx_pll14xx_clk *pll_clk);
- 
- struct clk_hw *imx_clk_hw_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
-@@ -242,6 +242,13 @@ static inline struct clk *to_clk(struct clk_hw *hw)
- 	return hw->clk;
- }
- 
-+static inline struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
-+				  void __iomem *base,
-+				  const struct imx_pll14xx_clk *pll_clk)
-+{
-+	return imx_dev_clk_hw_pll14xx(NULL, name, parent_name, base, pll_clk);
-+}
++		aips4: bus@32c00000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0x32c00000 0x10000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++		};
 +
- static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rate)
- {
- 	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);
++		aips5: bus@30c00000 {
++			compatible = "fsl,aips-bus", "simple-bus";
++			reg = <0x30c00000 0x10000>;
++			#address-cells = <1>;
++			#size-cells = <1>;
++			ranges;
++		};
++
+ 		gic: interrupt-controller@38800000 {
+ 			compatible = "arm,gic-v3";
+ 			reg = <0x38800000 0x10000>,
 -- 
 2.7.4
 
