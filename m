@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E0DC2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:53:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2748C2BB55
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 73B122137B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:53:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11FC2078A
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:57:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586951592;
+	s=default; t=1586951820;
 	bh=diZCH/Mg8n9hXnJ0WhmZgAaGP/vFOO2uGKOad9Enxpw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rf+PYZG/rOSJZKUBJHbSTUH5WCubFW4IcrTaQaCT1DdxzlCc6UAuJJL5g+xtvesub
-	 ivtdd1wgarJ2ueo9xhbLWdvivZwqfYILjv4KHVwpJbGvp2vomFTcscUK8W5xoN0AhC
-	 lVoOgJ94X7xJOOagzkJ1Z4udltY72WNy/juotf+c=
+	b=wIGxUSJVL7cNPRAFEcYk3kySMe7gjEgjR1AirS2an7wYIeXim5onNUDzfGGou6q7v
+	 jp7mGsKUdOz7CGGTrYzw/hfE33KwOJ0Yvb6GVVgb8LiSzyNkygbtVSP505HljnR/Oc
+	 2BXWPP2wHnLbXlflC0MoEufPuPI1JqNdfyt4HEkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897796AbgDOLxI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44012 "EHLO mail.kernel.org"
+        id S2409667AbgDOL4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:56:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43460 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409448AbgDOLsR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:48:17 -0400
+        id S2409400AbgDOLrx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:47:53 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65C1020775;
-        Wed, 15 Apr 2020 11:48:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC43B2137B;
+        Wed, 15 Apr 2020 11:47:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586951297;
+        s=default; t=1586951272;
         bh=diZCH/Mg8n9hXnJ0WhmZgAaGP/vFOO2uGKOad9Enxpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TDqNr59t4PMHxAz3NxIhbJp01/dK3UoOPI+47yYK8/NcXPy3VVlKSLA9Xm6JsFrLq
-         EbdWxPxPgtvZYLt1qLWeDshJKwHVuTlUtRiRgQ3WKi1BGsZ/JzeZNtBGEdbdj9S4sj
-         uZxSBe0g+h5HxKyXdh0q1AIp3+lFuLs8DFowJgfY=
+        b=k6JGzRWmG059w7EXAz8TGhThLULVatYwILZgRyT/ErgKlvyYt1lPJ5jCZJmMaouQM
+         zQSVTw8m8KC/lp+WbVAkFlKA+R0YKOOsD++IeGHctvkqi3cPqa1uFv/pmPw7fjynvd
+         KELttE8vB051nYOICcKx4sjx1bkAnS4fK4OV05sM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
@@ -45,12 +45,12 @@ Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 02/14] clk: tegra: Fix Tegra PMC clock out parents
-Date:   Wed, 15 Apr 2020 07:48:02 -0400
-Message-Id: <20200415114814.15954-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/21] clk: tegra: Fix Tegra PMC clock out parents
+Date:   Wed, 15 Apr 2020 07:47:30 -0400
+Message-Id: <20200415114748.15713-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415114814.15954-1-sashal@kernel.org>
-References: <20200415114814.15954-1-sashal@kernel.org>
+In-Reply-To: <20200415114748.15713-1-sashal@kernel.org>
+References: <20200415114748.15713-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
