@@ -2,105 +2,111 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA42C3815B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 14:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7D9C2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 14:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA076206D5
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 14:22:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWTAORPr"
+	by mail.kernel.org (Postfix) with ESMTP id 495C2208E4
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 14:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1586961685;
+	bh=PAG9Vhu/wdR1VqyO6fTJvVRJwUmrUv2Vfe0zePWlCMM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bAAJyV08KghFVdiQxwwgmin+RzBpDCWnmaS1cm9FTBjODoaVVYEI6P6axSDXzKrXZ
+	 ZrWu+cNLrhDPU2RyaSUBFLsMaCBUszG4nwMiaHHNF2zMCJtgMW7YIM9gkx4XEhnkb0
+	 74n6UwLEixasGnEiliE4Ho1XYwv1xzvVxJfeqB8w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636555AbgDOOWr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 10:22:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37758 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391838AbgDOOWn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 10:22:43 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61A7DC061A0E;
-        Wed, 15 Apr 2020 07:22:43 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id r24so3885989ljd.4;
-        Wed, 15 Apr 2020 07:22:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yzzMWqy+OD4Sj0S39fbp3R3eS6fFNXX/dFDozNIagPM=;
-        b=KWTAORPrZ9yvy2jm6Ap6fsX3FfC6VKBcC0qtVLW22TSIvQGUqfa9ZFqAE1mcQI5H27
-         sh6X1jq0IReze++5Oioq6uIiLMUIygFHw82W/+Hsa1RBWVla9KHhjQmC6YGjkZOnEzPh
-         WzMtMStHr6tzuj6G3d9NYhLE18RqLXCBUlF038DeYkEG6h9tH7MT8Zn/BdfWGmXw2TWp
-         68GzOO8BYt1H/L6ZWeKsLsGDme7/cJAhnGR8Mfr0fTC5bMYBlQiLut+VJGwpN99brNwm
-         CKo3+PYwpg+ra/MJdYYMgEdlxKZ3SqYAOR9wFyYdNz26ECLZxIT46/U4VsLTPvBPij5x
-         g/wg==
+        id S370821AbgDOOkZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 10:40:25 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:38109 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2636734AbgDOOkT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 10:40:19 -0400
+Received: by mail-oi1-f193.google.com with SMTP id x21so7423663oic.5;
+        Wed, 15 Apr 2020 07:40:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yzzMWqy+OD4Sj0S39fbp3R3eS6fFNXX/dFDozNIagPM=;
-        b=eqcEd8t9S4UrhaHvDFFlxnSepII/TRx2aYQ480VQkRB5oAZF4uJZs/vDtgGR+edlBE
-         ujTc3LdgLphmGbhEm55gLS/l20pQGFvB74eMqLEliUfeDSLnvukfN3/6atj+eyZHqiP0
-         MTI+UR7mZ6g2I7y629Uiehxv6hpEYe0oH+BI3UYIGqrTiac/IuhfCXH7gMYATJfEXAoZ
-         TR/8y76Pydc8c3ShEJgv5P2b3HTzTHc/G+Yn9gf1dGOtgGiWMkFZZoTt9xrpfTozagBe
-         fcIapmI4Iq6b8uYftwus7eOkrJy/Lc18rY7t6V9bZQ3bYnJ0gRsUISPvxiwhHEUH8XFc
-         vj6g==
-X-Gm-Message-State: AGi0PuammHIfVcMMRN5yT6mZhTGYeXLwyqAt1TIoLmKOKIQY1Avbh7GG
-        W6BZTFIO5pIh4s48OcixHOB+W3kp
-X-Google-Smtp-Source: APiQypLMYU1bFrRYsDqjdUgL9OS1QiNz+30o8kG5V5EZ+R7+XtORGUcbqKGG7ZBWbfUmpihoYf9NZA==
-X-Received: by 2002:a2e:2245:: with SMTP id i66mr3534404lji.191.1586960559886;
-        Wed, 15 Apr 2020 07:22:39 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id o17sm12834558lff.70.2020.04.15.07.22.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 15 Apr 2020 07:22:28 -0700 (PDT)
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
-Date:   Wed, 15 Apr 2020 17:22:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JuvzyUQda56xAYCtJ1sYbNZE0RbPskAoqaEeQtvOFTc=;
+        b=Lm1SGHp1ePyVnSm8uGOUhjUuQugLoiqDF3i3pc3v/io2tYwopAXfLGrUZpAlY+KPkR
+         uJSRRnxUet1jAUqMYd2vfUbYArisZNOKSznGMKJ3txzgbGXzZqUToUw6ba282wIivcuv
+         HwIJ9U2jw1MhSQeIBmqqNfoWdKRx7XWdkLRf6ah0T8QkZp2I7UkkzzvwK/BU2u9vBse/
+         IStit7d8gG5MUcXE8HZyvaa0TAqKkzeogmxEsN3x0yFWuP14Qo1MVL/yhZgTjdYG343X
+         fNJy/BerqUGIj3lb352rX7ynWqzoVCIgzFC17Y7egIBx59inYMcHfF/2TbpiB5YN5e5u
+         QNLw==
+X-Gm-Message-State: AGi0PubXUwENK1l3z3uniWGVQS2YRsCjPDgFPUNnK/u7iR9+we2e5I1m
+        AyW2SCeWcYW34WXs9UmsZA==
+X-Google-Smtp-Source: APiQypKQDJ7OUo2PH72nmsevzWtRJ1xyeW5rr9pORlJ4+DM6LMTt1YQKtYojzR45dQWjeWOKMSmnqA==
+X-Received: by 2002:aca:ecce:: with SMTP id k197mr15969614oih.127.1586961617711;
+        Wed, 15 Apr 2020 07:40:17 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y131sm6420487oie.39.2020.04.15.07.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 07:40:17 -0700 (PDT)
+Received: (nullmailer pid 11685 invoked by uid 1000);
+        Wed, 15 Apr 2020 14:40:16 -0000
+Date:   Wed, 15 Apr 2020 09:40:16 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, mark.rutland@arm.com
+Subject: Re: [PATCHv6 4/5] dt-bindings: documentation: add clock bindings
+ information for Agilex
+Message-ID: <20200415144016.GA26244@bogus>
+References: <20200406160418.27476-1-dinguyen@kernel.org>
+ <20200406160418.27476-5-dinguyen@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200406160418.27476-5-dinguyen@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-15.04.2020 05:57, Sowjanya Komatineni пишет:
-> +static int tegra_csi_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_csi *csi = platform_get_drvdata(pdev);
-> +	int err;
-> +
-> +	err = host1x_client_unregister(&csi->client);
-> +	if (err < 0) {
-> +		dev_err(csi->dev,
-> +			"failed to unregister host1x client: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	pm_runtime_disable(csi->dev);
-> +	kfree(csi);
+On Mon, Apr 06, 2020 at 11:04:17AM -0500, Dinh Nguyen wrote:
+> Document the Agilex clock bindings, and add the clock header file. The
+> clock header is an enumeration of all the different clocks on the Agilex
+> platform.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v6: fix build error by adding descriptions for clocks and reg in
+>     properties
+> v5: update license to GPL-2.0-only
+>     Add additionalProperties
+>     Add clock input for clkmgr
+> v4: really fix build error(comment formatting was wrong)
+> v3: address comments from Stephen Boyd
+>     fix build error(tab removed in line 37)
+>     renamed to intel,agilex.yaml
+> v2: convert original document to YAML
+> ---
+>  .../bindings/clock/intel,agilex.yaml          | 46 ++++++++++++
+>  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+>  2 files changed, 116 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+>  create mode 100644 include/dt-bindings/clock/agilex-clock.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+> new file mode 100644
+> index 000000000000..83bca2661ec3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
 
-IIRC, the driver removal is invoked on the unbinding. Hence, I'm not
-sure how moving away from the resource-managed API helps here. Could you
-please explain in a more details?
+Dual license new bindings:
 
-Have you tried to test this driver under KASAN? I suspect that you just
-masked the problem, instead of fixing it.
+(GPL-2.0-only OR BSD-2-Clause)
+
+With that:
+
+Reviewed-by: Rob Herring <robh@kernel.org>
