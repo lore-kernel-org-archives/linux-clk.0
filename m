@@ -2,103 +2,91 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112A5C38A2B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C58D0C2BB85
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D88A42166E
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:27:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D3BC20737
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:46:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586968032;
-	bh=LWfFbupRx/XswUr5kigXBAfxzxhwYoQenxtzW80yBGw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FHBhCdbhrNjkINx2NEicIek265RlIbUKXn32xQQKsG7R7rbCWV6VqpYdPAso9pHmG
-	 NxjlVzNvUQkAJYfMaiPn8I3QC+Xt3b7LHfjUQQBUnhRWIt3oC9GIRCh9Eb+i3OC4J3
-	 3tgq6MN8aIt+aXkz9YqoS+kRl3jfvzIYmmrt7oME=
+	s=default; t=1586969213;
+	bh=Z9iFeNHWUQbmLEpVJTncXd+btqYkvHNdjtz4MDYl1G8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=m6tiIr9EQ+vuSIOsyw3Ww7yV2dVn0VBPO9fY54uGO1psHZ7Uxl+lzG8qoBjX5VA1C
+	 +MzlLuatWI7c60qL/A47O3snRfXyVI7HOfoRblCINt9qLoXC+5jdUHWQyOVfqr8cId
+	 jX7QFm3oL7VbOPKdSYn2YVgCAZrkcPGoK9sJyifo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1415903AbgDOQ1L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 12:27:11 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:42680 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1415896AbgDOQ1J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 12:27:09 -0400
-Received: by mail-oi1-f196.google.com with SMTP id d7so8918993oif.9;
-        Wed, 15 Apr 2020 09:27:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=QoWSyptq3r7jFBqwiB+wzQmxtvTTslBNIl5gglBkLNo=;
-        b=HY1i5U29vF/9GOuib82x0MVY4aPTAJ1kByhH7rd5InEXWPflAEuLXmhks+XhRIzS14
-         6t/iQAil6k6AG4A4gZRtb/4VzEAXCXFTHsa8q3/UMooQPbCc9wIALQRr5aYO0KrM5VCm
-         T0v6H0YqB4hITny2oMPHS2BiytbsOA2MG4fw7cYf0SylC4nlg+AsWxcc9qTTOaxJHNwC
-         FLyrPd0WFwP4kArXg0bxmm+2Q5Or2zZWmZDeDOPPd9PnQdN4fXI/g/0NeKhFja+R8Id3
-         byBhiVX/ywbpE3Y7Fd7JY7i2KlRYzYIOF6UHDc4kTKbY1ZvIBC4uS0h/xj13XLGBkWJV
-         hfSA==
-X-Gm-Message-State: AGi0PuZBYeE6WOy1iV4aiVJJRJZbMfUvwMP2YhG1VzXAtxDTdsRToXTb
-        +/mcHkMGdloQkKsrXGrVmQ==
-X-Google-Smtp-Source: APiQypIQ2YEOM2xPkhIK1e7H2ZCsw87caX8t1G4qJ1Op/t60CQS2o6DAcnKl4kvVepkYzIq8a/Hyow==
-X-Received: by 2002:aca:5d8a:: with SMTP id r132mr5493oib.129.1586968027427;
-        Wed, 15 Apr 2020 09:27:07 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i17sm6365730otc.16.2020.04.15.09.27.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Apr 2020 09:27:06 -0700 (PDT)
-Received: (nullmailer pid 5651 invoked by uid 1000);
-        Wed, 15 Apr 2020 16:27:05 -0000
-Date:   Wed, 15 Apr 2020 11:27:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 08/14] dt-bindings: memory: tegra: Add external memory
- controller binding for Tegra210
-Message-ID: <20200415162705.GA5587@bogus>
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-9-thierry.reding@gmail.com>
+        id S1416225AbgDOQqw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 12:46:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47114 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1416219AbgDOQqv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 12:46:51 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABF7120737;
+        Wed, 15 Apr 2020 16:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1586969211;
+        bh=Z9iFeNHWUQbmLEpVJTncXd+btqYkvHNdjtz4MDYl1G8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=i+0ZdBoHK1IJCFwj75kbaqZa4XXaYuyvMzPAYM+2SXIGbUewO+DPSwxulXzCyDUE6
+         Eaui+xtenUgO/iEfnjkfyT4I52w7co7sEc0jzrPN/R07uBKNLRErSCxfifWai0fOKd
+         tICazg3ghLEgmlKzklPGQlupchcxEVPqf6uCAB6I=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
+Subject: [PATCHv7 0/5] clk: agilex: add clock driver
+Date:   Wed, 15 Apr 2020 11:46:37 -0500
+Message-Id: <20200415164642.29382-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200409175238.3586487-9-thierry.reding@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu,  9 Apr 2020 19:52:32 +0200, Thierry Reding wrote:
-> From: Joseph Lo <josephl@nvidia.com>
-> 
-> Add the binding document for the external memory controller (EMC) which
-> communicates with external LPDDR4 devices. It includes the bindings of
-> the EMC node and a sub-node of EMC table which under the reserved memory
-> node. The EMC table contains the data of the rates that EMC supported.
-> 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Changes in v6:
-> - fix example by changing #address-cells and #size-cells
-> - remove status property from example
-> 
-> Changes in v5:
-> - convert to dt-schema
-> 
->  .../nvidia,tegra210-emc.yaml                  | 82 +++++++++++++++++++
->  1 file changed, 82 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra210-emc.yaml
-> 
+Hi,
 
-Applied, thanks.
+This is version 7 of the patchset to add a clock driver to the Agilex
+platform.
 
-Rob
+The change from v6 is to correct the dt-bindings document to include the
+license header to be "(GPL-2.0-only OR BSD-2-Clause)".
+
+Thanks,
+
+Dinh Nguyen (5):
+  clk: socfpga: stratix10: use new parent data scheme
+  clk: socfpga: remove clk_ops enable/disable methods
+  clk: socfpga: add const to _ops data structures
+  dt-bindings: documentation: add clock bindings information for Agilex
+  clk: socfpga: agilex: add clock driver for the Agilex platform
+
+ .../bindings/clock/intel,agilex.yaml          |  46 ++
+ drivers/clk/Makefile                          |   3 +-
+ drivers/clk/socfpga/Makefile                  |   2 +
+ drivers/clk/socfpga/clk-agilex.c              | 454 ++++++++++++++++++
+ drivers/clk/socfpga/clk-gate-s10.c            |   5 +-
+ drivers/clk/socfpga/clk-periph-s10.c          |  10 +-
+ drivers/clk/socfpga/clk-pll-a10.c             |   4 +-
+ drivers/clk/socfpga/clk-pll-s10.c             |  78 ++-
+ drivers/clk/socfpga/clk-pll.c                 |   4 +-
+ drivers/clk/socfpga/clk-s10.c                 | 160 ++++--
+ drivers/clk/socfpga/stratix10-clk.h           |  10 +-
+ include/dt-bindings/clock/agilex-clock.h      |  70 +++
+ 12 files changed, 794 insertions(+), 52 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
+ create mode 100644 drivers/clk/socfpga/clk-agilex.c
+ create mode 100644 include/dt-bindings/clock/agilex-clock.h
+
+-- 
+2.25.1
+
