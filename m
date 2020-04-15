@@ -2,178 +2,140 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85AF6C2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 17:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F7AC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 17:27:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C74E20784
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 17:21:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Zu8LthJ3"
+	by mail.kernel.org (Postfix) with ESMTP id AA0F320784
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 17:27:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410840AbgDORVW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 13:21:22 -0400
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9097 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405973AbgDORVU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 13:21:20 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e9742810001>; Wed, 15 Apr 2020 10:21:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 15 Apr 2020 10:21:18 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 15 Apr 2020 10:21:18 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
- 2020 17:21:17 +0000
-Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
- 2020 17:21:16 +0000
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
- <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
- <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
-Message-ID: <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
-Date:   Wed, 15 Apr 2020 10:21:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2410874AbgDOR1G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 13:27:06 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53347 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2410844AbgDOR1F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 13:27:05 -0400
+IronPort-SDR: bV+QBSVMvJsMWNZ50g8bFAqdcKjpyxE0x1nyUiy5xVEpflZ0dEY7iGaVswq8Rmb/a9NcHutWzo
+ 2a0THkEP/jFA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Apr 2020 10:27:02 -0700
+IronPort-SDR: mSk6aOISQhPtyVxBoM3CwHC1wCmHkRux0rvXtc6dsTm0VfMBf0EFhMxn3GGLZyAWqeKcLqI6xk
+ CZlyMDkirMZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,387,1580803200"; 
+   d="scan'208";a="271795362"
+Received: from jplam-mobl1.amr.corp.intel.com (HELO [10.209.82.197]) ([10.209.82.197])
+  by orsmga002.jf.intel.com with ESMTP; 15 Apr 2020 10:26:58 -0700
+Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
+ clock
+To:     Mark Brown <broonie@kernel.org>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
+ <20200414174530.GK5412@sirena.org.uk>
+ <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
+ <20200414182728.GM5412@sirena.org.uk>
+ <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
+ <20200414195031.GP5412@sirena.org.uk>
+ <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
+ <20200415113630.GC5265@sirena.org.uk>
+ <4635e57b-fccd-d8a9-fa99-8124debb3428@linux.intel.com>
+ <20200415162247.GF5265@sirena.org.uk>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <9a7fbbac-818a-01d0-7a32-8ae313f9ad50@linux.intel.com>
+Date:   Wed, 15 Apr 2020 12:26:57 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200415162247.GF5265@sirena.org.uk>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1586971265; bh=aYOmnHhbLsi1mW5Ldu2gZgxLMlRJkwu6eXD1fASdZvQ=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Zu8LthJ3WtnIlnbQjYiwgebX9Bktgs+JZRBi+0urq/Tb5OyckSMwua7n6ooUd90MJ
-         Lw00ZBScvnj74pZKmVXwPs8nd1HB07AXJbc/fm3eFreYpTvmeSQVA39A5W+DdfVNu9
-         MeNQglGl/Ki6Pp4tu9MsZxZyFdGb17r/H047XDMeWgA0Ev7ltqY265lNQCa1pGKDZY
-         Hgu5GeKVN+3HTXoQ3ipmbEJ1bHiKAUmcduGJ0rPixcaZmsWJ9z4IPPgcVKldIW7zY3
-         WleQtkdZeYP3dVcZ/jHZxVB6tb3joDqVk/UPfb79RVedx/ZcgsqROdGj+uy6M6eEXH
-         TA9iCaW8bvWHQ==
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 4/15/20 9:54 AM, Sowjanya Komatineni wrote:
->
-> On 4/15/20 7:22 AM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 15.04.2020 05:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> +static int tegra_csi_remove(struct platform_device *pdev)
->>> +{
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 struct tegra_csi *csi =3D platform_get_drvdat=
-a(pdev);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 int err;
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 err =3D host1x_client_unregister(&csi->client=
-);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 if (err < 0) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 dev_err(csi->dev,
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "failed to unregister h=
-ost1x client: %d\n", err);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 return err;
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 }
->>> +
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 pm_runtime_disable(csi->dev);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0 kfree(csi);
->> IIRC, the driver removal is invoked on the unbinding. Hence, I'm not
->> sure how moving away from the resource-managed API helps here. Could you
->> please explain in a more details?
->>
->> Have you tried to test this driver under KASAN? I suspect that you just
->> masked the problem, instead of fixing it.
-> Using devm_kzalloc for vi/csi structures based on prior feedback=20
-> request to switch to use kzalloc all over this driver.
->
-> Hi Hans,
->
-> video devices lifetime is till video device nodes are released. So,=20
-> v4l2 device release callback does the release of tegra channel=20
-> allocation which hold video device.
->
-> Below are the 3 possible cases of unbind/unload,
->
-> 1. during tegra-video module unload, if v4l2 device refcnt is not 0=20
-> which is the case when any of video device node handle is kept opened=20
-> then unloading module will not happen and module refcnt is also=20
-> non-zero and unloading tegra-video module reports module in use.
->
-> 2. during tegra-video driver unbind, tegra-video driver removal will=20
-> do vi/csi clients exit ops which unregisters video device allocated=20
-> memory during release callback of v4l2 device. vi/csi structure=20
-> allocation remains same as vi/csi driver removal will not happen in=20
-> this case.
->
->
-> 3. during direct host1x client drivers vi/csi unbind, both=20
-> host1x_clients vi/csi gets unregistered, deletes host1x logical device=20
-> which executes tegra-video driver removal() -> vi/csi exit() before=20
-> vi/csi memory gets freed in vi/csi driver remove().
->
-> So, any active streaming will stop and video devices are unregistered=20
-> during direct client driver unbind prior to freeing vi/csi memory.
->
-> Also vi/csi driver remove does explicit free vi/csi as its allocated=20
-> with kzalloc. So not sure how using kzalloc is different to=20
-> devm_kzalloc for vi/csi structure in terms of when vi/csi memory gets=20
-> freed?
->
-> Except for channel allocation which holds video device and as video=20
-> device life time is beyond tegra-video module unbind->vi exit(), looks=20
-> like we can use devm_kzalloc for vi/csi.
->
->
-> Can you please comment if you still think we need to use kzalloc=20
-> rather than devm_kzalloc for vi/csi structure allocation?
->
-> Thanks
->
-> Sowjanya
->
-One more case is when video device node is kept opened with v4l2-ctl=20
-sleep (rather than streaming), where it will keep device node open for=20
-specified time and if direct vi client driver unbind happens then vi=20
-driver remove() will free vi memory before v4l2 device release happens.
+>> the SST/SOF driver creates a platform device using the codec _HID as a key
+>> to hard-coded lookup tables in sound/soc/intel/common/soc-acpi*.c - it will
+>> be probed *after* the codec driver probes. I really don't see how to use the
+>> machine driver as currently implemented to establish board-level connections
+>> that would influence the codec driver probe and its use of a clock.
+> 
+> You have the opportunity to run whatever code you want to run at the
+> point where you're registering your drivers with the system on module
+> init, things like DMI quirk tables (which is what you're going to need
+> to do here AFAICT) should work just as well there as they do later on
+> when the driver loads.
 
-But I don't see any crash or errors with this case.
+The idea here was to have one single build, and then rely on what the 
+user configured with initrd override to probe the right I2C codec driver 
+and indirectly the machine driver. It's similar to device tree overlays.
 
-Also if we allow direct client driver unbind, then vi structure memory=20
-lifetime should also be till v4l2 device release happens.
+With the same up2 board, I change the .aml file in 
+/lib/firmware/acpi-upgrades, swap one HAT board for another and the new 
+board is handled automagically.
 
-But we can free vi in v4l2 device release callback as in case when=20
-device node is not kept opened, video device release happens immediate=20
-and we cant free vi that early.
+I don't see how I can use hard-coded DMI tables or board-specific things 
+without losing the single build?
 
-Hans/Thierry, Can you please comment on this case?
+>>> I think you're giving up way too easily here.  The kernel has really
+>>> good support for systems that don't have any firmware description at
+>>> all, this shouldn't be complex or breaking new ground.
+> 
+>> See above, I don't think the machine driver can do what you had in mind?
+> 
+>> I don't see how to proceed unless we remove all support for ACPI, both for
+>> codec and clock driver, and trigger their probe "manually" with a
+>> board-level initialization.
+> 
+> The clkdev stuff can use dev_name() so so long as the devices appear
+> with predictable names you should be fine.  If not IIRC everything in
+> ACPI is named in the AML so clkdev could be extended to be able to find
+> things based on the names it gives.
 
-Thanks
+I had a discussion with Andy Shevchenko that we should precisely not be 
+using dev_name() since we don't control the names that ACPI selects for 
+us. And since I was using the generic PRP0001 thing for the clock device 
+to probe using the 'compatible' string it's actually even less reliable 
+and unique...
 
-Sowjanya
+>> And btw there's already a precedent for using global names, it's what the
+>> Skylake driver does for the mclk and ssp clocks. To the best of my knowledge
+>> the device specific namespacing does not exist on any ACPI platform. We have
+> 
+> No machine description at all exists on board file systems other than
+> what we write in C and they manage to cope with this, I'm sure we can
+> find a way to do it with ACPI.  I mentioned clkdev before, that is
+> something that's done entirely at the Linux level.
+> 
+>> a request from Dialog to implement the same thing for SOF to solve
+>> dependencies on the clock being stable before turning on the codec, so if
+>> global names are not acceptable we have a real problem.
+> 
+> If existing usages that have ended up getting merged are going to be
+> used to push for additional adoption then that's not encouraging.
 
+I wasn't trying to push this against your will, rather I wanted to 
+highlight that we should be clear on the direction for all these uses of 
+the clk API in an ACPI context. If what I suggested here is not the 
+right path, then how do we deal with all the existing cases? This 
+PCM512x use is not a mainstream usage, we use this board mainly for 
+validation and for community support, the other cases with 'mclk' and 
+'sspX_fsync' are critical and impact devices shipping in large volumes.
