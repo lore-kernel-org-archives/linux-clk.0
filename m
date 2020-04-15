@@ -2,93 +2,145 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFF5C2BA19
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 12:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5506CC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 13:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 908FC20767
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 12:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369C920936
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 13:03:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586955170;
-	bh=lbGMWCj1Ow4xOVH+P9eXNDdT+gYet8KYpgKFEEcJB1Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gEOlhwRXZRlcOjxdYFPy0CZ/JmokA2GZPuWHygpdK0BExSioN6V4p65rd5BHqgre+
-	 MGwimSIfqnSYTMD+0pPQkQ80SbJnv/0QCG0Wkvjz5pYJRtOMK8IRC9Dq/0xyKzeKni
-	 50et0ct6AIXxQQdAZmAQD+Z2pa9hVbl5zWESKZSA=
+	s=default; t=1586955803;
+	bh=hGaPNPo2bXtmqhGm530nnBNN9yGymFS64dOLD7ZHm+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fWoaUodks7pFlOS/H5mU3mCtXVkZM4ikWzmBT9yiAlBIZfU/sYt11y7OwmkMZ7Ohl
+	 kg4EeqtZX4VilRoZCZTz07wgzYqiUvWv3uUjrwadhUMMn78euMNszngUi0N2xEStrA
+	 gx35MKIx0W3ASblVJN9k0NQg8UZIUvozbcsXLxi0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S370546AbgDOMwq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 08:52:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33840 "EHLO mail.kernel.org"
+        id S2505745AbgDONCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 09:02:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2897147AbgDOLmd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:42:33 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2897154AbgDOLge (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:36:34 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49ED4206A2;
-        Wed, 15 Apr 2020 11:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF07220857;
+        Wed, 15 Apr 2020 11:36:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586950953;
-        bh=lbGMWCj1Ow4xOVH+P9eXNDdT+gYet8KYpgKFEEcJB1Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TqlT7Wv3HJX1xD5UnEhxWSgkS0pynih6HItDoibC3ZjpqUCQXdCD5IKsnWYM3IR6L
-         u0UGhrf/11Jf/u8hN/qHNEvyWU16HsJaAlUFg4R9hQYkTJGfv6OFcq6nOBnH6+szUx
-         FjCITT4aCS+jneRxTWGfy48TPqHNIFMqvnGLX+AI=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.5 005/106] clk: imx: pll14xx: Add new frequency entries for pll1443x table
-Date:   Wed, 15 Apr 2020 07:40:45 -0400
-Message-Id: <20200415114226.13103-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200415114226.13103-1-sashal@kernel.org>
-References: <20200415114226.13103-1-sashal@kernel.org>
+        s=default; t=1586950592;
+        bh=hGaPNPo2bXtmqhGm530nnBNN9yGymFS64dOLD7ZHm+o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RDSYzi66kakJCorZcJfkhARuzoUP//RGk5PLdJ450hrz9g205FplNu38EDzppW/ov
+         TCUjHOeKWHOSTLwCFCbpwKqRyUxti0cC9B2ozrkZROzXFkqvqAvpSIOxTy8oo0lB0W
+         Xk5FBXSqwwoz0VxNjsg4z4a60Fm/ZN4QZv2mS4DA=
+Date:   Wed, 15 Apr 2020 12:36:30 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
+ clock
+Message-ID: <20200415113630.GC5265@sirena.org.uk>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
+ <20200414174530.GK5412@sirena.org.uk>
+ <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
+ <20200414182728.GM5412@sirena.org.uk>
+ <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
+ <20200414195031.GP5412@sirena.org.uk>
+ <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tqI+Z3u+9OQ7kwn0"
+Content-Disposition: inline
+In-Reply-To: <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
+X-Cookie: Hire the morally handicapped.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 57795654fb553a78f07a9f92d87fb2582379cd93 ]
+--tqI+Z3u+9OQ7kwn0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Add new frequency entries to pll1443x table to meet different
-display settings requirement.
+On Tue, Apr 14, 2020 at 03:13:01PM -0500, Pierre-Louis Bossart wrote:
+> On 4/14/20 2:50 PM, Mark Brown wrote:
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imx/clk-pll14xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+> > It's not just DT platforms that I'm worried about here, it's also ACPI
+> > systems - all it takes is for a system to have a second device and a
+> > name collision could happen, especially with such generic names.  We
+> > tried to avoid doing this for board files for the same reason.
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 3636c8035c7d9..c5df14caa1675 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -55,8 +55,10 @@ static const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] = {
- };
- 
- static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
-+	PLL_1443X_RATE(1039500000U, 173, 2, 1, 16384),
- 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
- 	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
-+	PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
- 	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
- 	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
- };
--- 
-2.20.1
+> I am on the paranoid side but here I don't see much potential for conflicts:
 
+> a) this only works for the Up2 board with a HAT connector
+> b) this only work with the Hifiberry DAC+ PRO board.
+
+> This codec is not used in any traditional client devices.
+
+That's what you're doing right now but someone else can use the same
+devices, or adopt the same approaches on something like a Chromebook.
+
+> > My understanding is that ACPI just doesn't have clock bindings (or audio
+> > bindings or...) so you're basically using board files here and board
+> > files can definitely do more than we're seeing here.
+
+> I don't understand your definition of board file, sorry. We've never had
+> one, the only thing that's board-specific is the machine driver.
+
+Architectures that don't have firmware bindings use straight C code to
+register and set things up.  Machine drivers are essentially board
+files, they're just audio specific bits of board file that use audio
+APIs and so are in the sound directory.
+
+> > You should be able to register links between devices using the clock
+> > API, or add that functionality if it's not there but AFAIK clkdev still
+> > works.
+
+> The machine driver has no information whatsoever on who provides the clock.
+> I just don't see how I might link stuff without at least some amount of
+> information?
+
+The machine driver must have this information, it knows exactly what
+hardware it runs on.  The whole point of a machine driver is that it's
+board specific.
+
+> All I needed was to toggle 2 gpios to select 44.1 or 48kHz...Looks like it's
+> going to take two more years, oh well.
+
+I think you're giving up way too easily here.  The kernel has really
+good support for systems that don't have any firmware description at
+all, this shouldn't be complex or breaking new ground.
+
+--tqI+Z3u+9OQ7kwn0
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6W8b0ACgkQJNaLcl1U
+h9D17Af/RhGgm4ZGHtLAdFJ+aGM6tFqBf1vbPHV3CiIESBM6b2F4siv8Zz1Tm62X
+ZrLAoIDt7NB9a9wxuWGYzZL0QKOunAXzw4kAxwdh3HlJPhrlc+mG0CPkc2gccNgb
+v9AQRQJX5Q6RkRsXPKLTENGvvBH/pjsybKCnHGZtj4ffWfitIRGLkRWa5ieEL0XS
+NAY2B1/Oqj0m9UXZnPC4vHPEyflD5z5thYNpCtrikrqWA0f/ydpYVOhLZxI7/Sli
+Bc/Z2E7vEoA/uifEu97t0X0VEqHShdd1ha7EPpNdPv5OUFW4GSrM6XJOIYGmtcAx
+ZKzPKc7vExdL8HgvNakMTp98Uxxfhw==
+=Be0S
+-----END PGP SIGNATURE-----
+
+--tqI+Z3u+9OQ7kwn0--
