@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D70C3815B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B98C2BB55
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 67AE3208FE
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6AC420936
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:35:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586950502;
-	bh=P04iBLwJn0vDXHqxsvdHNKZ9hXQfsXc2NSGvEKJvR4Q=;
+	s=default; t=1586950521;
+	bh=uHb5jBjIoswJZxzBsYgMUJiHR8BPe/xFo1UMnp0/+P8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BaoNuAqeEsEx5k+sbL+hdqfJRu8fZ+PyxET7IIJpn2FTo9t1hAcmhfubS/0sG979u
-	 5zValDGFkzHc6C6hLTSAe4qePDJQ+nRKZZG4ZuWFI7H10PrCfaUUMBT6z5Pm0c+Ymv
-	 hWE0YHJP2kx+k/zJtuIQRD7OrO+57y3rceYNRbQA=
+	b=g9VUthmtzsxgpdtPDyzlYZAElr5ThGUra+kA50sydO6+gPzFFJwOmN2t3Ech+rsb1
+	 nv4t2cpRqiIR7TC9KeACGQ0KsS6+YuifRDSxOAyHVYECRzImTIr5geyyAKjTt6OKwx
+	 Fjx6YpYRAqyyTOB5ygTfQfcGSQkpHGa++/TZe6Z8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408881AbgDOLfA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54364 "EHLO mail.kernel.org"
+        id S2897035AbgDOLfP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:35:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408865AbgDOLew (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:34:52 -0400
+        id S2408889AbgDOLfN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:35:13 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B68620857;
-        Wed, 15 Apr 2020 11:34:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11F7020768;
+        Wed, 15 Apr 2020 11:35:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586950492;
-        bh=P04iBLwJn0vDXHqxsvdHNKZ9hXQfsXc2NSGvEKJvR4Q=;
+        s=default; t=1586950512;
+        bh=uHb5jBjIoswJZxzBsYgMUJiHR8BPe/xFo1UMnp0/+P8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zSWS3TgHFL5j7cDYIkDdqA7peZDpEyGB3rHouiLCTMyGpinY9PQMY3PXra0LUy4wh
-         GSVtCT6dc97Ab+rTsQfwEx3QD3vQDVUdc0VwCLiu5Y84t2zA34d7NL5TueQWwKlIns
-         sXc9K3v8wKXT1F5wSoTl+8bONLYpb/+imc7wUzpw=
+        b=GAJ7cBnHlfb8vbS60Rc4NmaDHU481x2CfBKVw+CF0Xrur0rW/agD8DXfbY+L8FvFi
+         ZxZmqTl3N2UPrpnMeZuXt6lUOQmbjQIfPCzA1hnHL4WzPIOQ18is3XtF9skVcjvA4n
+         4CxfWShOQsF0z3EHBfffS4ZSDHah2v87+juJf7Z4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <Anson.Huang@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.6 005/129] clk: imx: pll14xx: Add new frequency entries for pll1443x table
-Date:   Wed, 15 Apr 2020 07:32:40 -0400
-Message-Id: <20200415113445.11881-5-sashal@kernel.org>
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.6 023/129] clk: tegra: Fix Tegra PMC clock out parents
+Date:   Wed, 15 Apr 2020 07:32:58 -0400
+Message-Id: <20200415113445.11881-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200415113445.11881-1-sashal@kernel.org>
 References: <20200415113445.11881-1-sashal@kernel.org>
@@ -59,36 +60,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
+From: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-[ Upstream commit 57795654fb553a78f07a9f92d87fb2582379cd93 ]
+[ Upstream commit 6fe38aa8cac3a5db38154331742835a4d9740788 ]
 
-Add new frequency entries to pll1443x table to meet different
-display settings requirement.
+Tegra PMC clocks clk_out_1, clk_out_2, and clk_out_3 supported parents
+are osc, osc_div2, osc_div4 and extern clock.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
+for PMC clocks.
+
+This patch fixes this.
+
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-pll14xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 5b0519a81a7af..37e311e1d0586 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -55,8 +55,10 @@ static const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] = {
+diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+index bec3e008335f3..5e044ba1ae364 100644
+--- a/drivers/clk/tegra/clk-tegra-pmc.c
++++ b/drivers/clk/tegra/clk-tegra-pmc.c
+@@ -49,16 +49,16 @@ struct pmc_clk_init_data {
+ 
+ static DEFINE_SPINLOCK(clk_out_lock);
+ 
+-static const char *clk_out1_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern1",
++static const char *clk_out1_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern1",
  };
  
- static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
-+	PLL_1443X_RATE(1039500000U, 173, 2, 1, 16384),
- 	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
- 	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
-+	PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
- 	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
- 	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
+-static const char *clk_out2_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern2",
++static const char *clk_out2_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern2",
  };
+ 
+-static const char *clk_out3_parents[] = { "clk_m", "clk_m_div2",
+-	"clk_m_div4", "extern3",
++static const char *clk_out3_parents[] = { "osc", "osc_div2",
++	"osc_div4", "extern3",
+ };
+ 
+ static struct pmc_clk_init_data pmc_clks[] = {
 -- 
 2.20.1
 
