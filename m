@@ -2,192 +2,110 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BEB2C3815B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 19:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2831C2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 19:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF5AF20768
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 19:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586980246;
-	bh=k50LK4AV1A49znM2MRiULTORGEhOJ6EmpCBTRgrN6FQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1PeBSYa58Y6LHPj7O5zfDfXRCzI980fYZtvmD2BLkjUA372+iH5Y0auaW+M2q598M
-	 UPXQg5Ixc3EL5cXSqJ2IjrJPA564OZ1ENaer2bSE8kK0YC45qyLKxylCQ9PaZc7HRv
-	 geefdpMlS7dYJNgPgkj1xM0wnsNR7sCqkHnxIFZw=
+	by mail.kernel.org (Postfix) with ESMTP id 89C8420774
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 19:51:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EPWOSpRu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436693AbgDOTuo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 15:50:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40418 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406367AbgDOTuh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 15:50:37 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E6B920774;
-        Wed, 15 Apr 2020 19:50:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586980236;
-        bh=k50LK4AV1A49znM2MRiULTORGEhOJ6EmpCBTRgrN6FQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0H4lC/7am8WdK6fXWwABQFceU4C+0rCh5I/2agBq0tpwPPrR26Dq4BrtiB20fC7r4
-         i7gt2mapzLtpi+fwVPpUubKRlQFXSqy0667p5n1Bhpc/l7vqbHJ85Du1FNU/eWlHI6
-         UtDQV3tsyrIOihC7gRS33LfmHXcrezTbLCnIwamQ=
-Date:   Wed, 15 Apr 2020 20:50:33 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
- clock
-Message-ID: <20200415195033.GL5265@sirena.org.uk>
-References: <20200414174530.GK5412@sirena.org.uk>
- <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
- <20200414182728.GM5412@sirena.org.uk>
- <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
- <20200414195031.GP5412@sirena.org.uk>
- <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
- <20200415113630.GC5265@sirena.org.uk>
- <4635e57b-fccd-d8a9-fa99-8124debb3428@linux.intel.com>
- <20200415162247.GF5265@sirena.org.uk>
- <9a7fbbac-818a-01d0-7a32-8ae313f9ad50@linux.intel.com>
+        id S2436721AbgDOTvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 15:51:46 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:10177 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406367AbgDOTvk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 15:51:40 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e97655b0000>; Wed, 15 Apr 2020 12:49:47 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 15 Apr 2020 12:51:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 15 Apr 2020 12:51:37 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
+ 2020 19:51:36 +0000
+Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
+ 2020 19:51:35 +0000
+Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <frankc@nvidia.com>, <hverkuil@xs4all.nl>, <sakari.ailus@iki.fi>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
+ <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
+ <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
+ <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
+ <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
+ <b1c78827-13ea-0c94-a575-97b5afc0ede1@nvidia.com>
+ <5954a7e1-910e-7f48-56d3-e671b56ead74@nvidia.com>
+ <d6a9e07c-474a-a076-8313-32f5f4ca8d64@nvidia.com>
+ <786949a9-8507-7723-f29b-b91a216bfd28@nvidia.com>
+ <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
+Date:   Wed, 15 Apr 2020 12:51:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="CgTrtGVSVGoxAIFj"
-Content-Disposition: inline
-In-Reply-To: <9a7fbbac-818a-01d0-7a32-8ae313f9ad50@linux.intel.com>
-X-Cookie: Hire the morally handicapped.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1586980187; bh=YmoGzPhSYhYGSWM5wgpNyYVYjJV4XWVyBHmrFTZns4A=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=EPWOSpRu7TsrjEd/ScsdhZxozGsUk37bS5oPWzI1MM/YA6irJ9u7NeG9BF7JQTPBx
+         ZCpQXx/Fu/DvwCEu68r8L6meReI4ZmKxao2VBmu2ndU2q+oCbvg43Tl6WLq0bmTN9n
+         WeG6Q3BVdAf/nkpqrKpW/ltQG2XMnpeUDkkn9c0tHPKFeFXXnFogTElu4eaD42zMKH
+         zC8gaARqM7sEu5ojCgV49LZ/TntagOM6QBJwnCWTUMxzyEXc8Ngku8EfnvkVV8bMLF
+         evNNeubKyN+hTRC6RQAAGihjeYch5ara8kXQbMVxqhtFAvmlT/WTvYiZE4lkhzRCVd
+         f+K6faAr3Ca0w==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---CgTrtGVSVGoxAIFj
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 4/15/20 12:21 PM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 15.04.2020 21:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> ...
+>>>>>>>> Have you tried to test this driver under KASAN? I suspect that
+>>>>>>>> you just
+>>>>>>>> masked the problem, instead of fixing it.
+>> Tested with kmemleak scan and did not see any memory leaks
+> You should get use-after-free and not memleak.
+I don't see use-after-free bugs during the testing.
 
-On Wed, Apr 15, 2020 at 12:26:57PM -0500, Pierre-Louis Bossart wrote:
+But as mentioned when direct vi/csi client driver unbind happens while=20
+video device node is kept opened, vi driver remove will free vi=20
+structure memory but actual video device memory which is part of=20
+channels remains but list head gets lost when vi structure is freed.
 
-> > You have the opportunity to run whatever code you want to run at the
-> > point where you're registering your drivers with the system on module
-> > init, things like DMI quirk tables (which is what you're going to need
-> > to do here AFAICT) should work just as well there as they do later on
-> > when the driver loads.
+So, when device node is released and executes release callback as list=20
+head is lost it can't free allocated channels which is not good.
 
-> The idea here was to have one single build, and then rely on what the user
-> configured with initrd override to probe the right I2C codec driver and
-> indirectly the machine driver. It's similar to device tree overlays.
+This happens only with direct host1x client vi/csi driver unbind.
 
-> With the same up2 board, I change the .aml file in
-> /lib/firmware/acpi-upgrades, swap one HAT board for another and the new
-> board is handled automagically.
+Need to find better place to free host1x client driver data structure to=20
+allow direct client driver unbind->bind.
 
-> I don't see how I can use hard-coded DMI tables or board-specific things
-> without losing the single build?
-
-Ugh, so you change for another machine description and don't update any
-of the DMI information?  Perhaps you can't...  That doesn't seem very
-ACPI given how reliant it is on doing quirks based on DMI data for
-modern systems :/
-
-> > The clkdev stuff can use dev_name() so so long as the devices appear
-> > with predictable names you should be fine.  If not IIRC everything in
-> > ACPI is named in the AML so clkdev could be extended to be able to find
-> > things based on the names it gives.
-
-> I had a discussion with Andy Shevchenko that we should precisely not be
-> using dev_name() since we don't control the names that ACPI selects for u=
-s.
-
-It's not ideal and you should definitely use something better if it's
-available but if it's all you've got...  You could also search for the
-device by binding string at runtime, that'd blow up if you've got more
-than one of the same device but it's a bit less likely.
-
-> And since I was using the generic PRP0001 thing for the clock device to
-> probe using the 'compatible' string it's actually even less reliable and
-> unique...
-
-I see, though actually that might be a place to set up links from now I
-think about it - if you know what the I2C device is going to be called
-you could have the platform device for the clock source register the
-links too.
-
-> > If existing usages that have ended up getting merged are going to be
-> > used to push for additional adoption then that's not encouraging.
-
-> I wasn't trying to push this against your will, rather I wanted to highli=
-ght
-> that we should be clear on the direction for all these uses of the clk API
-> in an ACPI context. If what I suggested here is not the right path, then =
-how
-> do we deal with all the existing cases? This PCM512x use is not a mainstr=
-eam
-> usage, we use this board mainly for validation and for community support,
-> the other cases with 'mclk' and 'sspX_fsync' are critical and impact devi=
-ces
-> shipping in large volumes.
-
-The ideal thing would of course be to extend ACPI to encode things like
-this in the firmware description so that it is able to reflect the
-reality of modern systems, the graph bits of this were already specified
-so most of the work has been done.  However it's a bit late for
-the shipping systems.
-
-Normal shipping systems are in a lot better position here in that they=20
-do have some hope of being able to patch up the links after the fact
-with DMI based quirks.  It really would be good to see a way of doing
-that deployed, especially in cases where you might otherwise have to
-modify the CODEC driver.  I *think* that should be doable, assuming
-there's some stable or runtime discoverable naming for the ACPI devices.
-
-In the case of this driver could you look at registering the link from
-the device for the clocks?  Have it say "I supply SCK on device X" as it
-registers.  That should be fairly straightforward I think, we do that
-for one of the regulators.
-
-The main thing I want to avoid is having to have the CODEC drivers know
-platform specific strings that they're supposed to look up, or general
-approaches where that ends up being a thing that looks idiomatic.  That
-was something board files did for a while, it didn't work very well and
-we did something better with clkdev instead.  I'm a lot less worried
-about this for cases where it's two devices that are part of the SoC
-talking to each other, that's relatively well controled and doesn't
-affect non-x86 platforms.  When it starts touching the CODECs it's a lot
-more worrying.
-
-I think by now there's ample evidence that it's worth investing in
-better firmware descriptions :(
-
---CgTrtGVSVGoxAIFj
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6XZYgACgkQJNaLcl1U
-h9CYcwf/bDWwfuo2FiWQSP36OnUu8ZBkLZ9OalzWaANi6JQfpeFsDg+aYY0KgjqG
-uCFPdS0qLy3ElI1Kn9oyODo8HYrqGHdB5kZn6Eui22vWdq79bH79t5Pt9DUL/pqQ
-L5G2HYN72IniSogSEzytlDNbqwocdfsEvmv/ru6EMCimcDDQE3TpBa8u0s3suTIc
-zuvB/7rgdPGUATu6koJwfS2/mG5yXq2uE6d3R889bXWnPpnW0EIo3tUWXSF+mh97
-Y1zRXPSQVDlLX0aS/cz6XQyPGpgKBtaxAlUSCziVkjDtULYW07dc5iAh2tRkpJY8
-4XOjJkROeYdNB2/Hr+ZXzDUFUCeJDA==
-=jfnC
------END PGP SIGNATURE-----
-
---CgTrtGVSVGoxAIFj--
