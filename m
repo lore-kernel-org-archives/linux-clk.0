@@ -2,212 +2,147 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EF2C3815B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A47EC38A2B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA012168B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586969245;
-	bh=3LgAEXzg3hin+aaY948zanpI6w0MQHNo1PfMx6VlC7w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sRegSHWVLT8MFfPBRI0EKES3yCTKvCiN+73upwQOLEi1lyw1nk5fjifINsyFp1eRn
-	 1PC93htFO6ty3qeNn5f/nzFXuwMY8EdDJi3cZ9PMCdbIfvIFQgvjIUUEeuMKVFg/n0
-	 Ucy4+qR+7c/+Mtft6S67C89hfcYsf3AZbeydmMhY=
+	by mail.kernel.org (Postfix) with ESMTP id D63E3214AF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:54:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rH/1dp3D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbgDOQrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 12:47:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47178 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1416219AbgDOQq4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 12:46:56 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C2D121556;
-        Wed, 15 Apr 2020 16:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586969215;
-        bh=3LgAEXzg3hin+aaY948zanpI6w0MQHNo1PfMx6VlC7w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LWysdhMx1OPkv8LstjduIfPlHM+DFSeHnCLWTj/SUfEBpgoihDLdbt4O0FGOSYpJ5
-         XEkj9pta4WAMpTNwXD2qmUtbTS3xpeU6fBsF2FiI+E1hpH731QWfbQ8gbVvR/NQCeL
-         7mstKQEnzAHBGQAVzQqHuzRjbpyQOxCj+DGM1iTg=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com
-Subject: [PATCHv7 4/5] dt-bindings: documentation: add clock bindings information for Agilex
-Date:   Wed, 15 Apr 2020 11:46:41 -0500
-Message-Id: <20200415164642.29382-5-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200415164642.29382-1-dinguyen@kernel.org>
-References: <20200415164642.29382-1-dinguyen@kernel.org>
+        id S2404654AbgDOQyl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 12:54:41 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:9536 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2410503AbgDOQyk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 12:54:40 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e973c150000>; Wed, 15 Apr 2020 09:53:41 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 15 Apr 2020 09:54:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 15 Apr 2020 09:54:39 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
+ 2020 16:54:39 +0000
+Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 15 Apr
+ 2020 16:54:36 +0000
+Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
+ <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
+ <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
+Date:   Wed, 15 Apr 2020 09:54:35 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1586969621; bh=qoQMVbOMXWlnzPj6qRnxRISwVee7/CHgjWqtqRqD2To=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=rH/1dp3DfCTqvWOIb14CzYUIoOBvbHu6es5/YeDMq1vuUKzUsaP0ZogLcKxkaCTAK
+         siGgltClP2My3W8nCnSEhAz2rKh7Ms+MCFFBzBAy3OIcIYBeFcdNM+YC1jUfChofDV
+         6tGaIcsi5WiscfbsyhITxWJ+y7CFhtsNYhNwHJpK5t8kMyRTEz1wd0SI+elcl9Oroa
+         KnIx9MhujgyDZa6x4zPTCoFNAkUYJY6l6UpKddVaY2VSI/igFIy8JwN5iUujfLIGOo
+         DV1m9qtkcf53op6YPF9MvP0x84DSESxCuVxJftskbTv74WWeziFineswTyvu6iVHiD
+         Jy32J1en+B5eg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the Agilex clock bindings, and add the clock header file. The
-clock header is an enumeration of all the different clocks on the Agilex
-platform.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v7: Fix license to be "(GPL-2.0-only OR BSD-2-Clause)"
-v6: fix build error by adding descriptions for clocks and reg in
-    properties
-v5: update license to GPL-2.0-only
-    Add additionalProperties
-    Add clock input for clkmgr
-v4: really fix build error(comment formatting was wrong)
-v3: address comments from Stephen Boyd
-    fix build error(tab removed in line 37)
-    renamed to intel,agilex.yaml
-v2: convert original document to YAML
----
- .../bindings/clock/intel,agilex.yaml          | 46 ++++++++++++
- include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
- create mode 100644 include/dt-bindings/clock/agilex-clock.h
+On 4/15/20 7:22 AM, Dmitry Osipenko wrote:
+> External email: Use caution opening links or attachments
+>
+>
+> 15.04.2020 05:57, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> +static int tegra_csi_remove(struct platform_device *pdev)
+>> +{
+>> +     struct tegra_csi *csi =3D platform_get_drvdata(pdev);
+>> +     int err;
+>> +
+>> +     err =3D host1x_client_unregister(&csi->client);
+>> +     if (err < 0) {
+>> +             dev_err(csi->dev,
+>> +                     "failed to unregister host1x client: %d\n", err);
+>> +             return err;
+>> +     }
+>> +
+>> +     pm_runtime_disable(csi->dev);
+>> +     kfree(csi);
+> IIRC, the driver removal is invoked on the unbinding. Hence, I'm not
+> sure how moving away from the resource-managed API helps here. Could you
+> please explain in a more details?
+>
+> Have you tried to test this driver under KASAN? I suspect that you just
+> masked the problem, instead of fixing it.
+Using devm_kzalloc for vi/csi structures based on prior feedback request=20
+to switch to use kzalloc all over this driver.
 
-diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
-new file mode 100644
-index 000000000000..cf5a9eb803e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Intel SoCFPGA Agilex platform clock controller binding
-+
-+maintainers:
-+  - Dinh Nguyen <dinguyen@kernel.org>
-+
-+description:
-+  The Intel Agilex Clock controller is an integrated clock controller, which
-+  generates and supplies to all modules.
-+
-+properties:
-+  compatible:
-+    const: intel,agilex-clkmgr
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  # Clock controller node:
-+  - |
-+    clkmgr: clock-controller@ffd10000 {
-+      compatible = "intel,agilex-clkmgr";
-+      reg = <0xffd10000 0x1000>;
-+      clocks = <&osc1>;
-+      #clock-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
-new file mode 100644
-index 000000000000..f19cf8ccbdd2
---- /dev/null
-+++ b/include/dt-bindings/clock/agilex-clock.h
-@@ -0,0 +1,70 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019, Intel Corporation
-+ */
-+
-+#ifndef __AGILEX_CLOCK_H
-+#define __AGILEX_CLOCK_H
-+
-+/* fixed rate clocks */
-+#define AGILEX_OSC1			0
-+#define AGILEX_CB_INTOSC_HS_DIV2_CLK	1
-+#define AGILEX_CB_INTOSC_LS_CLK		2
-+#define AGILEX_L4_SYS_FREE_CLK		3
-+#define AGILEX_F2S_FREE_CLK		4
-+
-+/* PLL clocks */
-+#define AGILEX_MAIN_PLL_CLK		5
-+#define AGILEX_MAIN_PLL_C0_CLK		6
-+#define AGILEX_MAIN_PLL_C1_CLK		7
-+#define AGILEX_MAIN_PLL_C2_CLK		8
-+#define AGILEX_MAIN_PLL_C3_CLK		9
-+#define AGILEX_PERIPH_PLL_CLK		10
-+#define AGILEX_PERIPH_PLL_C0_CLK	11
-+#define AGILEX_PERIPH_PLL_C1_CLK	12
-+#define AGILEX_PERIPH_PLL_C2_CLK	13
-+#define AGILEX_PERIPH_PLL_C3_CLK	14
-+#define AGILEX_MPU_FREE_CLK		15
-+#define AGILEX_MPU_CCU_CLK		16
-+#define AGILEX_BOOT_CLK			17
-+
-+/* fixed factor clocks */
-+#define AGILEX_L3_MAIN_FREE_CLK		18
-+#define AGILEX_NOC_FREE_CLK		19
-+#define AGILEX_S2F_USR0_CLK		20
-+#define AGILEX_NOC_CLK			21
-+#define AGILEX_EMAC_A_FREE_CLK		22
-+#define AGILEX_EMAC_B_FREE_CLK		23
-+#define AGILEX_EMAC_PTP_FREE_CLK	24
-+#define AGILEX_GPIO_DB_FREE_CLK		25
-+#define AGILEX_SDMMC_FREE_CLK		26
-+#define AGILEX_S2F_USER0_FREE_CLK	27
-+#define AGILEX_S2F_USER1_FREE_CLK	28
-+#define AGILEX_PSI_REF_FREE_CLK		29
-+
-+/* Gate clocks */
-+#define AGILEX_MPU_CLK			30
-+#define AGILEX_MPU_L2RAM_CLK		31
-+#define AGILEX_MPU_PERIPH_CLK		32
-+#define AGILEX_L4_MAIN_CLK		33
-+#define AGILEX_L4_MP_CLK		34
-+#define AGILEX_L4_SP_CLK		35
-+#define AGILEX_CS_AT_CLK		36
-+#define AGILEX_CS_TRACE_CLK		37
-+#define AGILEX_CS_PDBG_CLK		38
-+#define AGILEX_CS_TIMER_CLK		39
-+#define AGILEX_S2F_USER0_CLK		40
-+#define AGILEX_EMAC0_CLK		41
-+#define AGILEX_EMAC1_CLK		43
-+#define AGILEX_EMAC2_CLK		44
-+#define AGILEX_EMAC_PTP_CLK		45
-+#define AGILEX_GPIO_DB_CLK		46
-+#define AGILEX_NAND_CLK			47
-+#define AGILEX_PSI_REF_CLK		48
-+#define AGILEX_S2F_USER1_CLK		49
-+#define AGILEX_SDMMC_CLK		50
-+#define AGILEX_SPI_M_CLK		51
-+#define AGILEX_USB_CLK			52
-+#define AGILEX_NUM_CLKS			53
-+
-+#endif	/* __AGILEX_CLOCK_H */
--- 
-2.25.1
+Hi Hans,
+
+video devices lifetime is till video device nodes are released. So, v4l2=20
+device release callback does the release of tegra channel allocation=20
+which hold video device.
+
+Below are the 3 possible cases of unbind/unload,
+
+1. during tegra-video module unload, if v4l2 device refcnt is not 0=20
+which is the case when any of video device node handle is kept opened=20
+then unloading module will not happen and module refcnt is also non-zero=20
+and unloading tegra-video module reports module in use.
+
+2. during tegra-video driver unbind, tegra-video driver removal will do=20
+vi/csi clients exit ops which unregisters video device allocated memory=20
+during release callback of v4l2 device. vi/csi structure allocation=20
+remains same as vi/csi driver removal will not happen in this case.
+
+
+3. during direct host1x client drivers vi/csi unbind, both=20
+host1x_clients vi/csi gets unregistered, deletes host1x logical device=20
+which executes tegra-video driver removal() -> vi/csi exit() before=20
+vi/csi memory gets freed in vi/csi driver remove().
+
+So, any active streaming will stop and video devices are unregistered=20
+during direct client driver unbind prior to freeing vi/csi memory.
+
+Also vi/csi driver remove does explicit free vi/csi as its allocated=20
+with kzalloc. So not sure how using kzalloc is different to devm_kzalloc=20
+for vi/csi structure in terms of when vi/csi memory gets freed?
+
+Except for channel allocation which holds video device and as video=20
+device life time is beyond tegra-video module unbind->vi exit(), looks=20
+like we can use devm_kzalloc for vi/csi.
+
+
+Can you please comment if you still think we need to use kzalloc rather=20
+than devm_kzalloc for vi/csi structure allocation?
+
+Thanks
+
+Sowjanya
 
