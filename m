@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C43C2BB55
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A262EC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 998352168B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C9B9206D9
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 11:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586951239;
-	bh=S6wAKXdXmDJgv7u1+X6ARKowSlSQupWIYsmGHU1DPC0=;
+	s=default; t=1586951475;
+	bh=Ohz8aThqvX1NBM5Mz0A+jU9WKKsOhrId6ATYf0piSOA=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=tUhuvVopXkS4dg+dMl8KrxUJUuBXZ7EdRl4rY+ZHzkPFNIne82oew/6rEPDmrCFHa
-	 QZMvVuklJufBmZsUNbE70UY9QUc/20zUf5LfcOeMs84AxPuthlhVuEO3+6neq/nNDJ
-	 Qv+WKrNUe+UFJ2zUkICYszQnK+WSPvrUU+lWyCS0=
+	b=SDD/rp7A65B6HPfpAf0AoNvMpp3wE98f2Qwl/J0M5mdd8attFl0SCvul5DpODUMmp
+	 paAt/acXO+KHj4hrMuJOjZPVRaX5CzsEleGFONQ4CAFedqLkYH+uWZkgXzoRWeJa9B
+	 oErAUWVMy9COBt3wq9J/S4cgm7wIiVXXfRS1reTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2897618AbgDOLrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 07:47:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41934 "EHLO mail.kernel.org"
+        id S2409455AbgDOLsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 07:48:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409346AbgDOLrN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 07:47:13 -0400
+        id S2409444AbgDOLsQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Apr 2020 07:48:16 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8BFA2168B;
-        Wed, 15 Apr 2020 11:47:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B5F1214D8;
+        Wed, 15 Apr 2020 11:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586951233;
-        bh=S6wAKXdXmDJgv7u1+X6ARKowSlSQupWIYsmGHU1DPC0=;
+        s=default; t=1586951296;
+        bh=Ohz8aThqvX1NBM5Mz0A+jU9WKKsOhrId6ATYf0piSOA=;
         h=From:To:Cc:Subject:Date:From;
-        b=KaA0SrNIyIrrEe09tFojBDHmLp1CttB2rUVTjvY9RlXEFu+yFQrBdqAvU9PDhryJJ
-         0cvbk3/hQjDlP3n00WcaUD4bH+yuNQXWmX2OL77fRPKXMXpI1wuM5xu9S9a+cIGcuv
-         eBZOUu6szAJ+dXiAxIthtxyZvBzxwm3ReAuWCEWo=
+        b=qtnurdzGQikUV13C3LUyrXzCK6Mf2hta0D+hUXSwC6fSHqP6M5BQccBZW4HcOwiG7
+         lk2nTr93KDjwqjtLWI4w3dt74Z2sOXoIaYdBymbcoJpsAQQ/2WM9qJF7va5CDaxoMl
+         GVc/AIy0aXvc6cLcnaOqjbw+X8A7qqIAVUr+WKBI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Claudiu Beznea <claudiu.beznea@microchip.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 01/30] clk: at91: usb: continue if clk_hw_round_rate() return zero
-Date:   Wed, 15 Apr 2020 07:46:42 -0400
-Message-Id: <20200415114711.15381-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/14] clk: at91: usb: continue if clk_hw_round_rate() return zero
+Date:   Wed, 15 Apr 2020 07:48:01 -0400
+Message-Id: <20200415114814.15954-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 X-stable: review
@@ -85,10 +85,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+)
 
 diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index 791770a563fcc..6fac6383d024e 100644
+index 8ab8502778a28..55e09641b491b 100644
 --- a/drivers/clk/at91/clk-usb.c
 +++ b/drivers/clk/at91/clk-usb.c
-@@ -78,6 +78,9 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
+@@ -79,6 +79,9 @@ static int at91sam9x5_clk_usb_determine_rate(struct clk_hw *hw,
  			tmp_parent_rate = req->rate * div;
  			tmp_parent_rate = clk_hw_round_rate(parent,
  							   tmp_parent_rate);
