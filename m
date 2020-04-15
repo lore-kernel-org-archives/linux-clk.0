@@ -2,155 +2,97 @@ Return-Path: <SRS0=0uWh=57=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E16C3815B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD1EC2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97F4E208E4
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0AD1208FE
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Apr 2020 16:23:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586967777;
-	bh=5vqYtdTCKFz1d6OC39tkbz4gI+3qu+ArDdtxYAtQrdc=;
+	s=default; t=1586967819;
+	bh=YnGrocLLlukK0Ri+yP6skQu5nbXjfB50XcKkg3n5ims=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=w3+HVj72fky4o0jzUPsHbJWpJHPY1OuY48ZUxHpvz35jslzRkcufusbJ8eUKkqYqA
-	 0VlC0jwrToqoIFOFkhokJq6KrVAbelrh73C8o1p7Eo+vk/Udvy3iTsbmNPse2IAMB4
-	 tMPv4L6ZO9Nlep2fZRZU42lzRjjWb8dBe6/Zqdj0=
+	b=GkndbgIFuvHF1SJgOgOMEXiY92sin1xiYQlhVn81BKGk5laRzKObARv7ggA1dFXqt
+	 Jxoit3i1VNSWmOwtuwKFoRyI/pQHegoe3zQC2G0kfRzzi4ERk18XR5gZSJtzxWoer1
+	 IpYuDIeH6QxZW7XmH2aY3WzMec9OX8D8KmLY2uvI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1415710AbgDOQWy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 12:22:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1415627AbgDOQWv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 12:22:51 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76CBF206F9;
-        Wed, 15 Apr 2020 16:22:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586967771;
-        bh=5vqYtdTCKFz1d6OC39tkbz4gI+3qu+ArDdtxYAtQrdc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=utbHXhovrSMk2Z+MefR5IojzWv2ZfkATL0DePNHpYK2CiqAB04Zmq/N9YZKqDzQTb
-         Nr26wl52buZfyRKbSXTvn7HP6bSwM2cz+XnhTxHwXV3cEnxswsDB+0iQJgeaGGCWFP
-         XhjtEzs72xyUjkaAF9FhYHckGVTu3by4V162+WP0=
-Date:   Wed, 15 Apr 2020 17:22:47 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
+        id S1415735AbgDOQXi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Apr 2020 12:23:38 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:32925 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1415722AbgDOQXf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Apr 2020 12:23:35 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j26so520670ots.0;
+        Wed, 15 Apr 2020 09:23:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dqCaYkT8OVNprkSigyoCp2ZPVsKvgzd87cPbi/J2G4k=;
+        b=J2yU4MShL4rNveeXHKhsgxS4XF3cTPNhFRp7fkE8TUtdTc3C1YpK1NKSR9xvshvUee
+         Nh3X00x4rbiYuXrTQHbrnCA3cBtUklpt4xe1UuJODyQrIco0CzHmQOGBSbAijIpIlk+4
+         0XGS40R5HD3Vvw3B5iH7pDaVwIbKt5BNg8Z5yRNME0ZyW3Fz6BeJNbLEL83OOCbocS/6
+         UYycztJwUiH/IyEwLLrNkYRu3IdvylzoMTr2O1fngXL58VaN1DYWCOECsummNq+J4YGH
+         xIoZaBUJ7puf8QdbPw9zxjuhNWjHmuUIN1vVoocXX2MWuKSuvKg72MaM0SW8zEOyCp4J
+         1IPQ==
+X-Gm-Message-State: AGi0Pub4tQjttzItimEiIOv7+BeaBsf/MAmxk86L9zrrxjR5eCZFcIrf
+        9I1NVZkIR8VBl7s2L4t3MA==
+X-Google-Smtp-Source: APiQypKR1UuoH9e32fZQ9cndTzQaO9IUxQZvKDBEkzyNV7mi2Ii3pK0yWsxcv3mWaq3m8wipHNp1MQ==
+X-Received: by 2002:a9d:1b4b:: with SMTP id l69mr13808068otl.179.1586967813963;
+        Wed, 15 Apr 2020 09:23:33 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 186sm6865669ooi.30.2020.04.15.09.23.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Apr 2020 09:23:33 -0700 (PDT)
+Received: (nullmailer pid 32365 invoked by uid 1000);
+        Wed, 15 Apr 2020 16:23:32 -0000
+Date:   Wed, 15 Apr 2020 11:23:32 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 02/16] ASoC: pcm512x: use "sclk" string to retrieve
- clock
-Message-ID: <20200415162247.GF5265@sirena.org.uk>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-3-pierre-louis.bossart@linux.intel.com>
- <20200414174530.GK5412@sirena.org.uk>
- <8ee01a4f-ceb2-d207-7cef-cf766fa670af@linux.intel.com>
- <20200414182728.GM5412@sirena.org.uk>
- <3017b762-7a0c-cee2-06dd-1e96f52eb849@linux.intel.com>
- <20200414195031.GP5412@sirena.org.uk>
- <0d2aed9b-5c79-9ed2-6ca1-67b2688e4c99@linux.intel.com>
- <20200415113630.GC5265@sirena.org.uk>
- <4635e57b-fccd-d8a9-fa99-8124debb3428@linux.intel.com>
+        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 01/14] dt-bindings: reserved-memory: Introduce
+ memory-region-names
+Message-ID: <20200415162332.GA32297@bogus>
+References: <20200409175238.3586487-1-thierry.reding@gmail.com>
+ <20200409175238.3586487-2-thierry.reding@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/QKKmeG/X/bPShih"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4635e57b-fccd-d8a9-fa99-8124debb3428@linux.intel.com>
-X-Cookie: Hire the morally handicapped.
+In-Reply-To: <20200409175238.3586487-2-thierry.reding@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu,  9 Apr 2020 19:52:25 +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> In order to make the reserved-memory bindings more consistent with other
+> existing bindings, add a memory-region-names property that contains an
+> array of strings that name the entries of the memory-region property and
+> allows these regions to be looked up by name.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+> Changes in v6:
+> - drop addition of memory-regions alias
+> 
+>  .../devicetree/bindings/reserved-memory/reserved-memory.txt     | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
---/QKKmeG/X/bPShih
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied, thanks.
 
-On Wed, Apr 15, 2020 at 09:44:12AM -0500, Pierre-Louis Bossart wrote:
-> On 4/15/20 6:36 AM, Mark Brown wrote:
-
-> > Architectures that don't have firmware bindings use straight C code to
-> > register and set things up.  Machine drivers are essentially board
-> > files, they're just audio specific bits of board file that use audio
-> > APIs and so are in the sound directory.
-
-> Humm, we may have a conceptual disconnect here. In the ACPI world, there is
-> no support for the machine driver - unlike Device Tree. It is probed when
-
-This is nothing to do with device tree except in that it has useful
-firmware descriptions of the hardware.
-
-> the SST/SOF driver creates a platform device using the codec _HID as a key
-> to hard-coded lookup tables in sound/soc/intel/common/soc-acpi*.c - it will
-> be probed *after* the codec driver probes. I really don't see how to use the
-> machine driver as currently implemented to establish board-level connections
-> that would influence the codec driver probe and its use of a clock.
-
-You have the opportunity to run whatever code you want to run at the
-point where you're registering your drivers with the system on module
-init, things like DMI quirk tables (which is what you're going to need
-to do here AFAICT) should work just as well there as they do later on
-when the driver loads.
-
-> > I think you're giving up way too easily here.  The kernel has really
-> > good support for systems that don't have any firmware description at
-> > all, this shouldn't be complex or breaking new ground.
-
-> See above, I don't think the machine driver can do what you had in mind?
-
-> I don't see how to proceed unless we remove all support for ACPI, both for
-> codec and clock driver, and trigger their probe "manually" with a
-> board-level initialization.
-
-The clkdev stuff can use dev_name() so so long as the devices appear
-with predictable names you should be fine.  If not IIRC everything in
-ACPI is named in the AML so clkdev could be extended to be able to find
-things based on the names it gives.
-
-> And btw there's already a precedent for using global names, it's what the
-> Skylake driver does for the mclk and ssp clocks. To the best of my knowledge
-> the device specific namespacing does not exist on any ACPI platform. We have
-
-No machine description at all exists on board file systems other than
-what we write in C and they manage to cope with this, I'm sure we can
-find a way to do it with ACPI.  I mentioned clkdev before, that is
-something that's done entirely at the Linux level.
-
-> a request from Dialog to implement the same thing for SOF to solve
-> dependencies on the clock being stable before turning on the codec, so if
-> global names are not acceptable we have a real problem.
-
-If existing usages that have ended up getting merged are going to be
-used to push for additional adoption then that's not encouraging.
-
---/QKKmeG/X/bPShih
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl6XNNYACgkQJNaLcl1U
-h9Aqhwf/cG1ywCKHbggOqbCvgesS1TiRvusYdrRC114nvcJ7Ljju1ZCzTa+SK2Xp
-bBL2XaKZ0KYChnzuGMGYjQEJbf1sUbA3zyM5barfwt4syASXT7VeaUfdcTYxS4dA
-pDtWAex05jD2YGVPThnn4AKiCBRB9ygszMsf4NTZHGW7l9bKvvZOWQTuvrZWY3pb
-0vRL6roijlkQ+2lDjpMZPQ9i5ni5Za0rwrHhS2b/kaGkBRZjpYuWjsQJXFRVKOsi
-yF5K3jCsFr7F6AAjEtGYoS5riG2c6vi2nvpquEe3EeAc0i0OlgJNpddd6K/mL+P0
-qqBUAo1IHNAuum9AYzbm9FSCpYBcyg==
-=ww1w
------END PGP SIGNATURE-----
-
---/QKKmeG/X/bPShih--
+Rob
