@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28323C2BB55
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 17:49:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C487C352BE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 18:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DE484214D8
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 17:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ED512223D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 18:13:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="rfmBJsjW"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="MI3PIN03"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbgDPRt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 13:49:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40354 "EHLO
+        id S1731974AbgDPSND (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 14:13:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727816AbgDPRtz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 13:49:55 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D0B7C061A0C;
-        Thu, 16 Apr 2020 10:49:55 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id rh22so1929194ejb.12;
-        Thu, 16 Apr 2020 10:49:55 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1726129AbgDPSNC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 14:13:02 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 252BFC061A0C;
+        Thu, 16 Apr 2020 11:13:01 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id rh22so1984335ejb.12;
+        Thu, 16 Apr 2020 11:13:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O9vqKvQJSosI2zy51g44Ony9xOnUOUnQzLKmbPYbXLs=;
-        b=rfmBJsjW7+iTxonwOCa9eCjK/EmzWmpsGcOogRYhp8EKYhNyd9HpF5Ix//iAy7xSf2
-         Mzq9b7MumB9KO/PUheOIa/m+S6RHDonRpqTFDuMG15bAWrFdQJea/fVK3pL4tIiv25YI
-         E1u5q1/jCMFhdUA1jQ8jvzX0mzbNXFLEAys1Gju0aZITfFrNkM7TqdgdFzNvw2UjwIZN
-         POeYLUtBG+z/YvS9AI46Ddr8gt5atrXRUib1JNxz4OiBBWl7ijjeVA/eTLQ97eAlrJO3
-         8Df88AU9SeyWCF+ufDJ9hXne0Ahwgg1njLoo0yg25cXkPYpsQyn8i6sY1jhOVX2Au0mO
-         A3jA==
+        bh=3BujPtYkPgE5qbv/kcmnLou5PuLayVpEmjsVIPVlZ6c=;
+        b=MI3PIN03g9mte9tt/J80yvDslXb3w5cZmZDi6gm4zlUVzFOR9lZnuarDbb8wWGmYJm
+         NKMmuKGIWz9Nz2eRwTDCAUTxmweTc9el3ER8sG3w1TZGBshbNfx0vMTldgm65Cdlll78
+         WZ0BOuepmKQy15b9XnY3Qdn8gQLvqy1E4Q2orei2X8a6KbkHoOcwwOtIxXnDlFnjGLph
+         WJlmU9GbCvAa/WFA3EY+gzuUHVqwVyMe8Qx3igEX0O4wX4MUu293I9QfiuaXqLadpIhX
+         KsQFZRC2lLEBWh/0JvCD2aW0+aa7shBCg2fiEqcRiFN3SmaW39m+JikfaII+EJxJHEzA
+         2dnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O9vqKvQJSosI2zy51g44Ony9xOnUOUnQzLKmbPYbXLs=;
-        b=oEdweKjHBgCiDTZuh6InganaKFrpR/pnQFZZc2OCyMFFpOpSgCU5oGfq4HB3MphC4C
-         fyVyaizhLYw3Am85DONAh6YIWEv4epnUy69B/wrrEBJW+f8cV99bb492hhDe2TRyI23L
-         EewEboFoS9rTFSgZ9I15Q6KvQJWKUAP3xCKyy5LrGCaStURKJaHi7zdfruhJFCtz/klU
-         GgkvpPMGFiRZQtnxCJzjcBES/nY0uiu62Ayy6gT/9i0WEDnBynPZNEc60OjwVejIo64L
-         FWc5fkQDH5gd4qHSs88QQ1z9BJepmhj35fUIe0gQLtwat1HW0/6wyj0lALndSgkMl542
-         na5g==
-X-Gm-Message-State: AGi0PuYzV03J43r0PhqZMCUmP00F/xPLixsO8ppxBRgaSZPGwp7N7+fI
-        aQT+6D+/Tp0leWz0d0YvHp5JKIf8W0Ka/g5q4R4=
-X-Google-Smtp-Source: APiQypLEk2gMPX17Qyadyvo1VqaylHm20tB8KtuyppUGRUqPXNDwTXsEmsPQN4DGCwkKaSyK8Y5IYXm3qjuuAz/y7dQ=
-X-Received: by 2002:a17:906:2962:: with SMTP id x2mr10033635ejd.233.1587059393912;
- Thu, 16 Apr 2020 10:49:53 -0700 (PDT)
+        bh=3BujPtYkPgE5qbv/kcmnLou5PuLayVpEmjsVIPVlZ6c=;
+        b=oLL1r9gIwybtF1nsOLKzkb08QzxpwjJq54Whs04wHb//67N3rUGeIRSkxigTOty0W7
+         9+ISw4OHMUUtZD+yPQBjh/sOgdKee0Mpdni5utdsD/CmSbM01plMZMRCflUYR3SKxUFU
+         WCNJkBWNylMWGOXPw/VJgV1dmfQO3e9LyWEx6kY2Pb84ZGcXSJ4HkBMhLsDrHvPV3S8u
+         rU+wEd1wh75JFwhbyN0yE/GxFWQx17ZpfkVlPCsOS8EBmxlWSHxXQZZkmhSwnOrQa5Ko
+         JHzL8BORE+S0RNXjK8/QWDz7rBz0j2iZJiJLhcZxdU3KhvKxHDL3wgX4yJrl6iO3oc12
+         fInA==
+X-Gm-Message-State: AGi0PuaBEjj1tzAeoy40lDOgM9m9b5RCEBY5d8+rI4OP2qL5lt7RoDaO
+        ASGANwH9xyQquQqXwe+31hT1MUXT2lTqousjfWE=
+X-Google-Smtp-Source: APiQypIkLNljPlUdohCkcdi0muKk9NtkNh8bkA9dgBVjbBN/j84bykCU96fEtuK2GZpJZGQwXkyrDlqZd1lfhqCqzrA=
+X-Received: by 2002:a17:906:2962:: with SMTP id x2mr10118232ejd.233.1587060779605;
+ Thu, 16 Apr 2020 11:12:59 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200414200017.226136-1-martin.blumenstingl@googlemail.com>
- <20200414200017.226136-2-martin.blumenstingl@googlemail.com> <1jblnrbu16.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jblnrbu16.fsf@starbuckisacylon.baylibre.com>
+ <20200414200017.226136-3-martin.blumenstingl@googlemail.com> <1ja73bbtqt.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1ja73bbtqt.fsf@starbuckisacylon.baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 16 Apr 2020 19:49:42 +0200
-Message-ID: <CAFBinCCV=RNqLpJfj6JUkoc_+NXMWNgsdUSdAfucLCJCFWddUQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] clk: meson: meson8b: Fix the first parent of vid_pll_in_sel
+Date:   Thu, 16 Apr 2020 20:12:48 +0200
+Message-ID: <CAFBinCAtSPTHfbr5KGNFFg3eo_d2p2q59fQfMXu+XkOb8WVrDQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] clk: meson: meson8b: Fix the polarity of the RESET_N lines
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -74,45 +74,25 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Jerome,
 
-On Thu, Apr 16, 2020 at 12:32 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Thu, Apr 16, 2020 at 12:38 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+[...]
+> >
+> >       if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
+> >               return -EINVAL;
+> >
+> >       reset = &meson8b_clk_reset_bits[id];
+> >
+> > +     if (assert == reset->active_low)
+> > +             value = 0;
+> > +     else
+> > +             value = BIT(reset->bit_idx);
 >
->
-> On Tue 14 Apr 2020 at 22:00, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->
-> > Use hdmi_pll_lvds_out as parent of the vid_pll_in_sel clock. It's not
-> > easy to see that the vendor kernel does the same, but it actually does.
-> > meson_clk_pll_ops in mainline still cannot fully recalculate all rates
-> > from the HDMI PLL registers because some register bits (at the time of
-> > writing it's unknown which bits are used for this) double the HDMI PLL
-> > output rate (compared to simply considering M, N and FRAC).
->
-> Have you considered adding a fixed_factor pre-multiplier, like in the
-> gxbb driver ?
->
-> Seems to be the same thing
-it seems like I haven't been clear enough here: the doubling only
-happens for some - but not all - PLL settings.
-
-Let me give you two examples with values from the 3.10 vendor kernel:
-1. the CVBS modes use a hdmi_pll_dco freq of 1296MHz
-it uses: M = 54, N = 1 and FRAC = 0
-with our existing clock tree this works out perfectly: 24MHz * 54 / 1 = 1296MHz
-
-2. HDMI 1080P mode uses hdmi_pll_dco freq of 2970MHz
-it uses M = 61, N = 1 and FRAC = 3584
-with our existing clock tree this doesn't end up right: (24MHz * 61 /
-1)  + (24MHz * 3584 / 4095) = 1485MHz
-
-I did play with the registers and our clock-measurer.
-it *seems* that the HHI_VID_PLL_CNTL3 and/or HHI_VID_PLL_CNTL4 are
-related to this doubling, but I don't know for sure
-my assumption is that there's either a fixed pre-multiplier like you
-suggested and then a configurable "divide by 2" somewhere or there's
-simply a configurable "multiply by 2" somewhere
-Either way, I want to fix that at some point but since I don't know
-the related bits I want to do that later on (in separate patches once
-I have figured it out)
+> if (assert ^ reset->active_low)
+>         value = BIT(reset->bit_idx);
+I can do that, but I prefer "!=" over "^" because the result is
+expected to be a bool (and because I'm not used to reading "^" for
+logical comparisons)
+will this work for you as well?
 
 
-Regards
 Martin
