@@ -2,168 +2,159 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95871C38A2C
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 12:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CACEC352BE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 15:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F154208E4
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 12:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A560214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 15:14:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ch6t49Tf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2636085AbgDPMoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 08:44:21 -0400
-Received: from asavdk4.altibox.net ([109.247.116.15]:33886 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2636077AbgDPMoR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 08:44:17 -0400
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id 924AA80487;
-        Thu, 16 Apr 2020 14:44:00 +0200 (CEST)
-Date:   Thu, 16 Apr 2020 14:43:59 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: Clean-up schema indentation formatting
-Message-ID: <20200416124359.GB5785@ravnborg.org>
-References: <20200416005549.9683-1-robh@kernel.org>
+        id S2405725AbgDPPOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 11:14:04 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11981 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395064AbgDPPMR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 11:12:17 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e9875950002>; Thu, 16 Apr 2020 08:11:17 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 16 Apr 2020 08:12:16 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 16 Apr 2020 08:12:16 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr
+ 2020 15:12:15 +0000
+Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr
+ 2020 15:12:14 +0000
+Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <frankc@nvidia.com>, <hverkuil@xs4all.nl>, <sakari.ailus@iki.fi>,
+        <helen.koike@collabora.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
+ <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
+ <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
+ <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
+ <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
+ <b1c78827-13ea-0c94-a575-97b5afc0ede1@nvidia.com>
+ <5954a7e1-910e-7f48-56d3-e671b56ead74@nvidia.com>
+ <d6a9e07c-474a-a076-8313-32f5f4ca8d64@nvidia.com>
+ <786949a9-8507-7723-f29b-b91a216bfd28@nvidia.com>
+ <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
+ <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
+ <31924f2b-8f85-d28d-4f5d-4e232bff94a5@nvidia.com>
+ <c95cd2b6-8036-8c0a-25f3-6ea3fe35334a@nvidia.com>
+Message-ID: <254a9091-8c90-61fa-6a5a-af5ad6e2133e@nvidia.com>
+Date:   Thu, 16 Apr 2020 08:12:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200416005549.9683-1-robh@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=XpTUx2N9 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10
-        a=xJWM5Xtqm7-vkBAKM1YA:9 a=bxeknKLoBf6BnO7k:21 a=StjP_oZuoJ7ca4eH:21
-        a=CjuIK1q_8ugA:10
+In-Reply-To: <c95cd2b6-8036-8c0a-25f3-6ea3fe35334a@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1587049877; bh=Fl0om3B9+m0xV2ZjbeTZ3/9u69RbONb/EFDDfM5VqKs=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ch6t49Tf658edmz0fglGVlzhPSSet19nHf/fKo2uG7qcur4fqhwj+ST3F0ICyEgVb
+         Kh75bt6Sl+b8xPOMBTcW8fg3wi7BWSvW64xhzma4Wp+NUn7dl2/mBM45K1zFKJgzHx
+         nwd8k6dZDLGPamZJAfUgEYcMFhbWEbdvAMtE5S8X4Er6jl22B5C85FRivpF6KX4H/N
+         ZoUtkxJjV0uEUJPaHJ0+eTvylQruWS17yBq8fn6eA5moVtoFVC1SuddtCJCoUwGYay
+         dmqurfw5ukAkzI6Aky5Yo906YUhgemz1Tvm80u1cvJYz+cgi+x/Qp2eHSYLjTAlmTX
+         hdVJbtGKnV1fQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob.
+tegra-video module unload->load and tegra-video driver unbind->bind are=20
+good.
 
-On Wed, Apr 15, 2020 at 07:55:48PM -0500, Rob Herring wrote:
-> Fix various inconsistencies in schema indentation. Most of these are
-> list indentation which should be 2 spaces more than the start of the
-> enclosing keyword. This doesn't matter functionally, but affects running
-> scripts which do transforms on the schema files.
+Will have v8 to switch to use devm_kzalloc for vi/csi and will revisit=20
+direct host1x client driver unbind->bind later.
 
-Are there any plans to improve the tooling so we get warnigns for this?
-Otherwise I am afraid we will see a lot of patches that gets this wrong.
+Thanks
 
-As a follow-up patch it would be good if example-schema.yaml
-could gain some comments about the correct indentions.
-
-Some comments in the following.
-
-> diff --git a/Documentation/devicetree/bindings/arm/altera.yaml b/Documentation/devicetree/bindings/arm/altera.yaml
-> index 49e0362ddc11..b388c5aa7984 100644
-> --- a/Documentation/devicetree/bindings/arm/altera.yaml
-> +++ b/Documentation/devicetree/bindings/arm/altera.yaml
-> @@ -13,8 +13,8 @@ properties:
->    compatible:
->      items:
->        - enum:
-> -        - altr,socfpga-cyclone5
-> -        - altr,socfpga-arria5
-> -        - altr,socfpga-arria10
-> +          - altr,socfpga-cyclone5
-> +          - altr,socfpga-arria5
-> +          - altr,socfpga-arria10
->        - const: altr,socfpga
-
-So here "- enum" do not need the extra indent.
-Is it because this is not a list?
-
->  ...
-> diff --git a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
-> index 66213bd95e6e..6cc74523ebfd 100644
-> --- a/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
-> +++ b/Documentation/devicetree/bindings/arm/amlogic/amlogic,meson-gx-ao-secure.yaml
-> @@ -25,7 +25,7 @@ select:
-> 
->  properties:
->    compatible:
-> -   items:
-> +    items:
->        - const: amlogic,meson-gx-ao-secure
->        - const: syscon
-
-This is something I had expected the tooling to notice.
-I had expected the two "- const" to be indented with 4 spaces, not two.
-So there is something I do not understand.
+Sowjanya
 
 
-> diff --git a/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml b/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
-> index 07f39d3eee7e..f7f024910e71 100644
-> --- a/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
-> +++ b/Documentation/devicetree/bindings/arm/nxp/lpc32xx.yaml
-> @@ -17,9 +17,8 @@ properties:
->            - nxp,lpc3230
->            - nxp,lpc3240
->        - items:
-> -        - enum:
-> -            - ea,ea3250
-> -            - phytec,phy3250
-> -        - const: nxp,lpc3250
-> -
-> +          - enum:
-> +              - ea,ea3250
-> +              - phytec,phy3250
-> +          - const: nxp,lpc3250
->  ...
-
-And here "- enum" receive extra indent.
-
-I trust you know what you are doing - but I do not get it.
-
-Some pointers or examples for the correct indention would be great.
-I cannot review this patch as long as I do not know the rules.
-
-My request to update example-schema.yaml was one way to teach me.
-(Some people will say that is difficult/impossible to teach me,
-but thats another story:-) ).
-
-	Sam
+On 4/15/20 4:28 PM, Sowjanya Komatineni wrote:
+> Sorry please ignore.
+>
+> We can't free vi during v4l2 device release as when no device nodes=20
+> are opened, vi free happens right away during host1x_video_remove.
+>
+> With this tegra-video driver unbind ->bind will not work as vi memory=20
+> allocated during vi_probe gets freed during v4l2 device release so=20
+> during bind init() callback execution will crash as vi got freed while=20
+> vi driver is still bound to device.
+>
+> Will wait for Hans/Thierry comments as I see dependency depending on=20
+> where unbind/bind happens.
+>
+>
+> On 4/15/20 4:08 PM, Sowjanya Komatineni wrote:
+>> With minor change of not using vi reference after=20
+>> host1x_client_unregister and freeing vi during v4l2 device release=20
+>> works.
+>>
+>> For csi, we can use devm_kzalloc for now untill we decide later if we=20
+>> want to expose async subdev nodes during sensor support.
+>>
+>> Will have this fix in v8 with a comment in vi_remove to make sure not=20
+>> to use vi reference after host1x_client_unregister.
+>>
+>> Will test more and will release v8 with above fix to allow direct=20
+>> host1x client driver unbind.
+>>
+>> Thanks
+>>
+>> sowjanya
+>>
+>>
+>> On 4/15/20 12:51 PM, Sowjanya Komatineni wrote:
+>>>
+>>> On 4/15/20 12:21 PM, Dmitry Osipenko wrote:
+>>>> External email: Use caution opening links or attachments
+>>>>
+>>>>
+>>>> 15.04.2020 21:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> ...
+>>>>>>>>>>> Have you tried to test this driver under KASAN? I suspect that
+>>>>>>>>>>> you just
+>>>>>>>>>>> masked the problem, instead of fixing it.
+>>>>> Tested with kmemleak scan and did not see any memory leaks
+>>>> You should get use-after-free and not memleak.
+>>> I don't see use-after-free bugs during the testing.
+>>>
+>>> But as mentioned when direct vi/csi client driver unbind happens=20
+>>> while video device node is kept opened, vi driver remove will free=20
+>>> vi structure memory but actual video device memory which is part of=20
+>>> channels remains but list head gets lost when vi structure is freed.
+>>>
+>>> So, when device node is released and executes release callback as=20
+>>> list head is lost it can't free allocated channels which is not good.
+>>>
+>>> This happens only with direct host1x client vi/csi driver unbind.
+>>>
+>>> Need to find better place to free host1x client driver data=20
+>>> structure to allow direct client driver unbind->bind.
+>>>
