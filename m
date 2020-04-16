@@ -2,159 +2,199 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CACEC352BE
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 15:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D234FC2BB55
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A560214D8
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 15:14:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ch6t49Tf"
+	by mail.kernel.org (Postfix) with ESMTP id B364F2223E
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587054191;
+	bh=dYe0L8knPjq4V+e3C0CynMr68uvk2h/61C1ujyYiF70=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=nD0h1DOnzQn7b2ikc8BxsdGg3j4TCJ28CEb+mzcJYoNmVG0Yv8zUtZN84YmPBX9ih
+	 tIGBMc4ASggOURSmHWsVzmgmSNwae04UNvi84bNoAJtIG9XZgUCOUQDPJYKVUhNrt3
+	 NoE3nM9xnri8xROdTAYy3VlDyX23kyqb8WfQnOEE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405725AbgDPPOE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 11:14:04 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:11981 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395064AbgDPPMR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 11:12:17 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e9875950002>; Thu, 16 Apr 2020 08:11:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Thu, 16 Apr 2020 08:12:16 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Thu, 16 Apr 2020 08:12:16 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr
- 2020 15:12:15 +0000
-Received: from [10.2.171.241] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 16 Apr
- 2020 15:12:14 +0000
-Subject: Re: [RFC PATCH v7 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <frankc@nvidia.com>, <hverkuil@xs4all.nl>, <sakari.ailus@iki.fi>,
-        <helen.koike@collabora.com>, <sboyd@kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1586919463-30542-1-git-send-email-skomatineni@nvidia.com>
- <1586919463-30542-7-git-send-email-skomatineni@nvidia.com>
- <4118112f-f865-5460-6319-d71271fd78d1@gmail.com>
- <a69a8b34-beea-3ad0-e08e-f7df8b9e7047@nvidia.com>
- <6afa951e-d904-f3c0-053f-82a02fb18979@nvidia.com>
- <b1c78827-13ea-0c94-a575-97b5afc0ede1@nvidia.com>
- <5954a7e1-910e-7f48-56d3-e671b56ead74@nvidia.com>
- <d6a9e07c-474a-a076-8313-32f5f4ca8d64@nvidia.com>
- <786949a9-8507-7723-f29b-b91a216bfd28@nvidia.com>
- <f831408b-bbf4-3047-20e3-5bebfa9fc1ad@gmail.com>
- <2ad9352f-cb65-1643-e540-a21f9c570266@nvidia.com>
- <31924f2b-8f85-d28d-4f5d-4e232bff94a5@nvidia.com>
- <c95cd2b6-8036-8c0a-25f3-6ea3fe35334a@nvidia.com>
-Message-ID: <254a9091-8c90-61fa-6a5a-af5ad6e2133e@nvidia.com>
-Date:   Thu, 16 Apr 2020 08:12:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2391207AbgDPQXJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 12:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50818 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729633AbgDPQXG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Apr 2020 12:23:06 -0400
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A03322250;
+        Thu, 16 Apr 2020 16:23:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587054185;
+        bh=dYe0L8knPjq4V+e3C0CynMr68uvk2h/61C1ujyYiF70=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=m92+j7PyJJqSdIZDHDYxGpMk1MSTdEN3OfxmyZ5uDz3gYONFBBkjqZfnO2V19s6L3
+         uWSFke5h6gqhJSuJUX/v4SaHaHZp1FcOjeDRIRraalXi9n50/SXBviV2xU4LGfnrd5
+         Ek5R1e51qljTWjy8yVonj+VDn0jnnD+E/Zrj+BWE=
+Received: by mail-ej1-f41.google.com with SMTP id s9so1713435eju.1;
+        Thu, 16 Apr 2020 09:23:05 -0700 (PDT)
+X-Gm-Message-State: AGi0Pub+htmOBUicEH+5GKsykiMe17NI6O3zbKw5fJhuoYhKKWaSnVMl
+        iiyvH0OSeZ6gsKPZPhfJWdV5hJ+GlP/+Qprujw==
+X-Google-Smtp-Source: APiQypJY17+s5/o0+wlz0famZC0WrI5UI7Klts8JPoOZRnB9zgY8QO2uzy/FBMWzeg9CvxriYGO6Q1j1IF4pKi5aPZw=
+X-Received: by 2002:a17:906:2ad4:: with SMTP id m20mr10975923eje.324.1587054183934;
+ Thu, 16 Apr 2020 09:23:03 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <c95cd2b6-8036-8c0a-25f3-6ea3fe35334a@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+References: <20200311165322.1594233-1-enric.balletbo@collabora.com>
+ <20200311165322.1594233-5-enric.balletbo@collabora.com> <02290a21-7392-a2cf-576c-215091ec05e8@suse.com>
+ <1585177534.26117.4.camel@mtksdaap41> <f3c2926a-ef92-b004-9786-5be1645af497@suse.com>
+ <1585234277.12089.3.camel@mtksdaap41> <73ef0b8e-2802-a047-2a56-936b63d264cb@suse.com>
+In-Reply-To: <73ef0b8e-2802-a047-2a56-936b63d264cb@suse.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Fri, 17 Apr 2020 00:22:52 +0800
+X-Gmail-Original-Message-ID: <CAAOTY__EV8PHau9CzSiA8up1QAmZxfK2QnaTid0WrNOsn2Xcag@mail.gmail.com>
+Message-ID: <CAAOTY__EV8PHau9CzSiA8up1QAmZxfK2QnaTid0WrNOsn2Xcag@mail.gmail.com>
+Subject: Re: [PATCH v12 4/5] soc / drm: mediatek: Move routing control to
+ mmsys device
+To:     Matthias Brugger <mbrugger@suse.com>
+Cc:     CK Hu <ck.hu@mediatek.com>, Mark Rutland <mark.rutland@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        David Airlie <airlied@linux.ie>,
+        Michael Turquette <mturquette@baylibre.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Richard Fontana <rfontana@redhat.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        ulrich.hecht+renesas@gmail.com,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        wens@csie.org, Allison Randal <allison@lohutok.net>,
+        mtk01761 <wendell.lin@mediatek.com>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Frank Wunderlich <frank-w@public-files.de>,
+        Seiya Wang <seiya.wang@mediatek.com>, sean.wang@mediatek.com,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rdunlap@infradead.org, linux-kernel <linux-kernel@vger.kernel.org>,
+        Daniel Vetter <daniel@ffwll.ch>, matthias.bgg@kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1587049877; bh=Fl0om3B9+m0xV2ZjbeTZ3/9u69RbONb/EFDDfM5VqKs=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ch6t49Tf658edmz0fglGVlzhPSSet19nHf/fKo2uG7qcur4fqhwj+ST3F0ICyEgVb
-         Kh75bt6Sl+b8xPOMBTcW8fg3wi7BWSvW64xhzma4Wp+NUn7dl2/mBM45K1zFKJgzHx
-         nwd8k6dZDLGPamZJAfUgEYcMFhbWEbdvAMtE5S8X4Er6jl22B5C85FRivpF6KX4H/N
-         ZoUtkxJjV0uEUJPaHJ0+eTvylQruWS17yBq8fn6eA5moVtoFVC1SuddtCJCoUwGYay
-         dmqurfw5ukAkzI6Aky5Yo906YUhgemz1Tvm80u1cvJYz+cgi+x/Qp2eHSYLjTAlmTX
-         hdVJbtGKnV1fQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-tegra-video module unload->load and tegra-video driver unbind->bind are=20
-good.
+Hi, Matthias:
 
-Will have v8 to switch to use devm_kzalloc for vi/csi and will revisit=20
-direct host1x client driver unbind->bind later.
-
-Thanks
-
-Sowjanya
-
-
-On 4/15/20 4:28 PM, Sowjanya Komatineni wrote:
-> Sorry please ignore.
->
-> We can't free vi during v4l2 device release as when no device nodes=20
-> are opened, vi free happens right away during host1x_video_remove.
->
-> With this tegra-video driver unbind ->bind will not work as vi memory=20
-> allocated during vi_probe gets freed during v4l2 device release so=20
-> during bind init() callback execution will crash as vi got freed while=20
-> vi driver is still bound to device.
->
-> Will wait for Hans/Thierry comments as I see dependency depending on=20
-> where unbind/bind happens.
+Matthias Brugger <mbrugger@suse.com> =E6=96=BC 2020=E5=B9=B43=E6=9C=8826=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:45=E5=AF=AB=E9=81=93=EF=BC=
+=9A
 >
 >
-> On 4/15/20 4:08 PM, Sowjanya Komatineni wrote:
->> With minor change of not using vi reference after=20
->> host1x_client_unregister and freeing vi during v4l2 device release=20
->> works.
->>
->> For csi, we can use devm_kzalloc for now untill we decide later if we=20
->> want to expose async subdev nodes during sensor support.
->>
->> Will have this fix in v8 with a comment in vi_remove to make sure not=20
->> to use vi reference after host1x_client_unregister.
->>
->> Will test more and will release v8 with above fix to allow direct=20
->> host1x client driver unbind.
->>
->> Thanks
->>
->> sowjanya
->>
->>
->> On 4/15/20 12:51 PM, Sowjanya Komatineni wrote:
->>>
->>> On 4/15/20 12:21 PM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 15.04.2020 21:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> ...
->>>>>>>>>>> Have you tried to test this driver under KASAN? I suspect that
->>>>>>>>>>> you just
->>>>>>>>>>> masked the problem, instead of fixing it.
->>>>> Tested with kmemleak scan and did not see any memory leaks
->>>> You should get use-after-free and not memleak.
->>> I don't see use-after-free bugs during the testing.
->>>
->>> But as mentioned when direct vi/csi client driver unbind happens=20
->>> while video device node is kept opened, vi driver remove will free=20
->>> vi structure memory but actual video device memory which is part of=20
->>> channels remains but list head gets lost when vi structure is freed.
->>>
->>> So, when device node is released and executes release callback as=20
->>> list head is lost it can't free allocated channels which is not good.
->>>
->>> This happens only with direct host1x client vi/csi driver unbind.
->>>
->>> Need to find better place to free host1x client driver data=20
->>> structure to allow direct client driver unbind->bind.
->>>
+>
+> On 26/03/2020 15:51, CK Hu wrote:
+> > Hi, Matthias:
+> >
+> > On Thu, 2020-03-26 at 12:54 +0100, Matthias Brugger wrote:
+> >> Hi CK,
+> >>
+> >> On 26/03/2020 00:05, CK Hu wrote:
+> >>> Hi, Matthias:
+> >>>
+> >>> On Wed, 2020-03-25 at 17:16 +0100, Matthias Brugger wrote:
+> >>>>
+> >>>> On 11/03/2020 17:53, Enric Balletbo i Serra wrote:
+> >>>>> Provide a mtk_mmsys_ddp_connect() and mtk_mmsys_disconnect() functi=
+ons to
+> >>>>> replace mtk_ddp_add_comp_to_path() and mtk_ddp_remove_comp_from_pat=
+h().
+> >>>>> Those functions will allow DRM driver and others to control the dat=
+a
+> >>>>> path routing.
+> >>>>>
+> >>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com=
+>
+> >>>>> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> >>>>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> >>>>> Acked-by: CK Hu <ck.hu@mediatek.com>
+> >>>>
+> >>>> This patch does not apply against v5.6-rc1.
+> >>>> Please rebase as this is a quite big patch and it won't be easy to d=
+o that by hand.
+> >>>
+> >>> I think this patch depends on [1] which has been acked by me and I ha=
+ve
+> >>> not picked it. The simple way is that you pick [1] first and then pic=
+k
+> >>> this series.
+> >>>
+> >>> [1]
+> >>> https://patchwork.kernel.org/patch/11406227/
+> >>>
+> >>
+> >> You would need to provide a stable tag for me that I can merge into my=
+ tree. You
+> >> can also try to merge my for-next [1] which has the newest version fro=
+m Enric.
+> >> If you see any merge conflict, then we have to do something about it :=
+)
+> >>
+> >> Regards,
+> >> Matthias
+> >>
+> >> [1]
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.git=
+/log/?h=3Dfor-next
+> >>
+> >
+> > You have applied this series, so I would not apply other patches which
+> > would conflict with this series. After this series land on main stream
+> > (wish it happen in this merge window), I would rebase other patch on
+> > main stream.
+> >
+>
+> I haven't (yet) send the pull request. If you want to bring in your patch=
+es in
+> v5.7 as well we can find a solution to that. Shall I provide you with a s=
+table
+> branch which you can merge? This way you can add all your patches in the =
+pull
+> request as well and we don't have to wait for v5.8 to get things into mai=
+nline.
+>
+> Let me know and I'll provide you with a stable branch.
+
+This series is in linux-next but does not in main stream. So would you
+please provide a stable branch so I could pull this series?
+
+Regards,
+Chun-Kuang.
+
+>
+> Regards,
+> Matthias
+>
+> > Regards,
+> > CK
+> >
+> >>> Regards,
+> >>> CK
+> >>>
+> >>>>
+> >>>> Regards,
+> >>>> Matthias
+> >>>>
+> >>>>> ---
+> >>>>>
