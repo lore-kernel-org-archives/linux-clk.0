@@ -2,109 +2,117 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3F38C352BE
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 234C9C2BB55
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4054221E8
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:42:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7626206E9
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d+ge5ueO"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ryq1RWfi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633637AbgDPLmt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:42:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39310 "EHLO
+        id S2506605AbgDPLq1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:46:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2505947AbgDPLmk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 07:42:40 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C39B2C061A0F
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2020 04:42:39 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id q19so7412025ljp.9
-        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2020 04:42:39 -0700 (PDT)
+        with ESMTP id S2505035AbgDPKcZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 06:32:25 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E821CC061A0C
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2020 03:32:23 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id y24so4247886wma.4
+        for <linux-clk@vger.kernel.org>; Thu, 16 Apr 2020 03:32:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PMemjoCt4EMKF+iaj5mfbjvOgSWo2uOQlvsUZEFak2w=;
-        b=d+ge5ueOEBxL85/Rug3S7EEuX77yMsrtiKnGUaRtQ7w1l8OIu5l5bvFy7ZuS4+iIDc
-         vEuvxgrjdYRMjzfB1i5140XxLorLvTk+XhU8Lw4ySKdwNEyiBqJ1e11vOAimeEDdeFsq
-         d5G10/xEhTp5FHT0pJH7mGsdf7DK30sWc0QPDKj4xkmzQvUvk97GJouZCpzE97tjVwAk
-         5vuoYW/mt34Hi9rtm+iEnu0/oKgBGroShdTRV5HUW+iduqhk9LagtACmFRFCGZT7azR9
-         htL5Wotiu2zhlKEoa4o/iQd5efO8JDhDuyekp+xZ2jonjMgCc03NFrnveMG4VUo2epW5
-         6Gag==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=9L5k3Ln1Qt7W9TpURaqzpjRy4n7lxiu2UCwSIpKQOFY=;
+        b=Ryq1RWfipGTXPSDerCgXOnwVBcBk+SES+dQi/983JsKTieI0hUpxVt0XEnAt5BZtc+
+         3j0OPScJqjuBIE/e8RGOCz2qxvAOsR5mXaTJGLhb/2duJk/L3WjLQ/RFj565RNvubZUj
+         hrSaYRFzGzIrj5sKgXIknAqEaWAnJEKXWJhEzJV60auxxyKw0K6wI8LTl2AvhZqxAIzs
+         uUb+EokUxmU9Z5axhY1kITo29sfTFoPdQv2b6GKfiFiAtbS7xobLEghD53lOPZN2TpEu
+         nZmpRVx6DspQ/ffW9RGXXgnbX7+3JVYh3AZBYzIMNW5yjBNXwQzkQJY9vONcYn4HDTT4
+         WFog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PMemjoCt4EMKF+iaj5mfbjvOgSWo2uOQlvsUZEFak2w=;
-        b=sbQY5iNhpzrCqQz6fq2Ut01FNmzUYejviRb2/8BVzxBugAN+WiL+qF8FqGz7RKezbp
-         nuhQzcc4uNSD7kDVkjK8XnFSkN0GkSRGtfp9sKreMhXhAciMFGWVsR9PhabsHfCiftCD
-         J8MHM4AnS7ze6LiHvfLnmEJEXGBFUopMy4XePBYZZ8PLrwclyscQ9AYyg4CQc4iOpFYu
-         LQy1sGKk31CFBMzC8N++3PkcNxbfw4K5phlnC8ePTdVWic7Z7Hbhpy6S2QhGwral0ey7
-         dKNv1ldaY/jzLAv/XRvIITghqlRA+6cKpZ5AN+S4Wi2bUMypUmRUdKAXaexVk1disvEv
-         jWaw==
-X-Gm-Message-State: AGi0PuYGIBiYxj6hr4MXdBLqbzDz0NnmF1rIx3IydToyvB8QpI44rzmY
-        l5aPI9NL9d/Cfpsv1hfdAYKGfr0YlWfsHqrsvCACKw==
-X-Google-Smtp-Source: APiQypIiZuLzQrvYkiNeyORy157fLPptCAM8hPVcZFSfyIeA/0Aw/t8tq6u9+QYki+nEJa9ACas6eAvqHD2XaCatgUw=
-X-Received: by 2002:a05:651c:32e:: with SMTP id b14mr1319254ljp.277.1587037358214;
- Thu, 16 Apr 2020 04:42:38 -0700 (PDT)
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=9L5k3Ln1Qt7W9TpURaqzpjRy4n7lxiu2UCwSIpKQOFY=;
+        b=Ynp2nhdysDKqfmS9sCj0OFYZB8Px92Y1Pn8vQryEZBMbLZjTVW4LLmEFgX4xmVIa12
+         nbjufCA6+pr+XIbuCqKtgEr9dluwFrahMIsPbO+lRTGO0XT+u7gqCvluFHwCXLGBTGYh
+         z0GYgCKDDW8LcyTpMrgU6+wySZ3UAa3PQkQkinZEz0+n2C0Wc56WkWuOOKSrYCTdSxao
+         Ubx7vnPk+lMvsjAKtpQZDs9Qme3O5z7NhHlPnbqTL4xxXRzBWSJTEw04LJqu07uNzJN9
+         eiv6D6Jrb//rMsCjqBB+28Pa2k4yOYzPyU5QDcgl6UVNHmo6v83Epolk+WXj6Zsg+LQQ
+         daGA==
+X-Gm-Message-State: AGi0PuYUbzmPnVp+FJJPh8EAfPZVxgVNCfhRZEVkzq9euvl9CguIVJya
+        HeLfOH1Jwek1xXZmvi7Ao7yBLA==
+X-Google-Smtp-Source: APiQypJclY5jrpfvL8yZKMalQnkMXP+jCZNrFkQ3BCEqz3+ltwYSFd7LZVCdQLzaOSzpaZBpIvP+Cw==
+X-Received: by 2002:a7b:c181:: with SMTP id y1mr4442183wmi.83.1587033142678;
+        Thu, 16 Apr 2020 03:32:22 -0700 (PDT)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id j135sm3021115wmj.46.2020.04.16.03.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Apr 2020 03:32:22 -0700 (PDT)
+References: <20200414200017.226136-1-martin.blumenstingl@googlemail.com> <20200414200017.226136-2-martin.blumenstingl@googlemail.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     narmstrong@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] clk: meson: meson8b: Fix the first parent of vid_pll_in_sel
+In-reply-to: <20200414200017.226136-2-martin.blumenstingl@googlemail.com>
+Date:   Thu, 16 Apr 2020 12:32:21 +0200
+Message-ID: <1jblnrbu16.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-2-pierre-louis.bossart@linux.intel.com> <20200414170934.GA34613@smile.fi.intel.com>
-In-Reply-To: <20200414170934.GA34613@smile.fi.intel.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 16 Apr 2020 13:42:27 +0200
-Message-ID: <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
-Subject: Re: [RFC PATCH 01/16] ASoC: pcm512x: expose 6 GPIOs
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Walle <michael@walle.cc>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>,
-        Mark Brown <broonie@kernel.org>,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 14, 2020 at 7:09 PM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Thu, Apr 09, 2020 at 02:58:26PM -0500, Pierre-Louis Bossart wrote:
-> > The GPIOs are used e.g. on HifiBerry DAC+ HATs to control the LED
-> > (GPIO3) and the choice of the 44.1 (GPIO6) or 48 (GPIO3) kHz
-> > oscillator (when present).
-> >
-> > Enable basic gpio_chip to get/set values and get/set
-> > directions. Tested with GPIO_LIB from sys/class/gpio, the LED turns
-> > on/off as desired.
->
->
-> One question, can this use existing GPIO infrastructure, like bgpio_init()?
-> Ah, I see, that one operates over MMIO, while we would need something based on
-> regmap API.
->
-> Bartosz, do we have plans to have bgpio_regmap_init() or alike?
 
-Michael Walle is working on that:
-https://lore.kernel.org/linux-gpio/20200402203656.27047-11-michael@walle.cc/
+On Tue 14 Apr 2020 at 22:00, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-I think we should try to merge it sooner rather than later.
-I can provide an ib-* branch for ASoC whenever we agreed
-on a basic generic driver.
+> Use hdmi_pll_lvds_out as parent of the vid_pll_in_sel clock. It's not
+> easy to see that the vendor kernel does the same, but it actually does.
+> meson_clk_pll_ops in mainline still cannot fully recalculate all rates
+> from the HDMI PLL registers because some register bits (at the time of
+> writing it's unknown which bits are used for this) double the HDMI PLL
+> output rate (compared to simply considering M, N and FRAC).
 
-Yours,
-Linus Walleij
+Have you considered adding a fixed_factor pre-multiplier, like in the
+gxbb driver ?
+
+Seems to be the same thing
+
+>
+> Update the vid_pll_in_sel parent so our clock calculation works for
+> simple clock settings like the CVBS output (where no rate doubling is
+> going on). The PLL ops need to be fixed later on for more complex clock
+> settings (all HDMI rates).
+>
+> Fixes: 6cb57c678bb70 ("clk: meson: meson8b: add the read-only video clock trees")
+> Suggested-by: Neil Armstrong <narmstrong@baylibre.com>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 7c55c695cbae..90d284ffc780 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -1077,7 +1077,7 @@ static struct clk_regmap meson8b_vid_pll_in_sel = {
+>  		 * Meson8m2: vid2_pll
+>  		 */
+>  		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_hdmi_pll_dco.hw
+> +			&meson8b_hdmi_pll_lvds_out.hw
+>  		},
+>  		.num_parents = 1,
+>  		.flags = CLK_SET_RATE_PARENT,
+
