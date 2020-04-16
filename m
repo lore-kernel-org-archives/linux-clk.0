@@ -2,72 +2,96 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EEAEC2BB55
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:41:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09CDC352BE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 542FC21D7E
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:41:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86BB22222D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 16:51:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727824AbgDPQlt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 12:41:49 -0400
-Received: from elvis.franken.de ([193.175.24.41]:42212 "EHLO elvis.franken.de"
+        id S1729169AbgDPQv1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 12:51:27 -0400
+Received: from mga04.intel.com ([192.55.52.120]:50923 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731646AbgDPQlf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Apr 2020 12:41:35 -0400
-Received: from uucp (helo=alpha)
-        by elvis.franken.de with local-bsmtp (Exim 3.36 #1)
-        id 1jP7Zy-0001kl-04; Thu, 16 Apr 2020 18:41:30 +0200
-Received: by alpha.franken.de (Postfix, from userid 1000)
-        id 10BFCC0144; Thu, 16 Apr 2020 18:40:16 +0200 (CEST)
-Date:   Thu, 16 Apr 2020 18:40:16 +0200
-From:   Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     sboyd@kernel.org, jiaxun.yang@flygoat.com,
-        linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, chenhc@lemote.com,
-        Paul Burton <paulburton@kernel.org>, mturquette@baylibre.com
-Subject: Re: [PATCH] mips: loongsoon2ef: remove private clk api
-Message-ID: <20200416164016.GE24743@alpha.franken.de>
-References: <20200409064416.83340-1-sboyd@kernel.org>
- <20200409090228.2241176-1-arnd@arndb.de>
+        id S1728285AbgDPQvZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Apr 2020 12:51:25 -0400
+IronPort-SDR: xhHJx65bGA7K8ejB6lFFQrI4tT4y201pn8T5dwpA6qwEj/k2Zgt4Oy8fvvYJqHVNb9m/wtElF2
+ ZhuH2/9Z95lQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Apr 2020 09:51:24 -0700
+IronPort-SDR: BFJewqmLyHxlwPPIzbmpaDcWq2/78eGWBs6jbDpOcKLssIPLdS5UDrylMxYYckHIXKF9clIUA+
+ 2JGaJL3drs4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,391,1580803200"; 
+   d="scan'208";a="278060214"
+Received: from ernestom-mobl.amr.corp.intel.com (HELO [10.251.128.102]) ([10.251.128.102])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Apr 2020 09:51:23 -0700
+Subject: Re: [RFC PATCH 01/16] ASoC: pcm512x: expose 6 GPIOs
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Walle <michael@walle.cc>
+Cc:     "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, Takashi Iwai <tiwai@suse.de>,
+        Mark Brown <broonie@kernel.org>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-2-pierre-louis.bossart@linux.intel.com>
+ <20200414170934.GA34613@smile.fi.intel.com>
+ <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <2cd8d540-8bd0-4a42-4d11-7dea0fb03c22@linux.intel.com>
+Date:   Thu, 16 Apr 2020 09:25:21 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200409090228.2241176-1-arnd@arndb.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CACRpkdZRnSUhmVPKjJ6dWnSfhnvrAKUrBY6tWLkxPgT28CzbHw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 09, 2020 at 11:02:28AM +0200, Arnd Bergmann wrote:
-> As platforms are moving to COMMON_CLK in general, loongson2ef
-> stuck out as something that has a private implementation but
-> does not actually use it except for setting the frequency of
-> the CPU itself from the loongson2_cpufreq driver.
+
+
+On 4/16/20 6:42 AM, Linus Walleij wrote:
+> On Tue, Apr 14, 2020 at 7:09 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+>> On Thu, Apr 09, 2020 at 02:58:26PM -0500, Pierre-Louis Bossart wrote:
+>>> The GPIOs are used e.g. on HifiBerry DAC+ HATs to control the LED
+>>> (GPIO3) and the choice of the 44.1 (GPIO6) or 48 (GPIO3) kHz
+>>> oscillator (when present).
+>>>
+>>> Enable basic gpio_chip to get/set values and get/set
+>>> directions. Tested with GPIO_LIB from sys/class/gpio, the LED turns
+>>> on/off as desired.
+>>
+>>
+>> One question, can this use existing GPIO infrastructure, like bgpio_init()?
+>> Ah, I see, that one operates over MMIO, while we would need something based on
+>> regmap API.
+>>
+>> Bartosz, do we have plans to have bgpio_regmap_init() or alike?
 > 
-> Change that driver to call the register setting function directly
-> and remove the rest of the stub implementation.
+> Michael Walle is working on that:
+> https://lore.kernel.org/linux-gpio/20200402203656.27047-11-michael@walle.cc/
 > 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/mips/include/asm/clock.h                 | 49 ----------
->  .../include/asm/mach-loongson2ef/loongson.h   |  1 +
->  arch/mips/loongson2ef/Kconfig                 |  1 -
->  arch/mips/loongson2ef/lemote-2f/clock.c       | 98 +------------------
->  arch/mips/loongson64/smp.c                    |  1 -
->  drivers/cpufreq/loongson2_cpufreq.c           | 22 +----
->  6 files changed, 8 insertions(+), 164 deletions(-)
->  delete mode 100644 arch/mips/include/asm/clock.h
+> I think we should try to merge it sooner rather than later.
+> I can provide an ib-* branch for ASoC whenever we agreed
+> on a basic generic driver.
 
-applied to mips-next.
-
-Thomas.
-
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+Thanks for the pointer, I will give it a try.
