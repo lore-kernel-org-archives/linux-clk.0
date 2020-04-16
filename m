@@ -2,110 +2,107 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15922C2BB55
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB5B0C352BE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EEA6721973
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5CD621D7F
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 11:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2506256AbgDPLO2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Apr 2020 07:14:28 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:35707 "EHLO
+        id S2633295AbgDPLap (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 07:30:45 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:37281 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2506182AbgDPLNz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 07:13:55 -0400
-Received: from mail-qv1-f49.google.com ([209.85.219.49]) by
- mrelayeu.kundenserver.de (mreue009 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MuDPh-1j6o4C3Hq9-00uaJK; Thu, 16 Apr 2020 13:12:01 +0200
-Received: by mail-qv1-f49.google.com with SMTP id y19so1575640qvv.4;
-        Thu, 16 Apr 2020 04:12:01 -0700 (PDT)
-X-Gm-Message-State: AGi0PubRT2SdYTkhIEjJSZmqyTc0qSMC/rqcVrbySVmMnMRFiBtUWHra
-        4u3zl+sq1SfKxlSNwIzblvmJJAtajZ24vv1trIg=
-X-Google-Smtp-Source: APiQypKUBOB6XQd2d+M75WuZ0DqJUTG/HnuwXa8550Av2Y6bO9ZONTvLBnhPRU7U+ROebImWwMBgxhHTnpmmhVTBibs=
-X-Received: by 2002:a0c:a602:: with SMTP id s2mr9756889qva.222.1587035520523;
- Thu, 16 Apr 2020 04:12:00 -0700 (PDT)
+        with ESMTP id S2505899AbgDPLJI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Apr 2020 07:09:08 -0400
+Received: from mail-qk1-f174.google.com ([209.85.222.174]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N4A1h-1jGgZn1t8T-0103T1; Thu, 16 Apr 2020 13:07:14 +0200
+Received: by mail-qk1-f174.google.com with SMTP id y3so20748368qky.8;
+        Thu, 16 Apr 2020 04:07:14 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZ0HtBnhGYMaYQOLJpCyPgjWJpQF/FPXuoNeABZ+xQ43q/4+0e/
+        iwuzvD7bQRjpZ9z2IuUym61FN3Sx5xYhi/YAW/c=
+X-Google-Smtp-Source: APiQypK4+pWIjTlcQKHWs83hDUiq9HrROe6p4sKwqSeztDfxIRma7taMpjWbk4MOI+E9EtZHMoCq/s3VDhbpWUliCGE=
+X-Received: by 2002:a37:851:: with SMTP id 78mr31161821qki.352.1587035233142;
+ Thu, 16 Apr 2020 04:07:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <1586937773-5836-1-git-send-email-abel.vesa@nxp.com> <1586937773-5836-3-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1586937773-5836-3-git-send-email-abel.vesa@nxp.com>
+References: <1583226206-19758-1-git-send-email-abel.vesa@nxp.com> <CAK8P3a3FLRotVmMnBAyBKFMbXeEx760S-Cvqr19VPMi81PKJgw@mail.gmail.com>
+In-Reply-To: <CAK8P3a3FLRotVmMnBAyBKFMbXeEx760S-Cvqr19VPMi81PKJgw@mail.gmail.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 16 Apr 2020 13:11:44 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1Zd8Pctn9ra9dH7bTUSSMoTOwmDNOc6JwmKQA4fgdpWw@mail.gmail.com>
-Message-ID: <CAK8P3a1Zd8Pctn9ra9dH7bTUSSMoTOwmDNOc6JwmKQA4fgdpWw@mail.gmail.com>
-Subject: Re: [PATCH v3 02/13] Documentation: mfd: Add DT bindings for i.MX Mix
+Date:   Thu, 16 Apr 2020 13:06:57 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a26JS4FVt5wiaRQahF+OJZp9Ot84o8GSth9Rk2skkEMSQ@mail.gmail.com>
+Message-ID: <CAK8P3a26JS4FVt5wiaRQahF+OJZp9Ot84o8GSth9Rk2skkEMSQ@mail.gmail.com>
+Subject: Re: [RFC 00/11] Add generic MFD i.MX mix and audiomix support
 To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, Shawn Guo <shawnguo@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
         Anson Huang <anson.huang@nxp.com>,
         Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
         NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:+sq+YMxtlC9OU/qKkZhu9BGJJ5gWuzZ4Ytnc0jfFhmWzcXtl8+M
- Q95Yh2SeJzbVsDYPxBAg+r4yfopOTdjV65qorKsHYDqfkavkuHc23AZjKcoTXN1ULekS/Rh
- gKZ/WDwKJkGbVkbIcexDMUqmPwWYE64i/VuZ/s7HV8H7v3g7stGbn9SBDKw46MmNCPp/Eej
- s6MydABCpcfdbZ9dV0LGA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:n3Rsk45AdaQ=:EaVzcBvIGXitKFCtnWj6Xf
- 0pLpWUsZtJIIoFMn78shvZX8VWdWAVeUIg9J4demjPjeKUODaW/CpIKBFB70iMVbf8InxR3I+
- +FfJkG4RiH6W+rMrpz8ZfphUc/VPGuHlkE+K1P3Hswct0XFAuToVa8Zfx2hq9801TjHbl7jyu
- H70lU8TmpXNKlnmK4MtwzYXBuOqRXhtaLHZHjO2qSne2tm8rs6TsTO5VrBk3tYNff3gC3fWw9
- lhGI5iKrWPxxPnz3ZTy2KtePbzhA+vb+YLX/X8QlIRAZKndk6RnSZ7Nx5apHFdNQ8EzBPg6h9
- rUNcNMioMDUXp7wrSQL6JIrQpsMOXllNXag16Ep6QxJ5HD3ox0iNARfM4b9Xu6c7YVmY1Xc0t
- Bme/cjR2hw5ovsObpAm2TcKOwBv9h3K0Pn/Ac6G46kM7y/Lf+Lb7CK+Nsj0poXx6JzLYsI0Tv
- ZEi6jCjvvsTkzsh+dTY8yhOtvRFx9uAGqWxd75ccy1vN0LJmUinyNwrPiSBmf3JZxZjdX+Pzt
- 4ZfxfHlKSpPJ8bJTsQOyrF6+3UjpZcXXnkPIeM8Z/0USfHQhJAeUgM2M1Rl0bWy2odwwgaalj
- 2sZLyanKooMUe76ztk7cLOM+m3AoxCgJge4M4mni6/Dn0F8Dy2B00u49wDa6WZmqbibd+vDTY
- GF0D6NLH6olyyTnBvZtuhaXNBnalSxkkuf83oIgKNbJmPbHW5XZgRq7Y/6Tb6WBq1sGIUwBBp
- 9he2vzD455wDPZDzqMlu34kghREwKYKjeBfz9dg3NQEpj+9s7DpQ0/QC2UjwU0BPaPrs0wMdB
- 0bxyJ3JKkH8L7c98Xejqk2YZoKDIWk7ILaB4M4d5+335vjKSSY=
+X-Provags-ID: V03:K1:XDrsoNce09dQF4v/GnqEBmnqKLXmtj6TBeZwkb0Q1p/Uh3G4zU2
+ 0k3IovXzNymJfDpYP+paFT5/eWoSFAeiBFdDU4Rni9XRQeX3O1+NLIdTwj2Pjh0XkF+TDll
+ 1IlwD9gwjHnD+odPwajh6GbLWG891MKN9Rx98amEyN7OMvBE52hiFWSTxA3GU6fNMtSEwOp
+ pw5aRLFhsd4iHpP797jPg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UrU3V50W3HM=:osuXuGqVgUdq7A200W2C78
+ yvOogCC4ycYp8D/QQ51stxlPHzIbJ90W4XRdEyRUCdnqexIEE7FDxlI4GsR5V8NIIitmHuVbL
+ K6P3HN+e2h2+LYjnjEvvPaKan3jh7ofMgum0GykZxVHbcS1LIXWD9fYNdA+FwceONMm+gJGpu
+ fpjzfLg+HRuiW3GBZN06IGzRx9ssOTlYLy1WkdG5dYFkkQc7hd11NvNJDi5Xa17VaSgQ+RCFK
+ DvpPp3QRxUcEocqxNER+D4HaduDW2UN65RjNDYp7GYKEZaMsznupKpvzsTI7jYxAyXebpF2Q8
+ Pk2fHP6MnqQCoXIYCHD7uByrmvG51hnkkpoAG6YAsXIhCXCbg3lqm0CAJSRTEpFoYabab786w
+ vBwEL528pv5zE8UaQXjFreu75DB2kGzxfZgQTEmnkOwZiXvlBrP+6LZugTdybEOIyYF4q/+ZI
+ Ux26wrxjcQIy8pfywxkfCBy34rMgdt0C1hA+duNUz7PLTIQqEZ8AgL+5XDpG3Tv70Hlu3194z
+ nov/DedOT2DQGVkMbkQe7QR5lQvisEw53LAyeayjfEVhm71WcS22yb91gPrxLYYQW09nbteD4
+ XjjM3jPLRYthG9et4jy72VQ6FJkbt3hejBbu29Qk5f3uLT6DiWXPOxyL6yKvGW6hZwh8WWz4V
+ TS0WRoeoagrV1zVFzyX0H/DS2yCp33jRNyOKAUa6I7v6v0f3oneYxFpTs3RWIZVvbmMZvlfx4
+ WGxFBveJi9eps4+XhNmzT9ZHR7wEcaVAtlBYXhRHruKZF0dCKnije2DUlAPRAWvUisoNF6uhD
+ 0idC/tapiEphpZHxGmea2IpZEx9KYy8jkC0R5Oq+ItAj6U3zzQ=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 10:05 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+On Thu, Apr 16, 2020 at 1:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> Documnent the i.MX Mix with its devicetree properties.
+> On Tue, Mar 3, 2020 at 10:04 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+> >
+> > The i.MX8MP has some new IPs called mixes. They are formed usually by some
+> > GPRs that can be split into different functionalities. The first example
+> > here is the audiomix which has dedicated registers that can be registered
+> > as a clock controller and some other registers that can be registered as
+> > a reset controller, plus some dedicated ones that will be registered as
+> > syscon and used by each dedicated audio IP.
+> >
+> > More mixes to be following the same structure are to come, like hdmimix,
+> > dispmix and mediamix. They will all be populated and registered by the MFD
+> > imx-mix generic driver.
 >
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  .../devicetree/bindings/mfd/fsl,imx-mix.yaml       | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/fsl,imx-mix.yaml
+> Can you enumerate what functionality is in each one?
 >
-> diff --git a/Documentation/devicetree/bindings/mfd/fsl,imx-mix.yaml b/Documentation/devicetree/bindings/mfd/fsl,imx-mix.yaml
-> new file mode 100644
-> index 00000000..8b1870e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/fsl,imx-mix.yaml
-> @@ -0,0 +1,34 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/fsl,imx-mix.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale i.MX mix
-> +
-> +description: |
-> +  i.MX mix is a conglomerate of different GPRs that are
-> +  usually dedicated to one subsystem. These GPRs can be
-> +  further split between different types of drivers, once
-> +  the MFD populates all the devices based on its devicetree
-> +  subnodes.
+> I'm not convinced that using an MFD driver is the best solution here,
+> compared to e.g. a clk driver with a few extra bits in it, if most of the
+> code for the child drivers ends up being for the clk subsystem.
+>
+> Lee suggested maybe having a generic (platform independent) driver
+> for it, which may help here, as it would let others share the trivial
+> mfd portion.
+>
+> Another option that we are using on several platforms today is to
+> have a single syscon node and have other drivers that reference
+> that one using a phandle to get at the regmap.
 
-This does not describe the hardware but the implementation in Linux.
-Please rephrase it to not independent of the software that interprets
-the DT nodes.
+Sorry I replied to the wrong thread, I meant to reply to the v3 version.
 
        Arnd
