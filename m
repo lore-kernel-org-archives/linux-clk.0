@@ -2,102 +2,149 @@ Return-Path: <SRS0=ULxT=6A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F5E1C3815B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 00:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFBCC352BE
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 04:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 556D321556
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 00:58:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1586998732;
-	bh=NjTvNrxjlHFScy4ebnKzSnM4jSIs1SlF2paT+ZaYBeI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=WM0XMnS/AVVXfjeOrf1k1VdfTSrkP3sNyauKNVUhdAB4KWuoWbQ0nDb+/0pyPORp3
-	 fDFyeswrdaLP5piBBt6Fd331lERty72hXDa4kCKdv3Dth0uoa8Og3vZ0j9G/HR+4Lx
-	 zSAFSs7lf/iWlsOyBzynTOk2QNvToB439V7qpJ/s=
+	by mail.kernel.org (Postfix) with ESMTP id 10C042137B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Apr 2020 04:34:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389178AbgDPA6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Apr 2020 20:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42272 "EHLO mail.kernel.org"
+        id S2392030AbgDPEed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Apr 2020 00:34:33 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:55016 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728100AbgDPA6r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Apr 2020 20:58:47 -0400
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE0CF208E0;
-        Thu, 16 Apr 2020 00:58:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1586998726;
-        bh=NjTvNrxjlHFScy4ebnKzSnM4jSIs1SlF2paT+ZaYBeI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tdrhhcUfkIKCM0s18mbeSn5SP9h0vWFC+0x6fkNf029GOJlZMaz2gbXoDORxN6UGT
-         Xk64ZR1+eHjz/HTPl+uZpf4Fq6rSk56xrWIJTvM4SVpKHaWp4yR/YfgpHAKb1prJeW
-         RTN8+ZqrEHL1ytzFowd4LpDpB9ps6wXa3Y8MCfHE=
-Received: by mail-qt1-f182.google.com with SMTP id l13so12390124qtr.7;
-        Wed, 15 Apr 2020 17:58:46 -0700 (PDT)
-X-Gm-Message-State: AGi0PuaxHTfiRVMXvt5bYs/eDBZ/PxT0rYXJss5oysmspdR980/EGdwh
-        CVfAN8LxqTnTPgiY8pmzyqldcX5s6d+4FEguOg==
-X-Google-Smtp-Source: APiQypIb8Qh+U7+DzcXL5pISte9uAUnyZWYerl12Hfw9dl6hFAs7Ug63drp+s8XNKQa3pH3auFFQ0DRFz+hVTsEascg=
-X-Received: by 2002:ac8:39e5:: with SMTP id v92mr24067936qte.224.1586998725925;
- Wed, 15 Apr 2020 17:58:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200409175238.3586487-1-thierry.reding@gmail.com>
- <20200409175238.3586487-3-thierry.reding@gmail.com> <20200415162449.GA1842@bogus>
- <20200415233532.GA211822@ulmo>
-In-Reply-To: <20200415233532.GA211822@ulmo>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 15 Apr 2020 19:58:33 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqK6Ku3woyc+9kxzjN_fih_ygWWnt3EFdVRi6UBd7=2iFw@mail.gmail.com>
-Message-ID: <CAL_JsqK6Ku3woyc+9kxzjN_fih_ygWWnt3EFdVRi6UBd7=2iFw@mail.gmail.com>
-Subject: Re: [PATCH v6 02/14] of: reserved-memory: Support lookup of regions
- by name
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S2391971AbgDPEec (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Apr 2020 00:34:32 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1BDB4200B5D;
+        Thu, 16 Apr 2020 06:34:30 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DC17B200B64;
+        Thu, 16 Apr 2020 06:34:23 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 41B3E40307;
+        Thu, 16 Apr 2020 12:34:16 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 5/5] dt-bindings: clock: Convert i.MX6UL clock to json-schema
+Date:   Thu, 16 Apr 2020 12:26:11 +0800
+Message-Id: <1587011171-24532-5-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1587011171-24532-1-git-send-email-Anson.Huang@nxp.com>
+References: <1587011171-24532-1-git-send-email-Anson.Huang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 15, 2020 at 6:35 PM Thierry Reding <thierry.reding@gmail.com> wrote:
->
-> On Wed, Apr 15, 2020 at 11:24:49AM -0500, Rob Herring wrote:
-> > On Thu,  9 Apr 2020 19:52:26 +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding@nvidia.com>
-> > >
-> > > Add support for looking up memory regions by name. This looks up the
-> > > given name in the newly introduced memory-region-names property and
-> > > returns the memory region at the corresponding index in the memory-
-> > > region(s) property.
-> > >
-> > > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > > ---
-> > >  drivers/of/of_reserved_mem.c    | 19 +++++++++++++++++++
-> > >  include/linux/of_reserved_mem.h | 11 +++++++++++
-> > >  2 files changed, 30 insertions(+)
-> > >
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
->
-> Hi Rob,
->
-> thanks for the review. Do you want me to apply this and patch 3/14 to a
-> stable branch and send to you as a pull request? That way I could use
-> that same branch to resolve the dependency in the Tegra tree for the
-> memory controller driver patches.
+Convert the i.MX6UL clock binding to DT schema format using json-schema.
 
-I think it is fine for you to just take the patches.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ .../devicetree/bindings/clock/imx6ul-clock.txt     | 13 -----
+ .../devicetree/bindings/clock/imx6ul-clock.yaml    | 63 ++++++++++++++++++++++
+ 2 files changed, 63 insertions(+), 13 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx6ul-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
 
-Rob
+diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.txt b/Documentation/devicetree/bindings/clock/imx6ul-clock.txt
+deleted file mode 100644
+index 571d503..0000000
+--- a/Documentation/devicetree/bindings/clock/imx6ul-clock.txt
++++ /dev/null
+@@ -1,13 +0,0 @@
+-* Clock bindings for Freescale i.MX6 UltraLite
+-
+-Required properties:
+-- compatible: Should be "fsl,imx6ul-ccm"
+-- reg: Address and length of the register set
+-- #clock-cells: Should be <1>
+-- clocks: list of clock specifiers, must contain an entry for each required
+-  entry in clock-names
+-- clock-names: should include entries "ckil", "osc", "ipp_di0" and "ipp_di1"
+-
+-The clock consumer should specify the desired clock by having the clock
+-ID in its "clocks" phandle cell.  See include/dt-bindings/clock/imx6ul-clock.h
+-for the full list of i.MX6 UltraLite clock IDs.
+diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+new file mode 100644
+index 0000000..0a18d5a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+@@ -0,0 +1,63 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/imx6ul-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Clock bindings for Freescale i.MX6 UltraLite
++
++maintainers:
++  - Anson Huang <Anson.Huang@nxp.com>
++
++properties:
++  compatible:
++    const: fsl,imx6ul-ccm
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    minItems: 1
++    maxItems: 2
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    items:
++      - description: 32k osc
++      - description: 24m osc
++      - description: ipp_di0 clock input
++      - description: ipp_di1 clock input
++
++  clock-names:
++    items:
++      - const: ckil
++      - const: osc
++      - const: ipp_di0
++      - const: ipp_di1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++examples:
++  # Clock Control Module node:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    clks: clock-controller@20c4000 {
++        compatible = "fsl,imx6ul-ccm";
++        reg = <0x020c4000 0x4000>;
++        interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 88 IRQ_TYPE_LEVEL_HIGH>;
++        #clock-cells = <1>;
++        clocks = <&ckil>, <&osc>, <&ipp_di0>, <&ipp_di1>;
++        clock-names = "ckil", "osc", "ipp_di0", "ipp_di1";
++    };
++
++...
+-- 
+2.7.4
+
