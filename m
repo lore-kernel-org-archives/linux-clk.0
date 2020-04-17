@@ -2,152 +2,85 @@ Return-Path: <SRS0=c3RB=6B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D49CDC2BB1D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 07:01:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552F4C2BB55
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 07:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4A3F221F4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 07:01:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i+z1H6qc"
+	by mail.kernel.org (Postfix) with ESMTP id 3DA2C2083E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 07:09:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbgDQHBf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Apr 2020 03:01:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50172 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbgDQHBN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Apr 2020 03:01:13 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D75DFC061A0F
-        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2020 00:01:13 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id ng8so700096pjb.2
-        for <linux-clk@vger.kernel.org>; Fri, 17 Apr 2020 00:01:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=e5yt6ZDVqr+7QSHc88Bnrv499SbQQkOFM9/QQvODlrQ=;
-        b=i+z1H6qc1RQjl8dF/ZQWkrj1LOmONZiANWqZQj2D1MApZKXOwpspT+eAloxxqIWDgb
-         2lxvRDCuJUmPo5f5TTlJ8mQBdorfC+3Sb+nANtWH/ShuFGYtSopy6PHdifjCPMZVjFw0
-         AlpaM40+KsDeja6zYbzc2ZmmTZHvG3PuGI2VjJzpwekWr1/xHwTCLj2eRw2dd++Kcv8e
-         Xzje+GzPKMh1Dk+AEFwcOENQ6LqmvYTKIHbkteGRf9J1pkfjaBWgL+y1r0LghOq1kuNM
-         xnXo6BRHouV9DGEgGcOsahVlGL65Hf3d4c/zFgk9eZUDuLcAnx4GX+ynjLehVLKhyejD
-         ijew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=e5yt6ZDVqr+7QSHc88Bnrv499SbQQkOFM9/QQvODlrQ=;
-        b=r5FbIhzCLQkN2fTA+kPu+YGRMhCodQ7kgFk51oQNwp4DGhXP7lzbq3EXnop+wSO6QQ
-         GMiHI4ypbbpmjvngRO/yqQjRWmE08fAzSGzwGiEMW8u8ApmP3IGxp/+Rl4jArHKtO8Wq
-         EYTOMVFKh5m1I+1h3eAA401Pt0nqpSTgLd+Gpw/dQjxewn9CLfZGkOgmscUZgHqgWC7f
-         AkeRfzPW5l2Q82pAoY/QgZZK4BtPQ2u+g/S3fbpNUoQ9kgMI2S559gjw/DIAsj+k+n67
-         lO/+4z8SabAu4bfVK56ENDYJQeE3H0wLDKTVDK1KxNj2E+CryVlselPpknPv+GHBISb6
-         X5Ow==
-X-Gm-Message-State: AGi0PuZjn1LgTsqFbgqop1cZzZHG/i0oD3pxD+dTurCPcJ2RVHsTqo8C
-        hCIOarZRQIZXDC93vRSdYv0Bhg==
-X-Google-Smtp-Source: APiQypKAPouxJUj8ZEHXCCyGsr9aFHrJPhULvsgTpcyEK+wS31hk0TH+VbwkpYL+s3wPwKVaYlchtA==
-X-Received: by 2002:a17:90a:68cb:: with SMTP id q11mr2759270pjj.15.1587106873385;
-        Fri, 17 Apr 2020 00:01:13 -0700 (PDT)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c125sm18561609pfa.142.2020.04.17.00.01.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2020 00:01:12 -0700 (PDT)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] arm64: dts: qcom: db820c: Add vdd_gfx and tie it into mmcc
-Date:   Fri, 17 Apr 2020 00:00:43 -0700
-Message-Id: <20200417070044.1376212-4-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200417070044.1376212-1-bjorn.andersson@linaro.org>
-References: <20200417070044.1376212-1-bjorn.andersson@linaro.org>
+        id S1728655AbgDQHJH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Apr 2020 03:09:07 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2391 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728375AbgDQHJH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 17 Apr 2020 03:09:07 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id E77479351F233395DA81;
+        Fri, 17 Apr 2020 15:09:03 +0800 (CST)
+Received: from huawei.com (10.175.124.28) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.487.0; Fri, 17 Apr 2020
+ 15:08:57 +0800
+From:   Jason Yan <yanaijie@huawei.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <tony@atomide.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Jason Yan <yanaijie@huawei.com>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH] clk: ti: dra7: remove two unused symbols
+Date:   Fri, 17 Apr 2020 15:35:23 +0800
+Message-ID: <20200417073523.42520-1-yanaijie@huawei.com>
+X-Mailer: git-send-email 2.21.1
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rajendra Nayak <rnayak@codeaurora.org>
+Fix the following gcc warning:
 
-Add the SPMI regulator node in the PMI8994, use it to give us VDD_GX
-at a fixed max nominal voltage for the db820c and specify this as supply
-for the MMSS GPU_GX GDSC.
+drivers/clk/ti/clk-7xx.c:320:43: warning: ‘dra7_gpu_sys_clk_data’
+defined but not used [-Wunused-const-variable=]
+ static const struct omap_clkctrl_div_data dra7_gpu_sys_clk_data
+__initconst = {
+                                           ^~~~~~~~~~~~~~~~~~~~~
+drivers/clk/ti/clk-7xx.c:315:27: warning: ‘dra7_gpu_sys_clk_parents’
+defined but not used [-Wunused-const-variable=]
+ static const char * const dra7_gpu_sys_clk_parents[] __initconst = {
+                           ^~~~~~~~~~~~~~~~~~~~~~~~
 
-With the introduction of CPR support the range for VDD_GX should be
-expanded.
-
-Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-[bjorn: Split between pmi8994 and db820c, changed voltage, rewrote commit message]
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: Jason Yan <yanaijie@huawei.com>
 ---
+ drivers/clk/ti/clk-7xx.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-Changes since v1:
-- Polished commit message
-- vdd_gfx -> vdd-gfx
-
- arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi | 14 ++++++++++++++
- arch/arm64/boot/dts/qcom/pmi8994.dtsi        |  6 ++++++
- 2 files changed, 20 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-index 4692b7ad16b7..fc23b381c5e4 100644
---- a/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-+++ b/arch/arm64/boot/dts/qcom/apq8096-db820c.dtsi
-@@ -251,6 +251,10 @@ &mdss {
- 	status = "okay";
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+index 14b645093107..941a67dae22c 100644
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -312,15 +312,6 @@ static const char * const dra7_gpu_hyd_mux_parents[] __initconst = {
+ 	NULL,
  };
  
-+&mmcc {
-+	vdd-gfx-supply = <&vdd_gfx>;
-+};
-+
- &msmgpio {
- 	gpio-line-names =
- 		"[SPI0_DOUT]", /* GPIO_0, BLSP1_SPI_MOSI, LSEC pin 14 */
-@@ -688,6 +692,16 @@ pinconf {
- 	};
- };
- 
-+
-+&pmi8994_spmi_regulators {
-+	vdd_gfx: s2@1700 {
-+		reg = <0x1700 0x100>;
-+		regulator-name = "VDD_GFX";
-+		regulator-min-microvolt = <980000>;
-+		regulator-max-microvolt = <980000>;
-+	};
-+};
-+
- &rpm_requests {
- 	pm8994-regulators {
- 		compatible = "qcom,rpm-pm8994-regulators";
-diff --git a/arch/arm64/boot/dts/qcom/pmi8994.dtsi b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-index 21e05215abe4..e5ed28ab9b2d 100644
---- a/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pmi8994.dtsi
-@@ -26,5 +26,11 @@ pmic@3 {
- 		reg = <0x3 SPMI_USID>;
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+
-+		pmi8994_spmi_regulators: regulators {
-+			compatible = "qcom,pmi8994-regulators";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+		};
- 	};
- };
+-static const char * const dra7_gpu_sys_clk_parents[] __initconst = {
+-	"sys_clkin",
+-	NULL,
+-};
+-
+-static const struct omap_clkctrl_div_data dra7_gpu_sys_clk_data __initconst = {
+-	.max_div = 2,
+-};
+-
+ static const struct omap_clkctrl_bit_data dra7_gpu_core_bit_data[] __initconst = {
+ 	{ 24, TI_CLK_MUX, dra7_gpu_core_mux_parents, NULL, },
+ 	{ 26, TI_CLK_MUX, dra7_gpu_hyd_mux_parents, NULL, },
 -- 
-2.24.0
+2.21.1
 
