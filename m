@@ -2,104 +2,130 @@ Return-Path: <SRS0=c3RB=6B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA7BC2D0EF
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 16:16:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2046CC2D0EF
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 16:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD2D2223C
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 16:16:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587140219;
-	bh=XtsgZHijijuzZe7pbCMmqmPNOdju+fj2LvLO6lzXAzI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jFjlsLrVbJt/3iIZPfid4Wmlufu+qEHI0oNT3AcMU3xCuK0iDP0zjGPwe5LhswOgU
-	 vYTGlT+myt2r1vWYwqJyB0qR2o+aSOMG1or7eNNm2KSMBC0Dzu7LuDmg+iU0UrCSDr
-	 GBq4ta/5joiRM2TpvJdCikbV8JQ4iVNiPxGD1yJg=
+	by mail.kernel.org (Postfix) with ESMTP id 0377A22209
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Apr 2020 16:55:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729682AbgDQQQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Apr 2020 12:16:58 -0400
-Received: from mail-oo1-f53.google.com ([209.85.161.53]:38867 "EHLO
-        mail-oo1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729581AbgDQQQ6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Apr 2020 12:16:58 -0400
-Received: by mail-oo1-f53.google.com with SMTP id i9so571277ool.5;
-        Fri, 17 Apr 2020 09:16:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=n18HlrFzEzddDGYInumpnanTTIeL8cwMsOF4IHAX20k=;
-        b=ZsBc4Idx2Rn2GiJ2ruLjzQOxjscl9dPRKpIiRuDeYmCM77ZZpJctK1vNJNIUMWfclF
-         bIYeBUXzUJC0K5JLG4q+JJCVhik58ZTRnWkMURCfW3O+/Dsvdmm+QGllyoimZv1cm1ng
-         kNIBlAaYFEQhh9Axd7SW7Er6J5UsM747Wfidb+GAoi1/IOAvEznr30b7NqFWvO0VOkuL
-         YE4D4Ikz471a+jmpP4o5CFoFs+S6Q0e04lDJv9k13wE/YEKykKdL0QvCssmEiwf/C/mb
-         3ot4a6dZpsovWShNfphV9rn5LIB+L9glmrL5F4B5nIUBpZlggoGYrB+eRXouHU1nnqVZ
-         u2dg==
-X-Gm-Message-State: AGi0PuYYxoiPjQKUGJ9Y4tAqKkR32FF/0bYHZJStVjb+9NX++eIWkQGe
-        w2GffWe9+duHdfMJr+utcw==
-X-Google-Smtp-Source: APiQypJbw3Petn9wdktbWmJ2xla/a7PdjaDZGC8jQledwof5uDQTF8vX3jEaNAjBtZO247IkQqC/rA==
-X-Received: by 2002:a4a:5482:: with SMTP id t124mr3083325ooa.92.1587140216553;
-        Fri, 17 Apr 2020 09:16:56 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i23sm8048489otp.74.2020.04.17.09.16.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Apr 2020 09:16:55 -0700 (PDT)
-Received: (nullmailer pid 32046 invoked by uid 1000);
-        Fri, 17 Apr 2020 16:16:53 -0000
-Date:   Fri, 17 Apr 2020 11:16:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dinh Nguyen <dinguyen@kernel.org>
-Cc:     linux-clk@vger.kernel.org, dinguyen@kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Subject: Re: [PATCHv7 4/5] dt-bindings: documentation: add clock bindings
- information for Agilex
-Message-ID: <20200417161653.GA31608@bogus>
-References: <20200415164642.29382-1-dinguyen@kernel.org>
- <20200415164642.29382-5-dinguyen@kernel.org>
+        id S1727925AbgDQQzc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Apr 2020 12:55:32 -0400
+Received: from muru.com ([72.249.23.125]:49980 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727840AbgDQQzc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 17 Apr 2020 12:55:32 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 3D9B48047;
+        Fri, 17 Apr 2020 16:56:17 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Adam Ford <aford173@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Keerthy <j-keerthy@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/14] Update omaps to use drivers/clocksource timers
+Date:   Fri, 17 Apr 2020 09:55:05 -0700
+Message-Id: <20200417165519.4979-1-tony@atomide.com>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200415164642.29382-5-dinguyen@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Apr 2020 11:46:41 -0500, Dinh Nguyen wrote:
-> Document the Agilex clock bindings, and add the clock header file. The
-> clock header is an enumeration of all the different clocks on the Agilex
-> platform.
-> 
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
-> v7: Fix license to be "(GPL-2.0-only OR BSD-2-Clause)"
-> v6: fix build error by adding descriptions for clocks and reg in
->     properties
-> v5: update license to GPL-2.0-only
->     Add additionalProperties
->     Add clock input for clkmgr
-> v4: really fix build error(comment formatting was wrong)
-> v3: address comments from Stephen Boyd
->     fix build error(tab removed in line 37)
->     renamed to intel,agilex.yaml
-> v2: convert original document to YAML
-> ---
->  .../bindings/clock/intel,agilex.yaml          | 46 ++++++++++++
->  include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
->  2 files changed, 116 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
->  create mode 100644 include/dt-bindings/clock/agilex-clock.h
-> 
+Hi all,
 
-Please add Acked-by/Reviewed-by tags when posting new versions. However,
-there's no need to repost patches *only* to add the tags. The upstream
-maintainer will do that for acks received on the version they apply.
+Here's a series of changes to udpate omaps to use drivers/clocksource
+timers for the 32k counter and dmtimer and to remove the old legacy
+platform code. Please review and test.
 
-If a tag was not added on purpose, please state why and what changed.
+Daniel, if the the first two patches look OK after review, maybe you
+can again set up an immutable branch for the first two patches against
+v5.7-rc1 that I can merge in?
+
+Regards,
+
+Tony
+
+
+Tony Lindgren (14):
+  clocksource/drivers/timer-ti-32k: Add support for initializing
+    directly
+  clocksource/drivers/timer-ti-dm: Add clockevent and clocksource
+    support
+  clk: ti: dm816: enable sysclk6_ck on init
+  bus: ti-sysc: Ignore timer12 on secure omap3
+  ARM: OMAP2+: Add omap_init_time_of()
+  ARM: dts: Configure system timers for am335x
+  ARM: dts: Configure system timers for am437x
+  ARM: dts: Configure system timers for omap4
+  ARM: dts: Configure system timers for omap5 and dra7
+  ARM: dts: Configure system timers for omap3
+  ARM: dts: Configure system timers for ti81xx
+  ARM: dts: Configure system timers for omap2
+  ARM: OMAP2+: Drop old timer code for dmtimer and 32k counter
+  bus: ti-sysc: Timers no longer need legacy quirk handling
+
+ .../devicetree/bindings/timer/ti,timer.txt    |   2 +
+ arch/arm/boot/dts/am33xx-l4.dtsi              |   2 -
+ arch/arm/boot/dts/am33xx.dtsi                 |  12 +
+ arch/arm/boot/dts/am3517.dtsi                 |  16 +-
+ arch/arm/boot/dts/am4372.dtsi                 |  12 +
+ arch/arm/boot/dts/am437x-l4.dtsi              |   3 -
+ arch/arm/boot/dts/dm814x.dtsi                 |  66 +-
+ arch/arm/boot/dts/dm816x.dtsi                 |  70 ++-
+ arch/arm/boot/dts/dra7-l4.dtsi                |   5 -
+ arch/arm/boot/dts/dra7.dtsi                   |   6 +
+ arch/arm/boot/dts/omap2.dtsi                  |  38 +-
+ arch/arm/boot/dts/omap2420.dtsi               |  65 +-
+ arch/arm/boot/dts/omap2430.dtsi               |  65 +-
+ arch/arm/boot/dts/omap3-beagle.dts            |  16 +
+ arch/arm/boot/dts/omap3-devkit8000.dts        |  16 +
+ arch/arm/boot/dts/omap3.dtsi                  | 130 +++-
+ arch/arm/boot/dts/omap4-l4.dtsi               |   2 -
+ arch/arm/boot/dts/omap4.dtsi                  |   6 +
+ arch/arm/boot/dts/omap5-l4.dtsi               |   2 -
+ arch/arm/boot/dts/omap5.dtsi                  |   6 +
+ arch/arm/mach-omap2/Makefile                  |   4 +-
+ arch/arm/mach-omap2/board-generic.c           |  32 +-
+ arch/arm/mach-omap2/common.h                  |   7 +
+ arch/arm/mach-omap2/omap_hwmod_2420_data.c    |  20 -
+ arch/arm/mach-omap2/omap_hwmod_2430_data.c    |  19 -
+ .../omap_hwmod_2xxx_interconnect_data.c       |   8 -
+ .../mach-omap2/omap_hwmod_2xxx_ipblock_data.c |  47 --
+ .../omap_hwmod_33xx_43xx_common_data.h        |   2 -
+ .../omap_hwmod_33xx_43xx_interconnect_data.c  |   8 -
+ .../omap_hwmod_33xx_43xx_ipblock_data.c       |  62 --
+ arch/arm/mach-omap2/omap_hwmod_33xx_data.c    |  10 -
+ arch/arm/mach-omap2/omap_hwmod_3xxx_data.c    | 146 +----
+ arch/arm/mach-omap2/omap_hwmod_43xx_data.c    |  45 --
+ arch/arm/mach-omap2/omap_hwmod_44xx_data.c    |  90 ---
+ arch/arm/mach-omap2/omap_hwmod_54xx_data.c    |  89 ---
+ arch/arm/mach-omap2/omap_hwmod_7xx_data.c     | 176 ------
+ arch/arm/mach-omap2/omap_hwmod_81xx_data.c    |  74 ---
+ arch/arm/mach-omap2/omap_hwmod_common_data.h  |   3 -
+ arch/arm/mach-omap2/timer.c                   | 568 +-----------------
+ drivers/bus/ti-sysc.c                         |  25 +-
+ drivers/clk/ti/clk-816x.c                     |   1 +
+ drivers/clocksource/Makefile                  |   1 +
+ drivers/clocksource/timer-ti-32k.c            |  48 +-
+ drivers/clocksource/timer-ti-dm-systimer.c    | 468 +++++++++++++++
+ include/clocksource/timer-ti-dm.h             |   1 +
+ 45 files changed, 1016 insertions(+), 1478 deletions(-)
+ create mode 100644 drivers/clocksource/timer-ti-dm-systimer.c
+
+-- 
+2.26.1
