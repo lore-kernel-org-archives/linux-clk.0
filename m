@@ -1,509 +1,468 @@
-Return-Path: <SRS0=L57n=6C=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=qh3w=6D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7169FC38A2F
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Apr 2020 16:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43131C38A2F
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Apr 2020 01:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45EEE2223D
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Apr 2020 16:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587225824;
-	bh=1De5fPfA8NlpQyTocewa07h9s/10o7DRNH2qDVFvqA8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=tnKC12++FEKxHoPb+pEsoyrkAH4PM6czYMeHeQXu1PqUWm2a19hBMJI+nODQ+i9Ni
-	 Nta/DFpDCdd8FJYsyp2iRIrp8Hvz2YFUEH1pal7ZqRNZkm+S7OShSy2SwIUlh7AKba
-	 k4buq7qE2rnMPS29zbTl6JxWkyS+QpnFRobh6O8A=
+	by mail.kernel.org (Postfix) with ESMTP id 128CB21924
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Apr 2020 01:05:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V2gmisqM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbgDRQDo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Apr 2020 12:03:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37362 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726471AbgDRQDn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 18 Apr 2020 12:03:43 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 265E021D93;
-        Sat, 18 Apr 2020 16:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587225820;
-        bh=1De5fPfA8NlpQyTocewa07h9s/10o7DRNH2qDVFvqA8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=hCjq0MAZUj3JKbCWIjnXWIz9oU3vpGOMvk/gvn814KBjM6utN9lAFJL+B2m6MmgOb
-         k0FKGfq6P773PBXkOofNwvIhcReneAEe9NcOSIdyxXFv35zQTjjLRM7pO4ATd9ITv9
-         kAdnoppSvnbrv7agegq0zfHzkamIw7ZjHlwMbaT8=
-Date:   Sat, 18 Apr 2020 17:03:30 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>, Vinod Koul <vkoul@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-i2c@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH 2/2] dt-bindings: Remove cases of 'allOf' containing a
- '$ref'
-Message-ID: <20200418170330.65bff80c@archlinux>
-In-Reply-To: <20200416005549.9683-2-robh@kernel.org>
-References: <20200416005549.9683-1-robh@kernel.org>
-        <20200416005549.9683-2-robh@kernel.org>
-X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725891AbgDSBFf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Apr 2020 21:05:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43786 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbgDSBFf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Apr 2020 21:05:35 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4260C061A0F
+        for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2020 18:05:34 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id v8so7846840wma.0
+        for <linux-clk@vger.kernel.org>; Sat, 18 Apr 2020 18:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=CXnMqd+CNGROBXCA5AWtCVrEYdM2DTzDorCVGG6gADA=;
+        b=V2gmisqMzcAGsfKFzdhjMcMyZbNber00Xe3WiWIXDk6uegQLhJj9ejT3x9wW8CoU4L
+         1Y7k1PT5NTxZugYn8KCOu4EcWKtV74m+bekoltQrFtbpTgR0bX+XugHiahIS2pjzgptt
+         7BL3Deu2IoJCMbjGDGvlAqEpKX/hkGKqPwrFIMrwLqDwjEtVDPHY3dqz85q64gBYC7kU
+         BXEfkzhU0AEcbPcUrHcdqIQtF/z+/wobpfOJE4aCyAmBZTs7BnCnuQWHpC9W5+0PU+mE
+         hHuRXfUJwB6sKLEnXJ+xovRlbOLZoZQtRKMJMnQuFHXcKgOsnXdu3ygu6SgEtmpIGQhP
+         y8lA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=CXnMqd+CNGROBXCA5AWtCVrEYdM2DTzDorCVGG6gADA=;
+        b=QhdbUTKPQMSAxu+99xOg8QvvknkO0wWoG9TduMmMsrKWfaY9lMS+15Q6py9LVpaU+1
+         A0nRDicBQrdrTHqP3x+MSZwTrdSmQ+pTFbjkeyV631YHrU1UkaZsEXilL85I2i3GJ2fw
+         vefL7bqAW5YiUSH1rMTvMtX4hFcrCakzXsjxFYvyLh6gkUMuaFnx4KE/d6TwdIQRV1Ay
+         0SMzl+JW/8PsNYLnOOHlOvDiNor5l7o9xRgQvzSU83iPnimBwVsdQcPCVHLdKc6xWMLx
+         egg0VDbZJpKbduQW4woropuJDRzFY6GTMTRWYjCMi7mbLZTbHA1VKTcqKSsvvDOVQdKF
+         Z8OQ==
+X-Gm-Message-State: AGi0PuaOEPnl4CLwcYK+U57zGaYShpc90VaqA/qVjWie5dVLB3tJhB5g
+        Iu1mdEsDJfHPsc1K/HMUeA5gOA==
+X-Google-Smtp-Source: APiQypJsaPxbAFkr8IeYDm3boA5MrN8FxjsEHOKLZffNzcoX+ygtxcm89mkHVvvnsDilPWRty/DTFg==
+X-Received: by 2002:a1c:3c08:: with SMTP id j8mr10359719wma.30.1587258333325;
+        Sat, 18 Apr 2020 18:05:33 -0700 (PDT)
+Received: from localhost.localdomain ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id h2sm14064880wmf.34.2020.04.18.18.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 18 Apr 2020 18:05:32 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] clk: qcom: Add DT bindings for msm8939 gcc
+Date:   Sun, 19 Apr 2020 02:05:57 +0100
+Message-Id: <20200419010559.438463-2-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200419010559.438463-1-bryan.odonoghue@linaro.org>
+References: <20200419010559.438463-1-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 15 Apr 2020 19:55:49 -0500
-Rob Herring <robh@kernel.org> wrote:
+Add compatible strings and the include files for the msm8939 gcc.
 
-> json-schema versions draft7 and earlier have a weird behavior in that
-> any keywords combined with a '$ref' are ignored (silently). The correct
-> form was to put a '$ref' under an 'allOf'. This behavior is now changed
-> in the 2019-09 json-schema spec and '$ref' can be mixed with other
-> keywords. The json-schema library doesn't yet support this, but the
-> tooling now does a fixup for this and either way works.
->=20
-> This has been a constant source of review comments, so let's change this
-> treewide so everyone copies the simpler syntax.
->=20
-> Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |   3 +
+ include/dt-bindings/clock/qcom,gcc-msm8939.h  | 215 ++++++++++++++++++
+ include/dt-bindings/reset/qcom,gcc-msm8939.h  | 119 ++++++++++
+ 3 files changed, 337 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8939.h
+ create mode 100644 include/dt-bindings/reset/qcom,gcc-msm8939.h
 
-A few unrelated white space changes in enums in the IIO chunks.
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index e533bb0cfd2b..ee0467fb5e31 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -22,6 +22,8 @@ description: |
+   - dt-bindings/reset/qcom,gcc-ipq6018.h
+   - dt-bindings/clock/qcom,gcc-ipq806x.h (qcom,gcc-ipq8064)
+   - dt-bindings/reset/qcom,gcc-ipq806x.h (qcom,gcc-ipq8064)
++  - dt-bindings/clock/qcom,gcc-msm8939.h
++  - dt-bindings/reset/qcom,gcc-msm8939.h
+   - dt-bindings/clock/qcom,gcc-msm8660.h
+   - dt-bindings/reset/qcom,gcc-msm8660.h
+   - dt-bindings/clock/qcom,gcc-msm8974.h
+@@ -41,6 +43,7 @@ properties:
+       - qcom,gcc-ipq8064
+       - qcom,gcc-msm8660
+       - qcom,gcc-msm8916
++      - qcom,gcc-msm8939
+       - qcom,gcc-msm8960
+       - qcom,gcc-msm8974
+       - qcom,gcc-msm8974pro
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8939.h b/include/dt-bindings/clock/qcom,gcc-msm8939.h
+new file mode 100644
+index 000000000000..f9ac936590f3
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gcc-msm8939.h
+@@ -0,0 +1,215 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2020 Linaro Limited
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_CLK_MSM_GCC_8939_H
++#define _DT_BINDINGS_CLK_MSM_GCC_8939_H
++
++#define GPLL0					0
++#define GPLL0_VOTE				1
++#define BIMC_PLL				2
++#define BIMC_PLL_VOTE				3
++#define GPLL1					4
++#define GPLL1_VOTE				5
++#define GPLL2					6
++#define GPLL2_VOTE				7
++#define PCNOC_BFDCD_CLK_SRC			8
++#define SYSTEM_NOC_BFDCD_CLK_SRC		9
++#define CAMSS_AHB_CLK_SRC			10
++#define APSS_AHB_CLK_SRC			11
++#define CSI0_CLK_SRC				12
++#define CSI1_CLK_SRC				13
++#define GFX3D_CLK_SRC				14
++#define VFE0_CLK_SRC				15
++#define BLSP1_QUP1_I2C_APPS_CLK_SRC		16
++#define BLSP1_QUP1_SPI_APPS_CLK_SRC		17
++#define BLSP1_QUP2_I2C_APPS_CLK_SRC		18
++#define BLSP1_QUP2_SPI_APPS_CLK_SRC		19
++#define BLSP1_QUP3_I2C_APPS_CLK_SRC		20
++#define BLSP1_QUP3_SPI_APPS_CLK_SRC		21
++#define BLSP1_QUP4_I2C_APPS_CLK_SRC		22
++#define BLSP1_QUP4_SPI_APPS_CLK_SRC		23
++#define BLSP1_QUP5_I2C_APPS_CLK_SRC		24
++#define BLSP1_QUP5_SPI_APPS_CLK_SRC		25
++#define BLSP1_QUP6_I2C_APPS_CLK_SRC		26
++#define BLSP1_QUP6_SPI_APPS_CLK_SRC		27
++#define BLSP1_UART1_APPS_CLK_SRC		28
++#define BLSP1_UART2_APPS_CLK_SRC		29
++#define CCI_CLK_SRC				30
++#define CAMSS_GP0_CLK_SRC			31
++#define CAMSS_GP1_CLK_SRC			32
++#define JPEG0_CLK_SRC				33
++#define MCLK0_CLK_SRC				34
++#define MCLK1_CLK_SRC				35
++#define CSI0PHYTIMER_CLK_SRC			36
++#define CSI1PHYTIMER_CLK_SRC			37
++#define CPP_CLK_SRC				38
++#define CRYPTO_CLK_SRC				39
++#define GP1_CLK_SRC				40
++#define GP2_CLK_SRC				41
++#define GP3_CLK_SRC				42
++#define BYTE0_CLK_SRC				43
++#define ESC0_CLK_SRC				44
++#define MDP_CLK_SRC				45
++#define PCLK0_CLK_SRC				46
++#define VSYNC_CLK_SRC				47
++#define PDM2_CLK_SRC				48
++#define SDCC1_APPS_CLK_SRC			49
++#define SDCC2_APPS_CLK_SRC			50
++#define APSS_TCU_CLK_SRC			51
++#define USB_HS_SYSTEM_CLK_SRC			52
++#define VCODEC0_CLK_SRC				53
++#define GCC_BLSP1_AHB_CLK			54
++#define GCC_BLSP1_SLEEP_CLK			55
++#define GCC_BLSP1_QUP1_I2C_APPS_CLK		56
++#define GCC_BLSP1_QUP1_SPI_APPS_CLK		57
++#define GCC_BLSP1_QUP2_I2C_APPS_CLK		58
++#define GCC_BLSP1_QUP2_SPI_APPS_CLK		59
++#define GCC_BLSP1_QUP3_I2C_APPS_CLK		60
++#define GCC_BLSP1_QUP3_SPI_APPS_CLK		61
++#define GCC_BLSP1_QUP4_I2C_APPS_CLK		62
++#define GCC_BLSP1_QUP4_SPI_APPS_CLK		63
++#define GCC_BLSP1_QUP5_I2C_APPS_CLK		64
++#define GCC_BLSP1_QUP5_SPI_APPS_CLK		65
++#define GCC_BLSP1_QUP6_I2C_APPS_CLK		66
++#define GCC_BLSP1_QUP6_SPI_APPS_CLK		67
++#define GCC_BLSP1_UART1_APPS_CLK		68
++#define GCC_BLSP1_UART2_APPS_CLK		69
++#define GCC_BOOT_ROM_AHB_CLK			70
++#define GCC_CAMSS_CCI_AHB_CLK			71
++#define GCC_CAMSS_CCI_CLK			72
++#define GCC_CAMSS_CSI0_AHB_CLK			73
++#define GCC_CAMSS_CSI0_CLK			74
++#define GCC_CAMSS_CSI0PHY_CLK			75
++#define GCC_CAMSS_CSI0PIX_CLK			76
++#define GCC_CAMSS_CSI0RDI_CLK			77
++#define GCC_CAMSS_CSI1_AHB_CLK			78
++#define GCC_CAMSS_CSI1_CLK			79
++#define GCC_CAMSS_CSI1PHY_CLK			80
++#define GCC_CAMSS_CSI1PIX_CLK			81
++#define GCC_CAMSS_CSI1RDI_CLK			82
++#define GCC_CAMSS_CSI_VFE0_CLK			83
++#define GCC_CAMSS_GP0_CLK			84
++#define GCC_CAMSS_GP1_CLK			85
++#define GCC_CAMSS_ISPIF_AHB_CLK			86
++#define GCC_CAMSS_JPEG0_CLK			87
++#define GCC_CAMSS_JPEG_AHB_CLK			88
++#define GCC_CAMSS_JPEG_AXI_CLK			89
++#define GCC_CAMSS_MCLK0_CLK			90
++#define GCC_CAMSS_MCLK1_CLK			91
++#define GCC_CAMSS_MICRO_AHB_CLK			92
++#define GCC_CAMSS_CSI0PHYTIMER_CLK		93
++#define GCC_CAMSS_CSI1PHYTIMER_CLK		94
++#define GCC_CAMSS_AHB_CLK			95
++#define GCC_CAMSS_TOP_AHB_CLK			96
++#define GCC_CAMSS_CPP_AHB_CLK			97
++#define GCC_CAMSS_CPP_CLK			98
++#define GCC_CAMSS_VFE0_CLK			99
++#define GCC_CAMSS_VFE_AHB_CLK			100
++#define GCC_CAMSS_VFE_AXI_CLK			101
++#define GCC_CRYPTO_AHB_CLK			102
++#define GCC_CRYPTO_AXI_CLK			103
++#define GCC_CRYPTO_CLK				104
++#define GCC_OXILI_GMEM_CLK			105
++#define GCC_GP1_CLK				106
++#define GCC_GP2_CLK				107
++#define GCC_GP3_CLK				108
++#define GCC_MDSS_AHB_CLK			109
++#define GCC_MDSS_AXI_CLK			110
++#define GCC_MDSS_BYTE0_CLK			111
++#define GCC_MDSS_ESC0_CLK			112
++#define GCC_MDSS_MDP_CLK			113
++#define GCC_MDSS_PCLK0_CLK			114
++#define GCC_MDSS_VSYNC_CLK			115
++#define GCC_MSS_CFG_AHB_CLK			116
++#define GCC_OXILI_AHB_CLK			117
++#define GCC_OXILI_GFX3D_CLK			118
++#define GCC_PDM2_CLK				119
++#define GCC_PDM_AHB_CLK				120
++#define GCC_PRNG_AHB_CLK			121
++#define GCC_SDCC1_AHB_CLK			122
++#define GCC_SDCC1_APPS_CLK			123
++#define GCC_SDCC2_AHB_CLK			124
++#define GCC_SDCC2_APPS_CLK			125
++#define GCC_GTCU_AHB_CLK			126
++#define GCC_JPEG_TBU_CLK			127
++#define GCC_MDP_TBU_CLK				128
++#define GCC_SMMU_CFG_CLK			129
++#define GCC_VENUS_TBU_CLK			130
++#define GCC_VFE_TBU_CLK				131
++#define GCC_USB2A_PHY_SLEEP_CLK			132
++#define GCC_USB_HS_AHB_CLK			133
++#define GCC_USB_HS_SYSTEM_CLK			134
++#define GCC_VENUS0_AHB_CLK			135
++#define GCC_VENUS0_AXI_CLK			136
++#define GCC_VENUS0_VCODEC0_CLK			137
++#define BIMC_DDR_CLK_SRC			138
++#define GCC_APSS_TCU_CLK			139
++#define GCC_GFX_TCU_CLK				140
++#define BIMC_GPU_CLK_SRC			141
++#define GCC_BIMC_GFX_CLK			142
++#define GCC_BIMC_GPU_CLK			143
++#define ULTAUDIO_LPAIF_PRI_I2S_CLK_SRC		144
++#define ULTAUDIO_LPAIF_SEC_I2S_CLK_SRC		145
++#define ULTAUDIO_LPAIF_AUX_I2S_CLK_SRC		146
++#define ULTAUDIO_XO_CLK_SRC			147
++#define ULTAUDIO_AHBFABRIC_CLK_SRC		148
++#define CODEC_DIGCODEC_CLK_SRC			149
++#define GCC_ULTAUDIO_PCNOC_MPORT_CLK		150
++#define GCC_ULTAUDIO_PCNOC_SWAY_CLK		151
++#define GCC_ULTAUDIO_AVSYNC_XO_CLK		152
++#define GCC_ULTAUDIO_STC_XO_CLK			153
++#define GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_CLK	154
++#define GCC_ULTAUDIO_AHBFABRIC_IXFABRIC_LPM_CLK	155
++#define GCC_ULTAUDIO_LPAIF_PRI_I2S_CLK		156
++#define GCC_ULTAUDIO_LPAIF_SEC_I2S_CLK		157
++#define GCC_ULTAUDIO_LPAIF_AUX_I2S_CLK		158
++#define GCC_CODEC_DIGCODEC_CLK			159
++#define GCC_MSS_Q6_BIMC_AXI_CLK			160
++#define GPLL3					161
++#define GPLL3_VOTE				162
++#define GPLL4					163
++#define GPLL4_VOTE				164
++#define GPLL5					165
++#define GPLL5_VOTE				166
++#define GPLL6					167
++#define GPLL6_VOTE				168
++#define BYTE1_CLK_SRC				169
++#define GCC_MDSS_BYTE1_CLK			170
++#define ESC1_CLK_SRC				171
++#define GCC_MDSS_ESC1_CLK			172
++#define PCLK1_CLK_SRC				173
++#define GCC_MDSS_PCLK1_CLK			174
++#define GCC_GFX_TBU_CLK				175
++#define GCC_CPP_TBU_CLK				176
++#define GCC_MDP_RT_TBU_CLK			177
++#define USB_FS_SYSTEM_CLK_SRC			178
++#define USB_FS_IC_CLK_SRC			179
++#define GCC_USB_FS_AHB_CLK			180
++#define GCC_USB_FS_IC_CLK			181
++#define GCC_USB_FS_SYSTEM_CLK			182
++#define GCC_VENUS0_CORE0_VCODEC0_CLK		183
++#define GCC_VENUS0_CORE1_VCODEC0_CLK		184
++#define GCC_OXILI_TIMER_CLK			185
++
++/* Indexes for GDSCs */
++#define BIMC_GDSC				0
++#define VENUS_GDSC				1
++#define MDSS_GDSC				2
++#define JPEG_GDSC				3
++#define VFE_GDSC				4
++#define OXILI_GDSC				5
++#define VENUS_CORE0_GDSC			6
++#define VENUS_CORE1_GDSC			7
++
++#endif
+diff --git a/include/dt-bindings/reset/qcom,gcc-msm8939.h b/include/dt-bindings/reset/qcom,gcc-msm8939.h
+new file mode 100644
+index 000000000000..a8c8135ce24d
+--- /dev/null
++++ b/include/dt-bindings/reset/qcom,gcc-msm8939.h
+@@ -0,0 +1,119 @@
++/* SPDX-License-Identifier: GPL-2.0+ */
++/*
++ * Copyright 2020 Linaro Limited
++ *
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ */
++
++#ifndef _DT_BINDINGS_RESET_MSM_GCC_8939_H
++#define _DT_BINDINGS_RESET_MSM_GCC_8939_H
++
++#define GCC_BLSP1_BCR			0
++#define GCC_BLSP1_QUP1_BCR		1
++#define GCC_BLSP1_UART1_BCR		2
++#define GCC_BLSP1_QUP2_BCR		3
++#define GCC_BLSP1_UART2_BCR		4
++#define GCC_BLSP1_QUP3_BCR		5
++#define GCC_BLSP1_QUP4_BCR		6
++#define GCC_BLSP1_QUP5_BCR		7
++#define GCC_BLSP1_QUP6_BCR		8
++#define GCC_IMEM_BCR			9
++#define GCC_SMMU_BCR			10
++#define GCC_APSS_TCU_BCR		11
++#define GCC_SMMU_XPU_BCR		12
++#define GCC_PCNOC_TBU_BCR		13
++#define GCC_PRNG_BCR			14
++#define GCC_BOOT_ROM_BCR		15
++#define GCC_CRYPTO_BCR			16
++#define GCC_SEC_CTRL_BCR		17
++#define GCC_AUDIO_CORE_BCR		18
++#define GCC_ULT_AUDIO_BCR		19
++#define GCC_DEHR_BCR			20
++#define GCC_SYSTEM_NOC_BCR		21
++#define GCC_PCNOC_BCR			22
++#define GCC_TCSR_BCR			23
++#define GCC_QDSS_BCR			24
++#define GCC_DCD_BCR			25
++#define GCC_MSG_RAM_BCR			26
++#define GCC_MPM_BCR			27
++#define GCC_SPMI_BCR			28
++#define GCC_SPDM_BCR			29
++#define GCC_MM_SPDM_BCR			30
++#define GCC_BIMC_BCR			31
++#define GCC_RBCPR_BCR			32
++#define GCC_TLMM_BCR			33
++#define GCC_USB_HS_BCR			34
++#define GCC_USB2A_PHY_BCR		35
++#define GCC_SDCC1_BCR			36
++#define GCC_SDCC2_BCR			37
++#define GCC_PDM_BCR			38
++#define GCC_SNOC_BUS_TIMEOUT0_BCR	39
++#define GCC_PCNOC_BUS_TIMEOUT0_BCR	40
++#define GCC_PCNOC_BUS_TIMEOUT1_BCR	41
++#define GCC_PCNOC_BUS_TIMEOUT2_BCR	42
++#define GCC_PCNOC_BUS_TIMEOUT3_BCR	43
++#define GCC_PCNOC_BUS_TIMEOUT4_BCR	44
++#define GCC_PCNOC_BUS_TIMEOUT5_BCR	45
++#define GCC_PCNOC_BUS_TIMEOUT6_BCR	46
++#define GCC_PCNOC_BUS_TIMEOUT7_BCR	47
++#define GCC_PCNOC_BUS_TIMEOUT8_BCR	48
++#define GCC_PCNOC_BUS_TIMEOUT9_BCR	49
++#define GCC_MMSS_BCR			50
++#define GCC_VENUS0_BCR			51
++#define GCC_MDSS_BCR			52
++#define GCC_CAMSS_PHY0_BCR		53
++#define GCC_CAMSS_CSI0_BCR		54
++#define GCC_CAMSS_CSI0PHY_BCR		55
++#define GCC_CAMSS_CSI0RDI_BCR		56
++#define GCC_CAMSS_CSI0PIX_BCR		57
++#define GCC_CAMSS_PHY1_BCR		58
++#define GCC_CAMSS_CSI1_BCR		59
++#define GCC_CAMSS_CSI1PHY_BCR		60
++#define GCC_CAMSS_CSI1RDI_BCR		61
++#define GCC_CAMSS_CSI1PIX_BCR		62
++#define GCC_CAMSS_ISPIF_BCR		63
++#define GCC_CAMSS_CCI_BCR		64
++#define GCC_CAMSS_MCLK0_BCR		65
++#define GCC_CAMSS_MCLK1_BCR		66
++#define GCC_CAMSS_GP0_BCR		67
++#define GCC_CAMSS_GP1_BCR		68
++#define GCC_CAMSS_TOP_BCR		69
++#define GCC_CAMSS_MICRO_BCR		70
++#define GCC_CAMSS_JPEG_BCR		71
++#define GCC_CAMSS_VFE_BCR		72
++#define GCC_CAMSS_CSI_VFE0_BCR		73
++#define GCC_OXILI_BCR			74
++#define GCC_GMEM_BCR			75
++#define GCC_CAMSS_AHB_BCR		76
++#define GCC_MDP_TBU_BCR			77
++#define GCC_GFX_TBU_BCR			78
++#define GCC_GFX_TCU_BCR			79
++#define GCC_MSS_TBU_AXI_BCR		80
++#define GCC_MSS_TBU_GSS_AXI_BCR		81
++#define GCC_MSS_TBU_Q6_AXI_BCR		82
++#define GCC_GTCU_AHB_BCR		83
++#define GCC_SMMU_CFG_BCR		84
++#define GCC_VFE_TBU_BCR			85
++#define GCC_VENUS_TBU_BCR		86
++#define GCC_JPEG_TBU_BCR		87
++#define GCC_PRONTO_TBU_BCR		88
++#define GCC_SMMU_CATS_BCR		89
++#define GCC_BLSP1_UART3_BCR		90
++#define GCC_CAMSS_CSI2_BCR		91
++#define GCC_CAMSS_CSI2PHY_BCR		92
++#define GCC_CAMSS_CSI2RDI_BCR		93
++#define GCC_CAMSS_CSI2PIX_BCR		94
++#define GCC_USB_FS_BCR			95
++#define GCC_BLSP1_QUP4_SPI_APPS_CBCR	96
++#define GCC_CAMSS_MCLK2_BCR		97
++#define GCC_CPP_TBU_BCR			98
++#define GCC_MDP_RT_TBU_BCR		99
++
++#endif
+-- 
+2.25.1
 
-Don't suppose they matter but maybe need the description to mention there
-may be some minor formatting changes as well in some cases.
-
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com> #for-iio
-
-> ---
->  .../devicetree/bindings/arm/cpus.yaml         |  81 +++---
->  .../devicetree/bindings/arm/l2c2x0.yaml       |  87 +++---
->  .../devicetree/bindings/arm/psci.yaml         |  15 +-
->  .../bindings/arm/samsung/exynos-chipid.yaml   |   5 +-
->  .../bus/allwinner,sun50i-a64-de2.yaml         |   5 +-
->  .../bindings/clock/fixed-factor-clock.yaml    |   5 +-
->  .../bindings/connector/usb-connector.yaml     |  28 +-
->  .../bindings/crypto/st,stm32-hash.yaml        |   9 +-
->  .../allwinner,sun4i-a10-display-engine.yaml   |   7 +-
->  .../display/allwinner,sun4i-a10-tcon.yaml     |   5 +-
->  .../bindings/display/panel/panel-common.yaml  |   5 +-
->  .../devicetree/bindings/dma/dma-common.yaml   |   3 +-
->  .../devicetree/bindings/dma/ti/k3-udma.yaml   |  18 +-
->  .../devicetree/bindings/eeprom/at24.yaml      |  11 +-
->  .../devicetree/bindings/example-schema.yaml   |  17 +-
->  .../bindings/hwmon/adi,ltc2947.yaml           |  32 +--
->  .../devicetree/bindings/hwmon/ti,tmp513.yaml  |  21 +-
->  .../devicetree/bindings/i2c/st,stm32-i2c.yaml |   9 +-
->  .../bindings/iio/adc/adi,ad7124.yaml          |   5 +-
->  .../bindings/iio/adc/lltc,ltc2496.yaml        |   3 +-
->  .../bindings/iio/adc/microchip,mcp3911.yaml   |   7 +-
->  .../bindings/iio/adc/st,stm32-dfsdm-adc.yaml  |  31 +-
->  .../bindings/iio/light/tsl2772.yaml           |  13 +-
->  .../bindings/iio/temperature/adi,ltc2983.yaml |  56 ++--
-
-...
-
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml b/=
-Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> index 97087a45ce54..deb34deff0e8 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.yaml
-> @@ -83,9 +83,8 @@ patternProperties:
->            1: REFIN2(+)/REFIN2(=E2=88=92).
->            3: AVDD
->            If this field is left empty, internal reference is selected.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - enum: [0, 1, 3]
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1, 3]
->=20
->        diff-channels:
->          description: see Documentation/devicetree/bindings/iio/adc/adc.t=
-xt
-> diff --git a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml =
-b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> index 97f521d654ea..6a991e9f78e2 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/lltc,ltc2496.yaml
-> @@ -18,8 +18,7 @@ properties:
->=20
->    vref-supply:
->      description: phandle to an external regulator providing the referenc=
-e voltage
-> -    allOf:
-> -      - $ref: /schemas/types.yaml#/definitions/phandle
-> +    $ref: /schemas/types.yaml#/definitions/phandle
->=20
->    reg:
->      description: spi chipselect number according to the usual spi bindin=
-gs
-> diff --git a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.=
-yaml b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> index 8ffeceb6abae..95ab285f4eba 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/microchip,mcp3911.yaml
-> @@ -38,10 +38,9 @@ properties:
->=20
->    microchip,device-addr:
->      description: Device address when multiple MCP3911 chips are present =
-on the same SPI bus.
-> -    allOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> -      - enum: [0, 1, 2, 3]
-> -      - default: 0
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-> +    default: 0
->=20
->    vref-supply:
->      description: |
-> diff --git a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc=
-.yaml b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> index b1627441a0b2..d69ca492d020 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/st,stm32-dfsdm-adc.yaml
-> @@ -95,16 +95,14 @@ patternProperties:
->            On stm32h7 and stm32mp1:
->            - For st,stm32-dfsdm-adc: up to 8 channels numbered from 0 to =
-7.
->            - For st,stm32-dfsdm-dmic: 1 channel numbered from 0 to 7.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32-array
-> -          - items:
-> -              minimum: 0
-> -              maximum: 7
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        items:
-> +          minimum: 0
-> +          maximum: 7
->=20
->        st,adc-channel-names:
->          description: List of single-ended channel names.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/string-array
-> +        $ref: /schemas/types.yaml#/definitions/string-array
->=20
->        st,filter-order:
->          description: |
-> @@ -112,11 +110,10 @@ patternProperties:
->            - 0: FastSinC
->            - [1-5]: order 1 to 5.
->            For audio purpose it is recommended to use order 3 to 5.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - items:
-> -              minimum: 0
-> -              maximum: 5
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        items:
-> +          minimum: 0
-> +          maximum: 5
->=20
->        "#io-channel-cells":
->          const: 1
-> @@ -129,9 +126,8 @@ patternProperties:
->            - "MANCH_R": manchester codec, rising edge =3D logic 0, fallin=
-g edge =3D logic 1
->            - "MANCH_F": manchester codec, rising edge =3D logic 1, fallin=
-g edge =3D logic 0
->          items:
-> -          enum: [ SPI_R, SPI_F, MANCH_R, MANCH_F ]
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/non-unique-string-arr=
-ay
-> +          enum: [SPI_R, SPI_F, MANCH_R, MANCH_F]
-
-I don't suppose it matters much but unrelated change.
-
-> +        $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->=20
->        st,adc-channel-clk-src:
->          description: |
-> @@ -141,9 +137,8 @@ patternProperties:
->            - "CLKOUT_F": internal SPI clock divided by 2 (falling edge).
->            - "CLKOUT_R": internal SPI clock divided by 2 (rising edge).
->          items:
-> -          enum: [ CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R ]
-
-Unrelated change.
-
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/non-unique-string-arr=
-ay
-> +          enum: [CLKIN, CLKOUT, CLKOUT_F, CLKOUT_R]
-> +        $ref: /schemas/types.yaml#/definitions/non-unique-string-array
->=20
->        st,adc-alt-channel:
->          description:
-> diff --git a/Documentation/devicetree/bindings/iio/light/tsl2772.yaml b/D=
-ocumentation/devicetree/bindings/iio/light/tsl2772.yaml
-> index e8f7d1ada57b..d81229857944 100644
-> --- a/Documentation/devicetree/bindings/iio/light/tsl2772.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/tsl2772.yaml
-> @@ -33,13 +33,12 @@ properties:
->=20
->    amstaos,proximity-diodes:
->      description: Proximity diodes to enable
-> -    allOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> -      - minItems: 1
-> -        maxItems: 2
-> -        items:
-> -          minimum: 0
-> -          maximum: 1
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      minimum: 0
-> +      maximum: 1
->=20
->    interrupts:
->      maxItems: 1
-> diff --git a/Documentation/devicetree/bindings/iio/temperature/adi,ltc298=
-3.yaml b/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> index 8fb46de6641d..9480ede59c37 100644
-> --- a/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> +++ b/Documentation/devicetree/bindings/iio/temperature/adi,ltc2983.yaml
-> @@ -42,10 +42,9 @@ properties:
->        0 - 50/60Hz rejection
->        1 - 60Hz rejection
->        2 - 50Hz rejection
-> -    allOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32
-> -      - minimum: 0
-> -        maximum: 2
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    minimum: 0
-> +    maximum: 2
->=20
->    '#address-cells':
->      const: 1
-> @@ -91,8 +90,7 @@ patternProperties:
->            7 - Type T Thermocouple
->            8 - Type B Thermocouple
->            9 - Custom Thermocouple
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          minimum: 1
->          maximum: 9
->=20
-> @@ -121,8 +119,7 @@ patternProperties:
->            more details look at table 69 and 70.
->            Note should be signed, but dtc doesn't currently maintain the
->            sign.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint64-matrix
-> +        $ref: /schemas/types.yaml#/definitions/uint64-matrix
->          minItems: 3
->          maxItems: 64
->          items:
-> @@ -138,8 +135,7 @@ patternProperties:
->      properties:
->        adi,sensor-type:
->          description: Identifies the sensor as a diode.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          const: 28
->=20
->        adi,single-ended:
-> @@ -196,8 +192,7 @@ patternProperties:
->            16 - RTD PT-1000 (0.00375)
->            17 - RTD NI-120
->            18 - RTD Custom
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          minimum: 10
->          maximum: 18
->=20
-> @@ -210,9 +205,8 @@ patternProperties:
->          description:
->            Identifies the number of wires used by the RTD. Setting this
->            property to 5 means 4 wires with Kelvin Rsense.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - enum: [2, 3, 4, 5]
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [2, 3, 4, 5]
->=20
->        adi,rsense-share:
->          description:
-> @@ -237,18 +231,16 @@ patternProperties:
->          description:
->            This property set the RTD curve used and the corresponding
->            Callendar-VanDusen constants. Look at table 30 of the datashee=
-t.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - minimum: 0
-> -            maximum: 3
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        minimum: 0
-> +        maximum: 3
->=20
->        adi,custom-rtd:
->          description:
->            This is a table, where each entry should be a pair of
->            resistance(ohm)-temperature(K). The entries added here are in =
-uohm
->            and uK. For more details values look at table 74 and 75.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint64-matrix
-> +        $ref: /schemas/types.yaml#/definitions/uint64-matrix
->          items:
->            minItems: 3
->            maxItems: 64
-> @@ -280,8 +272,7 @@ patternProperties:
->            25 - Thermistor Spectrum 1003k 1kohm
->            26 - Thermistor Custom Steinhart-Hart
->            27 - Custom Thermistor
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          minimum: 19
->          maximum: 27
->=20
-> @@ -314,10 +305,9 @@ patternProperties:
->            This property controls the magnitude of the excitation current
->            applied to the thermistor. Value 0 set's the sensor in auto-ra=
-nge
->            mode.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - enum: [0, 250, 500, 1000, 5000, 10000, 25000, 50000, 100000,
-> -                   250000, 500000, 1000000]
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 250, 500, 1000, 5000, 10000, 25000, 50000, 100000, 250=
-000,
-> +          500000, 1000000]
->=20
->        adi,custom-thermistor:
->          description:
-> @@ -325,8 +315,7 @@ patternProperties:
->            resistance(ohm)-temperature(K). The entries added here are in =
-uohm
->            and uK only for custom thermistors. For more details look at t=
-able
->            78 and 79.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint64-matrix
-> +        $ref: /schemas/types.yaml#/definitions/uint64-matrix
->          minItems: 3
->          maxItems: 64
->          items:
-> @@ -339,8 +328,7 @@ patternProperties:
->            be programmed into the device memory using this property. For
->            Steinhart sensors the coefficients are given in the raw
->            format. Look at table 82 for more information.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
->          items:
->            minItems: 6
->            maxItems: 6
-> @@ -358,8 +346,7 @@ patternProperties:
->      properties:
->        adi,sensor-type:
->          description: Identifies the sensor as a direct adc.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          const: 30
->=20
->        adi,single-ended:
-> @@ -379,8 +366,7 @@ patternProperties:
->=20
->        adi,sensor-type:
->          description: Identifies the sensor as a rsense.
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> +        $ref: /schemas/types.yaml#/definitions/uint32
->          const: 29
->=20
->        adi,rsense-val-milli-ohms:
-> diff --git a/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-=
-lradc-keys.yaml b/Documentation/devicetree/bindings/input/allwinner,sun4i-a=
-10-lradc-keys.yaml
-> index 512a6af5aa42..cffd02028d02 100644
-> --- a/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-k=
-eys.yaml
-> +++ b/Documentation/devicetree/bindings/input/allwinner,sun4i-a10-lradc-k=
-eys.yaml
-> @@ -42,9 +42,8 @@ patternProperties:
->          description: Keycode to emit
->=20
->        channel:
-> -        allOf:
-> -          - $ref: /schemas/types.yaml#/definitions/uint32
-> -          - enum: [0, 1]
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [0, 1]
->          description: ADC Channel this key is attached to
->=20
->        voltage:
-> diff --git a/Documentation/devicetree/bindings/input/input.yaml b/Documen=
-tation/devicetree/bindings/input/input.yaml
-> index 6d519046b3af..8edcb3c31270 100644
-> --- a/Documentation/devicetree/bindings/input/input.yaml
-> +++ b/Documentation/devicetree/bindings/input/input.yaml
-> @@ -18,11 +18,10 @@ properties:
->      description:
->        Specifies an array of numeric keycode values to be used for report=
-ing
->        button presses.
-> -    allOf:
-> -      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> -      - items:
-> -          minimum: 0
-> -          maximum: 0xff
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    items:
-> +      minimum: 0
-> +      maximum: 0xff
->=20
->    poll-interval:
->      description: Poll interval time in milliseconds.
-...
