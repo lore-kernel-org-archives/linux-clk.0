@@ -2,68 +2,91 @@ Return-Path: <SRS0=HJ9p=6E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B30A8C3815B
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 14:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA76DC3815B
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 15:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8DBA22082E
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 14:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587394623;
-	bh=YMqSLYesrVGfEVE3naJYR+Hx7EfHi7G425jwAw+TTLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jKa+UrLrzMNmJAqDy1+yM3yERd+x6Mmh6rAYWsF8YUklDjwGdRlCemqFdGuM6QB4B
-	 FcTwOnjnNh3rOQn+r5Dk+808rhIqUAIdYTxjaXH/nmLnLV7uiFDqHpoBY2xw25qJgl
-	 Qys97TPX9IpCqYHi9fRX40qFth9PJfS7UeHXO49c=
+	by mail.kernel.org (Postfix) with ESMTP id ABF9520775
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 15:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbgDTO5D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Apr 2020 10:57:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49696 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725944AbgDTO5D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Apr 2020 10:57:03 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B6A5A20775;
-        Mon, 20 Apr 2020 14:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587394622;
-        bh=YMqSLYesrVGfEVE3naJYR+Hx7EfHi7G425jwAw+TTLY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sW5B2zF5DOuLuC4jUKuLD0NhFx2My7Kck3JlCva2C/MRMzM/yhtP3LfQPHFmhQ0ne
-         jAbeao3r34jrR2VlKyWcVZ7VVBSAkIgAUFOYivnleQdB+CR9cV+6v6XzUhpJk4+w0c
-         GqhQlndLXud0y4e646rhIuc0ybDgk1Amo9Csxzao=
-Date:   Mon, 20 Apr 2020 22:56:55 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, gustavo@embeddedor.com,
-        gregkh@linuxfoundation.org, tglx@linutronix.de, abel.vesa@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2] clk: imx: clk-pllv3: Use readl_relaxed_poll_timeout()
- for PLL lock wait
-Message-ID: <20200420145654.GF32419@dragon>
-References: <1584661443-12032-1-git-send-email-Anson.Huang@nxp.com>
+        id S1726287AbgDTPRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Apr 2020 11:17:40 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:58993 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbgDTPRj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Apr 2020 11:17:39 -0400
+Received: from mail-qt1-f169.google.com ([209.85.160.169]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MkYg4-1ixDiO1PLy-00m2bW; Mon, 20 Apr 2020 17:17:38 +0200
+Received: by mail-qt1-f169.google.com with SMTP id x2so8770048qtr.0;
+        Mon, 20 Apr 2020 08:17:38 -0700 (PDT)
+X-Gm-Message-State: AGi0PuY/iZ6ttYSFVF9++O17st1rSes9xUvWaxkOZYUXA/EtuACW3moS
+        BnsSBkyhVU7LpFjmGI8MMGyLiTeClvWmELcmT1c=
+X-Google-Smtp-Source: APiQypIZpcbpVguGnPVp2wcc994cFV0BoBRFUnMkzk8Awyyhz/lIgecL9i9/JcHFcxSM2GnbEmja+3MHVnQ4/GLwybU=
+X-Received: by 2002:ac8:2bce:: with SMTP id n14mr5661013qtn.18.1587395857124;
+ Mon, 20 Apr 2020 08:17:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1584661443-12032-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-2-robh@kernel.org>
+In-Reply-To: <20200419170810.5738-2-robh@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Apr 2020 17:17:20 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2bjyBDHnOVv2NwFA_wZvtH6O8R9godAg8zE3HpFe75ww@mail.gmail.com>
+Message-ID: <CAK8P3a2bjyBDHnOVv2NwFA_wZvtH6O8R9godAg8zE3HpFe75ww@mail.gmail.com>
+Subject: Re: [PATCH 01/17] ARM: vexpress: Move vexpress_flags_set() into arch code
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:2+L3TmmH6fDJ7kiV/Y6W/e2A8/uSLSXkD7MBhCL2H1Mwg9VVQh0
+ 73e4tK46L5RJ0KRLI+iuddNKnDCgYLPcWJ3bLNyXWOXBrfqXG9qpkJPVuhXo2kWgnoYzsoP
+ 4IJ+V+FO3GruezDGh/3zVFKxmD4RX+soMxxiN5XJz+qh6am6XMudT7OM/4NDha0c+3HS8Z2
+ C/6hI/ZpvHrUFeSEXXmoA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:XVFbk9G7Osg=:hFWl265yAWdQLVm5oPqS3L
+ pPNvXZp6nT9/KhSSp1gjOQy0QYbs+UcR0KZ/tnN9qcSMYCnPSbmWFmImwXlSDdDR7yiDVsszY
+ 1/VhHbL/FtOaYbWWnxBwMRQCK5coqyPN0sVbGJYN1b1Q5RM4TuCnHZVngyS7KmzCx6bWwipq5
+ 6IYBJcKoBLjr0QvWUVfCwfRLxmX5YwRguJDs2P1LwVQ2iniU+Ged++jYngvIcRRzeKRoCXiLy
+ +xfd3R71xcuG5QID3UnVliCv4deBF976hIArZkrNrMH/2p/sClKtRQzEdghJVuY9e7xeDrUQK
+ z+mkiEw49cZVyQC6X0tkx3bkrP5Kr9JTk4D+wNvlKiqhclESbVs0aULqpOBzbNbhf2MlO54od
+ vn4I/+zWrdWdkeu1peYcmi4QLKw+UwOboNHJUpXmhXaR08ghlZ79f/Bu6MVAvbOH5AydaO91Q
+ lOmBUYXQqOWBQDkUFW2F5iIXhFE4ZUwZ9GpFxDNgbpfvj84Vkk8+bxgxunxZL7nWohmiIHgbJ
+ heI7jxdOrB/eqXqR0uM1w5VkbE8exOHFe4CCcKTPq9mrsBAGGBtMzHVa63cYDZUpsRyea6Eom
+ LXc/qBtC/vn4gffOhXh+gbVOm43tcDJpLuG03Y4UnUhXbW/NMCNMvhZVK6ThPmj57wzv5qDZT
+ Q4xS38+JCihPnIL/sgxXauiLP/ogOuIM7rURXwHeuOVgqUYMnTCZg+BzefWv8z+jxWE3vBhWg
+ KNTCzAPczwXt4fXTdHS/C2G3WB/ljRPU/m0a0PvwLPKivLpa4KAVHPRR/yLQbV8jBSmB4EgTC
+ LX4oae4xcuzmEG8jhcR+vogQy/CdIizHg5S4NOB3ijJB/f/U6Y=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Mar 20, 2020 at 07:44:03AM +0800, Anson Huang wrote:
-> Use readl_relaxed_poll_timeout() for PLL lock wait which can simplify the
-> code a lot.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+On Sun, Apr 19, 2020 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
+>
+> vexpress_flags_set() is only used by the platform SMP related code and
+> has nothing to do with the vexpress-sysreg MFD driver other than both
+> access the same h/w block. It's also only needed for 32-bit systems and
+> must be built-in for them. Let's move vexpress_flags_set() closer to
+> where it is being used. This will allow for vexpress-sysreg to be built
+> as a module.
+>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-Applied, thanks.
+Acked-by: Arnd Bergmann <arnd@arndb.de>
