@@ -2,58 +2,42 @@ Return-Path: <SRS0=HJ9p=6E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACB0C3815B
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 17:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 563B9C3815B
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 20:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9B80D20CC7
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 17:48:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587404923;
-	bh=xUzIDhLrcbNY8MK4u4nZct1kwq2cE8o8IntAJsSwdpk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JuUwNb04ky61lGA/Qib4ym7z1HEoCggP3sVLYo8XJ9HQXVwws2CRA0viKQBxCd8h8
-	 cX9J1LAsNbShA2cBDY19/TNlipni6xnkUBc6PaSNnsdM3rUcaMuk47VsR6eY0kiC78
-	 oklg4T7Voqb6nDDWp8A7WSWR+4UYMkMcMV+Zxiks=
+	by mail.kernel.org (Postfix) with ESMTP id 386CA20782
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 20:07:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbgDTRsn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Apr 2020 13:48:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbgDTRsn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Apr 2020 13:48:43 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72969218AC;
-        Mon, 20 Apr 2020 17:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587404922;
-        bh=xUzIDhLrcbNY8MK4u4nZct1kwq2cE8o8IntAJsSwdpk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CFydE2rknr/Ms+qSihKc279Hhku/sxlE27vkOz7Ljm6u7pPYtYYm+HirqYmVg4kG8
-         jZTLjLpS6NVw08JzOZYidmIl5sFGJv9tL37F64PGrz+2cl9ItjfypjPruwRbHTMo8B
-         ccaWuhEWqwz3a67Z7TNBRt7J04CPt081UgDiTo8o=
-Received: by mail-qt1-f172.google.com with SMTP id z90so9232647qtd.10;
-        Mon, 20 Apr 2020 10:48:42 -0700 (PDT)
-X-Gm-Message-State: AGi0PuYoOGsCijC7BUPuVbSH+sUecdxBL472I+7Vea+TQzgYWhzcq0gG
-        w0tUa4sWsUujUJ2BCmszjq32hUizP5j+5L6c4g==
-X-Google-Smtp-Source: APiQypLsmqqa6tPO6Vd26Z8hr0a4fVqisr+0rvULo+LKFuzNKUPn9rWtoTexXEtJsn8bhiB8U87ufUvE1XRG0ZXm9r0=
-X-Received: by 2002:ac8:39e5:: with SMTP id v92mr17459679qte.224.1587404921554;
- Mon, 20 Apr 2020 10:48:41 -0700 (PDT)
+        id S1726089AbgDTUHU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Apr 2020 16:07:20 -0400
+Received: from mout.kundenserver.de ([212.227.126.134]:58813 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725918AbgDTUHT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Apr 2020 16:07:19 -0400
+Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
+ mrelayeu.kundenserver.de (mreue011 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1MderZ-1irq2m38AD-00Zjuu; Mon, 20 Apr 2020 22:07:17 +0200
+Received: by mail-qk1-f177.google.com with SMTP id g74so12121934qke.13;
+        Mon, 20 Apr 2020 13:07:17 -0700 (PDT)
+X-Gm-Message-State: AGi0Publ1bZEWi+heVILQKN5kJNTbcOigHURO2SK3owzAb8T7iC4DGbU
+        kYSnB2p1Dt8k7FFAZISU/XZCOFUr1Nj9YaGCn3M=
+X-Google-Smtp-Source: APiQypIAhB8mGz6XM0SD8ArnZJY6aRKd7XU6MxbJm3d0s6y853Y/+oeV+mBwceNCaK3NIlM89N1GSdGstRKXiXTq2KM=
+X-Received: by 2002:a37:a046:: with SMTP id j67mr18240249qke.286.1587413236560;
+ Mon, 20 Apr 2020 13:07:16 -0700 (PDT)
 MIME-Version: 1.0
 References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-7-robh@kernel.org>
- <CAK8P3a2cxU3UYSj19Rt6pcUAtA1uTiQx46MF=92q_asmMOXMnA@mail.gmail.com>
-In-Reply-To: <CAK8P3a2cxU3UYSj19Rt6pcUAtA1uTiQx46MF=92q_asmMOXMnA@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 20 Apr 2020 12:48:28 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJS5o7_Ep50vfhNBOQ2sczgD+dNuiF8+GwjHUu7tN9j7Q@mail.gmail.com>
-Message-ID: <CAL_JsqJS5o7_Ep50vfhNBOQ2sczgD+dNuiF8+GwjHUu7tN9j7Q@mail.gmail.com>
+ <CAK8P3a2cxU3UYSj19Rt6pcUAtA1uTiQx46MF=92q_asmMOXMnA@mail.gmail.com> <CAL_JsqJS5o7_Ep50vfhNBOQ2sczgD+dNuiF8+GwjHUu7tN9j7Q@mail.gmail.com>
+In-Reply-To: <CAL_JsqJS5o7_Ep50vfhNBOQ2sczgD+dNuiF8+GwjHUu7tN9j7Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 20 Apr 2020 22:07:00 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3YQaQESsb61rZKopddmiKdm2qK_mS+yiBY5th0xSHOjw@mail.gmail.com>
+Message-ID: <CAK8P3a3YQaQESsb61rZKopddmiKdm2qK_mS+yiBY5th0xSHOjw@mail.gmail.com>
 Subject: Re: [PATCH 06/17] clk: versatile: Only enable SP810 on 32-bit by default
-To:     Arnd Bergmann <arnd@arndb.de>
+To:     Rob Herring <robh@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Liviu Dudau <liviu.dudau@arm.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -68,38 +52,59 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:MDDR7O5z3srHf9k4tFMNpMqyjLlTrKq8QJuFfR5s3iqWoApvmWA
+ o/12HEdOg0bICi0AD+txwsSTRNV4Gu3MxmyYx1SIYzk9VpWsKK+KnRJ4mhXXCOqUiUNmTn7
+ WkgypqL5wBih8h6bmCo8zZ4B1uqDrT1BNIIWQLgjQDK5k+/l1QeR8lKTtSK0WhbQIVcIZAI
+ 9Mh4rS6PhXi2xCLls4xvQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:L/+MCRj5Tck=:IlB8SHvEelKZ6OqI+7S/Rs
+ gdbVNRwOEd9NsTzChaE4lygKYFVuArsmBCJpm+fw9x5/IA9708kHQ3hxUbMmZlViAY/pYYJQL
+ gWL6UOQFsN0aA9zrJqj+8a5E0YKfqlkz56ENxqzN737oYTrBhxfgfcB9QjgW9oJ04MaOQSWP5
+ EDqw+r/jj5yaez19jbYOMQbU/P0+d3hpwZ37OALhBBt5haJEN6psVehsGzDbWeTEBxw+Mtly/
+ nZ4DIMD4sQxZL5CcQiDI+s6ZomZqHF0NW72s3/sinjy6zsEA7Q8xYnQFT5SmPIPtSD42uVUoq
+ IBS/iLQmIRWRQ4BwKNUAvNRxY30YzD96MFP4GDFnT7b8S8RuqvtttZfGEeIMMPFQBDcfG/dDS
+ y+htNKFmRiwTyAFi+UKOEtFkYOEZ5R+63BEfT7179LbwtKhbFZ2rHrI3zzZp2LF3/02e6GLS4
+ /4bAuzavHaoV2+GMJ0s4dvDPk9QjP4RnmuKoNUrWtfh0YN0b3rClHW9coFiexwUGrhweBl++6
+ /tal7rjyRxCIj3r3hgeQVTk+mQptrvCjuAuwdZT/ZPKIENUymJZAJxXHiUG/M4bKUu9OU9RuQ
+ 0jfrZHEz3GROR301re97Mfd38G/5xp56phRf7F2wL7OFF9aju3vnANY0IVIboV20x8a0nIaft
+ fODmvSCjJ6Lv7LVIZuvqIZiIiie39/1Z01bdqWh7j3O0vzH+JrD21FHhPM9u2bZnFBno6vHSR
+ +I4YeqdtgOf45ahiK6/XOs8WoA9D/e3uXKNgNb9cGAcE7Asf00zP1I5mQyf4MWali/alK0oqJ
+ 8BibD69fSquXXvhXC19K1WYl2YSm14qxpYXDgNvOMId8U0ttvQ=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 20, 2020 at 10:26 AM Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Apr 20, 2020 at 7:48 PM Rob Herring <robh@kernel.org> wrote:
 >
-> On Sun, Apr 19, 2020 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
+> On Mon, Apr 20, 2020 at 10:26 AM Arnd Bergmann <arnd@arndb.de> wrote:
 > >
-> > While 64-bit Arm reference platforms have SP810 for clocks for SP804
-> > timers, they are not needed since the arch timers are used instead.
+> > On Sun, Apr 19, 2020 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > While 64-bit Arm reference platforms have SP810 for clocks for SP804
+> > > timers, they are not needed since the arch timers are used instead.
+> > >
+> > > Cc: Catalin Marinas <catalin.marinas@arm.com>
+> > > Cc: Will Deacon <will@kernel.org>
+> > > Cc: Liviu Dudau <liviu.dudau@arm.com>
+> > > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: linux-clk@vger.kernel.org
+> > > Signed-off-by: Rob Herring <robh@kernel.org>
 > >
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Liviu Dudau <liviu.dudau@arm.com>
-> > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Signed-off-by: Rob Herring <robh@kernel.org>
->
-> Acked-by: Arnd Bergmann <arnd@arndb.de>
->
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
 > >
-> >  config CLK_SP810
-> >         bool "Clock driver for ARM SP810 System Controller"
-> > -       default y if ARCH_VEXPRESS
-> > +       default y if (ARCH_VEXPRESS && ARM)
+> > >
+> > >  config CLK_SP810
+> > >         bool "Clock driver for ARM SP810 System Controller"
+> > > -       default y if ARCH_VEXPRESS
+> > > +       default y if (ARCH_VEXPRESS && ARM)
+> >
+> > But maybe add "|| (COMPILE_TEST && OF)" for extra points.
 >
-> But maybe add "|| (COMPILE_TEST && OF)" for extra points.
+> On a 'default y'? Not necessary.
 
-On a 'default y'? Not necessary.
+Ah right, that would indeed result in negative points.
 
-Rob
+      Arnd
