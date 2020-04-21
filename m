@@ -1,86 +1,108 @@
-Return-Path: <SRS0=HJ9p=6E=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=UvOF=6F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9713C55182
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 21:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82877C55181
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Apr 2020 00:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9952E206DD
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Apr 2020 21:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587417232;
-	bh=ladtRRSCDooyypcdlTIXnMSTekPpNfEw68EBe3NLi2o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=n2C/FRA0d+VA6C18cTu+2+jC3GS2Kq0BJWfppniu5x925hWSzgvPasY8PUG+kKamS
-	 F33WkCn2qrSFgR48STetfWzhlpBTpCneVwgFYni8VfyYRL7qXfTqmRLarlpcnqXuML
-	 XFr2c2MJorncVA+/03ZhsfwjD5p8A8jwSRQnVy6E=
+	by mail.kernel.org (Postfix) with ESMTP id 62A9F20782
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Apr 2020 00:11:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ScWjphOb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbgDTVNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Apr 2020 17:13:52 -0400
-Received: from mail-oo1-f66.google.com ([209.85.161.66]:44620 "EHLO
-        mail-oo1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgDTVNw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Apr 2020 17:13:52 -0400
-Received: by mail-oo1-f66.google.com with SMTP id p67so2454899ooa.11;
-        Mon, 20 Apr 2020 14:13:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JEOjjjtQz9Vnq1KP3e3xrBz5qWH4d/8MKyIiQy0K/uA=;
-        b=R32Hq9otd2L+OtbB7vFobc50tosyqj4UX8fzJWdjCU/bQ08kSrDG3riw8LawkWzVSi
-         L/oFYswwINBkWix1TMEsDMHVx3GNXY3p2BN/ROkIejLS0zCtLUxhemEt7nuxgBrqeQhv
-         NRxyL918wqU4z6MU6MhtyOBVfiBLIEKKk7bCTm1RUZwMAMXa/Jtr7PkeB9jFpqDTS5FK
-         Sy1hIiCphvYZ0K9f+FEX7qpU5rz7AepaWDHMyWiOPUPCwPymgBNQrXrMY1WJ/WsLeaW5
-         VUWqSrWFp4N1v6aYc85NdrELFi3pYdGPdsNaJYw/hHKX5VSrphigBaCpXNDApyZOEhD2
-         xZtg==
-X-Gm-Message-State: AGi0Pub515rCnjVURfm9mgn2+5/Oq8l2+dfnoafULDQ48VOcRTz4Z/Yb
-        pPC6aPKVnqofOqBZ1HZhpA==
-X-Google-Smtp-Source: APiQypJd+FO1fX6clVbxSEcDj4px4F3lcYXlRdPj7fldtoMnAg+jYmcsMFVHImnx6rOTzcOD8MIOnA==
-X-Received: by 2002:a05:6820:221:: with SMTP id j1mr14553878oob.12.1587417231315;
-        Mon, 20 Apr 2020 14:13:51 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i20sm216861ots.29.2020.04.20.14.13.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Apr 2020 14:13:50 -0700 (PDT)
-Received: (nullmailer pid 14172 invoked by uid 1000);
-        Mon, 20 Apr 2020 21:13:49 -0000
-Date:   Mon, 20 Apr 2020 16:13:49 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     linux-clk@vger.kernel.org, aford@beaconembedded.com,
-        charles.stevens@logicpd.com, Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt: Add additional option bindings for IDT VersaClock
-Message-ID: <20200420211349.GA14073@bogus>
-References: <20200414193616.1368209-1-aford173@gmail.com>
- <20200414193616.1368209-3-aford173@gmail.com>
+        id S1726639AbgDUALX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Apr 2020 20:11:23 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:9984 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbgDUALW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Apr 2020 20:11:22 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e9e3a1d0001>; Mon, 20 Apr 2020 17:11:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 20 Apr 2020 17:11:22 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 20 Apr 2020 17:11:22 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 Apr
+ 2020 00:11:22 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 21 Apr 2020 00:11:21 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.165.49]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e9e3a280001>; Mon, 20 Apr 2020 17:11:21 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v8 4/9] clk: tegra: Add Tegra210 CSI TPG clock gate
+Date:   Mon, 20 Apr 2020 17:11:09 -0700
+Message-ID: <1587427874-3291-5-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
+References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200414193616.1368209-3-aford173@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1587427870; bh=/06MYnopqzjyrf2N0nRAUhGBnkcd6r/kBjlHyehzo9I=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=ScWjphObhyTxS1LYNhpPSkmIciySTfaqOyCXM8UmZMWZNnASDvhJtFZ5lTXpEuAvR
+         a92y23U5ogPWMCRwcvwmBB/lvJ9G7xKtfspcOnTf4jl2onfkUHSl/zDmXHsRH2A6Rf
+         HzHML+HJklr9b0eWRZI9fAljOq8W2BXz/NurwKVZcqqSYywb+PyaKCLwfXmCcrcUwE
+         bU4MttinfF4v0LKp1WWLSNmnCqJYcL1gu3BTD4i5aUVXG+SHb4rEQIiydGfX/E6I5b
+         bLEMqND6NQ+1Vkph76KRi5ENMAFUdDFNmApU5FxlWV3OOMNiEENUqtn1NZhNmXUCyl
+         +c/WOIu63qJiw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Apr 2020 14:36:16 -0500, Adam Ford wrote:
-> The VersaClock driver now supports some additional bindings to support
-> child nodes which can configure optional settings like mode, voltage
-> and slew.
-> 
-> This patch updates the binding document to describe what is available
-> in the driver.
-> 
-> Signed-off-by: Adam Ford <aford173@gmail.com>
-> 
+Tegra210 CSI hardware internally uses PLLD for internal test pattern
+generator logic.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+PLLD_BASE register in CAR has a bit CSI_CLK_SOURCE to enable PLLD
+out to CSI during TPG mode.
+
+This patch adds this CSI TPG clock gate to Tegra210 clock driver
+to allow Tegra video driver to ungate CSI TPG clock during TPG mode
+and gate during non TPG mode.
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index defe3b7..81a879b 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3035,6 +3035,13 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
+ 					     periph_clk_enb_refcnt);
+ 	clks[TEGRA210_CLK_DSIB] = clk;
+ 
++	/* csi_tpg */
++	clk = clk_register_gate(NULL, "csi_tpg", "pll_d",
++				CLK_SET_RATE_PARENT, clk_base + PLLD_BASE,
++				23, 0, &pll_d_lock);
++	clk_register_clkdev(clk, "csi_tpg", NULL);
++	clks[TEGRA210_CLK_CSI_TPG] = clk;
++
+ 	/* la */
+ 	clk = tegra_clk_register_periph("la", la_parents,
+ 			ARRAY_SIZE(la_parents), &tegra210_la, clk_base,
+-- 
+2.7.4
+
