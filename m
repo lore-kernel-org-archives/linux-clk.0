@@ -2,96 +2,101 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61517C5518A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 685E2C5518A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 363DE2071E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:14:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587550464;
-	bh=QR1NHEAeB7Pb6pt/2UuzlqAk9OkMYR0Ply0bFo3EXSU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=IuPQNjmW2O/HW10KV/TkkInOIoiOUFZ6aAGgT3VHaXF5uRnlxUsWXlyFgRvHxYThW
-	 y2+xQInKFmAeoozo8yJwfVNhVbm/G+omGQqxzLxfMFtNm/PLD3bF7KylC73ZMvcIAn
-	 KrXRjzw4t67FSqCNejDryEAmW6ITZVnf7ISdRZ+Q=
+	by mail.kernel.org (Postfix) with ESMTP id 48CAB21556
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:16:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729499AbgDVKOX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:14:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
+        id S1729780AbgDVKQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:16:48 -0400
+Received: from foss.arm.com ([217.140.110.172]:46012 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729514AbgDVKOW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 06:14:22 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91D5020575;
-        Wed, 22 Apr 2020 10:14:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587550461;
-        bh=QR1NHEAeB7Pb6pt/2UuzlqAk9OkMYR0Ply0bFo3EXSU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tGD3b6T0+ZDbE6+isLMUgz5WS+FTXFukeNNEvEbF3Yr5vSdkrCZ3c4K8SkPtUw8l8
-         mmodx0FjFCH1RihFODV/EuIjNM4OYdVo/1iSF/cFNZa06j9RDLFw0/C9rTRlxVYeTr
-         k4R6Dt1pLqsXTC1pip1xJ1iZfiQ7+BJAgghUWP6k=
-Content-Type: text/plain; charset="utf-8"
+        id S1729777AbgDVKQq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:16:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F10431B;
+        Wed, 22 Apr 2020 03:16:46 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EE0F3F68F;
+        Wed, 22 Apr 2020 03:16:46 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id CDEDF682F3E; Wed, 22 Apr 2020 11:16:44 +0100 (BST)
+Date:   Wed, 22 Apr 2020 11:16:44 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 02/17] arm64: vexpress: Don't select
+ CONFIG_POWER_RESET_VEXPRESS
+Message-ID: <20200422101644.GQ364558@e110455-lin.cambridge.arm.com>
+References: <20200419170810.5738-1-robh@kernel.org>
+ <20200419170810.5738-3-robh@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAPDyKFqpS=wke5Y=rTeq3+8bQyacVHcbWnBwG5pxsJ4hPys+9g@mail.gmail.com>
-References: <20200409064416.83340-1-sboyd@kernel.org> <20200409064416.83340-7-sboyd@kernel.org> <CAPDyKFqpS=wke5Y=rTeq3+8bQyacVHcbWnBwG5pxsJ4hPys+9g@mail.gmail.com>
-Subject: Re: [PATCH v2 06/10] mmc: meson-mx-sdio: Depend on OF_ADDRESS and not just OF
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        kbuild test robot <lkp@intel.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 22 Apr 2020 03:14:20 -0700
-Message-ID: <158755046077.159702.10648240040343779828@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200419170810.5738-3-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ulf Hansson (2020-04-21 07:04:54)
-> On Thu, 9 Apr 2020 at 08:44, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Making COMMON_CLK a visible option causes the sparc allyesconfig to fail
-> > to build like so:
-> >
-> >    sparc64-linux-ld: drivers/mmc/host/meson-mx-sdio.o: in function `mes=
-on_mx_mmc_remove':
-> >    meson-mx-sdio.c:(.text+0x70): undefined reference to `of_platform_de=
-vice_destroy'
-> >    sparc64-linux-ld: drivers/mmc/host/meson-mx-sdio.o: in function `mes=
-on_mx_mmc_probe':
-> >    meson-mx-sdio.c:(.text+0x9e4): undefined reference to `of_platform_d=
-evice_create'
-> >    sparc64-linux-ld: meson-mx-sdio.c:(.text+0xdd4): undefined reference=
- to `of_platform_device_destroy'
-> >
-> > This is because the implementation of of_platform_device_destroy() is
-> > inside an #ifdef CONFIG_OF_ADDRESS section of drivers/of/platform.c.
-> > This driver already depends on OF being enabled, so let's tighten that
-> > constrain a little more so that it depends on OF_ADDRESS instead. This
-> > way we won't try to build this driver on platforms that don't have this
-> > function.
-> >
-> > Reported-by: kbuild test robot <lkp@intel.com>
-> > Cc: Neil Armstrong <narmstrong@baylibre.com>
-> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
->=20
-> I don't have the complete picture here, can I just apply this a fix to
-> my mmc tree?
->=20
+On Sun, Apr 19, 2020 at 12:07:55PM -0500, Rob Herring wrote:
+> The VExpress power-off/reset driver is not needed on 64-bit platforms as
+> PSCI power-off and reset can be used instead. Stop selecting it so it
+> can be disabled and not always built-in.
+> 
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
 
-If this patch stays in the series then I can avoid a bisection hole. And
-it also doesn't matter until COMMON_CLK config becomes selectable. Maybe
-just ack and let it go through clk tree? Unless there's something
-changing here in the mmc tree?
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  arch/arm64/Kconfig.platforms | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 55d70cfe0f9e..9c084f995e0f 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -278,7 +278,6 @@ config ARCH_VEXPRESS
+>  	select GPIOLIB
+>  	select PM
+>  	select PM_GENERIC_DOMAINS
+> -	select POWER_RESET_VEXPRESS
+>  	select VEXPRESS_CONFIG
+>  	help
+>  	  This enables support for the ARMv8 software model (Versatile
+> -- 
+> 2.20.1
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
