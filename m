@@ -2,222 +2,87 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE04C5518C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C40C55186
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9BF0B2076B
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B15F72075A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587546266;
-	bh=iodvWiMvLvn6GaULtni3VC0AD9QWqgVNJaaTAKMQ/7o=;
+	s=default; t=1587546488;
+	bh=f0aiFIOIExhXxU07mFVwKcIPbTiTvLNT8p9G/D8EJGs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=tyKPcfFAwUe0gr9gdotQ+KwFuhtA8B7g9QCWeP7wA1GIUr7hTQBWAdx6L4caqvtir
-	 5NWI5miGCjPiOWbcxGqcaLtdGHZvGqpqQ7yYX206EEp1CPuNY8YtO7WxPER7WdKm7E
-	 IhDcYa46nuOcpARy9RzT6Xealga38VEyM6pJmfa8=
+	b=jP2reeuBj7Rk1a2UGUQqWfrH7KAS8wx65r2kizMsdAow6IwwwYXZnhm7x4Uyd0771
+	 Lka3f0WutVqF6lm3QmxCvH0m7RX4Lvwy3eOQ2cMriD4N4a4wYZFpm+8v/683M/3rK6
+	 hgZJHqwGe6GyDxFKp5ZyWd3XjK9bubH0YJJb4FtU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbgDVJEY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:04:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58264 "EHLO mail.kernel.org"
+        id S1726563AbgDVJII (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:08:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726082AbgDVJEX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:04:23 -0400
+        id S1725924AbgDVJII (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:08:08 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CF41320735;
-        Wed, 22 Apr 2020 09:04:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AEA682075A;
+        Wed, 22 Apr 2020 09:08:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587546262;
-        bh=iodvWiMvLvn6GaULtni3VC0AD9QWqgVNJaaTAKMQ/7o=;
+        s=default; t=1587546487;
+        bh=f0aiFIOIExhXxU07mFVwKcIPbTiTvLNT8p9G/D8EJGs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=uh4uMrz8n6WGjDIRlgafWrfd3QKM+e52dJPUqvDFl/atI44pOlVJkjYxYtiETc6Pw
-         dDbHLBfkJ7NZwpXlOgx9irih1UdxvpgbBr1KhsaObMO0Yw+L0loR3Gd22YsGWHTz1t
-         drCCAeTI0CAyPs5wYXls8aDp+7eW4OYbqw6XQFMM=
+        b=NDN581bpDopAwvyzxLsA6QQcVieKApy7B15NinWdDTq23iM7TqL6nQxin4AbUhaqT
+         c3APG4SRznBpstZ++3ddlUZke6hVKzGqUIZ/QE5jPQQTtomej3nFTpx+DFjk4QeysG
+         m+JhRyPgmFKxljD8usIKQTL3zvvA6F2rlQgaLIVk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1586832922-29191-6-git-send-email-sivaprak@codeaurora.org>
-References: <1586832922-29191-1-git-send-email-sivaprak@codeaurora.org> <1586832922-29191-6-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH V3 5/8] clk: qcom: Add ipq apss clock controller
+In-Reply-To: <1585224008-15730-4-git-send-email-loic.poulain@linaro.org>
+References: <1585224008-15730-1-git-send-email-loic.poulain@linaro.org> <1585224008-15730-4-git-send-email-loic.poulain@linaro.org>
+Subject: Re: [PATCH 3/4] dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Wed, 22 Apr 2020 02:04:22 -0700
-Message-ID: <158754626202.132238.18279860573775399302@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        Ilia Lin <ilialin@codeaurora.org>
+To:     Loic Poulain <loic.poulain@linaro.org>, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com
+Date:   Wed, 22 Apr 2020 02:08:06 -0700
+Message-ID: <158754648689.132238.18246673092201406766@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-04-13 19:55:19)
-> The CPU on Qualcomm's IPQ platform devices are clocked primarily by a
-> PLL and xo which are connected to a mux and enable block, This patch adds
-
-The comma should be a period? Don't write "This patch" in commit text.
-
-> support for the mux and the enable.
->=20
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig    |  10 +++++
->  drivers/clk/qcom/Makefile   |   1 +
->  drivers/clk/qcom/apss-ipq.c | 107 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  3 files changed, 118 insertions(+)
->  create mode 100644 drivers/clk/qcom/apss-ipq.c
->=20
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 15cdcdc..8573f2e 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -89,6 +89,16 @@ config APQ_MMCC_8084
->           Say Y if you want to support multimedia devices such as display,
->           graphics, video encode/decode, camera, etc.
-> =20
-> +config IPQ_APSS
-> +       tristate "IPQ APSS Clock Controller"
-> +       default N
-
-Drop this, it's already the default.
-
-> +       help
-> +         Support for APSS clock controller on ipq platform devices. The
-
-Maybe say "IPQ platforms" and drop the devices part?
-
-> +         APSS clock controller manages the Mux and enable block that fee=
-ds the
-> +         CPUs.
-> +         Say Y if you want to support CPU frequency scaling on
-> +         ipq based devices.
-> +
->  config IPQ_GCC_4019
->         tristate "IPQ4019 Global Clock Controller"
->         help
-> diff --git a/drivers/clk/qcom/apss-ipq.c b/drivers/clk/qcom/apss-ipq.c
+Quoting Loic Poulain (2020-03-26 05:00:07)
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,kryocc.txt b/Do=
+cumentation/devicetree/bindings/clock/qcom,kryocc.txt
 > new file mode 100644
-> index 0000000..a37cd98
+> index 0000000..8458783
 > --- /dev/null
-> +++ b/drivers/clk/qcom/apss-ipq.c
-> @@ -0,0 +1,107 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
+> +++ b/Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+> @@ -0,0 +1,17 @@
+> +Qualcomm CPUSS clock controller for Kryo CPUs
+> +----------------------------------------------------
 > +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/regmap.h>
-> +#include <linux/module.h>
+> +Required properties :
+> +- compatible : shall contain only one of the following:
 > +
-> +#include <dt-bindings/clock/qcom,apss-ipq.h>
+> +                       "qcom,msm8996-apcc"
 > +
-> +#include "common.h"
-> +#include "clk-regmap.h"
-> +#include "clk-branch.h"
-> +#include "clk-alpha-pll.h"
-> +#include "clk-regmap-mux.h"
-> +
-> +enum {
-> +       P_XO,
-> +       P_APSS_PLL_EARLY,
-> +};
-> +
-> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] =3D {
-> +       { .fw_name =3D "xo" },
-> +       { .fw_name =3D "pll" },
-> +};
-> +
-> +static const struct parent_map parents_apcs_alias0_clk_src_map[] =3D {
-> +       { P_XO, 0 },
-> +       { P_APSS_PLL_EARLY, 5 },
-> +};
-> +
-> +static struct clk_regmap_mux apcs_alias0_clk_src =3D {
-> +       .reg =3D 0x0050,
-> +       .width =3D 3,
-> +       .shift =3D 7,
-> +       .parent_map =3D parents_apcs_alias0_clk_src_map,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "apcs_alias0_clk_src",
-> +               .parent_data =3D parents_apcs_alias0_clk_src,
-> +               .num_parents =3D 2,
-> +               .ops =3D &clk_regmap_mux_closest_ops,
-> +               .flags =3D CLK_SET_RATE_PARENT,
-> +       },
-> +};
-> +
-> +/*required for cpufreq*/
+> +- reg : shall contain base register location and length
+> +- #clock-cells : shall contain 1
 
-This comment doesn't help in understanding.
+Any chance this can become YAML, take parent clocks via the 'clocks' and
+'clock-names' properties in DT, and have the file name reflect the
+compatible string instead of qcom,kryocc?
 
-> +static struct clk_branch apcs_alias0_core_clk =3D {
-> +       .halt_reg =3D 0x0058,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x0058,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "apcs_alias0_core_clk",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &apcs_alias0_clk_src.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-
-Please comment why the clk is critical.
-
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
 > +
-> +static const struct regmap_config apss_ipq_regmap_config =3D {
-> +       .reg_bits       =3D 32,
-> +       .reg_stride     =3D 4,
-> +       .val_bits       =3D 32,
-> +       .max_register   =3D 0x1000,
-> +       .fast_io        =3D true,
-> +};
-> +
-> +static struct clk_regmap *apss_ipq_clks[] =3D {
-> +       [APCS_ALIAS0_CLK_SRC] =3D &apcs_alias0_clk_src.clkr,
-> +       [APCS_ALIAS0_CORE_CLK] =3D &apcs_alias0_core_clk.clkr,
-> +};
-> +
-> +static const struct qcom_cc_desc apss_ipq_desc =3D {
-> +       .config =3D &apss_ipq_regmap_config,
-> +       .clks =3D apss_ipq_clks,
-> +       .num_clks =3D ARRAY_SIZE(apss_ipq_clks),
-> +};
-> +
-> +static int apss_ipq_probe(struct platform_device *pdev)
-> +{
-> +       struct regmap *regmap;
-> +
-> +       regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
-> +       if (IS_ERR(regmap))
-> +               return PTR_ERR(regmap);
-> +
-> +       return qcom_cc_really_probe(pdev, &apss_ipq_desc, regmap);
-
-What is this a child of?
-
-> +}
-> +
-> +static struct platform_driver apss_ipq_driver =3D {
-> +       .probe =3D apss_ipq_probe,
-> +       .driver =3D {
-> +               .name   =3D "qcom,apss-ipq-clk",
-> +       },
-> +};
+> +Example:
+> +       kryocc: clock-controller@6400000 {
+> +               compatible =3D "qcom,msm8996-apcc";
+> +               reg =3D <0x6400000 0x90000>;
+> +               #clock-cells =3D <1>;
+> +       };
