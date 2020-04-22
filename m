@@ -3,101 +3,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE091C54FD0
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 02:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73638C2BA19
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 02:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE5820722
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 02:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50ED4206D5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 02:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587523572;
-	bh=WDVNXLuDKHJmMAKTFYft3OMO/USP/AU36btJw83knso=;
+	s=default; t=1587523815;
+	bh=jeKrgn+vYwXwg75fzJr3ucFd8MMCv3flh6yGk+f3Pv0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=LwtoxftE3d/o/LymE6CuPNGeuqUwx5Eegfk7j60Zv+B7L0i41ACt6nDdMXAbRn+a9
-	 28DC7kBV3nOQVg4jdvALyMDpPOXVVaOU/tl8TQojFlAVL2n1maoF+/7kFa2Um2miYR
-	 vBlmIVmDbx6OvbCRFWfqdxJt6MuBos15RRQuDQ5Y=
+	b=zq5qP7dDD15KJw5kpQfRn0oHwbzQEpiz2kAGiQptt3KDWRI0BtJEiELhJo7hrPTn1
+	 MNlJUpYDelA6lIGmyfxAh1xQxG8wjlL6oLkG7BuYAqjuN0XVEt1WYRfDu5jIqoJI/b
+	 YWlAozO4ZCxtmim7Lbh/2VW2pdq0MhayHT8iGFGA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbgDVCqJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Apr 2020 22:46:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58806 "EHLO mail.kernel.org"
+        id S1726228AbgDVCuM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Apr 2020 22:50:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgDVCqJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Apr 2020 22:46:09 -0400
+        id S1725912AbgDVCuM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Apr 2020 22:50:12 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0894206D5;
-        Wed, 22 Apr 2020 02:46:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A53D3206D5;
+        Wed, 22 Apr 2020 02:50:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587523569;
-        bh=WDVNXLuDKHJmMAKTFYft3OMO/USP/AU36btJw83knso=;
+        s=default; t=1587523811;
+        bh=jeKrgn+vYwXwg75fzJr3ucFd8MMCv3flh6yGk+f3Pv0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Of9o2uQzI9EzXzjRvHOeCuJLwn/xkYTytsQYc2MEfhFMsiacEV0sYZ7tMG2EGSqLr
-         ASKMJcPD5HFJOisISVcF7owCxs6dJkKwm1cWeSODxwKR5kU2D4MFCBhbiBgIj8625M
-         QimS93P99SUmrAhwd9XzhSiNYsF4pfWI9WSvXKgw=
+        b=XoGzn7sHNE9IV5gmu3y02AdQzZFYq/yUkPoRUxGhldCDhrsPHbLB5xZea4Zx40jwD
+         qV60y+HChfjrWQ6PhFaq/dD091NV2zUNxxO15vnCeBT7gvsJqzEaXC3GzYNieanfJc
+         XodtmPFw/1zIe5JVy3VK4T5Fl5pGKdrHf9p+9OoQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
-References: <20200329124116.4185447-1-bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH] clk: qcom: msm8916: Fix the address location of pll->config_reg
+In-Reply-To: <20200419121808.440780-2-bryan.odonoghue@linaro.org>
+References: <20200419121808.440780-1-bryan.odonoghue@linaro.org> <20200419121808.440780-2-bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH 1/3] clk: qcom: Add DT bindings for msm8939 gcc
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Date:   Tue, 21 Apr 2020 19:46:07 -0700
-Message-ID: <158752356720.132238.12302452053488329235@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        shawn.guo@linaro.org, p.zabel@pengutronix.de,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Tue, 21 Apr 2020 19:50:10 -0700
+Message-ID: <158752381090.132238.9198658810848946174@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bryan O'Donoghue (2020-03-29 05:41:16)
-> During the process of debugging a processor derived from the msm8916 which
-> we found the new processor was not starting one of its PLLs.
->=20
-> After tracing the addresses and writes that downstream was doing and
-> comparing to upstream it became obvious that we were writing to a differe=
-nt
-> register location than downstream when trying to configure the PLL.
->=20
-> This error is also present in upstream msm8916.
->=20
-> As an example clk-pll.c::clk_pll_recalc_rate wants to write to
-> pll->config_reg updating the bit-field POST_DIV_RATIO. That bit-field is
-> defined in PLL_USER_CTL not in PLL_CONFIG_CTL. Taking the BIMC PLL as an
-> example
->=20
-> lm80-p0436-13_c_qc_snapdragon_410_processor_hrd.pdf
->=20
-> 0x01823010 GCC_BIMC_PLL_USER_CTL
-> 0x01823014 GCC_BIMC_PLL_CONFIG_CTL
->=20
-> This pattern is repeated for gpll0, gpll1, gpll2 and bimc_pll.
->=20
-> This error is likely not apparent since the bootloader will already have
-> initialized these PLLs.
->=20
-> This patch corrects the location of config_reg from PLL_CONFIG_CTL to
-> PLL_USER_CTL for all relevant PLLs on msm8916.
->=20
-> Fixes commit 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controlle=
-r support")
->=20
-> Cc: Georgi Djakov <georgi.djakov@linaro.org>
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
+Quoting Bryan O'Donoghue (2020-04-19 05:18:06)
+> diff --git a/include/dt-bindings/clock/qcom,gcc-msm8939.h b/include/dt-bi=
+ndings/clock/qcom,gcc-msm8939.h
+> new file mode 100644
+> index 000000000000..f9ac936590f3
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,gcc-msm8939.h
+> @@ -0,0 +1,215 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright 2020 Linaro Limited
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-Applied to clk-next
+Please remove the boiler plate that SPDX already covers.
+
+> diff --git a/include/dt-bindings/reset/qcom,gcc-msm8939.h b/include/dt-bi=
+ndings/reset/qcom,gcc-msm8939.h
+> new file mode 100644
+> index 000000000000..a8c8135ce24d
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/qcom,gcc-msm8939.h
+> @@ -0,0 +1,119 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright 2020 Linaro Limited
+> + *
+> + * This software is licensed under the terms of the GNU General Public
+> + * License version 2, as published by the Free Software Foundation, and
+> + * may be copied, distributed, and modified under those terms.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+
+Same.
