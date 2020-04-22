@@ -2,88 +2,112 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68E6C5518E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1EF3C55189
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F94C2071E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B07F62076C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587548869;
+	bh=VDHv7iN7f71wDl0Vm0L8nrtTCwARrTeDoVAxeAGLVmo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=ixHzMi2Sq5w97viVD0jewNFG1FrPdsLLh5wyVIsnuvsEJnbdphjy2K48NyH9aDf1u
+	 t+UmTTd3WnYaqB68rmOfxYvoSxQCiz4zK1fu2rKhYvb1CqzngETjL2cdS7j2+0ynmt
+	 AARMO1SUuUglgR6zOQZG6TGw6kVqiuw67y+3wEeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726200AbgDVJra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:47:30 -0400
-Received: from mga07.intel.com ([134.134.136.100]:27723 "EHLO mga07.intel.com"
+        id S1726071AbgDVJrt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:47:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725994AbgDVJr3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:47:29 -0400
-IronPort-SDR: QLN/jondOn7rUpGVekkWjsWWIP930hNONMRoF5BwKJIuGti7bgzM7wjGO1vxW2a82ZvDLD1357
- SrQ7/fG4eXaA==
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 02:47:28 -0700
-IronPort-SDR: 3aN7PojsIhZcUS0QDEfAJyxsjD1t1zD6WtaWFaWz45joO8ATB/Jbbakkgv8rZUN3zxRGc+3uB0
- QjpKwd1cSl2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.72,413,1580803200"; 
-   d="scan'208";a="402489946"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga004.jf.intel.com with ESMTP; 22 Apr 2020 02:47:24 -0700
-Received: from andy by smile with local (Exim 4.93)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1jRByZ-002PzX-07; Wed, 22 Apr 2020 12:47:27 +0300
-Date:   Wed, 22 Apr 2020 12:47:26 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
-        Daniel Matuschek <daniel@hifiberry.com>,
-        Matthias Reichl <hias@horus.com>,
-        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [RFC PATCH 12/16] clk: hifiberry-dacpro: add ACPI support
-Message-ID: <20200422094726.GZ185537@smile.fi.intel.com>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
- <20200409195841.18901-13-pierre-louis.bossart@linux.intel.com>
- <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
+        id S1725994AbgDVJrt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:47:49 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FBED2071E;
+        Wed, 22 Apr 2020 09:47:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587548868;
+        bh=VDHv7iN7f71wDl0Vm0L8nrtTCwARrTeDoVAxeAGLVmo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=VbAV/lWHS2qQ8ld0T0GumGUybrF3+jzfqIyvP++6F+z/oF6aGijuYj7rFrmyK4hXh
+         IVpszqtn7I+Khe4u6muPSMSuIY68b/BnG+9+iiTjimExGrZ2VNCAXOgZOT0lKpe+eX
+         duDW8qDbVJCQrR6kaxDa/V0LidGo8iCNTAM+NhEY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200419170810.5738-6-robh@kernel.org>
+References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-6-robh@kernel.org>
+Subject: Re: [PATCH 05/17] clk: versatile: Kill CONFIG_COMMON_CLK_VERSATILE
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Date:   Wed, 22 Apr 2020 02:47:47 -0700
+Message-ID: <158754886772.132238.8648193086417881263@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 02:32:15AM -0700, Stephen Boyd wrote:
-> Quoting Pierre-Louis Bossart (2020-04-09 12:58:37)
-> > On ACPI platforms the of_ functions are irrelevant, conditionally
-> > compile them out and add devm_clk_hw_register_clkdev() call instead.
+Quoting Rob Herring (2020-04-19 10:07:58)
+> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> index c2618f1477a2..3465fb291998 100644
+> --- a/drivers/clk/versatile/Kconfig
+> +++ b/drivers/clk/versatile/Kconfig
+> @@ -1,22 +1,14 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config ICST
+> -       bool
+> -
+> -config COMMON_CLK_VERSATILE
+> -       bool "Clock driver for ARM Reference designs"
+> -       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
+> -               ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
+> -               COMPILE_TEST
+> +       bool "Clock driver for ARM Reference designs ICST" if COMPILE_TEST
+>         select REGMAP_MMIO
+>         ---help---
+>           Supports clocking on ARM Reference designs:
+>           - Integrator/AP and Integrator/CP
+>           - RealView PB1176, EB, PB11MP and PBX
+> -         - Versatile Express
+> =20
+>  config CLK_SP810
+>         bool "Clock driver for ARM SP810 System Controller"
+> -       depends on COMMON_CLK_VERSATILE
 
-...
+Shouldn't this get the depends from COMMON_CLK_VERSATILE so that this
+option isn't exposed unless someone is compile testing or using that
+platform?
 
-> Use if (!IS_ENABLED(CONFIG_ACPI)) instead?
-> 
-> >         ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
-> >                                      &proclk->hw);
-
-I'm rather wondering if we have OF stuff integrated properly to CLK framework
-to avoid first branch completely.
-
-> > +#else
-> > +       ret = devm_clk_hw_register_clkdev(dev, &proclk->hw,
-> > +                                         init.name, NULL);
-> > +#endif
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>         default y if ARCH_VEXPRESS
+>         ---help---
+>           Supports clock muxing (REFCLK/TIMCLK to TIMERCLKEN0-3) capabili=
+ties
+> @@ -24,8 +16,7 @@ config CLK_SP810
+> =20
+>  config CLK_VEXPRESS_OSC
+>         bool "Clock driver for Versatile Express OSC clock generators"
+> -       depends on COMMON_CLK_VERSATILE
+> -       depends on VEXPRESS_CONFIG
+> +       depends on VEXPRESS_CONFIG || COMPILE_TEST
+>         default y if ARCH_VEXPRESS
+>         ---help---
+>           Simple regmap-based driver driving clock generators on Versatile
