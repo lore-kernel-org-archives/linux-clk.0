@@ -2,133 +2,83 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C55FC55185
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2659FC55185
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 12D462077D
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:03:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587553386;
-	bh=fTbTECVBN+Kz09FDYc7YbldgvRd8WnH3neoB4D6wj34=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Xz3mCeNYixKc32rXd9TzQlo+mzrzkrz7VF09z6RK6mnu6hzPWuX2Hm7p56GX70P7X
-	 Nwz39czbhDQlA5AyQiJziwpJ2kkySGAMkvnwkaDS/UO1l5kfK0dYfsanLxaI7ehkPc
-	 jNvPv+AiYqs9i1OwHD+v9zDOQnxWpg8B69q1rGEU=
+	by mail.kernel.org (Postfix) with ESMTP id 00EF520774
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:09:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbgDVKAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:00:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47054 "EHLO mail.kernel.org"
+        id S1726121AbgDVLJh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 07:09:37 -0400
+Received: from mga01.intel.com ([192.55.52.88]:12656 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbgDVKAD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 06:00:03 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CF0320776;
-        Wed, 22 Apr 2020 10:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587549602;
-        bh=fTbTECVBN+Kz09FDYc7YbldgvRd8WnH3neoB4D6wj34=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CyXnhtVQc/tjmkDRIYakYjCI5CAGw3rGlNL21QcC8sdhycajuvegJUEGK6GEUDnEz
-         te+rOS0eVTHZKW4ZCrTH3neUWbLJqt2rMAOOmJGQvCrt1ID0sBcQxwAZPtGxFb6+1t
-         LEZr/4pkNDHM8aSZQ3K75+O1a+/FaU4LRlcqPAy8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200414193616.1368209-2-aford173@gmail.com>
-References: <20200414193616.1368209-1-aford173@gmail.com> <20200414193616.1368209-2-aford173@gmail.com>
-Subject: Re: [PATCH 2/3] clk: vc5: Enable addition output configurations of the Versaclock
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
-        Adam Ford <aford173@gmail.com>,
+        id S1726104AbgDVLJh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 07:09:37 -0400
+IronPort-SDR: ekUo6i82p9hH7RS1jH1EaSunQC3qds07G5RlC74mRAdLGnmSCjfguw0hllKYqzntIjiNLn6djz
+ u59BmNzMVulQ==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 04:09:37 -0700
+IronPort-SDR: C8gBEMh74DJeDpXbU7qrvhRVlQBYlnTsVVaUFYIoZGnnyDwZ/+ZG2r1FEdHQ7lc4xpWXXlpWMu
+ NJKRArDDUW6A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,414,1580803200"; 
+   d="scan'208";a="457108260"
+Received: from ajavier-mobl1.amr.corp.intel.com (HELO [10.255.68.153]) ([10.255.68.153])
+  by fmsmga006.fm.intel.com with ESMTP; 22 Apr 2020 04:09:36 -0700
+Subject: Re: [RFC PATCH 13/16] clk: hifiberry-dacpro: add "sclk" lookup
+To:     Stephen Boyd <sboyd@kernel.org>, alsa-devel@alsa-project.org
+Cc:     tiwai@suse.de, broonie@kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Date:   Wed, 22 Apr 2020 03:00:01 -0700
-Message-ID: <158754960123.132238.9912757167863379129@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        Rob Herring <robh+dt@kernel.org>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-14-pierre-louis.bossart@linux.intel.com>
+ <158754810745.132238.7647643247125302962@swboyd.mtv.corp.google.com>
+From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Message-ID: <c52e0f7d-1eaf-a89b-ff5d-b2a02ad56021@linux.intel.com>
+Date:   Wed, 22 Apr 2020 04:51:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <158754810745.132238.7647643247125302962@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Adam Ford (2020-04-14 12:36:15)
-> @@ -865,6 +904,77 @@ static int vc5_probe(struct i2c_client *client,
->                                 init.name);
->                         goto err_clk;
->                 }
-> +
-> +               /* Fetch Clock Output configuration from DT (if specified=
-) */
-> +               child_name =3D kasprintf(GFP_KERNEL, "OUT%d", n);
-> +               np_output =3D of_get_child_by_name(client->dev.of_node, c=
-hild_name);
-> +               kfree(child_name);
-> +               if (!np_output)
-> +                       continue;
-> +               if (!(ret || of_property_read_u32(np_output,
-> +                       "idt,mode", &value))) {
-> +                       vc5->clk_out[n].clk_output_cfg0_mask |=3D VC5_CLK=
-_OUTPUT_CFG0_CFG_MASK;
-> +                       switch (value) {
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_LVPECL:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOS:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_HCSL33:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_LVDS:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOS2:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOSD:
-> +                       case VC5_CLK_OUTPUT_CFG0_CFG_HCSL25:
-> +                               vc5->clk_out[n].clk_output_cfg0 |=3D valu=
-e << VC5_CLK_OUTPUT_CFG0_CFG_SHIFT;
-> +                               break;
-> +                       default:
-> +                               ret =3D -EINVAL;
-> +                               break;
-> +                       }
-> +               }
-
-Can these three things be functions that are called and passed a
-vc5->clk_out[n] pointer? Then the code would be something like=20
-
- ret =3D prop1_parse_and_update(vc5->clk_out[n]);
- if (ret)
- 	goto err_clk;
- ret =3D prop2_parse_and_update(...)
- if (ret)
- 	goto err_clk;
 
 
-> +               if (!(ret || of_property_read_u32(np_output,
-> +                       "idt,voltage-microvolts", &value))) {
-> +                       vc5->clk_out[n].clk_output_cfg0_mask |=3D VC5_CLK=
-_OUTPUT_CFG0_PWR_MASK;
-> diff --git a/include/dt-bindings/clk/versaclock.h b/include/dt-bindings/c=
-lk/versaclock.h
-> new file mode 100644
-> index 000000000000..30add3488713
-> --- /dev/null
-> +++ b/include/dt-bindings/clk/versaclock.h
-> @@ -0,0 +1,13 @@
-> +/* HEADER */
+>> +       proclk->sclk_lookup = clkdev_hw_create(&proclk->hw, "sclk", NULL);
+>> +       if (!proclk->sclk_lookup) {
+>> +#ifndef CONFIG_ACPI
+> 
+> Is it to save code space? Otherwise the ifdefs are pretty ugly and I'd
+> prefer we just call of_clk APIs and rely on the inline stubs when
+> CONFIG_OF isn't enabled to be optimized out.
 
-Any SPDX license for this in place of HEADER?
+CONFIG_OF was added as a dependency (see patch 10/16) so that we can use 
+the 'compatible' string to probe w/ the PRP0001 device.
 
-> +
-> +/* This file defines field values used by the versaclock 6 family
-> + * for defining output type
-> + */
-> +
-> +#define VC5_LVPECL     0
-> +#define VC5_CMOS       1
-> +#define VC5_HCSL33     2
-> +#define VC5_LVDS       3
-> +#define VC5_CMOS2      4
-> +#define VC5_CMOSD      5
-> +#define VC5_HCSL25     6
+I must admit I don't know what these functions do so I just filtered 
+them out in the ACPI case.
+
+>> +               of_clk_del_provider(dev->of_node);
+>> +#endif
+>> +               return -ENOMEM;
+>> +       }
+>> +
