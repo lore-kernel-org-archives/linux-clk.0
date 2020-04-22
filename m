@@ -2,107 +2,133 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C623C55189
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:02:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C55FC55185
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 505A52076E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D462077D
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:03:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587553386;
+	bh=fTbTECVBN+Kz09FDYc7YbldgvRd8WnH3neoB4D6wj34=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=Xz3mCeNYixKc32rXd9TzQlo+mzrzkrz7VF09z6RK6mnu6hzPWuX2Hm7p56GX70P7X
+	 Nwz39czbhDQlA5AyQiJziwpJ2kkySGAMkvnwkaDS/UO1l5kfK0dYfsanLxaI7ehkPc
+	 jNvPv+AiYqs9i1OwHD+v9zDOQnxWpg8B69q1rGEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732436AbgDVLCe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 07:02:34 -0400
-Received: from foss.arm.com ([217.140.110.172]:47676 "EHLO foss.arm.com"
+        id S1726151AbgDVKAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:00:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732435AbgDVLCc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 07:02:32 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABE1E31B;
-        Wed, 22 Apr 2020 04:02:31 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8B6DB3F6CF;
-        Wed, 22 Apr 2020 04:02:31 -0700 (PDT)
-Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id 451BC682F3D; Wed, 22 Apr 2020 12:02:30 +0100 (BST)
-Date:   Wed, 22 Apr 2020 12:02:30 +0100
-From:   Liviu Dudau <liviu.dudau@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH 09/17] mfd: vexpress-sysreg: Drop selecting
- CONFIG_CLKSRC_MMIO
-Message-ID: <20200422110230.GU364558@e110455-lin.cambridge.arm.com>
-References: <20200419170810.5738-1-robh@kernel.org>
- <20200419170810.5738-10-robh@kernel.org>
+        id S1726590AbgDVKAD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:00:03 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CF0320776;
+        Wed, 22 Apr 2020 10:00:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587549602;
+        bh=fTbTECVBN+Kz09FDYc7YbldgvRd8WnH3neoB4D6wj34=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=CyXnhtVQc/tjmkDRIYakYjCI5CAGw3rGlNL21QcC8sdhycajuvegJUEGK6GEUDnEz
+         te+rOS0eVTHZKW4ZCrTH3neUWbLJqt2rMAOOmJGQvCrt1ID0sBcQxwAZPtGxFb6+1t
+         LEZr/4pkNDHM8aSZQ3K75+O1a+/FaU4LRlcqPAy8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200419170810.5738-10-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200414193616.1368209-2-aford173@gmail.com>
+References: <20200414193616.1368209-1-aford173@gmail.com> <20200414193616.1368209-2-aford173@gmail.com>
+Subject: Re: [PATCH 2/3] clk: vc5: Enable addition output configurations of the Versaclock
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Date:   Wed, 22 Apr 2020 03:00:01 -0700
+Message-ID: <158754960123.132238.9912757167863379129@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 19, 2020 at 12:08:02PM -0500, Rob Herring wrote:
-> Nothing in the VExpress sysregs nor the MFD child drivers use
-> CONFIG_CLKSRC_MMIO. There's the 24MHz counter, but that's handled by
-> drivers/clocksource/timer-versatile.c which doesn't use
-> CONFIG_CLKSRC_MMIO either. So let's just drop CONFIG_CLKSRC_MMIO.
-> 
-> As the !ARCH_USES_GETTIMEOFFSET dependency was added for
-> CONFIG_CLKSRC_MMIO, that can be dropped, too.
-> 
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
+Quoting Adam Ford (2020-04-14 12:36:15)
+> @@ -865,6 +904,77 @@ static int vc5_probe(struct i2c_client *client,
+>                                 init.name);
+>                         goto err_clk;
+>                 }
+> +
+> +               /* Fetch Clock Output configuration from DT (if specified=
+) */
+> +               child_name =3D kasprintf(GFP_KERNEL, "OUT%d", n);
+> +               np_output =3D of_get_child_by_name(client->dev.of_node, c=
+hild_name);
+> +               kfree(child_name);
+> +               if (!np_output)
+> +                       continue;
+> +               if (!(ret || of_property_read_u32(np_output,
+> +                       "idt,mode", &value))) {
+> +                       vc5->clk_out[n].clk_output_cfg0_mask |=3D VC5_CLK=
+_OUTPUT_CFG0_CFG_MASK;
+> +                       switch (value) {
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_LVPECL:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOS:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_HCSL33:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_LVDS:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOS2:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_CMOSD:
+> +                       case VC5_CLK_OUTPUT_CFG0_CFG_HCSL25:
+> +                               vc5->clk_out[n].clk_output_cfg0 |=3D valu=
+e << VC5_CLK_OUTPUT_CFG0_CFG_SHIFT;
+> +                               break;
+> +                       default:
+> +                               ret =3D -EINVAL;
+> +                               break;
+> +                       }
+> +               }
 
-Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+Can these three things be functions that are called and passed a
+vc5->clk_out[n] pointer? Then the code would be something like=20
 
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
->  drivers/mfd/Kconfig | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 0a59249198d3..b1311dea2da1 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -2029,9 +2029,8 @@ endmenu
->  
->  config MFD_VEXPRESS_SYSREG
->  	bool "Versatile Express System Registers"
-> -	depends on VEXPRESS_CONFIG && GPIOLIB && !ARCH_USES_GETTIMEOFFSET
-> +	depends on VEXPRESS_CONFIG && GPIOLIB
->  	default y
-> -	select CLKSRC_MMIO
->  	select GPIO_GENERIC_PLATFORM
->  	select MFD_CORE
->  	select MFD_SYSCON
-> -- 
-> 2.20.1
-> 
+ ret =3D prop1_parse_and_update(vc5->clk_out[n]);
+ if (ret)
+ 	goto err_clk;
+ ret =3D prop2_parse_and_update(...)
+ if (ret)
+ 	goto err_clk;
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+
+> +               if (!(ret || of_property_read_u32(np_output,
+> +                       "idt,voltage-microvolts", &value))) {
+> +                       vc5->clk_out[n].clk_output_cfg0_mask |=3D VC5_CLK=
+_OUTPUT_CFG0_PWR_MASK;
+> diff --git a/include/dt-bindings/clk/versaclock.h b/include/dt-bindings/c=
+lk/versaclock.h
+> new file mode 100644
+> index 000000000000..30add3488713
+> --- /dev/null
+> +++ b/include/dt-bindings/clk/versaclock.h
+> @@ -0,0 +1,13 @@
+> +/* HEADER */
+
+Any SPDX license for this in place of HEADER?
+
+> +
+> +/* This file defines field values used by the versaclock 6 family
+> + * for defining output type
+> + */
+> +
+> +#define VC5_LVPECL     0
+> +#define VC5_CMOS       1
+> +#define VC5_HCSL33     2
+> +#define VC5_LVDS       3
+> +#define VC5_CMOS2      4
+> +#define VC5_CMOSD      5
+> +#define VC5_HCSL25     6
