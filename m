@@ -2,274 +2,222 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E490DC55189
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:44:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A75EC5518C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C42E020857
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:44:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="EbOVnHdy"
+	by mail.kernel.org (Postfix) with ESMTP id 81ABB2076E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:47:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729984AbgDVKo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:44:56 -0400
-Received: from mail26.static.mailgun.info ([104.130.122.26]:56542 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731537AbgDVKoz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Apr 2020 06:44:55 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1587552293; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
- Subject: Sender; bh=X9RGF6DVDVLfxnPxoe5Yh8TPlAiL8319mi3nRhdPovs=; b=EbOVnHdybhI/Z+i0QSnG5GnFql4S0801W9Vooo0T1NjYkrpDgxWKrngk7PhjdD+V9DJqCVru
- faDrQiipOfq4aOlp13V075oif5yiFPGAm+vZD7WfKYxctR5v48qq+e/JYj4Jx9j4YHTpYMCN
- WQmN2inpIJOMfig0RrGWMllR/yg=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ea02019.7ff1f3af2500-smtp-out-n05;
- Wed, 22 Apr 2020 10:44:41 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 05D28C433F2; Wed, 22 Apr 2020 10:44:40 +0000 (UTC)
-Received: from [192.168.0.105] (unknown [49.207.137.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CC38C433D2;
-        Wed, 22 Apr 2020 10:44:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CC38C433D2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH V3 3/8] clk: qcom: Add A53 PLL support for ipq6018 devices
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
-References: <1586832922-29191-1-git-send-email-sivaprak@codeaurora.org>
- <1586832922-29191-4-git-send-email-sivaprak@codeaurora.org>
- <158754602745.132238.14379194464345140559@swboyd.mtv.corp.google.com>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <4025e5c3-b532-d235-f73b-2b86055bdde2@codeaurora.org>
-Date:   Wed, 22 Apr 2020 16:14:33 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1728301AbgDVKrO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:47:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:45988 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729035AbgDVKP7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:15:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D734C31B;
+        Wed, 22 Apr 2020 03:15:56 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 990B93F68F;
+        Wed, 22 Apr 2020 03:15:56 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 46D24682F3E; Wed, 22 Apr 2020 11:15:55 +0100 (BST)
+Date:   Wed, 22 Apr 2020 11:15:55 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 01/17] ARM: vexpress: Move vexpress_flags_set() into arch
+ code
+Message-ID: <20200422101555.GP364558@e110455-lin.cambridge.arm.com>
+References: <20200419170810.5738-1-robh@kernel.org>
+ <20200419170810.5738-2-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <158754602745.132238.14379194464345140559@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200419170810.5738-2-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Sun, Apr 19, 2020 at 12:07:54PM -0500, Rob Herring wrote:
+> vexpress_flags_set() is only used by the platform SMP related code and
+> has nothing to do with the vexpress-sysreg MFD driver other than both
+> access the same h/w block. It's also only needed for 32-bit systems and
+> must be built-in for them. Let's move vexpress_flags_set() closer to
+> where it is being used. This will allow for vexpress-sysreg to be built
+> as a module.
+> 
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
 
-On 4/22/2020 2:30 PM, Stephen Boyd wrote:
-> Quoting Sivaprakash Murugesan (2020-04-13 19:55:17)
->> The CPUs on Qualcomm IPQ6018 platform is primarily clocked by A53 PLL.
->> This patch adds support for the A53 PLL on IPQ6018 devices which can
->> support CPU frequencies above 1Ghz.
->>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->>   drivers/clk/qcom/a53-pll.c | 136 ++++++++++++++++++++++++++++++++++++---------
->>   1 file changed, 111 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
->> index 45cfc57..a95351c 100644
->> --- a/drivers/clk/qcom/a53-pll.c
->> +++ b/drivers/clk/qcom/a53-pll.c
->> @@ -11,11 +11,40 @@
->>   #include <linux/platform_device.h>
->>   #include <linux/regmap.h>
->>   #include <linux/module.h>
->> +#include <linux/of_device.h>
-> Why does this driver need to change to use of_device APIs?
-we can use devm APIs and avoid this in next patch.
->
->>   
->>   #include "clk-pll.h"
->>   #include "clk-regmap.h"
->> +#include "clk-alpha-pll.h"
->>   
->> -static const struct pll_freq_tbl a53pll_freq[] = {
->> +struct a53_alpha_pll {
->> +       struct alpha_pll_config *pll_config;
->> +       struct clk_alpha_pll *pll;
->> +};
->> +
->> +union a53pll {
->> +       struct clk_pll *pll;
->> +       struct a53_alpha_pll alpha_pll;
->> +};
->> +
->> +struct a53pll_data {
->> +#define PLL_IS_ALPHA BIT(0)
->> +       u8 flags;
->> +       union a53pll a53pll;
-> Why is there a union? Can't we have different clk ops for the two types
-> of PLLs and then use container_of to get it from the clk ops?
-ok.
->
->> +};
->> +
->> +static const u8 ipq_pll_offsets[] = {
->> +       [PLL_OFF_L_VAL] = 0x08,
->> +       [PLL_OFF_ALPHA_VAL] = 0x10,
->> +       [PLL_OFF_USER_CTL] = 0x18,
->> +       [PLL_OFF_CONFIG_CTL] = 0x20,
->> +       [PLL_OFF_CONFIG_CTL_U] = 0x24,
->> +       [PLL_OFF_STATUS] = 0x28,
->> +       [PLL_OFF_TEST_CTL] = 0x30,
->> +       [PLL_OFF_TEST_CTL_U] = 0x34,
->> +};
->> +
->> +static const struct pll_freq_tbl msm8996_a53pll_freq[] = {
->>          {  998400000, 52, 0x0, 0x1, 0 },
->>          { 1094400000, 57, 0x0, 0x1, 0 },
->>          { 1152000000, 62, 0x0, 0x1, 0 },
->> @@ -26,6 +55,64 @@ static const struct pll_freq_tbl a53pll_freq[] = {
->>          { }
->>   };
->>   
->> +static struct clk_pll msm8996_pll = {
->> +       .mode_reg = 0x0,
->> +       .l_reg = 0x04,
->> +       .m_reg = 0x08,
->> +       .n_reg = 0x0c,
->> +       .config_reg = 0x14,
->> +       .status_reg = 0x1c,
->> +       .status_bit = 16,
->> +       .freq_tbl = msm8996_a53pll_freq,
->> +       .clkr.hw.init = &(struct clk_init_data){
->> +               .name = "a53pll",
->> +               .flags = CLK_IS_CRITICAL,
->> +               .parent_data = &(const struct clk_parent_data){
->> +                       .fw_name = "xo",
->> +                       .name = "xo",
->> +               },
->> +               .num_parents = 1,
->> +               .ops = &clk_pll_sr2_ops,
->> +       },
->> +};
->> +
->> +static struct clk_alpha_pll ipq6018_pll = {
->> +       .offset = 0x0,
->> +       .regs = ipq_pll_offsets,
->> +       .flags = SUPPORTS_DYNAMIC_UPDATE,
->> +       .clkr = {
->> +               .enable_reg = 0x0,
->> +               .enable_mask = BIT(0),
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "a53pll",
->> +                       .flags = CLK_IS_CRITICAL,
->> +                       .parent_data = &(const struct clk_parent_data){
->> +                               .fw_name = "xo",
->> +                       },
->> +                       .num_parents = 1,
->> +                       .ops = &clk_alpha_pll_huayra_ops,
->> +               },
->> +       },
->> +};
->> +
->> +static struct alpha_pll_config ipq6018_pll_config = {
-> Can this be const?
-yeah it can be. will fix up in next patch.
->
->> +       .l = 0x37,
->> +       .config_ctl_val = 0x04141200,
->> +       .config_ctl_hi_val = 0x0,
->> +       .early_output_mask = BIT(3),
->> +       .main_output_mask = BIT(0),
->> +};
->> +
->> +static struct a53pll_data msm8996pll_data = {
->> +       .a53pll.pll = &msm8996_pll,
->> +};
->> +
->> +static struct a53pll_data ipq6018pll_data = {
->> +       .flags = PLL_IS_ALPHA,
->> +       .a53pll.alpha_pll.pll = &ipq6018_pll,
->> +       .a53pll.alpha_pll.pll_config = &ipq6018_pll_config,
->> +};
->> +
->>   static const struct regmap_config a53pll_regmap_config = {
->>          .reg_bits               = 32,
->>          .reg_stride             = 4,
->> @@ -39,14 +126,16 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
->>          struct device *dev = &pdev->dev;
->>          struct regmap *regmap;
->>          struct resource *res;
->> -       struct clk_pll *pll;
->> +       const struct a53pll_data *pll_data;
->> +       struct clk_regmap *clkr;
->>          void __iomem *base;
->> -       struct clk_init_data init = { };
->>          int ret;
->>   
->> -       pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
->> -       if (!pll)
->> -               return -ENOMEM;
->> +       pll_data = of_device_get_match_data(dev);
-> Use device_get_match_data() please.
-ok.
->
->> +       if (!pll_data) {
->> +               dev_err(dev, "failed to get platform data\n");
-> No error message please.
-ok.
->
->> +               return -ENODEV;
->> +       }
->>   
->>          res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>          base = devm_ioremap_resource(dev, res);
->> @@ -57,30 +146,26 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
->>          if (IS_ERR(regmap))
->>                  return PTR_ERR(regmap);
->>   
->> -       pll->l_reg = 0x04;
->> -       pll->m_reg = 0x08;
->> -       pll->n_reg = 0x0c;
->> -       pll->config_reg = 0x14;
->> -       pll->mode_reg = 0x00;
->> -       pll->status_reg = 0x1c;
->> -       pll->status_bit = 16;
->> -       pll->freq_tbl = a53pll_freq;
->> -
->> -       init.name = "a53pll";
->> -       init.parent_names = (const char *[]){ "xo" };
->> -       init.num_parents = 1;
->> -       init.ops = &clk_pll_sr2_ops;
->> -       init.flags = CLK_IS_CRITICAL;
-> Please document why a clk is critical.
-ok
->
->> -       pll->clkr.hw.init = &init;
->> -
->> -       ret = devm_clk_register_regmap(dev, &pll->clkr);
->> +       if (pll_data->flags & PLL_IS_ALPHA) {
->> +               struct clk_alpha_pll *alpha_pll =
->> +                       pll_data->a53pll.alpha_pll.pll;
->> +               struct alpha_pll_config *alpha_pll_config =
->> +                       pll_data->a53pll.alpha_pll.pll_config;
->> +
->> +               clk_alpha_pll_configure(alpha_pll, regmap, alpha_pll_config);
->> +               clkr = &pll_data->a53pll.alpha_pll.pll->clkr;
->> +       } else {
->> +               clkr = &pll_data->a53pll.pll->clkr;
->> +       }
-> Sorry, the design is confusing.
+Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 
-The basic idea is to add support for various PLLs available to clock the 
-A53 core.
+Unfortunately I did not had the forethought to leave my Versatile Express board
+plugged in before our office lockdown, so I will not have a chance to test the
+series.
 
-if this messing up the code, can the alpha pll support be moved to a 
-separate file?
+Best regards,
+Liviu
 
-It would be very helpful if you provide your input on this.
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  arch/arm/mach-vexpress/Kconfig |  1 -
+>  arch/arm/mach-vexpress/core.h  |  1 +
+>  arch/arm/mach-vexpress/dcscb.c |  1 +
+>  arch/arm/mach-vexpress/v2m.c   | 23 +++++++++++++++++++++++
+>  drivers/mfd/vexpress-sysreg.c  | 19 -------------------
+>  include/linux/vexpress.h       |  4 ----
+>  6 files changed, 25 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/arm/mach-vexpress/Kconfig b/arch/arm/mach-vexpress/Kconfig
+> index 726a68085c3b..18951cd20d9d 100644
+> --- a/arch/arm/mach-vexpress/Kconfig
+> +++ b/arch/arm/mach-vexpress/Kconfig
+> @@ -22,7 +22,6 @@ menuconfig ARCH_VEXPRESS
+>  	select REGULATOR_FIXED_VOLTAGE if REGULATOR
+>  	select VEXPRESS_CONFIG
+>  	select VEXPRESS_SYSCFG
+> -	select MFD_VEXPRESS_SYSREG
+>  	help
+>  	  This option enables support for systems using Cortex processor based
+>  	  ARM core and logic (FPGA) tiles on the Versatile Express motherboard,
+> diff --git a/arch/arm/mach-vexpress/core.h b/arch/arm/mach-vexpress/core.h
+> index f4a7519084f1..bda78675c55d 100644
+> --- a/arch/arm/mach-vexpress/core.h
+> +++ b/arch/arm/mach-vexpress/core.h
+> @@ -1,3 +1,4 @@
+>  bool vexpress_smp_init_ops(void);
+> +void vexpress_flags_set(u32 data);
+>  
+>  extern const struct smp_operations vexpress_smp_dt_ops;
+> diff --git a/arch/arm/mach-vexpress/dcscb.c b/arch/arm/mach-vexpress/dcscb.c
+> index 46a903c88c6a..a0554d7d04f7 100644
+> --- a/arch/arm/mach-vexpress/dcscb.c
+> +++ b/arch/arm/mach-vexpress/dcscb.c
+> @@ -20,6 +20,7 @@
+>  #include <asm/cputype.h>
+>  #include <asm/cp15.h>
+>  
+> +#include "core.h"
+>  
+>  #define RST_HOLD0	0x0
+>  #define RST_HOLD1	0x4
+> diff --git a/arch/arm/mach-vexpress/v2m.c b/arch/arm/mach-vexpress/v2m.c
+> index 95886b3bb9dd..ffe7c7a85ae9 100644
+> --- a/arch/arm/mach-vexpress/v2m.c
+> +++ b/arch/arm/mach-vexpress/v2m.c
+> @@ -1,8 +1,31 @@
+>  // SPDX-License-Identifier: GPL-2.0
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <asm/mach/arch.h>
+>  
+>  #include "core.h"
+>  
+> +#define SYS_FLAGSSET		0x030
+> +#define SYS_FLAGSCLR		0x034
+> +
+> +void vexpress_flags_set(u32 data)
+> +{
+> +	static void __iomem *base;
+> +
+> +	if (!base) {
+> +		struct device_node *node = of_find_compatible_node(NULL, NULL,
+> +				"arm,vexpress-sysreg");
+> +
+> +		base = of_iomap(node, 0);
+> +	}
+> +
+> +	if (WARN_ON(!base))
+> +		return;
+> +
+> +	writel(~0, base + SYS_FLAGSCLR);
+> +	writel(data, base + SYS_FLAGSSET);
+> +}
+> +
+>  static const char * const v2m_dt_match[] __initconst = {
+>  	"arm,vexpress",
+>  	NULL,
+> diff --git a/drivers/mfd/vexpress-sysreg.c b/drivers/mfd/vexpress-sysreg.c
+> index c68ff56dbdb1..0b9cc67706c7 100644
+> --- a/drivers/mfd/vexpress-sysreg.c
+> +++ b/drivers/mfd/vexpress-sysreg.c
+> @@ -8,7 +8,6 @@
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/mfd/core.h>
+> -#include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/platform_data/syscon.h>
+>  #include <linux/platform_device.h>
+> @@ -42,24 +41,6 @@
+>  
+>  #define SYS_MISC_MASTERSITE	(1 << 14)
+>  
+> -void vexpress_flags_set(u32 data)
+> -{
+> -	static void __iomem *base;
+> -
+> -	if (!base) {
+> -		struct device_node *node = of_find_compatible_node(NULL, NULL,
+> -				"arm,vexpress-sysreg");
+> -
+> -		base = of_iomap(node, 0);
+> -	}
+> -
+> -	if (WARN_ON(!base))
+> -		return;
+> -
+> -	writel(~0, base + SYS_FLAGSCLR);
+> -	writel(data, base + SYS_FLAGSSET);
+> -}
+> -
+>  /* The sysreg block is just a random collection of various functions... */
+>  
+>  static struct syscon_platform_data vexpress_sysreg_sys_id_pdata = {
+> diff --git a/include/linux/vexpress.h b/include/linux/vexpress.h
+> index 0e130b5077a5..2ec7992b054c 100644
+> --- a/include/linux/vexpress.h
+> +++ b/include/linux/vexpress.h
+> @@ -40,8 +40,4 @@ struct device *vexpress_config_bridge_register(struct device *parent,
+>  
+>  struct regmap *devm_regmap_init_vexpress_config(struct device *dev);
+>  
+> -/* Platform control */
+> -
+> -void vexpress_flags_set(u32 data);
+> -
+>  #endif
+> -- 
+> 2.20.1
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
