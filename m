@@ -2,31 +2,31 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685E2C5518A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:16:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D66FC5518C
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 48CAB21556
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:16:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E87112073A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbgDVKQs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:16:48 -0400
-Received: from foss.arm.com ([217.140.110.172]:46012 "EHLO foss.arm.com"
+        id S1731007AbgDVKjI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:39:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:46140 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729777AbgDVKQq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 06:16:46 -0400
+        id S1729474AbgDVKVh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:21:37 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3F10431B;
-        Wed, 22 Apr 2020 03:16:46 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F0D131B;
+        Wed, 22 Apr 2020 03:21:37 -0700 (PDT)
 Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1EE0F3F68F;
-        Wed, 22 Apr 2020 03:16:46 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E2D1B3F68F;
+        Wed, 22 Apr 2020 03:21:36 -0700 (PDT)
 Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
-        id CDEDF682F3E; Wed, 22 Apr 2020 11:16:44 +0100 (BST)
-Date:   Wed, 22 Apr 2020 11:16:44 +0100
+        id 9CCBE682F3D; Wed, 22 Apr 2020 11:21:35 +0100 (BST)
+Date:   Wed, 22 Apr 2020 11:21:35 +0100
 From:   Liviu Dudau <liviu.dudau@arm.com>
 To:     Rob Herring <robh@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -41,28 +41,26 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Kevin Brodsky <Kevin.Brodsky@arm.com>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org
-Subject: Re: [PATCH 02/17] arm64: vexpress: Don't select
- CONFIG_POWER_RESET_VEXPRESS
-Message-ID: <20200422101644.GQ364558@e110455-lin.cambridge.arm.com>
+Subject: Re: [PATCH 07/17] clk: vexpress-osc: Use the devres clock API
+ variants
+Message-ID: <20200422102135.GS364558@e110455-lin.cambridge.arm.com>
 References: <20200419170810.5738-1-robh@kernel.org>
- <20200419170810.5738-3-robh@kernel.org>
+ <20200419170810.5738-8-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200419170810.5738-3-robh@kernel.org>
+In-Reply-To: <20200419170810.5738-8-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Apr 19, 2020 at 12:07:55PM -0500, Rob Herring wrote:
-> The VExpress power-off/reset driver is not needed on 64-bit platforms as
-> PSCI power-off and reset can be used instead. Stop selecting it so it
-> can be disabled and not always built-in.
+On Sun, Apr 19, 2020 at 12:08:00PM -0500, Rob Herring wrote:
+> In preparation to enable the vexpress-osc clock driver as a module,
+> convert the driver to use the managed devres clock API variants. With
+> this, a driver .remove() hook is not needed.
 > 
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
 > Cc: Liviu Dudau <liviu.dudau@arm.com>
 
 Acked-by: Liviu Dudau <liviu.dudau@arm.com>
@@ -70,23 +68,43 @@ Acked-by: Liviu Dudau <liviu.dudau@arm.com>
 > Cc: Sudeep Holla <sudeep.holla@arm.com>
 > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  arch/arm64/Kconfig.platforms | 1 -
->  1 file changed, 1 deletion(-)
+>  drivers/clk/versatile/clk-vexpress-osc.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index 55d70cfe0f9e..9c084f995e0f 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -278,7 +278,6 @@ config ARCH_VEXPRESS
->  	select GPIOLIB
->  	select PM
->  	select PM_GENERIC_DOMAINS
-> -	select POWER_RESET_VEXPRESS
->  	select VEXPRESS_CONFIG
->  	help
->  	  This enables support for the ARMv8 software model (Versatile
+> diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+> index 7ade146a3ea9..5bb1d5a714d0 100644
+> --- a/drivers/clk/versatile/clk-vexpress-osc.c
+> +++ b/drivers/clk/versatile/clk-vexpress-osc.c
+> @@ -65,8 +65,8 @@ static int vexpress_osc_probe(struct platform_device *pdev)
+>  {
+>  	struct clk_init_data init;
+>  	struct vexpress_osc *osc;
+> -	struct clk *clk;
+>  	u32 range[2];
+> +	int ret;
+>  
+>  	osc = devm_kzalloc(&pdev->dev, sizeof(*osc), GFP_KERNEL);
+>  	if (!osc)
+> @@ -92,11 +92,11 @@ static int vexpress_osc_probe(struct platform_device *pdev)
+>  
+>  	osc->hw.init = &init;
+>  
+> -	clk = clk_register(NULL, &osc->hw);
+> -	if (IS_ERR(clk))
+> -		return PTR_ERR(clk);
+> +	ret = devm_clk_hw_register(&pdev->dev, &osc->hw);
+> +	if (ret < 0)
+> +		return ret;
+>  
+> -	of_clk_add_provider(pdev->dev.of_node, of_clk_src_simple_get, clk);
+> +	devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_simple_get, &osc->hw);
+>  	clk_hw_set_rate_range(&osc->hw, osc->rate_min, osc->rate_max);
+>  
+>  	dev_dbg(&pdev->dev, "Registered clock '%s'\n", init.name);
 > -- 
 > 2.20.1
 > 
