@@ -6,78 +6,92 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC96BC5518A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61517C5518A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:14:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8C87220774
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 363DE2071E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587549116;
-	bh=o2n43kaLkZk8Yc3c5jw7xR0qABHEQs6JMUkUxQReAVM=;
+	s=default; t=1587550464;
+	bh=QR1NHEAeB7Pb6pt/2UuzlqAk9OkMYR0Ply0bFo3EXSU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=aFuPr09Rid+5x52kUpelIgP4kwHm1JXm4ESEYCDa1CaNnOp6Fz+oX6Z+++7xXLVHe
-	 3PZX1DgpRT7Fa2AGqLm2xjEp7rOGwH2Wn8ySe9ok/Cr1lOb54Z4geOfMldke1LwNa9
-	 Yq0C+XXp3zt86tXmVmfWo2ZUmDXQu6UfTMT23MRM=
+	b=IuPQNjmW2O/HW10KV/TkkInOIoiOUFZ6aAGgT3VHaXF5uRnlxUsWXlyFgRvHxYThW
+	 y2+xQInKFmAeoozo8yJwfVNhVbm/G+omGQqxzLxfMFtNm/PLD3bF7KylC73ZMvcIAn
+	 KrXRjzw4t67FSqCNejDryEAmW6ITZVnf7ISdRZ+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726117AbgDVJv4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:51:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
+        id S1729499AbgDVKOX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 06:14:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgDVJv4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:51:56 -0400
+        id S1729514AbgDVKOW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 06:14:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AE2312073A;
-        Wed, 22 Apr 2020 09:51:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91D5020575;
+        Wed, 22 Apr 2020 10:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587549115;
-        bh=o2n43kaLkZk8Yc3c5jw7xR0qABHEQs6JMUkUxQReAVM=;
+        s=default; t=1587550461;
+        bh=QR1NHEAeB7Pb6pt/2UuzlqAk9OkMYR0Ply0bFo3EXSU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SEusCKdNvAthriMYUMGBLbl+Npwh4x+yKKFsGZ+ZiCntRRFZE19TKIoA9b6fvJ5WK
-         uxEuviBo94uJ7xv4ZyPWFnKDIyumUD0J9m15t2eufbrPkr3tIviPfgkhCD6l10hkw5
-         wnnNR3eLnoOhe0CRRpu0McpMoGUooLe0GPAOvZP0=
+        b=tGD3b6T0+ZDbE6+isLMUgz5WS+FTXFukeNNEvEbF3Yr5vSdkrCZ3c4K8SkPtUw8l8
+         mmodx0FjFCH1RihFODV/EuIjNM4OYdVo/1iSF/cFNZa06j9RDLFw0/C9rTRlxVYeTr
+         k4R6Dt1pLqsXTC1pip1xJ1iZfiQ7+BJAgghUWP6k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200419170810.5738-8-robh@kernel.org>
-References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-8-robh@kernel.org>
-Subject: Re: [PATCH 07/17] clk: vexpress-osc: Use the devres clock API variants
+In-Reply-To: <CAPDyKFqpS=wke5Y=rTeq3+8bQyacVHcbWnBwG5pxsJ4hPys+9g@mail.gmail.com>
+References: <20200409064416.83340-1-sboyd@kernel.org> <20200409064416.83340-7-sboyd@kernel.org> <CAPDyKFqpS=wke5Y=rTeq3+8bQyacVHcbWnBwG5pxsJ4hPys+9g@mail.gmail.com>
+Subject: Re: [PATCH v2 06/10] mmc: meson-mx-sdio: Depend on OF_ADDRESS and not just OF
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Date:   Wed, 22 Apr 2020 02:51:54 -0700
-Message-ID: <158754911497.132238.14935003164917739527@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        kbuild test robot <lkp@intel.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 22 Apr 2020 03:14:20 -0700
+Message-ID: <158755046077.159702.10648240040343779828@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2020-04-19 10:08:00)
-> In preparation to enable the vexpress-osc clock driver as a module,
-> convert the driver to use the managed devres clock API variants. With
-> this, a driver .remove() hook is not needed.
+Quoting Ulf Hansson (2020-04-21 07:04:54)
+> On Thu, 9 Apr 2020 at 08:44, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Making COMMON_CLK a visible option causes the sparc allyesconfig to fail
+> > to build like so:
+> >
+> >    sparc64-linux-ld: drivers/mmc/host/meson-mx-sdio.o: in function `mes=
+on_mx_mmc_remove':
+> >    meson-mx-sdio.c:(.text+0x70): undefined reference to `of_platform_de=
+vice_destroy'
+> >    sparc64-linux-ld: drivers/mmc/host/meson-mx-sdio.o: in function `mes=
+on_mx_mmc_probe':
+> >    meson-mx-sdio.c:(.text+0x9e4): undefined reference to `of_platform_d=
+evice_create'
+> >    sparc64-linux-ld: meson-mx-sdio.c:(.text+0xdd4): undefined reference=
+ to `of_platform_device_destroy'
+> >
+> > This is because the implementation of of_platform_device_destroy() is
+> > inside an #ifdef CONFIG_OF_ADDRESS section of drivers/of/platform.c.
+> > This driver already depends on OF being enabled, so let's tighten that
+> > constrain a little more so that it depends on OF_ADDRESS instead. This
+> > way we won't try to build this driver on platforms that don't have this
+> > function.
+> >
+> > Reported-by: kbuild test robot <lkp@intel.com>
+> > Cc: Neil Armstrong <narmstrong@baylibre.com>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 >=20
-> Cc: Liviu Dudau <liviu.dudau@arm.com>
-> Cc: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+> I don't have the complete picture here, can I just apply this a fix to
+> my mmc tree?
+>=20
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+If this patch stays in the series then I can avoid a bisection hole. And
+it also doesn't matter until COMMON_CLK config becomes selectable. Maybe
+just ack and let it go through clk tree? Unless there's something
+changing here in the mmc tree?
