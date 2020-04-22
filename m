@@ -2,80 +2,104 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E970BC5518A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 871C2C5518A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE5492076E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60FD32077D
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:32:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587547419;
-	bh=KIXbtLYXdqvFRpDylTVVouE4ecbmQXC4DLEhxDnLiqQ=;
+	s=default; t=1587547937;
+	bh=lIl6HImVJ6Dh/zIbLnzk79LumoD5Vgqca2ZsZri1L9M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=jfTU1xzESn35kBPaU9bg/m9N7UVJdhFUNW08CaBwSnsSptQdvoBexKGwc/ZuW/UMr
-	 T5m3rBnGa3qtqTcxOJq98QdhMa0w7+iFwZ2l68JVHie+de7yO2/9lCawL9e2KqX9L2
-	 Hndh+gCyOuiVbWUHlHapNKEHg6CbBrTU7ka1Lzhc=
+	b=xIMsycg4rXpw9vdR2BKR43tG6vibqYNoh7YrUQDp/VPrWMAgT1HRuphOFkh8U69EC
+	 B0P4tY1ueyKD/iK1SDJCcAQit+dmieLZbkv/qYicGlrT8A2YSEbpBgkERGQXxLVxI8
+	 WLw/Py/NlNIE3apcd04VexU5r6Bk68erfXOepTOg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725842AbgDVJXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:23:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34792 "EHLO mail.kernel.org"
+        id S1726056AbgDVJcR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:32:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbgDVJXg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:23:36 -0400
+        id S1726021AbgDVJcQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:32:16 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38B5020656;
-        Wed, 22 Apr 2020 09:23:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D5752075A;
+        Wed, 22 Apr 2020 09:32:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587547416;
-        bh=KIXbtLYXdqvFRpDylTVVouE4ecbmQXC4DLEhxDnLiqQ=;
+        s=default; t=1587547936;
+        bh=lIl6HImVJ6Dh/zIbLnzk79LumoD5Vgqca2ZsZri1L9M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=yRAendzY6ymm0fek+hxJrl3UcbcYiwJc1PuXqmJ2aHooL0fEGEait1WW5A3cWEWDc
-         3ammBbeCxOIOzfGvy+QIl5xHKoKq/8VJtBUvjKhswRhO3cuTnTFqzFRW2pqP6wEkng
-         N4gh2kXS7PF2PCr4tsLpI1VoRpWZ8h7HTBEHXuKU=
+        b=2kFpEQIZIJ4lZcUA7T08f6TV99oT5xXQrAyVh3KqbohiFsYKkNCACfJshaKBda9So
+         +KF0TH5tFfnbWpkpLSNVOi293lHsXSjKFMQpENVaZmDlvdcYnH4bquNMpfJ3m2rtlE
+         K8cQcvWAtne6L9kmuXBUpKWpRUHvUgUvOLvn+P3Y=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200411010143.GF20625@builder.lan>
-References: <1586566362-21450-1-git-send-email-wcheng@codeaurora.org> <1586566362-21450-2-git-send-email-wcheng@codeaurora.org> <20200411010143.GF20625@builder.lan>
-Subject: Re: [PATCH v4 1/2] clk: qcom: gcc: Add USB3 PIPE clock and GDSC for SM8150
+In-Reply-To: <20200409195841.18901-13-pierre-louis.bossart@linux.intel.com>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com> <20200409195841.18901-13-pierre-louis.bossart@linux.intel.com>
+Subject: Re: [RFC PATCH 12/16] clk: hifiberry-dacpro: add ACPI support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, vinod.koul@linaro.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Wesley Cheng <wcheng@codeaurora.org>
-Date:   Wed, 22 Apr 2020 02:23:35 -0700
-Message-ID: <158754741540.132238.1839211437225696725@swboyd.mtv.corp.google.com>
+Cc:     tiwai@suse.de, broonie@kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Daniel Matuschek <daniel@hifiberry.com>,
+        Matthias Reichl <hias@horus.com>,
+        Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org
+Date:   Wed, 22 Apr 2020 02:32:15 -0700
+Message-ID: <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-04-10 18:01:43)
-> On Fri 10 Apr 17:52 PDT 2020, Wesley Cheng wrote:
+Quoting Pierre-Louis Bossart (2020-04-09 12:58:37)
+> On ACPI platforms the of_ functions are irrelevant, conditionally
+> compile them out and add devm_clk_hw_register_clkdev() call instead.
 >=20
-> > This adds the USB3 PIPE clock and GDSC structures, so
-> > that the USB driver can vote for these resources to be
-> > enabled/disabled when required.  Both are needed for SS
-> > and HS USB paths to operate properly.  The GDSC will
-> > allow the USB system to be brought out of reset, while
-> > the PIPE clock is needed for data transactions between
-> > the PHY and controller.
-> >=20
-> > Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
-> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+> ---
+>  drivers/clk/clk-hifiberry-dacpro.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 >=20
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->=20
->=20
-> Stephen, let me know when you take this patch and I'll take the dts one.
->=20
+> diff --git a/drivers/clk/clk-hifiberry-dacpro.c b/drivers/clk/clk-hifiber=
+ry-dacpro.c
+> index bf0616c959da..d01a90fed51b 100644
+> --- a/drivers/clk/clk-hifiberry-dacpro.c
+> +++ b/drivers/clk/clk-hifiberry-dacpro.c
+> @@ -114,15 +114,22 @@ static int clk_hifiberry_dacpro_probe(struct platfo=
+rm_device *pdev)
+>                 return ret;
+>         }
+> =20
+> +#ifndef CONFIG_ACPI
 
-Looks like I already applied it and it's merged in Linus' tree.
+Use if (!IS_ENABLED(CONFIG_ACPI)) instead?
+
+>         ret =3D of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
+>                                      &proclk->hw);
+> +#else
+> +       ret =3D devm_clk_hw_register_clkdev(dev, &proclk->hw,
+> +                                         init.name, NULL);
+> +#endif
+> =20
+>         return ret;
+>  }
+> =20
+>  static int clk_hifiberry_dacpro_remove(struct platform_device *pdev)
+>  {
+> +#ifndef CONFIG_ACPI
+>         of_clk_del_provider(pdev->dev.of_node);
+> +#endif
