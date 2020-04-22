@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBD5AC55189
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC96BC5518A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B472A2076C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C87220774
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:51:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587549069;
-	bh=bLJbp6+zinXZf+o+3jQEHKbAguMOzTp9z4BWNRFsioo=;
+	s=default; t=1587549116;
+	bh=o2n43kaLkZk8Yc3c5jw7xR0qABHEQs6JMUkUxQReAVM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=cEL6y3mF40sh3LQ8kZjLELagRljNyl7rQ/NvbLGVQvivSLsskWkI9Gf2mxcdIwy23
-	 E/5XSa/dsbX2gVddLxAVbVbLVqeIFfCa9HIFFEbkWaSQyBIktdK3Iw97VLKx6cnB4u
-	 xbx3c00wHGZuG6BOHUPfGy8lZyJdC+09Mxv4qfpU=
+	b=aFuPr09Rid+5x52kUpelIgP4kwHm1JXm4ESEYCDa1CaNnOp6Fz+oX6Z+++7xXLVHe
+	 3PZX1DgpRT7Fa2AGqLm2xjEp7rOGwH2Wn8ySe9ok/Cr1lOb54Z4geOfMldke1LwNa9
+	 Yq0C+XXp3zt86tXmVmfWo2ZUmDXQu6UfTMT23MRM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbgDVJvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
+        id S1726117AbgDVJv4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:51:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725912AbgDVJvJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:51:09 -0400
+        id S1725912AbgDVJv4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:51:56 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17BB2073A;
-        Wed, 22 Apr 2020 09:51:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE2312073A;
+        Wed, 22 Apr 2020 09:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587549068;
-        bh=bLJbp6+zinXZf+o+3jQEHKbAguMOzTp9z4BWNRFsioo=;
+        s=default; t=1587549115;
+        bh=o2n43kaLkZk8Yc3c5jw7xR0qABHEQs6JMUkUxQReAVM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=0tApOW/IF82Eyo4QYx0jHf79aQWnMBt4tiFgAQiWawt/Hk5icbg9am6XY+7DqRmuN
-         zt+gvXfeCjBOOG2tK1rcbSZ9xX2TmE6UiLZ+mShYcpTX/2wuAFACXBnYOQ5WALzdlK
-         OyMw7LUKAWkkHP4PO/2baErwXnqGV5FU2ZnarNOU=
+        b=SEusCKdNvAthriMYUMGBLbl+Npwh4x+yKKFsGZ+ZiCntRRFZE19TKIoA9b6fvJ5WK
+         uxEuviBo94uJ7xv4ZyPWFnKDIyumUD0J9m15t2eufbrPkr3tIviPfgkhCD6l10hkw5
+         wnnNR3eLnoOhe0CRRpu0McpMoGUooLe0GPAOvZP0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200419170810.5738-16-robh@kernel.org>
-References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-16-robh@kernel.org>
-Subject: Re: [PATCH 15/17] vexpress: Move site master init to vexpress-config bus
+In-Reply-To: <20200419170810.5738-8-robh@kernel.org>
+References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-8-robh@kernel.org>
+Subject: Re: [PATCH 07/17] clk: vexpress-osc: Use the devres clock API variants
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -58,27 +58,26 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         Rob Herring <robh@kernel.org>,
         Sudeep Holla <sudeep.holla@arm.com>
-Date:   Wed, 22 Apr 2020 02:51:08 -0700
-Message-ID: <158754906803.132238.5380277174069330915@swboyd.mtv.corp.google.com>
+Date:   Wed, 22 Apr 2020 02:51:54 -0700
+Message-ID: <158754911497.132238.14935003164917739527@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Is the subject supposed to say 'set master' vs. 'site master'?
-
-Quoting Rob Herring (2020-04-19 10:08:08)
-> There's only a single caller of vexpress_config_set_master() from
-> vexpress-sysreg.c. Let's just make the registers needed available to
-> vexpress-config and move all the code there. The registers needed aren't
-> used anywhere else either. With this, we can get rid of the private API
-> between these 2 drivers.
+Quoting Rob Herring (2020-04-19 10:08:00)
+> In preparation to enable the vexpress-osc clock driver as a module,
+> convert the driver to use the managed devres clock API variants. With
+> this, a driver .remove() hook is not needed.
 >=20
 > Cc: Liviu Dudau <liviu.dudau@arm.com>
 > Cc: Sudeep Holla <sudeep.holla@arm.com>
 > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 > Cc: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Lee Jones <lee.jones@linaro.org>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
 > Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
