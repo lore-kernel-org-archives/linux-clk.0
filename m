@@ -2,50 +2,43 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228EEC55186
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C68E6C5518E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F219B2076C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:35:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587548109;
-	bh=5DNBkHR6a+WVtLqdbWXqDmcSPGo1U6AntaC8sObehFs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=nYvz0PsgSvSbnsSykwbMdvhx4AHL8+a33JB4v4deFwtdFdCg+Zr9lko6rAP34027v
-	 q9O4UaM/phEclDF0QKb3Q2CrzQbFW/FkZPl6cG9JTA7xS3C+DdEEs7uyRaKagdLat+
-	 WSSYHN54qXu1bJXc8VGCywBNr/28hFqNgZTkkk2o=
+	by mail.kernel.org (Postfix) with ESMTP id 9F94C2071E
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:47:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726358AbgDVJfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 05:35:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38670 "EHLO mail.kernel.org"
+        id S1726200AbgDVJra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:47:30 -0400
+Received: from mga07.intel.com ([134.134.136.100]:27723 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbgDVJfI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 05:35:08 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FBB52076B;
-        Wed, 22 Apr 2020 09:35:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587548108;
-        bh=5DNBkHR6a+WVtLqdbWXqDmcSPGo1U6AntaC8sObehFs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=IoecbU53MGHU4OIbquC13L8j+2LL3jXiSkDNYkI3LvP3Y10smFBzY5WmEkRy7npAz
-         RNOFynyvWuaqMOctvCNmFdqSjX837qKSiX1XDaX2YCQrP3UEiRHY+tipBTJVFawHUP
-         ARfRcyfM6HeUv6bogHBFQq6LYoG0he3xbL6z8MbU=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200409195841.18901-14-pierre-louis.bossart@linux.intel.com>
-References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com> <20200409195841.18901-14-pierre-louis.bossart@linux.intel.com>
-Subject: Re: [RFC PATCH 13/16] clk: hifiberry-dacpro: add "sclk" lookup
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     tiwai@suse.de, broonie@kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        id S1725994AbgDVJr3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:47:29 -0400
+IronPort-SDR: QLN/jondOn7rUpGVekkWjsWWIP930hNONMRoF5BwKJIuGti7bgzM7wjGO1vxW2a82ZvDLD1357
+ SrQ7/fG4eXaA==
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Apr 2020 02:47:28 -0700
+IronPort-SDR: 3aN7PojsIhZcUS0QDEfAJyxsjD1t1zD6WtaWFaWz45joO8ATB/Jbbakkgv8rZUN3zxRGc+3uB0
+ QjpKwd1cSl2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.72,413,1580803200"; 
+   d="scan'208";a="402489946"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
+  by orsmga004.jf.intel.com with ESMTP; 22 Apr 2020 02:47:24 -0700
+Received: from andy by smile with local (Exim 4.93)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1jRByZ-002PzX-07; Wed, 22 Apr 2020 12:47:27 +0300
+Date:   Wed, 22 Apr 2020 12:47:26 +0300
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        alsa-devel@alsa-project.org, tiwai@suse.de, broonie@kernel.org,
         Daniel Matuschek <daniel@hifiberry.com>,
         Matthias Reichl <hias@horus.com>,
         Hui Wang <hui.wang@canonical.com>, linux-gpio@vger.kernel.org,
@@ -53,68 +46,44 @@ Cc:     tiwai@suse.de, broonie@kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-clk@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        alsa-devel@alsa-project.org
-Date:   Wed, 22 Apr 2020 02:35:07 -0700
-Message-ID: <158754810745.132238.7647643247125302962@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC PATCH 12/16] clk: hifiberry-dacpro: add ACPI support
+Message-ID: <20200422094726.GZ185537@smile.fi.intel.com>
+References: <20200409195841.18901-1-pierre-louis.bossart@linux.intel.com>
+ <20200409195841.18901-13-pierre-louis.bossart@linux.intel.com>
+ <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158754793532.132238.9824423478783177623@swboyd.mtv.corp.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Pierre-Louis Bossart (2020-04-09 12:58:38)
-> devm_clk_get() fails on ACPI platforms when a NULL string is used.
-> Create a "sclk" lookup to make sure codec and machine drivers can get
-> the clock.
->=20
-> Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-> ---
->  drivers/clk/clk-hifiberry-dacpro.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->=20
-> diff --git a/drivers/clk/clk-hifiberry-dacpro.c b/drivers/clk/clk-hifiber=
-ry-dacpro.c
-> index d01a90fed51b..36210f52c624 100644
-> --- a/drivers/clk/clk-hifiberry-dacpro.c
-> +++ b/drivers/clk/clk-hifiberry-dacpro.c
-> @@ -24,10 +24,12 @@
->   * struct clk_hifiberry_hw - Common struct to the HiFiBerry DAC Pro
->   * @hw: clk_hw for the common clk framework
->   * @mode: 0 =3D> CLK44EN, 1 =3D> CLK48EN
-> + * @sclk_lookup: handle for "sclk"
->   */
->  struct clk_hifiberry_hw {
->         struct clk_hw hw;
->         u8 mode;
-> +       struct clk_lookup *sclk_lookup;
->  };
-> =20
->  #define to_hifiberry_clk(_hw) container_of(_hw, struct clk_hifiberry_hw,=
- hw)
-> @@ -121,15 +123,34 @@ static int clk_hifiberry_dacpro_probe(struct platfo=
-rm_device *pdev)
->         ret =3D devm_clk_hw_register_clkdev(dev, &proclk->hw,
->                                           init.name, NULL);
->  #endif
-> +       if (ret) {
-> +               dev_err(dev, "Fail to add clock driver\n");
-> +               return ret;
-> +       }
-> +
-> +       proclk->sclk_lookup =3D clkdev_hw_create(&proclk->hw, "sclk", NUL=
-L);
-> +       if (!proclk->sclk_lookup) {
-> +#ifndef CONFIG_ACPI
+On Wed, Apr 22, 2020 at 02:32:15AM -0700, Stephen Boyd wrote:
+> Quoting Pierre-Louis Bossart (2020-04-09 12:58:37)
+> > On ACPI platforms the of_ functions are irrelevant, conditionally
+> > compile them out and add devm_clk_hw_register_clkdev() call instead.
 
-Is it to save code space? Otherwise the ifdefs are pretty ugly and I'd
-prefer we just call of_clk APIs and rely on the inline stubs when
-CONFIG_OF isn't enabled to be optimized out.
+...
 
-> +               of_clk_del_provider(dev->of_node);
-> +#endif
-> +               return -ENOMEM;
-> +       }
-> +
+> Use if (!IS_ENABLED(CONFIG_ACPI)) instead?
+> 
+> >         ret = of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get,
+> >                                      &proclk->hw);
+
+I'm rather wondering if we have OF stuff integrated properly to CLK framework
+to avoid first branch completely.
+
+> > +#else
+> > +       ret = devm_clk_hw_register_clkdev(dev, &proclk->hw,
+> > +                                         init.name, NULL);
+> > +#endif
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
