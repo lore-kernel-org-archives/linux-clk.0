@@ -2,67 +2,140 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F96DC5518A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:59:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2258C55185
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C38B2076E
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 10:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587553171;
-	bh=LnZRo6Hxvi5TmQdejLBPUBQPhDfSwxKOii0Tkhdj/mo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=gTchfdcs1hzy8z2lg4cTzfpB0+5JVQI8hn7i4lAiqG2vadTeP+EbSvZbtfPepw1Or
-	 KSb2V9bPtPKjxu9tgw+0Gnuo6samKSBq4/e6tlIJKc6Y/x0xcCgwbdF0OfXsuTtf88
-	 CxR87HXmGhRIqhPRhDiW8eJv4EDrBkhMiurGYGaM=
+	by mail.kernel.org (Postfix) with ESMTP id AE3222077D
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 11:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbgDVKCz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 06:02:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52214 "EHLO mail.kernel.org"
+        id S1728507AbgDVLBp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 07:01:45 -0400
+Received: from foss.arm.com ([217.140.110.172]:47584 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbgDVKCw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 06:02:52 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF30820B1F;
-        Wed, 22 Apr 2020 10:02:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587549771;
-        bh=LnZRo6Hxvi5TmQdejLBPUBQPhDfSwxKOii0Tkhdj/mo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RhEM734AtFLN0QmsgyCYHpRa2d3P36Y5dDqv4X/v0tc4zUAwCqMRcIomtWMgOnMpy
-         lhHMk02wk/CZHA53+iTcVPv7v0MhOAZXhWH6KQSyG1mPBc+AzaeRxRhGmDHdgAi8M/
-         bSqWZSIdFMK6JyOqsH9raIVAmao3dCMzvN/js/3c=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200416081348.326833-1-linus.walleij@linaro.org>
-References: <20200416081348.326833-1-linus.walleij@linaro.org>
-Subject: Re: [PATCH] clk: impd1: Look up clock-output-names
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
+        id S1726742AbgDVLBo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 07:01:44 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B267231B;
+        Wed, 22 Apr 2020 04:01:43 -0700 (PDT)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 905FE3F6CF;
+        Wed, 22 Apr 2020 04:01:43 -0700 (PDT)
+Received: by e110455-lin.cambridge.arm.com (Postfix, from userid 1000)
+        id 35482682F3D; Wed, 22 Apr 2020 12:01:42 +0100 (BST)
+Date:   Wed, 22 Apr 2020 12:01:42 +0100
+From:   Liviu Dudau <liviu.dudau@arm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>
-Date:   Wed, 22 Apr 2020 03:02:50 -0700
-Message-ID: <158754977096.132238.12292029969034991900@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Subject: Re: [PATCH 08/17] clk: vexpress-osc: Support building as a module
+Message-ID: <20200422110142.GT364558@e110455-lin.cambridge.arm.com>
+References: <20200419170810.5738-1-robh@kernel.org>
+ <20200419170810.5738-9-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200419170810.5738-9-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Linus Walleij (2020-04-16 01:13:48)
-> The IM-PD1 still need to pass the clock output names.
->=20
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+On Sun, Apr 19, 2020 at 12:08:01PM -0500, Rob Herring wrote:
+> Enable building the vexpress-osc clock driver as a module.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/clk/versatile/Kconfig            |  4 ++--
+>  drivers/clk/versatile/clk-vexpress-osc.c | 10 ++++------
+>  2 files changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> index 5bdd5c98990b..9de2396dcf9b 100644
+> --- a/drivers/clk/versatile/Kconfig
+> +++ b/drivers/clk/versatile/Kconfig
+> @@ -15,8 +15,8 @@ config CLK_SP810
+>  	  of the ARM SP810 System Controller cell.
+>  
+>  config CLK_VEXPRESS_OSC
+> -	bool "Clock driver for Versatile Express OSC clock generators"
+> -	depends on VEXPRESS_CONFIG || COMPILE_TEST
+> +	tristate "Clock driver for Versatile Express OSC clock generators"
+> +	depends on VEXPRESS_CONFIG
 
-Is this a
+Looks good to me with the exception of COMPILE_TEST appearing in patch 5 and
+disappearing here. Which one should be the one to survive?
 
-Fixes: 84655b762a27 ("clk: versatile: Add device tree probing for IM-PD1 cl=
-ocks")
+Best regards,
+Liviu
 
-change?
+>  	default y if ARCH_VEXPRESS
+>  	---help---
+>  	  Simple regmap-based driver driving clock generators on Versatile
+> diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+> index 5bb1d5a714d0..b2b32fa2d7c3 100644
+> --- a/drivers/clk/versatile/clk-vexpress-osc.c
+> +++ b/drivers/clk/versatile/clk-vexpress-osc.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/clkdev.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/err.h>
+> +#include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/slab.h>
+> @@ -108,6 +109,7 @@ static const struct of_device_id vexpress_osc_of_match[] = {
+>  	{ .compatible = "arm,vexpress-osc", },
+>  	{}
+>  };
+> +MODULE_DEVICE_TABLE(of, vexpress_osc_of_match);
+>  
+>  static struct platform_driver vexpress_osc_driver = {
+>  	.driver	= {
+> @@ -116,9 +118,5 @@ static struct platform_driver vexpress_osc_driver = {
+>  	},
+>  	.probe = vexpress_osc_probe,
+>  };
+> -
+> -static int __init vexpress_osc_init(void)
+> -{
+> -	return platform_driver_register(&vexpress_osc_driver);
+> -}
+> -core_initcall(vexpress_osc_init);
+> +module_platform_driver(vexpress_osc_driver);
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.20.1
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
