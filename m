@@ -2,147 +2,260 @@ Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C829C55189
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 06:23:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAB4C55186
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2E1AD2076B
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 06:23:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="klxqohSY"
+	by mail.kernel.org (Postfix) with ESMTP id 0640120735
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 09:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587546034;
+	bh=Szlf9ZzsWRDVLiUoIgGCUpAgcbXQVj4EqngSZMV2pGY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=Z1AVZaBU4igZEBCQ+qPqgHPZz75YW7sgXN7Cf7RDsPQWQ/0WClItO9lox8QRwqsuU
+	 1JI1FGtYp4v7BdAGJbbp14C+UDJZMINhiWMByBEa4CAVE/67scy+dP6XERsZlhBpiu
+	 zsXHUE58OznlFdS7KHQL1QpQAc5M7Qmjjt+MeSlg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726119AbgDVGXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 02:23:07 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15843 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726082AbgDVGXH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Apr 2020 02:23:07 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e9fe2560001>; Tue, 21 Apr 2020 23:21:10 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 21 Apr 2020 23:23:06 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 21 Apr 2020 23:23:06 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 22 Apr
- 2020 06:23:06 +0000
-Received: from [10.2.165.49] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 22 Apr
- 2020 06:23:05 +0000
-Subject: Re: [RFC PATCH v8 0/9] Add Tegra driver for video capture
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <sakari.ailus@iki.fi>,
-        <helen.koike@collabora.com>, <digetx@gmail.com>,
-        <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
- <20200421205032.GD3233341@ulmo>
- <cfbd9954-6a89-3973-55f5-920b7a807774@nvidia.com>
-Message-ID: <154b779e-e3f5-1322-2f10-1356402ff956@nvidia.com>
-Date:   Tue, 21 Apr 2020 23:23:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726294AbgDVJA3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 05:00:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726071AbgDVJA3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 05:00:29 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 43919206D6;
+        Wed, 22 Apr 2020 09:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587546028;
+        bh=Szlf9ZzsWRDVLiUoIgGCUpAgcbXQVj4EqngSZMV2pGY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=APQfd9bUJPPAgYgjsa4XM35xNOOByU2WNDdm4k95dTACr3ILzmncCxszFhiy1Ku5u
+         PbqOgLt554/UNk5yAn9xBNFqr3b8J8iP72lUEpcsbvGMY7T4SNFRSz/97qKqIIJy6H
+         YsYBqOkWd6uxz6JZnfqEEUyTg6KjsgcSdsqKhKnI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <cfbd9954-6a89-3973-55f5-920b7a807774@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1587536470; bh=0MjPPOLvF0Koh9IIPl/Xwd7aLx+PTICwfRq0xHoYkQs=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=klxqohSY/6GbdZdLOXvDJjYTVGeNTxVWp+v+1HfSFIbIIlLgy+u99GTzpouOL2+6k
-         LlqsO+MXDxsXOuydKKM8TDzqhnqiZF9GMo/nPjWYsZoF0m7i0U/abRDeVTpC9rFwBZ
-         3LD539xao5yz/yU7fkAulH1vKYMDdUw92gPxptikBYR1ZaYdFPsvDNWvWrE5i4KYaj
-         DtN9sC7pq52aflMt5NaV+3A25YdQW0aCicssTDAHOAclartwbR3Mz2mYRX6bLHiD20
-         1qEbAy+wWi7eEv3XcHy7syu+TMJ5XupwkmCMFT49HFVIsriTsvuCOCkTm81DEUDucT
-         XZe1gqhcQtVmQ==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1586832922-29191-4-git-send-email-sivaprak@codeaurora.org>
+References: <1586832922-29191-1-git-send-email-sivaprak@codeaurora.org> <1586832922-29191-4-git-send-email-sivaprak@codeaurora.org>
+Subject: Re: [PATCH V3 3/8] clk: qcom: Add A53 PLL support for ipq6018 devices
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Date:   Wed, 22 Apr 2020 02:00:27 -0700
+Message-ID: <158754602745.132238.14379194464345140559@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sivaprakash Murugesan (2020-04-13 19:55:17)
+> The CPUs on Qualcomm IPQ6018 platform is primarily clocked by A53 PLL.
+> This patch adds support for the A53 PLL on IPQ6018 devices which can
+> support CPU frequencies above 1Ghz.
+>=20
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> ---
+>  drivers/clk/qcom/a53-pll.c | 136 ++++++++++++++++++++++++++++++++++++---=
+------
+>  1 file changed, 111 insertions(+), 25 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+> index 45cfc57..a95351c 100644
+> --- a/drivers/clk/qcom/a53-pll.c
+> +++ b/drivers/clk/qcom/a53-pll.c
+> @@ -11,11 +11,40 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/module.h>
+> +#include <linux/of_device.h>
 
-On 4/21/20 9:12 PM, Sowjanya Komatineni wrote:
->
-> On 4/21/20 1:50 PM, Thierry Reding wrote:
->> On Tue, Apr 21, 2020 at 01:09:50PM +0200, Hans Verkuil wrote:
->>> Hi Sowjanya,
->>>
->>> On 21/04/2020 02:11, Sowjanya Komatineni wrote:
->>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>>> generator (TPG) capture.
->>>>
->>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>>> CSI port is one-to-one mapped to VI channel for video capture.
->>>>
->>>> This series has TPG support only where it creates hard media links
->>>> between CSI subdevice and VI video device without device graphs.
->>>>
->>>> v4l2-compliance results are available below the patch diff.
->>> I'm ready to merge this v8. Looking at the series I should only merge
->>> patches 6 and 7, all other patches go through different subsystems, 
->>> right?
->> You could also pick up patch 5 because it adds the bindings that are
->> implemented by the driver in patch 6. But I can also pick that up into
->> the Tegra tree. In fact, I do have a set of patches to convert some
->> Tegra bindings to the new json-schema format and the host1x file is
->> among them. If I do get around to finish those up for v5.8 it might be
->> better for me to pick up patch 5 so that I can base my conversion patch
->> on top of that.
->>
->> Either way is fine with me, so I've acked the three patches. Take which
->> ones you want and I'll pick up the rest.
->>
->> Thanks again for your guidance on this patch set!
->>
->> Thierry
->
-> Hi Hans,
->
-> Would like to add a small fix to the driver for explicit check for vi 
-> and csi availability before TPG setup and cleanup in case if video 
-> driver is enabled without device tree support where vi and csi drivers 
-> does not register.
->
-> Although we are not enabling driver by default now, would be good to 
-> have this in this series itself.
->
-> Will send out the updated version, please pick v9.
->
-> Thanks
->
-> Sowjanya
+Why does this driver need to change to use of_device APIs?
 
-Sorry Hans. Just sent v9 which has small fix of explicit check on csi 
-and vi both channels availability before TPG setup and cleanup.
+> =20
+>  #include "clk-pll.h"
+>  #include "clk-regmap.h"
+> +#include "clk-alpha-pll.h"
+> =20
+> -static const struct pll_freq_tbl a53pll_freq[] =3D {
+> +struct a53_alpha_pll {
+> +       struct alpha_pll_config *pll_config;
+> +       struct clk_alpha_pll *pll;
+> +};
+> +
+> +union a53pll {
+> +       struct clk_pll *pll;
+> +       struct a53_alpha_pll alpha_pll;
+> +};
+> +
+> +struct a53pll_data {
+> +#define PLL_IS_ALPHA BIT(0)
+> +       u8 flags;
+> +       union a53pll a53pll;
 
-As for later Tegras (Tegra186+), CSI is not a child device to VI and in 
-case if either of CSI/VI platform driver register doesn't happen this 
-explicit check helps to skip TPG setup. Mostly as device tree changes go 
-with driver updates, should not be real issue but in case of wrong 
-compatible or missing in device tree to avoid crash added this explicit 
-check.
+Why is there a union? Can't we have different clk ops for the two types
+of PLLs and then use container_of to get it from the clk ops?
 
-Please consider this v9 for merge.
+> +};
+> +
+> +static const u8 ipq_pll_offsets[] =3D {
+> +       [PLL_OFF_L_VAL] =3D 0x08,
+> +       [PLL_OFF_ALPHA_VAL] =3D 0x10,
+> +       [PLL_OFF_USER_CTL] =3D 0x18,
+> +       [PLL_OFF_CONFIG_CTL] =3D 0x20,
+> +       [PLL_OFF_CONFIG_CTL_U] =3D 0x24,
+> +       [PLL_OFF_STATUS] =3D 0x28,
+> +       [PLL_OFF_TEST_CTL] =3D 0x30,
+> +       [PLL_OFF_TEST_CTL_U] =3D 0x34,
+> +};
+> +
+> +static const struct pll_freq_tbl msm8996_a53pll_freq[] =3D {
+>         {  998400000, 52, 0x0, 0x1, 0 },
+>         { 1094400000, 57, 0x0, 0x1, 0 },
+>         { 1152000000, 62, 0x0, 0x1, 0 },
+> @@ -26,6 +55,64 @@ static const struct pll_freq_tbl a53pll_freq[] =3D {
+>         { }
+>  };
+> =20
+> +static struct clk_pll msm8996_pll =3D {
+> +       .mode_reg =3D 0x0,
+> +       .l_reg =3D 0x04,
+> +       .m_reg =3D 0x08,
+> +       .n_reg =3D 0x0c,
+> +       .config_reg =3D 0x14,
+> +       .status_reg =3D 0x1c,
+> +       .status_bit =3D 16,
+> +       .freq_tbl =3D msm8996_a53pll_freq,
+> +       .clkr.hw.init =3D &(struct clk_init_data){
+> +               .name =3D "a53pll",
+> +               .flags =3D CLK_IS_CRITICAL,
+> +               .parent_data =3D &(const struct clk_parent_data){
+> +                       .fw_name =3D "xo",
+> +                       .name =3D "xo",
+> +               },
+> +               .num_parents =3D 1,
+> +               .ops =3D &clk_pll_sr2_ops,
+> +       },
+> +};
+> +
+> +static struct clk_alpha_pll ipq6018_pll =3D {
+> +       .offset =3D 0x0,
+> +       .regs =3D ipq_pll_offsets,
+> +       .flags =3D SUPPORTS_DYNAMIC_UPDATE,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x0,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "a53pll",
+> +                       .flags =3D CLK_IS_CRITICAL,
+> +                       .parent_data =3D &(const struct clk_parent_data){
+> +                               .fw_name =3D "xo",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .ops =3D &clk_alpha_pll_huayra_ops,
+> +               },
+> +       },
+> +};
+> +
+> +static struct alpha_pll_config ipq6018_pll_config =3D {
 
-Thanks
+Can this be const?
 
-Sowjanya
+> +       .l =3D 0x37,
+> +       .config_ctl_val =3D 0x04141200,
+> +       .config_ctl_hi_val =3D 0x0,
+> +       .early_output_mask =3D BIT(3),
+> +       .main_output_mask =3D BIT(0),
+> +};
+> +
+> +static struct a53pll_data msm8996pll_data =3D {
+> +       .a53pll.pll =3D &msm8996_pll,
+> +};
+> +
+> +static struct a53pll_data ipq6018pll_data =3D {
+> +       .flags =3D PLL_IS_ALPHA,
+> +       .a53pll.alpha_pll.pll =3D &ipq6018_pll,
+> +       .a53pll.alpha_pll.pll_config =3D &ipq6018_pll_config,
+> +};
+> +
+>  static const struct regmap_config a53pll_regmap_config =3D {
+>         .reg_bits               =3D 32,
+>         .reg_stride             =3D 4,
+> @@ -39,14 +126,16 @@ static int qcom_a53pll_probe(struct platform_device =
+*pdev)
+>         struct device *dev =3D &pdev->dev;
+>         struct regmap *regmap;
+>         struct resource *res;
+> -       struct clk_pll *pll;
+> +       const struct a53pll_data *pll_data;
+> +       struct clk_regmap *clkr;
+>         void __iomem *base;
+> -       struct clk_init_data init =3D { };
+>         int ret;
+> =20
+> -       pll =3D devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
+> -       if (!pll)
+> -               return -ENOMEM;
+> +       pll_data =3D of_device_get_match_data(dev);
 
->
->
+Use device_get_match_data() please.
+
+> +       if (!pll_data) {
+> +               dev_err(dev, "failed to get platform data\n");
+
+No error message please.
+
+> +               return -ENODEV;
+> +       }
+> =20
+>         res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         base =3D devm_ioremap_resource(dev, res);
+> @@ -57,30 +146,26 @@ static int qcom_a53pll_probe(struct platform_device =
+*pdev)
+>         if (IS_ERR(regmap))
+>                 return PTR_ERR(regmap);
+> =20
+> -       pll->l_reg =3D 0x04;
+> -       pll->m_reg =3D 0x08;
+> -       pll->n_reg =3D 0x0c;
+> -       pll->config_reg =3D 0x14;
+> -       pll->mode_reg =3D 0x00;
+> -       pll->status_reg =3D 0x1c;
+> -       pll->status_bit =3D 16;
+> -       pll->freq_tbl =3D a53pll_freq;
+> -
+> -       init.name =3D "a53pll";
+> -       init.parent_names =3D (const char *[]){ "xo" };
+> -       init.num_parents =3D 1;
+> -       init.ops =3D &clk_pll_sr2_ops;
+> -       init.flags =3D CLK_IS_CRITICAL;
+
+Please document why a clk is critical.
+
+> -       pll->clkr.hw.init =3D &init;
+> -
+> -       ret =3D devm_clk_register_regmap(dev, &pll->clkr);
+> +       if (pll_data->flags & PLL_IS_ALPHA) {
+> +               struct clk_alpha_pll *alpha_pll =3D
+> +                       pll_data->a53pll.alpha_pll.pll;
+> +               struct alpha_pll_config *alpha_pll_config =3D
+> +                       pll_data->a53pll.alpha_pll.pll_config;
+> +
+> +               clk_alpha_pll_configure(alpha_pll, regmap, alpha_pll_conf=
+ig);
+> +               clkr =3D &pll_data->a53pll.alpha_pll.pll->clkr;
+> +       } else {
+> +               clkr =3D &pll_data->a53pll.pll->clkr;
+> +       }
+
+Sorry, the design is confusing.
