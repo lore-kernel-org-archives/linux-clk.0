@@ -1,142 +1,288 @@
-Return-Path: <SRS0=UvOF=6F=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA26C54FCC
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Apr 2020 20:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D171FC55186
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 00:40:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7DECF206E9
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Apr 2020 20:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FkFdVjeA"
+	by mail.kernel.org (Postfix) with ESMTP id AA573206D5
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 00:40:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587516028;
+	bh=JrE4SFb3uJdJn6w4bpKQFbHrGjxfDltzodlDIbB/g8s=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=uiUMGpUPYhSr7aRLq4iYEDUeqo+zcuPkL2H5qT3MFGstMd2Xljo3U+bXFUAo3HIDD
+	 ejJ0NAmkNZDat5CbWMFqQ16k4enuq6fZNzdRBKg7LKz+SWTG26XDLWOFOnd5v7k8R4
+	 wWixpWFXxsEHRaSCtsPTlOHgZfQBTM+9iCq1S9aU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725850AbgDUUug (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Apr 2020 16:50:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51346 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726024AbgDUUuf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Apr 2020 16:50:35 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84270C0610D5;
-        Tue, 21 Apr 2020 13:50:35 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id r26so5102865wmh.0;
-        Tue, 21 Apr 2020 13:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uC+JJcP7egb4ofyt56mWCPOQaPZzoY/zRGrMx1VckLM=;
-        b=FkFdVjeAsI+sBX/CNG+E14M9Wefz00vmoLhXMLng0Ap6nH8pB6UffYXTYQL5++aSg8
-         1J4eBj+8aLXpkleQA/S9tsKYWIMzYjGJfGkohBOp9wQlSI6ir+6G2CfCGUwK2pFyM9Vg
-         qH+gpFlVm1n46sdu8KwoYXdztEQ57V4GqwxtHOTlXUG4fVpn4LiMDq2gK2TkLSaj6n2z
-         7VQPzfKSn9mI575D8WlJ8FuOEufKPawD5R1AuLS4Q5efX9ikJTH6nMUZUl4Vl03aYeYo
-         RK+QpVSSB6N4XO13Bk474pJx0aLVgmnHJJ/WWiN7a4H4Gm9gL2scxNg1DEmEqaUfOYky
-         crQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uC+JJcP7egb4ofyt56mWCPOQaPZzoY/zRGrMx1VckLM=;
-        b=th+u7MOrxtVJu1G4mW20S4RaG2VlRN0ttTlvsin7/Dunn6hm7sQjhlY+B+pHE0HhyI
-         OY6MlGq4jR9x1co+9LkvQjQjlX+SurAWyGVIcezjROm+J9voDMBuFNWAODw8fnzNx7ji
-         zPrPYfx6Y4uow5tJd2qZbTa3nPZrYcxBUPE5XRtqagf5lj9Z68e9tOFmqDLZZj/1cDln
-         SGgQHDPB/Fb4cpkOHG+dtqaAprAjqTx5Bvwo5idBcopK8OSE/cNzbmgQAw2SbcEda2Zj
-         LDUA3ORr/mP3gm8TNRu94BDn2i4uMl50UZxjavbkWmflfEbRu1nTPqaCB5o3fCCtsgWb
-         oxFw==
-X-Gm-Message-State: AGi0PuYhMzgzWPhYzWXuBGsQKANdG/eosXljB7bLXYaBTYGWb9YaMwwM
-        kKTNDQlk7QwZlwWyMR7iTdw=
-X-Google-Smtp-Source: APiQypK+Gc5H9oDn9XvZP6m0OhwPMUU+tvlw+9xBndDEnwmM0sL73yQu3958nQ99/SmyVzxN2KK85g==
-X-Received: by 2002:a7b:c927:: with SMTP id h7mr6687203wml.122.1587502234234;
-        Tue, 21 Apr 2020 13:50:34 -0700 (PDT)
-Received: from localhost (p2E5BEDBA.dip0.t-ipconnect.de. [46.91.237.186])
-        by smtp.gmail.com with ESMTPSA id y20sm5413891wra.79.2020.04.21.13.50.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Apr 2020 13:50:33 -0700 (PDT)
-Date:   Tue, 21 Apr 2020 22:50:32 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        frankc@nvidia.com, sakari.ailus@iki.fi, helen.koike@collabora.com,
-        digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v8 0/9] Add Tegra driver for video capture
-Message-ID: <20200421205032.GD3233341@ulmo>
-References: <1587427874-3291-1-git-send-email-skomatineni@nvidia.com>
- <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
+        id S1726379AbgDVAk2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Apr 2020 20:40:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726061AbgDVAk1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Apr 2020 20:40:27 -0400
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D47A2076B;
+        Wed, 22 Apr 2020 00:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587516026;
+        bh=JrE4SFb3uJdJn6w4bpKQFbHrGjxfDltzodlDIbB/g8s=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=EtgbIUyrKaCGuMhfjQUJP7iDIVSWVQN030NoF/zHtDVjirajFdK7intfO+Efdeqdn
+         ZwWKwe+7SuatM6epm7i7rE/Dg3Jp9v5fQY5vaMgbjQx7eX3X9CGN+vqp0bjC1vL034
+         tCbc9PDfKupqLgSxRYKWl891P2zFgJWqbvOn30bk=
+Received: by mail-ej1-f51.google.com with SMTP id e2so466756eje.13;
+        Tue, 21 Apr 2020 17:40:26 -0700 (PDT)
+X-Gm-Message-State: AGi0PuZF3wTkGnxmF+lgCnTKgqjUj09Q4E9JUhDm2EX5QaX3TBNVTG6k
+        n1+NMeZs7W0QGPFRzziGt5jwtON03JnR1i6+QA==
+X-Google-Smtp-Source: APiQypK7cdCKjli8HuUiA28l0aQv0sLbTXWgBnvZw+Qy1aWczSZMJuwiLUBEsh2xe4WaVZor6AsjcT7aHjEYSSesgns=
+X-Received: by 2002:a17:906:7717:: with SMTP id q23mr28916ejm.38.1587516024861;
+ Tue, 21 Apr 2020 17:40:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mSxgbZZZvrAyzONB"
-Content-Disposition: inline
-In-Reply-To: <5c44beca-4016-6e4f-01bb-e38480bfc34b@xs4all.nl>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+References: <20200311165322.1594233-1-enric.balletbo@collabora.com>
+ <20200311165322.1594233-5-enric.balletbo@collabora.com> <02290a21-7392-a2cf-576c-215091ec05e8@suse.com>
+ <1585177534.26117.4.camel@mtksdaap41> <f3c2926a-ef92-b004-9786-5be1645af497@suse.com>
+ <1585234277.12089.3.camel@mtksdaap41> <73ef0b8e-2802-a047-2a56-936b63d264cb@suse.com>
+ <CAAOTY__EV8PHau9CzSiA8up1QAmZxfK2QnaTid0WrNOsn2Xcag@mail.gmail.com> <c809233f-6d96-8871-e6a4-b66ed5cc535f@suse.com>
+In-Reply-To: <c809233f-6d96-8871-e6a4-b66ed5cc535f@suse.com>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Wed, 22 Apr 2020 08:40:13 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_8Nyu3AckQf==aKuiGZQ6t7xsKhCrwoa0oxq5qySOo_KQ@mail.gmail.com>
+Message-ID: <CAAOTY_8Nyu3AckQf==aKuiGZQ6t7xsKhCrwoa0oxq5qySOo_KQ@mail.gmail.com>
+Subject: Re: [PATCH v12 4/5] soc / drm: mediatek: Move routing control to
+ mmsys device
+To:     Matthias Brugger <mbrugger@suse.com>
+Cc:     Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        linux-clk@vger.kernel.org, Weiyi Lu <weiyi.lu@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>,
+        sean.wang@mediatek.com, Houlong Wei <houlong.wei@mediatek.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        matthias.bgg@kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi, Matthias:
 
---mSxgbZZZvrAyzONB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Matthias Brugger <mbrugger@suse.com> =E6=96=BC 2020=E5=B9=B44=E6=9C=8821=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=885:31=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+>
+>
+> On 4/16/20 6:22 PM, Chun-Kuang Hu wrote:
+> > Hi, Matthias:
+> >
+> > Matthias Brugger <mbrugger@suse.com> =E6=96=BC 2020=E5=B9=B43=E6=9C=882=
+6=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=8811:45=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> >>
+> >>
+> >>
+> >> On 26/03/2020 15:51, CK Hu wrote:
+> >>> Hi, Matthias:
+> >>>
+> >>> On Thu, 2020-03-26 at 12:54 +0100, Matthias Brugger wrote:
+> >>>> Hi CK,
+> >>>>
+> >>>> On 26/03/2020 00:05, CK Hu wrote:
+> >>>>> Hi, Matthias:
+> >>>>>
+> >>>>> On Wed, 2020-03-25 at 17:16 +0100, Matthias Brugger wrote:
+> >>>>>>
+> >>>>>> On 11/03/2020 17:53, Enric Balletbo i Serra wrote:
+> >>>>>>> Provide a mtk_mmsys_ddp_connect() and mtk_mmsys_disconnect() func=
+tions to
+> >>>>>>> replace mtk_ddp_add_comp_to_path() and mtk_ddp_remove_comp_from_p=
+ath().
+> >>>>>>> Those functions will allow DRM driver and others to control the d=
+ata
+> >>>>>>> path routing.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.c=
+om>
+> >>>>>>> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> >>>>>>> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> >>>>>>> Acked-by: CK Hu <ck.hu@mediatek.com>
+> >>>>>>
+> >>>>>> This patch does not apply against v5.6-rc1.
+> >>>>>> Please rebase as this is a quite big patch and it won't be easy to=
+ do that by hand.
+> >>>>>
+> >>>>> I think this patch depends on [1] which has been acked by me and I =
+have
+> >>>>> not picked it. The simple way is that you pick [1] first and then p=
+ick
+> >>>>> this series.
+> >>>>>
+> >>>>> [1]
+> >>>>> https://patchwork.kernel.org/patch/11406227/
+> >>>>>
+> >>>>
+> >>>> You would need to provide a stable tag for me that I can merge into =
+my tree. You
+> >>>> can also try to merge my for-next [1] which has the newest version f=
+rom Enric.
+> >>>> If you see any merge conflict, then we have to do something about it=
+ :)
+> >>>>
+> >>>> Regards,
+> >>>> Matthias
+> >>>>
+> >>>> [1]
+> >>>> https://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.g=
+it/log/?h=3Dfor-next
+> >>>>
+> >>>
+> >>> You have applied this series, so I would not apply other patches whic=
+h
+> >>> would conflict with this series. After this series land on main strea=
+m
+> >>> (wish it happen in this merge window), I would rebase other patch on
+> >>> main stream.
+> >>>
+> >>
+> >> I haven't (yet) send the pull request. If you want to bring in your pa=
+tches in
+> >> v5.7 as well we can find a solution to that. Shall I provide you with =
+a stable
+> >> branch which you can merge? This way you can add all your patches in t=
+he pull
+> >> request as well and we don't have to wait for v5.8 to get things into =
+mainline.
+> >>
+> >> Let me know and I'll provide you with a stable branch.
+> >
+> > This series is in linux-next but does not in main stream. So would you
+> > please provide a stable branch so I could pull this series?
+> >
+>
+> Please find the pull request below:
+>
+> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
+36:
+>
+>   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+>
+> are available in the Git repository at:
+>
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/matthias.bgg/linux.git/
+> tags/v5.7-next-drm-stable
+>
+> for you to fetch changes up to 667c769246b01c53ad0925d603d2a2531abd3ef2:
+>
+>   soc / drm: mediatek: Fix mediatek-drm device probing (2020-04-13
+> 13:01:16 +0200)
+>
+> ----------------------------------------------------------------
+> Enric Balletbo i Serra (3):
+>       dt-bindings: mediatek: Update mmsys binding to reflect it is a
+> system controller
+>       soc / drm: mediatek: Move routing control to mmsys device
+>       soc / drm: mediatek: Fix mediatek-drm device probing
+>
+> Matthias Brugger (2):
+>       drm/mediatek: Omit warning on probe defers
+>       clk / soc: mediatek: Move mt8173 MMSYS to platform driver
+>
+>  Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt |   7 =
++--
+>  drivers/clk/mediatek/Kconfig                                      |   7 =
++++
+>  drivers/clk/mediatek/Makefile                                     |   1 =
++
+>  drivers/clk/mediatek/clk-mt8173-mm.c                              | 146
+> +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/mediatek/clk-mt8173.c                                 | 104
+> ------------------------------------------
+>  drivers/gpu/drm/mediatek/Kconfig                                  |   1 =
++
+>  drivers/gpu/drm/mediatek/mtk_disp_color.c                         |   5 =
+++-
+>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c                           |   5 =
+++-
+>  drivers/gpu/drm/mediatek/mtk_disp_rdma.c                          |   5 =
+++-
+>  drivers/gpu/drm/mediatek/mtk_dpi.c                                |  12
+> +++--
+>  drivers/gpu/drm/mediatek/mtk_drm_crtc.c                           |  19
+> ++++----
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c                            | 259
+> +------------------------------------------------------------------------=
+--------------------------------
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.h                            |   7 =
+---
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.c                            |  45
+> ++++++++++---------
+>  drivers/gpu/drm/mediatek/mtk_drm_drv.h                            |   2 =
++-
+>  drivers/gpu/drm/mediatek/mtk_dsi.c                                |   8
+> +++-
+>  drivers/gpu/drm/mediatek/mtk_hdmi.c                               |   4 =
++-
+>  drivers/soc/mediatek/Kconfig                                      |   8
+> ++++
+>  drivers/soc/mediatek/Makefile                                     |   1 =
++
+>  drivers/soc/mediatek/mtk-mmsys.c                                  | 337
+> +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++=
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/soc/mediatek/mtk-mmsys.h                            |  20
+> +++++++++
+>  21 files changed, 592 insertions(+), 411 deletions(-)
+>  create mode 100644 drivers/clk/mediatek/clk-mt8173-mm.c
+>  create mode 100644 drivers/soc/mediatek/mtk-mmsys.c
+>  create mode 100644 include/linux/soc/mediatek/mtk-mmsys.h
 
-On Tue, Apr 21, 2020 at 01:09:50PM +0200, Hans Verkuil wrote:
-> Hi Sowjanya,
->=20
-> On 21/04/2020 02:11, Sowjanya Komatineni wrote:
-> > This series adds Tegra210 VI and CSI driver for built-in test pattern
-> > generator (TPG) capture.
-> >=20
-> > Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
-> > CSI port is one-to-one mapped to VI channel for video capture.
-> >=20
-> > This series has TPG support only where it creates hard media links
-> > between CSI subdevice and VI video device without device graphs.
-> >=20
-> > v4l2-compliance results are available below the patch diff.
->=20
-> I'm ready to merge this v8. Looking at the series I should only merge
-> patches 6 and 7, all other patches go through different subsystems, right?
+Pulled into mediatek-drm-next [1], thanks.
 
-You could also pick up patch 5 because it adds the bindings that are
-implemented by the driver in patch 6. But I can also pick that up into
-the Tegra tree. In fact, I do have a set of patches to convert some
-Tegra bindings to the new json-schema format and the host1x file is
-among them. If I do get around to finish those up for v5.8 it might be
-better for me to pick up patch 5 so that I can base my conversion patch
-on top of that.
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-next
 
-Either way is fine with me, so I've acked the three patches. Take which
-ones you want and I'll pick up the rest.
+Regards,
+Chun-Kuang.
 
-Thanks again for your guidance on this patch set!
-
-Thierry
-
---mSxgbZZZvrAyzONB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl6fXJcACgkQ3SOs138+
-s6FBjg/9FimcqXOseP9+byIOz8utrw/aQW03bxfp+khGtSfVES8b9+2uyWnlc+IM
-qW2Kc56/5wDuBs2nXSxzJAadqov9o5381zJiiacxwuW84/SHA2csj5UVz8ymb/Uw
-/Sfmk6RDZUb6y+TK4SWzWpwJmsvElhnxAidTh1Q2yDs7nyvqmBC1itkZOLHXibRL
-u5/V7VVeIpEiqIoluxlj5pS9o54KJRNZwDknrXbzkgEzOnYMH9cuGpMsqwdUbFAb
-74dKbjgYMzKcdlf8jz0oo1MBYisCemp760JQnWeI/Grp26xgDPCwU9nmPaapmpMP
-+yAYWCg6Nj51sdwiU1/EsTDVXlP3tUjGB2l5IxkepGKGyc7KydbX9+WUXD7b8m/P
-39Olhf1/jswjtwBPgitwSEX66ZheWbNwIykJo6RiRnu9F1Vnc8aJPbnJMuxqERix
-TqCN2cIKWPJNr9TGOnuHfADbsCNWUpFBIaRxgqM1hTmSYeoMTwgYRCDLkVbK6q58
-LTdMKeYu3iS4QpW0VwQ1JBZwzM8EezsUO63THUXKn+HUj0SiLpTE+5S7OmQvYf1K
-Yo2liZF7SC45LCPFY1UvlbU3/1k6QpDMLIF923iGBRk6NebcHrIqBaJTjaum08uq
-M/tFejv+n6cXergSPcHXgy4/oPyzEUrCJEt/ZfjLuldZuV2ZeKw=
-=qERF
------END PGP SIGNATURE-----
-
---mSxgbZZZvrAyzONB--
+>
+>
+>
+> > Regards,
+> > Chun-Kuang.
+> >
+> >>
+> >> Regards,
+> >> Matthias
+> >>
+> >>> Regards,
+> >>> CK
+> >>>
+> >>>>> Regards,
+> >>>>> CK
+> >>>>>
+> >>>>>>
+> >>>>>> Regards,
+> >>>>>> Matthias
+> >>>>>>
+> >>>>>>> ---
+> >>>>>>>
