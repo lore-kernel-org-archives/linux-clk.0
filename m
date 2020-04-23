@@ -2,193 +2,129 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3635C54FD0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 16:59:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF23C54FD0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 19:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D561120781
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 16:59:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0481520728
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 19:47:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aHGGJBMO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbgDWQ7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 12:59:46 -0400
-Received: from foss.arm.com ([217.140.110.172]:44306 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729687AbgDWQ7q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Apr 2020 12:59:46 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 51C0530E;
-        Thu, 23 Apr 2020 09:59:45 -0700 (PDT)
-Received: from bogus (unknown [10.37.12.118])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 017993F68F;
-        Thu, 23 Apr 2020 09:59:40 -0700 (PDT)
-Date:   Thu, 23 Apr 2020 17:58:47 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 08/17] clk: vexpress-osc: Support building as a module
-Message-ID: <20200423165847.GA19124@bogus>
-References: <20200419170810.5738-1-robh@kernel.org>
- <20200419170810.5738-9-robh@kernel.org>
- <20200422210802.GH25585@bogus>
- <20200423133342.GA10628@bogus>
- <CAL_JsqLnKd5_ifeARuc8RfsUCnc37jNBOkGSeWEp6EPA4J9tqA@mail.gmail.com>
+        id S1726158AbgDWTrb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 15:47:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37304 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726068AbgDWTrb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 15:47:31 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3966BC09B042
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2020 12:47:31 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id pg17so5631014ejb.9
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2020 12:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eu1JjVOxELUgxTKtCnJF1cKtrRvuQ0zxNce+3IOPNG4=;
+        b=aHGGJBMO8aIh6R/t4vgw2/UnTvqfi88owWaY+ncPQ08ZHatVLp37vDcPdCWZ0/gqq3
+         3vxM0iZUqLHXZAMj1ERhl/ywNgIR1Qbf3SOusfZRl4iBSYO/QYqQdLiAPcB9EB9mhSK6
+         VK8UzAMtqOWp9EKATb419tFKLzbMtQM8JAT9b3lA8ohpLoqEbq+Hmm5sDXD4Hbf5RtN4
+         TV/iMEjmyqAig7+TZ+fbdtuksfHS8TcaauTJvhAuwNRMGtjPyMWf0JQuVFPtETztFSH8
+         n3mDPAJ0QD4CENuj06rSwH7KwoE5eLuvzbrmLHRHTmPXXzeuXrPWV+c+6m5p1tLDJgrF
+         Tokg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eu1JjVOxELUgxTKtCnJF1cKtrRvuQ0zxNce+3IOPNG4=;
+        b=hKf01PfNlW8maLOd6xDV8BpKk40T8pkGet1ZitpKjWd7v0Hp6ybzpkEJ8h901mSv8p
+         sAgmUKvJxTn/iuGuViD3L2WXasuirw4cty8KOo6dj68mSQQbdVkwn4vdDQDUoFjKBK0l
+         ddViGMTbpFKBUJKoPACFeFWxQ7PorSLLV2Oex636EBx7/NhC288LfFLRSosyq7m3Z0cm
+         lDcM+hht8RfrdIiAl5ocp6R0YRFtLFOdyXrValLHz3IPrEzhDt1CQRkMCEDcF4KYx8s1
+         N5gPV6yLIsTY4vS0r10oO3qZ3JsQK9Lp57s6OVRoBXn++DUepDVhc8mDtjBUo2XwqZwU
+         131w==
+X-Gm-Message-State: AGi0PuasjYtUVKHfrT6vpVF4qmUE7zzL3R3PBU8JL1cJCRMPwcBcZrQj
+        0b4wmWR22L+KKF4JzmpCkrI=
+X-Google-Smtp-Source: APiQypJugfkYwl8uXexYu1t6cGPzSC9w2g8IlN9KYueSes1YYC1D8Jp57AZsYlA+0fyUeBF6NK7dug==
+X-Received: by 2002:a17:906:4ecb:: with SMTP id i11mr3921141ejv.79.1587671249772;
+        Thu, 23 Apr 2020 12:47:29 -0700 (PDT)
+Received: from localhost (ipv6-80adf4751ff4da96.ost.clients.hamburg.freifunk.net. [2a03:2267:4:0:80ad:f475:1ff4:da96])
+        by smtp.gmail.com with ESMTPSA id m7sm290939edv.70.2020.04.23.12.47.28
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 23 Apr 2020 12:47:28 -0700 (PDT)
+Date:   Thu, 23 Apr 2020 21:47:26 +0200
+From:   Oliver Graute <oliver.graute@gmail.com>
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Oliver Graute <Oliver.Graute@KoCoConnector.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: imx8qxp-lpcg-clk: probe of 5a4a0000.clock-controller failed with
+ error -110
+Message-ID: <20200423194726.GA18436@portage>
+References: <20200421142350.GA77260@archlinux.localdomain>
+ <AM6PR04MB4966D212E388766E8F6101A980D30@AM6PR04MB4966.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_JsqLnKd5_ifeARuc8RfsUCnc37jNBOkGSeWEp6EPA4J9tqA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <AM6PR04MB4966D212E388766E8F6101A980D30@AM6PR04MB4966.eurprd04.prod.outlook.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 10:53:40AM -0500, Rob Herring wrote:
-> On Thu, Apr 23, 2020 at 8:45 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Wed, Apr 22, 2020 at 10:08:02PM +0100, Sudeep Holla wrote:
-> > > On Sun, Apr 19, 2020 at 12:08:01PM -0500, Rob Herring wrote:
-> > > > Enable building the vexpress-osc clock driver as a module.
-> > > >
-> > > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > > Cc: Liviu Dudau <liviu.dudau@arm.com>
-> > > > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> > > > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > > Cc: linux-clk@vger.kernel.org
-> > > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > >  drivers/clk/versatile/Kconfig            |  4 ++--
-> > > >  drivers/clk/versatile/clk-vexpress-osc.c | 10 ++++------
-> > > >  2 files changed, 6 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> > > > index 5bdd5c98990b..9de2396dcf9b 100644
-> > > > --- a/drivers/clk/versatile/Kconfig
-> > > > +++ b/drivers/clk/versatile/Kconfig
-> > > > @@ -15,8 +15,8 @@ config CLK_SP810
-> > > >       of the ARM SP810 System Controller cell.
-> > > >
-> > > >  config CLK_VEXPRESS_OSC
-> > > > -   bool "Clock driver for Versatile Express OSC clock generators"
-> > > > -   depends on VEXPRESS_CONFIG || COMPILE_TEST
-> > > > +   tristate "Clock driver for Versatile Express OSC clock generators"
-> > > > +   depends on VEXPRESS_CONFIG
-> > > >     default y if ARCH_VEXPRESS
-> > > >     ---help---
-> > > >       Simple regmap-based driver driving clock generators on Versatile
-> > > > diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > > index 5bb1d5a714d0..b2b32fa2d7c3 100644
-> > > > --- a/drivers/clk/versatile/clk-vexpress-osc.c
-> > > > +++ b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > > @@ -7,6 +7,7 @@
-> > > >  #include <linux/clkdev.h>
-> > > >  #include <linux/clk-provider.h>
-> > > >  #include <linux/err.h>
-> > > > +#include <linux/module.h>
-> > > >  #include <linux/of.h>
-> > > >  #include <linux/platform_device.h>
-> > > >  #include <linux/slab.h>
-> > > > @@ -108,6 +109,7 @@ static const struct of_device_id vexpress_osc_of_match[] = {
-> > > >     { .compatible = "arm,vexpress-osc", },
-> > > >     {}
-> > > >  };
-> > > > +MODULE_DEVICE_TABLE(of, vexpress_osc_of_match);
-> > > >
-> > > >  static struct platform_driver vexpress_osc_driver = {
-> > > >     .driver = {
-> > > > @@ -116,9 +118,5 @@ static struct platform_driver vexpress_osc_driver = {
-> > > >     },
-> > > >     .probe = vexpress_osc_probe,
-> > > >  };
-> > > > -
-> > > > -static int __init vexpress_osc_init(void)
-> > > > -{
-> > > > -   return platform_driver_register(&vexpress_osc_driver);
-> > > > -}
-> > > > -core_initcall(vexpress_osc_init);
-> > > > +module_platform_driver(vexpress_osc_driver);
-> > >
-> > > I am not 100% sure of this. This might break the boot on CA9 and TC2
-> > > at-least. There are loads of MB peripherals that need this. This will
-> > > break the boot. We need to check if all the dependent modules are also
-> > > at module_initcall level and if they deal with deferred probe correctly.
-> > > Lot of them are legacy and may happen to be working by carefully initcall
-> > > level adjustments.
-> > >
-> >
-> > OK I managed to try this on my TC2 and it fails to boot. However when I
-> > enable earlyprintk as I see no log without it, it boots just fine.
+On 23/04/20, Aisheng Dong wrote:
+> > From: Oliver Graute <oliver.graute@gmail.com>
+> > Sent: Tuesday, April 21, 2020 10:24 PM
+> > 
+> > Hello,
+> > 
+> > I run into below clock probing issue, after upgrading from next-20200214 to
+> > next-20200420. I use the following patches series ontop:
+> > > 
+> > Some ideas what's the reason for this behavior? or how to fix this?
+> > 
 > 
-> Well, the uart clocks for TC2 are all dependent on vexpress-osc. The
-> console setup is going to fail to get the clocks and just fail as
-> there's no deferred probe for consoles. We need some way to retrigger
-> the console matching.
-> 
+> I will check it tomorrow.
+> Before that, I need rebase my patch series to last kernel to reproduce this issue.
 
-Ah right, I didn't bother to look at pl011 as I got it confused with Juno
-which has on-chip pl011.
+ok fine, I have some bisect results for you I think this change is
+causing the issue.
 
-Sorry I don't know details of how early console hands over to the console.
-Just wondering how is the dependency resolved when earlyprintk is enabled.
-The partial log from
+e2cec7d6853712295cef5377762165a489b2957f is the first bad commit
+commit e2cec7d6853712295cef5377762165a489b2957f
+Author: John Stultz <john.stultz@linaro.org>
+Date:   Tue Feb 25 05:08:24 2020 +0000
 
-$ dmesg  | grep -i -E "("pl0"|"vexpress"|"console")"
+    driver core: Set deferred_probe_timeout to a longer default if CONFIG_MODULES is set
+    
+    When using modules, its common for the modules not to be loaded
+    until quite late by userland. With the current code,
+    driver_deferred_probe_check_state() will stop returning
+    EPROBE_DEFER after late_initcall, which can cause module
+    dependency resolution to fail after that.
+    
+    So allow a longer window of 30 seconds (picked somewhat
+    arbitrarily, but influenced by the similar regulator core
+    timeout value) in the case where modules are enabled.
 
-below when it boots earlyprintk. I see that console is enabled after
-vexpress_osc_driver_init is called.
+ drivers/base/dd.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---->8
-calling  vexpress_syscfg_init+0x1/0xe @ 1
-initcall vexpress_syscfg_init+0x1/0xe returned 0 after 0 usecs
-calling  vexpress_sysreg_init+0x1/0x48 @ 1
-probe of vexpress-syscfg.6.auto returned 1 after 0 usecs
-initcall vexpress_sysreg_init+0x1/0x48 returned 0 after 0 usecs
-calling  vexpress_config_init+0x1/0xae @ 1
-initcall vexpress_config_init+0x1/0xae returned 0 after 0 usecs
-calling  pl011_init+0x1/0x38 @ 1
-Serial: AMBA PL011 UART driver
-initcall pl011_init+0x1/0x38 returned 0 after 9765 usecs
-calling  pl022_init+0x1/0xc @ 1
-initcall pl022_init+0x1/0xc returned 0 after 0 usecs
-calling  pl061_gpio_init+0x1/0xc @ 1
-initcall pl061_gpio_init+0x1/0xc returned 0 after 31 usecs
-calling  vexpress_osc_driver_init+0x1/0x10 @ 1
-initcall vexpress_osc_driver_init+0x1/0x10 returned 0 after 231119 usecs
-calling  vexpress_regulator_driver_init+0x1/0xe @ 1
-initcall vexpress_regulator_driver_init+0x1/0xe returned 0 after 114764 usecs
-calling  pl031_driver_init+0x1/0xc @ 1
-initcall pl031_driver_init+0x1/0xc returned 0 after 25 usecs
-calling  vexpress_reset_driver_init+0x1/0xe @ 1
-initcall vexpress_reset_driver_init+0x1/0xe returned 0 after 594 usecs
-1c090000.uart: ttyAMA0 at MMIO 0x1c090000 (irq = 30, base_baud = 0) is a PL011 rev2
-printk: console [ttyAMA0] enabled
-printk: bootconsole [earlycon0] disabled
-1c0a0000.uart: ttyAMA1 at MMIO 0x1c0a0000 (irq = 31, base_baud = 0) is a PL011 rev2
-1c0b0000.uart: ttyAMA2 at MMIO 0x1c0b0000 (irq = 32, base_baud = 0) is a PL011 rev2
-1c0c0000.uart: ttyAMA3 at MMIO 0x1c0c0000 (irq = 33, base_baud = 0) is a PL011 rev2
-rtc-pl031 1c170000.rtc: registered as rtc0
-rtc-pl031 1c170000.rtc: setting system clock to 2020-04-23T16:54:46 UTC (1587660886)
---->8
+Best regards,
 
--- 
-Regards,
-Sudeep
+Oliver
