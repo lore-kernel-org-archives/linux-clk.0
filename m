@@ -2,91 +2,152 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EA4C5518C
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 02:06:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9501C2BA19
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99B512080D
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 02:06:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C498A21569
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:01:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="os394JnE"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CP9Uls27"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbgDWCGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 22:06:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41018 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726398AbgDWCGH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Apr 2020 22:06:07 -0400
-Received: from mail-wr1-x435.google.com (mail-wr1-x435.google.com [IPv6:2a00:1450:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5871FC03C1AE
-        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2020 19:06:07 -0700 (PDT)
-Received: by mail-wr1-x435.google.com with SMTP id d15so3323538wrx.3
-        for <linux-clk@vger.kernel.org>; Wed, 22 Apr 2020 19:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A/9Q0gDEQk7SNMN/b68r58ICpmz+7X03N2hr6NiaoH8=;
-        b=os394JnEZiB7hZzjCkNFjqIx1gf9N5AYKFKocDI3OSFTkfodOiJXYFYsfKLKpmaf4S
-         JY6Lput0qZK8yke6lcP8CulzTaxZ6njBHxf6bbfXmwGDVjtmkLy4kABeMzrcIwTlyJH6
-         Vf5RRHfJb1/uBnLE/jbKajIikW3ncK70q+zpBO8nzVPZTu3aVc33D1CGr6A+rGcV4YG1
-         z1T/Xo6jKmkhmmXhBmz6UDm2dQYOZtLwI6YgQCZQrZiZzbb+92Q/H1Zg1Z+nb1ntJFaE
-         A7KwHZCRz8UWwc63yPK9Qh9kiA1fMIfPNCltQiCmzFWPq9PdYf1iCJe6otPkPNbnCkK5
-         OCKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A/9Q0gDEQk7SNMN/b68r58ICpmz+7X03N2hr6NiaoH8=;
-        b=NzSdBReqa8xC9LRqPjp89mCz8p/paPxR1v1Ww/h4Ok2b0bBCD8tggAK/Dlvy115jtZ
-         5j3gwD0T9nLvJHDFQb58OC2jRm6Ff0Mb1XO7CpIC4QHhSUWkdMspKMBjT4n6HPT5heBG
-         grL2nFBccwpQQcSg5DrpRdCxB5ChnVijLtAqffmyomYGz1SwyEBsAAtmEojOIHocZnkp
-         wTmUIfOU2vY59AS/AxjVE1LGVsgmGWwcHbOz7SH7MzBurVWcdQZTFSpaeJ015skLI44X
-         2xbTtY/+ervIjn7l0kos+Ai95GYWp1bsnSsHPk/JBWFYipMxDFqNjrhUS8kRtue+9YMi
-         ydwQ==
-X-Gm-Message-State: AGi0PuYFFCxrVC37JQe7DYF54WRPGRXKhT2DX+VEY17nROOapUUBbwDV
-        Av8CKUWEpnlWQY71uj8gFH0Wuw==
-X-Google-Smtp-Source: APiQypLAiRsG0qCINhLGe1EpQJ0HHWcgW2S1wxioVrDAsZWOl/hXi+QT6wmWP4U2nP4U4P4Nmx6KeQ==
-X-Received: by 2002:a5d:690a:: with SMTP id t10mr2096175wru.225.1587607566043;
-        Wed, 22 Apr 2020 19:06:06 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id c10sm1340584wru.48.2020.04.22.19.06.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Apr 2020 19:06:05 -0700 (PDT)
-Subject: Re: [PATCH 3/3] clk: qcom: gcc-msm8939: Make silicon specific updates
- for msm8939
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        shawn.guo@linaro.org, p.zabel@pengutronix.de
-References: <20200419121808.440780-1-bryan.odonoghue@linaro.org>
- <20200419121808.440780-4-bryan.odonoghue@linaro.org>
- <158752417863.132238.13958544237045504884@swboyd.mtv.corp.google.com>
-From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
-Message-ID: <11c762c5-0dea-2696-a063-335387e25d1f@nexus-software.ie>
-Date:   Thu, 23 Apr 2020 03:06:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726094AbgDWHBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 03:01:10 -0400
+Received: from mail-eopbgr60077.outbound.protection.outlook.com ([40.107.6.77]:56054
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725562AbgDWHBK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Apr 2020 03:01:10 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QZuO+2Q3nUmvIE/UZRNHG3IeNBQGwZJjuMuPAW4YuLycR/c3QvI9hg//yA71rgUEyR5Qie1znvSVN+9Cjl4Eq5p6Re6EGJaTo5liqvk4lBuj01UBRrGfCAXTnyOXBnGrXtA7TQ2VNWp1GqvVR8MOlayVSDsbfXiOvE5J1jkLB3xXKexNvf/zx+OHXbgMkTKq4Jf+Ia6hFygC0S+PhbNuLfOCYigfXXZzTG0E+2GI3BXHW7fEgq439GxgqVcrRWTXAu3XCNdZl/jM8EuUErpO78ESidAwXWM1ctT2/Df7LzBpKC/6X+a08TY+IAVNg9YppFac9Svor9pfV5MxNGLnNQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ffBclFaIhjRLAK7MzFsb012aA60idB+fH+Vz0PPO97w=;
+ b=SkdBE7zaMtgROUveuqliuNnebvuWX8hFKXBfS20vmRSjDHvdg8285zf0XC26rHjv8ZJN52UAIUuxaAuYs16kcMprQErszomurCpHuyzYfA1hlGqijkGoURXQW98Nc/ZO8jHcgi4lG+Ekd9HWqACQcvWgRWL4B5ublbtAEUZ+2KLs8ExKAG/rCBkXUlr85/ScpW2JrA+Lf5vR5hLw8fqMoHRYX/uPECV9j9m3VcZrPTkWQi59yvYCijojdGeafJ8FjPtWJ94W2GWgeYfGA9AgEa7Qxnjbf7n/AQ3o2OK/0ek+60Bwyv2hwuVhURBgyw2jQASwytLLiwfbweE2jwrIvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ffBclFaIhjRLAK7MzFsb012aA60idB+fH+Vz0PPO97w=;
+ b=CP9Uls27hw/hBbP9qMwLDcu9Ot1mqP5pwmkjoZkZqesAJH+iHMRGWjC8H5pDub9GbAvmNmjqT3stq4qrHd/2tPTkTKaY8sdozLf1tSwoLV/rMhLmBMB8vbwlLBU8/7DOWLxKM39gWnNAlTStf3iaNdNONnaRKhsV/+AtI8oQOuo=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0402MB2822.eurprd04.prod.outlook.com (2603:10a6:4:96::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Thu, 23 Apr
+ 2020 07:01:06 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2937.012; Thu, 23 Apr 2020
+ 07:01:06 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, abel.vesa@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: introduce imx_clk_hw_critical
+Date:   Thu, 23 Apr 2020 14:52:28 +0800
+Message-Id: <1587624748-27228-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR04CA0133.apcprd04.prod.outlook.com
+ (2603:1096:3:16::17) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-In-Reply-To: <158752417863.132238.13958544237045504884@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR04CA0133.apcprd04.prod.outlook.com (2603:1096:3:16::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2937.13 via Frontend Transport; Thu, 23 Apr 2020 07:01:02 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 58967f40-8bd2-463f-ae2e-08d7e75417e5
+X-MS-TrafficTypeDiagnostic: DB6PR0402MB2822:|DB6PR0402MB2822:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB6PR0402MB28221B5F19EBCEBFACF1A2B188D30@DB6PR0402MB2822.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
+X-Forefront-PRVS: 03827AF76E
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(366004)(396003)(136003)(39860400002)(346002)(376002)(66946007)(66556008)(66476007)(5660300002)(6512007)(2616005)(6506007)(69590400007)(316002)(8936002)(6666004)(9686003)(956004)(81156014)(186003)(8676002)(36756003)(6486002)(86362001)(478600001)(52116002)(16526019)(2906002)(4326008)(26005);DIR:OUT;SFP:1101;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 2PtT2wqPZDmpJHcsl/XXQjfTudtWy4pGegZdcH4Vxj/xgrSN4o25G4/7N7fliafYE+LDZQs3mn3q5OEbKokQKnc8iFV5pWPsCJ1mcARQBNOchwGz+Pjol9KrOv2V/wUfEIuve7HKX7XvxTa7SN2gTncmRj/YgptcBpogb8TBDPNbtUYdZ02CJmDhQfAkXCIQQTKnBDlewkamLRBfZZyDVW9pB8Ti6XPElng1LZVd3XpwevuShaJV6XrQ0uZh9ro9M8zNKLgr+gONK3vHOpGmGgJLPR6I9DL23m/8WAf8Xlc7Hieb60O37irqWqOgSdwkn5Vl2fjXrdHRYH8VyVVti1eeia4xTouHXKg/4a5FgSg3e9QsjZIyKLDftR7XYMNOliVoFaE4ZBMgZN8+otvk29ccYRBgWghalppH6x0QFEfoURwHz3ZtKRxdIfTZgA5eMzf+6jtXh41XOO/Bf41yWlpm4cEcotGxfCuAdFm1CrIBuC11oxWI4nrXODQGE2/p
+X-MS-Exchange-AntiSpam-MessageData: gfCkf5d4pE8PelfW25KWiGngQq2Pjk8f+wqJgunq8QGDbzAYzmkjjIsHZZhgeuyPAtB1vLsYZyWPL6JqaMj6TZpMH+Nba6AcxE60PodK8VWPE5CtSmDzdpR2FglrFvKuqi51iLIuUhCK5IZOcYk7dw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58967f40-8bd2-463f-ae2e-08d7e75417e5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2020 07:01:06.2520
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B5lCUn35qCvTcTcdrRXSSsv3RVClfiKyLOP/dwK/t4AQcsQu35qsHrGdQy6mwKhRrc7BYERm+FJjXa6MLuKeoA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2822
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Thanks for the review.
+From: Peng Fan <peng.fan@nxp.com>
 
-I think I've captured and implemented, all of what you said.
+To i.MX8M SoC, there is an case is when running dual OSes
+with hypervisor, the clk of the hardware that passthrough
+to the 2nd OS needs to be setup by 1st Linux OS.
+So detect clock-critical from ccm node and enable the clocks to let
+the 2nd OS could use the hardware without touch CCM module.
 
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
-bod
+ drivers/clk/imx/clk.c | 19 +++++++++++++++++++
+ drivers/clk/imx/clk.h |  1 +
+ 2 files changed, 20 insertions(+)
+
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index 87ab8db3d282..ec7d422540c1 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -177,3 +177,22 @@ static int __init imx_clk_disable_uart(void)
+ 	return 0;
+ }
+ late_initcall_sync(imx_clk_disable_uart);
++
++int imx_clk_hw_critical(struct device_node *np, struct clk_hw * const hws[])
++{
++	struct property *prop;
++	const __be32 *cur;
++	u32 idx;
++	int ret;
++
++	if (!np || !hws)
++		return -EINVAL;
++
++	of_property_for_each_u32(np, "clock-critical", prop, cur, idx) {
++		ret = clk_prepare_enable(hws[idx]->clk);
++		if (ret)
++			return ret;
++	}
++
++	return 0;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index d4ea1609bcb7..701d7440f98c 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -9,6 +9,7 @@ extern spinlock_t imx_ccm_lock;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
+ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
++int imx_clk_hw_critical(struct device_node *np, struct clk_hw * const hws[]);
+ void imx_register_uart_clocks(struct clk ** const clks[]);
+ void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
+ void imx_unregister_clocks(struct clk *clks[], unsigned int count);
+-- 
+2.16.4
+
