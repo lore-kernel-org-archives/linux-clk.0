@@ -2,152 +2,129 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9501C2BA19
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79349C54FD0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C498A21569
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:01:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52FF821569
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:48:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="CP9Uls27"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="rPlAzvHY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726094AbgDWHBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 03:01:10 -0400
-Received: from mail-eopbgr60077.outbound.protection.outlook.com ([40.107.6.77]:56054
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725562AbgDWHBK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Apr 2020 03:01:10 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QZuO+2Q3nUmvIE/UZRNHG3IeNBQGwZJjuMuPAW4YuLycR/c3QvI9hg//yA71rgUEyR5Qie1znvSVN+9Cjl4Eq5p6Re6EGJaTo5liqvk4lBuj01UBRrGfCAXTnyOXBnGrXtA7TQ2VNWp1GqvVR8MOlayVSDsbfXiOvE5J1jkLB3xXKexNvf/zx+OHXbgMkTKq4Jf+Ia6hFygC0S+PhbNuLfOCYigfXXZzTG0E+2GI3BXHW7fEgq439GxgqVcrRWTXAu3XCNdZl/jM8EuUErpO78ESidAwXWM1ctT2/Df7LzBpKC/6X+a08TY+IAVNg9YppFac9Svor9pfV5MxNGLnNQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ffBclFaIhjRLAK7MzFsb012aA60idB+fH+Vz0PPO97w=;
- b=SkdBE7zaMtgROUveuqliuNnebvuWX8hFKXBfS20vmRSjDHvdg8285zf0XC26rHjv8ZJN52UAIUuxaAuYs16kcMprQErszomurCpHuyzYfA1hlGqijkGoURXQW98Nc/ZO8jHcgi4lG+Ekd9HWqACQcvWgRWL4B5ublbtAEUZ+2KLs8ExKAG/rCBkXUlr85/ScpW2JrA+Lf5vR5hLw8fqMoHRYX/uPECV9j9m3VcZrPTkWQi59yvYCijojdGeafJ8FjPtWJ94W2GWgeYfGA9AgEa7Qxnjbf7n/AQ3o2OK/0ek+60Bwyv2hwuVhURBgyw2jQASwytLLiwfbweE2jwrIvQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ffBclFaIhjRLAK7MzFsb012aA60idB+fH+Vz0PPO97w=;
- b=CP9Uls27hw/hBbP9qMwLDcu9Ot1mqP5pwmkjoZkZqesAJH+iHMRGWjC8H5pDub9GbAvmNmjqT3stq4qrHd/2tPTkTKaY8sdozLf1tSwoLV/rMhLmBMB8vbwlLBU8/7DOWLxKM39gWnNAlTStf3iaNdNONnaRKhsV/+AtI8oQOuo=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2822.eurprd04.prod.outlook.com (2603:10a6:4:96::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2921.29; Thu, 23 Apr
- 2020 07:01:06 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2937.012; Thu, 23 Apr 2020
- 07:01:06 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, s.hauer@pengutronix.de, sboyd@kernel.org
-Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, abel.vesa@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: introduce imx_clk_hw_critical
-Date:   Thu, 23 Apr 2020 14:52:28 +0800
-Message-Id: <1587624748-27228-1-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0133.apcprd04.prod.outlook.com
- (2603:1096:3:16::17) To DB6PR0402MB2760.eurprd04.prod.outlook.com
- (2603:10a6:4:a1::14)
+        id S1726923AbgDWHsU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 03:48:20 -0400
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59635 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726271AbgDWHsT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 03:48:19 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id RWahjKdw87xncRWaljPcej; Thu, 23 Apr 2020 09:48:16 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1587628096; bh=lJ9loEmVaJryUiVmPLNo9go2q+BR27ddnJpMegvNhPw=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=rPlAzvHYxfTDXr8aJtmoN4++BOKth5dNDNcSepvFoJT7P7WCOYzzwnHy4TOSHZe6S
+         7M2KN8kdpM6BukUl+UG7o8I1zMXlJJ02sCYwkjEai36m/CH89gdApuOz5JLxTq5EAz
+         wFbfX234WeCAnqBYj6TX+ZyYzSFoKYg2vv0zpGDC/rZ1jcxQvZZmiDldoRQeGIj9Cy
+         OqJwPWDWtjrtQoAtrRs7iP5lKi1skasCMeAfZmOefMAydY4Tb39VlV14vmByJUUYY4
+         LXubK5zsBb5sfzdtqje206JABOfOzo+m5hx2Crs8fnQB/GJfvgwJkGCGvWhXXxcO09
+         gSVMCkGxDBr3A==
+Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
+ <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
+Date:   Thu, 23 Apr 2020 09:48:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR04CA0133.apcprd04.prod.outlook.com (2603:1096:3:16::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2937.13 via Frontend Transport; Thu, 23 Apr 2020 07:01:02 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 58967f40-8bd2-463f-ae2e-08d7e75417e5
-X-MS-TrafficTypeDiagnostic: DB6PR0402MB2822:|DB6PR0402MB2822:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB6PR0402MB28221B5F19EBCEBFACF1A2B188D30@DB6PR0402MB2822.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6790;
-X-Forefront-PRVS: 03827AF76E
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(10009020)(4636009)(366004)(396003)(136003)(39860400002)(346002)(376002)(66946007)(66556008)(66476007)(5660300002)(6512007)(2616005)(6506007)(69590400007)(316002)(8936002)(6666004)(9686003)(956004)(81156014)(186003)(8676002)(36756003)(6486002)(86362001)(478600001)(52116002)(16526019)(2906002)(4326008)(26005);DIR:OUT;SFP:1101;
-Received-SPF: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 2PtT2wqPZDmpJHcsl/XXQjfTudtWy4pGegZdcH4Vxj/xgrSN4o25G4/7N7fliafYE+LDZQs3mn3q5OEbKokQKnc8iFV5pWPsCJ1mcARQBNOchwGz+Pjol9KrOv2V/wUfEIuve7HKX7XvxTa7SN2gTncmRj/YgptcBpogb8TBDPNbtUYdZ02CJmDhQfAkXCIQQTKnBDlewkamLRBfZZyDVW9pB8Ti6XPElng1LZVd3XpwevuShaJV6XrQ0uZh9ro9M8zNKLgr+gONK3vHOpGmGgJLPR6I9DL23m/8WAf8Xlc7Hieb60O37irqWqOgSdwkn5Vl2fjXrdHRYH8VyVVti1eeia4xTouHXKg/4a5FgSg3e9QsjZIyKLDftR7XYMNOliVoFaE4ZBMgZN8+otvk29ccYRBgWghalppH6x0QFEfoURwHz3ZtKRxdIfTZgA5eMzf+6jtXh41XOO/Bf41yWlpm4cEcotGxfCuAdFm1CrIBuC11oxWI4nrXODQGE2/p
-X-MS-Exchange-AntiSpam-MessageData: gfCkf5d4pE8PelfW25KWiGngQq2Pjk8f+wqJgunq8QGDbzAYzmkjjIsHZZhgeuyPAtB1vLsYZyWPL6JqaMj6TZpMH+Nba6AcxE60PodK8VWPE5CtSmDzdpR2FglrFvKuqi51iLIuUhCK5IZOcYk7dw==
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58967f40-8bd2-463f-ae2e-08d7e75417e5
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Apr 2020 07:01:06.2520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B5lCUn35qCvTcTcdrRXSSsv3RVClfiKyLOP/dwK/t4AQcsQu35qsHrGdQy6mwKhRrc7BYERm+FJjXa6MLuKeoA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2822
+In-Reply-To: <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfBrqqqyGyVRnDMGKreG0gYg22SyVz4yFDJM/l05Yhqmq4BQCdIaJ4DuxIQosu4gWlSjxs/MSCdBjvgXZu3W/LAAUpVk9hbTWPilQrU08m1zbkoKfwi3f
+ IeI5VvCQ4yT9S2S93z9cpy80I6a77P8ny8m/ETG6EDu8B+kD1AwsRZfL/2w/Cyq3J4O4/y2vVNxVwkc0qVapTgjSAl8hZSriuL9sgkUrIUBQ6Mrgji4ae0Ow
+ 8tiQQiScGT7/SFoLT9fd4PgY6msv9uEWYUwz0R5kmizB1B+Rg5vUx7rj8XUZ+CrBbv2b25xdwN0pEksib83f92vtLpidRoj0oXFjqbSEbanvcUuFdHkWpYYu
+ kJx9rWU6ZZdK2Qx8id5pQRK3WAAin3PZxGtn1Q6UWMJGZkDRqGm102J2zTbpuqD6VqR2HwuRd3aoomLeBCm4WEWsItddDwFjMiqAMcIrKW6oPEjFCY3cxtaA
+ VXIVmba0haiNpsRiLFhh0SsUy9pci3J1/PowZ8iTZJdXJDLEMYdwrQhHX5oeFf34vJdlM7Ns+aLX+SoHX4SeN9Jj9jc07fwMcUhC+tCjj1go2vwHteqZc6pm
+ YmE=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 22/04/2020 08:18, Sowjanya Komatineni wrote:
+> Tegra210 contains a powerful Video Input (VI) hardware controller
+> which can support up to 6 MIPI CSI camera sensors.
+> 
+> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+> capture from an external camera sensor connected to CSI or from
+> built-in test pattern generator.
+> 
+> Tegra210 supports built-in test pattern generator from CSI to VI.
+> 
+> This patch adds a v4l2 capture driver with media interface for
+> Tegra210 built-in CSI to VI test pattern generator.
+> 
+> This patch includes TPG support only and all the video pipeline
+> configuration happens through the video device node.
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/staging/media/Kconfig          |    2 +
+>  drivers/staging/media/Makefile         |    1 +
+>  drivers/staging/media/tegra/Kconfig    |   13 +
+>  drivers/staging/media/tegra/Makefile   |    8 +
+>  drivers/staging/media/tegra/TODO       |   10 +
+>  drivers/staging/media/tegra/common.h   |  262 ++++++++
+>  drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
+>  drivers/staging/media/tegra/csi.h      |  149 +++++
+>  drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
+>  drivers/staging/media/tegra/tegra210.h |  190 ++++++
+>  drivers/staging/media/tegra/vi.c       | 1132 ++++++++++++++++++++++++++++++++
+>  drivers/staging/media/tegra/vi.h       |   83 +++
+>  drivers/staging/media/tegra/video.c    |  153 +++++
+>  drivers/staging/media/tegra/video.h    |   34 +
+>  14 files changed, 3352 insertions(+)
+>  create mode 100644 drivers/staging/media/tegra/Kconfig
+>  create mode 100644 drivers/staging/media/tegra/Makefile
+>  create mode 100644 drivers/staging/media/tegra/TODO
+>  create mode 100644 drivers/staging/media/tegra/common.h
+>  create mode 100644 drivers/staging/media/tegra/csi.c
+>  create mode 100644 drivers/staging/media/tegra/csi.h
+>  create mode 100644 drivers/staging/media/tegra/tegra210.c
+>  create mode 100644 drivers/staging/media/tegra/tegra210.h
+>  create mode 100644 drivers/staging/media/tegra/vi.c
+>  create mode 100644 drivers/staging/media/tegra/vi.h
+>  create mode 100644 drivers/staging/media/tegra/video.c
+>  create mode 100644 drivers/staging/media/tegra/video.h
 
-To i.MX8M SoC, there is an case is when running dual OSes
-with hypervisor, the clk of the hardware that passthrough
-to the 2nd OS needs to be setup by 1st Linux OS.
-So detect clock-critical from ccm node and enable the clocks to let
-the 2nd OS could use the hardware without touch CCM module.
+With 'make menuconfig' I get this:
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk.c | 19 +++++++++++++++++++
- drivers/clk/imx/clk.h |  1 +
- 2 files changed, 20 insertions(+)
+scripts/kconfig/mconf  Kconfig
 
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 87ab8db3d282..ec7d422540c1 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -177,3 +177,22 @@ static int __init imx_clk_disable_uart(void)
- 	return 0;
- }
- late_initcall_sync(imx_clk_disable_uart);
-+
-+int imx_clk_hw_critical(struct device_node *np, struct clk_hw * const hws[])
-+{
-+	struct property *prop;
-+	const __be32 *cur;
-+	u32 idx;
-+	int ret;
-+
-+	if (!np || !hws)
-+		return -EINVAL;
-+
-+	of_property_for_each_u32(np, "clock-critical", prop, cur, idx) {
-+		ret = clk_prepare_enable(hws[idx]->clk);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index d4ea1609bcb7..701d7440f98c 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -9,6 +9,7 @@ extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
- void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
-+int imx_clk_hw_critical(struct device_node *np, struct clk_hw * const hws[]);
- void imx_register_uart_clocks(struct clk ** const clks[]);
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_clocks(struct clk *clks[], unsigned int count);
--- 
-2.16.4
+WARNING: unmet direct dependencies detected for TEGRA_HOST1X
+  Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM && COMPILE_TEST [=y])
+  Selected by [y]:
+  - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] && MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
 
+This is an x86_64 build with COMPILE_TEST set. I can provide my full .config if you need it.
+
+CONFIG_TEGRA_HOST1X=y
+CONFIG_VIDEO_TEGRA=y
+
+Regards,
+
+	Hans
