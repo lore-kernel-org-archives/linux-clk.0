@@ -2,89 +2,187 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79868C54FD0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A493BC55191
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52B7020715
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587656340;
-	bh=Wyu9njrWlhbl7xf7oU5Wt4MW02zQKWUfKmPdIYJCS0w=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Zx87+vuvoeizL7vKo3iCDs691+JkEd3hkbCqmdcG5B5z4ioeRbdnJtDkF/svRAXQO
-	 l7t6dKtPtbjz9FxjQRKEm05I/su22mx9Tx07vuFb9BSRsdPQQghBETVOLWCVo9c2Zd
-	 B8PtRdvl8y+vhIvH7VtS4rEC6/ctCsZMhD9e/qmo=
+	by mail.kernel.org (Postfix) with ESMTP id 8EF2E21655
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:47:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbgDWPi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 11:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50352 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729077AbgDWPi6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:38:58 -0400
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 142CA21582;
-        Thu, 23 Apr 2020 15:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587656338;
-        bh=Wyu9njrWlhbl7xf7oU5Wt4MW02zQKWUfKmPdIYJCS0w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xRMSLfCbE0Vw3xMU4fnO//Q4cZSfE5hkCFSOe6ZvHH6D9J/nOp0Ug94nN5MBnfqcs
-         gblM2xujaaLkfOQpowbZvxT6qkM+Sp3vWTewAnDGPs22E3VIcloVFrBuPpU0S1d8eT
-         uNrIBWpIEAHt8kYTypKjK0wjr7y/WLH+LsZgg87o=
-Received: by mail-qk1-f171.google.com with SMTP id 23so1962644qkf.0;
-        Thu, 23 Apr 2020 08:38:58 -0700 (PDT)
-X-Gm-Message-State: AGi0PuY7fmMd+2nFIjIgI7vSbx4z8kKWPT4K5/RVEBD/h56P6XUXzH01
-        zE4tRVWKcEEET+bLIA/X+9CRFLHbEIIK1+LGpA==
-X-Google-Smtp-Source: APiQypK3p49qKpfBlVKXdtl+eplKi5bsSct+10rTJ7VfvZd7h2kFVzE91169u5oa40cUZAZqg4c5h3ql6gSKT2CIpyk=
-X-Received: by 2002:a37:cc1:: with SMTP id 184mr4344618qkm.254.1587656337201;
- Thu, 23 Apr 2020 08:38:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-7-robh@kernel.org>
- <20200422205202.GF25585@bogus>
-In-Reply-To: <20200422205202.GF25585@bogus>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 23 Apr 2020 10:38:45 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKO0KkYEq59t5+BECkK6uOHEkbW2ra6SeNDT9afiMhmSg@mail.gmail.com>
-Message-ID: <CAL_JsqKO0KkYEq59t5+BECkK6uOHEkbW2ra6SeNDT9afiMhmSg@mail.gmail.com>
-Subject: Re: [PATCH 06/17] clk: versatile: Only enable SP810 on 32-bit by default
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
+        id S1729212AbgDWPrp convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 11:47:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729350AbgDWPro (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 11:47:44 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02070C09B040
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2020 08:47:44 -0700 (PDT)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jRe4c-0007d9-C5; Thu, 23 Apr 2020 17:47:34 +0200
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1jRe4b-0006Ow-Ja; Thu, 23 Apr 2020 17:47:33 +0200
+Message-ID: <a32ab342e7e4928ec252815ab0023f81bb182b32.camel@pengutronix.de>
+Subject: Re: [PATCH v3 12/13] reset: imx: Add audiomix reset controller
+ support
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>, Lee Jones <lee.jones@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 23 Apr 2020 17:47:33 +0200
+In-Reply-To: <1586937773-5836-13-git-send-email-abel.vesa@nxp.com>
+References: <1586937773-5836-1-git-send-email-abel.vesa@nxp.com>
+         <1586937773-5836-13-git-send-email-abel.vesa@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
+MIME-Version: 1.0
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 3:52 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Sun, Apr 19, 2020 at 12:07:59PM -0500, Rob Herring wrote:
-> > While 64-bit Arm reference platforms have SP810 for clocks for SP804
-> > timers, they are not needed since the arch timers are used instead.
-> >
->
-> Shouldn't we disable selection of SP804 for arm64 at the same time ?
+Hi Abel,
 
-SP804 is already not selected for VEXPRESS. Only RPi and HiSilicon
-enable it on arm64. Though it makes me wonder why they require it as
-they should have arch timer too.
+On Wed, 2020-04-15 at 11:02 +0300, Abel Vesa wrote:
+> The imx-mix MFD driver registers some devices, one of which, in case of
+> audiomix, maps correctly to a reset controller type. This driver registers
+> a reset controller for that. For now, only the EARC specific resets are added.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  drivers/reset/Kconfig              |   7 +++
+>  drivers/reset/Makefile             |   1 +
+>  drivers/reset/reset-imx-audiomix.c | 117 +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 125 insertions(+)
+>  create mode 100644 drivers/reset/reset-imx-audiomix.c
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index d9efbfd..2f8d9b3 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -81,6 +81,13 @@ config RESET_INTEL_GW
+>  	  Say Y to control the reset signals provided by reset controller.
+>  	  Otherwise, say N.
+>  
+> +config RESET_IMX_AUDIOMIX
+> +	bool "i.MX Audiomix Reset Driver" if COMPILE_TEST
+> +	depends on HAS_IOMEM
+> +	default ARCH_MXC
+> +	help
+> +	  This enables the audiomix reset controller driver for i.MX SoCs.
+> +
+>  config RESET_LANTIQ
+>  	bool "Lantiq XWAY Reset Driver" if COMPILE_TEST
+>  	default SOC_TYPE_XWAY
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 249ed35..cf23d38 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -12,6 +12,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
+>  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
+>  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
+>  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
+> +obj-$(CONFIG_RESET_IMX_AUDIOMIX) += reset-imx-audiomix.o
+>  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
+>  obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+>  obj-$(CONFIG_RESET_MESON) += reset-meson.o
+> diff --git a/drivers/reset/reset-imx-audiomix.c b/drivers/reset/reset-imx-audiomix.c
+> new file mode 100644
+> index 00000000..9533e41
+> --- /dev/null
+> +++ b/drivers/reset/reset-imx-audiomix.c
+> @@ -0,0 +1,117 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2019 NXP.
+> + */
+> +
+> +#include <dt-bindings/reset/imx-audiomix-reset.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#define IMX_AUDIOMIX_EARC_CTRL_REG	0x200
+> +
+> +#define IMX_AUDIOMIX_EARC_RESET_BIT	0x0
+> +#define IMX_AUDIOMIX_EARC_PHY_RESET_BIT	0x1
+> +
+> +struct imx_audiomix_reset_data {
+> +	void __iomem *base;
+> +	struct reset_controller_dev rcdev;
+> +	spinlock_t lock;
+> +};
+> +
+> +static int imx_audiomix_reset_set(struct reset_controller_dev *rcdev,
+> +			  unsigned long id, bool assert)
+> +{
+> +	struct imx_audiomix_reset_data *drvdata = container_of(rcdev,
+> +			struct imx_audiomix_reset_data, rcdev);
+> +	void __iomem *reg_addr = drvdata->base;
+> +	unsigned long flags;
+> +	unsigned int offset;
+> +	u32 reg;
+> +
+> +	switch (id) {
+> +	case IMX_AUDIOMIX_EARC_PHY_RESET:
+> +		reg_addr += IMX_AUDIOMIX_EARC_CTRL_REG;
+> +		offset = IMX_AUDIOMIX_EARC_PHY_RESET_BIT;
+> +		break;
+> +	case IMX_AUDIOMIX_EARC_RESET:
+> +		reg_addr += IMX_AUDIOMIX_EARC_CTRL_REG;
+> +		offset = IMX_AUDIOMIX_EARC_RESET_BIT;
+> +		break;
 
-Rob
+This switch is not necessary. Since reg_addr is the same for both bits,
+you can just set it directly, once. And since (IMX_AUDIOMIX_EARC_RESET
+== IMX_AUDIOMIX_EARC_RESET_BIT) and (IMX_AUDIOMIX_EARC_PHY_RESET ==
+IMX_AUDIOMIX_EARC_PHY_RESET_BIT), you can just use BIT(id) instead of
+BIT(offset) below.
+
+> +	default:
+> +		return -EINVAL;
+
+This is already catched by the core, which doesn't allow
+(id >= rcdev->nr_resets).
+
+> +	}
+> +
+> +	if (assert) {
+> +		spin_lock_irqsave(&drvdata->lock, flags);
+> +		reg = readl(reg_addr);
+> +		writel(reg & ~BIT(offset), reg_addr);
+> +		spin_unlock_irqrestore(&drvdata->lock, flags);
+> +	} else {
+> +		spin_lock_irqsave(&drvdata->lock, flags);
+> +		reg = readl(reg_addr);
+> +		writel(reg | BIT(offset), reg_addr);
+> +		spin_unlock_irqrestore(&drvdata->lock, flags);
+> +	}
+
+regards
+Philipp
