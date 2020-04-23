@@ -1,58 +1,58 @@
-Return-Path: <SRS0=SEET=6G=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B33E3C54FCB
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 22:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760DCC55185
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 00:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8BBE92077D
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Apr 2020 22:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B2052075A
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 00:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587594879;
-	bh=SNLJpvjts7rfI5JB0oV0kkk5fsoKCQ2Y16T9IZfyysU=;
+	s=default; t=1587603270;
+	bh=EdeAQ2EdBIQEUfUEWY+K0rWxiAbfj3atcOU3hxgWKyQ=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ip3DD/UpJZCC3YQp3Ywq6YX96V0Ozev+GGk98DPlVRSYGJ9Aioxn96YFex9ObC/el
-	 Eho92rcABMBoJFB4Ny6X+UN8IsR9AlNWETetQfEchy7CV6c3tFYIcdoACxy9jnTljY
-	 HSN/rGnvv91gC1Wx1RFH64+oiqnu3wtzShY1rIl4=
+	b=lJtKSBs3bB/tzrRaxdjJxlaR+mkQYWlq4lcVshpQW7ZGZ/kI8EPKD9n66QzdEBUAs
+	 oJNek1ktEv79CSWF2z0lOfO6qH3NbPF3Yt1SXs+T34rqoNmG5LEIvRjOfKT+BZ2B1F
+	 0wYVmx6MuvjwtruwO63KSHVH459sf/sn0VZrRSig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726006AbgDVWej (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Apr 2020 18:34:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50596 "EHLO mail.kernel.org"
+        id S1726384AbgDWAya (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Apr 2020 20:54:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56546 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbgDVWej (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Apr 2020 18:34:39 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        id S1725895AbgDWAy3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Apr 2020 20:54:29 -0400
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 66FC720787;
-        Wed, 22 Apr 2020 22:34:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B13E2075A;
+        Thu, 23 Apr 2020 00:54:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587594878;
-        bh=SNLJpvjts7rfI5JB0oV0kkk5fsoKCQ2Y16T9IZfyysU=;
+        s=default; t=1587603269;
+        bh=EdeAQ2EdBIQEUfUEWY+K0rWxiAbfj3atcOU3hxgWKyQ=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=jfEGWgL3I7QE5dnT9rxy4Uh0or1xw7bOlQluSsJjQV2pMj3+bHmUWPnl+9rV5U8ne
-         AAabN2yFwNtBeg1WcMgBiezmMS82oeM0GmunyElkIOERrFQiLYuPSuBFXrffoNjL7a
-         dpAAZK6RY5ygJQAYsPKTD8Zwe73PoTVt8hiAjUCE=
-Received: by mail-qk1-f175.google.com with SMTP id n143so4327710qkn.8;
-        Wed, 22 Apr 2020 15:34:38 -0700 (PDT)
-X-Gm-Message-State: AGi0PuYpHE6R0dLPDGLB7vllMGMTsODmWDzd49rIqqdYK/wHAS7X1v/5
-        XbP40UbYnyNa06sBQPWoQm8WKEpPnrcUGiQYLw==
-X-Google-Smtp-Source: APiQypKvREuslhX7owSjgWSS+4M/X4oIDaXzXQlnQscoYPYL8BsUg9lRR4iwpRQ3uKjlf98Z0AnWRF3ELD7q9OJL57M=
-X-Received: by 2002:a37:61cd:: with SMTP id v196mr559236qkb.393.1587594877490;
- Wed, 22 Apr 2020 15:34:37 -0700 (PDT)
+        b=U6eIpZ4dnkMiG9rnK5P7Ne5VcVRJzLtgh6wGjJ421bhNj3OJyq6TyzpmwccXDczX8
+         GZm6rDL3BmglFyz3Ru8xJp4K1LbRYEpPLDdT4rYXMFF1MalxjWggEkrG4/otS1kk9V
+         6Yu2Mt/XZpKjosxzTyls8cNSfzU74NEVM4xcS3Rc=
+Received: by mail-qt1-f171.google.com with SMTP id x8so3481488qtp.13;
+        Wed, 22 Apr 2020 17:54:29 -0700 (PDT)
+X-Gm-Message-State: AGi0PuYjIcf2BTZ6YG4sgP7GhVHTRbdlpxJlC2wK16R2XY5TzgFBTkey
+        KRwfAnnEQsQZj5xPotU/AD+SaER3abmnWEq2rg==
+X-Google-Smtp-Source: APiQypLM57Lkh8iAgNUZnacihwoOR74d09qQ7Q5sY/K/hAUmznUbIS0nhBAnRSBkMJUqszGyIlIZBbd7gRjPBC5mzIc=
+X-Received: by 2002:ac8:47cb:: with SMTP id d11mr496433qtr.136.1587603268256;
+ Wed, 22 Apr 2020 17:54:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-6-robh@kernel.org>
- <158754886772.132238.8648193086417881263@swboyd.mtv.corp.google.com>
-In-Reply-To: <158754886772.132238.8648193086417881263@swboyd.mtv.corp.google.com>
+References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-16-robh@kernel.org>
+ <158754906803.132238.5380277174069330915@swboyd.mtv.corp.google.com>
+In-Reply-To: <158754906803.132238.5380277174069330915@swboyd.mtv.corp.google.com>
 From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 22 Apr 2020 17:34:26 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLhdpye3z4-mznA+mV6y-mgfDONYZNW+39nZgEXH2_eEw@mail.gmail.com>
-Message-ID: <CAL_JsqLhdpye3z4-mznA+mV6y-mgfDONYZNW+39nZgEXH2_eEw@mail.gmail.com>
-Subject: Re: [PATCH 05/17] clk: versatile: Kill CONFIG_COMMON_CLK_VERSATILE
+Date:   Wed, 22 Apr 2020 19:54:16 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJb7x+gcsxstvdRkUD75=cJ7DsASmhCJKdoQJ62rBHvXw@mail.gmail.com>
+Message-ID: <CAL_JsqJb7x+gcsxstvdRkUD75=cJ7DsASmhCJKdoQJ62rBHvXw@mail.gmail.com>
+Subject: Re: [PATCH 15/17] vexpress: Move site master init to vexpress-config bus
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
         Liviu Dudau <liviu.dudau@arm.com>,
@@ -75,41 +75,24 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 22, 2020 at 4:47 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Apr 22, 2020 at 4:51 AM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Quoting Rob Herring (2020-04-19 10:07:58)
-> > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> > index c2618f1477a2..3465fb291998 100644
-> > --- a/drivers/clk/versatile/Kconfig
-> > +++ b/drivers/clk/versatile/Kconfig
-> > @@ -1,22 +1,14 @@
-> >  # SPDX-License-Identifier: GPL-2.0-only
-> >  config ICST
-> > -       bool
-> > -
-> > -config COMMON_CLK_VERSATILE
-> > -       bool "Clock driver for ARM Reference designs"
-> > -       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
-> > -               ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
-> > -               COMPILE_TEST
-> > +       bool "Clock driver for ARM Reference designs ICST" if COMPILE_TEST
-> >         select REGMAP_MMIO
-> >         ---help---
-> >           Supports clocking on ARM Reference designs:
-> >           - Integrator/AP and Integrator/CP
-> >           - RealView PB1176, EB, PB11MP and PBX
-> > -         - Versatile Express
+> Is the subject supposed to say 'set master' vs. 'site master'?
+
+Humm, maybe 'master site' instead.
+
+>
+> Quoting Rob Herring (2020-04-19 10:08:08)
+> > There's only a single caller of vexpress_config_set_master() from
+> > vexpress-sysreg.c. Let's just make the registers needed available to
+> > vexpress-config and move all the code there. The registers needed aren't
+> > used anywhere else either. With this, we can get rid of the private API
+> > between these 2 drivers.
 > >
-> >  config CLK_SP810
-> >         bool "Clock driver for ARM SP810 System Controller"
-> > -       depends on COMMON_CLK_VERSATILE
->
-> Shouldn't this get the depends from COMMON_CLK_VERSATILE so that this
-> option isn't exposed unless someone is compile testing or using that
-> platform?
-
-IMO, once the dependencies get complicated enough, it's better to just
-expose the option. But I could drop just the select and keep the
-depends. It's primarily having both that we didn't need.
-
-Rob
+> > Cc: Liviu Dudau <liviu.dudau@arm.com>
+> > Cc: Sudeep Holla <sudeep.holla@arm.com>
+> > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Lee Jones <lee.jones@linaro.org>
+> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
