@@ -2,168 +2,166 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78805C54FD0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:53:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 857A0C55193
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 16:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55E4121655
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 15:53:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587657236;
-	bh=s3YHiF3eHUkNFeBMptoPc4xjgSN1RME0WUf4jO6w/us=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=HnAdY8FNPBxyC+G7HqZlyQJ26NS1Mp4YMxW25xl9rP+Ae/gGiDieMEpHcQHNAeGxq
-	 BcbC5zk0j8sP0LsaxsSm1C8jaGFEh7DDHh8ygLkW/NbVLZ8ggrAAfGIzK1stGB68LQ
-	 sWgjhf0gw5R0+ORqyJ+7uvHLc5v7EvW/q/zvVs8o=
+	by mail.kernel.org (Postfix) with ESMTP id 5D49220CC7
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 16:51:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AFFUb/gO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbgDWPx4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 11:53:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729230AbgDWPxz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Apr 2020 11:53:55 -0400
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 010E721582;
-        Thu, 23 Apr 2020 15:53:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587657235;
-        bh=s3YHiF3eHUkNFeBMptoPc4xjgSN1RME0WUf4jO6w/us=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=A4phta+jNe4PkzlcXnUchsz34o2lcWJYlSeHvPrXxVgP2NqWk+Xq1dOTpvwJ/2nKr
-         JPrRIp+D3x3lLbTzRDRlRzzAZZxaVLBa/87IcYH6WfNHeYa8pqIXKbQtfh1zk24sCJ
-         AtLQweB9a+m8MyWv2FPyhkscdXMXQfFul7pYyNXs=
-Received: by mail-yb1-f175.google.com with SMTP id e17so3407067ybq.0;
-        Thu, 23 Apr 2020 08:53:54 -0700 (PDT)
-X-Gm-Message-State: AGi0PuYpEtJkNaXLu9+jIMjSpDdZgzIdcLSS0VUmw78ABaOiW8tWfZ4r
-        JhmD3dgwed1aHDn/eP4BqnImJPekKwF2U+c/pg==
-X-Google-Smtp-Source: APiQypItf6P4u5QhuwYnh32TjB2B27BbwMX+t2h/1EzeCIMKMBZ70JAemO83CNpLnyd2kyd3i8vYaBELfUOCkztl7Xo=
-X-Received: by 2002:a25:b74c:: with SMTP id e12mr8433306ybm.472.1587657234161;
- Thu, 23 Apr 2020 08:53:54 -0700 (PDT)
+        id S1729720AbgDWQvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 12:51:00 -0400
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:16536 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729673AbgDWQvA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 12:51:00 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5ea1c6fe0000>; Thu, 23 Apr 2020 09:49:02 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 23 Apr 2020 09:50:59 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 23 Apr 2020 09:50:59 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 Apr
+ 2020 16:50:59 +0000
+Received: from [10.2.165.49] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 23 Apr
+ 2020 16:50:58 +0000
+Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <sakari.ailus@iki.fi>,
+        <helen.koike@collabora.com>
+CC:     <digetx@gmail.com>, <sboyd@kernel.org>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
+ <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+ <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <3115a959-045e-7b27-94fb-a11a8b5f4a6a@nvidia.com>
+Date:   Thu, 23 Apr 2020 09:50:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200419170810.5738-1-robh@kernel.org> <20200419170810.5738-9-robh@kernel.org>
- <20200422210802.GH25585@bogus> <20200423133342.GA10628@bogus>
-In-Reply-To: <20200423133342.GA10628@bogus>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 23 Apr 2020 10:53:40 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLnKd5_ifeARuc8RfsUCnc37jNBOkGSeWEp6EPA4J9tqA@mail.gmail.com>
-Message-ID: <CAL_JsqLnKd5_ifeARuc8RfsUCnc37jNBOkGSeWEp6EPA4J9tqA@mail.gmail.com>
-Subject: Re: [PATCH 08/17] clk: vexpress-osc: Support building as a module
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1587660543; bh=dej+/NPj9Zi1pabB1YDOATDwcPgl93oxjqVQvLEgeFI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=AFFUb/gOdvlNFh1DMRIVqsHEiu2OxZA7yamw8sGomynyNEQHjU2gdH4D/+rYuHqzW
+         GIE8dqx8IYgzpyoX8l8Xq9wTvP0fkBgIqmSUWljq4BsBGCshvTvhd4DDHKLOz2zvZs
+         dCFHPknwxPg2f4a/rXS/H6paMn9MbEc4DsdqHaeok/pVCehqLD0knLBkIh4DbpiRwt
+         juF5SVtaW6gsd9UosilztfUhUIxEx4gWkpM5qQUCpVc7iDEavnuhMEEMXGZuh7thla
+         G7AeWdL8aB6c99SkEIgPAIrzhVYcDr6dpiunAdtX5Kx3iSSgXoGfJHOwWLbDMK93tx
+         0ep0Na2OjP/IQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 8:45 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
->
-> On Wed, Apr 22, 2020 at 10:08:02PM +0100, Sudeep Holla wrote:
-> > On Sun, Apr 19, 2020 at 12:08:01PM -0500, Rob Herring wrote:
-> > > Enable building the vexpress-osc clock driver as a module.
-> > >
-> > > Cc: Linus Walleij <linus.walleij@linaro.org>
-> > > Cc: Liviu Dudau <liviu.dudau@arm.com>
-> > > Cc: Sudeep Holla <sudeep.holla@arm.com>
-> > > Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: linux-clk@vger.kernel.org
-> > > Signed-off-by: Rob Herring <robh@kernel.org>
-> > > ---
-> > >  drivers/clk/versatile/Kconfig            |  4 ++--
-> > >  drivers/clk/versatile/clk-vexpress-osc.c | 10 ++++------
-> > >  2 files changed, 6 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-> > > index 5bdd5c98990b..9de2396dcf9b 100644
-> > > --- a/drivers/clk/versatile/Kconfig
-> > > +++ b/drivers/clk/versatile/Kconfig
-> > > @@ -15,8 +15,8 @@ config CLK_SP810
-> > >       of the ARM SP810 System Controller cell.
-> > >
-> > >  config CLK_VEXPRESS_OSC
-> > > -   bool "Clock driver for Versatile Express OSC clock generators"
-> > > -   depends on VEXPRESS_CONFIG || COMPILE_TEST
-> > > +   tristate "Clock driver for Versatile Express OSC clock generators"
-> > > +   depends on VEXPRESS_CONFIG
-> > >     default y if ARCH_VEXPRESS
-> > >     ---help---
-> > >       Simple regmap-based driver driving clock generators on Versatile
-> > > diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > index 5bb1d5a714d0..b2b32fa2d7c3 100644
-> > > --- a/drivers/clk/versatile/clk-vexpress-osc.c
-> > > +++ b/drivers/clk/versatile/clk-vexpress-osc.c
-> > > @@ -7,6 +7,7 @@
-> > >  #include <linux/clkdev.h>
-> > >  #include <linux/clk-provider.h>
-> > >  #include <linux/err.h>
-> > > +#include <linux/module.h>
-> > >  #include <linux/of.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/slab.h>
-> > > @@ -108,6 +109,7 @@ static const struct of_device_id vexpress_osc_of_match[] = {
-> > >     { .compatible = "arm,vexpress-osc", },
-> > >     {}
-> > >  };
-> > > +MODULE_DEVICE_TABLE(of, vexpress_osc_of_match);
-> > >
-> > >  static struct platform_driver vexpress_osc_driver = {
-> > >     .driver = {
-> > > @@ -116,9 +118,5 @@ static struct platform_driver vexpress_osc_driver = {
-> > >     },
-> > >     .probe = vexpress_osc_probe,
-> > >  };
-> > > -
-> > > -static int __init vexpress_osc_init(void)
-> > > -{
-> > > -   return platform_driver_register(&vexpress_osc_driver);
-> > > -}
-> > > -core_initcall(vexpress_osc_init);
-> > > +module_platform_driver(vexpress_osc_driver);
-> >
-> > I am not 100% sure of this. This might break the boot on CA9 and TC2
-> > at-least. There are loads of MB peripherals that need this. This will
-> > break the boot. We need to check if all the dependent modules are also
-> > at module_initcall level and if they deal with deferred probe correctly.
-> > Lot of them are legacy and may happen to be working by carefully initcall
-> > level adjustments.
-> >
->
-> OK I managed to try this on my TC2 and it fails to boot. However when I
-> enable earlyprintk as I see no log without it, it boots just fine.
 
-Well, the uart clocks for TC2 are all dependent on vexpress-osc. The
-console setup is going to fail to get the clocks and just fail as
-there's no deferred probe for consoles. We need some way to retrigger
-the console matching.
-
-> I also checked adding initcall_debug and I may be wrong on the dependency
-> part. The modules dependent on vexpress-osc are probed later correctly.
+On 4/23/20 12:48 AM, Hans Verkuil wrote:
+> External email: Use caution opening links or attachments
 >
-> This make it more difficult to debug as I don't have any debugger attached
-> at the moment to look at the logbuf when it hangs without earlyprintk.
 >
-> --
+> On 22/04/2020 08:18, Sowjanya Komatineni wrote:
+>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>> which can support up to 6 MIPI CSI camera sensors.
+>>
+>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>> capture from an external camera sensor connected to CSI or from
+>> built-in test pattern generator.
+>>
+>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>
+>> This patch adds a v4l2 capture driver with media interface for
+>> Tegra210 built-in CSI to VI test pattern generator.
+>>
+>> This patch includes TPG support only and all the video pipeline
+>> configuration happens through the video device node.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/staging/media/Kconfig          |    2 +
+>>   drivers/staging/media/Makefile         |    1 +
+>>   drivers/staging/media/tegra/Kconfig    |   13 +
+>>   drivers/staging/media/tegra/Makefile   |    8 +
+>>   drivers/staging/media/tegra/TODO       |   10 +
+>>   drivers/staging/media/tegra/common.h   |  262 ++++++++
+>>   drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
+>>   drivers/staging/media/tegra/csi.h      |  149 +++++
+>>   drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
+>>   drivers/staging/media/tegra/tegra210.h |  190 ++++++
+>>   drivers/staging/media/tegra/vi.c       | 1132 ++++++++++++++++++++++++++++++++
+>>   drivers/staging/media/tegra/vi.h       |   83 +++
+>>   drivers/staging/media/tegra/video.c    |  153 +++++
+>>   drivers/staging/media/tegra/video.h    |   34 +
+>>   14 files changed, 3352 insertions(+)
+>>   create mode 100644 drivers/staging/media/tegra/Kconfig
+>>   create mode 100644 drivers/staging/media/tegra/Makefile
+>>   create mode 100644 drivers/staging/media/tegra/TODO
+>>   create mode 100644 drivers/staging/media/tegra/common.h
+>>   create mode 100644 drivers/staging/media/tegra/csi.c
+>>   create mode 100644 drivers/staging/media/tegra/csi.h
+>>   create mode 100644 drivers/staging/media/tegra/tegra210.c
+>>   create mode 100644 drivers/staging/media/tegra/tegra210.h
+>>   create mode 100644 drivers/staging/media/tegra/vi.c
+>>   create mode 100644 drivers/staging/media/tegra/vi.h
+>>   create mode 100644 drivers/staging/media/tegra/video.c
+>>   create mode 100644 drivers/staging/media/tegra/video.h
+> With 'make menuconfig' I get this:
+>
+> scripts/kconfig/mconf  Kconfig
+>
+> WARNING: unmet direct dependencies detected for TEGRA_HOST1X
+>    Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM && COMPILE_TEST [=y])
+>    Selected by [y]:
+>    - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] && MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
+>
+> This is an x86_64 build with COMPILE_TEST set. I can provide my full .config if you need it.
+>
+> CONFIG_TEGRA_HOST1X=y
+> CONFIG_VIDEO_TEGRA=y
+>
 > Regards,
-> Sudeep
+>
+>          Hans
+
+Hi Hans,
+
+In v7, changed Kconfig to remove ARM. But looks like we should limit
+
+TEGRA_HOST1X also limits compile to ARM only so running VIDEO_TEGRA on 
+x86_64 shows above warning.
+
+We should limit compile to ARM for CONFIG_VIDEO_TEGRA.
+
+Will update CONFIG_VIDEO_TEGRA dependency to use ARM && COMPILE_TEST 
+like I had in previous version. Sorry about this.
+
+
+Also, I see some changes went into latest linux-next staging media 
+Kconfig, So, will have my patches on top of today's linux-next.
+
+Thanks
+
+Sowjanya
+
+
