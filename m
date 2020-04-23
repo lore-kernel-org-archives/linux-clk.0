@@ -2,129 +2,151 @@ Return-Path: <SRS0=Q+FU=6H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79349C54FD0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC23EC55192
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 10:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52FF821569
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 07:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACF0220781
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Apr 2020 10:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="rPlAzvHY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ML8Zyc4m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbgDWHsU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 03:48:20 -0400
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59635 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726271AbgDWHsT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 03:48:19 -0400
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id RWahjKdw87xncRWaljPcej; Thu, 23 Apr 2020 09:48:16 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1587628096; bh=lJ9loEmVaJryUiVmPLNo9go2q+BR27ddnJpMegvNhPw=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=rPlAzvHYxfTDXr8aJtmoN4++BOKth5dNDNcSepvFoJT7P7WCOYzzwnHy4TOSHZe6S
-         7M2KN8kdpM6BukUl+UG7o8I1zMXlJJ02sCYwkjEai36m/CH89gdApuOz5JLxTq5EAz
-         wFbfX234WeCAnqBYj6TX+ZyYzSFoKYg2vv0zpGDC/rZ1jcxQvZZmiDldoRQeGIj9Cy
-         OqJwPWDWtjrtQoAtrRs7iP5lKi1skasCMeAfZmOefMAydY4Tb39VlV14vmByJUUYY4
-         LXubK5zsBb5sfzdtqje206JABOfOzo+m5hx2Crs8fnQB/GJfvgwJkGCGvWhXXxcO09
-         gSVMCkGxDBr3A==
-Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     digetx@gmail.com, sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
- <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <ae6dfd6b-4b0b-db73-54cf-a16e59476f38@xs4all.nl>
-Date:   Thu, 23 Apr 2020 09:48:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1727075AbgDWKdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 06:33:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35284 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727021AbgDWKdj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 06:33:39 -0400
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69F42C08E859
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2020 03:33:39 -0700 (PDT)
+Received: by mail-wm1-x333.google.com with SMTP id u127so5997973wmg.1
+        for <linux-clk@vger.kernel.org>; Thu, 23 Apr 2020 03:33:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6jPdlcIxfEbZ7t28aDiBn6sEBBwa7mpS/DnDKlaphSU=;
+        b=ML8Zyc4mlZRhLCXmy4qzW7nX9oIJfOtbfiHZYvQjeqyH1oqqLkdFPIqnmn76pOZjSH
+         lEI+yoBOXKlNeTeNbj+HnTskuSWg2wtdQ3WImhDNxfcAIFbgJq9z80eU5ijQD0g2xzWa
+         ejfm6FZFUS49oei0VyUZYtHgYmBnjMPApm/TdQ4ZhizA666dpf9U2KtJ1F/SpRaLJvQH
+         0wpmC7ncQ4yQSzvTLWrgk0WkCRUkM+ypesSlCwxweAaEC8OOTfwpY5fmmLIOdujOTxTO
+         cfbkyVuLvM+qk2Ho3dmdLI7iIzZ5sdqGAdUt9vtF47POujaVtAxdytqs4ZfAqV3xd71l
+         0wgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6jPdlcIxfEbZ7t28aDiBn6sEBBwa7mpS/DnDKlaphSU=;
+        b=ZsBfs1Ps5O+9QhUo0A/rLFykEZrb0bwQjiWpDGiKXxmNCOUUHA9uuhhUH4o8Mssodk
+         NRlogY51ZISrf6JC7C5X3gJhg/tNuFo7KAhD5w/KyAmR6c3vnTNeVB2qAyG+yy+0DtgL
+         RLr4ZeakEP42jmQt/WRGX7pwZS2PLLDuRqNt3m/x7KTr2i5soOXjCdONRgK8ylSkCJ7S
+         1/tk9hfV5rcBudETYpABXwXq6LbJuWVWKLCEzvR1s7oJuri7Var+67D/u7zn/oo/WMwT
+         em79q8/rMwmU+vlfN4SS7CFyfw5OvNZ4sYBhosV+xuJD+KQpymLgrj96dXPkCqcddTSd
+         gBTw==
+X-Gm-Message-State: AGi0PuZvzr0KaVM/R6GQyjM81bv8bq/LrVxTiqj0H4vrRl9E292O1yWq
+        hnR4XMygU/Pd9DUWM6NxU1l9hQ==
+X-Google-Smtp-Source: APiQypKiod48xHrM5Fm8UUhAEWoL3u9Xlj9qcFBgpftfn4avtKeo3nYQtZZ7MDTuS0KAYnyZmnpweA==
+X-Received: by 2002:a1c:f418:: with SMTP id z24mr3393652wma.122.1587638017711;
+        Thu, 23 Apr 2020 03:33:37 -0700 (PDT)
+Received: from localhost.localdomain ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id x18sm3086757wrs.11.2020.04.23.03.33.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Apr 2020 03:33:37 -0700 (PDT)
+From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        shawn.guo@linaro.org, p.zabel@pengutronix.de,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH v3 0/2] Add Qualcomm MSM8939 GCC binding and driver
+Date:   Thu, 23 Apr 2020 11:34:04 +0100
+Message-Id: <20200423103406.481289-1-bryan.odonoghue@linaro.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-In-Reply-To: <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBrqqqyGyVRnDMGKreG0gYg22SyVz4yFDJM/l05Yhqmq4BQCdIaJ4DuxIQosu4gWlSjxs/MSCdBjvgXZu3W/LAAUpVk9hbTWPilQrU08m1zbkoKfwi3f
- IeI5VvCQ4yT9S2S93z9cpy80I6a77P8ny8m/ETG6EDu8B+kD1AwsRZfL/2w/Cyq3J4O4/y2vVNxVwkc0qVapTgjSAl8hZSriuL9sgkUrIUBQ6Mrgji4ae0Ow
- 8tiQQiScGT7/SFoLT9fd4PgY6msv9uEWYUwz0R5kmizB1B+Rg5vUx7rj8XUZ+CrBbv2b25xdwN0pEksib83f92vtLpidRoj0oXFjqbSEbanvcUuFdHkWpYYu
- kJx9rWU6ZZdK2Qx8id5pQRK3WAAin3PZxGtn1Q6UWMJGZkDRqGm102J2zTbpuqD6VqR2HwuRd3aoomLeBCm4WEWsItddDwFjMiqAMcIrKW6oPEjFCY3cxtaA
- VXIVmba0haiNpsRiLFhh0SsUy9pci3J1/PowZ8iTZJdXJDLEMYdwrQhHX5oeFf34vJdlM7Ns+aLX+SoHX4SeN9Jj9jc07fwMcUhC+tCjj1go2vwHteqZc6pm
- YmE=
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 22/04/2020 08:18, Sowjanya Komatineni wrote:
-> Tegra210 contains a powerful Video Input (VI) hardware controller
-> which can support up to 6 MIPI CSI camera sensors.
-> 
-> Each Tegra CSI port can be one-to-one mapped to VI channel and can
-> capture from an external camera sensor connected to CSI or from
-> built-in test pattern generator.
-> 
-> Tegra210 supports built-in test pattern generator from CSI to VI.
-> 
-> This patch adds a v4l2 capture driver with media interface for
-> Tegra210 built-in CSI to VI test pattern generator.
-> 
-> This patch includes TPG support only and all the video pipeline
-> configuration happens through the video device node.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/staging/media/Kconfig          |    2 +
->  drivers/staging/media/Makefile         |    1 +
->  drivers/staging/media/tegra/Kconfig    |   13 +
->  drivers/staging/media/tegra/Makefile   |    8 +
->  drivers/staging/media/tegra/TODO       |   10 +
->  drivers/staging/media/tegra/common.h   |  262 ++++++++
->  drivers/staging/media/tegra/csi.c      |  606 +++++++++++++++++
->  drivers/staging/media/tegra/csi.h      |  149 +++++
->  drivers/staging/media/tegra/tegra210.c |  709 ++++++++++++++++++++
->  drivers/staging/media/tegra/tegra210.h |  190 ++++++
->  drivers/staging/media/tegra/vi.c       | 1132 ++++++++++++++++++++++++++++++++
->  drivers/staging/media/tegra/vi.h       |   83 +++
->  drivers/staging/media/tegra/video.c    |  153 +++++
->  drivers/staging/media/tegra/video.h    |   34 +
->  14 files changed, 3352 insertions(+)
->  create mode 100644 drivers/staging/media/tegra/Kconfig
->  create mode 100644 drivers/staging/media/tegra/Makefile
->  create mode 100644 drivers/staging/media/tegra/TODO
->  create mode 100644 drivers/staging/media/tegra/common.h
->  create mode 100644 drivers/staging/media/tegra/csi.c
->  create mode 100644 drivers/staging/media/tegra/csi.h
->  create mode 100644 drivers/staging/media/tegra/tegra210.c
->  create mode 100644 drivers/staging/media/tegra/tegra210.h
->  create mode 100644 drivers/staging/media/tegra/vi.c
->  create mode 100644 drivers/staging/media/tegra/vi.h
->  create mode 100644 drivers/staging/media/tegra/video.c
->  create mode 100644 drivers/staging/media/tegra/video.h
+V3:
+This update removes the old clock name arrays which I forgot to prune in
+the previous V2.
 
-With 'make menuconfig' I get this:
+git diff bod/clk-next+msm8939 bod/clk-next+msm8939-v2.1
 
-scripts/kconfig/mconf  Kconfig
+V2:
+This update does the following
 
-WARNING: unmet direct dependencies detected for TEGRA_HOST1X
-  Depends on [n]: HAS_IOMEM [=y] && (ARCH_TEGRA || ARM && COMPILE_TEST [=y])
-  Selected by [y]:
-  - VIDEO_TEGRA [=y] && STAGING [=y] && STAGING_MEDIA [=y] && MEDIA_SUPPORT [=y] && (ARCH_TEGRA || COMPILE_TEST [=y])
+1. Drops code in the probe routine to add xo and sleep_clk. Instead
+   the DTS for the GCC will need to declare both of those clocks for the
+   GCC controller.
 
-This is an x86_64 build with COMPILE_TEST set. I can provide my full .config if you need it.
+2. Supplants parent_names for parent_data for all clocks.
 
-CONFIG_TEGRA_HOST1X=y
-CONFIG_VIDEO_TEGRA=y
+3. Squashes down the previous three patches into two.
 
-Regards,
+4. Drops the git log of copying files. The git log makes clear the silicon
+   is highly similar, so, you can just as easily read the log and do a
+   diff.
 
-	Hans
+5. Doesn't update the MSM8916 with parent_data.
+   Happy to do this at a later date but, don't have the time to validate
+   this properly at the moment. This set focuses on the MSM8939 alone.
+
+6. Dropped comment and boilerplate license text as indicated.
+
+7. Dropped dependency on COMMON_CLK_QCOM seems to not be needed.
+
+8. Easily view the changes here:
+   git add bod https://github.com/bryanodonoghue/linux.git
+   git fetch bod
+   git diff bod/clk-next+msm8939 bod/clk-next+msm8939-v2   
+
+V1:
+These three patches add support for the MSM8939 Global Clock Controller.
+The MSM8939 is a derivation of the MSM8916 sharing the large majority of
+its clock settings with MSM8916, however, there are enough changes, in some
+cases mutually incompatible changes that necessitate a separate driver.
+
+I thought it was both important and useful to show in the git log the
+differences between MSM8916 and MSM8939 so, one patch copies the MSM8916
+driver while another patch applies the entire gamut of MSM8939 changes,
+squashing down from a git log of approximately 31 separate commits.
+
+For reference that log is here:
+https://github.com/bryanodonoghue/linux/pull/new/msm8939-clk-next-reference-log
+
+Generally speaking MSM8939 differes from MSM8916 in two key ways.
+
+- New and higher clock frequencies for existing IP blocks.
+- New PLLs to drive those higher frequencies
+
+Bryan O'Donoghue (2):
+  clk: qcom: Add DT bindings for MSM8939 GCC
+  clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller
+
+Bryan O'Donoghue (2):
+  clk: qcom: Add DT bindings for MSM8939 GCC
+  clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml   |    3 +
+ drivers/clk/qcom/Kconfig                      |    8 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-msm8939.c                | 3999 +++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8939.h  |  206 +
+ include/dt-bindings/reset/qcom,gcc-msm8939.h  |  110 +
+ 6 files changed, 4327 insertions(+)
+ create mode 100644 drivers/clk/qcom/gcc-msm8939.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8939.h
+ create mode 100644 include/dt-bindings/reset/qcom,gcc-msm8939.h
+
+-- 
+2.25.1
+
