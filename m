@@ -2,102 +2,94 @@ Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C2A4C54FCB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 12:32:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7560C5519B
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 12:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E794F20736
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 12:32:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1587731551;
-	bh=l0ZRuARmG39itY8Gk3NXDFg74u0GGjLdxKk76vOkrOc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PFGV5cfNxXKZIxLL/cDL0zSORHIxfCgZAZhuS3H/tQj5ZC5PxpnTTFkiKoLeGAYvJ
-	 9aQeAjOJ2Dh4wV0Jeb6AUsWrfxMKFzvKT3rSD5wX0SieeRNdcsHsWZIzOs3Az85Z7Q
-	 YVr0IUgqrCWfeSOGxnGllgLws29DCAsJ06B9mmAs=
+	by mail.kernel.org (Postfix) with ESMTP id 7ABA720706
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 12:47:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uD8pDOoY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgDXMca (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Apr 2020 08:32:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52284 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbgDXMW5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Apr 2020 08:22:57 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 547BF21582;
-        Fri, 24 Apr 2020 12:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1587730977;
-        bh=l0ZRuARmG39itY8Gk3NXDFg74u0GGjLdxKk76vOkrOc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ge8KogarkkOTxEfqmoJAKxRcZDmFBOxdJpbGAmnidNmvfcTLQ+zHLcEAX6H6jWZN/
-         qk7dZ3ONe6EjFJcUmGBErK0Fk4aJmbbFzpWznQ6jEQibr/ovSS1xUWB3ozefTwfbwp
-         UO9je6TORIb8pLmVLROMCegEEZ8tlfsjpNWilq5Y=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 17/38] clk: asm9260: fix __clk_hw_register_fixed_rate_with_accuracy typo
-Date:   Fri, 24 Apr 2020 08:22:15 -0400
-Message-Id: <20200424122237.9831-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200424122237.9831-1-sashal@kernel.org>
-References: <20200424122237.9831-1-sashal@kernel.org>
+        id S1728121AbgDXMrd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Apr 2020 08:47:33 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:33472 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbgDXMrb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 08:47:31 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03OClSbh013707;
+        Fri, 24 Apr 2020 07:47:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1587732448;
+        bh=WBg5tAJeJxs9zQBIrOrEJPDiql3rS9wv8Z7K8hDEjZ8=;
+        h=From:To:CC:Subject:Date;
+        b=uD8pDOoYE7O8VeTD00az9r1gsr8CiNGV87IWHg2d7kHRhGdXd1l4Rl9awNQ1B1788
+         Te6aiC8PrLiADeNmnDrIzlgVp0yID43K9tVPoPQ8yYEQtT+Pir/QoF5JE4vVo1CbKc
+         ccSlvCAO2rJrMwjTvRZ5DPYvIwtVeqkJ9gUtBvAE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03OClS4a095095;
+        Fri, 24 Apr 2020 07:47:28 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 24
+ Apr 2020 07:47:28 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 24 Apr 2020 07:47:28 -0500
+Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03OClQ7f022011;
+        Fri, 24 Apr 2020 07:47:26 -0500
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>
+CC:     <tony@atomide.com>, <linux-omap@vger.kernel.org>
+Subject: [PATCH 1/1] clk: ti: clkctrl: Fix Bad of_node_put within clkctrl_get_name
+Date:   Fri, 24 Apr 2020 15:47:25 +0300
+Message-ID: <20200424124725.9895-1-t-kristo@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+clkctrl_get_name incorrectly calls of_node_put when it is not really
+doing of_node_get. This causes a boot time warning later on:
 
-[ Upstream commit 924ed1f5c181132897c5928af7f3afd28792889c ]
+[    0.000000] OF: ERROR: Bad of_node_put() on /ocp/interconnect@4a000000/segmen
+t@0/target-module@5000/cm_core_aon@0/ipu-cm@500/ipu1-clkctrl@20
 
-The __clk_hw_register_fixed_rate_with_accuracy() function (with two '_')
-does not exist, and apparently never did:
+Fix by dropping the of_node_put from the function.
 
-drivers/clk/clk-asm9260.c: In function 'asm9260_acc_init':
-drivers/clk/clk-asm9260.c:279:7: error: implicit declaration of function '__clk_hw_register_fixed_rate_with_accuracy'; did you mean 'clk_hw_register_fixed_rate_with_accuracy'? [-Werror=implicit-function-declaration]
-  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      |       clk_hw_register_fixed_rate_with_accuracy
-drivers/clk/clk-asm9260.c:279:5: error: assignment to 'struct clk_hw *' from 'int' makes pointer from integer without a cast [-Werror=int-conversion]
-  279 |  hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-      |     ^
-
-From what I can tell, __clk_hw_register_fixed_rate() is the correct
-API here, so use that instead.
-
-Fixes: 728e3096741a ("clk: asm9260: Use parent accuracy in fixed rate clk")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Link: https://lkml.kernel.org/r/20200408155402.2138446-1-arnd@arndb.de
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node name")
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/clk-asm9260.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/ti/clkctrl.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-index 536b59aabd2cb..bacebd457e6f3 100644
---- a/drivers/clk/clk-asm9260.c
-+++ b/drivers/clk/clk-asm9260.c
-@@ -276,7 +276,7 @@ static void __init asm9260_acc_init(struct device_node *np)
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+index 062266034d84..9019624e37bc 100644
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -461,7 +461,6 @@ static char * __init clkctrl_get_name(struct device_node *np)
+ 			return name;
+ 		}
+ 	}
+-	of_node_put(np);
  
- 	/* TODO: Convert to DT parent scheme */
- 	ref_clk = of_clk_get_parent_name(np, 0);
--	hw = __clk_hw_register_fixed_rate_with_accuracy(NULL, NULL, pll_clk,
-+	hw = __clk_hw_register_fixed_rate(NULL, NULL, pll_clk,
- 			ref_clk, NULL, NULL, 0, rate, 0,
- 			CLK_FIXED_RATE_PARENT_ACCURACY);
- 
+ 	return NULL;
+ }
 -- 
-2.20.1
+2.17.1
 
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
