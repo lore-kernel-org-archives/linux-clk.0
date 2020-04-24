@@ -2,316 +2,226 @@ Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC0CC55186
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0698DC54FD0
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 17:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0C2C21655
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4AD920857
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 17:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="hXx0pIW5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Mlb9b22b"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="crFmzsS8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728783AbgDXPlh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Apr 2020 11:41:37 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:53303 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726872AbgDXPf2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 11:35:28 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 9CAB9FDA;
-        Fri, 24 Apr 2020 11:35:25 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 24 Apr 2020 11:35:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=SjPxpBg04ATGSZdAKkAXPSZsAf
-        VM7yh1JfLe0zEl7+g=; b=hXx0pIW5H8BKgxYN5+QEQdnnjQ5VQEwDdfb6ZhEByP
-        GKZ9hwUMYt7pqdLXhch+mA9jgB3Adrv/HyDlNuCgUq72qQvz8yz5XwwETqvWdyyN
-        ZVuUbiWmlarvOILFIQ1RBq3DR57O1YRXxzZQlfkMrvagjeLUCFofh6XLHYxMIgot
-        4jMLccyBWEZKoCWsxN7TxlqbS7bB/Rd5YdaLVTAqXb6JCkYIASpzKlpG/5ftDlGW
-        hTlYYnrFzeDV0SG66oXCEfVXtTJ3SolcTuy+qHUPL7KXgcH9FAos87+Cma0q3dBs
-        paxKMjqcVpxJ7HVpdBLjvTALLY/llROoP7KpzTtR5wNw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=SjPxpBg04ATGSZdAK
-        kAXPSZsAfVM7yh1JfLe0zEl7+g=; b=Mlb9b22bSR7Hde/F/dOJZYLIEqC89YPy3
-        dxlDHjk7qb0FbxPg4LmdM+oiYQEXossulDcC154qk3ECA7hMlWXRUBr/MTuOlsQJ
-        fR1cRUKfBRpkXuK8XIWmU8pbzu9mAQHrYuIQ2Cr5j5QrUU/HsZiEZdsECd3J8as0
-        pl6OQ4CySam4FBpmwnjdw2x0N0O16W1jYT+tjwo3KWW3qZmX/u4DWaSInv+S3PsY
-        wMuB+HcolHeWv+OHBerU6xxC21MwzGD9VfhshMW99kjCWVol/dpNXIYum6jy614p
-        4sxf/+nFaIOxthKOW779h+4Mo+Rh5S88eT2OH+65zyxuw750tpPqg==
-X-ME-Sender: <xms:OgejXng3eLL_lDWBqPLpVmVs2cTZr39H-QT5GgRdtVGtdm3jJ9jmDA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrhedugdekiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucft
-    ihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucffohhmrghinheprh
-    grshhpsggvrhhrhihpihdrtghomhenucfkphepledtrdekledrieekrdejieenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestg
-    gvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:OgejXipiVaI7spi09qsLQMin7WBpub62cpnO2n3mrOkGglQ5ioWJmA>
-    <xmx:OgejXmsX_wOFi4OGojKhqp6TWt2fCp_nJCpTOn2an_XIUoVRNOMQ-w>
-    <xmx:OgejXqd71MPEuP8txaD7HtZ3liViey1zYrLn74ra2OcSfegPQ12_UQ>
-    <xmx:PQejXqJX5YvWCjTyhOqakzdwR0PWNv5-nqyFbsuYDZpJzIieOPEdpCpBkmQ>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F1F24328006C;
-        Fri, 24 Apr 2020 11:35:21 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Kamal Dasu <kdasu.kdev@gmail.com>, linux-clk@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>
-Subject: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipeline
-Date:   Fri, 24 Apr 2020 17:33:41 +0200
-Message-Id: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.26.0
+        id S1727841AbgDXRO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Apr 2020 13:14:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727863AbgDXRO0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 13:14:26 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30BBC09B047
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:24 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id y26so1253590ioj.2
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RYByyO3QIEU47gTN7mqAa4K1vs54y8GQ0x5KuvlJFVY=;
+        b=crFmzsS8lWUOAAgiwUHxODA0VdX/NmN1uriNwtVUUxeQaK6UjeTU8g+fpOFh5DHg5Z
+         ywSPkI7dTX4Q+k1xGvY8RE+c1imAur9njIPVgQGFLJrrJWol7k8ymDw011RnY4NCmTRD
+         J8cDVFeHjut2K/RXWWmDzhYA0uh2wEb/vXvkY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RYByyO3QIEU47gTN7mqAa4K1vs54y8GQ0x5KuvlJFVY=;
+        b=a8a2/soa8eKhlZqg0aSKUN5j9DamG/LafHUKGk5Xxd1TZ3zjOltcsY+YYsm+Gx1eKs
+         HMTQgfJgOEOVjD6HOk9xeD8l/UXGsTa+uSuTTcqfGakkQaVV+yzTJJRseLkT8uxe5YVY
+         0nhCVZBtdQtR1h6/xcqkymzxLLAKET2ZE980Gf3hQedJiPwLgIb/Bb7yy7Aken+Fjt2k
+         lL0Z55IAwnkIBMoVhE8B5e88zI3mmobuljuAPTLR9dBWtN3FTuX3FsKBfGOXD16KgBpo
+         dJw5kkR0PO7wsqaUQzJINxPxVlAAVZWMEoia5oCVXTwcf2Ylt695qRY35lOphweIbfDb
+         aCUQ==
+X-Gm-Message-State: AGi0PuY5p1RrNEmgkF97++vB8iE7j8GSHnwQt6Wk8hh1lTt+yVLQD6V8
+        Z02pyollwfsjaQ5ER4H//A6kVLfnyZcJ/A==
+X-Google-Smtp-Source: APiQypItjKR3Ve7BQRJeJoRPGNnDJyx8urBRRqF46rMkZiq7WP+Gx2UkUHAIG2NuGrpTcFut5TuQkg==
+X-Received: by 2002:a02:3351:: with SMTP id k17mr9277195jak.31.1587748463771;
+        Fri, 24 Apr 2020 10:14:23 -0700 (PDT)
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
+        by smtp.gmail.com with ESMTPSA id p22sm2008479ioh.11.2020.04.24.10.14.12
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 24 Apr 2020 10:14:18 -0700 (PDT)
+Received: by mail-io1-f54.google.com with SMTP id w4so11099633ioc.6
+        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:12 -0700 (PDT)
+X-Received: by 2002:a5d:8615:: with SMTP id f21mr9473817iol.155.1587748451793;
+ Fri, 24 Apr 2020 10:14:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1585701031-28871-1-git-send-email-tanmay@codeaurora.org>
+In-Reply-To: <1585701031-28871-1-git-send-email-tanmay@codeaurora.org>
+From:   Sean Paul <seanpaul@chromium.org>
+Date:   Fri, 24 Apr 2020 13:13:34 -0400
+X-Gmail-Original-Message-ID: <CAOw6vbKus8S-ZWjuozKQ8Ft4s-8dPsihrNoZf-GjcToR466RZA@mail.gmail.com>
+Message-ID: <CAOw6vbKus8S-ZWjuozKQ8Ft4s-8dPsihrNoZf-GjcToR466RZA@mail.gmail.com>
+Subject: Re: [DPU PATCH v5 0/5] Add support for DisplayPort driver on SnapDragon.
+To:     Tanmay Shah <tanmay@codeaurora.org>
+Cc:     freedreno <freedreno@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        devicetree@vger.kernel.org, swboyd@chromium.org,
+        Rob Clark <robdclark@gmail.com>, abhinavk@codeaurora.org,
+        nganji@codeaurora.org, Jeykumar Sankaran <jsanka@codeaurora.org>,
+        aravindh@codeaurora.org,
+        Kristian Kristensen <hoegsberg@google.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+On Tue, Mar 31, 2020 at 8:31 PM Tanmay Shah <tanmay@codeaurora.org> wrote:
+>
+> These patches add support for Display-Port driver on SnapDragon 845 hardware. It adds
+> DP driver and DP PLL driver files along with the needed device-tree bindings.
+>
 
-Here's a (pretty long) series to introduce support in the VC4 DRM driver
-for the display pipeline found in the BCM2711 (and thus the RaspberryPi 4).
+I focused on patches 2, 3 & 5, seems like you have good feedback on
+the others by more qualified folks than me.
 
-The main differences are that there's two HDMI controllers and that there's
-more pixelvalve now. Those pixelvalve come with a mux in the HVS that still
-have only 3 FIFOs. Both of those differences are breaking a bunch of
-expectations in the driver, so we first need a good bunch of cleanup and
-reworks to introduce support for the new controllers.
+At a high level I don't have any major issues with the set. There are
+some rough edges that I noticed as I was reading it (as would any
+patch of this size), but I think it's probably not a good use of
+either of our time for me to nitpick 10k lines of code over multiple
+iterations.
 
-Similarly, the HDMI controller has all its registers shuffled and split in
-multiple controllers now, so we need a bunch of changes to support this as
-well.
+So in the interest of not letting the perfect get in the way of the
+good, I suggest we apply the set and fix up as time and necessity
+allow.
 
-Only the HDMI support is enabled for now (even though the DPI output has
-been tested too). There's a couple of rough edges still that should be
-addressed in the next versions:
-  - After a modeset, it's likely that the pixels will be shifted by one.
-  - Dual output doesn't work
-  - The transposer (and thus writeback) doesn't work either and conflicts
-    with the output mux too.
+Patches 2/3/5 are:
 
-Let me know if you have any comments
-Maxime
+Acked-by: Sean Paul <seanpaul@chromium.org>
 
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: devicetree@vger.kernel.org
-Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: linux-i2c@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>
+Sean
 
-Changes from v1:
-  - Rebased on top of 5.7-rc1
-  - Run checkpatch
-  - Added audio support
-  - Fixed some HDMI timeouts
-  - Swiched to clk_hw_register_gate_parent_data
-  - Reorder Kconfig symbols in drivers/i2c/busses
-  - Make the firmware clocks a child of the firmware node
-  - Switch DVP clock driver to clk_hw interface
-  - constify raspberrypi_clk_data in raspberrypi_clock_property
-  - Don't mark firmware clocks as IGNORE_UNUSED
-  - Change from reset_ms to reset_us in reset-simple, and add a bit more
-    comments
-  - Remove generic clk patch to test if a NULL pointer is returned
-  - Removed misleading message in the is_prepared renaming patch commit
-    message
-  - Constify HDMI controller variants
-  - Fix a bug in the allocation size of the clk data array
-  - Added a mention in the DT binding conversion patches about the breakage
-  - Merged a few fixes from kbuild
-  - Fixed a few bisection and CEC build issues
-  - Collected Acked-by and Reviewed-by
-  - Change Dave email address to raspberrypi.com
 
-Dave Stevenson (6):
-  drm/vc4: Add support for the BCM2711 HVS5
-  drm/vc4: plane: Improve LBM usage
-  drm/vc4: hdmi: Use reg-names to retrieve the HDMI audio registers
-  drm/vc4: hdmi: Reset audio infoframe on encoder_enable if previously streaming
-  drm/vc4: hdmi: Set the b-frame marker to the match ALSA's default.
-  drm/vc4: hdmi: Add audio-related callbacks
-
-Florian Fainelli (1):
-  dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML
-
-Maxime Ripard (84):
-  i2c: brcmstb: Allow to compile it on BCM2835
-  dt-bindings: clock: Add a binding for the RPi Firmware clocks
-  firmware: rpi: Only create clocks device if we don't have a node for it
-  clk: bcm: rpi: Allow the driver to be probed by DT
-  clk: bcm: rpi: Statically init clk_init_data
-  clk: bcm: rpi: Use clk_hw_register for pllb_arm
-  clk: bcm: rpi: Remove global pllb_arm clock pointer
-  clk: bcm: rpi: Make sure pllb_arm is removed
-  clk: bcm: rpi: Remove pllb_arm_lookup global pointer
-  clk: bcm: rpi: Switch to clk_hw_register_clkdev
-  clk: bcm: rpi: Make sure the clkdev lookup is removed
-  clk: bcm: rpi: Create a data structure for the clocks
-  clk: bcm: rpi: Add clock id to data
-  clk: bcm: rpi: Pass the clocks data to the firmware function
-  clk: bcm: rpi: Rename is_prepared function
-  clk: bcm: rpi: Split pllb clock hooks
-  clk: bcm: rpi: Make the PLLB registration function return a clk_hw
-  clk: bcm: rpi: Add DT provider for the clocks
-  clk: bcm: rpi: Discover the firmware clocks
-  ARM: dts: bcm2711: Add firmware clocks node
-  reset: Move reset-simple header out of drivers/reset
-  reset: simple: Add reset callback
-  dt-bindings: clock: Add BCM2711 DVP binding
-  clk: bcm: Add BCM2711 DVP driver
-  ARM: dts: bcm2711: Add HDMI DVP
-  dt-bindings: display: Convert VC4 bindings to schemas
-  dt-bindings: display: vc4: dpi: Add missing clock-names property
-  dt-bindings: display: vc4: dsi: Add missing clock properties
-  dt-bindings: display: vc4: hdmi: Add missing clock-names property
-  dt-bindings: display: vc4: Document BCM2711 VC5
-  drm/vc4: drv: Add include guards
-  drm/vc4: drv: Support BCM2711
-  dt-bindings: display: Add support for the BCM2711 HVS
-  drm/vc4: hvs: Boost the core clock during modeset
-  drm/vc4: plane: Move planes creation to its own function
-  drm/vc4: plane: Move additional planes creation to driver
-  drm/vc4: plane: Register all the planes at once
-  drm/vc4: plane: Create overlays for any CRTC
-  drm/vc4: plane: Create more planes
-  drm/vc4: crtc: Rename SoC data structures
-  drm/vc4: crtc: Move crtc state to common header
-  drm/vc4: crtc: Deal with different number of pixel per clock
-  drm/vc4: crtc: Use a shared interrupt
-  drm/vc4: crtc: Turn static const variable into a define
-  drm/vc4: crtc: Move the cob allocation outside of bind
-  drm/vc4: crtc: Rename HVS channel to output
-  drm/vc4: crtc: Use local chan variable
-  drm/vc4: crtc: Enable and disable the PV in atomic_enable / disable
-  drm/vc4: crtc: Assign output to channel automatically
-  drm/vc4: crtc: Add FIFO depth to vc4_crtc_data
-  drm/vc4: crtc: Add function to compute FIFO level bits
-  drm/vc4: crtc: Rename HDMI encoder type to HDMI0
-  drm/vc4: crtc: Add HDMI1 encoder type
-  drm/vc4: crtc: Remove redundant call to drm_crtc_enable_color_mgmt
-  drm/vc4: crtc: Disable color management for HVS5
-  dt-bindings: display: vc4: pv: Add BCM2711 pixel valves
-  drm/vc4: crtc: Add BCM2711 pixelvalves
-  drm/vc4: hdmi: Use debugfs private field
-  drm/vc4: hdmi: Move structure to header
-  drm/vc4: hdmi: rework connectors and encoders
-  drm/vc4: hdmi: Remove DDC argument to connector_init
-  drm/vc4: hdmi: Rename hdmi to vc4_hdmi
-  drm/vc4: hdmi: Move accessors to vc4_hdmi
-  drm/vc4: hdmi: Use local vc4_hdmi directly
-  drm/vc4: hdmi: Add container_of macros for encoders and connectors
-  drm/vc4: hdmi: Pass vc4_hdmi to CEC code
-  drm/vc4: hdmi: Remove vc4_dev hdmi pointer
-  drm/vc4: hdmi: Remove vc4_hdmi_connector
-  drm/vc4: hdmi: Introduce resource init and variant
-  drm/vc4: hdmi: Implement a register layout abstraction
-  drm/vc4: hdmi: Add reset callback
-  drm/vc4: hdmi: Add PHY init and disable function
-  drm/vc4: hdmi: Add PHY RNG enable / disable function
-  drm/vc4: hdmi: Add a CSC setup callback
-  drm/vc4: hdmi: Store the encoder type in the variant structure
-  drm/vc4: hdmi: Deal with multiple debugfs files
-  drm/vc4: hdmi: Move CEC init to its own function
-  drm/vc4: hdmi: Add CEC support flag
-  drm/vc4: hdmi: Remove unused CEC_CLOCK_DIV define
-  drm/vc4: hdmi: Rename drm_encoder pointer in mode_valid
-  drm/vc4: hdmi: Adjust HSM clock rate depending on pixel rate
-  drm/vc4: hdmi: Support the BCM2711 HDMI controllers
-  dt-bindings: display: vc4: hdmi: Add BCM2711 HDMI controllers bindings
-  ARM: dts: bcm2711: Enable the display pipeline
-
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt  |   14 +-
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml |   59 +++-
- Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml               |   47 ++-
- Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt                  |  174 +--------
- Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml            |  109 +++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml             |   72 +++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml            |   84 ++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml            |   80 ++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml             |   53 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml     |   45 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml             |   37 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml             |   42 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml             |   35 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml             |   44 ++-
- MAINTAINERS                                                                 |    2 +-
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts                                       |   51 ++-
- arch/arm/boot/dts/bcm2711.dtsi                                              |  130 +++++-
- drivers/clk/bcm/Kconfig                                                     |    1 +-
- drivers/clk/bcm/Makefile                                                    |    1 +-
- drivers/clk/bcm/clk-bcm2711-dvp.c                                           |  127 ++++++-
- drivers/clk/bcm/clk-raspberrypi.c                                           |  280 +++++++++----
- drivers/firmware/raspberrypi.c                                              |   17 +-
- drivers/gpu/drm/vc4/Makefile                                                |    1 +-
- drivers/gpu/drm/vc4/vc4_crtc.c                                              |  328 +++++++++------
- drivers/gpu/drm/vc4/vc4_drv.c                                               |    5 +-
- drivers/gpu/drm/vc4/vc4_drv.h                                               |   58 ++-
- drivers/gpu/drm/vc4/vc4_hdmi.c                                              | 1536 ++++++++++++++++++++++++++++++++++++++++++------------------------------
- drivers/gpu/drm/vc4/vc4_hdmi.h                                              |  179 ++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_phy.c                                          |  508 ++++++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h                                         |  451 +++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hvs.c                                               |   25 +-
- drivers/gpu/drm/vc4/vc4_kms.c                                               |  181 +++++++-
- drivers/gpu/drm/vc4/vc4_plane.c                                             |  271 +++++++++----
- drivers/gpu/drm/vc4/vc4_regs.h                                              |  173 +++-----
- drivers/i2c/busses/Kconfig                                                  |    4 +-
- drivers/reset/reset-simple.c                                                |   27 +-
- drivers/reset/reset-simple.h                                                |   41 +--
- drivers/reset/reset-socfpga.c                                               |    3 +-
- drivers/reset/reset-sunxi.c                                                 |    3 +-
- drivers/reset/reset-uniphier-glue.c                                         |    3 +-
- include/linux/reset/reset-simple.h                                          |   47 ++-
- include/soc/bcm2835/raspberrypi-firmware.h                                  |    5 +-
- 42 files changed, 4109 insertions(+), 1244 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml
- delete mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml
- create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi.h
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_phy.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_regs.h
- delete mode 100644 drivers/reset/reset-simple.h
- create mode 100644 include/linux/reset/reset-simple.h
-
-base-commit: cb3692197b5da2fb898335eec1640db14d92e52e
--- 
-git-series 0.9.1
+> The block diagram of DP driver is shown below:
+>
+>
+>                  +-------------+
+>                  |DRM FRAMEWORK|
+>                  +------+------+
+>                         |
+>                    +----v----+
+>                    | DP DRM  |
+>                    +----+----+
+>                         |
+>                    +----v----+
+>      +------------+|   DP    +----------++------+
+>      +             | DISPLAY |+---+      |      |
+>      |             +-+-----+-+    |      |      |
+>      |               |     |      |      |      |
+>      |               |     |      |      |      |
+>      |               |     |      |      |      |
+>      v               v     v      v      v      v
+>  +------+          +---+ +----+ +----+ +---+ +-----+
+>  |  DP  |          |DP | | DP | | DP | |DP | | DP  |
+>  |PARSER|          |AUX| |LINK| |CTRL| |PHY| |POWER|
+>  +--+---+          +---+ +----+ +--+-+ +-+-+ +-----+
+>     |                              |     |
+>  +--v---+                         +v-----v+
+>  |DEVICE|                         |  DP   |
+>  | TREE |                         |CATALOG|
+>  +------+                         +---+---+
+>                                       |
+>                                   +---v----+
+>                                   |CTRL/PHY|
+>                                   |   HW   |
+>                                   +--------+
+>
+>
+> These patches have dependency on clock driver changes mentioned below:
+> https://patchwork.kernel.org/patch/10632753/
+> https://patchwork.kernel.org/patch/10632757/
+>
+> Chandan Uddaraju (4):
+>   dt-bindings: msm/dp: add bindings of DP/DP-PLL driver for Snapdragon
+>   drm: add constant N value in helper file
+>   drm/msm/dp: add displayPort driver support
+>   drm/msm/dp: add support for DP PLL driver
+>
+> Jeykumar Sankaran (1):
+>   drm/msm/dpu: add display port support in DPU
+>
+>  .../devicetree/bindings/display/msm/dp-sc7180.yaml |  325 ++++
+>  .../devicetree/bindings/display/msm/dpu.txt        |   16 +-
+>  drivers/gpu/drm/i915/display/intel_display.c       |    2 +-
+>  drivers/gpu/drm/msm/Kconfig                        |   21 +
+>  drivers/gpu/drm/msm/Makefile                       |   16 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |   28 +-
+>  .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   |    8 +
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   65 +-
+>  drivers/gpu/drm/msm/dp/dp_aux.c                    |  531 ++++++
+>  drivers/gpu/drm/msm/dp/dp_aux.h                    |   35 +
+>  drivers/gpu/drm/msm/dp/dp_catalog.c                |  988 +++++++++++
+>  drivers/gpu/drm/msm/dp/dp_catalog.h                |   86 +
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c                   | 1707 ++++++++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_ctrl.h                   |   35 +
+>  drivers/gpu/drm/msm/dp/dp_display.c                |  943 +++++++++++
+>  drivers/gpu/drm/msm/dp/dp_display.h                |   31 +
+>  drivers/gpu/drm/msm/dp/dp_drm.c                    |  170 ++
+>  drivers/gpu/drm/msm/dp/dp_drm.h                    |   19 +
+>  drivers/gpu/drm/msm/dp/dp_hpd.c                    |   69 +
+>  drivers/gpu/drm/msm/dp/dp_hpd.h                    |   79 +
+>  drivers/gpu/drm/msm/dp/dp_link.c                   | 1216 ++++++++++++++
+>  drivers/gpu/drm/msm/dp/dp_link.h                   |  132 ++
+>  drivers/gpu/drm/msm/dp/dp_panel.c                  |  490 ++++++
+>  drivers/gpu/drm/msm/dp/dp_panel.h                  |   95 ++
+>  drivers/gpu/drm/msm/dp/dp_parser.c                 |  473 ++++++
+>  drivers/gpu/drm/msm/dp/dp_parser.h                 |  220 +++
+>  drivers/gpu/drm/msm/dp/dp_power.c                  |  545 +++++++
+>  drivers/gpu/drm/msm/dp/dp_power.h                  |  115 ++
+>  drivers/gpu/drm/msm/dp/dp_reg.h                    |  489 ++++++
+>  drivers/gpu/drm/msm/dp/pll/dp_pll.c                |  127 ++
+>  drivers/gpu/drm/msm/dp/pll/dp_pll.h                |   57 +
+>  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.c           |  401 +++++
+>  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.h           |   86 +
+>  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm_util.c      |  524 ++++++
+>  drivers/gpu/drm/msm/msm_drv.c                      |    2 +
+>  drivers/gpu/drm/msm/msm_drv.h                      |   53 +-
+>  include/drm/drm_dp_helper.h                        |    2 +
+>  37 files changed, 10178 insertions(+), 23 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_aux.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_aux.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_catalog.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_catalog.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_ctrl.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_ctrl.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_display.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_display.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_drm.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_drm.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_hpd.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_hpd.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_link.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_link.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_panel.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_panel.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_parser.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_parser.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_power.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_power.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/dp_reg.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.c
+>  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.h
+>  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm_util.c
+>
+> --
+> 1.9.1
