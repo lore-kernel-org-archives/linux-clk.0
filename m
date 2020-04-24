@@ -2,122 +2,93 @@ Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A83C54FD0
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:11:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8583C54FCB
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2235220706
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B2B1206D7
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 15:23:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPPlj6Ke"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="WOAoq5az"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727091AbgDXPLv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Apr 2020 11:11:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49092 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726908AbgDXPLv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 11:11:51 -0400
-Received: from mail-lf1-x144.google.com (mail-lf1-x144.google.com [IPv6:2a00:1450:4864:20::144])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01EE1C09B045;
-        Fri, 24 Apr 2020 08:11:51 -0700 (PDT)
-Received: by mail-lf1-x144.google.com with SMTP id h6so8012305lfc.0;
-        Fri, 24 Apr 2020 08:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NCKvIwAX2lyXMS3V6hPb1K5t940QaLImTpHp7o0dE7s=;
-        b=ZPPlj6KejWk1GgqB17PvtCeurdQHT9dJyPcc6ya8nlrJqICXXJUQxO5szQgOw9D+/u
-         EzCY3JkhGA7rbu8v44DxyBba204k0ftrATJ02TAt/4dBuMkIhzlclFO7ixNYvtCnYPXg
-         Vj0EF2QOxCYxovSVnTdHhWjKMdL8/W+aWrWL/gJUOeVJt0wZG22IH2UrHmgFuMjifPkq
-         o6c9HiQINryTwKeTLeh6Oc1MUYB0lJfma2zgJ0dHDoP7agJUrMAToOXKOwpxuM2+DsRN
-         ZkUCrzKMPvZ0c8knVIbQUhYNRU8Co59TjlKp1VzmDgG8/OU0M+2YV2UxHO/iiInjvNO5
-         v4sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NCKvIwAX2lyXMS3V6hPb1K5t940QaLImTpHp7o0dE7s=;
-        b=eVDCK/OCE0ZjXSopaoKxFIMljHo9Zbspq6s/AONUIwq5PevvqxPCW4tvqCRJRc187K
-         aDIeWJxcC8bY9Uc4/Jvcj0Cn7XBCYE2wFQ3TIU3sArSuLs0pYJKtuzdeuadr+oyEGwV+
-         VsHXUkQL6W/HaXvhLtIRNSbFz9vkvzqkT+RwfZflcN25Hoq+ONoM5sfT9s1sd2l4B93c
-         SPzYAtTyQUJw1cbpEnVrEk4sffBy22TfHnOOX+JZ7LWe/0j8BuJplNLm8R/kbsFpRfi9
-         +VjJJpvNutrDMCThVPimu4QtQSkp/D5mt2xEdT6m6i7STOB+VYw9Pm1B5YWS9dSX4Oz9
-         I1tw==
-X-Gm-Message-State: AGi0PuZwiVl7PahJrtxuAg6PjrAV/bTYNbDzs/4zWgIUelM7uzEZ+B6t
-        sewlowr4PX3oMM7TioVqYlJDlU6s
-X-Google-Smtp-Source: APiQypL6Y5pP8frZ9lwc0gIlbRZu3rStQ/IZIVvDo4JJv6attpFW3Fvcwp2bbk7qQ+x9ipofzKGfEw==
-X-Received: by 2002:a05:6512:308c:: with SMTP id z12mr6528775lfd.195.1587741108845;
-        Fri, 24 Apr 2020 08:11:48 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id a26sm4679765lfl.66.2020.04.24.08.11.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2020 08:11:47 -0700 (PDT)
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
-Date:   Fri, 24 Apr 2020 18:11:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1726998AbgDXPXH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Apr 2020 11:23:07 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:55282 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbgDXPXH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 11:23:07 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03OFN3mt105049;
+        Fri, 24 Apr 2020 10:23:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1587741783;
+        bh=m2sHyM1LH4LSgb92tuBX838XNsL85Lw1JXBiHZer4oc=;
+        h=From:To:CC:Subject:Date;
+        b=WOAoq5azhAj6mS59nJmqjuXfd2imcldlU20lvPpqefpqhh4QtrvTJ2STTnU+39Jo8
+         9KiFf1zE+2+CHUi/GdMRER0Z/JOrq5arnQNKawDa+hdU14vLbHieKPNzx/FjKKwkkO
+         jvZK0FCa7fw3ITlFHiHq1KuSa2iY01tVZx1Udwg4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03OFN3ld108240
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 24 Apr 2020 10:23:03 -0500
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Fri, 24
+ Apr 2020 10:23:03 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Fri, 24 Apr 2020 10:23:03 -0500
+Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03OFN1O8062339;
+        Fri, 24 Apr 2020 10:23:02 -0500
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
+        <mturquette@baylibre.com>
+CC:     <tony@atomide.com>, <linux-omap@vger.kernel.org>
+Subject: [PATCH] clk: ti: am33xx: fix RTC clock parent
+Date:   Fri, 24 Apr 2020 18:23:01 +0300
+Message-ID: <20200424152301.4018-1-t-kristo@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-24.04.2020 06:55, Sowjanya Komatineni пишет:
-> Tegra210 contains a powerful Video Input (VI) hardware controller
-> which can support up to 6 MIPI CSI camera sensors.
-> 
-> Each Tegra CSI port can be one-to-one mapped to VI channel and can
-> capture from an external camera sensor connected to CSI or from
-> built-in test pattern generator.
-> 
-> Tegra210 supports built-in test pattern generator from CSI to VI.
-> 
-> This patch adds a v4l2 capture driver with media interface for
-> Tegra210 built-in CSI to VI test pattern generator.
-> 
-> This patch includes TPG support only and all the video pipeline
-> configuration happens through the video device node.
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/staging/media/Kconfig          |    2 +
->  drivers/staging/media/Makefile         |    1 +
->  drivers/staging/media/tegra/Kconfig    |   12 +
->  drivers/staging/media/tegra/Makefile   |    8 +
->  drivers/staging/media/tegra/TODO       |   10 +
->  drivers/staging/media/tegra/common.h   |  259 ++++++++
->  drivers/staging/media/tegra/csi.c      |  604 +++++++++++++++++
->  drivers/staging/media/tegra/csi.h      |  144 ++++
->  drivers/staging/media/tegra/tegra210.c |  708 ++++++++++++++++++++
->  drivers/staging/media/tegra/tegra210.h |  190 ++++++
->  drivers/staging/media/tegra/vi.c       | 1127 ++++++++++++++++++++++++++++++++
->  drivers/staging/media/tegra/vi.h       |   72 ++
->  drivers/staging/media/tegra/video.c    |  153 +++++
->  drivers/staging/media/tegra/video.h    |   29 +
+Right now, trying to use RTC purely with the ti-sysc / clkctrl framework
+fails to enable the RTC module properly. Based on experimentation, this
+appears to be because RTC is sourced from the clkdiv32k optional clock.
+TRM is not very clear on this topic, but fix the RTC to use the proper
+source clock nevertheless.
 
-The media/tegra/ sounds a bit too generic, the media/tegra-vi/ path
-should better reflect the driver, IMO.
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+---
+ drivers/clk/ti/clk-33xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It also should be better to name the compiled kernel module as tegra-vi,
-IMO.
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index e001b9bcb6bf..7dc30dd6c8d5 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -212,7 +212,7 @@ static const struct omap_clkctrl_reg_data am3_mpu_clkctrl_regs[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data am3_l4_rtc_clkctrl_regs[] __initconst = {
+-	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
++	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk-24mhz-clkctrl:0000:0" },
+ 	{ 0 },
+ };
+ 
+-- 
+2.17.1
+
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
