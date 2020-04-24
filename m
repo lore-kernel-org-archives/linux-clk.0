@@ -2,226 +2,309 @@ Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0698DC54FD0
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 17:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBBE2C54FD0
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 19:29:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4AD920857
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 17:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC4B32098B
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 19:29:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="crFmzsS8"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FephGL4p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgDXRO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Apr 2020 13:14:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41024 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727863AbgDXRO0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 13:14:26 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E30BBC09B047
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:24 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id y26so1253590ioj.2
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RYByyO3QIEU47gTN7mqAa4K1vs54y8GQ0x5KuvlJFVY=;
-        b=crFmzsS8lWUOAAgiwUHxODA0VdX/NmN1uriNwtVUUxeQaK6UjeTU8g+fpOFh5DHg5Z
-         ywSPkI7dTX4Q+k1xGvY8RE+c1imAur9njIPVgQGFLJrrJWol7k8ymDw011RnY4NCmTRD
-         J8cDVFeHjut2K/RXWWmDzhYA0uh2wEb/vXvkY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RYByyO3QIEU47gTN7mqAa4K1vs54y8GQ0x5KuvlJFVY=;
-        b=a8a2/soa8eKhlZqg0aSKUN5j9DamG/LafHUKGk5Xxd1TZ3zjOltcsY+YYsm+Gx1eKs
-         HMTQgfJgOEOVjD6HOk9xeD8l/UXGsTa+uSuTTcqfGakkQaVV+yzTJJRseLkT8uxe5YVY
-         0nhCVZBtdQtR1h6/xcqkymzxLLAKET2ZE980Gf3hQedJiPwLgIb/Bb7yy7Aken+Fjt2k
-         lL0Z55IAwnkIBMoVhE8B5e88zI3mmobuljuAPTLR9dBWtN3FTuX3FsKBfGOXD16KgBpo
-         dJw5kkR0PO7wsqaUQzJINxPxVlAAVZWMEoia5oCVXTwcf2Ylt695qRY35lOphweIbfDb
-         aCUQ==
-X-Gm-Message-State: AGi0PuY5p1RrNEmgkF97++vB8iE7j8GSHnwQt6Wk8hh1lTt+yVLQD6V8
-        Z02pyollwfsjaQ5ER4H//A6kVLfnyZcJ/A==
-X-Google-Smtp-Source: APiQypItjKR3Ve7BQRJeJoRPGNnDJyx8urBRRqF46rMkZiq7WP+Gx2UkUHAIG2NuGrpTcFut5TuQkg==
-X-Received: by 2002:a02:3351:: with SMTP id k17mr9277195jak.31.1587748463771;
-        Fri, 24 Apr 2020 10:14:23 -0700 (PDT)
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com. [209.85.166.54])
-        by smtp.gmail.com with ESMTPSA id p22sm2008479ioh.11.2020.04.24.10.14.12
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 24 Apr 2020 10:14:18 -0700 (PDT)
-Received: by mail-io1-f54.google.com with SMTP id w4so11099633ioc.6
-        for <linux-clk@vger.kernel.org>; Fri, 24 Apr 2020 10:14:12 -0700 (PDT)
-X-Received: by 2002:a5d:8615:: with SMTP id f21mr9473817iol.155.1587748451793;
- Fri, 24 Apr 2020 10:14:11 -0700 (PDT)
+        id S1727021AbgDXT3J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Apr 2020 15:29:09 -0400
+Received: from mail-eopbgr10062.outbound.protection.outlook.com ([40.107.1.62]:49997
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725970AbgDXT3I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Apr 2020 15:29:08 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BYv7pXFyfypZi6WpE10jAzzET2JhO0Sshlmz6m0J883fxAb0ZzlIcQZCJFQ6ql4mpT9kIuYcgZUzGATI+AbP0q8aHtvlNhbHpFmzJscbm/Bp6WDh8fdhjiHzUI2KWOjHMFnpbJTThA0/z54XtsuVvgJezmaLW55hi88OuLjDiZ+fDW7ohxwdMj5br1Gb+vpDnkukPVTvgmCSqMFLE+KyIVleydISTI0XlbUKmAMcRVpGvUqLZ4Yf69CFvG3Ft4mFhwWAZxhojRo4VmimRQlupNdUHyDCERytWXcQ+Zxb+PDlElRNbZ2X8te7jjFfDAVVolRU9JNo6Y0D7v81J90c8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RMUS30HN5O4f433+owxb1LAdwLy3OuwBOdIoKgVBvMw=;
+ b=GSodwmuUAj+fPebr5Wj35kyWnm0CJMKiyRm2aGdNRM8KlMkqUD9bLBw8cRn94Z3Z9zv5Xzh8ahHXliBWUH9DtZzrTa83okEzc2Xl9UM1yGE0qmr7m1VzL4K/mjEvuSOT2E6YPkwyJyQ4TRRzIXSta2i4Id6AQ+VV/uZsNOOodaJ398iIs+RecWjQy0rHulJQdnvvPQou9VERrFFvH5gdIOBxMToaRzjrXieRaBvBCYL4FKBhl/dDNOEYwhYwedpvxNdBkJVD8i2HttAYTe5d6nH0dRrmlhBGnf4j1R3u710OwWR5opTpVN9F9E2E7TN75YABzBJ2n9w0ltNSJ5G5CA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RMUS30HN5O4f433+owxb1LAdwLy3OuwBOdIoKgVBvMw=;
+ b=FephGL4pprfXY6a1oTaSu7z3J3xO+YCnPgNjUShRGTM0Ufas1nTE/cTQrw3OO0XMhyZOUEGjCUrqXDNHndL8sI7MyAeci8+JxIKtKhceoA3pDBefKwl6GXh94UkCWtUpJmE/UyFFDJpVRO28EWujBdqoBTcYF/P24rpXhSBoZOI=
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com (2603:10a6:803:12e::23)
+ by VI1PR04MB6334.eurprd04.prod.outlook.com (2603:10a6:803:102::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13; Fri, 24 Apr
+ 2020 19:29:02 +0000
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::8de5:8c61:6e4d:9fe9]) by VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::8de5:8c61:6e4d:9fe9%9]) with mapi id 15.20.2937.020; Fri, 24 Apr 2020
+ 19:29:02 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>, Anson Huang <anson.huang@nxp.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "aford173@gmail.com" <aford173@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH V2 07/10] clk: imx: add mux ops for i.MX8M composite clk
+Thread-Topic: [PATCH V2 07/10] clk: imx: add mux ops for i.MX8M composite clk
+Thread-Index: AQHV+FjQMBLZK1sUBkmPtGWbyCJKZA==
+Date:   Fri, 24 Apr 2020 19:29:01 +0000
+Message-ID: <VI1PR04MB69418E9348D5765B4AE01D18EED00@VI1PR04MB6941.eurprd04.prod.outlook.com>
+References: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
+ <1584008384-11578-8-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.3.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: ccba8604-20a6-4e88-9f2d-08d7e885be81
+x-ms-traffictypediagnostic: VI1PR04MB6334:|VI1PR04MB6334:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB6334DDF5FECB9AFEC1CDC3A2EED00@VI1PR04MB6334.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 03838E948C
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB6941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(346002)(366004)(376002)(136003)(396003)(39860400002)(86362001)(44832011)(2906002)(4326008)(8676002)(66446008)(66946007)(64756008)(52536014)(76116006)(66556008)(71200400001)(66476007)(91956017)(5660300002)(6506007)(81156014)(8936002)(110136005)(186003)(6636002)(9686003)(55016002)(33656002)(316002)(7696005)(26005)(54906003)(478600001)(53546011)(7416002);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: wUmUbE2N4DKA/Sg2XE/RMXehxA99I5wDGuxRRNvxtOE/3+CBQYuAo/o6M1pzJPyXoLt9ea0Q6T7AqI4REmvsSE0beBY6+9ueoCWb/bdFe+sorQPJzaFGgS67drRNMZPiB8mo/RNXH9G+7kWWXG7+aBCjnESaeghVY0bjFzFwFX7a/tn3PN6VqF4qX4fkdJKRYv+c14HQRXly8NTRtuDXrdalUhCP+ZxURmdSZGT1UTd0C57jjUg/DM5dbH2VF0N5mKedubRRG6yD7dAwra/oFiHM9o1sd8LSkWKyjMHIssGhXrq0ujxZ7K3u9aCuCIOxp1R8Mi/pHznQd0g6/2p73RuaolIoM+p567S5r+0N8PRzv9AJvD56IFA8s8B61r6X36/4eFsKACzKU/SffZGqWC6Zm1EooJttNyaRoZuqyCJqLrA/W1bwTEFl+JeuyxK+
+x-ms-exchange-antispam-messagedata: DeATf/V+9WmqHoxwcXmKGE5UVx8oy6T2PKqvyvXpMZvllfhaV2nPiBUdAJTP41c4d0oWHqnaFTdr8SQAlif5MDxCLeYvVSED9EbTtqHWOHBF8vjySMwi8Gp9si/n/3JcdSzogtPiSV/mfhVJKA9nTw==
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <1585701031-28871-1-git-send-email-tanmay@codeaurora.org>
-In-Reply-To: <1585701031-28871-1-git-send-email-tanmay@codeaurora.org>
-From:   Sean Paul <seanpaul@chromium.org>
-Date:   Fri, 24 Apr 2020 13:13:34 -0400
-X-Gmail-Original-Message-ID: <CAOw6vbKus8S-ZWjuozKQ8Ft4s-8dPsihrNoZf-GjcToR466RZA@mail.gmail.com>
-Message-ID: <CAOw6vbKus8S-ZWjuozKQ8Ft4s-8dPsihrNoZf-GjcToR466RZA@mail.gmail.com>
-Subject: Re: [DPU PATCH v5 0/5] Add support for DisplayPort driver on SnapDragon.
-To:     Tanmay Shah <tanmay@codeaurora.org>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, swboyd@chromium.org,
-        Rob Clark <robdclark@gmail.com>, abhinavk@codeaurora.org,
-        nganji@codeaurora.org, Jeykumar Sankaran <jsanka@codeaurora.org>,
-        aravindh@codeaurora.org,
-        Kristian Kristensen <hoegsberg@google.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ccba8604-20a6-4e88-9f2d-08d7e885be81
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2020 19:29:01.8713
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: G9ZNJomv7ZIBFm+xKs8ox0wjrAsfxtQMpghzOx06bp2nQm1nLTOAutDwZZvwQ7ihII1/w3ZgR3WofMiZUEDKVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6334
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Mar 31, 2020 at 8:31 PM Tanmay Shah <tanmay@codeaurora.org> wrote:
->
-> These patches add support for Display-Port driver on SnapDragon 845 hardware. It adds
-> DP driver and DP PLL driver files along with the needed device-tree bindings.
->
-
-I focused on patches 2, 3 & 5, seems like you have good feedback on
-the others by more qualified folks than me.
-
-At a high level I don't have any major issues with the set. There are
-some rough edges that I noticed as I was reading it (as would any
-patch of this size), but I think it's probably not a good use of
-either of our time for me to nitpick 10k lines of code over multiple
-iterations.
-
-So in the interest of not letting the perfect get in the way of the
-good, I suggest we apply the set and fix up as time and necessity
-allow.
-
-Patches 2/3/5 are:
-
-Acked-by: Sean Paul <seanpaul@chromium.org>
-
-Sean
-
-
-> The block diagram of DP driver is shown below:
->
->
->                  +-------------+
->                  |DRM FRAMEWORK|
->                  +------+------+
->                         |
->                    +----v----+
->                    | DP DRM  |
->                    +----+----+
->                         |
->                    +----v----+
->      +------------+|   DP    +----------++------+
->      +             | DISPLAY |+---+      |      |
->      |             +-+-----+-+    |      |      |
->      |               |     |      |      |      |
->      |               |     |      |      |      |
->      |               |     |      |      |      |
->      v               v     v      v      v      v
->  +------+          +---+ +----+ +----+ +---+ +-----+
->  |  DP  |          |DP | | DP | | DP | |DP | | DP  |
->  |PARSER|          |AUX| |LINK| |CTRL| |PHY| |POWER|
->  +--+---+          +---+ +----+ +--+-+ +-+-+ +-----+
->     |                              |     |
->  +--v---+                         +v-----v+
->  |DEVICE|                         |  DP   |
->  | TREE |                         |CATALOG|
->  +------+                         +---+---+
->                                       |
->                                   +---v----+
->                                   |CTRL/PHY|
->                                   |   HW   |
->                                   +--------+
->
->
-> These patches have dependency on clock driver changes mentioned below:
-> https://patchwork.kernel.org/patch/10632753/
-> https://patchwork.kernel.org/patch/10632757/
->
-> Chandan Uddaraju (4):
->   dt-bindings: msm/dp: add bindings of DP/DP-PLL driver for Snapdragon
->   drm: add constant N value in helper file
->   drm/msm/dp: add displayPort driver support
->   drm/msm/dp: add support for DP PLL driver
->
-> Jeykumar Sankaran (1):
->   drm/msm/dpu: add display port support in DPU
->
->  .../devicetree/bindings/display/msm/dp-sc7180.yaml |  325 ++++
->  .../devicetree/bindings/display/msm/dpu.txt        |   16 +-
->  drivers/gpu/drm/i915/display/intel_display.c       |    2 +-
->  drivers/gpu/drm/msm/Kconfig                        |   21 +
->  drivers/gpu/drm/msm/Makefile                       |   16 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |   28 +-
->  .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   |    8 +
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c            |   65 +-
->  drivers/gpu/drm/msm/dp/dp_aux.c                    |  531 ++++++
->  drivers/gpu/drm/msm/dp/dp_aux.h                    |   35 +
->  drivers/gpu/drm/msm/dp/dp_catalog.c                |  988 +++++++++++
->  drivers/gpu/drm/msm/dp/dp_catalog.h                |   86 +
->  drivers/gpu/drm/msm/dp/dp_ctrl.c                   | 1707 ++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_ctrl.h                   |   35 +
->  drivers/gpu/drm/msm/dp/dp_display.c                |  943 +++++++++++
->  drivers/gpu/drm/msm/dp/dp_display.h                |   31 +
->  drivers/gpu/drm/msm/dp/dp_drm.c                    |  170 ++
->  drivers/gpu/drm/msm/dp/dp_drm.h                    |   19 +
->  drivers/gpu/drm/msm/dp/dp_hpd.c                    |   69 +
->  drivers/gpu/drm/msm/dp/dp_hpd.h                    |   79 +
->  drivers/gpu/drm/msm/dp/dp_link.c                   | 1216 ++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_link.h                   |  132 ++
->  drivers/gpu/drm/msm/dp/dp_panel.c                  |  490 ++++++
->  drivers/gpu/drm/msm/dp/dp_panel.h                  |   95 ++
->  drivers/gpu/drm/msm/dp/dp_parser.c                 |  473 ++++++
->  drivers/gpu/drm/msm/dp/dp_parser.h                 |  220 +++
->  drivers/gpu/drm/msm/dp/dp_power.c                  |  545 +++++++
->  drivers/gpu/drm/msm/dp/dp_power.h                  |  115 ++
->  drivers/gpu/drm/msm/dp/dp_reg.h                    |  489 ++++++
->  drivers/gpu/drm/msm/dp/pll/dp_pll.c                |  127 ++
->  drivers/gpu/drm/msm/dp/pll/dp_pll.h                |   57 +
->  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.c           |  401 +++++
->  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.h           |   86 +
->  drivers/gpu/drm/msm/dp/pll/dp_pll_10nm_util.c      |  524 ++++++
->  drivers/gpu/drm/msm/msm_drv.c                      |    2 +
->  drivers/gpu/drm/msm/msm_drv.h                      |   53 +-
->  include/drm/drm_dp_helper.h                        |    2 +
->  37 files changed, 10178 insertions(+), 23 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_aux.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_aux.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_catalog.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_catalog.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_ctrl.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_ctrl.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_display.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_display.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_drm.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_drm.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_hpd.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_hpd.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_link.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_link.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_panel.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_panel.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_parser.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_parser.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_power.c
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_power.h
->  create mode 100644 drivers/gpu/drm/msm/dp/dp_reg.h
->  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll.c
->  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll.h
->  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.c
->  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm.h
->  create mode 100644 drivers/gpu/drm/msm/dp/pll/dp_pll_10nm_util.c
->
-> --
-> 1.9.1
+On 2020-03-12 12:27 PM, Peng Fan wrote:=0A=
+> From: Peng Fan <peng.fan@nxp.com>=0A=
+> =0A=
+> The CORE/BUS root slice has following design, simplied graph:=0A=
+> The difference is core not have pre_div block.=0A=
+> A composite core/bus clk has 8 inputs for mux to select, saying clk[0-7].=
+=0A=
+> =0A=
+>              SEL_A  GA=0A=
+>              +--+  +-+=0A=
+>              |  +->+ +------+=0A=
+> CLK[0-7]--->+  |  +-+      |=0A=
+>         |    |  |      +----v---+    +----+=0A=
+>         |    +--+      |pre_diva+---->    |  +---------+=0A=
+>         |              +--------+    |mux +--+post_div |=0A=
+>         |    +--+      |pre_divb+--->+    |  +---------+=0A=
+>         |    |  |      +----^---+    +----+=0A=
+>         +--->+  |  +-+      |=0A=
+>              |  +->+ +------+=0A=
+>              +--+  +-+=0A=
+>              SEL_B  GB=0A=
+> =0A=
+> There will be system hang, when doing the following steps:=0A=
+> 1. switch mux from clk0 to clk1=0A=
+> 2. gate off clk0=0A=
+> 3. swtich from clk1 to clk2, or gate off clk1=0A=
+> =0A=
+> Step 3 triggers system hang.=0A=
+> =0A=
+> If we skip step2, keep clk0 on, step 3 will not trigger system hang.=0A=
+> However we have CLK_OPS_PARENT_ENABLE flag, which will unprepare disable=
+=0A=
+> the clk0 which will not be used.=0A=
+=0A=
+As far as I understand when switching from clk1 to clk2 this is done by =0A=
+temporarily switching the rightmost SELECT mux to whatever was in the =0A=
+spare SEL, which is essentially arbitrary from linux POV.=0A=
+=0A=
+This is quite unexpected but in theory it might be desirable to use a =0A=
+third parent as a fallback.=0A=
+=0A=
+> =0A=
+> To address this issue, we could use following simplied software flow:=0A=
+> After the first target register set=0A=
+> wait the target register set finished=0A=
+> set the target register set again=0A=
+> wait the target register set finished=0A=
+> =0A=
+> The upper flow will make sure SEL_A and SEL_B both set the new mux,=0A=
+> but with only one path gate on.=0A=
+> And there will be no system hang anymore with step3.=0A=
+=0A=
+Your fix tries to work around this scenario by always setting the mux =0A=
+value in SEL_A and SEL_B to the same value after each set_parent operation.=
+=0A=
+=0A=
+But what if SEL_A and SEL_B are different at linux boot time and the =0A=
+first reparenting is done *after* disabling unused clocks? This doesn't =0A=
+happen for A53 because it's reparented during clock provider probe but =0A=
+maybe this scenario could be contrived if bootloader touches one of the =0A=
+other bus slices.=0A=
+=0A=
+It might be extra safe to assign the parent of the spare mux at the =0A=
+start of each set_parent call. This could even be done on probe and this =
+=0A=
+way wouldn't have to duplicate mux_ops just to do a double write.=0A=
+=0A=
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
+> ---=0A=
+> =0A=
+> V2:=0A=
+>   Drop wait after write, add one line comment for write twice.=0A=
+> =0A=
+>   drivers/clk/imx/clk-composite-8m.c | 62 +++++++++++++++++++++++++++++++=
+++++++-=0A=
+>   1 file changed, 61 insertions(+), 1 deletion(-)=0A=
+> =0A=
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-com=
+posite-8m.c=0A=
+> index 99773519b5a5..eae02c151ced 100644=0A=
+> --- a/drivers/clk/imx/clk-composite-8m.c=0A=
+> +++ b/drivers/clk/imx/clk-composite-8m.c=0A=
+> @@ -24,6 +24,12 @@=0A=
+>   =0A=
+>   #define PCG_CGC_SHIFT		28=0A=
+>   =0A=
+> +#define PRE_REG_OFF		0x30=0A=
+> +#define PRE_MUXA_SHIFT		24=0A=
+> +#define PRE_MUXA_MASK		0x7=0A=
+> +#define PRE_MUXB_SHIFT		8=0A=
+> +#define PRE_MUXB_MASK		0x7=0A=
+=0A=
+These are unused.=0A=
+=0A=
+> +=0A=
+>   static unsigned long imx8m_clk_composite_divider_recalc_rate(struct clk=
+_hw *hw,=0A=
+>   						unsigned long parent_rate)=0A=
+>   {=0A=
+> @@ -124,6 +130,57 @@ static const struct clk_ops imx8m_clk_composite_divi=
+der_ops =3D {=0A=
+>   	.set_rate =3D imx8m_clk_composite_divider_set_rate,=0A=
+>   };=0A=
+>   =0A=
+> +static u8 imx8m_clk_composite_mux_get_parent(struct clk_hw *hw)=0A=
+> +{=0A=
+> +	struct clk_mux *mux =3D to_clk_mux(hw);=0A=
+> +	u32 val;=0A=
+> +=0A=
+> +	val =3D readl(mux->reg) >> mux->shift;=0A=
+> +	val &=3D mux->mask;=0A=
+> +=0A=
+> +	return clk_mux_val_to_index(hw, mux->table, mux->flags, val);=0A=
+> +}=0A=
+> +=0A=
+> +static int imx8m_clk_composite_mux_set_parent(struct clk_hw *hw, u8 inde=
+x)=0A=
+> +{=0A=
+> +	struct clk_mux *mux =3D to_clk_mux(hw);=0A=
+> +	u32 val =3D clk_mux_index_to_val(mux->table, mux->flags, index);=0A=
+> +	unsigned long flags =3D 0;=0A=
+> +	u32 reg;=0A=
+> +=0A=
+> +	if (mux->lock)=0A=
+> +		spin_lock_irqsave(mux->lock, flags);=0A=
+> +=0A=
+> +	reg =3D readl(mux->reg);=0A=
+> +	reg &=3D ~(mux->mask << mux->shift);=0A=
+> +	val =3D val << mux->shift;=0A=
+> +	reg |=3D val;=0A=
+> +	/* write twice to make sure SEL_A/B point the same mux */=0A=
+> +	writel(reg, mux->reg);=0A=
+> +	writel(reg, mux->reg);=0A=
+> +=0A=
+> +	if (mux->lock)=0A=
+> +		spin_unlock_irqrestore(mux->lock, flags);=0A=
+> +=0A=
+> +	return 0;=0A=
+> +}=0A=
+> +=0A=
+> +static int=0A=
+> +imx8m_clk_composite_mux_determine_rate(struct clk_hw *hw,=0A=
+> +				       struct clk_rate_request *req)=0A=
+> +{=0A=
+> +	struct clk_mux *mux =3D to_clk_mux(hw);=0A=
+> +=0A=
+> +	return clk_mux_determine_rate_flags(hw, req, mux->flags);=0A=
+> +}=0A=
+> +=0A=
+> +=0A=
+> +const struct clk_ops imx8m_clk_composite_mux_ops =3D {=0A=
+> +	.get_parent =3D imx8m_clk_composite_mux_get_parent,=0A=
+> +	.set_parent =3D imx8m_clk_composite_mux_set_parent,=0A=
+> +	.determine_rate =3D imx8m_clk_composite_mux_determine_rate,=0A=
+> +};=0A=
+> +=0A=
+>   struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,=0A=
+>   					const char * const *parent_names,=0A=
+>   					int num_parents, void __iomem *reg,=0A=
+> @@ -136,6 +193,7 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const cha=
+r *name,=0A=
+>   	struct clk_gate *gate =3D NULL;=0A=
+>   	struct clk_mux *mux =3D NULL;=0A=
+>   	const struct clk_ops *divider_ops;=0A=
+> +	const struct clk_ops *mux_ops;=0A=
+>   =0A=
+>   	mux =3D kzalloc(sizeof(*mux), GFP_KERNEL);=0A=
+>   	if (!mux)=0A=
+> @@ -157,10 +215,12 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const c=
+har *name,=0A=
+>   		div->shift =3D PCG_DIV_SHIFT;=0A=
+>   		div->width =3D PCG_CORE_DIV_WIDTH;=0A=
+>   		divider_ops =3D &clk_divider_ops;=0A=
+> +		mux_ops =3D &imx8m_clk_composite_mux_ops;=0A=
+>   	} else {=0A=
+>   		div->shift =3D PCG_PREDIV_SHIFT;=0A=
+>   		div->width =3D PCG_PREDIV_WIDTH;=0A=
+>   		divider_ops =3D &imx8m_clk_composite_divider_ops;=0A=
+> +		mux_ops =3D &clk_mux_ops;=0A=
+>   	}=0A=
+>   =0A=
+>   	div->lock =3D &imx_ccm_lock;=0A=
+> @@ -176,7 +236,7 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const cha=
+r *name,=0A=
+>   	gate->lock =3D &imx_ccm_lock;=0A=
+>   =0A=
+>   	hw =3D clk_hw_register_composite(NULL, name, parent_names, num_parents=
+,=0A=
+> -			mux_hw, &clk_mux_ops, div_hw,=0A=
+> +			mux_hw, mux_ops, div_hw,=0A=
+>   			divider_ops, gate_hw, &clk_gate_ops, flags);=0A=
+>   	if (IS_ERR(hw))=0A=
+>   		goto fail;=0A=
+> =0A=
+=0A=
