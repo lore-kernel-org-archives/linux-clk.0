@@ -2,203 +2,178 @@ Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 602F9C55186
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 02:03:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 305F2C2BA19
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 02:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3393F2074F
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 02:03:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3C820CC7
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 02:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P74hXmJi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWhpw730"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725888AbgDXCDD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Apr 2020 22:03:03 -0400
-Received: from mail-db8eur05on2056.outbound.protection.outlook.com ([40.107.20.56]:48939
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725884AbgDXCDD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Apr 2020 22:03:03 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ijtievauOvxcnuQwXBFy9wbLd/JphvjYCAZr0F3LE62igbKy0DzsXLrZOwgnmTe1nx8j9uonB9KGWTit+gp16m13PfHkcgAwX0b+5zlc7/bZClc0qnMuVTWIxhkWBJNYlCRrI+5aZi1X4FS1+N35/aXHx7hWxj987jYKQ0k5/qs+SgFFBdbWj6hHD+5EBgg2Sh1G0Vet7J4xAr+pgRt/8qOCkZ+lVF8H36LooxGRP+Ax02jJG9+XkCByqQ5pX9/9OtccXA6NWQ1KHOvikTZGwFFsAB8aR/NNXIJNAyQJpytBuURdkTL3ydehZ477rF+x3JdekWfHBjyvEDPWR7BZ0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU0F6DxwJwUelxvKSOGGK0X2m6M1kIMQVmuznKFUQrI=;
- b=KaTIM/Yq/njlRV2hXJIv7kH4yFybktCUayJoDzOm3ontrw9gv/rE+nFkicMxTlAxVD6meSXPqI3j4Dtm6MRXMp4DGaBb4eWBfFqh8/xLY/gwHLo9Ud1gbm/iSfsDVAchh8764bEdhHCFZt2RaNQ3YSqIaMqoMEsgLIOX5XAVV2OvwATT4K0mMZqDx/jIfnUcqEwfUWUz53SuEkzVFWIfZg96nefJho4z4oKZ9MHMqE4FdhyS06V9hge1r+YjReg0V1+0VDXkF2S212EkRMojl0ju6bh7pTBhsIvt72RBNHqwgemqF2iV0prU8y/tCA96urPJR7LyyzyaKEHrhY7D/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dU0F6DxwJwUelxvKSOGGK0X2m6M1kIMQVmuznKFUQrI=;
- b=P74hXmJioolUkuPHSGAdkb8hvMjvUqQaFaexC6jRwdNsBM9EZoUpE/qGLLG2HEUgxFxJVujjveLQ1BPeD6bvOr0kLi198MR9ryvfuQY+XeQddVDq30dj+iP4eZapAAillEOu4AwtZjrRbFdb5jY2Inlj4mw1yh+VAGiaiXdSw64=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2824.eurprd04.prod.outlook.com (2603:10a6:4:98::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13; Fri, 24 Apr
- 2020 02:02:57 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2937.012; Fri, 24 Apr 2020
- 02:02:57 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] clk: imx: introduce imx_clk_hw_critical
-Thread-Topic: [PATCH] clk: imx: introduce imx_clk_hw_critical
-Thread-Index: AQHWGTz1S3ryZr4eI06QzGNLele1k6iGhU2AgAACxjCAADVJgIAAt/hggAAQDACAAACyUA==
-Date:   Fri, 24 Apr 2020 02:02:57 +0000
-Message-ID: <DB6PR0402MB27606091A98872EB60A5BA5788D00@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <1587624748-27228-1-git-send-email-peng.fan@nxp.com>
- <AM6PR04MB4966934EE0411F7C3FF5AA2F80D30@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <DB6PR0402MB2760793865AA2E67E1C33F4488D30@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <AM6PR04MB4966460FE849E557FDA754F980D30@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <DB6PR0402MB276068E21E36BFCCA91728D088D00@DB6PR0402MB2760.eurprd04.prod.outlook.com>
- <AM6PR04MB49665A599A06623160EB592980D00@AM6PR04MB4966.eurprd04.prod.outlook.com>
-In-Reply-To: <AM6PR04MB49665A599A06623160EB592980D00@AM6PR04MB4966.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4e47ca25-6ad7-447f-378a-08d7e7f39bf7
-x-ms-traffictypediagnostic: DB6PR0402MB2824:|DB6PR0402MB2824:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB6PR0402MB2824C27AEB9C832BE80FFDBD88D00@DB6PR0402MB2824.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 03838E948C
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(376002)(346002)(366004)(136003)(39860400002)(396003)(66446008)(186003)(86362001)(9686003)(8676002)(478600001)(5660300002)(81156014)(316002)(54906003)(8936002)(2906002)(966005)(110136005)(66556008)(66476007)(55016002)(64756008)(71200400001)(52536014)(33656002)(76116006)(7696005)(6506007)(4326008)(44832011)(66946007)(26005)(53546011);DIR:OUT;SFP:1101;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: O2yjsTzy9j6HE0Ncu985wcD/FNnc7HY6vrLGg42r82nE58VxlkNIuRceMaZsZSnHK6QFUpTgF4nb0Dd6zEdGtCU1HzD3MQespLrvG8kYtXRhXwaox4LZWeLl08wEav10v+R1l1tMCG5WQRwj9mvzRzxA1J/09r7fSvqoJJqTyU11AgCmGaRxo87e9KwIlqivFQuhl48oxUJQ3Wvy0U0NwRd5GSk059NkjXGrYkZhUmbGvzvhdDTvVPIBUMpLoUtm546sYqUZ2+M99ieeBdxDjT8GWJJyTosqt5HcPE+fZjdVvJebnef83FM90BIPsX6F7xJj6Q6oQxGFJZsjGE2LA5bw+HwYfRJJGcz8CKcAxhXz+gvPNqQhjw/F9C5qjlV1QSWSLV5BvAUzwDq/exrOY+ejM3UhLkMW7EoyEVp3IjDm8wK0laQWeboYySYVIqAzP7F1CK24nCSQPYB6NLcT33YDarvRKm9nEi1GbLWxkUhXsiOYrKQdOXbsDkMaNcUH2djI0mpshduxX7WcCw5Ojw==
-x-ms-exchange-antispam-messagedata: 9jizYNVdLrGWvZlxJ4d00CHS9MUel44COBSxTOXIhQ+3EdEMzbYZe31UsvMorHUEinEidv12BWY5wAv3d0Mcnqm3CU3srHx8MTfsQteHKd+hRP1cuBMhlBzpE+3ry2u4D8Bp5q9GCrAppfR1JKu0/Q==
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726078AbgDXCJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Apr 2020 22:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40172 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725884AbgDXCJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Apr 2020 22:09:05 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9159C09B042;
+        Thu, 23 Apr 2020 19:09:04 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id a21so5459352ljj.11;
+        Thu, 23 Apr 2020 19:09:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=asdel7Nnwdq8gXb0wfYVTZi0cag88uF9i59tRQsaVzA=;
+        b=kWhpw7300uRV64GQ+LZk1RjwjbYN2maIGft1o6R8mtbKIer8m0k92d/hgbcgPMBOi7
+         fkrPQN71H3TNtQMdmt9IDsJ3jr5P4PKAwcJKPPj1EWxcdz6RBHdh56Q1tZBVKnQE+VsX
+         B5Kvg/E+2x/KUA/tR/t+2JD6ywz8Ylc/SNWa9E64BYzXqUe2vMueKVuIZ+8jxabTgy8G
+         5jgwP/2gPv7ny9VHCJpV3vlWsr30AhDcObnQjXpQK7WoKHEZvdocpWPj3Zy3KWyDRd0k
+         S38RDjznsPZEihkhBPgJm8B9hArOxcQK1r24EaM08rMUgTKBX6ZpuS+QyGhvCRaz/Y4K
+         vuwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=asdel7Nnwdq8gXb0wfYVTZi0cag88uF9i59tRQsaVzA=;
+        b=RgWp48/PDFgepbh9auzJ+NNyQhkX3xv7FL+moRUAsiNJRyDQlCVb2L2SoeHbv67iby
+         WaONAuVqhVW04whGEv6T7R/F5x/zNShmLe8Hs8JXTHVxlg823NxbGtVMGAisC27sDQqm
+         TWOHAfeMqSjxgv65mqzlNXB6ThWRoK3h+5qfzavmCEcdC8v7Hky6XCeOQNK9xZxdQufg
+         eT35XbKNKFKXRu+BqJl4dxmLGFNa63Npb415rOo0X3HJ1YdXxspvaP/b1q3pDJxMSDHc
+         eK2vtiEDy52O5C6zkjOvn6RiFBtspyHaPcfL1VGfgd6sDtKpV1jCCi8S5+ZkpcS/8s9U
+         pYLg==
+X-Gm-Message-State: AGi0PubQO95R+5KQE9jDEPsHw/cHQl2OeV3uOdD0qsuMoXfqyBbuEJYC
+        bm1o90APsCznQOMkIpJtCaDoUnCt
+X-Google-Smtp-Source: APiQypItFHoCX/FTFqbHNozzHeT8UgpiUGk4DWwc/59oGcQxfSMGZ9itJNAWOxIxRtCzgDv+zEmI6g==
+X-Received: by 2002:a2e:a313:: with SMTP id l19mr4437612lje.133.1587694142811;
+        Thu, 23 Apr 2020 19:09:02 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id l26sm3153517ljc.49.2020.04.23.19.09.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 23 Apr 2020 19:09:02 -0700 (PDT)
+Subject: Re: [RFC PATCH v9 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1587536339-4030-1-git-send-email-skomatineni@nvidia.com>
+ <1587536339-4030-7-git-send-email-skomatineni@nvidia.com>
+ <7e473fa9-0409-d868-e818-2e7928a8acca@gmail.com>
+ <a83bfc89-35de-85b5-fe5f-71e62456f5e9@nvidia.com>
+ <3691c4b5-1ecc-2ad3-23ed-72ef6b8d25fa@nvidia.com>
+ <fce6dfbb-0b8d-319b-2d6f-976953a3c36c@gmail.com>
+ <a2672be9-93c1-8363-6c0e-6d43c2bd59bc@nvidia.com>
+ <492dafac-42aa-3caf-4d32-ba0e434b19c3@gmail.com>
+ <39402a49-f39f-256c-31e7-afaa25d55664@nvidia.com>
+ <8f01724e-95d4-e6d8-9e2d-bce4b8dd0177@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <5ad77b67-0dc6-3c6d-7df3-4c21c68b2b1e@gmail.com>
+Date:   Fri, 24 Apr 2020 05:09:00 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e47ca25-6ad7-447f-378a-08d7e7f39bf7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Apr 2020 02:02:57.4464
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CGMuqZh9o2ODSGLtXPEoG10KLrdp0WXNgt91kUp47f8QYszdSmA73i9nXK8HWAKOl/TE/D5vkyXwvI+xJIP/Wg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2824
+In-Reply-To: <8f01724e-95d4-e6d8-9e2d-bce4b8dd0177@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBTdWJqZWN0OiBSRTogW1BBVENIXSBjbGs6IGlteDogaW50cm9kdWNlIGlteF9jbGtfaHdfY3Jp
-dGljYWwNCj4gDQo+ID4gRnJvbTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4gU2Vu
-dDogRnJpZGF5LCBBcHJpbCAyNCwgMjAyMCA5OjA4IEFNDQo+ID4NCj4gPiA+IFN1YmplY3Q6IFJF
-OiBbUEFUQ0hdIGNsazogaW14OiBpbnRyb2R1Y2UgaW14X2Nsa19od19jcml0aWNhbA0KPiA+ID4N
-Cj4gPiA+ID4gRnJvbTogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+ID4gPiA+IFNlbnQ6
-IFRodXJzZGF5LCBBcHJpbCAyMywgMjAyMCA2OjU0IFBNDQo+ID4gPiA+DQo+ID4gPiA+ID4gU3Vi
-amVjdDogUkU6IFtQQVRDSF0gY2xrOiBpbXg6IGludHJvZHVjZSBpbXhfY2xrX2h3X2NyaXRpY2Fs
-DQo+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IEZyb206IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29t
-Pg0KPiA+ID4gPiA+ID4gU2VudDogVGh1cnNkYXksIEFwcmlsIDIzLCAyMDIwIDI6NTIgUE0NCj4g
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gPiBUbyBpLk1YOE0gU29DLCB0aGVyZSBpcyBhbiBjYXNlIGlz
-IHdoZW4gcnVubmluZyBkdWFsIE9TZXMgd2l0aA0KPiA+ID4gPiA+ID4gaHlwZXJ2aXNvciwgdGhl
-IGNsayBvZiB0aGUgaGFyZHdhcmUgdGhhdCBwYXNzdGhyb3VnaCB0byB0aGUNCj4gPiA+ID4gPiA+
-IDJuZCBPUyBuZWVkcyB0byBiZSBzZXR1cCBieSAxc3QgTGludXggT1MuDQo+ID4gPiA+ID4gPiBT
-byBkZXRlY3QgY2xvY2stY3JpdGljYWwgZnJvbSBjY20gbm9kZSBhbmQgZW5hYmxlIHRoZSBjbG9j
-a3MNCj4gPiA+ID4gPiA+IHRvIGxldCB0aGUgMm5kIE9TIGNvdWxkIHVzZSB0aGUgaGFyZHdhcmUg
-d2l0aG91dCB0b3VjaCBDQ00NCj4gbW9kdWxlLg0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+IFNp
-Z25lZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiA+ID4gPiA+ID4gLS0t
-DQo+ID4gPiA+ID4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay5jIHwgMTkgKysrKysrKysrKysrKysr
-KysrKw0KPiA+ID4gPiA+ID4gZHJpdmVycy9jbGsvaW14L2Nsay5oDQo+ID4gPiA+ID4gPiB8ICAx
-DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCAyMCBpbnNlcnRp
-b25zKCspDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xr
-L2lteC9jbGsuYyBiL2RyaXZlcnMvY2xrL2lteC9jbGsuYw0KPiA+ID4gPiA+ID4gaW5kZXgNCj4g
-PiA+ID4gPiA+IDg3YWI4ZGIzZDI4Mi4uZWM3ZDQyMjU0MGMxIDEwMDY0NA0KPiA+ID4gPiA+ID4g
-LS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay5jDQo+ID4gPiA+ID4gPiArKysgYi9kcml2ZXJzL2Ns
-ay9pbXgvY2xrLmMNCj4gPiA+ID4gPiA+IEBAIC0xNzcsMyArMTc3LDIyIEBAIHN0YXRpYyBpbnQg
-X19pbml0IGlteF9jbGtfZGlzYWJsZV91YXJ0KHZvaWQpDQo+ID4gPiA+ID4gPiAgCXJldHVybiAw
-Ow0KPiA+ID4gPiA+ID4gIH0NCj4gPiA+ID4gPiA+ICBsYXRlX2luaXRjYWxsX3N5bmMoaW14X2Ns
-a19kaXNhYmxlX3VhcnQpOw0KPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gK2ludCBpbXhfY2xr
-X2h3X2NyaXRpY2FsKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnAsIHN0cnVjdCBjbGtfaHcNCj4gPiA+
-ID4gPiA+ICsqIGNvbnN0DQo+ID4gPiA+ID4gPiAraHdzW10pIHsNCj4gPiA+ID4gPiA+ICsJc3Ry
-dWN0IHByb3BlcnR5ICpwcm9wOw0KPiA+ID4gPiA+ID4gKwljb25zdCBfX2JlMzIgKmN1cjsNCj4g
-PiA+ID4gPiA+ICsJdTMyIGlkeDsNCj4gPiA+ID4gPiA+ICsJaW50IHJldDsNCj4gPiA+ID4gPiA+
-ICsNCj4gPiA+ID4gPiA+ICsJaWYgKCFucCB8fCAhaHdzKQ0KPiA+ID4gPiA+ID4gKwkJcmV0dXJu
-IC1FSU5WQUw7DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4gPiArCW9mX3Byb3BlcnR5X2Zvcl9l
-YWNoX3UzMihucCwgImNsb2NrLWNyaXRpY2FsIiwgcHJvcCwgY3VyLA0KPiA+ID4gPiA+ID4gK2lk
-eCkgew0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gSXMgdGhlcmUgYSBiaW5kaW5nIGZvciBpdCBhbHJl
-YWR5Pw0KPiA+ID4gPg0KPiA+ID4gPiBJIHRoaW5rIGNsb2NrLWNyaXRpY2FsIGlzIGEgY29tbW9u
-IGJpbmRpbmdzPyBTZWUgb2ZfY2xrX2RldGVjdF9jcml0aWNhbC4NCj4gPiA+ID4gUGxlYXNlIHJl
-dmlldyB3aGV0aGVyIHRoaXMgYXBwcm9hY2ggaXMgYWNjZXB0YWJsZSwgaWYgZG8gbmVlZA0KPiA+
-ID4gPiBiaW5kaW5ncywgSSBjb3VsZCBhZGQgdGhhdCBpbiB2Mi4NCj4gPiA+ID4NCj4gPiA+DQo+
-ID4gPiBJJ20gb2sgaWYgaXQncyBhIGNvbW1vbiBiaW5kaW5nIGFscmVhZHkgc3VwcG9ydGVkIGJ5
-IGN1cnJlbnQgY2xrDQo+IGZyYW1ld29yay4NCj4gPiA+IEJ1dCBpdCBzZWVtcyB0byBiZSBtb3Jl
-IGxpa2UgYSBjb21tb24gY2xrIGZlYXR1cmUgcmF0aGVyIHRoYW4NCj4gPiA+IHBsYXRmb3JtIGZl
-YXR1cmUuDQo+ID4NCj4gPiBIZXJlIGlzIHRvIHVzZSBpdCBmb3IgZHVhbCBMaW51eCBjYXNlIHJ1
-bm5pbmcgb24gaS5NWCBwbGFmb3Jtcy4NCj4gPiBJdCBpcyB0byByZXBsYWNlIHRoZSBpbml0LW9u
-LWFycmF5IHByb3BlcnR5IGluIGRvd25zdHJlYW0ga2VybmVsLg0KPiA+DQo+ID4gVGhlIHJlY29t
-bWVuZGVkIGNyaXRpY2FsIGNsb2NrIGlzIHVzaW5nIENMS19JU19DUklUSUNBTCBmbGFnIGluIGNs
-aw0KPiA+IGRyaXZlciwgbm90IHVzZSBjbG9jay1jcml0aWNhbCBwcm9wZXJ0eS4NCj4gPg0KPiAN
-Cj4gQ2xvY2stY3JpdGljYWwgcHJvcGVydHkgc2VlbXMgRFQgdXNhZ2Ugb2YgQ0xLX0lTX0NSSVRJ
-Q0FMIGZsYWcgYW5kIHB1cmUNCj4gcGxhdGZvcm0gaW5kZXBlbmRlbnQuDQo+IFNvIEkgd29uZGVy
-IGlmIHRoaXMgZmVhdHVyZSBjb3VsZCBiZSBhZGRlZCBpbnRvIG9mX2Nsa19hZGRfaHdfcHJvdmlk
-ZXIuDQo+IA0KPiA+IEJ1dCBoZXJlLCB3ZSBjb3VsZCBub3QgdXNlIENMS19JU19DUklUSUNBTCwg
-YmVjYXVzZSB3aGVuIHN1cHBvcnQgZHVhbA0KPiA+IE9TZXMsIGl0IGlzIG5vdCBmbGV4aWJsZSwg
-YW5kIGl0IHdpbGwgYWZmZWN0IG5vbiBoeXBlcnZpc29yIGNhc2UuDQo+ID4NCj4gDQo+IEEgYml0
-IGNvbmZ1aW5nIGJlY2F1c2UgeW91IHNhaWQgdGhlIGNyaXRpY2FsLWNsb2NrIHByb3BlcnR5IHdp
-bGwgb25seSBiZSB1c2VkIGJ5DQo+IEh5cGVydmlzb3IgZHRzLCB0aGVuIGhvdyB0byBhZmZlY3Qg
-bm9uIGh5cGVydmlzb3IgY2FzZXM/DQoNCklmIHB1dCB0aGUgYXJyYXkgaW50byBoeXBlcnZpc29y
-IGR0cywgaXQgd2lsbCBub3QgYWZmZWN0IG5vbiBoeXBlcnZpc29yIGNhc2UuDQoNCkkgbWVhbiBp
-ZiB1c2luZyBDTEtfSVNfQ1JJVElDQUwgaW4gZHJpdmVyIGNvZGUsIGl0IHdpbGwgYWZmZWN0IG5v
-biBoeXBlcnZpc29yIGNhc2UuDQoNClRoYW5rcywNClBlbmcuDQoNCj4gDQo+ID4gPiBBbHNvIGEg
-Yml0IHN0cmFuZ2UgdGhhdCB3aHkgSSBkaWQgbm90IGZpbmQgdGhlIGJpbmRpbmcgZG9jIGluIGxh
-dGVzdCBrZXJuZWwuDQo+ID4gPiBNYXliZSBTdGVwaGVuIGNvdWxkIGNvbW1lbnQgbW9yZS4NCj4g
-Pg0KPiA+IEl0IGlzIHVzZWQgaGVyZS4NCj4gPiBodHRwczovL2VsaXhpci5ib290bGluLmNvbS9s
-aW51eC92NS43LXJjMi9zb3VyY2UvZHJpdmVycy9jbGsvY2xrLmMjTDQ4DQo+ID4gOTENCj4gDQo+
-IFllcywgSSBhbHNvIHNhdyBpdCwgYnV0IGRpZG4ndCBmaW5kIGJpbmRpbmcgZG9jLg0KPiANCj4g
-UmVnYXJkcw0KPiBBaXNoZW5nDQo+IA0KPiA+DQo+ID4gPg0KPiA+ID4gQlRXLCBpZiB1c2luZyB0
-aGlzIGZvciBkdWFsIE9TZXMgY2FzZSwgd2lsbCB0aG9zZSBjcml0aWNhbCBjbG9ja3MNCj4gPiA+
-IGFmZmVjdCB0aGUgbm9ybWFsIHVzZXJzIHRoYXQgbm90IGJvb3RpbmcgdGhlIHNlY29uZCBPUz8N
-Cj4gPg0KPiA+IE5vLiBkdWFsIG9zIHVzaW5nIHgtcm9vdC5kdHMsIG5vdCB4LmR0cy4gY3JpdGlj
-YWwtY2xvY2sgd2lsbCBiZSBwdXNoIGluDQo+IHgtcm9vdC5kdHMuDQo+ID4NCj4gPiBUaGFua3Ms
-DQo+ID4gUGVuZy4NCj4gPg0KPiA+ID4NCj4gPiA+IFJlZ2FyZHMNCj4gPiA+IEFpc2hlbmcNCj4g
-PiA+DQo+ID4gPiA+IFRoYW5rcywNCj4gPiA+ID4gUGVuZy4NCj4gPiA+ID4NCj4gPiA+ID4gPg0K
-PiA+ID4gPiA+IFJlZ2FyZHMNCj4gPiA+ID4gPiBBaXNoZW5nDQo+ID4gPiA+ID4NCj4gPiA+ID4g
-PiA+ICsJCXJldCA9IGNsa19wcmVwYXJlX2VuYWJsZShod3NbaWR4XS0+Y2xrKTsNCj4gPiA+ID4g
-PiA+ICsJCWlmIChyZXQpDQo+ID4gPiA+ID4gPiArCQkJcmV0dXJuIHJldDsNCj4gPiA+ID4gPiA+
-ICsJfQ0KPiA+ID4gPiA+ID4gKw0KPiA+ID4gPiA+ID4gKwlyZXR1cm4gMDsNCj4gPiA+ID4gPiA+
-ICt9DQo+ID4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay5oIGIvZHJp
-dmVycy9jbGsvaW14L2Nsay5oDQo+ID4gPiA+ID4gPiBpbmRleCBkNGVhMTYwOWJjYjcuLjcwMWQ3
-NDQwZjk4YyAxMDA2NDQNCj4gPiA+ID4gPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9jbGsuaA0K
-PiA+ID4gPiA+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14L2Nsay5oDQo+ID4gPiA+ID4gPiBAQCAt
-OSw2ICs5LDcgQEAgZXh0ZXJuIHNwaW5sb2NrX3QgaW14X2NjbV9sb2NrOw0KPiA+ID4gPiA+ID4N
-Cj4gPiA+ID4gPiA+ICB2b2lkIGlteF9jaGVja19jbG9ja3Moc3RydWN0IGNsayAqY2xrc1tdLCB1
-bnNpZ25lZCBpbnQNCj4gPiA+ID4gPiA+IGNvdW50KTsgdm9pZCBpbXhfY2hlY2tfY2xrX2h3cyhz
-dHJ1Y3QgY2xrX2h3ICpjbGtzW10sIHVuc2lnbmVkDQo+ID4gPiA+ID4gPiBpbnQgY291bnQpOw0K
-PiA+ID4gPiA+ID4gK2ludCBpbXhfY2xrX2h3X2NyaXRpY2FsKHN0cnVjdCBkZXZpY2Vfbm9kZSAq
-bnAsIHN0cnVjdCBjbGtfaHcNCj4gPiA+ID4gPiA+ICsqIGNvbnN0IGh3c1tdKTsNCj4gPiA+ID4g
-PiA+ICB2b2lkIGlteF9yZWdpc3Rlcl91YXJ0X2Nsb2NrcyhzdHJ1Y3QgY2xrICoqIGNvbnN0IGNs
-a3NbXSk7DQo+ID4gPiA+ID4gPiB2b2lkIGlteF9tbWRjX21hc2tfaGFuZHNoYWtlKHZvaWQgX19p
-b21lbSAqY2NtX2Jhc2UsDQo+IHVuc2lnbmVkDQo+ID4gPiA+ID4gPiBpbnQNCj4gPiA+IGNobik7
-DQo+ID4gPiA+ID4gPiB2b2lkIGlteF91bnJlZ2lzdGVyX2Nsb2NrcyhzdHJ1Y3QgY2xrICpjbGtz
-W10sIHVuc2lnbmVkIGludA0KPiA+ID4gPiA+ID4gY291bnQpOw0KPiA+ID4gPiA+ID4gLS0NCj4g
-PiA+ID4gPiA+IDIuMTYuNA0KDQo=
+24.04.2020 04:08, Sowjanya Komatineni пишет:
+> 
+> On 4/23/20 5:51 PM, Sowjanya Komatineni wrote:
+>>
+>> On 4/23/20 5:42 PM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 24.04.2020 02:50, Sowjanya Komatineni пишет:
+>>>> On 4/23/20 4:25 PM, Dmitry Osipenko wrote:
+>>>>> External email: Use caution opening links or attachments
+>>>>>
+>>>>>
+>>>>> 24.04.2020 02:20, Sowjanya Komatineni пишет:
+>>>>>> On 4/23/20 4:19 PM, Sowjanya Komatineni wrote:
+>>>>>>> On 4/23/20 4:16 PM, Dmitry Osipenko wrote:
+>>>>>>>> External email: Use caution opening links or attachments
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> 22.04.2020 09:18, Sowjanya Komatineni пишет:
+>>>>>>>>> +static int chan_capture_kthread_start(void *data)
+>>>>>>>>> +{
+>>>>>>>>> +     struct tegra_vi_channel *chan = data;
+>>>>>>>>> +     struct tegra_channel_buffer *buf;
+>>>>>>>>> +     int err = 0;
+>>>>>>>>> +
+>>>>>>>>> +     set_freezable();
+>>>>>>>>> +
+>>>>>>>>> +     while (1) {
+>>>>>>>>> +             try_to_freeze();
+>>>>>>>>> +
+>>>>>>>>> + wait_event_interruptible(chan->start_wait,
+>>>>>>>>> + !list_empty(&chan->capture) ||
+>>>>>>>>> + kthread_should_stop());
+>>>>>>>>> +
+>>>>>>>>> +             if (kthread_should_stop())
+>>>>>>>>> +                     break;
+>>>>>>>>> +
+>>>>>>>>> +             /*
+>>>>>>>>> +              * Source is not streaming if error is non-zero.
+>>>>>>>>> +              * So, do not dequeue buffers on capture error.
+>>>>>>>>> +              */
+>>>>>>>>> +             if (err)
+>>>>>>>>> +                     continue;
+>>>>>>>> This will result in an endless loop, I suppose it wasn't the
+>>>>>>>> intention.
+>>>>>>> no it will not. on error we report vb2_queue_error which will do
+>>>>>>> streaming stop request.
+>>>>>>>
+>>>>>>> So thread will be stopped on streaming stop request thru kthread
+>>>>>>> stop
+>>>>>>> signal
+>>>>>> To be clear on error it reports vb2 queue error and waits for stop
+>>>>>> streaming to happen
+>>>>> If thread should exit on error, then it should do it on the actual
+>>>>> error. Otherwise it looks very error-prone.
+>>>> When v4l2 drivers indicate fatal error through vb2_queue_error, queue
+>>>> error flag  is set and wakes up all processes waiting on queue along
+>>>> with polling reporting  EPOLLERR and also reporting error for queuing
+>>>> and dequeuing buffers. Stream stop will surely happen which stops the
+>>>> thread.
+>>> This doesn't explain what is the point of continuing to loop instead of
+>>> exiting immediately on error.
+>>
+>> We are using 2 threads and when capture start error happens, we can
+>> stop capture_start thread immediately but capture_finish thread will
+>> still run for any outstanding buffers.
+>>
+>> So, as it makes no diff stopping both threads during stream stop which
+>> will definitely happen on error and when we don't dequeue buffers
+>>
+> Also there will be an issue if we break on error immediately during
+> stop_streaming -> kthread_stop()
+> 
+> As stop streaming can happen any time, we do kthread_stop and in case of
+> error if we stop thread and on stop streaming kthread_stop might crash
+> as kthread_stop can only be called on running thread
+> 
+
+This a better explanation, but still it's not good that there could be a
+busy loop within the thread.
+
+Should be better to sleep if error is set.
+
+wait_event_interruptible(chan->start_wait,
+			(!err && !list_empty(&chan->capture)) ||
+			kthread_should_stop());
