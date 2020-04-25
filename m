@@ -1,95 +1,119 @@
-Return-Path: <SRS0=8VSC=6I=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=dTms=6J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F1AC54FCB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 22:00:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F00CCC55185
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 09:36:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2FDBF2098B
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Apr 2020 22:00:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D18F820704
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 09:36:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="OcI9iHqB"
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="CslqNo6T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726038AbgDXWAp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Apr 2020 18:00:45 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8834 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbgDXWAp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Apr 2020 18:00:45 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ea361170001>; Fri, 24 Apr 2020 14:58:47 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 24 Apr 2020 15:00:45 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 24 Apr 2020 15:00:45 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 24 Apr
- 2020 22:00:45 +0000
-Received: from [10.2.165.152] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 24 Apr
- 2020 22:00:43 +0000
+        id S1726035AbgDYJg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Apr 2020 05:36:28 -0400
+Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:54873 "EHLO
+        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725837AbgDYJg1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Apr 2020 05:36:27 -0400
+Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id SHERjN65NlKa1SHEVjTTIE; Sat, 25 Apr 2020 11:36:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1587807384; bh=fSYBdxjgYtmYwGO3ICwPcGjEcBBVqN9UZaSZatOml9E=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=CslqNo6TKr61FhjvZFeX4gxFSTW3yda1JQn1LdpQJf2j+M8j5S3RH+XrsXl496S7p
+         gf31e4sre4Ofq1DdZLgfcJC8Ac5lpBctqgW7gTPd2cz4Ix6OdwLd+VekbGRSVdXXTK
+         fpFLeoeBYqx3mlBVvD4quAru9/yw24j9WZCxnp95EQZq5BJAZKt73XBv1rA/N4TL60
+         6WdWxWUFYjKroQBXNemGwgj3M/YdjE3O5BoeeCYQLie9tmGjqgqoExq7exGZd60Qlf
+         nvqqbjkQHVOFLYKYNC1x+gdsyMamBqWeAJhhr792mj8y1NlelP0wkPejUVAQlETWNk
+         ppsheNEsfYhLA==
 Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
  <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <fffc09d1-a25f-2d6e-83bd-f7657dd2ff16@nvidia.com>
-Date:   Fri, 24 Apr 2020 15:00:42 -0700
+ <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
+Date:   Sat, 25 Apr 2020 11:36:19 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-In-Reply-To: <3155e0d2-94b0-6e0a-bf35-b3560c201039@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1587765527; bh=FpcOx6PfCadj3eE4qyv+7F6UJr7IJK3I60weagCPMHA=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=OcI9iHqBAt3zPDERTFGnL2DLtT5l+Ros3tkaBJ+lIiz2wCqoottbppfxw2J5GUIt0
-         6vqKxZu+WuaHwKEKrDuOtPHlrDLz1eIe+c8D0mDzO9LTkZf3nEpJpodJhQVoXCKCiv
-         llf+ryHkBozJqOMG2ThsHFRwTaxOqfnvVRVOvA7O3UvvTLzGyeAItPpnhyxHn0Wlq3
-         Tu0aLbLNQbSHOPf2vWWPERAWU6FXUsx/7dRG7rvaMDgxsfqa7aF/6L6/9SRPG1WI92
-         vMaEtoNzttKGX+64ZrVFUoZLHvuWJVIULkt0/CcysFySq1tqXyaS9Tr8bDtxOHcjx8
-         b48E17i3xbdqg==
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfNDz9HNxuqvyVl2LksfOfgdeceMdmfDlPtUuL8p5+1z94jh0ysXaXrk72fRFAoZruzMaSpqmLAabuLPR5TyA5ByC+iydYkYlRyRlM0C7ttuXsNFV1eGY
+ LsJkH3/vDAMCBJ8Fv5m1EmuwJm5pi6PX3ch6aCVALXxDadxmW1SA5WVFFbo/LjjGLfyzePjxAWsMOl4PNiGprlcYCqN9VqdJG/IkgFFMUOKPFSSxmoHwkOXZ
+ sZzwyghdVQA+TzD0DxfFTpptWzbrvMWwJvpm7/pvgomRw2+iOS5U1NDSfaULH8RDhLI1dlwk1st1XgsqGjbcInAIH34OqwchG0gW24U41PG00p7bkKnhIWB3
+ MOKrYVqHcNLQ401YQFQ2uGXfxY9AGfuYHQDSz2jw2CzWCk2BF+/ApXoz+OkOJ03Ap38lV0W5JccjA42GvfgfF0FhSg5cAOtCr+Az78jHzp6Awo/u81IYG3yO
+ cCtMKi9bxEuozGXV/hol1DzHh743hJQKa9h8R0WJ2VoyKmsCZGifmne5T1DQZ5bWxP+eD0DBuQGX00+YvBzXvVZKJx1hyfnPYXFers040re5rp3+Y4mMTiqP
+ JNc=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 24/04/2020 17:11, Dmitry Osipenko wrote:
+> 24.04.2020 06:55, Sowjanya Komatineni пишет:
+>> Tegra210 contains a powerful Video Input (VI) hardware controller
+>> which can support up to 6 MIPI CSI camera sensors.
+>>
+>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
+>> capture from an external camera sensor connected to CSI or from
+>> built-in test pattern generator.
+>>
+>> Tegra210 supports built-in test pattern generator from CSI to VI.
+>>
+>> This patch adds a v4l2 capture driver with media interface for
+>> Tegra210 built-in CSI to VI test pattern generator.
+>>
+>> This patch includes TPG support only and all the video pipeline
+>> configuration happens through the video device node.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>  drivers/staging/media/Kconfig          |    2 +
+>>  drivers/staging/media/Makefile         |    1 +
+>>  drivers/staging/media/tegra/Kconfig    |   12 +
+>>  drivers/staging/media/tegra/Makefile   |    8 +
+>>  drivers/staging/media/tegra/TODO       |   10 +
+>>  drivers/staging/media/tegra/common.h   |  259 ++++++++
+>>  drivers/staging/media/tegra/csi.c      |  604 +++++++++++++++++
+>>  drivers/staging/media/tegra/csi.h      |  144 ++++
+>>  drivers/staging/media/tegra/tegra210.c |  708 ++++++++++++++++++++
+>>  drivers/staging/media/tegra/tegra210.h |  190 ++++++
+>>  drivers/staging/media/tegra/vi.c       | 1127 ++++++++++++++++++++++++++++++++
+>>  drivers/staging/media/tegra/vi.h       |   72 ++
+>>  drivers/staging/media/tegra/video.c    |  153 +++++
+>>  drivers/staging/media/tegra/video.h    |   29 +
+> 
+> The media/tegra/ sounds a bit too generic, the media/tegra-vi/ path
+> should better reflect the driver, IMO.
+> 
+> It also should be better to name the compiled kernel module as tegra-vi,
+> IMO.
+> 
 
-On 4/24/20 8:07 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 24.04.2020 06:55, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->
-> Is this driver compiled as a single kernel module file?
->
->> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra CSI Device Driver");
->> +MODULE_LICENSE("GPL v2");
-> ...
->> +MODULE_AUTHOR("Sowjanya Komatineni <skomatineni@nvidia.com>");
->> +MODULE_DESCRIPTION("NVIDIA Tegra Video Input Device Driver");
->> +MODULE_LICENSE("GPL v2");
-> I don't think that these macros are needed in that case.
-> The video.c should be enough, isn't it?
-yes these can be removed
+The driver name and the directory should be in sync, so either tegra-video
+or tegra-vi for both. I have no preference myself, as long as they are the
+same.
+
+This can be done as a follow-up patch.
+
+Regards,
+
+	Hans
