@@ -2,118 +2,162 @@ Return-Path: <SRS0=dTms=6J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F00CCC55185
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 09:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A424C55191
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 19:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D18F820704
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 09:36:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="CslqNo6T"
+	by mail.kernel.org (Postfix) with ESMTP id 3B79F2072B
+	for <linux-clk@archiver.kernel.org>; Sat, 25 Apr 2020 19:10:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1587841843;
+	bh=qCzK81o9S1FvWHH3Re7Q5eO5cCxmRBtEqvPS2rVjoZk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=lsYMI15bSEbshdDAPYBRxhVoP7vETYNLHw1k761bjj2yDjK9rqjtMv1VhofRhzyKS
+	 94lRnGesxLZb7ZpPdvucuCWfXyCIOOnI4IyYzYp3tvG1tL4VnEgUb2J0J2Dr6+RXwp
+	 kVI1CQF2m9HJ1TkGBn98Casv9yGSEkVJvtApT22s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgDYJg2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Apr 2020 05:36:28 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:54873 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725837AbgDYJg1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Apr 2020 05:36:27 -0400
-Received: from cust-b5b5937f ([IPv6:fc0c:c16d:66b8:757f:c639:739b:9d66:799d])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id SHERjN65NlKa1SHEVjTTIE; Sat, 25 Apr 2020 11:36:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1587807384; bh=fSYBdxjgYtmYwGO3ICwPcGjEcBBVqN9UZaSZatOml9E=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=CslqNo6TKr61FhjvZFeX4gxFSTW3yda1JQn1LdpQJf2j+M8j5S3RH+XrsXl496S7p
-         gf31e4sre4Ofq1DdZLgfcJC8Ac5lpBctqgW7gTPd2cz4Ix6OdwLd+VekbGRSVdXXTK
-         fpFLeoeBYqx3mlBVvD4quAru9/yw24j9WZCxnp95EQZq5BJAZKt73XBv1rA/N4TL60
-         6WdWxWUFYjKroQBXNemGwgj3M/YdjE3O5BoeeCYQLie9tmGjqgqoExq7exGZd60Qlf
-         nvqqbjkQHVOFLYKYNC1x+gdsyMamBqWeAJhhr792mj8y1NlelP0wkPejUVAQlETWNk
-         ppsheNEsfYhLA==
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
-Date:   Sat, 25 Apr 2020 11:36:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
+        id S1726396AbgDYTKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 25 Apr 2020 15:10:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726386AbgDYTKm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 25 Apr 2020 15:10:42 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F25F92072B;
+        Sat, 25 Apr 2020 19:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1587841842;
+        bh=qCzK81o9S1FvWHH3Re7Q5eO5cCxmRBtEqvPS2rVjoZk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=xkzm+y6yqXjR3PWNmT/aaBECsOFQOmnjcQlOIjPG1tznWghzKpNkUqqjrl06lfdqW
+         UEDyrPCUPgzuGQkozCi9qi94uq7RsYns2BFo/c0ZMwkKeEQKATlMH9uq7ak0PyY4lE
+         mCiF7QRmyHfcDdK4rJnpNS85Ybj/YWi6gQo7DKNg=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfNDz9HNxuqvyVl2LksfOfgdeceMdmfDlPtUuL8p5+1z94jh0ysXaXrk72fRFAoZruzMaSpqmLAabuLPR5TyA5ByC+iydYkYlRyRlM0C7ttuXsNFV1eGY
- LsJkH3/vDAMCBJ8Fv5m1EmuwJm5pi6PX3ch6aCVALXxDadxmW1SA5WVFFbo/LjjGLfyzePjxAWsMOl4PNiGprlcYCqN9VqdJG/IkgFFMUOKPFSSxmoHwkOXZ
- sZzwyghdVQA+TzD0DxfFTpptWzbrvMWwJvpm7/pvgomRw2+iOS5U1NDSfaULH8RDhLI1dlwk1st1XgsqGjbcInAIH34OqwchG0gW24U41PG00p7bkKnhIWB3
- MOKrYVqHcNLQ401YQFQ2uGXfxY9AGfuYHQDSz2jw2CzWCk2BF+/ApXoz+OkOJ03Ap38lV0W5JccjA42GvfgfF0FhSg5cAOtCr+Az78jHzp6Awo/u81IYG3yO
- cCtMKi9bxEuozGXV/hol1DzHh743hJQKa9h8R0WJ2VoyKmsCZGifmne5T1DQZ5bWxP+eD0DBuQGX00+YvBzXvVZKJx1hyfnPYXFers040re5rp3+Y4mMTiqP
- JNc=
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200424044311.2155917-1-vkoul@kernel.org>
+References: <20200424044311.2155917-1-vkoul@kernel.org>
+Subject: Re: [PATCH 1/2] clk: qcom: gcc: Add GPU and NPU clocks for SM8150
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>
+Date:   Sat, 25 Apr 2020 12:10:41 -0700
+Message-ID: <158784184123.117437.7321952768664025415@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/04/2020 17:11, Dmitry Osipenko wrote:
-> 24.04.2020 06:55, Sowjanya Komatineni пишет:
->> Tegra210 contains a powerful Video Input (VI) hardware controller
->> which can support up to 6 MIPI CSI camera sensors.
->>
->> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->> capture from an external camera sensor connected to CSI or from
->> built-in test pattern generator.
->>
->> Tegra210 supports built-in test pattern generator from CSI to VI.
->>
->> This patch adds a v4l2 capture driver with media interface for
->> Tegra210 built-in CSI to VI test pattern generator.
->>
->> This patch includes TPG support only and all the video pipeline
->> configuration happens through the video device node.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  drivers/staging/media/Kconfig          |    2 +
->>  drivers/staging/media/Makefile         |    1 +
->>  drivers/staging/media/tegra/Kconfig    |   12 +
->>  drivers/staging/media/tegra/Makefile   |    8 +
->>  drivers/staging/media/tegra/TODO       |   10 +
->>  drivers/staging/media/tegra/common.h   |  259 ++++++++
->>  drivers/staging/media/tegra/csi.c      |  604 +++++++++++++++++
->>  drivers/staging/media/tegra/csi.h      |  144 ++++
->>  drivers/staging/media/tegra/tegra210.c |  708 ++++++++++++++++++++
->>  drivers/staging/media/tegra/tegra210.h |  190 ++++++
->>  drivers/staging/media/tegra/vi.c       | 1127 ++++++++++++++++++++++++++++++++
->>  drivers/staging/media/tegra/vi.h       |   72 ++
->>  drivers/staging/media/tegra/video.c    |  153 +++++
->>  drivers/staging/media/tegra/video.h    |   29 +
-> 
-> The media/tegra/ sounds a bit too generic, the media/tegra-vi/ path
-> should better reflect the driver, IMO.
-> 
-> It also should be better to name the compiled kernel module as tegra-vi,
-> IMO.
-> 
+Quoting Vinod Koul (2020-04-23 21:43:10)
+> Add the GPU and NPU clocks for SM8150. They were missed in earlier
+> addition of clock driver.
+>=20
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
-The driver name and the directory should be in sync, so either tegra-video
-or tegra-vi for both. I have no preference myself, as long as they are the
-same.
+Fixes tag? That way backporters know they're missing this.
 
-This can be done as a follow-up patch.
+> ---
+>  drivers/clk/qcom/gcc-sm8150.c | 72 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> index ef98fdc51755..5c3dc34c955e 100644
+> --- a/drivers/clk/qcom/gcc-sm8150.c
+> +++ b/drivers/clk/qcom/gcc-sm8150.c
+> @@ -1617,6 +1617,40 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk =3D {
+>         },
+>  };
+> =20
+> +/* external clocks so add BRANCH_HALT_SKIP */
+> +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
+> +       .halt_check =3D BRANCH_HALT_SKIP,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x52004,
+> +               .enable_mask =3D BIT(15),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_gpu_gpll0_clk_src",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gpll0.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +/* these are external clocks so add BRANCH_HALT_SKIP */
+> +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
+> +       .halt_check =3D BRANCH_HALT_SKIP,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x52004,
+> +               .enable_mask =3D BIT(16),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_gpu_gpll0_div_clk_src",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gcc_gpu_gpll0_clk_src.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+>  static struct clk_branch gcc_gpu_iref_clk =3D {
+>         .halt_reg =3D 0x8c010,
+>         .halt_check =3D BRANCH_HALT,
+> @@ -1699,6 +1733,40 @@ static struct clk_branch gcc_npu_cfg_ahb_clk =3D {
+>         },
+>  };
+> =20
+> +/* external clocks so add BRANCH_HALT_SKIP */
+> +static struct clk_branch gcc_npu_gpll0_clk_src =3D {
+> +       .halt_check =3D BRANCH_HALT_SKIP,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x52004,
+> +               .enable_mask =3D BIT(18),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_npu_gpll0_clk_src",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gpll0.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+> +/* external clocks so add BRANCH_HALT_SKIP */
 
-Regards,
+None of these look external. The parents are all inside this driver. Why
+are we skipping the halt check?
 
-	Hans
+> +static struct clk_branch gcc_npu_gpll0_div_clk_src =3D {
+> +       .halt_check =3D BRANCH_HALT_SKIP,
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x52004,
+> +               .enable_mask =3D BIT(19),
+> +               .hw.init =3D &(struct clk_init_data){
+> +                       .name =3D "gcc_npu_gpll0_div_clk_src",
+> +                       .parent_hws =3D (const struct clk_hw *[]){
+> +                               &gcc_npu_gpll0_clk_src.clkr.hw },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+>  static struct clk_branch gcc_npu_trig_clk =3D {
+>         .halt_reg =3D 0x4d00c,
+>         .halt_check =3D BRANCH_VOTED,
