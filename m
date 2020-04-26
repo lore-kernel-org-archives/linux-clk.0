@@ -2,101 +2,256 @@ Return-Path: <SRS0=mt6U=6K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09465C55199
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 08:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E715FC54FCB
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 18:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3E5D2070A
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 08:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C837E214D8
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 18:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MliPMSo4"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="Z6/fqZft"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726132AbgDZI1n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Apr 2020 04:27:43 -0400
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:8346 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbgDZI1n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Apr 2020 04:27:43 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5ea545870000>; Sun, 26 Apr 2020 01:25:43 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 26 Apr 2020 01:27:42 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 26 Apr 2020 01:27:42 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 26 Apr
- 2020 08:27:42 +0000
-Received: from [10.2.165.152] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sun, 26 Apr
- 2020 08:27:41 +0000
-Subject: Re: [RFC PATCH v10 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <sakari.ailus@iki.fi>,
-        <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1587700513-28449-1-git-send-email-skomatineni@nvidia.com>
- <1587700513-28449-7-git-send-email-skomatineni@nvidia.com>
- <6ca93ff9-ca59-544f-767c-4355d01a5c20@gmail.com>
- <62546d1f-eca5-06be-2bc2-e45ccd53830a@xs4all.nl>
- <50fd1016-ca8b-ec5d-e5a8-f257138b152e@gmail.com>
- <658c4232-94d9-3051-8c93-bff7046cf5f2@nvidia.com>
- <03426915-25ea-69b4-bc64-f87f3046d33f@nvidia.com>
- <aabaecc4-3494-0137-7d2b-853304bfa68b@gmail.com>
- <09f20441-fec6-7496-2edc-c69db535e441@nvidia.com>
- <61799fab-858c-8b0d-ba7d-846cd041e044@gmail.com>
- <7dfca778-e402-3a6f-617c-dd8448187a13@gmail.com>
- <be48a991-3047-6ee3-8d6f-85979752d86f@nvidia.com>
- <edad2953-ff4c-7c3c-4550-a3638a714c65@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <78bc2a89-d570-34b0-87b5-78d161d11315@nvidia.com>
-Date:   Sun, 26 Apr 2020 01:27:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1726315AbgDZS7I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Apr 2020 14:59:08 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:58818 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbgDZS7H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Apr 2020 14:59:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1587927544; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=MPcskCveO2zpxatA04dSJRF87yAOrKmZ9Wd1I3xcHTU=;
+        b=Z6/fqZftGdOUEtMtcu02nGndmzyxIBgeOF9dPZBgE5ifLiRAyektZNhiEL0ueCc3Iuk9Fo
+        hXLnc6XscOR9Fbncc4E7XDFz9GllPXw7KS0Xn/IGPrD2HbdBeplzxpdR6vHzuRIWSpa3ff
+        Y+t9/96FUmUzzA+qCK1I+9CPwK4JJhY=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     od@zcrc.me,
+        =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0?= <zhouyanjie@wanyeetech.com>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mips@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/8] dt-bindings: clock: Convert ingenic,cgu.txt to YAML
+Date:   Sun, 26 Apr 2020 20:58:49 +0200
+Message-Id: <20200426185856.38826-1-paul@crapouillou.net>
 MIME-Version: 1.0
-In-Reply-To: <edad2953-ff4c-7c3c-4550-a3638a714c65@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1587889543; bh=O2FyQJa75n11NYmNXq86zgUw7lxEjvNtxEQBNjA/0lY=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=MliPMSo4xAXa8zc2m33os5Uq1L4i8Z8tS4H16pEd06ERovvXtkFvKDS8RiW10QhAv
-         uk3Qk/Ty0PShwKoMzndRJdHuiWUfycxUoQzBAIZEJeQGrH7fmV9qEPI+opfZGnAo/j
-         FASAT+jETw/phnUt+e2UV8bYXpaBqo+jczsuCb0pD0kpaDbK62pXYH66/UWXpseNv3
-         xr26SBJpbxkfwpGh2/ryi+juSUU8sIAp8l1l2TOsNKkXaAlkqJjwxZftqL2VWNo83x
-         Y/4QLpOdaS9hjMdd0Xuy8uE83WUONAlUEDAx229wjO0lPw5Caqis51nqdfol71BSVv
-         i524P9A5u03Cg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Convert the ingenic,cgu.txt doc file to ingenic,cgu.yaml.
 
-On 4/25/20 10:51 PM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 26.04.2020 07:47, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> So, probably what we have regarding structure is ok except video formats
->> I will move to Tegra210 and change defines to use Tegra210 prefix.
-> If those defines aren't reusable by T186, then you could move them all
-> to t210.c.
+The binding documentation has been updated as well. The node can have a
+child node that corresponds to the USB PHY, which happens to be present
+in the middle of the CGU registers.
 
-ok, will combine defines and soc specific programming into tegra210.c
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ .../devicetree/bindings/clock/ingenic,cgu.txt |  57 --------
+ .../bindings/clock/ingenic,cgu.yaml           | 122 ++++++++++++++++++
+ 2 files changed, 122 insertions(+), 57 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
 
-Also will then get rid of common.h with video formats moving to tegra210
+diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+deleted file mode 100644
+index 75598e655067..000000000000
+--- a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
++++ /dev/null
+@@ -1,57 +0,0 @@
+-Ingenic SoC CGU binding
+-
+-The CGU in an Ingenic SoC provides all the clocks generated on-chip. It
+-typically includes a variety of PLLs, multiplexers, dividers & gates in order
+-to provide many different clock signals derived from only 2 external source
+-clocks.
+-
+-Required properties:
+-- compatible : Should be one of:
+-  * ingenic,jz4740-cgu
+-  * ingenic,jz4725b-cgu
+-  * ingenic,jz4770-cgu
+-  * ingenic,jz4780-cgu
+-  * ingenic,x1000-cgu
+-- reg : The address & length of the CGU registers.
+-- clocks : List of phandle & clock specifiers for clocks external to the CGU.
+-  Two such external clocks should be specified - first the external crystal
+-  "ext" and second the RTC clock source "rtc".
+-- clock-names : List of name strings for the external clocks.
+-- #clock-cells: Should be 1.
+-  Clock consumers specify this argument to identify a clock. The valid values
+-  may be found in <dt-bindings/clock/<soctype>-cgu.h>.
+-
+-Example SoC include file:
+-
+-/ {
+-	cgu: jz4740-cgu {
+-		compatible = "ingenic,jz4740-cgu";
+-		reg = <0x10000000 0x100>;
+-		#clock-cells = <1>;
+-	};
+-
+-	uart0: serial@10030000 {
+-		clocks = <&cgu JZ4740_CLK_UART0>;
+-	};
+-};
+-
+-Example board file:
+-
+-/ {
+-	ext: clock@0 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <12000000>;
+-	};
+-
+-	rtc: clock@1 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <32768>;
+-	};
+-
+-	&cgu {
+-		clocks = <&ext> <&rtc>;
+-		clock-names: "ext", "rtc";
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+new file mode 100644
+index 000000000000..0281cd1d7e1b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+@@ -0,0 +1,122 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ingenic,cgu.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Ingenic SoCs CGU devicetree bindings
++
++description: |
++  The CGU in an Ingenic SoC provides all the clocks generated on-chip. It
++  typically includes a variety of PLLs, multiplexers, dividers & gates in order
++  to provide many different clock signals derived from only 2 external source
++  clocks.
++
++maintainers:
++  - Paul Cercueil <paul@crapouillou.net>
++
++select:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - ingenic,jz4740-cgu
++          - ingenic,jz4725b-cgu
++          - ingenic,jz4770-cgu
++          - ingenic,jz4780-cgu
++          - ingenic,x1000-cgu
++  required:
++    - compatible
++
++properties:
++  $nodename:
++    pattern: "^clock-controller@[0-9a-f]+$"
++
++  "#address-cells":
++    const: 1
++
++  "#size-cells":
++    const: 1
++
++  "#clock-cells":
++    const: 1
++
++  ranges: true
++
++  compatible:
++    items:
++      - enum:
++        - ingenic,jz4740-cgu
++        - ingenic,jz4725b-cgu
++        - ingenic,jz4770-cgu
++        - ingenic,jz4780-cgu
++        - ingenic,x1000-cgu
++      - const: simple-mfd
++    minItems: 1
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: External oscillator clock
++      - description: Internal 32 kHz RTC clock
++
++  clock-names:
++    items:
++      - const: ext
++      - enum:
++        - rtc
++        - osc32k # Different name, same clock
++
++  assigned-clocks:
++    minItems: 1
++    maxItems: 64
++
++  assigned-clock-parents:
++    minItems: 1
++    maxItems: 64
++
++  assigned-clock-rates:
++    minItems: 1
++    maxItems: 64
++
++required:
++  - "#clock-cells"
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++patternProperties:
++  "^usb-phy@[a-f0-9]+$":
++    allOf: [ $ref: "../usb/ingenic,jz4770-phy.yaml#" ]
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/jz4770-cgu.h>
++    cgu: clock-controller@10000000 {
++      compatible = "ingenic,jz4770-cgu", "simple-mfd";
++      reg = <0x10000000 0x100>;
++      #address-cells = <1>;
++      #size-cells = <1>;
++      ranges = <0x0 0x10000000 0x100>;
++
++      clocks = <&ext>, <&osc32k>;
++      clock-names = "ext", "osc32k";
++
++      #clock-cells = <1>;
++
++      otg_phy: usb-phy@3c {
++        compatible = "ingenic,jz4770-phy";
++        reg = <0x3c 0x10>;
++
++        clocks = <&cgu JZ4770_CLK_OTG_PHY>;
++
++        vcc-supply = <&ldo5>;
++
++        #phy-cells = <0>;
++      };
++    };
+-- 
+2.26.2
 
