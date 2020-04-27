@@ -2,199 +2,228 @@ Return-Path: <SRS0=1IxS=6L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B13C54FD0
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 08:58:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D48C54FD0
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 09:10:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 92CD22075B
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 08:58:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ThZEAUXk"
+	by mail.kernel.org (Postfix) with ESMTP id D28072064A
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 09:10:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbgD0I6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Apr 2020 04:58:55 -0400
-Received: from mail-vi1eur05on2076.outbound.protection.outlook.com ([40.107.21.76]:6159
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726183AbgD0I6y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Apr 2020 04:58:54 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i9f/fq3blev9rbCEpL2w1bNP3PjbUFV0NeHkTHd2YGB9CDQ2rLuqjhFpcT1nkRnol8dV3HqLpGPLKVAK1X3dOqo1BwyzBAVf34SqXI8O0zP8bYM+jpcaIIe6H5NlJFqNiAVGLtKddcQDFypFQTmg8aqbdSjj8wLLtBLKCwLZvBYxpx3ma3Bx631QgH/gJgBuba5ObG42Y8rHIdswfg1dLthU6SqakhzuzCQhO58zqrgvDNgvPwUNoEit9WUr5BkrnTlQp6pbSQ3oGJF9P5BWaLJWTG2P0PzD4Ox2wTkB6IrR23aPqBcql+RhtRJzHpwyq87CvFeMRFyS4SQuSNxj5g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7L+t0uo8/Q6dvV762NrAvxk+bHM+qr1Hptvt6C8Sglw=;
- b=kULDH4e7q2196XegGoo8p4WAW1rQCXzg4YxqmdtaHQrdn/H+Chitp1CZ7/9usCIusJ1qHjDLgmwd/iGAjnCHp4erLDcj975NguzrYtFj+q5g7curf4bhTY3mRNKetlCS2/aW7edMAaQbyC51tB/j2CGIrmf2gChEfCxKB0bLZKTyk2hhPA6Os1C+rQTx0Ofima3+zpTTkGjKWNddCCrpCqUPSe4sw9jAuY0ToBJ2XtjUMcz5thleftCwPNObR75uxGSkPG/KWGW1PxnyET9xEGX0RkcN2Tm7xhYTjeAbZW0qWDDc7i7hm9nmFBq/63y/MrQeZEnih2LrLEGmckoWqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7L+t0uo8/Q6dvV762NrAvxk+bHM+qr1Hptvt6C8Sglw=;
- b=ThZEAUXk/VqPDZ7A2SqqjvGzmcnSwTKQaC5I3SUVOaQBm2BpDnYzIOL21Xy5sn+jlZBAIiSTG/ihCKZGtuFO3Lz7XxpXKPrSBhksPN8vjCKFtpWWwK6r5nKszFn9DjOXGpEXRzNnl04laI4YURHI1ycsbynvbo0aRK8Pr1zM5os=
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2711.eurprd04.prod.outlook.com (2603:10a6:4:96::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13; Mon, 27 Apr
- 2020 08:58:50 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2937.020; Mon, 27 Apr 2020
- 08:58:49 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "aford173@gmail.com" <aford173@gmail.com>,
-        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
-        "agx@sigxcpu.org" <agx@sigxcpu.org>,
-        "angus@akkea.ca" <angus@akkea.ca>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        Andy Duan <fugang.duan@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH V2 06/10] clk: imx8m: migrate A53 clk root to use
- composite core
-Thread-Topic: [PATCH V2 06/10] clk: imx8m: migrate A53 clk root to use
- composite core
-Thread-Index: AQHV+FjKzuc7KbaUCkiuyqa70SF6FKiLGbaAgAHZnPA=
-Date:   Mon, 27 Apr 2020 08:58:49 +0000
-Message-ID: <DB6PR0402MB276031ADC7FB0209973655F588AF0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
-References: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
- <1584008384-11578-7-git-send-email-peng.fan@nxp.com>
- <AM6PR04MB49664159E56A48EC6C4CBCC880AE0@AM6PR04MB4966.eurprd04.prod.outlook.com>
-In-Reply-To: <AM6PR04MB49664159E56A48EC6C4CBCC880AE0@AM6PR04MB4966.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4f433613-9d8d-4aed-15e9-08d7ea8933f4
-x-ms-traffictypediagnostic: DB6PR0402MB2711:|DB6PR0402MB2711:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB6PR0402MB2711842FC7F027349FDC5DB588AF0@DB6PR0402MB2711.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0386B406AA
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(346002)(376002)(396003)(136003)(366004)(39860400002)(81156014)(8676002)(44832011)(33656002)(186003)(52536014)(110136005)(9686003)(7416002)(316002)(478600001)(54906003)(5660300002)(2906002)(8936002)(4326008)(55016002)(7696005)(6506007)(86362001)(26005)(6636002)(66556008)(64756008)(66446008)(76116006)(71200400001)(66476007)(66946007)(32563001);DIR:OUT;SFP:1101;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: TeyeVhKxajZgndDBHCjV/ZPYebI3+pfEMB3t0ic6LzdgyBMSCmtt9DDpidA4IZXvvo2kilD6hUJ5CUcozPA2dc9ohVwXArJxQ5R97mZG0jcM4beLenObCvEWXeZRLDwR7JUwm2d3s+FDxIovJR9KLrreiQi324nW5m2eknBzdudO1b1HmzGRxKuKfjrJj6A+Kfme2sa+h/5+pzxHGBQeVWPsYMAbifXAgdSCXGoLyWAHwyxcZPV2kAXVBOiooEZUj1HFXZA0POE4Sm0F7YpYUW4F7iztxUi+39nwlYQAy8W7RdqpS8AMw2sNrC2Sv9zKQBUzUZhydObCScVBdEjk3E7nQpelijtFhxm3wyp2Aba0cr+xok7DnfLuM8s79Fy9OGQ++c63oYgfTeNlbIzs6AIAGfpQ9SqbNWB1QVRHAEPTUnyjXEpgM0eieCM0vgRbhk4B3lNlqhvt7WIYUh4uxeek0MuXYFw7V84Yo5pEkYMzsYqNixv+un2Vvi6A76xy
-x-ms-exchange-antispam-messagedata: AxW7748LINQh++khNOZLxSMZP01/fZ2qCKNVZ9lsLcWmuC5srU6U8yuKZAfXA4k/AuTjcsXQktl+AKAKFEUyqyftHddSID2aJ20KWBjAi7CnpHB/by22ahleWB/5jhOw2ygp1+crLeQpereKh+EfYUKFGmt0nWpYgeYBWZCEQF1baS8LjnAkRENOguxlhXZSkQBo/ZE8MNRon2n0MmHT6j4ZAOk/SVgbazYZqpij3gXjpp21dP8j6N+d29c/NSocONp5tauusNw11iwuSUbWv0kHcBvK0Nc1oRkSv5fWJ2B5s8Qxq+BVFB8T1MV2dFJODKcmMJTelRsTM3snwcuYSXqs2iMoehGCRLbFwNbHkqxSTiz6ah5haQmIGG3hmgvtiAtg1aRG7929aOBieB9YF8PiI4hqTa04bdBYlY8/ffMdov3nkkxMC6v3/nCdPIJcOGOm7AvFVglWk6eqynPK1fLFxXNkhuIp0HSNlK4B1iQAIe5kzYDukB10prGFaEmNRUOqMJQ64Pc3kHVtrRki6ecPhmLK93PwApoPZIFJqHmwVkKaxL65wb11t0NGxpRZUkYvGEFgIbmqyHbddNzxU1bfFRf8zb38/CZn7uNiEx8NnytQ9qncmAbSNlTfYH+jkK4qXZLZX8VEYofbIkdgZ3tsRZFKlIbgkonJZQadpPS4hXOfBTiHeiea/P66ydUwpXoq3P8VHwEfeQ5CV4YNkxHAknmpM0O0H+r56sAxqhN61/HVk31TKUZDmHeyv/OF9tKVAfE14csZV4N31/Q1w9jbZrlitCCWUdOgMlPvNeY=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726485AbgD0JKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Apr 2020 05:10:42 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45141 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726183AbgD0JKm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Apr 2020 05:10:42 -0400
+Received: by mail-ot1-f66.google.com with SMTP id e20so24946276otk.12;
+        Mon, 27 Apr 2020 02:10:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qcNlgT253Q+mnyb0dmPBeKwZupVLUVCEsXLGGQlN7mU=;
+        b=l4XhQPhefh0GTIyDpEVrTyYasipwFtBtPxRNNze6HMFvhzgKUILtr5x4Pxt6g9S7xk
+         nrlESZJxyPUREGTzDaQLIEla2kvKIHDxvCC0uK2D4Nd0MivcNkRSu0xpinahms6i0VPy
+         Eqz0WfhsFoIF7hOedkK2esFVThhk6teUvbc99jmoMiILkZq3hqPVUely6hk+tFlBVsnz
+         AP48sMs2gRryUU7c3+XvO5qdKBp0mRta1ZqKtQ5qTgveYbItxF38XyfEO5xcnapDhmV5
+         1xBZlaI6IwhdllM/XAjkefXIbiq3yy0QclKQTPiwGEbdOEI5s+M/+QdtF9tsbEdxSdIJ
+         5SZw==
+X-Gm-Message-State: AGi0PuY6kedkysaYurdLYTDWR4JUxVVrmkKZPbf1M2fj5FSnUO/Ug7aP
+        jxyt6a26K8Pd6DOjjb87YcTuH+i7TYMQrY0Pyqc=
+X-Google-Smtp-Source: APiQypKw19uX7pNh+s25tQlcVi6u/qoBo4l+PDXl+dtgYprl6i34GYCNk/rsJvOcHawKKsX52BSbZ5FC/bbkN04OYi4=
+X-Received: by 2002:a9d:7990:: with SMTP id h16mr11539338otm.145.1587978640642;
+ Mon, 27 Apr 2020 02:10:40 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f433613-9d8d-4aed-15e9-08d7ea8933f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2020 08:58:49.8158
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6U+NEGZGfR09G6NWal/2gnXHB+siy1yonW9MgNb7ssRhda/heJiryjo300LYNVZUDv531ownRFY7cj79LjzH3g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2711
+References: <1587678050-23468-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1587678050-23468-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1587678050-23468-9-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 27 Apr 2020 11:10:29 +0200
+Message-ID: <CAMuHMdUmj+m8WLaSfwELD0VGYFpDaACTLgerbznBeqfVVy2nzw@mail.gmail.com>
+Subject: Re: [PATCH 08/10] clk: renesas: cpg-mssr: Add R8A7742 support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Marian-Cristian Rotariu 
+        <marian-cristian.rotariu.rb@bp.renesas.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Lad Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBTdWJqZWN0OiBSRTogW1BBVENIIFYyIDA2LzEwXSBjbGs6IGlteDhtOiBtaWdyYXRlIEE1MyBj
-bGsgcm9vdCB0byB1c2UNCj4gY29tcG9zaXRlIGNvcmUNCj4gDQo+ID4gRnJvbTogUGVuZyBGYW4g
-PHBlbmcuZmFuQG54cC5jb20+DQo+ID4gU2VudDogVGh1cnNkYXksIE1hcmNoIDEyLCAyMDIwIDY6
-MjAgUE0NCj4gPg0KPiA+IE1pZ3JhdGUgQTUzIGNsayByb290IHRvIHVzZSBjb21wb3NpdGUgY29y
-ZSBjbGsgdHlwZS4gSXQgd2lsbCBzaW1wbGlmeQ0KPiA+IGNvZGUgYW5kIG1ha2UgaXQgZWFzeSB0
-byB1c2UgY29tcG9zaXRlIHNwZWNpZmljIG11eCBvcGVyYXRpb24uDQo+ID4NCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVy
-cy9jbGsvaW14L2Nsay1pbXg4bW0uYyB8IDYgKysrLS0tICBkcml2ZXJzL2Nsay9pbXgvY2xrLWlt
-eDhtbi5jDQo+ID4gfCA2DQo+ID4gKysrLS0tICBkcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtcS5j
-IHwgNiArKystLS0NCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDkgZGVs
-ZXRpb25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4
-bW0uYw0KPiA+IGIvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW0uYyBpbmRleA0KPiA+IDU0MzUw
-NDJhMDZlMy4uMTI0NDNlMDZmMzI5IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9j
-bGstaW14OG1tLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtbS5jDQo+ID4g
-QEAgLTQxNiw5ICs0MTYsOSBAQCBzdGF0aWMgaW50IGlteDhtbV9jbG9ja3NfcHJvYmUoc3RydWN0
-DQo+ID4gcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiA+ICAJCXJldHVybiBQVFJfRVJSKGJhc2Up
-Ow0KPiA+DQo+ID4gIAkvKiBDb3JlIFNsaWNlICovDQo+ID4gLQlod3NbSU1YOE1NX0NMS19BNTNf
-U1JDXSA9IGlteF9jbGtfaHdfbXV4MigiYXJtX2E1M19zcmMiLA0KPiBiYXNlICsNCj4gPiAweDgw
-MDAsIDI0LCAzLCBpbXg4bW1fYTUzX3NlbHMsIEFSUkFZX1NJWkUoaW14OG1tX2E1M19zZWxzKSk7
-DQo+ID4gLQlod3NbSU1YOE1NX0NMS19BNTNfQ0ddID0gaW14X2Nsa19od19nYXRlMygiYXJtX2E1
-M19jZyIsDQo+ID4gImFybV9hNTNfc3JjIiwgYmFzZSArIDB4ODAwMCwgMjgpOw0KPiA+IC0JaHdz
-W0lNWDhNTV9DTEtfQTUzX0RJVl0gPSBpbXhfY2xrX2h3X2RpdmlkZXIyKCJhcm1fYTUzX2RpdiIs
-DQo+ID4gImFybV9hNTNfY2ciLCBiYXNlICsgMHg4MDAwLCAwLCAzKTsNCj4gPiArCWh3c1tJTVg4
-TU1fQ0xLX0E1M19ESVZdID0NCj4gPiBpbXg4bV9jbGtfaHdfY29tcG9zaXRlX2NvcmUoImFybV9h
-NTNfZGl2IiwgaW14OG1tX2E1M19zZWxzLCBiYXNlICsNCj4gPiAweDgwMDApOw0KPiA+ICsJaHdz
-W0lNWDhNTV9DTEtfQTUzX0NHXSA9IGh3c1tJTVg4TU1fQ0xLX0E1M19ESVZdOw0KPiA+ICsJaHdz
-W0lNWDhNTV9DTEtfQTUzX1NSQ10gPSBod3NbSU1YOE1NX0NMS19BNTNfRElWXTsNCj4gDQo+IFRo
-ZSBmb3JtZXIgcGF0Y2ggYWxyZWFkeSBicmVha3MgdGhlIGNvbXBhdGliaWxpdHkuDQo+IE5vdCBz
-dXJlIGlmIHdlIHJlYWxseSBuZWVkIGtlZXAgaXQgZm9yIG9ubHkgQTUzIGNsb2NrIGhlcmUgYXMg
-d2UgYXJlIHN0aWxsIGF0DQo+IHZlcnkgZWFybHkgZW5hYmxlbWVudCBQaGFzZSBmb3IgTVg4TVAu
-ICBTbyB3ZSBtYXkganVzdCByZW1vdmUgdGhlbQ0KPiBJTUhPLg0KDQppLk1YOE1NLCBub3QgaS5N
-WDhNUC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiBTaGF3biwgd2hhdCdzIHlvdXIgc3VnZ2VzdGlv
-bj8NCj4gDQo+IFJlZ2FyZHMNCj4gQWlzaGVuZw0KPiANCj4gPg0KPiA+ICAJaHdzW0lNWDhNTV9D
-TEtfTTRfQ09SRV0gPQ0KPiA+IGlteDhtX2Nsa19od19jb21wb3NpdGVfY29yZSgiYXJtX200X2Nv
-cmUiLCBpbXg4bW1fbTRfc2VscywgYmFzZSArDQo+ID4gMHg4MDgwKTsNCj4gPiAgCWh3c1tJTVg4
-TU1fQ0xLX1ZQVV9DT1JFXSA9DQo+ID4gaW14OG1fY2xrX2h3X2NvbXBvc2l0ZV9jb3JlKCJ2cHVf
-Y29yZSIsIGlteDhtbV92cHVfc2VscywgYmFzZSArDQo+ID4gMHg4MTAwKTsgZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvY2xrL2lteC9jbGstaW14OG1uLmMNCj4gPiBiL2RyaXZlcnMvY2xrL2lteC9jbGst
-aW14OG1uLmMgaW5kZXggNmNhYzZjYTAzZTEyLi5iZDM3NTliNGFmZDANCj4gMTAwNjQ0DQo+ID4g
-LS0tIGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg4bW4uYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xr
-L2lteC9jbGstaW14OG1uLmMNCj4gPiBAQCAtNDEzLDkgKzQxMyw5IEBAIHN0YXRpYyBpbnQgaW14
-OG1uX2Nsb2Nrc19wcm9iZShzdHJ1Y3QNCj4gPiBwbGF0Zm9ybV9kZXZpY2UNCj4gPiAqcGRldikN
-Cj4gPiAgCX0NCj4gPg0KPiA+ICAJLyogQ09SRSAqLw0KPiA+IC0JaHdzW0lNWDhNTl9DTEtfQTUz
-X1NSQ10gPSBpbXhfY2xrX2h3X211eDIoImFybV9hNTNfc3JjIiwgYmFzZQ0KPiArDQo+ID4gMHg4
-MDAwLCAyNCwgMywgaW14OG1uX2E1M19zZWxzLCBBUlJBWV9TSVpFKGlteDhtbl9hNTNfc2Vscykp
-Ow0KPiA+IC0JaHdzW0lNWDhNTl9DTEtfQTUzX0NHXSA9IGlteF9jbGtfaHdfZ2F0ZTMoImFybV9h
-NTNfY2ciLA0KPiA+ICJhcm1fYTUzX3NyYyIsIGJhc2UgKyAweDgwMDAsIDI4KTsNCj4gPiAtCWh3
-c1tJTVg4TU5fQ0xLX0E1M19ESVZdID0gaW14X2Nsa19od19kaXZpZGVyMigiYXJtX2E1M19kaXYi
-LA0KPiA+ICJhcm1fYTUzX2NnIiwgYmFzZSArIDB4ODAwMCwgMCwgMyk7DQo+ID4gKwlod3NbSU1Y
-OE1OX0NMS19BNTNfRElWXSA9DQo+ID4gaW14OG1fY2xrX2h3X2NvbXBvc2l0ZV9jb3JlKCJhcm1f
-YTUzX2RpdiIsIGlteDhtbl9hNTNfc2VscywgYmFzZSArDQo+ID4gMHg4MDAwKTsNCj4gPiArCWh3
-c1tJTVg4TU5fQ0xLX0E1M19TUkNdID0gaHdzW0lNWDhNTl9DTEtfQTUzX0RJVl07DQo+ID4gKwlo
-d3NbSU1YOE1OX0NMS19BNTNfQ0ddID0gaHdzW0lNWDhNTl9DTEtfQTUzX0RJVl07DQo+ID4NCj4g
-PiAgCWh3c1tJTVg4TU5fQ0xLX0dQVV9DT1JFXSA9DQo+ID4gaW14OG1fY2xrX2h3X2NvbXBvc2l0
-ZV9jb3JlKCJncHVfY29yZSIsIGlteDhtbl9ncHVfY29yZV9zZWxzLCBiYXNlDQo+ICsNCj4gPiAw
-eDgxODApOw0KPiA+ICAJaHdzW0lNWDhNTl9DTEtfR1BVX1NIQURFUl0gPQ0KPiA+IGlteDhtX2Ns
-a19od19jb21wb3NpdGVfY29yZSgiZ3B1X3NoYWRlciIsIGlteDhtbl9ncHVfc2hhZGVyX3NlbHMs
-DQo+IGJhc2UNCj4gPiArIDB4ODIwMCk7IGRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9pbXgvY2xr
-LWlteDhtcS5jDQo+ID4gYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtcS5jIGluZGV4IDIwMWM3
-YmJiMjAxZi4uOTEzMDlmZjY1NDQxIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9j
-bGstaW14OG1xLmMNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9pbXgvY2xrLWlteDhtcS5jDQo+ID4g
-QEAgLTQwNSw5ICs0MDUsOSBAQCBzdGF0aWMgaW50IGlteDhtcV9jbG9ja3NfcHJvYmUoc3RydWN0
-DQo+ID4gcGxhdGZvcm1fZGV2aWNlDQo+ID4gKnBkZXYpDQo+ID4gIAkJcmV0dXJuIFBUUl9FUlIo
-YmFzZSk7DQo+ID4NCj4gPiAgCS8qIENPUkUgKi8NCj4gPiAtCWh3c1tJTVg4TVFfQ0xLX0E1M19T
-UkNdID0gaW14X2Nsa19od19tdXgyKCJhcm1fYTUzX3NyYyIsIGJhc2UNCj4gKw0KPiA+IDB4ODAw
-MCwgMjQsIDMsIGlteDhtcV9hNTNfc2VscywgQVJSQVlfU0laRShpbXg4bXFfYTUzX3NlbHMpKTsN
-Cj4gPiAtCWh3c1tJTVg4TVFfQ0xLX0E1M19DR10gPSBpbXhfY2xrX2h3X2dhdGUzX2ZsYWdzKCJh
-cm1fYTUzX2NnIiwNCj4gPiAiYXJtX2E1M19zcmMiLCBiYXNlICsgMHg4MDAwLCAyOCwgQ0xLX0lT
-X0NSSVRJQ0FMKTsNCj4gPiAtCWh3c1tJTVg4TVFfQ0xLX0E1M19ESVZdID0gaW14X2Nsa19od19k
-aXZpZGVyMigiYXJtX2E1M19kaXYiLA0KPiA+ICJhcm1fYTUzX2NnIiwgYmFzZSArIDB4ODAwMCwg
-MCwgMyk7DQo+ID4gKwlod3NbSU1YOE1RX0NMS19BNTNfRElWXSA9DQo+ID4gaW14OG1fY2xrX2h3
-X2NvbXBvc2l0ZV9jb3JlKCJhcm1fYTUzX2RpdiIsIGlteDhtcV9hNTNfc2VscywgYmFzZSArDQo+
-ID4gMHg4MDAwKTsNCj4gPiArCWh3c1tJTVg4TVFfQ0xLX0E1M19DR10gPSBod3NbSU1YOE1RX0NM
-S19BNTNfRElWXTsNCj4gPiArCWh3c1tJTVg4TVFfQ0xLX0E1M19TUkNdID0gaHdzW0lNWDhNUV9D
-TEtfQTUzX0RJVl07DQo+ID4NCj4gPiAgCWh3c1tJTVg4TVFfQ0xLX000X0NPUkVdID0NCj4gPiBp
-bXg4bV9jbGtfaHdfY29tcG9zaXRlX2NvcmUoImFybV9tNF9jb3JlIiwgaW14OG1xX2FybV9tNF9z
-ZWxzLA0KPiBiYXNlDQo+ID4gKyAweDgwODApOw0KPiA+ICAJaHdzW0lNWDhNUV9DTEtfVlBVX0NP
-UkVdID0NCj4gPiBpbXg4bV9jbGtfaHdfY29tcG9zaXRlX2NvcmUoInZwdV9jb3JlIiwgaW14OG1x
-X3ZwdV9zZWxzLCBiYXNlICsNCj4gPiAweDgxMDApOw0KPiA+IC0tDQo+ID4gMi4xNi40DQoNCg==
+Hi Prabhakar,
+
+On Thu, Apr 23, 2020 at 11:41 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> Add RZ/G1H (R8A7742) Clock Pulse Generator / Module Standby and Software
+> Reset support, using the CPG/MSSR driver core and the common R-Car Gen2
+> (and RZ/G) code.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r8a7742-cpg-mssr.c
+
+> +static struct cpg_core_clk r8a7742_core_clks[] __initdata = {
+> +       /* External Clock Inputs */
+> +       DEF_INPUT("extal",      CLK_EXTAL),
+> +       DEF_INPUT("usb_extal",  CLK_USB_EXTAL),
+> +
+> +       /* Internal Core Clocks */
+> +       DEF_BASE(".main",       CLK_MAIN, CLK_TYPE_GEN2_MAIN, CLK_EXTAL),
+> +       DEF_BASE(".pll0",       CLK_PLL0, CLK_TYPE_GEN2_PLL0, CLK_MAIN),
+> +       DEF_BASE(".pll1",       CLK_PLL1, CLK_TYPE_GEN2_PLL1, CLK_MAIN),
+> +       DEF_BASE(".pll3",       CLK_PLL3, CLK_TYPE_GEN2_PLL3, CLK_MAIN),
+> +
+> +       DEF_FIXED(".pll1_div2", CLK_PLL1_DIV2, CLK_PLL1, 2, 1),
+> +
+> +       /* Core Clock Outputs */
+> +       DEF_BASE("z",    R8A7742_CLK_Z,    CLK_TYPE_GEN2_Z,     CLK_PLL0),
+> +       DEF_BASE("sdh",  R8A7742_CLK_SDH,  CLK_TYPE_GEN2_SDH,   CLK_PLL1),
+> +       DEF_BASE("sd0",  R8A7742_CLK_SD0,  CLK_TYPE_GEN2_SD0,   CLK_PLL1),
+> +       DEF_BASE("sd1",  R8A7742_CLK_SD1,  CLK_TYPE_GEN2_SD1,   CLK_PLL1),
+> +       DEF_BASE("qspi", R8A7742_CLK_QSPI, CLK_TYPE_GEN2_QSPI,  CLK_PLL1_DIV2),
+> +       DEF_BASE("rcan", R8A7742_CLK_RCAN, CLK_TYPE_GEN2_RCAN,  CLK_USB_EXTAL),
+> +
+> +       DEF_FIXED("z2",    R8A7742_CLK_Z2,      CLK_PLL1,           2, 1),
+> +       DEF_FIXED("zg",    R8A7742_CLK_ZG,      CLK_PLL1,           3, 1),
+> +       DEF_FIXED("zt",    R8A7742_CLK_ZT,      CLK_PLL1,           5, 1),
+> +       DEF_FIXED("ztr",   R8A7742_CLK_ZTR,     CLK_PLL1,           4, 1),
+> +       DEF_FIXED("ztrd2", R8A7742_CLK_ZTRD2,   CLK_PLL1,           12, 1),
+
+The ZT* clocks are not fixed-factor clocks, but use programmable
+dividers in FRQCRB.
+So either you implement them correctly, or you drop them, like we did
+for the other R-Car Gen2 and RZ/G1 SoCs (there are no users yet).
+
+> +       DEF_FIXED("zx",    R8A7742_CLK_ZX,      CLK_PLL1,           3, 1),
+> +       DEF_FIXED("zs",    R8A7742_CLK_ZS,      CLK_PLL1,           6, 1),
+> +       DEF_FIXED("hp",    R8A7742_CLK_HP,      CLK_PLL1,          12, 1),
+> +       DEF_FIXED("b",     R8A7742_CLK_B,       CLK_PLL1,          12, 1),
+> +       DEF_FIXED("lb",    R8A7742_CLK_LB,      CLK_PLL1,          24, 1),
+
+Please use CLK_TYPE_GEN2_LB, as the LB divider depends on the state of
+mode pin MD18.
+
+> +       DEF_FIXED("p",     R8A7742_CLK_P,       CLK_PLL1,          24, 1),
+> +       DEF_FIXED("cl",    R8A7742_CLK_CL,      CLK_PLL1,          48, 1),
+> +       DEF_FIXED("m2",    R8A7742_CLK_M2,      CLK_PLL1,           8, 1),
+> +       DEF_FIXED("zb3",   R8A7742_CLK_ZB3,     CLK_PLL3,           4, 1),
+> +       DEF_FIXED("zb3d2", R8A7742_CLK_ZB3D2,   CLK_PLL3,           8, 1),
+> +       DEF_FIXED("ddr",   R8A7742_CLK_DDR,     CLK_PLL3,           8, 1),
+> +       DEF_FIXED("mp",    R8A7742_CLK_MP,      CLK_PLL1_DIV2,     15, 1),
+> +       DEF_FIXED("cp",    R8A7742_CLK_CP,      CLK_EXTAL,          2, 1),
+> +       DEF_FIXED("r",     R8A7742_CLK_R,       CLK_PLL1,       49152, 1),
+> +       DEF_FIXED("osc",   R8A7742_CLK_OSC,     CLK_PLL1,       12288, 1),
+> +
+> +       DEF_DIV6P1("sd2",  R8A7742_CLK_SD2,     CLK_PLL1_DIV2,  0x078),
+> +       DEF_DIV6P1("sd3",  R8A7742_CLK_SD3,     CLK_PLL1_DIV2,  0x26c),
+> +       DEF_DIV6P1("mmc0", R8A7742_CLK_MMC0,    CLK_PLL1_DIV2,  0x240),
+> +       DEF_DIV6P1("mmc1", R8A7742_CLK_MMC1,    CLK_PLL1_DIV2,  0x244),
+> +};
+> +
+> +static const struct mssr_mod_clk r8a7742_mod_clks[] __initconst = {
+> +       DEF_MOD("msiof0",                  0,   R8A7742_CLK_MP),
+> +       DEF_MOD("vcp1",                  100,   R8A7742_CLK_ZS),
+> +       DEF_MOD("vcp0",                  101,   R8A7742_CLK_ZS),
+> +       DEF_MOD("vpc1",                  102,   R8A7742_CLK_ZS),
+> +       DEF_MOD("vpc0",                  103,   R8A7742_CLK_ZS),
+> +       DEF_MOD("tmu1",                  111,   R8A7742_CLK_P),
+> +       DEF_MOD("3dg",                   112,   R8A7742_CLK_ZG),
+> +       DEF_MOD("2d-dmac",               115,   R8A7742_CLK_ZS),
+> +       DEF_MOD("fdp1-2",                117,   R8A7742_CLK_ZS),
+> +       DEF_MOD("fdp1-1",                118,   R8A7742_CLK_ZS),
+> +       DEF_MOD("fdp1-0",                119,   R8A7742_CLK_ZS),
+> +       DEF_MOD("tmu3",                  121,   R8A7742_CLK_P),
+> +       DEF_MOD("tmu2",                  122,   R8A7742_CLK_P),
+> +       DEF_MOD("cmt0",                  124,   R8A7742_CLK_R),
+> +       DEF_MOD("tmu0",                  125,   R8A7742_CLK_CP),
+> +       DEF_MOD("vsp1du1",               127,   R8A7742_CLK_ZS),
+> +       DEF_MOD("vsp1du0",               128,   R8A7742_CLK_ZS),
+> +       DEF_MOD("vsp1-sy",               131,   R8A7742_CLK_ZS),
+> +       DEF_MOD("scifa2",                202,   R8A7742_CLK_MP),
+> +       DEF_MOD("scifa1",                203,   R8A7742_CLK_MP),
+> +       DEF_MOD("scifa0",                204,   R8A7742_CLK_MP),
+> +       DEF_MOD("msiof2",                205,   R8A7742_CLK_MP),
+> +       DEF_MOD("scifb0",                206,   R8A7742_CLK_MP),
+> +       DEF_MOD("scifb1",                207,   R8A7742_CLK_MP),
+> +       DEF_MOD("msiof1",                208,   R8A7742_CLK_MP),
+> +       DEF_MOD("msiof3",                215,   R8A7742_CLK_MP),
+> +       DEF_MOD("scifb2",                216,   R8A7742_CLK_MP),
+> +       DEF_MOD("sys-dmac1",             218,   R8A7742_CLK_ZS),
+> +       DEF_MOD("sys-dmac0",             219,   R8A7742_CLK_ZS),
+> +       DEF_MOD("iic2",                  300,   R8A7742_CLK_CP),
+
+Parent should be R8A7742_CLK_HP.
+
+> +       DEF_MOD("tpu0",                  304,   R8A7742_CLK_CP),
+> +       DEF_MOD("mmcif1",                305,   R8A7742_CLK_MMC1),
+> +       DEF_MOD("scif2",                 310,   R8A7742_CLK_CP),
+
+Parent should be R8A7742_CLK_P.
+
+> +       DEF_MOD("sdhi3",                 311,   R8A7742_CLK_SD3),
+> +       DEF_MOD("sdhi2",                 312,   R8A7742_CLK_SD2),
+> +       DEF_MOD("sdhi1",                 313,   R8A7742_CLK_SD2),
+
+Parent should be R8A7742_CLK_SD1.
+
+> +static int __init r8a7742_cpg_mssr_init(struct device *dev)
+> +{
+> +       const struct rcar_gen2_cpg_pll_config *cpg_pll_config;
+> +       struct device_node *np = dev->of_node;
+> +       unsigned int i;
+> +       u32 cpg_mode;
+> +       int error;
+> +
+> +       error = rcar_rst_read_mode_pins(&cpg_mode);
+> +       if (error)
+> +               return error;
+> +
+> +       cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
+> +
+> +       if (of_device_is_compatible(np, "renesas,r8a7742-cpg-mssr")) {
+> +               /* RZ/G1H uses a 1/3 divider for ZG */
+> +               for (i = 0; i < ARRAY_SIZE(r8a7742_core_clks); i++)
+> +                       if (r8a7742_core_clks[i].id == R8A7742_CLK_ZG) {
+> +                               r8a7742_core_clks[i].div = 3;
+> +                               break;
+> +                       }
+> +       }
+
+Do you really need this part? (copied from r8a7743-cpg-mssr.c ;-)
+If you remove it, r8a7742_core_clks[] can be const, and <linux/of.h> is
+no longer needed,
+
+> +       return rcar_gen2_cpg_init(cpg_pll_config, 2, cpg_mode);
+> +}
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
