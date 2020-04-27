@@ -2,66 +2,67 @@ Return-Path: <SRS0=1IxS=6L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD908C55199
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 10:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70851C5519B
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B5CB0206D6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 10:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EB0C206CD
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 10:31:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hgm0O5D0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tvtrT3kr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbgD0KWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Apr 2020 06:22:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52064 "EHLO
+        id S1726991AbgD0KbW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Apr 2020 06:31:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726507AbgD0KWo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Apr 2020 06:22:44 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AFDC03C1A6
-        for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2020 03:22:44 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id x2so5094633pfx.7
-        for <linux-clk@vger.kernel.org>; Mon, 27 Apr 2020 03:22:44 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1726537AbgD0KbW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Apr 2020 06:31:22 -0400
+Received: from mail-ot1-x344.google.com (mail-ot1-x344.google.com [IPv6:2607:f8b0:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46847C0610D5;
+        Mon, 27 Apr 2020 03:31:22 -0700 (PDT)
+Received: by mail-ot1-x344.google.com with SMTP id c3so25250386otp.8;
+        Mon, 27 Apr 2020 03:31:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1CyxLaZcj63tQcR7tpc4uGoE1KDGBKikBpluCv751iQ=;
-        b=Hgm0O5D0lCarAkzn4DV0qMdx7tM3kC1QJVrjbaAa/X38bcsMUwXZDOePZRakepLaEi
-         ya2IRGM2AuFx6/UTyzBLHVx9q79FtdJq/l/m3VSUHXUvl5AGOsXg02/t+JpagqTKBY+l
-         obX+tcG3SyQnpGzNDAdirBSQEglqgR6wCxsUrwAQQzjt2Bu+XzZsIEHvDpjMra1GLSlQ
-         MSEf4ffKitmCDwnSIVAkqJSZNUB/aQfo6Ui2zLT0F5Ryz8LEqvNYgvQGnyKwe77+XYoS
-         Vxb+SytqcBGuoccm99VXH3I6Ke6RBkkw2FA3eFkxWF4W/BvMnNrec62dGeUBH+npxyEk
-         XcPA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3d7vs20E1Et9twZMWtdoqd2YRjkdvKBGwACExL5kyRg=;
+        b=tvtrT3kris+dM2Fd6C2U6qTO23oFqBPH6nLTx0ZEhnnfleDuIP/+oa2CScVy19rpkk
+         COfloMiCX95ftcXhVLOPW9KP7+/PaNrE5zONJMcZOrxURYrILEre8ttKPbOuS9tNpbc+
+         LQyyBkxNObiImX/P5y/ncL6LJQndQzzc6Jy+qhTjr9Nw6vZAm/8Q2PpozO/2q7mhIQjP
+         r8TjF1g2Kr1eXk4Xa8TSMGOR2HVZBkAYtqRAzb+771Tp+yqOfrydKCWcUx6jcrSjXd0d
+         O2ekoMICDb+M+9eC8HjlW8bLQL5QPtmmvnkdbcSe0V5vhWaWzrOcN9XgUbUpCCVKD8Nd
+         4kyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1CyxLaZcj63tQcR7tpc4uGoE1KDGBKikBpluCv751iQ=;
-        b=pYI28Iu0SFClCEeigKgkUZem6wyaUu1NC7hY2l5LA0q5w7YajD65HWJBCZen0WHbA8
-         KoR4ij9xfEQzC5Zhs92XerzzqmegzLF6pkp4QiZAIc01hoYX3wo+PXBVK0OAJ4nPL3eT
-         bt5eMWf5+iygebYWE3z6fgIqdcvXs8eYESdd4NpuA1etUtCye+nxRNMmxtQvgRmM9lEO
-         LLBQ7JmFEoZLM7AxGLW4uHtqgw7yDzhakiBQsmmumsNNl1iduV/JI+4l5mmJPlXVoEVD
-         Wk+meagjdql56TsEUl96I32K+ZupOy+LtDZPSqSxD23VqrHeGIkGdoXMnwwH8NCeefLF
-         2ZRg==
-X-Gm-Message-State: AGi0PuY0xM7go1uscTvhQMj4cjBq3AhQBLLX9sPh6WqRinrp+txONXVT
-        +p65c3wC8T//nZanPw002t+Qig==
-X-Google-Smtp-Source: APiQypK3z4yQqpVlHsZhnbToQmUFhKubYEh51/9LQwynKZdCC2YUpDM70yeaRzHItaf4MzlKveltLA==
-X-Received: by 2002:a62:fc82:: with SMTP id e124mr23801311pfh.126.1587982963367;
-        Mon, 27 Apr 2020 03:22:43 -0700 (PDT)
-Received: from localhost ([122.171.118.46])
-        by smtp.gmail.com with ESMTPSA id h31sm11276301pjb.33.2020.04.27.03.22.42
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 27 Apr 2020 03:22:42 -0700 (PDT)
-Date:   Mon, 27 Apr 2020 15:52:40 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3d7vs20E1Et9twZMWtdoqd2YRjkdvKBGwACExL5kyRg=;
+        b=bejcDyz1aMlUPfSlZkCOAbvetcWvg+aD+3DK9dS97ntfaWiS8Bix9bHLkj/AmAN8/W
+         eyc1OqyEtykUgD7KUbY5b01OmQ8MGe8pbleWQDEegryrl03jIrQyML9uZlvotFKG9UEL
+         HsE7gbBl3qHuCKHDdTlmek290NjvHT69fRHcyTIH/C8/cykMrU0y8PdCzlx4xTfvHMJZ
+         ehG3PLxPvIQS95N87UyGj8PBzPoT2o9GcOZG8mIftlt6B6BkYD5mc8msMhewtoIvr+TY
+         lugYCODjhb+52MCn0cuPsZhT5BckllM7Uwiuyh4FbG9Udd7bsBMkZY242lf5szejfqrs
+         SS7w==
+X-Gm-Message-State: AGi0PuaafEg7jv8V8546/sfGgjguGrdkg3bcWqxVlNiIBzcrXkTFkJWR
+        13/hR4O4gGmDTfBSU3jYPw9Nw/V1214WZN0PsPg=
+X-Google-Smtp-Source: APiQypLDnWLyGAgDCNv98J886odnQ8mX26B9JoocB96gAjQ4sJvW7pv565vVlbaHXsTMdz90L4H275X8XO7T/WINWDQ=
+X-Received: by 2002:aca:b783:: with SMTP id h125mr3069784oif.62.1587983481703;
+ Mon, 27 Apr 2020 03:31:21 -0700 (PDT)
+MIME-Version: 1.0
+References: <1587678050-23468-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdXwsUAaeY+b6t-nqPE8kL-p+F4HqXE2mujP0eXPjrbooQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdXwsUAaeY+b6t-nqPE8kL-p+F4HqXE2mujP0eXPjrbooQ@mail.gmail.com>
+From:   "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date:   Mon, 27 Apr 2020 11:30:55 +0100
+Message-ID: <CA+V-a8sH4sLN1XuRM+SgbbN5O38wrtMyk5QEXEPhV5tOkbchJw@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Add RZ/G1H support.
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -77,53 +78,77 @@ Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux PM list <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 10/10] cpufreq: dt: Add support for r8a7742
-Message-ID: <20200427102240.jsskbskczvctvcwv@vireshk-i7>
-References: <1587678050-23468-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1587678050-23468-11-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdV6J-_gBkzhUXtA8OrxhJVzyrAqjA8oeGJGBp86X-C3Nw@mail.gmail.com>
- <20200427092408.g2vpc6j2c6it4x2i@vireshk-i7>
- <CA+V-a8vwF=u53dZ_U4vX3oAUHrBh5uVUBeOTiDqTZJfV8UUeCA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+V-a8vwF=u53dZ_U4vX3oAUHrBh5uVUBeOTiDqTZJfV8UUeCA@mail.gmail.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27-04-20, 11:20, Lad, Prabhakar wrote:
-> Hi Viresh,
-> 
-> On Mon, Apr 27, 2020 at 10:24 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> >
-> > On 27-04-20, 11:22, Geert Uytterhoeven wrote:
-> > > Hi Prabhakar,
-> > >
-> > > This patch should be merged through Viresh's cpufreq tree (CCed).
-> > >
-> > > On Thu, Apr 23, 2020 at 11:41 PM Lad Prabhakar
-> > > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > > Add the compatible strings for supporting the generic cpufreq driver on
-> > > > the Renesas RZ/G1H (R8A7742) SoC.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > Reviewed-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> > >
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Prabhakar,
-> >
-> > Please resend the patch with all dependencies to me so I can apply it.
-> >
-> This is the only patch which is needed for R8A7742 SoC which needs to
-> be applied for drivers/cpufreq. Shall I still repost it or you are
-> happy to pick this one up ?
+Hi Geert,
 
-would be easier for me if you repost it. I don't have it in my
-mailbox.
+On Mon, Apr 27, 2020 at 10:28 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Apr 23, 2020 at 11:41 PM Lad Prabhakar
+> <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> > This patch series aims to add support for Renesas RZ/G1H (r8a7742) SoC.
+> >
+> > RZ/G1H SoC is similar to R-Car Gen2 H2 SoC.
+> >
+> > This patch set is based on renesas-drivers/master-v5.7-rc1.
+>
+> Thanks for your series!
+>
+> Looks mostly OK to me.
+Thank you for the review. After fixing patch 8/10 shall I just post a
+v2 with a single patch or the entire series ?
 
--- 
-viresh
+> The missing code part seems to be the introduction of the main
+> CONFIG_ARCH_R8A7742 symbol?
+>
+I was planning to post them once these patches were reviewed, just
+didn't wanted to flood with too many patches.
+
+for enabling r8a7742 SoC in multi_v7_defconfig should this be only
+sent out wen its accepted in shmobile_defconfig or can it be part of
+same series as below ?
+
+05ba50a4cf99 ARM: multi_v7_defconfig: Enable r8a7742 SoC
+99b69d08729a ARM: shmobile: defconfig: Enable r8a7742 SoC
+6b7bcd6635c7 ARM: debug-ll: Add support for r8a7742
+1cf4e52e3a0e soc: renesas: Add Renesas R8A7742 config option
+
+> I assume you plan to submit the DTS for v5.8, too, so I'll have to be
+> careful and apply the binding definitions to a separate shared branch?
+>
+Yes I do plan to submit the DTS changes for v5.8.
+
+Cheers,
+--Prabhakar
+
+> Thanks again!
+>
+> > Lad Prabhakar (10):
+> >   dt-bindings: power: rcar-sysc: Document r8a7742 SYSC binding
+> >   dt-bindings: power: rcar-sysc: Add r8a7742 power domain index macros
+> >   soc: renesas: rcar-sysc: add R8A7742 support
+> >   dt-bindings: reset: rcar-rst: Document r8a7742 reset module
+> >   soc: renesas: rcar-rst: Add support for RZ/G1H
+> >   dt-bindings: clock: renesas: cpg-mssr: Document r8a7742 binding
+> >   clk: renesas: Add r8a7742 CPG Core Clock Definitions
+> >   clk: renesas: cpg-mssr: Add R8A7742 support
+> >   ARM: shmobile: r8a7742: Basic SoC support
+> >   cpufreq: dt: Add support for r8a7742
+>
+> Gr{oetje,eeting}s,
+>
+>                         Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
