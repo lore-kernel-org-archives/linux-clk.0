@@ -2,143 +2,175 @@ Return-Path: <SRS0=1IxS=6L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 799E8C54FD0
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 15:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EACF1C4CECC
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 19:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 540C1206B6
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 15:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588002221;
-	bh=w1azKjWdrnZjgbv7B4X2uNjhbZ3vn8MbYNztK+jcxrY=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=cSXi5uNz6z6AVFVKmR2pFdzIKnmiH3l9ZKxzeTW0PQvqhMv+9aCm4Z6HGB5FZDOYC
-	 kAfnB7Zb18g+TgPYxVnLgn+uYY1eoyAVwwq/i1Wj8vKbMzEUnWfZdgnDNtqyTJripF
-	 kJ0NYgj/WuN3XA4XhIvQqW1dc9YuUvXRS1ytXDu4=
+	by mail.kernel.org (Postfix) with ESMTP id C7591205C9
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 19:34:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LFHogvnJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbgD0Pnl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Apr 2020 11:43:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51314 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726539AbgD0Pnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Apr 2020 11:43:40 -0400
-Received: from [192.168.1.30] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23DF720656;
-        Mon, 27 Apr 2020 15:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588002219;
-        bh=w1azKjWdrnZjgbv7B4X2uNjhbZ3vn8MbYNztK+jcxrY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=wusn4jm4VJuXs9dMAqHmy04sX89KZFH7THfQdVKLxE/Ymc9REmPdgLaaU7WSl9I1v
-         DVWK+V8UJJJBSnXTmPYi6w57jbM08G+goe7jfA+jVsWfEvKbbpxWFaMEsbfZScZ79V
-         POC+rBRzhyh3+jO3BzqimC/d5EvHCF/gxB+9cRFM=
-Subject: Re: [PATCHv7 0/5] clk: agilex: add clock driver
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-References: <20200415164642.29382-1-dinguyen@kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- xsFNBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
- Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
- yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
- c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
- smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
- K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
- yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
- LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
- 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
- 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABzSFEaW5oIE5ndXll
- biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz7CwXgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
- CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
- AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
- twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
- cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
- NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
- n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
- yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
- Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
- m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
- ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
- zsFNBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
- 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
- cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
- xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
- 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
- UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
- 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
- rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
- eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
- prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABwsFfBBgBAgAJBQJR
- J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
- 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
- d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
- K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
- oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
- 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
- 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
- cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
- Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
- JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <5ec389fa-c0ff-93a5-e3f4-a42090b6f2e3@kernel.org>
-Date:   Mon, 27 Apr 2020 10:43:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-MIME-Version: 1.0
-In-Reply-To: <20200415164642.29382-1-dinguyen@kernel.org>
-Content-Type: text/plain; charset=utf-8
+        id S1726230AbgD0Teu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Apr 2020 15:34:50 -0400
+Received: from mail-vi1eur05on2072.outbound.protection.outlook.com ([40.107.21.72]:6142
+        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725919AbgD0Teu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Apr 2020 15:34:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BU1nEK67KZ5tZQdXxRMotayBYZnq8vknaAi/uuc7IYt0UFYxL3jQnPtWGvRZAb7yVD7DZDjvKq2W834YsBM2IIZfOAdm3SUz4zIGIqkdFr6IJocWgNVBSYQu7Kw/dlKtn6mmvpsj/l3mLt5cw+1sp/CmiTkt4PM3qywuXDsZK8m7L2I2O6LHQPrX1bjZRzGMqiykZFxeEDZXCymYCGi1OltRDfKBnq7O+TSYIH+c1GslniZ6w6iwf7nmoq8AaIIjiE9wCjn9EtNL7QLrWzxZXpHk8NluS+9uSDppg1ZHSNHqzgDx/ibiK75anxFs6RoOhtw9NgnQ9lEklNvy034PPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CsN9jWbg9loNUXAl0n7rm1Zbyfjlc/gT6Qt+xSzi2c4=;
+ b=VXIY/49uBNLo1EqA4OmW+7ikcONuIHt/VjF8LcNK8+MEq5UB3dchXlC/ejCmorJKt9+cdEjNjDTVT7VTQwCTUYunffiPIu85CnHmdpiyG4+xupoXh5NBM3+GjKk+VYmN6b4l8sZZyG2mneyFmKrsEaxAASeT2uhCQlwk09laP7h7xjOBF1BJy3AXg9Uj+kx1O1Aex6UVI8ewr9hi4APiesC+BoSDqN8LXlmfs5IuJC+uXIfIYKaUmAbjsyyIyLh9PKvK0O0BWCDC/rmc94AJ1pFjsJjkzbMtqtoypULxxseSNqBytYskKlvB38xNCYrpLklyGXQtkJ+dH96uaccLIg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CsN9jWbg9loNUXAl0n7rm1Zbyfjlc/gT6Qt+xSzi2c4=;
+ b=LFHogvnJJcy3oc+HDGlRtB21iEyxuGwdC08h/3wp/J5Lqo4vaGD55uRKd8Yrz3oCohVcKPf2QgP6XqlTzkgiWo4OVEDrTgBphoC9bex1p2GCl3heCAEP/xQuLn7wCqVQkkn/2FIAFk8DfsMG2BjSLyVysRdzrdje3EJXvQqf0lI=
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com (2603:10a6:803:12e::23)
+ by VI1PR04MB4238.eurprd04.prod.outlook.com (2603:10a6:803:4e::31) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2937.13; Mon, 27 Apr
+ 2020 19:34:41 +0000
+Received: from VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::8de5:8c61:6e4d:9fe9]) by VI1PR04MB6941.eurprd04.prod.outlook.com
+ ([fe80::8de5:8c61:6e4d:9fe9%9]) with mapi id 15.20.2937.020; Mon, 27 Apr 2020
+ 19:34:41 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>, Anson Huang <anson.huang@nxp.com>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "aford173@gmail.com" <aford173@gmail.com>,
+        Jacky Bai <ping.bai@nxp.com>, Jun Li <jun.li@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "agx@sigxcpu.org" <agx@sigxcpu.org>,
+        "angus@akkea.ca" <angus@akkea.ca>,
+        "heiko@sntech.de" <heiko@sntech.de>,
+        Andy Duan <fugang.duan@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH V2 07/10] clk: imx: add mux ops for i.MX8M composite clk
+Thread-Topic: [PATCH V2 07/10] clk: imx: add mux ops for i.MX8M composite clk
+Thread-Index: AQHV+FjQMBLZK1sUBkmPtGWbyCJKZA==
+Date:   Mon, 27 Apr 2020 19:34:41 +0000
+Message-ID: <VI1PR04MB694162B89953B58266395091EEAF0@VI1PR04MB6941.eurprd04.prod.outlook.com>
+References: <1584008384-11578-1-git-send-email-peng.fan@nxp.com>
+ <1584008384-11578-8-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB69418E9348D5765B4AE01D18EED00@VI1PR04MB6941.eurprd04.prod.outlook.com>
+ <DB6PR0402MB2760726D128E4BA868F03D9488AF0@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [95.76.3.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1ad6f389-9b18-4beb-3a3f-08d7eae2082b
+x-ms-traffictypediagnostic: VI1PR04MB4238:|VI1PR04MB4238:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB4238EC55FF1DB6A9C18E7D1EEEAF0@VI1PR04MB4238.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0386B406AA
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI1PR04MB6941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(346002)(136003)(366004)(376002)(39860400002)(396003)(66446008)(478600001)(91956017)(66556008)(9686003)(7696005)(7416002)(66476007)(5660300002)(55016002)(44832011)(71200400001)(54906003)(66946007)(76116006)(110136005)(64756008)(86362001)(6636002)(4326008)(8936002)(2906002)(81156014)(33656002)(6506007)(8676002)(186003)(26005)(52536014)(53546011)(316002);DIR:OUT;SFP:1101;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: MRYl+TyJCFLYEz6gHzgIhZCWTZbAbv1ngsrwzpntyq9QgZkl7vQK+2lBksr/0xn+qOkJOC9Wj5pi5kjn+3MrrGZj3rtOvPun4brCSS/UmlZEf4u3Ba+eV4WiL/gt5o/iaOqZoBigTlhJcI6/E4AYGokzkhefb2MQ9jBpACBxYlgZURMgHY6j2KSliJEhvdfOqW+N4vB6enpSbIBnmNq+9TJMIiFlnrrwCUc0DIa8jzLd68NWqZrMIw8ywd3JWgc5H+JTMIluJnW4XzHBMUM3zg1eLqBJUkTgms8r/jVpQNxviLskzX7irHiwoxC39vV9Xvz7ggyp/IxB92KGDRE7hyVGt4D077TsSd7rMJUNYSsziMXZev9rO2O/Bp81St4DW+GGE2JQ+Ybc2VfNbC/mo5RV4pGbkWroMu1P35MGIOAO0oOFLK23YQ0PIcO4J9S7
+x-ms-exchange-antispam-messagedata: cEjHh3TRX4Bc/dCqXvNOgTsocunGZld5e3RkNe4BmdE3BT3YFqORRBFr/lBjyNP1OaJbKk6fACMmwqbyR3wOfnWVk5WkUKvtqucmRswZKGct7YGcSeVkp2VmgPWIKH+BpmFxi1OuO9q7wmWHsoLLMWC3qNRuBm7OdTHbw7WCcixRzZlJNgd0rJDnnwzohh2FCOjOINAt1wKYPj8pl8n+Wy85SPdQVRpiwGuKZRD+h9F5ZbOZgwQ+X2qOK7iaMr0cazrkcurT3e81BevtDrkDlIuNdbfM0EVfdbzThdYVDdxfFXdu7mS3ipe17HJaHspAWB89TzkSxOsS7hbcC5U33hc1WKj9Nm2nroDJB8lXQWXBJRrIDrmljRgq4KlBDKNDhUg2KJKxXhyxOZiUlssPq8RNlHyq9nKoFKOeQYMxuVpACB9eJg5y0oGgo2/hwyC2Ji3+ki8+k9YpkpbduJbkrrxBabHQ1SScEaB1GlQDx5yGg5xzD2whWyHDooZUH5dLyum5j2Jcr1Wb5Vz25kV3U1z0UqMFEvdl79rffrTv5IKMpsme1ueNpblnJi9zttu+4ewTFbk4DmvRJpwqr2TZ87lZszOyakw0SsVtfzr2ZOGUdmwlwhF0wnb7SWsZyU1jILYrE4EC7oQ++u5DuMR5k1tQ9BgaVryE+rz5f/MfpIgR09CTjY2IbXeR8QOnz/W9rU/zoT32BnK25NmWkI2LKdFxwD4RAG8VEPBCsPXYTuuRmelNzzqGGxVuIxo1JQGaoEkWc+rNKYOKgEHnwrZ6/9NiDfULvyNv2SQGix9BvjE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ad6f389-9b18-4beb-3a3f-08d7eae2082b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Apr 2020 19:34:41.4862
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l9TX6lmYzP/+JWZwwslIA0IsPjEtnK3LWUVLyrbSHdEbmIWEO4wHMHrgYdy+nOGD6nabxRpenvc8lxJkNMPBGQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4238
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-Was wondering if you have any comments on this series?
-
-On 4/15/20 11:46 AM, Dinh Nguyen wrote:
-> Hi,
-> 
-> This is version 7 of the patchset to add a clock driver to the Agilex
-> platform.
-> 
-> The change from v6 is to correct the dt-bindings document to include the
-> license header to be "(GPL-2.0-only OR BSD-2-Clause)".
-> 
-> Thanks,
-> 
-> Dinh Nguyen (5):
->   clk: socfpga: stratix10: use new parent data scheme
->   clk: socfpga: remove clk_ops enable/disable methods
->   clk: socfpga: add const to _ops data structures
->   dt-bindings: documentation: add clock bindings information for Agilex
->   clk: socfpga: agilex: add clock driver for the Agilex platform
-> 
->  .../bindings/clock/intel,agilex.yaml          |  46 ++
->  drivers/clk/Makefile                          |   3 +-
->  drivers/clk/socfpga/Makefile                  |   2 +
->  drivers/clk/socfpga/clk-agilex.c              | 454 ++++++++++++++++++
->  drivers/clk/socfpga/clk-gate-s10.c            |   5 +-
->  drivers/clk/socfpga/clk-periph-s10.c          |  10 +-
->  drivers/clk/socfpga/clk-pll-a10.c             |   4 +-
->  drivers/clk/socfpga/clk-pll-s10.c             |  78 ++-
->  drivers/clk/socfpga/clk-pll.c                 |   4 +-
->  drivers/clk/socfpga/clk-s10.c                 | 160 ++++--
->  drivers/clk/socfpga/stratix10-clk.h           |  10 +-
->  include/dt-bindings/clock/agilex-clock.h      |  70 +++
->  12 files changed, 794 insertions(+), 52 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
->  create mode 100644 drivers/clk/socfpga/clk-agilex.c
->  create mode 100644 include/dt-bindings/clock/agilex-clock.h
-> 
-
-Thanks,
-Dinh
+On 2020-04-27 12:15 PM, Peng Fan wrote:=0A=
+>> Subject: Re: [PATCH V2 07/10] clk: imx: add mux ops for i.MX8M composite=
+=0A=
+>> clk=0A=
+>>=0A=
+>> On 2020-03-12 12:27 PM, Peng Fan wrote:=0A=
+>>> From: Peng Fan <peng.fan@nxp.com>=0A=
+>>>=0A=
+>>> The CORE/BUS root slice has following design, simplied graph:=0A=
+>>> The difference is core not have pre_div block.=0A=
+>>> A composite core/bus clk has 8 inputs for mux to select, saying clk[0-7=
+].=0A=
+>>>=0A=
+>>>               SEL_A  GA=0A=
+>>>               +--+  +-+=0A=
+>>>               |  +->+ +------+=0A=
+>>> CLK[0-7]--->+  |  +-+      |=0A=
+>>>          |    |  |      +----v---+    +----+=0A=
+>>>          |    +--+      |pre_diva+---->    |  +---------+=0A=
+>>>          |              +--------+    |mux +--+post_div |=0A=
+>>>          |    +--+      |pre_divb+--->+    |  +---------+=0A=
+>>>          |    |  |      +----^---+    +----+=0A=
+>>>          +--->+  |  +-+      |=0A=
+>>>               |  +->+ +------+=0A=
+>>>               +--+  +-+=0A=
+>>>               SEL_B  GB=0A=
+>>>=0A=
+>>> There will be system hang, when doing the following steps:=0A=
+>>> 1. switch mux from clk0 to clk1=0A=
+>>> 2. gate off clk0=0A=
+>>> 3. swtich from clk1 to clk2, or gate off clk1=0A=
+>>>=0A=
+>>> Step 3 triggers system hang.=0A=
+>>>=0A=
+>>> If we skip step2, keep clk0 on, step 3 will not trigger system hang.=0A=
+>>> However we have CLK_OPS_PARENT_ENABLE flag, which will unprepare=0A=
+>>> disable the clk0 which will not be used.=0A=
+>>=0A=
+>> As far as I understand when switching from clk1 to clk2 this is done by=
+=0A=
+>> temporarily switching the rightmost SELECT mux to whatever was in the=0A=
+>> spare SEL, which is essentially arbitrary from linux POV.=0A=
+> =0A=
+> No. The fixes in this patches has been confirmed by IC design owner=0A=
+> =0A=
+>>=0A=
+>> This is quite unexpected but in theory it might be desirable to use a th=
+ird=0A=
+>> parent as a fallback.=0A=
+> =0A=
+> No. this will make things complicated. To CCM SEL_A and SEL_B,=0A=
+> it is controlled by a hardware counter. Saying you write n times to=0A=
+> the target interface.=0A=
+> =0A=
+> The mux will use n % 2 to choose SEL_A or SEL_B. write twice=0A=
+> to make sure SEL_A and SEL_B has the same value.=0A=
+=0A=
+What if SEL_A and SEL_B have different values on boot? The first time =0A=
+linux does set_parent it will switch to the other SEL_X which might be off.=
+=0A=
