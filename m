@@ -2,125 +2,194 @@ Return-Path: <SRS0=1IxS=6L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE96C54FD0
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 11:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E15C54FCB
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 14:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B76C9206BF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 11:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2C7B206CD
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 14:31:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726795AbgD0LS6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Apr 2020 07:18:58 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42155 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbgD0LS5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Apr 2020 07:18:57 -0400
-Received: by mail-ot1-f67.google.com with SMTP id m18so25419462otq.9;
-        Mon, 27 Apr 2020 04:18:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CXoIxJ0w84+gaX7lsp/3b8bY8viRFcnPlJWfzHbiZf8=;
-        b=mteN7XTr4EBwrrONWMEYcxD6AFays0+0pgkurGjIlgteLqhhLOTNLP6D2Su5PGIbcZ
-         +UNkqmQiEUPV0KbZ117LEMUf1cP25ORvMgtlnOvdzXRhKsyAaMuF6Nx2qF7Kz4XRH2jy
-         4vWV8F8bnH8bhRzUVfPSz24l72c/vng3qNA8eL4bTTnRmuAJ4/TTCF8PSm/urj727vb5
-         kmEk9wdiy+vOcdanyCO4hl7xcTvzIAGkjiSuSfYRvBwfdkxowgh5LDypVQB1d3T/m+M0
-         49+9vIIknViMRuwJWoPgHPN613DCQxo8i3DIbKTieiwmWFep1Iizipq1n6nINQe+aJf2
-         sE5w==
-X-Gm-Message-State: AGi0PuZI1H6LztnpE0zhoLuIexgK1uPRLMpO/pnv6E/p0cfraHwGQRdO
-        THsRpVEI54FLyjC9LA42oZmn5KFTaH7mEou812A=
-X-Google-Smtp-Source: APiQypL5O90eZiVP91Spazxw9kNLM/oUk/UxGHPayskHGw0X4cu3MGkQ9jx0LWUyAkboJxHXtR2bszWrIXRFKtjKifw=
-X-Received: by 2002:a9d:564:: with SMTP id 91mr17871599otw.250.1587986335286;
- Mon, 27 Apr 2020 04:18:55 -0700 (PDT)
-MIME-Version: 1.0
-References: <1587678050-23468-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdXwsUAaeY+b6t-nqPE8kL-p+F4HqXE2mujP0eXPjrbooQ@mail.gmail.com> <CA+V-a8sH4sLN1XuRM+SgbbN5O38wrtMyk5QEXEPhV5tOkbchJw@mail.gmail.com>
-In-Reply-To: <CA+V-a8sH4sLN1XuRM+SgbbN5O38wrtMyk5QEXEPhV5tOkbchJw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 27 Apr 2020 13:18:44 +0200
-Message-ID: <CAMuHMdXW1YQMUzzTGcyz2d=NxkcLtLasTqgZH0CRufQx=vfT0g@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Add RZ/G1H support.
-To:     "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+        id S1727824AbgD0Obs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Apr 2020 10:31:48 -0400
+Received: from muru.com ([72.249.23.125]:51522 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727022AbgD0Obs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Apr 2020 10:31:48 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E62BE8087;
+        Mon, 27 Apr 2020 14:32:34 +0000 (UTC)
+Date:   Mon, 27 Apr 2020 07:31:44 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Adam Ford <aford173@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 02/14] clocksource/drivers/timer-ti-dm: Add clockevent
+ and clocksource support
+Message-ID: <20200427143144.GQ37466@atomide.com>
+References: <20200417165519.4979-1-tony@atomide.com>
+ <20200417165519.4979-3-tony@atomide.com>
+ <62be90e2-7dbe-410d-4171-c0ad0cddc7a3@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62be90e2-7dbe-410d-4171-c0ad0cddc7a3@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Prabhakar,
+Hi,
 
-On Mon, Apr 27, 2020 at 12:31 PM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Mon, Apr 27, 2020 at 10:28 AM Geert Uytterhoeven
-> <geert@linux-m68k.org> wrote:
-> > On Thu, Apr 23, 2020 at 11:41 PM Lad Prabhakar
-> > <prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> > > This patch series aims to add support for Renesas RZ/G1H (r8a7742) SoC.
-> > >
-> > > RZ/G1H SoC is similar to R-Car Gen2 H2 SoC.
-> > >
-> > > This patch set is based on renesas-drivers/master-v5.7-rc1.
-> >
-> > Thanks for your series!
-> >
-> > Looks mostly OK to me.
-> Thank you for the review. After fixing patch 8/10 shall I just post a
-> v2 with a single patch or the entire series ?
+* Daniel Lezcano <daniel.lezcano@linaro.org> [200427 09:19]:
+> On 17/04/2020 18:55, Tony Lindgren wrote:
+> > --- a/Documentation/devicetree/bindings/timer/ti,timer.txt
+> > +++ b/Documentation/devicetree/bindings/timer/ti,timer.txt
+> > @@ -14,6 +14,8 @@ Required properties:
+> >  			ti,omap5430-timer (applicable to OMAP543x devices)
+> >  			ti,am335x-timer	(applicable to AM335x devices)
+> >  			ti,am335x-timer-1ms (applicable to AM335x devices)
+> > +			ti,dmtimer-clockevent (when used as for clockevent)
+> > +			ti,dmtimer-clocksource (when used as for clocksource)
+> 
+> Please, submit a separate patch for this.
+> 
+> Before you resend as is, this will be nacked as clocksource / clockevent
+> is not a hardware description but a Linux thing.
+> 
+> Finding a way to characterize that from the DT is an endless discussion
+> since years, so I suggest to use a single property for the timer eg
+> <ti,dmtimer> and initialize the clocksource and the clockevent in the
+> driver.
 
-A single v2 patch is fine.  The clock driver goes in through a different
-tree anyway/
+Hmm good point. We still need to specify which timer is a clocksource
+and which one a clockevent somehow.
 
-> > The missing code part seems to be the introduction of the main
-> > CONFIG_ARCH_R8A7742 symbol?
-> >
-> I was planning to post them once these patches were reviewed, just
-> didn't wanted to flood with too many patches.
->
-> for enabling r8a7742 SoC in multi_v7_defconfig should this be only
-> sent out wen its accepted in shmobile_defconfig or can it be part of
-> same series as below ?
->
-> 05ba50a4cf99 ARM: multi_v7_defconfig: Enable r8a7742 SoC
-> 99b69d08729a ARM: shmobile: defconfig: Enable r8a7742 SoC
-> 6b7bcd6635c7 ARM: debug-ll: Add support for r8a7742
-> 1cf4e52e3a0e soc: renesas: Add Renesas R8A7742 config option
+Maybe we could have a generic properties like the clock framework such as:
 
-It can be part of the same series.
+assigned-system-clocksource
+assigned-system-clockevent
 
-> > I assume you plan to submit the DTS for v5.8, too, so I'll have to be
-> > careful and apply the binding definitions to a separate shared branch?
-> >
-> Yes I do plan to submit the DTS changes for v5.8.
+Or do we already have something similar that can be used?
 
-Thanks. Looking forward to it!
+> > diff --git a/drivers/clocksource/timer-ti-dm-systimer.c b/drivers/clocksource/timer-ti-dm-systimer.c
+> > new file mode 100644
+> > --- /dev/null
+> > +++ b/drivers/clocksource/timer-ti-dm-systimer.c
+> > +struct dmtimer_clocksource {
+> > +	struct clocksource dev;
+> > +	struct omap_dm_timer timer;
+> 
+> The usage of the timer field is to use the __omap_dm_timer_* helpers
+> function which does a busy looping on the status before read/write the
+> register. AFAICS, for the clocksource, the posted argument is zero, thus
+> it is possible to replace the calls to these helpers to a write / read
+> and perhaps the struct omap_dm_timer could be removed from the
+> clocksource structure.
+> 
+> The driver gets obfuscated by calls to helpers which does 'posted' things.
+> 
+> Why not remove those and handle the case in the driver to make it
+> self-encapsuled and remove the omap_dm_timer structure usage in this driver.
 
-Gr{oetje,eeting}s,
+Hmm that's a good comment indeed. If we can just use readl/writel for
+clockevent and clocksource driver without worrying about the posted mode
+flags, we can make all the old helpers static for the generic dmtimer
+driver. I'll take a look.
 
-                        Geert
+> > +static int dmtimer_systimer_type2_reset(struct omap_dm_timer *timer)
+> > +{
+> > +	void __iomem *sysc = timer->io_base + OMAP_TIMER_OCP_CFG_OFFSET;
+> > +	u32 l;
+> > +
+> 
+> Isn't missing a write here ?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Oops thanks for spotting it. Without that the mode can be whatever left
+over from the bootloader.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> > +static int __init dmtimer_systimer_tag_disabled(struct device_node *np)
+> > +{
+> > +	struct property *prop;
+> > +
+> > +	prop = kzalloc(sizeof(*prop), GFP_KERNEL);
+> > +	if (!prop)
+> > +		return -ENOMEM;
+> > +
+> > +	prop->name = "status";
+> > +	prop->value = "disabled";
+> > +	prop->length = strlen(prop->value);
+> > +
+> > +	return of_add_property(np, prop);
+> 
+> Why not add this property in the DT instead ? That sounds hackish
+
+Yes that's a good point too. We need to configure the source clock anyways
+for the clocksource and clockevent in devicetree anyways, so setting it
+disabled there totally makes sense.
+
+> > +	dmtimer_systimer_enable(timer);
+> > +	dmtimer_systimer_reset(timer);
+> > +	pr_debug("dmtimer rev %08x sysc %08x\n", readl_relaxed(timer->io_base),
+> > +		 readl_relaxed(timer->io_base + OMAP_TIMER_OCP_CFG_OFFSET));
+> > +
+> > +	if (of_find_property(np, "ti,timer-alwon", NULL))
+> > +		timer->capability |= OMAP_TIMER_ALWON;
+> 
+> Where is used this capability in this driver ?
+
+That is just something we should show in dmesg for info as that helps to
+understand the board specific system timer configuration for PM related
+issues folks end up reporting.
+
+> > +static struct irqaction dmtimer_clockevent_irq = {
+> > +	.name		= "gp_timer",
+> > +	.flags		= IRQF_TIMER | IRQF_IRQPOLL,
+> 
+> Why do you need IRQF_IRQPOLL ?
+
+I'll check if that's needed. Probably just something that has mutated into
+the old timer code somehow.
+
+> > +	pa = of_translate_address(np, of_get_address(np, 0, NULL, NULL));
+> > +	pr_info("TI gptimer clockevent: %stimer@%08x at %lu Hz\n",
+> > +		timer->capability & OMAP_TIMER_ALWON ? "always-on " : "",
+> > +		pa, timer->rate);
+> 
+> %pOF instead of of_translate_address ?
+
+That just 0 from the interconnect target module here. But doing %pOF
+on the np->parent should work here and for the clocksource.
+
+> > diff --git a/include/clocksource/timer-ti-dm.h b/include/clocksource/timer-ti-dm.h
+> > --- a/include/clocksource/timer-ti-dm.h
+> > +++ b/include/clocksource/timer-ti-dm.h
+> > @@ -97,6 +97,7 @@ struct omap_dm_timer {
+> >  	int id;
+> >  	int irq;
+> >  	struct clk *fclk;
+> > +	struct clk *iclk;
+> 
+> No need of these clocks in the structure as they are used only to
+> initialize.
+
+OK I'll make them local.
+
+Thanks for the review! I'll fix up the other issues you spotted too,
+they all seem good comments.
+
+Regards,
+
+Tony
