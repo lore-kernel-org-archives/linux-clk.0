@@ -1,238 +1,114 @@
-Return-Path: <SRS0=mt6U=6K=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=1IxS=6L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D15C5519B
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 19:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1B0C54FD0
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 02:36:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BADF2206BF
-	for <linux-clk@archiver.kernel.org>; Sun, 26 Apr 2020 19:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95AF8214AF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Apr 2020 02:36:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="vSPLGrsl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I3lIcaBh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbgDZTAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 26 Apr 2020 15:00:08 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:59100 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726296AbgDZTAH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Apr 2020 15:00:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1587927554; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=lozQm5cUkRzX/D1RhqthQ7AWiCa273YjHW3E+nR6jsg=;
-        b=vSPLGrslCbSH7fxxJOBgw8RSrDw5vKfyWZZT1Kmj2ygGh2g0ssvW60J8xqVN5HdVI31Uqd
-        HEw0PZ0VI2xNa8hOnYoljwGsrPfXVdDqqxq6NAVGayyep9litDT7N3YSWrhSbQULBktX6p
-        Y8t+pvrKjD7VKryZ5eF3cY5DY93rmIU=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     od@zcrc.me,
-        =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0?= <zhouyanjie@wanyeetech.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 8/8] dt-bindings: display: Convert ingenic,lcd.txt to YAML
-Date:   Sun, 26 Apr 2020 20:58:56 +0200
-Message-Id: <20200426185856.38826-8-paul@crapouillou.net>
-In-Reply-To: <20200426185856.38826-1-paul@crapouillou.net>
-References: <20200426185856.38826-1-paul@crapouillou.net>
+        id S1726478AbgD0Cgp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Apr 2020 22:36:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36274 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726398AbgD0Cgp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Apr 2020 22:36:45 -0400
+Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD9F1C061A0F;
+        Sun, 26 Apr 2020 19:36:44 -0700 (PDT)
+Received: by mail-wm1-x344.google.com with SMTP id k12so9274077wmj.3;
+        Sun, 26 Apr 2020 19:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aIGMIvukWB0JR+cfXy+rA7pHtSrD50jP/W65MSIyFw0=;
+        b=I3lIcaBhb86twoSNgoqT1NsiiU3+PpF0Jcck8obekQF8iTYFw/ekaYVtHZHbTkFzb6
+         r1DhUEdhRM71vdTpvnuRUHiYGYCXaX5DX1DesiURaEru3xG5y3g4b8n95H2NUFoSImFr
+         9JcyohpsbKt8yarW8TA2C4vL5iBI2CtdYjSIqiJADtS1NAa2iOoVuGPHafeoZT7g2DA+
+         PjQaHvauOQ484DlG7OZUKaGJ63Dq3Ps7CKEIm0cgnP0r7A6RwMBA8PuIqiSWizsPVsHF
+         C2nGuiN74p3D2l0jKMCFucdWgZGZGOMWsQw9mKxfZguIuJqxunh5e8AXBi4ob5R0PgHC
+         w33w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aIGMIvukWB0JR+cfXy+rA7pHtSrD50jP/W65MSIyFw0=;
+        b=gNpxtbMC1Jmx4GB/2NyZ5VPnX3sQBckYpDo0YFLq37SGAXMShfV3rF1sJnk1Nap65t
+         mTTmtiM+9JnmJ761ftpY52jQb7IZAOossQ2YA23FrCRNk59tt3B4hOW3y2qA9QObiaaA
+         /nCs+mU2ri/McDys1ntabdkiq1/OlDtOHZzJaZ9bMGpNIVifLNNS4NPrl2M1wSAURtdT
+         tCtpu8bDR8pBYHClOs5GIqUSAXJwSIPPkC55craOV8Y8WEUckECAsarHgcAdICWtaxsl
+         yHyDlgrnBI2bWD3gWXlcUKlk9RCSFd0ZJtXekICKPeXIymwoCm3KXRpOvrT63iAG6WNo
+         0GYg==
+X-Gm-Message-State: AGi0Puax8nVImTTiyitI5InQyXDoWZOZT+MFgu1iv2QEvQz7uK8T9HDe
+        F/2+lobRJBNmjxmyFtlZRDY2AJHwY57ffFJ1Kr/QKfQo
+X-Google-Smtp-Source: APiQypL0pr/s2dO3FQgXpMTObZzY0bdp17wEVkUxtYpLeHCgYpZRk0EmyZWKGJm1uIDkoAKE53Ebru7QqEtBt8EIImk=
+X-Received: by 2002:a7b:cd04:: with SMTP id f4mr22760899wmj.3.1587955003408;
+ Sun, 26 Apr 2020 19:36:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200414033325.26536-1-zhang.lyra@gmail.com>
+In-Reply-To: <20200414033325.26536-1-zhang.lyra@gmail.com>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Mon, 27 Apr 2020 10:36:07 +0800
+Message-ID: <CAAfSe-uz2v7AO_pb8zOMN-2RqJ6Y6p=apTQVo=pq_oiDmmOWuA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] add mipi_csi_xx gate clocks for SC9863A
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the ingenic,lcd.txt to a new ingenic,lcd.yaml file.
+Hi Stephen,
 
-In the process, the new ingenic,jz4780-lcd compatible string has been
-added.
+On Tue, 14 Apr 2020 at 11:33, <zhang.lyra@gmail.com> wrote:
+>
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+>
+> mipi_csi_xx clocks are used by camera sensors. These clocks cannot be
+> accessed (even read) if their parent gate clock is disabled. So this
+> patchset also add a check to parent clocks when reading these gate
+> clocks which marked with the specific flag (SPRD_GATE_NON_AON).
+>
+> changes from v1:
+> * added Rob's acked-by;
+>
+> Chunyan Zhang (4):
+>   clk: sprd: check its parent status before reading gate clock
+>   dt-bindings: clk: sprd: add mipi_csi_xx clocks for SC9863A
+>   clk: sprd: add dt-bindings include for mipi_csi_xx clocks
+>   clk: sprd: add mipi_csi_xx gate clocks
+>
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- .../bindings/display/ingenic,lcd.txt          |  45 -------
- .../bindings/display/ingenic,lcd.yaml         | 113 ++++++++++++++++++
- 2 files changed, 113 insertions(+), 45 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/display/ingenic,lcd.txt
- create mode 100644 Documentation/devicetree/bindings/display/ingenic,lcd.yaml
+Do you have comments or could you please take this patchset to your tree?
 
-diff --git a/Documentation/devicetree/bindings/display/ingenic,lcd.txt b/Documentation/devicetree/bindings/display/ingenic,lcd.txt
-deleted file mode 100644
-index 01e3261defb6..000000000000
---- a/Documentation/devicetree/bindings/display/ingenic,lcd.txt
-+++ /dev/null
-@@ -1,45 +0,0 @@
--Ingenic JZ47xx LCD driver
--
--Required properties:
--- compatible: one of:
--  * ingenic,jz4740-lcd
--  * ingenic,jz4725b-lcd
--  * ingenic,jz4770-lcd
--- reg: LCD registers location and length
--- clocks: LCD pixclock and device clock specifiers.
--	   The device clock is only required on the JZ4740.
--- clock-names: "lcd_pclk" and "lcd"
--- interrupts: Specifies the interrupt line the LCD controller is connected to.
--
--Example:
--
--panel {
--	compatible = "sharp,ls020b1dd01d";
--
--	backlight = <&backlight>;
--	power-supply = <&vcc>;
--
--	port {
--		panel_input: endpoint {
--			remote-endpoint = <&panel_output>;
--		};
--	};
--};
--
--
--lcd: lcd-controller@13050000 {
--	compatible = "ingenic,jz4725b-lcd";
--	reg = <0x13050000 0x1000>;
--
--	interrupt-parent = <&intc>;
--	interrupts = <31>;
--
--	clocks = <&cgu JZ4725B_CLK_LCD>;
--	clock-names = "lcd";
--
--	port {
--		panel_output: endpoint {
--			remote-endpoint = <&panel_input>;
--		};
--	};
--};
-diff --git a/Documentation/devicetree/bindings/display/ingenic,lcd.yaml b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-new file mode 100644
-index 000000000000..8e9c851dc7c5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-@@ -0,0 +1,113 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/display/ingenic,lcd.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Ingenic SoCs LCD controller devicetree bindings
-+
-+maintainers:
-+  - Paul Cercueil <paul@crapouillou.net>
-+
-+properties:
-+  $nodename:
-+    pattern: "^lcd-controller@[0-9a-f]+$"
-+
-+  compatible:
-+    enum:
-+      - ingenic,jz4740-lcd
-+      - ingenic,jz4725b-lcd
-+      - ingenic,jz4770-lcd
-+      - ingenic,jz4780-lcd
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Module clock
-+      - description: Pixel clock
-+    minItems: 1
-+
-+  clock-names:
-+    items:
-+      - const: lcd
-+      - const: lcd_pclk
-+    minItems: 1
-+
-+  port:
-+    type: object
-+    description:
-+      A port node with endpoint definitions as defined in
-+      Documentation/devicetree/bindings/media/video-interfaces.txt
-+
-+required:
-+    - compatible
-+    - reg
-+    - interrupts
-+    - clocks
-+    - clock-names
-+
-+if:
-+  properties:
-+    compatible:
-+      contains:
-+        enum:
-+          - ingenic,jz4740-lcd
-+          - ingenic,jz4780-lcd
-+then:
-+  properties:
-+    clocks:
-+      minItems: 2
-+    clock-names:
-+      minItems: 2
-+else:
-+  properties:
-+    clocks:
-+      maxItems: 1
-+    clock-names:
-+      maxItems: 1
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/jz4740-cgu.h>
-+    lcd-controller@13050000 {
-+      compatible = "ingenic,jz4740-lcd";
-+      reg = <0x13050000 0x1000>;
-+
-+      interrupt-parent = <&intc>;
-+      interrupts = <30>;
-+
-+      clocks = <&cgu JZ4740_CLK_LCD>, <&cgu JZ4740_CLK_LCD_PCLK>;
-+      clock-names = "lcd", "lcd_pclk";
-+
-+      port {
-+        endpoint {
-+          remote-endpoint = <&panel_input>;
-+        };
-+      };
-+    };
-+
-+  - |
-+    #include <dt-bindings/clock/jz4725b-cgu.h>
-+    lcd-controller@13050000 {
-+      compatible = "ingenic,jz4725b-lcd";
-+      reg = <0x13050000 0x1000>;
-+
-+      interrupt-parent = <&intc>;
-+      interrupts = <31>;
-+
-+      clocks = <&cgu JZ4725B_CLK_LCD>;
-+      clock-names = "lcd";
-+
-+      port {
-+        endpoint {
-+          remote-endpoint = <&panel_input>;
-+        };
-+      };
-+    };
--- 
-2.26.2
+Thanks,
+Chunyan
 
+>  .../bindings/clock/sprd,sc9863a-clk.yaml      |  1 +
+>  drivers/clk/sprd/gate.c                       |  7 ++++
+>  drivers/clk/sprd/gate.h                       |  9 ++++++
+>  drivers/clk/sprd/sc9863a-clk.c                | 32 +++++++++++++++++++
+>  include/dt-bindings/clock/sprd,sc9863a-clk.h  |  5 +++
+>  5 files changed, 54 insertions(+)
+>
+> --
+> 2.20.1
+>
