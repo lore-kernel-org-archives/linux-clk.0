@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AAF4C8300C
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 20:58:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5B1C83004
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 20:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 670C8214AF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 20:58:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 219222076B
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 20:58:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588193917;
-	bh=bZWmwNZRThJSNoN/9I2DxiXbKB7TM5mrJ11tx2SjYi8=;
+	s=default; t=1588193920;
+	bh=RHwqmk34hRt22w/ldSGV0u0E1CO7bTs78pTQyWBA6FE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=emo3I/EzA81uS+qF5t9nqt4+tfLGsyA73sjc8TIIipAhA+RnfK7iDTjlRaiT1IEti
-	 qwK6I2biNBSTQqoPDmpIavwRoC+Tym6aLrOVs9ip0cNW3xsAnZzPs87f1BHAW3TaJq
-	 NNxOe5F92+4hZyfOB7/LmLYWfWs5pJ9ZZC+lsL7k=
+	b=hE6sgf/hHxdKOLyfS8HJn17wM4GSNgInSSp42ZT7lPWCqPlyIOSRY4SE1x2tci871
+	 mDUrhO94hZ7nmgxylp1XwQVW5rAviIujBF8XjRHfi9jv+H/KtvvVFt/UW0RLVlm1u1
+	 WQUlLVsk2td/ALU6C0oUStkeWITa8M7XILqju6sU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727098AbgD2U6h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Apr 2020 16:58:37 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35421 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbgD2U6g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Apr 2020 16:58:36 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e26so3006313otr.2;
-        Wed, 29 Apr 2020 13:58:34 -0700 (PDT)
+        id S1727099AbgD2U6k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Apr 2020 16:58:40 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:41114 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbgD2U6j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Apr 2020 16:58:39 -0400
+Received: by mail-oi1-f193.google.com with SMTP id 19so3121315oiy.8;
+        Wed, 29 Apr 2020 13:58:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ycrzTsN2UDt80PFGBLFquCxPRdusJ6s2yOMWOscpSM4=;
-        b=EtjarPHuadfV1NbMBXYMoHbqWbIbcn3Swqbi+WnC26ajPHYcaYWVICl9zXEQ8a947J
-         Sq2+0Dyfj7EbIQ+GfdAFTmPUUitqKoyPyb35bPvQwqfuP5XedtIQdYE9ICzX3KRDA9n5
-         tmjlRdy4YQz5xZ99uWjdQ69wF8oyfJ2zM3o58qWSPEDG5kmiIqdy5slx5kg+P6ImPGOS
-         1zJsHto9imFmJpKe7KpCRnKfREkOGYx7jaVPcZC7lzG59eGVFqun2NxmOrgKb5keX2vD
-         jQ1U03k/6K4xF0w+5yCS9tEfDcSAQwQfbTgETcWFrZ8KWUp49CRPU8pRlkPzbLqyOEcZ
-         LmcQ==
-X-Gm-Message-State: AGi0PuY3ZLi408o8TD4VtcqLpa2NRvZC4hOJBewj2bIiDktAu2u5ISl1
-        oaK7B8fJCe4RkOznzSoonQ==
-X-Google-Smtp-Source: APiQypL4VnrXGZPah4Civ+Lm3BOCjh2M68S53+iKXITJryVzyn0lRjk1cF+ARDOewyDNk8HX1VAE3Q==
-X-Received: by 2002:a05:6830:22dc:: with SMTP id q28mr26756333otc.221.1588193914163;
-        Wed, 29 Apr 2020 13:58:34 -0700 (PDT)
+        bh=qg2zxc590nC56Olu/LMLIdebNTiQLSp6hgsD/Wgzqhc=;
+        b=jGCOmzGqVtaMZ+AgL4r4UTSJEoMJEHCOHSLCsqRpCIlbrddNLAfMmSTlVbtKqqcHLl
+         GCPzv1dycCZAezM/Yqcu3PQUCHxxoC7r+C0Qg1Ly53zy84WQgZw4d1d646LzZ4KTaJOu
+         FX3j4TKg8VOUWbeXy8lpTHwSYyvdQ57a1wkw78KZBXJUAUt2dKcciNrlHbknh+3vweUa
+         inANULWtepxULwIi7IyQiXzfjcbLqu81L5KYo+PN7K1HuL3T85icvvO5dw2QVJLpNpYz
+         UjVrPoouOm25XLTdR9FD4ybALUOKaDoUoL0iUzzb1QYgqZOgH7DbKA5u5WV3OXqd8+/2
+         WLfQ==
+X-Gm-Message-State: AGi0PuajgC+iTW02vZ3Nju4nTeOyT21YIiYbGLhNxPDgh12DMgOIdhuQ
+        ToJ8UMCu+OH9cLKsPj7q0w==
+X-Google-Smtp-Source: APiQypLrWJY7pYSRXhfCSOB9FxS2TVlt5Ok67NnxttN2E8ckgZPz2Ph897iAX8kOYgBQBWEzEAcFZw==
+X-Received: by 2002:a54:4619:: with SMTP id p25mr128029oip.122.1588193918475;
+        Wed, 29 Apr 2020 13:58:38 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id z13sm653162oth.10.2020.04.29.13.58.32
+        by smtp.googlemail.com with ESMTPSA id z13sm653162oth.10.2020.04.29.13.58.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Apr 2020 13:58:33 -0700 (PDT)
+        Wed, 29 Apr 2020 13:58:37 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>,
         Liviu Dudau <liviu.dudau@arm.com>,
@@ -61,10 +61,11 @@ Cc:     Kevin Brodsky <Kevin.Brodsky@arm.com>,
         Sebastian Reichel <sre@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: [PATCH v2 04/16] clk: versatile: Rework kconfig structure
-Date:   Wed, 29 Apr 2020 15:58:13 -0500
-Message-Id: <20200429205825.10604-5-robh@kernel.org>
+        linux-pm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: [PATCH v2 07/16] clk: vexpress-osc: Support building as a module
+Date:   Wed, 29 Apr 2020 15:58:16 -0500
+Message-Id: <20200429205825.10604-8-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200429205825.10604-1-robh@kernel.org>
 References: <20200429205825.10604-1-robh@kernel.org>
@@ -75,165 +76,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CONFIG_COMMON_CLK_VERSATILE doesn't really do anything other than hiding
-Arm Ltd reference platform clock drivers. It is both selected by the
-platforms that need it and has a 'depends on' for those platforms. Let's
-drop the selects and convert CONFIG_COMMON_CLK_VERSATILE into a
-menuconfig entry. With this make CONFIG_ICST visible.
+Enable building the vexpress-osc clock driver as a module.
 
-Move the 'select REGMAP_MMIO' to the drivers that require it (SP810 did
-not).
-
-This also has the side effect of enabling CONFIG_ICST for COMPILE_TEST
-as it was not visible before.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Cc: Liviu Dudau <liviu.dudau@arm.com>
 Cc: Sudeep Holla <sudeep.holla@arm.com>
 Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
-v2:
- - Correct erroneous COMPILE_TEST added and then removed later in the
-   series.
- - Bring back COMMON_CLK_VERSATILE making it a menuconfig and separate
-   it from CONFIG_ICST
----
- arch/arm/mach-integrator/Kconfig |  1 -
- arch/arm/mach-realview/Kconfig   |  1 -
- arch/arm/mach-versatile/Kconfig  |  1 -
- arch/arm/mach-vexpress/Kconfig   |  1 -
- arch/arm64/Kconfig.platforms     |  1 -
- drivers/clk/Makefile             |  2 +-
- drivers/clk/versatile/Kconfig    | 22 ++++++++++++----------
- 7 files changed, 13 insertions(+), 16 deletions(-)
+ drivers/clk/versatile/clk-vexpress-osc.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/mach-integrator/Kconfig b/arch/arm/mach-integrator/Kconfig
-index 982eabc36163..d59ba15a6b69 100644
---- a/arch/arm/mach-integrator/Kconfig
-+++ b/arch/arm/mach-integrator/Kconfig
-@@ -3,7 +3,6 @@ menuconfig ARCH_INTEGRATOR
- 	bool "ARM Ltd. Integrator family"
- 	depends on ARCH_MULTI_V4T || ARCH_MULTI_V5 || ARCH_MULTI_V6
- 	select ARM_AMBA
--	select COMMON_CLK_VERSATILE
- 	select HAVE_TCM
- 	select ICST
- 	select MFD_SYSCON
-diff --git a/arch/arm/mach-realview/Kconfig b/arch/arm/mach-realview/Kconfig
-index 44ebbf9ec673..002404fafc14 100644
---- a/arch/arm/mach-realview/Kconfig
-+++ b/arch/arm/mach-realview/Kconfig
-@@ -6,7 +6,6 @@ menuconfig ARCH_REALVIEW
- 	select ARM_GIC
- 	select ARM_TIMER_SP804
- 	select CLK_SP810
--	select COMMON_CLK_VERSATILE
- 	select GPIO_PL061 if GPIOLIB
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
-diff --git a/arch/arm/mach-versatile/Kconfig b/arch/arm/mach-versatile/Kconfig
-index f5c275434d6c..d88e7725bf99 100644
---- a/arch/arm/mach-versatile/Kconfig
-+++ b/arch/arm/mach-versatile/Kconfig
-@@ -6,7 +6,6 @@ config ARCH_VERSATILE
- 	select ARM_TIMER_SP804
- 	select ARM_VIC
- 	select CLKSRC_VERSATILE
--	select COMMON_CLK_VERSATILE
- 	select CPU_ARM926T
- 	select ICST
- 	select MFD_SYSCON
-diff --git a/arch/arm/mach-vexpress/Kconfig b/arch/arm/mach-vexpress/Kconfig
-index 18951cd20d9d..2d1fdec4c230 100644
---- a/arch/arm/mach-vexpress/Kconfig
-+++ b/arch/arm/mach-vexpress/Kconfig
-@@ -7,7 +7,6 @@ menuconfig ARCH_VEXPRESS
- 	select ARM_GIC
- 	select ARM_GLOBAL_TIMER
- 	select ARM_TIMER_SP804
--	select COMMON_CLK_VERSATILE
- 	select GPIOLIB
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 5c38dc56b808..25cbb556d863 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -274,7 +274,6 @@ config ARCH_UNIPHIER
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index 5bb1d5a714d0..b2b32fa2d7c3 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -7,6 +7,7 @@
+ #include <linux/clkdev.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
++#include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+@@ -108,6 +109,7 @@ static const struct of_device_id vexpress_osc_of_match[] = {
+ 	{ .compatible = "arm,vexpress-osc", },
+ 	{}
+ };
++MODULE_DEVICE_TABLE(of, vexpress_osc_of_match);
  
- config ARCH_VEXPRESS
- 	bool "ARMv8 software model (Versatile Express)"
--	select COMMON_CLK_VERSATILE
- 	select GPIOLIB
- 	select PM
- 	select PM_GENERIC_DOMAINS
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..fb30c16e1596 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -114,7 +114,7 @@ obj-$(CONFIG_ARCH_TEGRA)		+= tegra/
- obj-y					+= ti/
- obj-$(CONFIG_CLK_UNIPHIER)		+= uniphier/
- obj-$(CONFIG_ARCH_U8500)		+= ux500/
--obj-$(CONFIG_COMMON_CLK_VERSATILE)	+= versatile/
-+obj-y					+= versatile/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_X86)			+= x86/
- endif
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index c2618f1477a2..df0d50bb846c 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -1,22 +1,22 @@
- # SPDX-License-Identifier: GPL-2.0-only
--config ICST
--	bool
- 
--config COMMON_CLK_VERSATILE
--	bool "Clock driver for ARM Reference designs"
--	depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
--		ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
--		COMPILE_TEST
-+menuconfig COMMON_CLK_VERSATILE
-+	bool "Clock driver for ARM Reference designs" if COMPILE_TEST
-+	default y if ARCH_INTEGRATOR || ARCH_REALVIEW || \
-+		ARCH_VERSATILE || ARCH_VEXPRESS
-+
-+if COMMON_CLK_VERSATILE
-+
-+config ICST
-+	bool "Clock driver for ARM Reference designs ICST"
- 	select REGMAP_MMIO
- 	---help---
- 	  Supports clocking on ARM Reference designs:
- 	  - Integrator/AP and Integrator/CP
- 	  - RealView PB1176, EB, PB11MP and PBX
--	  - Versatile Express
- 
- config CLK_SP810
- 	bool "Clock driver for ARM SP810 System Controller"
--	depends on COMMON_CLK_VERSATILE
- 	default y if ARCH_VEXPRESS
- 	---help---
- 	  Supports clock muxing (REFCLK/TIMCLK to TIMERCLKEN0-3) capabilities
-@@ -24,10 +24,12 @@ config CLK_SP810
- 
- config CLK_VEXPRESS_OSC
- 	bool "Clock driver for Versatile Express OSC clock generators"
--	depends on COMMON_CLK_VERSATILE
- 	depends on VEXPRESS_CONFIG
-+	select REGMAP_MMIO
- 	default y if ARCH_VEXPRESS
- 	---help---
- 	  Simple regmap-based driver driving clock generators on Versatile
- 	  Express platforms hidden behind its configuration infrastructure,
- 	  commonly known as OSCs.
-+
-+endif
+ static struct platform_driver vexpress_osc_driver = {
+ 	.driver	= {
+@@ -116,9 +118,5 @@ static struct platform_driver vexpress_osc_driver = {
+ 	},
+ 	.probe = vexpress_osc_probe,
+ };
+-
+-static int __init vexpress_osc_init(void)
+-{
+-	return platform_driver_register(&vexpress_osc_driver);
+-}
+-core_initcall(vexpress_osc_init);
++module_platform_driver(vexpress_osc_driver);
++MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
