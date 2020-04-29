@@ -2,104 +2,143 @@ Return-Path: <SRS0=KQjW=6N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5F2C8300A
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 13:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47195C83003
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 13:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29D362184D
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 13:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A952087E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Apr 2020 13:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I6a7yLDm"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="fsdbxE9Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726747AbgD2NN4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Apr 2020 09:13:56 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:37842 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbgD2NN4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Apr 2020 09:13:56 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03TDDpGH011386;
-        Wed, 29 Apr 2020 08:13:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1588166031;
-        bh=fZ/iP6cnEiTuHev/VJT7sUmLIKv6ebhl7+OZwef0YBs=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=I6a7yLDmtjH3Usg6oLpmhE3EbHkuO/cGffeEuuZEzdvROvTxA5SOpwtSVyNQTHu9d
-         UboKdKl2vxKGnzWCLMWXylEZ5OPVBE9GaPkY/8yvmlP9Mk9VuL9NDvzX+1sHpIpfJn
-         Ty3IHgHhcmNpSiq+hTKiDYObCA7y5B3gpfxs5ydA=
-Received: from DLEE111.ent.ti.com (dlee111.ent.ti.com [157.170.170.22])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 03TDDpkY062992
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 29 Apr 2020 08:13:51 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 29
- Apr 2020 08:13:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 29 Apr 2020 08:13:50 -0500
-Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03TDDjrp113387;
-        Wed, 29 Apr 2020 08:13:49 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>
-CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>
-Subject: [PATCH 2/3] clk: ti: omap4: Add proper parent clocks for l4-secure clocks
-Date:   Wed, 29 Apr 2020 16:13:40 +0300
-Message-ID: <20200429131341.4697-3-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200429131341.4697-1-t-kristo@ti.com>
-References: <20200429131341.4697-1-t-kristo@ti.com>
+        id S1726781AbgD2Naj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Apr 2020 09:30:39 -0400
+Received: from mout.web.de ([212.227.17.11]:54393 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726780AbgD2Naj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Apr 2020 09:30:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1588167022;
+        bh=/MTQc9gAsJAPP4H8/tzw9TM1Qf8zudFOc4Xfmf7+dYw=;
+        h=X-UI-Sender-Class:To:Cc:Subject:From:Date;
+        b=fsdbxE9Y9QjcpcTNcDW5A6vLho0tdp1NHLllHlKKk9jr3duMgpRDz1MwAwEyZGFbC
+         Cs96J68+R+oAjGMOTeIgy9hjJM8TUQ+9ER2LltZmtxP+aEw624v7hKV6uXR3uWIHVZ
+         OBA5rNeNnFXPYggFnDvAm/R+2LuRb2bES+xQU76U=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.133.72.72]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MFL2m-1jQXf73GXE-00EJ4M; Wed, 29
+ Apr 2020 15:30:21 +0200
+To:     Bernard Zhao <bernard@vivo.com>, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        opensource.kernel@vivo.com, Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk/meson: Complete exception handling in
+ meson8b_clkc_init_common()
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <ceba9706-0819-54cf-c3d3-9ceb93d31c5e@web.de>
+Date:   Wed, 29 Apr 2020 15:30:20 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:VbtUozrdnS3f3mFsMO90WUGM4iLjjRhtjaQ2tdiDGbLTbeM8kps
+ oeBHZw3l4M5oaDrHpnAZ/tz2cVpUMocce20jjzTJHfDqQgg3QoHS7AQLt8Wfug2chbbxkY9
+ sAsH2sUA+2LKOHNghLioNcBvzcVZq9SEmjalf6ke6Elv4s4hIdn17v3OGEYXSe06mNz1bxw
+ 0PhXOUbwuExEI8rxgOE4A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:0WnMMYIuquU=:xwc98jCk5A95enBKww7nVB
+ 41Mb80XNIKMDDVGiYbtQl3csVIr1rP4fi1XSzOqV886C29z9WOeeVO8k8GfD08qeKCiUut/kH
+ k9SUFuVV80TRCrUB8vSfvkxxWz3YqrA2bMEnankibACtpfy/BWvNSmHjQRxhtoyDFUHVjALsS
+ IyClxlWKjMEQE05hzLGPfu2fDWx0NM97kilJvqjC5ciPm9fb7Qk/TX80mrLoBfCt4yE4xq9og
+ 82d4gviF0yc365ZSaMaWAsE5GakAXNoZGSV8xR9Ay2Epz+hbqc/KbYRm6mA5rz/IXgmRSLNIh
+ LEmMfrUZCHzWWobj/ZDT1J0Kor04yHtZovxZTo2YlJzOIhfZLATe/tsM6N9zBqw4yqhCXRFXf
+ Wr9lCj2xgEEu8XaDs0XuaaNBVkdscac6v+4f41cEDYjwJp1ZdEq1S0O5G29/dux+4H6WC/ZYe
+ BJMAFMio9GhIwGChikz1WXrbn+avS7ag93XzsijRMscO5LVUfHkc35jUqP7tQcDIBLGgHd4MM
+ Wqu9tAxSPxyl6DiHSLEPIPDOkn8DjS+pr87pt443ceGTCkCBiZkIA5NQcMGOxJ7E0wTr/Udid
+ pwN7zpIrIr6110Mnj6KVk1kgHSqRIL15VUJ5eC7GyFd8YVE2ggtLcSi0ZUf1zEEY8C3AlISr0
+ 8m0a8Ozn3p5ksDQjbtv7Y584YOe/hUHFRWp48bSsYQm3w5M8VRDI+f6khvHQbjmhvuOhtD+F+
+ FTijKRWaa7Eu1y4PcYEYKuopYWHhDYMSQjlYX4bqcrqX6xXXNjMRiXwaq1Csc8oPNsTiLP8M0
+ KhDIf/BueyMp8ub1ViGAyziIUp0KU+77mM4MQRBotbHjT6HynhO/QsKO2WxWzMBtWSX4wIVQi
+ jJzgF2R/pnVJOk+fZaRwXEQfENk3FGoEsnovr3oNW0vkzoKN10wYtlPWYX9hP9Kp6DgpKx6O2
+ 7axOJlSmZm0YdaNyGMLEszF6KfDOdD3AkjpvGDv44REMrKIweQigIDwV2n2tToEMPyIHNHZKd
+ dnX6/PCYV3ddFcmdWwBqUJxeMlS0eYqDdGOjjabNtos7a+9GfdzsyIZtZYxDXNF0EPDPWsGZJ
+ eWjZwJfx2aEAXFQAmdbhj46pW0FsWHoA6r/QGkTFbo72H8C7twyc3sL5q9/FFDQcXp6J+3+r3
+ MB3373nLxjh+kQBJf3MQK+08N1nn+ZeKHyhaDzwg+4AaXGGSP3TDV18E42dtnU9jpd0nkYhaF
+ ihYRX8HFXjgOYD5ii
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-L4 secure clocks do not have their parents set currently, which ends
-them up to the orphan clock list. Fix this by adding either l3 or l4
-clock as their parent.
+> In common init function, when run into err branch, we didn`t
+> use kfree to release kzmalloc area, this may bring in memleak
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-44xx.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+* I suggest to improve also this change description.
 
-diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
-index 312a20f8ec0e..a38c92153979 100644
---- a/drivers/clk/ti/clk-44xx.c
-+++ b/drivers/clk/ti/clk-44xx.c
-@@ -606,13 +606,13 @@ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initcons
- 
- static const struct
- omap_clkctrl_reg_data omap4_l4_secure_clkctrl_regs[] __initconst = {
--	{ OMAP4_AES1_CLKCTRL, NULL, CLKF_SW_SUP, "" },
--	{ OMAP4_AES2_CLKCTRL, NULL, CLKF_SW_SUP, "" },
--	{ OMAP4_DES3DES_CLKCTRL, NULL, CLKF_SW_SUP, "" },
--	{ OMAP4_PKA_CLKCTRL, NULL, CLKF_SW_SUP, "" },
--	{ OMAP4_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "" },
--	{ OMAP4_SHA2MD5_CLKCTRL, NULL, CLKF_SW_SUP, "" },
--	{ OMAP4_CRYPTODMA_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "" },
-+	{ OMAP4_AES1_CLKCTRL, NULL, CLKF_SW_SUP, "l3_div_ck" },
-+	{ OMAP4_AES2_CLKCTRL, NULL, CLKF_SW_SUP, "l3_div_ck" },
-+	{ OMAP4_DES3DES_CLKCTRL, NULL, CLKF_SW_SUP, "l4_div_ck" },
-+	{ OMAP4_PKA_CLKCTRL, NULL, CLKF_SW_SUP, "l4_div_ck" },
-+	{ OMAP4_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "l4_div_ck" },
-+	{ OMAP4_SHA2MD5_CLKCTRL, NULL, CLKF_SW_SUP, "l3_div_ck" },
-+	{ OMAP4_CRYPTODMA_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "l3_div_ck" },
- 	{ 0 },
- };
- 
--- 
-2.17.1
+* Please move the resource release functions to end of
+  the function =E2=80=9Cmeson8b_clkc_init_common=E2=80=9D here.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/coding-style.rst?id=3D96c9a7802af7d500a582d89a8b8645=
+84fe878c1b#n450
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+* Will the tag =E2=80=9CFixes=E2=80=9D be relevant then for the completed =
+exception handling?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?id=3D96c9a7802af7d500a582d89a=
+8b864584fe878c1b#n183
+
+Regards,
+Markus
