@@ -2,134 +2,122 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0166BC47247
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96CD7C47253
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:30:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E08F8208D5
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76952208D6
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:30:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="sOWMM3UK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbgD3QTr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 12:19:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56094 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728121AbgD3QTr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Apr 2020 12:19:47 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 68804ACC4;
-        Thu, 30 Apr 2020 16:19:43 +0000 (UTC)
-Message-ID: <0f7f2350cebdbd6904274e6a4e8da6e0a6c72102.camel@suse.de>
-Subject: Re: [PATCH v2 05/91] clk: bcm: rpi: Allow the driver to be probed
- by DT
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>, Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Thu, 30 Apr 2020 18:19:41 +0200
-In-Reply-To: <0f5319caa4d1b9ba8a83a094abcb681d4be6eb1c.1587742492.git-series.maxime@cerno.tech>
-References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech>
-         <0f5319caa4d1b9ba8a83a094abcb681d4be6eb1c.1587742492.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-q7dZwA3wemW7oWhPS4wd"
-User-Agent: Evolution 3.36.2 
+        id S1726470AbgD3Qaa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 12:30:30 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:13064 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgD3Qa2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 12:30:28 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5eaafce10000>; Thu, 30 Apr 2020 09:29:21 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Apr 2020 09:30:28 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Apr 2020 09:30:28 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Apr
+ 2020 16:30:28 +0000
+Received: from [10.2.165.152] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Apr
+ 2020 16:30:26 +0000
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+ <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+ <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+ <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+Message-ID: <7d31d24f-f353-7e82-3ff9-cdba8b773d1e@nvidia.com>
+Date:   Thu, 30 Apr 2020 09:29:00 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
+In-Reply-To: <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1588264161; bh=2DroO8GJPT0AtZeSQK8ueROEdYIu6Ovs1ect3MjQzPE=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=sOWMM3UKIfeFYgOV3uLGzs75tw9iBGuZFODCZwKiHiL0dCOJKwlbBZuiVacayju7e
+         27d2YHXn6JgrBPa+b3Hh61DgKBgkUmucxkOTNu8c+vgIAULPzB8dey7Yw/htsnhCCi
+         sgpgv5qzEi2Xjxe45K2l7wKPHL30bR76787qy9sYYntYjM1k3MGUtvwlC2oBaqb24e
+         T3cqJ8NssY3wetqt+VdP8KOmm25bnSyqK5rGV9hT8NdshtcuZqFpdbsfHCebZ31M2P
+         +9bqvOZCh/SYfCppuNEApgaVu0DmUSJyW0MHRm1PjX133UeOdd26rXX75kPw9uNcGz
+         6VU8iQUbmqIyA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-q7dZwA3wemW7oWhPS4wd
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2020-04-24 at 17:33 +0200, Maxime Ripard wrote:
-> The current firmware clock driver for the RaspberryPi can only be probed =
-by
-> manually registering an associated platform_device.
->=20
-> While this works fine for cpufreq where the device gets attached a clkdev
-> lookup, it would be tedious to maintain a table of all the devices using
-> one of the clocks exposed by the firmware.
->=20
-> Since the DT on the other hand is the perfect place to store those
-> associations, make the firmware clocks driver probe-able through the devi=
-ce
-> tree so that we can represent it as a node.
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 20 +++++++++++++++++---
->  1 file changed, 17 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-
-> raspberrypi.c
-> index 1654fd0eedc9..aedeaaf2f66b 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -255,15 +255,22 @@ static int raspberrypi_clk_probe(struct platform_de=
-vice
-> *pdev)
->  	struct raspberrypi_clk *rpi;
->  	int ret;
-> =20
-> -	firmware_node =3D of_find_compatible_node(NULL, NULL,
-> -					"raspberrypi,bcm2835-firmware");
-> +	/*
-> +	 * We can be probed either through the an old-fashioned
-> +	 * platform device registration or through a DT node that is a
-> +	 * child of the firmware node. Handle both cases.
-> +	 */
-> +	if (dev->of_node)
-> +		firmware_node =3D of_get_parent(dev->of_node);
-> +	else
-> +		firmware_node =3D of_find_compatible_node(NULL, NULL,
-> +							"raspberrypi,bcm2835-
-> firmware");
->  	if (!firmware_node) {
->  		dev_err(dev, "Missing firmware node\n");
->  		return -ENOENT;
->  	}
-> =20
->  	firmware =3D rpi_firmware_get(firmware_node);
-> -	of_node_put(firmware_node);
-
-Why remove this? I think it's still needed after your changes.
-
-Regards,
-Nicolas
-
-
---=-q7dZwA3wemW7oWhPS4wd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl6q+p0ACgkQlfZmHno8
-x/5Aewf/fIRt353bQjRQPXHvnCWvme3juReNuol1emq3w4qxjIbYk/3z6mE5Xqik
-N6cAGO+Hf35L5nhpW9qXpVTT3vbylYXIZ/OW5weQzIN+oKmUvJh+7FUwzl790OiU
-y2LJVs53mnmGErmkoTOkyoJNmDeft+FMuQ+105YbheOsgDY3XKDscjlwQgsk/Vx7
-/ELAtNxaNwm0lU2V6TfIgDaIDysRbkao9DtA1c97wG1O6lZAanouAfuIFR+8+xrz
-AYKm8KnHJXi4wRSh2BAjm0e3qX+/RaI9RNeT7Xq68tsLl4jbz673IXTuyETjVc0s
-Csb4+I6CCUbczBNHzKUO2UntZvTpdQ==
-=fDu0
------END PGP SIGNATURE-----
-
---=-q7dZwA3wemW7oWhPS4wd--
-
+On 4/30/20 9:04 AM, Sowjanya Komatineni wrote:
+>
+> On 4/30/20 7:13 AM, Dmitry Osipenko wrote:
+>> 30.04.2020 17:02, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 30.04.2020 16:56, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> 30.04.2020 01:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>>> +static int chan_capture_kthread_finish(void *data)
+>>>>> +{
+>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_vi_channel *chan =3D data;
+>>>>> +=C2=A0=C2=A0=C2=A0 struct tegra_channel_buffer *buf;
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 set_freezable();
+>>>>> +
+>>>>> +=C2=A0=C2=A0=C2=A0 while (1) {
+>>>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try_to_freeze();
+>>>> I guess it won't be great to freeze in the middle of a capture=20
+>>>> process, so:
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (list_empty(&chan->done)=
+)
+>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 try=
+_to_freeze();
+>>> And here should be some locking protection in order not race with the
+>>> chan_capture_kthread_start because kthread_finish could freeze before
+>>> kthread_start.
+>> Or maybe both start / finish threads should simply be allowed to freeze
+>> only when both capture and done lists are empty.
+>>
+>> if (list_empty(&chan->capture) &&
+>> =C2=A0=C2=A0=C2=A0=C2=A0 list_empty(&chan->done))
+>> =C2=A0=C2=A0=C2=A0=C2=A0try_to_freeze();
+>
+> good to freeze when not in middle of the frame capture but why should=20
+> we not allow freeze in between captures?
+>
+> Other drivers do allow freeze in between frame captures.
+>
+> I guess we can freeze before dequeue for capture and in finish thread=20
+> we can freeze after capture done. This also don't need to check for=20
+> list_empty with freeze to allow between frame captures.
+>
+Also if we add check for both lists empty, freeze is not allowed as long=20
+as streaming is going on and in case of continuous streaming freeze will=20
+never happen.
