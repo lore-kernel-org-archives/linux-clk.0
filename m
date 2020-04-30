@@ -2,90 +2,118 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63488C83001
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9818C8300A
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 356BD20838
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aXTJZnUc"
+	by mail.kernel.org (Postfix) with ESMTP id B179820838
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726684AbgD3Igx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 04:36:53 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:48808 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726420AbgD3Igw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 04:36:52 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 03U8anKh094449;
-        Thu, 30 Apr 2020 03:36:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1588235809;
-        bh=VYueZm5CvboGryMIxPqzyx8mLmX3qjIlZueWkp9+pss=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=aXTJZnUcOWKiJHI+oQ3XlMBQOlJQe1QqtAa0zQgrppcUHYPzPQVZSBWeK7qP2GpHR
-         svnD4zerDYjBbnoGsYkshxfV6bkaHzLaCwnqMXuob9k1G9pbL9m6COGlfq3Lr1ZM+j
-         039jrH6F1hlQeFGKSimHKRTuLNb2lVAi3FFMApwU=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03U8anYr076754;
-        Thu, 30 Apr 2020 03:36:49 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Thu, 30
- Apr 2020 03:36:49 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Thu, 30 Apr 2020 03:36:49 -0500
-Received: from sokoban.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 03U8agEo073623;
-        Thu, 30 Apr 2020 03:36:47 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>
-CC:     <tony@atomide.com>, <linux-omap@vger.kernel.org>
-Subject: [PATCH 3/3] clk: ti: dra7xx: fix RNG clock parent
-Date:   Thu, 30 Apr 2020 11:36:40 +0300
-Message-ID: <20200430083640.8621-4-t-kristo@ti.com>
+        id S1726546AbgD3ItF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 04:49:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35742 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726420AbgD3ItF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 04:49:05 -0400
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DA3C035494
+        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2020 01:49:04 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:182a:142e:a95f:66c2])
+        by laurent.telenet-ops.be with bizsmtp
+        id Ywp32200g0w8ZL601wp3Ki; Thu, 30 Apr 2020 10:49:03 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jU4sR-0002le-JT; Thu, 30 Apr 2020 10:49:03 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jU4sR-0000Pb-ID; Thu, 30 Apr 2020 10:49:03 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.8
+Date:   Thu, 30 Apr 2020 10:49:02 +0200
+Message-Id: <20200430084902.1540-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200430083640.8621-1-t-kristo@ti.com>
-References: <20200430083640.8621-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RNG is sourced from L4 clock. Add info for this for proper parenting of
-the clock.
+	Hi Mike, Stephen,
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- drivers/clk/ti/clk-7xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index 146d1d67c732..bf8fced40e42 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -644,7 +644,7 @@ static const struct omap_clkctrl_reg_data dra7_l4sec_clkctrl_regs[] __initconst
- 	{ DRA7_L4SEC_AES1_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
- 	{ DRA7_L4SEC_AES2_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
- 	{ DRA7_L4SEC_DES_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
--	{ DRA7_L4SEC_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "" },
-+	{ DRA7_L4SEC_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "l4_root_clk_div" },
- 	{ DRA7_L4SEC_SHAM_CLKCTRL, NULL, CLKF_HW_SUP, "l3_iclk_div" },
- 	{ 0 },
- };
--- 
-2.17.1
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.8-tag1
+
+for you to fetch changes up to e2f022c10ed3b50ba1d2bb1f037b0e7a84cb1c3e:
+
+  clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects (2020-04-30 09:39:06 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.8
+
+  - Add support for the USB 2.0 clock selector on R-Car M3-W+,
+  - Add support for the new RZ/G1H (R8A7742) SoC,
+  - Minor fixes and cleanups.
+
+Note that the new Renesas RZ/G1H DT Binding Definitions are shared by
+driver and DT source files, and thus included in multiple pull requests:
+  - "[GIT PULL 4/5] Renesas driver updates for v5.8" (for arm-soc),
+  - "[GIT PULL] clk: renesas: Updates for v5.8" (for clk).
+
+Thanks for pulling!
+----------------------------------------------------------------
+Christophe JAILLET (1):
+      clk: renesas: r9a06g032: Fix some typo in comments
+
+Geert Uytterhoeven (3):
+      MAINTAINERS: Add DT Bindings for Renesas Clock Generators
+      Merge tag 'renesas-r8a7742-dt-binding-defs-tag' into clk-renesas-for-v5.8
+      clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects
+
+Lad Prabhakar (4):
+      dt-bindings: power: rcar-sysc: Add r8a7742 power domain index macros
+      clk: renesas: Add r8a7742 CPG Core Clock Definitions
+      dt-bindings: clock: renesas: cpg-mssr: Document r8a7742 binding
+      clk: renesas: cpg-mssr: Add R8A7742 support
+
+Yoshihiro Shimoda (1):
+      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add r8a77961 support
+
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |   4 +-
+ MAINTAINERS                                        |   1 +
+ drivers/clk/renesas/Kconfig                        |   8 +-
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a7742-cpg-mssr.c             | 275 +++++++++++++++++++++
+ drivers/clk/renesas/r9a06g032-clocks.c             |   6 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a7742-cpg-mssr.h       |  42 ++++
+ include/dt-bindings/power/r8a7742-sysc.h           |  29 +++
+ 11 files changed, 367 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a7742-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a7742-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a7742-sysc.h
+
+Gr{oetje,eeting}s,
+
+						Geert
 
 --
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
