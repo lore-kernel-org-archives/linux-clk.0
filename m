@@ -2,157 +2,115 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A537C47254
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 15:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4A85C47257
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 143D02076D
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 15:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35B020873
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 16:06:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="kP9ln9IF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgD3PbY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 11:31:24 -0400
-Received: from muru.com ([72.249.23.125]:52176 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726468AbgD3PbY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Apr 2020 11:31:24 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 3B5B18123;
-        Thu, 30 Apr 2020 15:32:10 +0000 (UTC)
-Date:   Thu, 30 Apr 2020 08:31:19 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/14] clocksource/drivers/timer-ti-dm: Add clockevent
- and clocksource support
-Message-ID: <20200430153119.GX37466@atomide.com>
-References: <20200417165519.4979-1-tony@atomide.com>
- <20200417165519.4979-3-tony@atomide.com>
- <62be90e2-7dbe-410d-4171-c0ad0cddc7a3@linaro.org>
- <20200427143144.GQ37466@atomide.com>
- <29f39839-b3ed-cac3-1dea-c137286320b1@linaro.org>
- <20200427152329.GR37466@atomide.com>
- <20200430140040.GA8363@bogus>
+        id S1728305AbgD3QGJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 12:06:09 -0400
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:10786 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727813AbgD3QGJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 12:06:09 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5eaaf72c0002>; Thu, 30 Apr 2020 09:05:00 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Apr 2020 09:06:07 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Apr 2020 09:06:07 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Apr
+ 2020 16:06:07 +0000
+Received: from [10.2.165.152] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Apr
+ 2020 16:06:06 +0000
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+ <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+ <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+Date:   Thu, 30 Apr 2020 09:04:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200430140040.GA8363@bogus>
+In-Reply-To: <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1588262700; bh=eWajUdI0iXeAXeqVD5ZpEmRaSpEhM1U8KfCosqzO194=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=kP9ln9IFyG1CyD2zYD6UBRJU+3nqtrfnnZ+cS/JlbzMx3B5faTPLBdCdqyTod9yo1
+         Z0Z2LBvNwQOpWFZIlo0fsv987r878bT2zeUtFfUToRuBf1Lh/HgCJgU7bLrKBMWn3Q
+         7EPPKclFWEMjk0R/r47l9T1m3+0SRS07OY7Pci/cE1nIgNUWDe6tk+Kayl8v2RJ0Rk
+         3nt0YCCT4XfBt1BFf++ZQhEXx6KRIn9v+noVua6ZqWw5Skg8oeWfj68av04Fza1i/d
+         F7E8EIRMAtO/MowkXFoanRyv6lWSbQx/oMz+9gxgwUq+u9RKO8pXG3cOzg4ztuNvIk
+         5iYSGa7WbeIhA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Rob Herring <robh@kernel.org> [200430 14:01]:
-> On Mon, Apr 27, 2020 at 08:23:29AM -0700, Tony Lindgren wrote:
-> > * Daniel Lezcano <daniel.lezcano@linaro.org> [200427 15:03]:
-> > > On 27/04/2020 16:31, Tony Lindgren wrote:
-> > > > Hi,
-> > > > 
-> > > > * Daniel Lezcano <daniel.lezcano@linaro.org> [200427 09:19]:
-> > > >> On 17/04/2020 18:55, Tony Lindgren wrote:
-> > > >>> --- a/Documentation/devicetree/bindings/timer/ti,timer.txt
-> > > >>> +++ b/Documentation/devicetree/bindings/timer/ti,timer.txt
-> > > >>> @@ -14,6 +14,8 @@ Required properties:
-> > > >>>  			ti,omap5430-timer (applicable to OMAP543x devices)
-> > > >>>  			ti,am335x-timer	(applicable to AM335x devices)
-> > > >>>  			ti,am335x-timer-1ms (applicable to AM335x devices)
-> > > >>> +			ti,dmtimer-clockevent (when used as for clockevent)
-> > > >>> +			ti,dmtimer-clocksource (when used as for clocksource)
-> > > >>
-> > > >> Please, submit a separate patch for this.
-> > > >>
-> > > >> Before you resend as is, this will be nacked as clocksource / clockevent
-> > > >> is not a hardware description but a Linux thing.
-> > > >>
-> > > >> Finding a way to characterize that from the DT is an endless discussion
-> > > >> since years, so I suggest to use a single property for the timer eg
-> > > >> <ti,dmtimer> and initialize the clocksource and the clockevent in the
-> > > >> driver.
-> > > > 
-> > > > Hmm good point. We still need to specify which timer is a clocksource
-> > > > and which one a clockevent somehow.
-> > > > 
-> > > > Maybe we could have a generic properties like the clock framework such as:
-> > > > 
-> > > > assigned-system-clocksource
-> > > > assigned-system-clockevent
-> > > 
-> > > I think that will be the same problem :/
-> > 
-> > Seems like other SoCs have the same issue too with multiple timers
-> > to configure.
-> > 
-> > > Is it possible to check the interrupt for the clockevent ? A timer node
-> > > with the interrrupt is the clockevent, without it is a clocksource.
-> > 
-> > OK let's try that. So the configuration would become then:
-> > 
-> > compatible = "ti,dmtimer;	/* reserved for system timers */
-> > /delete-property/interrupts;	/* ok so it's a clocksource */
-> > /delete-property/interrupts-extended;
-> 
-> That's not really what was meant.
 
-OK, so let's figure out something better then.
+On 4/30/20 7:13 AM, Dmitry Osipenko wrote:
+> 30.04.2020 17:02, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> 30.04.2020 16:56, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> 30.04.2020 01:00, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> +static int chan_capture_kthread_finish(void *data)
+>>>> +{
+>>>> +	struct tegra_vi_channel *chan =3D data;
+>>>> +	struct tegra_channel_buffer *buf;
+>>>> +
+>>>> +	set_freezable();
+>>>> +
+>>>> +	while (1) {
+>>>> +		try_to_freeze();
+>>> I guess it won't be great to freeze in the middle of a capture process,=
+ so:
+>>> 		if (list_empty(&chan->done))
+>>> 			try_to_freeze();
+>> And here should be some locking protection in order not race with the
+>> chan_capture_kthread_start because kthread_finish could freeze before
+>> kthread_start.
+> Or maybe both start / finish threads should simply be allowed to freeze
+> only when both capture and done lists are empty.
+>
+> if (list_empty(&chan->capture) &&
+>      list_empty(&chan->done))
+> 	try_to_freeze();
 
-> Let's say you have N timers. Either every timer is exactly the same and 
-> the OS can just assign them however it wants or there is some difference 
-> in the h/w making certain timer better for certain functions. Describe 
-> that difference. It could be clock rate, number of counter bits, always 
-> on, secure mode access only, has or doesn't have output compare or input 
-> capture, etc.
+good to freeze when not in middle of the frame capture but why should we=20
+not allow freeze in between captures?
 
-Hmm. Trying to detect this automatically will get messy. For example,
-we have few omap3 boards with the following options that also need to
-consider if the separate 32KiHz counter is available:
+Other drivers do allow freeze in between frame captures.
 
-1. The best case scenario
+I guess we can freeze before dequeue for capture and in finish thread we=20
+can freeze after capture done. This also don't need to check for=20
+list_empty with freeze to allow between frame captures.
 
-ti,omap-counter32k clocksource
-ti,sysc-omap2-timer ti,timer-alwon clockevent (timer1)
-
-2. Boards relying on internal clock with unusable 32k counter
-
-ti,sysc-omap2-timer ti,timer-alwon clocksource (timer12)
-ti,sysc-omap2-timer clockevent (typically gpt2)
-
-In the second case, the 32k counter is unusable, and timer1
-is unusable with the external 32k always on clock. But timer1
-can be used with the system clock just fine for other purposes.
-So ideally we would not tag timer1 as disabled :)
-
-For the second case, we could remove ti,timer-alwon property
-for timer1, and tag the 32k counter as disabled as the source
-clock is unreliable. Then somewhere in the code we would need
-to check if ti,omap-counter32k is availabe, then check if
-timer1 is always-on, then use timer12 if not a secure device
-like n900.
-
-If the board wants to use the system clock as the source for
-a higher resolution with assigned-clock-parents, then we'd need
-to ignore the always-on property and not use the 32k counter as
-the clocksource. Basically to somehow figure out that a higher
-resolution configuration is preferred over a
-low-power configuration.
-
-So what's your take on just adding the generic properties for
-assigned-system-clocksource and clockevent?
-
-Regards,
-
-Tony
 
