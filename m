@@ -2,56 +2,177 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7597C47247
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 20:24:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AD8C4724C
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CBBF7207DD
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 20:24:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F759207DD
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:11:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbgD3UYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 16:24:42 -0400
-Received: from muru.com ([72.249.23.125]:52380 "EHLO muru.com"
+        id S1726673AbgD3VLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 17:11:08 -0400
+Received: from foss.arm.com ([217.140.110.172]:33604 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726377AbgD3UYm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Apr 2020 16:24:42 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 8A4DA8123;
-        Thu, 30 Apr 2020 20:25:30 +0000 (UTC)
-Date:   Thu, 30 Apr 2020 13:24:38 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Tero Kristo <t-kristo@ti.com>
-Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, linux-omap@vger.kernel.org
-Subject: Re: [PATCH] clk: ti: clkctrl: convert subclocks to use proper names
- also
-Message-ID: <20200430202438.GY37466@atomide.com>
-References: <20200430083451.8562-1-t-kristo@ti.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200430083451.8562-1-t-kristo@ti.com>
+        id S1725844AbgD3VLI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Apr 2020 17:11:08 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7EBB31B;
+        Thu, 30 Apr 2020 14:11:07 -0700 (PDT)
+Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EBC03F68F;
+        Thu, 30 Apr 2020 14:11:06 -0700 (PDT)
+From:   Andre Przywara <andre.przywara@arm.com>
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v3 1/8] dt-bindings: clock: Convert Calxeda clock bindings to json-schema
+Date:   Thu, 30 Apr 2020 22:10:47 +0100
+Message-Id: <20200430211054.30466-2-andre.przywara@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200430211054.30466-1-andre.przywara@arm.com>
+References: <20200430211054.30466-1-andre.przywara@arm.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Tero Kristo <t-kristo@ti.com> [200430 08:35]:
-> Addition of the new internal API to get the clkctrl names missed adding
-> the same conversion in place for the subclocks. This leads into missed
-> parent/child relationships (i.e. orphaned clocks) with mixed node name
-> handling, for example with omap4/omap5 where the l4_per clocks are using
-> new naming, but rest are using old. Fix by converting the subclock
-> registration to pick correct names for the clocks also.
+Convert the Calxeda clock bindings to DT schema format using json-schema.
 
-OK, sorry for missing that part.
+This just covers the actual PLL and divider clock nodes. In the actual
+DTs they are somewhat unconnected (no ranges or bus compatible) children
+of the sregs node, but for the actual clock bindings this is not
+relevant.
 
-> Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node name")
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+One oddity is that the addresses are relative to the parent node,
+without that being pronounced using a ranges property.
+But this is too late to fix now.
 
-Thanks for fixing it:
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+---
+ .../devicetree/bindings/clock/calxeda.txt     | 17 ----
+ .../devicetree/bindings/clock/calxeda.yaml    | 82 +++++++++++++++++++
+ 2 files changed, 82 insertions(+), 17 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/calxeda.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/calxeda.yaml
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+diff --git a/Documentation/devicetree/bindings/clock/calxeda.txt b/Documentation/devicetree/bindings/clock/calxeda.txt
+deleted file mode 100644
+index 0a6ac1bdcda1..000000000000
+--- a/Documentation/devicetree/bindings/clock/calxeda.txt
++++ /dev/null
+@@ -1,17 +0,0 @@
+-Device Tree Clock bindings for Calxeda highbank platform
+-
+-This binding uses the common clock binding[1].
+-
+-[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-
+-Required properties:
+-- compatible : shall be one of the following:
+-	"calxeda,hb-pll-clock" - for a PLL clock
+-	"calxeda,hb-a9periph-clock" - The A9 peripheral clock divided from the
+-		A9 clock.
+-	"calxeda,hb-a9bus-clock" - The A9 bus clock divided from the A9 clock.
+-	"calxeda,hb-emmc-clock" - Divided clock for MMC/SD controller.
+-- reg : shall be the control register offset from SYSREGs base for the clock.
+-- clocks : shall be the input parent clock phandle for the clock. This is
+-	either an oscillator or a pll output.
+-- #clock-cells : from common clock binding; shall be set to 0.
+diff --git a/Documentation/devicetree/bindings/clock/calxeda.yaml b/Documentation/devicetree/bindings/clock/calxeda.yaml
+new file mode 100644
+index 000000000000..a34cbf3c9aaf
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/calxeda.yaml
+@@ -0,0 +1,82 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/calxeda.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Device Tree Clock bindings for Calxeda highbank platform
++
++description: |
++  This binding covers the Calxeda SoC internal peripheral and bus clocks
++  as used by peripherals. The clocks live inside the "system register"
++  region of the SoC, so are typically presented as children of an
++  "hb-sregs" node.
++
++maintainers:
++  - Andre Przywara <andre.przywara@arm.com>
++
++properties:
++  "#clock-cells":
++    const: 0
++
++  compatible:
++    enum:
++      - calxeda,hb-pll-clock
++      - calxeda,hb-a9periph-clock
++      - calxeda,hb-a9bus-clock
++      - calxeda,hb-emmc-clock
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++required:
++  - "#clock-cells"
++  - compatible
++  - clocks
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    sregs@3fffc000 {
++        compatible = "calxeda,hb-sregs";
++        reg = <0x3fffc000 0x1000>;
++
++        clocks {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            osc: oscillator {
++                #clock-cells = <0>;
++                compatible = "fixed-clock";
++                clock-frequency = <33333000>;
++            };
++
++            ddrpll: ddrpll@108 {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-pll-clock";
++                clocks = <&osc>;
++                reg = <0x108>;
++            };
++
++            a9pll: a9pll@100 {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-pll-clock";
++                clocks = <&osc>;
++                reg = <0x100>;
++            };
++
++            a9periphclk: a9periphclk@104 {
++                #clock-cells = <0>;
++                compatible = "calxeda,hb-a9periph-clock";
++                clocks = <&a9pll>;
++                reg = <0x104>;
++            };
++        };
++    };
++
++...
+-- 
+2.17.1
+
