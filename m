@@ -2,143 +2,123 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 018A8C28CBC
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADDEC4724C
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE3D9206D9
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:00:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588255250;
-	bh=YlQS0JWm1kZ1bcJMVHBPFuI7i/sHKcm81FIe/NwSwj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BkES/tGSE43bXoaayEtJAfS/oJMGRa6cR16W4tWZBxkyOq37RpFmXdpzk6yDySN/Y
-	 TS1V3g1VYas8Oa4sG2XDgk/Za3eOdNdNsiHv9E25tiJ+12Krqmaib68KAcFfXwLeMY
-	 Vu2fld1RHVAUFYBipOvIUorBmErU4CoBZITJ1tPc=
+	by mail.kernel.org (Postfix) with ESMTP id 1ABCB2063A
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:02:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPLsH1OV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728879AbgD3OAp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 10:00:45 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:35035 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729397AbgD3OAn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:00:43 -0400
-Received: by mail-oi1-f193.google.com with SMTP id o7so5292733oif.2;
-        Thu, 30 Apr 2020 07:00:42 -0700 (PDT)
+        id S1728268AbgD3OC1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 10:02:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729147AbgD3OCX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:02:23 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37561C035494;
+        Thu, 30 Apr 2020 07:02:23 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id a21so6594391ljb.9;
+        Thu, 30 Apr 2020 07:02:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=N+Ht0CmfDxJVUU6J4yFlhD6kd2eTTrdGjBG9WTx/UyQ=;
+        b=XPLsH1OV1IK/7IHKpVHzrXqje08ez4AfmDTnVvgYOvBOy0FfpRqK+D9XYPlaE05rNQ
+         tbWt8gHkoewEz1ZUIHtmfsi6katLHTeLsDVuZdrrb/9kmBnnr7Nqg4uaZMHik+Lfx6bT
+         CnqceWSKVJEUN9qF/EyddjcmjwKe2GCmxEKpOxxTndVb9qiTjOzT0MYSxJFK+kGc+B1U
+         ss1n7PFEVRDR/o9znXtZsEQYylgNtoHQJBLwCePduH/UfxVLEX40B8VRVdyP8pEunGTV
+         kZTPfxQ4HNrinx9RBPk88XHaX88dN3YSuwQOdCnup6aHtdw0gsWv+BchoKbWH6xQEaEw
+         K0mg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4SqKDcgFBHx1L7Er/7o6lUHlh3wWzthDwvJZwo5hrJU=;
-        b=QyHss8qcgQyLccmUxMGK7EApLeAiW3/3iykKdJiIOU3pytBtLQreG1zD8jJ/osRaD1
-         OWi7ggHOWxUnCKRUStcWiCp3YU2h4RLn+K/afjcbEAwT0BoPDqfXOI/GqIfeC542vLS4
-         hFNDlBn2oe/4WqL9tEk8xWMn1qMxKYECNJMjIHPmKsj9l7JnLiHJ/8DEdZOPxYHctfjh
-         NW1jlrZzQJAmt5XHzD6WXnICdzRdU+XU8uCdXJju0eQgZNJGbNxRJiZjLozars3rVELi
-         Hr1qn+7431iZ5bRbzjdaZVrFoE9uROl4/S2hzHbzjllvm4lfb7veQyczd+Shv9MmnrY9
-         XTgQ==
-X-Gm-Message-State: AGi0PuaPA9FSTj3JLI/HqpvsxzbRoFDsDSrtYwsxW3pw74BYgtOH6h+F
-        UV+4l2aVqGYNdyrkKtBJlg==
-X-Google-Smtp-Source: APiQypK+NEro6nmq5Ju0kr11u0dYdZk562OwLmfEc6Rdsg37blDy9Pox4kBxZ7K1FWgojRgFDGj0HA==
-X-Received: by 2002:aca:d684:: with SMTP id n126mr1810974oig.173.1588255242401;
-        Thu, 30 Apr 2020 07:00:42 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h137sm2698oib.33.2020.04.30.07.00.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 07:00:41 -0700 (PDT)
-Received: (nullmailer pid 20979 invoked by uid 1000);
-        Thu, 30 Apr 2020 14:00:40 -0000
-Date:   Thu, 30 Apr 2020 09:00:40 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 02/14] clocksource/drivers/timer-ti-dm: Add clockevent
- and clocksource support
-Message-ID: <20200430140040.GA8363@bogus>
-References: <20200417165519.4979-1-tony@atomide.com>
- <20200417165519.4979-3-tony@atomide.com>
- <62be90e2-7dbe-410d-4171-c0ad0cddc7a3@linaro.org>
- <20200427143144.GQ37466@atomide.com>
- <29f39839-b3ed-cac3-1dea-c137286320b1@linaro.org>
- <20200427152329.GR37466@atomide.com>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=N+Ht0CmfDxJVUU6J4yFlhD6kd2eTTrdGjBG9WTx/UyQ=;
+        b=s57I4YQgB+D0UXAnhqsItvyDVqjJNqarQ00pQ/nIAnEcQUg+rjc9mJVF93UqcRDv+9
+         BJ87PNUr0/ZI4c83Ey5jbxBj2bGsIVMNyhgaE6y+hK+iP/Rgdl8mi45QH1ifOfqMHM/e
+         8LA05IGc6tnnWLMKTksdCBgCrV0lZbTIKk615KkLmHnZA3p7NzgD7wwNss5AGMNC9aBr
+         ipGI3mPTSzrUjqgqnTI1atvcwF4OX2zHt9RPyIr6cfvr8jlMneUdXp5rOWtll0WfnJ0R
+         7R1pXHW4ODbWl9Jj4gayufqn+n+ojVz7fBATu53t+ARa27L5engxI6uLxZZ02rC5CCoh
+         g9cQ==
+X-Gm-Message-State: AGi0PubsdP8A1WQGp7T6pGEU46IiNbmVW5kRWUoRoj/KegF+QT8CReSj
+        a6/i9R+F0bzyEbMoozGwfXC8yt19
+X-Google-Smtp-Source: APiQypInaM7ORzF/CVsxNxUc0J9Cyf/Q6St4WH9tVfb2A8VygbMaxJllBH4AhcGid0vObbUWazuWjQ==
+X-Received: by 2002:a2e:87d9:: with SMTP id v25mr2275164ljj.241.1588255341268;
+        Thu, 30 Apr 2020 07:02:21 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id v8sm4886684lfp.85.2020.04.30.07.02.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Apr 2020 07:02:20 -0700 (PDT)
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+Message-ID: <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+Date:   Thu, 30 Apr 2020 17:02:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200427152329.GR37466@atomide.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Apr 27, 2020 at 08:23:29AM -0700, Tony Lindgren wrote:
-> * Daniel Lezcano <daniel.lezcano@linaro.org> [200427 15:03]:
-> > On 27/04/2020 16:31, Tony Lindgren wrote:
-> > > Hi,
-> > > 
-> > > * Daniel Lezcano <daniel.lezcano@linaro.org> [200427 09:19]:
-> > >> On 17/04/2020 18:55, Tony Lindgren wrote:
-> > >>> --- a/Documentation/devicetree/bindings/timer/ti,timer.txt
-> > >>> +++ b/Documentation/devicetree/bindings/timer/ti,timer.txt
-> > >>> @@ -14,6 +14,8 @@ Required properties:
-> > >>>  			ti,omap5430-timer (applicable to OMAP543x devices)
-> > >>>  			ti,am335x-timer	(applicable to AM335x devices)
-> > >>>  			ti,am335x-timer-1ms (applicable to AM335x devices)
-> > >>> +			ti,dmtimer-clockevent (when used as for clockevent)
-> > >>> +			ti,dmtimer-clocksource (when used as for clocksource)
-> > >>
-> > >> Please, submit a separate patch for this.
-> > >>
-> > >> Before you resend as is, this will be nacked as clocksource / clockevent
-> > >> is not a hardware description but a Linux thing.
-> > >>
-> > >> Finding a way to characterize that from the DT is an endless discussion
-> > >> since years, so I suggest to use a single property for the timer eg
-> > >> <ti,dmtimer> and initialize the clocksource and the clockevent in the
-> > >> driver.
-> > > 
-> > > Hmm good point. We still need to specify which timer is a clocksource
-> > > and which one a clockevent somehow.
-> > > 
-> > > Maybe we could have a generic properties like the clock framework such as:
-> > > 
-> > > assigned-system-clocksource
-> > > assigned-system-clockevent
-> > 
-> > I think that will be the same problem :/
+30.04.2020 16:56, Dmitry Osipenko пишет:
+> 30.04.2020 01:00, Sowjanya Komatineni пишет:
+>> +static int chan_capture_kthread_finish(void *data)
+>> +{
+>> +	struct tegra_vi_channel *chan = data;
+>> +	struct tegra_channel_buffer *buf;
+>> +
+>> +	set_freezable();
+>> +
+>> +	while (1) {
+>> +		try_to_freeze();
 > 
-> Seems like other SoCs have the same issue too with multiple timers
-> to configure.
-> 
-> > Is it possible to check the interrupt for the clockevent ? A timer node
-> > with the interrrupt is the clockevent, without it is a clocksource.
-> 
-> OK let's try that. So the configuration would become then:
-> 
-> compatible = "ti,dmtimer;	/* reserved for system timers */
-> /delete-property/interrupts;	/* ok so it's a clocksource */
-> /delete-property/interrupts-extended;
+> I guess it won't be great to freeze in the middle of a capture process, so:
+> 		if (list_empty(&chan->done))
+> 			try_to_freeze();
 
-That's not really what was meant.
+And here should be some locking protection in order not race with the
+chan_capture_kthread_start because kthread_finish could freeze before
+kthread_start.
 
-Let's say you have N timers. Either every timer is exactly the same and 
-the OS can just assign them however it wants or there is some difference 
-in the h/w making certain timer better for certain functions. Describe 
-that difference. It could be clock rate, number of counter bits, always 
-on, secure mode access only, has or doesn't have output compare or input 
-capture, etc.
+>> +		wait_event_interruptible(chan->done_wait,
+>> +					 !list_empty(&chan->done) ||
+>> +					 kthread_should_stop());
+>> +
+>> +		/* dequeue buffers and finish capture */
+>> +		buf = dequeue_buf_done(chan);
+>> +		while (buf) {
+>> +			tegra_channel_capture_done(chan, buf);
+>> +			buf = dequeue_buf_done(chan);
+>> +		}
+>> +
+>> +		if (kthread_should_stop())
+>> +			break;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+> 
 
-Rob
