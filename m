@@ -2,118 +2,117 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.7 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9818C8300A
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F303C8300A
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 09:43:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B179820838
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 08:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A92214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 09:43:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MFlPir4v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbgD3ItF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 04:49:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35742 "EHLO
+        id S1726792AbgD3Jnv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 05:43:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726420AbgD3ItF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 04:49:05 -0400
-Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [IPv6:2a02:1800:110:4::f00:19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12DA3C035494
-        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2020 01:49:04 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:182a:142e:a95f:66c2])
-        by laurent.telenet-ops.be with bizsmtp
-        id Ywp32200g0w8ZL601wp3Ki; Thu, 30 Apr 2020 10:49:03 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jU4sR-0002le-JT; Thu, 30 Apr 2020 10:49:03 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jU4sR-0000Pb-ID; Thu, 30 Apr 2020 10:49:03 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.8
-Date:   Thu, 30 Apr 2020 10:49:02 +0200
-Message-Id: <20200430084902.1540-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        by vger.kernel.org with ESMTP id S1726453AbgD3Jnu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 05:43:50 -0400
+Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C370DC035494;
+        Thu, 30 Apr 2020 02:43:50 -0700 (PDT)
+Received: by mail-pl1-x644.google.com with SMTP id w3so2054643plz.5;
+        Thu, 30 Apr 2020 02:43:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PMlWSW6ttnanNb8wF0bobaava2tVkjYUTBjAcm/ZuJs=;
+        b=MFlPir4vo3tEZYxlusrpRQF5dV+NyqZ+15+TQFJLozgqv+/HoDTTsM9j5hQMDFgyI5
+         /QPcVzxBAlfOI5DCpUcUmQPdN3BpfO5ImVwMShy5sFSa6XAqvb/69oqZIgApPKizVlib
+         p2Z0OeoLvAPyMWpI5Ah+svBEvUfQfakzUXEWT/g36h6Imiwt2O/UwWeaWFpu/U2RrjI8
+         3wJaz9cELshAdY2rUcOq4Q8NiaBW2R2EJQf6dkyPNvxcT1dhz+tVp3WI+UXFDtZDEpRH
+         Wr4vCgcociS8CmaTZYdyDFNKYLMNQFgpCQEMJo3OzPjoQ7AR/utuwMPMTdoKeZSmF0M1
+         NbeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PMlWSW6ttnanNb8wF0bobaava2tVkjYUTBjAcm/ZuJs=;
+        b=cEabMlpi6Ey56XxYO/nz+TD+kUHsHWPQad00Ud+zb2U2f5PFcoOopB6C5Of6GQGdfH
+         3jnra+EgJ7HqJh2IcHD+E/hcf7zUlin5Ls7FYOL972+Hj4XBUA8WfnJwnfIOMpxlIHDp
+         stXe1fcfQxlwuJyDeCH2E6iOoHmGlXVo13EdcRvANH9jSe2U1afM1e8LaxbmYBR8g06d
+         KAj4mj3f1+NnpmVzhtMHYpaf237EELyhHftNWv0DlYR0GNp6uauRJH/Npvh2MO1S4Es0
+         LLcXFRyzNdnhcVbkr4S9cadJaAPBFaCIyJ/Zh4zSaRfui79pHTHCwiG/zoZsiCT4Sma9
+         Nn7A==
+X-Gm-Message-State: AGi0PuZvXOMqBf0LKISzSmNnGkjFuyh6gb91yErMwA/WceMIjykfZ90N
+        9mwnNBNS5An4TftxCJbWT7I=
+X-Google-Smtp-Source: APiQypLKUFlZg0CytxNp74nTXeWU2B/WRcjEZ8j8XaaORn8LkrMUWInRi+XbgmfA/ZJJ++4rjGTf1Q==
+X-Received: by 2002:a17:902:a586:: with SMTP id az6mr2779889plb.201.1588239829729;
+        Thu, 30 Apr 2020 02:43:49 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([137.59.101.138])
+        by smtp.gmail.com with ESMTPSA id 5sm1307138pjf.19.2020.04.30.02.43.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 30 Apr 2020 02:43:49 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     alexandre.torgue@st.com
+Cc:     sboyd@kernel.org, mcoquelin.stm32@gmail.com,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dillon.minfei@gmail.com
+Subject: [PATCH 2/4] fix hang in ltdc driver loading bug, add CLK_IGNORE_UNUSED for ltdc
+Date:   Thu, 30 Apr 2020 17:43:44 +0800
+Message-Id: <1588239824-11491-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+From: dillon min <dillon.minfei@gmail.com>
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+1) in clk-stm32f4.c set clk_hw to the wrong offset PLL_VCO_SAI, PLL_VCO_I2S
+   of clks array, should change to PLL_SAI, PLL_I2S, otherwise get null from
+   to_clk_gate
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+2) add CLK_IGNORE_UNUSED for ltdc, otherwise system will close ltdc clk
+   before filesystem mount
 
-are available in the Git repository at:
+Signed-off-by: dillon min <dillon.minfei@gmail.com>
+---
+ drivers/clk/clk-stm32f4.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.8-tag1
+diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+index 18117ce..bdebe05 100644
+--- a/drivers/clk/clk-stm32f4.c
++++ b/drivers/clk/clk-stm32f4.c
+@@ -129,7 +129,8 @@ static const struct stm32f4_gate_data stm32f429_gates[] __initconst = {
+ 	{ STM32F4_RCC_APB2ENR, 20,	"spi5",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 21,	"spi6",		"apb2_div" },
+ 	{ STM32F4_RCC_APB2ENR, 22,	"sai1",		"apb2_div" },
+-	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div" },
++	{ STM32F4_RCC_APB2ENR, 26,	"ltdc",		"apb2_div",
++		CLK_IGNORE_UNUSED },
+ };
+ 
+ static const struct stm32f4_gate_data stm32f469_gates[] __initconst = {
+@@ -1754,10 +1755,10 @@ static void __init stm32f4_rcc_init(struct device_node *np)
+ 	stm32f4_rcc_register_pll("vco_in", &data->pll_data[0],
+ 			&stm32f4_clk_lock);
+ 
+-	clks[PLL_VCO_I2S] = stm32f4_rcc_register_pll("vco_in",
++	clks[PLL_I2S] = stm32f4_rcc_register_pll("vco_in",
+ 			&data->pll_data[1], &stm32f4_clk_lock);
+ 
+-	clks[PLL_VCO_SAI] = stm32f4_rcc_register_pll("vco_in",
++	clks[PLL_SAI] = stm32f4_rcc_register_pll("vco_in",
+ 			&data->pll_data[2], &stm32f4_clk_lock);
+ 
+ 	for (n = 0; n < MAX_POST_DIV; n++) {
+-- 
+2.7.4
 
-for you to fetch changes up to e2f022c10ed3b50ba1d2bb1f037b0e7a84cb1c3e:
-
-  clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects (2020-04-30 09:39:06 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.8
-
-  - Add support for the USB 2.0 clock selector on R-Car M3-W+,
-  - Add support for the new RZ/G1H (R8A7742) SoC,
-  - Minor fixes and cleanups.
-
-Note that the new Renesas RZ/G1H DT Binding Definitions are shared by
-driver and DT source files, and thus included in multiple pull requests:
-  - "[GIT PULL 4/5] Renesas driver updates for v5.8" (for arm-soc),
-  - "[GIT PULL] clk: renesas: Updates for v5.8" (for clk).
-
-Thanks for pulling!
-----------------------------------------------------------------
-Christophe JAILLET (1):
-      clk: renesas: r9a06g032: Fix some typo in comments
-
-Geert Uytterhoeven (3):
-      MAINTAINERS: Add DT Bindings for Renesas Clock Generators
-      Merge tag 'renesas-r8a7742-dt-binding-defs-tag' into clk-renesas-for-v5.8
-      clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects
-
-Lad Prabhakar (4):
-      dt-bindings: power: rcar-sysc: Add r8a7742 power domain index macros
-      clk: renesas: Add r8a7742 CPG Core Clock Definitions
-      dt-bindings: clock: renesas: cpg-mssr: Document r8a7742 binding
-      clk: renesas: cpg-mssr: Add R8A7742 support
-
-Yoshihiro Shimoda (1):
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add r8a77961 support
-
- .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
- .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |   4 +-
- MAINTAINERS                                        |   1 +
- drivers/clk/renesas/Kconfig                        |   8 +-
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a7742-cpg-mssr.c             | 275 +++++++++++++++++++++
- drivers/clk/renesas/r9a06g032-clocks.c             |   6 +-
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- include/dt-bindings/clock/r8a7742-cpg-mssr.h       |  42 ++++
- include/dt-bindings/power/r8a7742-sysc.h           |  29 +++
- 11 files changed, 367 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a7742-cpg-mssr.c
- create mode 100644 include/dt-bindings/clock/r8a7742-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/r8a7742-sysc.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
