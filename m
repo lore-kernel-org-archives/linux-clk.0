@@ -2,177 +2,223 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59AD8C4724C
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A5D7C4724C
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F759207DD
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FDA8207DD
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 21:17:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oc4ISMOV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726673AbgD3VLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 17:11:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:33604 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbgD3VLI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Apr 2020 17:11:08 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7EBB31B;
-        Thu, 30 Apr 2020 14:11:07 -0700 (PDT)
-Received: from donnerap.arm.com (donnerap.cambridge.arm.com [10.1.197.25])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EBC03F68F;
-        Thu, 30 Apr 2020 14:11:06 -0700 (PDT)
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Maxime Ripard <mripard@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v3 1/8] dt-bindings: clock: Convert Calxeda clock bindings to json-schema
-Date:   Thu, 30 Apr 2020 22:10:47 +0100
-Message-Id: <20200430211054.30466-2-andre.przywara@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200430211054.30466-1-andre.przywara@arm.com>
-References: <20200430211054.30466-1-andre.przywara@arm.com>
+        id S1726742AbgD3VRX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 17:17:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40502 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726430AbgD3VRX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 17:17:23 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 118EBC035494;
+        Thu, 30 Apr 2020 14:17:23 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id t11so2459863lfe.4;
+        Thu, 30 Apr 2020 14:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ulSnjrVahD3ngtDTBqJ4GqWuIHf55OLXY1bECTxDS44=;
+        b=oc4ISMOVLP5hvC3AL+ELmDB6d1Vldyb8K8cjoSkEGiCH2rfArMnvs44iETFALx+qdK
+         /rbI06jovJK7dDH1ey5rcRxBd0BfrzycbzEi8RZxjNh8JFUsMfe6I1BINQYjJUSgkfhO
+         AYAAivfMm+DHPVzwQpJVpr7V/Pbg5l021AtYwc1HFUuUGn0m1ePhePFQsWisP7WInlum
+         /3ARFJQk4lMIDb5Vit1tNUUm5JSrDEVwpVXXTq0TeOgIL8FoN7weeimkJKprspg3SFZH
+         80rfpFrhT1y9sQr1g8LIuP7U2EljqpAszIyfflg8TeJaB3wup6U+XrCeX8eMb6zq0keV
+         6ylQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ulSnjrVahD3ngtDTBqJ4GqWuIHf55OLXY1bECTxDS44=;
+        b=lr+Ko41d/Ej4CM7wP/C9OiQnIbGUagMrihzMwptdqQ/gO4n1O2b2zT/GZdXpwf18r7
+         ACih/s/1yxprxoYCVNYhM9nnYr6Ilh00mIraS3mqFYpV1PcVhr5AZ0EqPRIZ1cYQE4yd
+         MyCTvpp4EUegK9l9V4XzJGlUmf0GFJ7Zyjdtr5a0dTWx1783lQgSCGGCuImxey7emZLW
+         YEPxVxIJl2NABRMZJWSPjP9k3taB6mBWq2PNnw27rP/eVjL6z44v3j9gzh3pHEFowE9U
+         HylA6N6E9P2dJGx27hyZiBCSBjAy/fAauHLQEO9pfXm54yzVL48yywKo/cwHEOfG0TEk
+         D7ww==
+X-Gm-Message-State: AGi0PuatBSnhi25yAXpo4HUXW8u/AEzoOOpCpvQxSlSYjKuVKzb8E19U
+        BMdyZpth5R9S98sX6MjQBQSxj5fF
+X-Google-Smtp-Source: APiQypKwVKpc68og19f2tP6BDvbtFM8V8QGSMRaDDyTLi9qHIctnxsKr9M+orYSlTHW5xaLOAQchhA==
+X-Received: by 2002:a19:e20b:: with SMTP id z11mr403737lfg.156.1588281441041;
+        Thu, 30 Apr 2020 14:17:21 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id k18sm827670lfg.81.2020.04.30.14.17.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Apr 2020 14:17:20 -0700 (PDT)
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+ <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+ <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+ <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+ <7d31d24f-f353-7e82-3ff9-cdba8b773d1e@nvidia.com>
+ <06a4a067-8d54-4322-b2a6-14e82eaeda29@nvidia.com>
+ <47873bbd-cf90-4595-5a99-7e9113327ecc@nvidia.com>
+ <f6088e0f-4ac7-a6be-3ede-0233dc88ef2c@nvidia.com>
+ <71532440-f455-cc24-74f7-9ccad5947099@gmail.com>
+ <b3238987-5e8a-32f2-7ce7-924e86bc6e9e@nvidia.com>
+ <298187f6-2425-4813-1ae1-f256c179623e@nvidia.com>
+ <9c942bc9-703e-3bbb-eeab-f37e69dc1ded@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <b72b9d5c-7d02-1b58-20f7-30f94e230d58@gmail.com>
+Date:   Fri, 1 May 2020 00:17:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <9c942bc9-703e-3bbb-eeab-f37e69dc1ded@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the Calxeda clock bindings to DT schema format using json-schema.
+30.04.2020 23:02, Sowjanya Komatineni пишет:
+> 
+> On 4/30/20 12:53 PM, Sowjanya Komatineni wrote:
+>>
+>> On 4/30/20 12:46 PM, Sowjanya Komatineni wrote:
+>>>
+>>> On 4/30/20 12:33 PM, Dmitry Osipenko wrote:
+>>>> 30.04.2020 22:09, Sowjanya Komatineni пишет:
+>>>>> On 4/30/20 11:18 AM, Sowjanya Komatineni wrote:
+>>>>>> On 4/30/20 10:06 AM, Sowjanya Komatineni wrote:
+>>>>>>> On 4/30/20 9:29 AM, Sowjanya Komatineni wrote:
+>>>>>>>> On 4/30/20 9:04 AM, Sowjanya Komatineni wrote:
+>>>>>>>>> On 4/30/20 7:13 AM, Dmitry Osipenko wrote:
+>>>>>>>>>> 30.04.2020 17:02, Dmitry Osipenko пишет:
+>>>>>>>>>>> 30.04.2020 16:56, Dmitry Osipenko пишет:
+>>>>>>>>>>>> 30.04.2020 01:00, Sowjanya Komatineni пишет:
+>>>>>>>>>>>>> +static int chan_capture_kthread_finish(void *data)
+>>>>>>>>>>>>> +{
+>>>>>>>>>>>>> +    struct tegra_vi_channel *chan = data;
+>>>>>>>>>>>>> +    struct tegra_channel_buffer *buf;
+>>>>>>>>>>>>> +
+>>>>>>>>>>>>> +    set_freezable();
+>>>>>>>>>>>>> +
+>>>>>>>>>>>>> +    while (1) {
+>>>>>>>>>>>>> +        try_to_freeze();
+>>>>>>>>>>>> I guess it won't be great to freeze in the middle of a capture
+>>>>>>>>>>>> process, so:
+>>>>>>>>>>>>          if (list_empty(&chan->done))
+>>>>>>>>>>>>              try_to_freeze();
+>>>>>>>>>>> And here should be some locking protection in order not race
+>>>>>>>>>>> with
+>>>>>>>>>>> the
+>>>>>>>>>>> chan_capture_kthread_start because kthread_finish could freeze
+>>>>>>>>>>> before
+>>>>>>>>>>> kthread_start.
+>>>>>>>>>> Or maybe both start / finish threads should simply be allowed to
+>>>>>>>>>> freeze
+>>>>>>>>>> only when both capture and done lists are empty.
+>>>>>>>>>>
+>>>>>>>>>> if (list_empty(&chan->capture) &&
+>>>>>>>>>>       list_empty(&chan->done))
+>>>>>>>>>>      try_to_freeze();
+>>>>>>>>> good to freeze when not in middle of the frame capture but why
+>>>>>>>>> should we not allow freeze in between captures?
+>>>>>>>>>
+>>>>>>>>> Other drivers do allow freeze in between frame captures.
+>>>>>>>>>
+>>>>>>>>> I guess we can freeze before dequeue for capture and in finish
+>>>>>>>>> thread we can freeze after capture done. This also don't need to
+>>>>>>>>> check for list_empty with freeze to allow between frame captures.
+>>>>>>>>>
+>>>>>>>> Also if we add check for both lists empty, freeze is not allowed as
+>>>>>>>> long as streaming is going on and in case of continuous streaming
+>>>>>>>> freeze will never happen.
+>>>>>> To allow freeze b/w frames (but not in middle of a frame),
+>>>>>>
+>>>>>> for capture_start thread, probably we can do unconditional
+>>>>>> try_to_freeze()
+>>>> Is it possible to use wait_event_freezable()?
+>>>>
+>>>> https://www.kernel.org/doc/Documentation/power/freezing-of-tasks.txt
+>>>>
+>>>> Will the wait_event_interruptible() be woken up when system freezes?
+>>>
+>>> Based on wait_event_freezable implementation, looks like it similar
+>>> to wait_event_interruptible + try_to_free() as it does
+>>> freezable_schedule unlike schedule with wait_event_interruptible.
+>>>
+>>> So using this for capture_start may be ok to allow freeze before
+>>> start of frame. But can't use for capture_finish as this is same as
+>>> wait_event_interruptible followed by unconditional try_to_freeze.
+>>>
+>>>>
+>>>>>> for capture_finish thread, at end of capture done we can do
+>>>>>> try_to_freeze() only when done list is empty
+>>>> This doesn't prevent situation where the done-list is empty and the
+>>>> "finish" thread freezes, in the same time the "start" thread issues new
+>>>> capture and then freezes too.
+>>>>
+>>>> 1. "start" thread issues capture
+>>>>
+>>>> 2. "finish" thread wakes and waits for the capture to complete
+>>>>
+>>>> 3. "start" thread begins another capture, waits for FRAME_START
+>>>>
+>>>> 4. system freezing activates
+>>>>
+>>>> 5. "finish" thread completes the capture and freezes because done-list
+>>>> is empty
+>>>>
+>>>> 6. "start" thread gets FRAME_START, issues another capture and freezes
+>>>
+>>> This will not happen as we allow double buffering done list will not
+>>> be empty till stream stop happens
+>>>
+>>> There will always be 1 outstanding frame in done list
+>>
+>> Correction, there will always be 1 outstanding buffer except beginning
+>> during beginning of stream.
+>>
+>> Except during beginning frames, done list will not be empty for all
+>> subsequent streaming process
+> 
+> Also to be clear, hardware sees next frame start event prior to previous
+> frame mw_ack event as mw_ack event happens after frame end. So once
+> initial buffer got queued to done list to finish processes, while
+> waiting for mw_ack next frame start happens and pushes next buffer to
+> done list.
 
-This just covers the actual PLL and divider clock nodes. In the actual
-DTs they are somewhat unconnected (no ranges or bus compatible) children
-of the sregs node, but for the actual clock bindings this is not
-relevant.
+What about this variant:
 
-One oddity is that the addresses are relative to the parent node,
-without that being pronounced using a ranges property.
-But this is too late to fix now.
+1. "start" thread wakes up to start capture
 
-Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- .../devicetree/bindings/clock/calxeda.txt     | 17 ----
- .../devicetree/bindings/clock/calxeda.yaml    | 82 +++++++++++++++++++
- 2 files changed, 82 insertions(+), 17 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/calxeda.txt
- create mode 100644 Documentation/devicetree/bindings/clock/calxeda.yaml
+2. system freezing activates
 
-diff --git a/Documentation/devicetree/bindings/clock/calxeda.txt b/Documentation/devicetree/bindings/clock/calxeda.txt
-deleted file mode 100644
-index 0a6ac1bdcda1..000000000000
---- a/Documentation/devicetree/bindings/clock/calxeda.txt
-+++ /dev/null
-@@ -1,17 +0,0 @@
--Device Tree Clock bindings for Calxeda highbank platform
--
--This binding uses the common clock binding[1].
--
--[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
--
--Required properties:
--- compatible : shall be one of the following:
--	"calxeda,hb-pll-clock" - for a PLL clock
--	"calxeda,hb-a9periph-clock" - The A9 peripheral clock divided from the
--		A9 clock.
--	"calxeda,hb-a9bus-clock" - The A9 bus clock divided from the A9 clock.
--	"calxeda,hb-emmc-clock" - Divided clock for MMC/SD controller.
--- reg : shall be the control register offset from SYSREGs base for the clock.
--- clocks : shall be the input parent clock phandle for the clock. This is
--	either an oscillator or a pll output.
--- #clock-cells : from common clock binding; shall be set to 0.
-diff --git a/Documentation/devicetree/bindings/clock/calxeda.yaml b/Documentation/devicetree/bindings/clock/calxeda.yaml
-new file mode 100644
-index 000000000000..a34cbf3c9aaf
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/calxeda.yaml
-@@ -0,0 +1,82 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/calxeda.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Device Tree Clock bindings for Calxeda highbank platform
-+
-+description: |
-+  This binding covers the Calxeda SoC internal peripheral and bus clocks
-+  as used by peripherals. The clocks live inside the "system register"
-+  region of the SoC, so are typically presented as children of an
-+  "hb-sregs" node.
-+
-+maintainers:
-+  - Andre Przywara <andre.przywara@arm.com>
-+
-+properties:
-+  "#clock-cells":
-+    const: 0
-+
-+  compatible:
-+    enum:
-+      - calxeda,hb-pll-clock
-+      - calxeda,hb-a9periph-clock
-+      - calxeda,hb-a9bus-clock
-+      - calxeda,hb-emmc-clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+required:
-+  - "#clock-cells"
-+  - compatible
-+  - clocks
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    sregs@3fffc000 {
-+        compatible = "calxeda,hb-sregs";
-+        reg = <0x3fffc000 0x1000>;
-+
-+        clocks {
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            osc: oscillator {
-+                #clock-cells = <0>;
-+                compatible = "fixed-clock";
-+                clock-frequency = <33333000>;
-+            };
-+
-+            ddrpll: ddrpll@108 {
-+                #clock-cells = <0>;
-+                compatible = "calxeda,hb-pll-clock";
-+                clocks = <&osc>;
-+                reg = <0x108>;
-+            };
-+
-+            a9pll: a9pll@100 {
-+                #clock-cells = <0>;
-+                compatible = "calxeda,hb-pll-clock";
-+                clocks = <&osc>;
-+                reg = <0x100>;
-+            };
-+
-+            a9periphclk: a9periphclk@104 {
-+                #clock-cells = <0>;
-+                compatible = "calxeda,hb-a9periph-clock";
-+                clocks = <&a9pll>;
-+                reg = <0x104>;
-+            };
-+        };
-+    };
-+
-+...
--- 
-2.17.1
+3. "finish" thread wakes up and freezes
 
+4. "start" thread issues capture and freezes
+
+And again, I assume that system's freezing should wake
+wait_event_interruptible(), otherwise it won't be possible to freeze
+idling threads at all and freezing should fail (IIUC).
+
+And in this case synchronization between start/finish threads should be
+needed in regards to freezing.
+
+Note that this could be a wrong assumption, I'm not closely familiar
+with how freezer works.
