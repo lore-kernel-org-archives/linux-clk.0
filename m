@@ -2,108 +2,104 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C17B6C83003
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 03:40:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1734C83001
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 06:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A1A742083B
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 03:40:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6DC0214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 06:21:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="PU41HCwM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726486AbgD3DkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Apr 2020 23:40:14 -0400
-Received: from m176148.mail.qiye.163.com ([59.111.176.148]:12360 "EHLO
-        m176148.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbgD3DkN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Apr 2020 23:40:13 -0400
-Received: from vivo.com (wm-8.qy.internal [127.0.0.1])
-        by m176148.mail.qiye.163.com (Hmail) with ESMTP id AA5181A3FD3;
-        Thu, 30 Apr 2020 11:33:07 +0800 (CST)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-Message-ID: <AMEAJAC4CHW7UjeCKaE3F4rq.3.1588217587684.Hmail.bernard@vivo.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-Subject: =?UTF-8?B?UmU6UmU6IFtQQVRDSF0gY2xrL21lc29uOiBmaXhlcyBtZW1sZWFrIGlzc3VlIGluIGluaXQgZXJyIGJyYW5jaA==?=
-X-Priority: 3
-X-Mailer: HMail Webmail Server V2.0 Copyright (c) 2016-163.com
-X-Originating-IP: 157.0.31.122
-In-Reply-To: <CAFBinCA7CvBzEYMG+VmJTRF9zxajj1KOHt0F4A2hUJhKrTpmhw@mail.gmail.com>
+        id S1726412AbgD3GVl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 02:21:41 -0400
+Received: from plaes.org ([188.166.43.21]:35836 "EHLO plaes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726337AbgD3GVl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Apr 2020 02:21:41 -0400
+Received: from plaes.org (localhost [127.0.0.1])
+        by plaes.org (Postfix) with ESMTPSA id C8C4640275;
+        Thu, 30 Apr 2020 06:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
+        t=1588227698; bh=5IaA8hDKqgMnJSHF6ro9Jo9eG0qGD7sBE3O2dZ7w10w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PU41HCwMPoxYMSyP8fhrzD6juPZxEfBmdlc/PKMFtE1ZPwP2er0AY9lHYRfd5IOs3
+         ww3lPC5lv8vjJLPdcnVfIoJu7rNEJRr0Lv1Buhc0bYyLzlWARFRNANnl0nlVCDQEH+
+         Y7F12KOpQ9BlyxXFUabLCBAlIDMhR06t3f5crcpIZKeMscVaFpJAmB0Hd1Xtk36JV5
+         Ug7TbNUf/+Ji5WbqHB4maeCLgNeA2fMie78EH0EFtcL2SQsL4EH5GY3/X/pg8QHISy
+         SYRK3bC5DsGaqSbiZ5AmCmw+VLptLlpjL2rl/5gMOfj5zxvd8mZ2G8rPYanR9TdXIg
+         NlKmvcIWocIiA==
+Date:   Thu, 30 Apr 2020 06:21:37 +0000
+From:   Priit Laes <plaes@plaes.org>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH 1/4] clk: sunxi-ng: a10/a20: rewrite init code to a
+ platform driver
+Message-ID: <20200430062137.GA32281@plaes.org>
+References: <20200417221730.555954-1-plaes@plaes.org>
+ <20200417221730.555954-2-plaes@plaes.org>
+ <20200420124935.asfbgv7envb2af55@gilmour.lan>
+ <20200420203228.GA4734@plaes.org>
+ <20200429143510.ksi27lok2udtmfas@gilmour.lan>
 MIME-Version: 1.0
-Received: from bernard@vivo.com( [157.0.31.122) ] by ajax-webmail ( [127.0.0.1] ) ; Thu, 30 Apr 2020 11:33:07 +0800 (GMT+08:00)
-From:   =?UTF-8?B?6LW15Yab5aWO?= <bernard@vivo.com>
-Date:   Thu, 30 Apr 2020 11:33:07 +0800 (GMT+08:00)
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgYFAkeWUFZSFVLT0hLS0tJSUpJTklPT1lXWShZQU
-        hPN1dZLVlBSVdZCQ4XHghZQVk1NCk2OjckKS43PlkG
-X-HM-Sender-Digest: e1kJHlYWEh9ZQUhMTklMSU9ISk1DN1dZDB4ZWUEPCQ4eV1kSHx4VD1lB
-        WUc6Nj46MTo4TzgzLEwuER44MBo#SD1PCQpVSFVKTkNDSUpMTkNMTE5MVTMWGhIXVRkeCRUaCR87
-        DRINFFUYFBZFWVdZEgtZQVlKTkxVS1VISlVKSUlZV1kIAVlBTU5MSDcG
-X-HM-Tid: 0a71c92527f89394kuwsaa5181a3fd3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200429143510.ksi27lok2udtmfas@gilmour.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CkZyb206IE1hcnRpbiBCbHVtZW5zdGluZ2wgPG1hcnRpbi5ibHVtZW5zdGluZ2xAZ29vZ2xlbWFp
-bC5jb20+CkRhdGU6IDIwMjAtMDQtMzAgMDE6NDM6NTUKVG86ICBKZXJvbWUgQnJ1bmV0IDxqYnJ1
-bmV0QGJheWxpYnJlLmNvbT4KQ2M6ICBCZXJuYXJkIFpoYW8gPGJlcm5hcmRAdml2by5jb20+LE5l
-aWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT4sU3RlcGhlbiBCb3lkIDxzYm95
-ZEBrZXJuZWwub3JnPixLZXZpbiBIaWxtYW4gPGtoaWxtYW5AYmF5bGlicmUuY29tPixsaW51eC1h
-bWxvZ2ljQGxpc3RzLmluZnJhZGVhZC5vcmcsbGludXgtY2xrQHZnZXIua2VybmVsLm9yZyxsaW51
-eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnLG9wZW5zb3VyY2Uua2VybmVsQHZpdm8uY29tClN1Ympl
-Y3Q6IFJlOiBbUEFUQ0hdIGNsay9tZXNvbjogZml4ZXMgbWVtbGVhayBpc3N1ZSBpbiBpbml0IGVy
-ciBicmFuY2g+SGkgSmVyb21lLAo+Cj5PbiBXZWQsIEFwciAyOSwgMjAyMCBhdCAyOjM3IFBNIEpl
-cm9tZSBCcnVuZXQgPGpicnVuZXRAYmF5bGlicmUuY29tPiB3cm90ZToKPj4KPj4KPj4gT24gV2Vk
-IDI5IEFwciAyMDIwIGF0IDA1OjE0LCBCZXJuYXJkIFpoYW8gPGJlcm5hcmRAdml2by5jb20+IHdy
-b3RlOgo+Pgo+PiA+IEluIGNvbW1vbiBpbml0IGZ1bmN0aW9uLCB3aGVuIHJ1biBpbnRvIGVyciBi
-cmFuY2gsIHdlIGRpZG5gdAo+PiA+IHVzZSBrZnJlZSB0byByZWxlYXNlIGt6bWFsbG9jIGFyZWEs
-IHRoaXMgbWF5IGJyaW5nIGluIG1lbWxlYWsKPj4KPj4gVGh4IGZvciByZXBvcnRpbmcgdGhpcyBC
-ZXJuYXJkLgo+PiBJJ20gbm90IGEgZmFuIG9mIGFkZGluZyBrZnJlZSBldmVyeXdoZXJlLiBJJ2Qg
-bXVjaCBwcmVmZXIgYSBsYWJlbCBhbmQKPj4gY2xlYXIgZXJyb3IgZXhpdCBwYXRoLgo+Pgo+PiBU
-aGF0IGJlaW5nIHNhaWQsIHRoZSBhbGxvY2F0aW9uIGlzIHByb2JhYmx5IG5vdCB0aGUgb25seSB0
-aGluZyB0aGF0Cj4+IG5lZWRzIHRvIGJlIHVuZG9uZSBpbiBjYXNlIG9mIGVycm9yLiBJIGd1ZXNz
-IHRoaXMgaXMgZHVlIHRvIGNvbnZlcnNpb24KPj4gdG8gQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKCkg
-d2hpY2ggZm9yY2VkIHRvIGRyb3AgYWxsIHRoZSBkZXZtXwo+PiBUaGlzIHdhcyBkb25lIGJlY2F1
-c2UgdGhlIGNsb2NrIGNvbnRyb2xsZXIgd2FzIHJlcXVpcmVkIGVhcmx5IGluIHRoZQo+PiBib290
-IHNlcXVlbmNlLgo+Pgo+PiBUaGVyZSBpcyAyIHBhdGhzIHRvIHByb3Blcmx5IHNvbHZlIHRoaXM6
-Cj4+IDEpIE9sZCBzY2hvb2w6IG1hbnVhbGx5IHVuZG8gZXZlcnl0aGluZyB3aXRoIGV2ZXJ5IGVy
-cm9yIGV4aXQgY29uZGl0aW9uCj4+ICAgIERvYWJsZSBidXQgcHJvYmFibHkgYSBiaXQgbWVzc3kK
-Pj4gMikgQ29udmVydCBiYWNrIHRoZSBkcml2ZXIgdG8gYSByZWFsIHBsYXRmb3JtIGRyaXZlciBh
-bmQgdXNlIGRldm1fLgo+PiAgICBXZSB3b3VsZCBzdGlsbCBuZWVkIHRoZSBjb250cm9sbGVyIHRv
-IHJlZ2lzdGVyIGVhcmx5IGJ1dCBJIHdvbmRlciBpZgo+PiAgICB3ZSBjb3VsZCB1c2UgdGhlIHNh
-bWUgbWV0aG9kIGFzIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDI3MDEuYyBhbmQKPj4gICAg
-dXNlIGFyY2hfaW5pdGNhbGwoKSA/Cj4+Cj4+IE1hcnRpbiwgeW91IGRpZCB0aGUgaW5pdGlhbCBj
-b252ZXJzaW9uLCB3aGF0IGRvIHlvdSB0aGluayBvZiBvcHRpb24gMiA/Cj5JIHRyaWVkIGl0IHdp
-dGggdGhlIGF0dGFjaGVkIHBhdGNoCj51bmZvcnR1bmF0ZWx5IG15ICJtOGJfY2xrY190ZXN0X3By
-b2JlIiBpcyBzdGlsbCBydW4gdG9vIGxhdGUKPgo+PiBXb3VsZCBpdCBzdGlsbCBhbnN3ZXIgdGhl
-IHByb2JsZW0geW91IHdlcmUgdHJ5aW5nIHRvIHNvbHZlIGJhY2sgdGhlbiA/Cj5JJ20gYWZyYWlk
-IGl0IGRvZXMgbm90Ogo+LSB0aGUgcmVzZXRzIGFyZSBuZWVkZWQgZWFybHkgZm9yIFNNUCBpbml0
-aWFsaXphdGlvbgo+LSB0aGUgY2xvY2tzIGFyZSBuZWVkZWQgZXZlbiBlYXJsaWVyIGZvciB0aW1l
-ciByZWdpc3RyYXRpb24gKHdlIGhhdmUKPmJvdGgsIHRoZSBBUk0gVFdEIHRpbWVyIGFuZCBzb21l
-IEFtbG9naWMgY3VzdG9tIHRpbWVyLiBib3RoIGhhdmUgY2xvY2sKPmlucHV0cykKPgo+PiBPbmUg
-YWRkZWQgYmVuZWZpdCBvZiBvcHRpb24gMiBpcyB3ZSBjb3VsZCBkcm9wIENMS19PRl9ERUNMQVJF
-X0RSSVZFUigpLgo+PiBXZSBjb3VsZCBldmVuIGRvIHRoZSBzYW1lIGluIGZvciB0aGUgb3RoZXIg
-U29Dcywgd2hpY2ggSSBzdXBwb3NlIHdvdWxkCj4+IGF2b2lkIGEgZmFpciBhbW91bnQgb2YgcHJv
-YmUgZGVmZXJyYWwuCj5pdCB3b3VsZCBiZSBncmVhdCwgaW5kZWVkCj5idXQgdGhpcyB3aWxsIG9u
-bHkgd29yayBvbmNlIHRpbWVyIGluaXRpYWxpemF0aW9uIGFuZCBTTVAgYm9vdCBjYW4KPmhhcHBl
-biBhdCBhIGxhdGVyIHN0YWdlCj4KPklmIHRoZSBjbG9jayBjb250cm9sbGVyIHJlZ2lzdHJhdGlv
-biBmYWlscyB0aGUgYm9hcmQgd29uJ3QgYm9vdC4gWWVzLAo+Y2xlYW5pbmcgdXAgbWVtb3J5IGlz
-IGdvb2QsIGJ1dCBpbiB0aGlzIHNwZWNpZmljIGNhc2UgaXQgd2lsbCBhZGQgYQo+Y291cGxlIG9m
-IGV4dHJhIENQVSBjeWNsZXMgYmVmb3JlIHRoZSBrZXJuZWwgaXMgZGVhZAo+U28sIGlmIHdlIHdh
-bnQgdG8gaWdub3JlIHRoYXQgZmFjdCB0aGVuIEkgYWdyZWUgd2l0aCB5b3VyIGZpcnN0IG9wdGlv
-bgo+KHVuZG9pbmcgdGhpbmdzIHRoZSAib2xkIHNjaG9vbCIgd2F5KS4KPgoKSGkKSSBhbSBub3Qg
-c3VyZSB3aGV0aGVyIG15IHVuZGVyc3RhbmRpbmcgaXMgY29ycmVjdC4gCkkgZmVlbHMgdGhhdCB0
-aGUgZmFpbHVyZSBvZiBvdXIgbW9kdWxlIGNhbiBub3QgYmxvY2sgdGhlIGVudGlyZSBrZXJuZWwg
-ZnJvbSBzdGFydGluZy4gCk1heWJlIHdlIHNob3VsZCB0aHJvdyBhbiBleGNlcHRpb24sIGNsZWFy
-IHRoZSBzdGF0dXMsIGFzICJvbGQgd2F5IiwgCmFuZCBjb250aW51ZSB0byBleGVjdXRlIHRoZSBr
-ZXJuZWwuCgpBbmQgaWYgb3VyIG1vZHVsZSByZXF1aXJlcyB0aGF0IHRoZSBrZXJuZWwgY2Fubm90
-IGNvbnRpbnVlIHRvIHJ1biB3aGVuIHRoZSBleGNlcHRpb24gb2NjdXJzLAp0aGVuIHdlIGRvIG5v
-dCBuZWVkIHRvIHJldHVybiBpbiB0aGUgZXJyb3IgYnJhbmNoLCBhbHNvIHdlIGRvIG5vdCBuZWVk
-IHRvIGtmcmVlLCBqdXN0IEJVR19PTigpLgoKUmVnYXJkcywKQmVybmFyZAoKPk1hcnRpbgoNCg0K
+On Wed, Apr 29, 2020 at 04:35:10PM +0200, Maxime Ripard wrote:
+> Hi,
+> 
+> On Mon, Apr 20, 2020 at 08:32:28PM +0000, Priit Laes wrote:
+> > On Mon, Apr 20, 2020 at 02:49:35PM +0200, Maxime Ripard wrote:
+> > > On Sat, Apr 18, 2020 at 01:17:27AM +0300, Priit Laes wrote:
+> > > > In order to register regmap for sun7i CCU, there needs to be
+> > > > a device structure already bound to the CCU device node.
+> > > > 
+> > > > Convert the sun4i/sun7i CCU setup to platform driver to use
+> > > > it later as platform device.
+> > > > 
+> > > > Signed-off-by: Priit Laes <plaes@plaes.org>
+> > > 
+> > > You can't relly do that though. We have timers that need those clocks before the
+> > > device model is initialized.
+> > 
+> > Ok, I'm somewhat lost now... are these the affected timers on sun7i following:
+> > - allwinner,sun4i-a10-timer (timer@1c20c00)
+> > - allwinner,sun7i-a20-hstimer (hstimer@1c60000)
+> 
+> Yep
+> 
+> > Any ideas on what approach I could actually use?
+> 
+> I guess you could keep the CLK_OF_DECLARE registration, and then have a
+> platform_driver probe and register the regmap?
+> 
+
+Thanks this did the trick.
+
+> > Also, similar timer dependency would affect then sun6i-a31 and sun9i-a80
+> > platforms too...
+
+I didn't check this before, but sun9i-a80 CCU is initialized currently via
+platform device. Should it be converted first to clock driver (CLK_OF_DECLARE)?
+
+I have sent out the v2 which contains sun7i/sun6i changes.
+
+> 
+> Indeed.
+> 
+> Maxime
+
+
