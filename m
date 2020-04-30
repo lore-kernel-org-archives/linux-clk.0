@@ -2,264 +2,99 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF35C8300D
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 11:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BFD8C8300A
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 12:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AC4E220873
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 11:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25F3C2078D
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 12:24:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="Pzng54RT"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xd8BJWpE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726809AbgD3L5p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 07:57:45 -0400
-Received: from plaes.org ([188.166.43.21]:37078 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbgD3L5p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Apr 2020 07:57:45 -0400
-Received: from localhost (unknown [IPv6:2001:1530:1000:d397:940e:6b9e:3deb:3])
-        by plaes.org (Postfix) with ESMTPSA id 318D840774;
-        Thu, 30 Apr 2020 11:57:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1588247832; bh=vozgkxdGukZkw97VZxaA46SLq3vMd9Wmn6ITkjlRwzM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pzng54RTQjI9fC292U4VQj3hoLs4JvLd08JqmAYuJFI68IoP3RsYXyQQyKs5XoE1s
-         KXyFZS80zUmUhih+dFToXFlTYSTr/ssTL3EYBzRDM1DyNXm544MdIg2ge3xf5/Srqc
-         M99cDk1y0oKds9ZeOq+JWo4aYzzTZcIQkolNStBKeisSMPjveyNheJr4sEORZ9/i0l
-         Zs+8jGZ89oO+U1i+LmLCSho8B3mHf0GYTDzTax/f6eI3DeyDP8roAkW8zibaR7FLbf
-         vZgoh4doBfYAXJ0QVP+KtToeM4XK3AM0tqgPII/YRrsWds5S2Ev0A8xZpcudckDVv3
-         wmgy5+DsF7I5Q==
-From:   Priit Laes <plaes@plaes.org>
-To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Priit Laes <plaes@plaes.org>
-Subject: [PATCH v3 3/6] net: stmmac: dwmac-sunxi: Implement syscon-based clock handling
-Date:   Thu, 30 Apr 2020 14:56:59 +0300
-Message-Id: <20200430115702.5768-4-plaes@plaes.org>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200430115702.5768-1-plaes@plaes.org>
-References: <20200430115702.5768-1-plaes@plaes.org>
+        id S1726550AbgD3MYo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 08:24:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41194 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726500AbgD3MYo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 08:24:44 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CC1EC035494
+        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2020 05:24:44 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id k1so6657804wrx.4
+        for <linux-clk@vger.kernel.org>; Thu, 30 Apr 2020 05:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=user-agent:from:to:cc:subject:date:message-id:mime-version;
+        bh=0SsmCVXRnkXXPF3iwxgzfLk25Cg8yBecJWm6wm0A4gk=;
+        b=xd8BJWpEAmPWknlFQI1p20/J4G6PE8GikQxXOWevEiuthufqNhA3cFrOo8YgIj2iJ2
+         qF37zkSLPXCHKVtOIJr8D1csGe9h4K6aS56hvzBBoD5cElmh64URHRrJr64sBKtVW8/u
+         jqZozKJR67XNrH5P8D4JUPrEsjBGvI/qbMNjxxjux+W+urdy/FSPpl8EChcqxbmyfi7V
+         31a/X1bA8gH5Akql+mAQx0IBXql9YUBsNrGXwXf9Vru3c5O8pWD9eHHucsEGOqkN8KwV
+         kzADn2HNkLXSlmkZDlmaOZs1hGfGKV9I8K1ydamIMlMo1ioXvVWKfkTKMX4tjWarVGWF
+         yItw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:user-agent:from:to:cc:subject:date:message-id
+         :mime-version;
+        bh=0SsmCVXRnkXXPF3iwxgzfLk25Cg8yBecJWm6wm0A4gk=;
+        b=YA9joI5ze32CsUucqO/lysmVOpZnkiTQAdwvD99TbXmuXplFMhq6wBYfUlyxkOwdo5
+         aWaWP+CSjVFaxM1DgetkD+QL6ZTFU0Wxdhd9qV6DJXFFOfrABKUCNZ551LybUfluYUPH
+         RZ7L1EDiXZIQJ410IS2g1njRM+KjtqZJ4wnCNMQ4SI4gV/1ApoqjMPlqA9uZwg0MYwmU
+         jq55wBcFHw8bGHt6avnAow2wnfJ5xAUwkP+/+BRuwxRg99oHy/vMdXnSoxEhEp41km9h
+         zj21o2NaVUbfynjo9diRN/pF3aYJyoSMH9ZzSsFzzAcuxEUyeWDncO7Wm7nXNYK1pJe1
+         mGVA==
+X-Gm-Message-State: AGi0PuaOrhzfJL0qaryL8yosPRLNcPtz/fCtCsAxL5EY6jIWZeSM93FS
+        MlUjElaMqFnDjhAnAal0hPyQ7g==
+X-Google-Smtp-Source: APiQypJ5tpe4MZNXWxAc97GLCd8uPMJ/9ymBE2FrP7SAVu2s8iWKNUQSodKMKtfL4llzvGmNRkzVWw==
+X-Received: by 2002:adf:fe87:: with SMTP id l7mr3863095wrr.360.1588249482859;
+        Thu, 30 Apr 2020 05:24:42 -0700 (PDT)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id k6sm12640874wma.19.2020.04.30.05.24.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2020 05:24:42 -0700 (PDT)
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        ulf.hansson@linaro.org
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: clk: clk_register is deprecated
+Date:   Thu, 30 Apr 2020 14:24:41 +0200
+Message-ID: <1jftcli2k6.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the sun7i-gmac driver to use a regmap-based driver,
-instead of relying on the custom clock implementation.
+Hi Stephen,
 
-This allows to get rid of the last custom clock in the sun7i
-device tree making the sun7i fully CCU-compatible.
+We have a question regarding drivers which register clocks in CCF and
+later need to use these clocks.
 
-Compatibility with existing devicetrees is retained.
+So far, these drivers had been using clk_register() to get a 'struct
+clk*' they could later use with the linux/clk.h API.
 
-Signed-off-by: Priit Laes <plaes@plaes.org>
----
- .../net/ethernet/stmicro/stmmac/dwmac-sunxi.c | 130 ++++++++++++++++--
- 1 file changed, 122 insertions(+), 8 deletions(-)
+Now that this clk_register() is deprecated in favor of
+clk_hw_register(), how are these driver supposed to get the per-user
+"struct clk*" they need ?
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-index 0e1ca2cba3c7..206398f7a2af 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sunxi.c
-@@ -12,8 +12,11 @@
- #include <linux/module.h>
- #include <linux/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/of_device.h>
- #include <linux/of_net.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/regmap.h>
-+#include <linux/mfd/syscon.h>
- 
- #include "stmmac_platform.h"
- 
-@@ -22,11 +25,23 @@ struct sunxi_priv_data {
- 	int clk_enabled;
- 	struct clk *tx_clk;
- 	struct regulator *regulator;
-+	struct regmap_field *regmap_field;
-+};
-+
-+/* EMAC clock register @ 0x164 in the CCU address range */
-+static const struct reg_field ccu_reg_field = {
-+	.reg = 0x164,
-+	.lsb = 0,
-+	.msb = 31,
- };
- 
- #define SUN7I_GMAC_GMII_RGMII_RATE	125000000
- #define SUN7I_GMAC_MII_RATE		25000000
- 
-+#define SUN7I_A20_CLK_MASK		GENMASK(2, 0)
-+#define SUN7I_A20_RGMII_CLK		(BIT(2) | BIT(1))
-+#define SUN7I_A20_MII_CLK		0
-+
- static int sun7i_gmac_init(struct platform_device *pdev, void *priv)
- {
- 	struct sunxi_priv_data *gmac = priv;
-@@ -38,7 +53,20 @@ static int sun7i_gmac_init(struct platform_device *pdev, void *priv)
- 			return ret;
- 	}
- 
--	/* Set GMAC interface port mode
-+	if (gmac->regmap_field) {
-+		if (phy_interface_mode_is_rgmii(gmac->interface)) {
-+			regmap_field_update_bits(gmac->regmap_field,
-+						 SUN7I_A20_CLK_MASK,
-+						 SUN7I_A20_RGMII_CLK);
-+			return clk_prepare_enable(gmac->tx_clk);
-+		}
-+		regmap_field_update_bits(gmac->regmap_field,
-+					 SUN7I_A20_CLK_MASK,
-+					 SUN7I_A20_MII_CLK);
-+		return clk_enable(gmac->tx_clk);
-+	}
-+
-+	/* Legacy devicetree clock (allwinner,sun7i-a20-gmac-clk) support:
- 	 *
- 	 * The GMAC TX clock lines are configured by setting the clock
- 	 * rate, which then uses the auto-reparenting feature of the
-@@ -62,9 +90,16 @@ static void sun7i_gmac_exit(struct platform_device *pdev, void *priv)
- {
- 	struct sunxi_priv_data *gmac = priv;
- 
--	if (gmac->clk_enabled) {
-+	if (gmac->regmap_field) {
-+		regmap_field_update_bits(gmac->regmap_field,
-+					 SUN7I_A20_CLK_MASK, 0);
- 		clk_disable(gmac->tx_clk);
--		gmac->clk_enabled = 0;
-+	} else {
-+		/* Handle legacy devicetree clock (sun7i-a20-gmac-clk) */
-+		if (gmac->clk_enabled) {
-+			clk_disable(gmac->tx_clk);
-+			gmac->clk_enabled = 0;
-+		}
- 	}
- 	clk_unprepare(gmac->tx_clk);
- 
-@@ -72,10 +107,55 @@ static void sun7i_gmac_exit(struct platform_device *pdev, void *priv)
- 		regulator_disable(gmac->regulator);
- }
- 
-+static struct regmap *sun7i_gmac_get_syscon_from_dev(struct device_node *node)
-+{
-+	struct device_node *syscon_node;
-+	struct platform_device *syscon_pdev;
-+	struct regmap *regmap = NULL;
-+
-+	syscon_node = of_parse_phandle(node, "syscon", 0);
-+	if (!syscon_node)
-+		return ERR_PTR(-ENODEV);
-+
-+	syscon_pdev = of_find_device_by_node(syscon_node);
-+	if (!syscon_pdev) {
-+		/* platform device might not be probed yet */
-+		regmap = ERR_PTR(-EPROBE_DEFER);
-+		goto out_put_node;
-+	}
-+
-+	/* If no regmap is found then the other device driver is at fault */
-+	regmap = dev_get_regmap(&syscon_pdev->dev, NULL);
-+	if (!regmap)
-+		regmap = ERR_PTR(-EINVAL);
-+
-+	platform_device_put(syscon_pdev);
-+out_put_node:
-+	of_node_put(syscon_node);
-+	return regmap;
-+}
-+
- static void sun7i_fix_speed(void *priv, unsigned int speed)
- {
- 	struct sunxi_priv_data *gmac = priv;
- 
-+	if (gmac->regmap_field) {
-+		clk_disable(gmac->tx_clk);
-+		clk_unprepare(gmac->tx_clk);
-+		if (speed == 1000)
-+			regmap_field_update_bits(gmac->regmap_field,
-+						 SUN7I_A20_CLK_MASK,
-+						 SUN7I_A20_RGMII_CLK);
-+		else
-+			regmap_field_update_bits(gmac->regmap_field,
-+						 SUN7I_A20_CLK_MASK,
-+						 SUN7I_A20_MII_CLK);
-+		clk_prepare_enable(gmac->tx_clk);
-+		return;
-+	}
-+
-+	/* Handle legacy devicetree clock (sun7i-a20-gmac-clk) */
-+
- 	/* only GMII mode requires us to reconfigure the clock lines */
- 	if (gmac->interface != PHY_INTERFACE_MODE_GMII)
- 		return;
-@@ -102,6 +182,8 @@ static int sun7i_gmac_probe(struct platform_device *pdev)
- 	struct stmmac_resources stmmac_res;
- 	struct sunxi_priv_data *gmac;
- 	struct device *dev = &pdev->dev;
-+	struct device_node *syscon_node;
-+	struct regmap *regmap = NULL;
- 	int ret;
- 
- 	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-@@ -124,11 +206,43 @@ static int sun7i_gmac_probe(struct platform_device *pdev)
- 		goto err_remove_config_dt;
- 	}
- 
--	gmac->tx_clk = devm_clk_get(dev, "allwinner_gmac_tx");
--	if (IS_ERR(gmac->tx_clk)) {
--		dev_err(dev, "could not get tx clock\n");
--		ret = PTR_ERR(gmac->tx_clk);
--		goto err_remove_config_dt;
-+	/* Attempt to fetch syscon node... */
-+	syscon_node = of_parse_phandle(dev->of_node, "syscon", 0);
-+	if (syscon_node) {
-+		gmac->tx_clk = devm_clk_get(dev, "stmmaceth");
-+		if (IS_ERR(gmac->tx_clk)) {
-+			dev_err(dev, "Could not get TX clock\n");
-+			ret = PTR_ERR(gmac->tx_clk);
-+			goto err_remove_config_dt;
-+		}
-+
-+		regmap = sun7i_gmac_get_syscon_from_dev(pdev->dev.of_node);
-+		if (IS_ERR(regmap))
-+			regmap = syscon_regmap_lookup_by_phandle(pdev->dev.of_node,
-+								 "syscon");
-+		if (IS_ERR(regmap)) {
-+			ret = PTR_ERR(regmap);
-+			dev_err(&pdev->dev, "Unable to map syscon: %d\n", ret);
-+			goto err_remove_config_dt;
-+		}
-+
-+		gmac->regmap_field = devm_regmap_field_alloc(dev, regmap,
-+							     ccu_reg_field);
-+
-+		if (IS_ERR(gmac->regmap_field)) {
-+			ret = PTR_ERR(gmac->regmap_field);
-+			dev_err(dev, "Unable to map syscon register: %d\n", ret);
-+			goto err_remove_config_dt;
-+		}
-+	/* ...or fall back to legacy clock setup */
-+	} else {
-+		gmac->tx_clk = devm_clk_get(dev, "allwinner_gmac_tx");
-+		if (IS_ERR(gmac->tx_clk)) {
-+			dev_err(dev, "could not get tx clock\n");
-+			ret = PTR_ERR(gmac->tx_clk);
-+			goto err_remove_config_dt;
-+		}
-+		dev_info(dev, "allwinner_gmac_tx support is deprecated!\n");
- 	}
- 
- 	/* Optional regulator for PHY */
--- 
-2.26.2
+In this mmc thread [0] Martin proposed to go through a provider. I think
+it is overkill, especially for a device which will not provide its clocks
+to any other device.
 
+They other way available is "hw->clk". I suspect it is not recommended
+to do so, is it ?
+
+If not, what would be the recommended way to get the "struct clk*" from
+a newly registered "struct clk_hw *" ? Should we add something new to
+clk-provider.h API ?
+
+Cheers
+Jerome
+
+[0]: https://lore.kernel.org/linux-amlogic/20200428210229.703309-3-martin.blumenstingl@googlemail.com
