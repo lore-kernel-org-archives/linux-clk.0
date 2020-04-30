@@ -2,123 +2,83 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADDEC4724C
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C81C47247
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ABCB2063A
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:02:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XPLsH1OV"
+	by mail.kernel.org (Postfix) with ESMTP id CB47E2076D
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1588255952;
+	bh=Rpdf6PWfcZZvoRHEe+vtJ+oqdu0MiflAH85msrRC/ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Uo8WtK+J9Xbf5KUW1vf7ajFVA+hbR+tjNMrR2aM9rp+ZGVPNWqVPHBZWl3SOR0gnq
+	 mwY/kOfRMBIEobbbyazo5VuQTQ+RG6f63RDVWVPiWzrM9pXZbwausLVacXhYBEsPuy
+	 0kLwBnIzIV6XHk9rUqxm9dLusbxQUbMftoK7GuOY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbgD3OC1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 10:02:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56524 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729147AbgD3OCX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:02:23 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37561C035494;
-        Thu, 30 Apr 2020 07:02:23 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id a21so6594391ljb.9;
-        Thu, 30 Apr 2020 07:02:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=N+Ht0CmfDxJVUU6J4yFlhD6kd2eTTrdGjBG9WTx/UyQ=;
-        b=XPLsH1OV1IK/7IHKpVHzrXqje08ez4AfmDTnVvgYOvBOy0FfpRqK+D9XYPlaE05rNQ
-         tbWt8gHkoewEz1ZUIHtmfsi6katLHTeLsDVuZdrrb/9kmBnnr7Nqg4uaZMHik+Lfx6bT
-         CnqceWSKVJEUN9qF/EyddjcmjwKe2GCmxEKpOxxTndVb9qiTjOzT0MYSxJFK+kGc+B1U
-         ss1n7PFEVRDR/o9znXtZsEQYylgNtoHQJBLwCePduH/UfxVLEX40B8VRVdyP8pEunGTV
-         kZTPfxQ4HNrinx9RBPk88XHaX88dN3YSuwQOdCnup6aHtdw0gsWv+BchoKbWH6xQEaEw
-         K0mg==
+        id S1728901AbgD3OMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 10:12:31 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34106 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727896AbgD3OMZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:12:25 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 72so5010798otu.1;
+        Thu, 30 Apr 2020 07:12:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=N+Ht0CmfDxJVUU6J4yFlhD6kd2eTTrdGjBG9WTx/UyQ=;
-        b=s57I4YQgB+D0UXAnhqsItvyDVqjJNqarQ00pQ/nIAnEcQUg+rjc9mJVF93UqcRDv+9
-         BJ87PNUr0/ZI4c83Ey5jbxBj2bGsIVMNyhgaE6y+hK+iP/Rgdl8mi45QH1ifOfqMHM/e
-         8LA05IGc6tnnWLMKTksdCBgCrV0lZbTIKk615KkLmHnZA3p7NzgD7wwNss5AGMNC9aBr
-         ipGI3mPTSzrUjqgqnTI1atvcwF4OX2zHt9RPyIr6cfvr8jlMneUdXp5rOWtll0WfnJ0R
-         7R1pXHW4ODbWl9Jj4gayufqn+n+ojVz7fBATu53t+ARa27L5engxI6uLxZZ02rC5CCoh
-         g9cQ==
-X-Gm-Message-State: AGi0PubsdP8A1WQGp7T6pGEU46IiNbmVW5kRWUoRoj/KegF+QT8CReSj
-        a6/i9R+F0bzyEbMoozGwfXC8yt19
-X-Google-Smtp-Source: APiQypInaM7ORzF/CVsxNxUc0J9Cyf/Q6St4WH9tVfb2A8VygbMaxJllBH4AhcGid0vObbUWazuWjQ==
-X-Received: by 2002:a2e:87d9:: with SMTP id v25mr2275164ljj.241.1588255341268;
-        Thu, 30 Apr 2020 07:02:21 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id v8sm4886684lfp.85.2020.04.30.07.02.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Apr 2020 07:02:20 -0700 (PDT)
-Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
- <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
-Message-ID: <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
-Date:   Thu, 30 Apr 2020 17:02:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jH47In+vOUdDhR141TzeK3fOseWCLkJwCgk8ocB+Nqg=;
+        b=IscGFxZXX0aO1iHkQjoehlGkxvkTfbuO6zdOixA8tnulQaxnHyopnsf0ZrfH9X/L7f
+         87IioMKJbJQv49ielEQun1/WfAWf0wbcGCxMf4HVaFo1hFDFyXCBIwBxFJ2eFcA4N9/Q
+         jJE2PxoiBpSlxet920kAjA6wqlVRWbFIp56B6O0QWyBn+cObeWK5C7HkbqRp3jGMG7AO
+         wQGm6d6OCOQwbSa7zS1vnpVZjsw5qJUcG+GGFkJCf6J/Zk1gC9sd/D2F/6F+HfvRh3Em
+         je2ZhZAvmCPkUePuDbwCkb9mxWvxRuNNkbIrP/rv2sQx4iFtYi0PCnlJAuyl6JN9hQn9
+         x50Q==
+X-Gm-Message-State: AGi0Pubpbp7ruJa1nHb4//LBrDKphzOCvnnTRKK72zIrWFdIB5lBSllt
+        /Szg+8lDBbw/v4dj2Hzh3A==
+X-Google-Smtp-Source: APiQypLv7dPcYnLvOBxawDrcOT6GdPYGYLv0pv1iAj9xySMQfpV0BT9bHrPNbBvohWgFiuFxrKS3Bg==
+X-Received: by 2002:a9d:6d8e:: with SMTP id x14mr2775926otp.156.1588255944417;
+        Thu, 30 Apr 2020 07:12:24 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id l11sm1359815oom.15.2020.04.30.07.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Apr 2020 07:12:23 -0700 (PDT)
+Received: (nullmailer pid 8701 invoked by uid 1000);
+        Thu, 30 Apr 2020 14:12:22 -0000
+Date:   Thu, 30 Apr 2020 09:12:22 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: Re: [PATCH 03/10] dt-bindings: marvell,mmp2: Add clock id for the
+ I2S clocks
+Message-ID: <20200430141222.GA8657@bogus>
+References: <20200419172742.674717-1-lkundrak@v3.sk>
+ <20200419172742.674717-4-lkundrak@v3.sk>
 MIME-Version: 1.0
-In-Reply-To: <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200419172742.674717-4-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-30.04.2020 16:56, Dmitry Osipenko пишет:
-> 30.04.2020 01:00, Sowjanya Komatineni пишет:
->> +static int chan_capture_kthread_finish(void *data)
->> +{
->> +	struct tegra_vi_channel *chan = data;
->> +	struct tegra_channel_buffer *buf;
->> +
->> +	set_freezable();
->> +
->> +	while (1) {
->> +		try_to_freeze();
+On Sun, 19 Apr 2020 19:27:35 +0200, Lubomir Rintel wrote:
+> There are two of these on a MMP2.
 > 
-> I guess it won't be great to freeze in the middle of a capture process, so:
-> 		if (list_empty(&chan->done))
-> 			try_to_freeze();
-
-And here should be some locking protection in order not race with the
-chan_capture_kthread_start because kthread_finish could freeze before
-kthread_start.
-
->> +		wait_event_interruptible(chan->done_wait,
->> +					 !list_empty(&chan->done) ||
->> +					 kthread_should_stop());
->> +
->> +		/* dequeue buffers and finish capture */
->> +		buf = dequeue_buf_done(chan);
->> +		while (buf) {
->> +			tegra_channel_capture_done(chan, buf);
->> +			buf = dequeue_buf_done(chan);
->> +		}
->> +
->> +		if (kthread_should_stop())
->> +			break;
->> +	}
->> +
->> +	return 0;
->> +}
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  include/dt-bindings/clock/marvell,mmp2.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
+Acked-by: Rob Herring <robh@kernel.org>
