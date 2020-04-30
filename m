@@ -2,88 +2,96 @@ Return-Path: <SRS0=t0pr=6O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD799C28CBC
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:14:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56005C47247
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A10F72074A
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588256041;
-	bh=+cxomEtUWCe6dA12D/rRn4EHfonQqoh5eyGHeFbM9eU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pi7sJKKB72qNM3EULQqbtKnPOFgwsMVQBpZyErNVZmOH0gc2VtT2rQoeEsy+NBA0T
-	 k51WirxhNnvXfwQJ6i2Gbnf9rTpYBl2aHw/AVZ6swjzZwLRDaaT5cXTUSt/iURxlAG
-	 /A4BSWWVFoBCncN09y1toNNrqFD/nrZ3q2tLr6D4=
+	by mail.kernel.org (Postfix) with ESMTP id 355E920774
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Apr 2020 14:25:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yls6c42g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbgD3OOB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Apr 2020 10:14:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34943 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbgD3OOB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:14:01 -0400
-Received: by mail-oi1-f196.google.com with SMTP id o7so5333771oif.2;
-        Thu, 30 Apr 2020 07:14:00 -0700 (PDT)
+        id S1728207AbgD3OZO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Apr 2020 10:25:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60072 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726853AbgD3OZO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Apr 2020 10:25:14 -0400
+Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0BDAC035494;
+        Thu, 30 Apr 2020 07:25:13 -0700 (PDT)
+Received: by mail-lf1-x141.google.com with SMTP id j14so1371441lfg.9;
+        Thu, 30 Apr 2020 07:25:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tCY9CYxU1gOzRgXfCj/hSl5kyF2mN2AlCiXAxXLnSuM=;
+        b=Yls6c42gjD6zTZpJzYY5ocdHYSZeyoSnujMd9pi8JSCHJ3DnixNK8u1NSrrQghA6w8
+         9tkHj0U6/xNjU7hJhx8h64wdiry/1JMSUI1rS4Mm7eqZh7AXgVBecNthGqNzwOb4DOaE
+         lIlIiTvDtAl+OPGwD17vAL7ZWINU10TUkLgRdmS3s1IACHN7iF6cKMPYGnz+EVz+fsAS
+         Y3NDUEKc5nmiGii7c4qhPvDTYfG+Bu2MVsm0Qw8qJnBq9C46ngDOfo/okVRzh1+OtHl+
+         x60FWuExZgACWju7/R55m1NGf8Ig87+ClD2hP8N6zTo29DsWU3piOGyPfZ6qSbIkpxRf
+         6QJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X1MbW9Qo4Miysa5TwjV5C+o7hh3lAoWv+hFsO/XdvDw=;
-        b=LL7KgwOJmJNSonng3nWGj40PkFLVPrtAqJ3G1fxBvSKlTQ14m2D+aBGFnXUjCL0Myu
-         GjAhu4dU1k3/DJIRlv6ss/yEVZ7w/3mUILraO3EU7fPqRiIonwsdCu4X854+t4TLxU4v
-         1J7dxpPY421FuGr4lOGrN8hln0FBBisQjC4lZCSkoVl6mbejg9fsCHppKZGBk0RyTqEp
-         u3K/LRDJ2crgRRqic4u9Cz/y44hgSJVpN6z5levlmPGbZs7jX8lKTHZ0FizaxR6ProKZ
-         KMDBHEw6WX8NUmPzjqHLDKUkTuaMuJ3LA/QR4mHUmJS9n9a5E4iFJ8WecfQpBAfEPO9n
-         a3AA==
-X-Gm-Message-State: AGi0Pua2bu7DMDycqSpeIXI1EB+wNX3RGuY6CDzQJrWOLNdwMGa1VV7I
-        kd2HHmJEvdcewoSOguU2fgolxEY=
-X-Google-Smtp-Source: APiQypKqaC+5seFi5xSOnMvPXzp1mosucGBYkNhJOE7FDZIO70API6amH6QsDOIhAKDN787xUbKEdA==
-X-Received: by 2002:aca:2b04:: with SMTP id i4mr1954562oik.137.1588256039885;
-        Thu, 30 Apr 2020 07:13:59 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h21sm15797otr.2.2020.04.30.07.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Apr 2020 07:13:58 -0700 (PDT)
-Received: (nullmailer pid 11709 invoked by uid 1000);
-        Thu, 30 Apr 2020 14:13:57 -0000
-Date:   Thu, 30 Apr 2020 09:13:57 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: Re: [PATCH 09/10] dt-bindings: marvell,mmp2: Add ids for the power
- domains
-Message-ID: <20200430141357.GA11669@bogus>
-References: <20200419172742.674717-1-lkundrak@v3.sk>
- <20200419172742.674717-10-lkundrak@v3.sk>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tCY9CYxU1gOzRgXfCj/hSl5kyF2mN2AlCiXAxXLnSuM=;
+        b=AmNOpei6ToD9ZUslZq0usvosFVEDuYZPrfMyzAfGmIxuxSnRnxIAiK15nKJEH7Pxqf
+         emgmSUX/dsSN8zSjimgBtkNP8mqTSYAhHKUrzU94xm0A6NpeK34N2U6vLer2tDxZ9GLF
+         tS5zLFGAbGq7o0gYtk6VGkciyRod/ajo2Za4STy6gEO3yu6ZW54GEs8kfT7LLJKD7d7M
+         ovQvNb6cNI+51gWjxwJbx5RFMFjFUT6BG5yVlSTvjGm9uSTpEegtzBrqerp7XK1W2dvS
+         5V9u3b72gvM1Uhu0V2Y0OSwNUnfNVDnuFjRgcgXfk/V3zCSiqO8CGBAgZVgdeXOBsaFU
+         l80w==
+X-Gm-Message-State: AGi0PuY7rL9dyRxLBqW0bZNJisuuC9E0XsSiXa+c0hU2BS6CwAHRnOdJ
+        sMSCxLvDGSHSuylzYWSUJZWuwZBP
+X-Google-Smtp-Source: APiQypIxKIrY61iyWN8E2p2v+gt5AUX6i+jScFYei172jZBeATJ8+md5KljdfAj8+Dhqh3p5r2H+ig==
+X-Received: by 2002:a05:6512:108a:: with SMTP id j10mr2368340lfg.38.1588256712061;
+        Thu, 30 Apr 2020 07:25:12 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id a28sm4893311lfr.4.2020.04.30.07.25.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Apr 2020 07:25:11 -0700 (PDT)
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <05271cd8-010d-6e09-2bb0-97519d3db3c6@gmail.com>
+Date:   Thu, 30 Apr 2020 17:25:10 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200419172742.674717-10-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 19 Apr 2020 19:27:41 +0200, Lubomir Rintel wrote:
-> On MMP2 the audio and GPU blocks are on separate power islands. On MMP3
-> the camera block's power is also controlled separately.
-> 
-> Add the numbers that we could use to refer to the power domains for
-> respective power islands from the device tree.
-> 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  include/dt-bindings/power/marvell,mmp2.h | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->  create mode 100644 include/dt-bindings/power/marvell,mmp2.h
-> 
+30.04.2020 01:00, Sowjanya Komatineni пишет:
+> +int tegra_v4l2_nodes_setup_tpg(struct tegra_video_device *vid)
+> +{
+> +	struct tegra_vi *vi = vid->vi;
+> +	struct tegra_csi *csi = vid->csi;
+> +	struct tegra_vi_channel *vi_chan;
+> +	struct tegra_csi_channel *csi_chan;
+> +	u32 link_flags = MEDIA_LNK_FL_ENABLED;
 
-Acked-by: Rob Herring <robh@kernel.org>
+> +	int ret = 0;
+
+No need to unnecessarily initialize variables. Same for all other
+similar occurrences in the code.
