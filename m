@@ -2,83 +2,158 @@ Return-Path: <SRS0=65tD=6P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ABE1C4724C
-	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 17:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D92DC47256
+	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 20:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 698BB24953
-	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 17:20:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7CAC216FD
+	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 20:58:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RcG701du"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbgEARUh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 May 2020 13:20:37 -0400
-Received: from foss.arm.com ([217.140.110.172]:44416 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729108AbgEARUg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 May 2020 13:20:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B2D930E;
-        Fri,  1 May 2020 10:20:36 -0700 (PDT)
-Received: from bogus (unknown [10.37.12.80])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 764B23F305;
-        Fri,  1 May 2020 10:20:32 -0700 (PDT)
-Date:   Fri, 1 May 2020 18:20:29 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 00/17] Modularizing Versatile Express
-Message-ID: <20200501172029.GM14018@bogus>
-References: <20200429205825.10604-1-robh@kernel.org>
+        id S1726564AbgEAU57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 May 2020 16:57:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726272AbgEAU56 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 May 2020 16:57:58 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42DD1C061A0C;
+        Fri,  1 May 2020 13:57:58 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id g13so12966522wrb.8;
+        Fri, 01 May 2020 13:57:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s46Pums7160hDMRHz4lcI0wKlc3rbqTgaKkrnlbOBuA=;
+        b=RcG701duKjGztCPmMJi6pENCMoCBn+L6THrkNZymKbb5c/AZsV86c1g9Cgql0yn5DR
+         Vmrx7hNpD9vsmBjFQ1yEzNX2u3HquDJOyseNp73KAw2dU9O+g8f7LXp+JZypSOhTpq2b
+         I9wvltZuQqln8NgGKbMNoD7iIGG8px/0uKXHDuSmJXYohTjPFvKHCaSYJq0DKcYkD40R
+         iqeSLn5UkHMwdpR+Tm0ghr04es9sGH6XsPkUzoPJoK/u1V5YobpuazvL/s1i/mKzBBrv
+         VEOCxJQ8I/KDRawTuf9dK/dQeC9DccG+2z5wdQf5krrySQludEdQ4U+lN1bTucamsXRU
+         dzJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s46Pums7160hDMRHz4lcI0wKlc3rbqTgaKkrnlbOBuA=;
+        b=cCffW32u6obbWiKa3vdH0ycNmZRXWsT0QRzvrV6lYycefAhEavmSkpF0z9v5OFmosE
+         h1JBbbCiZI6XuVw/ljV52tSDrRR5ZN4+QmIzc5DV3blGofzYCwsJun/Blzl8hgATiSQF
+         Jaq5gPuRn6jQir4bmYnVyVJmmYDk2+IOVVfuca449Xv+TqRzmyIVE/YuuTP7fktxGoHJ
+         nkhMEnDSrkdIw1HXWz1I2hkHirXz0xr3ynK/tDfm3QZCzhBqeysfhg1p1SGXPFGJEqmb
+         Fu/KIvsYu3XzOZnrtpYoxdQYz3aZwEDixS0onpl5etYM6WxJAtBXjRKDWYQj5n8Bl5y0
+         NSzg==
+X-Gm-Message-State: AGi0Pua1ZkZOqY58d2q/jASZeVytMR0E0ooZ1Zdwf/TTGQICrHT2Go+C
+        nN5lW8GHznFvRGLTgCm/am3FLwqKpZdFqg==
+X-Google-Smtp-Source: APiQypL6Hwl66LoJR1CXVn0JrzHRhsrU2/hv46W1qXtjdKAn0COb1rqSPWBv+qbJLFAahBi7PD8ucA==
+X-Received: by 2002:a5d:5646:: with SMTP id j6mr6361494wrw.207.1588366676984;
+        Fri, 01 May 2020 13:57:56 -0700 (PDT)
+Received: from localhost.localdomain (abag125.neoplus.adsl.tpnet.pl. [83.6.170.125])
+        by smtp.googlemail.com with ESMTPSA id k14sm5970446wrp.53.2020.05.01.13.57.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 May 2020 13:57:56 -0700 (PDT)
+From:   Konrad Dybcio <konradybcio@gmail.com>
+To:     skrzynka@konradybcio.pl
+Cc:     Vincent Knecht <vincent.knecht@mailoo.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] clk: qcom: smd: Add support for MSM8936 rpm clocks
+Date:   Fri,  1 May 2020 22:57:26 +0200
+Message-Id: <20200501205728.152048-1-konradybcio@gmail.com>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200429205825.10604-1-robh@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 03:58:09PM -0500, Rob Herring wrote:
-> This series enables building various Versatile Express platform drivers
-> as modules. The primary target is the Fast Model FVP which is supported
-> in Android. As Android is moving towards their GKI, or generic kernel,
-> the hardware support has to be in modules. Currently ARCH_VEXPRESS
-> enables several built-in only drivers. Some of these are needed, but
-> some are only needed for older 32-bit VExpress platforms and can just
-> be disabled. For FVP, the pl111 display driver is needed. The pl111
-> driver depends on vexpress-osc clocks which had a dependency chain of
-> vexpress-config --> vexpress-syscfg --> vexpress-sysreg. These
-> components relied on fixed initcall ordering and didn't support deferred
-> probe which would have complicated making them modules. All these levels
-> of abstraction are needlessly complicated, so this series simplifies
-> things a bit by merging the vexpress-config and vexpress-syscfg
-> functionality.
->
-> There's a couple of other pieces to this which I've sent out separately
-> as they don't have dependencies with this series. The cross subsystem
-> dependencies in this series are mainly the ordering of enabling drivers
-> as modules.
->
-> A complete git branch is here[1]. Tested on Fast Model FVP Rev C.
+From: Vincent Knecht <vincent.knecht@mailoo.org>
 
-I am assuming you will send pull request to ARM SoC guys directly. Let
-me know what's the plan if that's not the case.
+Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+---
+ drivers/clk/qcom/clk-smd-rpm.c | 50 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
---
-Regards,
-Sudeep
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 52f63ad787ba9..4ac80d8ac6c25 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -452,6 +452,55 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
+ 	.num_clks = ARRAY_SIZE(msm8916_clks),
+ };
+ 
++/* msm8936 */
++DEFINE_CLK_SMD_RPM(msm8936, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8936, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
++DEFINE_CLK_SMD_RPM(msm8936, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
++DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
++DEFINE_CLK_SMD_RPM_QDSS(msm8936, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, bb_clk1, bb_clk1_a, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, bb_clk2, bb_clk2_a, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, rf_clk1, rf_clk1_a, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, rf_clk2, rf_clk2_a, 5);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, bb_clk1_pin, bb_clk1_a_pin, 1);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, bb_clk2_pin, bb_clk2_a_pin, 2);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, rf_clk1_pin, rf_clk1_a_pin, 4);
++DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, rf_clk2_pin, rf_clk2_a_pin, 5);
++
++static struct clk_smd_rpm *msm8936_clks[] = {
++		[RPM_SMD_PCNOC_CLK]		     = &msm8936_pcnoc_clk,
++		[RPM_SMD_PCNOC_A_CLK]		   = &msm8936_pcnoc_a_clk,
++		[RPM_SMD_SNOC_CLK]		      = &msm8936_snoc_clk,
++		[RPM_SMD_SNOC_A_CLK]		    = &msm8936_snoc_a_clk,
++		[RPM_SMD_BIMC_CLK]		      = &msm8936_bimc_clk,
++		[RPM_SMD_BIMC_A_CLK]		    = &msm8936_bimc_a_clk,
++		[RPM_SMD_SYSMMNOC_CLK]		  = &msm8936_sysmmnoc_clk,
++		[RPM_SMD_SYSMMNOC_A_CLK]		= &msm8936_sysmmnoc_a_clk,
++		[RPM_SMD_QDSS_CLK]		      = &msm8936_qdss_clk,
++		[RPM_SMD_QDSS_A_CLK]		    = &msm8936_qdss_a_clk,
++		[RPM_SMD_BB_CLK1]		       = &msm8936_bb_clk1,
++		[RPM_SMD_BB_CLK1_A]		     = &msm8936_bb_clk1_a,
++		[RPM_SMD_BB_CLK2]		       = &msm8936_bb_clk2,
++		[RPM_SMD_BB_CLK2_A]		     = &msm8936_bb_clk2_a,
++		[RPM_SMD_RF_CLK1]		       = &msm8936_rf_clk1,
++		[RPM_SMD_RF_CLK1_A]		     = &msm8936_rf_clk1_a,
++		[RPM_SMD_RF_CLK2]		       = &msm8936_rf_clk2,
++		[RPM_SMD_RF_CLK2_A]		     = &msm8936_rf_clk2_a,
++		[RPM_SMD_BB_CLK1_PIN]		   = &msm8936_bb_clk1_pin,
++		[RPM_SMD_BB_CLK1_A_PIN]		 = &msm8936_bb_clk1_a_pin,
++		[RPM_SMD_BB_CLK2_PIN]		   = &msm8936_bb_clk2_pin,
++		[RPM_SMD_BB_CLK2_A_PIN]		 = &msm8936_bb_clk2_a_pin,
++		[RPM_SMD_RF_CLK1_PIN]		   = &msm8936_rf_clk1_pin,
++		[RPM_SMD_RF_CLK1_A_PIN]		 = &msm8936_rf_clk1_a_pin,
++		[RPM_SMD_RF_CLK2_PIN]		   = &msm8936_rf_clk2_pin,
++		[RPM_SMD_RF_CLK2_A_PIN]		 = &msm8936_rf_clk2_a_pin,
++};
++
++static const struct rpm_smd_clk_desc rpm_clk_msm8936 = {
++		.clks = msm8936_clks,
++		.num_clks = ARRAY_SIZE(msm8936_clks),
++};
++
+ /* msm8974 */
+ DEFINE_CLK_SMD_RPM(msm8974, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
+ DEFINE_CLK_SMD_RPM(msm8974, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
+@@ -768,6 +817,7 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
+ 
+ static const struct of_device_id rpm_smd_clk_match_table[] = {
+ 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
++	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
+ 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
+ 	{ .compatible = "qcom,rpmcc-msm8976", .data = &rpm_clk_msm8976 },
+ 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
+-- 
+2.26.1
+
