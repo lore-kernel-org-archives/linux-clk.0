@@ -2,134 +2,80 @@ Return-Path: <SRS0=65tD=6P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA333C47258
-	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 14:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680E3C47253
+	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 16:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9E452076D
-	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 14:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4377A24956
+	for <linux-clk@archiver.kernel.org>; Fri,  1 May 2020 16:26:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729013AbgEAOLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 May 2020 10:11:44 -0400
-Received: from muru.com ([72.249.23.125]:52456 "EHLO muru.com"
+        id S1729300AbgEAQ0v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 May 2020 12:26:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:43468 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbgEAOLn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 1 May 2020 10:11:43 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 83262810E;
-        Fri,  1 May 2020 14:12:29 +0000 (UTC)
-Date:   Fri, 1 May 2020 07:11:38 -0700
-From:   Tony Lindgren <tony@atomide.com>
+        id S1728947AbgEAQ0u (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 May 2020 12:26:50 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 086DD30E;
+        Fri,  1 May 2020 09:26:50 -0700 (PDT)
+Received: from bogus (unknown [10.37.12.80])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 02DB43F68F;
+        Fri,  1 May 2020 09:26:45 -0700 (PDT)
+Date:   Fri, 1 May 2020 17:26:30 +0100
+From:   Sudeep Holla <sudeep.holla@arm.com>
 To:     Rob Herring <robh@kernel.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Keerthy <j-keerthy@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 02/14] clocksource/drivers/timer-ti-dm: Add clockevent
- and clocksource support
-Message-ID: <20200501141138.GA37466@atomide.com>
-References: <20200417165519.4979-1-tony@atomide.com>
- <20200417165519.4979-3-tony@atomide.com>
- <62be90e2-7dbe-410d-4171-c0ad0cddc7a3@linaro.org>
- <20200427143144.GQ37466@atomide.com>
- <29f39839-b3ed-cac3-1dea-c137286320b1@linaro.org>
- <20200427152329.GR37466@atomide.com>
- <20200430140040.GA8363@bogus>
- <20200430153119.GX37466@atomide.com>
- <CAL_Jsq+Xqv0JByAK-tYj8aHDhuB5rYrn0NXQxkm97j0P1zqGPg@mail.gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 04/16] clk: versatile: Rework kconfig structure
+Message-ID: <20200501162605.GA14018@bogus>
+References: <20200429205825.10604-1-robh@kernel.org>
+ <20200429205825.10604-5-robh@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+Xqv0JByAK-tYj8aHDhuB5rYrn0NXQxkm97j0P1zqGPg@mail.gmail.com>
+In-Reply-To: <20200429205825.10604-5-robh@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Rob Herring <robh@kernel.org> [200501 13:19]:
-> On Thu, Apr 30, 2020 at 10:31 AM Tony Lindgren <tony@atomide.com> wrote:
-> > Hmm. Trying to detect this automatically will get messy. For example,
-> > we have few omap3 boards with the following options that also need to
-> > consider if the separate 32KiHz counter is available:
-> >
-> > 1. The best case scenario
-> >
-> > ti,omap-counter32k clocksource
-> > ti,sysc-omap2-timer ti,timer-alwon clockevent (timer1)
-> >
-> > 2. Boards relying on internal clock with unusable 32k counter
-> >
-> > ti,sysc-omap2-timer ti,timer-alwon clocksource (timer12)
-> > ti,sysc-omap2-timer clockevent (typically gpt2)
-> >
-> > In the second case, the 32k counter is unusable, and timer1
-> > is unusable with the external 32k always on clock. But timer1
-> > can be used with the system clock just fine for other purposes.
-> > So ideally we would not tag timer1 as disabled :)
+On Wed, Apr 29, 2020 at 03:58:13PM -0500, Rob Herring wrote:
+> CONFIG_COMMON_CLK_VERSATILE doesn't really do anything other than hiding
+> Arm Ltd reference platform clock drivers. It is both selected by the
+> platforms that need it and has a 'depends on' for those platforms. Let's
+> drop the selects and convert CONFIG_COMMON_CLK_VERSATILE into a
+> menuconfig entry. With this make CONFIG_ICST visible.
 > 
-> I'm perfectly fine with a 'broken 32k clk' type property.
-
-OK. Maybe "unreliable-oscillator" type property or something like
-that. Or maybe "shrodingers-cat-oscillator" :)
-
-> Though I think the compatibility story is not good changing DT for
-> stuff needed to boot and needed early in boot. It's one thing to break
-> something not required to get a system booted.
-
-For the boards with the 32k clock issue the system boots but
-is unreliable. I'm not sure how long a 32k clock based timer would
-have to be monitored with another system clock based timer to
-detect it.. I recall the issues start popping up with PM and
-that much later and the system clock may not even be active..
-
-Anyways, the issue is related to how the board is wired, so a
-property for it makes sense here.
-
-> > For the second case, we could remove ti,timer-alwon property
-> > for timer1, and tag the 32k counter as disabled as the source
-> > clock is unreliable. Then somewhere in the code we would need
-> > to check if ti,omap-counter32k is availabe, then check if
-> > timer1 is always-on, then use timer12 if not a secure device
-> > like n900.
+> Move the 'select REGMAP_MMIO' to the drivers that require it (SP810 did
+> not).
 > 
-> IIRC, there's some OMAP timer properties for secure vs. non-secure.
-> (It's not the first time we've had this discussion on TI timers.)
-
-Yes.
-
-> > If the board wants to use the system clock as the source for
-> > a higher resolution with assigned-clock-parents, then we'd need
-> > to ignore the always-on property and not use the 32k counter as
-> > the clocksource. Basically to somehow figure out that a higher
-> > resolution configuration is preferred over a
-> > low-power configuration.
+> This also has the side effect of enabling CONFIG_ICST for COMPILE_TEST
+> as it was not visible before.
 > 
-> That could be something you want to pick at run-time.
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Liviu Dudau <liviu.dudau@arm.com>
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
 
-OK
+FWIW,
 
-> > So what's your take on just adding the generic properties for
-> > assigned-system-clocksource and clockevent?
-> 
-> I'm tired of discussing this for 10 years...
+Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Well luckly most system have basic timers integrated nowadays
-rather than each SoC vendor doing their own timers :)
-
+-- 
 Regards,
-
-Tony
+Sudeep
