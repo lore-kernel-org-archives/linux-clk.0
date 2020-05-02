@@ -2,162 +2,148 @@ Return-Path: <SRS0=8LXL=6Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED319C47256
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 04:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A27AC3A5A9
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 10:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C199724956
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 04:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A3E7216FD
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 10:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="pV8ZvRgo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTs/6dNb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbgEBEh3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 May 2020 00:37:29 -0400
-Received: from mail-dm6nam11on2074.outbound.protection.outlook.com ([40.107.223.74]:6039
-        "EHLO NAM11-DM6-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726764AbgEBEhU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 2 May 2020 00:37:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aVWYEdWWm5r8J4302K/amhzEf3c0Mm7nUQakiGzqJmA4Sjpt8AiFHwB59qKx0EDXWvgp3ztti2GN/h9PlS/BZXvv7//YTdV8t9kuvjtmbAugDkiAWLCDrnG1WUBlizOSip1y+FxgQWCcWlUjzY4T1bjp3rzVyJGWCIJy3Q2PLeRe9RAchfEOxxRxBn70Q+OlOHEkxqzUbCSW1dmb5xLgiyWBWFwuSF2T4cqfBb5fRJIGiaQhFgDqZ9/MjvJTo7uih3fkpEa6Rn3Cz9UGh/w5UArfElIpXTWJEvDxO2+0oalA97W1psuIfmHQXGk9WfHhbYBjz3YEwcejSixWHmtdOw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QJfiyrZ9gRa2hO4SmvSP/QAj6O9n7lxEUGz9Ogi1kMI=;
- b=En0kHX1U4Idy0pI0wMATRqGBS5ynBzjVHO45uJMgLnw1kw/QRAbrYJQXFS0hCNVcJ9yIOjnbqgubnCKkHtodeV8YBEwbg8WhNUEWmwb4y3jr/aR7y9pLpDy+apo2tIi+8ZS5swEbYbn1NVMIUNo2xhi9I6G73TkNPZ2/VcpVDtwAb+BKMTgxlgMGwCzIajae8bfYykvpBgYZ7XvofvY0GC3GsLrQvOAPuEvyRWy0dGwqpSF9lSesAF5ZQazeGh4+bjxDEHB1v2APouP73ODLoo2nCLpO6EjApvPsZ5XIdg3yFbVelyUFF1HMIRJSb48jLYYqxUtvkOq2IsB0J/k/Dg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
+        id S1726793AbgEBKxf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 May 2020 06:53:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53130 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726654AbgEBKxf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 May 2020 06:53:35 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27FA8C061A0C;
+        Sat,  2 May 2020 03:53:35 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id r2so6704778ilo.6;
+        Sat, 02 May 2020 03:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QJfiyrZ9gRa2hO4SmvSP/QAj6O9n7lxEUGz9Ogi1kMI=;
- b=pV8ZvRgoJGp6ocb5tBonZQiOnYxPol4QIMWLj58gPo6VQrHIW4AeSraQLaYyz3gcS1mH22rkGFfoiDJAnTlMnz49P2EtINIo+LKdniIIMlbBiQubStETBZlMi3aaQ3lqA8dmj22ZVeN6oAXYGdlXBr80D+egB4tlUSGJQlAAJik=
-Received: from MN2PR20CA0014.namprd20.prod.outlook.com (2603:10b6:208:e8::27)
- by BY5PR02MB6723.namprd02.prod.outlook.com (2603:10b6:a03:213::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.27; Sat, 2 May
- 2020 04:37:15 +0000
-Received: from BL2NAM02FT017.eop-nam02.prod.protection.outlook.com
- (2603:10b6:208:e8:cafe::81) by MN2PR20CA0014.outlook.office365.com
- (2603:10b6:208:e8::27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.20 via Frontend
- Transport; Sat, 2 May 2020 04:37:14 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- BL2NAM02FT017.mail.protection.outlook.com (10.152.77.174) with Microsoft SMTP
- Server id 15.20.2958.27 via Frontend Transport; Sat, 2 May 2020 04:37:14
- +0000
-Received: from [149.199.38.66] (port=34452 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jUjtn-0002fk-Dh; Fri, 01 May 2020 21:37:11 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jUjtp-0004eZ-U7; Fri, 01 May 2020 21:37:13 -0700
-Received: from xsj-pvapsmtp01 (smtp-fallback.xilinx.com [149.199.38.66] (may be forged))
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 0424b50g002110;
-        Fri, 1 May 2020 21:37:05 -0700
-Received: from [172.19.3.8] (helo=xsjamitsuni50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jUjth-0004de-AM; Fri, 01 May 2020 21:37:05 -0700
-From:   Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
-        mark.rutland@arm.com, linux-clk@vger.kernel.org
-Cc:     rajanv@xilinx.com, jollys@xilinx.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rajan Vaja <rajan.vaja@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-Subject: [RESEND PATCH v2 3/4] drivers: clk: zynqmp: Fix invalid clock name queries
-Date:   Fri,  1 May 2020 21:37:02 -0700
-Message-Id: <1588394223-257635-4-git-send-email-amit.sunil.dhamne@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588394223-257635-1-git-send-email-amit.sunil.dhamne@xilinx.com>
-References: <1588394223-257635-1-git-send-email-amit.sunil.dhamne@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(4636009)(346002)(376002)(396003)(39860400002)(136003)(46966005)(70586007)(70206006)(107886003)(356005)(26005)(82310400002)(186003)(478600001)(8676002)(336012)(4326008)(9786002)(8936002)(2616005)(36756003)(426003)(5660300002)(47076004)(2906002)(6666004)(54906003)(81166007)(7696005)(82740400003)(316002)(42866002);DIR:OUT;SFP:1101;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m9LZ8ST+6LzjBGdaEIV2c8yn5dkQzPADS108pGHml1w=;
+        b=PTs/6dNbidwTJZIuSOvkN3VnCcJkyoKXyCzjrsOB1mAFUi0LpNXsxG4gW2mbcI/pik
+         CydNAU8z+t0IfESfNvQOBLhUmCJJVhdFzqBVFlXd/Zn3JthWpHFdD4pr8Mt4TlUznip3
+         U/WiPUJFoCTualQQW3ESl0ZJxpFBKGQZjnKZkA6RL6+YkjtndgJem6S8BWMjWP5MiQfn
+         rgI0dSLWwh8kW5bDRi1Jrda1ump3s5oJkEILM08E0MArVJL5U8v7oc6K6VATSYbttmjd
+         4LtrPfaYIROee4lV8XwomJf0kUBmTtBpr4Yy9BtK4EaagU48REe9+S4mvoQqmhVdmRBt
+         QuIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m9LZ8ST+6LzjBGdaEIV2c8yn5dkQzPADS108pGHml1w=;
+        b=ChQRYVb0RdB8URhIVXnSFjOKWjMilxQebtv7K1eNfsUUNcjj+htJZPvpPpvPpnkaP/
+         8jDOpGySHWw9Zgq5h2XVCyHzJu9ffUDcp1SOk9XICVAMwGpBQqEimXQNMZ/ZIGpoAEL0
+         9YNdt7GFA4AtG36lN+EEU4ynN/pByI+4K84mIbqPNoT2nYieTXC9xaWLqfhizDaibXwB
+         4c4nOT0omRETXc/lCEPG3GcE9C/V+SIZrTz9mS9FXrmNMM5PKGZGQOpdRMOgPD2lr1Tk
+         riJRIuji94xIsgJghIZBok48YKkGrYa5RTVRdsuj4GDVa24QBTf6AqMcWzTPFwEgHUqA
+         jHNQ==
+X-Gm-Message-State: AGi0Puam0keT2yapnV6cdXCQ0TknIc1MCdqy4Q0QyOA7PfRfGB5DBLgA
+        iGdqe0A3UjflS67vWXpqjk8R5YvDxSIYtLd1A1mWLedQ
+X-Google-Smtp-Source: APiQypIHiSluSp8zltLiHWhXVtICtbgab42gEUfjztSVhleg/ky/1r1/Ss6C7gJM4qs0WFi5ehg92uoORRSH1sEc+F4=
+X-Received: by 2002:a92:c144:: with SMTP id b4mr7597001ilh.89.1588416813921;
+ Sat, 02 May 2020 03:53:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 23a80819-1019-498c-71a3-08d7ee527cb1
-X-MS-TrafficTypeDiagnostic: BY5PR02MB6723:
-X-Microsoft-Antispam-PRVS: <BY5PR02MB6723DD3D84422F78A187910EA7A80@BY5PR02MB6723.namprd02.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:2201;
-X-Forefront-PRVS: 039178EF4A
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: olngKhVorikGE6Atky4gSX2JM/94fD6XF38srnqeEca/uW/ERypmHuYuM1sdNrWsLnu6OT+QYJZF3fNdKZ3Vuxn43VdCqZakk1Nz31AzpWHRgF9mLWd2N1+X8vkOse0ybNtIhuAxusyRFdSa+QMNxqONquKHmU3N1KABMdIjWsQjQp+hhwO9wkAyrrF38oYsm+mT1B7q4Xis4nW1ieQOCjc/hKfTy4CR9r6fU7xMaRsXXTPgldnj2ToX527NXPbjKFCwk13hGsX6odo9AFp87eLySACH6oIIgvO1L0aar9IGo3N9QidwdB8A14BU019ocVhx5aRQLem7edOPwZc856xcLJQ8ljzXM6Hoq/86KLdISNV/9y2y0//sNizlYB0kgv+bfHTnmoEmIQokMxtiGaK/CjaTzhfrDAo6nOUiI50C0GO6oHlaWyCaYo/A9IpAMufmR7ifCXIm+iy108SmSlzp8ce6IksoZK002ayBjO1ngZsXbUQPPdrGvQWTq9+meja26auVUw7XKPZqQaiYHllTges9phliiYy61lCFJEs=
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 May 2020 04:37:14.2857
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23a80819-1019-498c-71a3-08d7ee527cb1
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6723
+References: <20200404161537.2312297-1-aford173@gmail.com>
+In-Reply-To: <20200404161537.2312297-1-aford173@gmail.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Sat, 2 May 2020 05:53:22 -0500
+Message-ID: <CAHCN7xJBxaS-7e=PY8BXVyit-Ye22JKmfOk3=oUTv1BZurE4oA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V6965
+To:     linux-clk <linux-clk@vger.kernel.org>
+Cc:     Adam Ford-BE <aford@beaconembedded.com>,
+        Charles Stevens <charles.stevens@logicpd.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rajan Vaja <rajan.vaja@xilinx.com>
+On Sat, Apr 4, 2020 at 11:15 AM Adam Ford <aford173@gmail.com> wrote:
+>
+> Update IDT VersaClock 5 driver to support 5P49V6965.
+>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>
 
-The clock driver makes EEMI call to get the name of invalid clk
-when executing versal_get_clock_info() function. This results in
-error messages.
-Added check for validating clock before saving clock attribute and
-calling zynqmp_pm_clock_get_name() in versal_get_clock_info() function.
+Gentle ping.   Rob H has given the 2nd which adds the bindings his
+'signed-of-by'
 
-Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
-Signed-off-by: Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
----
- drivers/clk/zynqmp/clkc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Once this has been approved, I'll be issuing an update to an another
+patch series for this same clock, and once those have been approved,
+I'll be introducing a new board, but I need this patch approved before
+I can do that.
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index 10e89f2..3e83c51 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -663,6 +663,11 @@ static void zynqmp_get_clock_info(void)
-                        continue;
+thanks,
 
-                clock[i].valid =3D FIELD_GET(CLK_ATTR_VALID, attr.attr[0]);
-+               /* skip query for Invalid clock */
-+               ret =3D zynqmp_is_valid_clock(i);
-+               if (ret !=3D CLK_ATTR_VALID)
-+                       continue;
-+
-                clock[i].type =3D FIELD_GET(CLK_ATTR_TYPE, attr.attr[0]) ?
-                        CLK_TYPE_EXTERNAL : CLK_TYPE_OUTPUT;
+adam
 
---
-2.7.4
-
-This email and any attachments are intended for the sole use of the named r=
-ecipient(s) and contain(s) confidential information that may be proprietary=
-, privileged or copyrighted under applicable law. If you are not the intend=
-ed recipient, do not read, copy, or forward this email message or any attac=
-hments. Delete this email message and any attachments immediately.
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>
+> index 24fef51fbcb5..fa96659f8023
+> --- a/drivers/clk/clk-versaclock5.c
+> +++ b/drivers/clk/clk-versaclock5.c
+> @@ -124,6 +124,7 @@ enum vc5_model {
+>         IDT_VC5_5P49V5933,
+>         IDT_VC5_5P49V5935,
+>         IDT_VC6_5P49V6901,
+> +       IDT_VC6_5P49V6965,
+>  };
+>
+>  /* Structure to describe features of a particular VC5 model */
+> @@ -683,6 +684,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+>         case IDT_VC5_5P49V5925:
+>         case IDT_VC5_5P49V5935:
+>         case IDT_VC6_5P49V6901:
+> +       case IDT_VC6_5P49V6965:
+>         default:
+>                 return n;
+>         }
+> @@ -956,12 +958,20 @@ static const struct vc5_chip_info idt_5p49v6901_info = {
+>         .flags = VC5_HAS_PFD_FREQ_DBL,
+>  };
+>
+> +static const struct vc5_chip_info idt_5p49v6965_info = {
+> +       .model = IDT_VC6_5P49V6965,
+> +       .clk_fod_cnt = 4,
+> +       .clk_out_cnt = 5,
+> +       .flags = 0,
+> +};
+> +
+>  static const struct i2c_device_id vc5_id[] = {
+>         { "5p49v5923", .driver_data = IDT_VC5_5P49V5923 },
+>         { "5p49v5925", .driver_data = IDT_VC5_5P49V5925 },
+>         { "5p49v5933", .driver_data = IDT_VC5_5P49V5933 },
+>         { "5p49v5935", .driver_data = IDT_VC5_5P49V5935 },
+>         { "5p49v6901", .driver_data = IDT_VC6_5P49V6901 },
+> +       { "5p49v6965", .driver_data = IDT_VC6_5P49V6965 },
+>         { }
+>  };
+>  MODULE_DEVICE_TABLE(i2c, vc5_id);
+> @@ -972,6 +982,7 @@ static const struct of_device_id clk_vc5_of_match[] = {
+>         { .compatible = "idt,5p49v5933", .data = &idt_5p49v5933_info },
+>         { .compatible = "idt,5p49v5935", .data = &idt_5p49v5935_info },
+>         { .compatible = "idt,5p49v6901", .data = &idt_5p49v6901_info },
+> +       { .compatible = "idt,5p49v6965", .data = &idt_5p49v6965_info },
+>         { },
+>  };
+>  MODULE_DEVICE_TABLE(of, clk_vc5_of_match);
+> --
+> 2.25.1
+>
