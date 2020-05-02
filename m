@@ -2,71 +2,46 @@ Return-Path: <SRS0=8LXL=6Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B86C47256
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 20:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2052AC47257
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 22:47:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21F6B2072E
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 20:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0003D21775
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 22:47:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewx0eis3"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aPojyaqa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbgEBUsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 May 2020 16:48:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60676 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728472AbgEBUsr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 May 2020 16:48:47 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C146C061A0C;
-        Sat,  2 May 2020 13:48:46 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id g4so5869996ljl.2;
-        Sat, 02 May 2020 13:48:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7s/4VcNmw1wJVQ1beU53IUkohldspgncL00MxHfRDtc=;
-        b=ewx0eis3GDwHmOvVENFcmg9kjEyLj36dLMtAzUTSqHgUB+5HxuvcNVZ/egsYw85Khe
-         yNQzEaUOnQlHNTdB9izwQqQE8UAIsvMU+LwNaCln1kjHR9CxmooE5Dsec/eIEEdhftsy
-         qXi235uE3IwSIFP8iLYNwf9xgqSPv1Nvvjrz7PYpGu69m05S7/5ISTl0E5quQ11MDq2m
-         Yxd5H+IKx0XRAxdc5clTC0y+ZnyaBeK71wuy01yklRNvsN8xUePNSjaF76bR0/tfq8q9
-         9crj4zy4VPswdthr+08b1QZquKkRkB4PZ4TgSNuCpMAqi+vbFg1WEQ+AfFE2PI2ddUzk
-         YilQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7s/4VcNmw1wJVQ1beU53IUkohldspgncL00MxHfRDtc=;
-        b=HOhEDqYoUu3uKufILGLqss7q6EZucAog7DPyBBEOy7cUMgEy8FohhBHx+4bRxp1HgT
-         eC7ojM/mO9f/d4/pgG/cZeaoFjxXMi1BoZN5VlNOYEDohN7NYDamangMBp1VP0aB+4Ct
-         qhLGGn2sesU4GKQ7t6UHKBFkJm+1tB4gkDfC/D8kaSgjuXP+ic9659Z71u6mGci10m5t
-         fMvKdtdypdb9LhLXTDQySjXW1AbAx/V7t8DVfBb0RCMwOiQsAQ4GMlt/Ynk9DrQPS5Q0
-         CS0u8ZHXzKTIRsV/yQDs+eK84DQaM0+fBFMmhTvvrFB7RRZnTs8ApbxOH5nQFYc9oslI
-         A1+w==
-X-Gm-Message-State: AGi0PuZrMlN+Tnt7iBuhQT6yiYSK3NzE+W0ZMu+8VLNtO2rHDpGiJHmF
-        BS94qMZLTqH832XwnuVa88N7Pvqy
-X-Google-Smtp-Source: APiQypJoM7fRjqmtoWZmB620LDMpi4Oh+ILfKnuEtXzQJUokAIqy6LiWN/mkJpdrkGv6B6qPA3Fh6A==
-X-Received: by 2002:a05:651c:107a:: with SMTP id y26mr6065337ljm.80.1588452524597;
-        Sat, 02 May 2020 13:48:44 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id q125sm4572080ljb.34.2020.05.02.13.48.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 May 2020 13:48:43 -0700 (PDT)
+        id S1728565AbgEBWr0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 May 2020 18:47:26 -0400
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:6750 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728545AbgEBWr0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 May 2020 18:47:26 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5eadf8710000>; Sat, 02 May 2020 15:47:13 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sat, 02 May 2020 15:47:25 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sat, 02 May 2020 15:47:25 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 2 May
+ 2020 22:47:25 +0000
+Received: from [10.2.165.119] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Sat, 2 May 2020
+ 22:47:24 +0000
 Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <sakari.ailus@iki.fi>, <helen.koike@collabora.com>
+CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
  <289d9c92-383f-3257-de7b-46179724285a@nvidia.com>
  <9aa64f21-7b23-7228-b5eb-d2ff092682ad@nvidia.com>
  <668cc4a0-2c81-0d87-b801-9fbf64e19137@nvidia.com>
@@ -84,46 +59,98 @@ References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
  <235a4cd4-4d4a-04b8-6c65-43a4dba48a0b@nvidia.com>
  <f8103170-7879-8597-3e3c-da9a3b6a40b3@nvidia.com>
  <5d847770-dad9-8f18-67b5-c1ba79084957@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4abf30e0-fed9-ba39-ae38-350789bce99d@gmail.com>
-Date:   Sat, 2 May 2020 23:48:42 +0300
+ <4abf30e0-fed9-ba39-ae38-350789bce99d@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <b5f6a4e0-6e97-05ae-f034-b84fc5a1129a@nvidia.com>
+Date:   Sat, 2 May 2020 15:46:36 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <5d847770-dad9-8f18-67b5-c1ba79084957@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <4abf30e0-fed9-ba39-ae38-350789bce99d@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1588459633; bh=CBnFL7uPNS5WM1c2jb/jKo6GeM5vonJcVOmwBiIyxHY=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=aPojyaqaxt+7L2ozKSgR37xcCVX+2zTA1ccSwHPPcrfxHXwMchhOeiKGHmU1VT+PW
+         RWOO7wXM3IaMcrWVsjwaFCANTlt3YHnmVrFDiwESt7UVmxnh69qYgiNqPiDDCmNK6C
+         UilidCJ/KEFgQHtgke6ft/Frh0q6J2t0j6xFj6Ohbc3W7fuA+rphqUkhPGOuLfAWVJ
+         STp+DGQKXP3283i/tOzXv0K7mDp5YGkbdnrxGFKLo/S50ycWPU6OMfkdRLvJNUfv+v
+         3sGgaBscrx6iaGYs/XWHMWJxusIDGJiK4d4b8A+RoFA+R87LLGKnFTWmrAEn7AfR8P
+         xosrKYoXCjT1Q==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-02.05.2020 19:55, Sowjanya Komatineni пишет:
-> Also stop stream ioctl request happens during suspend where both threads
-> will be stopped properly. done thread stop happens only after finishing
-> all outstanding buffers.
 
-Do you mean that V4L core takes care of stopping the streami on suspend
-and re-starting it on resume from suspend?
+On 5/2/20 1:48 PM, Dmitry Osipenko wrote:
+> 02.05.2020 19:55, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> Also stop stream ioctl request happens during suspend where both threads
+>> will be stopped properly. done thread stop happens only after finishing
+>> all outstanding buffers.
+> Do you mean that V4L core takes care of stopping the streami on suspend
+> and re-starting it on resume from suspend?
+>
+>> Stop stream request happens from streaming applications so even without
+>> driver suspend/resume implementation currently, streaming will be
+>> stopped prior to system=C2=A0 suspend where both threads will be stopped
+>> properly (after finishing out standing buffers) and will be resumed by
+>> application on system resume
+> All userspace is frozen on suspend. System suspension is transparent for
+> userspace applications. I'm not sure what you're meaning here.
+>
+>> Also tested suspending while streaming with this unconditional freeze, I
+>> don't see any issue as application stops stream where v4l_streamoff gets
+>> executed during suspend and on resume streaming starts where
+>> v4l_streamon happens.
+>>
+>> So, I don't see any issue with existing implementation of unconditional
+>> freeze.
+> I don't understand why freezing is needed at all if V4L core takes care
+> of stopping the stream on suspend, what is the point? If there is no
+> real point, then let's make threads non-freezable and done with that.
 
-> Stop stream request happens from streaming applications so even without
-> driver suspend/resume implementation currently, streaming will be
-> stopped prior to system  suspend where both threads will be stopped
-> properly (after finishing out standing buffers) and will be resumed by
-> application on system resume
+video device fops unlocked_ioctl is set to video_ioctl2() in vi driver.
 
-All userspace is frozen on suspend. System suspension is transparent for
-userspace applications. I'm not sure what you're meaning here.
+video device fops unlocked_ioctl gets executed with stream off cmd=20
+during suspend and stream on cmd during resume which eventually calls=20
+v4l_streamoff and v4l_streamon during system suspend/resume.
 
-> Also tested suspending while streaming with this unconditional freeze, I
-> don't see any issue as application stops stream where v4l_streamoff gets
-> executed during suspend and on resume streaming starts where
-> v4l_streamon happens.
-> 
-> So, I don't see any issue with existing implementation of unconditional
-> freeze.
+My understanding to have freezable threads is during system suspend user=20
+space applications are frozen prior to kernel freeze and during suspend=20
+when opened video character device node gets closed these ioctl gets=20
+invoked and stream off during suspend and stream on during resume=20
+happens. So probably we still need to use freezable threads to sync with=20
+user space application when frozen before really entering suspend.
 
-I don't understand why freezing is needed at all if V4L core takes care
-of stopping the stream on suspend, what is the point? If there is no
-real point, then let's make threads non-freezable and done with that.
+Will wait for Thierry/Hans comment to correct if my above understanding=20
+is wrong and help clarify if we need freezable threads at all in this=20
+case...
+
+Note: I see other drivers using freezable threads for capture drivers.
+
+
+Assuming we use freezable threads, I was saying we don't need=20
+conditional try_to_freeze() like you pointed because even if finish=20
+thread freeze happens prior to frame capture initiated by start thread,=20
+vi hardware will still continue to update this single ongoing buffer and=20
+will finish max within 200ms and actually there is no direct processing=20
+of this done by finish thread itself except that it returns buffers back=20
+when done and in this case it returns back when unfreeze/wake up happens.
+
+So, I don't see any issue of unconditional try_to_freeze() even with=20
+freezable threads.
+
+Thanks
+
+Sowjanya
+
+
