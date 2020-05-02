@@ -2,319 +2,298 @@ Return-Path: <SRS0=8LXL=6Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D69C47258
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 12:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D4C47258
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 15:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3611320787
-	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 12:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED1221973
+	for <linux-clk@archiver.kernel.org>; Sat,  2 May 2020 15:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jCF0fvZI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WnNt4r+R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727934AbgEBMVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 May 2020 08:21:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38586 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727815AbgEBMVr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 May 2020 08:21:47 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13856C061A0C;
-        Sat,  2 May 2020 05:21:47 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id q7so11872508qkf.3;
-        Sat, 02 May 2020 05:21:47 -0700 (PDT)
+        id S1728241AbgEBPQv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 May 2020 11:16:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37488 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728163AbgEBPQu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 May 2020 11:16:50 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3331C061A0C;
+        Sat,  2 May 2020 08:16:48 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id f11so5361540ljp.1;
+        Sat, 02 May 2020 08:16:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Xc+J3gtEQ6bPEPTp0sgpXqx6Tn93A+XqoBLEHYkXhKM=;
-        b=jCF0fvZIPTawUCjHOM7V09c/e61xyhbmprSvjmt5CNWIj1nAVGMPsw9kbKD51QFdWm
-         03uJGvvUfvsu1dTlTd5/5nN0JnqoTO6CO7EkDY0Hwpn+Vh3+o2qdd+d0QZlUcccxePUr
-         kD9c56Z6Q20pTHpQ4LpUWaehjXgZx7gc3YZoVk4G1aj/9NM1vRxklXIGn7kHXiD+qug3
-         0hBljFsRm5q1fvpd+Xc4+6Y6bw0VzledqZ7+fna1KmLqDxg8kDwQJa5PaeEax6cMKepS
-         zJ5baYMhXyghH50gxaAGOUP4iHXZZWBd5lxXrd7KeHVTPxiqvTt+O/Rx7sETyK6rXSfW
-         DVXQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Gx0Is5+F4FiiACKex8epswIclEUCgzGlDdmsu44R9Ts=;
+        b=WnNt4r+R8/umeNLEcst79H/Ils9choOMCTryjQF/BJo1cnv0fbBrBFcYa5BobGLMAR
+         6lNRMIPSC0V2+wwoKVWD9Bnuwkgpl4NWnQeLVLotGRQhQUnf6NWndSh7KTUc5gLtgI0/
+         bKJc6njY5UsZbVrmhyS9PjcIbWnMX7rxpPH3jnsTwX10dt58Mv66H+Dq4zB8Eooqa1aV
+         v55TVyXRuBLGdWoUCoqV0zcDs2OT6mHMCHnx6tOv2fwK0GXJb0VfHHpTBnD2E+TI2oVk
+         +KzvDkt0bxczZMv2CE7Zkxz4Z051AIOWrUeWp4F8LgccoNEpRqMumdDTmD0J8OOzQ8Y3
+         pCsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Xc+J3gtEQ6bPEPTp0sgpXqx6Tn93A+XqoBLEHYkXhKM=;
-        b=jH769tSljB2sFSVhzRJ2IXHLs4AS5Io7KScXEbMYELdaGrA7lQPl/aj2Aj3eYw2kAd
-         gkqDfszpmidmBhKnWy/1WoMqbf+xSRf4neBFVgwdDdfcFZPtxS46fvwU957hbR2F37Kg
-         NfIgHMoz9ARE1TfIQA8pUvoX5E5+fm2KGDeXPU1bzyAv6Ccw6sGWyO1I/O/YZMaU5apX
-         PuNytKRcAT1j7y56O2htpWe4NBLF59oHeHnOhS5qAXvpn063Ex8sgUt2//x7ddIP/qKQ
-         +yroOtZ/6oBROeHYBo94pIsuo/S/NgtQBI/ZohWtZYPxToaEBM0ntW02D0L8nXjEkNXV
-         8E8w==
-X-Gm-Message-State: AGi0PuY4nrE5zX0jbJjnHW+KJwaerqx2zgpOp5c1EJF4YSJsTFjj2LHw
-        bUU6qljntcdYLe+MzqBcIDYuLulqOOQ=
-X-Google-Smtp-Source: APiQypKenyB99S4TSSF7qhbgp0pDpPJx8fMkndmgo9aJiw8nzsHsQJPKUOuBihrBg1nimDH4HwY6Vw==
-X-Received: by 2002:a37:d8e:: with SMTP id 136mr7804191qkn.260.1588422105817;
-        Sat, 02 May 2020 05:21:45 -0700 (PDT)
-Received: from localhost.localdomain (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
-        by smtp.gmail.com with ESMTPSA id p47sm5256413qta.44.2020.05.02.05.21.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 May 2020 05:21:45 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
-        Adam Ford <aford173@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/3] clk: vc5: Enable addition output configurations of the Versaclock
-Date:   Sat,  2 May 2020 07:21:25 -0500
-Message-Id: <20200502122126.188001-2-aford173@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200502122126.188001-1-aford173@gmail.com>
-References: <20200502122126.188001-1-aford173@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Gx0Is5+F4FiiACKex8epswIclEUCgzGlDdmsu44R9Ts=;
+        b=L0xRiZZVAiq9NsrfLSJ67WJEUOAZOlxS9IHZYvsGOJrZzVZiPZ9jAumSYGV/z6Gp0A
+         A6xUtm0Fk3W91W0CZKlDt3QQ4Qoe+zRCdzdfe1bpqxgNdQz7WZOkHOgI3w2YnvuuQjuL
+         AbUfY2Oe9JKmtS8V/UoUrTJF1ygtt39wca7Ihwqk4WL0FpZE+ec0a7Sb0gwjiQMyJ5Vo
+         tpAvdHalZx8wi04RpyqGt4jl/yBM8/rrz5CBCvZ456bnUPcGGq7MDtaVERbqUqnRnV+A
+         M35wk25RXxAgEC548pFg5FweOkp2T39JbALEt5q6Upj9c6TMijNb7V3vshqkJ+60liad
+         K+9w==
+X-Gm-Message-State: AGi0PubBibmhCd6SqPnB1O1XI1U7GwrjEWckCl2x4GhXzzdvRZicF8y+
+        ilvKWTzsd92oz1pgF98DRHt2M2Wv
+X-Google-Smtp-Source: APiQypL9ApnElSz/U5f/02s2TZkR00EZDvqCa4/qW9iy3WiMejVjfpJZF2y/UQQpmSDmYaO1UBj1Vg==
+X-Received: by 2002:a2e:593:: with SMTP id 141mr5060908ljf.271.1588432607004;
+        Sat, 02 May 2020 08:16:47 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id r2sm4102245ljm.8.2020.05.02.08.16.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 May 2020 08:16:46 -0700 (PDT)
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <71532440-f455-cc24-74f7-9ccad5947099@gmail.com>
+ <b3238987-5e8a-32f2-7ce7-924e86bc6e9e@nvidia.com>
+ <298187f6-2425-4813-1ae1-f256c179623e@nvidia.com>
+ <9c942bc9-703e-3bbb-eeab-f37e69dc1ded@nvidia.com>
+ <b72b9d5c-7d02-1b58-20f7-30f94e230d58@gmail.com>
+ <668d9b65-9590-cc97-41c3-2c1a5cfbbe61@nvidia.com>
+ <289d9c92-383f-3257-de7b-46179724285a@nvidia.com>
+ <9aa64f21-7b23-7228-b5eb-d2ff092682ad@nvidia.com>
+ <668cc4a0-2c81-0d87-b801-9fbf64e19137@nvidia.com>
+ <bf3f654e-b8f8-d560-fc5e-03d73cb7eab0@nvidia.com>
+ <525e481b-9137-6fdd-bbf9-3779a5704e6b@nvidia.com>
+ <fe7ebad6-0368-b1f0-4f58-648baa5e3f79@nvidia.com>
+ <4f095181-2338-3b71-316c-f8bbfc7865cc@nvidia.com>
+ <50e872bb-913a-7b47-3264-af6b1cedb0e2@nvidia.com>
+ <e17a8a49-be53-465d-f64c-3f4c77391d98@nvidia.com>
+ <da5154b4-85f9-3e56-a440-f75debaec3a8@nvidia.com>
+ <cbb047ae-97dc-8b9a-a5ba-8e2a5dab3771@nvidia.com>
+ <6ae2d00d-7955-d12b-5b56-955ef72ece26@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f9073b28-f1f1-636c-be53-764fb0a531a1@gmail.com>
+Date:   Sat, 2 May 2020 18:16:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <6ae2d00d-7955-d12b-5b56-955ef72ece26@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The existing driver is expecting the Versaclock to be pre-programmed,
-and only sets the output frequency.  Unfortunately, not all devices
-are pre-programmed, and the Versaclock chip has more options beyond
-just the frequency.
+02.05.2020 06:55, Sowjanya Komatineni пишет:
+> 
+> On 5/1/20 8:39 PM, Sowjanya Komatineni wrote:
+>>
+>>
+>> On 5/1/20 2:05 PM, Sowjanya Komatineni wrote:
+>>>
+>>>
+>>> On 5/1/20 1:58 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>>
+>>>> On 5/1/20 1:44 PM, Sowjanya Komatineni wrote:
+>>>>>
+>>>>>
+>>>>> On 5/1/20 11:03 AM, Sowjanya Komatineni wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 4/30/20 4:33 PM, Sowjanya Komatineni wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 4/30/20 4:14 PM, Sowjanya Komatineni wrote:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> And in this case synchronization between start/finish
+>>>>>>>>>>>>>> threads should be
+>>>>>>>>>>>>>> needed in regards to freezing.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> Was thinking to have counter to track outstanding frame
+>>>>>>>>>>>>> w.r.t single shot issue b/w start and finish and allow to
+>>>>>>>>>>>>> freeze only when no outstanding frames in process.
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> This will make sure freeze will not happen when any buffers
+>>>>>>>>>>>>> are in progress
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Note that this could be a wrong assumption, I'm not
+>>>>>>>>>>>>>> closely familiar
+>>>>>>>>>>>>>> with how freezer works.
+>>>>>>>>>>>>
+>>>>>>>>>>>> kthread_start can unconditionally allow try_to_freeze before
+>>>>>>>>>>>> start of frame capture
+>>>>>>>>>>>>
+>>>>>>>>>>>> We can compute captures inflight w.r.t single shot issued
+>>>>>>>>>>>> during capture start and finished frames by kthread_finish
+>>>>>>>>>>>> and allow kthread_finish to freeze only when captures
+>>>>>>>>>>>> inflight is 0.
+>>>>>>>>>>>>
+>>>>>>>>>>>> This allows freeze to happen b/w frames but not in middle of
+>>>>>>>>>>>> frame
+>>>>>>>>> will have caps inflight check in v12 to allow freeze finish
+>>>>>>>>> thread only when no captures are in progress
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> try_to_freeze() returns thread frozen state and looks like we
+>>>>>>>> can use this in kthread finish to allow finish thread to freeze
+>>>>>>>> only when kthread_start is already frozen and no buffers in
+>>>>>>>> progress/initiated for capture.
+>>>>>>>>
+>>>>>>> chan->capture_frozen holds frozen state returned from
+>>>>>>> try_to_freeze() in start kthread
+>>>>>>>
+>>>>>>> chan->capture_reqs increments after every single shot issued.
+>>>>>>>
+>>>>>>>
+>>>>>>> static int chan_capture_kthread_finish(void *data)
+>>>>>>>
+>>>>>>> {
+>>>>>>>     struct tegra_vi_channel *chan = data;
+>>>>>>>     struct tegra_channel_buffer *buf;
+>>>>>>>     int caps_inflight;
+>>>>>>>
+>>>>>>>     set_freezable();
+>>>>>>>
+>>>>>>>     while (1) {
+>>>>>>>         wait_event_interruptible(chan->done_wait,
+>>>>>>>                      !list_empty(&chan->done) ||
+>>>>>>>                      kthread_should_stop());
+>>>>>>>
+>>>>>>>         /* dequeue buffers and finish capture */
+>>>>>>>         buf = dequeue_buf_done(chan);
+>>>>>>>         while (buf) {
+>>>>>>>             tegra_channel_capture_done(chan, buf);
+>>>>>>>             buf = dequeue_buf_done(chan);
+>>>>>>>         }
+>>>>>>>
+>>>>>>>         if (kthread_should_stop())
+>>>>>>>             break;
+>>>>>>>
+>>>>>>>         caps_inflight = chan->capture_reqs - chan->sequence;
+>>>>>>>         if (chan->capture_frozen && !caps_inflight)
+>>>>>>>             try_to_freeze();
+>>>>>>>     }
+>>>>>>>
+>>>>>>>     return 0;
+>>>>>>> }
+>>>>>>
+>>>>>>
+>>>>>> Freezing happens prior to suspend() during suspend entry and when
+>>>>>> we implement suspend/resume during suspend we stop streaming where
+>>>>>> we stop threads anyway.
+>>>>>>
+>>>>>> So, was thinking why we need these threads freezable here?
+>>>>>>
+>>>>>>
+>>>>> Hi Dmitry,
+>>>>>
+>>>>> Did some testing and below are latest observation and fix I tested.
+>>>>>
+>>>>> wait_event_interruptible() uses schedule() which blocks the freezer.
+>>>>> When I do suspend while keeping streaming active in background, I
+>>>>> see freezing of these threads fail and call trace shows __schedule
+>>>>> -> __switch_to from these kthreads.
+>>>>>
+>>>>> wait_event_freezable() uses freezable_schedule() which should not
+>>>>> block the freezer but we can't use this here as we need conditional
+>>>>> try_to_freeze().
+>>>>>
+>>>>>
+>>>>> So, doing below sequence works where we set PF_FREEZER_SKIP flag
+>>>>> thru freezer_not_count() before wait_event which calls schedule()
+>>>>> and remove PF_FREEZER_SKIP after schedule allows try_to_freeze to
+>>>>> work and also conditional try_to_freeze below prevents freezing
+>>>>> thread in middle of capture.
+>>>>>
+>>>>> while (1) {
+>>>>>     freezer_not_count()
+>>>>>     wait_event_interruptible()
+>>>>>     freezer_count()
+>>>>>     ...
+>>>>>     ...
+>>>>>     if (chan->capture_frozen && !caps_inflight)
+>>>>>         try_to_freeze()
+>>>>> }
+>>>>>
+>>>>> Please comment if you agree with above sequence. Will include this
+>>>>> in v12.
+>>>>>
+>>> sorry, freezer_count() does try_to_freeze after clearing skip flag.
+>>> So, dont think we can use this as we need conditional try_to_freeze.
+>>> Please ignore above sequence.
+>>>>>
+>>>> Or probably we can take closer look on this later when we add
+>>>> suspend/resume support as it need more testing as well.
+>>>>
+>>>> As this is initial series which has TPG only I think we shouldn't
+>>>> get blocked on this now. Series-2 and 3 will be for sensor support
+>>>> and on next series when we add suspend/resume will look into this.
+>>>>
+>>>>
+>> When freeze activity starts and in case if finish thread freezes prior
+>> to start thread issuing capture, its the VI hardware writes data to
+>> the allocated buffer address.
+>>
+>> finish thread just checks for the event from the hardware and we don't
+>> handle/process directly on memory in this driver.
+>>
+>> So even we freeze done thread when single shot is issued frame buffer
+>> gets updated.
+>>
+>> In case if capture thread is frozen there will not buffers queued to
+>> process by finish thread. So, this will not be an issue.
+>>
+>> So, probably we don't need to do conditional try_to_freeze and what we
+>> have should work good in this corner case.
+>>
+> I still need to change wait_event_interruptible() to
+> wait_event_freezable() but no need to synchronize finish thread freeze
+> with start thread as even on issuing capture start its vi hardware that
+> does frame buffer update and finish thread just checks for mw_ack event
+> and returns buffer to application.
 
-This patch enables the following additional features:
+The problem we are primarily trying to avoid is to have suspending being
+done in the middle of IO.
 
-   - Programmable voltage: 1.8V, 2.5V, or 3.3V​
-   - Slew Percentage of normal: 85%, 90%, or 100%
-   - Output Type: LVPECL, CMOS, HCSL, or LVDS
+IIUC, even if system will be suspended in the middle of VI IO, it won't
+be fatal. In worst case the buffer capture should fail on resume from
+suspend. Could you please try to simulate this potential issue and see
+what result will be on suspending in the middle of VI IO?
 
-Signed-off-by: Adam Ford <aford173@gmail.com>
+We don't want to suspend system / stop streaming in the middle of IO, so
+this problem of a proper threads tear-down still exists. It should
+become easier to resolve the problem in a case of a proper suspending
+callback because the "start" thread could be turned down at any time, so
+it should be easier to maintain a proper tear-down order when threads
+are fully controlled by the driver, i.e. the "start" thread goes down
+first and the "finish" is second, blocking until the capture is completed.
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 81255d923f00..ad99d50b7b16 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -24,6 +24,8 @@
- #include <linux/regmap.h>
- #include <linux/slab.h>
- 
-+#include <dt-bindings/clk/versaclock.h>
-+
- /* VersaClock5 registers */
- #define VC5_OTP_CONTROL				0x00
- 
-@@ -89,6 +91,28 @@
- 
- /* Clock control register for clock 1,2 */
- #define VC5_CLK_OUTPUT_CFG(idx, n)	(0x60 + ((idx) * 0x2) + (n))
-+#define VC5_CLK_OUTPUT_CFG0_CFG_SHIFT	5
-+#define VC5_CLK_OUTPUT_CFG0_CFG_MASK GENMASK(7, VC5_CLK_OUTPUT_CFG0_CFG_SHIFT)
-+
-+#define VC5_CLK_OUTPUT_CFG0_CFG_LVPECL	(VC5_LVPECL)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_CMOS		(VC5_CMOS)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_HCSL33	(VC5_HCSL33)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_LVDS		(VC5_LVDS)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_CMOS2		(VC5_CMOS2)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_CMOSD		(VC5_CMOSD)
-+#define VC5_CLK_OUTPUT_CFG0_CFG_HCSL25	(VC5_HCSL25)
-+
-+#define VC5_CLK_OUTPUT_CFG0_PWR_SHIFT	3
-+#define VC5_CLK_OUTPUT_CFG0_PWR_MASK GENMASK(4, VC5_CLK_OUTPUT_CFG0_PWR_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_PWR_18	(0<<VC5_CLK_OUTPUT_CFG0_PWR_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_PWR_25	(2<<VC5_CLK_OUTPUT_CFG0_PWR_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_PWR_33	(3<<VC5_CLK_OUTPUT_CFG0_PWR_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT	0
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_MASK GENMASK(1, VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_80	(0<<VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_85	(1<<VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_90	(2<<VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT)
-+#define VC5_CLK_OUTPUT_CFG0_SLEW_100	(3<<VC5_CLK_OUTPUT_CFG0_SLEW_SHIFT)
- #define VC5_CLK_OUTPUT_CFG1_EN_CLKBUF	BIT(0)
- 
- #define VC5_CLK_OE_SHDN				0x68
-@@ -143,6 +167,8 @@ struct vc5_hw_data {
- 	u32			div_int;
- 	u32			div_frc;
- 	unsigned int		num;
-+	unsigned int		clk_output_cfg0;
-+	unsigned int		clk_output_cfg0_mask;
- };
- 
- struct vc5_driver_data {
-@@ -567,6 +593,17 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
- 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF,
- 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF);
-+	if (hwdata->clk_output_cfg0_mask) {
-+		dev_dbg(&vc5->client->dev, "Update output %d mask 0x%0X val 0x%0X\n",
-+			hwdata->num, hwdata->clk_output_cfg0_mask,
-+			hwdata->clk_output_cfg0);
-+
-+		regmap_update_bits(vc5->regmap,
-+			VC5_CLK_OUTPUT_CFG(hwdata->num, 0),
-+			hwdata->clk_output_cfg0_mask,
-+			hwdata->clk_output_cfg0);
-+	}
-+
- 	return 0;
- }
- 
-@@ -666,6 +703,120 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	}
- }
- 
-+static int vc5_update_mode(struct device_node *np_output,
-+			   struct vc5_hw_data *clk_out)
-+{
-+	u32 value;
-+
-+	if (!of_property_read_u32(np_output, "idt,mode", &value)) {
-+		clk_out->clk_output_cfg0_mask |= VC5_CLK_OUTPUT_CFG0_CFG_MASK;
-+		switch (value) {
-+		case VC5_CLK_OUTPUT_CFG0_CFG_LVPECL:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_CMOS:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_HCSL33:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_LVDS:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_CMOS2:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_CMOSD:
-+		case VC5_CLK_OUTPUT_CFG0_CFG_HCSL25:
-+			clk_out->clk_output_cfg0 |=
-+			    value << VC5_CLK_OUTPUT_CFG0_CFG_SHIFT;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int vc5_update_power(struct device_node *np_output,
-+			    struct vc5_hw_data *clk_out)
-+{
-+	u32 value;
-+
-+	if (!of_property_read_u32(np_output,
-+				  "idt,voltage-microvolts", &value)) {
-+		clk_out->clk_output_cfg0_mask |= VC5_CLK_OUTPUT_CFG0_PWR_MASK;
-+		switch (value) {
-+		case 1800000:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_PWR_18;
-+			break;
-+		case 2500000:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_PWR_25;
-+			break;
-+		case 3300000:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_PWR_33;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int vc5_update_slew(struct device_node *np_output,
-+			   struct vc5_hw_data *clk_out)
-+{
-+	u32 value;
-+
-+	if (!of_property_read_u32(np_output, "idt,slew-percent", &value)) {
-+		clk_out->clk_output_cfg0_mask |= VC5_CLK_OUTPUT_CFG0_SLEW_MASK;
-+		switch (value) {
-+		case 80:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_SLEW_80;
-+			break;
-+		case 85:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_SLEW_85;
-+			break;
-+		case 90:
-+			clk_out->clk_output_cfg0 |= VC5_CLK_OUTPUT_CFG0_SLEW_90;
-+			break;
-+		case 100:
-+			clk_out->clk_output_cfg0 |=
-+			    VC5_CLK_OUTPUT_CFG0_SLEW_100;
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+	return 0;
-+}
-+
-+static int vc5_get_output_config(struct i2c_client *client,
-+				 struct vc5_hw_data *clk_out)
-+{
-+	struct device_node *np_output;
-+	char *child_name;
-+	int ret = 0;
-+
-+	child_name = kasprintf(GFP_KERNEL, "OUT%d", clk_out->num + 1);
-+	np_output = of_get_child_by_name(client->dev.of_node, child_name);
-+	kfree(child_name);
-+	if (!np_output)
-+		goto output_done;
-+
-+	ret = vc5_update_mode(np_output, clk_out);
-+	if (ret)
-+		goto output_error;
-+
-+	ret = vc5_update_power(np_output, clk_out);
-+	if (ret)
-+		goto output_error;
-+
-+	ret = vc5_update_slew(np_output, clk_out);
-+
-+output_error:
-+	if (ret) {
-+		dev_err(&client->dev,
-+			"Invalid clock output configuration OUT%d\n",
-+			clk_out->num + 1);
-+	}
-+
-+	of_node_put(np_output);
-+
-+output_done:
-+	return ret;
-+}
-+
- static const struct of_device_id clk_vc5_of_match[];
- 
- static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
-@@ -863,6 +1014,11 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 				init.name);
- 			goto err_clk;
- 		}
-+
-+		/* Fetch Clock Output configuration from DT (if specified) */
-+		ret = vc5_get_output_config(client, &vc5->clk_out[n]);
-+		if (ret)
-+			goto err_clk;
- 	}
- 
- 	ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
-diff --git a/include/dt-bindings/clk/versaclock.h b/include/dt-bindings/clk/versaclock.h
-new file mode 100644
-index 000000000000..c6a6a0946564
---- /dev/null
-+++ b/include/dt-bindings/clk/versaclock.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+/* This file defines field values used by the versaclock 6 family
-+ * for defining output type
-+ */
-+
-+#define VC5_LVPECL	0
-+#define VC5_CMOS	1
-+#define VC5_HCSL33	2
-+#define VC5_LVDS	3
-+#define VC5_CMOS2	4
-+#define VC5_CMOSD	5
-+#define VC5_HCSL25	6
--- 
-2.25.1
+I think yours suggestion about dropping the freezing from the threads
+for now and returning back to it later on (once a proper suspend/resume
+support will be added) sounds reasonable.
 
+But if you'd want to keep the freezing, then the easy solution could be
+like that:
+
+  1. "start" thread could freeze at any time
+  2. "finish" thread could freeze only when the "start" thread is frozen
+and capture isn't in-progress. Use frozen(kthread_start_capture) to
+check the freezing state.
+
+https://elixir.bootlin.com/linux/v5.7-rc3/source/include/linux/freezer.h#L25
