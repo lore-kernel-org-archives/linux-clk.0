@@ -2,95 +2,99 @@ Return-Path: <SRS0=Uk8T=6R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EB6C28CBC
-	for <linux-clk@archiver.kernel.org>; Sun,  3 May 2020 12:18:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6906C28CBC
+	for <linux-clk@archiver.kernel.org>; Sun,  3 May 2020 15:55:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7450D21775
-	for <linux-clk@archiver.kernel.org>; Sun,  3 May 2020 12:18:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="SQmh7B9G"
+	by mail.kernel.org (Postfix) with ESMTP id AC351206EB
+	for <linux-clk@archiver.kernel.org>; Sun,  3 May 2020 15:55:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1588521308;
+	bh=1lVj9O04pSrh4fKuFXpMuuTNgaBhbrz8sKMQK55Qixc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1B2/5IW/k+6l34BtLc6MEmUMzdEz1j5GtWsIp4StFwSmU98UskASEw2vTD1aCvGdH
+	 IDcYUrPoAwpHEIScflWZOSJxBiW0raJg610CWut9tsfl8iiJReNbT2oeDUcTlvTWsW
+	 FqzU76o7vvuo/m6YmLqumXuBuExqF8g81msrh79Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbgECMS3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 May 2020 08:18:29 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:19681 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgECMS2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 May 2020 08:18:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1588508308; x=1620044308;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=pi9dyMRbnlcW2sUMQWe9DzJs+ld1yk+KsP1Dq8HADTE=;
-  b=SQmh7B9GIhF7XjK9gwiuVcZWckYfUBTn4c/1Emye3CPvMNdhb+7pWD7u
-   kojAVpYIJXaIFoJ0O8EStJlwjcWCKQq4pq7rV17I4KwlTtZHRkOZUIj/U
-   dmjS0oqU7iNiuXJc3uaScr6KEefXxir1pL9DVPSiPq48OMITkQAQc4tAz
-   74iv655MoR+80fpP/T20IZEAuoZuzrEyTY50V7n9yMjOP1zmVN8NH8gI2
-   tmE+AIKfi9MB9/Ovj3ZrfBqh66gP7XcDDnXvTPhgoxhi9slVnocdwPYDo
-   29tLLgBXT8H1zv556jTKmec5xYs5CXzD041EGPObQCQzmOU3l5sOJagjB
-   g==;
-IronPort-SDR: hhyLO3xXo8v+nj+BQPxEGwUpzUViMS5cR3raVxwSLXFAcxKSOx0+FI0BfmcwDmDZXut84EZY9d
- ILtQfc5HUaH1VxeN4W8e2r93wPRqwf0ablLihWTJwsgQU3r3H60KnIubWT9qJ9zb1RpXV7S+OM
- biwsoYp0ixKAehhcU3FeoXgOmD9PdoqZT+AQ3jAou4sWtlAviAnIu2LUNwHSTAYz0NrbdUa2ZW
- W7YX2eqmNkaVIPni3tPQsDNpkF1xh5JW6ztBGVrpZd0mXtacOuSHd9W3yM+nNLUJFHSVrmPIdx
- yHk=
-X-IronPort-AV: E=Sophos;i="5.73,347,1583218800"; 
-   d="scan'208";a="75334452"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 03 May 2020 05:18:27 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Sun, 3 May 2020 05:18:28 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Sun, 3 May 2020 05:18:23 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 2/2] clk: at91: pmc: decrement node's refcount
-Date:   Sun, 3 May 2020 15:18:09 +0300
-Message-ID: <1588508289-10140-2-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1588508289-10140-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1588508289-10140-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1728725AbgECPzF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 May 2020 11:55:05 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36562 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728207AbgECPzE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 May 2020 11:55:04 -0400
+Received: by mail-ot1-f67.google.com with SMTP id t3so2919177otp.3;
+        Sun, 03 May 2020 08:55:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1SJl+Zf+PXhgsQbG0N6jArE/8YWiS3AQ+7VS1y+nDYs=;
+        b=kl82RmQXh0iwAMd0IPL6N1jgKpS4ZBI2vTx8EmY8zh93JWa00EV5tEeVeKHGQGET6d
+         cvc7Olk6/H/WQ18AcINDotPJueCVCQ4PdECnPjjm3FUAIjuAt2E4jacuPhplEk7J7KXp
+         U/j1tOOVwoPYGyMTc/wqTTDBSYYcK6tbnJUBZVoxa0+CGWc4IJ70D8Y0765mbTj7xfTC
+         hgqYzj07w8Bejc16R7USyC//+jk3c20I/ehPG41ab3tUSiO+eMtP02/zZ39DE5Xo61Rt
+         52cfQ8jBSjiklOKIiD/B57NNpruE0NpT829Vy/VnaJMpSehIb/MqZzegGs9EiwlXhE3b
+         S0XA==
+X-Gm-Message-State: AGi0PuaUfn56wApmqTl+cEAEjjUuGEDc/P19y+qwqgIFDh4nkhJpdTul
+        ZMA2T6DIGMxRbdeWEVPNmQ==
+X-Google-Smtp-Source: APiQypLt0OsGOy7bdAk4eX8ZfJHsyORJIwBTySAb9tpBQpijaTQl/DOvjAzwB99sHAw0bd0niLZoUA==
+X-Received: by 2002:a9d:400d:: with SMTP id m13mr11156744ote.347.1588521303624;
+        Sun, 03 May 2020 08:55:03 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id q19sm2489210otf.6.2020.05.03.08.55.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 May 2020 08:55:02 -0700 (PDT)
+Received: (nullmailer pid 19190 invoked by uid 1000);
+        Sun, 03 May 2020 15:55:01 -0000
+Date:   Sun, 3 May 2020 10:55:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Andre Przywara <andre.przywara@arm.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v3 1/8] dt-bindings: clock: Convert Calxeda clock
+ bindings to json-schema
+Message-ID: <20200503155501.GA19073@bogus>
+References: <20200430211054.30466-1-andre.przywara@arm.com>
+ <20200430211054.30466-2-andre.przywara@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200430211054.30466-2-andre.przywara@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-of_find_matching_node() increment node's refcount. Call
-of_node_put() to decrement it after it was used.
+On Thu, 30 Apr 2020 22:10:47 +0100, Andre Przywara wrote:
+> Convert the Calxeda clock bindings to DT schema format using json-schema.
+> 
+> This just covers the actual PLL and divider clock nodes. In the actual
+> DTs they are somewhat unconnected (no ranges or bus compatible) children
+> of the sregs node, but for the actual clock bindings this is not
+> relevant.
+> 
+> One oddity is that the addresses are relative to the parent node,
+> without that being pronounced using a ranges property.
+> But this is too late to fix now.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  .../devicetree/bindings/clock/calxeda.txt     | 17 ----
+>  .../devicetree/bindings/clock/calxeda.yaml    | 82 +++++++++++++++++++
+>  2 files changed, 82 insertions(+), 17 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/calxeda.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/calxeda.yaml
+> 
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/pmc.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied, thanks.
 
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index bf0570e66fc1..e164069c81bd 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -278,6 +278,7 @@ static int __init pmc_register_ops(void)
- 		return -ENODEV;
- 
- 	pmcreg = device_node_to_regmap(np);
-+	of_node_put(np);
- 	if (IS_ERR(pmcreg))
- 		return PTR_ERR(pmcreg);
- 
--- 
-2.7.4
-
+Rob
