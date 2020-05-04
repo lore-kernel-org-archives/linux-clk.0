@@ -2,224 +2,113 @@ Return-Path: <SRS0=oKF9=6S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 588D6C47257
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B54C3A5A9
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 07:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3217720721
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:36:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80DE320746
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 07:44:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="w0XGA768"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rc7VQyjW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgEDGgB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 May 2020 02:36:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbgEDGgA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 02:36:00 -0400
-Received: from mail-vs1-xe43.google.com (mail-vs1-xe43.google.com [IPv6:2607:f8b0:4864:20::e43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0EAAC061A0E
-        for <linux-clk@vger.kernel.org>; Sun,  3 May 2020 23:35:58 -0700 (PDT)
-Received: by mail-vs1-xe43.google.com with SMTP id z1so10430000vsn.11
-        for <linux-clk@vger.kernel.org>; Sun, 03 May 2020 23:35:58 -0700 (PDT)
+        id S1727827AbgEDHoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 May 2020 03:44:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727088AbgEDHoX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 03:44:23 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE05C061A0E;
+        Mon,  4 May 2020 00:44:21 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id f11so8712066ljp.1;
+        Mon, 04 May 2020 00:44:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5sFJYLc/0VUdiszQsskqwyzqT4X+yBo4BGoRsgAELP8=;
-        b=w0XGA768oHIzv2ggftjQOGlT6jWI8cD7B/hFDXHnLiHdftXRdssuj+DM4uSXaAgTpI
-         5eIRxvoNBR8MEvD36bWKlbPvLEDKwUaPPeTE7oEtxH9uWFLOVHeWFq9iaT09woZiUbxX
-         gOw+c2Ar5IMdSlobe97mK788mPLoWO8d9s6FwRa9XSNKkaRWZPOiFPcNlRH4P5Zdjafm
-         qqbpoJ9LX9jm5/aYTAShd4JXVlfZ46AZyX9VBNiDjTcx4j/wrfDuGnaXfnRPVoM8nMbm
-         Kx+ofGOiNwHx2Q+ryv2D60qNRiv1rSS4a/IsD/R9d37W89kor/isaYMqwaQurXpzcBKe
-         Jl+A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=e4Prdlmnh5uMplVy6wvzEHluFiUsOf4wHXUycuzMInI=;
+        b=rc7VQyjWHiU8q8qd53Z+gt23a2bhQs1Im6BnZyZBhVh5XJ6EL6dKzE0iatghW6oR0H
+         GL9eYKW6E7wbVT1gk9tepA8LjwnLXAcv+SyREN2WF6uyqARF0upWipHGR44MIPXI3tT/
+         mC01pyqegP/i+P24L1gtiPXRDUY9PRP2p68Nb79PKEkKH2FoU5Eymqqwr38LstdpGTea
+         KnOXiCfrxgYoURdxxy3lnKGl2x3v2lAnAtT/n/ON2L+UsmdX48dNiAmgiwDjljQHlFKL
+         gLnETiVHjve/Ud4pkfvKYZ3gQy+oiTX8KFtF6ipQcDDlKuboY0l3Ay0Iq55aUi2YKhT3
+         +KAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5sFJYLc/0VUdiszQsskqwyzqT4X+yBo4BGoRsgAELP8=;
-        b=tPLwda253f3D5fVhlWPfwtjIvkiT/+RlHGWaoAwCmFiw9ldAny2c1iB3ea6jNG1n9X
-         FX+14jA6Tete8AWP/23X3EgSwK+rWr/958nX2xJE6piNkWEdD6DYA2MgxvSmGYGzO2Rm
-         6ApQK6Y1by/Utx7FfIDKxnbHuxsyWd0d7cS73/Os8BusMVUxHIN2F45F38H33Y7ouOmt
-         uH1DYKC3yqM8DUQDaKHg4WeQBx+y8LyiRm1tTAZyYliGQ9ho9qBYFPGMbHHEF5UfLwh/
-         1UMuxsvVqlQiXzKm+U0QTtiqutWGt6rJKdAFX6BK2ZIg9gX4hWghKCFe6V2d79nKNyqz
-         FtQw==
-X-Gm-Message-State: AGi0PuZ1M5VFxCk82RGfBge95Gid8Zsh+uLMY307l4jwsKWfZIPE3nJ8
-        IETO7sr1dYhBdC7iw75XhMXqsAaa7zDbjBgbfELYPo+p4dnCEw==
-X-Google-Smtp-Source: APiQypKTJI0Xlt9dGE+0uJMLYsCNcQkeRzkxYMbdYpJXByDZ7vhKcQaxHvTj/nEv+e1qF1f+EkvX1YRc9YSoLnOdaBo=
-X-Received: by 2002:a67:bd07:: with SMTP id y7mr11154865vsq.109.1588574157839;
- Sun, 03 May 2020 23:35:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech>
- <20200427072342.5499-1-jian-hong@endlessm.com> <20200428162152.ztsqp7nxqbwqrm6r@gilmour.lan>
-In-Reply-To: <20200428162152.ztsqp7nxqbwqrm6r@gilmour.lan>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Mon, 4 May 2020 14:35:08 +0800
-Message-ID: <CAPpJ_efvtVzb_hvoVOeaePh7UdE13wOiiGaDBH38cToB-yhkUg@mail.gmail.com>
-Subject: Re: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipelin
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=e4Prdlmnh5uMplVy6wvzEHluFiUsOf4wHXUycuzMInI=;
+        b=U6eK5sh2SJWR3r3+sTXiTveVOcSruTCsGfzwqfPi4XwsDXL9298kDs49WG1Rcy3jOE
+         bZj43S0F2wVm558nfuqGjCuunPsjOyXAyW0inrgJlA78ns9udUBJ2ziyYAxw8XKYHFtC
+         f749s+B1IHs/1yJA7jQ1WZ24foE8t0SaUC/2AX/hqcnpxjS3l5JUU2Gbo53pJmjqPgyc
+         Qn6YwitwCe026eStLO5QjtA9VIoYDw4GVt3QX3q6TUu5SG2y56hfbSj1PC8FASF3KXV5
+         0G+gp9Zk6G18R40IqiDxLD1ICV3D3QDrheKI6efieWrzUHt5Tx3regX5quXid3DH1hoK
+         CBDg==
+X-Gm-Message-State: AGi0PubOfSz82sLpR9rJ0V+SNTM9NFxGBUGfXm9Jmxu5HtRNiOiUwWZb
+        fzMl1abpggZhkDTeRNhuzV9RY8K/
+X-Google-Smtp-Source: APiQypJ8wNAZdGO/6Y4ZZsGPSt3WVOBD64UxuHEzeznj10Lv1Ffj/SWws8iZ49zH7gwc43OFr4X0OQ==
+X-Received: by 2002:a2e:5813:: with SMTP id m19mr9144139ljb.230.1588578259413;
+        Mon, 04 May 2020 00:44:19 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id y21sm7535417ljg.66.2020.05.04.00.44.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 May 2020 00:44:18 -0700 (PDT)
+Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-i2c@vger.kernel.org,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f1cbb602-163e-a539-aaa5-c7e947a8945b@gmail.com>
+Date:   Mon, 4 May 2020 10:44:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B44=E6=9C=8829=E6=97=
-=A5 =E9=80=B1=E4=B8=89 =E4=B8=8A=E5=8D=8812:21=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> Hi,
->
-> On Mon, Apr 27, 2020 at 03:23:42PM +0800, Jian-Hong Pan wrote:
-> > Hi Maxime,
-> >
-> > Thanks for your V2 patch series!  I'm testing it.
-> >
-> > This patch series is applied upon mainline kernel 5.7-rc2 cleanly and b=
-uilt.
-> > System can boot into console text mode, but no graphic UI.
-> >
-> > Get the error in vc5_hdmi_phy_init(), and full dmesg is at [1]:
-> >
-> > [    5.587543] vc4_hdmi fef00700.hdmi: Unknown register ID 46
-> > [    5.587700] debugfs: Directory 'fef00700.hdmi' with parent 'vc4-hdmi=
-' already present!
-> > [    5.588070] vc4_hdmi fef00700.hdmi: vc4-hdmi-hifi <-> fef00700.hdmi =
-mapping ok
-> > [    5.588076] vc4_hdmi fef00700.hdmi: ASoC: no DMI vendor name!
-> > [    5.588263] vc4-drm gpu: bound fef00700.hdmi (ops vc4_hdmi_ops)
-> > [    5.588299] vc4_hdmi fef05700.hdmi: Unknown register ID 46
-> > [    5.588373] debugfs: Directory 'vc4-hdmi' with parent 'asoc' already=
- present!
-> > [    5.588673] vc4_hdmi fef05700.hdmi: vc4-hdmi-hifi <-> fef05700.hdmi =
-mapping ok
-> > [    5.588677] vc4_hdmi fef05700.hdmi: ASoC: no DMI vendor name!
-> > [    5.588809] vc4-drm gpu: bound fef05700.hdmi (ops vc4_hdmi_ops)
-> > [    5.588854] vc4-drm gpu: bound fe806000.vec (ops vc4_vec_ops)
-> > [    5.588897] vc4-drm gpu: bound fe004000.txp (ops vc4_txp_ops)
-> > [    5.588934] vc4-drm gpu: bound fe400000.hvs (ops vc4_hvs_ops)
-> > [    5.588990] vc4-drm gpu: bound fe206000.pixelvalve (ops vc4_crtc_ops=
-)
-> > [    5.589030] vc4-drm gpu: bound fe207000.pixelvalve (ops vc4_crtc_ops=
-)
-> > [    5.589074] vc4-drm gpu: bound fe20a000.pixelvalve (ops vc4_crtc_ops=
-)
-> > [    5.589106] vc4-drm gpu: bound fe216000.pixelvalve (ops vc4_crtc_ops=
-)
-> > [    5.589145] vc4-drm gpu: bound fec12000.pixelvalve (ops vc4_crtc_ops=
-)
-> > [    5.589294] checking generic (3e513000 6d8c00) vs hw (0 ffffffffffff=
-ffff)
-> > [    5.589297] fb0: switching to vc4drmfb from simple
-> > [    5.589433] Console: switching to colour dummy device 80x25
-> > [    5.589481] [drm] Supports vblank timestamp caching Rev 2 (21.10.201=
-3).
-> > [    5.589816] [drm] Initialized vc4 0.0.0 20140616 for gpu on minor 0
-> > [    5.601079] ------------[ cut here ]------------
-> > [    5.601095] WARNING: CPU: 2 PID: 127 at drivers/gpu/drm/vc4/vc4_hdmi=
-_phy.c:413 vc5_hdmi_phy_init+0x7ac/0x2078
-> > [    5.601097] Modules linked in:
-> > [    5.601103] CPU: 2 PID: 127 Comm: kworker/2:1 Not tainted 5.7.0-rc2-=
-00091-ga181df59a930 #7
-> > [    5.601105] Hardware name: Raspberry Pi 4 Model B (DT)
-> > [    5.601112] Workqueue: events deferred_probe_work_func
-> > [    5.601116] pstate: 20000005 (nzCv daif -PAN -UAO)
-> > [    5.601119] pc : vc5_hdmi_phy_init+0x7ac/0x2078
-> > [    5.601123] lr : vc4_hdmi_encoder_enable+0x1b8/0x1ac0
-> > [    5.601124] sp : ffff80001217b410
-> > [    5.601126] x29: ffff80001217b410 x28: ffff0000ec6370f0
-> > [    5.601129] x27: ffff0000f650d400 x26: 000000008a500000
-> > [    5.601132] x25: ffff8000113b4ac0 x24: 0000000000002060
-> > [    5.601135] x23: 000000000a500000 x22: 0000000000000300
-> > [    5.601137] x21: 0000000008d9ee20 x20: ffff0000ec535080
-> > [    5.601140] x19: 000000010989e7c0 x18: 0000000000000000
-> > [    5.601142] x17: 0000000000000001 x16: 0000000000005207
-> > [    5.601145] x15: 00004932ad293c92 x14: 0000000000000137
-> > [    5.601147] x13: ffff800010015000 x12: 0000000000000001
-> > [    5.601150] x11: 0000000000000001 x10: 0000000000000000
-> > [    5.601152] x9 : 0000000000000000 x8 : ffff800010015038
-> > [    5.601154] x7 : 0000000000000001 x6 : ffff80001217b368
-> > [    5.601157] x5 : 0000000000000000 x4 : 000000000000004c
-> > [    5.601159] x3 : 0000000000000000 x2 : ffff8000113b4ac0
-> > [    5.601162] x1 : ffff8000120c5f44 x0 : 00000000dc8984ff
-> > [    5.601164] Call trace:
-> > [    5.601169]  vc5_hdmi_phy_init+0x7ac/0x2078
-> > [    5.601172]  vc4_hdmi_encoder_enable+0x1b8/0x1ac0
-> > [    5.601176]  drm_atomic_helper_commit_modeset_enables+0x224/0x248
-> > [    5.601179]  vc4_atomic_complete_commit+0x400/0x558
-> > [    5.601182]  vc4_atomic_commit+0x1e0/0x200
-> > [    5.601185]  drm_atomic_commit+0x4c/0x60
-> > [    5.601190]  drm_client_modeset_commit_atomic.isra.0+0x17c/0x238
-> > [    5.601192]  drm_client_modeset_commit_locked+0x5c/0x198
-> > [    5.601195]  drm_client_modeset_commit+0x30/0x58
-> > [    5.601201]  drm_fb_helper_restore_fbdev_mode_unlocked+0x78/0xe0
-> > [    5.601204]  drm_fb_helper_set_par+0x30/0x68
-> > [    5.601208]  fbcon_init+0x3d4/0x598
-> > [    5.601212]  visual_init+0xb0/0x108
-> > [    5.601214]  do_bind_con_driver+0x1d0/0x3a8
-> > [    5.601217]  do_take_over_console+0x144/0x208
-> > [    5.601219]  do_fbcon_takeover+0x68/0xd8
-> > [    5.601222]  fbcon_fb_registered+0x100/0x118
-> > [    5.601226]  register_framebuffer+0x1f4/0x338
-> > [    5.601229]  __drm_fb_helper_initial_config_and_unlock+0x2f8/0x4a0
-> > [    5.601232]  drm_fbdev_client_hotplug+0xd4/0x1b0
-> > [    5.601235]  drm_fbdev_generic_setup+0xb0/0x130
-> > [    5.601238]  vc4_drm_bind+0x184/0x1a0
-> > [    5.601241]  try_to_bring_up_master+0x168/0x1c8
-> > [    5.601244]  __component_add+0xa4/0x170
-> > [    5.601246]  component_add+0x14/0x20
-> > [    5.601248]  vc4_vec_dev_probe+0x20/0x30
-> > [    5.601252]  platform_drv_probe+0x54/0xa8
-> > [    5.601254]  really_probe+0xd8/0x320
-> > [    5.601256]  driver_probe_device+0x58/0xf0
-> > [    5.601258]  __device_attach_driver+0x84/0xc8
-> > [    5.601263]  bus_for_each_drv+0x78/0xc8
-> > [    5.601265]  __device_attach+0xe4/0x140
-> > [    5.601267]  device_initial_probe+0x14/0x20
-> > [    5.601269]  bus_probe_device+0x9c/0xa8
-> > [    5.601271]  deferred_probe_work_func+0x74/0xb0
-> > [    5.601276]  process_one_work+0x1bc/0x338
-> > [    5.601279]  worker_thread+0x1f8/0x428
-> > [    5.601282]  kthread+0x138/0x158
-> > [    5.601286]  ret_from_fork+0x10/0x1c
-> > [    5.601288] ---[ end trace cfba0996218c3f3d ]---
->
-> Thanks for testing!
->
-> Do you have a bit more details regarding your setup? Was it connected to =
-an
-> external display?
+30.04.2020 01:00, Sowjanya Komatineni пишет:
+> +/*
+> + * VI channel input data type enum.
+> + * These data type enum value gets programmed into corresponding Tegra VI
+> + * channel register bits.
+> + */
+> +enum tegra_image_dt {
+> +	TEGRA_IMAGE_DT_YUV420_8 = 24,
+> +	TEGRA_IMAGE_DT_YUV420_10,
+> +
+> +	TEGRA_IMAGE_DT_YUV420CSPS_8 = 28,
+> +	TEGRA_IMAGE_DT_YUV420CSPS_10,
+> +	TEGRA_IMAGE_DT_YUV422_8,
+> +	TEGRA_IMAGE_DT_YUV422_10,
+> +	TEGRA_IMAGE_DT_RGB444,
+> +	TEGRA_IMAGE_DT_RGB555,
+> +	TEGRA_IMAGE_DT_RGB565,
+> +	TEGRA_IMAGE_DT_RGB666,
+> +	TEGRA_IMAGE_DT_RGB888,
+> +
+> +	TEGRA_IMAGE_DT_RAW6 = 40,
+> +	TEGRA_IMAGE_DT_RAW7,
+> +	TEGRA_IMAGE_DT_RAW8,
+> +	TEGRA_IMAGE_DT_RAW10,
+> +	TEGRA_IMAGE_DT_RAW12,
+> +	TEGRA_IMAGE_DT_RAW14,
+> +};
 
-Yes, the HDMI cable is connected to HDMI0 port on RPi 4.
-
-> If so, do you know the resolution it was trying to setup?
-
-According to the log, I think it is 1920x1080:
-Apr 27 15:37:25 endless gdm-Xorg-:0[1960]: (II) modeset(0): Output
-HDMI-1 connected
-Apr 27 15:37:25 endless gdm-Xorg-:0[1960]: (II) modeset(0): Output
-HDMI-2 disconnected
-Apr 27 15:37:25 endless gdm-Xorg-:0[1960]: (II) modeset(0): Output
-Composite-1 disconnected
-Apr 27 15:37:25 endless gdm-Xorg-:0[1960]: (II) modeset(0): Using
-exact sizes for initial modes
-Apr 27 15:37:25 endless gdm-Xorg-:0[1960]: (II) modeset(0): Output
-HDMI-1 using initial mode 1920x1080 +0+0
-
-https://gist.github.com/starnight/45e1468bfa0426a54d2fb4a9269cfb94
-
-Regards,
-Jian-Hong Pan
+Are these format IDs common to all Tegra SoCs or they unique to T210?
