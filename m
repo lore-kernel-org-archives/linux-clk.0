@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9F8C3A5A9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:20:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 626D9C3A5A9
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:20:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC0121775
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:20:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4819D20735
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 06:20:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726946AbgEDGUb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 May 2020 02:20:31 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:59629 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726906AbgEDGUb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 02:20:31 -0400
-Received: from unknown (HELO ironmsg-SD-alpha.qualcomm.com) ([10.53.140.30])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 03 May 2020 23:20:31 -0700
+        id S1727803AbgEDGUg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 May 2020 02:20:36 -0400
+Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:3330 "EHLO
+        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727790AbgEDGUe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 02:20:34 -0400
+Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
+  by alexa-out-sd-02.qualcomm.com with ESMTP; 03 May 2020 23:20:31 -0700
 Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg-SD-alpha.qualcomm.com with ESMTP; 03 May 2020 23:20:28 -0700
+  by ironmsg03-sd.qualcomm.com with ESMTP; 03 May 2020 23:20:28 -0700
 Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id B6D882173A; Mon,  4 May 2020 11:50:26 +0530 (IST)
+        id E7E742173C; Mon,  4 May 2020 11:50:26 +0530 (IST)
 From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
 To:     agross@kernel.org, bjorn.andersson@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -31,9 +31,9 @@ To:     agross@kernel.org, bjorn.andersson@linaro.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH V4 2/8] dt-bindings: clock: Add schema for QCOM IPQ apss pll
-Date:   Mon,  4 May 2020 11:50:18 +0530
-Message-Id: <1588573224-3038-3-git-send-email-sivaprak@codeaurora.org>
+Subject: [PATCH V4 4/8] clk: qcom: Add DT bindings for ipq6018 apss clock controller
+Date:   Mon,  4 May 2020 11:50:20 +0530
+Message-Id: <1588573224-3038-5-git-send-email-sivaprak@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
 References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
@@ -42,69 +42,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add dt-binding for apss pll found on QCOM IPQ platforms
+add dt-binding for ipq6018 apss clock controller
 
 Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 ---
- .../bindings/clock/qcom,ipq-apsspll.yaml           | 49 ++++++++++++++++++++++
- 1 file changed, 49 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
+ include/dt-bindings/clock/qcom,apss-ipq.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
+diff --git a/include/dt-bindings/clock/qcom,apss-ipq.h b/include/dt-bindings/clock/qcom,apss-ipq.h
 new file mode 100644
-index 0000000..dd12ec4
+index 0000000..77b6e05
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
-@@ -0,0 +1,49 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/qcom,ipq-apsspll.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/include/dt-bindings/clock/qcom,apss-ipq.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
 +
-+title: Qualcomm IPQ APSS PLL Binding
++#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
++#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
 +
-+maintainers:
-+  - Sivaprakash Murugesan <sivaprak@codeaurora.org>
++#define APCS_ALIAS0_CLK_SRC			0
++#define APCS_ALIAS0_CORE_CLK			1
 +
-+description:
-+  The APSS PLL is the main clock that feds the CPUs on QCOM IPQ platforms.
-+  It can support frequencies above 1GHz.
-+
-+properties:
-+  compatible:
-+    const: qcom,ipq-apss-pll
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 0
-+
-+  clocks:
-+    items:
-+      - description: board XO clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    a53pll_ipq: clock@b116000 {
-+        compatible = "qcom,ipq-apss-pll";
-+        reg = <0x0b116000 0x40>;
-+        #clock-cells = <0>;
-+        clocks = <&xo>;
-+        clock-names = "xo";
-+    };
++#endif
 -- 
 2.7.4
 
