@@ -2,218 +2,115 @@ Return-Path: <SRS0=oKF9=6S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FCC3C3A5A9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 14:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB980C4724C
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 15:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11074206B9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 14:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 898B3206C0
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 15:53:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NucxclL+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oXvlHJUw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbgEDOtt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 May 2020 10:49:49 -0400
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17314 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728821AbgEDOtt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 10:49:49 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5eb02b470001>; Mon, 04 May 2020 07:48:39 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 04 May 2020 07:49:49 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 04 May 2020 07:49:49 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 May
- 2020 14:49:49 +0000
-Received: from [10.2.165.119] (172.20.13.39) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 4 May 2020
- 14:49:47 +0000
+        id S1729310AbgEDPxT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 May 2020 11:53:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36900 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728873AbgEDPxT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 11:53:19 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6931C061A0E;
+        Mon,  4 May 2020 08:53:18 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id a21so10158480ljj.11;
+        Mon, 04 May 2020 08:53:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Uaqoisb/ISvzu7HtxB7/o6dTkuqP/WZqu9coo5sj/rM=;
+        b=oXvlHJUwcUAMcJO2folcLpAl4lu16ZdbHEUsIwKLpxhkbVjp+Pqsf29yGIQ0ZQ6CBp
+         mkb8I6hfNPtNe84cp72KKyuFGdD3W1dErn9FwHRIjfgpjPbyO46oblD3L3JLxYVdCVil
+         06P5osWdgGoXea5Xlh9Bruoxw8N41BiwWFhg2BmrbbgqRvK9fSODQpe0FI1jt8QYhr6x
+         xu0IwDh0VcEuPOL89Gub9MpeSnnhXmjuBLzBtUKq7QFLTv+M+g82rGvR402vk7AxuR63
+         SiC1judP6Hz6poiGeRWSoY8uO6voUtRJpGW87jlvaXJO+umnBTCbIpEbcEkoafq47WPr
+         Wfhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Uaqoisb/ISvzu7HtxB7/o6dTkuqP/WZqu9coo5sj/rM=;
+        b=iBNDwPcFSe/QIs3ltR+WmYgg50G4X8R3+zlKPJeEgVinyZrtfsxSI0QHs4UNfC2ojZ
+         U5iu+Za/JJWDJrhxdEoMcxgd9DlRVND9id+hpjlE3avW16kVEmoUacFSaqWEMkUd9WqI
+         fWQahgRkm5VqQzRkNCruNPE56eEh/cJ2ZdqhQtfk06AaYEqBgRLUAwk4Xc9MEKcpqguG
+         DFhFgfS6AOh2tkbCdJx8BFE+cinRJNBIseFEHDuyUKbWaiHCNTIPLrluVeZo0UQ+IUrJ
+         uSUIDkwWBxnaSLc4S8rwMHxgCF9YXEycuZ2oA7TAPg/2K3aBj9yNLR+zDf1fUTbE8VK/
+         Csaw==
+X-Gm-Message-State: AGi0PuYmj0M9ltIVVSNK2evH+au9kVY6b1BElA1pvrjWtLinGwheaEQE
+        VU3zsZMi/aMWP9W0L+x3zGrRj1XQ
+X-Google-Smtp-Source: APiQypIYu3Eg7NEgNAgIjKBlQAKZLAcXDN2o4QVrIrfX6wXxEGW7JxgFHm/j+Ij7gLyXdheePb6ZUg==
+X-Received: by 2002:a2e:8884:: with SMTP id k4mr11003642lji.267.1588607596749;
+        Mon, 04 May 2020 08:53:16 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
+        by smtp.googlemail.com with ESMTPSA id o18sm10053646lfb.13.2020.05.04.08.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 May 2020 08:53:15 -0700 (PDT)
 Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <sakari.ailus@iki.fi>,
-        <helen.koike@collabora.com>
-CC:     <sboyd@kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
+        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
+Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <668cc4a0-2c81-0d87-b801-9fbf64e19137@nvidia.com>
- <bf3f654e-b8f8-d560-fc5e-03d73cb7eab0@nvidia.com>
- <525e481b-9137-6fdd-bbf9-3779a5704e6b@nvidia.com>
- <fe7ebad6-0368-b1f0-4f58-648baa5e3f79@nvidia.com>
- <4f095181-2338-3b71-316c-f8bbfc7865cc@nvidia.com>
- <50e872bb-913a-7b47-3264-af6b1cedb0e2@nvidia.com>
- <e17a8a49-be53-465d-f64c-3f4c77391d98@nvidia.com>
- <da5154b4-85f9-3e56-a440-f75debaec3a8@nvidia.com>
- <cbb047ae-97dc-8b9a-a5ba-8e2a5dab3771@nvidia.com>
- <6ae2d00d-7955-d12b-5b56-955ef72ece26@nvidia.com>
- <f9073b28-f1f1-636c-be53-764fb0a531a1@gmail.com>
- <1767e50f-efb7-5e89-22f6-0917821b660d@nvidia.com>
- <235a4cd4-4d4a-04b8-6c65-43a4dba48a0b@nvidia.com>
- <f8103170-7879-8597-3e3c-da9a3b6a40b3@nvidia.com>
- <5d847770-dad9-8f18-67b5-c1ba79084957@nvidia.com>
- <4abf30e0-fed9-ba39-ae38-350789bce99d@gmail.com>
- <b5f6a4e0-6e97-05ae-f034-b84fc5a1129a@nvidia.com>
- <eddb1de3-81c2-159b-b24b-2e30ba2ba948@xs4all.nl>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <89f0835c-d946-2288-b867-25f1ef1ae583@nvidia.com>
-Date:   Mon, 4 May 2020 07:50:28 -0700
+ <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
+ <bacc4308-4b95-f566-b80e-096ff96407b5@gmail.com>
+ <4da289e6-036f-853b-beb4-379d6462adb0@gmail.com>
+ <c6d54885-6f23-f60c-a17b-3481fc4d6adf@gmail.com>
+ <b14b9dc5-7ac9-7735-d98d-eebc7e151cba@nvidia.com>
+ <7d31d24f-f353-7e82-3ff9-cdba8b773d1e@nvidia.com>
+ <06a4a067-8d54-4322-b2a6-14e82eaeda29@nvidia.com>
+ <47873bbd-cf90-4595-5a99-7e9113327ecc@nvidia.com>
+ <f6088e0f-4ac7-a6be-3ede-0233dc88ef2c@nvidia.com>
+ <71532440-f455-cc24-74f7-9ccad5947099@gmail.com>
+ <960d2715-a717-0cc3-df19-ff78dc426535@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <23520fa4-4d8f-b083-0ad3-b249339ee032@gmail.com>
+Date:   Mon, 4 May 2020 18:53:13 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.7.0
 MIME-Version: 1.0
-In-Reply-To: <eddb1de3-81c2-159b-b24b-2e30ba2ba948@xs4all.nl>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <960d2715-a717-0cc3-df19-ff78dc426535@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1588603719; bh=8yGX7LmfP3dxzmPn9zc00N6IVAfMQdLzgvlsfYKzE20=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=NucxclL+MWs/EZiDmzt/9XMxunSA8BNQkYR+W5SQ9uK5Oo9RdoTzPXRXBOrRcM+X7
-         iVTSKXM0IPLI5aFvp1u1AolhMMOFociSVO62PqC54l03qPx4L35Y4l/ZWJWczLeNaw
-         Clp6vjDkG0uKBQIrbX07gOcwNFk8YdrIiRHsSdyCm/rw7lpAI6scatQ4ELQOKoJ4r7
-         yn3npaYrkuNxUjYqNhT+IaDMWP1DTxCGJDo6BDZcEodbVtjOl0deCalsc8hq7wL+AU
-         iAiTYzq9q1QUKhEehgwE/vNHSA8EBtubrAFMchPUnPU0T43eJ/Mb3WZOwjc3Vk4yVa
-         VooggUMVe58fQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+04.05.2020 17:53, Sowjanya Komatineni пишет:
+> 
+> On 4/30/20 12:33 PM, Dmitry Osipenko wrote:
+>>>>> Hi Dmitry,
+>>>>>
+>>>>> Will update in v12 to not allow freeze in middle of a frame capture.
+>>>>>
+>>>>> Can you please confirm on above if you agree to allow freeze to
+>>>>> happen in b/w frame captures?
+>>>>>
+>>>>> Also as most feedback has been received from you by now, appreciate
+>>>>> if you can provide all in this v11 if you have anything else so we
+>>>>> will not have any new changes after v12.
+>> I'll take another look tomorrow / during weekend and let you know.
+> 
+> Hi Dmitry,
+> 
+> Will send v12 if there is no more feedback. Please let me know.
 
-On 5/4/20 5:18 AM, Hans Verkuil wrote:
-> On 03/05/2020 00:46, Sowjanya Komatineni wrote:
->> On 5/2/20 1:48 PM, Dmitry Osipenko wrote:
->>> 02.05.2020 19:55, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> Also stop stream ioctl request happens during suspend where both threa=
-ds
->>>> will be stopped properly. done thread stop happens only after finishin=
-g
->>>> all outstanding buffers.
->>> Do you mean that V4L core takes care of stopping the streami on suspend
->>> and re-starting it on resume from suspend?
->>>
->>>> Stop stream request happens from streaming applications so even withou=
-t
->>>> driver suspend/resume implementation currently, streaming will be
->>>> stopped prior to system=C2=A0 suspend where both threads will be stopp=
-ed
->>>> properly (after finishing out standing buffers) and will be resumed by
->>>> application on system resume
->>> All userspace is frozen on suspend. System suspension is transparent fo=
-r
->>> userspace applications. I'm not sure what you're meaning here.
->>>
->>>> Also tested suspending while streaming with this unconditional freeze,=
- I
->>>> don't see any issue as application stops stream where v4l_streamoff ge=
-ts
->>>> executed during suspend and on resume streaming starts where
->>>> v4l_streamon happens.
->>>>
->>>> So, I don't see any issue with existing implementation of unconditiona=
-l
->>>> freeze.
->>> I don't understand why freezing is needed at all if V4L core takes care
->>> of stopping the stream on suspend, what is the point? If there is no
->>> real point, then let's make threads non-freezable and done with that.
->> video device fops unlocked_ioctl is set to video_ioctl2() in vi driver.
->>
->> video device fops unlocked_ioctl gets executed with stream off cmd
->> during suspend and stream on cmd during resume which eventually calls
->> v4l_streamoff and v4l_streamon during system suspend/resume.
-> That's news to me. The 'only' thing that suspend/resume needs to do is to
-> stop the HW DMA on suspend and to restart the HW DMA (and typically recon=
-figure
-> the whole HW video pipeline) on resume. Userspace doesn't do anything spe=
-cial.
->
-> That's how e.g. a UVC webcam behaves when you close the lid of a laptop w=
-hile
-> it is streaming and open it again later.
->
-> It can be hard to get this right, and I suspect many media drivers will f=
-ail
-> this test.
+Hello Sowjanya,
 
-when video device node path is kept opened during suspend, on suspend=20
-entry looks like inode path is tried to closes and on resume opened=20
-again causing v4l2 stream off/on thru v4l2 ioctl.
-
-Based on our testing even with downstream and user applications, we=20
-always see video device node path close/open during suspend/resume which=20
-does v4l2 stream off/on.
-
-
->> My understanding to have freezable threads is during system suspend user
->> space applications are frozen prior to kernel freeze and during suspend
->> when opened video character device node gets closed these ioctl gets
->> invoked and stream off during suspend and stream on during resume
->> happens. So probably we still need to use freezable threads to sync with
->> user space application when frozen before really entering suspend.
->>
->> Will wait for Thierry/Hans comment to correct if my above understanding
->> is wrong and help clarify if we need freezable threads at all in this
->> case...
->>
->> Note: I see other drivers using freezable threads for capture drivers.
-> Well, it's often a copy-and-paste without truly understanding what is
-> going on. You should not assume that the author knew what was happening.
->
-> To be honest, I'm not an expert on this either.
->
-> Looking at the tegra start/finish threads: they basically look at the
-> chan->capture and chan->done lists. Freezing the threads should not be
-> a problem as long as the actual suspend/resume doesn't mess with those
-> lists. If it does, then it may get tricky to prove that it is safe to
-> do suspend/resume (I think).
->
-> An alternative is to stop and restart those threads when suspending or
-> resuming. Then those threads do not need to be 'freezable' and it might
-> be easier to validate the code.
->
-> In any case, I do not want to postpone the merger of the upcoming v12 for
-> this. Changes can be done in later patches, if needed.
->
-> Regards,
->
-> 	Hans
-
-Thanks Hans.
-
-Buffers list don't get altered after frozen and during suspend/resume=20
-till they are out of freeze.
-
-Will remove freezable threads and move on for v12.
-
-Will validate suspend/resume later after all sensor support.
-
->>
->> Assuming we use freezable threads, I was saying we don't need
->> conditional try_to_freeze() like you pointed because even if finish
->> thread freeze happens prior to frame capture initiated by start thread,
->> vi hardware will still continue to update this single ongoing buffer and
->> will finish max within 200ms and actually there is no direct processing
->> of this done by finish thread itself except that it returns buffers back
->> when done and in this case it returns back when unfreeze/wake up happens=
-.
->>
->> So, I don't see any issue of unconditional try_to_freeze() even with
->> freezable threads.
->>
->> Thanks
->>
->> Sowjanya
->>
->>
+I don't have any more comments to add, looking forward to v12.
