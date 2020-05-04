@@ -2,113 +2,121 @@ Return-Path: <SRS0=oKF9=6S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UPPERCASE_50_75,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4B54C3A5A9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 07:44:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F45C3A5A9
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 08:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 80DE320746
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 07:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7F2B215A4
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 08:26:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rc7VQyjW"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jd8QRL+z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727827AbgEDHoX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 May 2020 03:44:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45492 "EHLO
+        id S1727100AbgEDI0M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 May 2020 04:26:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51972 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727088AbgEDHoX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 03:44:23 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CE05C061A0E;
-        Mon,  4 May 2020 00:44:21 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id f11so8712066ljp.1;
-        Mon, 04 May 2020 00:44:21 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1725941AbgEDI0M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 May 2020 04:26:12 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E877DC061A0F
+        for <linux-clk@vger.kernel.org>; Mon,  4 May 2020 01:26:11 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id s8so9515276wrt.9
+        for <linux-clk@vger.kernel.org>; Mon, 04 May 2020 01:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=e4Prdlmnh5uMplVy6wvzEHluFiUsOf4wHXUycuzMInI=;
-        b=rc7VQyjWHiU8q8qd53Z+gt23a2bhQs1Im6BnZyZBhVh5XJ6EL6dKzE0iatghW6oR0H
-         GL9eYKW6E7wbVT1gk9tepA8LjwnLXAcv+SyREN2WF6uyqARF0upWipHGR44MIPXI3tT/
-         mC01pyqegP/i+P24L1gtiPXRDUY9PRP2p68Nb79PKEkKH2FoU5Eymqqwr38LstdpGTea
-         KnOXiCfrxgYoURdxxy3lnKGl2x3v2lAnAtT/n/ON2L+UsmdX48dNiAmgiwDjljQHlFKL
-         gLnETiVHjve/Ud4pkfvKYZ3gQy+oiTX8KFtF6ipQcDDlKuboY0l3Ay0Iq55aUi2YKhT3
-         +KAQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=n5utVexByIlwVa1JUCEUjzVIUGqWjCE4M8uVE3TwE+M=;
+        b=Jd8QRL+zgOFdBJ/lk24W5lhMdSFlhDdyG8mvpzpm40aTmd75dT6sSm+3fMmxLWJQ5J
+         2mHq6FlEDHtKKlj5cyDoY1invckZFXsinicmYZhicr/2IlBmPdgdoDt8gnHxhf0CZm2I
+         v9XIwGE04CZNSU45B3Sysd+F17nL6xtmmS05YNIjeN3GuGO/DTe0IPHq5ru2mLT9l/46
+         C2cl/drmKkBVdKps2u+TdqAWtXqpoXSwl6g/yFnQt0iIkRd413zULDaBmKwE25VczgGX
+         nWi5RQ4TZUjMrq8QMJs8baZNJqMfQNBr9DJbrPMlv4B/t6vw6Z2xtggnwSoH6DoIJQ/R
+         S5gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=e4Prdlmnh5uMplVy6wvzEHluFiUsOf4wHXUycuzMInI=;
-        b=U6eK5sh2SJWR3r3+sTXiTveVOcSruTCsGfzwqfPi4XwsDXL9298kDs49WG1Rcy3jOE
-         bZj43S0F2wVm558nfuqGjCuunPsjOyXAyW0inrgJlA78ns9udUBJ2ziyYAxw8XKYHFtC
-         f749s+B1IHs/1yJA7jQ1WZ24foE8t0SaUC/2AX/hqcnpxjS3l5JUU2Gbo53pJmjqPgyc
-         Qn6YwitwCe026eStLO5QjtA9VIoYDw4GVt3QX3q6TUu5SG2y56hfbSj1PC8FASF3KXV5
-         0G+gp9Zk6G18R40IqiDxLD1ICV3D3QDrheKI6efieWrzUHt5Tx3regX5quXid3DH1hoK
-         CBDg==
-X-Gm-Message-State: AGi0PubOfSz82sLpR9rJ0V+SNTM9NFxGBUGfXm9Jmxu5HtRNiOiUwWZb
-        fzMl1abpggZhkDTeRNhuzV9RY8K/
-X-Google-Smtp-Source: APiQypJ8wNAZdGO/6Y4ZZsGPSt3WVOBD64UxuHEzeznj10Lv1Ffj/SWws8iZ49zH7gwc43OFr4X0OQ==
-X-Received: by 2002:a2e:5813:: with SMTP id m19mr9144139ljb.230.1588578259413;
-        Mon, 04 May 2020 00:44:19 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-208-152.pppoe.mtu-net.ru. [91.78.208.152])
-        by smtp.googlemail.com with ESMTPSA id y21sm7535417ljg.66.2020.05.04.00.44.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 May 2020 00:44:18 -0700 (PDT)
-Subject: Re: [RFC PATCH v11 6/9] media: tegra: Add Tegra210 Video input driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, frankc@nvidia.com,
-        hverkuil@xs4all.nl, sakari.ailus@iki.fi, helen.koike@collabora.com
-Cc:     sboyd@kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1588197606-32124-1-git-send-email-skomatineni@nvidia.com>
- <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <f1cbb602-163e-a539-aaa5-c7e947a8945b@gmail.com>
-Date:   Mon, 4 May 2020 10:44:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=n5utVexByIlwVa1JUCEUjzVIUGqWjCE4M8uVE3TwE+M=;
+        b=N6D4+wvtYwZD5Xco24QHFexfctY/IN1W8RwjDzjN59J2IRJ/0RP9jHDBpdmYlLxa4y
+         iBkC8vzZRg5SCvP2GVVRzd8r7UUIjnFM8AdeLsma87zFZgCkPLfyphZ8CKUrxmhZ8TGV
+         dQ603xvDxkl55saKYBdMHi79utrIYCNDkIuu0JhL3dk7jTA2BzNZKEAr/ZqyI2BnwjIT
+         AeeX5A391sht17J3vDSsOsAsYbv1WMbBVzGtUcGGC+Q8CvoKbj7SWgLmCiNynJ3lKOMw
+         UjReCj4+ur9B92udq42vQdACw5zBJb09W19I+PaeTw2Vziml9b/d3nUKpXRDUtBg7mka
+         ytiQ==
+X-Gm-Message-State: AGi0PuaaOHABxHxJo5FfiKhvLCqLVWIhQBeqcIK8nCQ6AJMVxsR/lnnv
+        yAKZYiY+lGKUL5EH2kGHPvvwkw==
+X-Google-Smtp-Source: APiQypIHlXgPkJWkD3nLibz6TxOMDF7gc3HUQFdp/Sz/FeUzFc3kLlLDwe91THddYROIubCtA0BPBg==
+X-Received: by 2002:adf:ab18:: with SMTP id q24mr17475648wrc.214.1588580770615;
+        Mon, 04 May 2020 01:26:10 -0700 (PDT)
+Received: from dell ([2.31.163.63])
+        by smtp.gmail.com with ESMTPSA id r20sm11910698wmh.26.2020.05.04.01.26.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 May 2020 01:26:09 -0700 (PDT)
+Date:   Mon, 4 May 2020 09:26:08 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH v2 14/16] vexpress: Move setting master site to
+ vexpress-config bus
+Message-ID: <20200504082608.GD298816@dell>
+References: <20200429205825.10604-1-robh@kernel.org>
+ <20200429205825.10604-15-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1588197606-32124-7-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200429205825.10604-15-robh@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-30.04.2020 01:00, Sowjanya Komatineni пишет:
-> +/*
-> + * VI channel input data type enum.
-> + * These data type enum value gets programmed into corresponding Tegra VI
-> + * channel register bits.
-> + */
-> +enum tegra_image_dt {
-> +	TEGRA_IMAGE_DT_YUV420_8 = 24,
-> +	TEGRA_IMAGE_DT_YUV420_10,
-> +
-> +	TEGRA_IMAGE_DT_YUV420CSPS_8 = 28,
-> +	TEGRA_IMAGE_DT_YUV420CSPS_10,
-> +	TEGRA_IMAGE_DT_YUV422_8,
-> +	TEGRA_IMAGE_DT_YUV422_10,
-> +	TEGRA_IMAGE_DT_RGB444,
-> +	TEGRA_IMAGE_DT_RGB555,
-> +	TEGRA_IMAGE_DT_RGB565,
-> +	TEGRA_IMAGE_DT_RGB666,
-> +	TEGRA_IMAGE_DT_RGB888,
-> +
-> +	TEGRA_IMAGE_DT_RAW6 = 40,
-> +	TEGRA_IMAGE_DT_RAW7,
-> +	TEGRA_IMAGE_DT_RAW8,
-> +	TEGRA_IMAGE_DT_RAW10,
-> +	TEGRA_IMAGE_DT_RAW12,
-> +	TEGRA_IMAGE_DT_RAW14,
-> +};
+On Wed, 29 Apr 2020, Rob Herring wrote:
 
-Are these format IDs common to all Tegra SoCs or they unique to T210?
+> There's only a single caller of vexpress_config_set_master() from
+> vexpress-sysreg.c. Let's just make the registers needed available to
+> vexpress-config and move all the code there. The registers needed aren't
+> used anywhere else either. With this, we can get rid of the private API
+> between these 2 drivers.
+> 
+> Cc: Sudeep Holla <sudeep.holla@arm.com>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Lee Jones <lee.jones@linaro.org>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+> v2:
+>   - Reword subject
+> ---
+>  drivers/bus/vexpress-config.c | 37 +++++++++++++++++++++++++++++++----
+
+>  drivers/mfd/vexpress-sysreg.c | 25 +----------------------
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+>  include/linux/vexpress.h      |  9 ---------
+>  3 files changed, 34 insertions(+), 37 deletions(-)
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
