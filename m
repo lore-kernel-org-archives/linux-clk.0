@@ -2,85 +2,86 @@ Return-Path: <SRS0=oKF9=6S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 185C9C3A5A9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 20:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19AE0C3A5A9
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 20:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9C0F24978
-	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 20:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC7420707
+	for <linux-clk@archiver.kernel.org>; Mon,  4 May 2020 20:19:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="sSELaenv"
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="OMWOhZsj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726751AbgEDUMY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 May 2020 16:12:24 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:24175 "EHLO rere.qmqm.pl"
+        id S1726476AbgEDUTT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 May 2020 16:19:19 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:34336 "EHLO rere.qmqm.pl"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbgEDUMY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 May 2020 16:12:24 -0400
+        id S1726111AbgEDUTT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 May 2020 16:19:19 -0400
 Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 49GDY21b4jzGl;
-        Mon,  4 May 2020 22:12:22 +0200 (CEST)
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 49GDj11SK1zGl;
+        Mon,  4 May 2020 22:19:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1588623142; bh=lVLIC8hMj/0zr6xzzWxKI8HUujqMOA03DhHUsoA3EK8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sSELaenvGR2loMssEW9C2IPbeJJDiP07QoXDXmPDjeihpa36xngv/yqhlQnNLiciW
-         aK97Q6unTc7OHBBaPpQMSEU9ECI+m8Z0UiEHl0Ggzx8UVLhlK9x2p3X+KS8W9mDtM1
-         yRXlP50WBSyvLl5z3+6WFxIhWb5LL+HXrCHs3rifrGZb2Xz2M1tV9BKkHrVvVHnbkZ
-         Ki+0igizq16vYtHxr2Hieb36mugVEbhSHuXmW7swTURL14uA4/6MThhNOkHqHVkUsc
-         uoY3tdjDDx3ir3X19XKEiPvdI2x3PpOlTHbTgjS0SDVcw6pLHxOzcLLq/lDAR774RN
-         BRYmABHPNDlpQ==
+        t=1588623557; bh=qcQYscDQASAGGq1qfnXT5pHuuM+wfGhJkYYXvoJsvpU=;
+        h=Date:From:Subject:To:Cc:From;
+        b=OMWOhZsjgMD0dtICo6Gxn1dfhSoW3AoL7g5Fy0jnwxrW97z9DXRHuqGg9/mPVs4iL
+         4ydpOesSxNGbnFc2WMuyj+Y645n3nuoPYqjJwbVRV+mHjYHWTb2udx4KQOAowKQltF
+         A7un/+N6G7QMM+XRdZMUEOtJifmtplR8Eal46I7GbMprqOi0gPp0qbnx17h7hsLHkx
+         Wp3ISCYP/v639xzile3FILkqSFswgwHBQZHV5Pyd017T9v7HmcnA8gOnmznl7G18VB
+         UwkoWceaBUeHnaHH22q/sLjCRnJXfjLcgxAjybP5y+zUsrVxE1SopX2bWKU6c9w9D+
+         j3b+7BxyjG3Tg==
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.102.2 at mail
-Date:   Mon, 4 May 2020 22:12:21 +0200
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] clk: at91: allow setting all PMC clock parents
- via DT
-Message-ID: <20200504201220.GA21544@qmqm.qmqm.pl>
-References: <cover.1588526049.git.mirq-linux@rere.qmqm.pl>
- <ae0c612ce6bc53ea726ddcb25eb36bca78055e33.1588526049.git.mirq-linux@rere.qmqm.pl>
- <20200504200431.GI34497@piout.net>
+Date:   Mon, 04 May 2020 22:19:16 +0200
+Message-Id: <cover.1588623391.git.mirq-linux@rere.qmqm.pl>
+From:   =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>
+Subject: [PATCH v6 0/3] clk: at91: support configuring more clocks via DT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200504200431.GI34497@piout.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, May 04, 2020 at 10:04:31PM +0200, Alexandre Belloni wrote:
-> Hi,
-> 
-> On 03/05/2020 19:19:26+0200, Micha≥ Miros≥aw wrote:
-> > diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock/at91.h
-> > index c3f4aa6a2d29..adcf608b41fa 100644
-> > --- a/include/dt-bindings/clock/at91.h
-> > +++ b/include/dt-bindings/clock/at91.h
-> > @@ -21,6 +21,9 @@
-> >  #define PMC_MCK2		4
-> >  #define PMC_I2S0_MUX		5
-> >  #define PMC_I2S1_MUX		6
-> > +#define PMC_PLLACK		7
-> > +#define PMC_PLLBCK		8
-> > +#define PMC_AUDIOPLLCK		8		/* SAMA5D2-only, no PLLB there */
-> Just use 9 here because we can't know for sure that a future SoC won't
-> have both a PLLB and audio PLL.
+This series extends AT91 clock support with references to PCKx and
+PLLA/PLLB/AUDIOPLL. This makes the DT be able to fully specify (assign)
+clock parents when needed.
 
-Ok. I assumed that PLLB is only in old generations. Fix coming shortly.
+First patch simplifies clock table allocation. Next two update the table
+with missing clock pointers and IDs.
 
-Best Regrads,
-Micha≥ Miros≥aw
+
+Micha≈Ç Miros≈Çaw (3):
+  clk: at91: optimize pmc data allocation
+  clk: at91: allow setting PCKx parent via DT
+  clk: at91: allow setting all PMC clock parents via DT
+
+ drivers/clk/at91/at91rm9200.c    | 12 ++++++---
+ drivers/clk/at91/at91sam9260.c   | 13 +++++++---
+ drivers/clk/at91/at91sam9g45.c   | 10 +++++---
+ drivers/clk/at91/at91sam9n12.c   | 12 ++++++---
+ drivers/clk/at91/at91sam9rl.c    | 10 +++++---
+ drivers/clk/at91/at91sam9x5.c    | 10 +++++---
+ drivers/clk/at91/pmc.c           | 44 ++++++++++++--------------------
+ drivers/clk/at91/pmc.h           |  8 ++++--
+ drivers/clk/at91/sam9x60.c       | 10 +++++---
+ drivers/clk/at91/sama5d2.c       | 12 ++++++---
+ drivers/clk/at91/sama5d3.c       | 10 +++++---
+ drivers/clk/at91/sama5d4.c       | 10 +++++---
+ include/dt-bindings/clock/at91.h |  4 +++
+ 13 files changed, 106 insertions(+), 59 deletions(-)
+
+-- 
+2.20.1
+
