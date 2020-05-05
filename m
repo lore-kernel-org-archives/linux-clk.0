@@ -2,102 +2,75 @@ Return-Path: <SRS0=eW+W=6T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B765EC47254
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1C2C47254
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9535D20735
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:10:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BA87206B9
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588705816;
-	bh=uxareK78vxmfIvFodQD+Oa38MY8vebhJp7PDQpQCksA=;
+	s=default; t=1588705925;
+	bh=kG4CkVHdPSFNSk//wEUiNx4HcAcholUGFbWBHBSfob8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=InNF606mk9eS1FO67UmsG9B2CVUaNm5Iy1oNa6fDwX4xVG1X6L0dhUd0bmhptP/d0
-	 DmpcYPhcJrrcq4SCLTsRtZZSXNpWrasBlTlGpaWo3nTWr6PmzojMVQxEhFCpaIzKqc
-	 ntzHB9tgzVc8YRFIQHr+tVr6ndBWffCIaEWM9TAk=
+	b=W5eDDUE1704MvDa/B21VtVIFtftG3aXA2uOw/2X7i0DVWVANKzt38xzS2Hzsbk8kV
+	 SBpvFYJvDfPUvvby8klRdRTynxBis7GEHJ7O/4XjqpcIAdEluy7tKeJI85HoABhExJ
+	 JzXq5REFzwdpncWhixQjcGSithbDh18Ali5AlPCo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbgEETKQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 May 2020 15:10:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56548 "EHLO mail.kernel.org"
+        id S1728356AbgEETMF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 May 2020 15:12:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbgEETKP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 May 2020 15:10:15 -0400
+        id S1726350AbgEETMF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 May 2020 15:12:05 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4753A206FA;
-        Tue,  5 May 2020 19:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98C50206FA;
+        Tue,  5 May 2020 19:12:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588705815;
-        bh=uxareK78vxmfIvFodQD+Oa38MY8vebhJp7PDQpQCksA=;
+        s=default; t=1588705924;
+        bh=kG4CkVHdPSFNSk//wEUiNx4HcAcholUGFbWBHBSfob8=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vI2sh5moGQUgayJgcTMxt0nnAkHsZObGmaao7WvLmAq7zcyyu0bjPghtnjHZ8B8Kr
-         Wj5+qXiTSgLzcKGa/wR21tVzKN3XUR3/M9Wn9a1bK86WEJXDIuIg0BwEsrS+0kZ5Lr
-         W9yf7YsyUw73HiSD/iBqUjNuPYAfXn8rQmsfwtcI=
+        b=E1ln3WDAKNT3LLokR08JUlTQaD1WDUuwjQ8rTYld3ToQl6kR+7eB9kMAvIN3iGYeM
+         Z+zWhJ63LjZ17BnXSwfd/PPTxzBcSbJkYtPiU4Oe2lQaMAbgm1LMH71J/Vik0WjaMK
+         rJmki3mAmrQ/Ugs2SeNx/9FoFZj3UBujT6DJ9rts=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j368egyie.fsf@starbuckisacylon.baylibre.com>
-References: <1jftcli2k6.fsf@starbuckisacylon.baylibre.com> <158861256065.11125.3262677295691476922@swboyd.mtv.corp.google.com> <1j368egyie.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: clk: clk_register is deprecated
+In-Reply-To: <20200505140953.409430-1-maz@kernel.org>
+References: <20200505140953.409430-1-maz@kernel.org>
+Subject: Re: [PATCH] clk: Unlink clock if failed to prepare or enable
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        ulf.hansson@linaro.org
-Date:   Tue, 05 May 2020 12:10:14 -0700
-Message-ID: <158870581453.26370.15255632521260524214@swboyd.mtv.corp.google.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Michael Turquette <mturquette@baylibre.com>
+To:     Marc Zyngier <maz@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 05 May 2020 12:12:03 -0700
+Message-ID: <158870592381.26370.8784478076215991539@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-05-05 09:03:21)
+Quoting Marc Zyngier (2020-05-05 07:09:53)
+> On failing to prepare or enable a clock, remove the core structure
+> from the list it has been inserted as it is about to be freed.
 >=20
-> On Mon 04 May 2020 at 19:16, Stephen Boyd <sboyd@kernel.org> wrote:
+> This otherwise leads to random crashes when subsequent clocks get
+> registered, during which parsing of the clock tree becomes adventurous.
 >=20
-> > Quoting Jerome Brunet (2020-04-30 05:24:41)
-> >>=20
-> >> If not, what would be the recommended way to get the "struct clk*" from
-> >> a newly registered "struct clk_hw *" ? Should we add something new to
-> >> clk-provider.h API ?
-> >>=20
-> >
-> > Yes we should add a clk_hw_get_clk() API that takes a device pointer and
-> > a string name, mirroring the clk_get() API but cutting out the part
-> > where we have to go through the provider to find it.
+> Observed with QEMU's RPi-3 emulation.
 >=20
-> We will try to propose something for clk_hw_get_clk() soon.
-> If we do so, could we "UN-deprecate" clk_register() and make it a
-> wrapper around clk_hw_register() and clk_hw_get_clk() ?
->=20
-> It would make it easier on drivers which both register and use clocks.
->=20
-> To get a short term solution for Martin and his MMC driver:
-> -  If the above wrapper is OK and we commit on doing it soon, would you
->    also be OK for martin to use clk_register() in his MMC driver (now) ?
->=20
-> -  If not, could we use clk_hw->clk until  we have clk_hw_get_clk() in
->    CCF ?
+> Fixes: 12ead77432f2 ("clk: Don't try to enable critical clocks if prepare=
+ failed")
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> ---
 
-Using clk_hw->clk until we have clk_hw_get_clk() is fine for now.
-Various drivers do that already and I hope that a simple coccinelle
-script can figure out how to convert that to the new function.l Is it
-much work to introduce this API now? I thought it would be fairly simple
-to do it but I haven't looked deeply.
-
->=20
-> >
-> > This is so that one day in "the future" we can remove hw->clk and make
-> > that an internal detail that struct clk_hw can't see because we go
-> > through the clk_hw::clk_core pointer instead.
->=20
-> Yes, I know it is your secret plan ... ;)
->=20
->=20
-
-Hehe
+Applied to clk-fixes
