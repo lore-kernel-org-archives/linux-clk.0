@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AB4C47254
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:13:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F7C6C47254
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:28:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E91A206FA
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D55206CC
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588705997;
-	bh=hRcuIbFiLNist/cLGJNltQ7csmh88dozJ2HTWt/Pfzk=;
+	s=default; t=1588706891;
+	bh=usynuOR1E69N5AJk67ILaNhdKMo/Dyy/RKGLkmis1xo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=hl+yuSJeZwH4tVhMVfuhTOzKjSRNarEJeN1Tc6AKK9tpMvGqRRa0bwtwjSvL/CAbX
-	 xCwuc+b8x0cG+42AiSu7EUEoWP0gQLHD28w/vaIerntIQAuyjCaz7/JdPdO6ah1uZz
-	 EFiBzS1lKpIP3VXZwR2Y0oPwjve2gb7LA/zdialE=
+	b=s10tbTQ5mYs+BjHXtJdG05P0Hq/Rr2RFBQpLijROd6QNo6FzG+yDE5pRxTlLfZSt4
+	 mkY9H4v+hloiw4u+YuaCoNxsg/TFce4++yUhhasmyp9riTbTURy13Hf/LGXYP9f68y
+	 LPFeYoEyR2Doyc94BkZPUhEVnmrJV8TpH3RWIVvs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726350AbgEETNR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 May 2020 15:13:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33356 "EHLO mail.kernel.org"
+        id S1728481AbgEET2L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 May 2020 15:28:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728346AbgEETNQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 May 2020 15:13:16 -0400
+        id S1726350AbgEET2K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 May 2020 15:28:10 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52F4E206B9;
-        Tue,  5 May 2020 19:13:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E7E0206B9;
+        Tue,  5 May 2020 19:28:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588705996;
-        bh=hRcuIbFiLNist/cLGJNltQ7csmh88dozJ2HTWt/Pfzk=;
+        s=default; t=1588706890;
+        bh=usynuOR1E69N5AJk67ILaNhdKMo/Dyy/RKGLkmis1xo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KJFi2sa4qc1YFtc/WlHsIdIpKuH/FblVg+Klb/26hq84pDGRCOC7CaKtudhBkrbcn
-         pB7gkARo7Pz0TPvXAe/HSO78bfiDtj/DRcYBQkQ1P0atCBp+2QTQBEgfJwlXdsDY6T
-         ANZAcjZZ5XCAaQS2WLKvIEUlhh1of/bc6PGifN78=
+        b=Avl9qAu9qsa4YCgPnESVnktkOzDptTWX6NQHwh9lYOc2aJ7DhJG17FctXiT2JyEvW
+         9zFKeFyDYRgQcaA9Bn9KYPyLAIkzocXgfD4eJVo33wK2MLz0WqtTiaAKbte0UIWMt+
+         4T0CI5y6LNp7WKc+rFZtFesD+36ygm8Gf0YWc1Qo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200416081348.326833-1-linus.walleij@linaro.org>
-References: <20200416081348.326833-1-linus.walleij@linaro.org>
-Subject: Re: [PATCH] clk: impd1: Look up clock-output-names
+In-Reply-To: <20200505083001.52564-1-yuehaibing@huawei.com>
+References: <20200505083001.52564-1-yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] clk: Remove unused inline function clk_debug_reparent
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 05 May 2020 12:13:15 -0700
-Message-ID: <158870599561.26370.3723302763695127259@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>, mturquette@baylibre.com
+Date:   Tue, 05 May 2020 12:28:09 -0700
+Message-ID: <158870688968.26370.16781214256369290362@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Linus Walleij (2020-04-16 01:13:48)
-> The IM-PD1 still need to pass the clock output names.
+Quoting YueHaibing (2020-05-05 01:30:01)
+> There's no callers in-tree anymore.
 >=20
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next
