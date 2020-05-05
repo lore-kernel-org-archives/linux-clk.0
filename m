@@ -2,65 +2,88 @@ Return-Path: <SRS0=eW+W=6T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C69E4C47247
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99F3C47254
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A0B34206CC
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BED24206FA
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588706903;
-	bh=Yr3TQpeq70JjThAV/5vG6MVwKJzSlkrhF5dMaLEdqM0=;
+	s=default; t=1588707153;
+	bh=VaPSawdI6c2GPZEPFPxmM5eZQ0mqch5COld+n26AhNE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Se2PCv0MOV6komGmiPNkDMzb/ejDsSNksy6t+y025zMOQD1PfqBEGxNOVDtqsFVtB
-	 P08j7reRyXnEqolKf115S9oYeNgkXqknCQqOFqYgSYaCi/eympX9Zk+v6RCO3GxV81
-	 nvq83ph5V1VVbcOE0h3pd1HY676eZI6IjwtbMu2c=
+	b=TUnj3ceAp+0vn++fQUMg8M3f5P9DM9XTgHqEzoj470kA9diu8E6VoffZ+ZZfHq3Qc
+	 CA5HSuE4ieMfMtS3McmSRC9kc4xQ3I98uro0VmI+11ZzelrYp0xKaBnmYTXXxflcCa
+	 ExS/QBApyNkRAuZR24BAnuESN0A3bmwcltOL2JTU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbgEET2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 May 2020 15:28:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40422 "EHLO mail.kernel.org"
+        id S1728660AbgEETcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 May 2020 15:32:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726350AbgEET2X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 May 2020 15:28:23 -0400
+        id S1728512AbgEETcd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 May 2020 15:32:33 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7975206B9;
-        Tue,  5 May 2020 19:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC4262068E;
+        Tue,  5 May 2020 19:32:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588706902;
-        bh=Yr3TQpeq70JjThAV/5vG6MVwKJzSlkrhF5dMaLEdqM0=;
+        s=default; t=1588707153;
+        bh=VaPSawdI6c2GPZEPFPxmM5eZQ0mqch5COld+n26AhNE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=dcku2eH2BmPmUgxbGP+OoSfkmbJZtg1891jJlQ2Qt73crzD6MNGuTpeHQtt9xxm7q
-         2IzxPdgKZkvx9qGKgq8mlxVYOjkdFmGtruxF5ZT0nFIwQGxp4qNOYpXB5Lu+7felZi
-         PpJkOehG8Z+uUA0t4j+wqeUA2rMUrkpUiUJGFK2I=
+        b=khnTB/AhLn3+G2g83vvdyETJTObdasq3QT3gFBzgJGkFJtkJr1QSAPLCh1otb8oDw
+         /vo8+otvA5zQ+2WFHKdrqHILiFPD72D3QXQb0uK2dbIlaIOAlzt+PfCnRZr1l+BQkF
+         WVukOVCb8X7jTysAf/EEM9qaqyLlWov+O+WoJisA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200503190327.153249-1-christophe.jaillet@wanadoo.fr>
-References: <20200503190327.153249-1-christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH] clk: clk-xgene: Fix a typo in Kconfig
+In-Reply-To: <20200430084902.1540-1-geert+renesas@glider.be>
+References: <20200430084902.1540-1-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.8
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        mturquette@baylibre.com
-Date:   Tue, 05 May 2020 12:28:22 -0700
-Message-ID: <158870690209.26370.14224464671343137404@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 05 May 2020 12:32:32 -0700
+Message-ID: <158870715221.26370.13261608407586100210@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Christophe JAILLET (2020-05-03 12:03:27)
-> s/Sypport/Support
+Quoting Geert Uytterhoeven (2020-04-30 01:49:02)
+>         Hi Mike, Stephen,
 >=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
+> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
+36:
+>=20
+>   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.8-tag1
+>=20
+> for you to fetch changes up to e2f022c10ed3b50ba1d2bb1f037b0e7a84cb1c3e:
+>=20
+>   clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects (2=
+020-04-30 09:39:06 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-next
+Thanks. Pulled into clk-next
+
+I see these warnings with smatch. Is it a real problem?
+
+drivers/clk/renesas/renesas-cpg-mssr.c:851
+cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
+drivers/clk/renesas/renesas-cpg-mssr.c:860
+cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
+clk/renesas/renesas-cpg-mssr.c:862
+cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
