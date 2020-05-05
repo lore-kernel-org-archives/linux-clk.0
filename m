@@ -2,121 +2,95 @@ Return-Path: <SRS0=eW+W=6T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C19C47256
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 07:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD216C47254
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 08:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D204E206CC
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 07:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A008D20721
+	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 08:06:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VXiucNkK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H6brHUXh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbgEEHRE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 May 2020 03:17:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39846 "EHLO
+        id S1726575AbgEEIGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 May 2020 04:06:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725766AbgEEHRE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 May 2020 03:17:04 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6607BC061A0F;
-        Tue,  5 May 2020 00:17:02 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id k1so1392617wrx.4;
-        Tue, 05 May 2020 00:17:02 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1725766AbgEEIG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 May 2020 04:06:29 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E46EC061A0F
+        for <linux-clk@vger.kernel.org>; Tue,  5 May 2020 01:06:29 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id 188so591450lfa.10
+        for <linux-clk@vger.kernel.org>; Tue, 05 May 2020 01:06:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=emMqIAfTmjcgvm1WUdIrm2dV6d1JMni+YiBRBMmX0eQ=;
-        b=VXiucNkKpaip/zEZ6eBBDS6iKOD3nIpqI2Fh2iN85/Sl++tlzvouYppk/Fo5nBiBX6
-         A6A72YGdafkTVVQiPi38t+ySHKExmYY36S64CR8fpVFTn2AKi0SONKBl+vBu/fYeHEoV
-         Q5HJ3QZsTcEHoKsBHLLofZS7RVetwqMcPFVR7/FsynFE7qJc2oe3MSCRxIF120cO7awC
-         wz6+gG1IvPigOpuzvYAXRlB3aE3aRmD26J7zWc0MXo4cC28OT9yv+kvR+gxhGu66jotD
-         tqS+s0mgYv+eGiRu2OlWx8gsBFU78ZkAR4ydg+wSeoG5hSoZg8lZT/YUZQ/L+Y+X9r9K
-         nWcA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BM5I/eLIBpdDqwONsc09KvAhqNejkBtbqW6zXUqOGDM=;
+        b=H6brHUXhmPoa6zRoah2a4Ev/ApNs4HQfXgl1AMVDedbRFjJd3q4fjzSWBPoTdQxGzX
+         UvIQuWfeP07JlzPU8ZTkczKI7kH9BANy9v4VG7/REnKPxBhBQkh6jD8Euir6dJoW/7pE
+         JqQqo8l+Z0WRSjOeE53ncbAsDQ2b0WBUWLk+NsqSZ7+u02Wh51h+bSWxJ5DReEUkwbbP
+         M+1IDQxD2QN/Uuj7jBaDJIt5vXQTL4dgnH1rvi3/0Gds7oJIN2Jp6gzfqZeeghDa624N
+         Mglt1/voaZXMSLb0dOKJj6MSQSCMAvH1Jkhblz4/ZEfh8NyP/0sOqf3AefDr9FPN5C0o
+         aSAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=emMqIAfTmjcgvm1WUdIrm2dV6d1JMni+YiBRBMmX0eQ=;
-        b=TAYBVqjW8WAaGQcicRg1XqdZMytU8e3jvMyWPYKHACXhNsMOtPyMCpkmh+/ayVrfwZ
-         KdaEQ4z7QOEq+wrefaFsnt0Crcpjw/tpYXrFN+y1cRoFZMqQvO3hsSZNVKr5Stl4QvL7
-         dR0dkIT3apsISBtCbarxh76cNvR4o6wEHAU3nJJZQD2sB40h09Jce4Gf8DgyGa8JUlOT
-         AeUWKz8vahlhSfg3f26aQD6fc3CUSpK7uaNLh9wBpssKoxZURolwwKjE8G2iiEfwXSEi
-         1pZAyO7NWN1de6WO45bczfs5t0zKDve0UHRNTUyPS+DTdp65tbBXS1/RL861fIC7p5FN
-         hsAQ==
-X-Gm-Message-State: AGi0PuYRj0/6BLFOPONzm0QebOTeh0YuLbbTkBdyep14LC3ChbU57f6s
-        5m2+FAO02rNm7/iHYhl8NY4=
-X-Google-Smtp-Source: APiQypJfp1jaYnS8GcWJcUlLxMofx0mkoUY2CEAkpWUvjs6Jz1EciDTzqso+47ZlYU196Xa0qUVkyg==
-X-Received: by 2002:adf:f6cb:: with SMTP id y11mr1990205wrp.304.1588663020899;
-        Tue, 05 May 2020 00:17:00 -0700 (PDT)
-Received: from localhost (p2E5BE57B.dip0.t-ipconnect.de. [46.91.229.123])
-        by smtp.gmail.com with ESMTPSA id a24sm2251287wmb.24.2020.05.05.00.16.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 May 2020 00:16:59 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH v5.7] clk: tegra: Fix initial rate for pll_a on Tegra124
-Date:   Tue,  5 May 2020 09:16:55 +0200
-Message-Id: <20200505071655.644773-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.24.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BM5I/eLIBpdDqwONsc09KvAhqNejkBtbqW6zXUqOGDM=;
+        b=T/QdHn5XxaC2NW5b98O9GqPiyZMqN8rX7VWEJGabf9nkaEytWYRCTuzMc5uwwGzvRc
+         AajRLyP8NZ4iU3AsFVCwrOHV/p/mbwAQ23A24SKcHNdb0No1aaXqLkDc2egQv4pXjFe0
+         SwopViJAK7XaTcPS1D5VlwwKBcB2H3AiA9/cqBINrPKdqw7nbfCNUlO8hhaRLDwB560g
+         XSIfPdik0xuJ041TKCmMZy1an/lysFr6FRtsOmAlyJr+skFB6QBT+hS1Rr7kRGIqlQy8
+         ZyX6UzaYqS1/ZIZuH7ftdE9cDfQxLttR/E+D0P2LumzF+F9asHr1rCzObDg0DsAm6DcH
+         +XJA==
+X-Gm-Message-State: AGi0PuYWDrBFo3azaVjY9VSm65fm6L8xJp8TH9+YKJYsjvsrZbTCPHEH
+        4p5x/YYR0xXiJwS7uZxNGLrYSHj7AaxEAVSdnMjh5CVP
+X-Google-Smtp-Source: APiQypL1w3SpaPxH6QovOqv0jtLE711ohHCS4Ihcr316KdeCGm4QK1l8Bsdjm5HPnveuD3CAqIEEP3ixMrDd7SHdu0o=
+X-Received: by 2002:a19:d55:: with SMTP id 82mr866154lfn.89.1588665987769;
+ Tue, 05 May 2020 01:06:27 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200416081348.326833-1-linus.walleij@linaro.org>
+ <158754977096.132238.12292029969034991900@swboyd.mtv.corp.google.com>
+ <CACRpkdaurouZLFD2aqjDnUgvp=iMOjZ0Lu=xboxqEUx4-dvWWg@mail.gmail.com> <158865980315.24786.12205627766889336218@swboyd.mtv.corp.google.com>
+In-Reply-To: <158865980315.24786.12205627766889336218@swboyd.mtv.corp.google.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 May 2020 10:06:16 +0200
+Message-ID: <CACRpkdbrkZnD8JpaWgqY6R4gAbsrBh2Xwfe+Nm15SEUPOJnfEA@mail.gmail.com>
+Subject: Re: [PATCH] clk: impd1: Look up clock-output-names
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On Tue, May 5, 2020 at 8:23 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Linus Walleij (2020-04-28 05:51:10)
+> > On Wed, Apr 22, 2020 at 12:02 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Linus Walleij (2020-04-16 01:13:48)
+> > > > The IM-PD1 still need to pass the clock output names.
+> > > >
+> > > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> > >
+> > > Is this a
+> > >
+> > > Fixes: 84655b762a27 ("clk: versatile: Add device tree probing for IM-PD1 clocks")
+> > >
+> > > change?
+> >
+> > Yep. Can you fold it in when applying?
+>
+> This is being deleted so does it matter anymore?
 
-pll_a_out0 and the I2S clocks are already configured to default to rates
-corresponding to a 44.1 kHz sampling rate, but the pll_a configuration
-was set to a default that is not listed in the frequency table, which
-caused the PLL code to compute an invalid configuration. As a result of
-this invalid configuration, Jetson TK1 fails to resume from suspend.
+This patch is for the device tree path. What is getting deleted
+is the board file path, if I'm not mistaken.
 
-This used to get papered over because the ASoC driver would force audio
-clocks to a 44.1 kHz configuration on boot. However, that's not really
-necessary and was hence removed in commit ff5d18cb04f4 ("ASoC: tegra:
-Enable audio mclk during tegra_asoc_utils_init()").
-
-Fix the initial rate for pll_a so that it matches the 44.1 kHz entry in
-the pll_a frequency table.
-
-Fixes: ff5d18cb04f4 ("ASoC: tegra: Enable audio mclk during tegra_asoc_utils_init()")
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Mike, Stephen,
-
-this fixes a regression in v5.7, so it'd be great if you could queue it
-up in your fixes branch.
-
-Thanks,
-Thierry
-
- drivers/clk/tegra/clk-tegra124.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index 64e229ddf2a5..e931319dcc9d 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1292,7 +1292,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_UARTB, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTC, TEGRA124_CLK_PLL_P, 408000000, 0 },
- 	{ TEGRA124_CLK_UARTD, TEGRA124_CLK_PLL_P, 408000000, 0 },
--	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 564480000, 0 },
-+	{ TEGRA124_CLK_PLL_A, TEGRA124_CLK_CLK_MAX, 282240000, 0 },
- 	{ TEGRA124_CLK_PLL_A_OUT0, TEGRA124_CLK_CLK_MAX, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S0, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA124_CLK_I2S1, TEGRA124_CLK_PLL_A_OUT0, 11289600, 0 },
--- 
-2.24.1
-
+Yours,
+Linus Walleij
