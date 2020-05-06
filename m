@@ -2,76 +2,170 @@ Return-Path: <SRS0=z+8+=6U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72528C28CBC
-	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 17:21:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDE7C47257
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 22:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5350C20936
-	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 17:21:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95F182078C
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 22:23:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728685AbgEFRVt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 May 2020 13:21:49 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:56430 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727872AbgEFRVt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 May 2020 13:21:49 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id 00E752A1E8A
-Subject: Re: [PATCH] soc: mediatek: mmsys: Drop <linux/clk-provider.h>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        CK Hu <ck.hu@mediatek.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20200506120204.31422-1-geert+renesas@glider.be>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <56149461-e60a-a1a0-a43c-67a9913bd7f6@collabora.com>
-Date:   Wed, 6 May 2020 19:21:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1729873AbgEFWXj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 May 2020 18:23:39 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:34190 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728888AbgEFWXj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 May 2020 18:23:39 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id CCAAD8030808;
+        Wed,  6 May 2020 22:23:33 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Epmofd3VE4Ed; Thu,  7 May 2020 01:23:33 +0300 (MSK)
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>,
+        Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>,
+        Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>,
+        Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>,
+        Vadim Vlasov <V.Vlasov@baikalelectronics.ru>,
+        Alexey Kolotnikov <Alexey.Kolotnikov@baikalelectronics.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/4] clk: Add Baikal-T1 SoC Clock Control Unit support
+Date:   Thu, 7 May 2020 01:22:56 +0300
+Message-ID: <20200506222300.30895-1-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <20200306130053.BCBFC803078F@mail.baikalelectronics.ru>
+References: <20200306130053.BCBFC803078F@mail.baikalelectronics.ru>
 MIME-Version: 1.0
-In-Reply-To: <20200506120204.31422-1-geert+renesas@glider.be>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Clocks Control Unit is the core of Baikal-T1 SoC responsible for the chip
+subsystems clocking and resetting. The CCU is connected with an external
+fixed rate oscillator, which signal is transformed into clocks of various
+frequencies and then propagated to either individual IP-blocks or to groups
+of blocks (clock domains). The transformation is done by means of PLLs and
+gateable/non-gateable, fixed/variable dividers embedded into the CCU. There
+are five PLLs to create a clock for the MIPS P5600 cores, the embedded DDR
+controller, SATA, Ethernet and PCIe domains. The last three PLLs CLKOUT are
+then passed over CCU dividers to create signals required for the target clock
+domains: individual AXI and APB bus clocks, SoC devices reference clocks.
+The CCU divider registers may also provide a way to reset the target devices
+state.
 
-Thank you for your patch.
+So this patchset introduces the Baikal-T1 clock and reset drivers of CCU
+PLLs, AXI-bus clock dividers and system devices clock dividers.
 
-On 6/5/20 14:02, Geert Uytterhoeven wrote:
-> After the split, the mt8173 MMSYS driver is no longer a clock provider,
-> and thus does not need to include <linux/clk-provider.h>.
-> 
-> Fixes: 13032709e2328553 ("clk / soc: mediatek: Move mt8173 MMSYS to platform driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This patchset is rebased and tested on the mainline Linux kernel 5.7-rc4:
+0e698dfa2822 ("Linux 5.7-rc4")
+tag: v5.7-rc4
 
-Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Changelog v2:
+- Rearrange the SoBs.
+- Discard comments in the binding files headers.
+- Add dual GPL/BSD license to the bindings.
+- Add spaces around the ASCII-graphics in the bindings description.
+- Discard redundant dt objects check against "/schemas/clock/clock.yaml#"
+  schema.
+- Discard redundant descriptions of the "#clock-cells" and "#reset-cells"
+  properties in dt bindings schema.
+- Discard "reg" property since the CCU dividers DT nodes are supposed be
+  children of the syscon-compatible system controller node.
+- Remove "clock-output-names" property support.
+- Replace "additionalProperties: false" with "unevaluatedProperties: false"
+  in the bindings.
+- Lowercase the nodes name in the binding examples.
+- Use "clock-controller" node name suffix in the binding examples.
+- Remove unnecessary comments in the clocks and resets dt-binding header
+  files.
+- Don't enable the CCU clock drivers by default for COMPILE_TEST config.
+- Make sure the CCU drivers depend on OF kernel config only when built for
+  Baikal-T1-based platform.
+- Fix spelling in the CCU PLL and Dividers kernel configs description.
+- Replace lock delay and frequency calculation macros with inline functions.
+- Use 64-bits arithmetics in the CCU PLL frequency calculation function.
+- Use FIELD_{GET,PREP}() macro instead of handwritten field setters and
+  getters.
+- Discard CLK_IGNORE_UNUSED flag setting. It's redundant since CLK_IS_CRITICAL
+  is enough for cases when it's appropriate.
+- Comment out the CLK_IS_CRITICAL flag settings.
+- Discard !pll and !div tests from ccu_pll_hw_unregister() and ccu_div_get_clk_id()
+  methods respectively.
+- Discard alive probe messages.
+- Convert the drivers to using syscon regmap instead of direct IO methods,
+  since now the PLLs DT node is supposed to be a sub-node of the Baikal-T1
+  System Controller node.
+- Add DebugFS nodes in RO-mode by default.
 
-> ---
->  drivers/soc/mediatek/mtk-mmsys.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
-> index 05e322c9c301ad91..bb5ccd5b0386c041 100644
-> --- a/drivers/soc/mediatek/mtk-mmsys.c
-> +++ b/drivers/soc/mediatek/mtk-mmsys.c
-> @@ -4,7 +4,6 @@
->   * Author: James Liao <jamesjj.liao@mediatek.com>
->   */
->  
-> -#include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/of_device.h>
->  #include <linux/platform_device.h>
-> 
+Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+Cc: Maxim Kaurkin <Maxim.Kaurkin@baikalelectronics.ru>
+Cc: Pavel Parkhomenko <Pavel.Parkhomenko@baikalelectronics.ru>
+Cc: Ramil Zaripov <Ramil.Zaripov@baikalelectronics.ru>
+Cc: Ekaterina Skachko <Ekaterina.Skachko@baikalelectronics.ru>
+Cc: Vadim Vlasov <V.Vlasov@baikalelectronics.ru>
+Cc: Alexey Kolotnikov <Alexey.Kolotnikov@baikalelectronics.ru>
+Cc: Paul Burton <paulburton@kernel.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+
+Serge Semin (4):
+  dt-bindings: clk: Add Baikal-T1 CCU PLLs binding
+  dt-bindings: clk: Add Baikal-T1 CCU Dividers binding
+  clk: Add Baikal-T1 CCU PLLs driver
+  clk: Add Baikal-T1 CCU Dividers driver
+
+ .../bindings/clock/baikal,bt1-ccu-div.yaml    | 182 ++++++
+ .../bindings/clock/baikal,bt1-ccu-pll.yaml    | 127 ++++
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/baikal-t1/Kconfig                 |  42 ++
+ drivers/clk/baikal-t1/Makefile                |   3 +
+ drivers/clk/baikal-t1/ccu-div.c               | 602 ++++++++++++++++++
+ drivers/clk/baikal-t1/ccu-div.h               | 110 ++++
+ drivers/clk/baikal-t1/ccu-pll.c               | 558 ++++++++++++++++
+ drivers/clk/baikal-t1/ccu-pll.h               |  64 ++
+ drivers/clk/baikal-t1/clk-ccu-div.c           | 487 ++++++++++++++
+ drivers/clk/baikal-t1/clk-ccu-pll.c           | 204 ++++++
+ include/dt-bindings/clock/bt1-ccu.h           |  48 ++
+ include/dt-bindings/reset/bt1-ccu.h           |  25 +
+ 14 files changed, 2454 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-div.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-pll.yaml
+ create mode 100644 drivers/clk/baikal-t1/Kconfig
+ create mode 100644 drivers/clk/baikal-t1/Makefile
+ create mode 100644 drivers/clk/baikal-t1/ccu-div.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-div.h
+ create mode 100644 drivers/clk/baikal-t1/ccu-pll.c
+ create mode 100644 drivers/clk/baikal-t1/ccu-pll.h
+ create mode 100644 drivers/clk/baikal-t1/clk-ccu-div.c
+ create mode 100644 drivers/clk/baikal-t1/clk-ccu-pll.c
+ create mode 100644 include/dt-bindings/clock/bt1-ccu.h
+ create mode 100644 include/dt-bindings/reset/bt1-ccu.h
+
+-- 
+2.25.1
+
