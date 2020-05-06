@@ -1,89 +1,72 @@
-Return-Path: <SRS0=eW+W=6T=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=z+8+=6U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-10.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E99F3C47254
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A22FC47247
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 00:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BED24206FA
-	for <linux-clk@archiver.kernel.org>; Tue,  5 May 2020 19:32:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1588707153;
-	bh=VaPSawdI6c2GPZEPFPxmM5eZQ0mqch5COld+n26AhNE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=TUnj3ceAp+0vn++fQUMg8M3f5P9DM9XTgHqEzoj470kA9diu8E6VoffZ+ZZfHq3Qc
-	 CA5HSuE4ieMfMtS3McmSRC9kc4xQ3I98uro0VmI+11ZzelrYp0xKaBnmYTXXxflcCa
-	 ExS/QBApyNkRAuZR24BAnuESN0A3bmwcltOL2JTU=
+	by mail.kernel.org (Postfix) with ESMTP id 21D25205C9
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 00:28:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgEETcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 May 2020 15:32:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41732 "EHLO mail.kernel.org"
+        id S1728642AbgEFA2p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 May 2020 20:28:45 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:34992 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbgEETcd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 May 2020 15:32:33 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC4262068E;
-        Tue,  5 May 2020 19:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1588707153;
-        bh=VaPSawdI6c2GPZEPFPxmM5eZQ0mqch5COld+n26AhNE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=khnTB/AhLn3+G2g83vvdyETJTObdasq3QT3gFBzgJGkFJtkJr1QSAPLCh1otb8oDw
-         /vo8+otvA5zQ+2WFHKdrqHILiFPD72D3QXQb0uK2dbIlaIOAlzt+PfCnRZr1l+BQkF
-         WVukOVCb8X7jTysAf/EEM9qaqyLlWov+O+WoJisA=
-Content-Type: text/plain; charset="utf-8"
+        id S1728609AbgEFA2p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 May 2020 20:28:45 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1jW7vV-0005g9-E9; Wed, 06 May 2020 02:28:41 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: [GIT PULL] Rockchip clock fix for 5.7
+Date:   Wed, 06 May 2020 02:28:40 +0200
+Message-ID: <2256140.alkMTrVvHO@phil>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200430084902.1540-1-geert+renesas@glider.be>
-References: <20200430084902.1540-1-geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.8
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Tue, 05 May 2020 12:32:32 -0700
-Message-ID: <158870715221.26370.13261608407586100210@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-04-30 01:49:02)
->         Hi Mike, Stephen,
->=20
-> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
-36:
->=20
->   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v5.8-tag1
->=20
-> for you to fetch changes up to e2f022c10ed3b50ba1d2bb1f037b0e7a84cb1c3e:
->=20
->   clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects (2=
-020-04-30 09:39:06 +0200)
->=20
-> ----------------------------------------------------------------
+Hi Mike, Stephen,
 
-Thanks. Pulled into clk-next
+please find below a rockchip clock fix for 5.7
+Please pull
 
-I see these warnings with smatch. Is it a real problem?
+Thanks
+Heiko
 
-drivers/clk/renesas/renesas-cpg-mssr.c:851
-cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
-drivers/clk/renesas/renesas-cpg-mssr.c:860
-cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
-clk/renesas/renesas-cpg-mssr.c:862
-cpg_mssr_resume_noirq() error: buffer overflow 'stbcr' 11 <=3D 11
+The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+
+  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git tags/v5.7-rockchip-clk-fixes1
+
+for you to fetch changes up to cec9d101d70a3509da9bd2e601e0b242154ce616:
+
+  clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks (2020-04-13 09:35:24 +0200)
+
+----------------------------------------------------------------
+Fix for wrongly defines rk3228 aclk_gpu*
+
+----------------------------------------------------------------
+Justin Swartz (1):
+      clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks
+
+ drivers/clk/rockchip/clk-rk3228.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
+
+
+
