@@ -1,141 +1,76 @@
-Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=z+8+=6U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23A2C4724C
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 20:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ECBC28CBC
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 06:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BEB5721582
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 20:07:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B44D206F9
+	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 06:42:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKCgobvv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJXMohOT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbgEGUHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 May 2020 16:07:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45542 "EHLO
+        id S1727812AbgEFGmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 May 2020 02:42:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726326AbgEGUHW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 16:07:22 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFEF3C05BD43;
-        Thu,  7 May 2020 13:07:21 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id y3so7934833wrt.1;
-        Thu, 07 May 2020 13:07:21 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1727778AbgEFGmq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 May 2020 02:42:46 -0400
+Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FA5C061A0F;
+        Tue,  5 May 2020 23:42:46 -0700 (PDT)
+Received: by mail-pg1-x544.google.com with SMTP id n11so351600pgl.9;
+        Tue, 05 May 2020 23:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SIPxEGkoigO/RdOn28FMwPwqLB9D7Bf2pDVWj4s0qzc=;
-        b=BKCgobvvRk12sNHbQdFp+jiN+mhqDLIsgN1BPt5/gOiz6w7q/RC36egt8JkAzGEfB2
-         rmw4ZCtt4ohfBNhFThzB8aMSnGCBgUATdSDMswU0j9M7NqMYFhjSxTsl7+wf0XvS6KRP
-         fG1xdg7y/0KiBK5yZMXDS4xFB5o4jIMi6Zv/5FLMDely/LqMO+GIoMPTyLC57O4ehli9
-         lf3OvA5mjrsOue86jHJzdbdsmqGjuuH1xDP7+989AKT2RVoltDdc+C6qZjcTJzt3ndNE
-         168Y43cITyDVhe7QmPGuIdO8MLIliZF6yB6sNWga9oyqdjMJw337OUCZsQeyLediPkHt
-         T+9w==
+        h=from:to:cc:subject:date:message-id;
+        bh=Liq4U1nmJp+k1QseFVbXa0y7jGlGm2IcoibIba6bIN4=;
+        b=QJXMohOTAWtXIbpZubPh2LhaWiMq0ZGIq0L2bnRHMjcmGM/qNb2cfMeJlBM5rLvlte
+         T9eOd/OVDHbQWnD9mwKEjWvtsl0lZ3psBAWlOFkDkmKKLNS11BtBtYhlaIKBPxQK0L22
+         NNBB5H7yrCzqTh2ZrpSlqlsBFK/9ikpvANfd+ZT86mABSQfaKlAwhE/Brp70ZaXBQSu1
+         CN5fL0eDswOdCzd1tjhv87EdSymR4nUIIZ1qI+BnM5d/q/HlHuwL06b4Pg3YYcvELMgB
+         DCBxUPHcHkX5kfPsYbD4mqMkAZJ+AQCY+6Szf7RjtpS+S+AR/y81bNKUJvM8e2CJ/ETY
+         nuOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SIPxEGkoigO/RdOn28FMwPwqLB9D7Bf2pDVWj4s0qzc=;
-        b=Cb0TCZScrH/D0epUkn+QqwJdhtNDc7qDY37K6I0OFo7Dfv+zvcCSw69doMh5Cp5CNu
-         V2Me49vr/IRllWSE3WdIJwxwZUhV2Jop/Qu5n64H22RYLK93yvZ2QlYw9WFkviKpY/ux
-         blaCOwUA9y20A6eilYtwmJ1kxZyOpfTOedtBqMyXq28hEo/QShUQUiVGRZuNsFHFiqd6
-         eIvGBR+geZSsUsMKafq3i5aq7sijlK93UTGKs1oQg3MKoYdhoeWx4jcKPyPmUTs3Dd2d
-         tQoDd14Smz4Z6RQNYlu/Ae4auZxGlBeWyFKVODCo5WbdSdd1JzPX6J249n1BkCkYpkhM
-         J+2g==
-X-Gm-Message-State: AGi0PuaEwiHMGownWr8uQmF2fMnc/uDFNJC7cKd03QltryPLC5Cbagmp
-        PgfR3YVXSKZT3kjGxfmbRoRjVt2aing=
-X-Google-Smtp-Source: APiQypI8cqMnwNEw1dPA8CPIiiM5LeFDJj/l6ggkxKJc3616ZPFx9eahE4EJ1H2wPJFUTJw/ziTj3A==
-X-Received: by 2002:a5d:4447:: with SMTP id x7mr17126025wrr.299.1588882040490;
-        Thu, 07 May 2020 13:07:20 -0700 (PDT)
-Received: from localhost (p2E5BE57B.dip0.t-ipconnect.de. [46.91.229.123])
-        by smtp.gmail.com with ESMTPSA id 185sm10472035wmc.32.2020.05.07.13.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 May 2020 13:07:19 -0700 (PDT)
-Date:   Thu, 7 May 2020 22:07:18 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] memory: tegra: EMC scaling is not a clock provider
-Message-ID: <20200507200718.GD2981633@ulmo>
-References: <20200506123236.7463-1-geert+renesas@glider.be>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="veXX9dWIonWZEC6h"
-Content-Disposition: inline
-In-Reply-To: <20200506123236.7463-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Liq4U1nmJp+k1QseFVbXa0y7jGlGm2IcoibIba6bIN4=;
+        b=cMViMU2lKnB13uqDY+Yo7zxFTPImkGp6ItWOUU7onqNnepPsTuHmMuasU9t+H2KaHN
+         KWsRicuW04j0sIdpW0K+ZXusbZ3vvym1FvpdLkr+JOxZ9K9CWbOpAsbV0n9fL5TIISIr
+         mYoR31/SN346ikETBXyUJU+y44Seq537ssJV+e2bYxp5/0ZQriHdg4/oi/kjriB7vCJu
+         fdoOr0pg3V30MLK364RhC9dW8cWMDucERh3nemnhesS/5KdAYqbeGRda4b7ChmYQrWgE
+         FG5LlEhSwsKgpwJuymo2k2cH12wQrHpZ+6MXqOul6QAZ3H4fOEHot7LD8EHogGpU6WYT
+         P9Vw==
+X-Gm-Message-State: AGi0PuZzkRVM1Diajb5PkLM5bn5rGEL77DjRfh3WuUJK5NvTIRCLNJwf
+        Aov4jDer/CmY7Q+8ud24tFs=
+X-Google-Smtp-Source: APiQypL4f1fBXLMhRTVK8DI+lv01KkC0rfikO3bHWD+7BkH2eVp9KWSsqAGBycmCNOlzG+hbh0ZLcg==
+X-Received: by 2002:a63:4503:: with SMTP id s3mr5973180pga.85.1588747366086;
+        Tue, 05 May 2020 23:42:46 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([103.206.190.146])
+        by smtp.gmail.com with ESMTPSA id b75sm3793254pjc.23.2020.05.05.23.42.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 May 2020 23:42:45 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        sam@ravnborg.org
+Cc:     linux-clk@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: 
+Date:   Wed,  6 May 2020 14:42:37 +0800
+Message-Id: <1588747358-31306-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---veXX9dWIonWZEC6h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, May 06, 2020 at 02:32:34PM +0200, Geert Uytterhoeven wrote:
-> 	Hi all,
->=20
-> The Tegra EMC scaling support code is not a clock provider, but merely a
-> clock consumer, and thus does not need to include
-> <linux/clk-provider.h>.
->=20
-> However, drivers/memory/tegra/tegra210-emc-table.c relies on
-> tegra210-emc.h to include <linux/of.h> through <linux/clk-provider.h>.
-> Hence the first patch makes <linux/of_reserved_mem.h> self-contained
-> first.
->=20
-> Thanks for your comments!
->=20
-> Geert Uytterhoeven (2):
->   of: Make <linux/of_reserved_mem.h> self-contained
->   memory: tegra: Drop <linux/clk-provider.h>
->=20
->  drivers/memory/tegra/tegra210-emc-core.c | 1 -
->  drivers/memory/tegra/tegra210-emc.h      | 1 -
->  include/linux/of_reserved_mem.h          | 1 +
->  3 files changed, 1 insertion(+), 2 deletions(-)
-
-Ah... I should've read the cover letter first. Looks like I need to take
-that first patch through the Tegra tree as well to avoid introducing the
-build error in the second patch.
-
-Rob, do you mind if I pick up patch 1 of this into the same OF branch
-that I already carry the memory-region-names patches on?
-
-Thierry
-
---veXX9dWIonWZEC6h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl60anYACgkQ3SOs138+
-s6EaEw/9EGmZ4wRdJQnZKEPfSrkI8ezYGzEWDNRp9OC17IzFf2+rDPyHkuM6zynx
-sqWhXQeersjdUCJLMyRStJ47/ismsDY9Dsi/Y52S1Bhc9PibFbKO6GsEOUyiRaSa
-FQJX/LstrlkGtTsymCp7rXw1SnneQg4StyPI7pXmoNBZafCEdRVHAUt5atl3dKO1
-vPQolPeuzA9oaizomcnPKM2eY7JXxWw0J/ZnphMRcpPLkNXdGLcKb4IZocBS9DcX
-Qd/4Ipk5jMR4lILYOHweJFHV3FagRj8GSO/cotDSDPlPdxYPQF1XDNTRau2FAuv0
-fdft30qVrMr4XwZW5opTxafv90UZJXXtchexfUMx+SBgtQ8DGy1PLiNbKxyQjbcD
-SqKNNKIoz3LdcKv3PTBSmIsdROOPoKtO0lSTR3lqsc1gMWt/RVdnIoffOupFFxU/
-FLoXWUfbQojhjUg7NME0ViUVaJDrORqbbH6Wq7F7zNBTBJJPq+pC1G4jkvvuFmvG
-0s//QGxgO8hoZOE8++1pw+F1fybzkGOiDATBCxFBllutuHq897y9sgIk6FquRud4
-cf8wdwJ+fOAH1eHMTr/U3TXNMKm3YccLNYY6Iry8xDGU3/vAk8MsUrFkFKLSMIm5
-Lxd5rMApw+T2sZX2BDThuWZN38gotqCZhJbgBl0b/P1PnclP1IU=
-=qNDk
------END PGP SIGNATURE-----
-
---veXX9dWIonWZEC6h--
+Fix stm32f429's ltdc driver loading hang in ltdc clk enable. set clk_hw to the
+wrong offset of clks in stm32f4_rcc_register_pll, should be PLL_SAI
