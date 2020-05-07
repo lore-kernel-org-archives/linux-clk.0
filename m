@@ -2,110 +2,166 @@ Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE1EC38A24
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 05:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38813C47257
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 06:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8082075E
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 05:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12F4E20838
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 06:05:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="slcpKIce"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cYTApWxQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgEGFSX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 May 2020 01:18:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47852 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726393AbgEGFSW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 01:18:22 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A70D9C061A10
-        for <linux-clk@vger.kernel.org>; Wed,  6 May 2020 22:18:22 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id n11so1984178pgl.9
-        for <linux-clk@vger.kernel.org>; Wed, 06 May 2020 22:18:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EjwpJVR1oS9DdS7pegxHcKxChjnzSaTIkyZTVhILaoo=;
-        b=slcpKIceAq3cfjYgNr8Zhq1cKoLAoXXqoHotEAb2xiQ35kfA512G47MwpKhZXuM/7e
-         CPnlmatcZzVIRfNzpy00KH25stfePubouqjpWYnEmzYbZ4ABGq0cZy3Nmuh7tvH2wUGL
-         a5veNcqHV2kXAgW7D+G/lGfw7VAQcdJhiOQnGPFvP3w7C1vRRwMk7rCHjG23Uw3Q0w1u
-         jBhgWVFKipZ/m5hr6AzK9WoqH9NgDiX0dGl4AWiRoCTXvB4aa07ZvnHrV99m3lGg3wsh
-         //8wutcZlOEfr0/AnEAjs7Cc4yZV4yYPA2Db4R7sXaVoPjV+1d9BSXEk4soUalWD6wMI
-         L1ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EjwpJVR1oS9DdS7pegxHcKxChjnzSaTIkyZTVhILaoo=;
-        b=d2an3laWSzRNQ07HSGGz3ghmbjBYckS75BTOqNKQ+JaCVIL4ctl6m1HI6hVi1jisdx
-         AurREKllE6VvgRXG34ygW0cnvHdnNd0wD0QOPr9MJJhIy1SkIjKna7OQf5tkUk4URoKn
-         YyxiMxDrVPDjR6pZ4DGgh+ygieHkOEN8jFkeEbUeOQrFB916zieuairnwqNzKP6k8FMs
-         iKI4/pQGBW8OtUTEuRK5Lzg+9ZbHtYNPLN8grvoF3DFT2EP7jzGtTUii2bJ48g16bSp8
-         6YXDdSXXZGqjVNUnFonw4Y/evwzlDm0WPKBPBBxx8FdZMX9EmHW068H43ZPv2/HCPtEj
-         M0+w==
-X-Gm-Message-State: AGi0Puae67+GCliRflOUNJUhkFtS/H+0UsFW68Ji9D+crrDKcSLmxfse
-        hAOpAEtFQRvuGbfUOsWSl/Ua2A==
-X-Google-Smtp-Source: APiQypIEmsP8B+EwGLQga6A4T0mFxXwfh7oJIQ8PZk2O+MdkKuUNTJ0xX+z5cnzD4HZ+G174irQzXg==
-X-Received: by 2002:a62:3181:: with SMTP id x123mr11697759pfx.109.1588828701997;
-        Wed, 06 May 2020 22:18:21 -0700 (PDT)
-Received: from localhost ([122.171.118.46])
-        by smtp.gmail.com with ESMTPSA id v127sm3499629pfv.77.2020.05.06.22.18.20
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 May 2020 22:18:21 -0700 (PDT)
-Date:   Thu, 7 May 2020 10:48:18 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     rjw@rjwysocki.net, Mian Yousaf Kaukab <ykaukab@suse.de>
-Cc:     linux-pm@vger.kernel.org, andy.tang@nxp.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, shawnguo@kernel.org, leoyang.li@nxp.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v2 1/2] cpufreq: qoriq: convert to a platform driver
-Message-ID: <20200507051818.xi43yfusjktemd5r@vireshk-i7>
-References: <20200421083000.16740-1-ykaukab@suse.de>
- <20200428110125.lobyrsbma6astfmq@vireshk-i7>
+        id S1725793AbgEGGFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 May 2020 02:05:40 -0400
+Received: from mail-eopbgr140048.outbound.protection.outlook.com ([40.107.14.48]:52182
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725763AbgEGGFj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 May 2020 02:05:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NMB8QKb1uzZju1F6PguZmpgiFWtOJXfckvjF0m3Rm6bcrvX7tuRnIT6k9Sh0V/sSehn/EHhXzvgaPc48k0wJuAoD0LI1w4wLHHimEthLFnUBC/83zMFRnrnTHSgxG3uYOGhIPSFDBY6k/HukNxkDQ1I5ygoYoWIViC7IkPkZTKQKJclsPaKg0bmtHq8pViw6hlHUYmlkYNjYBOP87ncgQDaPkZEphKxPLv+650sVS3wL+YmCAKdz/honEDUtOxm+XwW5rlPhPTWGLYLfwHonVvr8qYJU5Eih7EzJca9njhT0RDenV8Sn/p2kITCQRrIz2O2cmLYhaeXepXH+hLZrPw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ar6Czx/TezE8j5XbVIC+AYzW2sKAS85fp3d2AJzNPA=;
+ b=hGsnKpUQiymTgTqXbi7ECWjPRWURWWFz1biPD44cLrB2l39mkDpeOL0y1tsGzGfNq8PkXXHjIoLnJchPPHMcsWAeRm16u6LbTtwTShJRCOlaJILr903Okamjvh1niB9YvDk/wyZaz4xZyVwIxnmMZUEH8acIv+S3ccTLFyGzfZbZQzZohSif0EZ+IiIyifPEtKXNwcRN2myIPcyuYcKY1PL2gt8tp/8Lo7x6EwTTDjuy+B4OjatuxwORFgfFRuTaMZPs5hys3J0pMRcQ/c1aKeMeIEEs+FvXsnTmlTrWfQ/AJ3BVs7WHIi+Xe5+nKKYOCmWHtI6dtm0KvwzFCRF8gw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8ar6Czx/TezE8j5XbVIC+AYzW2sKAS85fp3d2AJzNPA=;
+ b=cYTApWxQ0H6hBwEH+maN8lCMBnZKXtsFbyHgAzUZ0ra9oBA4GzVDMvAV1ZsdpQW/ZdgoryLpCWLwZUssj0YIb3LD1zDFdoSDodEw7szeb+fPQ0OqB0BGW2WS3TnA5keuqxMhRERBVvxaVhNCj+I6tqV8bxhhiS7FjlCtgtWlEdE=
+Authentication-Results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0402MB2710.eurprd04.prod.outlook.com (2603:10a6:4:95::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2958.19; Thu, 7 May
+ 2020 06:05:35 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.2979.028; Thu, 7 May 2020
+ 06:05:34 +0000
+From:   peng.fan@nxp.com
+To:     shawnguo@kernel.org, s.hauer@pengutronix.de,
+        leonard.crestez@nxp.com, abel.vesa@nxp.com, aisheng.dong@nxp.com
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V3 00/10] clk: imx: fixes and improve for i.MX8M
+Date:   Thu,  7 May 2020 13:56:09 +0800
+Message-Id: <1588830979-11586-1-git-send-email-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.7.4
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR01CA0147.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::27) To DB6PR0402MB2760.eurprd04.prod.outlook.com
+ (2603:10a6:4:a1::14)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200428110125.lobyrsbma6astfmq@vireshk-i7>
-User-Agent: NeoMutt/20180716-391-311a52
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0147.apcprd01.prod.exchangelabs.com (2603:1096:4:8f::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2979.28 via Frontend Transport; Thu, 7 May 2020 06:05:30 +0000
+X-Mailer: git-send-email 2.7.4
+X-Originating-IP: [119.31.174.66]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 02a6064c-16a9-43e1-3c33-08d7f24ca7f5
+X-MS-TrafficTypeDiagnostic: DB6PR0402MB2710:|DB6PR0402MB2710:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DB6PR0402MB271014BBCD40325ADBBB8C2D88A50@DB6PR0402MB2710.eurprd04.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1923;
+X-Forefront-PRVS: 03965EFC76
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 69C5UPZIlP2kpsBMD0rlpsa/vyxXA3k2zWsjnj4/aEmUEP7X9+O2EE4M9OVJYL2cCj2FmVE7HB2EZOajmi3/93eHIn1oRJLm2hIXGUxlWTy+UmcHAHSbJtNdCXHzv+JYUy4S1RSBBV+YzdGnR5VP2nROM338hU68ydkN5EdPywLMZdv0hQuaFfv5eIT17v56mKBKPdarUnspqQyVRKdUDBOtmwbnjJIPcnQA/mlx1lhhakRTt4ELILJ+CoSD6iuwnxhUjBX26HsYhShZ5E+Z5plvXfhtbBdrHZTqFSriAIjFXHWQTOjFtzYENhwptTvyGX7lwfQhGWOpiBUoUZ+NmbNkay31AwW26TSfRAK3tT//+2241v0ZiK4X7qePpsQIORxsaQ4Qb6/34apKNuA4JAF17OHUh/zxBLt7zHmJi56SdRjGHTEXbj+EZ/yLDe82X3E1Rkxl/Qtwb7rEx1EwNTkKWadigy3s4deLIKfsmH7SERhIRKqXzN3W/euPWAXUbMqTfJNnR1kISaa41gkx84UmYM9fMh2YTHtbOqKdn8L52zJVWc8k4+nj11E1iJp5mvGj5d0N3QgMPAWTZ7P3plxhIw7tP4F79XOAT+bhlUM=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(376002)(346002)(136003)(39860400002)(396003)(33430700001)(316002)(33440700001)(478600001)(2616005)(16526019)(966005)(6666004)(4326008)(66476007)(66946007)(86362001)(2906002)(66556008)(956004)(6486002)(52116002)(36756003)(8676002)(26005)(6506007)(8936002)(5660300002)(186003)(6512007)(9686003)(83320400001)(83280400001)(83300400001)(83310400001)(83290400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: sDmWfNqIVpa5quykLxRir7anePHe3TZvoWVcKcH2b4kv/K2SV+O/DK5alhs1GATwF7RswsjCaBP/NJvIW+z7JpufZBj9ZDD9WWZMF286uGDkeTojOyQ8ZErShoHlo687dsiV9CwYBPWAEjvpxjMsKsa53RzaBgizJlmmjRbNzBwmXNpFFjsAplp3kD7425kdpSK20HRDNvhdbPLytij8uhJDuE1WWzxQbJd3n72HQrTDUUc6aThaEOBd3z1DdvZhtLKmiYOLBImNu/UYAOm48ZhBdykdds58lmuxPI5TUcWDwCHCD7nJ1LH9yoNmo7bBpdGsnXE9x4DYacUIwPi5kfn8xMdVLfS/uv6Oaijymk0LrpXxfJUeBQESiQGJp+c0jSf6o+HT7J08a2lNe9N0gqCaaP32gr/S4Gyo0N2AR2/N/SnWFr+FPnF85866Ntg6tHGfLIxioizBor6/pha8yl1uYNUtopPk+W7CtBf7OghfF8P8R6ezv77cm3Y1loufWHYDJhS9wH/SqK84qfjZivvmSZoJPZCWTdZGlG1yawcIFfvdrwPetdCl95FSX8hEtZqH6k6mE8YCFRItA9ojUPehLlEGhUNQsVoPql0EOZfjskcrzi+PF7XVS94ZNXh41feloYpn5JXFH4AfribLmHzsPJm4M6FbsAwY4dFA7zXHoR97RDScU7PFYtMpx71pSxlYS3yULTY8UcFpehppg/swmBGZ8GkZ5bGRnLy6jAzZMJcjPz5xBMxAi8LHbac3LwyNEkWS69tW60eofXMTH/rvexqfKD17mnbLeJSNERs=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02a6064c-16a9-43e1-3c33-08d7f24ca7f5
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2020 06:05:34.8346
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dJQJWG4lhIZkf/fv4uc6NySBm+ggWBKVrn1vjM3F5sp4SSRdCYYDFs83sJtP5Oj73p2T3ZuylJAytZuimzQRKg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2710
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28-04-20, 16:31, Viresh Kumar wrote:
-> On 21-04-20, 10:29, Mian Yousaf Kaukab wrote:
-> > The driver has to be manually loaded if it is built as a module. It
-> > is neither exporting MODULE_DEVICE_TABLE nor MODULE_ALIAS. Moreover,
-> > no platform-device is created (and thus no uevent is sent) for the
-> > clockgen nodes it depends on.
-> > 
-> > Convert the module to a platform driver with its own alias. Moreover,
-> > drop whitelisted SOCs. Platform device will be created only for the
-> > compatible platforms.
-> > 
-> > Reviewed-by: Yuantian Tang <andy.tang@nxp.com>
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> > Signed-off-by: Mian Yousaf Kaukab <ykaukab@suse.de>
-> > ---
-> > v2:
-> >  +Rafael, Stephen, linux-clk
-> >  Add Reviewed-by and Acked-by tags
-> > 
-> >  drivers/cpufreq/qoriq-cpufreq.c | 76 ++++++++++++++++-------------------------
-> >  1 file changed, 29 insertions(+), 47 deletions(-)
-> 
-> @Rafael,
-> 
-> Though this looks to be PPC stuff, but it is used on both ARM and PPC. Do you
-> want to pick them up or should I do that ?
+From: Peng Fan <peng.fan@nxp.com>
 
-Applied now. Thanks.
+Patches rebased on for-next
+
+V3:
+ Add R-b tag for patch 1-6,10
+ Use clk_mux_ops in patch 7, explain more details in commit log
+ Boot test on i.MX8MM/N/MQ/P
+
+V2:
+ Patch 7, drop wait after write, add one line comment for write twice
+
+V1:
+Patch 1,2 is to fix the lockdep warning reported by Leonard
+Patch 3 is to fix pll mux bit
+Patch 4 is align with other i.MX8M using gate
+Patch 5 is to simplify i.MX8MP clk root using composite
+
+Patch 3~5 is actually https://patchwork.kernel.org/patch/11402761/
+with a minimal change to patch 5 here.
+
+Patch 6 is to use composite core clk for A53 clk root
+Patch 7,8,9 is actually to fix CORE/BUS clk slice issue.
+ This issue is triggerred after we update U-Boot to include
+ the A53 clk fixes to sources from PLL, not from A53 root clk,
+ because of the signoff timing is 1GHz. U-Boot set the A53 root
+ mux to 2, sys pll2 500MHz. Kernel will set the A53 root mux to
+ 4, sys pll1 800MHz, then gate off sys pll2 500MHz. Then kernel
+ will gate off A53 root because clk_ignore_unsed, A53 directly sources
+ PLL, so it is ok to gate off A53 root. However when gate off A53
+ root clk, system hang, because the original mux sys pll2 500MHz
+ gated off with CLK_OPS_PARENT_ENABLE flag.
+
+ It is lucky that we not met issue for other core/bus clk slice
+ except A53 ROOT core slice. But it is always triggerred after
+ U-Boot and Linux both switch to use ARM PLL for A53 core, but
+ have different mux settings for A53 root clk slice.
+
+ So the three patches is to address this issue.
+
+Patch 10 is make memrepair as critical.
+
+Peng Fan (10):
+  arm64: dts: imx8m: assign clocks for A53
+  clk: imx8m: drop clk_hw_set_parent for A53
+  clk: imx: imx8mp: fix pll mux bit
+  clk: imx8mp: Define gates for pll1/2 fixed dividers
+  clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code
+  clk: imx8m: migrate A53 clk root to use composite core
+  clk: imx: add mux ops for i.MX8M composite clk
+  clk: imx: add imx8m_clk_hw_composite_bus
+  clk: imx: use imx8m_clk_hw_composite_bus for i.MX8M bus clk slice
+  clk: imx8mp: mark memrepair clock as critical
+
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi |  10 +-
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi |  10 +-
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi |  11 ++-
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi |   9 +-
+ drivers/clk/imx/clk-composite-8m.c        |  56 ++++++++++-
+ drivers/clk/imx/clk-imx8mm.c              |  27 +++---
+ drivers/clk/imx/clk-imx8mn.c              |  25 +++--
+ drivers/clk/imx/clk-imx8mp.c              | 150 +++++++++++++++---------------
+ drivers/clk/imx/clk-imx8mq.c              |  29 +++---
+ drivers/clk/imx/clk.h                     |   7 ++
+ include/dt-bindings/clock/imx8mp-clock.h  |  28 +++++-
+ 11 files changed, 229 insertions(+), 133 deletions(-)
 
 -- 
-viresh
+2.16.4
+
