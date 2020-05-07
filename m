@@ -2,124 +2,124 @@ Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6D9C38A2A
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23613C35280
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A465021655
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05F12208DB
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727896AbgEGVrJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 May 2020 17:47:09 -0400
-Received: from mail.baikalelectronics.com ([87.245.175.226]:38786 "EHLO
-        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbgEGVrI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 17:47:08 -0400
-Received: from localhost (unknown [127.0.0.1])
-        by mail.baikalelectronics.ru (Postfix) with ESMTP id 32FE780307C1;
-        Thu,  7 May 2020 21:47:04 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at baikalelectronics.ru
-Received: from mail.baikalelectronics.ru ([127.0.0.1])
-        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ATZSyttrcu1J; Fri,  8 May 2020 00:47:03 +0300 (MSK)
-Date:   Fri, 8 May 2020 00:46:56 +0300
-From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
-To:     Randy Dunlap <rdunlap@infradead.org>
-CC:     Serge Semin <fancer.lancer@gmail.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Paul Burton <paulburton@kernel.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Rob Herring <robh+dt@kernel.org>, <linux-mips@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
-        Michael Walle <michael@walle.cc>,
-        Lubomir Rintel <lkundrak@v3.sk>,
-        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Tony Xie <tony.xie@rock-chips.com>, Wen He <wen.he_1@nxp.com>,
-        Mike Looijmans <mike.looijmans@topic.nl>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Joel Stanley <joel@jms.id.au>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 3/4] clk: Add Baikal-T1 CCU PLLs driver
-Message-ID: <20200507214656.bh254nytzrzfk5hx@mobilestation>
-References: <20200306130053.BCBFC803078F@mail.baikalelectronics.ru>
- <20200506222300.30895-1-Sergey.Semin@baikalelectronics.ru>
- <20200506222300.30895-4-Sergey.Semin@baikalelectronics.ru>
- <9259445e-86a8-8e4a-58c9-822bd00d62f8@infradead.org>
+        id S1726445AbgEGV6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 May 2020 17:58:05 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:38116 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726437AbgEGV6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 17:58:05 -0400
+Received: by mail-il1-f194.google.com with SMTP id c18so6804683ile.5;
+        Thu, 07 May 2020 14:58:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GI7tbDeUUOEa56ks8zKfYc4C3uORKh3Rq+YHa4B8fIs=;
+        b=lp5r0bNPyWv3GAesA97nDseDd3FliLrzwb/rNcOECzveb5UExPmBt7/cVbULtfoaln
+         ucmtdQG/+jF4pLZc+T77beljpmyvFQo7bkXmh/pVWQMM7KX7mUbuEfTcSgJOtCD9T9jp
+         +qAjSj7F4tEKvNG4KFUQ8QXeNH3+4AoKQviQNVBTzrlRFa/llrJvY65EjmOCz3mvyQom
+         dYEFe2Jt6yy4VhinChDTi1TyRcRixL2sPMHX4/9Hz0PirI54f4RtYvyLwjYNDjRt+cmv
+         twaZjeYLmD0ETkpah+IxWNz1dM51QXKEL4Ybvuzs5rxgPE2OsLR9ORLuL20t0KCLdlLn
+         JiFg==
+X-Gm-Message-State: AGi0PubJ2vc4y+Jkl2ZdWcAueoVF0hbld2VIxB06VTpakXOwgbEnLNLE
+        QA8OoVcU+4jnvSMFD2qydNc5EMvPO1I=
+X-Google-Smtp-Source: APiQypI+iDElsr2p1ZHpOctO/W21HEtkb++o96IuKTURr/XhzdkfhcqL3CM10Waq1sixCES6+TeJTg==
+X-Received: by 2002:a92:1d4e:: with SMTP id d75mr10484005ild.235.1588888683969;
+        Thu, 07 May 2020 14:58:03 -0700 (PDT)
+Received: from mail-io1-f42.google.com (mail-io1-f42.google.com. [209.85.166.42])
+        by smtp.gmail.com with ESMTPSA id 7sm847683ion.52.2020.05.07.14.58.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 14:58:03 -0700 (PDT)
+Received: by mail-io1-f42.google.com with SMTP id j8so2243161iog.13;
+        Thu, 07 May 2020 14:58:03 -0700 (PDT)
+X-Received: by 2002:a02:cebb:: with SMTP id z27mr16202135jaq.32.1588888683009;
+ Thu, 07 May 2020 14:58:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <9259445e-86a8-8e4a-58c9-822bd00d62f8@infradead.org>
-X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
+References: <20200507112955.23520-1-geert+renesas@glider.be>
+In-Reply-To: <20200507112955.23520-1-geert+renesas@glider.be>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Thu, 7 May 2020 16:57:51 -0500
+X-Gmail-Original-Message-ID: <CADRPPNTdv3R4t7JsjGuPP5h5APA7vcSMNK1vJMjzPtGw=Uw9-w@mail.gmail.com>
+Message-ID: <CADRPPNTdv3R4t7JsjGuPP5h5APA7vcSMNK1vJMjzPtGw=Uw9-w@mail.gmail.com>
+Subject: Re: [PATCH 0/4] qoriq: Add platform dependencies
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Shawn Guo <shawnguo@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-ide@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>, linux-pm@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 06, 2020 at 03:27:57PM -0700, Randy Dunlap wrote:
-> Hi,
-> 
-> Typo(s):
-> 
-> On 5/6/20 3:22 PM, Serge Semin wrote:
-> > diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
-> > new file mode 100644
-> > index 000000000000..e1257af9f49e
-> > --- /dev/null
-> > +++ b/drivers/clk/baikal-t1/Kconfig
-> > @@ -0,0 +1,30 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +config CLK_BAIKAL_T1
-> > +	bool "Baikal-T1 Clocks Control Unit interface"
-> > +	depends on (MIPS_BAIKAL_T1 && OF) || COMPILE_TEST
-> > +	default MIPS_BAIKAL_T1
-> > +	help
-> > +	  Clocks Control Unit is the core of Baikal-T1 SoC System Controller
-> > +	  responsible for the chip subsystems clocking and resetting. It
-> > +	  consists of multiple global clock domains, which can be reset by
-> > +	  means of the CCU control registers. These domains and devices placed
-> > +	  in them are fed with clocks generated by a hierarchy of PLLs,
-> > +	  configurable and fixed clock dividers. Enable this option to be able
-> > +	  to select Baikal-T1 CCU PLLs and Dividers drivers.
-> > +
-> > +if CLK_BAIKAL_T1
-> > +
-> > +config CLK_BT1_CCU_PLL
-> > +	bool "Baikal-T1 CCU PLLs support"
-> > +	select MFD_SYSCON
-> > +	default MIPS_BAIKAL_T1
-> > +	help
-> > +	  Enable this to support the PLLs embedded into the Baikal-T1 SoC
-> > +	  System Controller. These are five PLLs placed at the root of the
-> > +	  clocks hierarchy, right after an external reference osciallator
-> 
-> 	                                                      oscillator
-> 
-> > +	  (normally of 25MHz). They are used to generate high frequency
-> > +	  signals, which are either directly wired to the consumers (like
-> > +	  CPUs, DDR, etc) or passed over the clock dividers to be only then
-> 
-> and while you are here:
-> 
->                      etc.)
+On Thu, May 7, 2020 at 6:31 AM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+>
+>         Hi all,
+>
+> Several QorIQ blocks are only present on Freescale or NXP SoCs.
+> This series adds platform dependencies to the corresponding config
+> ymbols, to avoid asking the user about them when configuring a kernel
+> without support for these SoCs.
+>
+> Most patches in this series are independent, but the third patch may
+> cause some Kconfig warnings when applied before the second patch, and
+> enabling the QorIQ CPU frequency scaling driver in a non-Layerscape
+> kernel.
+>
+> Thanks for your comments!
 
-Both will be fixed in v3. Thanks.
+Thanks.  The series looks good to me.
 
--Sergey 
+Are we trying to merge them through the various driver subsystems or I
+can also pull them in through the fsl-soc tree.  If we want to go
+through driver subsystems:
 
-> 
-> > +	  used as an individual reference clock of a target device.
-> > +
-> > +endif
-> 
-> thanks.
-> -- 
-> ~Randy
-> 
+Acked-by: Li Yang <leoyang.li@nxp.com>
+
+>
+> Geert Uytterhoeven (4):
+>   ahci: qoriq: Add platform dependencies
+>   cpufreq: qoriq: Add platform dependencies
+>   clk: qoriq: Add platform dependencies
+>   thermal: qoriq: Add platform dependencies
+>
+>  drivers/ata/Kconfig     | 1 +
+>  drivers/clk/Kconfig     | 3 ++-
+>  drivers/cpufreq/Kconfig | 3 ++-
+>  drivers/thermal/Kconfig | 4 ++--
+>  4 files changed, 7 insertions(+), 4 deletions(-)
+>
+> --
+> 2.17.1
+>
+> Gr{oetje,eeting}s,
+>
+>                                                 Geert
+>
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                                             -- Linus Torvalds
