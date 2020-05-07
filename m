@@ -1,76 +1,125 @@
-Return-Path: <SRS0=z+8+=6U=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ECBC28CBC
-	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 06:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6D9C38A2A
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:47:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B44D206F9
-	for <linux-clk@archiver.kernel.org>; Wed,  6 May 2020 06:42:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJXMohOT"
+	by mail.kernel.org (Postfix) with ESMTP id A465021655
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:47:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727812AbgEFGmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 May 2020 02:42:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33630 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727778AbgEFGmq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 May 2020 02:42:46 -0400
-Received: from mail-pg1-x544.google.com (mail-pg1-x544.google.com [IPv6:2607:f8b0:4864:20::544])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78FA5C061A0F;
-        Tue,  5 May 2020 23:42:46 -0700 (PDT)
-Received: by mail-pg1-x544.google.com with SMTP id n11so351600pgl.9;
-        Tue, 05 May 2020 23:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Liq4U1nmJp+k1QseFVbXa0y7jGlGm2IcoibIba6bIN4=;
-        b=QJXMohOTAWtXIbpZubPh2LhaWiMq0ZGIq0L2bnRHMjcmGM/qNb2cfMeJlBM5rLvlte
-         T9eOd/OVDHbQWnD9mwKEjWvtsl0lZ3psBAWlOFkDkmKKLNS11BtBtYhlaIKBPxQK0L22
-         NNBB5H7yrCzqTh2ZrpSlqlsBFK/9ikpvANfd+ZT86mABSQfaKlAwhE/Brp70ZaXBQSu1
-         CN5fL0eDswOdCzd1tjhv87EdSymR4nUIIZ1qI+BnM5d/q/HlHuwL06b4Pg3YYcvELMgB
-         DCBxUPHcHkX5kfPsYbD4mqMkAZJ+AQCY+6Szf7RjtpS+S+AR/y81bNKUJvM8e2CJ/ETY
-         nuOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Liq4U1nmJp+k1QseFVbXa0y7jGlGm2IcoibIba6bIN4=;
-        b=cMViMU2lKnB13uqDY+Yo7zxFTPImkGp6ItWOUU7onqNnepPsTuHmMuasU9t+H2KaHN
-         KWsRicuW04j0sIdpW0K+ZXusbZ3vvym1FvpdLkr+JOxZ9K9CWbOpAsbV0n9fL5TIISIr
-         mYoR31/SN346ikETBXyUJU+y44Seq537ssJV+e2bYxp5/0ZQriHdg4/oi/kjriB7vCJu
-         fdoOr0pg3V30MLK364RhC9dW8cWMDucERh3nemnhesS/5KdAYqbeGRda4b7ChmYQrWgE
-         FG5LlEhSwsKgpwJuymo2k2cH12wQrHpZ+6MXqOul6QAZ3H4fOEHot7LD8EHogGpU6WYT
-         P9Vw==
-X-Gm-Message-State: AGi0PuZzkRVM1Diajb5PkLM5bn5rGEL77DjRfh3WuUJK5NvTIRCLNJwf
-        Aov4jDer/CmY7Q+8ud24tFs=
-X-Google-Smtp-Source: APiQypL4f1fBXLMhRTVK8DI+lv01KkC0rfikO3bHWD+7BkH2eVp9KWSsqAGBycmCNOlzG+hbh0ZLcg==
-X-Received: by 2002:a63:4503:: with SMTP id s3mr5973180pga.85.1588747366086;
-        Tue, 05 May 2020 23:42:46 -0700 (PDT)
-Received: from fmin-OptiPlex-7060.nreal.work ([103.206.190.146])
-        by smtp.gmail.com with ESMTPSA id b75sm3793254pjc.23.2020.05.05.23.42.43
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 May 2020 23:42:45 -0700 (PDT)
-From:   dillon.minfei@gmail.com
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        sam@ravnborg.org
-Cc:     linux-clk@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: 
-Date:   Wed,  6 May 2020 14:42:37 +0800
-Message-Id: <1588747358-31306-1-git-send-email-dillon.minfei@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727896AbgEGVrJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 May 2020 17:47:09 -0400
+Received: from mail.baikalelectronics.com ([87.245.175.226]:38786 "EHLO
+        mail.baikalelectronics.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbgEGVrI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 17:47:08 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mail.baikalelectronics.ru (Postfix) with ESMTP id 32FE780307C1;
+        Thu,  7 May 2020 21:47:04 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at baikalelectronics.ru
+Received: from mail.baikalelectronics.ru ([127.0.0.1])
+        by localhost (mail.baikalelectronics.ru [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ATZSyttrcu1J; Fri,  8 May 2020 00:47:03 +0300 (MSK)
+Date:   Fri, 8 May 2020 00:46:56 +0300
+From:   Serge Semin <Sergey.Semin@baikalelectronics.ru>
+To:     Randy Dunlap <rdunlap@infradead.org>
+CC:     Serge Semin <fancer.lancer@gmail.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Paul Burton <paulburton@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Rob Herring <robh+dt@kernel.org>, <linux-mips@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, Lee Jones <lee.jones@linaro.org>,
+        Michael Walle <michael@walle.cc>,
+        Lubomir Rintel <lkundrak@v3.sk>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Tony Xie <tony.xie@rock-chips.com>, Wen He <wen.he_1@nxp.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Joel Stanley <joel@jms.id.au>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] clk: Add Baikal-T1 CCU PLLs driver
+Message-ID: <20200507214656.bh254nytzrzfk5hx@mobilestation>
+References: <20200306130053.BCBFC803078F@mail.baikalelectronics.ru>
+ <20200506222300.30895-1-Sergey.Semin@baikalelectronics.ru>
+ <20200506222300.30895-4-Sergey.Semin@baikalelectronics.ru>
+ <9259445e-86a8-8e4a-58c9-822bd00d62f8@infradead.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <9259445e-86a8-8e4a-58c9-822bd00d62f8@infradead.org>
+X-ClientProxiedBy: MAIL.baikal.int (192.168.51.25) To mail (192.168.51.25)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, May 06, 2020 at 03:27:57PM -0700, Randy Dunlap wrote:
+> Hi,
+> 
+> Typo(s):
+> 
+> On 5/6/20 3:22 PM, Serge Semin wrote:
+> > diff --git a/drivers/clk/baikal-t1/Kconfig b/drivers/clk/baikal-t1/Kconfig
+> > new file mode 100644
+> > index 000000000000..e1257af9f49e
+> > --- /dev/null
+> > +++ b/drivers/clk/baikal-t1/Kconfig
+> > @@ -0,0 +1,30 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +config CLK_BAIKAL_T1
+> > +	bool "Baikal-T1 Clocks Control Unit interface"
+> > +	depends on (MIPS_BAIKAL_T1 && OF) || COMPILE_TEST
+> > +	default MIPS_BAIKAL_T1
+> > +	help
+> > +	  Clocks Control Unit is the core of Baikal-T1 SoC System Controller
+> > +	  responsible for the chip subsystems clocking and resetting. It
+> > +	  consists of multiple global clock domains, which can be reset by
+> > +	  means of the CCU control registers. These domains and devices placed
+> > +	  in them are fed with clocks generated by a hierarchy of PLLs,
+> > +	  configurable and fixed clock dividers. Enable this option to be able
+> > +	  to select Baikal-T1 CCU PLLs and Dividers drivers.
+> > +
+> > +if CLK_BAIKAL_T1
+> > +
+> > +config CLK_BT1_CCU_PLL
+> > +	bool "Baikal-T1 CCU PLLs support"
+> > +	select MFD_SYSCON
+> > +	default MIPS_BAIKAL_T1
+> > +	help
+> > +	  Enable this to support the PLLs embedded into the Baikal-T1 SoC
+> > +	  System Controller. These are five PLLs placed at the root of the
+> > +	  clocks hierarchy, right after an external reference osciallator
+> 
+> 	                                                      oscillator
+> 
+> > +	  (normally of 25MHz). They are used to generate high frequency
+> > +	  signals, which are either directly wired to the consumers (like
+> > +	  CPUs, DDR, etc) or passed over the clock dividers to be only then
+> 
+> and while you are here:
+> 
+>                      etc.)
 
-Fix stm32f429's ltdc driver loading hang in ltdc clk enable. set clk_hw to the
-wrong offset of clks in stm32f4_rcc_register_pll, should be PLL_SAI
+Both will be fixed in v3. Thanks.
+
+-Sergey 
+
+> 
+> > +	  used as an individual reference clock of a target device.
+> > +
+> > +endif
+> 
+> thanks.
+> -- 
+> ~Randy
+> 
