@@ -2,95 +2,112 @@ Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFFEC38A24
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 13:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7550DC38A24
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 15:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E266220838
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 13:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 461B72083B
+	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 15:56:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="Nx3LC3Ib"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726134AbgEGNZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 May 2020 09:25:03 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:53803 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbgEGNZA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 09:25:00 -0400
-Received: from mail-qv1-f48.google.com ([209.85.219.48]) by
- mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MUGqT-1jgPph155X-00RJ9O; Thu, 07 May 2020 15:24:58 +0200
-Received: by mail-qv1-f48.google.com with SMTP id a15so623335qvt.9;
-        Thu, 07 May 2020 06:24:57 -0700 (PDT)
-X-Gm-Message-State: AGi0PubcbnKfTZF/aTRyPpow6VVBcaniSl7c4HI7NWDL9wTgXkHef1PE
-        TbO1w/BdjwN0hp/yhrV8ErY2M4V7OZgYKgTRLVc=
-X-Google-Smtp-Source: APiQypLIAviOYBCYxRnII0AvfushamRE+8Q+7+nbZJVXRnY9HSekpz3+fnWiynyno8isRVxgoJHmyQo0K7lErlQsonk=
-X-Received: by 2002:a0c:ea43:: with SMTP id u3mr12360811qvp.211.1588857896673;
- Thu, 07 May 2020 06:24:56 -0700 (PDT)
+        id S1727067AbgEGP4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 May 2020 11:56:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34766 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727798AbgEGP4m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 11:56:42 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82F44C05BD0B
+        for <linux-clk@vger.kernel.org>; Thu,  7 May 2020 08:56:42 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id g13so7008555wrb.8
+        for <linux-clk@vger.kernel.org>; Thu, 07 May 2020 08:56:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9nd2a3PO/+LDgm1Vu9n0q5s4h9DVCpLpJzPVuCZ63KU=;
+        b=Nx3LC3IbvKtNTVEmAzQ/KFOqYYpw/GP1+cD1yxWaXF9ZN50dmGcN+FwQzWUJHf2SiJ
+         HYOLhybnWiXpx+N6hpWSUtUUpne2o1FQunmFR88u7qw4m//q3YwjbfOeIl4v4Kd1WP1M
+         sQ1JUR9bi7Qr/c0rwFj1q7QG0YR52asMBJJ/Njqs7ZuKSnAIwWru6sdJinpKQ1IU2Hd0
+         bGT0DumcFKjKO5xedyLSFcC++pEDuhORe4ydAlnY3JwOAg731Zz3BV3xOToURDMTj8lA
+         Sk0Kc4rfad7Mav3BaoCGj4zJt6I0gBbPPqhsC6tC1ZBMMf/h/geoZwSDg+35zO1uk6sk
+         QzIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9nd2a3PO/+LDgm1Vu9n0q5s4h9DVCpLpJzPVuCZ63KU=;
+        b=mouhfVO1nOQfurRbmOsck85KMr1hCckjS2sScKyawy6Iedfq6cU5b2B6kRUllU7aNK
+         frW4rooZhG8C/h2PnOn68tgawfdTgnikx5A9Ob/QJZDcTAM1jbIqecWDcjb95kNeAWCl
+         vmq582G7z2X/VXbnN8/kHyGi5ELOnRHrMCZwcDYY7IEkeH0UXSjW0EVpS3WD1lNeXLAU
+         +jufSFIBlplL1PEb1MdqVCv+BBz89Nojg4+8zXZbXjzfpoPVkc865SXWkHpZNfgXFJIp
+         L9NkxD2ZUrzaSB+kxyCq4+5hwSSRPC9rKiv9i5Gu7UUOBZyomsDoUpzcuoUwkw8O/UJC
+         niqA==
+X-Gm-Message-State: AGi0PuZbZLMEfBk19ES+q2f3OYP9xdS8jNCGIsyJjXwrlY32jiouVkGO
+        gt6uklSYLFj3cOoRCbHui+C6lw==
+X-Google-Smtp-Source: APiQypLmKMr8r52sf+RwYWYfNgMHo75Wmz7UYlWGQpE7tOtOW43JsiTpxSwbqhBRyIHt2soCkzEApA==
+X-Received: by 2002:a5d:42cf:: with SMTP id t15mr15963353wrr.354.1588867001109;
+        Thu, 07 May 2020 08:56:41 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id c17sm8835844wrn.59.2020.05.07.08.56.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 07 May 2020 08:56:40 -0700 (PDT)
+Subject: Re: [PATCH v3 0/2] Add Qualcomm MSM8939 GCC binding and driver
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        shawn.guo@linaro.org, p.zabel@pengutronix.de,
+        Vincent Knecht <vincent.knecht@mailoo.org>,
+        Konrad Dybcio <konradybcio@gmail.com>
+References: <20200423103406.481289-1-bryan.odonoghue@linaro.org>
+From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Message-ID: <e9d181a9-938c-a69b-8325-2aabeefd0934@nexus-software.ie>
+Date:   Thu, 7 May 2020 16:57:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
 MIME-Version: 1.0
-References: <20200507112955.23520-1-geert+renesas@glider.be>
-In-Reply-To: <20200507112955.23520-1-geert+renesas@glider.be>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 7 May 2020 15:24:39 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2TcOrWOhLKdovo0qTTx1PB4+iWVyFyzQOen7ZRwNZhJA@mail.gmail.com>
-Message-ID: <CAK8P3a2TcOrWOhLKdovo0qTTx1PB4+iWVyFyzQOen7ZRwNZhJA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] qoriq: Add platform dependencies
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:PgbK4jomL/oPmttcNNnNdvjMIBGCXYxepf+gQMxPOyS7UoUERQ/
- hW+ZUN4S6Wz5oQZDDsyqlH3P8NKPG6bDDMVnwBMiIDmMOL01fhNIiYpbmsqRAobYyDtdxAJ
- 2O4Sg1SLW3ojyS9z8M/8Yrn2v3t9pOpKufGf+NtrKUtYS+0atpuVpIQBvjzp79GUiuPrsBD
- oNvy58oNqsh/cvEGxx0Ug==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:UKGBaAfyG2A=:ipOGl0fuZujD4juaVnmoX9
- t2Iq6oBdXx59XiTToq9LBoAlqD/08LcZnKcwP7sX6iAA5BLddg82vBftJKAo2AesDb8BK3KBn
- H5ClSqBp0gqKpvcpb/Tn+1ReWapcz1+wUCU82UvucS8WHy+D2pRw/7y3yjX16EMkWwKwwSZtM
- L6+4EXrpp/6DkQ+WV52GPMrAzy+sl5gIHrnr0ekmumxP9Mkc+zc3om4cGWy6Z+8rI0HpQsjbA
- P9AIIlFJnqFc7TNYJ78GEDpK8dY5pOx2p/6W2kES78vuAKT290c0sy5rRec4H7a56rmW7DYm7
- Nwm5VDMms9PUPuLn/cOy0PLHZTpqJqD2WPgSQfe54FC1SmBAcIOP949kJja1+dDof11JAqHHF
- 5ZAHbPbprqiUOtlZNB70FV7NBBgOfhSngZ+RpFidKqqCERD7DLm9ubqVye3CNGCCSfv1kZkR1
- b75oHcDFUnqbQ2B5leNHUqoOk7tiUQ93FGiXMSxLfeIr2cFdKgXzD05r1MOleWLmke40zxiMe
- KleXNBIWbhMFJTUEEhQV8zi9C5G+qRsCO4lwtDL81MbooF2L6psOk8orZLXxdH7x1UXEJg4yn
- ToRzNBytYemhZ5omLilJBAFU1AhIvUHXZ12iaK1vE4QDj2ANFxjDcnmTamxEON6DeeHeDn8WO
- cByGB/07BOns8kkblHUxyI85+3byXg3zo5jgIBU4/8hHnSLlB5isxJepVARAlyWX8iKC82kDd
- Xonc6yh4nxVxPmBP7DqeWiJJK72LHhZtyJnloi+o1JStoMTM/D/g/xes0ZRLDZXvIjEm/speC
- KZVZOuczobNrMvl9K1Ur2GWXINeXsZBFiLjqvyrdCYybdc28zw=
+In-Reply-To: <20200423103406.481289-1-bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 7, 2020 at 1:30 PM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
->         Hi all,
->
-> Several QorIQ blocks are only present on Freescale or NXP SoCs.
-> This series adds platform dependencies to the corresponding config
-> ymbols, to avoid asking the user about them when configuring a kernel
-> without support for these SoCs.
->
-> Most patches in this series are independent, but the third patch may
-> cause some Kconfig warnings when applied before the second patch, and
-> enabling the QorIQ CPU frequency scaling driver in a non-Layerscape
-> kernel.
->
-> Thanks for your comments!
+On 23/04/2020 11:34, Bryan O'Donoghue wrote:
+> V3:
+> This update removes the old clock name arrays which I forgot to prune in
+> the previous V2.
+> 
+> git diff bod/clk-next+msm8939 bod/clk-next+msm8939-v2.1
 
-These all look good to me, thank you for the improvements!
+I should have mentioned.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+If you want to test this you'll need to do the following to your 
+msm8939.dtsi
+
+diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi 
+b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+index 996425a70014..2d54ad7f99b6 100644
+--- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
+@@ -673,6 +673,10 @@ gcc: clock-controller@1800000 {
+                         reg = <0x1800000 0x80000>;
++                       clock-names = "xo",
++                                     "sleep_clk";
++                       clocks = <&xo_board>,
++                                <&sleep_clk>;
+                 };
+
+"xo" and "sleep_clk" names can be resolved.
+
+---
+bod
