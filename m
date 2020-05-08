@@ -1,125 +1,113 @@
-Return-Path: <SRS0=pUc3=6V=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=D2b3=6W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23613C35280
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B700C47247
+	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 04:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 05F12208DB
-	for <linux-clk@archiver.kernel.org>; Thu,  7 May 2020 21:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0458C2085B
+	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 04:13:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f549fH1r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726445AbgEGV6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 May 2020 17:58:05 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38116 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgEGV6F (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 May 2020 17:58:05 -0400
-Received: by mail-il1-f194.google.com with SMTP id c18so6804683ile.5;
-        Thu, 07 May 2020 14:58:04 -0700 (PDT)
+        id S1725815AbgEHENV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 May 2020 00:13:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36416 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbgEHENV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 May 2020 00:13:21 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FC6BC05BD43;
+        Thu,  7 May 2020 21:13:21 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id r14so284192pfg.2;
+        Thu, 07 May 2020 21:13:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=n63i3r0L2IRpeGMKN7qKGLKSiEkxvDfFBuN0D82sIKo=;
+        b=f549fH1riIbuo8ah1TTsCCpm1ZZXn7S2OPcoVIKseqS3u3naNxt2u5u2yue9ia4f35
+         aukn+x9RoVtzRotGy89BFThqOsN+8Hvz0BiPwBjQEETQ9gD+zhB0cqzrEvTxKYQDvgwF
+         ZZ3vzEx4Edbtr92ALNFDitl/XcwHHmoK6aBBirRzTJb2giYxmR8LHalrm8FHTOBuhSD6
+         hR6zDTJluoRElYuNmnpxzdsWrJvQ2QN2cyG5asOiU16f9ANpVcSJF4/7QDMMFK9+ZPgV
+         k0NVAlaHzH3PUoYp+3/40hIKX2qcANGDt4gxjc+LWJBv7LnVGgOCTAESa5PmQ5zQMZyR
+         da5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GI7tbDeUUOEa56ks8zKfYc4C3uORKh3Rq+YHa4B8fIs=;
-        b=lp5r0bNPyWv3GAesA97nDseDd3FliLrzwb/rNcOECzveb5UExPmBt7/cVbULtfoaln
-         ucmtdQG/+jF4pLZc+T77beljpmyvFQo7bkXmh/pVWQMM7KX7mUbuEfTcSgJOtCD9T9jp
-         +qAjSj7F4tEKvNG4KFUQ8QXeNH3+4AoKQviQNVBTzrlRFa/llrJvY65EjmOCz3mvyQom
-         dYEFe2Jt6yy4VhinChDTi1TyRcRixL2sPMHX4/9Hz0PirI54f4RtYvyLwjYNDjRt+cmv
-         twaZjeYLmD0ETkpah+IxWNz1dM51QXKEL4Ybvuzs5rxgPE2OsLR9ORLuL20t0KCLdlLn
-         JiFg==
-X-Gm-Message-State: AGi0PubJ2vc4y+Jkl2ZdWcAueoVF0hbld2VIxB06VTpakXOwgbEnLNLE
-        QA8OoVcU+4jnvSMFD2qydNc5EMvPO1I=
-X-Google-Smtp-Source: APiQypI+iDElsr2p1ZHpOctO/W21HEtkb++o96IuKTURr/XhzdkfhcqL3CM10Waq1sixCES6+TeJTg==
-X-Received: by 2002:a92:1d4e:: with SMTP id d75mr10484005ild.235.1588888683969;
-        Thu, 07 May 2020 14:58:03 -0700 (PDT)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com. [209.85.166.42])
-        by smtp.gmail.com with ESMTPSA id 7sm847683ion.52.2020.05.07.14.58.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 07 May 2020 14:58:03 -0700 (PDT)
-Received: by mail-io1-f42.google.com with SMTP id j8so2243161iog.13;
-        Thu, 07 May 2020 14:58:03 -0700 (PDT)
-X-Received: by 2002:a02:cebb:: with SMTP id z27mr16202135jaq.32.1588888683009;
- Thu, 07 May 2020 14:58:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200507112955.23520-1-geert+renesas@glider.be>
-In-Reply-To: <20200507112955.23520-1-geert+renesas@glider.be>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Thu, 7 May 2020 16:57:51 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTdv3R4t7JsjGuPP5h5APA7vcSMNK1vJMjzPtGw=Uw9-w@mail.gmail.com>
-Message-ID: <CADRPPNTdv3R4t7JsjGuPP5h5APA7vcSMNK1vJMjzPtGw=Uw9-w@mail.gmail.com>
-Subject: Re: [PATCH 0/4] qoriq: Add platform dependencies
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-ide@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>, linux-pm@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=n63i3r0L2IRpeGMKN7qKGLKSiEkxvDfFBuN0D82sIKo=;
+        b=Ds+lXQrCmrgAZHpx/fO4+YMg01cQsOPhUP1Ce+jdx2VKw3NQf0yce5fzeT/xjsYsmk
+         qPXXN2ZGKNDFow0YsO0JAEVQ2GZU2MpxjgF7vnJDjFexh1uzjzD908HnLpSB7TJYGWBf
+         RHeIM9h05Iac6GRXeK9raKMHSSNj2PbtrSw5wd7exK1QUTN1vMTd2vdTsD+n+nsk3EjR
+         WgGAYYF8nWiHYigNZiDOeUi1ZZa+3skEgnzQrrG7yZib9Ad/Bl0zu7MSOMB1HiUel8/T
+         GZXbis6AblJcDUcN7NqUa2pVwdQWHwHhNSoWbkA+rHAEZcJVg3VbYUi1KoiYG+KYN9nh
+         goSw==
+X-Gm-Message-State: AGi0PuZW+D1S/MoeYIEa6/wfT7bv5IflcWO0Nov1yNJdPUcqFjyJVGLr
+        jKprtNZXmAQf9N1GWGmUmJU=
+X-Google-Smtp-Source: APiQypKy7XAhc6hawzdj77Xs0oeZFyq8G/VpqAn061VrqG5U+MNUQKe6OKJlyeRDZxXp18aM4MdX/g==
+X-Received: by 2002:a63:da49:: with SMTP id l9mr508966pgj.432.1588911200789;
+        Thu, 07 May 2020 21:13:20 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([103.206.190.146])
+        by smtp.gmail.com with ESMTPSA id h12sm314868pfq.176.2020.05.07.21.13.16
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 07 May 2020 21:13:20 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     robh+dt@kernel.org, mcoquelin.stm32@gmail.com,
+        alexandre.torgue@st.com, thierry.reding@gmail.com,
+        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        dillon min <dillon.minfei@gmail.com>
+Subject: [PATCH v2 0/5] Enable ilitek ili9341 on stm32f429-disco board
+Date:   Fri,  8 May 2020 12:13:09 +0800
+Message-Id: <1588911194-12433-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, May 7, 2020 at 6:31 AM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
->
->         Hi all,
->
-> Several QorIQ blocks are only present on Freescale or NXP SoCs.
-> This series adds platform dependencies to the corresponding config
-> ymbols, to avoid asking the user about them when configuring a kernel
-> without support for these SoCs.
->
-> Most patches in this series are independent, but the third patch may
-> cause some Kconfig warnings when applied before the second patch, and
-> enabling the QorIQ CPU frequency scaling driver in a non-Layerscape
-> kernel.
->
-> Thanks for your comments!
+From: dillon min <dillon.minfei@gmail.com>
 
-Thanks.  The series looks good to me.
+This patchset have following changes
 
-Are we trying to merge them through the various driver subsystems or I
-can also pull them in through the fsl-soc tree.  If we want to go
-through driver subsystems:
+V2: verify ilitek,ili9341.yaml with make O=../linux-stm32 dt_binding_check
+DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
 
-Acked-by: Li Yang <leoyang.li@nxp.com>
+V1:
+    add ili9341 drm panel driver
+    add ltdc, spi5 controller for stm32f429-disco
+    add ltdc, spi5 pin map for stm32f429-disco
+    add docs about ili9341
+    fix ltdc driver loading hang in clk set rate bug
 
->
-> Geert Uytterhoeven (4):
->   ahci: qoriq: Add platform dependencies
->   cpufreq: qoriq: Add platform dependencies
->   clk: qoriq: Add platform dependencies
->   thermal: qoriq: Add platform dependencies
->
->  drivers/ata/Kconfig     | 1 +
->  drivers/clk/Kconfig     | 3 ++-
->  drivers/cpufreq/Kconfig | 3 ++-
->  drivers/thermal/Kconfig | 4 ++--
->  4 files changed, 7 insertions(+), 4 deletions(-)
->
-> --
-> 2.17.1
->
-> Gr{oetje,eeting}s,
->
->                                                 Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                                             -- Linus Torvalds
+dillon min (5):
+  ARM: dts: stm32: Add pin map for ltdc, spi5 on stm32f429-disco board
+  ARM: dts: stm32: enable ltdc binding with ili9341 on stm32429-disco
+    board
+  dt-bindings: display: panel: Add ilitek ili9341 panel bindings
+  clk: stm32: Fix stm32f429 ltdc driver loading hang in clk set rate.
+    keep ltdc     clk running after kernel startup
+  drm/panel: add panel driver for Ilitek ili9341 panels
+
+ .../bindings/display/panel/ilitek,ili9341.yaml     |  68 +++
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |  67 +++
+ arch/arm/boot/dts/stm32f429-disco.dts              |  40 ++
+ drivers/clk/clk-stm32f4.c                          |   5 +-
+ drivers/gpu/drm/panel/Kconfig                      |   8 +
+ drivers/gpu/drm/panel/Makefile                     |   1 +
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c       | 561 +++++++++++++++++++++
+ 7 files changed, 748 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+
+-- 
+2.7.4
+
