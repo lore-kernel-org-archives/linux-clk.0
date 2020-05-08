@@ -2,167 +2,124 @@ Return-Path: <SRS0=D2b3=6W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A95DC38A2A
-	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 11:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B28C38A2A
+	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 22:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0038120870
-	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 11:30:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D446821974
+	for <linux-clk@archiver.kernel.org>; Fri,  8 May 2020 22:02:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iq79pYLO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ImULIUI8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726618AbgEHLaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 May 2020 07:30:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
+        id S1727095AbgEHWCo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 May 2020 18:02:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726616AbgEHLaU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 May 2020 07:30:20 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56169C05BD43;
-        Fri,  8 May 2020 04:30:20 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id u16so10185852wmc.5;
-        Fri, 08 May 2020 04:30:20 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1726811AbgEHWCo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 May 2020 18:02:44 -0400
+Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DD3A2C061A0C;
+        Fri,  8 May 2020 15:02:43 -0700 (PDT)
+Received: by mail-lj1-x244.google.com with SMTP id a21so3251077ljj.11;
+        Fri, 08 May 2020 15:02:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GbNfoJNiKx6/ZU7iMTxz20yTQG61ErCidoEOq/ZHMgQ=;
-        b=Iq79pYLOaG814TxQFsVfG0swVgtIyNmjyQcAmb1wFin2WdwFHw7CPmD6oV3Ffcq2nN
-         91g1RIqGAKAz9e5ibJ9LzSHo1M8+TCZErM0lCnvdW43nF+sbDUmm7cT2S9CRlBwpyHTf
-         m1QQOayoUJQ9DjFKgXRnvbFnThSY5Art1dr5iF+za5CyvpxRywTHkaJiT+3NqYhSdM7K
-         5wOk8dV4taW1TYlF2tnY9bsQAiZwWSYQ9cSYryQDKDqxV2cWBB3r6xqXX2WxWZhzZgwy
-         JZOxjJTHbMWoI6GUHi1UKUzIrWC11fYaUiZRN9PUyQvGr4Ng2pIZydw+11oudJNVua5b
-         t/bw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lhCsaegrOoZCl6vEZUTaZb3RsjsXs48GL1YIxAy2vMI=;
+        b=ImULIUI8vS4rl30btrShLAv/odGxPb+iKIwLWS8bpsq8EqlczEXeOHncOPDLih+Px7
+         uU9n0bwtBXNBGGJiHNgj2kmCMPOE/IW08jsh+I0AQzL0tbzcGAid1l/wBxL8affWHSaS
+         4Yyd5V+/8Lk+UCopi4EWT9m7UrILlhs6fl3GdoOg80g6tMmwJrTnA10sFgEM/glQeJZZ
+         59XRifwnZOajpkXY518U5eH1D8yv/L6GtZ/9UMmJ9jx7D0pQUifX0VS5qIK0wHrIcTVz
+         Lgpsp5hODw/VsKDu1DTC1gDjGj6Oz5o14hDM8BEMOAB0TeEaReBYn6DELaFqyzEcMscj
+         0JtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GbNfoJNiKx6/ZU7iMTxz20yTQG61ErCidoEOq/ZHMgQ=;
-        b=p5u0nrlf3S4yFvJlN2/5rCHwKGygCDpTjrnP9xlUv0ZPwo0ShOU9wIXPcloJuu3bhP
-         fvQAxEeK3e7Y9ub/B0ZunccHTUDkiRTQm0kuHi/t5Ll3tN3M+q8UazbUxNa3zrAzapd8
-         PZeTzOsTh5i1gRKmPWWYrv9PREGVJO6pcEnf3p8Q+mijHuPAR3lzUFXCiLYXAo7qoyPv
-         H4qjo4chSwZtBU7qp/YUtsF5F9h5efQKPYwdEHJQmMupqbY2mzLFj0wsVZIwHgRwtnUN
-         3x5HKkOlwU1poO/pZS0iJ0bxzSPc+2LIlPN8nLfXwgIXelJtQLbImc2S9woHlCjPTKyI
-         0qPw==
-X-Gm-Message-State: AGi0PuYzjhsshc8qHnLWbD/4L7nETCC7BByia2JEQoauPXYXemot5Fiv
-        DvGNYKqJlzAw9vf3HR3RxGVQqhu+
-X-Google-Smtp-Source: APiQypLXLkhGhaDGu+eU2mZ3PNYyDz2ozJLRYPy44YsFJf1RWf0VM+/qAeXRczlR20iKKsh97h5I4Q==
-X-Received: by 2002:a1c:f20c:: with SMTP id s12mr16804525wmc.83.1588937419069;
-        Fri, 08 May 2020 04:30:19 -0700 (PDT)
-Received: from localhost ([185.67.209.71])
-        by smtp.gmail.com with ESMTPSA id y3sm2433391wrt.87.2020.05.08.04.30.18
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=lhCsaegrOoZCl6vEZUTaZb3RsjsXs48GL1YIxAy2vMI=;
+        b=HNMjdSapsWBjhniCHru2aovEIT75DLDUeRkbcxASs77rH35xcvJGds8VHNay3zw5D7
+         VYHW484KXnnjGHWnc3uDdBcLHb0vIbT09zPn0BmD2fv5BraJNPoxN6IbtEKePFG7c9wc
+         IfhuWJqJ2r4A6uJMnCXfhKdESusOvA3pmWizVETxYdIn68+v+Lv3QhNg/zhqc+BkWrn6
+         JPCbSOTbnGonPbav8w9h8ACQSYyJLFYqkUlashD+v3kRNZVsAqKG4jp10Y9P/bASrxBi
+         sMyocxj8YZ0ePHsgS50TgupH21VwbY1zM9EDsYTX8cFFCZBP7WKKH8YWKcBJam2yGYSJ
+         EoKg==
+X-Gm-Message-State: AOAM53107obdlYeBpOE8hBDxn3Rj3dnE6MSJT7GzQzy+w5eYLDBFwAv7
+        Fk4ZpuEt9Gu9CaM/+K2TTr4=
+X-Google-Smtp-Source: ABdhPJw5V0LEup6lO2Xmzty14DNHX7dQZQi4Pw21Q/XfLitxOcS1zS+lmtgxbzVOiXxhlLAowrwfww==
+X-Received: by 2002:a05:651c:505:: with SMTP id o5mr3196487ljp.0.1588975362361;
+        Fri, 08 May 2020 15:02:42 -0700 (PDT)
+Received: from localhost.localdomain (h-158-174-22-22.NA.cust.bahnhof.se. [158.174.22.22])
+        by smtp.gmail.com with ESMTPSA id s11sm2260983lfo.86.2020.05.08.15.02.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 08 May 2020 04:30:18 -0700 (PDT)
-Date:   Fri, 8 May 2020 13:30:12 +0200
-From:   Jorge Amoros-Argos <joramar76@gmail.com>
-To:     Hauke Mehrtens <hauke@hauke-m.de>
-Cc:     linux-kernel@vger.kernel.org, john@phrozen.org,
-        martin.blumenstingl@googlemail.com, rahul.tanwar@intel.com,
-        linux-clk@vger.kernel.org
-Subject: Re: clk: Lantiq/Intel: XWAY CGU support
-Message-ID: <20200508133012.000000f2@gmail.com>
-In-Reply-To: <743865de-c69c-836c-a74f-f50ccaaed9b3@hauke-m.de>
-References: <20200404105309.0000745d@gmail.com>
-        <743865de-c69c-836c-a74f-f50ccaaed9b3@hauke-m.de>
-X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; i686-w64-mingw32)
+        Fri, 08 May 2020 15:02:41 -0700 (PDT)
+From:   Rikard Falkeborn <rikard.falkeborn@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, nsaenzjulienne@suse.de,
+        f.fainelli@gmail.com, rjui@broadcom.com, sbranden@broadcom.com,
+        eric@anholt.net, wahrenst@gmx.net
+Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Subject: [PATCH] clk: bcm2835: Constify struct debugfs_reg32
+Date:   Sat,  9 May 2020 00:02:38 +0200
+Message-Id: <20200508220238.4883-1-rikard.falkeborn@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-El Wed, 15 Apr 2020 00:00:20 +0200
-Hauke Mehrtens <hauke@hauke-m.de> escribi=F3:
-> On 4/4/20 10:53 AM, Jorge Amoros-Argos wrote:
-> > Dear community,
-> >=20
-> > This is addresed to the Lantiq/Intel developers for the SoC's
-> > VRX200 and XWAY in general.
-> >=20
-> > I'm trying to port the current sources to the common clock
-> > framework for Openwrt. =20
->=20
-> Thanks for looking into this. this SoC should really be converted to
-> the common clock framework.
->=20
->=20
-> > For this purpose, I'd need to have a good knowledge of both clock
-> > providers and consumers in order to update the device tree and also
-> > the drivers. This means hardware (how devices are connected) and
-> > software (what registers do what?)
-> >=20
-> > There's no such low level detail after all my investigations, which
-> > are shown here:
-> >=20
-> >      https://github.com/Mandrake-Lee/Lantiq_XWAY_CGU
-> >=20
-> > For instance, the full structure of PLL2 register remains a mistery
-> > and also its output; OCP selector, is a kind of divider?; PCIe
-> > generator is located where? PMU, is just a gate controller or a
-> > provider itself?
-> >=20
-> > I'd really appreciate if you could share some details in order to
-> > start the job. =20
->=20
-> A common clock framework driver for the Lightning Mountain(LGM) SoC is
-> currently being reviewed on the upstream mailling list:
-> https://lkml.org/lkml/2020/3/24/4
-> there could still be some similarities between the VRX200 and the LGM,
-> but there are some generations in between and with the xrx500 many
-> registers in the CGU block changed.
->=20
-> Martin started to write a driver some years ago:
-> https://github.com/xdarklight/linux/commits/lantiq-clk-20160620
-> But this does not really models the clock tree.
->=20
-> Be aware that the clock tree is not so simple, it has a lot of
-> dividers.
->=20
-> Hauke
->=20
->=20
+bcm2835_debugfs_clock_reg32 is never changed and can therefore be made
+const.
 
-Dear Hauke and friends,
+This allows the compiler to put it in the text section instead of the
+data section.
 
-Based on some forsaken sources for linux and uboot, I have managed to
-re-create most of the clock layout of the Lantiq VR9.
+Before:
+   text    data     bss     dec     hex filename
+  26598   16088      64   42750    a6fe drivers/clk/bcm/clk-bcm2835.o
 
-With this information I've been able to modify the device tree
-structure and create a minor set of drivers in order migrate to CCF.
+After:
+   text    data     bss     dec     hex filename
+  26662   16024      64   42750    a6fe drivers/clk/bcm/clk-bcm2835.o
 
-The code is now available at:
-	https://github.com/Mandrake-Lee/openwrt/tree/LTQ_PORTING_CLK_FRAMEWORK
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Also, I've tried to gather all relevant information with references
-here:
-	https://github.com/Mandrake-Lee/Lantiq_XWAY_CGU
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index ded13ccf768e..7da3b1ba1377 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -396,8 +396,8 @@ static unsigned long bcm2835_measure_tcnt_mux(struct bcm2835_cprman *cprman,
+ }
+ 
+ static void bcm2835_debugfs_regset(struct bcm2835_cprman *cprman, u32 base,
+-				  struct debugfs_reg32 *regs, size_t nregs,
+-				  struct dentry *dentry)
++				   const struct debugfs_reg32 *regs,
++				   size_t nregs, struct dentry *dentry)
+ {
+ 	struct debugfs_regset32 *regset;
+ 
+@@ -1240,7 +1240,7 @@ static u8 bcm2835_clock_get_parent(struct clk_hw *hw)
+ 	return (src & CM_SRC_MASK) >> CM_SRC_SHIFT;
+ }
+ 
+-static struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
++static const struct debugfs_reg32 bcm2835_debugfs_clock_reg32[] = {
+ 	{
+ 		.name = "ctl",
+ 		.offset = 0,
+-- 
+2.26.2
 
-There's also a fancy schematic:
-	https://github.com/Mandrake-Lee/Lantiq_XWAY_CGU/blob/master/VR9_CGU_v0_202=
-00503.pdf
-
-Unfortunately the status so far is UNSTABLE although I have the feeling
-that we must be very close to the end.
-
-The boot-up logging is mostly standard but right after kernel modules
-are loaded and eth driver detects a link, the system hangs-up and
-reboots after 30s roughly. There's no log message at all.
-
-There're still some seconds where a terminal is operative though, so I
-guess there's a module loading that crashes without trace.
-
-So any help and comments are really appreciated.
-
-In parallel, the only big "black box" that remains is the PCIe PLL
-register meaning. I would appreciate if someone from Lantiq (now Intel)
-could give a hand.
-
-Best regards,
-Jorge Amor=F3s-Argos
