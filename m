@@ -2,105 +2,140 @@ Return-Path: <SRS0=CTAb=6Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59773C54E8F
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 20:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 663CDC54E8D
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 21:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C4E22078A
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 20:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589229307;
-	bh=wZu2QvR91WC41QmzoIY8JNxlOBqCk1UY+9nOgrl0Y6Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1dMlWcMRIc3j8nYEpaN+7rb57iyNplvyBRZFJXkBXMi1QMqgoajN8bRb0LEq6ATa3
-	 4133AfFn+UFXC5g7+web4QfdK0wgmPsP2/jrM6l+efNIWyj9nI9kSJ3vxkjcT3bG1M
-	 fwnEdGbK0ohc+b3tb7XUzuCJ+HkhauB4mMFuounY=
+	by mail.kernel.org (Postfix) with ESMTP id 4E45620836
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 21:01:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731639AbgEKUfF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 May 2020 16:35:05 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43341 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbgEKUfE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 16:35:04 -0400
-Received: by mail-oi1-f193.google.com with SMTP id j16so16281447oih.10;
-        Mon, 11 May 2020 13:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xPfARJBDe31edRqTmB22eqqJ1jCXSCt4soTep9+eCZE=;
-        b=I3feRbee1STlb3Rm82R2kiNQj+ZBEHmm5dfpcX0CGR32SIzX3MEBRcYiC+WFuLk8eo
-         ZZKAmlyK/kUcZ2K1TyQntfaGIP46H1wKL2nQ4LqSlmRFNOXWSS6ceAiMJy02a2g6iBQ9
-         YDTdvAGeFYIEQ243RGt5YXfM66y4bcSxwy9vL5o066SZbkvH5JBhneU5IyKH/ymgT+8y
-         fsGjdcKN940bS+/XJ62nD9oRvPpyb4rgPOJtjy6PBWU0Lr04pDi5DYwBqDYK/qkXBKnH
-         dQvquvJgDKQInlbusEpYRcf5C411lG9BhU/X6rmKtdVd3fPhRuQ+pNSR6EntiUCCsbR8
-         tAjQ==
-X-Gm-Message-State: AGi0PuZUrCLP/Nx+RwYfy5lD5+6gRkDg/Tm9WkE5brEj4LelOc+UkGVp
-        DnrxKhkArVk3iHePTsA2d5oDEGc=
-X-Google-Smtp-Source: APiQypLhCz0Iweh6mDeRxFs1JldCYPCWFDZ/eWcgs5VYLylwJuEA3ROhRph1lzQha6aqqe17WNMHUA==
-X-Received: by 2002:aca:5643:: with SMTP id k64mr19984093oib.152.1589229303517;
-        Mon, 11 May 2020 13:35:03 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y25sm1875229oto.29.2020.05.11.13.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 13:35:02 -0700 (PDT)
-Received: (nullmailer pid 32429 invoked by uid 1000);
-        Mon, 11 May 2020 20:35:01 -0000
-Date:   Mon, 11 May 2020 15:35:01 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        shawn.guo@linaro.org, p.zabel@pengutronix.de
-Subject: Re: [PATCH v3 2/2] clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock
- Controller
-Message-ID: <20200511203501.GA29988@bogus>
-References: <20200423103406.481289-1-bryan.odonoghue@linaro.org>
- <20200423103406.481289-3-bryan.odonoghue@linaro.org>
+        id S1732355AbgEKVBr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 May 2020 17:01:47 -0400
+Received: from v6.sk ([167.172.42.174]:52574 "EHLO v6.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732339AbgEKVBq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 11 May 2020 17:01:46 -0400
+Received: from localhost (v6.sk [IPv6:::1])
+        by v6.sk (Postfix) with ESMTP id BA2E6610D2;
+        Mon, 11 May 2020 21:01:44 +0000 (UTC)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Liam Girdwood <lgirdwood@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH 05/11] ASoC: mmp-sspa: Add support for soc-generic-dmaengine-pcm
+Date:   Mon, 11 May 2020 23:01:28 +0200
+Message-Id: <20200511210134.1224532-6-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200511210134.1224532-1-lkundrak@v3.sk>
+References: <20200511210134.1224532-1-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200423103406.481289-3-bryan.odonoghue@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 23, 2020 at 11:34:06AM +0100, Bryan O'Donoghue wrote:
-> This patch adds support for the MSM8939 GCC. The MSM8939 is based on the
-> MSM8916. MSM8939 is compatible in several ways with MSM8916 but, has
-> additional functional blocks added which require additional PLL sources. In
-> some cases functional blocks from the MSM8916 have different clock sources
-> or different supported frequencies.
-> 
-> Cc: Andy Gross <agross@kernel.org>
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: linux-arm-msm@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  drivers/clk/qcom/Kconfig                     |    8 +
->  drivers/clk/qcom/Makefile                    |    1 +
->  drivers/clk/qcom/gcc-msm8939.c               | 3999 ++++++++++++++++++
+This makes the driver usable with the mmp_tdma drier via
+soc-generic-dmaengine-pcm. This is conditionalized on DT node (support
+for DT is added by a later patch).
 
->  include/dt-bindings/clock/qcom,gcc-msm8939.h |   27 +
->  include/dt-bindings/reset/qcom,gcc-msm8939.h |   10 +
+A custom mmap callback that creates a NC mapping is used instead of the
+default WC one, because with write-combining some bytes don't seem to
+make it through for reasons unknown to me.
 
-These go in patch 1.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ sound/soc/pxa/mmp-sspa.c | 57 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
 
->  5 files changed, 4045 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-msm8939.c
+diff --git a/sound/soc/pxa/mmp-sspa.c b/sound/soc/pxa/mmp-sspa.c
+index 421ffa9fa7b1..6e4b63d0c589 100644
+--- a/sound/soc/pxa/mmp-sspa.c
++++ b/sound/soc/pxa/mmp-sspa.c
+@@ -386,8 +386,54 @@ static struct snd_soc_dai_driver mmp_sspa_dai = {
+ 	.ops = &mmp_sspa_dai_ops,
+ };
+ 
++#define MMP_PCM_INFO (SNDRV_PCM_INFO_MMAP |	\
++		SNDRV_PCM_INFO_MMAP_VALID |	\
++		SNDRV_PCM_INFO_INTERLEAVED |	\
++		SNDRV_PCM_INFO_PAUSE |		\
++		SNDRV_PCM_INFO_RESUME |		\
++		SNDRV_PCM_INFO_NO_PERIOD_WAKEUP)
++
++static const struct snd_pcm_hardware mmp_pcm_hardware[] = {
++	{
++		.info			= MMP_PCM_INFO,
++		.period_bytes_min	= 1024,
++		.period_bytes_max	= 2048,
++		.periods_min		= 2,
++		.periods_max		= 32,
++		.buffer_bytes_max	= 4096,
++		.fifo_size		= 32,
++	},
++	{
++		.info			= MMP_PCM_INFO,
++		.period_bytes_min	= 1024,
++		.period_bytes_max	= 2048,
++		.periods_min		= 2,
++		.periods_max		= 32,
++		.buffer_bytes_max	= 4096,
++		.fifo_size		= 32,
++	},
++};
++
++static const struct snd_dmaengine_pcm_config mmp_pcm_config = {
++	.prepare_slave_config = snd_dmaengine_pcm_prepare_slave_config,
++	.pcm_hardware = mmp_pcm_hardware,
++	.prealloc_buffer_size = 4096,
++};
++
++static int mmp_pcm_mmap(struct snd_soc_component *component,
++			struct snd_pcm_substream *substream,
++			struct vm_area_struct *vma)
++{
++	vma->vm_flags |= VM_DONTEXPAND | VM_DONTDUMP;
++	vma->vm_page_prot = pgprot_noncached(vma->vm_page_prot);
++	return remap_pfn_range(vma, vma->vm_start,
++		substream->dma_buffer.addr >> PAGE_SHIFT,
++		vma->vm_end - vma->vm_start, vma->vm_page_prot);
++}
++
+ static const struct snd_soc_component_driver mmp_sspa_component = {
+ 	.name		= "mmp-sspa",
++	.mmap		= mmp_pcm_mmap,
+ };
+ 
+ static int asoc_mmp_sspa_probe(struct platform_device *pdev)
+@@ -425,10 +471,21 @@ static int asoc_mmp_sspa_probe(struct platform_device *pdev)
+ 	priv->dai_fmt = (unsigned int) -1;
+ 	platform_set_drvdata(pdev, priv);
+ 
++	priv->playback_dma_data.maxburst = 4;
++	priv->capture_dma_data.maxburst = 4;
+ 	/* You know, these addresses are actually ignored. */
+ 	priv->playback_dma_data.addr = SSPA_TXD;
+ 	priv->capture_dma_data.addr = SSPA_RXD;
+ 
++	if (pdev->dev.of_node) {
++		int ret;
++
++		ret = devm_snd_dmaengine_pcm_register(&pdev->dev,
++						      &mmp_pcm_config, 0);
++		if (ret)
++			return ret;
++	}
++
+ 	return devm_snd_soc_register_component(&pdev->dev, &mmp_sspa_component,
+ 					       &mmp_sspa_dai, 1);
+ }
+-- 
+2.26.2
+
