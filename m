@@ -2,117 +2,107 @@ Return-Path: <SRS0=CTAb=6Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AFCC54E8E
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 17:51:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD4A8C54E92
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 18:27:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E85E206DD
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 17:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E9122075E
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 18:27:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589221673;
+	bh=MgVQkYx2uhSi6iJBKNGVrVj2nrRJrnpJs4rdGhxoayY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=I55JFPpvjP2oqYmSGnylh2vgAqsvOHlWwY/jwbcLYDeYjvAvNaeMyxuw9jeWqo/RJ
+	 M+HT6QSEME8Bah7/qtZnXhjRIFsiyyUgV4q07NOeLXZwueSh4Uj6QB6uwXzV68EXjS
+	 JDVaGtciwhwTsmJTYWI4/gXqWOsCvurkrqRHnP2o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbgEKRvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 May 2020 13:51:03 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37485 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbgEKRvC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 13:51:02 -0400
-Received: by mail-ot1-f67.google.com with SMTP id z17so8268432oto.4;
-        Mon, 11 May 2020 10:51:02 -0700 (PDT)
+        id S1731187AbgEKS1k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 May 2020 14:27:40 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:43149 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731176AbgEKS1j (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 14:27:39 -0400
+Received: by mail-oi1-f195.google.com with SMTP id j16so15937987oih.10;
+        Mon, 11 May 2020 11:27:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dv11OYYCqnzc6zMWFHWY2m/yP18XAr5yVlsgzBkGlOM=;
-        b=jeKc0vj/lVHo7vMpdJ786URFlXgonD6KRT0VxE0e+ypxSX/pdXc4RQoPZSkQvzy45T
-         ykL1FQYnG+5RtAQ3anlImX69ymd8G07feSZZ2WNbQWBTSerQ8FkGECoazc7rdaZnjtnD
-         kDi+XP3rjOJX4Wr1p6F4lz4bl7RGkOEpsJVHd3IFmhuDLA9OGIffZbCa2DxUfapQGJTY
-         lwZCcuf8x1LOYiitlW+wixFP7Jtm9yhAuokS9lB2d6HGRQjM+DWhUYfzuwVIuiqnp6dP
-         HKU0pPolwPEXXWybw4zqFWw/6h9IVFrCnUC5mviePs2GvT7QB8QZkwXcmCYOJqqwmjPN
-         nyfg==
-X-Gm-Message-State: AGi0PuadJ+j+DuAzFIfrcTsD84ORj0CcpQTaAWkdKdhonY8UwYGyjvJ/
-        /2GNmegqJ9CoxFhF0L8huLe93D+QJXPCUTMv7rU=
-X-Google-Smtp-Source: APiQypLVjWlhqHxdXs6KSsw3VJLCELYOE+LtyrIZWUD1fQqtgg6kKCl9e9spU9G/3/FvPyZy+0QABE7Z3QIA6tvq7Ps=
-X-Received: by 2002:a9d:63da:: with SMTP id e26mr12743845otl.107.1589219461670;
- Mon, 11 May 2020 10:51:01 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8UqBS1lQR2q+XxDhxu6aNZ/bIhX5PHWACaiv6Dgd2LQ=;
+        b=YbHcgpDdJs5V45uRHYQDmKiW9LuZ5J7XKTLr5zolG5vbG2mWZISHY5pWw19EI8FoSP
+         X4Lj0qzDBC9iUdWNDJFeOkpHI461f8sH/BFvYefyz7xQLIw4czlvWNmVk2gA7/1U12kv
+         6oezpghRUpL/1ANP1hHbO09D8EqJoATZ9JWxZynjELgdg+7IbaEmZLde7bfS4Y8tHpzB
+         j5tW4PZ/kRTYv0trpgddIF90EvCwqGJp08YD4fHtTJD/QkRD63aaxP/NaQMVg22ki/Zi
+         L6mwP74FOcxAp2lM769MC/WWq6E51/f3u+fXXdMXsmCNQFRG8Oz5bTzLqq9SWhB0NQQF
+         qO4Q==
+X-Gm-Message-State: AGi0PubTgzysPV3v8gJN0rTW4BdPaLyKIdo5dMgg8v1+ouZSp6Flpke3
+        i3ryUmxs6B7u28IAwJGnNA==
+X-Google-Smtp-Source: APiQypK6P/hEdy6mo2ATCuUvZ14EVXN/An88waBSg+NBZOfZZiZiojO0qq3eBtkwOGsdP9sQoPEKeg==
+X-Received: by 2002:aca:4ac3:: with SMTP id x186mr11881071oia.81.1589221658261;
+        Mon, 11 May 2020 11:27:38 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v27sm2942183oov.14.2020.05.11.11.27.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 11 May 2020 11:27:37 -0700 (PDT)
+Received: (nullmailer pid 18590 invoked by uid 1000);
+        Mon, 11 May 2020 17:17:43 -0000
+Date:   Mon, 11 May 2020 12:17:43 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] memory: tegra: EMC scaling is not a clock provider
+Message-ID: <20200511171743.GA16850@bogus>
+References: <20200506123236.7463-1-geert+renesas@glider.be>
+ <20200507200718.GD2981633@ulmo>
 MIME-Version: 1.0
-References: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
-In-Reply-To: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 11 May 2020 19:50:40 +0200
-Message-ID: <CAMuHMdUTgrWZcEO6msW13hW=UzbkQZcGY5b0d9uhWyJN_K3yDQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] clk: renesas: cpg-mssr: add never-disable option
-To:     Ulrich Hecht <uli+renesas@fpond.eu>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200507200718.GD2981633@ulmo>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CC clk
+On Thu, May 07, 2020 at 10:07:18PM +0200, Thierry Reding wrote:
+> On Wed, May 06, 2020 at 02:32:34PM +0200, Geert Uytterhoeven wrote:
+> > 	Hi all,
+> > 
+> > The Tegra EMC scaling support code is not a clock provider, but merely a
+> > clock consumer, and thus does not need to include
+> > <linux/clk-provider.h>.
+> > 
+> > However, drivers/memory/tegra/tegra210-emc-table.c relies on
+> > tegra210-emc.h to include <linux/of.h> through <linux/clk-provider.h>.
+> > Hence the first patch makes <linux/of_reserved_mem.h> self-contained
+> > first.
+> > 
+> > Thanks for your comments!
+> > 
+> > Geert Uytterhoeven (2):
+> >   of: Make <linux/of_reserved_mem.h> self-contained
+> >   memory: tegra: Drop <linux/clk-provider.h>
+> > 
+> >  drivers/memory/tegra/tegra210-emc-core.c | 1 -
+> >  drivers/memory/tegra/tegra210-emc.h      | 1 -
+> >  include/linux/of_reserved_mem.h          | 1 +
+> >  3 files changed, 1 insertion(+), 2 deletions(-)
+> 
+> Ah... I should've read the cover letter first. Looks like I need to take
+> that first patch through the Tegra tree as well to avoid introducing the
+> build error in the second patch.
+> 
+> Rob, do you mind if I pick up patch 1 of this into the same OF branch
+> that I already carry the memory-region-names patches on?
 
-Complete series at
-http://lore.kernel.org/r/1589214838-18075-1-git-send-email-uli+renesas@fpond.eu
+No, it's fine.
 
-On Mon, May 11, 2020 at 6:34 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> This revision should work more reliably as it keeps the never-disable
-> handling in the clock driver instead of relying on the semantics of
-> CLK_IGNORE_UNUSED, which still allows clocks to be turned off for power
-> management.
->
-> This series adds the option for declaring clocks as "never-disable", i.e.
-> clocks that will not be turned on if not used, but also not turned off if
-> unused. It also enables this option for the RWDT clocks in (almost) all
-> SoCs.
->
-> The point of this is to allow a WDT that has been enabled by the bootloader
-> to survive these events:
->
-> - deferred probing of the WDT device, which can lead the clock driver
->   to disable the WDT clock until the WDT is re-probed, giving it a
->   blind spot
-> - probe failure in the WDT driver
->
-> There are a number of Gen2 and RZ/G1 SoCs that have the RWDT clock declared
-> as critical in order to allow SMP bringup code to work. These have been
-> left as they are.
->
-> CU
-> Uli
->
->
-> Changes since v2:
-> - use the term "never-disable" instead of "ignore-unused"
-> - do the handling internally instead of relying on the behavior of
->   CLK_IGNORE_UNUSED
->
-> Changes since v1:
-> - rename data structures for clarity
-> - squash SoC-specific patches into one per family
->
->
-> Ulrich Hecht (3):
->   clk: renesas: cpg-mssr: add support for never-disable clocks
->   clk: renesas: rcar-gen3: mark RWDT clocks as never-disable
->   clk: renesas: rzg2: mark RWDT clock as never-disable
->
->  drivers/clk/renesas/r8a774a1-cpg-mssr.c |  5 +++++
->  drivers/clk/renesas/r8a774b1-cpg-mssr.c |  5 +++++
->  drivers/clk/renesas/r8a774c0-cpg-mssr.c |  5 +++++
->  drivers/clk/renesas/r8a7795-cpg-mssr.c  |  6 +++++-
->  drivers/clk/renesas/r8a7796-cpg-mssr.c  |  6 +++++-
->  drivers/clk/renesas/r8a77965-cpg-mssr.c |  5 +++++
->  drivers/clk/renesas/r8a77970-cpg-mssr.c |  6 +++++-
->  drivers/clk/renesas/r8a77980-cpg-mssr.c |  6 +++++-
->  drivers/clk/renesas/r8a77990-cpg-mssr.c |  5 +++++
->  drivers/clk/renesas/r8a77995-cpg-mssr.c |  6 +++++-
->  drivers/clk/renesas/renesas-cpg-mssr.c  | 10 ++++++++++
->  drivers/clk/renesas/renesas-cpg-mssr.h  |  9 +++++++++
->  12 files changed, 69 insertions(+), 5 deletions(-)
+Acked-by: Rob Herring <robh@kernel.org>
