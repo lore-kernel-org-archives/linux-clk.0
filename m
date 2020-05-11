@@ -2,116 +2,117 @@ Return-Path: <SRS0=CTAb=6Z=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBF1C47255
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 09:28:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AFCC54E8E
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 17:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBA1A206F5
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 09:28:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pBaG7fHp"
+	by mail.kernel.org (Postfix) with ESMTP id 3E85E206DD
+	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 17:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726071AbgEKJ2t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 May 2020 05:28:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48996 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725790AbgEKJ2t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 05:28:49 -0400
-Received: from mail-wm1-x336.google.com (mail-wm1-x336.google.com [IPv6:2a00:1450:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D45E7C061A0C
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2020 02:28:48 -0700 (PDT)
-Received: by mail-wm1-x336.google.com with SMTP id g14so6361617wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 11 May 2020 02:28:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=user-agent:from:to:cc:subject:date:message-id:mime-version;
-        bh=Mh8BUB33BkRpM8aRwNinU38S2vUC6fEvoov1NKAowG0=;
-        b=pBaG7fHpfSyn91qMTy91WjirPbPNwfVY7UW/JkojDMasPZx6lER9z3xS9q+97dUJn4
-         Hiq1pnaisrwwq/nCdHLAV2r+67h4Dfhu0WIF+AUh1jrxG0VuvGhkLC1OIwE54J3d/W5h
-         O+SG4LTHlZnkd+hR3f1DhxDwp0mVmuNjeK0JRv4A7taIUJUtgZ7XcRNBCayhX89WmzoV
-         rMQCdGRgwLUqAK8mz34ilZzahJcHHj5KGY2kNpzS/eIP2UsulAe6LNi7JvP8XrM/y1XO
-         As56NoE7r1gaV18Q+NX0jl/GEqN+pFPanX6a10CldokF1P5AzJK9HsNW0U2L4udCGPJu
-         GEhw==
+        id S1728711AbgEKRvD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 May 2020 13:51:03 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37485 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbgEKRvC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 13:51:02 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z17so8268432oto.4;
+        Mon, 11 May 2020 10:51:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:user-agent:from:to:cc:subject:date:message-id
-         :mime-version;
-        bh=Mh8BUB33BkRpM8aRwNinU38S2vUC6fEvoov1NKAowG0=;
-        b=VnIW/c3UK8/WRgRKwp6RJHnxvx79q7iFh7d8Tl6lqbqE4Y/3+xeMvVt6rAb9Eo+tly
-         QtjG/8a00jDNadTezf2C/N6phYvxWzE3OW7zYahOTqDq/wwt6pW+hBVM2xOLc7vUxnrL
-         Gup5TXTg83QUWhZOpQrObzWx7EV/Zwcrx1ZNvIdWCaoow5yG0w05k+qVwnCqgiX3FK/k
-         +voEBWxJs+fhU0+suliM2VE+n1/FHw8XZcrUUp8FfN3BkIMtVcIDHK/ln5RS5btuDzrr
-         0MA6lSj6NxmbhiaO1YraQMB1wgQU3bBbfNABq8oS4nFhdWP7SMCBiKvUTeipIwW7ahu3
-         1D5w==
-X-Gm-Message-State: AGi0PuaYQKukJ3GDZ/jLo3eTfy7NKMam9VQ10qyOOYP7dtM/JlE1pDxD
-        aq8J4LJS2I5fjQRG/MIaiZz5yw==
-X-Google-Smtp-Source: APiQypKERVZrItZkKv3SFAqMxzeC3pVuCzo0/ct6fZp7Ucz/892XCm/L0uc0xYtYm6t2UV3w6TMK6g==
-X-Received: by 2002:a7b:c459:: with SMTP id l25mr29862222wmi.52.1589189327567;
-        Mon, 11 May 2020 02:28:47 -0700 (PDT)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id f26sm25790278wmj.11.2020.05.11.02.28.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 02:28:47 -0700 (PDT)
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [GIT PULL] clk: meson: updates for v5.8
-Date:   Mon, 11 May 2020 11:28:45 +0200
-Message-ID: <1j3686g6r6.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dv11OYYCqnzc6zMWFHWY2m/yP18XAr5yVlsgzBkGlOM=;
+        b=jeKc0vj/lVHo7vMpdJ786URFlXgonD6KRT0VxE0e+ypxSX/pdXc4RQoPZSkQvzy45T
+         ykL1FQYnG+5RtAQ3anlImX69ymd8G07feSZZ2WNbQWBTSerQ8FkGECoazc7rdaZnjtnD
+         kDi+XP3rjOJX4Wr1p6F4lz4bl7RGkOEpsJVHd3IFmhuDLA9OGIffZbCa2DxUfapQGJTY
+         lwZCcuf8x1LOYiitlW+wixFP7Jtm9yhAuokS9lB2d6HGRQjM+DWhUYfzuwVIuiqnp6dP
+         HKU0pPolwPEXXWybw4zqFWw/6h9IVFrCnUC5mviePs2GvT7QB8QZkwXcmCYOJqqwmjPN
+         nyfg==
+X-Gm-Message-State: AGi0PuadJ+j+DuAzFIfrcTsD84ORj0CcpQTaAWkdKdhonY8UwYGyjvJ/
+        /2GNmegqJ9CoxFhF0L8huLe93D+QJXPCUTMv7rU=
+X-Google-Smtp-Source: APiQypLVjWlhqHxdXs6KSsw3VJLCELYOE+LtyrIZWUD1fQqtgg6kKCl9e9spU9G/3/FvPyZy+0QABE7Z3QIA6tvq7Ps=
+X-Received: by 2002:a9d:63da:: with SMTP id e26mr12743845otl.107.1589219461670;
+ Mon, 11 May 2020 10:51:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
+In-Reply-To: <1589214838-18075-1-git-send-email-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 11 May 2020 19:50:40 +0200
+Message-ID: <CAMuHMdUTgrWZcEO6msW13hW=UzbkQZcGY5b0d9uhWyJN_K3yDQ@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] clk: renesas: cpg-mssr: add never-disable option
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+CC clk
 
-Here are the amlogic clock updates for v5.8.
-Nothing fancy, please pull.
+Complete series at
+http://lore.kernel.org/r/1589214838-18075-1-git-send-email-uli+renesas@fpond.eu
 
-Cheers
-
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
-
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.8-1
-
-for you to fetch changes up to a29ae8600d50ece1856b062a39ed296b8b952259:
-
-  clk: meson: meson8b: Don't rely on u-boot to init all GP_PLL registers (2020-05-02 01:53:32 +0200)
-
-----------------------------------------------------------------
-Amlogic clock updates for v5.8:
-
-* Meson8b: Updates and fixup HDMI and video clocks
-* Meson8b: Fixup reset polarity
-* Meson gx and g12: fix GPU glitch free mux switch
-
-----------------------------------------------------------------
-Martin Blumenstingl (9):
-      clk: meson8b: export the HDMI system clock
-      clk: meson: meson8b: make the hdmi_sys clock tree mutable
-      clk: meson: gxbb: Prepare the GPU clock tree to change at runtime
-      clk: meson: g12a: Prepare the GPU clock tree to change at runtime
-      clk: meson: meson8b: Fix the first parent of vid_pll_in_sel
-      clk: meson: meson8b: Fix the polarity of the RESET_N lines
-      clk: meson: meson8b: Fix the vclk_div{1, 2, 4, 6, 12}_en gate bits
-      clk: meson: meson8b: Make the CCF use the glitch-free VPU mux
-      clk: meson: meson8b: Don't rely on u-boot to init all GP_PLL registers
-
- drivers/clk/meson/g12a.c                 |  30 +++++---
- drivers/clk/meson/gxbb.c                 |  40 ++++++-----
- drivers/clk/meson/meson8b.c              | 120 ++++++++++++++++++++++---------
- drivers/clk/meson/meson8b.h              |   5 +-
- include/dt-bindings/clock/meson8b-clkc.h |   1 +
- 5 files changed, 134 insertions(+), 62 deletions(-)
+On Mon, May 11, 2020 at 6:34 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> This revision should work more reliably as it keeps the never-disable
+> handling in the clock driver instead of relying on the semantics of
+> CLK_IGNORE_UNUSED, which still allows clocks to be turned off for power
+> management.
+>
+> This series adds the option for declaring clocks as "never-disable", i.e.
+> clocks that will not be turned on if not used, but also not turned off if
+> unused. It also enables this option for the RWDT clocks in (almost) all
+> SoCs.
+>
+> The point of this is to allow a WDT that has been enabled by the bootloader
+> to survive these events:
+>
+> - deferred probing of the WDT device, which can lead the clock driver
+>   to disable the WDT clock until the WDT is re-probed, giving it a
+>   blind spot
+> - probe failure in the WDT driver
+>
+> There are a number of Gen2 and RZ/G1 SoCs that have the RWDT clock declared
+> as critical in order to allow SMP bringup code to work. These have been
+> left as they are.
+>
+> CU
+> Uli
+>
+>
+> Changes since v2:
+> - use the term "never-disable" instead of "ignore-unused"
+> - do the handling internally instead of relying on the behavior of
+>   CLK_IGNORE_UNUSED
+>
+> Changes since v1:
+> - rename data structures for clarity
+> - squash SoC-specific patches into one per family
+>
+>
+> Ulrich Hecht (3):
+>   clk: renesas: cpg-mssr: add support for never-disable clocks
+>   clk: renesas: rcar-gen3: mark RWDT clocks as never-disable
+>   clk: renesas: rzg2: mark RWDT clock as never-disable
+>
+>  drivers/clk/renesas/r8a774a1-cpg-mssr.c |  5 +++++
+>  drivers/clk/renesas/r8a774b1-cpg-mssr.c |  5 +++++
+>  drivers/clk/renesas/r8a774c0-cpg-mssr.c |  5 +++++
+>  drivers/clk/renesas/r8a7795-cpg-mssr.c  |  6 +++++-
+>  drivers/clk/renesas/r8a7796-cpg-mssr.c  |  6 +++++-
+>  drivers/clk/renesas/r8a77965-cpg-mssr.c |  5 +++++
+>  drivers/clk/renesas/r8a77970-cpg-mssr.c |  6 +++++-
+>  drivers/clk/renesas/r8a77980-cpg-mssr.c |  6 +++++-
+>  drivers/clk/renesas/r8a77990-cpg-mssr.c |  5 +++++
+>  drivers/clk/renesas/r8a77995-cpg-mssr.c |  6 +++++-
+>  drivers/clk/renesas/renesas-cpg-mssr.c  | 10 ++++++++++
+>  drivers/clk/renesas/renesas-cpg-mssr.h  |  9 +++++++++
+>  12 files changed, 69 insertions(+), 5 deletions(-)
