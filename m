@@ -2,86 +2,67 @@ Return-Path: <SRS0=sCEi=62=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F64C2D0F7
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 21:05:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C3EC2D0FC
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 21:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 42B2820740
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 21:05:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6465520659
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 21:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589317500;
-	bh=9WD2TT79a+5LIszdf+w2C5Z81ZgVMTXPGIIWYpH5N9w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hB+nIPaM8mSvuwu5LdRBYw6ToKQWI0rsEtgHbCS7Oy8R8raRJ+fObQ9i22BRlyBy3
-	 kMEmCL+KNbmQVzEsMLehtnFIHR2WPNvjHlKtbY21nPTOizBObU9JmO6ZtQM5ZjhH+3
-	 QDe+h+oy5ILT0S2BlG8EW6BXavelZASxScIdh69E=
+	s=default; t=1589318019;
+	bh=ah3PdDBco+3zTv9xUB/UM1YD/Pr1jnR3JXdj8wparF0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=XrVLRsniJBCHLmsV2Nj09pVYCC3WRtj+L7TEULXnY5tukmMBHCXlt64c6/MqoyN4P
+	 HlPKO77obCtT4OHf/fd66ly/cGw5gh2CpoJ/rmwwM8NDt/aYDbXCE3wwoercB9mdhA
+	 2ML8jlk4+xsmpgC2WAv2Y0bgScken/eEflaLEt/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbgELVE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 17:04:56 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:35532 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725938AbgELVE4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 May 2020 17:04:56 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k110so11719629otc.2;
-        Tue, 12 May 2020 14:04:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=jDEABMbUCOrmyaLLdMYoJYNT1l5JID3d7JkoMsunLvI=;
-        b=F7eh0jn6f2PaOomAOHWGp4X378pT4fejVDE2mJ/x4Mkb4U8oOhl/0ssXlV42mvp9xq
-         /pRDbHMGCqgofGFzWAn0bHRkaQVHyKKgp5snjDaK2wWrEQTreDrd+dID0IdhR4zEYr/H
-         pUFSqNpZg0Rnl+Lug8SNQmm1h22y6nTC1lFLp3GBev68RMaKQ3q0AifSNYXK4mufz4nJ
-         9ZHsfk3uZe20UhS/zXhdwpQLE4Bd0bX3LZsLqyTve9tYB83jy7LrHyiphfQYvThF9XdE
-         s6EbMYJoRPPwIcD4tFQO12OU6z9MmJ6KeBlwBcCAjEQgVfRJ03Bzo8ErnqQyXs6BmlAq
-         ywNw==
-X-Gm-Message-State: AGi0PuY70Ry5tajtUIddW73xZLWhsFsWFsYwsug8+ndX8w+Ke0ZeWBY0
-        ri7dES38XXsBzuA/0c5v9g==
-X-Google-Smtp-Source: APiQypKftJxqUm21+bNVWckPQB2WL9oBxBSfPqK6hJlCXeBF0AcfmKp+aWWi/4AXegtFnvIZ8YVckw==
-X-Received: by 2002:a9d:6295:: with SMTP id x21mr18022599otk.291.1589317493971;
-        Tue, 12 May 2020 14:04:53 -0700 (PDT)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m11sm3692657otr.79.2020.05.12.14.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 May 2020 14:04:53 -0700 (PDT)
-Received: (nullmailer pid 26353 invoked by uid 1000);
-        Tue, 12 May 2020 21:04:52 -0000
-Date:   Tue, 12 May 2020 16:04:52 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     Vincent Knecht <vincent.knecht@mailoo.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: rpmcc: Document MSM8936
- compatible
-Message-ID: <20200512210452.GA26278@bogus>
-References: <20200501223232.275800-1-konradybcio@gmail.com>
- <20200501223232.275800-3-konradybcio@gmail.com>
+        id S1731320AbgELVNf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 17:13:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731269AbgELVNf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 May 2020 17:13:35 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9F43420659;
+        Tue, 12 May 2020 21:13:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589318014;
+        bh=ah3PdDBco+3zTv9xUB/UM1YD/Pr1jnR3JXdj8wparF0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=iV/KGfOY59MtJj5Ob3NsTxLpiOWQjsg1mRmMs2yjp7xAu48kFEvOkBgtLLq7hSHq0
+         ms8bGIOtRVZoFPR+UVgpkf9MoTden6TFNlXTQo04J2nI+lGMHB6FGKpTv2Mg/WiMYY
+         VIqdFaiPhP9v0UXQ4tcEnPmrINoQMcwY1c6ppnuw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200501223232.275800-3-konradybcio@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200506120304.31550-1-geert+renesas@glider.be>
+References: <20200506120304.31550-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] media: i2c: imx219: Drop <linux/clk-provider.h> and <linux/clkdev.h>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-media@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Date:   Tue, 12 May 2020 14:13:33 -0700
+Message-ID: <158931801390.215346.6065473068389157307@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat,  2 May 2020 00:32:30 +0200, Konrad Dybcio wrote:
-> From: Vincent Knecht <vincent.knecht@mailoo.org>
-> 
-> Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
+Quoting Geert Uytterhoeven (2020-05-06 05:03:04)
+> The IMX219 camera driver is not a clock provider, but merely a clock
+> consumer, and thus does not need to include <linux/clk-provider.h> and
+> <linux/clkdev.h>.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
->  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
