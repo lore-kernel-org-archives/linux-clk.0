@@ -2,91 +2,99 @@ Return-Path: <SRS0=sCEi=62=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624B5C54E8E
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 12:45:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D3AC54E4A
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 13:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 35E4F206F5
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 12:45:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9972C206CC
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 13:58:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589287528;
-	bh=B8EsQkIZ4mWzMFetp7c3r9TqEBFzsY2l1zuTizTYPB4=;
+	s=default; t=1589291890;
+	bh=Gydc74HwInmPnu49WDK1F7TD00UY8LxN2CDeqsTFXKE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qhQ2WngAgV63tlmholnxQggIduKArgNnGqdvqnSVAE9u+pUjt+3MwYIGrfY3eDwNo
-	 aYSrI51DHJ4TIQBHusM5+8DlkJ5a5jwuTHaCs7J7kynIT8QIPCaI/hSAJC++jgYsc0
-	 vcztUSirScif9jdaBT5HyGClZlVsPxiJeSf11BUk=
+	b=su1i6rlMDkcPj3oIZOL/3eNyF+F2gGKwxcoZRCnFm0cl0m7j6FIqmU2zvGZWAdPjG
+	 qweV5XSvvCWco2/0FoRi05Ntuy0Vwgv0O/xFq8fkDubAqvAXt594XMpAhL9RUkAg4j
+	 o3SutvRfRMP+/H7NrrfidUD1H1/AxDyiJjJr96J4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729524AbgELMpX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 08:45:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53848 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727783AbgELMpX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 08:45:23 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE13A20674;
-        Tue, 12 May 2020 12:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589287523;
-        bh=B8EsQkIZ4mWzMFetp7c3r9TqEBFzsY2l1zuTizTYPB4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Mez8boHcMnR+mev15Qse9ch6E4/Ezv+JCkJDwFG9E8tW1tilmUDFKHY1Ah04d6BaH
-         Aig7VFji0wMpoH0NpnAqDOuDS+tTWi+z3cieLPwzSxsc04qLUd8ixLtn+9mb0jgCzN
-         BryR2K1An27QybVGN8qEiBY50g9twxf+3cLm4pH0=
-Date:   Tue, 12 May 2020 13:45:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 07/11] ASoC: mmp-sspa: Prepare/unprepare the clocks
-Message-ID: <20200512124520.GH5110@sirena.org.uk>
-References: <20200511210134.1224532-1-lkundrak@v3.sk>
- <20200511210134.1224532-8-lkundrak@v3.sk>
+        id S1728085AbgELN6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 09:58:10 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34298 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727859AbgELN6K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 May 2020 09:58:10 -0400
+Received: by mail-oi1-f194.google.com with SMTP id c12so17272249oic.1;
+        Tue, 12 May 2020 06:58:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CZM7qY/VR2Qz31TeWcm/jF7dQ7HT5V2CZiGyP+g6mHI=;
+        b=YTL7/SRbdD5qU592/VwWfQZsKh+QA3LQx0FEGja1jMCV2Oe8Zl+UEXI6IBIhdNU4Ae
+         Y/dIshK0U1/SExFRrY8kyB8FNHCYaZ4Jk5HNBvPi49/hOSTtfelF1fdPaFGoYWT0U6dG
+         52kOG2xaxVtLCeV5NlsPzGY8uj8lpGRgIh9494uWM0ZtBg7YZyM7Aim7rgHd/9pbpYgo
+         RRtwk11TQTCU60l42Qy1USp7Aak6tOhIcHWMdsPri6GByzeHHnsfk7NkUyzGKuodbY3u
+         HXXd2vZF0O5NwiDFHOi3W8tIMgtJugppPTxmW5b2Ee3pejeR9HNavl75hn+OqCpkLxnG
+         6xJQ==
+X-Gm-Message-State: AGi0PubZycblm+h5nHPNZM/he2MFOPK5oJwyNmUcg6xl07JZQswmbyfD
+        ZXCDtr+yVRNws+TS/T0mvg==
+X-Google-Smtp-Source: APiQypIwmkbnX5Sb2oV1hGg6uEJnYAI3+wIEqPQG7uo2hEE2JbCsnecwxKCCPVRQz2cG8d7amOSAvw==
+X-Received: by 2002:aca:4386:: with SMTP id q128mr22953082oia.150.1589291888011;
+        Tue, 12 May 2020 06:58:08 -0700 (PDT)
+Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u197sm5325693oie.7.2020.05.12.06.58.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 06:58:06 -0700 (PDT)
+Received: (nullmailer pid 2669 invoked by uid 1000);
+        Tue, 12 May 2020 13:58:05 -0000
+Date:   Tue, 12 May 2020 08:58:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc:     linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
+        vincent.knecht@mailoo.org, devicetree@vger.kernel.org,
+        shawn.guo@linaro.org, robh+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, konradybcio@gmail.com,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        linux-kernel@vger.kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org
+Subject: Re: [PATCH v4 1/2] clk: qcom: Add DT bindings for MSM8939 GCC
+Message-ID: <20200512135805.GA2022@bogus>
+References: <20200512115023.2856617-1-bryan.odonoghue@linaro.org>
+ <20200512115023.2856617-2-bryan.odonoghue@linaro.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="smOfPzt+Qjm5bNGJ"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200511210134.1224532-8-lkundrak@v3.sk>
-X-Cookie: The only perfect science is hind-sight.
+In-Reply-To: <20200512115023.2856617-2-bryan.odonoghue@linaro.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, 12 May 2020 12:50:22 +0100, Bryan O'Donoghue wrote:
+> Add compatible strings and the include files for the MSM8939 GCC.
+> 
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Tested-by: Vincent Knecht <vincent.knecht@mailoo.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   |   3 +
+>  include/dt-bindings/clock/qcom,gcc-msm8939.h  | 206 ++++++++++++++++++
+>  include/dt-bindings/reset/qcom,gcc-msm8939.h  | 110 ++++++++++
+>  3 files changed, 319 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8939.h
+>  create mode 100644 include/dt-bindings/reset/qcom,gcc-msm8939.h
+> 
 
---smOfPzt+Qjm5bNGJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, May 11, 2020 at 11:01:30PM +0200, Lubomir Rintel wrote:
-> The driver enables the clocks without preparing them and disables
-> without unpreparing afterwards. Fix that.
-
-This fix should've been earlier in the series so it could be sent as a
-fix.
-
---smOfPzt+Qjm5bNGJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl66ml8ACgkQJNaLcl1U
-h9CzLgf+Jh8LwbiE+tnUKFZaCx9Xvm8TpBqizolD7ds1chpXzCKwvsCD05D6xK1c
-+pHm2YbWUn9S8j1WfrsfjyVqFVs04kBNbEl4gN4zNhNfT+t8bZ96c8MJLaJDBNO8
-8rjXWZwanFpNCHI3PMqZ9mtMMZciEnKCzvxOfh0Cf//nPoExjVNYu6RkdRlxhOYB
-gxWXMJhfDryXdkfiCpigwLeePjFdME9Pwfdt+i02oKnLZKGZJXJyEmzHxdWa66Wp
-7XMKQYf81z5vDKteF4X4osscnFuMDKtcbW/Jmy6PRYz00zsJF6pnrfe47bRxOSmy
-i75Py2lUbkbyLBjn/oBevQ1588aDlw==
-=3JaX
------END PGP SIGNATURE-----
-
---smOfPzt+Qjm5bNGJ--
+Reviewed-by: Rob Herring <robh@kernel.org>
