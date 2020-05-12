@@ -2,99 +2,113 @@ Return-Path: <SRS0=sCEi=62=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5F0C2D0F6
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 16:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABBCCA90AF
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 621BD20714
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 16:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8CF120752
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589301915;
-	bh=KsnJ3Mt/qpKQdSl9UrFC2Z9oOS5Kx1O1ey9XFH0Yt2s=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=flQG06v1DOoFDlvsuzFZDhJJgsjYe4dhWpsT2VI4SpoiPKscl7zmJelN38xasdfCT
-	 5EeEMfn8oVY5tKrLNRaQfXyQza2fz539sK0yZozHKR1M1+u6eNLKuf7phj0VPK70LT
-	 JTtUqRRiVK7N8QgMcOrwIWW1RBfg+5uS7DC2wy8g=
+	s=default; t=1589307421;
+	bh=7ledyV1OhRiHzkxJNPm3VGiig2l4t0br/rnLqqrD5+A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=v60e6OcxN3Bsi+V0GxQeYmsTQTyogYAEoPzFDtGMXX03ifHobrQkDVNilk1zQIKZS
+	 2q1DOao+/f0cBvNUjb2N5kV/pvihSLcvCy8ULrZKOJxQfMuNx4wABMoeKOCb3QoG0q
+	 VSFT1DGGr8I6kkRL5kb+06WYQS5qWSTrmJJCrWY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbgELQpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 12:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42074 "EHLO mail.kernel.org"
+        id S1729194AbgELSRB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 14:17:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57256 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbgELQpL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 12:45:11 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728309AbgELSRB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 May 2020 14:17:01 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 859AB20722;
-        Tue, 12 May 2020 16:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39D7F20722;
+        Tue, 12 May 2020 18:17:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589301911;
-        bh=KsnJ3Mt/qpKQdSl9UrFC2Z9oOS5Kx1O1ey9XFH0Yt2s=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=wrrkXcg8AntdueHPHgaqaJX9X8VI/WJcE6yb3/5lv7XacccuPPg7ewN14DB/X2wJa
-         BcEIXHmrAqtqFCnnZtftHkvQp1Wa4xLRtoCfmKUEcJ/xAz5/Keydl0YQ/clhhEIt8e
-         kONBjkTtjFWFsv+FFvpZFDWMhs4jeRqS+eMT68A4=
-Date:   Tue, 12 May 2020 17:45:08 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-clk@vger.kernel.org
-In-Reply-To: <20200511210134.1224532-2-lkundrak@v3.sk>
-References: <20200511210134.1224532-1-lkundrak@v3.sk> <20200511210134.1224532-2-lkundrak@v3.sk>
-Subject: Re: [PATCH 01/11] ASoC: mmp-sspa: Flip SNDRV_PCM_FMTBIT_S24_3LE on
-Message-Id: <158930188456.55827.7679180677411632006.b4-ty@kernel.org>
+        s=default; t=1589307420;
+        bh=7ledyV1OhRiHzkxJNPm3VGiig2l4t0br/rnLqqrD5+A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=F+RZzyXLjNRlziMmo/iZs9UXM0x/mC9pCgdz011XA84ABn48B5pKp9ssAWQP3ExkV
+         24np6yhYeB4o1Lpy0mKyndzq71g1b6ZR20bSFG9V6MF8Yj9qRCDISfoZinKqunoxAo
+         JCpwCB7KAUCbgJrLti02GPYX21P3O0qj/GHyC3bI=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com
+Subject: [RESEND PATCHv7 2/5] clk: socfpga: remove clk_ops enable/disable methods
+Date:   Tue, 12 May 2020 13:16:44 -0500
+Message-Id: <20200512181647.5071-2-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200512181647.5071-1-dinguyen@kernel.org>
+References: <20200512181647.5071-1-dinguyen@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 11 May 2020 23:01:24 +0200, Lubomir Rintel wrote:
-> The hw_params() callback handles the 3-byte format, not
-> SNDRV_PCM_FMTBIT_S24_LE.
+The enable/disable clock ops are already defined in the standard clock
+ops, so we don't need to assign them.
 
-Applied to
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+v7: no changes
+v6: no changes
+v5: no changes
+v4: no changes
+v3: no changes
+v2: created
+---
+ drivers/clk/socfpga/clk-pll-a10.c | 2 --
+ drivers/clk/socfpga/clk-pll-s10.c | 2 --
+ drivers/clk/socfpga/clk-pll.c     | 2 --
+ 3 files changed, 6 deletions(-)
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.8
+diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
+index 3816fc04b274..6d9395106c0c 100644
+--- a/drivers/clk/socfpga/clk-pll-a10.c
++++ b/drivers/clk/socfpga/clk-pll-a10.c
+@@ -102,8 +102,6 @@ static struct clk * __init __socfpga_pll_init(struct device_node *node,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
+-	clk_pll_ops.enable = clk_gate_ops.enable;
+-	clk_pll_ops.disable = clk_gate_ops.disable;
+ 
+ 	clk = clk_register(NULL, &pll_clk->hw.hw);
+ 	if (WARN_ON(IS_ERR(clk))) {
+diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+index bcd3f14e9145..9faa80ff3b53 100644
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -138,8 +138,6 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
+-	clk_pll_ops.enable = clk_gate_ops.enable;
+-	clk_pll_ops.disable = clk_gate_ops.disable;
+ 
+ 	clk = clk_register(NULL, &pll_clk->hw.hw);
+ 	if (WARN_ON(IS_ERR(clk))) {
+diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
+index dc65cc0fd3bd..a001641b2f42 100644
+--- a/drivers/clk/socfpga/clk-pll.c
++++ b/drivers/clk/socfpga/clk-pll.c
+@@ -105,8 +105,6 @@ static __init struct clk *__socfpga_pll_init(struct device_node *node,
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_EXT_ENA;
+-	clk_pll_ops.enable = clk_gate_ops.enable;
+-	clk_pll_ops.disable = clk_gate_ops.disable;
+ 
+ 	clk = clk_register(NULL, &pll_clk->hw.hw);
+ 	if (WARN_ON(IS_ERR(clk))) {
+-- 
+2.17.1
 
-Thanks!
-
-[1/7] ASoC: mmp-sspa: A trivial typo fix
-      commit: e0b9024d2c8851b18b953823204278602bf73086
-[2/7] ASoC: mmp-sspa: Get rid of dma_params and phys_base
-      commit: c9aeda1c94973f835b3d1b6c785a414caaf935c3
-[3/7] ASoC: mmp-sspa: Add support for soc-generic-dmaengine-pcm
-      commit: 724da05378ba7af6e273451a2c3f565a3315a9db
-[4/7] ASoC: mmp-sspa: Remove the embedded struct ssp_device
-      commit: 3c4e89df3b45348dc0ee01a2ef1be710f7424ff7
-[5/7] ASoC: mmp-sspa: Prepare/unprepare the clocks
-      commit: 8ecdcac8792b6787ecb2341d25cb82165cf0129d
-[6/7] ASoC: mmp-sspa: Add support for the runtime power management
-      commit: 7d98cc648253c362ebfc582b11095a0e3f001896
-[7/7] ASoC: mmp-sspa: Set appropriate bus format for given bit width
-      commit: 39ec7e9b699910792468cf41a179d9930052e8ff
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
