@@ -4,208 +4,371 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75754C2D0F9
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 078B7C2D0F7
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 56AE220722
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7224207DD
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589307433;
-	bh=dh2bwIqO9tL6HWgRewhRRAw68XQ4eezZk/K6blnQPFI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sfu7Ij8kpaKrNZNYH8xqTxxAEx7FGI76vG3kkWsa2d58YqJlVFQ/qUPw/oWepBwx6
-	 5AiqgTKCTGq04Y5AUT4nT7w4/HAnZXcJ4rC8puTKiDRG3VDGPATH/ofYsfg5Qacn+J
-	 hIgzMxIH9MF5EMV52J2xVkmQd+AXLT50YvWR3A4g=
+	s=default; t=1589307438;
+	bh=n//p7+8M3+kBax9IJzQimioQSM7ABpQuynYGbSHrqYs=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Uu7KeJUAySmSzaclXAI8XyANFnZCR4j2/8AzQBf1r6FuwBQayw+xrGr8hw9hAPaP/
+	 VwMBcDUFbRsLvO7rJK2acfMVyd6DzLnb8ogt3UOVF9EotDaRaivc3acCPyrQZJR5x0
+	 mYyoDfdzyjF8quSbkXW2lIcxrPnxKRzCQuRHeLrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbgELSRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 14:17:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57302 "EHLO mail.kernel.org"
+        id S1730707AbgELSRC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 14:17:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728309AbgELSRD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 14:17:03 -0400
+        id S1726890AbgELSRB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 May 2020 14:17:01 -0400
 Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF1C520736;
-        Tue, 12 May 2020 18:17:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B8CB206B8;
+        Tue, 12 May 2020 18:16:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589307422;
-        bh=dh2bwIqO9tL6HWgRewhRRAw68XQ4eezZk/K6blnQPFI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tz+vajUaLmmgKunr21+3roNUW2ty3lEbCSktq7qR3PzGIyBvk2w9vNCCleF1tNnZ/
-         ff1JJLNLv23enc3rXPgkO3g8PApa15FJ1au+4bL9KOA3g6hJMa+Y0GWy+bM1X06st0
-         bALdfmm8ICv+tEQJkLTxzVwRjPH8EU+rB18DJ3us=
+        s=default; t=1589307420;
+        bh=n//p7+8M3+kBax9IJzQimioQSM7ABpQuynYGbSHrqYs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YKACo0Sa5+3VQjC9NkwMERUHPpazmaLpnrFTEuOIBAC1dtMXLgKB1vPC5tVMOUc3k
+         1bTBeDTZt0GN2dlhnJKmLN45iJSmNv7NT+I9HWHMvUiYCQdD5R0pkSlfezGTJraVIL
+         hua+QG4Onl3J9kYe+TD6reJDtXxVHJsqJDqFIck4=
 From:   Dinh Nguyen <dinguyen@kernel.org>
 To:     linux-clk@vger.kernel.org
 Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com
-Subject: [RESEND PATCHv7 4/5] dt-bindings: documentation: add clock bindings information for Agilex
-Date:   Tue, 12 May 2020 13:16:46 -0500
-Message-Id: <20200512181647.5071-4-dinguyen@kernel.org>
+Subject: [RESEND PATCHv7 1/5] clk: socfpga: stratix10: use new parent data scheme
+Date:   Tue, 12 May 2020 13:16:43 -0500
+Message-Id: <20200512181647.5071-1-dinguyen@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200512181647.5071-1-dinguyen@kernel.org>
-References: <20200512181647.5071-1-dinguyen@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the Agilex clock bindings, and add the clock header file. The
-clock header is an enumeration of all the different clocks on the Agilex
-platform.
+Convert, where possible, the stratix10 clock driver to the new parent
+data scheme by specifying the parent data for clocks that have multiple
+parents.
 
 Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
-v7: Fix license to be "(GPL-2.0-only OR BSD-2-Clause)"
-v6: fix build error by adding descriptions for clocks and reg in
-    properties
-v5: update license to GPL-2.0-only
-    Add additionalProperties
-    Add clock input for clkmgr
-v4: really fix build error(comment formatting was wrong)
-v3: address comments from Stephen Boyd
-    fix build error(tab removed in line 37)
-    renamed to intel,agilex.yaml
-v2: convert original document to YAML
+v7: no change
+v6: no change
+v5: no change
+v4: no change
+v3: no change
+v2: add fw_name
 ---
- .../bindings/clock/intel,agilex.yaml          | 46 ++++++++++++
- include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
- 2 files changed, 116 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/intel,agilex.yaml
- create mode 100644 include/dt-bindings/clock/agilex-clock.h
+ drivers/clk/socfpga/clk-gate-s10.c   |   5 +-
+ drivers/clk/socfpga/clk-periph-s10.c |  10 +-
+ drivers/clk/socfpga/clk-pll-s10.c    |   4 +-
+ drivers/clk/socfpga/clk-s10.c        | 160 ++++++++++++++++++++++-----
+ drivers/clk/socfpga/stratix10-clk.h  |   8 +-
+ 5 files changed, 146 insertions(+), 41 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/intel,agilex.yaml b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
-new file mode 100644
-index 000000000000..cf5a9eb803e6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/intel,agilex.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/intel,agilex.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/clk/socfpga/clk-gate-s10.c b/drivers/clk/socfpga/clk-gate-s10.c
+index 8be4722f6064..083b2ec21fdd 100644
+--- a/drivers/clk/socfpga/clk-gate-s10.c
++++ b/drivers/clk/socfpga/clk-gate-s10.c
+@@ -70,7 +70,6 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
+ 	struct clk *clk;
+ 	struct socfpga_gate_clk *socfpga_clk;
+ 	struct clk_init_data init;
+-	const char * const *parent_names = clks->parent_names;
+ 	const char *parent_name = clks->parent_name;
+ 
+ 	socfpga_clk = kzalloc(sizeof(*socfpga_clk), GFP_KERNEL);
+@@ -108,7 +107,9 @@ struct clk *s10_register_gate(const struct stratix10_gate_clock *clks, void __io
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 	socfpga_clk->hw.hw.init = &init;
+ 
+ 	clk = clk_register(NULL, &socfpga_clk->hw.hw);
+diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+index dd6d4056e9de..397b77b89b16 100644
+--- a/drivers/clk/socfpga/clk-periph-s10.c
++++ b/drivers/clk/socfpga/clk-periph-s10.c
+@@ -81,7 +81,6 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -94,7 +93,9 @@ struct clk *s10_register_periph(const struct stratix10_perip_c_clock *clks,
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+@@ -114,7 +115,6 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+ 	const char *parent_name = clks->parent_name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	periph_clk = kzalloc(sizeof(*periph_clk), GFP_KERNEL);
+ 	if (WARN_ON(!periph_clk))
+@@ -137,7 +137,9 @@ struct clk *s10_register_cnt_periph(const struct stratix10_perip_cnt_clock *clks
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names ? parent_names : &parent_name;
++	init.parent_names = parent_name ? &parent_name : NULL;
++	if (init.parent_names == NULL)
++		init.parent_data = clks->parent_data;
+ 
+ 	periph_clk->hw.hw.init = &init;
+ 
+diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
+index a301bb22f36c..bcd3f14e9145 100644
+--- a/drivers/clk/socfpga/clk-pll-s10.c
++++ b/drivers/clk/socfpga/clk-pll-s10.c
+@@ -117,7 +117,6 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 	struct socfpga_pll *pll_clk;
+ 	struct clk_init_data init;
+ 	const char *name = clks->name;
+-	const char * const *parent_names = clks->parent_names;
+ 
+ 	pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+ 	if (WARN_ON(!pll_clk))
+@@ -134,7 +133,8 @@ struct clk *s10_register_pll(const struct stratix10_pll_clock *clks,
+ 	init.flags = clks->flags;
+ 
+ 	init.num_parents = clks->num_parents;
+-	init.parent_names = parent_names;
++	init.parent_names = NULL;
++	init.parent_data = clks->parent_data;
+ 	pll_clk->hw.hw.init = &init;
+ 
+ 	pll_clk->hw.bit_idx = SOCFPGA_PLL_POWER;
+diff --git a/drivers/clk/socfpga/clk-s10.c b/drivers/clk/socfpga/clk-s10.c
+index dea7c6c7d269..c1dfc9b34e4e 100644
+--- a/drivers/clk/socfpga/clk-s10.c
++++ b/drivers/clk/socfpga/clk-s10.c
+@@ -12,35 +12,137 @@
+ 
+ #include "stratix10-clk.h"
+ 
+-static const char * const pll_mux[] = { "osc1", "cb-intosc-hs-div2-clk",
+-					"f2s-free-clk",};
+-static const char * const cntr_mux[] = { "main_pll", "periph_pll",
+-					 "osc1", "cb-intosc-hs-div2-clk",
+-					 "f2s-free-clk"};
+-static const char * const boot_mux[] = { "osc1", "cb-intosc-hs-div2-clk",};
+-
+-static const char * const noc_free_mux[] = {"main_noc_base_clk",
+-					    "peri_noc_base_clk",
+-					    "osc1", "cb-intosc-hs-div2-clk",
+-					    "f2s-free-clk"};
+-
+-static const char * const emaca_free_mux[] = {"peri_emaca_clk", "boot_clk"};
+-static const char * const emacb_free_mux[] = {"peri_emacb_clk", "boot_clk"};
+-static const char * const emac_ptp_free_mux[] = {"peri_emac_ptp_clk", "boot_clk"};
+-static const char * const gpio_db_free_mux[] = {"peri_gpio_db_clk", "boot_clk"};
+-static const char * const sdmmc_free_mux[] = {"main_sdmmc_clk", "boot_clk"};
+-static const char * const s2f_usr1_free_mux[] = {"peri_s2f_usr1_clk", "boot_clk"};
+-static const char * const psi_ref_free_mux[] = {"peri_psi_ref_clk", "boot_clk"};
+-static const char * const mpu_mux[] = { "mpu_free_clk", "boot_clk",};
+-
+-static const char * const s2f_usr0_mux[] = {"f2s-free-clk", "boot_clk"};
+-static const char * const emac_mux[] = {"emaca_free_clk", "emacb_free_clk"};
+-static const char * const noc_mux[] = {"noc_free_clk", "boot_clk"};
+-
+-static const char * const mpu_free_mux[] = {"main_mpu_base_clk",
+-					    "peri_mpu_base_clk",
+-					    "osc1", "cb-intosc-hs-div2-clk",
+-					    "f2s-free-clk"};
++static const struct clk_parent_data pll_mux[] = {
++	{ .fw_name = "osc1",
++	  .name = "osc1" },
++	{ .fw_name = "cb-intosc-hs-div2-clk",
++	  .name = "cb-intosc-hs-div2-clk" },
++	{ .fw_name = "f2s-free-clk",
++	  .name = "f2s-free-clk" },
++};
 +
-+title: Intel SoCFPGA Agilex platform clock controller binding
++static const struct clk_parent_data cntr_mux[] = {
++	{ .fw_name =  "main_pll",
++	  .name = "main_pll", },
++	{ .fw_name = "periph_pll",
++	  .name = "periph_pll", },
++	{ .fw_name = "osc1",
++	  .name = "osc1", },
++	{ .fw_name = "cb-intosc-hs-div2-clk",
++	  .name = "cb-intosc-hs-div2-clk", },
++	{ .fw_name = "f2s-free-clk",
++	  .name = "f2s-free-clk", },
++};
 +
-+maintainers:
-+  - Dinh Nguyen <dinguyen@kernel.org>
++static const struct clk_parent_data boot_mux[] = {
++	{ .fw_name = "osc1",
++	  .name = "osc1" },
++	{ .fw_name = "cb-intosc-hs-div2-clk",
++	  .name = "cb-intosc-hs-div2-clk" },
++};
 +
-+description:
-+  The Intel Agilex Clock controller is an integrated clock controller, which
-+  generates and supplies to all modules.
++static const struct clk_parent_data noc_free_mux[] = {
++	{ .fw_name = "main_noc_base_clk",
++	  .name = "main_noc_base_clk", },
++	{ .fw_name = "peri_noc_base_clk",
++	  .name = "peri_noc_base_clk", },
++	{ .fw_name = "osc1",
++	  .name = "osc1", },
++	{ .fw_name = "cb-intosc-hs-div2-clk",
++	  .name = "cb-intosc-hs-div2-clk", },
++	{ .fw_name = "f2s-free-clk",
++	  .name = "f2s-free-clk", },
++};
 +
-+properties:
-+  compatible:
-+    const: intel,agilex-clkmgr
++static const struct clk_parent_data emaca_free_mux[] = {
++	{ .fw_name = "peri_emaca_clk",
++	  .name = "peri_emaca_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+  '#clock-cells':
-+    const: 1
++static const struct clk_parent_data emacb_free_mux[] = {
++	{ .fw_name = "peri_emacb_clk",
++	  .name = "peri_emacb_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+  reg:
-+    maxItems: 1
++static const struct clk_parent_data emac_ptp_free_mux[] = {
++	{ .fw_name = "peri_emac_ptp_clk",
++	  .name = "peri_emac_ptp_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+  clocks:
-+    maxItems: 1
++static const struct clk_parent_data gpio_db_free_mux[] = {
++	{ .fw_name = "peri_gpio_db_clk",
++	  .name = "peri_gpio_db_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
++static const struct clk_parent_data sdmmc_free_mux[] = {
++	{ .fw_name = "main_sdmmc_clk",
++	  .name = "main_sdmmc_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+additionalProperties: false
++static const struct clk_parent_data s2f_usr1_free_mux[] = {
++	{ .fw_name = "peri_s2f_usr1_clk",
++	  .name = "peri_s2f_usr1_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+examples:
-+  # Clock controller node:
-+  - |
-+    clkmgr: clock-controller@ffd10000 {
-+      compatible = "intel,agilex-clkmgr";
-+      reg = <0xffd10000 0x1000>;
-+      clocks = <&osc1>;
-+      #clock-cells = <1>;
-+    };
-+...
-diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
-new file mode 100644
-index 000000000000..f19cf8ccbdd2
---- /dev/null
-+++ b/include/dt-bindings/clock/agilex-clock.h
-@@ -0,0 +1,70 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2019, Intel Corporation
-+ */
++static const struct clk_parent_data psi_ref_free_mux[] = {
++	{ .fw_name = "peri_psi_ref_clk",
++	  .name = "peri_psi_ref_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+#ifndef __AGILEX_CLOCK_H
-+#define __AGILEX_CLOCK_H
++static const struct clk_parent_data mpu_mux[] = {
++	{ .fw_name = "mpu_free_clk",
++	  .name = "mpu_free_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+/* fixed rate clocks */
-+#define AGILEX_OSC1			0
-+#define AGILEX_CB_INTOSC_HS_DIV2_CLK	1
-+#define AGILEX_CB_INTOSC_LS_CLK		2
-+#define AGILEX_L4_SYS_FREE_CLK		3
-+#define AGILEX_F2S_FREE_CLK		4
++static const struct clk_parent_data s2f_usr0_mux[] = {
++	{ .fw_name = "f2s-free-clk",
++	  .name = "f2s-free-clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+/* PLL clocks */
-+#define AGILEX_MAIN_PLL_CLK		5
-+#define AGILEX_MAIN_PLL_C0_CLK		6
-+#define AGILEX_MAIN_PLL_C1_CLK		7
-+#define AGILEX_MAIN_PLL_C2_CLK		8
-+#define AGILEX_MAIN_PLL_C3_CLK		9
-+#define AGILEX_PERIPH_PLL_CLK		10
-+#define AGILEX_PERIPH_PLL_C0_CLK	11
-+#define AGILEX_PERIPH_PLL_C1_CLK	12
-+#define AGILEX_PERIPH_PLL_C2_CLK	13
-+#define AGILEX_PERIPH_PLL_C3_CLK	14
-+#define AGILEX_MPU_FREE_CLK		15
-+#define AGILEX_MPU_CCU_CLK		16
-+#define AGILEX_BOOT_CLK			17
++static const struct clk_parent_data emac_mux[] = {
++	{ .fw_name = "emaca_free_clk",
++	  .name = "emaca_free_clk", },
++	{ .fw_name = "emacb_free_clk",
++	  .name = "emacb_free_clk", },
++};
 +
-+/* fixed factor clocks */
-+#define AGILEX_L3_MAIN_FREE_CLK		18
-+#define AGILEX_NOC_FREE_CLK		19
-+#define AGILEX_S2F_USR0_CLK		20
-+#define AGILEX_NOC_CLK			21
-+#define AGILEX_EMAC_A_FREE_CLK		22
-+#define AGILEX_EMAC_B_FREE_CLK		23
-+#define AGILEX_EMAC_PTP_FREE_CLK	24
-+#define AGILEX_GPIO_DB_FREE_CLK		25
-+#define AGILEX_SDMMC_FREE_CLK		26
-+#define AGILEX_S2F_USER0_FREE_CLK	27
-+#define AGILEX_S2F_USER1_FREE_CLK	28
-+#define AGILEX_PSI_REF_FREE_CLK		29
++static const struct clk_parent_data noc_mux[] = {
++	{ .fw_name = "noc_free_clk",
++	  .name = "noc_free_clk", },
++	{ .fw_name = "boot_clk",
++	  .name = "boot_clk", },
++};
 +
-+/* Gate clocks */
-+#define AGILEX_MPU_CLK			30
-+#define AGILEX_MPU_L2RAM_CLK		31
-+#define AGILEX_MPU_PERIPH_CLK		32
-+#define AGILEX_L4_MAIN_CLK		33
-+#define AGILEX_L4_MP_CLK		34
-+#define AGILEX_L4_SP_CLK		35
-+#define AGILEX_CS_AT_CLK		36
-+#define AGILEX_CS_TRACE_CLK		37
-+#define AGILEX_CS_PDBG_CLK		38
-+#define AGILEX_CS_TIMER_CLK		39
-+#define AGILEX_S2F_USER0_CLK		40
-+#define AGILEX_EMAC0_CLK		41
-+#define AGILEX_EMAC1_CLK		43
-+#define AGILEX_EMAC2_CLK		44
-+#define AGILEX_EMAC_PTP_CLK		45
-+#define AGILEX_GPIO_DB_CLK		46
-+#define AGILEX_NAND_CLK			47
-+#define AGILEX_PSI_REF_CLK		48
-+#define AGILEX_S2F_USER1_CLK		49
-+#define AGILEX_SDMMC_CLK		50
-+#define AGILEX_SPI_M_CLK		51
-+#define AGILEX_USB_CLK			52
-+#define AGILEX_NUM_CLKS			53
-+
-+#endif	/* __AGILEX_CLOCK_H */
++static const struct clk_parent_data mpu_free_mux[] = {
++	{ .fw_name = "main_mpu_base_clk",
++	  .name = "main_mpu_base_clk", },
++	{ .fw_name = "peri_mpu_base_clk",
++	  .name = "peri_mpu_base_clk", },
++	{ .fw_name = "osc1",
++	  .name = "osc1", },
++	{ .fw_name = "cb-intosc-hs-div2-clk",
++	  .name = "cb-intosc-hs-div2-clk", },
++	{ .fw_name = "f2s-free-clk",
++	  .name = "f2s-free-clk", },
++};
+ 
+ /* clocks in AO (always on) controller */
+ static const struct stratix10_pll_clock s10_pll_clks[] = {
+diff --git a/drivers/clk/socfpga/stratix10-clk.h b/drivers/clk/socfpga/stratix10-clk.h
+index fcabef42249c..ffbd1fb2c8ef 100644
+--- a/drivers/clk/socfpga/stratix10-clk.h
++++ b/drivers/clk/socfpga/stratix10-clk.h
+@@ -14,7 +14,7 @@ struct stratix10_clock_data {
+ struct stratix10_pll_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -24,7 +24,7 @@ struct stratix10_perip_c_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -34,7 +34,7 @@ struct stratix10_perip_cnt_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		offset;
+@@ -47,7 +47,7 @@ struct stratix10_gate_clock {
+ 	unsigned int		id;
+ 	const char		*name;
+ 	const char		*parent_name;
+-	const char		*const *parent_names;
++	const struct clk_parent_data	*parent_data;
+ 	u8			num_parents;
+ 	unsigned long		flags;
+ 	unsigned long		gate_reg;
 -- 
 2.17.1
 
