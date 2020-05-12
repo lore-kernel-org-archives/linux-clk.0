@@ -2,119 +2,160 @@ Return-Path: <SRS0=sCEi=62=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C1DC2D0F8
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809BDC2D0F7
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 19:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F5C5207DD
-	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 18:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589307439;
-	bh=SH4TNKWiiMK8Bi96neyAYYKhQf6TWRQT/RGdYI++BQY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IhkK3HS58WsmM+17D72ahAzN+NI5P2ZZ/ulzJcj0IfWAjrtHXHY/Q0cKD8w59k8BJ
-	 kGaOE+jo6lZLioNHWDE7Us244nkI8BpS+qsLATFrtjYo2BmQa4PRD7Rmc3dM/+Ioqy
-	 JGG+MERIe1JfLZ3qix6aDMmBBej3QluHFV2ikEOo=
+	by mail.kernel.org (Postfix) with ESMTP id 564B520769
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 19:57:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="El/bqf4w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730610AbgELSRC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 14:17:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730200AbgELSRC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 14:17:02 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDC1620733;
-        Tue, 12 May 2020 18:17:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589307421;
-        bh=SH4TNKWiiMK8Bi96neyAYYKhQf6TWRQT/RGdYI++BQY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XRJJ8Qu2KupTZV05XmZVjD5bYb9CxKYGp7LfXo/Pv0DHGMTfj2kBpYx53jp7BiHYQ
-         wd+2Apw3HiN4Yp5uqNoe6HzzHZObBvixMq7ffUB3b8nu+RNewlKrWHwguPC0id9YKQ
-         ipFjN2RlGUJVIbTt1g1q4NjpndzrFlLOI8Y48Ve8=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com
-Subject: [RESEND PATCHv7 3/5] clk: socfpga: add const to _ops data structures
-Date:   Tue, 12 May 2020 13:16:45 -0500
-Message-Id: <20200512181647.5071-3-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200512181647.5071-1-dinguyen@kernel.org>
-References: <20200512181647.5071-1-dinguyen@kernel.org>
+        id S1727825AbgELT5m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 15:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725950AbgELT5m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 May 2020 15:57:42 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BB12C061A0C
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 12:57:42 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id x13so986676pfn.11
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 12:57:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=1psTwvcMYpTlpczp4vTp5xf7H5Bk+BZ23G7yvOHtOms=;
+        b=El/bqf4wDveDEiTDXcScWyBiRrWf6eAeAsz3ooMr11JsFE6beIk89EXPcqbHIcH7F0
+         4tNzcwqc8QmWjPm1A+BqT9XyEKpx81sYFEb/7J8JlcE1iOs21Vb6ZnyWV3wSimw6DPGD
+         n302fYLzBN0oMvb6jFlLMTizkbyEIvVlwfiKbKrthHm5RsZauiF4i5MxNIjGGqu2QA07
+         0TjGDYtgWuOH+pylHcfQrjJGLxVq3i81tsX00lMhd/+3/Da0c5k9OHij/ruxvFraAb1K
+         Waks40En5VF8A9SUKdd764BkePOn20EoCmMprVnlXjeQb1nm/0SiF4DNbzooWUv5IHt/
+         l2sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1psTwvcMYpTlpczp4vTp5xf7H5Bk+BZ23G7yvOHtOms=;
+        b=OVwUrHKqWEE5qne5t9K0ifjBP/Qs+2Vvf0lmRFAkpKRaMqUsKqy7AffoPc34F5U0ou
+         BHLyHRWcCrMr31bhORnFOlGExy/MYbOrmvLFxEszGVQY8E4iDgzV7Pbs7SMg6If0oBYu
+         YzgWDFtnPjKqdhb2ftti+ae//o1Lzn64d5oZTcL1HNoIHB8TLkpRDHED5D9oWCmOFiRA
+         Evobr9AkBBxqRjpBkS8PRze8kD6wN0UELzPw3K0TEDmuZcvLZPFGRiecCZ7xG/VHj61s
+         jhSzEGIqmjN3lWvTd0UJxe+G0qVIitkNTP4kqS+YwzFCW/Y8INyKaLSU+VqOc1CML9BR
+         ZsvQ==
+X-Gm-Message-State: AGi0PuYvGnsk54C+7VwmVPYn60J+lUED433hW4OJc7WSCreiVuLAjTEp
+        Ep6UpLbvjxeEkGerUsMmiFuquQ==
+X-Google-Smtp-Source: APiQypL0VtphI0YrUqP9ATJ5zZvSYtoaqUqrSdwWQ7JLvFmjvSe5bb+FGzlag56wLCaSIPLRqA7QdQ==
+X-Received: by 2002:a63:554c:: with SMTP id f12mr21482392pgm.163.1589313461706;
+        Tue, 12 May 2020 12:57:41 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t7sm3065968pjf.30.2020.05.12.12.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 May 2020 12:57:41 -0700 (PDT)
+Date:   Tue, 12 May 2020 12:56:08 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 2/8] dt-bindings: clock: Add schema for QCOM IPQ apss
+ pll
+Message-ID: <20200512195608.GH2165@builder.lan>
+References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
+ <1588573224-3038-3-git-send-email-sivaprak@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1588573224-3038-3-git-send-email-sivaprak@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-All the static clk_ops data structure need a const.
+On Sun 03 May 23:20 PDT 2020, Sivaprakash Murugesan wrote:
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
-v7: no changes
-v6: no changes
-v5: no changes
-v4: no changes
-v3: no changes
-v2: created
----
- drivers/clk/socfpga/clk-pll-a10.c | 2 +-
- drivers/clk/socfpga/clk-pll-s10.c | 4 ++--
- drivers/clk/socfpga/clk-pll.c     | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+> Add dt-binding for apss pll found on QCOM IPQ platforms
+> 
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 
-diff --git a/drivers/clk/socfpga/clk-pll-a10.c b/drivers/clk/socfpga/clk-pll-a10.c
-index 6d9395106c0c..db54f7d806a0 100644
---- a/drivers/clk/socfpga/clk-pll-a10.c
-+++ b/drivers/clk/socfpga/clk-pll-a10.c
-@@ -58,7 +58,7 @@ static u8 clk_pll_get_parent(struct clk_hw *hwclk)
- 		CLK_MGR_PLL_CLK_SRC_MASK;
- }
- 
--static struct clk_ops clk_pll_ops = {
-+static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
- };
-diff --git a/drivers/clk/socfpga/clk-pll-s10.c b/drivers/clk/socfpga/clk-pll-s10.c
-index 9faa80ff3b53..5c3e1ee44f6b 100644
---- a/drivers/clk/socfpga/clk-pll-s10.c
-+++ b/drivers/clk/socfpga/clk-pll-s10.c
-@@ -98,13 +98,13 @@ static int clk_pll_prepare(struct clk_hw *hwclk)
- 	return 0;
- }
- 
--static struct clk_ops clk_pll_ops = {
-+static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
- 	.prepare = clk_pll_prepare,
- };
- 
--static struct clk_ops clk_boot_ops = {
-+static const struct clk_ops clk_boot_ops = {
- 	.recalc_rate = clk_boot_clk_recalc_rate,
- 	.get_parent = clk_boot_get_parent,
- 	.prepare = clk_pll_prepare,
-diff --git a/drivers/clk/socfpga/clk-pll.c b/drivers/clk/socfpga/clk-pll.c
-index a001641b2f42..e5fb786843f3 100644
---- a/drivers/clk/socfpga/clk-pll.c
-+++ b/drivers/clk/socfpga/clk-pll.c
-@@ -65,7 +65,7 @@ static u8 clk_pll_get_parent(struct clk_hw *hwclk)
- 			CLK_MGR_PLL_CLK_SRC_MASK;
- }
- 
--static struct clk_ops clk_pll_ops = {
-+static const struct clk_ops clk_pll_ops = {
- 	.recalc_rate = clk_pll_recalc_rate,
- 	.get_parent = clk_pll_get_parent,
- };
--- 
-2.17.1
+This seems quite similar to the existing qcom,a53pll binding, can't you
+just describe both in the same binding?
 
+> ---
+>  .../bindings/clock/qcom,ipq-apsspll.yaml           | 49 ++++++++++++++++++++++
+>  1 file changed, 49 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
+> new file mode 100644
+> index 0000000..dd12ec4
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq-apsspll.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,ipq-apsspll.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm IPQ APSS PLL Binding
+> +
+> +maintainers:
+> +  - Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> +
+> +description:
+> +  The APSS PLL is the main clock that feds the CPUs on QCOM IPQ platforms.
+> +  It can support frequencies above 1GHz.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,ipq-apss-pll
+
+Allow me to claim that this is not the last IPQ, with an APSS PLL, which
+means that this compatible is no good.
+
+I think you want a compatible on the format qcom,ipq<numbers>-a53pll.
+
+Regards,
+Bjorn
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 0
+> +
+> +  clocks:
+> +    items:
+> +      - description: board XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    a53pll_ipq: clock@b116000 {
+> +        compatible = "qcom,ipq-apss-pll";
+> +        reg = <0x0b116000 0x40>;
+> +        #clock-cells = <0>;
+> +        clocks = <&xo>;
+> +        clock-names = "xo";
+> +    };
+> -- 
+> 2.7.4
+> 
