@@ -1,282 +1,111 @@
-Return-Path: <SRS0=CTAb=6Z=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=sCEi=62=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 971A7C47255
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 23:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8CAC54E8D
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 01:41:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6524320714
-	for <linux-clk@archiver.kernel.org>; Mon, 11 May 2020 23:05:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8685D20722
+	for <linux-clk@archiver.kernel.org>; Tue, 12 May 2020 01:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589238306;
-	bh=Q/SD88G0n0X4J3gzg6WclhV09rPoSG78QFKmDrkNQ74=;
+	s=default; t=1589247701;
+	bh=h9/ZrKGcx7wVFHsrWJiyY9Z/dMX0iVbJhyGYNpYRtY4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=a4iJ/GrSCHNM5ujYlm7TBZQSPIL3L2dXo30JjJweQzhg2lDm/XPdbwxHhqYgpO8X4
-	 odpfOnI7uxXN/8SnyKRZsB1pF1iAqpz4kFgPXH5e9jDrbG15S+gXzUn6kV1twsZj18
-	 BE8Bs6h+7RgLslfXHvBcmjXF3z3OLveqfc6PJ4c8=
+	b=JFUWuIO9UrzMUxzekcE8F+G3TeC9cODQRc3Hjx7BGj92EFZQzw2Tn2EHdGBqKJB1i
+	 AzegcSrXjtsSBwqu5LpibnE2vhpHNIqFkWmvLEAi0ApxYoW5FLto79KmMvpQUAdNKF
+	 SZvLtgDYpIpWjpFjy37/JcpsVc5/eNQSL49BscIE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbgEKXFG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 11 May 2020 19:05:06 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36865 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbgEKXFF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 19:05:05 -0400
-Received: by mail-ot1-f67.google.com with SMTP id z17so9015789oto.4;
-        Mon, 11 May 2020 16:05:04 -0700 (PDT)
+        id S1726874AbgELBli (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 11 May 2020 21:41:38 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35497 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbgELBli (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 11 May 2020 21:41:38 -0400
+Received: by mail-oi1-f196.google.com with SMTP id o7so16924736oif.2;
+        Mon, 11 May 2020 18:41:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ITRYcPcWlonHrPE5qtDXeTHw7EP1LYK528y4/wZgsuU=;
-        b=tgRdXBYceBiJ0giqzxQmpcxy6WZ94TvS4L7tx09ZwZmKt3g571JVv5IDa3vJyPKnzB
-         Q29G1W6MlSRDhg98inaW6gaPkSz6a89PrzYISoB7dSrLEcEsA7f8xdMGUg3UJMC/05cr
-         UeKYigocv6EMHz4wIA7/7ioex5hg2uYI2PYPKL/iyI5j2yC2ofDD+dOMMg0DYFL9VrnA
-         KbSVFKS43wbIE+lv8Xee7gDIms+GgWhNBAnnxclCwSpTvYo8QLIr4wXIxRvB5rStphwW
-         QeuXfCNbD6YAjkCXLGbIqdbNPjObgnnZ2xkhfOFS6iJ+CLufbQGWnoU8uWOxSvKZqa7g
-         DTMw==
-X-Gm-Message-State: AGi0PuagXhTokooopswu+7LdeFWnxACC9iTkvmYex0mbigtRi8TCQLsJ
-        MpE2Y9bsZDNB6gZI7jEEpQ==
-X-Google-Smtp-Source: APiQypIoY6kUC5CLLTgHsDsYf7d1b4AOMQ8Y25i9EikLDhE7xahbnoqgxdxYueOeAZkbPmnLTpOxvg==
-X-Received: by 2002:a9d:7e7:: with SMTP id 94mr14201369oto.82.1589238304172;
-        Mon, 11 May 2020 16:05:04 -0700 (PDT)
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qc7aeZe8qKrHeqqbdWlSzYUTH7CM0WkR8L80HDu2Jy4=;
+        b=F3tvvfc5oHR3pf9tKZh1o2xmhx5MfrrzBIZRwv9sl858GrcOAdeppNjVxb5SLfFHLV
+         G1sKOjjaz9ITRbK75l4D9jZzn24lPtQCqe+NPV1ZAZs6JFfPgciG9efcY87kormQSy/9
+         7TT9R6XfhKa26UKEExBCKnY2lu9iGeSiIrRtGJegzDaHFagG0gG0PcsWFcLBqGyCbpT1
+         y1X0PmAkVunDcT4odpQMWVd3KZi0nn9lyTzcN8tsfrxMfSWx0r857uC+jKNdOAG3i9Cb
+         GrzZDbr8CAF5gAaP76btA2mRXG9yHvwfzAp/3SaRMb5VFoBV+YDKRsmySvVhV6eI3QLa
+         YP4A==
+X-Gm-Message-State: AGi0PuZE1CqSCQUqy4BxiozB7y1BwFFWgreyOnxQrnBinDCVdQlKZiH0
+        VVPKB6S6dhRz6SCna4j3hg==
+X-Google-Smtp-Source: APiQypLtu39AJZfEb9cdImmCaZsDHwlqCT3WzgPF/Bxr7JVZSOElTYZZjaXHg/QrGCEcZAYMLJ4VYg==
+X-Received: by 2002:aca:a90e:: with SMTP id s14mr22266347oie.80.1589247696893;
+        Mon, 11 May 2020 18:41:36 -0700 (PDT)
 Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 33sm2820423otx.31.2020.05.11.16.05.02
+        by smtp.gmail.com with ESMTPSA id 130sm1697610oid.43.2020.05.11.18.41.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 11 May 2020 16:05:03 -0700 (PDT)
-Received: (nullmailer pid 22115 invoked by uid 1000);
-        Mon, 11 May 2020 23:05:02 -0000
-Date:   Mon, 11 May 2020 18:05:02 -0500
+        Mon, 11 May 2020 18:41:36 -0700 (PDT)
+Received: (nullmailer pid 15739 invoked by uid 1000);
+        Tue, 12 May 2020 01:41:35 -0000
+Date:   Mon, 11 May 2020 20:41:35 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     od@zcrc.me, =?utf-8?B?5ZGo55Cw5p2w?= <zhouyanjie@wanyeetech.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-mips@vger.kernel.org
-Subject: Re: [PATCH 8/8] dt-bindings: display: Convert ingenic,lcd.txt to YAML
-Message-ID: <20200511230502.GA21320@bogus>
-References: <20200426185856.38826-1-paul@crapouillou.net>
- <20200426185856.38826-8-paul@crapouillou.net>
- <LS4I9Q.A1ZGRSEVADNN1@crapouillou.net>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        devicetree@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-clk@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: sound: Add Marvell MMP Audio Clock
+ Controller binding
+Message-ID: <20200512014135.GA15336@bogus>
+References: <20200511195534.1207927-1-lkundrak@v3.sk>
+ <20200511195534.1207927-2-lkundrak@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <LS4I9Q.A1ZGRSEVADNN1@crapouillou.net>
+In-Reply-To: <20200511195534.1207927-2-lkundrak@v3.sk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Apr 28, 2020 at 04:12:21PM +0200, Paul Cercueil wrote:
-> This one patch will need a V2, I messed up with the clocks.
+On Mon, 11 May 2020 21:55:33 +0200, Lubomir Rintel wrote:
+> This describes the bindings for a controller that generates master and bit
+> clocks for the I2S interface.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  .../clock/marvell,mmp2-audio-clock.yaml       | 73 +++++++++++++++++++
+>  .../dt-bindings/clock/marvell,mmp2-audio.h    |  8 ++
+>  2 files changed, 81 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/marvell,mmp2-audio.h
+> 
 
-Looks fine otherwise.
 
-> 
-> -Paul
-> 
-> 
-> Le dim. 26 avril 2020 à 20:58, Paul Cercueil <paul@crapouillou.net> a écrit
-> :
-> > Convert the ingenic,lcd.txt to a new ingenic,lcd.yaml file.
-> > 
-> > In the process, the new ingenic,jz4780-lcd compatible string has been
-> > added.
-> > 
-> > Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> > ---
-> >  .../bindings/display/ingenic,lcd.txt          |  45 -------
-> >  .../bindings/display/ingenic,lcd.yaml         | 113 ++++++++++++++++++
-> >  2 files changed, 113 insertions(+), 45 deletions(-)
-> >  delete mode 100644
-> > Documentation/devicetree/bindings/display/ingenic,lcd.txt
-> >  create mode 100644
-> > Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/ingenic,lcd.txt
-> > b/Documentation/devicetree/bindings/display/ingenic,lcd.txt
-> > deleted file mode 100644
-> > index 01e3261defb6..000000000000
-> > --- a/Documentation/devicetree/bindings/display/ingenic,lcd.txt
-> > +++ /dev/null
-> > @@ -1,45 +0,0 @@
-> > -Ingenic JZ47xx LCD driver
-> > -
-> > -Required properties:
-> > -- compatible: one of:
-> > -  * ingenic,jz4740-lcd
-> > -  * ingenic,jz4725b-lcd
-> > -  * ingenic,jz4770-lcd
-> > -- reg: LCD registers location and length
-> > -- clocks: LCD pixclock and device clock specifiers.
-> > -	   The device clock is only required on the JZ4740.
-> > -- clock-names: "lcd_pclk" and "lcd"
-> > -- interrupts: Specifies the interrupt line the LCD controller is
-> > connected to.
-> > -
-> > -Example:
-> > -
-> > -panel {
-> > -	compatible = "sharp,ls020b1dd01d";
-> > -
-> > -	backlight = <&backlight>;
-> > -	power-supply = <&vcc>;
-> > -
-> > -	port {
-> > -		panel_input: endpoint {
-> > -			remote-endpoint = <&panel_output>;
-> > -		};
-> > -	};
-> > -};
-> > -
-> > -
-> > -lcd: lcd-controller@13050000 {
-> > -	compatible = "ingenic,jz4725b-lcd";
-> > -	reg = <0x13050000 0x1000>;
-> > -
-> > -	interrupt-parent = <&intc>;
-> > -	interrupts = <31>;
-> > -
-> > -	clocks = <&cgu JZ4725B_CLK_LCD>;
-> > -	clock-names = "lcd";
-> > -
-> > -	port {
-> > -		panel_output: endpoint {
-> > -			remote-endpoint = <&panel_input>;
-> > -		};
-> > -	};
-> > -};
-> > diff --git a/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-> > b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-> > new file mode 100644
-> > index 000000000000..8e9c851dc7c5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/display/ingenic,lcd.yaml
-> > @@ -0,0 +1,113 @@
-> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/display/ingenic,lcd.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Ingenic SoCs LCD controller devicetree bindings
-> > +
-> > +maintainers:
-> > +  - Paul Cercueil <paul@crapouillou.net>
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    pattern: "^lcd-controller@[0-9a-f]+$"
-> > +
-> > +  compatible:
-> > +    enum:
-> > +      - ingenic,jz4740-lcd
-> > +      - ingenic,jz4725b-lcd
-> > +      - ingenic,jz4770-lcd
-> > +      - ingenic,jz4780-lcd
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Module clock
-> > +      - description: Pixel clock
-> > +    minItems: 1
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: lcd
-> > +      - const: lcd_pclk
-> > +    minItems: 1
-> > +
-> > +  port:
-> > +    type: object
-> > +    description:
-> > +      A port node with endpoint definitions as defined in
-> > +      Documentation/devicetree/bindings/media/video-interfaces.txt
-> > +
-> > +required:
-> > +    - compatible
-> > +    - reg
-> > +    - interrupts
-> > +    - clocks
-> > +    - clock-names
-> > +
-> > +if:
-> > +  properties:
-> > +    compatible:
-> > +      contains:
-> > +        enum:
-> > +          - ingenic,jz4740-lcd
-> > +          - ingenic,jz4780-lcd
-> > +then:
-> > +  properties:
-> > +    clocks:
-> > +      minItems: 2
-> > +    clock-names:
-> > +      minItems: 2
-> > +else:
-> > +  properties:
-> > +    clocks:
-> > +      maxItems: 1
-> > +    clock-names:
-> > +      maxItems: 1
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/jz4740-cgu.h>
-> > +    lcd-controller@13050000 {
-> > +      compatible = "ingenic,jz4740-lcd";
-> > +      reg = <0x13050000 0x1000>;
-> > +
-> > +      interrupt-parent = <&intc>;
-> > +      interrupts = <30>;
-> > +
-> > +      clocks = <&cgu JZ4740_CLK_LCD>, <&cgu JZ4740_CLK_LCD_PCLK>;
-> > +      clock-names = "lcd", "lcd_pclk";
-> > +
-> > +      port {
-> > +        endpoint {
-> > +          remote-endpoint = <&panel_input>;
-> > +        };
-> > +      };
-> > +    };
-> > +
-> > +  - |
-> > +    #include <dt-bindings/clock/jz4725b-cgu.h>
-> > +    lcd-controller@13050000 {
-> > +      compatible = "ingenic,jz4725b-lcd";
-> > +      reg = <0x13050000 0x1000>;
-> > +
-> > +      interrupt-parent = <&intc>;
-> > +      interrupts = <31>;
-> > +
-> > +      clocks = <&cgu JZ4725B_CLK_LCD>;
-> > +      clock-names = "lcd";
-> > +
-> > +      port {
-> > +        endpoint {
-> > +          remote-endpoint = <&panel_input>;
-> > +        };
-> > +      };
-> > +    };
-> > --
-> > 2.26.2
-> > 
-> 
-> 
+My bot found errors running 'make dt_binding_check' on your patch:
+
+Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.example.dts:20:18: fatal error: dt-bindings/power/marvell,mmp2.h: No such file or directory
+         #include <dt-bindings/power/marvell,mmp2.h>
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+scripts/Makefile.lib:312: recipe for target 'Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+Makefile:1300: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
+
+See https://patchwork.ozlabs.org/patch/1288040
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
+
