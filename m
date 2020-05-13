@@ -2,296 +2,100 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5C7C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 16:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE45C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 21:22:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25B0F2054F
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 16:21:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC248207D0
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 21:22:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hOZtlEBO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389220AbgEMQVH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 12:21:07 -0400
-Received: from disco-boy.misterjones.org ([51.254.78.96]:38078 "EHLO
-        disco-boy.misterjones.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728354AbgEMQVH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 12:21:07 -0400
-X-Greylist: delayed 2494 seconds by postgrey-1.27 at vger.kernel.org; Wed, 13 May 2020 12:21:04 EDT
-Received: from disco-boy.misterjones.org ([51.254.78.96] helo=www.loen.fr)
-        by disco-boy.misterjones.org with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <maz@misterjones.org>)
-        id 1jYtTi-00C1J1-Tf; Wed, 13 May 2020 16:39:27 +0100
+        id S1728715AbgEMVWO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 17:22:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44672 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728481AbgEMVWI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 17:22:08 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8BC47C05BD0A
+        for <linux-clk@vger.kernel.org>; Wed, 13 May 2020 14:22:08 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id w25so644673iol.12
+        for <linux-clk@vger.kernel.org>; Wed, 13 May 2020 14:22:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=tGOgO3DH7KY7eGZj+l93dH69/CZG3Xhtwrztz8Xi5EY=;
+        b=hOZtlEBO2LKyP8bHzFDDLBLE+AyP3GW51R2Bgu0+e70rfUZ9rIiczo3pB8s/u3VM70
+         K0T9RD7NVB7brgPgne9G7Y9DKSqMwc34kmUSNaN1+tKmQKMyi7b2a/DSMwe/zY5/KEhq
+         fQSq0XIBJbkr+PAekXcISSvdYkIgp1CyKT8+VJYoZrJ8KYzz0lTZCE6/MFJ87T2KQroR
+         EtSZS930x4uhhtysV1nP2Ob/eQgc7gMe8HsNnHtxeeVeS/yekgc2kD61tz8HifWs7qcn
+         aDv4sBzqEuxANANls7LL4SbixAH4tEKQkZN+1IFCsDhaPLM0Ftld10Il4H8V74Y2oTRm
+         cjMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=tGOgO3DH7KY7eGZj+l93dH69/CZG3Xhtwrztz8Xi5EY=;
+        b=Asb4ZgDtcU+oZZPcLQooeP5gap2nwt6lKbMK46JwGScYtx43A0COlq+3UrqcNqPEIg
+         VR/tr476lSrFBLqV2eh+q+DBvEkra0ZTGut6Z851xg/nxmVeHSPilUTxn9RSPBlnjjsx
+         1p9sJs9G1irEwKQfBWMrwyn3HuiIqU84uSuDtrkD4npsTMJ/H3qFPbdOH5UAJ5kmr8By
+         lAa5o49L0DFs3WJxNNMMjfKDW+//Kc1hif2/cTjfGOUrGB9tzrr8x9wO9HqyCuVhSA1I
+         bT8IIqSME0w8duIaJHY5QyyUbv1jDvBCclrUNC8NMFiADKpSoGflvE7lOLj+FxZS2HZT
+         CHHA==
+X-Gm-Message-State: AGi0Pua9DOLdm5Gp/BCwFHVHWQzbqG/i+QAcTh74nIahJQdNchL4WzL2
+        z4TmAi2iyjFlMeeSYxxa46YR+Q==
+X-Google-Smtp-Source: ABdhPJxZH8ktcsDq2DKyrfz9mzAZuFt485i9jtYbwe1JvROnYtyNj3dkM5M5qWN962L5ecYak/nF8Q==
+X-Received: by 2002:a05:6638:277:: with SMTP id x23mr1463557jaq.122.1589404927597;
+        Wed, 13 May 2020 14:22:07 -0700 (PDT)
+Received: from localhost ([2601:8c4:0:32f::7b7])
+        by smtp.gmail.com with ESMTPSA id j90sm272733ilg.70.2020.05.13.14.22.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 May 2020 14:22:06 -0700 (PDT)
+Date:   Wed, 13 May 2020 14:22:01 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Rob Herring <robh@kernel.org>
+cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Brown <broonie@kernel.org>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 1/5] spi: dt-bindings: sifive: Add missing 2nd register
+ region
+In-Reply-To: <20200512204543.22090-1-robh@kernel.org>
+Message-ID: <alpine.DEB.2.21.9999.2005131421010.18879@viisi.sifive.com>
+References: <20200512204543.22090-1-robh@kernel.org>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 13 May 2020 16:39:26 +0100
-From:   Marc Zyngier <maz@misterjones.org>
-To:     Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        devicetree@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Olof Johansson <olof@lixom.net>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 06/14] arm64: dts: sparx5: Add basic cpu support
-In-Reply-To: <20200513125532.24585-7-lars.povlsen@microchip.com>
-References: <20200513125532.24585-1-lars.povlsen@microchip.com>
- <20200513125532.24585-7-lars.povlsen@microchip.com>
-User-Agent: Roundcube Webmail/1.4.4
-Message-ID: <2d230dab95ee96727a42f9c242c93c18@misterjones.org>
-X-Sender: maz@misterjones.org
-X-SA-Exim-Connect-IP: 51.254.78.96
-X-SA-Exim-Rcpt-To: lars.povlsen@microchip.com, soc@kernel.org, arnd@arndb.de, sboyd@kernel.org, linus.walleij@linaro.org, devicetree@vger.kernel.org, alexandre.belloni@bootlin.com, Steen.Hegelund@microchip.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com, linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, olof@lixom.net, mturquette@baylibre.com
-X-SA-Exim-Mail-From: maz@misterjones.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020-05-13 13:55, Lars Povlsen wrote:
-> This adds the basic DT structure for the Microchip Sparx5 SoC, and the
-> reference boards, pcb125, pcb134 and pcb135. The two latter have a
-> NAND vs a eMMC centric variant (as a mount option),
+On Tue, 12 May 2020, Rob Herring wrote:
+
+> The 'reg' description and example have a 2nd register region for memory
+> mapped flash, but the schema says there is only 1 region. Fix this.
 > 
-> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-riscv@lists.infradead.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 > ---
->  MAINTAINERS                                   |   1 +
->  arch/arm64/boot/dts/Makefile                  |   1 +
->  arch/arm64/boot/dts/microchip/Makefile        |   4 +
->  arch/arm64/boot/dts/microchip/sparx5.dtsi     | 135 ++++++++++++++++++
->  .../boot/dts/microchip/sparx5_pcb125.dts      |  17 +++
->  .../boot/dts/microchip/sparx5_pcb134.dts      |  17 +++
->  .../dts/microchip/sparx5_pcb134_board.dtsi    |  15 ++
->  .../boot/dts/microchip/sparx5_pcb134_emmc.dts |  17 +++
->  .../boot/dts/microchip/sparx5_pcb135.dts      |  17 +++
->  .../dts/microchip/sparx5_pcb135_board.dtsi    |  15 ++
->  .../boot/dts/microchip/sparx5_pcb135_emmc.dts |  17 +++
->  .../boot/dts/microchip/sparx5_pcb_common.dtsi |  15 ++
->  12 files changed, 271 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/microchip/Makefile
->  create mode 100644 arch/arm64/boot/dts/microchip/sparx5.dtsi
->  create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
->  create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134.dts
->  create mode 100644 
-> arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
->  create mode 100644 
-> arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts
->  create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135.dts
->  create mode 100644 
-> arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
->  create mode 100644 
-> arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts
->  create mode 100644 
-> arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 1b5a18d3dbb9f..5aa28d6e39d4f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2084,6 +2084,7 @@ M:	Lars Povlsen <lars.povlsen@microchip.com>
->  M:	Steen Hegelund <Steen.Hegelund@microchip.com>
->  M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for 
-> non-subscribers)
-> +F:	arch/arm64/boot/dts/microchip/
->  N:	sparx5
->  S:	Supported
-> 
-> diff --git a/arch/arm64/boot/dts/Makefile 
-> b/arch/arm64/boot/dts/Makefile
-> index f19b762c008d8..9680a7f20c307 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -17,6 +17,7 @@ subdir-y += intel
->  subdir-y += lg
->  subdir-y += marvell
->  subdir-y += mediatek
-> +subdir-y += microchip
->  subdir-y += nvidia
->  subdir-y += qcom
->  subdir-y += realtek
-> diff --git a/arch/arm64/boot/dts/microchip/Makefile
-> b/arch/arm64/boot/dts/microchip/Makefile
-> new file mode 100644
-> index 0000000000000..c6e0313eea0f9
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/microchip/Makefile
-> @@ -0,0 +1,4 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb125.dtb
-> +dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb134.dtb sparx5_pcb134_emmc.dtb
-> +dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb135.dtb sparx5_pcb135_emmc.dtb
-> diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> new file mode 100644
-> index 0000000000000..3136b4369f507
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-> + */
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +/ {
-> +	compatible = "microchip,sparx5";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
-> +	#size-cells = <1>;
-> +
-> +	aliases {
-> +		serial0 = &uart0;
-> +		serial1 = &uart1;
-> +	};
-> +
-> +	chosen {
-> +		stdout-path = "serial0:115200n8";
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <2>;
-> +		#size-cells = <0>;
-> +		cpu-map {
-> +			cluster0 {
-> +				core0 {
-> +					cpu = <&cpu0>;
-> +				};
-> +				core1 {
-> +					cpu = <&cpu1>;
-> +				};
-> +			};
-> +		};
-> +		cpu0: cpu@0 {
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			device_type = "cpu";
-> +			reg = <0x0 0x0>;
-> +			enable-method = "spin-table";
+> Please ack, dependency for patch 5.
 
-Really? This is 2020, not 2012 any more. Surely a new platform
-boots using PSCI, and not *this*.
+Acked-by: Paul Walmsley <paul.walmsley@sifive.com> 
 
-> +			cpu-release-addr = <0x0 0x0000fff8>;
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +		cpu1: cpu@1 {
-> +			compatible = "arm,cortex-a53", "arm,armv8";
-> +			device_type = "cpu";
-> +			reg = <0x0 0x1>;
-> +			enable-method = "spin-table";
-> +			cpu-release-addr = <0x0 0x0000fff8>;
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +		L2_0: l2-cache0 {
-> +			compatible = "cache";
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts =
-> +			<GIC_PPI 13
-> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 14
-> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 11
-> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
-> +			<GIC_PPI 10
-> +				(GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
 
-You have a GICv3. These interrupt specifiers are not the ones GICv3 
-expects.
-
-> +	};
-> +
-> +	clocks: clocks {
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +		ahb_clk: ahb-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <250000000>;
-> +		};
-> +		sys_clk: sys-clk {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <625000000>;
-> +		};
-> +	};
-> +
-> +	axi: axi@600000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		gic: interrupt-controller@600300000 {
-> +			compatible = "arm,gic-v3";
-> +			#interrupt-cells = <3>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			interrupt-controller;
-> +			reg = <0x6 0x00300000 0x20000>,	/* GICD */
-> +			      <0x6 0x00340000 0x1000000>;	/* GICR */
-
-You are missing the GICv3 compatibility interfaces (GICV/GICH), which
-are implemented by the CPUs.
-
-> +			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +		uart0: serial@600100000 {
-> +			compatible = "ns16550a";
-> +			reg = <0x6 0x00100000 0x20>;
-> +			clocks = <&ahb_clk>;
-> +			reg-io-width = <4>;
-> +			reg-shift = <2>;
-> +			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		uart1: serial@600102000 {
-> +			compatible = "ns16550a";
-> +			reg = <0x6 0x00102000 0x20>;
-> +			clocks = <&ahb_clk>;
-> +			reg-io-width = <4>;
-> +			reg-shift = <2>;
-> +			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +			status = "disabled";
-> +		};
-> +
-> +		timer1: timer@600105000 {
-> +			compatible = "snps,dw-apb-timer";
-> +			reg = <0x6 0x00105000 0x1000>;
-> +			clocks = <&ahb_clk>;
-> +			clock-names = "timer";
-> +			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-> +		};
-> +
-> +	};
-> +};
-
-Where is the PMU node?
-
-Thanks,
-
-         M.
--- 
-Who you jivin' with that Cosmik Debris?
+- Paul
