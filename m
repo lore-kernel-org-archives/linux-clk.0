@@ -2,70 +2,103 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46385C2D0F6
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:18:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E45C2D0F8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:55:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2369C23127
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:18:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589339913;
-	bh=ed6gXENa/W1RjzBFyeIVvQW6Im7PXr0RmRmYy3seB8c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=w2T2Osm+Ps+/95HYjmoKvlEAuy+NFfcReCO0ddVnxA9A9ROg/NEKyh8LpMyntLDWh
-	 BhzFC1K/ITEmH3uE/LdP4UqNte5UBudMSh11EiTEZVXM2pe6TRgeK1XsQd8ims0/0/
-	 bcodu4A2/bmUS73PNgO67W359oEZT8O1ii0tLCok=
+	by mail.kernel.org (Postfix) with ESMTP id D4215205ED
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:55:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="wnAw6sch"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728475AbgEMDSc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 23:18:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50318 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725898AbgEMDSa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 23:18:30 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727902AbgEMDz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 23:55:59 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:49440 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727790AbgEMDz7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 May 2020 23:55:59 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1589342158; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=IgFKDSGjknGTNYONGt6w814LAjM7eJe3jLXGqPrlFK8=; b=wnAw6scha4S7TNGaZA+H6lXCVcCdMKtfRLgG5jkddeVBzCna4r92+XOAA77s+9N5KypjX+/0
+ 4P8id7NbNZT3JnHkePjaXhBKc7kutkH5WvAwQgijsYc+W7afgd0Zm1TQzMoMpztYxGMTaSCg
+ cnMMJAqot+L7F8zxmgiefhx5Bwk=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ebb6fb3.7fea8db43e68-smtp-out-n01;
+ Wed, 13 May 2020 03:55:31 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 7BCA3C433BA; Wed, 13 May 2020 03:55:30 +0000 (UTC)
+Received: from [192.168.0.105] (unknown [49.207.133.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 451A624927;
-        Wed, 13 May 2020 03:18:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589339910;
-        bh=ed6gXENa/W1RjzBFyeIVvQW6Im7PXr0RmRmYy3seB8c=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G07pCmBY2YfcYT/8Dgz2GHDgNgVAtQm+vKpVa/BKuIO8kIc5xu8NO4hvYobThHJnU
-         m4iiKkRkQqBZynA0XmrodJonIlEyakObiMOPHDJPuY7/xk2DzJb69VgugE4Nkig+Mk
-         yc+4FqogA2Lv/ku3PaANBzdj7PtIKinu35LGy77M=
-Content-Type: text/plain; charset="utf-8"
+        (Authenticated sender: sivaprak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 996DCC433F2;
+        Wed, 13 May 2020 03:55:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 996DCC433F2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
+Subject: Re: [PATCH V4 8/8] arm64: dts: ipq6018: Add a53 pll and apcs clock
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
+ <1588573224-3038-9-git-send-email-sivaprak@codeaurora.org>
+ <20200512202439.GK2165@builder.lan>
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Message-ID: <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
+Date:   Wed, 13 May 2020 09:25:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200430083451.8562-1-t-kristo@ti.com>
-References: <20200430083451.8562-1-t-kristo@ti.com>
-Subject: Re: [PATCH] clk: ti: clkctrl: convert subclocks to use proper names also
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     tony@atomide.com, linux-omap@vger.kernel.org
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Tue, 12 May 2020 20:18:29 -0700
-Message-ID: <158933990954.215346.10446994560814171691@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+In-Reply-To: <20200512202439.GK2165@builder.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2020-04-30 01:34:51)
-> Addition of the new internal API to get the clkctrl names missed adding
-> the same conversion in place for the subclocks. This leads into missed
-> parent/child relationships (i.e. orphaned clocks) with mixed node name
-> handling, for example with omap4/omap5 where the l4_per clocks are using
-> new naming, but rest are using old. Fix by converting the subclock
-> registration to pick correct names for the clocks also.
->=20
-> Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node nam=
-e")
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
+Hi Bjorn,
 
-Applied to clk-fixes
+On 5/13/2020 1:54 AM, Bjorn Andersson wrote:
+> On Sun 03 May 23:20 PDT 2020, Sivaprakash Murugesan wrote:
+>
+>> add support for apps pll and apcs clock.
+>>
+>> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 16 +++++++++++++---
+>>   1 file changed, 13 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> index 1aa8d85..af2ceeb 100644
+>> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+>> @@ -294,12 +294,22 @@
+>>   		};
+>>   
+>>   		apcs_glb: mailbox@b111000 {
+>> -			compatible = "qcom,ipq8074-apcs-apps-global";
+>> -			reg = <0x0b111000 0xc>;
+>> -
+>> +			compatible = "qcom,ipq6018-apcs-apps-global";
+>> +			reg = <0x0b111000 0x1000>;
+> My documentation states that IPQ8074 indeed has this block at
+> 0x0b111000, but IPQ6018 it's at 0x6b111000. Can you confirm this is
+> correct? Same with the pll below.
+The address 0x6b111000 is how the RPM sees this block. For A53 it is 
+still 0xb111000
+>
+> Apart from that the patch looks good.
+>
+> Regards,
+> Bjorn
