@@ -2,100 +2,169 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E55C2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B76C2D0FD
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9D7FD206F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5EC206F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:49:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GxtA4sBW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729737AbgEMHEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 03:04:42 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43953 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729642AbgEMHEm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 03:04:42 -0400
-Received: by mail-oi1-f195.google.com with SMTP id i22so3966938oik.10;
-        Wed, 13 May 2020 00:04:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sMqsXTZkQsUYXsgUW5SNfqYNzeikt2R+rOYAkqTmE5k=;
-        b=Qlo78ui8y08TBdBC1f87m+1ryXxVvJIB0Om7wNF+f5clbFdgRJkuZ+KV3ytof3yMzv
-         pM02R0CKD0jZQOggg78PwzYCICqcG2pqnWlJxECulifzUnEt9l855gTMvHK8AU9y91ts
-         /uQ9XkcsXgSYXTS2E0/JG62+VXh+H3y2256SXpcam2KItKvB51Ef8zoWWhXlmsWq6bgv
-         RLKfQsNJ1wZv/aYbLb16oD9ElcNCyaUn1NW+mNoOSonhUUqa8QBQvjhGKC2E9s9WZHR2
-         63gmIBtMFhzTCBuzEMmdiQyxcXTTohcGoM/8EZXUExFNtORXZDpi9p2ZZcQNWEyOb7LV
-         pMKA==
-X-Gm-Message-State: AGi0Puack8XJaENLTjvv1ed5B7u91qa0FqxGx8C9af530hSjD2PmLX0s
-        uidHH4s9Gs0xSRIp3B+eG53NviECbNhbEtanQUiqrw==
-X-Google-Smtp-Source: APiQypI2i3OcOk0fZSl5EaM/AtAYKVxaJffZ2UtQJdWMHY7G9eIbkNlIzli6zPVMpFnI38y49fid2zK+GkOq09gyGKs=
-X-Received: by 2002:aca:cd93:: with SMTP id d141mr3674965oig.148.1589353479660;
- Wed, 13 May 2020 00:04:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200512204543.22090-1-robh@kernel.org> <20200512204543.22090-5-robh@kernel.org>
-In-Reply-To: <20200512204543.22090-5-robh@kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 May 2020 09:04:28 +0200
-Message-ID: <CAMuHMdWoh94eFvVKHt5si3LOX4Nwx0-JssxVOy=fXPMXxgndXg@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dt-bindings: Fix incorrect 'reg' property sizes
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S1729340AbgEMHtH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 03:49:07 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:49114 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726138AbgEMHtH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 03:49:07 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04D7n4Le097562;
+        Wed, 13 May 2020 02:49:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1589356144;
+        bh=wtW22k3rGw5O3JPO++YwPMQIM+B/57xeHXQmnyUUzLU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=GxtA4sBWJkP7z72g3cMS/CWNj2rGfz81ocUu96x7f8aPdI2kjvyEsk9W1pGTtP8c6
+         6pl8fol2DAfch3SJZaxNxODQzvvHyNtt957q1GfZ2tFMJ6tmQFfgTLAzMwHjN/QChO
+         jHhyQ4UFWygDXEKKxZ8GrT5raQWR+m+wnDmSBVKw=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04D7n4am077526
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 May 2020 02:49:04 -0500
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 13
+ May 2020 02:49:04 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
+ Frontend Transport; Wed, 13 May 2020 02:49:04 -0500
+Received: from [10.250.234.195] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04D7n0k3005183;
+        Wed, 13 May 2020 02:49:01 -0500
+Subject: Re: [PATCH 3/5] dt-bindings: ufs: ti: Fix address properties handling
+To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <20200512204543.22090-1-robh@kernel.org>
+ <20200512204543.22090-3-robh@kernel.org>
+From:   Vignesh Raghavendra <vigneshr@ti.com>
+Message-ID: <503c62d9-d85d-ea14-8659-8a18ba47932e@ti.com>
+Date:   Wed, 13 May 2020 13:19:00 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <20200512204543.22090-3-robh@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
 
-On Tue, May 12, 2020 at 10:46 PM Rob Herring <robh@kernel.org> wrote:
-> The examples template is a 'simple-bus' with a size of 1 cell for
-> #address-cells and #size-cells. The schema was only checking the entries
-> had between 2 and 4 cells which really only errors on I2C or SPI type
-> devices with a single cell.
->
-> The easiest fix in most cases is to change the 'reg' property to for 1 cell
-> address and size. In some cases with child devices having 2 cells, that
-> doesn't make sense so a bus node is needed.
->
+
+On 13/05/20 2:15 am, Rob Herring wrote:
+> The ti,j721e-ufs schema and example have a couple of problems related to
+> address properties. First, the default #size-cells and #address-cells
+> are 1 for examples, so they need to be overriden with a bus node.
+> Second, address translation for the child ufs node is broken because
+> 'ranges', '#address-cells', and '#size-cells' are missing from the
+> schema.
+> 
+> Cc: Vignesh Raghavendra <vigneshr@ti.com>
 > Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
 
-Thanks for your patch!
+Acked-by: Vignesh Raghavendra <vigneshr@ti.com>
 
->  .../devicetree/bindings/arm/renesas,prr.yaml  |  2 +-
->  .../bindings/display/renesas,cmm.yaml         |  2 +-
->  .../interrupt-controller/renesas,irqc.yaml    |  2 +-
->  .../bindings/media/renesas,csi2.yaml          |  2 +-
->  .../bindings/media/renesas,vin.yaml           |  6 +-
->  .../bindings/net/renesas,ether.yaml           |  2 +-
->  .../bindings/pwm/renesas,pwm-rcar.yaml        |  2 +-
->  .../bindings/spi/renesas,sh-msiof.yaml        |  2 +-
->  .../bindings/thermal/rcar-thermal.yaml        |  6 +-
->  .../bindings/usb/renesas,usb3-peri.yaml       |  2 +-
->  .../bindings/usb/renesas,usbhs.yaml           |  2 +-
+Regards
+Vignesh
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Please ack, dependency for patch 5.
+> 
+>  .../devicetree/bindings/ufs/ti,j721e-ufs.yaml | 57 ++++++++++++-------
+>  1 file changed, 36 insertions(+), 21 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> index c8a2a92074df..b503b1a918a5 100644
+> --- a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
+> @@ -25,6 +25,14 @@ properties:
+>    power-domains:
+>      maxItems: 1
+>  
+> +  "#address-cells":
+> +    const: 2
+> +
+> +  "#size-cells":
+> +    const: 2
+> +
+> +  ranges: true
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -44,25 +52,32 @@ examples:
+>      #include <dt-bindings/interrupt-controller/irq.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+> -    ufs_wrapper: ufs-wrapper@4e80000 {
+> -       compatible = "ti,j721e-ufs";
+> -       reg = <0x0 0x4e80000 0x0 0x100>;
+> -       power-domains = <&k3_pds 277>;
+> -       clocks = <&k3_clks 277 1>;
+> -       assigned-clocks = <&k3_clks 277 1>;
+> -       assigned-clock-parents = <&k3_clks 277 4>;
+> -       #address-cells = <2>;
+> -       #size-cells = <2>;
+> -
+> -       ufs@4e84000 {
+> -          compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
+> -          reg = <0x0 0x4e84000 0x0 0x10000>;
+> -          interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> -          freq-table-hz = <19200000 19200000>;
+> -          power-domains = <&k3_pds 277>;
+> -          clocks = <&k3_clks 277 1>;
+> -          assigned-clocks = <&k3_clks 277 1>;
+> -          assigned-clock-parents = <&k3_clks 277 4>;
+> -          clock-names = "core_clk";
+> -       };
+> +    bus {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        ufs-wrapper@4e80000 {
+> +            compatible = "ti,j721e-ufs";
+> +            reg = <0x0 0x4e80000 0x0 0x100>;
+> +            power-domains = <&k3_pds 277>;
+> +            clocks = <&k3_clks 277 1>;
+> +            assigned-clocks = <&k3_clks 277 1>;
+> +            assigned-clock-parents = <&k3_clks 277 4>;
+> +
+> +            ranges = <0x0 0x0 0x0 0x4e80000 0x0 0x14000>;
+> +            #address-cells = <2>;
+> +            #size-cells = <2>;
+> +
+> +            ufs@4000 {
+> +                compatible = "cdns,ufshc-m31-16nm", "jedec,ufs-2.0";
+> +                reg = <0x0 0x4000 0x0 0x10000>;
+> +                interrupts = <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
+> +                freq-table-hz = <19200000 19200000>;
+> +                power-domains = <&k3_pds 277>;
+> +                clocks = <&k3_clks 277 1>;
+> +                assigned-clocks = <&k3_clks 277 1>;
+> +                assigned-clock-parents = <&k3_clks 277 4>;
+> +                clock-names = "core_clk";
+> +            };
+> +        };
+>      };
+> 
