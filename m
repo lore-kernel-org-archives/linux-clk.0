@@ -2,118 +2,171 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAF4C2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:49:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF69CA90AF
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 08:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B39E206F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 07:49:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75F3320740
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 08:13:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bwOEqlvo"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="b8H3/C8I";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RgT8M9sA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbgEMHtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 03:49:40 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49168 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726138AbgEMHtk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 03:49:40 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 04D7ncGK097655;
-        Wed, 13 May 2020 02:49:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1589356178;
-        bh=/N6ncEuKJTmEmVjkKxoOVRrkjQZg7dhNEmECsEcg4q4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=bwOEqlvoZW3rOQ8jYVLD+1F9KJqCaSwBbF2f8RdmF4dfpRtHGg2K9CkSex89IBpMV
-         vvLC+wtcISAgdVr5C2bf64CBxnd6j4LmmkfJdF2QcRa7zbKGfhuZT2y1D1kUZqjdIW
-         Sy5wSU8B9tHzCXntZ/svNTp3aDiOHE8Kn3xrZAe4=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 04D7ncgc077922
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 May 2020 02:49:38 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3; Wed, 13
- May 2020 02:49:37 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1979.3 via
- Frontend Transport; Wed, 13 May 2020 02:49:38 -0500
-Received: from [10.250.234.195] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 04D7nYbO078570;
-        Wed, 13 May 2020 02:49:35 -0500
-Subject: Re: [PATCH 4/5] dt-bindings: ufs: ti: Add missing
- 'additionalProperties: false'
-To:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>
-References: <20200512204543.22090-1-robh@kernel.org>
- <20200512204543.22090-4-robh@kernel.org>
-From:   Vignesh Raghavendra <vigneshr@ti.com>
-Message-ID: <394531de-05cd-3e2e-60f4-a84694208726@ti.com>
-Date:   Wed, 13 May 2020 13:19:34 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        id S1729414AbgEMINx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 04:13:53 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53329 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726092AbgEMINw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 04:13:52 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2175F5801B1;
+        Wed, 13 May 2020 04:13:51 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 13 May 2020 04:13:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=IGYOtJGhA33KVDBJeTx7LYHUsdb
+        eHZGIIUvV55V/pTo=; b=b8H3/C8IbYqfZrWAZDXls/QijycsCbs+xDvfu6K8u8W
+        5AQ/eTVHtwSbkcntqYZHPN0amfjE76nFi6IimdDSsxzMeNIxY1Pd+U7Zr5dLcyt6
+        t6Ir/bGJB85Pf3Hx11oMIeZUrA+KGV75Wl68Xw8wS/xFwnVvzZxScynqNA/J8+n/
+        f9jxDWit2CpPsBxbHw2M7EdwIXAhvfm4eLBO1Xb5PsLZhTgDdv5JfXAGKjnZT5+X
+        0YFziQghcrvVlgUyabEtY3eeay5znE1oM8nBlG0t67Y+sGviGpwd0I+7eQFMoICJ
+        VWiBn+0Fc67m++efoWcJwFstzZFslbPKvOk0QeFAdXQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=IGYOtJ
+        GhA33KVDBJeTx7LYHUsdbeHZGIIUvV55V/pTo=; b=RgT8M9sARsIBM7K0v2kxbW
+        3vdVUdBfWTY1uN/32ARoO7SEwTcqOU4ScxvSGS6339FCUqVQdI9IhOxDxattfrVT
+        ADTWifW9FKJuSMCwJYPiiEMbL5dfrYfE0GcV80sv3L+cmoWREOzbPGdM1avQwIa/
+        QZjvKn83IbWVv1OatKyyVpoYN2a2wrJI9+2AHtbsyUTDmj+DYZRYJwvwysnh0+SD
+        8p4jL5wUK7PHY/HMxxHH1Wzu4SRF9nFDIE6gDf5coSg2mLACDMz3mvctMmshZmtl
+        ZiCban1pvxftHA3yCFUudXcTZy85RWa3s1xvrBM/pW2+wZ+uxB9ghUbzznfM1UUw
+        ==
+X-ME-Sender: <xms:O6y7Xo1gWNRjX-uUeIA21csySJCs40dts9pgbWjr25yvCN92r9NJUA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleeggddtudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:O6y7XjHmUWAg7jfXhBO8YZpU6LpxIbYSYV6vXLs5_3QGcI3MfhWnWQ>
+    <xmx:O6y7Xg5hO0LEpGli15YGEIItHzmJ7b8BQZlFKWFPnjuKvFmmZW_m8g>
+    <xmx:O6y7Xh1TRm5CCQl3T2_VeXBT9eT0JFpgeiPaZ-3ZI0JmNNOZ2PhIpg>
+    <xmx:P6y7Xi-b_jpaSvZ34-DHJuWqeJEpw28r6AwybMhBBAQRdSR0SJ4www>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 0D151328005E;
+        Wed, 13 May 2020 04:13:46 -0400 (EDT)
+Date:   Wed, 13 May 2020 10:13:45 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 03/91] dt-bindings: clock: Add a binding for the RPi
+ Firmware clocks
+Message-ID: <20200513081345.zgey4k2ff4njtovm@gilmour.lan>
+References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech>
+ <69e869b0a79ea17f2cdb79df986409963672495a.1587742492.git-series.maxime@cerno.tech>
+ <20200511214727.GA20924@bogus>
 MIME-Version: 1.0
-In-Reply-To: <20200512204543.22090-4-robh@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4inkvqvn6iczrxel"
+Content-Disposition: inline
+In-Reply-To: <20200511214727.GA20924@bogus>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--4inkvqvn6iczrxel
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 13/05/20 2:15 am, Rob Herring wrote:
-> The ti,j721e-ufs schema is missing an 'additionalProperties: false'. Add
-> that and and the missing assigned-clock properties.
-> 
-> Cc: Vignesh Raghavendra <vigneshr@ti.com>
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> ---
+Hi Rob,
 
+On Mon, May 11, 2020 at 04:47:27PM -0500, Rob Herring wrote:
+> On Fri, Apr 24, 2020 at 05:33:44PM +0200, Maxime Ripard wrote:
+> > The firmware running on the RPi VideoCore can be used to discover and
+> > change the various clocks running in the BCM2711. Since devices will
+> > need to use them through the DT, let's add a pretty simple binding.
+> >=20
+> > Cc: Michael Turquette <mturquette@baylibre.com>
+> > Cc: Stephen Boyd <sboyd@kernel.org>
+> > Cc: Rob Herring <robh+dt@kernel.org>
+> > Cc: linux-clk@vger.kernel.org
+> > Cc: devicetree@vger.kernel.org
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
+> >  Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware=
+=2Eyaml | 24 ++++++++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2=
+835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,b=
+cm2835-firmware.yaml
+> > index cec540c052b6..b48ed875eb8e 100644
+> > --- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-fir=
+mware.yaml
+> > +++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-fir=
+mware.yaml
+> > @@ -22,6 +22,25 @@ properties:
+> >        Phandle to the firmware device's Mailbox.
+> >        (See: ../mailbox/mailbox.txt for more information)
+> > =20
+> > +  clocks:
+> > +    type: object
+> > +
+> > +    properties:
+> > +      compatible:
+> > +        const: raspberrypi,firmware-clocks
+> > +
+> > +      "#clock-cells":
+> > +        const: 1
+> > +        description: >
+> > +          The argument is the ID of the clocks contained by the
+> > +          firmware messages.
+>=20
+> Not really any reason to make this a child node. The parent can be a=20
+> clock provider.
 
-Acked-by: Vignesh Raghavendra <vigneshr@ti.com>
+This was meant to provide some consistency for that driver. It already has =
+a nod
+for the GPIOs exposed through the firmware in the RPi where you could make =
+the
+exact same argument, so I guess that, while we shouldn't make the same choi=
+ces
+if we had to design it from scratch, it's more important to keep the same d=
+esign
+choices for a given binding?
 
-Regards
-Vignesh
+Maxime
 
->  Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
-> index b503b1a918a5..4d13e6bc1c50 100644
-> --- a/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
-> +++ b/Documentation/devicetree/bindings/ufs/ti,j721e-ufs.yaml
-> @@ -25,6 +25,12 @@ properties:
->    power-domains:
->      maxItems: 1
->  
-> +  assigned-clocks:
-> +    maxItems: 1
-> +
-> +  assigned-clock-parents:
-> +    maxItems: 1
-> +
->    "#address-cells":
->      const: 2
->  
-> @@ -47,6 +53,8 @@ patternProperties:
->        Documentation/devicetree/bindings/ufs/cdns,ufshc.txt for binding
->        documentation of child node
->  
-> +additionalProperties: false
-> +
->  examples:
->    - |
->      #include <dt-bindings/interrupt-controller/irq.h>
-> 
+--4inkvqvn6iczrxel
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXrusOQAKCRDj7w1vZxhR
+xeVJAQDmR19y9u8phgKYgLVg8JA98FXCMq4WNwsekwqGe+stqgD9FsYBv4DsAMVZ
+IsGpCnj5GT0yoXdBxhf+6rQUuVZMMA4=
+=cQQz
+-----END PGP SIGNATURE-----
+
+--4inkvqvn6iczrxel--
