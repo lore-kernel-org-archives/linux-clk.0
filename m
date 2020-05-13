@@ -2,105 +2,169 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA87C2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 05:51:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DC2C2D0F8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 06:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27F1F20675
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 05:51:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747862176D
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 06:54:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589349105;
-	bh=JIVkHaAe6zIIWxhNRMgSqeXbtj4d7lTqShCIfC4OdH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PyNeBkgTfLETF56oo4O35OBdKF/4SDuonq9k6LPgUlTRvt8sH2oZC8/L+Is8ya3dR
-	 rFJ45f0fpXJX4dlWdV/fxD3T5B17nw+JRtjSdfcrE/nDvgbMmSwbtliJOsDZK2fwmJ
-	 2d2Qmk6mVSjJwWs+zHhNAC+GcZkoVxgaoYw+bqsU=
+	s=default; t=1589352881;
+	bh=22+HUZ7CroqaJ9Md5zbkNTrqb86GmjlwQWZmqM3ms+g=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=zqgIzzNMkMx0Ec5xy1RSiaFjUFdW6PHfC6W4puwqExOE4bfu4hi8t9jlgAS7oxgVR
+	 2D80fW8Ax60dGWa+FL1vnyItgYfw+cthl7OxCqwdhcdmzpHi4D4ZfNXmOgSYglYtmL
+	 8fBcUzweyQLyv2P7INRIm/WOIcrW/saVMT6ZtHeQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728784AbgEMFvo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 01:51:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37880 "EHLO mail.kernel.org"
+        id S1729434AbgEMGyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 02:54:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728680AbgEMFvo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 May 2020 01:51:44 -0400
-Received: from localhost (unknown [106.200.233.149])
+        id S1729367AbgEMGyi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 May 2020 02:54:38 -0400
+Received: from localhost.localdomain (unknown [106.200.233.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 420BB205C9;
-        Wed, 13 May 2020 05:51:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B64A20708;
+        Wed, 13 May 2020 06:54:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589349104;
-        bh=JIVkHaAe6zIIWxhNRMgSqeXbtj4d7lTqShCIfC4OdH4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dOCeiQC7fZb1Bsc2EtNeF8a+YfrZFN/vdFkbuJuJul/K2/x9owzSrlDpFYtKu2DAj
-         MPzxKYRCcQobgTGvo/Cq0ZTxy2zdlKmOND3pMvk4txaac3Gw4NQqv8i601rVA9hx/z
-         8GJwA8Sxnqas3HlDBVgfXJmkpbJp0o3PTGsc544Q=
-Date:   Wed, 13 May 2020 11:21:39 +0530
+        s=default; t=1589352877;
+        bh=22+HUZ7CroqaJ9Md5zbkNTrqb86GmjlwQWZmqM3ms+g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YuM9peVHpnfWYVgcL/DOKy592qks+dgV9GiTuuDuop8qcwMzRkZB//iifzgpfkJZH
+         9fhYxi6QzaojhRjPwBJ8Aqtdy62X+YVzosn+JO65+/ep8cDHEaHdK2FA4+5jZjNJGl
+         ihEgNipSM4btV3fcXx2VTeeDlKM5yhONRxkOWjGE=
 From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
         Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add missing UFS clocks for SM8150
-Message-ID: <20200513055139.GA14092@vkoul-mobl>
-References: <20200424044311.2155917-1-vkoul@kernel.org>
- <20200424044311.2155917-2-vkoul@kernel.org>
- <158784189516.117437.15588556636278394035@swboyd.mtv.corp.google.com>
- <20200427045534.GB4625@vkoul-mobl.Dlink>
- <158933311835.215346.12980712108351352362@swboyd.mtv.corp.google.com>
+Subject: [PATCH v2 1/2] clk: qcom: gcc: Add GPU and NPU clocks for SM8150
+Date:   Wed, 13 May 2020 12:24:19 +0530
+Message-Id: <20200513065420.32735-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <158933311835.215346.12980712108351352362@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12-05-20, 18:25, Stephen Boyd wrote:
-> Quoting Vinod Koul (2020-04-26 21:55:34)
-> > On 25-04-20, 12:11, Stephen Boyd wrote:
-> > > Quoting Vinod Koul (2020-04-23 21:43:11)
-> > > > Add the missing ufs card and ufs phy clocks for SM8150. They were missed
-> > > > in earlier addition of clock driver.
-> > > > 
-> > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > > ---
-> > > >  drivers/clk/qcom/gcc-sm8150.c | 84 +++++++++++++++++++++++++++++++++++
-> > > >  1 file changed, 84 insertions(+)
-> > > > 
-> > > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> > > > index 5c3dc34c955e..4354620fa12d 100644
-> > > > --- a/drivers/clk/qcom/gcc-sm8150.c
-> > > > +++ b/drivers/clk/qcom/gcc-sm8150.c
-> > > > @@ -2881,6 +2881,45 @@ static struct clk_branch gcc_ufs_card_phy_aux_hw_ctl_clk = {
-> > > >         },
-> > > >  };
-> > > >  
-> > > > +/* external clocks so add BRANCH_HALT_SKIP */
-> > > > +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
-> > > > +       .halt_check = BRANCH_HALT_SKIP,
-> > > > +       .clkr = {
-> > > > +               .enable_reg = 0x7501c,
-> > > > +               .enable_mask = BIT(0),
-> > > > +               .hw.init = &(struct clk_init_data){
-> > > > +                       .name = "gcc_ufs_card_rx_symbol_0_clk",
-> > > 
-> > > Any reason to not use .fw_name?
-> > 
-> > Did i understand it correct that you would like these to have .fw_name
-> > for parent? Should we start adding these clocks in DT description?
-> 
-> Sorry I misread the patch. This isn't a parent name description so .name
-> is correct here.
+Add the GPU and NPU clocks for SM8150. They were missed in earlier
+addition of clock driver.
 
-No worries, I will add fixes and send the update
+Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver for SM8150")
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+Changes in v2:
+  - add fixes tag
+  - remove BRANCH_HALT_SKIP from these clk
 
-Thanks
+ drivers/clk/qcom/gcc-sm8150.c | 64 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index ef98fdc51755..7c82dd85deaf 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -1617,6 +1617,36 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_gpu_gpll0_clk_src = {
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(15),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gpu_gpll0_clk_src",
++			.parent_hws = (const struct clk_hw *[]){
++				&gpll0.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_gpu_gpll0_div_clk_src = {
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(16),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_gpu_gpll0_div_clk_src",
++			.parent_hws = (const struct clk_hw *[]){
++				&gcc_gpu_gpll0_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_gpu_iref_clk = {
+ 	.halt_reg = 0x8c010,
+ 	.halt_check = BRANCH_HALT,
+@@ -1699,6 +1729,36 @@ static struct clk_branch gcc_npu_cfg_ahb_clk = {
+ 	},
+ };
+ 
++static struct clk_branch gcc_npu_gpll0_clk_src = {
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(18),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_npu_gpll0_clk_src",
++			.parent_hws = (const struct clk_hw *[]){
++				&gpll0.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch gcc_npu_gpll0_div_clk_src = {
++	.clkr = {
++		.enable_reg = 0x52004,
++		.enable_mask = BIT(19),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_npu_gpll0_div_clk_src",
++			.parent_hws = (const struct clk_hw *[]){
++				&gcc_npu_gpll0_clk_src.clkr.hw },
++			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct clk_branch gcc_npu_trig_clk = {
+ 	.halt_reg = 0x4d00c,
+ 	.halt_check = BRANCH_VOTED,
+@@ -3375,12 +3435,16 @@ static struct clk_regmap *gcc_sm8150_clocks[] = {
+ 	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
+ 	[GCC_GP3_CLK_SRC] = &gcc_gp3_clk_src.clkr,
+ 	[GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
++	[GCC_GPU_GPLL0_CLK_SRC] = &gcc_gpu_gpll0_clk_src.clkr,
++	[GCC_GPU_GPLL0_DIV_CLK_SRC] = &gcc_gpu_gpll0_div_clk_src.clkr,
+ 	[GCC_GPU_IREF_CLK] = &gcc_gpu_iref_clk.clkr,
+ 	[GCC_GPU_MEMNOC_GFX_CLK] = &gcc_gpu_memnoc_gfx_clk.clkr,
+ 	[GCC_GPU_SNOC_DVM_GFX_CLK] = &gcc_gpu_snoc_dvm_gfx_clk.clkr,
+ 	[GCC_NPU_AT_CLK] = &gcc_npu_at_clk.clkr,
+ 	[GCC_NPU_AXI_CLK] = &gcc_npu_axi_clk.clkr,
+ 	[GCC_NPU_CFG_AHB_CLK] = &gcc_npu_cfg_ahb_clk.clkr,
++	[GCC_NPU_GPLL0_CLK_SRC] = &gcc_npu_gpll0_clk_src.clkr,
++	[GCC_NPU_GPLL0_DIV_CLK_SRC] = &gcc_npu_gpll0_div_clk_src.clkr,
+ 	[GCC_NPU_TRIG_CLK] = &gcc_npu_trig_clk.clkr,
+ 	[GCC_PCIE0_PHY_REFGEN_CLK] = &gcc_pcie0_phy_refgen_clk.clkr,
+ 	[GCC_PCIE1_PHY_REFGEN_CLK] = &gcc_pcie1_phy_refgen_clk.clkr,
 -- 
-~Vinod
+2.25.4
+
