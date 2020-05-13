@@ -2,91 +2,105 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C897C2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 04:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA87C2D0F8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 05:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55DDB206F5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 04:49:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZXeZxeS"
+	by mail.kernel.org (Postfix) with ESMTP id 27F1F20675
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 05:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1589349105;
+	bh=JIVkHaAe6zIIWxhNRMgSqeXbtj4d7lTqShCIfC4OdH4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PyNeBkgTfLETF56oo4O35OBdKF/4SDuonq9k6LPgUlTRvt8sH2oZC8/L+Is8ya3dR
+	 rFJ45f0fpXJX4dlWdV/fxD3T5B17nw+JRtjSdfcrE/nDvgbMmSwbtliJOsDZK2fwmJ
+	 2d2Qmk6mVSjJwWs+zHhNAC+GcZkoVxgaoYw+bqsU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726060AbgEMEtz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 00:49:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59026 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725931AbgEMEty (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 00:49:54 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6EB8C061A0E
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 21:49:54 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id n11so14673781ilj.4
-        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 21:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7avQntptbSyfVNcjEHEawGHu0ZA5SFwdwGmNt7UNNE4=;
-        b=VZXeZxeSkNdl8aWyx4AKhpe+/+yWw4K1AFsNSfSLvZIPTWB9V3k7ygHClGGUvzus2W
-         8Kjj1xRmgufSy5p3p5oBvoY8dwp+Ev2OJRUgQQo0Q55Br3c4Y24CxHrlhnISy8mHK51X
-         xWjqOBLcJsvmosULWYiVc0Zjoq/UJildgMh+w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7avQntptbSyfVNcjEHEawGHu0ZA5SFwdwGmNt7UNNE4=;
-        b=dv9fL0h5jhSe6nsYi6fwJjnV1xJlONdHTYCN0suwPFf9uCDDrlFQHNA5gNCzAmiKEL
-         HgMaZGFp1G8At/yzvCBGjWe6A0Mt6jc1CraExDHquh+weKVdvY7I0EYO/W4K2NC/+q/K
-         S3qIqVHF1kGPYnKIbCnQCAHhtZY4rstYvuoNsrgGuagmhlb8knolfFcrhe0yC5hh9Nxd
-         1xQzSPeJXbEZfNrixMUOBnsF5fJ5ot9BTvf+Qwu0E2b+FOlEDPYGfsUQyNksqz+SAx8i
-         q6j7f6Lz9FW5mzcKyl9jS/bxtNew59qu15sCCHL1HhC/smXbL+60z/yrv/T2zABmXyNM
-         98IA==
-X-Gm-Message-State: AGi0PuaisOiXL2LG1hOlRTmHTKED2F2vq1EhHTD9PbOwV3u0dLu/xXBZ
-        23nqQc7BqMRaFk97XYSsTc6y0aXOWWuK3RKH+nRiAA==
-X-Google-Smtp-Source: APiQypLW4XrYA+YX10To7LSSFdH/pr6GwbWp+XKOzx9CNfSJM6J+CCr0iqX9Ux4YXkSF3w5tC6rtWCABka5M+lXvzeY=
-X-Received: by 2002:a92:1949:: with SMTP id e9mr25726680ilm.106.1589345393815;
- Tue, 12 May 2020 21:49:53 -0700 (PDT)
+        id S1728784AbgEMFvo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 01:51:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37880 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728680AbgEMFvo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 May 2020 01:51:44 -0400
+Received: from localhost (unknown [106.200.233.149])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 420BB205C9;
+        Wed, 13 May 2020 05:51:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1589349104;
+        bh=JIVkHaAe6zIIWxhNRMgSqeXbtj4d7lTqShCIfC4OdH4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dOCeiQC7fZb1Bsc2EtNeF8a+YfrZFN/vdFkbuJuJul/K2/x9owzSrlDpFYtKu2DAj
+         MPzxKYRCcQobgTGvo/Cq0ZTxy2zdlKmOND3pMvk4txaac3Gw4NQqv8i601rVA9hx/z
+         8GJwA8Sxnqas3HlDBVgfXJmkpbJp0o3PTGsc544Q=
+Date:   Wed, 13 May 2020 11:21:39 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add missing UFS clocks for SM8150
+Message-ID: <20200513055139.GA14092@vkoul-mobl>
+References: <20200424044311.2155917-1-vkoul@kernel.org>
+ <20200424044311.2155917-2-vkoul@kernel.org>
+ <158784189516.117437.15588556636278394035@swboyd.mtv.corp.google.com>
+ <20200427045534.GB4625@vkoul-mobl.Dlink>
+ <158933311835.215346.12980712108351352362@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20200401201736.2980433-1-enric.balletbo@collabora.com>
-In-Reply-To: <20200401201736.2980433-1-enric.balletbo@collabora.com>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Wed, 13 May 2020 12:49:27 +0800
-Message-ID: <CAJMQK-hsneV5FdyTHBvLV4pxfGWC=c8mLsH_c5KSq2LsCLGEww@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] soc: mediatek: Enable mmsys driver by default if
- Mediatek arch is selected
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, CK Hu <ck.hu@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        ulrich.hecht+renesas@gmail.com,
-        lkml <linux-kernel@vger.kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Collabora Kernel ML <kernel@collabora.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        Matthias Brugger <mbrugger@suse.com>, matthias.bgg@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <158933311835.215346.12980712108351352362@swboyd.mtv.corp.google.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Apr 2, 2020 at 4:17 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> The mmsys driver supports only MT8173 device for now, but like other system
-> controllers is an important piece for other Mediatek devices. Actually
-> it depends on the mt8173 clock specific driver but that dependency is
-> not real as it can build without the clock driver. Instead of depends on
-> a specific model, make the driver depends on the generic ARCH_MEDIATEK and
-> enable by default so other Mediatek devices can start using it without
-> flood the Kconfig.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
+On 12-05-20, 18:25, Stephen Boyd wrote:
+> Quoting Vinod Koul (2020-04-26 21:55:34)
+> > On 25-04-20, 12:11, Stephen Boyd wrote:
+> > > Quoting Vinod Koul (2020-04-23 21:43:11)
+> > > > Add the missing ufs card and ufs phy clocks for SM8150. They were missed
+> > > > in earlier addition of clock driver.
+> > > > 
+> > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > > ---
+> > > >  drivers/clk/qcom/gcc-sm8150.c | 84 +++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 84 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> > > > index 5c3dc34c955e..4354620fa12d 100644
+> > > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > > @@ -2881,6 +2881,45 @@ static struct clk_branch gcc_ufs_card_phy_aux_hw_ctl_clk = {
+> > > >         },
+> > > >  };
+> > > >  
+> > > > +/* external clocks so add BRANCH_HALT_SKIP */
+> > > > +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
+> > > > +       .halt_check = BRANCH_HALT_SKIP,
+> > > > +       .clkr = {
+> > > > +               .enable_reg = 0x7501c,
+> > > > +               .enable_mask = BIT(0),
+> > > > +               .hw.init = &(struct clk_init_data){
+> > > > +                       .name = "gcc_ufs_card_rx_symbol_0_clk",
+> > > 
+> > > Any reason to not use .fw_name?
+> > 
+> > Did i understand it correct that you would like these to have .fw_name
+> > for parent? Should we start adding these clocks in DT description?
+> 
+> Sorry I misread the patch. This isn't a parent name description so .name
+> is correct here.
+
+No worries, I will add fixes and send the update
+
+Thanks
+-- 
+~Vinod
