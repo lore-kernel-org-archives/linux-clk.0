@@ -2,103 +2,91 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E45C2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:55:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C897C2D0F8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 04:49:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D4215205ED
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 03:55:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55DDB206F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 04:49:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="wnAw6sch"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VZXeZxeS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbgEMDz7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 23:55:59 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:49440 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727790AbgEMDz7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 May 2020 23:55:59 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1589342158; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=IgFKDSGjknGTNYONGt6w814LAjM7eJe3jLXGqPrlFK8=; b=wnAw6scha4S7TNGaZA+H6lXCVcCdMKtfRLgG5jkddeVBzCna4r92+XOAA77s+9N5KypjX+/0
- 4P8id7NbNZT3JnHkePjaXhBKc7kutkH5WvAwQgijsYc+W7afgd0Zm1TQzMoMpztYxGMTaSCg
- cnMMJAqot+L7F8zxmgiefhx5Bwk=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5ebb6fb3.7fea8db43e68-smtp-out-n01;
- Wed, 13 May 2020 03:55:31 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7BCA3C433BA; Wed, 13 May 2020 03:55:30 +0000 (UTC)
-Received: from [192.168.0.105] (unknown [49.207.133.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 996DCC433F2;
-        Wed, 13 May 2020 03:55:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 996DCC433F2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH V4 8/8] arm64: dts: ipq6018: Add a53 pll and apcs clock
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
- <1588573224-3038-9-git-send-email-sivaprak@codeaurora.org>
- <20200512202439.GK2165@builder.lan>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
-Date:   Wed, 13 May 2020 09:25:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726060AbgEMEtz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 00:49:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59026 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725931AbgEMEty (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 00:49:54 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6EB8C061A0E
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 21:49:54 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id n11so14673781ilj.4
+        for <linux-clk@vger.kernel.org>; Tue, 12 May 2020 21:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7avQntptbSyfVNcjEHEawGHu0ZA5SFwdwGmNt7UNNE4=;
+        b=VZXeZxeSkNdl8aWyx4AKhpe+/+yWw4K1AFsNSfSLvZIPTWB9V3k7ygHClGGUvzus2W
+         8Kjj1xRmgufSy5p3p5oBvoY8dwp+Ev2OJRUgQQo0Q55Br3c4Y24CxHrlhnISy8mHK51X
+         xWjqOBLcJsvmosULWYiVc0Zjoq/UJildgMh+w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7avQntptbSyfVNcjEHEawGHu0ZA5SFwdwGmNt7UNNE4=;
+        b=dv9fL0h5jhSe6nsYi6fwJjnV1xJlONdHTYCN0suwPFf9uCDDrlFQHNA5gNCzAmiKEL
+         HgMaZGFp1G8At/yzvCBGjWe6A0Mt6jc1CraExDHquh+weKVdvY7I0EYO/W4K2NC/+q/K
+         S3qIqVHF1kGPYnKIbCnQCAHhtZY4rstYvuoNsrgGuagmhlb8knolfFcrhe0yC5hh9Nxd
+         1xQzSPeJXbEZfNrixMUOBnsF5fJ5ot9BTvf+Qwu0E2b+FOlEDPYGfsUQyNksqz+SAx8i
+         q6j7f6Lz9FW5mzcKyl9jS/bxtNew59qu15sCCHL1HhC/smXbL+60z/yrv/T2zABmXyNM
+         98IA==
+X-Gm-Message-State: AGi0PuaisOiXL2LG1hOlRTmHTKED2F2vq1EhHTD9PbOwV3u0dLu/xXBZ
+        23nqQc7BqMRaFk97XYSsTc6y0aXOWWuK3RKH+nRiAA==
+X-Google-Smtp-Source: APiQypLW4XrYA+YX10To7LSSFdH/pr6GwbWp+XKOzx9CNfSJM6J+CCr0iqX9Ux4YXkSF3w5tC6rtWCABka5M+lXvzeY=
+X-Received: by 2002:a92:1949:: with SMTP id e9mr25726680ilm.106.1589345393815;
+ Tue, 12 May 2020 21:49:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200512202439.GK2165@builder.lan>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20200401201736.2980433-1-enric.balletbo@collabora.com>
+In-Reply-To: <20200401201736.2980433-1-enric.balletbo@collabora.com>
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+Date:   Wed, 13 May 2020 12:49:27 +0800
+Message-ID: <CAJMQK-hsneV5FdyTHBvLV4pxfGWC=c8mLsH_c5KSq2LsCLGEww@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] soc: mediatek: Enable mmsys driver by default if
+ Mediatek arch is selected
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, CK Hu <ck.hu@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        ulrich.hecht+renesas@gmail.com,
+        lkml <linux-kernel@vger.kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Collabora Kernel ML <kernel@collabora.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        Matthias Brugger <mbrugger@suse.com>, matthias.bgg@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
-
-On 5/13/2020 1:54 AM, Bjorn Andersson wrote:
-> On Sun 03 May 23:20 PDT 2020, Sivaprakash Murugesan wrote:
+On Thu, Apr 2, 2020 at 4:17 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
 >
->> add support for apps pll and apcs clock.
->>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->>   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 16 +++++++++++++---
->>   1 file changed, 13 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->> index 1aa8d85..af2ceeb 100644
->> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
->> @@ -294,12 +294,22 @@
->>   		};
->>   
->>   		apcs_glb: mailbox@b111000 {
->> -			compatible = "qcom,ipq8074-apcs-apps-global";
->> -			reg = <0x0b111000 0xc>;
->> -
->> +			compatible = "qcom,ipq6018-apcs-apps-global";
->> +			reg = <0x0b111000 0x1000>;
-> My documentation states that IPQ8074 indeed has this block at
-> 0x0b111000, but IPQ6018 it's at 0x6b111000. Can you confirm this is
-> correct? Same with the pll below.
-The address 0x6b111000 is how the RPM sees this block. For A53 it is 
-still 0xb111000
+> The mmsys driver supports only MT8173 device for now, but like other system
+> controllers is an important piece for other Mediatek devices. Actually
+> it depends on the mt8173 clock specific driver but that dependency is
+> not real as it can build without the clock driver. Instead of depends on
+> a specific model, make the driver depends on the generic ARCH_MEDIATEK and
+> enable by default so other Mediatek devices can start using it without
+> flood the Kconfig.
 >
-> Apart from that the patch looks good.
->
-> Regards,
-> Bjorn
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Hsin-Yi Wang <hsinyi@chromium.org>
