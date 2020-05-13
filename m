@@ -2,171 +2,201 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF69CA90AF
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 08:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7EC7C2D0FE
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 09:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75F3320740
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 08:13:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="b8H3/C8I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RgT8M9sA"
+	by mail.kernel.org (Postfix) with ESMTP id C208420675
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 09:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729414AbgEMINx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 May 2020 04:13:53 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:53329 "EHLO
-        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726092AbgEMINw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 04:13:52 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 2175F5801B1;
-        Wed, 13 May 2020 04:13:51 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 13 May 2020 04:13:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=IGYOtJGhA33KVDBJeTx7LYHUsdb
-        eHZGIIUvV55V/pTo=; b=b8H3/C8IbYqfZrWAZDXls/QijycsCbs+xDvfu6K8u8W
-        5AQ/eTVHtwSbkcntqYZHPN0amfjE76nFi6IimdDSsxzMeNIxY1Pd+U7Zr5dLcyt6
-        t6Ir/bGJB85Pf3Hx11oMIeZUrA+KGV75Wl68Xw8wS/xFwnVvzZxScynqNA/J8+n/
-        f9jxDWit2CpPsBxbHw2M7EdwIXAhvfm4eLBO1Xb5PsLZhTgDdv5JfXAGKjnZT5+X
-        0YFziQghcrvVlgUyabEtY3eeay5znE1oM8nBlG0t67Y+sGviGpwd0I+7eQFMoICJ
-        VWiBn+0Fc67m++efoWcJwFstzZFslbPKvOk0QeFAdXQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=IGYOtJ
-        GhA33KVDBJeTx7LYHUsdbeHZGIIUvV55V/pTo=; b=RgT8M9sARsIBM7K0v2kxbW
-        3vdVUdBfWTY1uN/32ARoO7SEwTcqOU4ScxvSGS6339FCUqVQdI9IhOxDxattfrVT
-        ADTWifW9FKJuSMCwJYPiiEMbL5dfrYfE0GcV80sv3L+cmoWREOzbPGdM1avQwIa/
-        QZjvKn83IbWVv1OatKyyVpoYN2a2wrJI9+2AHtbsyUTDmj+DYZRYJwvwysnh0+SD
-        8p4jL5wUK7PHY/HMxxHH1Wzu4SRF9nFDIE6gDf5coSg2mLACDMz3mvctMmshZmtl
-        ZiCban1pvxftHA3yCFUudXcTZy85RWa3s1xvrBM/pW2+wZ+uxB9ghUbzznfM1UUw
-        ==
-X-ME-Sender: <xms:O6y7Xo1gWNRjX-uUeIA21csySJCs40dts9pgbWjr25yvCN92r9NJUA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrleeggddtudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
-    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:O6y7XjHmUWAg7jfXhBO8YZpU6LpxIbYSYV6vXLs5_3QGcI3MfhWnWQ>
-    <xmx:O6y7Xg5hO0LEpGli15YGEIItHzmJ7b8BQZlFKWFPnjuKvFmmZW_m8g>
-    <xmx:O6y7Xh1TRm5CCQl3T2_VeXBT9eT0JFpgeiPaZ-3ZI0JmNNOZ2PhIpg>
-    <xmx:P6y7Xi-b_jpaSvZ34-DHJuWqeJEpw28r6AwybMhBBAQRdSR0SJ4www>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0D151328005E;
-        Wed, 13 May 2020 04:13:46 -0400 (EDT)
-Date:   Wed, 13 May 2020 10:13:45 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 03/91] dt-bindings: clock: Add a binding for the RPi
- Firmware clocks
-Message-ID: <20200513081345.zgey4k2ff4njtovm@gilmour.lan>
-References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech>
- <69e869b0a79ea17f2cdb79df986409963672495a.1587742492.git-series.maxime@cerno.tech>
- <20200511214727.GA20924@bogus>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4inkvqvn6iczrxel"
-Content-Disposition: inline
-In-Reply-To: <20200511214727.GA20924@bogus>
+        id S1726922AbgEMJbk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 May 2020 05:31:40 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:57562 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726492AbgEMJbk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 May 2020 05:31:40 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 May 2020 15:01:35 +0530
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 13 May 2020 15:01:07 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id 361C021257; Wed, 13 May 2020 15:01:05 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+        robh+dt@kernel.org, sricharan@codeaurora.org,
+        nprakash@codeaurora.org
+Subject: [PATCH V5 01/10] remoteproc: qcom: Add PRNG proxy clock
+Date:   Wed, 13 May 2020 15:00:56 +0530
+Message-Id: <1589362265-22702-2-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
+References: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+PRNG clock is needed by the secure PIL, support for the same
+is added in subsequent patches.
 
---4inkvqvn6iczrxel
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++++++++----------
+ 1 file changed, 47 insertions(+), 18 deletions(-)
 
-Hi Rob,
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index fff681a..0700d68 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -91,19 +91,6 @@ enum {
+ 	WCSS_QCS404,
+ };
+ 
+-struct wcss_data {
+-	const char *firmware_name;
+-	int crash_reason_smem;
+-	u32 version;
+-	bool aon_reset_required;
+-	bool wcss_q6_reset_required;
+-	const char *ssr_name;
+-	const char *sysmon_name;
+-	int ssctl_id;
+-	const struct rproc_ops *ops;
+-	bool requires_force_stop;
+-};
+-
+ struct q6v5_wcss {
+ 	struct device *dev;
+ 
+@@ -128,6 +115,7 @@ struct q6v5_wcss {
+ 	struct clk *qdsp6ss_xo_cbcr;
+ 	struct clk *qdsp6ss_core_gfmux;
+ 	struct clk *lcc_bcr_sleep;
++	struct clk *prng_clk;
+ 	struct regulator *cx_supply;
+ 
+ 	struct qcom_rproc_glink glink_subdev;
+@@ -151,6 +139,21 @@ struct q6v5_wcss {
+ 	bool requires_force_stop;
+ };
+ 
++struct wcss_data {
++	int (*init_clock)(struct q6v5_wcss *wcss);
++	int (*init_regulator)(struct q6v5_wcss *wcss);
++	const char *firmware_name;
++	int crash_reason_smem;
++	u32 version;
++	bool aon_reset_required;
++	bool wcss_q6_reset_required;
++	const char *ssr_name;
++	const char *sysmon_name;
++	int ssctl_id;
++	const struct rproc_ops *ops;
++	bool requires_force_stop;
++};
++
+ static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+ {
+ 	int ret;
+@@ -240,6 +243,12 @@ static int q6v5_wcss_start(struct rproc *rproc)
+ 	struct q6v5_wcss *wcss = rproc->priv;
+ 	int ret;
+ 
++	ret = clk_prepare_enable(wcss->prng_clk);
++	if (ret) {
++		dev_err(wcss->dev, "prng clock enable failed\n");
++		return ret;
++	}
++
+ 	qcom_q6v5_prepare(&wcss->q6v5);
+ 
+ 	/* Release Q6 and WCSS reset */
+@@ -732,6 +741,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
+ 			return ret;
+ 	}
+ 
++	clk_disable_unprepare(wcss->prng_clk);
+ 	qcom_q6v5_unprepare(&wcss->q6v5);
+ 
+ 	return 0;
+@@ -889,7 +899,21 @@ static int q6v5_alloc_memory_region(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
++static int ipq8074_init_clock(struct q6v5_wcss *wcss)
++{
++	int ret;
++
++	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
++	if (IS_ERR(wcss->prng_clk)) {
++		ret = PTR_ERR(wcss->prng_clk);
++		if (ret != -EPROBE_DEFER)
++			dev_err(wcss->dev, "Failed to get prng clock\n");
++		return ret;
++	}
++	return 0;
++}
++
++static int qcs404_init_clock(struct q6v5_wcss *wcss)
+ {
+ 	int ret;
+ 
+@@ -979,7 +1003,7 @@ static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
+ 	return 0;
+ }
+ 
+-static int q6v5_wcss_init_regulator(struct q6v5_wcss *wcss)
++static int qcs404_init_regulator(struct q6v5_wcss *wcss)
+ {
+ 	wcss->cx_supply = devm_regulator_get(wcss->dev, "cx");
+ 	if (IS_ERR(wcss->cx_supply))
+@@ -1023,12 +1047,14 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto free_rproc;
+ 
+-	if (wcss->version == WCSS_QCS404) {
+-		ret = q6v5_wcss_init_clock(wcss);
++	if (desc->init_clock) {
++		ret = desc->init_clock(wcss);
+ 		if (ret)
+ 			goto free_rproc;
++	}
+ 
+-		ret = q6v5_wcss_init_regulator(wcss);
++	if (desc->init_regulator) {
++		ret = desc->init_regulator(wcss);
+ 		if (ret)
+ 			goto free_rproc;
+ 	}
+@@ -1073,6 +1099,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
+ }
+ 
+ static const struct wcss_data wcss_ipq8074_res_init = {
++	.init_clock = ipq8074_init_clock,
+ 	.firmware_name = "IPQ8074/q6_fw.mdt",
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+@@ -1082,6 +1109,8 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+ };
+ 
+ static const struct wcss_data wcss_qcs404_res_init = {
++	.init_clock = qcs404_init_clock,
++	.init_regulator = qcs404_init_regulator,
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.firmware_name = "wcnss.mdt",
+ 	.version = WCSS_QCS404,
+-- 
+2.7.4
 
-On Mon, May 11, 2020 at 04:47:27PM -0500, Rob Herring wrote:
-> On Fri, Apr 24, 2020 at 05:33:44PM +0200, Maxime Ripard wrote:
-> > The firmware running on the RPi VideoCore can be used to discover and
-> > change the various clocks running in the BCM2711. Since devices will
-> > need to use them through the DT, let's add a pretty simple binding.
-> >=20
-> > Cc: Michael Turquette <mturquette@baylibre.com>
-> > Cc: Stephen Boyd <sboyd@kernel.org>
-> > Cc: Rob Herring <robh+dt@kernel.org>
-> > Cc: linux-clk@vger.kernel.org
-> > Cc: devicetree@vger.kernel.org
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > ---
-> >  Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware=
-=2Eyaml | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2=
-835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,b=
-cm2835-firmware.yaml
-> > index cec540c052b6..b48ed875eb8e 100644
-> > --- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-fir=
-mware.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-fir=
-mware.yaml
-> > @@ -22,6 +22,25 @@ properties:
-> >        Phandle to the firmware device's Mailbox.
-> >        (See: ../mailbox/mailbox.txt for more information)
-> > =20
-> > +  clocks:
-> > +    type: object
-> > +
-> > +    properties:
-> > +      compatible:
-> > +        const: raspberrypi,firmware-clocks
-> > +
-> > +      "#clock-cells":
-> > +        const: 1
-> > +        description: >
-> > +          The argument is the ID of the clocks contained by the
-> > +          firmware messages.
->=20
-> Not really any reason to make this a child node. The parent can be a=20
-> clock provider.
-
-This was meant to provide some consistency for that driver. It already has =
-a nod
-for the GPIOs exposed through the firmware in the RPi where you could make =
-the
-exact same argument, so I guess that, while we shouldn't make the same choi=
-ces
-if we had to design it from scratch, it's more important to keep the same d=
-esign
-choices for a given binding?
-
-Maxime
-
---4inkvqvn6iczrxel
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXrusOQAKCRDj7w1vZxhR
-xeVJAQDmR19y9u8phgKYgLVg8JA98FXCMq4WNwsekwqGe+stqgD9FsYBv4DsAMVZ
-IsGpCnj5GT0yoXdBxhf+6rQUuVZMMA4=
-=cQQz
------END PGP SIGNATURE-----
-
---4inkvqvn6iczrxel--
