@@ -2,83 +2,100 @@ Return-Path: <SRS0=ZViX=63=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA5AC2D0F8
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 01:20:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89909C2D0F8
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 01:25:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F02E620753
-	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 01:20:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 583DD206F5
+	for <linux-clk@archiver.kernel.org>; Wed, 13 May 2020 01:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589332826;
-	bh=aUO4Hd9gwJ7SPhAlEhXeA+zsnUAmGPEMNmhK0lYyhBI=;
+	s=default; t=1589333120;
+	bh=W/ynoi3nuHXkxtpSAmA548nlbfjCmEtCLVDmlqPwuxA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=bE6V7Len1jSFgLTb9m12J5Ofh2QDX1We7k3nFSGnFfQnWKbDQjovL9Edefwt5ndBY
-	 +yogqn6bGtB61sof7UyG/iuXBZetnbMSmp5Vj95v8F8YqTnevCXs6uznacT6rN8p1s
-	 4OR3XdFCBSugoSSP3tJJVOPesV1ufVqTuJY2oO40=
+	b=dLffBWk4ZZU0uUTNxuiXO2JBT35xaeeOUrVNkOAiIEBlG4v1psAaTVEoS2OcCCi+E
+	 tKmB6dpXDCJaYZf6YZ+UEiHU6XG8Rv8Q6Z5hhYthJPoXn4N551rUPTz7TCAsMzxSfG
+	 X04HFj4IX949zH/jUb7W2X1/xu8HGsqDVmNuNgN4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728313AbgEMBUZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 May 2020 21:20:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34608 "EHLO mail.kernel.org"
+        id S1728313AbgEMBZU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 May 2020 21:25:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728131AbgEMBUZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 May 2020 21:20:25 -0400
+        id S1728131AbgEMBZT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 May 2020 21:25:19 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B715206D3;
-        Wed, 13 May 2020 01:20:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E40E206F5;
+        Wed, 13 May 2020 01:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589332825;
-        bh=aUO4Hd9gwJ7SPhAlEhXeA+zsnUAmGPEMNmhK0lYyhBI=;
+        s=default; t=1589333119;
+        bh=W/ynoi3nuHXkxtpSAmA548nlbfjCmEtCLVDmlqPwuxA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=TfWbrfb2iKisn7uoK14YHqxFjSGP/7Lj8zLE0sJ8ga6B5D4P7y23ywi6cFupFdup4
-         /i3cc2wN5ZF2jPZeKFXflJMS3SVmj13C36+yO3Hc1e4w+2jIRIYO7iOoqIRA6EURff
-         J9Hs+AAX1vvNN+2oP7iqFbkDZdGBjwstZNH4jSdY=
+        b=LNw/+Dg9HIVJMykSCCfxacM5QHGkBefqgBk5fndlZKTbeeLw+YuuMel/dz5jH8N9Z
+         BO42HgnHaFcv0+/egBe4uPPiYg9kuDQniFi/SpBXspwTqxdSAJ14rczFG1fMElP/3u
+         zXrlebmkNjDyY8hQ42cvLD9TsP1hk2Ee3L2k3euI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2256140.alkMTrVvHO@phil>
-References: <2256140.alkMTrVvHO@phil>
-Subject: Re: [GIT PULL] Rockchip clock fix for 5.7
+In-Reply-To: <20200427045534.GB4625@vkoul-mobl.Dlink>
+References: <20200424044311.2155917-1-vkoul@kernel.org> <20200424044311.2155917-2-vkoul@kernel.org> <158784189516.117437.15588556636278394035@swboyd.mtv.corp.google.com> <20200427045534.GB4625@vkoul-mobl.Dlink>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc: Add missing UFS clocks for SM8150
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date:   Tue, 12 May 2020 18:20:24 -0700
-Message-ID: <158933282442.215346.11254945377753790433@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Vinod Koul <vkoul@kernel.org>
+Date:   Tue, 12 May 2020 18:25:18 -0700
+Message-ID: <158933311835.215346.12980712108351352362@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2020-05-05 17:28:40)
-> Hi Mike, Stephen,
+Quoting Vinod Koul (2020-04-26 21:55:34)
+> On 25-04-20, 12:11, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2020-04-23 21:43:11)
+> > > Add the missing ufs card and ufs phy clocks for SM8150. They were mis=
+sed
+> > > in earlier addition of clock driver.
+> > >=20
+> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > ---
+> > >  drivers/clk/qcom/gcc-sm8150.c | 84 +++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 84 insertions(+)
+> > >=20
+> > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8=
+150.c
+> > > index 5c3dc34c955e..4354620fa12d 100644
+> > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > @@ -2881,6 +2881,45 @@ static struct clk_branch gcc_ufs_card_phy_aux_=
+hw_ctl_clk =3D {
+> > >         },
+> > >  };
+> > > =20
+> > > +/* external clocks so add BRANCH_HALT_SKIP */
+> > > +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk =3D {
+> > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> > > +       .clkr =3D {
+> > > +               .enable_reg =3D 0x7501c,
+> > > +               .enable_mask =3D BIT(0),
+> > > +               .hw.init =3D &(struct clk_init_data){
+> > > +                       .name =3D "gcc_ufs_card_rx_symbol_0_clk",
+> >=20
+> > Any reason to not use .fw_name?
 >=20
-> please find below a rockchip clock fix for 5.7
-> Please pull
+> Did i understand it correct that you would like these to have .fw_name
+> for parent? Should we start adding these clocks in DT description?
 >=20
-> Thanks
-> Heiko
->=20
-> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
-36:
->=20
->   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v5.7-rockchip-clk-fixes1
->=20
-> for you to fetch changes up to cec9d101d70a3509da9bd2e601e0b242154ce616:
->=20
->   clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks (=
-2020-04-13 09:35:24 +0200)
->=20
-> ----------------------------------------------------------------
 
-Thanks. Pulled into clk-fixes.
+Sorry I misread the patch. This isn't a parent name description so .name
+is correct here.
