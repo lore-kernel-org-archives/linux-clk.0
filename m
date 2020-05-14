@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C96A0C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF42C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A597620709
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F8D920709
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589491444;
-	bh=kkl4GgxVhIrhp1xeD0omNcInNUALfVuNoVrrnC357uk=;
+	s=default; t=1589491459;
+	bh=hwhB75hjGwoB/wgeS4DJZxQcWexZGFpkaxsr9BCtV/A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Eo4qeJzb7iKkQLa4Z1+BZloUlws29CON3z4JI3jNSSxOGTc7Bx7GJF2Z/wiY+6BZ0
-	 GJtbd5zLWDymZVGqDi97Ui0X4NudCTpOIkPcjS6SVEon0xQ6JEMZWrt7t3p9KMfkj4
-	 VXr7QP17Iolg1HTzKXuCsKWuzA5nQFEXMpj0oTH8=
+	b=oC7QsFhMLnhUMlNhp1BKsyVMDacLShofWbVtCozMNnbbjWSVwoLWmOthnmtUxQAN7
+	 sDcSThZXf+BxT1LzqRXCe+irWbf76M9JWbBTwt0Xg9ejpLHihdMrbOy6wrWJH7QJ1Q
+	 qWWZaUvzpoCwbJxkb2EXwXesV8l3lzq68HBmVc+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbgENVYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 17:24:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47276 "EHLO mail.kernel.org"
+        id S1728079AbgENVX7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 17:23:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728138AbgENVYC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 May 2020 17:24:02 -0400
+        id S1728035AbgENVX6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 May 2020 17:23:58 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2F5820767;
-        Thu, 14 May 2020 21:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 258172065D;
+        Thu, 14 May 2020 21:23:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589491442;
-        bh=kkl4GgxVhIrhp1xeD0omNcInNUALfVuNoVrrnC357uk=;
+        s=default; t=1589491438;
+        bh=hwhB75hjGwoB/wgeS4DJZxQcWexZGFpkaxsr9BCtV/A=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=qQPLIpyJzzK68ymfY0NhagI1nh0PfOxNAg5TRfixHOPL7wq8obCcaRUhiJrvCzQJT
-         ZTFaa09PQvfW4G1Jo2mlbTTxEAJRuqwkp36hFjZHxGLdR/QR8jJNuJ9WIgqSBsPq90
-         dlwUUUdsHLR+M/7aMInL6PdHqs3nvgUtdsBYAJR0=
+        b=O2/YTlgWYT8avs1aH41fxnibiSdSFbsiwWm+6gX93a8DOFDWP+XykIzy/3WK1X7SA
+         VVEBE2/rGYokj67++rz0UDem+BMQFjX91mHTAJyxbOKWN+weAXyNIVb4WwB6q7gSDU
+         OIeI3DJ9rnXizpQ9i70o4R8QlanIzweT9dIvhHmM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200417070044.1376212-3-bjorn.andersson@linaro.org>
-References: <20200417070044.1376212-1-bjorn.andersson@linaro.org> <20200417070044.1376212-3-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 2/4] clk: qcom: mmcc-msm8996: Properly describe GPU_GX gdsc
+In-Reply-To: <20200417070044.1376212-2-bjorn.andersson@linaro.org>
+References: <20200417070044.1376212-1-bjorn.andersson@linaro.org> <20200417070044.1376212-2-bjorn.andersson@linaro.org>
+Subject: Re: [PATCH v2 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
@@ -50,18 +50,29 @@ Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 14 May 2020 14:24:01 -0700
-Message-ID: <158949144132.215346.9049429951567251868@swboyd.mtv.corp.google.com>
+Date:   Thu, 14 May 2020 14:23:57 -0700
+Message-ID: <158949143731.215346.8783756589199321663@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-04-17 00:00:42)
-> The GPU_GX GDSC depends on both GPU GDSC being enabled and that the
-> VDD_GX rail is powered, so update the description of the node to cover
-> these requirements.
+Quoting Bjorn Andersson (2020-04-17 00:00:41)
+> Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
+> regulator supply is powered in order to be turned on.
+>=20
+> It's not guaranteed that the bootloader will leave these supplies on and
+> the driver core will attempt to enable any GDSCs before allowing the
+> individual drivers to probe defer on the PMIC regulator driver not yet
+> being present.
+>=20
+> So the gdsc driver needs to be made aware of supplying regulators and
+> probe defer on their absence, and it needs to enable and disable the
+> regulator accordingly.
+>=20
+> Voltage adjustments of the supplying regulator are deferred to the
+> client drivers themselves.
 >=20
 > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
