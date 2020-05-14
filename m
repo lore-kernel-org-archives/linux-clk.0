@@ -2,105 +2,86 @@ Return-Path: <SRS0=rluM=64=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7468C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 13:12:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46ABBC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 13:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7995D2073E
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 13:12:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="CZkeI7DX"
+	by mail.kernel.org (Postfix) with ESMTP id 2E1BF2073E
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 13:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbgENNM7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 09:12:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51656 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727095AbgENNM6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 09:12:58 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CF0DC061A0E
-        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 06:12:58 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id l17so4036682wrr.4
-        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 06:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=npgQi9gfzI+vqce3nXjJa+yPHqXwLMPWXp8Y51T6pJU=;
-        b=CZkeI7DX6voMS4uA9Y3/+UBBVJq7vaOZ4yvKmLHn97i66myLGSCpK6are538wqrdyS
-         MOAM1TUtG5qNn9BIRzQP3GBsyXXgK2MkxaMDjdQznWHT1ZVYR0HjXRsFGquEMWxJOYnV
-         BRkn5sURIMUoNhouZ0yVN37Q2fHIHxp99oi1gQNOtYoKIt9DSfZ6tqExPkihcFf/kJwD
-         P4Gh1j57hg6KPg1dYTcC+5pdsk65u/RdUqd+7LSOVKXJYgY/xT3L5BDUhWU6ePBOXVWr
-         0f6tJx39vvHSsBpI88bJ4aqYC2y9sbFbc5fFhd8/lgNX5eA40Eln+Pqp1VYKK0KyShqy
-         Bh5A==
+        id S1726073AbgENNYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 09:24:08 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:34500 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbgENNYI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 09:24:08 -0400
+Received: by mail-oi1-f194.google.com with SMTP id c12so23507494oic.1;
+        Thu, 14 May 2020 06:24:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=npgQi9gfzI+vqce3nXjJa+yPHqXwLMPWXp8Y51T6pJU=;
-        b=DkgYAuctH4Xl3+u6iaLtDw2r39bv0Qv7oYsi5mLgO3SZGb0Gh8WeWRt7DzPUAFhgh8
-         f9EzG0Pt3wT8CCv+OUI5W5crnD6dRnLgAT+jL8fx8stOwAMa4/gK5xVX6YR5QsrOol0u
-         21657ctTtiDJCTfgBfGCuSC5/OzlFHY4vsYLAJ16EUNiJmvNe7HWwB9zodw8UjTlZje0
-         0k8rsSGtKPmMDkUJNEaiByBMfHRxWoWfvJtfSHD3oA2SAspPbhwpeSW/LmjCFa1Kze9/
-         b6wIXL/IrZ0D7ttdZFkSgpEDg73SWM2CPm4wVdX66Fzf2HCb8fsEMW7KQhQdiPTys5Ov
-         CVig==
-X-Gm-Message-State: AOAM5321eCH2ZFxFTt4PwFgpGbo0EXG2Os1XM1fUEjUMpW1Tly5vGrTV
-        8dbvmny0mlAOOy4yA2kvnY1eBR0BHAEh+A5PIxbt+g==
-X-Google-Smtp-Source: ABdhPJxFWRfw7frnpjdcK38CKzL25GKS46O57jSHWs+DZytaKz3MplfFifGGGpb+8BG54zgJ74HDgfU9Nzo9WHizw5U=
-X-Received: by 2002:a5d:6988:: with SMTP id g8mr5159530wru.47.1589461977273;
- Thu, 14 May 2020 06:12:57 -0700 (PDT)
+        bh=sSamf2egw4mSH0QveGzXce+Ec2ZXIVCWEyzE7zx5koo=;
+        b=ufBg/RF2OdkhR5O5PFOlXLoq+pSKv7/3kb0ZgESlTDm+FJnC0FkVZXtcrgiw+740S6
+         280Tf1Lz44vPOLCIR+1iFiST9oOxO7p7au6KNxtQ9cN1vFkYB6xaPlfbLRJQVhhC53UY
+         usyoBMGwR+etOk0sJuCQGkA/iY2j5d6Rshk8fMUQGqfNr6/MHmyhYR+nXrofaobMJy2f
+         xYZi84t8eOGeBgJEljOUiYbgUPHx+udnV+r1QF0IC/gq2rMC6xb40VF39C8bDGJTC3Nh
+         zPZABkMekGSyQumpzrAY5m8bEtfOnncGa9C0p+YVaI+GhzPYrJD63aHf4nEQXFq77EE7
+         6gwg==
+X-Gm-Message-State: AGi0PuZMhhh/jte7hm2F+rXZ7yg70GuOiP1q3wP6ts/GzAeXwdbJ077R
+        K7hDKiCuj1sfgMToOalrAMth06Ck/KrxZTLcf60=
+X-Google-Smtp-Source: APiQypIRjs+5ZguLChX2CNoHXK9sTuzFIWqm/7PJ80eA/g5b0j1Bj3CFy/GBcv83VDyEJJ+o5z4ZH+rK8ac3DuVbIGQ=
+X-Received: by 2002:aca:cd93:: with SMTP id d141mr7906712oig.148.1589462647044;
+ Thu, 14 May 2020 06:24:07 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200506120304.31550-1-geert+renesas@glider.be>
-In-Reply-To: <20200506120304.31550-1-geert+renesas@glider.be>
-From:   Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date:   Thu, 14 May 2020 14:12:40 +0100
-Message-ID: <CAPY8ntDwffdgQadkBLSdJr0q7nThFHEBO_nPmja1EUVhnRa7YQ@mail.gmail.com>
+References: <20200506120304.31550-1-geert+renesas@glider.be> <CAPY8ntDwffdgQadkBLSdJr0q7nThFHEBO_nPmja1EUVhnRa7YQ@mail.gmail.com>
+In-Reply-To: <CAPY8ntDwffdgQadkBLSdJr0q7nThFHEBO_nPmja1EUVhnRa7YQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 14 May 2020 15:23:55 +0200
+Message-ID: <CAMuHMdUP8sT5G9TruLcJC8CoXTUrFZGKr07C3sqbbm0sXbjJbQ@mail.gmail.com>
 Subject: Re: [PATCH] media: i2c: imx219: Drop <linux/clk-provider.h> and <linux/clkdev.h>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Dave Stevenson <dave.stevenson@raspberrypi.com>
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-clk@vger.kernel.org
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 6 May 2020 at 13:03, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->
-> The IMX219 camera driver is not a clock provider, but merely a clock
-> consumer, and thus does not need to include <linux/clk-provider.h> and
-> <linux/clkdev.h>.
->
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Hi Dave
 
-I'm no expert on the clock frameworks, but that seems logical.
-Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+On Thu, May 14, 2020 at 3:12 PM Dave Stevenson
+<dave.stevenson@raspberrypi.com> wrote:
+> On Wed, 6 May 2020 at 13:03, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> > The IMX219 camera driver is not a clock provider, but merely a clock
+> > consumer, and thus does not need to include <linux/clk-provider.h> and
+> > <linux/clkdev.h>.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>
+> I'm no expert on the clock frameworks, but that seems logical.
+> Acked-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 
-The same appears to be true for drivers/media/i2c/ov5640.c unless it's
-been fixed since 5.7-rc5.
+Thank you.
 
-> ---
->  drivers/media/i2c/imx219.c | 2 --
->  1 file changed, 2 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index cb03bdec1f9c8954..078f2093d881d7c2 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -15,8 +15,6 @@
->   */
->
->  #include <linux/clk.h>
-> -#include <linux/clk-provider.h>
-> -#include <linux/clkdev.h>
->  #include <linux/delay.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/i2c.h>
-> --
-> 2.17.1
->
+> The same appears to be true for drivers/media/i2c/ov5640.c unless it's
+> been fixed since 5.7-rc5.
+
+Quite possible: I did a sweep a while ago, and looked at recently introduced
+offenders, but I may have missed some.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
