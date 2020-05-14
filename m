@@ -4,77 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF42C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE89C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8D920709
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90C96206F1
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589491459;
-	bh=hwhB75hjGwoB/wgeS4DJZxQcWexZGFpkaxsr9BCtV/A=;
+	s=default; t=1589491604;
+	bh=hdpPyN5dteVM3nWv6GH74YONT+giHmAAiglqA5/fT5E=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=oC7QsFhMLnhUMlNhp1BKsyVMDacLShofWbVtCozMNnbbjWSVwoLWmOthnmtUxQAN7
-	 sDcSThZXf+BxT1LzqRXCe+irWbf76M9JWbBTwt0Xg9ejpLHihdMrbOy6wrWJH7QJ1Q
-	 qWWZaUvzpoCwbJxkb2EXwXesV8l3lzq68HBmVc+Q=
+	b=ZLdOy4AOuziUCQG17SO83NLelKwMssMouFPUk/wo9fdHUeKXJfv0cAx2YXTLhEYks
+	 mLjppf7nielX/8LnA2gsyn8DO1Nw94ZUL6cRG6CSzhFmw0zJqXTSJkNkE7HMB/tqlB
+	 qH9VSS3hBqHvx1jCXrcEyD1GfaX6EX4Mazm99Ge4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728079AbgENVX7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 17:23:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47186 "EHLO mail.kernel.org"
+        id S1727850AbgENV0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 17:26:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728035AbgENVX6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 May 2020 17:23:58 -0400
+        id S1727823AbgENV0o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 May 2020 17:26:44 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 258172065D;
-        Thu, 14 May 2020 21:23:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A80DC2065D;
+        Thu, 14 May 2020 21:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589491438;
-        bh=hwhB75hjGwoB/wgeS4DJZxQcWexZGFpkaxsr9BCtV/A=;
+        s=default; t=1589491603;
+        bh=hdpPyN5dteVM3nWv6GH74YONT+giHmAAiglqA5/fT5E=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=O2/YTlgWYT8avs1aH41fxnibiSdSFbsiwWm+6gX93a8DOFDWP+XykIzy/3WK1X7SA
-         VVEBE2/rGYokj67++rz0UDem+BMQFjX91mHTAJyxbOKWN+weAXyNIVb4WwB6q7gSDU
-         OIeI3DJ9rnXizpQ9i70o4R8QlanIzweT9dIvhHmM=
+        b=d31gluSvwvzmx1hQU5w5o02mLdqJqMNNS/vs9ozMrdx9As/XQy0SFaU0pGVSRCoqD
+         av9fnzOqXzv9JjxIfNrkat7tunPKfh9M+RGAXluWlsBjqxukUE+kOFea2+LtGZRCL3
+         bd6KyZwfaMkDmWkae4ZebZrQljVjrXpnDqMh7SQw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200417070044.1376212-2-bjorn.andersson@linaro.org>
-References: <20200417070044.1376212-1-bjorn.andersson@linaro.org> <20200417070044.1376212-2-bjorn.andersson@linaro.org>
-Subject: Re: [PATCH v2 1/4] clk: qcom: gdsc: Handle GDSC regulator supplies
+In-Reply-To: <20200513065420.32735-1-vkoul@kernel.org>
+References: <20200513065420.32735-1-vkoul@kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: qcom: gcc: Add GPU and NPU clocks for SM8150
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 14 May 2020 14:23:57 -0700
-Message-ID: <158949143731.215346.8783756589199321663@swboyd.mtv.corp.google.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Vinod Koul <vkoul@kernel.org>
+Date:   Thu, 14 May 2020 14:26:42 -0700
+Message-ID: <158949160295.215346.13859813778240407164@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2020-04-17 00:00:41)
-> Certain GDSCs, such as the GPU_GX on MSM8996, requires that the upstream
-> regulator supply is powered in order to be turned on.
+Quoting Vinod Koul (2020-05-12 23:54:19)
+> Add the GPU and NPU clocks for SM8150. They were missed in earlier
+> addition of clock driver.
 >=20
-> It's not guaranteed that the bootloader will leave these supplies on and
-> the driver core will attempt to enable any GDSCs before allowing the
-> individual drivers to probe defer on the PMIC regulator driver not yet
-> being present.
->=20
-> So the gdsc driver needs to be made aware of supplying regulators and
-> probe defer on their absence, and it needs to enable and disable the
-> regulator accordingly.
->=20
-> Voltage adjustments of the supplying regulator are deferred to the
-> client drivers themselves.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver =
+for SM8150")
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
 
 Applied to clk-next
