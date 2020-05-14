@@ -2,371 +2,174 @@ Return-Path: <SRS0=rluM=64=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D0DC433E3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 10:22:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847DFC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 11:03:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 191AD2074A
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 10:22:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B222065F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 11:03:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ggcu6svR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idN8lOXM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbgENKWo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 06:22:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53362 "EHLO
+        id S1726146AbgENLDL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 07:03:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59632 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725978AbgENKWm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 06:22:42 -0400
-Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 42E59C061A0C;
-        Thu, 14 May 2020 03:22:42 -0700 (PDT)
-Received: by mail-io1-xd41.google.com with SMTP id e18so1795794iog.9;
-        Thu, 14 May 2020 03:22:42 -0700 (PDT)
+        with ESMTP id S1726010AbgENLDK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 07:03:10 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FECFC061A0C
+        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 04:03:10 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id l11so3428611wru.0
+        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 04:03:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Xf8xZfCQkg2LX+UGX2pErkunT3kzFVgUMzef0Ov7X8U=;
-        b=Ggcu6svRnfvNn9Dsd8MwVKxUpU+EtC/sdV/wX64b84Wf/BolKHyXwvu1WcAgSycmo9
-         g6zPSumtiqkSeg/QcGT+3q4t78VLeVlwl6HKyh0KVqIqjLxX9yHiHiNON3YGciyWSWQd
-         14IfBehKyCyDuRwAhd/VzyyI1AhdUMeVd71fprDrTnkKhlpptgiHQSzWV3FEOHDk8iYI
-         6aYpNBaPF2de9HV+vW7A9rtyXE8KjxOjSMU8ayWbhT6HWBb+T/BQ+rVuMVAEJSEEhQG4
-         fVsFK/jFbOjhOS46sttdZAMR0QWUWFNTxnFd3SlWG7nPg6GPegi8f6EWzz78dCL2i21L
-         KGHg==
+        h=subject:to:cc:references:from:autocrypt:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kEoo75ljzAF2ZQ3XwRO+6T9Ld8j2krVW/mTBkJEQD0A=;
+        b=idN8lOXMH1iA1vmy1l/s/ywBFJlzY/Lhia2N0ablIQwXAgXeHeB5nJEpM7VPRDYaGU
+         +/bWO+jQ13Ks0jgbROa8HA76FNM1x8mWFWKYzCLZiQ6vNfX0ELh/hODfFpU2AMKMiohf
+         RI1+SN/RlBVWeSQlSzxP9JDXi7alMeM36Lt5HlNpgcjUk1akKPtb35ybSC/ZX+OTaGk1
+         7FsorKVKDy+CKJCezmLZv4xrT7jIS0dqoiqmioHwI7W7hIHqXcQYyuEpF64G0XEYQnYr
+         ws0BMhlkTCl3uJirNThQ6OkWtTae3jBRYCXKim0gMzfFaFv1HIej03lskJSKlojfz//9
+         jkMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Xf8xZfCQkg2LX+UGX2pErkunT3kzFVgUMzef0Ov7X8U=;
-        b=l1rDUxmnbh90hP600V2i/c098LQ7wX1ODLKWQX0eRA7uU/pKiNNPtJiMY7BC8ave1c
-         3LyCIHRY4EB0rWq1nZnmcp3uDpXqAczHlb0eelwbxIq08TEq/0Jvo6w0FmUomzAF4D5P
-         6G8Z7UYOxj4N43bnHDPtt7u5izmOwOE89LJiKwj6btZM60LY9bPitXRACOzPn7VZDxU5
-         NWhRfQ3I9tMbWjOLuwBMJOXFrMIaT7YGXoWZX0RBBkFfmNBhuFFldJjjCL1RtH26r6Ho
-         bm9w5GTYDxT59ku/6DbhKcdL5RkUss/qmab12LPfmJ1aGGRux1VRFf2xleWq7LqYEyhD
-         VMLg==
-X-Gm-Message-State: AOAM530+9EjcAIpB+1YQPzTSFYt3rsSlFrR74nUXnHz+MtzNXBk+0O1j
-        wzrgvZrgIJu4ZXF237m4jQ/+v5k1x1hKZbLQQcw=
-X-Google-Smtp-Source: ABdhPJzLEl/PjziUjet7dMbd/2CbLJOcw5zJWiYxYZkGfaovRzeKZG7aVXM98VUw+JMNfNfgJzzoNSJMrMDnaE2xHXw=
-X-Received: by 2002:a5e:a80e:: with SMTP id c14mr3426158ioa.3.1589451761445;
- Thu, 14 May 2020 03:22:41 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=kEoo75ljzAF2ZQ3XwRO+6T9Ld8j2krVW/mTBkJEQD0A=;
+        b=IzuGGzR7EL7YYQKj+Np9TGeutNNKCwAcerybCjvpIAgkO9YesZ3Gi0Ii7WCUES+DEi
+         n1gv0kp3kqaH6a2d3ZzE3S+CxjOY9nnljhd09DSdDMYhwwo7OzropAZwXpqOzzSbUgFJ
+         KNDDay0AVw2jsFyZhuibKG3PPk659b/bNiSO4BWtKq6dlijXWQ6b3sXaJLmhOEcgrb9N
+         Q6hAyW4tiPcCqzdt1kiNXaasQ8E/kZGKSzaAZFt3IXhnTy9RwNGy7ke9frZOJESW2Afe
+         ZJ7EK8TASR3Hk92p7Pd5wS/DpbCWgeTmTKHm6eaFSOhlmaO+hMSDUX7u9A01tfAb4NgX
+         UCdA==
+X-Gm-Message-State: AOAM5322wlf4GaPERUSt9A4Nc9Rny1FMcJlpcX/PlqAWzxu86xE9DjPf
+        GcOmeLVQbrecpN6x8PKeO8eC3bii
+X-Google-Smtp-Source: ABdhPJzJ4/6HIiJ0/Q9938bQJZWwGWPecDAVS4C6Iw+pOSSC4sJKGYQBKwuLLmy+8pXxz7G/1EP0Aw==
+X-Received: by 2002:adf:ed06:: with SMTP id a6mr4768790wro.8.1589454188505;
+        Thu, 14 May 2020 04:03:08 -0700 (PDT)
+Received: from ziggy.stardust ([213.195.113.243])
+        by smtp.gmail.com with ESMTPSA id x184sm6824175wmg.38.2020.05.14.04.03.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 14 May 2020 04:03:07 -0700 (PDT)
+Subject: Re: [PATCH] soc: mediatek: mmsys: Drop <linux/clk-provider.h>
+To:     Stephen Boyd <sboyd@kernel.org>, CK Hu <ck.hu@mediatek.com>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org
+References: <20200506120204.31422-1-geert+renesas@glider.be>
+ <158931806972.215346.15226593152103612182@swboyd.mtv.corp.google.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5c4b61db-4a9f-7ce7-af77-efb8ef3d7e1f@gmail.com>
+Date:   Thu, 14 May 2020 13:03:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com>
- <1589267017-17294-6-git-send-email-dillon.minfei@gmail.com> <CACRpkdbZoMDC-D12CByKJUZbu4shqixC=QrKwJUd8x=nyK7seQ@mail.gmail.com>
-In-Reply-To: <CACRpkdbZoMDC-D12CByKJUZbu4shqixC=QrKwJUd8x=nyK7seQ@mail.gmail.com>
-From:   dillon min <dillon.minfei@gmail.com>
-Date:   Thu, 14 May 2020 18:22:03 +0800
-Message-ID: <CAL9mu0LVsePqifEC+-FR+NxvuZT3UGpU86KhzaTqb7w_Px0z2g@mail.gmail.com>
-Subject: Re: [PATCH v3 5/5] drm/panel: Add ilitek ili9341 driver
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <158931806972.215346.15226593152103612182@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Linus,
 
-Thanks for reviewing.
 
-On Thu, May 14, 2020 at 4:14 PM Linus Walleij <linus.walleij@linaro.org> wrote:
->
-> Hi Dillon,
->
-> thanks for your patch! Overall this looks like a good start.
->
-> On Tue, May 12, 2020 at 9:04 AM <dillon.minfei@gmail.com> wrote:
->
-> > #define ILI9341_SLEEP_OUT            0x11   /* Sleep out register */
->
-> This is not a register, also just use MIPI_DCS_EXIT_SLEEP_MODE
-> in the code.
->
-Yes, i will try to reuse MIPI_DCS_xxx.
+On 12/05/2020 23:14, Stephen Boyd wrote:
+> Quoting Geert Uytterhoeven (2020-05-06 05:02:04)
+>> After the split, the mt8173 MMSYS driver is no longer a clock provider,
+>> and thus does not need to include <linux/clk-provider.h>.
+>>
+>> Fixes: 13032709e2328553 ("clk / soc: mediatek: Move mt8173 MMSYS to platform driver")
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+> 
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> 
 
-> > +#define ILI9341_DFC                  0xb6   /* Display Function Control
-> > +                                            * register
-> > +                                            */
->
-> This commenting style doesn't work, either just put it after /* the define */
-> and don't care if the line gets a bit long and checkpatch complains,
-> or
->
-> /*
->  * Put it above the define like this
->  */
-> #define FOO 0x00
->
-Ok, will change this comments.
+Pushed now to v5.7-next/soc
 
-> > +/**
-> > + * struct ili9341_config - the system specific ILI9341 configuration
->
-> Nice with this per-system config, it makes the driver easy to maintain
-> for new users.
->
-Yes, will try to move more system related configurations to this part,
-instead of hard code.
-
-> > +static int ili9341_dpi_init(struct ili9341 *ili)
-> > +{
-> > +       ili9341_command(ili, 0xca, 0xc3, 0x08, 0x50);
->
-> This stuff is a bit hard to understand, don't you think?
->
-> But given that register 0xCA seems undocumented I don't
-> know if there is anything more you can do, so it is OK
-> I suppose.
->
-> > +       ili9341_command(ili, ILI9341_POWERB, 0x00, 0xc1, 0x30);
->
-> This command is described in the manual  page 196.
-> Version: V1.11
-> Document No.: ILI9341_DS_V1.11.pdf
-> https://dflund.se/~triad/ILI9341_v1.11.pdf
->
-Yes, "ili9341_command(ili, 0xca, 0xc3, 0x08, 0x50);" i ported from st's sdk.
-will use ILI9341_XXX to replace these magic numbers
-
-> And this goes for all the below commands. Please add some more defines
-> from the datasheet and have less magic numbers in the driver.
->
-> > +       ili9341_command(ili, ILI9341_POWER_SEQ, 0x64, 0x03, 0x12, 0x81);
-> > +       ili9341_command(ili, ILI9341_DTCA, 0x85, 0x00, 0x78);
-> > +       ili9341_command(ili, ILI9341_POWERA, 0x39, 0x2c, 0x00, 0x34, 0x02);
-> > +       ili9341_command(ili, ILI9341_PRC, 0x20);
-> > +       ili9341_command(ili, ILI9341_DTCB, 0x00, 0x00);
-> > +       ili9341_command(ili, ILI9341_FRC, 0x00, 0x1b);
-> > +       ili9341_command(ili, ILI9341_DFC, 0x0a, 0xa2);
-> > +       ili9341_command(ili, ILI9341_POWER1, 0x10);
-> > +       ili9341_command(ili, ILI9341_POWER2, 0x10);
-> > +       ili9341_command(ili, ILI9341_VCOM1, 0x45, 0x15);
-> > +       ili9341_command(ili, ILI9341_VCOM2, 0x90);
-> > +       ili9341_command(ili, ILI9341_MAC, 0xc8);
-> > +       ili9341_command(ili, ILI9341_3GAMMA_EN, 0x00);
-> > +       ili9341_command(ili, ILI9341_RGB_INTERFACE, 0xc2);
-> > +       ili9341_command(ili, ILI9341_DFC, 0x0a, 0xa7, 0x27, 0x04);
-> > +       ili9341_command(ili, ILI9341_COLUMN_ADDR, 0x00, 0x00, 0x00, 0xef);
-> > +       ili9341_command(ili, ILI9341_PAGE_ADDR, 0x00, 0x00, 0x01, 0x3f);
-> > +       ili9341_command(ili, ILI9341_INTERFACE, 0x01, 0x00, 0x06);
-> > +       if (ili->input == ILI9341_INPUT_PRGB_18_BITS)
-> > +               ili9341_command(ili, ILI9341_PIXEL_FORMAT, 0x66);
-> > +       else
-> > +               ili9341_command(ili, ILI9341_PIXEL_FORMAT, 0x56);
-> > +       ili9341_command(ili, ILI9341_GRAM);
-> > +       msleep(200);
->
-> I think some of the above should not be hard coded but should instead
-> be stored in fields in struct ili9341_config. I know it can be a bit
-> tedious but it makes things much more clear.
->
-Ok, will go deeper to find out some register configuration move to
-system config like rgb bus 16/18 bits
-
-> > +       ili9341_command(ili, ILI9341_GAMMA, 0x01);
-> > +       ili9341_command(ili, ILI9341_PGAMMA, 0x0f, 0x29, 0x24, 0x0c, 0x0e,
-> > +                                               0x09, 0x4e, 0x78, 0x3c, 0x09,
-> > +                                               0x13, 0x05, 0x17, 0x11, 0x00);
-> > +       ili9341_command(ili, ILI9341_NGAMMA, 0x00, 0x16, 0x1b, 0x04, 0x11,
-> > +                                               0x07, 0x31, 0x33, 0x42, 0x05,
-> > +                                               0x0c, 0x0a, 0x28, 0x2f, 0x0f);
->
-> This should definately be in ili9341_config, as it is a screen property.
->
-> In the long run I would like these panels to support setting gamma
-> from userspace etc but it is a big tedious work to get that right
-> so hard-coding a default per-variant is fine.
->
-ok, will refer to panel-ilitek-ili9322 and panel-novatek-nt35510 driver.
-
-> You can check in e.g. panel-novatek-nt35510.c how I encoded
-> such sequences in per-variant data.
->
-> > +static int ili9341_dpi_power_off(struct ili9341 *ili)
-> > +{
-> > +       /* Disable power */
-> > +       if (!IS_ERR(ili->vcc))
-> > +               return regulator_disable(ili->vcc);
-> > +
-> > +       return 0;
-> > +}
->
-> Usually you should also assert RESET when disabling
-> power.
->
-ok
-
-> > +/* This is the only mode listed for parallel RGB in the datasheet */
-> > +static const struct drm_display_mode rgb_240x320_mode = {
-> > +       .clock = 6100,
-> > +       .hdisplay = 240,
-> > +       .hsync_start = 240 + 10,
-> > +       .hsync_end = 240 + 10 + 10,
-> > +       .htotal = 240 + 10 + 10 + 20,
-> > +       .vdisplay = 320,
-> > +       .vsync_start = 320 + 4,
-> > +       .vsync_end = 320 + 4 + 2,
-> > +       .vtotal = 320 + 4 + 2 + 2,
-> > +       .vrefresh = 60,
-> > +       .flags = 0,
-> > +       .width_mm = 65,
-> > +       .height_mm = 50,
->
-> The width and height should certainly be om the ili9341_config
-> as it is a per-panel property. You can just fill in in in
-> the below .get_modes() function. Or assign the whole
-> mode as part of the ili9341_config if that is easier.
->
-ok, lcd timing part will move to ili9341 config
-
-> > +       return drm_panel_add(&ili->panel);
-> > +}
-> > +
-> > +
-> > +
->
-> Surplus whitespace here.
-ok, will delete it.
-
->
-> > +       mipi_dbi_command(dbi, MIPI_DCS_SET_DISPLAY_OFF);
-> > +
-> > +       mipi_dbi_command(dbi, ILI9341_POWERB, 0x00, 0xc1, 0x30);
-> > +       mipi_dbi_command(dbi, ILI9341_POWER_SEQ, 0x64, 0x03, 0x12, 0x81);
->
-> Some of these are just copies of the above init sequence, so it makes
-> even more sense to just have these settings stored in
-> ili9341_config.
-ok.
-
->
-> > +       mipi_dbi_command(dbi, ILI9341_DTCA, 0x85, 0x00, 0x78);
-> > +       mipi_dbi_command(dbi, ILI9341_POWERA, 0x39, 0x2c, 0x00, 0x34, 0x02);
-> > +       mipi_dbi_command(dbi, ILI9341_PRC, 0x20);
-> > +       mipi_dbi_command(dbi, ILI9341_DTCB, 0x00, 0x00);
-> > +
-> > +       /* Power Control */
-> > +       mipi_dbi_command(dbi, ILI9341_POWER1, 0x23);
-> > +       mipi_dbi_command(dbi, ILI9341_POWER2, 0x10);
-> > +       /* VCOM */
-> > +       mipi_dbi_command(dbi, ILI9341_VCOM1, 0x3e, 0x28);
-> > +       mipi_dbi_command(dbi, ILI9341_VCOM2, 0x86);
-> > +
-> > +       /* Memory Access Control */
-> > +       mipi_dbi_command(dbi, MIPI_DCS_SET_PIXEL_FORMAT,
-> > +                               MIPI_DCS_PIXEL_FMT_16BIT);
-> > +
-> > +       /* Frame Rate */
-> > +       mipi_dbi_command(dbi, ILI9341_FRC, 0x00, 0x1b);
-> > +
-> > +       /* Gamma */
-> > +       mipi_dbi_command(dbi, ILI9341_3GAMMA_EN, 0x00);
-> > +       mipi_dbi_command(dbi, MIPI_DCS_SET_GAMMA_CURVE, 0x01);
-> > +       mipi_dbi_command(dbi, ILI9341_PGAMMA,
-> > +                        0x0f, 0x31, 0x2b, 0x0c, 0x0e, 0x08, 0x4e, 0xf1,
-> > +                        0x37, 0x07, 0x10, 0x03, 0x0e, 0x09, 0x00);
-> > +       mipi_dbi_command(dbi, ILI9341_NGAMMA,
-> > +                        0x00, 0x0e, 0x14, 0x03, 0x11, 0x07, 0x31, 0xc1,
-> > +                        0x48, 0x08, 0x0f, 0x0c, 0x31, 0x36, 0x0f);
->
-> It seems to be copies of the stuff above, but why is there a different
-> gamma if you use DBI?
-for dbi interface, currently i just copy the code from tiny/ili9341.c.
-as so many boards use this driver now, like raspberry pi, etc
-i'm afraid it's will not work after modification. so, just leave the
-original code there.
-
->
-> I suspect only one of them is really needed and it is not even
-> necessary to set if up in two places.
->
-as i know, dbi interface use spi to transfer video data and register
-set to panel.
-but dpi use rgb bus transfer video data, spi set register, they are
-two different type for drm.
-i can't register two different interface into drm at the same time.
-so, i use two path.
-
-for code management, they have some common part, like register init.
-power on/off process. i will try to reuse most common functions. to make code
-easier to be understand.
-
-anther question:
-is there any panel driver have dbi & dpi or dpi & dsi supported? which
-i mean support
-two different panel interface in one driver.
-thanks
-
-> > +out_enable:
-> > +       switch (dbidev->rotation) {
-> > +       default:
-> > +               addr_mode = ILI9341_MADCTL_MX;
-> > +               break;> +out_enable:
-> > +       switch (dbidev->rotation) {
-> > +       default:
-> > +               addr_mode = ILI9341_MADCTL_MX;
-> > +               break;
-> > +       case 90:
-> > +               addr_mode = ILI9341_MADCTL_MV;
-> > +               break;
-> > +       case 180:
-> > +               addr_mode = ILI9341_MADCTL_MY;
-> > +               break;
-> > +       case 270:
-> > +               addr_mode = ILI9341_MADCTL_MV | ILI9341_MADCTL_MY |
-> > +                           ILI9341_MADCTL_MX;
-> > +               break;
-> > +       }
-> > +       addr_mode |= ILI9341_MADCTL_BGR;
-> > +       mipi_dbi_command(dbi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
-> > +       mipi_dbi_enable_flush(dbidev, crtc_state, plane_state);
-> > +       DRM_DEBUG_KMS("initialized display serial interface\n");
-> > +out_exit:
-> > +       drm_dev_exit(idx);
-> > +}
-> > +
->
-> > +       case 90:
-> > +               addr_mode = ILI9341_MADCTL_MV;
-> > +               break;
-> > +       case 180:
-> > +               addr_mode = ILI9341_MADCTL_MY;
-> > +               break;
-> > +       case 270:
-> > +               addr_mode = ILI9341_MADCTL_MV | ILI9341_MADCTL_MY |
-> > +                           ILI9341_MADCTL_MX;
-> > +               break;
-> > +       }
-> > +       addr_mode |= ILI9341_MADCTL_BGR;
-> > +       mipi_dbi_command(dbi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
->
-> Since you use MIPI_DCS_* define here, check if this applies
-> to more of the commands above so you don't need custom
-> defines for them. e.g.
-> ILI9341_SLEEP_OUT 0x11 = MIPI_DCS_EXIT_SLEEP_MODE
-> and that isn't even a register right, it is just a command?
-> (Noted in the beginning.)
->
-ok, will try to reuse MIPI_DCS_xxx
-
-> Yours,
-> Linus Walleij
+Thanks!
