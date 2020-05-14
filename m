@@ -2,65 +2,67 @@ Return-Path: <SRS0=rluM=64=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF95FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 08:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C275C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 09:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C4A22206DC
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 08:24:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6F5C206BE
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 09:18:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iIm3W3vx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYqSa8L/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgENIYm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 04:24:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34818 "EHLO
+        id S1726033AbgENJSW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 05:18:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726165AbgENIYl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 04:24:41 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C318C061A0F
-        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 01:24:41 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id g1so2502963ljk.7
-        for <linux-clk@vger.kernel.org>; Thu, 14 May 2020 01:24:41 -0700 (PDT)
+        by vger.kernel.org with ESMTP id S1725878AbgENJSV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 May 2020 05:18:21 -0400
+Received: from mail-il1-x144.google.com (mail-il1-x144.google.com [IPv6:2607:f8b0:4864:20::144])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89AADC061A0C;
+        Thu, 14 May 2020 02:18:20 -0700 (PDT)
+Received: by mail-il1-x144.google.com with SMTP id j2so31609ilr.5;
+        Thu, 14 May 2020 02:18:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Jkb8BxKnl71QcTSlAQifB2QDBHTd1utKf7Tuku0XIK4=;
-        b=iIm3W3vxPyvQT8hBr8kR8u+6yVBH0h6bfGPXKdobARfet5qpx6e2NJwbGUoVD4BTiz
-         kvpn1tyKA+LwVUJc8z8fF1ZwXlCreaNrldq4vaEDBNH9cKFjh4tAUHQkvEkgZrv38eDN
-         o2gz3Js+ZsuW3daffpbxtnkSsvbVGjH/1ch+B53s3SDAzYlJpVIgVSGq9BIdUF43U3J3
-         PYEdm9THYdzNqhqnu0YtajA3OhEFK2moz2+zytOAdmmOqgbfZNV8YpRwBfYf+FcYfKP1
-         slXNCbKogiAPZuvMbATklfcba8DSvlZ/NhggKTK4KlzEC8fEhJbI/SNZCFcSB3u8yrD/
-         oIKw==
+        bh=ydoBtyjQkZ71HME1rY9/L3edxtQ8UTZXOUoGaJuGgqs=;
+        b=ZYqSa8L/3MIGZtdjLm0uDEAUX9qw4WfHyEd/Xw3RGOzYb1CkiCmu64wr9INtmjvKAv
+         emNDZI8PC9mqxdaFO/x+7iDPFrRBkDTofku3oFwDsonyzK71UUmM/f2Ph34IYVB1ePui
+         TRYJEkf6+HZ5dpJwh+khw4qEqdRQ1Yz4UtEMkaULjMFHZPky5finqqVyz2JPi5d/Mocq
+         Ga+oJmmuDjPRydwsVFRhLCydvb7MAqHM/hyGTEJ+1CxinGcEilDhOARv4nY1Mia/4k5g
+         0CjcHoE1TsdomFZGSZaCa096y7nxhGm4PrO3r+27z96mUV9fH7IfZq7KcSOXdK64+inC
+         4q8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Jkb8BxKnl71QcTSlAQifB2QDBHTd1utKf7Tuku0XIK4=;
-        b=NH6LErBfti0UvTrS/WHEGHKRZXa9w0II+rKbAgIIorChDFka2HeBs6GBMPCp0U1SBA
-         USIXE8W4xS5Ol2qjy3DMqqzLuKvPOsLpmtu0kbU+mqFzVqVlb7LCvcmsno3IjRJKDrq1
-         pFEBA+2yRSM1NaR0qGjg3Kr2uWKyD2of5Xv9qfra0l8wa9v1x+q5cnKXDFKMG4zkAOqY
-         77xgnzkDL34A+UGXTmGpP7r/TqOokF0TuNG73Bhmmi/2KC9JnJ9lhJD4jk3evBwD4J2M
-         5Qp1qIbKpJft8iwq6aFER/vGkPsS4ndn3dgn5wPVvM2smE1FTB7HEWGyavjPoAUfovKi
-         NFBQ==
-X-Gm-Message-State: AOAM533a+2XMGnP9UayY9jbgxzpgSTjLWA5B3Xmt+iIkhz1uLjVqj0YG
-        l1G/Op69dAfypTjRZAtz843WVFu7o6YKOPuWtWjq5A==
-X-Google-Smtp-Source: ABdhPJzbR0lONsL+LHNQ562bI+zZx3vzCrNYamk5GJI5zjbv9WVScZ7rOiUe3C6sarzGNmAWB4jF6RMUNqx0dbXgSxU=
-X-Received: by 2002:a2e:8805:: with SMTP id x5mr2073815ljh.223.1589444679816;
- Thu, 14 May 2020 01:24:39 -0700 (PDT)
+        bh=ydoBtyjQkZ71HME1rY9/L3edxtQ8UTZXOUoGaJuGgqs=;
+        b=XgmuF3P3HSIQdiZq5nvGM4PC5volrhSK+Q/k92hEYAGIVfZRHAnpWUgxmfRp6au2Oh
+         0dvouz+a3Y4fsC1JkBUpzl6BvgeLT0zTf6g4kZWOwcx7O876cxfa2IuxYkwoo6TlOE36
+         t3Y+DLdSfRm3khn8hWL33GiDSWAf1QRc3gD9UBNRt4bRESkQOHX9OMmU5qbHm1BUEwW7
+         qzQdeBSptNF2Qc0WTYa3X9o+MzY4q4iLDcDGQ87k6XLWqYo/Bo+p9/xWEegp6xXyMKof
+         Fumtlfqmp/NkRD280Fh7GmZEEOrThMXZcqrdM9tqv1Q9SIL/UI20FGJm2/m+QAXvdzkQ
+         K01w==
+X-Gm-Message-State: AOAM533o0QBL2hhJZzYJ6TnpB9MJdY90kVxfQ7jEDSuewK2GTFNS5XmE
+        j6d27Znb8zQac4sNanHXbKObRJPzt8eIuwnJ3Xw=
+X-Google-Smtp-Source: ABdhPJx7BSQgQE4F6HtJZDnTuhUIhxQY0EfiByegZhfXtsPPqB/OWed28lLtaW/x8ef7ztWZ46mbWs3Tdl5vZCAZRP0=
+X-Received: by 2002:a92:3556:: with SMTP id c83mr3346133ila.218.1589447900002;
+ Thu, 14 May 2020 02:18:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com> <1589267017-17294-4-git-send-email-dillon.minfei@gmail.com>
-In-Reply-To: <1589267017-17294-4-git-send-email-dillon.minfei@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 May 2020 10:24:28 +0200
-Message-ID: <CACRpkda5VjjBdbruXTi33QBNb=VU6vK2zDE8yyQXoWw7=NQFeg@mail.gmail.com>
+References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com>
+ <1589267017-17294-4-git-send-email-dillon.minfei@gmail.com> <CACRpkda5VjjBdbruXTi33QBNb=VU6vK2zDE8yyQXoWw7=NQFeg@mail.gmail.com>
+In-Reply-To: <CACRpkda5VjjBdbruXTi33QBNb=VU6vK2zDE8yyQXoWw7=NQFeg@mail.gmail.com>
+From:   dillon min <dillon.minfei@gmail.com>
+Date:   Thu, 14 May 2020 17:17:42 +0800
+Message-ID: <CAL9mu0JZdgJ0yjULUHkXzU0CyKeMi0dcA1L7PxPiZucpuuyQ9Q@mail.gmail.com>
 Subject: Re: [PATCH v3 3/5] ARM: dts: stm32: enable ltdc binding with ili9341
  on stm32429-disco board
-To:     dillon.minfei@gmail.com
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
         Alexandre TORGUE <alexandre.torgue@st.com>,
@@ -83,32 +85,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, May 12, 2020 at 9:04 AM <dillon.minfei@gmail.com> wrote:
+Hi, Linus,
 
-> From: dillon min <dillon.minfei@gmail.com>
+thanks for reviewing.
+
+On Thu, May 14, 2020 at 4:24 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 >
-> Enable the ltdc & ili9341 on stm32429-disco board.
+> On Tue, May 12, 2020 at 9:04 AM <dillon.minfei@gmail.com> wrote:
 >
-> Signed-off-by: dillon min <dillon.minfei@gmail.com>
+> > From: dillon min <dillon.minfei@gmail.com>
+> >
+> > Enable the ltdc & ili9341 on stm32429-disco board.
+> >
+> > Signed-off-by: dillon min <dillon.minfei@gmail.com>
+>
+> This mostly looks good but...
+>
+> > +&spi5 {
+> > +       status = "okay";
+> > +       pinctrl-0 = <&spi5_pins>;
+> > +       pinctrl-names = "default";
+> > +       #address-cells = <1>;
+> > +       #size-cells = <0>;
+> > +       cs-gpios = <&gpioc 2 GPIO_ACTIVE_LOW>;
+> > +       dmas = <&dma2 3 2 0x400 0x0>,
+> > +              <&dma2 4 2 0x400 0x0>;
+> > +       dma-names = "rx", "tx";
+>
+> These DMA assignments seem to be SoC things and should
+> rather be in the DTS(I) file where &spi5 is defined, right?
+> stm32f429.dtsi I suppose?
+>
+> It is likely the same no matter which device is using spi5.
+>
+> Yours,
+> Linus Walleij
 
-This mostly looks good but...
+Yes, the dma assignments can be moved to stm32f429.dtsi file.
+i will change it.
 
-> +&spi5 {
-> +       status = "okay";
-> +       pinctrl-0 = <&spi5_pins>;
-> +       pinctrl-names = "default";
-> +       #address-cells = <1>;
-> +       #size-cells = <0>;
-> +       cs-gpios = <&gpioc 2 GPIO_ACTIVE_LOW>;
-> +       dmas = <&dma2 3 2 0x400 0x0>,
-> +              <&dma2 4 2 0x400 0x0>;
-> +       dma-names = "rx", "tx";
+thanks.
 
-These DMA assignments seem to be SoC things and should
-rather be in the DTS(I) file where &spi5 is defined, right?
-stm32f429.dtsi I suppose?
+best regards.
 
-It is likely the same no matter which device is using spi5.
-
-Yours,
-Linus Walleij
+dillon,
