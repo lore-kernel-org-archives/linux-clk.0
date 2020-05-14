@@ -2,95 +2,113 @@ Return-Path: <SRS0=rluM=64=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BF5C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 20:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396BBC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E61620801
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 20:56:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 123B320722
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 21:02:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589489760;
-	bh=9IxKQdyP8dC+y4xB/GzFEZ66AXNCoV9tM8PP7KQgFBc=;
+	s=default; t=1589490149;
+	bh=BpiNhcYdcKddO8cs3Vt8IZUscWTK1/Is8oqrDfZkC6w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=1ikYN1eqXGx/nZBR1Gc9wMOKroTqRmRRCc3KDcx6Z5TPkSehS0Mq3a6ysn/eo59tA
-	 NjOqel1BH+xoASqOwJx5/aFijgAM9/ScE93BvR3uhfLCGZU4AUCOjjYAcujS/0nQXL
-	 s8VOO47waUbKYjvS564M7YR31FizpiwixVCNKpUo=
+	b=a01UXE9wSh5qwMSMDLGyL3Nr+9uggm4MPWq9r3ddJAd7z6AF6mQ4ZxZFn3HVWW/qI
+	 S6W1yVrc5tP6jXTo87dq312m/fVe2BdvZq6e+JP7xT896DUC1coqVLOG8Ei4gOPezW
+	 4u6o5T/cdWE5C9ET51wRuljAMygqLhqA6Dbk126Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbgENU4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 16:56:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39724 "EHLO mail.kernel.org"
+        id S1726241AbgENVC2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 17:02:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbgENUz7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 May 2020 16:55:59 -0400
+        id S1726201AbgENVC2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 May 2020 17:02:28 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A608207E8;
-        Thu, 14 May 2020 20:55:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4298206F1;
+        Thu, 14 May 2020 21:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589489759;
-        bh=9IxKQdyP8dC+y4xB/GzFEZ66AXNCoV9tM8PP7KQgFBc=;
+        s=default; t=1589490148;
+        bh=BpiNhcYdcKddO8cs3Vt8IZUscWTK1/Is8oqrDfZkC6w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bDQ9LQYHSL4OSfP/pGMSUpfLmgjQ4a2loCpQHclgYby3Y6onnjVJPd82pe41tU5oT
-         GGhrMn6QVGPbENeozyUDGvqtrAkDlfpinygn2rJKrNWWs+zsRS6EaaoE/IldnMCDM4
-         51oPm2miwoOmX7jfzlVg3yEDLsC2nv54X5SrXrfU=
+        b=hyfFgR+GL76NQf566ZtlB+WOryIov5DSxhUL5b5JUGfd+iX0ldBn3aeIuHEmGYr5F
+         EJi9Wz7J28FNtt08VJYBztNyXwTQJ6uHS1pGhU4g7jeCKpOQ1WCr4QwXnoluVb/vcF
+         CFUnP5fIMuLO3vUY90BKaBpUzqs5HHWHXbnfeD0k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j3686g6r6.fsf@starbuckisacylon.baylibre.com>
-References: <1j3686g6r6.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: updates for v5.8
+In-Reply-To: <1589267017-17294-5-git-send-email-dillon.minfei@gmail.com>
+References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com> <1589267017-17294-5-git-send-email-dillon.minfei@gmail.com>
+Subject: Re: [PATCH v3 4/5] clk: stm32: Fix stm32f429 ltdc driver loading hang in clk set rate. keep ltdc clk running after kernel startup
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Date:   Thu, 14 May 2020 13:55:58 -0700
-Message-ID: <158948975864.215346.6720030658125416749@swboyd.mtv.corp.google.com>
+Cc:     devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        dillon.minfei@gmail.com
+To:     airlied@linux.ie, alexandre.torgue@st.com, daniel@ffwll.ch,
+        dillon.minfei@gmail.com, mcoquelin.stm32@gmail.com,
+        mturquette@baylibre.com, robh+dt@kernel.org, sam@ravnborg.org,
+        thierry.reding@gmail.com
+Date:   Thu, 14 May 2020 14:02:27 -0700
+Message-ID: <158949014721.215346.12197373767247910756@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-05-11 02:28:45)
-> Hi Stephen,
+Quoting dillon.minfei@gmail.com (2020-05-12 00:03:36)
+> From: dillon min <dillon.minfei@gmail.com>
 >=20
-> Here are the amlogic clock updates for v5.8.
-> Nothing fancy, please pull.
->=20
-> Cheers
->=20
-> The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f31=
-36:
->=20
->   Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.8-1
->=20
-> for you to fetch changes up to a29ae8600d50ece1856b062a39ed296b8b952259:
->=20
->   clk: meson: meson8b: Don't rely on u-boot to init all GP_PLL registers =
-(2020-05-02 01:53:32 +0200)
->=20
-> ----------------------------------------------------------------
-> Amlogic clock updates for v5.8:
->=20
-> * Meson8b: Updates and fixup HDMI and video clocks
-> * Meson8b: Fixup reset polarity
-> * Meson gx and g12: fix GPU glitch free mux switch
->=20
-> ----------------------------------------------------------------
+> as store stm32f4_rcc_register_pll return to the wrong offset of clks,
 
-Should also mention that sparse on arm64 complains about=20
+Use () on functions, i.e. stm32f4_rcc_register_pll().
 
-drivers/clk/meson/g12a.c:5074:43: warning: invalid access past the end of '=
-g12b_hw_onecell_data' (1472 8)
+> so ltdc gate clk is null. need change clks[PLL_VCO_SAI] to clks[PLL_SAI]
 
-but I have no idea if that's a real problem. Maybe my sparse build is
-bad?
+And quote variables like 'clks[PLL_VCO_SAI]'
+
+>=20
+> add CLK_IGNORE_UNUSED for ltdc to make sure clk not be freed by
+> clk_disable_unused
+
+clk_disable_unused() doesn't free anything. Why does ltdc not need to be
+turned off if it isn't used? Is it critical to system operation? Should
+it be marked with the critical clk flag then? The CLK_IGNORE_UNUSED flag
+is almost always wrong to use.
+
+>=20
+> Signed-off-by: dillon min <dillon.minfei@gmail.com>
+> ---
+>  drivers/clk/clk-stm32f4.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-stm32f4.c b/drivers/clk/clk-stm32f4.c
+> index 18117ce..0ba73de 100644
+> --- a/drivers/clk/clk-stm32f4.c
+> +++ b/drivers/clk/clk-stm32f4.c
+> @@ -129,7 +129,8 @@ static const struct stm32f4_gate_data stm32f429_gates=
+[] __initconst =3D {
+>         { STM32F4_RCC_APB2ENR, 20,      "spi5",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 21,      "spi6",         "apb2_div" },
+>         { STM32F4_RCC_APB2ENR, 22,      "sai1",         "apb2_div" },
+> -       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div" },
+> +       { STM32F4_RCC_APB2ENR, 26,      "ltdc",         "apb2_div",
+> +               CLK_IGNORE_UNUSED },
+>  };
+> =20
+>  static const struct stm32f4_gate_data stm32f469_gates[] __initconst =3D {
+> @@ -1757,7 +1758,7 @@ static void __init stm32f4_rcc_init(struct device_n=
+ode *np)
+>         clks[PLL_VCO_I2S] =3D stm32f4_rcc_register_pll("vco_in",
+>                         &data->pll_data[1], &stm32f4_clk_lock);
+> =20
+> -       clks[PLL_VCO_SAI] =3D stm32f4_rcc_register_pll("vco_in",
+> +       clks[PLL_SAI] =3D stm32f4_rcc_register_pll("vco_in",
+>                         &data->pll_data[2], &stm32f4_clk_lock);
+> =20
+>         for (n =3D 0; n < MAX_POST_DIV; n++) {
