@@ -6,60 +6,70 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0F9C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 19:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FF0C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 19:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E01602065F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 19:55:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86CEA20727
+	for <linux-clk@archiver.kernel.org>; Thu, 14 May 2020 19:56:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589486143;
-	bh=Aa/3H47uFWC2/0q0abwJhHfDwXbrQG02nMr4p4Vd1qc=;
+	s=default; t=1589486199;
+	bh=GxE8ANtTfub60hMSFbauTD0SDXUv1h7GY8/7gYwkj1s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=kpWcP2ZwAH/fJy6RZBYW4PRfoGe8dyycZCN4ct02z5urssK2Y7CUSLapydKCWpO6O
-	 lEAEbiQ1jpwUxLVLljfRSCtHDGFfNKL1jyZJ+9JccBCAPxd5ApEA8ZsQ898m1i/+Mt
-	 VbMzThyc0SIG+kmXLIrd9bF6d+GG1+70HE3zYBZI=
+	b=o8v4hCZIHQuoIvZklFXHVsnuQuKLL/r41zRI+Ufg3W7NvctFO5h08lEXAy3t4V/l8
+	 DhHOxVXfyOCthyB4s79pHnXBf7mPs+sSkSfOPK/dAkacL/YAN5ANiHLsk19ReBrmUQ
+	 K4U3oFPLwGrK8ean3FOvNIbLA1CBR32VLRkfITHs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbgENTzn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 May 2020 15:55:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47670 "EHLO mail.kernel.org"
+        id S1727837AbgENT4j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 May 2020 15:56:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbgENTzn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 14 May 2020 15:55:43 -0400
+        id S1727117AbgENT4j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 May 2020 15:56:39 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 026E52065C;
-        Thu, 14 May 2020 19:55:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 93F962065D;
+        Thu, 14 May 2020 19:56:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589486143;
-        bh=Aa/3H47uFWC2/0q0abwJhHfDwXbrQG02nMr4p4Vd1qc=;
+        s=default; t=1589486198;
+        bh=GxE8ANtTfub60hMSFbauTD0SDXUv1h7GY8/7gYwkj1s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=1FdmqHByV4+NQdNj3W8osU7HTeP3i8F/FwEfnqpo/3/cf/9KQ0kK1aCUrkLiWx5Km
-         Xsy3MKNjtLoSCiXuA4rSTewATmvYkaJeoHMzA09v5/AOqfOCcjTrycfCMdsm6sWXJ8
-         zN0IqZtZNZ9QUCyHfNhDhhThGGFpgPNOjQ+p4qbU=
+        b=lgNmKs8ZeUDv5XB7NX0ds36hRGZoVZieEig0mf4RgEgTJWjlQ6+m143PLJBuYH7wx
+         F05bfIZU6PCyTM5ZT28JE3VFQo8RYr73pSsG2RpJMSiGr2Tv3MSh4FqAMH5Rio/+J1
+         4uTcZX2ZW9B+JDol6KOeKnqZDX9cUmkFUCGu2Oss=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200430083640.8621-4-t-kristo@ti.com>
-References: <20200430083640.8621-1-t-kristo@ti.com> <20200430083640.8621-4-t-kristo@ti.com>
-Subject: Re: [PATCH 3/3] clk: ti: dra7xx: fix RNG clock parent
+In-Reply-To: <20200409064416.83340-3-sboyd@kernel.org>
+References: <20200409064416.83340-1-sboyd@kernel.org> <20200409064416.83340-3-sboyd@kernel.org>
+Subject: Re: [PATCH v2 02/10] ARM: Remove redundant CLKDEV_LOOKUP selects
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     tony@atomide.com, linux-omap@vger.kernel.org
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Thu, 14 May 2020 12:55:42 -0700
-Message-ID: <158948614233.215346.7786503812699873424@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Tony Prisk <linux@prisktech.co.nz>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Date:   Thu, 14 May 2020 12:56:37 -0700
+Message-ID: <158948619792.215346.16103604948090575932@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2020-04-30 01:36:40)
-> RNG is sourced from L4 clock. Add info for this for proper parenting of
-> the clock.
+Quoting Stephen Boyd (2020-04-08 23:44:08)
+> These platforms select COMMON_CLK indirectly through use of the
+> ARCH_MULTIPLATFORM config option that they depend on implicitly via some
+> V7/V6/V5 multi platform config option. The COMMON_CLK config option
+> already selects CLKDEV_LOOKUP so it's redundant to have this selected
+> again.
 >=20
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> Cc: Tony Prisk <linux@prisktech.co.nz>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: <linux-arm-kernel@lists.infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
