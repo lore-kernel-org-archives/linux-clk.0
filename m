@@ -2,57 +2,72 @@ Return-Path: <SRS0=k6hG=65=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A31C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 08:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE78C433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 09:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC71206F1
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 08:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EBC20767
+	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 09:25:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="tSlFRvwI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ScyKUI9Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbgEOIcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 May 2020 04:32:36 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:57810 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726730AbgEOIcf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 May 2020 04:32:35 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 04F8RKCf008633;
-        Fri, 15 May 2020 10:31:56 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=eJdDgRjKpklAGeIMtYx/P/MnYN9oSC9vUDGlJU7uW3M=;
- b=tSlFRvwIszSbH0n6EGhT1cOhcWrR9N2lmFcwsg/0R87FHKn48HaYPpw5Pd1UipFyXSQf
- o1WT15VZt4K04hoYJfOVeGJS0OyBw72LcR736Vyq5gavdNH19bZr8EQhYDHOa3vvq4w/
- XHHgKFeWfc2w6eTVqh35Qw27A+tji4plzvhLdiIs1gnBniHPcQ5R2u+rIZaxdSUMe3BO
- HGoaa12AGYiq2WH6HHLFbfFFZZbq0guYb3R4WaZQHPGf2yX1VuSFO07Eudozax+s4wyS
- WDQWn6+PwKlqIoLgYaB5lFQfjiJOEZwtU/+r+maXSYYGhIMdApxU38rRUoVDx3cEvGvQ bQ== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 3100vyrw43-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 May 2020 10:31:56 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DC686100034;
-        Fri, 15 May 2020 10:31:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B664E2208D2;
-        Fri, 15 May 2020 10:31:54 +0200 (CEST)
-Received: from SFHDAG3NODE3.st.com (10.75.127.9) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 15 May
- 2020 10:31:54 +0200
-Received: from SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476]) by
- SFHDAG3NODE3.st.com ([fe80::3507:b372:7648:476%20]) with mapi id
- 15.00.1347.000; Fri, 15 May 2020 10:31:54 +0200
-From:   Benjamin GAIGNARD <benjamin.gaignard@st.com>
-To:     dillon min <dillon.minfei@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>
-CC:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        id S1727973AbgEOJZH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 May 2020 05:25:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43278 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727116AbgEOJZH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 May 2020 05:25:07 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DBF2C061A0C;
+        Fri, 15 May 2020 02:25:07 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id x5so1900681ioh.6;
+        Fri, 15 May 2020 02:25:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Cc4MG6c747g2GpEAJm056wqMJo63ltnWhdsdBk/YjvU=;
+        b=ScyKUI9YtsU9p9A901j1O1w7H7TdnTlwcnuWzKYRo3T+bqoIZc8vOQ9X95sdz82tnm
+         urIdlt/GUp9Yfq/9xFWZj8mjEJR05XCX47NoY/P6Qt0R26F6a4+luq3nyePE1nmFInMi
+         6BAfAKoBoWEhG6za8fIQD/VCbuJv1yUxDeWf/yoarFgULSJjRsGjQawtvMMXahIIItR+
+         KspUduc8eOvKKZ1LH2ZaKUn870ew37S9JgdauJkgRN1oLquW5K4IJPZ6HqXyZzq+NGxx
+         sE/WbC8Y9Ybw+RAytAcJEnTXxxp56g590pE4tr+7ttn7UIBYdlYCf8fDbzQ8qu7KV+M1
+         0QRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Cc4MG6c747g2GpEAJm056wqMJo63ltnWhdsdBk/YjvU=;
+        b=bqDRC6qrgHNSLoIbdI08eyjFl5boo4tyhw0ECAM/gjLv3SBFUvYLQT1Q6oeOK8mDQF
+         vFYCcTj7UdaalLcVV249irNPwy62KRl5KYP3h+c6PhU11aZd7YPm6Ensu86n5ZU0KbZ3
+         Z6ifHdWCafQlLtMIkUmct04cr9HYmuioi8RzyIDFTPXnJeDneAVno3z8uw57f1+lvU/1
+         qxyErMXx/2jVTNDdGsnfJ9DaY4JisWVROayaitkswvw+q9hPLce93IKLUR75fajdehlC
+         tK0SANhGl8kMBSLnUmyi7Eh9sUhy4tyvJ9g7CV9tFkiO9NomdJJ+CltV4aCvED6bX5T/
+         aJpg==
+X-Gm-Message-State: AOAM533Oax1RJPL989pmSnl56QH9JpauNArbUCs4Du+mf+elBJjicLrS
+        2GwVfggeo80r8tWCRiWm2MmY5cTIO5sw/XS6mO4=
+X-Google-Smtp-Source: ABdhPJyr7Q+WoA1oeyUp1TGmDyNR7js+O5d1aEorqbluWDehBMJqofjEnccsNnqBusTGHRHYyHOE+n76LGnfJ7BM2as=
+X-Received: by 2002:a05:6638:1121:: with SMTP id f1mr2281062jar.62.1589534706577;
+ Fri, 15 May 2020 02:25:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com>
+ <1589267017-17294-4-git-send-email-dillon.minfei@gmail.com>
+ <CACRpkda5VjjBdbruXTi33QBNb=VU6vK2zDE8yyQXoWw7=NQFeg@mail.gmail.com>
+ <a4ebd7cd-5756-0683-135f-0f96be8a4a7b@st.com> <CAL9mu0Jt_xwo5pJfcx6G3grBuOaxLXvakpEjiB4gV3=bkiq2fg@mail.gmail.com>
+ <818b93b4-4431-8338-cd90-ed125ecac615@st.com>
+In-Reply-To: <818b93b4-4431-8338-cd90-ed125ecac615@st.com>
+From:   dillon min <dillon.minfei@gmail.com>
+Date:   Fri, 15 May 2020 17:24:29 +0800
+Message-ID: <CAL9mu0L6d2V5qypPfOSeMdhc=DdHkcsaF4GysNG-vfDe5npkhw@mail.gmail.com>
+Subject: Re: [Linux-stm32] [PATCH v3 3/5] ARM: dts: stm32: enable ltdc binding
+ with ili9341 on stm32429-disco board
+To:     Benjamin GAIGNARD <benjamin.gaignard@st.com>
+Cc:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>, Daniel Vetter <daniel@ffwll.ch>,
         Dave Airlie <airlied@linux.ie>,
         Linus Walleij <linus.walleij@linaro.org>,
@@ -65,81 +80,103 @@ CC:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
         Rob Herring <robh+dt@kernel.org>,
         "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        "Sam Ravnborg" <sam@ravnborg.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [Linux-stm32] [PATCH v3 3/5] ARM: dts: stm32: enable ltdc binding
- with ili9341 on stm32429-disco board
-Thread-Topic: [Linux-stm32] [PATCH v3 3/5] ARM: dts: stm32: enable ltdc
- binding with ili9341 on stm32429-disco board
-Thread-Index: AQHWKckeJCttwtJ4Q0KZXBBPInzZ9ainaAuAgAAEJgCAAUVIgA==
-Date:   Fri, 15 May 2020 08:31:54 +0000
-Message-ID: <818b93b4-4431-8338-cd90-ed125ecac615@st.com>
-References: <1589267017-17294-1-git-send-email-dillon.minfei@gmail.com>
- <1589267017-17294-4-git-send-email-dillon.minfei@gmail.com>
- <CACRpkda5VjjBdbruXTi33QBNb=VU6vK2zDE8yyQXoWw7=NQFeg@mail.gmail.com>
- <a4ebd7cd-5756-0683-135f-0f96be8a4a7b@st.com>
- <CAL9mu0Jt_xwo5pJfcx6G3grBuOaxLXvakpEjiB4gV3=bkiq2fg@mail.gmail.com>
-In-Reply-To: <CAL9mu0Jt_xwo5pJfcx6G3grBuOaxLXvakpEjiB4gV3=bkiq2fg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EEC9925CAF78A046ADDC74F9DCF8557D@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.676
- definitions=2020-05-15_03:2020-05-14,2020-05-15 signatures=0
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCk9uIDUvMTQvMjAgMzowNyBQTSwgZGlsbG9uIG1pbiB3cm90ZToNCj4gSGkgQWxleGFuZHJl
-LA0KPg0KPiBPbiBUaHUsIE1heSAxNCwgMjAyMCBhdCA4OjUzIFBNIEFsZXhhbmRyZSBUb3JndWUN
-Cj4gPGFsZXhhbmRyZS50b3JndWVAc3QuY29tPiB3cm90ZToNCj4+DQo+Pg0KPj4gT24gNS8xNC8y
-MCAxMDoyNCBBTSwgTGludXMgV2FsbGVpaiB3cm90ZToNCj4+PiBPbiBUdWUsIE1heSAxMiwgMjAy
-MCBhdCA5OjA0IEFNIDxkaWxsb24ubWluZmVpQGdtYWlsLmNvbT4gd3JvdGU6DQo+Pj4NCj4+Pj4g
-RnJvbTogZGlsbG9uIG1pbiA8ZGlsbG9uLm1pbmZlaUBnbWFpbC5jb20+DQo+Pj4+DQo+Pj4+IEVu
-YWJsZSB0aGUgbHRkYyAmIGlsaTkzNDEgb24gc3RtMzI0MjktZGlzY28gYm9hcmQuDQo+Pj4+DQo+
-Pj4+IFNpZ25lZC1vZmYtYnk6IGRpbGxvbiBtaW4gPGRpbGxvbi5taW5mZWlAZ21haWwuY29tPg0K
-Pj4+IFRoaXMgbW9zdGx5IGxvb2tzIGdvb2QgYnV0Li4uDQo+Pj4NCj4+Pj4gKyZzcGk1IHsNCj4+
-Pj4gKyAgICAgICBzdGF0dXMgPSAib2theSI7DQo+Pj4+ICsgICAgICAgcGluY3RybC0wID0gPCZz
-cGk1X3BpbnM+Ow0KPj4+PiArICAgICAgIHBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+Pj4+
-ICsgICAgICAgI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+Pj4+ICsgICAgICAgI3NpemUtY2VsbHMg
-PSA8MD47DQo+Pj4+ICsgICAgICAgY3MtZ3Bpb3MgPSA8JmdwaW9jIDIgR1BJT19BQ1RJVkVfTE9X
-PjsNCj4+Pj4gKyAgICAgICBkbWFzID0gPCZkbWEyIDMgMiAweDQwMCAweDA+LA0KPj4+PiArICAg
-ICAgICAgICAgICA8JmRtYTIgNCAyIDB4NDAwIDB4MD47DQo+Pj4+ICsgICAgICAgZG1hLW5hbWVz
-ID0gInJ4IiwgInR4IjsNCj4+PiBUaGVzZSBETUEgYXNzaWdubWVudHMgc2VlbSB0byBiZSBTb0Mg
-dGhpbmdzIGFuZCBzaG91bGQNCj4+PiByYXRoZXIgYmUgaW4gdGhlIERUUyhJKSBmaWxlIHdoZXJl
-ICZzcGk1IGlzIGRlZmluZWQsIHJpZ2h0Pw0KPj4+IHN0bTMyZjQyOS5kdHNpIEkgc3VwcG9zZT8N
-Cj4+IEkgYWdyZWUgd2l0aCBMaW51cywgRE1BIGhhdmUgdG8gYmUgZGVmaW5lZCBpbiBTb0MgZHRz
-aS4gQW5kIGlmIGEgYm9hcmQNCj4+IGRvZXNuJ3Qgd2FudCB0byB1c2UgaXQsIHdlIHVzZSB0aGUg
-ImRlbGV0ZS1wcm9wZXJ0eSIuDQo+IFllcywgd2lsbCBtb3ZlIHRvIFNvYyBkdHNpIGluIG5leHQg
-c3VibWl0cy4NCj4NCj4gaSdtIHdvcmtpbmcgb24gd3JpdGUgYSB2NGwyLW0ybSBkcml2ZXIgZm9y
-IGRtYTJkIG9mIHN0bTMyIHRvIHN1cHBvcnQNCj4gcGl4ZWwgY29udmVyc2lvbg0KPiBhbHBoYSBi
-bGVuZGluZyBiZXR3ZWVuIGZvcmVncm91bmQgYW5kIGJhY2tncm91bmQgZ3JhcGhpY3MuDQo+DQo+
-IGFzIHlvdSBrbm93LCBzb21lIHNvYydzIGVuZ2luZWVyIHRyeWluZyB0byBhZGQgdGhpcyBmdW5j
-dGlvbiB0byBkcm0gc3lzdGVtLg0KPg0KPiBkbyB5b3Uga25vdyBzdCdzIHBsYW5uaW5nIGFib3V0
-IHNvYydzIGhhcmR3YXJlIGFjY2VsZXJhdG9yIGRyaXZlciBvbiBzdG0zMm1wPw0KPiBzdWNoIGFz
-IGNocm9tLWFydCwgd2lsbCBhZGQgdG8gZHJtIHN1YnN5c3RlbSB2aWEgaW9jdGwgdG8gYWNjZXNz
-LCBvciB0byB2NGwyLA0KT24gc3RtMzJtcCB3ZSBkbyBub3QgcGxhbiB0byB1c2UgY2hyb20tYXJ0
-IGluIGRybSBvciB2NGwyIGJlY2F1c2UgaXQgDQpkb2VzIGZpdA0Kd2l0aCB1c2VybGFuZCB3YXkg
-b2Ygd29ya2luZy4gV2UgdXNlIHRoZSBHUFUgdG8gZG8gY29udmVyc2lvbiwgc2NhbGluZywgDQpi
-bGVuZGluZw0KYW5kIGNvbXBvc2l0aW9uIGluIG9ubHkgb25lIGdvLg0KQXMgZXhwbGFpbiBoZXJl
-IFsxXSBEUk0gc3Vic3l0ZW0gaXQgaXNuJ3QgYSBzb2x1dGlvbiBhbmQgdjRsMi1tMm0gaXNuJ3Qg
-DQp1c2VkIGluIGFueQ0KbWFpbmxpbmUgY29tcG9zaXRvcnMgbGlrZSBXZXN0b24gb3IgYW5kcm9p
-ZCBzdXJmYWNlZmxpbmdlci4NCg0KQmVuamFtaW4NCg0KWzFdIA0KaHR0cHM6Ly93d3cucGhvcm9u
-aXguY29tL3NjYW4ucGhwP3BhZ2U9bmV3c19pdGVtJnB4PUxpbnV4LURSTS1Oby0yRC1BY2NlbC1B
-UEkNCj4NCj4gdGhhbmtzLg0KPg0KPj4+IEl0IGlzIGxpa2VseSB0aGUgc2FtZSBubyBtYXR0ZXIg
-d2hpY2ggZGV2aWNlIGlzIHVzaW5nIHNwaTUuDQo+Pj4NCj4+PiBZb3VycywNCj4+PiBMaW51cyBX
-YWxsZWlqDQo+Pj4NCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18NCj4gTGludXgtc3RtMzIgbWFpbGluZyBsaXN0DQo+IExpbnV4LXN0bTMyQHN0LW1kLW1h
-aWxtYW4uc3Rvcm1yZXBseS5jb20NCj4gaHR0cHM6Ly9zdC1tZC1tYWlsbWFuLnN0b3JtcmVwbHku
-Y29tL21haWxtYW4vbGlzdGluZm8vbGludXgtc3RtMzINCg==
+Hi Benjamin,
+
+thanks for reply.
+
+On Fri, May 15, 2020 at 4:31 PM Benjamin GAIGNARD
+<benjamin.gaignard@st.com> wrote:
+>
+>
+>
+> On 5/14/20 3:07 PM, dillon min wrote:
+> > Hi Alexandre,
+> >
+> > On Thu, May 14, 2020 at 8:53 PM Alexandre Torgue
+> > <alexandre.torgue@st.com> wrote:
+> >>
+> >>
+> >> On 5/14/20 10:24 AM, Linus Walleij wrote:
+> >>> On Tue, May 12, 2020 at 9:04 AM <dillon.minfei@gmail.com> wrote:
+> >>>
+> >>>> From: dillon min <dillon.minfei@gmail.com>
+> >>>>
+> >>>> Enable the ltdc & ili9341 on stm32429-disco board.
+> >>>>
+> >>>> Signed-off-by: dillon min <dillon.minfei@gmail.com>
+> >>> This mostly looks good but...
+> >>>
+> >>>> +&spi5 {
+> >>>> +       status = "okay";
+> >>>> +       pinctrl-0 = <&spi5_pins>;
+> >>>> +       pinctrl-names = "default";
+> >>>> +       #address-cells = <1>;
+> >>>> +       #size-cells = <0>;
+> >>>> +       cs-gpios = <&gpioc 2 GPIO_ACTIVE_LOW>;
+> >>>> +       dmas = <&dma2 3 2 0x400 0x0>,
+> >>>> +              <&dma2 4 2 0x400 0x0>;
+> >>>> +       dma-names = "rx", "tx";
+> >>> These DMA assignments seem to be SoC things and should
+> >>> rather be in the DTS(I) file where &spi5 is defined, right?
+> >>> stm32f429.dtsi I suppose?
+> >> I agree with Linus, DMA have to be defined in SoC dtsi. And if a board
+> >> doesn't want to use it, we use the "delete-property".
+> > Yes, will move to Soc dtsi in next submits.
+> >
+> > i'm working on write a v4l2-m2m driver for dma2d of stm32 to support
+> > pixel conversion
+> > alpha blending between foreground and background graphics.
+> >
+> > as you know, some soc's engineer trying to add this function to drm system.
+> >
+> > do you know st's planning about soc's hardware accelerator driver on stm32mp?
+> > such as chrom-art, will add to drm subsystem via ioctl to access, or to v4l2,
+> On stm32mp we do not plan to use chrom-art in drm or v4l2 because it
+> does fit
+> with userland way of working. We use the GPU to do conversion, scaling,
+> blending
+> and composition in only one go.
+> As explain here [1] DRM subsytem it isn't a solution and v4l2-m2m isn't
+> used in any
+> mainline compositors like Weston or android surfaceflinger.
+>
+> Benjamin
+>
+
+After check stm32mp's datasheets, they don't have chrom-art ip inside. sorry for
+didn't check it yet.
+
+for stm32h7 series with chrom-art, jpeg hardware accelerator inside.
+does st has plan to
+setup a driver to support it ? i prefer v4l2-m2m should be easier to
+implement it.
+co work with dcmi, fbdev.
+
+thanks.
+
+best regards.
+
+Dillon
+> [1]
+> https://www.phoronix.com/scan.php?page=news_item&px=Linux-DRM-No-2D-Accel-API
+> >
+> > thanks.
+> >
+> >>> It is likely the same no matter which device is using spi5.
+> >>>
+> >>> Yours,
+> >>> Linus Walleij
+> >>>
+> > _______________________________________________
+> > Linux-stm32 mailing list
+> > Linux-stm32@st-md-mailman.stormreply.com
+> > https://st-md-mailman.stormreply.com/mailman/listinfo/linux-stm32
