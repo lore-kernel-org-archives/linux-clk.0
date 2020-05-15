@@ -2,137 +2,93 @@ Return-Path: <SRS0=k6hG=65=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE490C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 14:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE60C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 14:27:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C943D2076A
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 14:27:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97033207C4
+	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 14:27:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSzF8uWM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="KRvNnNJB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbgEOO1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 May 2020 10:27:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34076 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726144AbgEOO1e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 May 2020 10:27:34 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA2ADC061A0C;
-        Fri, 15 May 2020 07:27:33 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id j5so3826029wrq.2;
-        Fri, 15 May 2020 07:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZqEfVTuDY9bEUsJPlzwIaQx1lrVA14fy9lOBt0SuZsI=;
-        b=nSzF8uWMlBuWgPkJo620l4HBDnpGUQc0GuB5wiBQybK2PHDmdqv74v6aDOtP2rH6ti
-         K4m1KkwrO+q8BvTwTabJcixy71OE6H5xL2sy44a0g8Un/GwifvjFpLegkil8BRcG9pn7
-         08icjkBQ6zcvYqU6Z+irBm59G0ASQ7vDutWt5X4BLHcGV6tY6/IF6Ekm9iS3KZfn7Ne0
-         Ky53qLFw2VzACWQ61ZOc3S+vxNHvHn44pv9Ga/RAarZflluzKZXRRjNzwvkxqqmcCULQ
-         edKnX/UnxRv3FTNOq+K5v6tNS/cUmzvXAC7/Ae4kFoahElfIX8sA2TMJcn1kpQxCVtqy
-         CJvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZqEfVTuDY9bEUsJPlzwIaQx1lrVA14fy9lOBt0SuZsI=;
-        b=P5jjjWU2utfV6bMjW9Jc7bcoSconaansFe4IqxIvJr2fKGDc8SuCklnKXRQhVZazS7
-         4Q6YOrypp8m4NbBb7muq16lEml4ebBSk/HnKGeYMsGUqDhax30DSy558L7iuSuTqW8NN
-         rPgiSV45/RqksXqDXAA6hxVqk85o86TNUsK6tDJrumExjulYCShle1iyc2LccupNLd0w
-         yCuKDCjZdFr9XJAZmRv9A5J6sfjhZKvrl7C7gmeL4GnTfF28VVTPr0xfhU4CxO6OoXPo
-         grVIrgPEsHM6j7TKC9sj7oKyqaszYmeB1i4vghad3xXdo3KBLDvMEWBe2Q6BySxpmpRw
-         oqpQ==
-X-Gm-Message-State: AOAM531SK606U0PTjjHHs8GFqfhc+BTEV2QOI70iwb/CjRgNLQ7BIgzS
-        qoDriXxAaLLeMyIZn9fqLPE=
-X-Google-Smtp-Source: ABdhPJwB9R/SLlX2Uxqudh6APRzsvbqZz9CPXwL6WTdh11Gs3GYpUtZTTqDrfcrZ4txXKIu5R7d7lA==
-X-Received: by 2002:adf:f4c4:: with SMTP id h4mr4675606wrp.142.1589552852640;
-        Fri, 15 May 2020 07:27:32 -0700 (PDT)
-Received: from localhost (pD9E51079.dip0.t-ipconnect.de. [217.229.16.121])
-        by smtp.gmail.com with ESMTPSA id a10sm3841945wmf.46.2020.05.15.07.27.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 15 May 2020 07:27:31 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
-Subject: [GIT PULL] clk: tegra: Changes for v5.8-rc1
-Date:   Fri, 15 May 2020 16:27:30 +0200
-Message-Id: <20200515142730.1573945-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.24.1
-Content-Type: text/plain; charset="utf-8"
+        id S1726144AbgEOO1u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 May 2020 10:27:50 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:49885 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726140AbgEOO1u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 May 2020 10:27:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1589552869; x=1621088869;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=0AgeZMJbdU9KyuRMCIUBu9McO6vER1rNgjfIxpR274I=;
+  b=KRvNnNJB0HVfuseGhqUR63+tun9Xkdo6d/3QrajlL0Tfh9Jc17y170Yb
+   kD5c6nM5fsesBe8rS6H9hUsJnZ2/MllbY+3agriQnImwOTuvQU/IpWC78
+   q/BYCzaviqRISummCmCUx5TMKcILJX3IShHMHWWHo5Vll2S5TudZtTvhd
+   zqDBWWQKG1WeC7l4ud8e2Gej1WV55kea+4SUCAT94hTPuIUnN12Ktrh9P
+   sVTfoHV5xjJzWssdjN0rATcCGmTU23Jv+AJTxQR/i6/5OI7a+qsTwHc6Y
+   NiXmo2A6NGJ+4rn5Y2/6OoiGefoR3T9jUZ/A4o/yIA2XSbzp6CFtDyn7u
+   A==;
+IronPort-SDR: zUxu1mdSuJ3C0VOKq9t5RCnhqUBxbNxPvczwXo6LzTRvz2lQnXu5v7wXQKdVigzrMMpTz+EdSc
+ /MirwJyXyPyEidppEp8ncornFCklQ36fIhbgdDnhbU8rN9l6orsNmkgOhAjAEXM8UuqQ/ySa5E
+ +a7PjsZosn5Ix6XFhtnJfPzZ3yXxevmfP4rlZunzd5bqvt19NPOqhgDkrvvj98X+VjL5NxGyoj
+ i1pXdHglL1KVHqkuXR/eAM1KydX0NQ9Ueihi0USx9WZ4syPGEFkz2ZHuDoruZcE7S6ETh73DxU
+ aJg=
+X-IronPort-AV: E=Sophos;i="5.73,395,1583218800"; 
+   d="scan'208";a="73584368"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 May 2020 07:27:49 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 15 May 2020 07:27:50 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 15 May 2020 07:27:30 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <eugen.hristev@microchip.com>,
+        "Codrin Ciubotariu" <codrin.ciubotariu@microchip.com>
+Subject: [PATCH] clk: at91: Add peripheral clock for PTC
+Date:   Fri, 15 May 2020 17:27:20 +0300
+Message-ID: <20200515142720.290206-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
+PMC generates the peripheral clock for the PTC.
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ drivers/clk/at91/sama5d2.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index ff7e3f727082..73b287fbecb8 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -89,6 +89,7 @@ static const struct {
+ 	{ .n = "i2s1_clk",    .id = 55, .r = { .min = 0, .max = 83000000 }, },
+ 	{ .n = "can0_clk",    .id = 56, .r = { .min = 0, .max = 83000000 }, },
+ 	{ .n = "can1_clk",    .id = 57, .r = { .min = 0, .max = 83000000 }, },
++	{ .n = "ptc_clk",     .id = 58, .r = { .min = 0, .max = 83000000 }, },
+ 	{ .n = "classd_clk",  .id = 59, .r = { .min = 0, .max = 83000000 }, },
+ };
+ 
+-- 
+2.25.1
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/for-5.8-clk
-
-for you to fetch changes up to dec396322d25ca5ce2f307b6da897060fdf9a782:
-
-  clk: tegra: Add Tegra210 CSI TPG clock gate (2020-05-12 22:48:43 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-clk: tegra: Changes for v5.8-rc1
-
-Thise are a couple of changes to implement EMC frequency scaling on
-Tegra210, CPU frequency scaling on Tegra20 and Tegra30 as well as a
-special clock gate for the CSI test pattern generator on Tegra210.
-
-----------------------------------------------------------------
-Dmitry Osipenko (5):
-      clk: tegra: Add custom CCLK implementation
-      clk: tegra: pll: Add pre/post rate-change hooks
-      clk: tegra: cclk: Add helpers for handling PLLX rate changes
-      clk: tegra20: Use custom CCLK implementation
-      clk: tegra30: Use custom CCLK implementation
-
-Joseph Lo (4):
-      clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
-      clk: tegra: Export functions for EMC clock scaling
-      clk: tegra: Implement Tegra210 EMC clock
-      clk: tegra: Remove the old emc_mux clock for Tegra210
-
-Sowjanya Komatineni (2):
-      dt-bindings: clock: tegra: Add clock ID for CSI TPG clock
-      clk: tegra: Add Tegra210 CSI TPG clock gate
-
-Thierry Reding (2):
-      Merge branch 'for-5.8/dt-bindings' into for-5.8/clk
-      clk: tegra: Rename Tegra124 EMC clock source file
-
- drivers/clk/tegra/Kconfig                          |   4 -
- drivers/clk/tegra/Makefile                         |   4 +-
- drivers/clk/tegra/clk-pll.c                        |  12 +-
- drivers/clk/tegra/clk-tegra-super-cclk.c           | 212 ++++++++++++
- .../clk/tegra/{clk-emc.c => clk-tegra124-emc.c}    |   0
- drivers/clk/tegra/clk-tegra20.c                    |   7 +-
- drivers/clk/tegra/clk-tegra210-emc.c               | 369 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra210.c                   |  94 ++++--
- drivers/clk/tegra/clk-tegra30.c                    |   6 +-
- drivers/clk/tegra/clk.h                            |  24 +-
- include/dt-bindings/clock/tegra210-car.h           |   6 +-
- include/linux/clk/tegra.h                          |  27 ++
- 12 files changed, 730 insertions(+), 35 deletions(-)
- create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
- rename drivers/clk/tegra/{clk-emc.c => clk-tegra124-emc.c} (100%)
- create mode 100644 drivers/clk/tegra/clk-tegra210-emc.c
