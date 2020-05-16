@@ -1,114 +1,134 @@
-Return-Path: <SRS0=k6hG=65=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=BkqW=66=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC0BC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 17:12:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D760C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 16 May 2020 08:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE51C2073E
-	for <linux-clk@archiver.kernel.org>; Fri, 15 May 2020 17:12:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589562768;
-	bh=EwGY+MoNBkSyft3S/X2OQ943UQiliBzaUB3sMvP45qk=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=rYbJ+Mfs3amBjS/ot9+WUcYYlgLv2/5ed59gi8F2tmUMIvwy1C1Kbq6KV3R0h/0Ao
-	 uK5GvK1Qx/GMkZEggInkVR3tX8DfqXighON7tInyAEzUYVRL0yoldPFvezkk1m+KZA
-	 EfaUCb2lgZIJ8UM1AKH9QVbKNTjHJ5hxG0pnI8KA=
+	by mail.kernel.org (Postfix) with ESMTP id D22FC20767
+	for <linux-clk@archiver.kernel.org>; Sat, 16 May 2020 08:08:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FjZJlPba"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726191AbgEORMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 May 2020 13:12:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41470 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726183AbgEORMs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 15 May 2020 13:12:48 -0400
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1B78206C0;
-        Fri, 15 May 2020 17:12:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589562768;
-        bh=EwGY+MoNBkSyft3S/X2OQ943UQiliBzaUB3sMvP45qk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Qkpn1rx2fO7VBBWAguRho9/hhGaeqkssyzeUQzyAMMpJnf0Y7gv2dAe82V23wJbCH
-         fgogqXmzgXOO72sz93W1uavTF1Is33gZy+HGZW7cNM+H4f7JmF9VzRoiIzLZB6Hx+V
-         Idkn/CJhueIzloCTDk1wjq61HsGtvlEpr/RCUfH0=
-Date:   Fri, 15 May 2020 19:12:45 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S1726373AbgEPIIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 May 2020 04:08:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726264AbgEPIIT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 May 2020 04:08:19 -0400
+Received: from mail-ot1-x343.google.com (mail-ot1-x343.google.com [IPv6:2607:f8b0:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB616C061A0C;
+        Sat, 16 May 2020 01:08:19 -0700 (PDT)
+Received: by mail-ot1-x343.google.com with SMTP id t3so3908066otp.3;
+        Sat, 16 May 2020 01:08:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O65I1zmNTEDkuvl7Blq3pU8Ri7LhEzDZZNS97q+Lxi8=;
+        b=FjZJlPbawLMM/ZnJkShIEUeOrq3GKC79i+Ha8DSCMNL0//k9tBNOU0sR3lhju/fJOO
+         2DKQdMRwRr0WiTvH1iR2xKZtgbduQ8dQxIYrOhDDnnblzp2hyrH1OXugdle89NgYRb86
+         2INYSLAME7HtuuW6QzdgeaFytIS7WGh4LAVTG2xtoSsmSPVm6p/TE2vPh4b6bmvb4/Ro
+         O7aDpCAdhhTucTt4ayjJBqenIEOpqTmeYCbBxKkQEMMebFyfWsQQ2Q5jxIw4Pj/JsiKD
+         IU143p2NZxRlWYkVx+tYqHDerYpGkNOaRNs312EOsk2KRgMVRew7ZXsyk8c4EbB6Xvbk
+         DkjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O65I1zmNTEDkuvl7Blq3pU8Ri7LhEzDZZNS97q+Lxi8=;
+        b=p+O6Bv+vmMKEoANiQlA0pMC6yApUgBFfDLSnaV7e0RT0C6xCIgmZiRUcPMuVoYo6k+
+         3/jqdrCyCArZmpdx9jN/ZOYMG4zEKXjSl5oO/XlYn749d2L5nECf4shtxCIIIZn6v3Nb
+         9hU2hvjUzKkw9RlqUWELDFLg8mlTy3GaNnBynskXh1YK8XpNT695YfAnPTmPmFd7cWL5
+         +64NOCSg9bzjAZeVqFr1r5hLowPZkZp1g6Jo2/7u5gEM/Le+aQlrGa+Kb6wDDDrMlOdb
+         tbpiwAh5KgA7+lDJSHdLZPzfVTC8jLU05fAHAufpOcYxc8HK+OxjvjaWeAZ3LR2hd4QS
+         swrw==
+X-Gm-Message-State: AOAM532uItwfKvdBYViYWi+Nsn/kLZtsu1c+r1uMU9wte/eOXCTo7OBS
+        Dek5Lv7QxQuC4hGW2Ku7PfQ=
+X-Google-Smtp-Source: ABdhPJy9xrUAJUSrZGHz4rjNK3oxki+IlpWEmBm4DbMT7HduARzjVorHFCT1Vym5JNh1k3gyGNDlJQ==
+X-Received: by 2002:a9d:7dd9:: with SMTP id k25mr5079985otn.328.1589616499102;
+        Sat, 16 May 2020 01:08:19 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id n11sm1321064oij.21.2020.05.16.01.08.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 May 2020 01:08:18 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner Clock Changes for 5.8
-Message-ID: <e18bd659-6a8f-4a4f-8308-8e5091ca8b45.lettre@localhost>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH 1/2] clk: bcm2835: Fix return type of bcm2835_register_gate
+Date:   Sat, 16 May 2020 01:08:06 -0700
+Message-Id: <20200516080806.1459784-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-Content-Disposition: inline
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+bcm2835_register_gate is used as a callback for the clk_register member
+of bcm2835_clk_desc, which expects a struct clk_hw * return type but
+bcm2835_register_gate returns a struct clk *.
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This discrepancy is hidden by the fact that bcm2835_register_gate is
+cast to the typedef bcm2835_clk_register by the _REGISTER macro. This
+turns out to be a control flow integrity violation, which is how this
+was noticed.
 
-Hi,
+Change the return type of bcm2835_register_gate to be struct clk_hw *
+and use clk_hw_register_gate to do so. This should be a non-functional
+change as clk_register_gate calls clk_hw_register_gate anyways but this
+is needed to avoid issues with further changes.
 
-Please pull the following changes for the next release.
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1028
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/clk/bcm/clk-bcm2835.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-Thanks!
-Maxime
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index ded13ccf768e..7c845c293af0 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1448,13 +1448,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	return &clock->hw;
+ }
+ 
+-static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
++static struct clk_hw *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ 					 const struct bcm2835_gate_data *data)
+ {
+-	return clk_register_gate(cprman->dev, data->name, data->parent,
+-				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_GATE_BIT, 0, &cprman->regs_lock);
++	return clk_hw_register_gate(cprman->dev, data->name, data->parent,
++				    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
++				    cprman->regs + data->ctl_reg,
++				    CM_GATE_BIT, 0, &cprman->regs_lock);
+ }
+ 
+ typedef struct clk_hw *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+base-commit: bdecf38f228bcca73b31ada98b5b7ba1215eb9c9
+-- 
+2.26.2
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-for-5.8-1
-
-for you to fetch changes up to ee25d9742dabed3fd18158b518f846abeb70f319:
-
-  clk: sunxi: Fix incorrect usage of round_down() (2020-04-14 09:21:05 +0200)
-
-----------------------------------------------------------------
-This time we only have a single minor rounding fix for the legacy
-Allwinner clock support.
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXr7NfAAKCRDj7w1vZxhR
-xXarAP4wdfOSI6mpPQstJnueouvozab7dSOAJhZCdyy6gD+SHQD/arhVv5dPyAub
-MUA0yjWdgCGSrD+UQjLwSb/RsinoVgA=
-=2qN3
------END PGP SIGNATURE-----
-
-----------------------------------------------------------------
-Rikard Falkeborn (1):
-      clk: sunxi: Fix incorrect usage of round_down()
-
-
- drivers/clk/sunxi/clk-sunxi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-
-
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXr7NjQAKCRDj7w1vZxhR
-xZoLAQD/9YigNJFFnX8mFRwxyxEVzsNrfVUbv92elrNT8zxqxgD/aH2PmctKZzJt
-XZiE0Nb93YEKo3ERHgSNcr+iRqBA1QE=
-=6u0v
------END PGP SIGNATURE-----
-
---UugvWAfsgieZRqgk--
