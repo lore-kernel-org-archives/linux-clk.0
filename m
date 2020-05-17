@@ -2,111 +2,68 @@ Return-Path: <SRS0=yGVC=67=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4C8C433DF
-	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 17:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC4DC433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 20:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94DD1207E8
-	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 17:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F43207F5
+	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 20:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589737716;
-	bh=Q5mp8b6C2Vhyekeuu4yeHZX3Zj7dHJRcQuLzeMYZu7U=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=tFu4rSENdCU631pcUFP+QurgQ4bnl9vXkZ1p8Ab+5V3cPplGuHhfuVVLgHMTkhLcg
-	 kpOjJn4ey0l8lAmFLNEsEBRiGUWvWwMuhgmJapCcxT7H0/sOi8ZU3YVYI/H3B3DQXs
-	 YCTFtq/vzmzeVCXG+z65VrEKHiCvL7v4SKsIc5OM=
+	s=default; t=1589746513;
+	bh=D9VWro2YKBZnYUUXAmM6NCvOWmY4Q+wzO0aHKhwhFkw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=2HDY5Nxz4Qe75486BbNmz8CcmKczZy0Il3p6zuXk1vtyngFyYWvSyfxM7SMZ8+V//
+	 lxEGEB8V9eJjNVC6BWKRStrBvdLuO1t/gHeQ2JUoMdRh/YuTN0DSTfYTw3+1seWoJY
+	 Jkh0my54XcJN3aucRNWcJs2Jg/DKZhMvjPcxS7NE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726271AbgEQRsg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 May 2020 13:48:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55312 "EHLO mail.kernel.org"
+        id S1726550AbgEQUPJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 May 2020 16:15:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbgEQRsg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 17 May 2020 13:48:36 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80BF2207E8;
-        Sun, 17 May 2020 17:48:35 +0000 (UTC)
+        id S1726601AbgEQUPE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 May 2020 16:15:04 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.7-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589737715;
-        bh=Q5mp8b6C2Vhyekeuu4yeHZX3Zj7dHJRcQuLzeMYZu7U=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Rmi0mj+4K1lqTW5+VbBurce9v/rZOtldzK/3o4ob80LuRVKrz6ydVL+pBWMz6mFVD
-         wmrVeTRXZjXgQUD3k/cS4tIsC916C1mmGxX0AICcW3kzWou1J9eOPZy9LB9ZQOPlYl
-         P3NZmuPgJ0hQoqpquFmpUIvSpJSHEwq8M1pluc1Q=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=default; t=1589746504;
+        bh=D9VWro2YKBZnYUUXAmM6NCvOWmY4Q+wzO0aHKhwhFkw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=FW8Cb3ZCDnSr/O65PmW9cze6KEATMtJ7WSPnTbH6jWzbHpjsLrpKwrJMJc4dlEmv9
+         r+cLwvcUa+u7sX1nMgXscXeJQ3j1kxs9NRBCcQAoyEEglLjRscz5DvZnTuOET5Zob6
+         sSMYY9XSCMJoX1VRrBeoxWSm84Sh7NUMXI4nSaW8=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200517174834.126920-1-sboyd@kernel.org>
+References: <20200517174834.126920-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200517174834.126920-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 852049594b9af58fa2972103699fd58a7ac165c6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 9b1f2cbdb6d3062c468d3f9b579501f0f7ce330b
+Message-Id: <158974650408.31612.8511040806300170549.pr-tracker-bot@kernel.org>
+Date:   Sun, 17 May 2020 20:15:04 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.7-rc5
-Date:   Sun, 17 May 2020 10:48:34 -0700
-Message-Id: <20200517174834.126920-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.26.2.761.g0e0b3e54be-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit ca6df49d62d7cc4c1653a4d9b1ecc61ecd530e02:
+The pull request you sent on Sun, 17 May 2020 10:48:34 -0700:
 
-  clk: sprd: don't gate uart console clock (2020-04-13 12:20:07 -0700)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/9b1f2cbdb6d3062c468d3f9b579501f0f7ce330b
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 852049594b9af58fa2972103699fd58a7ac165c6:
-
-  clk: ti: clkctrl: convert subclocks to use proper names also (2020-05-12 20:18:19 -0700)
-
-----------------------------------------------------------------
-Some more clk driver fixes for the merge window and one core framework
-fix:
-
- - A handful of TI driver fixes for bad of_node_put() and incorrect
-   parent names
- - Rockchip rk3228 aclk_gpu* creation was interfering with lima GPU work
-   so we use a composite clk now
- - Resuming from suspend on Tegra Jetson TK1 was broken because an audio
-   PLL calculated an incorrect rate
- - A fix for devicetree probing on IM-PD1 by actually specifying a clk
-   name which is required to pass clk registration
- - Avoid list corruption if registration fails for a critical clk
-
-----------------------------------------------------------------
-Justin Swartz (1):
-      clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks
-
-Linus Walleij (1):
-      clk: impd1: Look up clock-output-names
-
-Marc Zyngier (1):
-      clk: Unlink clock if failed to prepare or enable
-
-Stephen Boyd (1):
-      Merge tag 'v5.7-rockchip-clk-fixes1' of git://git.kernel.org/.../mmind/linux-rockchip into clk-fixes
-
-Tero Kristo (3):
-      clk: ti: clkctrl: Fix Bad of_node_put within clkctrl_get_name
-      clk: ti: am33xx: fix RTC clock parent
-      clk: ti: clkctrl: convert subclocks to use proper names also
-
-Thierry Reding (1):
-      clk: tegra: Fix initial rate for pll_a on Tegra124
-
- drivers/clk/clk.c                 |  3 ++
- drivers/clk/rockchip/clk-rk3228.c | 17 ++-----
- drivers/clk/tegra/clk-tegra124.c  |  2 +-
- drivers/clk/ti/clk-33xx.c         |  2 +-
- drivers/clk/ti/clkctrl.c          | 99 +++++++++++++++++++--------------------
- drivers/clk/versatile/clk-impd1.c |  1 +
- 6 files changed, 58 insertions(+), 66 deletions(-)
+Thank you!
 
 -- 
-Sent by a computer, using git, on the internet
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
