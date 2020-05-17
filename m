@@ -1,110 +1,152 @@
-Return-Path: <SRS0=BkqW=66=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=yGVC=67=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1964C433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 16 May 2020 18:18:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5BC5C433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 09:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8496220756
-	for <linux-clk@archiver.kernel.org>; Sat, 16 May 2020 18:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A7D20735
+	for <linux-clk@archiver.kernel.org>; Sun, 17 May 2020 09:18:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="vdVL1oGO"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="N9vCmdv9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbgEPSSs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 May 2020 14:18:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41980 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-FAIL-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726341AbgEPSSr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 May 2020 14:18:47 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 962F0C061A0C;
-        Sat, 16 May 2020 11:18:47 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id s3so5190865eji.6;
-        Sat, 16 May 2020 11:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=51NZmWw8OgodGFU6Kwk+1cHIUOclm2JMHWgqoLAcNto=;
-        b=vdVL1oGOOCFNBnvnlLIFS59MY8Zba5m/lomLUqa2xGj9MprTK15U9qOHtzZVZGXMki
-         SRN/aRKYtdCByVFzAojZ+XpUchGlaufRsvLH4w6QYnpoIB/13LLwh0DXVQoOqvTKRRc+
-         groVxEd9/Nw5xIgB34HgKy0XZB57mqx0iKOZoknX88EYycJCqcjl6FFL65siJsJFwWBV
-         ikUNwN8YdC3l8It0+L9bzbGKXcWn+1BxDWPaCZHuQTwjhGfv0C9oetzA7JqSfdkfwptx
-         U5aI2RX6UfOokaz6JXDSAZ4VjK+i5BYcIyMe3aAH740tOG3iGlR0vf0ebzASP4lDZcVa
-         m9CQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=51NZmWw8OgodGFU6Kwk+1cHIUOclm2JMHWgqoLAcNto=;
-        b=Sx2/47ggQg/wnsWIU7LxmkQNl90UFW1bBbNbE8s/NfdW/dykVdowIzXIsHieLb79m2
-         SCXGBb3K12X2Y2SoxW8fysbXUcvBA8gesY56yIGd03gaLSRcPg4NkW/y4/Eb+dnKY+vz
-         zHTmhihV4w+E/KJIO/4XVPA1pk2EvTXazXncW5S9WBrhUttdO/IrpU69SbyNDvwmVdV9
-         Vun3UwNmkJL3jMLwOJqW2f6rrHVTC0ORrZ25bSiwOXnb6YzzauYz4aTkKAyN9ttTNyb9
-         JgwZAlJx8sqTvwN2zgay5vmRNgLKcZeFkIBDPWAEpppNE8cfcN6WkBF/x8wR42TjatZZ
-         ZLsw==
-X-Gm-Message-State: AOAM531wS/t7mMilV7eyANQwZRpbg/tAUwtdLZU3I7zzEhJO22009Qbp
-        nLdZVocB9j8PRIFUVGnKdzSZyV1gsvtBAkMAj9M=
-X-Google-Smtp-Source: ABdhPJwQWIgkduRjpke8VQImqkOHtcDvKOuMb3iSs2Z68bR+4jBb3XiYccBtJSOORYXmN3huf0xtevqJXXpDGN86/Zw=
-X-Received: by 2002:a17:906:ca14:: with SMTP id jt20mr7861078ejb.233.1589653126099;
- Sat, 16 May 2020 11:18:46 -0700 (PDT)
+        id S1727010AbgEQJSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 May 2020 05:18:07 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:34950 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727020AbgEQJSH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 May 2020 05:18:07 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1589707086; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=/0wRHOShBqaKov4Xp9D3AVXxXU23fv2pLHePIcLM4/Q=; b=N9vCmdv9Tciw4ETIdan9LkCZE8gOICC9ZOmEJ4twhVgxIJVlY9Bv8uAOdXqddsD1dAoRZVYx
+ jaQ4tb707YblaPSyiioJRPy2uEK9TAnkRaCfRXk2VoBE3BMVLE4lYYrk/HlRBjqcJkmUKxEI
+ CC0jQSbnpPYyNhXDNf9YNtmMSg0=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5ec10144.7fa2390228f0-smtp-out-n03;
+ Sun, 17 May 2020 09:17:56 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 052A6C433F2; Sun, 17 May 2020 09:17:56 +0000 (UTC)
+Received: from [192.168.0.102] (unknown [183.82.140.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00AC4C433D2;
+        Sun, 17 May 2020 09:17:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00AC4C433D2
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 1/4] clk: qcom: gdsc: Add support to enable retention
+ of GSDCR
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+References: <1585338485-31820-1-git-send-email-tdas@codeaurora.org>
+ <1585338485-31820-2-git-send-email-tdas@codeaurora.org>
+ <158646281555.77611.13094729241703720869@swboyd.mtv.corp.google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <4d5bf27a-f2dd-104a-094f-dab1c159d666@codeaurora.org>
+Date:   Sun, 17 May 2020 14:47:49 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <CAFBinCBHuPLS8BDzO4Gb86TG3tNTtqmW5BSWy8jhPuN3STOTUA@mail.gmail.com>
- <158948864581.215346.7236327959062539884@swboyd.mtv.corp.google.com>
-In-Reply-To: <158948864581.215346.7236327959062539884@swboyd.mtv.corp.google.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 16 May 2020 20:18:35 +0200
-Message-ID: <CAFBinCD6XiSnp=9vcFnztKobaq-Do9qd7WEi5Yvi5pvcw197og@mail.gmail.com>
-Subject: Re: clk_hw.init and -EPROBE_DEFER / driver re-load
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org, jbrunet@baylibre.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <158646281555.77611.13094729241703720869@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hello Stephen,
 
-On Thu, May 14, 2020 at 10:37 PM Stephen Boyd <sboyd@kernel.org> wrote:
-[...]
-> Do you have some sort of array of clk_hw pointers to register? Maybe we
-> could make a new clk registration structure to simplify this for users,
-> but I'm not super interested in introducing yet another registration
-> API! :/
->
-> struct clk_hw_desc {
->         struct clk_hw *hw;
->         struct clk_init_data *init;
-> };
-I could make an array of clk_hw pointers but I think it will make
-things more complicated then they have to be.
-In another version of my MMC controller patches I had a dedicated
-array of clk_init_data: [0]
+Thanks for the review.
 
-compare this with the latest version (which has made it to linux-next
-yesterday) where I'm initializing all clocks inside a few functions
-(meson_mx_sdhc_register_clkc, rather than a static table): [1]
-it's not great because it means I can't use a loop to register
-everything. but it's fairly easy to read so I think it's the best I
-can do for now.
+On 4/10/2020 1:36 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2020-03-27 12:48:02)
+>> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+>> index a250f59..cfe908f 100644
+>> --- a/drivers/clk/qcom/gdsc.c
+>> +++ b/drivers/clk/qcom/gdsc.c
+>> @@ -28,6 +28,7 @@
+>>   /* CFG_GDSCR */
+>>   #define GDSC_POWER_UP_COMPLETE         BIT(16)
+>>   #define GDSC_POWER_DOWN_COMPLETE       BIT(15)
+>> +#define GDSC_RETAIN_FF_ENABLE          BIT(11)
+>>   #define CFG_GDSCR_OFFSET               0x4
+>>
+>>   /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+>> @@ -202,6 +203,14 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
+>>          regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+>>                             GMEM_RESET_MASK, 0);
+>>   }
+>> +
+>> +static inline void gdsc_retain_ff_on(struct gdsc *sc)
+> 
+> Drop inline please.
+> 
 
-With the "solution" from [1] I also don't run into the issue which I
-described in my original mail because now clk_init_data only exists on
-the stack.
-I'm not sure if this is a recurring pattern or not, but for now I feel
-like a new API is not needed.
+Will drop in the next patch.
 
+>> +{
+>> +       u32 mask = RETAIN_FF_ENABLE;
+> 
+> Is this supposed to be GDSC_RETAIN_FF_ENABLE?
+> 
 
-Thank you for your time,
-Martin
+Will update in next patch.
 
+>> +
+>> +       regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
+>> +}
+>> +
+>>   static int gdsc_enable(struct generic_pm_domain *domain)
+>>   {
+>>          struct gdsc *sc = domain_to_gdsc(domain);
+>> @@ -254,6 +263,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+>>                  udelay(1);
+>>          }
+>>
+>> +       if (sc->flags & RETAIN_FF_ENABLE)
+>> +               gdsc_retain_ff_on(sc);
+>> +
+>>          return 0;
+>>   }
+>>
+>> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+>> index 64cdc8c..8604d44 100644
+>> --- a/drivers/clk/qcom/gdsc.h
+>> +++ b/drivers/clk/qcom/gdsc.h
+>> @@ -49,6 +49,7 @@ struct gdsc {
+>>   #define AON_RESET      BIT(4)
+>>   #define POLL_CFG_GDSCR BIT(5)
+>>   #define ALWAYS_ON      BIT(6)
+>> +#define RETAIN_FF_ENABLE       BIT(7)
+> 
+> This is a flag, not a register bit presumably.
 
-[0] https://patchwork.kernel.org/patch/11515631/
-[1] https://patchwork.kernel.org/patch/11543939/
+Yes, it is a flag.
+
+> 
+>>          struct reset_controller_dev     *rcdev;
+>>          unsigned int                    *resets;
+>>          unsigned int                    reset_count;
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
