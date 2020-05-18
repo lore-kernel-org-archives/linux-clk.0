@@ -2,121 +2,660 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B645C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C36C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 08:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0B9207D4
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:43:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N/Mo9gOd"
+	by mail.kernel.org (Postfix) with ESMTP id EE8EE206D4
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 08:16:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727833AbgERHnZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 03:43:25 -0400
-Received: from esa4.microchip.iphmx.com ([68.232.154.123]:25993 "EHLO
-        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbgERHnZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 03:43:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1589787804; x=1621323804;
-  h=references:from:to:cc:subject:in-reply-to:date:
-   message-id:mime-version;
-  bh=FKJAh1HkVv8d/p5YjXylM2nem6uVcaMiV5E5Xj3YJxg=;
-  b=N/Mo9gOdr8dLG92VO2vspqYTdC6ybwy06MNDNqrb1h5K4v4ruEkCkND2
-   cu0mZo4ozsdylQg/voj7wziwalD74fTzC4IMIyACbyyecFeOtwRyzEi9N
-   KbyGKXlPtFU3qM/y/WdEUaYyGmmDr6Vcw7og6K3x+WYJugwkF/lFSPCPo
-   Zk5f8N1qrsFCjQf0gcqKGCriHJFBmulpA103J1MKUZDHkpXSJEv83QGGr
-   z9bZiF3T8i7eiR5uFXkifdto6TQIulSIllcLw45pcNZvW2MQdntXxG7Av
-   CJddKWzosR+z76xtTrSM9/5AZKAj3T4CtK1+RkmYrl/GSBabx5+Cvrwq2
-   A==;
-IronPort-SDR: 9nIYTc6j7tSmHkUO/HDAiU7Hl4ptKImLP7FdPLXeUtwqYerLqPzqdExoE6E93pFxzBah3KHWWG
- Q9JPG+I2MEL3gHJXGrutIvVYPjZUo1UEB3ylMVbpbguzVvgclguDsT6B3iZUd/aTMSYKFy83vM
- CmUy67KdBD33r96EVfEhNlaspRBqwP35OdPswMyZsL8Gqtsd2knoZobWdvb4W8vZXCFq31c9xV
- fWceeyx3oQjJyQHT8TKz77OVnpKjLO40OSg3akb7hIM2OYZrCRcRG94HfDVpY9JW6g17CLZwRG
- ScA=
-X-IronPort-AV: E=Sophos;i="5.73,406,1583218800"; 
-   d="scan'208";a="73738900"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 May 2020 00:43:22 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 18 May 2020 00:43:22 -0700
-Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Mon, 18 May 2020 00:43:17 -0700
-References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-7-lars.povlsen@microchip.com> <2d230dab95ee96727a42f9c242c93c18@misterjones.org> <871rnlp740.fsf@soft-dev15.microsemi.net> <18c0d9ef-9a2b-31d0-b317-f051bb26a907@arm.com>
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-List-Id: <soc.lore.kernel.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Marc Zyngier <maz@misterjones.org>,
-        <devicetree@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, SoC Team <soc@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Olof Johansson" <olof@lixom.net>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>
-Subject: Re: [PATCH 06/14] arm64: dts: sparx5: Add basic cpu support
-In-Reply-To: <18c0d9ef-9a2b-31d0-b317-f051bb26a907@arm.com>
-Date:   Mon, 18 May 2020 09:43:16 +0200
-Message-ID: <87wo59ofhn.fsf@soft-dev15.microsemi.net>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1726925AbgERIQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 04:16:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55834 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726800AbgERIQr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 04:16:47 -0400
+Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB69CC061A0C
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 01:16:46 -0700 (PDT)
+Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:6c27:925d:6b9c:58b2])
+        by michel.telenet-ops.be with bizsmtp
+        id g8Gl2200T11gx4G068GlMd; Mon, 18 May 2020 10:16:45 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jaax3-0003iF-AI; Mon, 18 May 2020 10:16:45 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1jaax3-0006Ai-88; Mon, 18 May 2020 10:16:45 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2] dt-bindings: clock: renesas: cpg: Convert to json-schema
+Date:   Mon, 18 May 2020 10:16:44 +0200
+Message-Id: <20200518081644.23683-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Convert the Renesas Clock Pulse Generator (CPG) Device Tree
+binding documentation to json-schema, combining support for:
+  - R-Mobile APE6 (R8A73A4) and A1 (R8A7740),
+  - R-Car M1 (R8A7778) and H1 (R8A7779),
+  - RZ/A1 (R7S72100),
+  - SH-Mobile AG5 (SH73A0).
 
-Robin Murphy writes:
+Keep the example for R-Mobile A1, which shows most properties.
+Drop the consumer examples, as they do not belong here.
 
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
->
-> On 2020-05-15 16:09, Lars Povlsen wrote:
-> [...]
->>>> +             cpu0: cpu@0 {
->>>> +                     compatible = "arm,cortex-a53", "arm,armv8";
->
-> Side note: only one compatible string for the real CPU please, running a
-> DT bindings check should complain about that.
->
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - Remove unneeded 'allOf' container around '$ref',
 
-I'll change this.
+To be queued in clk-renesas-for-v5.8.
 
->>>> +                     device_type = "cpu";
->>>> +                     reg = <0x0 0x0>;
->>>> +                     enable-method = "spin-table";
->>>
->>> Really? This is 2020, not 2012 any more. Surely a new platform
->>> boots using PSCI, and not *this*.
->>>
->>
->> We don't currently support PSCI. The platform does not have TrustZone,
->> hence we don't use ATF.
-> AIUI, part of the purpose of ATF is to provide a nice standardised
-> platform interface regardless of whether you care about Secure software
-> or not. It shouldn't take much to knock up a trivial ATF port that just
-> uses an internal spin-table for its PSCI backend - in fact I suspect
-> that's probably just a copy-paste from the RPi3 port ;)
->
+For a clean dtbs_check, this depends on commit e47cb97f153193d4 ("ARM:
+dts: r8a7740: Add missing extal2 to CPG node") in v5.7-rc6.
 
-I'll change this to PSCI if that's whats expected these days. We
-actually already have an ATF port. I fully understand the desire to
-standardize on PSCI.
+As these bindings are very similar, I merged them into a single
+document.  SoC-specific differences are mostly limited to the "clocks"
+and "clock-output-names" properties, and "#power-domain-cells" for clock
+domain providers.
 
-> Robin.
+JFYI, the diffstat for the individual conversions would look like:
+     .../clock/renesas,r8a73a4-cpg-clocks.txt      | 33 --------
+     .../clock/renesas,r8a73a4-cpg-clocks.yaml     | 70 ++++++++++++++++
+     .../clock/renesas,r8a7740-cpg-clocks.txt      | 41 ----------
+     .../clock/renesas,r8a7740-cpg-clocks.yaml     | 81 +++++++++++++++++++
+     .../clock/renesas,r8a7778-cpg-clocks.txt      | 47 -----------
+     .../clock/renesas,r8a7778-cpg-clocks.yaml     | 64 +++++++++++++++
+     .../clock/renesas,r8a7779-cpg-clocks.txt      | 49 -----------
+     .../clock/renesas,r8a7779-cpg-clocks.yaml     | 65 +++++++++++++++
+     .../bindings/clock/renesas,rz-cpg-clocks.txt  | 53 ------------
+     .../bindings/clock/renesas,rz-cpg-clocks.yaml | 66 +++++++++++++++
+     .../clock/renesas,sh73a0-cpg-clocks.txt       | 35 --------
+     .../clock/renesas,sh73a0-cpg-clocks.yaml      | 69 ++++++++++++++++
+     12 files changed, 415 insertions(+), 258 deletions(-)
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.yaml
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.yaml
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.yaml
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.yaml
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.yaml
+     delete mode 100644 Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt
+     create mode 100644 Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.yaml
+---
+ .../bindings/clock/renesas,cpg-clocks.yaml    | 241 ++++++++++++++++++
+ .../clock/renesas,r8a73a4-cpg-clocks.txt      |  33 ---
+ .../clock/renesas,r8a7740-cpg-clocks.txt      |  41 ---
+ .../clock/renesas,r8a7778-cpg-clocks.txt      |  47 ----
+ .../clock/renesas,r8a7779-cpg-clocks.txt      |  49 ----
+ .../bindings/clock/renesas,rz-cpg-clocks.txt  |  53 ----
+ .../clock/renesas,sh73a0-cpg-clocks.txt       |  35 ---
+ 7 files changed, 241 insertions(+), 258 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt
 
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+new file mode 100644
+index 0000000000000000..b83f4138f2f8b149
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
+@@ -0,0 +1,241 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/renesas,cpg-clocks.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Renesas Clock Pulse Generator (CPG)
++
++maintainers:
++  - Geert Uytterhoeven <geert+renesas@glider.be>
++
++description:
++  The Clock Pulse Generator (CPG) generates core clocks for the SoC.  It
++  includes PLLs, and fixed and variable ratio dividers.
++
++  The CPG may also provide a Clock Domain for SoC devices, in combination with
++  the CPG Module Stop (MSTP) Clocks.
++
++properties:
++  compatible:
++    oneOf:
++      - const: renesas,r8a73a4-cpg-clocks # R-Mobile APE6
++      - const: renesas,r8a7740-cpg-clocks # R-Mobile A1
++      - const: renesas,r8a7778-cpg-clocks # R-Car M1
++      - const: renesas,r8a7779-cpg-clocks # R-Car H1
++      - items:
++        - enum:
++            - renesas,r7s72100-cpg-clocks # RZ/A1H
++        - const: renesas,rz-cpg-clocks    # RZ/A1
++      - const: renesas,sh73a0-cpg-clocks  # SH-Mobile AG5
++
++  reg:
++    maxItems: 1
++
++  clocks: true
++
++  '#clock-cells':
++    const: 1
++
++  clock-output-names: true
++
++  renesas,mode:
++    description: Board-specific settings of the MD_CK* bits on R-Mobile A1
++    $ref: /schemas/types.yaml#/definitions/uint32
++    minimum: 0
++    maximum: 7
++
++  '#power-domain-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++  - clock-output-names
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a73a4-cpg-clocks
++    then:
++      properties:
++        clocks:
++          items:
++            - description: extal1
++            - description: extal2
++
++        clock-output-names:
++          items:
++            - const: main
++            - const: pll0
++            - const: pll1
++            - const: pll2
++            - const: pll2s
++            - const: pll2h
++            - const: z
++            - const: z2
++            - const: i
++            - const: m3
++            - const: b
++            - const: m1
++            - const: m2
++            - const: zx
++            - const: zs
++            - const: hp
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a7740-cpg-clocks
++    then:
++      properties:
++        clocks:
++          items:
++            - description: extal1
++            - description: extal2
++            - description: extalr
++
++        clock-output-names:
++          items:
++            - const: system
++            - const: pllc0
++            - const: pllc1
++            - const: pllc2
++            - const: r
++            - const: usb24s
++            - const: i
++            - const: zg
++            - const: b
++            - const: m1
++            - const: hp
++            - const: hpp
++            - const: usbp
++            - const: s
++            - const: zb
++            - const: m3
++            - const: cp
++
++      required:
++        - renesas,mode
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a7778-cpg-clocks
++    then:
++      properties:
++        clocks:
++          maxItems: 1
++
++        clock-output-names:
++          items:
++            - const: plla
++            - const: pllb
++            - const: b
++            - const: out
++            - const: p
++            - const: s
++            - const: s1
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r8a7779-cpg-clocks
++    then:
++      properties:
++        clocks:
++          maxItems: 1
++
++        clock-output-names:
++          items:
++            - const: plla
++            - const: z
++            - const: zs
++            - const: s
++            - const: s1
++            - const: p
++            - const: b
++            - const: out
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,r7s72100-cpg-clocks
++    then:
++      properties:
++        clocks:
++          items:
++            - description: extal1
++            - description: usb_x1
++
++        clock-output-names:
++          items:
++            - const: pll
++            - const: i
++            - const: g
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: renesas,sh73a0-cpg-clocks
++    then:
++      properties:
++        clocks:
++          items:
++            - description: extal1
++            - description: extal2
++
++        clock-output-names:
++          items:
++            - const: main
++            - const: pll0
++            - const: pll1
++            - const: pll2
++            - const: pll3
++            - const: dsi0phy
++            - const: dsi1phy
++            - const: zg
++            - const: m3
++            - const: b
++            - const: m1
++            - const: m2
++            - const: z
++            - const: zx
++            - const: hp
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - renesas,r8a7778-cpg-clocks
++              - renesas,r8a7779-cpg-clocks
++              - renesas,rz-cpg-clocks
++    then:
++      required:
++        - '#power-domain-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/r8a7740-clock.h>
++    cpg_clocks: cpg_clocks@e6150000 {
++            compatible = "renesas,r8a7740-cpg-clocks";
++            reg = <0xe6150000 0x10000>;
++            clocks = <&extal1_clk>, <&extal2_clk>, <&extalr_clk>;
++            #clock-cells = <1>;
++            clock-output-names = "system", "pllc0", "pllc1", "pllc2", "r",
++                                 "usb24s", "i", "zg", "b", "m1", "hp", "hpp",
++                                 "usbp", "s", "zb", "m3", "cp";
++            renesas,mode = <0x05>;
++    };
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt
+deleted file mode 100644
+index ece92393e80d4648..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a73a4-cpg-clocks.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-* Renesas R8A73A4 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the R8A73A4 SoC. It includes five PLLs
+-and several fixed ratio dividers.
+-
+-Required Properties:
+-
+-  - compatible: Must be "renesas,r8a73a4-cpg-clocks"
+-
+-  - reg: Base address and length of the memory resource used by the CPG
+-
+-  - clocks: Reference to the parent clocks ("extal1" and "extal2")
+-
+-  - #clock-cells: Must be 1
+-
+-  - clock-output-names: The names of the clocks. Supported clocks are "main",
+-    "pll0", "pll1", "pll2", "pll2s", "pll2h", "z", "z2", "i", "m3", "b",
+-    "m1", "m2", "zx", "zs", and "hp".
+-
+-
+-Example
+--------
+-
+-        cpg_clocks: cpg_clocks@e6150000 {
+-                compatible = "renesas,r8a73a4-cpg-clocks";
+-                reg = <0 0xe6150000 0 0x10000>;
+-                clocks = <&extal1_clk>, <&extal2_clk>;
+-                #clock-cells = <1>;
+-                clock-output-names = "main", "pll0", "pll1", "pll2",
+-                                     "pll2s", "pll2h", "z", "z2",
+-                                     "i", "m3", "b", "m1", "m2",
+-                                     "zx", "zs", "hp";
+-        };
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt
+deleted file mode 100644
+index 2c03302f86edfb83..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7740-cpg-clocks.txt
++++ /dev/null
+@@ -1,41 +0,0 @@
+-These bindings should be considered EXPERIMENTAL for now.
+-
+-* Renesas R8A7740  Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the R8A7740 SoC. It includes three PLLs
+-and several fixed ratio and variable ratio dividers.
+-
+-Required Properties:
+-
+-  - compatible: Must be "renesas,r8a7740-cpg-clocks"
+-
+-  - reg: Base address and length of the memory resource used by the CPG
+-
+-  - clocks: Reference to the three parent clocks
+-  - #clock-cells: Must be 1
+-  - clock-output-names: The names of the clocks. Supported clocks are
+-    "system", "pllc0", "pllc1", "pllc2", "r", "usb24s", "i", "zg", "b",
+-    "m1", "hp", "hpp", "usbp", "s", "zb", "m3", and "cp".
+-
+-  - renesas,mode: board-specific settings of the MD_CK* bits
+-
+-
+-Example
+--------
+-
+-cpg_clocks: cpg_clocks@e6150000 {
+-        compatible = "renesas,r8a7740-cpg-clocks";
+-        reg = <0xe6150000 0x10000>;
+-        clocks = <&extal1_clk>, <&extal2_clk>, <&extalr_clk>;
+-        #clock-cells = <1>;
+-        clock-output-names = "system", "pllc0", "pllc1",
+-                             "pllc2", "r",
+-                             "usb24s",
+-                             "i", "zg", "b", "m1", "hp",
+-                             "hpp", "usbp", "s", "zb", "m3",
+-                             "cp";
+-};
+-
+-&cpg_clocks {
+-	renesas,mode = <0x05>;
+-};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+deleted file mode 100644
+index 7cc4c0330b534660..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
++++ /dev/null
+@@ -1,47 +0,0 @@
+-* Renesas R8A7778 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the R8A7778. It includes two PLLs and
+-several fixed ratio dividers.
+-The CPG also provides a Clock Domain for SoC devices, in combination with the
+-CPG Module Stop (MSTP) Clocks.
+-
+-Required Properties:
+-
+-  - compatible: Must be "renesas,r8a7778-cpg-clocks"
+-  - reg: Base address and length of the memory resource used by the CPG
+-  - #clock-cells: Must be 1
+-  - clock-output-names: The names of the clocks. Supported clocks are
+-    "plla", "pllb", "b", "out", "p", "s", and "s1".
+-  - #power-domain-cells: Must be 0
+-
+-SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+-through an MSTP clock should refer to the CPG device node in their
+-"power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
+-
+-
+-Examples
+---------
+-
+-  - CPG device node:
+-
+-	cpg_clocks: cpg_clocks@ffc80000 {
+-		compatible = "renesas,r8a7778-cpg-clocks";
+-		reg = <0xffc80000 0x80>;
+-		#clock-cells = <1>;
+-		clocks = <&extal_clk>;
+-		clock-output-names = "plla", "pllb", "b",
+-				     "out", "p", "s", "s1";
+-		#power-domain-cells = <0>;
+-	};
+-
+-
+-  - CPG/MSTP Clock Domain member device node:
+-
+-	sdhi0: sd@ffe4c000 {
+-		compatible = "renesas,sdhi-r8a7778";
+-		reg = <0xffe4c000 0x100>;
+-		interrupts = <0 87 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp3_clks R8A7778_CLK_SDHI0>;
+-		power-domains = <&cpg_clocks>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+deleted file mode 100644
+index 8c81547c29f568e8..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
++++ /dev/null
+@@ -1,49 +0,0 @@
+-* Renesas R8A7779 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the R8A7779. It includes one PLL and
+-several fixed ratio dividers.
+-The CPG also provides a Clock Domain for SoC devices, in combination with the
+-CPG Module Stop (MSTP) Clocks.
+-
+-Required Properties:
+-
+-  - compatible: Must be "renesas,r8a7779-cpg-clocks"
+-  - reg: Base address and length of the memory resource used by the CPG
+-
+-  - clocks: Reference to the parent clock
+-  - #clock-cells: Must be 1
+-  - clock-output-names: The names of the clocks. Supported clocks are "plla",
+-    "z", "zs", "s", "s1", "p", "b", "out".
+-  - #power-domain-cells: Must be 0
+-
+-SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+-through an MSTP clock should refer to the CPG device node in their
+-"power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
+-
+-
+-Examples
+---------
+-
+-  - CPG device node:
+-
+-	cpg_clocks: cpg_clocks@ffc80000 {
+-		compatible = "renesas,r8a7779-cpg-clocks";
+-		reg = <0xffc80000 0x30>;
+-		clocks = <&extal_clk>;
+-		#clock-cells = <1>;
+-		clock-output-names = "plla", "z", "zs", "s", "s1", "p",
+-		                     "b", "out";
+-		#power-domain-cells = <0>;
+-	};
+-
+-
+-  - CPG/MSTP Clock Domain member device node:
+-
+-	sata: sata@fc600000 {
+-		compatible = "renesas,sata-r8a7779", "renesas,rcar-sata";
+-		reg = <0xfc600000 0x2000>;
+-		interrupts = <0 100 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp1_clks R8A7779_CLK_SATA>;
+-		power-domains = <&cpg_clocks>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+deleted file mode 100644
+index 8ff3e2774ed8d1d0..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
++++ /dev/null
+@@ -1,53 +0,0 @@
+-* Renesas RZ/A1 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the RZ/A1 SoCs. It includes the PLL, variable
+-CPU and GPU clocks, and several fixed ratio dividers.
+-The CPG also provides a Clock Domain for SoC devices, in combination with the
+-CPG Module Stop (MSTP) Clocks.
+-
+-Required Properties:
+-
+-  - compatible: Must be one of
+-    - "renesas,r7s72100-cpg-clocks" for the r7s72100 CPG
+-    and "renesas,rz-cpg-clocks" as a fallback.
+-  - reg: Base address and length of the memory resource used by the CPG
+-  - clocks: References to possible parent clocks. Order must match clock modes
+-    in the datasheet. For the r7s72100, this is extal, usb_x1.
+-  - #clock-cells: Must be 1
+-  - clock-output-names: The names of the clocks. Supported clocks are "pll",
+-    "i", and "g"
+-  - #power-domain-cells: Must be 0
+-
+-SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+-through an MSTP clock should refer to the CPG device node in their
+-"power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
+-
+-
+-Examples
+---------
+-
+-  - CPG device node:
+-
+-	cpg_clocks: cpg_clocks@fcfe0000 {
+-		#clock-cells = <1>;
+-		compatible = "renesas,r7s72100-cpg-clocks",
+-			     "renesas,rz-cpg-clocks";
+-		reg = <0xfcfe0000 0x18>;
+-		clocks = <&extal_clk>, <&usb_x1_clk>;
+-		clock-output-names = "pll", "i", "g";
+-		#power-domain-cells = <0>;
+-	};
+-
+-
+-  - CPG/MSTP Clock Domain member device node:
+-
+-	mtu2: timer@fcff0000 {
+-		compatible = "renesas,mtu2-r7s72100", "renesas,mtu2";
+-		reg = <0xfcff0000 0x400>;
+-		interrupts = <0 107 IRQ_TYPE_LEVEL_HIGH>;
+-		interrupt-names = "tgi0a";
+-		clocks = <&mstp3_clks R7S72100_CLK_MTU2>;
+-		clock-names = "fck";
+-		power-domains = <&cpg_clocks>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt
+deleted file mode 100644
+index a8978ec94831fc6b..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,sh73a0-cpg-clocks.txt
++++ /dev/null
+@@ -1,35 +0,0 @@
+-These bindings should be considered EXPERIMENTAL for now.
+-
+-* Renesas SH73A0 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the SH73A0 SoC. It includes four PLLs
+-and several fixed ratio dividers.
+-
+-Required Properties:
+-
+-  - compatible: Must be "renesas,sh73a0-cpg-clocks"
+-
+-  - reg: Base address and length of the memory resource used by the CPG
+-
+-  - clocks: Reference to the parent clocks ("extal1" and "extal2")
+-
+-  - #clock-cells: Must be 1
+-
+-  - clock-output-names: The names of the clocks. Supported clocks are "main",
+-    "pll0", "pll1", "pll2", "pll3", "dsi0phy", "dsi1phy", "zg", "m3", "b",
+-    "m1", "m2", "z", "zx", and "hp".
+-
+-
+-Example
+--------
+-
+-        cpg_clocks: cpg_clocks@e6150000 {
+-                compatible = "renesas,sh73a0-cpg-clocks";
+-                reg = <0 0xe6150000 0 0x10000>;
+-                clocks = <&extal1_clk>, <&extal2_clk>;
+-                #clock-cells = <1>;
+-                clock-output-names = "main", "pll0", "pll1", "pll2",
+-                                     "pll3", "dsi0phy", "dsi1phy",
+-                                     "zg", "m3", "b", "m1", "m2",
+-                                     "z", "zx", "hp";
+-        };
 -- 
-Lars Povlsen,
-Microchip
+2.17.1
+
