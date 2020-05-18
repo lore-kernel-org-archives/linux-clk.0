@@ -2,94 +2,121 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E358DC433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:33:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B645C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:43:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C430620825
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0B9207D4
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:43:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H+oFxtUq"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N/Mo9gOd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbgERHdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 03:33:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49040 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726889AbgERHdY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 03:33:24 -0400
-Received: from mail-lf1-x141.google.com (mail-lf1-x141.google.com [IPv6:2a00:1450:4864:20::141])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F14B9C05BD0B
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 00:33:23 -0700 (PDT)
-Received: by mail-lf1-x141.google.com with SMTP id h26so7134413lfg.6
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 00:33:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uhRFGDARrcoHPrKHMBYkaN/2j11MRjpDJJbVmx54CE=;
-        b=H+oFxtUqptu6CrGRKkzcmJs+eMoraTQOATafIq2NDm8CwHwFmls5nvwqEoT+8/mmOE
-         WU7jisauq4/IiaKjcokmWtKJ1DP0tvQIHBs2ljdiXl8qlGxOtvQEAa4lD7HDUDrqwTWo
-         VnA6gPlW7BZEITXpxQXAFUfO8KJGhgyzDF2UXRCdOQb2doToExJaRRP+vFv2jjUUPojT
-         48hRbviNApp8pFFIMOcAtQbGT6U+m0T/qRRWzR9Dw1pnv66azfT1YUY+BE6/qqXLbxuk
-         l+jytCjh61iQMLKyg95PEYoavnodXi3brpiHHaRO7wI6myD90jtTysY/uu3Mf+GJycpC
-         l10w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uhRFGDARrcoHPrKHMBYkaN/2j11MRjpDJJbVmx54CE=;
-        b=nFjEjTH0abUCL1VzR/dPV1A8FVQQxvNHaqYRZezX+AADaP3Ubf32sX+MrQqCHgDlL4
-         jRFmaLdkYmjEX3qFNxQkG446jFqy2bt5awsstqQU7ySR7DB6GDk2tnTCpBDEpmTZdPgd
-         htaHThd/8A6B5pWeDys8FdForJa2MGj85e97UP+3M5d3yCnsOUsoK7qStngz0VrrWAi1
-         j/MR31l1SvfkmSpuRAyhHy8WbpI8LaJRiRAcJ46Qp7vVUzbqWJAv9Y8w6ph69CGRV4+j
-         +J6RpzJQrYQsgTRjA8HvFAdaPSq6Klyb7ZLDYH/1rlZbfAWUtlNSDyGFpLHR9fLegOmV
-         UEKQ==
-X-Gm-Message-State: AOAM530s6nnODDHJM6OA6W+sCR5i1l8+digrKjT0wwy+9jVBzrhtGG5T
-        s7tUAcVhHeMeoPPcvcAlBDGDZy1RhT981Zr1e6RcOw==
-X-Google-Smtp-Source: ABdhPJzM1cLtBMnZR+j+nSiG3KeWErg7zOIoRWARiHZUlNStxktk9ge3qdAjjUUMvZG6fIllhCXtTAAglY/emlzid+o=
-X-Received: by 2002:ac2:5a07:: with SMTP id q7mr3670246lfn.77.1589787202475;
- Mon, 18 May 2020 00:33:22 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-8-lars.povlsen@microchip.com>
-In-Reply-To: <20200513125532.24585-8-lars.povlsen@microchip.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 18 May 2020 09:33:11 +0200
-Message-ID: <CACRpkdZP=E=LvEFW4b8HvXR3yYFMzALC5_abiJuoewod6V+Y4w@mail.gmail.com>
-Subject: Re: [PATCH 07/14] dt-bindings: pinctrl: ocelot: Add Sparx5 SoC support
-To:     Lars Povlsen <lars.povlsen@microchip.com>
+        id S1727833AbgERHnZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 03:43:25 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:25993 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbgERHnZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 03:43:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1589787804; x=1621323804;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version;
+  bh=FKJAh1HkVv8d/p5YjXylM2nem6uVcaMiV5E5Xj3YJxg=;
+  b=N/Mo9gOdr8dLG92VO2vspqYTdC6ybwy06MNDNqrb1h5K4v4ruEkCkND2
+   cu0mZo4ozsdylQg/voj7wziwalD74fTzC4IMIyACbyyecFeOtwRyzEi9N
+   KbyGKXlPtFU3qM/y/WdEUaYyGmmDr6Vcw7og6K3x+WYJugwkF/lFSPCPo
+   Zk5f8N1qrsFCjQf0gcqKGCriHJFBmulpA103J1MKUZDHkpXSJEv83QGGr
+   z9bZiF3T8i7eiR5uFXkifdto6TQIulSIllcLw45pcNZvW2MQdntXxG7Av
+   CJddKWzosR+z76xtTrSM9/5AZKAj3T4CtK1+RkmYrl/GSBabx5+Cvrwq2
+   A==;
+IronPort-SDR: 9nIYTc6j7tSmHkUO/HDAiU7Hl4ptKImLP7FdPLXeUtwqYerLqPzqdExoE6E93pFxzBah3KHWWG
+ Q9JPG+I2MEL3gHJXGrutIvVYPjZUo1UEB3ylMVbpbguzVvgclguDsT6B3iZUd/aTMSYKFy83vM
+ CmUy67KdBD33r96EVfEhNlaspRBqwP35OdPswMyZsL8Gqtsd2knoZobWdvb4W8vZXCFq31c9xV
+ fWceeyx3oQjJyQHT8TKz77OVnpKjLO40OSg3akb7hIM2OYZrCRcRG94HfDVpY9JW6g17CLZwRG
+ ScA=
+X-IronPort-AV: E=Sophos;i="5.73,406,1583218800"; 
+   d="scan'208";a="73738900"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 18 May 2020 00:43:22 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 18 May 2020 00:43:22 -0700
+Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 18 May 2020 00:43:17 -0700
+References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-7-lars.povlsen@microchip.com> <2d230dab95ee96727a42f9c242c93c18@misterjones.org> <871rnlp740.fsf@soft-dev15.microsemi.net> <18c0d9ef-9a2b-31d0-b317-f051bb26a907@arm.com>
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Robin Murphy <robin.murphy@arm.com>
 List-Id: <soc.lore.kernel.org>
-Cc:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        Marc Zyngier <maz@misterjones.org>,
         <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, SoC Team <soc@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Olof Johansson" <olof@lixom.net>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>
+Subject: Re: [PATCH 06/14] arm64: dts: sparx5: Add basic cpu support
+In-Reply-To: <18c0d9ef-9a2b-31d0-b317-f051bb26a907@arm.com>
+Date:   Mon, 18 May 2020 09:43:16 +0200
+Message-ID: <87wo59ofhn.fsf@soft-dev15.microsemi.net>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 13, 2020 at 2:56 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 
-> This adds documentation for the "compatible" value designated for Sparx5
+Robin Murphy writes:
+
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 >
-> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+> On 2020-05-15 16:09, Lars Povlsen wrote:
+> [...]
+>>>> +             cpu0: cpu@0 {
+>>>> +                     compatible = "arm,cortex-a53", "arm,armv8";
+>
+> Side note: only one compatible string for the real CPU please, running a
+> DT bindings check should complain about that.
+>
 
-This patch applied to the pinctrl tree.
+I'll change this.
 
-Yours,
-Linus Walleij
+>>>> +                     device_type = "cpu";
+>>>> +                     reg = <0x0 0x0>;
+>>>> +                     enable-method = "spin-table";
+>>>
+>>> Really? This is 2020, not 2012 any more. Surely a new platform
+>>> boots using PSCI, and not *this*.
+>>>
+>>
+>> We don't currently support PSCI. The platform does not have TrustZone,
+>> hence we don't use ATF.
+> AIUI, part of the purpose of ATF is to provide a nice standardised
+> platform interface regardless of whether you care about Secure software
+> or not. It shouldn't take much to knock up a trivial ATF port that just
+> uses an internal spin-table for its PSCI backend - in fact I suspect
+> that's probably just a copy-paste from the RPi3 port ;)
+>
+
+I'll change this to PSCI if that's whats expected these days. We
+actually already have an ATF port. I fully understand the desire to
+standardize on PSCI.
+
+> Robin.
+
+-- 
+Lars Povlsen,
+Microchip
