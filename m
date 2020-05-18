@@ -2,254 +2,120 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4CEC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 16:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E10DC433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 16:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 508B3207FB
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 16:18:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589818685;
-	bh=P6CYf1QjOVi+vzZTnth12Ct6KP/pXI59zA4pwX1lGMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1Flr8IFQrEzKB15nxb41kT/XyOVd3IDBAKj/UNS1+4hXKA5y1b23t/ab9PUvF1tJI
-	 BEZqBOrATkALKxdyM1bKkHITIijCu6iONFCB5H2/DDF0VP0yxfRhC4OQyojdmpZ+5q
-	 Absv79ZsR39rwtRnw46/yb0wlDg3Bm5j9PO1tNOg=
+	by mail.kernel.org (Postfix) with ESMTP id EF77F20758
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 16:58:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NwBu0r7w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgERQSF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 12:18:05 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:40449 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727987AbgERQSE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 12:18:04 -0400
-Received: by mail-il1-f193.google.com with SMTP id e8so10363657ilm.7;
-        Mon, 18 May 2020 09:18:03 -0700 (PDT)
+        id S1727938AbgERQ6g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 12:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53016 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728297AbgERQ6e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 12:58:34 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD63CC05BD0B
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 09:58:32 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id k13so10635104wrx.3
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 09:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7UrsBklbWEQlXSIzoleVC5S+OEDveOLRjfhFBfKj/1U=;
+        b=NwBu0r7wl1gpM7daM6EL/QGiMubgwQrMS7DCx8+Wm8Lyg+2vJddtUQcJeERAwQZJL5
+         fPsxNVWNDou4B0PGdUAVuryOhMY0JAn5H7lujgsQObRDL1W/aBlkfInsKn6+u8uvDosc
+         qozNeuLAP3u48HfASCRiEDkctG8WgFnHziKs14NtB8EJyIfB9hPN8qYfBhk5ijnxF764
+         W0k7+ogDFppnKzURVA2wi86cCUAs2twWBridx7yCjgdykjs8UuHNecYybeC2X0kHut/Z
+         p+J/s8zIvyXlFlnM5w4aqPbHCk/waq1N9OgYU74c8WHzHYe28XBAi3kpKL/8WQYf2EWM
+         JpnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=od6i0i/mlWvl4dy5Y4Piq4ipgSDHP81ep3mNdXvuqAk=;
-        b=mvlL1JIidFe5Xk9oo2C3a8/7N2o/JwypJ4WL4DabELvAMyJ7UcFJhpKGFmyHLzkI8j
-         rixb6am95rs26djgPiOSPEn/jq3f2ivq/iu6jMcw0sDUIjhrcBk3YmVd2zknbhH0AzvX
-         yQrIubv1+Ne4mu+2hoSQ29xpQWM0WqKK+9bQZSqRXhoLUxnqY1wJLtc/7gysI7Fq5NXQ
-         885qUX/zBO1YJij7gkwaE+P5w6Cl/59zgZ3MdhF9+iEM/a9ZMdmrVADyDduz2pSK2ni8
-         lAvQdWgZA8YjbbKOhL950yWhxHiq4Q0J4gYDoOycYIDhdN23vC759Gxc77hMln8+WT0j
-         7vSQ==
-X-Gm-Message-State: AOAM533kJRahb5PIfjNHYscJuBy/SQnL6bCwWHrOzMTjhUnC8CuYjadF
-        xnHVlS10k0iuhcuUY0Xz3g==
-X-Google-Smtp-Source: ABdhPJw60rqCelx2mp91ncWb40Amd1TzGLv7/DsODaptYCGeZkydx+txWYPPmDfGFarzDpWdd6Hm8g==
-X-Received: by 2002:a05:6e02:46:: with SMTP id i6mr16376091ilr.298.1589818683086;
-        Mon, 18 May 2020 09:18:03 -0700 (PDT)
-Received: from rob-hp-laptop ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id w70sm4947206ili.78.2020.05.18.09.18.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 09:18:02 -0700 (PDT)
-Received: (nullmailer pid 27971 invoked by uid 1000);
-        Mon, 18 May 2020 16:18:01 -0000
-Date:   Mon, 18 May 2020 10:18:01 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: renesas: mstp: Convert to json-schema
-Message-ID: <20200518161801.GA9983@bogus>
-References: <20200508100321.6720-1-geert+renesas@glider.be>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7UrsBklbWEQlXSIzoleVC5S+OEDveOLRjfhFBfKj/1U=;
+        b=Lk+mipuD6DlCLOWW/ZuTj8TMC7uN0jWJXgnu61a1b95qqSyKRF5Jm3XEsDkd4nPlqv
+         spNKSdZ0VC6HFXI1ZgvHqYktcUvXUbSzzG0aZ2i5DcVss2TB1EHJFJ89qx2tQsnNX7is
+         YVC6Ga5SQ+n3uIKMmTOb8dVlPzVO9mocy3Us/7tgPZDRFMCZsETz+7bieq1uYfKhjmi1
+         2boyDaU7Kj8+187c4NYCXfJLag4UoO4wOXe7W1xli0KlxnDnh8SE0gejjie8hioSCexI
+         qo+exSnY8fzZ/zC1TJfweL44wAYXSujL0+wUFKJ232/ibxcIqTSqOXlaD6kycT9JiaOQ
+         y46Q==
+X-Gm-Message-State: AOAM5309SdFeqE4bmTFzDEelvP5zqpwsjDpXt0pR1Npg2gop06Jnb8e4
+        RjC2C0r9x+tqBnS9FT2D9+TIctDd1xc=
+X-Google-Smtp-Source: ABdhPJyz8YyWk+tq57qcErRl35YmZbUh3jm8IYRNJPP4QVZjm2zuQSf2e2RY9yuWYPSrTDhi0GW0MQ==
+X-Received: by 2002:adf:e985:: with SMTP id h5mr21630490wrm.239.1589821111188;
+        Mon, 18 May 2020 09:58:31 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:9e7:3ac5:a930:2cd8? ([2a01:e34:ed2f:f020:9e7:3ac5:a930:2cd8])
+        by smtp.googlemail.com with ESMTPSA id j190sm193855wmb.33.2020.05.18.09.58.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 18 May 2020 09:58:30 -0700 (PDT)
+Subject: Re: [PATCHv3 00/14] Update omaps to use drivers/clocksource timers
+To:     Tony Lindgren <tony@atomide.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Adam Ford <aford173@gmail.com>,
+        Andreas Kemnade <andreas@kemnade.info>,
+        Brian Hutchinson <b.hutchman@gmail.com>,
+        Graeme Smecher <gsmecher@threespeedlogic.com>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Keerthy <j-keerthy@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Tero Kristo <t-kristo@ti.com>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20200507172330.18679-1-tony@atomide.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <340cdd4a-d996-073f-127d-89ce6c05f221@linaro.org>
+Date:   Mon, 18 May 2020 18:58:29 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200508100321.6720-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200507172330.18679-1-tony@atomide.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 08, 2020 at 12:03:21PM +0200, Geert Uytterhoeven wrote:
-> Convert the Renesas Clock Pulse Generator (CPG) Module Stop (MSTP)
-> Clocks Device Tree binding documentation to json-schema.
-> 
-> Drop R-Car Gen2 compatible values, which were obsoleted by the unified
-> "Renesas Clock Pulse Generator / Module Standby and Software Reset" DT
-> bindings.
-> Replace the obsolete example for R-Car H2 by an example that is still
-> valid.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> To be queued in clk-renesas-for-v5.8.
-> ---
->  .../clock/renesas,cpg-mstp-clocks.txt         | 60 --------------
->  .../clock/renesas,cpg-mstp-clocks.yaml        | 82 +++++++++++++++++++
->  2 files changed, 82 insertions(+), 60 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> deleted file mode 100644
-> index da578ebdda2889fc..0000000000000000
-> --- a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
-> +++ /dev/null
-> @@ -1,60 +0,0 @@
-> -* Renesas CPG Module Stop (MSTP) Clocks
-> -
-> -The CPG can gate SoC device clocks. The gates are organized in groups of up to
-> -32 gates.
-> -
-> -This device tree binding describes a single 32 gate clocks group per node.
-> -Clocks are referenced by user nodes by the MSTP node phandle and the clock
-> -index in the group, from 0 to 31.
-> -
-> -Required Properties:
-> -
-> -  - compatible: Must be one of the following
-> -    - "renesas,r7s72100-mstp-clocks" for R7S72100 (RZ) MSTP gate clocks
-> -    - "renesas,r8a73a4-mstp-clocks" for R8A73A4 (R-Mobile APE6) MSTP gate clocks
-> -    - "renesas,r8a7740-mstp-clocks" for R8A7740 (R-Mobile A1) MSTP gate clocks
-> -    - "renesas,r8a7778-mstp-clocks" for R8A7778 (R-Car M1) MSTP gate clocks
-> -    - "renesas,r8a7779-mstp-clocks" for R8A7779 (R-Car H1) MSTP gate clocks
-> -    - "renesas,r8a7790-mstp-clocks" for R8A7790 (R-Car H2) MSTP gate clocks
-> -    - "renesas,r8a7791-mstp-clocks" for R8A7791 (R-Car M2-W) MSTP gate clocks
-> -    - "renesas,r8a7792-mstp-clocks" for R8A7792 (R-Car V2H) MSTP gate clocks
-> -    - "renesas,r8a7793-mstp-clocks" for R8A7793 (R-Car M2-N) MSTP gate clocks
-> -    - "renesas,r8a7794-mstp-clocks" for R8A7794 (R-Car E2) MSTP gate clocks
-> -    - "renesas,sh73a0-mstp-clocks" for SH73A0 (SH-MobileAG5) MSTP gate clocks
-> -    and "renesas,cpg-mstp-clocks" as a fallback.
-> -  - reg: Base address and length of the I/O mapped registers used by the MSTP
-> -    clocks. The first register is the clock control register and is mandatory.
-> -    The second register is the clock status register and is optional when not
-> -    implemented in hardware.
-> -  - clocks: Reference to the parent clocks, one per output clock. The parents
-> -    must appear in the same order as the output clocks.
-> -  - #clock-cells: Must be 1
-> -  - clock-output-names: The name of the clocks as free-form strings
-> -  - clock-indices: Indices of the gate clocks into the group (0 to 31)
-> -
-> -The clocks, clock-output-names and clock-indices properties contain one entry
-> -per gate clock. The MSTP groups are sparsely populated. Unimplemented gate
-> -clocks must not be declared.
-> -
-> -
-> -Example
-> --------
-> -
-> -	#include <dt-bindings/clock/r8a7790-clock.h>
-> -
-> -	mstp3_clks: mstp3_clks@e615013c {
-> -		compatible = "renesas,r8a7790-mstp-clocks", "renesas,cpg-mstp-clocks";
-> -		reg = <0 0xe615013c 0 4>, <0 0xe6150048 0 4>;
-> -		clocks = <&cp_clk>, <&mmc1_clk>, <&sd3_clk>, <&sd2_clk>,
-> -			 <&cpg_clocks R8A7790_CLK_SD1>, <&cpg_clocks R8A7790_CLK_SD0>,
-> -			 <&mmc0_clk>;
-> -		#clock-cells = <1>;
-> -		clock-output-names =
-> -			"tpu0", "mmcif1", "sdhi3", "sdhi2",
-> -			 "sdhi1", "sdhi0", "mmcif0";
-> -		clock-indices = <
-> -			R8A7790_CLK_TPU0 R8A7790_CLK_MMCIF1 R8A7790_CLK_SDHI3
-> -			R8A7790_CLK_SDHI2 R8A7790_CLK_SDHI1 R8A7790_CLK_SDHI0
-> -			R8A7790_CLK_MMCIF0
-> -		>;
-> -	};
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml
-> new file mode 100644
-> index 0000000000000000..9b79e70ae5504bd7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml
-> @@ -0,0 +1,82 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/renesas,cpg-mstp-clocks.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas Clock Pulse Generator (CPG) Module Stop (MSTP) Clocks
-> +
-> +maintainers:
-> +  - Geert Uytterhoeven <geert+renesas@glider.be>
-> +
-> +description:
-> +  The Clock Pulse Generator (CPG) can gate SoC device clocks. The gates are
-> +  organized in groups of up to 32 gates.
-> +
-> +  This device tree binding describes a single 32 gate clocks group per node.
-> +  Clocks are referenced by user nodes by the Module Stop (MSTP) node phandle
-> +  and the clock index in the group, from 0 to 31.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - renesas,r7s72100-mstp-clocks # RZ/A1
-> +          - renesas,r8a73a4-mstp-clocks  # R-Mobile APE6
-> +          - renesas,r8a7740-mstp-clocks  # R-Mobile A1
-> +          - renesas,r8a7778-mstp-clocks  # R-Car M1
-> +          - renesas,r8a7779-mstp-clocks  # R-Car H1
-> +          - renesas,sh73a0-mstp-clocks   # SH-Mobile AG5
-> +      - const: renesas,cpg-mstp-clocks
-> +
-> +  reg:
-> +    minItems: 1
-> +    items:
-> +      - description: Module Stop Control Register (MSTPCR)
-> +      - description: Module Stop Status Register (MSTPSR)
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clock-indices:
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +  clock-output-names:
-> +    minItems: 1
-> +    maxItems: 32
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +  - clock-indices
-> +  - clock-output-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/r8a73a4-clock.h>
-> +    mstp2_clks: mstp2_clks@e6150138 {
-> +            compatible = "renesas,r8a73a4-mstp-clocks",
-> +                         "renesas,cpg-mstp-clocks";
-> +            reg = <0xe6150138 0 4>, <0xe6150040 0 4>;
 
-Size is 2 cells?
+Hi Tony,
 
-With that fixed,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +            clocks = <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>, <&mp_clk>,
-> +                     <&mp_clk>, <&cpg_clocks R8A73A4_CLK_HP>;
-> +            #clock-cells = <1>;
-> +            clock-indices = <
-> +                    R8A73A4_CLK_SCIFA0 R8A73A4_CLK_SCIFA1
-> +                    R8A73A4_CLK_SCIFB0 R8A73A4_CLK_SCIFB1
-> +                    R8A73A4_CLK_SCIFB2 R8A73A4_CLK_SCIFB3
-> +                    R8A73A4_CLK_DMAC
-> +            >;
-> +            clock-output-names =
-> +                    "scifa0", "scifa1", "scifb0", "scifb1", "scifb2", "scifb3",
-> +                    "dmac";
-> +    };
-> -- 
-> 2.17.1
+On 07/05/2020 19:23, Tony Lindgren wrote:
+> Hi all,
 > 
+> Here's v3 series to udpate omaps to use drivers/clocksource timers for
+> the 32k counter and dmtimer, and to remove the old legacy platform code.
+> Please review and test.
+> 
+> I've updated the timer-ti-dm-systimer.c patch based on the comments from
+> Daniel and Rob, and added support for selecting the preferred timers to
+> use.
+> 
+> Then for merging when folks are happy with this series, Daniel if you
+> can please apply the first three patches into an immutable branch it
+> would be great.
+
+so the clk patch also ?
+
+[ ... ]
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
