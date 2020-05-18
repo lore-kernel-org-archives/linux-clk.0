@@ -2,77 +2,99 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 742D4C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 03:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1C6C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43C9020715
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 03:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDDDF20826
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 07:29:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KdzqRAP4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgERD6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 May 2020 23:58:16 -0400
-Received: from smtp23.cstnet.cn ([159.226.251.23]:59494 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726675AbgERD6P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 17 May 2020 23:58:15 -0400
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Sun, 17 May 2020 23:54:18 EDT
-Received: from localhost.localdomain (unknown [159.226.5.100])
-        by APP-03 (Coremail) with SMTP id rQCowABnSCE0BcJeMpsbAg--.55868S3;
-        Mon, 18 May 2020 11:47:01 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     t-kristo@ti.com, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] clk/ti/adpll: Add a NULL check for devm_kasprintf()
-Date:   Mon, 18 May 2020 03:46:58 +0000
-Message-Id: <1589773618-3658-1-git-send-email-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.7.4
-X-CM-TRANSID: rQCowABnSCE0BcJeMpsbAg--.55868S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-        VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYn7k0a2IF6FyUM7kC6x804xWl14x267AK
-        xVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGw
-        A2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26ryj
-        6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26r
-        4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJVW0owAS0I0E0xvYzxvE52x082IY
-        62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7V
-        C2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkI
-        ecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-        02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_
-        Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-        CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-        wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-        xUxjjgDUUUU
-X-Originating-IP: [159.226.5.100]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCwETA1z4jSkDjQABsV
+        id S1726676AbgERH3y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 03:29:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48452 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbgERH3y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 03:29:54 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2AFEC061A0C
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 00:29:53 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id d22so7097602lfm.11
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 00:29:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0QQj8C5JeEmDZ6ZApGtOW1NT9hev78BCGty9WyW8HQU=;
+        b=KdzqRAP43Jx15JsBd7CMIo/2/+5tguTprPLSwNIyfoZQ0+ufPuN6S/BANnhJsjrhDD
+         DtP3v+cVRz1H4W7gZemFOLYygUe9Nnqc8CiVseZ1qH7MkopzW0uYIM/6QDifbVQUaEzY
+         I9Io5hrtK55gyaPukpP3UulY28GmqBr7704IEqyzsek9z5cWKXKh+nj6/8N35gBEzKLB
+         z7UbsMop5bQJkCqzM/P6qv2TYsuzenpxX9AvppK/Ewkg0FlUbL6cOIGLnAWxK13GtB1K
+         pL1FPAWkCnhD9H5FlvEDJp4hPMXkM7uAmjEi0J/HlDU7NpDvA7JOV3+ynsGeu4wzmRsg
+         XxWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0QQj8C5JeEmDZ6ZApGtOW1NT9hev78BCGty9WyW8HQU=;
+        b=NzKlLLcDqeRPni4w9xXpLOz+epuShC0gJwsr6FlZUGzW0Wx4YdaaH/Z9yKY12QHKFH
+         Oh4Elwwgtk8nveHH2y1nEEbyEjbPw5xNWP95gS8O5C9pTbZAVykAPzHlfjTFafwTrTUG
+         5TGPvUVlOP6m3InXEdrvx0+DfsNUw/YsyVT7fxr7MeQR7PUyMos3fBNwXOhYn0Xhnw8t
+         p+po92vAJ5RgebTBlFK6SNKXdIt2GBL6Dl4cssPqqTWpdWO4J1F26ux1GhtwxKt/FSgd
+         Q3nl5rum/ko+LXR+BzsAW2QYh+Jhng1gyZ+w6y1ETeeO/noH/MTPkH0G1eURgKx5wJe4
+         VwAA==
+X-Gm-Message-State: AOAM531CNcRLbzBnn0hE8uiCeKheymLEh+mrHD0u8GcAMsop+1UpATxD
+        70cTE2Whm06AQlPglW9IYPYb0x1VWNP5jlAmXzj44Q==
+X-Google-Smtp-Source: ABdhPJx6fCXx6eAlYEP7owDMWFfg7cz4sOJv/yQfCTAhywTwMqJW95DyJ7NsllwioD8AhEiAVzPb9dcty/D6ToHML3U=
+X-Received: by 2002:a19:c8cb:: with SMTP id y194mr7741076lff.89.1589786992310;
+ Mon, 18 May 2020 00:29:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-2-lars.povlsen@microchip.com>
+In-Reply-To: <20200513125532.24585-2-lars.povlsen@microchip.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 18 May 2020 09:29:41 +0200
+Message-ID: <CACRpkdZF++0AExBvDHNT+whKP2sNKnbczV4w9SXksG2Dyctecw@mail.gmail.com>
+Subject: Re: [PATCH 01/14] pinctrl: ocelot: Should register GPIO's even if not
+ irq controller
+To:     Lars Povlsen <lars.povlsen@microchip.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Olof Johansson <olof@lixom.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-devm_kasprintf() may fail, so we should better add a NULL check
-and propagate an error on failure.
+On Wed, May 13, 2020 at 2:56 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- drivers/clk/ti/adpll.c | 2 ++
- 1 file changed, 2 insertions(+)
+> This fixes the situation where the GPIO controller is not used as an
+> interrupt controller as well.
+>
+> Previously, the driver would silently fail to register even the
+> GPIO's. With this change, the driver will only register as an
+> interrupt controller if a parent interrupt is provided.
+>
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index bb2f283..f18a672 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -196,6 +196,8 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
- 	} else {
- 		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.adpll.%s",
- 				      d->pa, postfix);
-+		if (!name)
-+			return -ENOMEM;
- 	}
- 
- 	return name;
--- 
-2.7.4
+This patch applied to the pinctrl tree.
 
+Yours,
+Linus Walleij
