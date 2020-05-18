@@ -2,126 +2,116 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D147C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 17:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A76C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 18:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A85C207FB
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 17:01:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA41420715
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 18:11:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdA653P/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yezs7gGm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbgERRBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 13:01:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53520 "EHLO
+        id S1728606AbgERSLU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 14:11:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728142AbgERRBm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 13:01:42 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0807C05BD0B
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 10:01:40 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id v12so12672303wrp.12
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 10:01:40 -0700 (PDT)
+        with ESMTP id S1732848AbgERSEt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 14:04:49 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C7DC05BD0B
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 11:04:49 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id 5so196667pjd.0
+        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 11:04:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=A6wVB9L5JuVcZQhVgNV1j0Bavs6H5jtfAqYurATa2Do=;
-        b=bdA653P/QboIHjRsQ/kXQWemQ8gbXJMRQu3sewNP+YlMuTl/p+foWkhrLBStyDO3gs
-         P2xavifo28Zofs/Rb7dMxZhbpgta+7Kk+bqr4BIbGuby4R3WDa5HKRGg2vGBBRVYB4YQ
-         aEDQ+ayplQUHRW1UmsY0tBOxCcGFp4kf4pIW4vhdh0O3Vkmx23NrQLjGIW0bxNe7fNj3
-         V7gc+n4557nQQNW5GXTQMVbWEL++D8cGjwykRK1eXP54o8As3O6011hEi6Ugivsi8Aeo
-         m//EeAkt88jJOpWwhlanVeKgEjGYuzreqBkcqexXZUxp3lcCujAJH3Tu31bBPV06jEiR
-         6l1w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=nGHpGwwWCzCJVc7bPHElzmAcZWD6x2usMfgTF/Hyv34=;
+        b=yezs7gGmWNEMQgES7TZ+xcCNcGDm2+5zFxorxpSP+ZD8d645MzsEgn/+ELaoNKXIFF
+         jwt25o2C1yM1vnTI6Hq0qT4rrZeh8aZYdo99QBYcXaJAED8NNz97cHQPfyanqByvOh8p
+         q2P6P9PgOakAS2y/R7ywxQeQLTluzvw4DRj7LTbweDTceoXUwix5YjtjzbpIgwZhWacL
+         u0kJHWnongsmlnxe9x81xW8PMi4x3cfmmaFf76hlMYAh3p7i/SevDZdLWIdwtV+XIvZo
+         HsJG3QBKDPJKTLwyqp0nSxh4qC5QRhrQ6MTB5zCV25Y/P42K/Yk+kupocFQObxdpjLwh
+         mzsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=A6wVB9L5JuVcZQhVgNV1j0Bavs6H5jtfAqYurATa2Do=;
-        b=TpxFoOZZkkOj0Cn7MB2EeRcHYSrIaUDXg9N12oTFA6hKyqtSAHpCYLyiq0vqBIlO5O
-         wjzm+DI8ldEcsYBtQ29rESFVgwaGwHQ4AOB+0w5qlYszxcld7iZMJe1FUCUUQNo0CnpV
-         OhmotxsQ21kHfLhRF+k+Sdy0R9zhoUA0dWsaVjGqOzCxG8WrVzLjGS7jYo+EQEf8Eq5l
-         Mdj8sk3gZL9+MBb7WdAouyhijNxOS4QXeDA4HpGm3xaYx4yWoOMQOELCqLuNNaT5xJgI
-         vHwcHpTJ56A4F+/kCS5fI4z7csexgNMMjUyg7BrkbJIRqtrW0WPIWXzzaRhtgAS9FGCb
-         ZFVA==
-X-Gm-Message-State: AOAM532eLDOsf6JmDv+QceHuASUpkhBK5r5D3uceqJ18Yub0TvyJxSDH
-        ld0B4cKHgkDTeoaX6SHGL33U1nmW5+E=
-X-Google-Smtp-Source: ABdhPJxWOh06HcVOViu4DIpbbOhR0OOnnCEwdTI40X9By447kp5WfnRE1ew1W4UPHl9Gn9nhNxTnxg==
-X-Received: by 2002:a5d:6283:: with SMTP id k3mr20606675wru.62.1589821299348;
-        Mon, 18 May 2020 10:01:39 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:9e7:3ac5:a930:2cd8? ([2a01:e34:ed2f:f020:9e7:3ac5:a930:2cd8])
-        by smtp.googlemail.com with ESMTPSA id m13sm178601wmi.42.2020.05.18.10.01.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 May 2020 10:01:38 -0700 (PDT)
-Subject: Re: [PATCHv3 00/14] Update omaps to use drivers/clocksource timers
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Adam Ford <aford173@gmail.com>,
-        Andreas Kemnade <andreas@kemnade.info>,
-        Brian Hutchinson <b.hutchman@gmail.com>,
-        Graeme Smecher <gsmecher@threespeedlogic.com>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Keerthy <j-keerthy@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20200507172330.18679-1-tony@atomide.com>
- <340cdd4a-d996-073f-127d-89ce6c05f221@linaro.org>
- <20200518170059.GR37466@atomide.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <c2404711-af5e-e9a2-29c1-55378522ebd2@linaro.org>
-Date:   Mon, 18 May 2020 19:01:35 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=nGHpGwwWCzCJVc7bPHElzmAcZWD6x2usMfgTF/Hyv34=;
+        b=MlqepefbOZc9DseKt2Tt4FAhzeLDju9vhSY6LJhEBb4YW360LPLOGIp/iau/zL1M26
+         X/ZnSPgKPpmr68u0I8yh985UDlOtUhEHUtCBXSmB2umJWSNp1vlahNxt4aHQGMQrqOkT
+         PljsfMzMrqnikH6Zs43p357yxkf/mShAClpiy7Hz4qdS48b+EsGCQPajF4vspJf7vCeI
+         joaiMMyrwZlVSV54k6GjeUVn98Pbp307TW3gc3qEKjhanYP9WE58OALKG0eHuqrFrUk+
+         MuYmlAQCl0wM7oph+e0lkZt/NpUWOwhBEKABDNsT5eb16yQQeGVQ2aLQTHR4AtZbESsW
+         B1cQ==
+X-Gm-Message-State: AOAM5310UGT2IUVaeLkxfbSZE+nAYRbXH1VWK/mecaz621wrHQj2ilyF
+        hFFGXx2ZjgoTA3Dr9IXRsysecg==
+X-Google-Smtp-Source: ABdhPJy0os+7IoFCFKg7k+EZgJxjNXzkxcklwepEVVeiJOSzaLYyRQZOx0XwQFhan0Ma7PyXS/9uNQ==
+X-Received: by 2002:a17:90a:bb81:: with SMTP id v1mr605595pjr.168.1589825088878;
+        Mon, 18 May 2020 11:04:48 -0700 (PDT)
+Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id c24sm172998pjs.51.2020.05.18.11.04.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 May 2020 11:04:48 -0700 (PDT)
+Date:   Mon, 18 May 2020 11:03:25 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 8/8] arm64: dts: ipq6018: Add a53 pll and apcs clock
+Message-ID: <20200518180325.GB2165@builder.lan>
+References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
+ <1588573224-3038-9-git-send-email-sivaprak@codeaurora.org>
+ <20200512202439.GK2165@builder.lan>
+ <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20200518170059.GR37466@atomide.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18/05/2020 19:00, Tony Lindgren wrote:
-> * Daniel Lezcano <daniel.lezcano@linaro.org> [200518 16:59]:
->>
->> Hi Tony,
->>
->> On 07/05/2020 19:23, Tony Lindgren wrote:
->>> Hi all,
->>>
->>> Here's v3 series to udpate omaps to use drivers/clocksource timers for
->>> the 32k counter and dmtimer, and to remove the old legacy platform code.
->>> Please review and test.
->>>
->>> I've updated the timer-ti-dm-systimer.c patch based on the comments from
->>> Daniel and Rob, and added support for selecting the preferred timers to
->>> use.
->>>
->>> Then for merging when folks are happy with this series, Daniel if you
->>> can please apply the first three patches into an immutable branch it
->>> would be great.
->>
->> so the clk patch also ?
+On Tue 12 May 20:55 PDT 2020, Sivaprakash Murugesan wrote:
+
+> Hi Bjorn,
 > 
-> Oops sorry, just first two are needed as we no longer need the
-> device tree binding changes :)
+> On 5/13/2020 1:54 AM, Bjorn Andersson wrote:
+> > On Sun 03 May 23:20 PDT 2020, Sivaprakash Murugesan wrote:
+> > 
+> > > add support for apps pll and apcs clock.
+> > > 
+> > > Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 16 +++++++++++++---
+> > >   1 file changed, 13 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> > > index 1aa8d85..af2ceeb 100644
+> > > --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> > > @@ -294,12 +294,22 @@
+> > >   		};
+> > >   		apcs_glb: mailbox@b111000 {
+> > > -			compatible = "qcom,ipq8074-apcs-apps-global";
+> > > -			reg = <0x0b111000 0xc>;
+> > > -
+> > > +			compatible = "qcom,ipq6018-apcs-apps-global";
+> > > +			reg = <0x0b111000 0x1000>;
+> > My documentation states that IPQ8074 indeed has this block at
+> > 0x0b111000, but IPQ6018 it's at 0x6b111000. Can you confirm this is
+> > correct? Same with the pll below.
+> The address 0x6b111000 is how the RPM sees this block. For A53 it is still
+> 0xb111000
 
-Ok
+Okay, thanks for confirming.
 
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Regards,
+Bjorn
