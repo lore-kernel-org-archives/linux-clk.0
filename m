@@ -2,116 +2,103 @@ Return-Path: <SRS0=U0T3=7A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A76C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 18:11:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CF4C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 19:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA41420715
-	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 18:11:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yezs7gGm"
+	by mail.kernel.org (Postfix) with ESMTP id 97C0920826
+	for <linux-clk@archiver.kernel.org>; Mon, 18 May 2020 19:37:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728606AbgERSLU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 14:11:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35164 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732848AbgERSEt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 14:04:49 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90C7DC05BD0B
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 11:04:49 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id 5so196667pjd.0
-        for <linux-clk@vger.kernel.org>; Mon, 18 May 2020 11:04:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=nGHpGwwWCzCJVc7bPHElzmAcZWD6x2usMfgTF/Hyv34=;
-        b=yezs7gGmWNEMQgES7TZ+xcCNcGDm2+5zFxorxpSP+ZD8d645MzsEgn/+ELaoNKXIFF
-         jwt25o2C1yM1vnTI6Hq0qT4rrZeh8aZYdo99QBYcXaJAED8NNz97cHQPfyanqByvOh8p
-         q2P6P9PgOakAS2y/R7ywxQeQLTluzvw4DRj7LTbweDTceoXUwix5YjtjzbpIgwZhWacL
-         u0kJHWnongsmlnxe9x81xW8PMi4x3cfmmaFf76hlMYAh3p7i/SevDZdLWIdwtV+XIvZo
-         HsJG3QBKDPJKTLwyqp0nSxh4qC5QRhrQ6MTB5zCV25Y/P42K/Yk+kupocFQObxdpjLwh
-         mzsw==
+        id S1728285AbgERThE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 May 2020 15:37:04 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:36770 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727987AbgERThD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 15:37:03 -0400
+Received: by mail-oi1-f195.google.com with SMTP id x23so3534020oic.3;
+        Mon, 18 May 2020 12:37:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=nGHpGwwWCzCJVc7bPHElzmAcZWD6x2usMfgTF/Hyv34=;
-        b=MlqepefbOZc9DseKt2Tt4FAhzeLDju9vhSY6LJhEBb4YW360LPLOGIp/iau/zL1M26
-         X/ZnSPgKPpmr68u0I8yh985UDlOtUhEHUtCBXSmB2umJWSNp1vlahNxt4aHQGMQrqOkT
-         PljsfMzMrqnikH6Zs43p357yxkf/mShAClpiy7Hz4qdS48b+EsGCQPajF4vspJf7vCeI
-         joaiMMyrwZlVSV54k6GjeUVn98Pbp307TW3gc3qEKjhanYP9WE58OALKG0eHuqrFrUk+
-         MuYmlAQCl0wM7oph+e0lkZt/NpUWOwhBEKABDNsT5eb16yQQeGVQ2aLQTHR4AtZbESsW
-         B1cQ==
-X-Gm-Message-State: AOAM5310UGT2IUVaeLkxfbSZE+nAYRbXH1VWK/mecaz621wrHQj2ilyF
-        hFFGXx2ZjgoTA3Dr9IXRsysecg==
-X-Google-Smtp-Source: ABdhPJy0os+7IoFCFKg7k+EZgJxjNXzkxcklwepEVVeiJOSzaLYyRQZOx0XwQFhan0Ma7PyXS/9uNQ==
-X-Received: by 2002:a17:90a:bb81:: with SMTP id v1mr605595pjr.168.1589825088878;
-        Mon, 18 May 2020 11:04:48 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id c24sm172998pjs.51.2020.05.18.11.04.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 11:04:48 -0700 (PDT)
-Date:   Mon, 18 May 2020 11:03:25 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 8/8] arm64: dts: ipq6018: Add a53 pll and apcs clock
-Message-ID: <20200518180325.GB2165@builder.lan>
-References: <1588573224-3038-1-git-send-email-sivaprak@codeaurora.org>
- <1588573224-3038-9-git-send-email-sivaprak@codeaurora.org>
- <20200512202439.GK2165@builder.lan>
- <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PFMzxu4nvE+GUaLmVzSE5kcqC4GbRhRm4W5pcYo5DRs=;
+        b=UyouROk2qWoHm61onD/2Conq/7m+mGwctxjYwh8v2HKtzeLpwUyaK1Dh/lADeolxBI
+         G3p9BoSPoeDf66x+EU57kiJbqQz+xM5Ww1QyTTmn3EYHJokemkeY9sd5D9soEA8j6ASW
+         tIvAESsRi4/s1QfEUyUndBBooSS1zNk+Up6JG9pFJHH99kX+vLbFpwggrksfin9NXY3V
+         xuDAaZQETNraUjnJh0RVjU4zEKXbP5+QPrJukI17ZuRsj8p855HxNcEwlNd0z+DfdrNu
+         6dvXFKP7matqjqSmJVZ+yV/Nqb0XTnwY/5XxNyQqmXw/1leZfwdoJB6eSivFsRaSQ1ZF
+         6QiA==
+X-Gm-Message-State: AOAM532sjBqlTMCBsIy9//Bb1FzSgrsLvZaxT2E//hnvdYJMrro0p6Df
+        6JAH4daas31SO9F3Cs7lONf5emzNmKbk0SliZWQ=
+X-Google-Smtp-Source: ABdhPJy5ijQHBsxqYLgMVYKEmYruck4k+Gkdc731EFwx1c/IAtTB7uKj/+/9chNW3EsoQ6leZIa6OgppSbZttueq6jE=
+X-Received: by 2002:aca:cd93:: with SMTP id d141mr663816oig.148.1589830621665;
+ Mon, 18 May 2020 12:37:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <80039c21-41cf-2ace-939a-ef48fd773aa4@codeaurora.org>
+References: <20200508100321.6720-1-geert+renesas@glider.be> <20200518161801.GA9983@bogus>
+In-Reply-To: <20200518161801.GA9983@bogus>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 May 2020 21:36:49 +0200
+Message-ID: <CAMuHMdUvR0=cdEyyQyy4J6GLs9=5AQDhVXOYVLrLeNkA2FLaZA@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: renesas: mstp: Convert to json-schema
+To:     Rob Herring <robh@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 12 May 20:55 PDT 2020, Sivaprakash Murugesan wrote:
+Hi Rob,
 
-> Hi Bjorn,
-> 
-> On 5/13/2020 1:54 AM, Bjorn Andersson wrote:
-> > On Sun 03 May 23:20 PDT 2020, Sivaprakash Murugesan wrote:
-> > 
-> > > add support for apps pll and apcs clock.
-> > > 
-> > > Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/ipq6018.dtsi | 16 +++++++++++++---
-> > >   1 file changed, 13 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> > > index 1aa8d85..af2ceeb 100644
-> > > --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> > > +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-> > > @@ -294,12 +294,22 @@
-> > >   		};
-> > >   		apcs_glb: mailbox@b111000 {
-> > > -			compatible = "qcom,ipq8074-apcs-apps-global";
-> > > -			reg = <0x0b111000 0xc>;
-> > > -
-> > > +			compatible = "qcom,ipq6018-apcs-apps-global";
-> > > +			reg = <0x0b111000 0x1000>;
-> > My documentation states that IPQ8074 indeed has this block at
-> > 0x0b111000, but IPQ6018 it's at 0x6b111000. Can you confirm this is
-> > correct? Same with the pll below.
-> The address 0x6b111000 is how the RPM sees this block. For A53 it is still
-> 0xb111000
+On Mon, May 18, 2020 at 6:18 PM Rob Herring <robh@kernel.org> wrote:
+> On Fri, May 08, 2020 at 12:03:21PM +0200, Geert Uytterhoeven wrote:
+> > Convert the Renesas Clock Pulse Generator (CPG) Module Stop (MSTP)
+> > Clocks Device Tree binding documentation to json-schema.
+> >
+> > Drop R-Car Gen2 compatible values, which were obsoleted by the unified
+> > "Renesas Clock Pulse Generator / Module Standby and Software Reset" DT
+> > bindings.
+> > Replace the obsolete example for R-Car H2 by an example that is still
+> > valid.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Okay, thanks for confirming.
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml
 
-Regards,
-Bjorn
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/r8a73a4-clock.h>
+> > +    mstp2_clks: mstp2_clks@e6150138 {
+> > +            compatible = "renesas,r8a73a4-mstp-clocks",
+> > +                         "renesas,cpg-mstp-clocks";
+> > +            reg = <0xe6150138 0 4>, <0xe6150040 0 4>;
+>
+> Size is 2 cells?
+
+Oops, forgot to drop the zeroes. Fixed.
+
+> With that fixed,
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
