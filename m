@@ -4,23 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42CD3C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D03FC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 295DD205CB
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 047672075F
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726352AbgESWl7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 18:41:59 -0400
-Received: from v6.sk ([167.172.42.174]:58510 "EHLO v6.sk"
+        id S1727966AbgESWmH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 18:42:07 -0400
+Received: from v6.sk ([167.172.42.174]:58564 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726318AbgESWl7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 May 2020 18:41:59 -0400
+        id S1726318AbgESWmF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 May 2020 18:42:05 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 04E49610D3;
-        Tue, 19 May 2020 22:41:57 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 768EC610DB;
+        Tue, 19 May 2020 22:42:03 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -28,9 +28,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 01/13] clk: mmp: frac: Do not lose last 4 digits of precision
-Date:   Wed, 20 May 2020 00:41:39 +0200
-Message-Id: <20200519224151.2074597-2-lkundrak@v3.sk>
+Subject: [PATCH v3 05/13] clk: mmp2: Move thermal register defines up a bit
+Date:   Wed, 20 May 2020 00:41:43 +0200
+Message-Id: <20200519224151.2074597-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200519224151.2074597-1-lkundrak@v3.sk>
 References: <20200519224151.2074597-1-lkundrak@v3.sk>
@@ -41,84 +41,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While calculating the output rate of a fractional divider clock, the
-value is divided and multipled by 10000, discarding the least
-significant digits -- presumably to fit the intermediate value within 32
-bits.
-
-The precision we're losing is, however, not insignificant for things like
-I2S clock. Maybe also elsewhere, now that since commit ea56ad60260e ("clk:
-mmp2: Stop pretending PLL outputs are constant") the parent rates are more
-precise and no longer rounded to 10000s.
+A trivial change to keep the sorting sane. The APBC registers are happier
+when they are grouped together, instead of mixed with the APMU ones.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/clk/mmp/clk-frac.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-frac.c b/drivers/clk/mmp/clk-frac.c
-index fabc09aca6c4..ed9928f5bdc7 100644
---- a/drivers/clk/mmp/clk-frac.c
-+++ b/drivers/clk/mmp/clk-frac.c
-@@ -28,13 +28,15 @@ static long clk_factor_round_rate(struct clk_hw *hw, unsigned long drate,
- 		unsigned long *prate)
- {
- 	struct mmp_clk_factor *factor = to_clk_factor(hw);
--	unsigned long rate = 0, prev_rate;
-+	u64 rate = 0, prev_rate;
- 	int i;
- 
- 	for (i = 0; i < factor->ftbl_cnt; i++) {
- 		prev_rate = rate;
--		rate = (((*prate / 10000) * factor->ftbl[i].den) /
--			(factor->ftbl[i].num * factor->masks->factor)) * 10000;
-+		rate = *prate;
-+		rate *= factor->ftbl[i].den;
-+		do_div(rate, factor->ftbl[i].num * factor->masks->factor);
-+
- 		if (rate > drate)
- 			break;
- 	}
-@@ -54,6 +56,7 @@ static unsigned long clk_factor_recalc_rate(struct clk_hw *hw,
- 	struct mmp_clk_factor *factor = to_clk_factor(hw);
- 	struct mmp_clk_factor_masks *masks = factor->masks;
- 	unsigned int val, num, den;
-+	u64 rate;
- 
- 	val = readl_relaxed(factor->base);
- 
-@@ -66,8 +69,11 @@ static unsigned long clk_factor_recalc_rate(struct clk_hw *hw,
- 	if (!den)
- 		return 0;
- 
--	return (((parent_rate / 10000)  * den) /
--			(num * factor->masks->factor)) * 10000;
-+	rate = parent_rate;
-+	rate *= den;
-+	do_div(rate, num * factor->masks->factor);
-+
-+	return rate;
- }
- 
- /* Configures new clock rate*/
-@@ -78,12 +84,14 @@ static int clk_factor_set_rate(struct clk_hw *hw, unsigned long drate,
- 	struct mmp_clk_factor_masks *masks = factor->masks;
- 	int i;
- 	unsigned long val;
--	unsigned long rate = 0;
- 	unsigned long flags = 0;
-+	u64 rate = 0;
- 
- 	for (i = 0; i < factor->ftbl_cnt; i++) {
--		rate = (((prate / 10000) * factor->ftbl[i].den) /
--			(factor->ftbl[i].num * factor->masks->factor)) * 10000;
-+		rate = prate;
-+		rate *= factor->ftbl[i].den;
-+		do_div(rate, factor->ftbl[i].num * factor->masks->factor);
-+
- 		if (rate > drate)
- 			break;
- 	}
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 52dc8b43acd9..524574187c17 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -45,6 +45,10 @@
+ #define APBC_SSP1	0x54
+ #define APBC_SSP2	0x58
+ #define APBC_SSP3	0x5c
++#define APBC_THERMAL0	0x90
++#define APBC_THERMAL1	0x98
++#define APBC_THERMAL2	0x9c
++#define APBC_THERMAL3	0xa0
+ #define APMU_SDH0	0x54
+ #define APMU_SDH1	0x58
+ #define APMU_SDH2	0xe8
+@@ -55,10 +59,6 @@
+ #define APMU_DISP1	0x110
+ #define APMU_CCIC0	0x50
+ #define APMU_CCIC1	0xf4
+-#define APBC_THERMAL0	0x90
+-#define APBC_THERMAL1	0x98
+-#define APBC_THERMAL2	0x9c
+-#define APBC_THERMAL3	0xa0
+ #define APMU_USBHSIC0	0xf8
+ #define APMU_USBHSIC1	0xfc
+ #define APMU_GPU	0xcc
 -- 
 2.26.2
 
