@@ -2,148 +2,305 @@ Return-Path: <SRS0=QrZd=7B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B043EC433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 16:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C16EBC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 17:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90CC020826
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 16:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97B28207D3
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 17:07:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nPSlUeVW"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="I/ymuisp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbgESQAs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 12:00:48 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52741 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729211AbgESQAq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 May 2020 12:00:46 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200519160044euoutp01a28e2d33b208d56247870b6c73da1c50~QeU4Ax-8t2633826338euoutp01s
-        for <linux-clk@vger.kernel.org>; Tue, 19 May 2020 16:00:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200519160044euoutp01a28e2d33b208d56247870b6c73da1c50~QeU4Ax-8t2633826338euoutp01s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1589904044;
-        bh=mfv7qvHfvq45NpEaYxxDp0Uspu0tWQaNUJ4rn5up5Mg=;
-        h=To:Cc:From:Subject:Date:References:From;
-        b=nPSlUeVWolwIm6939hSEVePIGEy1aIiZ1ODrZbvWR1anqZlyew2b9LrUqSrrN7o0q
-         Rzu4GkjClSQSwg6q6L5YH6CWk7TS1STdUjDarvaoXgAkkbaEom5GBnqH4nsauNFS54
-         9UCf2wKrKMJXdawlXl7qzfE0MGZktaVk9L25Bdd4=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20200519160044eucas1p1ab7ee2150575ab8521eb51b43a032e0d~QeU30I1Nh1186011860eucas1p1h;
-        Tue, 19 May 2020 16:00:44 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BD.A0.60679.CA204CE5; Tue, 19
-        May 2020 17:00:44 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1~QeU3fXhz_1203412034eucas1p1j;
-        Tue, 19 May 2020 16:00:43 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20200519160043eusmtrp12cadbc1abbfce6bcd05081456d3fb98e~QeU3ewtaW3256032560eusmtrp17;
-        Tue, 19 May 2020 16:00:43 +0000 (GMT)
-X-AuditID: cbfec7f4-0cbff7000001ed07-3d-5ec402aca0d7
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E6.FA.07950.BA204CE5; Tue, 19
-        May 2020 17:00:43 +0100 (BST)
-Received: from [106.210.123.115] (unknown [106.210.123.115]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20200519160043eusmtip2c1c10482d84f760512d6c9a739c8bd2a~QeU25pZkK2923329233eusmtip2S;
-        Tue, 19 May 2020 16:00:43 +0000 (GMT)
+        id S1729164AbgESRHl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 13:07:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53180 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728689AbgESRHl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 May 2020 13:07:41 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A19C8C08C5C0
+        for <linux-clk@vger.kernel.org>; Tue, 19 May 2020 10:07:39 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id z72so4062wmc.2
+        for <linux-clk@vger.kernel.org>; Tue, 19 May 2020 10:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=muft4GcNATjEV4x01YH/79QbRCrzio+OZVwdxHw5SPY=;
+        b=I/ymuisp2aK26Obn2TT/OWU63j23sp1lm9thePiJAWx1TgitUiDRnh/kqHQJ6rOKWU
+         Y5TqOPiUq1Qt4ZN/kdhy1GdxUHrYlnPJoRGggXV0sBsTkKiuwEetV0gj/UujOMQ2/4kp
+         lRcz+ib8TXtBBCOg8wA/7yVMsOJe4SvQumTeK08wzLR/PE/Dvui1IdYjgi1zLTBMwXug
+         SmHOCD2+1tHRyA/jd2M8RLLMw4eXWCvpteOhCq26+N0WK5+CIieRkctsEnMcjAfDXvpi
+         DmW0wmNX0DcpYrUOvXHxQRQWaePZf3qknF1cKi051MJvNi+0YlmbmB1Y+zxF8M5toOTW
+         M3Zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=muft4GcNATjEV4x01YH/79QbRCrzio+OZVwdxHw5SPY=;
+        b=WVelooVYl07fki9P+UMUc6D/0oqkxUNjFVuua/GrNb+dGAI97JewWUiwb6lqzjImpP
+         oSbr9IygNej8GxB6WOZ+eWP3lHGR2FG9H1ze4eaiSxWFtjp8ys9NB8cv5Z4AZdQzU0mK
+         uHYZj+WfwnPveC1Vx4g5vxue8AUHiGOMo7srmRaY7gFVr+D2NYo/hJAub3tr1/z9+duL
+         4D5D0rmAWFqhgHaua85v9Xp+Qx0MhAdhOcmzgVdXI3Jeon+Q3PaC0YyFDEE5DAvpkY9j
+         G0BgTXZWywvvK3XApyEPxycUgJhs0uL6Z24rnJbqu7h728XeofWY3poFC3AAQzWT5GP9
+         2EVw==
+X-Gm-Message-State: AOAM531X8vo2OeFWCWJbyTYN3GNu/9v/2HLogwgPl7zy+I1K2kJSkiqp
+        oqMZmVrDQPWDWJ4Z9tIKS5L2Ig==
+X-Google-Smtp-Source: ABdhPJyxewN7nNTcKNjJl7CerBfnul15agl1TPMcFp4JkElJdJZiwyXJymCrchHwGn7+zobVBPor7w==
+X-Received: by 2002:a7b:c4cc:: with SMTP id g12mr377327wmk.168.1589908058332;
+        Tue, 19 May 2020 10:07:38 -0700 (PDT)
+Received: from starbuck.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id 89sm61592wrj.37.2020.05.19.10.07.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 19 May 2020 10:07:37 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] clk/samsung updates for 5.8
-Message-ID: <72d1868f-65c0-5dd7-b497-ebc5f78bc34b@samsung.com>
-Date:   Tue, 19 May 2020 18:00:42 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
-        Thunderbird/68.8.0
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org
+Subject: [RFC PATCH] clk: rework clk_register to use the clk_hw API
+Date:   Tue, 19 May 2020 19:07:33 +0200
+Message-Id: <20200519170733.295100-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.25.4
 MIME-Version: 1.0
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAKsWRmVeSWpSXmKPExsWy7djP87prmI7EGRz6wGaxccZ6VovrX56z
-        WnzsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASxWWTkpqTWZZa
-        pG+XwJVxa9c6poL1XBXfV2xlbWA8w9HFyMkhIWAiMffgGxYQW0hgBaPEx6ueXYxcQPYXRon1
-        /xcyQzifGSX2vmligel4sXcKK0RiOaPEuqkzWSCcj4wS3y/3sYJUiQgESdzpX8sGkmAWOMAo
-        0bF+DVg7m4ChRO/RPkYQW1hAX2Lbkn1sIDavgJ1Ew8NZYHEWAVWJS7OOgtWLCsRKnF68mRGi
-        RlDi5MwnYHFmAXGJW0/mM0HY8hLb384Bu1VCoJtd4vbUG2wQt7pITHv1B8oWlnh1fAs7hC0j
-        cXpyDwtEQzOjRM/u2+wQzgRGifvHFzBCVFlL3Dn3C6ibA2iFpsT6XfoQYUeJte+ugYUlBPgk
-        brwVhDiCT2LStunMEGFeiY42IYhqFYnfq6YzQdhSEt1P/rNAlHhIvGnOm8CoOAvJZ7OQfDYL
-        yWezEE5YwMiyilE8tbQ4Nz212CgvtVyvODG3uDQvXS85P3cTIzDdnP53/MsOxl1/kg4xCnAw
-        KvHwGuw5HCfEmlhWXJl7iFGCg1lJhHfCi0NxQrwpiZVVqUX58UWlOanFhxilOViUxHmNF72M
-        FRJITyxJzU5NLUgtgskycXBKNTDGdzPdc7ojkSDT/1LvXfevAhO5hqLe1J03H7QHtLO0lnP/
-        F/wRtZ/7jV7QnIQ9dhsmzWr6erf/7/FOkfZ3voc+/V22j/GTicxj+f2Mm20LI4sVnk2ZYuoi
-        vHpDUO3KHa33v0/iOzwvb+Z+df62U2I33CWcZa72Vx04ni7j5yfUOskz8s3De5ZKLMUZiYZa
-        zEXFiQDEvm1/MwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xe7qrmY7EGez7q2OxccZ6VovrX56z
-        WnzsucdqMeP8PiaLi6dcLf5d28jiwObx/kYru8emVZ1sHn1bVjF6fN4kF8ASpWdTlF9akqqQ
-        kV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJdxa9c6poL1XBXfV2xl
-        bWA8w9HFyMkhIWAi8WLvFFYQW0hgKaPEhSbBLkYOoLiUxPwWJYgSYYk/17rYuhi5gEreM0ps
-        e7WRHSQhIhAk8WvPPVaQBLPAIUaJixf3gw1iEzCU6D3axwhiCwvoS2xbso8NxOYVsJNoeDgL
-        LM4ioCpxadZRFhBbVCBWYvW1VkaIGkGJkzOfgMWZBdQl/sy7xAxhi0vcejKfCcKWl9j+dg7z
-        BEaBWUhaZiFpmYWkZRaSlgWMLKsYRVJLi3PTc4uN9IoTc4tL89L1kvNzNzECo2XbsZ9bdjB2
-        vQs+xCjAwajEw2uw53CcEGtiWXFlLtCDHMxKIrwTXhyKE+JNSaysSi3Kjy8qzUktPsRoCvTQ
-        RGYp0eR8YCTnlcQbmhqaW1gamhubG5tZKInzdggcjBESSE8sSc1OTS1ILYLpY+LglGpgtKkM
-        ddn85vDC1An+68MdbRMVnkvlnS996lXCEm2moBn9IMHm/DNx0eO2DsuP7O+VNS6IqNmm9eaa
-        /E7zCcyGmf8/uMi71Jqf+fBEb/rz0oVV+kX6RsUxO/j6QqcY5G/7/5pz3+7K575VxlZMf47N
-        uPmoINLT/ljcLJNbsrnT58+bmvMqqfiBEktxRqKhFnNRcSIAmqxL5qwCAAA=
-X-CMS-MailID: 20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1
-References: <CGME20200519160043eucas1p11d34223ddaddaf00e136abacc9f351e1@eucas1p1.samsung.com>
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Mike
+This rework the clk_register/unregister functions to use the clk_hw API.
+The goal is to pave the way for the removal of the 'clk' member in
+struct clk_hw.
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+This member is used in about 60 drivers, most of them in drivers/clk/.
+Some cases will be trivial to remove but some drivers are hacking around
+it and will be tougher to deal with.
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+This change is sent as an RFC because, until there is a clear plan to deal
+with drivers above, there is memory penality when using clk_register()
+(struct clk is allocated in __clk_hw_register() and clk_register())
 
-are available in the Git repository at:
+Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/clk/clk.c | 110 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 62 insertions(+), 48 deletions(-)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/clk-v5.8-samsung
-
-for you to fetch changes up to 25bdae0f1c6609ceaf55fe6700654f0be2253d8e:
-
-  clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1 (2020-05-19 16:58:42 +0200)
-
-----------------------------------------------------------------
-clk/samsung updates for 5.8
-
- - Regression fixes for exynos542x and exynos5433 SoCs,
- - use of fallthrough; attribute for s3c24xx.
-
-----------------------------------------------------------------
-Joe Perches (1):
-      ARM/SAMSUNG EXYNOS ARM ARCHITECTURES: Use fallthrough;
-
-Marek Szyprowski (3):
-      clk: samsung: Mark top ISP and CAM clocks on Exynos542x as critical
-      clk: samsung: Fix CLK_SMMU_FIMCL3 clock name on Exynos542x
-      clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
-
- drivers/clk/samsung/clk-exynos5420.c | 18 ++++++++++--------
- drivers/clk/samsung/clk-exynos5433.c |  3 ++-
- drivers/clk/samsung/clk-s3c2443.c    |  2 +-
- drivers/i2c/busses/i2c-s3c2410.c     |  3 +--
- 4 files changed, 14 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index d9946e192cbc..d93062673b2c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3736,8 +3736,8 @@ static void clk_core_free_parent_map(struct clk_core *core)
+ 	kfree(core->parents);
+ }
+ 
+-static struct clk *
+-__clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
++static int
++__clk_hw_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ {
+ 	int ret;
+ 	struct clk_core *core;
+@@ -3801,7 +3801,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 
+ 	ret = __clk_core_init(core);
+ 	if (!ret)
+-		return hw->clk;
++		return 0;
+ 
+ 	clk_prepare_lock();
+ 	clk_core_unlink_consumer(hw->clk);
+@@ -3818,7 +3818,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ fail_name:
+ 	kfree(core);
+ fail_out:
+-	return ERR_PTR(ret);
++	return ret;
+ }
+ 
+ /**
+@@ -3843,6 +3843,24 @@ static struct device_node *dev_or_parent_of_node(struct device *dev)
+ 	return np;
+ }
+ 
++
++/**
++ * clk_hw_register - register a clk_hw and return an error code
++ * @dev: device that is registering this clock
++ * @hw: link to hardware-specific clock data
++ *
++ * clk_hw_register is the primary interface for populating the clock tree with
++ * new clock nodes. It returns an integer equal to zero indicating success or
++ * less than zero indicating failure. Drivers must test for an error code after
++ * calling clk_hw_register().
++ */
++int clk_hw_register(struct device *dev, struct clk_hw *hw)
++{
++	return __clk_hw_register(dev, dev_or_parent_of_node(dev),
++				 hw);
++}
++EXPORT_SYMBOL_GPL(clk_hw_register);
++
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+@@ -3858,26 +3876,19 @@ static struct device_node *dev_or_parent_of_node(struct device *dev)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
+-}
+-EXPORT_SYMBOL_GPL(clk_register);
++	struct clk *clk;
++	int ret = clk_hw_register(dev, hw);
+ 
+-/**
+- * clk_hw_register - register a clk_hw and return an error code
+- * @dev: device that is registering this clock
+- * @hw: link to hardware-specific clock data
+- *
+- * clk_hw_register is the primary interface for populating the clock tree with
+- * new clock nodes. It returns an integer equal to zero indicating success or
+- * less than zero indicating failure. Drivers must test for an error code after
+- * calling clk_hw_register().
+- */
+-int clk_hw_register(struct device *dev, struct clk_hw *hw)
+-{
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
+-			       hw));
++	if (ret < 0)
++		return ERR_PTR(ret);
++
++	clk = clk_hw_get_clk(hw);
++	if (IS_ERR_OR_NULL(clk))
++		clk_hw_unregister(hw);
++
++	return clk;
+ }
+-EXPORT_SYMBOL_GPL(clk_hw_register);
++EXPORT_SYMBOL_GPL(clk_register);
+ 
+ /*
+  * of_clk_hw_register - register a clk_hw and return an error code
+@@ -3892,7 +3903,7 @@ EXPORT_SYMBOL_GPL(clk_hw_register);
+  */
+ int of_clk_hw_register(struct device_node *node, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(__clk_register(NULL, node, hw));
++	return __clk_hw_register(NULL, node, hw);
+ }
+ EXPORT_SYMBOL_GPL(of_clk_hw_register);
+ 
+@@ -3972,25 +3983,25 @@ static void clk_core_evict_parent_cache(struct clk_core *core)
+ }
+ 
+ /**
+- * clk_unregister - unregister a currently registered clock
+- * @clk: clock to unregister
++ * clk_hw_unregister - unregister a currently registered clk_hw
++ * @hw: hardware-specific clock data to unregister
+  */
+-void clk_unregister(struct clk *clk)
++void clk_hw_unregister(struct clk_hw *hw)
+ {
+ 	unsigned long flags;
+ 	const struct clk_ops *ops;
+ 
+-	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
++	if (!hw || WARN_ON_ONCE(IS_ERR(hw)))
+ 		return;
+ 
+-	clk_debug_unregister(clk->core);
++	clk_debug_unregister(hw->core);
+ 
+ 	clk_prepare_lock();
+ 
+-	ops = clk->core->ops;
++	ops = hw->core->ops;
+ 	if (ops == &clk_nodrv_ops) {
+ 		pr_err("%s: unregistered clock: %s\n", __func__,
+-		       clk->core->name);
++		       hw->core->name);
+ 		goto unlock;
+ 	}
+ 	/*
+@@ -3998,50 +4009,53 @@ void clk_unregister(struct clk *clk)
+ 	 * a reference to this clock.
+ 	 */
+ 	flags = clk_enable_lock();
+-	clk->core->ops = &clk_nodrv_ops;
++	hw->core->ops = &clk_nodrv_ops;
+ 	clk_enable_unlock(flags);
+ 
+ 	if (ops->terminate)
+-		ops->terminate(clk->core->hw);
++		ops->terminate(hw);
+ 
+-	if (!hlist_empty(&clk->core->children)) {
++	if (!hlist_empty(&hw->core->children)) {
+ 		struct clk_core *child;
+ 		struct hlist_node *t;
+ 
+ 		/* Reparent all children to the orphan list. */
+-		hlist_for_each_entry_safe(child, t, &clk->core->children,
++		hlist_for_each_entry_safe(child, t, &hw->core->children,
+ 					  child_node)
+ 			clk_core_set_parent_nolock(child, NULL);
+ 	}
+ 
+-	clk_core_evict_parent_cache(clk->core);
++	clk_core_evict_parent_cache(hw->core);
+ 
+-	hlist_del_init(&clk->core->child_node);
++	hlist_del_init(&hw->core->child_node);
+ 
+-	if (clk->core->prepare_count)
++	if (hw->core->prepare_count)
+ 		pr_warn("%s: unregistering prepared clock: %s\n",
+-					__func__, clk->core->name);
++					__func__, hw->core->name);
+ 
+-	if (clk->core->protect_count)
++	if (hw->core->protect_count)
+ 		pr_warn("%s: unregistering protected clock: %s\n",
+-					__func__, clk->core->name);
++					__func__, hw->core->name);
+ 
+-	kref_put(&clk->core->ref, __clk_release);
+-	free_clk(clk);
++	kref_put(&hw->core->ref, __clk_release);
++	free_clk(hw->clk);
+ unlock:
+ 	clk_prepare_unlock();
+ }
+-EXPORT_SYMBOL_GPL(clk_unregister);
++EXPORT_SYMBOL_GPL(clk_hw_unregister);
+ 
+ /**
+- * clk_hw_unregister - unregister a currently registered clk_hw
+- * @hw: hardware-specific clock data to unregister
++ * clk_unregister - unregister a currently registered clock
++ * @clk: clock to unregister
+  */
+-void clk_hw_unregister(struct clk_hw *hw)
++void clk_unregister(struct clk *clk)
+ {
+-	clk_unregister(hw->clk);
++	struct clk_hw *hw = clk->core->hw;
++
++	clk_put(clk);
++	clk_hw_unregister(hw);
+ }
+-EXPORT_SYMBOL_GPL(clk_hw_unregister);
++EXPORT_SYMBOL_GPL(clk_unregister);
+ 
+ static void devm_clk_release(struct device *dev, void *res)
+ {
 -- 
-Regards,
-Sylwester
+2.25.4
+
