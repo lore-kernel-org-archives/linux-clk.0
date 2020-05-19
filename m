@@ -7,31 +7,31 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B59A1C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 920C0C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE7E208A9
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793DE205CB
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbgESWmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 18:42:31 -0400
-Received: from v6.sk ([167.172.42.174]:58646 "EHLO v6.sk"
+        id S1728305AbgESWm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 18:42:28 -0400
+Received: from v6.sk ([167.172.42.174]:58564 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728316AbgESWma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 May 2020 18:42:30 -0400
+        id S1728209AbgESWmM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 May 2020 18:42:12 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 8D6EE610D5;
-        Tue, 19 May 2020 22:41:58 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 6FF4B612FB;
+        Tue, 19 May 2020 22:42:11 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 02/13] clk: mmp: frac: Allow setting bits other than the numerator/denominator
-Date:   Wed, 20 May 2020 00:41:40 +0200
-Message-Id: <20200519224151.2074597-3-lkundrak@v3.sk>
+        Lubomir Rintel <lkundrak@v3.sk>, Rob Herring <robh@kernel.org>
+Subject: [PATCH v3 10/13] dt-bindings: marvell,mmp2: Add ids for the power domains
+Date:   Wed, 20 May 2020 00:41:48 +0200
+Message-Id: <20200519224151.2074597-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200519224151.2074597-1-lkundrak@v3.sk>
 References: <20200519224151.2074597-1-lkundrak@v3.sk>
@@ -42,42 +42,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-For the I2S fractional clocks, there are more bits that need to be set
-for the clock to run. Their actual meaning is unknown.
+On MMP2 the audio and GPU blocks are on separate power islands. On MMP3
+the camera block's power is also controlled separately.
+
+Add the numbers that we could use to refer to the power domains for
+respective power islands from the device tree.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/clk/mmp/clk-frac.c | 3 +++
- drivers/clk/mmp/clk.h      | 1 +
- 2 files changed, 4 insertions(+)
+Acked-by: Rob Herring <robh@kernel.org>
 
-diff --git a/drivers/clk/mmp/clk-frac.c b/drivers/clk/mmp/clk-frac.c
-index ed9928f5bdc7..48f592bd633d 100644
---- a/drivers/clk/mmp/clk-frac.c
-+++ b/drivers/clk/mmp/clk-frac.c
-@@ -148,7 +148,10 @@ static int clk_factor_init(struct clk_hw *hw)
- 		val &= ~(masks->den_mask << masks->den_shift);
- 		val |= (factor->ftbl[0].den & masks->den_mask) <<
- 			masks->den_shift;
-+	}
- 
-+	if (!(val & masks->enable_mask) || i >= factor->ftbl_cnt) {
-+		val |= masks->enable_mask;
- 		writel(val, factor->base);
- 	}
- 
-diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
-index 20dc1e5dd756..369a09256e2f 100644
---- a/drivers/clk/mmp/clk.h
-+++ b/drivers/clk/mmp/clk.h
-@@ -16,6 +16,7 @@ struct mmp_clk_factor_masks {
- 	unsigned int den_mask;
- 	unsigned int num_shift;
- 	unsigned int den_shift;
-+	unsigned int enable_mask;
- };
- 
- struct mmp_clk_factor_tbl {
+---
+Changes since v1:
+- Rob's ack
+
+ include/dt-bindings/power/marvell,mmp2.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 include/dt-bindings/power/marvell,mmp2.h
+
+diff --git a/include/dt-bindings/power/marvell,mmp2.h b/include/dt-bindings/power/marvell,mmp2.h
+new file mode 100644
+index 000000000000..c53d2b3e1057
+--- /dev/null
++++ b/include/dt-bindings/power/marvell,mmp2.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __DTS_MARVELL_MMP2_POWER_H
++#define __DTS_MARVELL_MMP2_POWER_H
++
++#define MMP2_POWER_DOMAIN_GPU		0
++#define MMP2_POWER_DOMAIN_AUDIO		1
++#define MMP3_POWER_DOMAIN_CAMERA	2
++
++#define MMP2_NR_POWER_DOMAINS		3
++
++#endif
 -- 
 2.26.2
 
