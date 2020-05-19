@@ -4,24 +4,23 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFC7C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75670C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BFEDB205CB
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACBE20842
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728384AbgESWmh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 18:42:37 -0400
-Received: from v6.sk ([167.172.42.174]:58676 "EHLO v6.sk"
+        id S1728191AbgESWmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 18:42:47 -0400
+Received: from v6.sk ([167.172.42.174]:58678 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728191AbgESWmg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 May 2020 18:42:36 -0400
+        id S1726344AbgESWmq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 May 2020 18:42:46 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 18704610DD;
-        Tue, 19 May 2020 22:42:05 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 8EBF5612FD;
+        Tue, 19 May 2020 22:42:14 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -29,9 +28,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 06/13] clk: mmp2: Rename mmp2_pll_init() to mmp2_main_clk_init()
-Date:   Wed, 20 May 2020 00:41:44 +0200
-Message-Id: <20200519224151.2074597-7-lkundrak@v3.sk>
+Subject: [PATCH v3 12/13] dt-bindings: clock: Add Marvell MMP Audio Clock Controller binding
+Date:   Wed, 20 May 2020 00:41:50 +0200
+Message-Id: <20200519224151.2074597-13-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200519224151.2074597-1-lkundrak@v3.sk>
 References: <20200519224151.2074597-1-lkundrak@v3.sk>
@@ -42,36 +41,121 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a trivial rename for a routine that registers more clock sources
-than the PLLs -- there's also a XO.
+This describes the bindings for a controller that generates master and bit
+clocks for the I2S interface.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 524574187c17..ac88ea99b7c6 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -139,7 +139,7 @@ static struct mmp_clk_factor_tbl uart_factor_tbl[] = {
- 	{.num = 3521, .den = 689},	/*19.23MHZ */
- };
- 
--static void mmp2_pll_init(struct mmp2_clk_unit *pxa_unit)
-+static void mmp2_main_clk_init(struct mmp2_clk_unit *pxa_unit)
- {
- 	struct clk *clk;
- 	struct mmp_clk_unit *unit = &pxa_unit->unit;
-@@ -456,7 +456,7 @@ static void __init mmp2_clk_init(struct device_node *np)
- 
- 	mmp_clk_init(np, &pxa_unit->unit, MMP2_NR_CLKS);
- 
--	mmp2_pll_init(pxa_unit);
-+	mmp2_main_clk_init(pxa_unit);
- 
- 	mmp2_apb_periph_clk_init(pxa_unit);
- 
+---
+Changes since v1:
+- Fix commit message wording
+- Define MMP2_CLK_AUDIO_NR_CLKS
+- Make clock ids start at 0, not 1
+- Fix dt-bindings/clock/marvell,mmp2-audio.h file name
+- Rename node from "clocks" to "clock-controller"
+
+ .../clock/marvell,mmp2-audio-clock.yaml       | 74 +++++++++++++++++++
+ .../dt-bindings/clock/marvell,mmp2-audio.h    | 10 +++
+ 2 files changed, 84 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
+ create mode 100644 include/dt-bindings/clock/marvell,mmp2-audio.h
+
+diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
+new file mode 100644
+index 000000000000..ab6e82d1d3a9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
+@@ -0,0 +1,74 @@
++# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/marvell,mmp2-audio-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Marvell MMP2 Audio Clock Controller
++
++maintainers:
++  - Lubomir Rintel <lkundrak@v3.sk>
++
++description: |
++  The audio clock controller generates and supplies the clocks to the audio
++  codec.
++
++  Each clock is assigned an identifier and client nodes use this identifier
++  to specify the clock which they consume.
++
++  All these identifiers could be found in
++  <dt-bindings/clock/marvell,mmp2-audio.h>.
++
++properties:
++  compatible:
++    enum:
++      - marvell,mmp2-audio-clock
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: Audio subsystem clock
++      - description: The crystal oscillator clock
++      - description: First I2S clock
++      - description: Second I2S clock
++
++  clock-names:
++    items:
++      - const: audio
++      - const: vctcxo
++      - const: i2s0
++      - const: i2s1
++
++  '#clock-cells':
++    const: 1
++
++  power-domains:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/marvell,mmp2-audio.h>
++    #include <dt-bindings/power/marvell,mmp2.h>
++
++    clock-controller@d42a0c30 {
++      compatible = "marvell,mmp2-audio-clock";
++      reg = <0xd42a0c30 0x10>;
++      clock-names = "audio", "vctcxo", "i2s0", "i2s1";
++      clocks = <&soc_clocks MMP2_CLK_AUDIO>,
++               <&soc_clocks MMP2_CLK_VCTCXO>,
++               <&soc_clocks MMP2_CLK_I2S0>,
++               <&soc_clocks MMP2_CLK_I2S1>;
++      power-domains = <&soc_clocks MMP2_POWER_DOMAIN_AUDIO>;
++      #clock-cells = <1>;
++    };
+diff --git a/include/dt-bindings/clock/marvell,mmp2-audio.h b/include/dt-bindings/clock/marvell,mmp2-audio.h
+new file mode 100644
+index 000000000000..20664776f497
+--- /dev/null
++++ b/include/dt-bindings/clock/marvell,mmp2-audio.h
+@@ -0,0 +1,10 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
++#ifndef __DT_BINDINGS_CLOCK_MARVELL_MMP2_AUDIO_H
++#define __DT_BINDINGS_CLOCK_MARVELL_MMP2_AUDIO_H
++
++#define MMP2_CLK_AUDIO_SYSCLK		0
++#define MMP2_CLK_AUDIO_SSPA0		1
++#define MMP2_CLK_AUDIO_SSPA1		2
++
++#define MMP2_CLK_AUDIO_NR_CLKS		3
++#endif
 -- 
 2.26.2
 
