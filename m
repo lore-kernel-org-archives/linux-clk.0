@@ -2,102 +2,119 @@ Return-Path: <SRS0=QrZd=7B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63B5CC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 13:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BC7C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 15:06:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 371AC20829
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 13:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8F9820825
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 15:06:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1589894998;
-	bh=M3ARIf/NFyp7eqcSEzhpB4KX+ZS1knnVFu5lcM8/xMA=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=TMqEZuZKsH85drqBU5I7Sr7yXkl6djFB/6ObPbOw2Ly+7IRiyDBYlnzrk29v6kiD4
-	 XZFkr8TmD0GxCUDR0wSlrHNpzfRc/u9JjkN+qCxJNPXugfpaDFUv+5HGIrcGvagvUY
-	 WuPIuCmXvlauVND+RqgqXD2m0h3u/j/HPhkp1880=
+	s=default; t=1589900785;
+	bh=29TXNGWd/fhmzxIwOPHw0n8O5RIe1LfOq81Iyfco7wA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vHH9tGgIGTZgVeIXuXryQDZO9ppnM8CCTz2spdsyNrhEpi2R944QMMCQL8ocKpbuw
+	 DT+FKH4aG6aaKIstLpHSbhOi1MQdWyfW4gh34I6Hyd9x0D7K/dSGge00kLHfWj55wh
+	 /ptO4TpZRJ0DZSWrJ/t+bmcMhy2J4NrkILEgtcsI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbgESN36 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 09:29:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33702 "EHLO mail.kernel.org"
+        id S1728773AbgESPGX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 11:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727057AbgESN35 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 May 2020 09:29:57 -0400
-Received: from [192.168.0.26] (89-70-52-201.dynamic.chello.pl [89.70.52.201])
+        id S1727910AbgESPGW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 May 2020 11:06:22 -0400
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F35C520825;
-        Tue, 19 May 2020 13:29:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02EF820842;
+        Tue, 19 May 2020 15:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1589894996;
-        bh=M3ARIf/NFyp7eqcSEzhpB4KX+ZS1knnVFu5lcM8/xMA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GdjyogbRRTCXGuWvZ6F8xoGw6Jo4wcI6OZrBou9UkWxE8GRH+OCAjWLOTMdXLbd3Z
-         nuK3ascFoDA/4C5vsWtOPcPevwRt29tlXjwHyrHuZTQJAKhCujIfqhA1B1p+YtG1Gp
-         ayDC+kjLm8PD+fC/ds/bwMzSUXoitl8ussGsOX8I=
-Subject: Re: [PATCH] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to
- sclk_i2s1
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <CGME20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39@eucas1p1.samsung.com>
- <20200519102652.10219-1-m.szyprowski@samsung.com>
-From:   Sylwester Nawrocki <snawrocki@kernel.org>
-Message-ID: <f67db8c1-453b-4c70-67b9-59762ac34f64@kernel.org>
-Date:   Tue, 19 May 2020 15:29:53 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        s=default; t=1589900782;
+        bh=29TXNGWd/fhmzxIwOPHw0n8O5RIe1LfOq81Iyfco7wA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=1lncfq4bQRql8j2TS2Wgze6M/ZcGlwO1+fkIQdkV/IW8TfwyMJhtgMCTFcF4VgJ6Z
+         8wrfyiDhSj6IpSkVByeGUSjrJkmtgJPElPcdodb+2Gj+0CJDHVPeiB4KdveoMQj0X/
+         wUhqBT3fvzumGtyJKbV99u7XSH2jt+4vK0BuQ7ks=
+Received: by mail-ej1-f43.google.com with SMTP id x1so12172320ejd.8;
+        Tue, 19 May 2020 08:06:21 -0700 (PDT)
+X-Gm-Message-State: AOAM53009rEustHcqM6mDrqwzasYQu88MuVr30WtxAYF2azZp2yus/Hs
+        qJ3hYLwMD+lxJqeOs5RxuWBywyzc0kxJ4+T2gg==
+X-Google-Smtp-Source: ABdhPJxqywpflae8clvRSoz205FDG3+5j2OG7HiXGl7nWU2mgAQwazM8mHI+SRKZTW7x6x9DfTSufqtqAiC8fcsPHqY=
+X-Received: by 2002:a17:907:724e:: with SMTP id ds14mr13708797ejc.260.1589900780280;
+ Tue, 19 May 2020 08:06:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200519102652.10219-1-m.szyprowski@samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200518113156.25009-1-matthias.bgg@kernel.org> <20200518113156.25009-4-matthias.bgg@kernel.org>
+In-Reply-To: <20200518113156.25009-4-matthias.bgg@kernel.org>
+From:   Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date:   Tue, 19 May 2020 23:06:08 +0800
+X-Gmail-Original-Message-ID: <CAAOTY_-Lh=4N2L9ZOrVw+wK1tSrCA=UuOH+7xs0U=12B3Qi7Ug@mail.gmail.com>
+Message-ID: <CAAOTY_-Lh=4N2L9ZOrVw+wK1tSrCA=UuOH+7xs0U=12B3Qi7Ug@mail.gmail.com>
+Subject: Re: [PATCH 4/4] arm64: dts: mt6797: Fix mmsys node name
+To:     matthias.bgg@kernel.org
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        devicetree@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-clk@vger.kernel.org, Allison Randal <allison@lohutok.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/19/20 12:26, Marek Szyprowski wrote:
-> Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
-> match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
-> a proper fix for Exynos I2S driver is ready.
-> 
-> This fixes the following synchronous abort issue revealed by the probe
-> order change caused by the commit 93d2e4322aa ("of: platform: Batch fwnode
-> parsing when adding all top level devices"):
+Hi, Matthias:
 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+<matthias.bgg@kernel.org> =E6=96=BC 2020=E5=B9=B45=E6=9C=8818=E6=97=A5 =E9=
+=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=887:33=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> From: Matthias Brugger <matthias.bgg@gmail.com>
+>
+> Node names are supposed to match the class of the device. The
+> mmsys node is a syscon as it provides more then just a clock controller.
+> Update the name.
 
+Reviewed-by: Chun-Kuang Hu <chunkuang.hu@kernel.org>
 
-I will take a look an will see if we can get rid of these CLK_IGNORE_UNUSED
-flags by modifying the I2S controller driver. Applying the patch for now.
-
-
+>
+> Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+>
 > ---
->   drivers/clk/samsung/clk-exynos5433.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index ed159beab34e..a111fc29352c 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
->   	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
->   			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
-> -			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
-> +			ENABLE_SCLK_PERIC, 6,
-> +			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
->   	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
->   			5, CLK_SET_RATE_PARENT, 0),
->   	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
-
---
-Regards,
-Sylwester
+>
+>  arch/arm64/boot/dts/mediatek/mt6797.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/mediatek/mt6797.dtsi b/arch/arm64/boot/d=
+ts/mediatek/mt6797.dtsi
+> index 136ef9527a0d..3efd032481ce 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt6797.dtsi
+> @@ -233,7 +233,7 @@ uart3: serial@11005000 {
+>                 status =3D "disabled";
+>         };
+>
+> -       mmsys: mmsys_config@14000000 {
+> +       mmsys: syscon@14000000 {
+>                 compatible =3D "mediatek,mt6797-mmsys", "syscon";
+>                 reg =3D <0 0x14000000 0 0x1000>;
+>                 #clock-cells =3D <1>;
+> --
+> 2.26.2
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
