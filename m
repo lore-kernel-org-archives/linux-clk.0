@@ -4,23 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75670C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59A1C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5ACBE20842
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE7E208A9
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 22:42:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbgESWmr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 May 2020 18:42:47 -0400
-Received: from v6.sk ([167.172.42.174]:58678 "EHLO v6.sk"
+        id S1728333AbgESWmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 18:42:31 -0400
+Received: from v6.sk ([167.172.42.174]:58646 "EHLO v6.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726344AbgESWmq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 May 2020 18:42:46 -0400
+        id S1728316AbgESWma (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 May 2020 18:42:30 -0400
 Received: from localhost (v6.sk [IPv6:::1])
-        by v6.sk (Postfix) with ESMTP id 8EBF5612FD;
-        Tue, 19 May 2020 22:42:14 +0000 (UTC)
+        by v6.sk (Postfix) with ESMTP id 8D6EE610D5;
+        Tue, 19 May 2020 22:41:58 +0000 (UTC)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
@@ -28,9 +29,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 12/13] dt-bindings: clock: Add Marvell MMP Audio Clock Controller binding
-Date:   Wed, 20 May 2020 00:41:50 +0200
-Message-Id: <20200519224151.2074597-13-lkundrak@v3.sk>
+Subject: [PATCH v3 02/13] clk: mmp: frac: Allow setting bits other than the numerator/denominator
+Date:   Wed, 20 May 2020 00:41:40 +0200
+Message-Id: <20200519224151.2074597-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <20200519224151.2074597-1-lkundrak@v3.sk>
 References: <20200519224151.2074597-1-lkundrak@v3.sk>
@@ -41,121 +42,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This describes the bindings for a controller that generates master and bit
-clocks for the I2S interface.
+For the I2S fractional clocks, there are more bits that need to be set
+for the clock to run. Their actual meaning is unknown.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v1:
-- Fix commit message wording
-- Define MMP2_CLK_AUDIO_NR_CLKS
-- Make clock ids start at 0, not 1
-- Fix dt-bindings/clock/marvell,mmp2-audio.h file name
-- Rename node from "clocks" to "clock-controller"
+ drivers/clk/mmp/clk-frac.c | 3 +++
+ drivers/clk/mmp/clk.h      | 1 +
+ 2 files changed, 4 insertions(+)
 
- .../clock/marvell,mmp2-audio-clock.yaml       | 74 +++++++++++++++++++
- .../dt-bindings/clock/marvell,mmp2-audio.h    | 10 +++
- 2 files changed, 84 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
- create mode 100644 include/dt-bindings/clock/marvell,mmp2-audio.h
-
-diff --git a/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml b/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
-new file mode 100644
-index 000000000000..ab6e82d1d3a9
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
-@@ -0,0 +1,74 @@
-+# SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/marvell,mmp2-audio-clock.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell MMP2 Audio Clock Controller
-+
-+maintainers:
-+  - Lubomir Rintel <lkundrak@v3.sk>
-+
-+description: |
-+  The audio clock controller generates and supplies the clocks to the audio
-+  codec.
-+
-+  Each clock is assigned an identifier and client nodes use this identifier
-+  to specify the clock which they consume.
-+
-+  All these identifiers could be found in
-+  <dt-bindings/clock/marvell,mmp2-audio.h>.
-+
-+properties:
-+  compatible:
-+    enum:
-+      - marvell,mmp2-audio-clock
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Audio subsystem clock
-+      - description: The crystal oscillator clock
-+      - description: First I2S clock
-+      - description: Second I2S clock
-+
-+  clock-names:
-+    items:
-+      - const: audio
-+      - const: vctcxo
-+      - const: i2s0
-+      - const: i2s1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+  - '#clock-cells'
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/marvell,mmp2-audio.h>
-+    #include <dt-bindings/power/marvell,mmp2.h>
-+
-+    clock-controller@d42a0c30 {
-+      compatible = "marvell,mmp2-audio-clock";
-+      reg = <0xd42a0c30 0x10>;
-+      clock-names = "audio", "vctcxo", "i2s0", "i2s1";
-+      clocks = <&soc_clocks MMP2_CLK_AUDIO>,
-+               <&soc_clocks MMP2_CLK_VCTCXO>,
-+               <&soc_clocks MMP2_CLK_I2S0>,
-+               <&soc_clocks MMP2_CLK_I2S1>;
-+      power-domains = <&soc_clocks MMP2_POWER_DOMAIN_AUDIO>;
-+      #clock-cells = <1>;
-+    };
-diff --git a/include/dt-bindings/clock/marvell,mmp2-audio.h b/include/dt-bindings/clock/marvell,mmp2-audio.h
-new file mode 100644
-index 000000000000..20664776f497
---- /dev/null
-+++ b/include/dt-bindings/clock/marvell,mmp2-audio.h
-@@ -0,0 +1,10 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR BSD-2-Clause) */
-+#ifndef __DT_BINDINGS_CLOCK_MARVELL_MMP2_AUDIO_H
-+#define __DT_BINDINGS_CLOCK_MARVELL_MMP2_AUDIO_H
-+
-+#define MMP2_CLK_AUDIO_SYSCLK		0
-+#define MMP2_CLK_AUDIO_SSPA0		1
-+#define MMP2_CLK_AUDIO_SSPA1		2
-+
-+#define MMP2_CLK_AUDIO_NR_CLKS		3
-+#endif
+diff --git a/drivers/clk/mmp/clk-frac.c b/drivers/clk/mmp/clk-frac.c
+index ed9928f5bdc7..48f592bd633d 100644
+--- a/drivers/clk/mmp/clk-frac.c
++++ b/drivers/clk/mmp/clk-frac.c
+@@ -148,7 +148,10 @@ static int clk_factor_init(struct clk_hw *hw)
+ 		val &= ~(masks->den_mask << masks->den_shift);
+ 		val |= (factor->ftbl[0].den & masks->den_mask) <<
+ 			masks->den_shift;
++	}
+ 
++	if (!(val & masks->enable_mask) || i >= factor->ftbl_cnt) {
++		val |= masks->enable_mask;
+ 		writel(val, factor->base);
+ 	}
+ 
+diff --git a/drivers/clk/mmp/clk.h b/drivers/clk/mmp/clk.h
+index 20dc1e5dd756..369a09256e2f 100644
+--- a/drivers/clk/mmp/clk.h
++++ b/drivers/clk/mmp/clk.h
+@@ -16,6 +16,7 @@ struct mmp_clk_factor_masks {
+ 	unsigned int den_mask;
+ 	unsigned int num_shift;
+ 	unsigned int den_shift;
++	unsigned int enable_mask;
+ };
+ 
+ struct mmp_clk_factor_tbl {
 -- 
 2.26.2
 
