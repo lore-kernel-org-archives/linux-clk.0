@@ -2,110 +2,163 @@ Return-Path: <SRS0=QrZd=7B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42747C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 03:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC8FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 215092075F
-	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 03:00:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC99F207ED
+	for <linux-clk@archiver.kernel.org>; Tue, 19 May 2020 10:27:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ONRt9F1E"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="dIq7kzXJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbgESDAs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 May 2020 23:00:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34120 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbgESDAs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 May 2020 23:00:48 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F31C6C061A0C;
-        Mon, 18 May 2020 20:00:47 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id w19so3245833ply.11;
-        Mon, 18 May 2020 20:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=eozjto79cDaaYBRhhL0JqfzI0jgkFXP1vwEZQbjMQKU=;
-        b=ONRt9F1E+eDwlkaAvdGC2p2pUX2Ert93Yot8UDXGJkjbURtIhWH/qiAAYF5xhBREQn
-         bVA/B059BU/o/w+AQBqFCK+RysA49IMCsiiWexwlF80xLUDD4/SASijPnXIvFpB2U7zT
-         Lz9gtXDthPvH7ol5HqdDaPi12+7HM4GJiBd+YEuWVglKynijbCap8gaGzKj2DLgT4yB2
-         kbzOPQZZhybuLXYolQ+vm1gWAcO5u4Op/nOYSjGQQv9553SVkU2a8ms7EFtishNvDQCn
-         rkTsVCUCcqpzcg9BWrm32xW1QnCgDngyUvb15NyOtRpCJejmLbjAj0vAekRUVZaQXQBE
-         biSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eozjto79cDaaYBRhhL0JqfzI0jgkFXP1vwEZQbjMQKU=;
-        b=sgATCaPxrnIrCtPn3qKTE3GIPdj4T7ZL8WWjRX7CW6DxPwfSr2pcfEjkxhwDG6Ksh0
-         F50Urp+Bg+S5CXHkLpDae/19BqHBAOJBipBxi0SZnE0Sn+kvM0cyLjmTpBfAXeufwsZA
-         /WWh2ckOHEJKAm8SBmQWHfBlBD/8su9JmvN0j0zwcS4nKC1SeQDdNYToydnmAdKL+zhF
-         Ql9FJrmNqQu+LH6NWT2Y/a2OBTwT4oFmpjVf5CXre4mkMXMdr4AMp8KETxnL8mv41fzx
-         /eiAC49DmZuVf8LH3ngMw4eVF0Nivf2ekTHAAc2+0V2ZHaaMTTD5xtIGBBu/jblShhGU
-         k/2g==
-X-Gm-Message-State: AOAM532AQJVJOSwKtc0URZVqigx1kDdiDPnLp5ZI9u1fKQE+ylG0YILS
-        BCLtCRAVrJB+zy8lT07gM+s=
-X-Google-Smtp-Source: ABdhPJz8QN5RT4ze2AENM1VjOY7uZWHZOObN8Ab2QuFZV98/1OxTfYA9AzMYQYq3wGEB4JkCnJhraA==
-X-Received: by 2002:a17:90a:141:: with SMTP id z1mr2613706pje.33.1589857247615;
-        Mon, 18 May 2020 20:00:47 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id k24sm9809494pfk.134.2020.05.18.20.00.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 May 2020 20:00:46 -0700 (PDT)
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-Subject: [PATCH 2/2] clk: sprd: return correct type of value for _sprd_pll_recalc_rate
-Date:   Tue, 19 May 2020 11:00:36 +0800
-Message-Id: <20200519030036.1785-2-zhang.lyra@gmail.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200519030036.1785-1-zhang.lyra@gmail.com>
-References: <20200519030036.1785-1-zhang.lyra@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728677AbgESK1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 May 2020 06:27:07 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51183 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbgESK1H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 May 2020 06:27:07 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20200519102705euoutp01a9cd602a83e3a8d650283f169809d4a7~QZxjl8ZSM0886708867euoutp01X
+        for <linux-clk@vger.kernel.org>; Tue, 19 May 2020 10:27:05 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20200519102705euoutp01a9cd602a83e3a8d650283f169809d4a7~QZxjl8ZSM0886708867euoutp01X
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1589884025;
+        bh=ZKT5i8ZwRi4zvF/m9X+xF/4p2k/qj6EshKkaUfn86Pk=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=dIq7kzXJkIAvCMDFS5aSniUeiibeKV4MlsHQSF6OvzNXEexrsLpQcsSp6rZ2WZGU8
+         8lnS2dElrrC1Ks6zaPozh24SmUVUgr8lmH/MI6u6Aq9qUC34cJgqgBGt+S3L2TSDh4
+         T3uJzlLCAJpD0Jr5k2qwZtVNv/QGvA8Rwy7OscgE=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200519102704eucas1p275a5b9c6f67687f182de879503edcca1~QZxjZlrgR0280802808eucas1p2V;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 04.4F.60679.874B3CE5; Tue, 19
+        May 2020 11:27:04 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39~QZxi90oHw3036330363eucas1p1m;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200519102704eusmtrp1f3bb8e53d7387cd858978d96f38fdf15~QZxi9AD2v0347803478eusmtrp1i;
+        Tue, 19 May 2020 10:27:04 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-f7-5ec3b47848cb
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F3.8C.07950.874B3CE5; Tue, 19
+        May 2020 11:27:04 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200519102703eusmtip2e76f0c0eceac89da6594c907f994bc2f~QZxigo_4G0281602816eusmtip2O;
+        Tue, 19 May 2020 10:27:03 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to
+ sclk_i2s1
+Date:   Tue, 19 May 2020 12:26:52 +0200
+Message-Id: <20200519102652.10219-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFIsWRmVeSWpSXmKPExsWy7djP87oVWw7HGXx8ZGKxccZ6VovrX56z
+        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3eLftY0sFu1PXzI7cHhsWtXJ5tG3ZRWjx+dNcgHMUVw2
+        Kak5mWWpRfp2CVwZ/e3/mQp2C1bMXrCJqYGxjb+LkZNDQsBEYtusrawgtpDACkaJpuMmXYxc
+        QPYXRokFy8+zQzifGSVW9PSywXSc6pjABJFYzijx4885driWm3fXMoFUsQkYSnS97QLrEBFw
+        kPj86TUjSBGzQAuTxNPeNewgCWGBAIm7F/aBLWcRUJV4c2kCUAMHB6+ArcSO1kyIbfISqzcc
+        YAbplRA4wyZx6M5XRoiEi8TpKytZIWxhiVfHt7BD2DISpyf3sEA0NDNKPDy3lh3C6WGUuNw0
+        A6rbWuLOuV9g25gFNCXW79KHCDtKXFj/lB0kLCHAJ3HjrSBImBnInLRtOjNEmFeio00IolpN
+        YtbxdXBrD164xAxhe0hMbZ3MBgnTWIlj/ZcYJzDKzULYtYCRcRWjeGppcW56arFRXmq5XnFi
+        bnFpXrpecn7uJkZgCjj97/iXHYy7/iQdYhTgYFTi4U3IPxQnxJpYVlyZe4hRgoNZSYR3wgug
+        EG9KYmVValF+fFFpTmrxIUZpDhYlcV7jRS9jhQTSE0tSs1NTC1KLYLJMHJxSDYzt2g9/qGeW
+        r2rfxFk/Sb64yTPJ6t3d5z9v3t+/Q0G65Qr3lZkli0IPvus/r/vgXfZ26VcMhmncdT6Vbhyv
+        ygpPbN/2bX+vtlenb6pWwY/A6OUnL8cZ3X311cBkpqyf4IqZ/8xmJnF9io0MWJrxofrrxhn2
+        V2f9yrxvuvt9+Jbt1Tt3Pd5So2imxFKckWioxVxUnAgARuT2Iv0CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPLMWRmVeSWpSXmKPExsVy+t/xe7oVWw7HGXQ1CVtsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt/h3bSOLRfvTl8wOHB6bVnWyefRtWcXo8XmTXABzlJ5N
+        UX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllqkb5dgl5Gf/t/poLd
+        ghWzF2xiamBs4+9i5OSQEDCRONUxgamLkYtDSGApo8T0J/eZIRIyEienNbBC2MISf651sUEU
+        fWKUOHD5IjtIgk3AUKLrLUiCk0NEwEniwbo3YHFmgQ4mifUfK0BsYQE/iWm9B8HiLAKqEm8u
+        TQCq5+DgFbCV2NGaCTFfXmL1hgPMExh5FjAyrGIUSS0tzk3PLTbSK07MLS7NS9dLzs/dxAgM
+        vG3Hfm7Zwdj1LvgQowAHoxIPb0L+oTgh1sSy4srcQ4wSHMxKIrwTXgCFeFMSK6tSi/Lji0pz
+        UosPMZoC7Z7ILCWanA+MirySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1M
+        HJxSDYxZOksl4n3Z2d+1PrQ9ISUc5KzN2re/bN7PmxWvG65Wn5n8O62IUea18rSOvuoAz03u
+        JnYbbN88OLEwnqe4o6CdzW7J0aArU5YteW+Q8viYjcrppO1ceW4Wjj4T31dOmZi42ffSxl/Z
+        /dX8ibvPmskxan86/L2dZ5HHnMe3PqfLqV+addfhq6QSS3FGoqEWc1FxIgB2EQJyUgIAAA==
+X-CMS-MailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39
+References: <CGME20200519102704eucas1p1e1169d593154c4e3c4dc0d35282d5b39@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
+match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
+a proper fix for Exynos I2S driver is ready.
 
-The function _sprd_pll_recalc_rate() defines return value to unsigned
-long, but it would return a negative value when malloc fail, changing
-to return its parent_rate makes more sense, since if the callback
-.recalc_rate() is not set, the framework returns the parent_rate as
-well.
+This fixes the following synchronous abort issue revealed by the probe
+order change caused by the commit 93d2e4322aa ("of: platform: Batch fwnode
+parsing when adding all top level devices"):
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
+Hardware name: Samsung TM2E board (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : samsung_i2s_probe+0x768/0x8f0
+lr : samsung_i2s_probe+0x688/0x8f0
+...
+Call trace:
+ samsung_i2s_probe+0x768/0x8f0
+ platform_drv_probe+0x50/0xa8
+ really_probe+0x108/0x370
+ driver_probe_device+0x54/0xb8
+ __device_attach_driver+0x90/0xc0
+ bus_for_each_drv+0x70/0xc8
+ __device_attach+0xdc/0x140
+ device_initial_probe+0x10/0x18
+ bus_probe_device+0x94/0xa0
+ deferred_probe_work_func+0x70/0xa8
+ process_one_work+0x2a8/0x718
+ worker_thread+0x48/0x470
+ kthread+0x134/0x160
+ ret_from_fork+0x10/0x1c
+Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
+---[ end trace ccf721c9400ddbd6 ]--- 
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/clk/sprd/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 15791484388f..13a322b2535a 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -106,7 +106,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
- 
- 	cfg = kcalloc(regs_num, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg)
--		return -ENOMEM;
-+		return parent_rate;
- 
- 	for (i = 0; i < regs_num; i++)
- 		cfg[i] = sprd_pll_read(pll, i);
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index ed159beab34e..a111fc29352c 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+ 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
+-			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 6,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
 -- 
-2.20.1
+2.17.1
 
