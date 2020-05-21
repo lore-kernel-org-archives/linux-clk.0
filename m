@@ -1,97 +1,88 @@
-Return-Path: <SRS0=T1sH=7C=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ANMQ=7D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719D8C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 20 May 2020 12:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84092C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 21 May 2020 05:27:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 510C1207C4
-	for <linux-clk@archiver.kernel.org>; Wed, 20 May 2020 12:53:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60BD7204EC
+	for <linux-clk@archiver.kernel.org>; Thu, 21 May 2020 05:27:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590038868;
+	bh=lt0gpxVtnKWojiQaQODpIem/TXcGV3ie7U1cocBy44k=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=KxtWFvjwxcz0Hb/oLSNvzS1/5GF0gQ48kOmmpGjfK6rG8znH+bQ/naIhAx02kzNV8
+	 KR2eIvY3wiMfMrZfKmh4Mnsha1xfDVfQGq9L+Fhza6pU+EL6l4jPUorMUatWlTXNWu
+	 nPPZhw6X1oT7zZkN+f5cZICKlewY6xGHwFvNkKGI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbgETMxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 20 May 2020 08:53:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41256 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbgETMxp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 20 May 2020 08:53:45 -0400
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [IPv6:2a02:1800:110:4::f00:1a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31790C061A0E
-        for <linux-clk@vger.kernel.org>; Wed, 20 May 2020 05:53:45 -0700 (PDT)
-Received: from ramsan ([IPv6:2a02:1810:ac12:ed60:884f:d4db:d672:7145])
-        by albert.telenet-ops.be with bizsmtp
-        id h0th2200b4QqYJb060th0v; Wed, 20 May 2020 14:53:41 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jbOE9-0005kQ-6W; Wed, 20 May 2020 14:53:41 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1jbOE9-0004De-3t; Wed, 20 May 2020 14:53:41 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        id S1727049AbgEUF1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 May 2020 01:27:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38874 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbgEUF1r (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 May 2020 01:27:47 -0400
+Received: from localhost.localdomain (unknown [106.200.226.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 761CE204EC;
+        Thu, 21 May 2020 05:27:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590038867;
+        bh=lt0gpxVtnKWojiQaQODpIem/TXcGV3ie7U1cocBy44k=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PD9bs30kqSo+GyXazKTr+hSlcs2oL24652D2CTC83HmCbeuHjvhEApe/ILYDCjgDh
+         uw/qt0QdEFuv7gq/2RWMGuM/d7l2gRUQTQs8Et/Z30wPGDpa14rbbtfULVePyObNlM
+         4ZAaW5MUwCybHO5IOoMnfSpsdSTcXOrFGmXkvKK8=
+From:   Vinod Koul <vkoul@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.8 (take two)
-Date:   Wed, 20 May 2020 14:53:36 +0200
-Message-Id: <20200520125336.16173-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: gcc: Fix parent for gpll0_out_even
+Date:   Thu, 21 May 2020 10:57:28 +0530
+Message-Id: <20200521052728.2141377-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.25.4
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+Documentation says that gpll0 is parent of gpll0_out_even, somehow
+driver coded that as bi_tcxo, so fix it
 
-The following changes since commit e2f022c10ed3b50ba1d2bb1f037b0e7a84cb1c3e:
+Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver for SM8150")
+Reported-by: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/gcc-sm8150.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-  clk: renesas: rcar-gen2: Remove superfluous CLK_RENESAS_DIV6 selects (2020-04-30 09:39:06 +0200)
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index 2bc08e7125bf..72524cf11048 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -76,8 +76,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "gpll0_out_even",
+ 		.parent_data = &(const struct clk_parent_data){
+-			.fw_name = "bi_tcxo",
+-			.name = "bi_tcxo",
++			.hw = &gpll0.clkr.hw,
+ 		},
+ 		.num_parents = 1,
+ 		.ops = &clk_trion_pll_postdiv_ops,
+-- 
+2.25.4
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.8-tag2
-
-for you to fetch changes up to 9b9df63b50306b9602954d2f40fa8e05c0c27fda:
-
-  dt-bindings: clock: renesas: mstp: Convert to json-schema (2020-05-20 14:08:15 +0200)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.8 (take two)
-
-  - A minor fix for the currently unused suspend/resume handling on
-    RZ/A1 and RZ/A2,
-  - Two more conversions of DT bindings to json-schema.
-
-Thanks for pulling!
-----------------------------------------------------------------
-Geert Uytterhoeven (3):
-      clk: renesas: cpg-mssr: Fix STBCR suspend/resume handling
-      dt-bindings: clock: renesas: div6: Convert to json-schema
-      dt-bindings: clock: renesas: mstp: Convert to json-schema
-
- .../bindings/clock/renesas,cpg-div6-clock.yaml     | 60 ++++++++++++++++
- .../bindings/clock/renesas,cpg-div6-clocks.txt     | 40 -----------
- .../bindings/clock/renesas,cpg-mstp-clocks.txt     | 60 ----------------
- .../bindings/clock/renesas,cpg-mstp-clocks.yaml    | 82 ++++++++++++++++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |  8 ++-
- 5 files changed, 147 insertions(+), 103 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-div6-clock.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-div6-clocks.txt
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.txt
- create mode 100644 Documentation/devicetree/bindings/clock/renesas,cpg-mstp-clocks.yaml
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
