@@ -1,112 +1,88 @@
-Return-Path: <SRS0=ANMQ=7D=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=s17W=7E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEE8C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 May 2020 10:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2529FC433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 03:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C4FF207FB
-	for <linux-clk@archiver.kernel.org>; Thu, 21 May 2020 10:16:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF51C2078B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 03:08:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbgEUKQa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 May 2020 06:16:30 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:36607 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728030AbgEUKQ3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 May 2020 06:16:29 -0400
-Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MYe6H-1jWzOK1H0t-00VkSJ; Thu, 21 May 2020 12:16:27 +0200
-Received: by mail-qk1-f177.google.com with SMTP id i14so6600881qka.10;
-        Thu, 21 May 2020 03:16:26 -0700 (PDT)
-X-Gm-Message-State: AOAM530DifCmGMR7y9BEpyEIqVzhQugXIb8cf7wNozVDCSJKD03eOxtQ
-        hTwja+7TnyKyfRF31GnkdzzkC2BJshtG/9O4FSo=
-X-Google-Smtp-Source: ABdhPJzG0yZLoO02lBv/GjHkHvx0xY0LzpxpTesxhUjbNmnX8hm9pN92rchECm8L89+atAf/Z7jq0U8pXKnfGDJcMoo=
-X-Received: by 2002:a37:434b:: with SMTP id q72mr9600780qka.352.1590056185859;
- Thu, 21 May 2020 03:16:25 -0700 (PDT)
+        id S1727794AbgEVDIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 May 2020 23:08:13 -0400
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:59167 "EHLO
+        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727123AbgEVDIN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 May 2020 23:08:13 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.106233|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0832929-0.000859812-0.915847;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03307;MF=frank@allwinnertech.com;NM=1;PH=DS;RN=15;RT=15;SR=0;TI=SMTPD_---.HbxBGFJ_1590116882;
+Received: from allwinnertech.com(mailfrom:frank@allwinnertech.com fp:SMTPD_---.HbxBGFJ_1590116882)
+          by smtp.aliyun-inc.com(10.147.41.178);
+          Fri, 22 May 2020 11:08:08 +0800
+From:   Frank Lee <frank@allwinnertech.com>
+To:     mripard@kernel.org, wens@csie.org, robh+dt@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, p.zabel@pengutronix.de,
+        frank@allwinnertech.com, huangshuosheng@allwinnertech.com,
+        tiny.windzz@gmail.com
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: [PATCH 0/4] Allwinner A100 Initial support
+Date:   Fri, 22 May 2020 11:07:39 +0800
+Message-Id: <20200522030743.10204-1-frank@allwinnertech.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-References: <20200513125532.24585-1-lars.povlsen@microchip.com>
-In-Reply-To: <20200513125532.24585-1-lars.povlsen@microchip.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 21 May 2020 12:16:09 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0wYbVcerL9OEfAs+jJ-9xR7ryZwmsvi4Kt4yXOHaNefw@mail.gmail.com>
-Message-ID: <CAK8P3a0wYbVcerL9OEfAs+jJ-9xR7ryZwmsvi4Kt4yXOHaNefw@mail.gmail.com>
-Subject: Re: [PATCH 00/14] Adding support for Microchip Sparx5 SoC
-To:     Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     SoC Team <soc@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        DTML <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:mu+e+kbYTEnKpI2tlcVsOeSxZO5G1rR6VAhSMX0JEEfW+3f9d/I
- UjAUyLgeyHw7AgZuSEDfn5BL2g23N+YkjbFG2fPieOPyPuaoRiuWMYanrBmZjZcTZ6NI52L
- jYDQHGLLLIXBSrXw1Tm0pmP5+LQKJXaNS+BOU4CRmtdCiJy4peqV4UZTGNbTNp07paoERlT
- PoxtjQUUtxmv1GgJsP+qQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:KTa0gpbTUK0=:xKT6TgWW7YqukhFqwtI4+h
- AngOvVkzdZFoEEv8uJGKiYdRPWBNZ+HlLeh23V0ldjsORekLJLyGsb1cuIypaB1Pi0QkTbX5a
- yr+c2KsipfGniVhCVIFWq3VbyUpBX1kT5jf7+tzTNZTkEZKXDwoajtAlDMkZN1aq1h4ywIUVz
- 6WausWDDBZjVSwWuYPf4hI5PP+qHOm2Qbb5pZBzc0AyIFv6RaxfiEIOf2COVV9D1wDrBF4IHM
- 0ULshmunA3BhrfgKam0Q3GCeyDvr40PJA5EI0wiEW9ran+JP0UuiJKe6PcRcdfvvw3PqtWpPv
- hUAh6qChjvsqzPZx0Qpp703X7xe2UbDU2zHP9F10EH8If26ayMNUs0/vV4RHpk/SLqD/m0oHU
- pSJ80QRC8mHCGzPnTtQg/Hej7Ivym+sCuXR23zYnPnJUvzjbwHFq6F6OJ0bqELl37iO/u5eHC
- T5yYr3z3UbtJlcoXw9AD9vuDLNo5sIhWdN1N8VP5v/aQJJT7aZR4w1JRCix0JeDZTC3396a+5
- 4MtySEzaru1mYcmowAv59Tk6CPqzK273nD2R1aMJ49X7LpCaiKLKQmi0eP3YYc3wR8DRnk4WE
- MVdy+BkA12Ji+XhLPBmltGm/emcCmafrXu4pg3Ms2fm08I93Zrbjm9feksSIHrCd+wOi2S8du
- O4/459gpWBoW/5Y5rSVWPrY2Jru/q368v0ClrgfEsuSvoPzyNeFgGFCdUDR4yMo80z53xNjIf
- JjIfiG6MazCkZ3h+De66rig97e9yhY5idWfKP9h4ioaYz9htVaoyervOd6W/H30V/suzQva4R
- /5IZ9dTnDaSPQ75WXm3scgBsVLmkhd0VyB5WJrnF2mjDJKeWmQ=
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 13, 2020 at 2:55 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
->
-> This patch series adds support for Microchip Sparx5 SoC, the CPU
-> system of a advanced, TSN capable gigabit switch. The CPU is an armv8
-> x 2 CPU core (A53).
->
-> Although this is an ARM core, it shares some peripherals with the
-> Microsemi Ocelot SoC.
->
-> This is the first official revision of the series.
+This patch set adds initial support for allwinner a100 soc,
+which is a 64-bit tablet chip.
 
-I see you sent multiple series to soc@kernel.org for review. This is the
-correct address for getting the initial soc support merged, but as the patches
-are still being reviewed by subsystem maintainers, please leave it off
-for now, until you are confident that they are ready to get merged for the
-following merge window and have received the appropriate Acks.
+Frank Lee (4):
+  clk: sunxi-ng: add support for the Allwinner A100 CCU
+  pinctrl: sunxi: add support for the Allwinner A100 pin controller
+  arm64: allwinner: A100: add the basical Allwinner A100 DTSI file
+  arm64: allwinner: A100: add support for Allwinner Perf1 board
 
-For each subsystem, there is generally the choice between merging
-code through the subsystem maintainer tree, or through the soc tree
-on an initial submission, as going through multiple trees is particularly
-hard to do for the devicetree files.
+ arch/arm64/boot/dts/allwinner/Makefile        |    1 +
+ .../allwinner/sun50i-a100-allwinner-perf1.dts |   27 +
+ .../arm64/boot/dts/allwinner/sun50i-a100.dtsi |  173 +++
+ drivers/clk/sunxi-ng/Kconfig                  |   10 +
+ drivers/clk/sunxi-ng/Makefile                 |    2 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c      |  206 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h      |   14 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a100.c        | 1255 +++++++++++++++++
+ drivers/clk/sunxi-ng/ccu-sun50i-a100.h        |   14 +
+ drivers/pinctrl/sunxi/Kconfig                 |   10 +
+ drivers/pinctrl/sunxi/Makefile                |    2 +
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c |  105 ++
+ drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c   |  710 ++++++++++
+ include/dt-bindings/clock/sun50i-a100-ccu.h   |  141 ++
+ include/dt-bindings/clock/sun50i-a100-r-ccu.h |   25 +
+ include/dt-bindings/reset/sun50i-a100-ccu.h   |   68 +
+ include/dt-bindings/reset/sun50i-a100-r-ccu.h |   18 +
+ 17 files changed, 2781 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+ create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+ create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.h
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c
+ create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
+ create mode 100644 include/dt-bindings/clock/sun50i-a100-ccu.h
+ create mode 100644 include/dt-bindings/clock/sun50i-a100-r-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a100-ccu.h
+ create mode 100644 include/dt-bindings/reset/sun50i-a100-r-ccu.h
 
-For the moment, I have marked all sparx5 patches as "Not Applicable"
-in patchwork at https://patchwork.kernel.org/project/linux-soc/list/
-as it is still unclear who is merging which parts, and they are under
-active review, but please do send them again after the review is
-complete.
+-- 
+2.24.0
 
-If you have a lot of patches, sending pull requests is sometimes easier,
-but it also takes a bit of practice to know how exactly to structure
-those. Let me know if you have questions about them. You an also
-contact me and most of the other maintainers on IRC using the
-#armlinux channel on irc.freenode.net.
-
-Sorry for not having been able to review the patches myself yet, I
-hope to get to that soon.
-
-     Arnd
