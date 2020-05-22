@@ -2,98 +2,96 @@ Return-Path: <SRS0=s17W=7E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46D8C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 11:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB1EC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 14:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91E9E20723
-	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 11:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E7342067B
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 14:55:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590147398;
-	bh=z/6OXOepRElS/C2Gkk6RRZeDF9+60BoN0+lQKMHv4sc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tn/fEpXSLY9dmxuOCJzVlWGfEtEq01doe1TaDqQcB5diPDNN9FS+2aP6erUTF4QUh
-	 FbeYTdYNKYXnMq6DwbjRmfHrkzN8z/ED1OHWnveWN49/j/lihud/xhmoPnuvxnwxYq
-	 29YORtXnPYiRxlhzeb5/mh3Dwm2hOtymkn8SG12o=
+	s=default; t=1590159334;
+	bh=J2jIe6HbveuMkncJ1bisbe9ib21+twXrpFHhdmfVG6s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=BBu/oScs7BdRdSCWhW5Or5qYnMi8nTd6YWCa4QrI9by48eeZ8MpiRaiWHoSLuU+vl
+	 gxzUUxfbmXcsf6OlZc0wn1M5DcPzUYEpIVSCrmM8PejpkJC+q717lh6H04MnzQ/aVN
+	 /6rXMNdFpysxPdj40q2WbjaQWyIpUgba8Krme0Zw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbgEVLgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 May 2020 07:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
+        id S1730935AbgEVOvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 May 2020 10:51:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728465AbgEVLgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 May 2020 07:36:37 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730929AbgEVOvM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 May 2020 10:51:12 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6CF8206C3;
-        Fri, 22 May 2020 11:36:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4F1C22259;
+        Fri, 22 May 2020 14:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590147397;
-        bh=z/6OXOepRElS/C2Gkk6RRZeDF9+60BoN0+lQKMHv4sc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SViwwqlJ87aevdHn4RYwBdrJnJkpk2rgiCE7e168UaD8MlGXvEupOGhOH7ejYfrbJ
-         N3kZOSYajFR+FWCWBWyZDHjCeSTW6pHxtLB0BJj1sTzEGGQE0HGaQz/KalAcMtdjVw
-         a7j7/Lewv8pBtYtgHXcvbty7bFHiOt4Q0y6gEdzA=
-Date:   Fri, 22 May 2020 12:36:34 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     dillon.minfei@gmail.com
-Cc:     robh+dt@kernel.org, p.zabel@pengutronix.de,
-        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
-        alexandre.torgue@st.com, thierry.reding@gmail.com,
-        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 3/8] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX'
- support for stm32f4
-Message-ID: <20200522113634.GE5801@sirena.org.uk>
-References: <1589800165-3271-1-git-send-email-dillon.minfei@gmail.com>
- <1589800165-3271-4-git-send-email-dillon.minfei@gmail.com>
+        s=default; t=1590159071;
+        bh=J2jIe6HbveuMkncJ1bisbe9ib21+twXrpFHhdmfVG6s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y4H7DK6uNwoa92K9UzjeUJl+qxCWRcy9yHPoVWAZz3I3NM2r7EwuoyBzgSwGl8vdW
+         RSU/FJU+7oFO/9Fb03jw+GFlbkDwoEDsiZW2132jSjCyO48nhZxPdOFYsjT9aAZ3g6
+         2Dpl5SKNIhAZqTNnFMWG4iXejyBPBkFapV98I5PU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 24/32] clk: ti: am33xx: fix RTC clock parent
+Date:   Fri, 22 May 2020 10:50:36 -0400
+Message-Id: <20200522145044.434677-24-sashal@kernel.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200522145044.434677-1-sashal@kernel.org>
+References: <20200522145044.434677-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
-Content-Disposition: inline
-In-Reply-To: <1589800165-3271-4-git-send-email-dillon.minfei@gmail.com>
-X-Cookie: C for yourself.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Tero Kristo <t-kristo@ti.com>
 
---HeFlAV5LIbMFYYuh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[ Upstream commit dc6dbd51009fc412729c307161f442c0a08618f4 ]
 
-On Mon, May 18, 2020 at 07:09:20PM +0800, dillon.minfei@gmail.com wrote:
+Right now, trying to use RTC purely with the ti-sysc / clkctrl framework
+fails to enable the RTC module properly. Based on experimentation, this
+appears to be because RTC is sourced from the clkdiv32k optional clock.
+TRM is not very clear on this topic, but fix the RTC to use the proper
+source clock nevertheless.
 
-> 2, use stm32 spi's "In full-duplex (BIDIMODE=0 and RXONLY=0)", as tx_buf is
-> null, we must add dummy data sent out before read data.
-> so, add stm32f4_spi_tx_dummy() to handle this situation.
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Link: https://lkml.kernel.org/r/20200424152301.4018-1-t-kristo@ti.com
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/ti/clk-33xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-There are flags SPI_CONTROLLER_MUST_TX and SPI_CONTROLLER_MUST_RX flags
-that the driver can set if it needs to, no need to open code this in the
-driver.
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index a360d3109555..73f567d8022f 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -212,7 +212,7 @@ static const struct omap_clkctrl_reg_data am3_mpu_clkctrl_regs[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data am3_l4_rtc_clkctrl_regs[] __initconst = {
+-	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
++	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk-24mhz-clkctrl:0000:0" },
+ 	{ 0 },
+ };
+ 
+-- 
+2.25.1
 
---HeFlAV5LIbMFYYuh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7HuUEACgkQJNaLcl1U
-h9DV4Qf/SihsJbdjpA046b8/NxOUN0XzKoBRryG9nf4DC4x3Fpb0tscXdk2/FeTd
-JceAquzFzEEQ49acoXxDA2UQXUMtmlEiGfbWhNHS0Jwo9JVU3XPHLG5d+nX+sudU
-L+O+LPQB61KcC2OQniMIjgApMjvyj2ePQY0lfjl1jnAb3PLHvlpaUt5Mjp8P0iVB
-N2skbxjLqD/nDEDYXV+S0Jp689oOuNDJ/zeNk3ds99vhHEc55yvZxvZB8OcWNuop
-AJ94iVaqJX+b7qak3V7Ts6Hb6GgkNvr/78bWpjGK5eB+a00Ia0l8yP9svyYdczOK
-GS605iD0geP72ehzZUhOjifzaJ7rgg==
-=XMsa
------END PGP SIGNATURE-----
-
---HeFlAV5LIbMFYYuh--
