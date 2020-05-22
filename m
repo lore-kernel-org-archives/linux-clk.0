@@ -2,132 +2,98 @@ Return-Path: <SRS0=s17W=7E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7894C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 09:12:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46D8C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 11:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1BDF206B6
-	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 09:12:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91E9E20723
+	for <linux-clk@archiver.kernel.org>; Fri, 22 May 2020 11:36:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590147398;
+	bh=z/6OXOepRElS/C2Gkk6RRZeDF9+60BoN0+lQKMHv4sc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tn/fEpXSLY9dmxuOCJzVlWGfEtEq01doe1TaDqQcB5diPDNN9FS+2aP6erUTF4QUh
+	 FbeYTdYNKYXnMq6DwbjRmfHrkzN8z/ED1OHWnveWN49/j/lihud/xhmoPnuvxnwxYq
+	 29YORtXnPYiRxlhzeb5/mh3Dwm2hOtymkn8SG12o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729728AbgEVJMf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 May 2020 05:12:35 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:52130 "EHLO inva021.nxp.com"
+        id S1729393AbgEVLgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 May 2020 07:36:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729719AbgEVJMe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 May 2020 05:12:34 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id D7BB42004D8;
-        Fri, 22 May 2020 11:12:32 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CB65F2004D2;
-        Fri, 22 May 2020 11:12:32 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B7682205C1;
-        Fri, 22 May 2020 11:12:32 +0200 (CEST)
-Date:   Fri, 22 May 2020 12:12:32 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH] clk: imx8mp: Set the correct parent for audio_root_clk
-Message-ID: <20200522091232.gjmmbdlqwkp2kubq@fsr-ub1664-175>
-References: <1588000281-6594-1-git-send-email-abel.vesa@nxp.com>
- <AM6PR04MB49663A072F56397BE55FF3C480AC0@AM6PR04MB4966.eurprd04.prod.outlook.com>
- <20200430101107.t76727jwwkyhlkvd@fsr-ub1664-175>
- <AM6PR04MB49664013B43C46422C0195A780AA0@AM6PR04MB4966.eurprd04.prod.outlook.com>
+        id S1728465AbgEVLgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 22 May 2020 07:36:37 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6CF8206C3;
+        Fri, 22 May 2020 11:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590147397;
+        bh=z/6OXOepRElS/C2Gkk6RRZeDF9+60BoN0+lQKMHv4sc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SViwwqlJ87aevdHn4RYwBdrJnJkpk2rgiCE7e168UaD8MlGXvEupOGhOH7ejYfrbJ
+         N3kZOSYajFR+FWCWBWyZDHjCeSTW6pHxtLB0BJj1sTzEGGQE0HGaQz/KalAcMtdjVw
+         a7j7/Lewv8pBtYtgHXcvbty7bFHiOt4Q0y6gEdzA=
+Date:   Fri, 22 May 2020 12:36:34 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     dillon.minfei@gmail.com
+Cc:     robh+dt@kernel.org, p.zabel@pengutronix.de,
+        mcoquelin.stm32@gmail.com, devicetree@vger.kernel.org,
+        alexandre.torgue@st.com, thierry.reding@gmail.com,
+        sam@ravnborg.org, airlied@linux.ie, daniel@ffwll.ch,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 3/8] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX'
+ support for stm32f4
+Message-ID: <20200522113634.GE5801@sirena.org.uk>
+References: <1589800165-3271-1-git-send-email-dillon.minfei@gmail.com>
+ <1589800165-3271-4-git-send-email-dillon.minfei@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AM6PR04MB49664013B43C46422C0195A780AA0@AM6PR04MB4966.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+In-Reply-To: <1589800165-3271-4-git-send-email-dillon.minfei@gmail.com>
+X-Cookie: C for yourself.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-04-30 10:18:24, Aisheng Dong wrote:
-> > From: Abel Vesa <abel.vesa@nxp.com>
-> > Sent: Thursday, April 30, 2020 6:11 PM
-> > 
 
-Sorry I didn't answer the other ones earlier. See below.
+--HeFlAV5LIbMFYYuh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> > On 20-04-28 08:15:51, Aisheng Dong wrote:
-> > > > From: Abel Vesa <abel.vesa@nxp.com>
-> > > > Sent: Monday, April 27, 2020 11:11 PM
-> > > >
-> > > > Instead of ipg_root, the parent needs to be ipg_audio_root.
-> > > >
-> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > >
-> > > I have a few doubts about this patch:
-> > > 1. From latest RM, it seems CCGR101 (0x4650) is a shared gate for many audio
-> > instances.
+On Mon, May 18, 2020 at 07:09:20PM +0800, dillon.minfei@gmail.com wrote:
 
-Yes. This is true. I'm working on adding the shared gate now.
+> 2, use stm32 spi's "In full-duplex (BIDIMODE=0 and RXONLY=0)", as tx_buf is
+> null, we must add dummy data sent out before read data.
+> so, add stm32f4_spi_tx_dummy() to handle this situation.
 
-> > > 2. If this patch is about AUDIO_AHB_CLK_ROOT, then it's parent is
-> > AHB[POST_PODF] from the clock tree in RM.
-> > > Not quite understand why this patch changes to IPG[POST_PODF]. Is this RM
-> > incorrect issue?
+There are flags SPI_CONTROLLER_MUST_TX and SPI_CONTROLLER_MUST_RX flags
+that the driver can set if it needs to, no need to open code this in the
+driver.
 
-Yes. Right again. It needs to be the IMX8MP_CLK_AUDIO_AHB. Will change that now.
+--HeFlAV5LIbMFYYuh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> > >
-> > > BTW, if this patch is taken from someone else, we usually better keep the
-> > original author if not fundamental changes.
-> > >
-> > 
-> > I made this change at the suggestion from S.j. Wang.
-> > I'm the original author in linux-nxp (internal tree).
-> > 
-> 
-> That's fine. Then please ignore my "stupid" reminder. 😊
-> BTW, how about other questions?
-> 
-> Regards
-> Aisheng
-> 
-> > > Regards
-> > > Aisheng
-> > >
-> > > > ---
-> > > >  drivers/clk/imx/clk-imx8mp.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/clk/imx/clk-imx8mp.c
-> > > > b/drivers/clk/imx/clk-imx8mp.c index 41469e2..dcdfc9d 100644
-> > > > --- a/drivers/clk/imx/clk-imx8mp.c
-> > > > +++ b/drivers/clk/imx/clk-imx8mp.c
-> > > > @@ -727,7 +727,7 @@ static int imx8mp_clocks_probe(struct
-> > > > platform_device
-> > > > *pdev)
-> > > >  	hws[IMX8MP_CLK_HDMI_ROOT] =
-> > imx_clk_hw_gate4("hdmi_root_clk",
-> > > > "hdmi_axi", ccm_base + 0x45f0, 0);
-> > > >  	hws[IMX8MP_CLK_TSENSOR_ROOT] =
-> > > > imx_clk_hw_gate4("tsensor_root_clk", "ipg_root", ccm_base + 0x4620, 0);
-> > > >  	hws[IMX8MP_CLK_VPU_ROOT] = imx_clk_hw_gate4("vpu_root_clk",
-> > > > "vpu_bus", ccm_base + 0x4630, 0);
-> > > > -	hws[IMX8MP_CLK_AUDIO_ROOT] = imx_clk_hw_gate4("audio_root_clk",
-> > > > "ipg_root", ccm_base + 0x4650, 0);
-> > > > +	hws[IMX8MP_CLK_AUDIO_ROOT] = imx_clk_hw_gate4("audio_root_clk",
-> > > > +"ipg_audio_root", ccm_base + 0x4650, 0);
-> > > >
-> > > >  	hws[IMX8MP_CLK_ARM] = imx_clk_hw_cpu("arm", "arm_a53_core",
-> > > >  					     hws[IMX8MP_CLK_A53_CORE]->clk,
-> > > > --
-> > > > 2.7.4
-> > >
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7HuUEACgkQJNaLcl1U
+h9DV4Qf/SihsJbdjpA046b8/NxOUN0XzKoBRryG9nf4DC4x3Fpb0tscXdk2/FeTd
+JceAquzFzEEQ49acoXxDA2UQXUMtmlEiGfbWhNHS0Jwo9JVU3XPHLG5d+nX+sudU
+L+O+LPQB61KcC2OQniMIjgApMjvyj2ePQY0lfjl1jnAb3PLHvlpaUt5Mjp8P0iVB
+N2skbxjLqD/nDEDYXV+S0Jp689oOuNDJ/zeNk3ds99vhHEc55yvZxvZB8OcWNuop
+AJ94iVaqJX+b7qak3V7Ts6Hb6GgkNvr/78bWpjGK5eB+a00Ia0l8yP9svyYdczOK
+GS605iD0geP72ehzZUhOjifzaJ7rgg==
+=XMsa
+-----END PGP SIGNATURE-----
+
+--HeFlAV5LIbMFYYuh--
