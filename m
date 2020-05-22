@@ -2,77 +2,176 @@ Return-Path: <SRS0=dPrR=7H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05971C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 06:41:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C38C3C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 08:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CE0DA20812
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 06:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4268207FB
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 08:38:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GLSosxCz"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="wPjwDdTk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uIft9tDe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388817AbgEYGlm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 May 2020 02:41:42 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:60899 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726393AbgEYGlm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 02:41:42 -0400
-X-UUID: 3141a7b4d1dc49c0874af76805d7c1e3-20200525
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=rPpVOTNMfIfxzbe8ETe1dm7/wf5N3sl6Al3g3yCdGBA=;
-        b=GLSosxCzgrZVU3EH3VE+cnZIpkCtJkNDv9/mYyryejePguRwrJwSZ+C5ImAAI2B93qX/O+JSL3Hsv1aXGMnmaiwV5sCc/faxC4mxlzFQlQxf6fVAIwOyFZZK8/Sk9BkT/AzAHeSYo01Mq0upww0AhzJAgdnY0OyFrdnT7emH45w=;
-X-UUID: 3141a7b4d1dc49c0874af76805d7c1e3-20200525
-Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1933868565; Mon, 25 May 2020 14:41:39 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 25 May 2020 14:41:36 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 25 May 2020 14:41:36 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v1] clk: mediatek: assign the initial value to clk_init_data of mtk_mux
-Date:   Mon, 25 May 2020 14:41:29 +0800
-Message-ID: <1590388889-28382-1-git-send-email-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
+        id S2388979AbgEYIi4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 May 2020 04:38:56 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:60051 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388956AbgEYIiz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 04:38:55 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 5E846580667;
+        Mon, 25 May 2020 04:38:54 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 25 May 2020 04:38:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=Ri9qjiyBiEOXkk9sDHg2CFYrqxt
+        dn6182rnMUiHzyQg=; b=wPjwDdTkJR4Lp6Yfr/SrGcmK14AkrgGuJKhIUhXtOO7
+        kMZI1RHjkF5E7Wzsn7OUnTMhAUKVaLhgbaPTd9DNASGUT+1KlrA8rOgSRxKao7kL
+        u+72wmN5nSMzn3/Ghcip9MBKf7R4UjuX3nCzCwR5ffkvMkEBNZpFhAo0uZV5psy7
+        981pfkM7r85+Ts+/ZQIAyCjlLBK8eVisb3tt2gYxYtdKlXSW70olDxKvCbzcFLLI
+        6hTKRyT+GC28s+5K9P9KRDrioiCnMzxTQcKGIfHnTky10M7eocaOywIYm2TaQL3v
+        OsglDFb7zn5QxjszzTRsRrl6nqsjKks7mcWVTopGknQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Ri9qji
+        yBiEOXkk9sDHg2CFYrqxtdn6182rnMUiHzyQg=; b=uIft9tDeyiLzqqol7PCgsf
+        lqMFLj8KRw2qT5IU6ChMSbZbl6uwfC3bZ4KnK+8WjG3ZgI8k1VpJDSm8QTZOH1B2
+        x97ycbKQZgOSTENs7sfCiWAz3ZIROAFQSgnhVXVdCrY38ilZzDIuyKFz7yeAA7RO
+        s6xH68rFCQz7K1HlSsZtf105gFVsKWHa8aOoyvYy0t/TrJct4lD4tUBMbufezhF0
+        j0tBguvumOmy4h2rRA7FNvicKKvvjAZ3AM/IsP+0iayfF+NFS/Fhk5+ltsNKDtnI
+        UP1A9TQcNenYXY/pvU4PF2TptCErYeKO7R0hI6D/hGNUMuQvc5BdVXVKezaVAoTg
+        ==
+X-ME-Sender: <xms:HoTLXjW0aGOkAZeejOU6kHnP1qaX3BZj41LQ9Ky5fi_KmAKMY8lcMA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddvtddgtdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddunecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepuddvudfhkeekhefgffetffelgffftdehffduffegveetffehueeivddvjedv
+    gfevnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:HoTLXrl0TsQ8zSmmJJv5ZgBg1ACl2BJlMUVdhISRxjEAd9M9UhfsZg>
+    <xmx:HoTLXvZAMhI81gTw0m3c6MGE1AFAhP0m_KEUMdcjURChQqeSMryuqw>
+    <xmx:HoTLXuUYbmHWrpQMeXxaVRdAYYQbNZ92gl0D1SMVfWj_idoC3VraQg>
+    <xmx:HoTLXmdWF94R7p0M4Dtu3DJ7Yw0f0LU2rF7tHaFpPkLX5px-1TZrCQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id EC7753280059;
+        Mon, 25 May 2020 04:38:53 -0400 (EDT)
+Date:   Fri, 22 May 2020 17:31:24 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     wens@csie.org, robh+dt@kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org, p.zabel@pengutronix.de,
+        huangshuosheng@allwinnertech.com, tiny.windzz@gmail.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: allwinner: A100: add support for Allwinner
+ Perf1 board
+Message-ID: <20200522153124.patpj7r6hubjnpmu@gilmour.lan>
+References: <20200522030743.10204-1-frank@allwinnertech.com>
+ <20200522030743.10204-5-frank@allwinnertech.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="kztrqmb2mweybzef"
+Content-Disposition: inline
+In-Reply-To: <20200522030743.10204-5-frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SXQnZCBiZSBkYW5nZXJvdXMgd2hlbiBzdHJ1Y3QgY2xrX2NvcmUgaGF2ZSBuZXcgbWVtZWJlcnMu
-DQpBZGQgdGhlIG1pc3NpbmcgaW5pdGlhbCB2YWx1ZSB0byBjbGtfaW5pdF9kYXRhLg0KDQpGaXhl
-czogYTNhZTU0OTkxN2YxICgiY2xrOiBtZWRpYXRlazogQWRkIG5ldyBjbGttdXggcmVnaXN0ZXIg
-QVBJIikNCkNjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4NClNpZ25lZC1vZmYtYnk6IFdlaXlp
-IEx1IDx3ZWl5aS5sdUBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL2Nsay9tZWRpYXRlay9j
-bGstbXV4LmMgfCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
-aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMgYi9k
-cml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCmluZGV4IDc2ZjljZDAuLjE0ZTEyN2UgMTAw
-NjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCisrKyBiL2RyaXZlcnMv
-Y2xrL21lZGlhdGVrL2Nsay1tdXguYw0KQEAgLTE2MCw3ICsxNjAsNyBAQCBzdHJ1Y3QgY2xrICpt
-dGtfY2xrX3JlZ2lzdGVyX211eChjb25zdCBzdHJ1Y3QgbXRrX211eCAqbXV4LA0KIAkJCQkgc3Bp
-bmxvY2tfdCAqbG9jaykNCiB7DQogCXN0cnVjdCBtdGtfY2xrX211eCAqY2xrX211eDsNCi0Jc3Ry
-dWN0IGNsa19pbml0X2RhdGEgaW5pdDsNCisJc3RydWN0IGNsa19pbml0X2RhdGEgaW5pdCA9IHt9
-Ow0KIAlzdHJ1Y3QgY2xrICpjbGs7DQogDQogCWNsa19tdXggPSBremFsbG9jKHNpemVvZigqY2xr
-X211eCksIEdGUF9LRVJORUwpOw0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
 
+--kztrqmb2mweybzef
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, May 22, 2020 at 11:07:43AM +0800, Frank Lee wrote:
+> A100 perf1 is an Allwinner A100-based SBC, with the following features:
+>=20
+> - 1GiB DDR3 DRAM
+> - AXP803 PMIC
+> - 2 USB 2.0 ports
+> - MicroSD slot and on-board eMMC module
+> - on-board Nand flash
+> - =B7=B7=B7
+>=20
+> Adds initial support for it, including the UART.
+>=20
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
+
+Which bootloader have you used to test this?
+
+> ---
+>  arch/arm64/boot/dts/allwinner/Makefile        |  1 +
+>  .../allwinner/sun50i-a100-allwinner-perf1.dts | 27 +++++++++++++++++++
+>  2 files changed, 28 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-p=
+erf1.dts
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts=
+/allwinner/Makefile
+> index e4d3cd0ac5bb..ab780dbdd17b 100644
+> --- a/arch/arm64/boot/dts/allwinner/Makefile
+> +++ b/arch/arm64/boot/dts/allwinner/Makefile
+> @@ -14,6 +14,7 @@ dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a64-pinephone-1.1.=
+dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a64-pinetab.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a64-sopine-baseboard.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a64-teres-i.dtb
+> +dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-a100-allwinner-perf1.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-bananapi-m2-plus.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-bananapi-m2-plus-v1.2.dtb
+>  dtb-$(CONFIG_ARCH_SUNXI) +=3D sun50i-h5-emlid-neutis-n5-devboard.dtb
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dt=
+s b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> new file mode 100644
+> index 000000000000..32c9986920ed
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+> @@ -0,0 +1,27 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
+> +/*
+> + * Copyright (c) 2020 Frank Lee <frank@allwinner.com>
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include "sun50i-a100.dtsi"
+> +
+> +/{
+> +	model =3D "A100 perf1";
+
+Having the same casing and the "brand" would be great here, so something li=
+ke
+"Allwinner A100 Perf1", or just Perf1 if that name is only ever going to be=
+ used
+on the A100
+
+> +	compatible =3D "allwinner,a100-perf1", "allwinner,sun50i-a100";
+
+This binding needs to be documented
+
+Maxime
+
+--kztrqmb2mweybzef
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXsfwTAAKCRDj7w1vZxhR
+xc2nAQDFNKJNA7ecm5DJ6UkyDw3MuKEnfkK0bTsPHjkFxg3Z7AEAzetqnArNS6h2
+o2VsK50L0OmgTGiE3EBUOEPJj669XwE=
+=5KLY
+-----END PGP SIGNATURE-----
+
+--kztrqmb2mweybzef--
