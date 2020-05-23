@@ -2,126 +2,129 @@ Return-Path: <SRS0=P1jM=7F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48341C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 01:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFDDC433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 01:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 226602074B
-	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 01:07:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590196060;
-	bh=BldAPkzFZw7CTlf8sR3v71/UbISCsC7M7kRPSqLDD7Q=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=bpaIRf3E9Mq5xdRxbDWUnWr0rtuQdNWyiU1V3SGZslaVosLnjngpKaJf9U9Ydoxwn
-	 7PNmrHfeV2UiiGGddn+PiLh0Ep6mvfyoivIMkbh9XN3oPnQUpZTewy5SNxeLQHpaWb
-	 iVadLOwqD/7iq6ajP1TlrRAGMX9bMeo72LwYhk3g=
+	by mail.kernel.org (Postfix) with ESMTP id 6DF4A20812
+	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 01:35:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A992b6KQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387473AbgEWBHk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 May 2020 21:07:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387465AbgEWBHj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 22 May 2020 21:07:39 -0400
-Received: from dragon (80.251.214.228.16clouds.com [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 916F0206B6;
-        Sat, 23 May 2020 01:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590196058;
-        bh=BldAPkzFZw7CTlf8sR3v71/UbISCsC7M7kRPSqLDD7Q=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Wfvo9WYcbIPRpVR9PpsA+jQRtXQSYSs0UMyAnS/YNnENKdfUT2pF1KkrBfDF/yRk5
-         uxeaYS03W1Dr9NH8ay1ujG9fy1XjVcWWOslHd21qPrytDgtxfq+Re1NoD1+bn2qQ67
-         XkW4+ZD2jkmw0NX5HGcAhvLfABjON9tcug8N+Z4I=
-Date:   Sat, 23 May 2020 09:07:33 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] i.MX clock updates for 5.8
-Message-ID: <20200523010732.GA9835@dragon>
+        id S2387465AbgEWBfo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 22 May 2020 21:35:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44568 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387418AbgEWBfo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 May 2020 21:35:44 -0400
+Received: from mail-il1-x141.google.com (mail-il1-x141.google.com [IPv6:2607:f8b0:4864:20::141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD0A1C061A0E;
+        Fri, 22 May 2020 18:35:43 -0700 (PDT)
+Received: by mail-il1-x141.google.com with SMTP id 18so12693579iln.9;
+        Fri, 22 May 2020 18:35:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=S1QSAzJLA557HDI9geZdFtza2j2ttaAmC0/pNbF94RQ=;
+        b=A992b6KQ0XxvQBvr4hpSCBAiJVOy3bCMOJRZbTEgNVsjziHkOX1YLkNL2W7JgGf5kB
+         6dkdnQIBW/+Lh4TZr5VZ9W9jlKsQLHFUNaXvbtKPXiXkE2z25chDOo+YqkADBuJdDhZ/
+         tHUB4rgSKsyEN1xbge2cNw65A0heIWhKbJcDMDvUkNC/9rydOmAqGX3PUZ8I2z0U7Y/V
+         5Cr+kLr+aMh+DQj7mplWOIOBhISwulzYr6G01tL+aSEMoNt7Tw1DQ0rbXyQBcNzZ99L6
+         aTZi5JpRzKVrsOLiFDG26hTNg0/+eB2eYUciggM6rhuzsRwMg4KgAEsT2EqkXuw9fJM0
+         UHFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=S1QSAzJLA557HDI9geZdFtza2j2ttaAmC0/pNbF94RQ=;
+        b=DgAFAc830boakhrF3DPI/j3d+CCWdkDX14ukx/QlioTLAHr0BpeV8dr+orcc1Xa6eg
+         /HcJWyFXIav2X0LeX/YETywX+obHaYm0BbTYLlVL+Nwh5CpnWEOcdcyeDwFUR6YRHZkO
+         OW/wwORiBOU4/iWhwNPXa/yLtm9T55KS7FVjEqA4h2hQbcmOK+hOTZxjD6wTAuE1T7cK
+         xZ9bjz+X8JEurVZW5B6PuQkfXwXPFnE+5AL8wv9UZYk/coJXss7CMBm4w08mVCyk5XN9
+         3l8dQuF0Hu6gjMq5FcHOWMy+YPcnBFf+dif3Idt9aAXqUpDrEoW4nZAC09gfjUj8w3FA
+         OZzw==
+X-Gm-Message-State: AOAM532arBrW/DX65bckdXrLUsNI9smIclT5cLczOJNbHc5WvdkaWdx9
+        rJZEphQE/BdineKCqmJYR2vtbH/izU5a1PpRWOZuzCte1dc=
+X-Google-Smtp-Source: ABdhPJyFMcan15/IQgBUd7V654mVVCiDvmI/KPlV1LTFmOXrmNhn289+5jn0LkISjmGIfWZTCLlEXoFxdgoJGQtXdZU=
+X-Received: by 2002:a92:dc85:: with SMTP id c5mr15557198iln.270.1590197742955;
+ Fri, 22 May 2020 18:35:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1589800165-3271-1-git-send-email-dillon.minfei@gmail.com>
+ <1589800165-3271-4-git-send-email-dillon.minfei@gmail.com>
+ <20200522113634.GE5801@sirena.org.uk> <CAL9mu0LAnT+AfjpGs0O-MD2HYrpnQRmrj6qXtJQrJi9kbQLPUw@mail.gmail.com>
+ <CAL9mu0JZ4Qy+m2oF9TSTRqA_mM0J89huCt3t_Gs7qHa=3LxhBw@mail.gmail.com> <20200522162901.GP5801@sirena.org.uk>
+In-Reply-To: <20200522162901.GP5801@sirena.org.uk>
+From:   dillon min <dillon.minfei@gmail.com>
+Date:   Sat, 23 May 2020 09:35:06 +0800
+Message-ID: <CAL9mu0+E5R0mDUW3f+aKpfE_457VimS-ow2z_xVOmCfCAMnKuA@mail.gmail.com>
+Subject: Re: [PATCH v4 3/8] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX'
+ support for stm32f4
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, p.zabel@pengutronix.de,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        thierry.reding@gmail.com, Sam Ravnborg <sam@ravnborg.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 8f3d9f354286745c751374f5f1fcafee6b3f3136:
+On Sat, May 23, 2020 at 12:29 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, May 22, 2020 at 11:59:25PM +0800, dillon min wrote:
+>
+> > but, after spi-core create a dummy tx_buf or rx_buf, then i can't get
+> > the correct spi_3wire direction.
+> > actually, this dummy tx_buf is useless for SPI_3WIRE. it's has meaning
+> > for SPI_SIMPLE_RX mode,
+> > simulate SPI_FULL_DUMPLEX
+>
+> Oh, that's annoying.  I think the fix here is in the core, it should
+> ignore MUST_TX and MUST_RX in 3WIRE mode since they clearly make no
+> sense there.
 
-  Linux 5.7-rc1 (2020-04-12 12:35:55 -0700)
+How about add below changes to spi-core
 
-are available in the Git repository at:
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 8994545..bfd465c 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1022,7 +1022,8 @@ static int spi_map_msg(struct spi_controller
+*ctlr, struct spi_message *msg)
+        void *tmp;
+        unsigned int max_tx, max_rx;
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/clk-imx-5.8
+-       if (ctlr->flags & (SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX)) {
++       if ((ctlr->flags & (SPI_CONTROLLER_MUST_RX | SPI_CONTROLLER_MUST_TX)) &&
++               !(msg->spi->mode & SPI_3WIRE)) {
+                max_tx = 0;
+                max_rx = 0;
 
-for you to fetch changes up to b1657ad708f761f9ca6d166d4dda685ca39b1254:
+for my board, lcd panel ilitek ill9341 use 3wire mode, gyro l3gd20 use
+simplex rx mode.
+it's has benefits to l3gd20, no impact to ili9341.
 
-  clk: imx: use imx8m_clk_hw_composite_bus for i.MX8M bus clk slice (2020-05-21 22:37:48 +0800)
+if it's fine to spi-core, i will include it to my next submits.
 
-----------------------------------------------------------------
-i.MX clock updates for 5.8:
+thanks
 
-- A few patches from Abel Vesa as preparation of adding audiomix clock
-  support.
-- A couple of cleanups from Anson Huang on clk-sscg-pll and clk-pllv3
-  driver.
-- Update imx7ulp clock driver to use imx_clk_hw_cpu() for making the
-  change of ARM core clock easier.
-- Drop dependency on ARM64 for i.MX8M clock driver, as there is a move
-  to support aarch32 mode on aarch64 hardware.
-- A series from Peng Fan to improve i.MX8M clock drivers, using
-  composite clock for core and bus clk slice.
-- Set a better parent clock for flexcan on i.MX6UL to support CiA102
-  defined bit rates.
+best regards.
 
-----------------------------------------------------------------
-Abel Vesa (4):
-      clk: imx: gate2: Allow single bit gating clock
-      clk: imx: pll14xx: Add the device as argument when registering
-      clk: imx: Add helpers for passing the device as argument
-      dt-bindings: clocks: imx8mp: Add ids for audiomix clocks
-
-Anson Huang (2):
-      clk: imx: clk-sscg-pll: Remove unnecessary blank lines
-      clk: imx: clk-pllv3: Use readl_relaxed_poll_timeout() for PLL lock wait
-
-Peng Fan (10):
-      clk: imx7ulp: make it easy to change ARM core clk
-      clk: imx: drop the dependency on ARM64 for i.MX8M
-      clk: imx8m: drop clk_hw_set_parent for A53
-      clk: imx: imx8mp: fix pll mux bit
-      clk: imx8mp: Define gates for pll1/2 fixed dividers
-      clk: imx8mp: use imx8m_clk_hw_composite_core to simplify code
-      clk: imx8m: migrate A53 clk root to use composite core
-      clk: imx: add mux ops for i.MX8M composite clk
-      clk: imx: add imx8m_clk_hw_composite_bus
-      clk: imx: use imx8m_clk_hw_composite_bus for i.MX8M bus clk slice
-
-Waibel Georg (1):
-      clk: imx: imx6ul: change flexcan clock to support CiA bitrates
-
- drivers/clk/imx/Kconfig                   |   8 +-
- drivers/clk/imx/clk-composite-8m.c        |  56 ++++++++++-
- drivers/clk/imx/clk-gate2.c               |  31 +++++--
- drivers/clk/imx/clk-imx6ul.c              |   2 +-
- drivers/clk/imx/clk-imx7ulp.c             |   6 +-
- drivers/clk/imx/clk-imx8mm.c              |  27 +++---
- drivers/clk/imx/clk-imx8mn.c              |  25 +++--
- drivers/clk/imx/clk-imx8mp.c              | 148 +++++++++++++++---------------
- drivers/clk/imx/clk-imx8mq.c              |  29 +++---
- drivers/clk/imx/clk-pll14xx.c             |   8 +-
- drivers/clk/imx/clk-pllv3.c               |  16 +---
- drivers/clk/imx/clk-sscg-pll.c            |  10 --
- drivers/clk/imx/clk.h                     |  62 ++++++++++++-
- include/dt-bindings/clock/imx7ulp-clock.h |   5 +-
- include/dt-bindings/clock/imx8mp-clock.h  |  90 +++++++++++++++++-
- 15 files changed, 358 insertions(+), 165 deletions(-)
+Dillon
