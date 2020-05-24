@@ -1,109 +1,138 @@
-Return-Path: <SRS0=P1jM=7F=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Bykf=7G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F10F3C433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 05:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E039C433DF
+	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 09:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B4B9E20759
-	for <linux-clk@archiver.kernel.org>; Sat, 23 May 2020 05:38:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E247E20787
+	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 09:36:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQINVmOx"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="h2rJMs5U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387590AbgEWFiv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 23 May 2020 01:38:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53652 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387456AbgEWFiu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 23 May 2020 01:38:50 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A6FAC061A0E
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2020 22:38:50 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id x11so4268604plv.9
-        for <linux-clk@vger.kernel.org>; Fri, 22 May 2020 22:38:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=gJrwsD95GiFyT9n16FxHRlHH8sHrHYZ+3946h1aQ09I=;
-        b=iQINVmOxAeLpDr0E2yIaMv28SPQnhgwEcX6Ju+vtadM9q9M2OLH6zrPh9QTPhnEPwr
-         3Fy7npvDe622nCK7raQJLFckR6yT7RiQnbSkq2Gzy4QZRUI5SmNsKENY1mhRoyZvneXh
-         QOtsKY6GxHaKwwxhc96ESAsE7obcP4zECHUfaFaUby39ploQCnD/ifATvlyCyAKMUl0P
-         pHmk651ADaXZKZoDt05z5BCxter4y7ZizKmkVEIDIWH4Pk90aGydVUgJZW2T3rjqRSuW
-         l4UyrR5YCwhPkzLEU4JmlIKi7UCxBUmF6Fx9At6x3hCKzrNVIwDCCBYqRRwFiZQ56n2V
-         PNpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gJrwsD95GiFyT9n16FxHRlHH8sHrHYZ+3946h1aQ09I=;
-        b=NZHMMgp29lEHjlFsqylTRqL67kPwMR4m14lNYRU7uBhYPoDc8hQXH0yTPPMJV5T697
-         gw84bbFY5cIu7bCwn+5hEGeX/OtqcgEw5K5xMILKORav+rHln1zvPYLytWoSLWLt1Dz+
-         W7Ajga3SUGMjmlocqtSJ9X7Xa/To9GdsxdbVHVlyt/p6XBY1WVC7p5JvGNPepN9paunG
-         oktnGvvHn0lcJTm9H406Az9KkbtJLu00IWEjYtyHzyBXzssgmkWcmSNSoKivBRDOjj10
-         y3GqT9b6A4Hj7YrTcZKZ7dmEChJvMSIeaH/aC+guakT+QHRSRw/S3tDy0OtHpWkvqc+w
-         KQcg==
-X-Gm-Message-State: AOAM531TntQM5pLhMZNEyY7EB4CbFb60Wz+iWWdkL+uqEfbzqT2Ce+1D
-        QDbmfNWX1VApr79QrWGrprC3EQ==
-X-Google-Smtp-Source: ABdhPJxhB1oBCneZ4xttQlsT2ySF2h6h3vamdFZz6sY9F6P4TuGI1WmzH/wlo8Z9uZQy0WBWdQraUw==
-X-Received: by 2002:a17:902:7e41:: with SMTP id a1mr3846943pln.72.1590212330089;
-        Fri, 22 May 2020 22:38:50 -0700 (PDT)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a71sm8638439pje.0.2020.05.22.22.38.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 22 May 2020 22:38:49 -0700 (PDT)
-Date:   Fri, 22 May 2020 22:38:46 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jonathan Marek <jonathan@marek.ca>
-Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: sm8250 gcc depends on QCOM_GDSC
-Message-ID: <20200523053846.GK11847@yoga>
-References: <20200523040947.31946-1-jonathan@marek.ca>
+        id S1728665AbgEXJg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 May 2020 05:36:27 -0400
+Received: from mail27.static.mailgun.info ([104.130.122.27]:37234 "EHLO
+        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728656AbgEXJg1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 05:36:27 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1590312986; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
+ Subject: Sender; bh=+d2IffuX0fcJRBhd+RuZep3EB0a9GMnYHUOyGNlqGoE=; b=h2rJMs5UhyF+j7umj0Ph2RD/t+jWotSExhJkStyqcDD0oXQ26HvDnCwyRxOSTwlA58cqfIqA
+ Ac7S8Yhfd7Fdul4/1PW6Kd86OLIusG96DsCAOnP76JxbEW4k4z5QGGlIuhBsjYYZYoQB0MDq
+ kIh8og3cj2MVoxm1mcLeGHMYhL0=
+X-Mailgun-Sending-Ip: 104.130.122.27
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 5eca40189d4cf4d3efd0b7a8 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sun, 24 May 2020 09:36:24
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 90C21C43391; Sun, 24 May 2020 09:36:24 +0000 (UTC)
+Received: from [192.168.0.104] (unknown [49.207.133.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sivaprak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CEBFC433C6;
+        Sun, 24 May 2020 09:36:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CEBFC433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
+Subject: Re: [PATCH V3 3/8] clk: qcom: Add A53 PLL support for ipq6018 devices
+To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+References: <1586832922-29191-1-git-send-email-sivaprak@codeaurora.org>
+ <1586832922-29191-4-git-send-email-sivaprak@codeaurora.org>
+ <158754602745.132238.14379194464345140559@swboyd.mtv.corp.google.com>
+ <4025e5c3-b532-d235-f73b-2b86055bdde2@codeaurora.org>
+ <158948883904.215346.15910533287389644445@swboyd.mtv.corp.google.com>
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Message-ID: <cd562d7c-2ea6-9481-c723-858dad799b06@codeaurora.org>
+Date:   Sun, 24 May 2020 15:06:18 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200523040947.31946-1-jonathan@marek.ca>
+In-Reply-To: <158948883904.215346.15910533287389644445@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 22 May 21:09 PDT 2020, Jonathan Marek wrote:
 
-> The driver will always fail to probe without QCOM_GDSC, so select it.
-> 
+On 5/15/2020 2:10 AM, Stephen Boyd wrote:
+> Quoting Sivaprakash Murugesan (2020-04-22 03:44:33)
+>> On 4/22/2020 2:30 PM, Stephen Boyd wrote:
+>>> Quoting Sivaprakash Murugesan (2020-04-13 19:55:17)
+>>>> diff --git a/drivers/clk/qcom/a53-pll.c b/drivers/clk/qcom/a53-pll.c
+>>>> index 45cfc57..a95351c 100644
+>>>> --- a/drivers/clk/qcom/a53-pll.c
+>>>> +++ b/drivers/clk/qcom/a53-pll.c
+>>>> @@ -57,30 +146,26 @@ static int qcom_a53pll_probe(struct platform_device *pdev)
+>>>>           if (IS_ERR(regmap))
+>>>>                   return PTR_ERR(regmap);
+>>>>    
+>>>> -       pll->l_reg = 0x04;
+>>>> -       pll->m_reg = 0x08;
+>>>> -       pll->n_reg = 0x0c;
+>>>> -       pll->config_reg = 0x14;
+>>>> -       pll->mode_reg = 0x00;
+>>>> -       pll->status_reg = 0x1c;
+>>>> -       pll->status_bit = 16;
+>>>> -       pll->freq_tbl = a53pll_freq;
+>>>> -
+>>>> -       init.name = "a53pll";
+>>>> -       init.parent_names = (const char *[]){ "xo" };
+>>>> -       init.num_parents = 1;
+>>>> -       init.ops = &clk_pll_sr2_ops;
+>>>> -       init.flags = CLK_IS_CRITICAL;
+>>> Please document why a clk is critical.
+>> ok
+>>>> -       pll->clkr.hw.init = &init;
+>>>> -
+>>>> -       ret = devm_clk_register_regmap(dev, &pll->clkr);
+>>>> +       if (pll_data->flags & PLL_IS_ALPHA) {
+>>>> +               struct clk_alpha_pll *alpha_pll =
+>>>> +                       pll_data->a53pll.alpha_pll.pll;
+>>>> +               struct alpha_pll_config *alpha_pll_config =
+>>>> +                       pll_data->a53pll.alpha_pll.pll_config;
+>>>> +
+>>>> +               clk_alpha_pll_configure(alpha_pll, regmap, alpha_pll_config);
+>>>> +               clkr = &pll_data->a53pll.alpha_pll.pll->clkr;
+>>>> +       } else {
+>>>> +               clkr = &pll_data->a53pll.pll->clkr;
+>>>> +       }
+>>> Sorry, the design is confusing.
+>> The basic idea is to add support for various PLLs available to clock the
+>> A53 core.
+>>
+>> if this messing up the code, can the alpha pll support be moved to a
+>> separate file?
+>>
+>> It would be very helpful if you provide your input on this.
+> Isn't the alpha PLL support already in a different file? Is it sometimes
+> an alpha pll and other times it is something else?
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+alpha pll for cpufreq is not yet available, and for ipq based devices it 
+is alpha pll, and I guess
 
-Regards,
-Bjorn
+for other mobile based devices it is something else.
 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/clk/qcom/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 5df110be52c1..59dc0bdafad4 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -378,6 +378,7 @@ config SM_GCC_8150
->  
->  config SM_GCC_8250
->  	tristate "SM8250 Global Clock Controller"
-> +	select QCOM_GDSC
->  	help
->  	  Support for the global clock controller on SM8250 devices.
->  	  Say Y if you want to use peripheral devices such as UART,
-> -- 
-> 2.26.1
-> 
+I have raised a patch set keeping the alpha pll as a separate file, 
+could you please take a
+
+look into it?
+
