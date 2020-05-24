@@ -2,98 +2,77 @@ Return-Path: <SRS0=Bykf=7G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D74C433DF
-	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 10:05:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 109D8C433DF
+	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 15:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 33AD72075F
-	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 10:05:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5E7A207CB
+	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 15:48:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbgEXKEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 May 2020 06:04:55 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:32231 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729389AbgEXKEz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 06:04:55 -0400
-Received: from unknown (HELO ironmsg02-sd.qualcomm.com) ([10.53.140.142])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 24 May 2020 03:04:54 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg02-sd.qualcomm.com with ESMTP; 24 May 2020 03:04:50 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 5BE49217E6; Sun, 24 May 2020 15:34:49 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH V5 2/8] dt-bindings: clock: add ipq6018 a53 pll compatible
-Date:   Sun, 24 May 2020 15:34:40 +0530
-Message-Id: <1590314686-11749-3-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1590314686-11749-1-git-send-email-sivaprak@codeaurora.org>
-References: <1590314686-11749-1-git-send-email-sivaprak@codeaurora.org>
+        id S1728207AbgEXPsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 May 2020 11:48:04 -0400
+Received: from out28-77.mail.aliyun.com ([115.124.28.77]:54087 "EHLO
+        out28-77.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbgEXPsE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 11:48:04 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.375452|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0182425-0.000259138-0.981498;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16367;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HcyTzUM_1590335272;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HcyTzUM_1590335272)
+          by smtp.aliyun-inc.com(10.147.44.118);
+          Sun, 24 May 2020 23:47:59 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
+Subject: [PATCH v9 0/6] Add support for the X1830 and fix bugs for X1000
+Date:   Sun, 24 May 2020 23:47:23 +0800
+Message-Id: <20200524154729.30958-2-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200524154729.30958-1-zhouyanjie@wanyeetech.com>
+References: <20200524154729.30958-1-zhouyanjie@wanyeetech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-cpus on ipq6018 are clocked by a53 pll, add device compatible for a53
-pll found on ipq6018 devices.
+v8->v9:
+Add Paul Cercueil's Reviewed-by, somehow his emails are not displayed
+on the mailing list and patchwork of clock framework subsystem.
 
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
----
-[V5]
- * Addressed Bjorn's review comment.
-   now the a53 dt-binding represents ipq a53 pll as well.
- .../devicetree/bindings/clock/qcom,a53pll.yaml         | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+周琰杰 (Zhou Yanjie) (6):
+  clk: Ingenic: Remove unnecessary spinlock when reading registers.
+  clk: Ingenic: Adjust cgu code to make it compatible with X1830.
+  dt-bindings: clock: Add X1830 bindings.
+  clk: Ingenic: Add CGU driver for X1830.
+  dt-bindings: clock: Add and reorder ABI for X1000.
+  clk: X1000: Add FIXDIV for SSI clock of X1000.
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-index 20d2638..972db15 100644
---- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
-@@ -16,6 +16,7 @@ description:
- properties:
-   compatible:
-     const: qcom,msm8916-a53pll
-+    const: qcom,ipq6018-a53pll
- 
-   reg:
-     maxItems: 1
-@@ -23,6 +24,14 @@ properties:
-   '#clock-cells':
-     const: 0
- 
-+  clocks:
-+    items:
-+      - description: board XO clock
-+
-+  clock-names:
-+    items:
-+      - const: xo
-+
- required:
-   - compatible
-   - reg
-@@ -38,3 +47,12 @@ examples:
-         reg = <0xb016000 0x40>;
-         #clock-cells = <0>;
-     };
-+  #Example 2 - A53 PLL found on IPQ6018 devices
-+  - |
-+    a53pll_ipq: clock@b116000 {
-+        compatible = "qcom,ipq6018-a53pll";
-+        reg = <0x0b116000 0x40>;
-+        #clock-cells = <0>;
-+        clocks = <&xo>;
-+        clock-names = "xo";
-+    };
+ .../devicetree/bindings/clock/ingenic,cgu.yaml     |   2 +
+ drivers/clk/ingenic/Kconfig                        |  10 +
+ drivers/clk/ingenic/Makefile                       |   1 +
+ drivers/clk/ingenic/cgu.c                          |  28 +-
+ drivers/clk/ingenic/cgu.h                          |   4 +
+ drivers/clk/ingenic/jz4725b-cgu.c                  |   4 +
+ drivers/clk/ingenic/jz4740-cgu.c                   |   4 +
+ drivers/clk/ingenic/jz4770-cgu.c                   |   8 +-
+ drivers/clk/ingenic/jz4780-cgu.c                   |   3 +
+ drivers/clk/ingenic/x1000-cgu.c                    | 114 +++++-
+ drivers/clk/ingenic/x1830-cgu.c                    | 436 +++++++++++++++++++++
+ include/dt-bindings/clock/x1000-cgu.h              |  64 +--
+ include/dt-bindings/clock/x1830-cgu.h              |  54 +++
+ 13 files changed, 684 insertions(+), 48 deletions(-)
+ create mode 100644 drivers/clk/ingenic/x1830-cgu.c
+ create mode 100644 include/dt-bindings/clock/x1830-cgu.h
+
 -- 
-2.7.4
+2.11.0
 
