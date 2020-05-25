@@ -2,151 +2,77 @@ Return-Path: <SRS0=dPrR=7H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90D51C433E4
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05971C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 06:41:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA0C20849
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0DA20812
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 06:41:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oOnEvJIc"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GLSosxCz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388810AbgEYDqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 May 2020 23:46:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58366 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388730AbgEYDqD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 23:46:03 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2569BC061A0E;
-        Sun, 24 May 2020 20:46:03 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id q8so8287284pfu.5;
-        Sun, 24 May 2020 20:46:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=TecVBwOuGZ/BbCjVyBAZuzQGGC9DlsbNm1sr3li0idE=;
-        b=oOnEvJIc5RIC+XycPQbNKIOqu3rZrB9GkscAVQFQ0bIPFUXhXArjacXi2Bv9R8irzo
-         xJ4obbevslcs+GawkyTJuMZcaQxb8t70SgchuEOmzRv9VmCoagv+xoE3hH8+uxrGu+u7
-         Tr/nTMpuhzI8FeOPEYF4CiVdLMO4Yo+CU/rEyl2ZyF/zXXNC8cydBxXGjcTypHEmgeax
-         OY8v4Xebai1cj4X0S4d58nwAtcOIGFv4+K0Qo3tuY/twGNB5zfVMY5LFwteks12B1qoP
-         WJ2FZXvTm78wjDBDexzekBDJehJ6XUiQNlj1HScpmMzEEio3Xpd63nu3vsmTHMjSstN4
-         gkgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TecVBwOuGZ/BbCjVyBAZuzQGGC9DlsbNm1sr3li0idE=;
-        b=e5EQCYJxKWV7reWZb0ezMTVLhW4RH9e2Ll1rHSSHvtIlybhLJqLWd/00A8JLc1Jc8Z
-         7jm373Hm/KZyZuPUsgfdc9gi1iacmb3UPNkV8ICrfBXY8m1unaEY6bFJDJaz7/MniyuM
-         pA1sxF5EhDrB+/b6nBzawC7Z/U+SLVDI03COn47puDyeSZA0Rq1upHLooK8h8FoSfCzO
-         Ec7AnBliW7qfh7CDu1qL+F6tANXJxVsnxrq+Lh4QqNftqZkMhvnTouJBU3npgNBwIJQP
-         QOIQxhRonakAQMn2w6Yi8Eki1inheqDSdZorFXKEpxPlFdXFx0mcTjoZq3xK9B3Xa27Z
-         rqnQ==
-X-Gm-Message-State: AOAM533XlAjRvgRV/69lwFXLeb9aHjWX32lA1tiK/KzMbLZv2csZCZwm
-        9ETWniQ8XrfNCgUlkmsOhSM=
-X-Google-Smtp-Source: ABdhPJzcQZcr90XePIuYsKAB+iyE3OReyvFJzMWSlexKfctfg9uLTc3FLbdM/Zb/mh6AWJtg+8RtAA==
-X-Received: by 2002:a62:e305:: with SMTP id g5mr15607365pfh.144.1590378362742;
-        Sun, 24 May 2020 20:46:02 -0700 (PDT)
-Received: from fmin-OptiPlex-7060.nreal.work ([103.206.191.44])
-        by smtp.gmail.com with ESMTPSA id i98sm12152831pje.37.2020.05.24.20.45.59
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 24 May 2020 20:46:02 -0700 (PDT)
-From:   dillon.minfei@gmail.com
-To:     linus.walleij@linaro.org, broonie@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
-        dillon min <dillon.minfei@gmail.com>
-Subject: [PATCH v5 3/8] ARM: dts: stm32: enable ltdc binding with ili9341, gyro l3gd20 on stm32429-disco board
-Date:   Mon, 25 May 2020 11:45:43 +0800
-Message-Id: <1590378348-8115-4-git-send-email-dillon.minfei@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com>
-References: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com>
+        id S2388817AbgEYGlm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 May 2020 02:41:42 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:60899 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726393AbgEYGlm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 02:41:42 -0400
+X-UUID: 3141a7b4d1dc49c0874af76805d7c1e3-20200525
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=rPpVOTNMfIfxzbe8ETe1dm7/wf5N3sl6Al3g3yCdGBA=;
+        b=GLSosxCzgrZVU3EH3VE+cnZIpkCtJkNDv9/mYyryejePguRwrJwSZ+C5ImAAI2B93qX/O+JSL3Hsv1aXGMnmaiwV5sCc/faxC4mxlzFQlQxf6fVAIwOyFZZK8/Sk9BkT/AzAHeSYo01Mq0upww0AhzJAgdnY0OyFrdnT7emH45w=;
+X-UUID: 3141a7b4d1dc49c0874af76805d7c1e3-20200525
+Received: from mtkcas11.mediatek.inc [(172.21.101.40)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1933868565; Mon, 25 May 2020 14:41:39 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 25 May 2020 14:41:36 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 25 May 2020 14:41:36 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Owen Chen <owen.chen@mediatek.com>
+Subject: [PATCH v1] clk: mediatek: assign the initial value to clk_init_data of mtk_mux
+Date:   Mon, 25 May 2020 14:41:29 +0800
+Message-ID: <1590388889-28382-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: dillon min <dillon.minfei@gmail.com>
-
-Enable the ltdc & ili9341, gyro l3gd20 on stm32429-disco board.
-
-Signed-off-by: dillon min <dillon.minfei@gmail.com>
----
- arch/arm/boot/dts/stm32f429-disco.dts | 48 +++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
-
-diff --git a/arch/arm/boot/dts/stm32f429-disco.dts b/arch/arm/boot/dts/stm32f429-disco.dts
-index 30c0f67..365d16f 100644
---- a/arch/arm/boot/dts/stm32f429-disco.dts
-+++ b/arch/arm/boot/dts/stm32f429-disco.dts
-@@ -49,6 +49,8 @@
- #include "stm32f429.dtsi"
- #include "stm32f429-pinctrl.dtsi"
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "STMicroelectronics STM32F429i-DISCO board";
-@@ -127,3 +129,49 @@
- 	pinctrl-names = "default";
- 	status = "okay";
- };
-+
-+&ltdc {
-+	status = "okay";
-+	pinctrl-0 = <&ltdc_pins_f429_disco>;
-+	pinctrl-names = "default";
-+
-+	port {
-+		ltdc_out_rgb: endpoint {
-+			remote-endpoint = <&panel_in_rgb>;
-+		};
-+	};
-+};
-+
-+&spi5 {
-+	status = "okay";
-+	pinctrl-0 = <&spi5_pins>;
-+	pinctrl-names = "default";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	cs-gpios = <&gpioc 1 GPIO_ACTIVE_LOW>, <&gpioc 2 GPIO_ACTIVE_LOW>;
-+
-+	l3gd20: l3gd20@0 {
-+		compatible = "st,l3gd20-gyro";
-+		spi-max-frequency = <10000000>;
-+		st,drdy-int-pin = <2>;
-+		interrupt-parent = <&gpioa>;
-+		interrupts = <1 IRQ_TYPE_EDGE_RISING>,
-+				<2 IRQ_TYPE_EDGE_RISING>;
-+		reg = <0>;
-+		status = "okay";
-+	};
-+
-+	display: display@1{
-+		/* Connect panel-ilitek-9341 to ltdc */
-+		compatible = "st,sf-tc240t-9370-t";
-+		reg = <1>;
-+		spi-3wire;
-+		spi-max-frequency = <10000000>;
-+		dc-gpios = <&gpiod 13 0>;
-+		port {
-+			panel_in_rgb: endpoint {
-+			remote-endpoint = <&ltdc_out_rgb>;
-+			};
-+		};
-+	};
-+};
--- 
-2.7.4
+SXQnZCBiZSBkYW5nZXJvdXMgd2hlbiBzdHJ1Y3QgY2xrX2NvcmUgaGF2ZSBuZXcgbWVtZWJlcnMu
+DQpBZGQgdGhlIG1pc3NpbmcgaW5pdGlhbCB2YWx1ZSB0byBjbGtfaW5pdF9kYXRhLg0KDQpGaXhl
+czogYTNhZTU0OTkxN2YxICgiY2xrOiBtZWRpYXRlazogQWRkIG5ldyBjbGttdXggcmVnaXN0ZXIg
+QVBJIikNCkNjOiA8c3RhYmxlQHZnZXIua2VybmVsLm9yZz4NClNpZ25lZC1vZmYtYnk6IFdlaXlp
+IEx1IDx3ZWl5aS5sdUBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL2Nsay9tZWRpYXRlay9j
+bGstbXV4LmMgfCAyICstDQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0
+aW9uKC0pDQoNCmRpZmYgLS1naXQgYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMgYi9k
+cml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCmluZGV4IDc2ZjljZDAuLjE0ZTEyN2UgMTAw
+NjQ0DQotLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXV4LmMNCisrKyBiL2RyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdXguYw0KQEAgLTE2MCw3ICsxNjAsNyBAQCBzdHJ1Y3QgY2xrICpt
+dGtfY2xrX3JlZ2lzdGVyX211eChjb25zdCBzdHJ1Y3QgbXRrX211eCAqbXV4LA0KIAkJCQkgc3Bp
+bmxvY2tfdCAqbG9jaykNCiB7DQogCXN0cnVjdCBtdGtfY2xrX211eCAqY2xrX211eDsNCi0Jc3Ry
+dWN0IGNsa19pbml0X2RhdGEgaW5pdDsNCisJc3RydWN0IGNsa19pbml0X2RhdGEgaW5pdCA9IHt9
+Ow0KIAlzdHJ1Y3QgY2xrICpjbGs7DQogDQogCWNsa19tdXggPSBremFsbG9jKHNpemVvZigqY2xr
+X211eCksIEdGUF9LRVJORUwpOw0KLS0gDQoxLjguMS4xLmRpcnR5DQo=
 
