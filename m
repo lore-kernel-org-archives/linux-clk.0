@@ -2,86 +2,166 @@ Return-Path: <SRS0=dPrR=7H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDFFC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4776CC433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD7CA2073B
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F57A2075F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOeC/Nr/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388450AbgEYDcE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 May 2020 23:32:04 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:48336 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388793AbgEYDcE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 24 May 2020 23:32:04 -0400
-Received: from linux.localdomain (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxD94sPMte3cI4AA--.386S3;
-        Mon, 25 May 2020 11:31:57 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: [PATCH 2/2] clk: Remove CONFIG_ARCH_HISI check for subdir hisilicon
-Date:   Mon, 25 May 2020 11:31:56 +0800
-Message-Id: <1590377516-32117-2-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-In-Reply-To: <1590377516-32117-1-git-send-email-yangtiezhu@loongson.cn>
-References: <1590377516-32117-1-git-send-email-yangtiezhu@loongson.cn>
-X-CM-TRANSID: AQAAf9DxD94sPMte3cI4AA--.386S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF43Ar1DWw48JryxZr45trb_yoWfAFbEkr
-        WDGr1xXw15CrykuF47WF92vryq9Fs8Zrn5uF4ayry3J34UZr43JF4qqr4UAF15GrW8uFyY
-        va1SqFy3ZryIvjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUbh8FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGwA2048vs2IY02
-        0Ec7CjxVAFwI0_JFI_Gr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJVW0owAS
-        0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
-        IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0
-        Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_Gr4l42xK82
-        IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
-        0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMI
-        IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
-        0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87
-        Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU80edUUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S2388450AbgEYDlK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 May 2020 23:41:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388397AbgEYDlK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 23:41:10 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CBA4C061A0E;
+        Sun, 24 May 2020 20:41:10 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id e11so7320594pfn.3;
+        Sun, 24 May 2020 20:41:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=V6bHngqzBjjcimyp4HxH/p2UMJo9dJvIc8PwFZSC+CA=;
+        b=aOeC/Nr/acFM3HuR/Lo9ZtaRnMkQ5S0uv2LDWJyAYXFdzmUzRE3n13Fhl8x4FV8Q8E
+         XQB+9W906G96KSwV1kx6VsFfQY6MqD7Ui7+3z4+jtPFDQ7+LOeTQYXLj0MWSk8qTP2ln
+         jlHo8yQ8AHp4Bjd7pefU72K2UID80/OCDtoEW7OibLN/DTbpSCdMSY/TkzGql8LzJVAB
+         mEycMb7WC82ZzHF7G2vU2NH2LfKkw0z6nGy+hcWjTLQvl+uAX7szl0b7kwB54MWAAeb2
+         NKSfqm7qnS6u6e7MwNcGSG2Vfisjk1AL9YvtF6veVWeuIy94iOrXs4qo3tEksUCm6LSM
+         rj9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=V6bHngqzBjjcimyp4HxH/p2UMJo9dJvIc8PwFZSC+CA=;
+        b=IidyZrs6gtG3YAn3+iX5/6KkTTUNDXwZZk+UXKyXLYUKI7Tsxz+uPclT1UOVEdpzDZ
+         6mPFHeq7WJ1LR3neGE7EgoxMc5zPp1uerI0fPoo53hB9lTbt4ktBYSx2uHkU2dJyWzsz
+         savzLcjDSWjjU6DDKDIebXCnB5afMLwV9yt1fyU8Rz3Sf8VpVxS6C43vnH9+ip8pf5Ou
+         wfCqSCu+6QAubYkZMwGS8bnaw9LK0tAJD+CFNalqBQLPFU8v7vAuajAG/s3nt2tzY7TJ
+         f6Z1ptFSnK9/uMRcQDD4VMaw6ho1r0jZXn+PRXCi2L0xw8AS++w5ibWJ8shgAVORR4sd
+         Tk7A==
+X-Gm-Message-State: AOAM531ylpjnuY33v34cq2P3nfBPmh9m1dnCSJVhiVDNyKQSx8mzMf/M
+        JqmkCFc3ETwi+NFO0Zo44WE=
+X-Google-Smtp-Source: ABdhPJxqLStyPNMFpP3TVYD0bkPBn6i+JD/A+HI8Eb7EY3tJVFtPEv203Lr79ePRqbSvGJDs5dnPYA==
+X-Received: by 2002:aa7:99cc:: with SMTP id v12mr15435085pfi.279.1590378070073;
+        Sun, 24 May 2020 20:41:10 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([103.206.191.44])
+        by smtp.gmail.com with ESMTPSA id 7sm11981695pfc.203.2020.05.24.20.41.05
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 24 May 2020 20:41:09 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     robh+dt@kernel.org, p.zabel@pengutronix.de,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        dillon min <dillon.minfei@gmail.com>
+Subject: [PATCH v5 0/8] Enable ili9341 and l3gd20 on stm32f429-disco
+Date:   Mon, 25 May 2020 11:40:54 +0800
+Message-Id: <1590378062-7965-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <broonie@kernel.org>
+References: <broonie@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If CONFIG_ARCH_HISI is not set but COMPILE_TEST is set, the file
-in the subdir hisilicon can not be built due to CONFIG_ARCH_HISI
-check in drivers/clk/Makefile.
+From: dillon min <dillon.minfei@gmail.com>
 
-Since the related configs in drivers/clk/hisilicon/Kconfig depend
-on ARCH_HISI, so remove CONFIG_ARCH_HISI check for subdir hisilicon
-in drivers/clk/Makefile.
+V5's update based on Mark Brown's suggestion, use 'SPI_MASTER_MUST_RX'
+for SPI_SIMPLEX_RX mode on stm32 spi controller.
 
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+V5:
+1 instead of add send dummy data out under SIMPLEX_RX mode,
+   add flags 'SPI_CONTROLLER_MUST_TX' for stm32 spi driver
+2 bypass 'SPI_CONTROLLER_MUST_TX' and 'SPI_CONTROLLER_MUST_RX' under
+'SPI_3WIRE' mode
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc..81045ec 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -79,7 +79,7 @@ obj-y					+= bcm/
- obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
- obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
- obj-$(CONFIG_H8300)			+= h8300/
--obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
-+obj-y					+= hisilicon/
- obj-y					+= imgtec/
- obj-y					+= imx/
- obj-y					+= ingenic/
+V4:
+According to alexandre torgue's suggestion, combine ili9341 and
+l3gd20's modification on stm32f429-disco board to one patchset.
+
+Changes:
+
+ili9341:
+
+1 update ili9341 panel driver according to Linus's suggestion
+2 drop V1's No.5 patch, sumbit new changes for clk-stm32f4
+3 merge l3gd20's change to this patchset
+
+V3:
+1 merge original tiny/ili9341.c driver to panel/panel-ilitek-ili9341.c
+  to support serial spi & parallel rgb interface in one driver.
+2 update ilitek,ili9341.yaml dts binding documentation.
+3 update stm32f429-disco dts binding
+
+V2:
+1 verify ilitek,ili9341.yaml with make O=../linux-stm32
+  dt_binding_check
+  DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/
+  ilitek,ili9341.yaml
+
+V1:
+1 add ili9341 drm panel driver
+2 add ltdc, spi5 controller for stm32f429-disco
+3 add ltdc, spi5 pin map for stm32f429-disco
+4 add docs about ili9341
+5 fix ltdc driver loading hang in clk set rate bug
+
+
+L3gd20:
+V3:
+1 merge stm32f429-disco dtbs binding with ili9341 part
+
+V2:
+1 insert blank line at stm32f420-disco.dts line 143
+2 add more description for l3gd20 in commit message
+
+V1:
+1 enable spi5 controller on stm32f429-disco (dts)
+2 add spi5 pinmap for stm32f429-disco  (dts)
+3 add SPI_SIMPLEX_RX, SPI_3WIRE_RX support for stm32f4
+
+
+dillon min (8):
+  ARM: dts: stm32: Add dma config for spi5
+  ARM: dts: stm32: Add pin map for ltdc & spi5 on stm32f429-disco board
+  ARM: dts: stm32: enable ltdc binding with ili9341, gyro l3gd20 on    
+    stm32429-disco board
+  dt-bindings: display: panel: Add ilitek ili9341 panel bindings
+  clk: stm32: Fix stm32f429's ltdc driver hang in set clock rate,    
+    fix duplicated ltdc clock register to 'clk_core' case ltdc's clock  
+      turn off by clk_disable_unused()
+  drm/panel: Add ilitek ili9341 panel driver
+  spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX' support for stm32f4
+  spi: flags 'SPI_CONTROLLER_MUST_RX' and 'SPI_CONTROLLER_MUST_TX' can't
+    be     coexit with 'SPI_3WIRE' mode
+
+ .../bindings/display/panel/ilitek,ili9341.yaml     |   69 ++
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |   67 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |   48 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |    3 +
+ drivers/clk/clk-stm32f4.c                          |    7 +-
+ drivers/gpu/drm/panel/Kconfig                      |   12 +
+ drivers/gpu/drm/panel/Makefile                     |    1 +
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c       | 1301 ++++++++++++++++++++
+ drivers/spi/spi-stm32.c                            |   19 +-
+ drivers/spi/spi.c                                  |    3 +-
+ 10 files changed, 1521 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+
 -- 
-2.1.0
+2.7.4
 
