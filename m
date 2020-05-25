@@ -1,110 +1,131 @@
-Return-Path: <SRS0=Bykf=7G=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=dPrR=7H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D381C433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 21:07:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61389C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BAD42078B
-	for <linux-clk@archiver.kernel.org>; Sun, 24 May 2020 21:07:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="1JKePdYi"
+	by mail.kernel.org (Postfix) with ESMTP id 46EFB207DA
+	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 03:32:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387879AbgEXVHN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 May 2020 17:07:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53154 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387860AbgEXVGW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 May 2020 17:06:22 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D98B9C08C5C3
-        for <linux-clk@vger.kernel.org>; Sun, 24 May 2020 14:06:21 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id z80so16046056qka.0
-        for <linux-clk@vger.kernel.org>; Sun, 24 May 2020 14:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SMexMeVTm63rHWx/JVuuK6vnjusS2CuBaYCJ1ubsUHs=;
-        b=1JKePdYirIa/xYzsH6LsSwNwjA8gJbjzNc7twg6f8DPN18cwtCA0vArVBxSyKrzwOC
-         XthO7qIO9vA3RRN3+tojwHCBG3t4z91tLS3NrsK5lpW8vBxOxJzGilyhdUhBY0t71RJU
-         3pexLHsPLP4NpTXHLh/ubZgFq9a2lOEsA/TWToMLuIz4OJvJ7PWqmkmMaAY5IcOUnhRE
-         0RqhdMSxjwtOhO3MvBo+sWzrl+zpdaU2cwGm3NYWWifV37GcJmcwWSREd0fK73/9hd++
-         AshtWVMEBdZ/VNo2ubWltFpFL7Tc0M0ARizZIR/YVghoNsF8IRHTZmsl4oBQk2piKgSW
-         ohbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SMexMeVTm63rHWx/JVuuK6vnjusS2CuBaYCJ1ubsUHs=;
-        b=NO/KKPWK7y97ha32YYAdbAvzj+DLnppRfcLQ3UZdoqhOIQ+Boznos/sFkKqgI8aZ2L
-         1bIfzwHaVsgxAi/cuHPAXnHxGa1yNDLRK9U6vOjI6ZPxjiLX3mHgI7E0qIRVpHI/vmd3
-         33xl1w2Fs4osmrpvIQgw5hvUHFK+NRMvHdgoRLJNyZNqDk8Xi55aA+j7coh8ECSbtHaH
-         KR4neukf3cGcvdDlictD4WyXZNS79u9qVCNQiqjCxLXzW1BFX7jJz9ZrnSkRBFAfPyb4
-         grae2fB6a7CBIjaKULr+fcK+dWhwK2M+GXpJ2kakfUlNnQKrKOOx+guyftyKjCVAzwWu
-         BjAw==
-X-Gm-Message-State: AOAM531G5XzVjkBHEO3JMjGkFtP1ZpE06afIIxJbQ7RbEzdHupGbSMs2
-        sGfz1HOdvXtEBnU/nZdZa3BtRg==
-X-Google-Smtp-Source: ABdhPJwi1NS9dgh+AnJIWhS0n3NdreA/ALo8O17bbkZnccp0vKqKC9yFbnoRSvMemCoMX3c5YyruMA==
-X-Received: by 2002:a05:620a:a53:: with SMTP id j19mr24845844qka.183.1590354380991;
-        Sun, 24 May 2020 14:06:20 -0700 (PDT)
-Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id g51sm4401769qtb.69.2020.05.24.14.06.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 24 May 2020 14:06:20 -0700 (PDT)
-From:   Jonathan Marek <jonathan@marek.ca>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 01/10] clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
-Date:   Sun, 24 May 2020 17:06:02 -0400
-Message-Id: <20200524210615.17035-2-jonathan@marek.ca>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200524210615.17035-1-jonathan@marek.ca>
-References: <20200524210615.17035-1-jonathan@marek.ca>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S2388687AbgEYDcB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 May 2020 23:32:01 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:48326 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388450AbgEYDcB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 24 May 2020 23:32:01 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9DxD94sPMte3cI4AA--.386S2;
+        Mon, 25 May 2020 11:31:56 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [PATCH 1/2] clk: hisilicon: Use correct return value about hisi_reset_init()
+Date:   Mon, 25 May 2020 11:31:55 +0800
+Message-Id: <1590377516-32117-1-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+X-CM-TRANSID: AQAAf9DxD94sPMte3cI4AA--.386S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxAFW3WFWfGrW8uw1rJryfXrb_yoW5XrWkpF
+        48JFW2ya4Yga17X3ZrXr90yFy5Za42gayUGFW8Z3srZwn8JrWUZr1fury8Zayqqrs3KFWa
+        9r40kr48ua1jyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUkm14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
+        1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
+        6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
+        GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+        1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+        64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+        0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVW8JVWxJwCI
+        42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfU1NVyDUUUU
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-0x44 isn't a register offset, it is the value that goes into CAL_L_VAL.
+The return value about hisi_reset_init() is not correct, fix it.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/hisilicon/clk-hi3519.c      | 4 ++--
+ drivers/clk/hisilicon/crg-hi3516cv300.c | 4 ++--
+ drivers/clk/hisilicon/crg-hi3798cv200.c | 4 ++--
+ drivers/clk/hisilicon/reset.c           | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9b2dfa08acb2..1325139173c9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -56,7 +56,6 @@
- #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
- #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
- #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
--#define PLL_CAL_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
+diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
+index ad0c7f3..803fa66 100644
+--- a/drivers/clk/hisilicon/clk-hi3519.c
++++ b/drivers/clk/hisilicon/clk-hi3519.c
+@@ -149,8 +149,8 @@ static int hi3519_clk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-@@ -115,7 +114,6 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_STATUS] = 0x30,
- 		[PLL_OFF_OPMODE] = 0x38,
- 		[PLL_OFF_ALPHA_VAL] = 0x40,
--		[PLL_OFF_CAL_VAL] = 0x44,
- 	},
- 	[CLK_ALPHA_PLL_TYPE_LUCID] =  {
- 		[PLL_OFF_L_VAL] = 0x04,
+ 	crg->rstc = hisi_reset_init(pdev);
+-	if (!crg->rstc)
+-		return -ENOMEM;
++	if (IS_ERR(crg->rstc))
++		return PTR_ERR(crg->rstc);
+ 
+ 	crg->clk_data = hi3519_clk_register(pdev);
+ 	if (IS_ERR(crg->clk_data)) {
+diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
+index 5d4e61c..c2af03d 100644
+--- a/drivers/clk/hisilicon/crg-hi3516cv300.c
++++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
+@@ -271,8 +271,8 @@ static int hi3516cv300_crg_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 
+ 	crg->rstc = hisi_reset_init(pdev);
+-	if (!crg->rstc)
+-		return -ENOMEM;
++	if (IS_ERR(crg->rstc))
++		return PTR_ERR(crg->rstc);
+ 
+ 	crg->clk_data = crg->funcs->register_clks(pdev);
+ 	if (IS_ERR(crg->clk_data)) {
+diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
+index 08a19ba..66fd6a9 100644
+--- a/drivers/clk/hisilicon/crg-hi3798cv200.c
++++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
+@@ -354,8 +354,8 @@ static int hi3798cv200_crg_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 
+ 	crg->rstc = hisi_reset_init(pdev);
+-	if (!crg->rstc)
+-		return -ENOMEM;
++	if (IS_ERR(crg->rstc))
++		return PTR_ERR(crg->rstc);
+ 
+ 	crg->clk_data = crg->funcs->register_clks(pdev);
+ 	if (IS_ERR(crg->clk_data)) {
+diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
+index 93cee17..f17d15f 100644
+--- a/drivers/clk/hisilicon/reset.c
++++ b/drivers/clk/hisilicon/reset.c
+@@ -93,11 +93,11 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
+ 
+ 	rstc = devm_kmalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
+ 	if (!rstc)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	rstc->membase = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(rstc->membase))
+-		return NULL;
++		return rstc->membase;
+ 
+ 	spin_lock_init(&rstc->lock);
+ 	rstc->rcdev.owner = THIS_MODULE;
 -- 
-2.26.1
+2.1.0
 
