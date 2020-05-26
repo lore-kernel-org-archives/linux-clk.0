@@ -2,152 +2,292 @@ Return-Path: <SRS0=OzFb=7I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01DFC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 11:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD02AC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 14:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7C555207CB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 11:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPud/H9R"
+	by mail.kernel.org (Postfix) with ESMTP id B3108207FB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 14:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731978AbgEZLk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 07:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48556 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731973AbgEZLk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 07:40:58 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92128C03E97E;
-        Tue, 26 May 2020 04:40:58 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id l5so17364818edn.7;
-        Tue, 26 May 2020 04:40:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wgN5VWTUiDEWDfFSZEwK5UrjaFdTqsQ9EGT1fY+LLDM=;
-        b=lPud/H9RYbONByKlYJnPcmoegAq7NXggnQy8LdHwIHOK+7jUB75uLFWq0LgSlKjwj0
-         jKA169ht/LZhODzErb9FOivuLm0Zbo48Aph5D5n0cpcd7ULW4vzzHqa8WrcZMPSKHyX9
-         lyI56onjsVIRUhzHb09lRfJhBm41t5HJfjgZsKMTq+PRTLKA5dvqFdZGY7vqFJytEN15
-         QVz7TsmU7YavnUinDGGAJJlp+hKvljmRtzCAOvfrmqKhHwy8ODJYOdRmcpmIIUOPdEKU
-         MTw+uFdUZ/zl3MHRBpmuJbNkkZLxi2cfeB5bejO19xDrxxPVNy7vypcSQcloZDGZ6ads
-         fkig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wgN5VWTUiDEWDfFSZEwK5UrjaFdTqsQ9EGT1fY+LLDM=;
-        b=gzl3KCFuA42yP8vCfq8/fVrEIJOvQygb6x7RRvTHWYAIb+cQy/hXFyGKVPiTfUjDuj
-         WC6phiRuRb8Q5Q628/qD474XhpEO/k+tjhVhK//Fnb22zG7TpHdsGYrn3LBTosS969xj
-         1HGYlVg5a8gA8b/+rl/H/XZmxnFOhoh9m2mG9B0gmrSgw5cctMnYqCm4CvF7TGDLrqeX
-         d0NRerHpdOeiS5HtsN4KtMoGZWEmzazSJKuKchYmESqtyjvOsvyCM6LSvAJveo8b5iuZ
-         ZlutR6Xs/ClSrhs33W/Awb+iK9lQ1QEp4q5G1qTHsekABrl7Emomcqw7777duLhZNtVX
-         U2WA==
-X-Gm-Message-State: AOAM5327ZikLNVfe5e1fhnzKQaerH/rou0Cz34O2Sqho1r7pmM7hILCE
-        fpjqiFgjB7+xeTcXYynXt0e1gcE5
-X-Google-Smtp-Source: ABdhPJxCs0LUkycI69pIWCwArPu0e0y1R9SQWGBf8Wc9edk+Gkhh3T1KZWsKi5g+nSC9euiUR4dVoA==
-X-Received: by 2002:a50:f09a:: with SMTP id v26mr19620985edl.343.1590493257270;
-        Tue, 26 May 2020 04:40:57 -0700 (PDT)
-Received: from localhost (pd9e51079.dip0.t-ipconnect.de. [217.229.16.121])
-        by smtp.gmail.com with ESMTPSA id r8sm6100255ejs.68.2020.05.26.04.40.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 04:40:56 -0700 (PDT)
-Date:   Tue, 26 May 2020 13:40:54 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-List-Id: <soc.lore.kernel.org>
-Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL 07/11] memory: tegra: Changes for v5.8-rc1
-Message-ID: <20200526114054.GA2935745@ulmo>
-References: <20200515145311.1580134-1-thierry.reding@gmail.com>
- <20200515145311.1580134-8-thierry.reding@gmail.com>
- <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
+        id S1729141AbgEZOms (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 10:42:48 -0400
+Received: from out28-2.mail.aliyun.com ([115.124.28.2]:42941 "EHLO
+        out28-2.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729021AbgEZOmr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 10:42:47 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436595|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.262833-0.000428458-0.736738;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03312;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.Hdvl59T_1590504067;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Hdvl59T_1590504067)
+          by smtp.aliyun-inc.com(10.147.41.143);
+          Tue, 26 May 2020 22:42:42 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
+Subject: [PATCH v10 6/6] clk: X1000: Add FIXDIV for SSI clock of X1000.
+Date:   Tue, 26 May 2020 22:40:44 +0800
+Message-Id: <20200526144044.71413-8-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
+References: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+1.The SSI clock of X1000 not like JZ4770 and JZ4780, they are not
+  directly derived from the output of SSIPLL, but from the clock
+  obtained by dividing the frequency by 2. "X1000_CLK_SSIPLL_DIV2"
+  is added for this purpose, and ensure that it initialized before
+  "X1000_CLK_SSIMUX" when initializing the clocks.
+2.Clocks of LCD, OTG, EMC, EFUSE, OST, TCU, and gates of CPU, PCLK
+  are also added.
+3.Use "CLK_OF_DECLARE_DRIVER" like the other CGU drivers.
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+---
 
-On Mon, May 25, 2020 at 11:52:30PM +0200, Arnd Bergmann wrote:
-> On Fri, May 15, 2020 at 4:53 PM Thierry Reding <thierry.reding@gmail.com>=
- wrote:
->=20
-> >
-> > ----------------------------------------------------------------
-> > memory: tegra: Changes for v5.8-rc1
-> >
-> > Contains a few cleanup patches and an implementation to scale the EMC
-> > frequency on Tegra210 systems.
->=20
-> I don't mind taking the memory driver patches, but it seems odd that this
-> pull request has so many drivers/clk changes but does not mention that
-> in the pull request, and does not Cc the clk maintainers or include Acks
-> from them.
->=20
-> I would assume that the reason for this is that you have based
-> the memory controller changes on a branch that was already
-> accepted by the clk maintainers in to their tree, but when you do that
-> please be more explicit so I know what is going on.
+Notes:
+    v5:
+    New patch.
+    
+    V5->v6:
+    Add missing part of X1000's CGU.
+    
+    v6->v7:
+    Update commit message.
+    
+    v7->v8:
+    No change.
+    
+    v8->v9:
+    Add Paul Cercueil's Reviewed-by, somehow his emails are not displayed
+    on the mailing list and patchwork of clock framework subsystem.
+    
+    v9->v10:
+    No change.
 
-So historically there's often a lot of dependencies, either build-time
-or runtime, between Tegra clock patches and other work. That's why we
-ended up with this model where I collect Tegra clock patches in the
-Tegra tree and it's not uncommon to end up with the clock branch being
-a dependency of one of the other branches.
+ drivers/clk/ingenic/x1000-cgu.c | 110 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 105 insertions(+), 5 deletions(-)
 
-I did send this to Mike and Stephen about 1 1/2 weeks ago, but it does
-not look like they've pulled it into the clk tree yet.
+diff --git a/drivers/clk/ingenic/x1000-cgu.c b/drivers/clk/ingenic/x1000-cgu.c
+index c33934d8ac14..68c6e62457e1 100644
+--- a/drivers/clk/ingenic/x1000-cgu.c
++++ b/drivers/clk/ingenic/x1000-cgu.c
+@@ -1,7 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+  * X1000 SoC CGU driver
+- * Copyright (c) 2019 Zhou Yanjie <zhouyanjie@zoho.com>
++ * Copyright (c) 2019 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -20,6 +20,9 @@
+ #define CGU_REG_CLKGR		0x20
+ #define CGU_REG_OPCR		0x24
+ #define CGU_REG_DDRCDR		0x2c
++#define CGU_REG_USBPCR		0x3c
++#define CGU_REG_USBPCR1		0x48
++#define CGU_REG_USBCDR		0x50
+ #define CGU_REG_MACCDR		0x54
+ #define CGU_REG_I2SCDR		0x60
+ #define CGU_REG_LPCDR		0x64
+@@ -40,8 +43,47 @@
+ #define OPCR_SPENDN0		BIT(7)
+ #define OPCR_SPENDN1		BIT(6)
+ 
++/* bits within the USBPCR register */
++#define USBPCR_SIDDQ		BIT(21)
++#define USBPCR_OTG_DISABLE	BIT(20)
++
+ static struct ingenic_cgu *cgu;
+ 
++static int x1000_usb_phy_enable(struct clk_hw *hw)
++{
++	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
++	void __iomem *reg_usbpcr	= cgu->base + CGU_REG_USBPCR;
++
++	writel(readl(reg_opcr) | OPCR_SPENDN0, reg_opcr);
++	writel(readl(reg_usbpcr) & ~USBPCR_OTG_DISABLE & ~USBPCR_SIDDQ, reg_usbpcr);
++	return 0;
++}
++
++static void x1000_usb_phy_disable(struct clk_hw *hw)
++{
++	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
++	void __iomem *reg_usbpcr	= cgu->base + CGU_REG_USBPCR;
++
++	writel(readl(reg_opcr) & ~OPCR_SPENDN0, reg_opcr);
++	writel(readl(reg_usbpcr) | USBPCR_OTG_DISABLE | USBPCR_SIDDQ, reg_usbpcr);
++}
++
++static int x1000_usb_phy_is_enabled(struct clk_hw *hw)
++{
++	void __iomem *reg_opcr		= cgu->base + CGU_REG_OPCR;
++	void __iomem *reg_usbpcr	= cgu->base + CGU_REG_USBPCR;
++
++	return (readl(reg_opcr) & OPCR_SPENDN0) &&
++		!(readl(reg_usbpcr) & USBPCR_SIDDQ) &&
++		!(readl(reg_usbpcr) & USBPCR_OTG_DISABLE);
++}
++
++static const struct clk_ops x1000_otg_phy_ops = {
++	.enable		= x1000_usb_phy_enable,
++	.disable	= x1000_usb_phy_disable,
++	.is_enabled	= x1000_usb_phy_is_enabled,
++};
++
+ static const s8 pll_od_encoding[8] = {
+ 	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
+ };
+@@ -101,6 +143,15 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		},
+ 	},
+ 
++
++	/* Custom (SoC-specific) OTG PHY */
++
++	[X1000_CLK_OTGPHY] = {
++		"otg_phy", CGU_CLK_CUSTOM,
++		.parents = { -1, -1, X1000_CLK_EXCLK, -1 },
++		.custom = { &x1000_otg_phy_ops },
++	},
++
+ 	/* Muxes & dividers */
+ 
+ 	[X1000_CLK_SCLKA] = {
+@@ -116,9 +167,10 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 	},
+ 
+ 	[X1000_CLK_CPU] = {
+-		"cpu", CGU_CLK_DIV,
++		"cpu", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_CPUMUX, -1, -1, -1 },
+ 		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 30 },
+ 	},
+ 
+ 	[X1000_CLK_L2CACHE] = {
+@@ -147,9 +199,10 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 	},
+ 
+ 	[X1000_CLK_PCLK] = {
+-		"pclk", CGU_CLK_DIV,
++		"pclk", CGU_CLK_DIV | CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_AHB2PMUX, -1, -1, -1 },
+ 		.div = { CGU_REG_CPCCR, 16, 1, 4, 20, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 28 },
+ 	},
+ 
+ 	[X1000_CLK_DDR] = {
+@@ -162,12 +215,20 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 
+ 	[X1000_CLK_MAC] = {
+ 		"mac", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+-		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL},
++		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL },
+ 		.mux = { CGU_REG_MACCDR, 31, 1 },
+ 		.div = { CGU_REG_MACCDR, 0, 1, 8, 29, 28, 27 },
+ 		.gate = { CGU_REG_CLKGR, 25 },
+ 	},
+ 
++	[X1000_CLK_LCD] = {
++		"lcd", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
++		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL },
++		.mux = { CGU_REG_LPCDR, 31, 1 },
++		.div = { CGU_REG_LPCDR, 0, 1, 8, 28, 27, 26 },
++		.gate = { CGU_REG_CLKGR, 23 },
++	},
++
+ 	[X1000_CLK_MSCMUX] = {
+ 		"msc_mux", CGU_CLK_MUX,
+ 		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL},
+@@ -188,6 +249,15 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.gate = { CGU_REG_CLKGR, 5 },
+ 	},
+ 
++	[X1000_CLK_OTG] = {
++		"otg", CGU_CLK_DIV | CGU_CLK_GATE | CGU_CLK_MUX,
++		.parents = { X1000_CLK_EXCLK, -1,
++					 X1000_CLK_APLL, X1000_CLK_MPLL },
++		.mux = { CGU_REG_USBCDR, 30, 2 },
++		.div = { CGU_REG_USBCDR, 0, 1, 8, 29, 28, 27 },
++		.gate = { CGU_REG_CLKGR, 3 },
++	},
++
+ 	[X1000_CLK_SSIPLL] = {
+ 		"ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
+ 		.parents = { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
+@@ -195,14 +265,32 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.div = { CGU_REG_SSICDR, 0, 1, 8, 29, 28, 27 },
+ 	},
+ 
++	[X1000_CLK_SSIPLL_DIV2] = {
++		"ssi_pll_div2", CGU_CLK_FIXDIV,
++		.parents = { X1000_CLK_SSIPLL },
++		.fixdiv = { 2 },
++	},
++
+ 	[X1000_CLK_SSIMUX] = {
+ 		"ssi_mux", CGU_CLK_MUX,
+-		.parents = { X1000_CLK_EXCLK, X1000_CLK_SSIPLL, -1, -1 },
++		.parents = { X1000_CLK_EXCLK, X1000_CLK_SSIPLL_DIV2, -1, -1 },
+ 		.mux = { CGU_REG_SSICDR, 30, 1 },
+ 	},
+ 
+ 	/* Gate-only clocks */
+ 
++	[X1000_CLK_EMC] = {
++		"emc", CGU_CLK_GATE,
++		.parents = { X1000_CLK_AHB2, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 0 },
++	},
++
++	[X1000_CLK_EFUSE] = {
++		"efuse", CGU_CLK_GATE,
++		.parents = { X1000_CLK_AHB2, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 1 },
++	},
++
+ 	[X1000_CLK_SFC] = {
+ 		"sfc", CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_SSIPLL, -1, -1, -1 },
+@@ -245,12 +333,24 @@ static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] = {
+ 		.gate = { CGU_REG_CLKGR, 16 },
+ 	},
+ 
++	[X1000_CLK_TCU] = {
++		"tcu", CGU_CLK_GATE,
++		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 18 },
++	},
++
+ 	[X1000_CLK_SSI] = {
+ 		"ssi", CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_SSIMUX, -1, -1, -1 },
+ 		.gate = { CGU_REG_CLKGR, 19 },
+ 	},
+ 
++	[X1000_CLK_OST] = {
++		"ost", CGU_CLK_GATE,
++		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
++		.gate = { CGU_REG_CLKGR, 20 },
++	},
++
+ 	[X1000_CLK_PDMA] = {
+ 		"pdma", CGU_CLK_GATE,
+ 		.parents = { X1000_CLK_EXCLK, -1, -1, -1 },
+-- 
+2.11.0
 
-I typically highlight the dependencies in the pull request, but looks
-like I forgot to do that this time around.
-
-> Waiting for clarification before I can pull this.
-
-Given the above, might be best to hold off on this for a bit until the
-clock branch was pulled by Mike or Stephen.
-
-Thierry
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl7NAEEACgkQ3SOs138+
-s6Fv6w/8Cu4dQWtsRKUDrg20jXHqNhVoKWh9ZIqXfZLZ6kbRuNF1Fov+dDUNJujN
-QqPjGh5YyFb3pwIDXK+EKBnPMi4BIDm2khwlL1Y6IgiOpgssfMLdB0SLZRZdHDnf
-dxvR2/yvNC6kjv7kDmc//1QuU+5k/JjmP6Mvqm5NsccJBNpsnlqzN5oMtZVJOYXo
-TOLKcRg0iRwkBJeeL20Q0HgikZCRUpazlhX/6ec4dclFpi6IrVwCBwKMpas77nzf
-cfW6IDba/sygJw5Xhcbj0Tk+aBTJ0OPmrwopAYunLO6vykjzlf9bYpbwesbJ3cbN
-ra1yLxUPM0y0wdEmPpHxzUQrDnPvgDpn2N7wrQN0TFMWvoeII75kh2cB6nChVhaE
-Lx2R/4TupCwMQjUOyULNRN+2y9cNdVoOb34Jl/nXwHD6XlWywZhJKEo5+jTSkG3e
-dmaxZS1WfkrCHEAdRkXNNQTSBznXBu6+yiKEN4GQRvOeEHmSWSnT1cVChVh94KES
-XRnAabAIne4kTqpS2gNugj1DrRytD1k2i2ZCsj/gVy8Qe/AY0rLmjXMSQOLFxdkO
-z9BBuZSLpkOAVvfAFCXpkJFOF8VDd699oyppGOp3fJyqVGPC34qEmvXW6qHzyUFp
-DaB2C2HMPOU3/fCn3QlSoSga8yJgBIXLj9l32h3eJ6eGTa3iZ5I=
-=8dgG
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
