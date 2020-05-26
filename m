@@ -2,103 +2,93 @@ Return-Path: <SRS0=OzFb=7I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFF2C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 02:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0774C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 07:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 958AC207D8
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 02:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A0532068D
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 07:46:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jrwl5nQm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IhzaWHQ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388485AbgEZCnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 May 2020 22:43:10 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63446 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2388428AbgEZCnK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 22:43:10 -0400
-X-UUID: 4a9a0bf8295c41558350d89cd6b0d0ec-20200526
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=diGs7P/c4KSIhXYc7oj93Qp0T+jxxg9AoG2TnBsAgcc=;
-        b=jrwl5nQmSk9CjJiebW6NI+m7HX6Z/CkhYX75eqncInbLj+uu3ULF4PgQZrT4HmiPsohy2VUtzv0CoJ3sKRQEUU1d+4+OHss1CqFoIJKAlpjmWFAaojTFtUauOmKUwonHxraNNYw91ubXBD8QrMQhbQkZNovafXBsqlHGCPY2vv8=;
-X-UUID: 4a9a0bf8295c41558350d89cd6b0d0ec-20200526
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1215273139; Tue, 26 May 2020 10:43:06 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 26 May 2020 10:42:57 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 26 May 2020 10:43:03 +0800
-Message-ID: <1590460982.28324.17.camel@mtksdaap41>
-Subject: Re: [PATCH v1] clk: mediatek: assign the initial value to
- clk_init_data of mtk_mux
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Nicolas Boichat <drinkcat@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Owen Chen <owen.chen@mediatek.com>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-Date:   Tue, 26 May 2020 10:43:02 +0800
-In-Reply-To: <1abb3571-75ad-10d8-ff62-17be270b5b71@gmail.com>
-References: <1590388889-28382-1-git-send-email-weiyi.lu@mediatek.com>
-         <1abb3571-75ad-10d8-ff62-17be270b5b71@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S1731636AbgEZHqq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 03:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40596 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731446AbgEZHqp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 03:46:45 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABD21C03E97E;
+        Tue, 26 May 2020 00:46:45 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id u5so9625399pgn.5;
+        Tue, 26 May 2020 00:46:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9hP2gJKDW99uKK2ci16iXnlfh+TatIfa89bbfH5MoI4=;
+        b=IhzaWHQ1IZn6kk5fS4iMMRliwb3dMakoIny3kYQoKhPJfWBCrUDuqY1zF35nu+X3uM
+         IIMZHSik2wI24wf1Rbv55Zfau50NYOZqwT5E3HJ44qFUyMAbvbwjtiMrX7FzQXecd9kx
+         lGIyMAkM6o6NpxpWeGv6qArvRioOMHh8MYr9HAxc+AY0J3ndgjB/AAgwouQuApmwW/2x
+         0i5kA8i2KdLS9Cry6afAJIVKO38W+8pxUNG0/aCJmn9FuhIrJGeaz0t9TNXu05wmWp60
+         LvOyWZwuhdmVr8GBpjVVjopbyWV+x35/HsE+p0t5/nrUupNP/bELGe190S/g6BN5d+FF
+         rd4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9hP2gJKDW99uKK2ci16iXnlfh+TatIfa89bbfH5MoI4=;
+        b=uRmDtXbyOahAa3SYUMBb1yl32ZIAJT/jzxrwSvu/H4++4ktPLDGFq78CVrR9jwdLDj
+         InlBPtAb266AIyvad/S7ZyiqTPm/ruVQaSrfjRilRf7aOII9ni3BtA+qHJQl46tvvVqr
+         KP7NV4Txn1Z0fh/HOesSiZG6n9cNorbpL1OP8F3aYdRIV8vJspy1YONcGtLs7SjE4tvC
+         5aEOYZOC8+e/c8ePAocRgEv+QKOz06U4hVMwK8sE6fhTZ2GSOFdLuO+QR3MJQVBxe2Pq
+         7HGezlcNj2J5U5sFLpnKntNzqVgsAPx9wTcrzJ0D/q9i3G8XIWuIfuYoB9c65AwJyIUK
+         cvLA==
+X-Gm-Message-State: AOAM533pwkYb4tFmtHiOCjns4kthOd6+8zt4Zy+OLDzqX2LCSmczI3Nv
+        4U12wZ3MBCf/mdE22Jpe/D9e1ep9sZBZckXKoOc=
+X-Google-Smtp-Source: ABdhPJyxzAObFo2fGXgOG0DTaZEGiMDEiM/XhPzUWJLhBUpA9j5+1D9nbFN8JF/guHMeGKz5o2jOHBt1rP1W7jAGnnM=
+X-Received: by 2002:aa7:99c8:: with SMTP id v8mr17942364pfi.36.1590479205218;
+ Tue, 26 May 2020 00:46:45 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: DDDB6C0F3A8AA9AC19A3F7982F4108E532DADCCD36F602FF9C91EF042C7AAF1B2000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com> <1590378348-8115-7-git-send-email-dillon.minfei@gmail.com>
+In-Reply-To: <1590378348-8115-7-git-send-email-dillon.minfei@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 26 May 2020 10:46:33 +0300
+Message-ID: <CAHp75VebSZa6mwAETnM0t42RQCp4iM6_SNjmy3TB48ixsGKV8g@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] drm/panel: Add ilitek ili9341 panel driver
+To:     dillon.minfei@gmail.com,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTA1LTI1IGF0IDExOjA4ICswMjAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
-Og0KPiANCj4gT24gMjUvMDUvMjAyMCAwODo0MSwgV2VpeWkgTHUgd3JvdGU6DQo+ID4gSXQnZCBi
-ZSBkYW5nZXJvdXMgd2hlbiBzdHJ1Y3QgY2xrX2NvcmUgaGF2ZSBuZXcgbWVtZWJlcnMuDQo+ID4g
-QWRkIHRoZSBtaXNzaW5nIGluaXRpYWwgdmFsdWUgdG8gY2xrX2luaXRfZGF0YS4NCj4gPiANCj4g
-DQo+IFNvcnJ5IEkgZG9uJ3QgcmVhbGx5IHVuZGVyc3RhbmQgdGhpcyBjb21taXQgbWVzc2FnZSwg
-Y2FuIHBsZWFzZSBleHBsYWluLg0KPiBJbiBhbnkgY2FzZSBpZiB0aGlzIGlzIGEgcHJvYmxlbSwg
-dGhlbiB3ZSBwcm9iYWJseSB3ZSBzaG91bGQgZml4IGl0IGZvciBhbGwgZHJpdmVycy4NCj4gQXBh
-cnQgZnJvbSBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstY3B1bXV4LmMNCj4gDQoNCkFjdHVhbGx5
-LCB3ZSB3ZXJlIGxvb2tpbmcgaW50byBhbiBhbmRyb2lkIGtlcm5lbCBwYXRjaCAiQU5EUk9JRDog
-R0tJOg0KY2xrOiBBZGQgc3VwcG9ydCBmb3Igdm9sdGFnZSB2b3RpbmciIFsxXQ0KDQpJbiB0aGlz
-IHBhdGNoLCB0aGVyZSBhZGRzIGEgbmV3IG1lbWJlciBzdHJ1Y3QgY2xrX3ZkZF9jbGFzcwkqdmRk
-X2NsYXNzOw0KaW4gc3RydWN0IGNsa19pbml0X2RhdGEgYW5kIHN0cnVjdCBjbGtfY29yZQ0KDQpB
-bmQgdGhlbiBpbiBjbGtfcmVnaXN0ZXIoLi4uKQ0KY29yZS0+dmRkX2NsYXNzID0gaHctPmluaXQt
-PnZkZF9jbGFzczsNCg0KSW4gbWFueSBjbG9jayBBUElzLCBpdCB3aWxsIGNoZWNrIHRoZSBjb3Jl
-LT52ZGRfY2xhc3MgdG8gc2VsZWN0IHRoZQ0KY29ycmVjdCBjb250cm9sIGZsb3cuDQpTbywgaWYg
-d2UgZG9uJ3QgYXNzaWduIGFuIGluaXRpYWwgdmFsdWUgdG8gY2xrX2luaXRfZGF0YSBvZiBtdGtf
-bXV4DQpjbG9jayB0eXBlLCBzb21ldGhpbmcgbWlnaHQgZ28gd3JvbmcuIEFuZCBhc3NpZ25pbmcg
-YW4gaW5pdGlhbCB2YWx1ZQ0KbWlnaHQgYmUgdGhlIGVhc2llc3QgYW5kIGdvb2Qgd2F5IHRvIGF2
-b2lkIHN1Y2ggcHJvYmxlbSBpZiBhbnkgbmV3IGNsb2NrDQpzdXBwb3J0IGFkZGVkIGluIHRoZSBm
-dXR1cmUuDQoNClsxXSBodHRwczovL2FuZHJvaWQtcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vYy9r
-ZXJuZWwvY29tbW9uLysvMTI3ODA0Ng0KDQo+IEl0J3MgYSB3aWRlbHkgdXNlZCBwYXR0ZXJuOg0K
-PiAkIGdpdCBncmVwICJzdHJ1Y3QgY2xrX2luaXRfZGF0YSBpbml0OyJ8IHdjIC1sDQo+IDIzNQ0K
-PiANCj4gUmVnYXJkcywNCj4gTWF0dGhpYXMNCj4gDQo+ID4gRml4ZXM6IGEzYWU1NDk5MTdmMSAo
-ImNsazogbWVkaWF0ZWs6IEFkZCBuZXcgY2xrbXV4IHJlZ2lzdGVyIEFQSSIpDQo+ID4gQ2M6IDxz
-dGFibGVAdmdlci5rZXJuZWwub3JnPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlaXlpIEx1IDx3ZWl5
-aS5sdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
-ay1tdXguYyB8IDIgKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
-bGV0aW9uKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
-ay1tdXguYyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguYw0KPiA+IGluZGV4IDc2Zjlj
-ZDAuLjE0ZTEyN2UgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11
-eC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jDQo+ID4gQEAgLTE2
-MCw3ICsxNjAsNyBAQCBzdHJ1Y3QgY2xrICptdGtfY2xrX3JlZ2lzdGVyX211eChjb25zdCBzdHJ1
-Y3QgbXRrX211eCAqbXV4LA0KPiA+ICAJCQkJIHNwaW5sb2NrX3QgKmxvY2spDQo+ID4gIHsNCj4g
-PiAgCXN0cnVjdCBtdGtfY2xrX211eCAqY2xrX211eDsNCj4gPiAtCXN0cnVjdCBjbGtfaW5pdF9k
-YXRhIGluaXQ7DQo+ID4gKwlzdHJ1Y3QgY2xrX2luaXRfZGF0YSBpbml0ID0ge307DQo+ID4gIAlz
-dHJ1Y3QgY2xrICpjbGs7DQo+ID4gIA0KPiA+ICAJY2xrX211eCA9IGt6YWxsb2Moc2l6ZW9mKCpj
-bGtfbXV4KSwgR0ZQX0tFUk5FTCk7DQo+ID4gDQoNCg==
+On Mon, May 25, 2020 at 6:46 AM <dillon.minfei@gmail.com> wrote:
+>
+> From: dillon min <dillon.minfei@gmail.com>
+>
+>     This driver combine tiny/ili9341.c mipi_dbi_interface driver
+>     with mipi_dpi_interface driver, can support ili9341 with serial
+>     mode or parallel rgb interface mode by register configuration.
 
+Noralf told once that this driver should be unified with mi0283qt.c.
+
+So, what should we do here?
+
+-- 
+With Best Regards,
+Andy Shevchenko
