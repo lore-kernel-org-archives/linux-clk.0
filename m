@@ -2,89 +2,70 @@ Return-Path: <SRS0=OzFb=7I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B87C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 22:31:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F30C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 22:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7837220899
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 22:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590532303;
-	bh=JaJ0fRQffGLWXvi9iW/3gwF3Q7T0IAPPD4d1dHNNzfg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=teqerZj+/eCgRxdb0Qutxy/xsh3W4s0wr9weL1sNWcSKr9DxnZshfRf8bW0t9ef3E
-	 RTnWzH+9+bvglRyF62jtllezQMAkwkfnn6uVAzmhyEpehfv3b05/KXNdoFhXt3+Egr
-	 LDl6I9kc2YXXx8In5uWmT+jMs/EVpQhuH7ZtZUHk=
+	by mail.kernel.org (Postfix) with ESMTP id 42215208C3
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 22:41:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392135AbgEZWbk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 18:31:40 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:38706 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389482AbgEZWbj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 18:31:39 -0400
-Received: by mail-il1-f194.google.com with SMTP id q18so1019399ilm.5;
-        Tue, 26 May 2020 15:31:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=dG0yREiJ8rMigfSfPZSI5NcnyO0i13MGt4qNl+maJjs=;
-        b=sSOavBq+EiqYb0po4IJRVm3kNfb4S4G70gZcNhSpQpZSb9Bx9kFq+XIUZBFPT1BGAF
-         sP2GFLAYXB7UkMQvl9bZ/6kqTEWGHNC3oi/iUWxAC6SUjBa+6sGV49KOottVKgZ+0uAy
-         2WdLXxH/1p+OOnZAqPfZqr7RYZ8/BKisaIJVTiWuHbitWOGLzD7cxDDeZEQ9Rv/4fgNw
-         JmDyFoyhAizIhBApQ/1iNaHUpoJE2g7V03vP4dFysEUan5iqjUeVoJTW6SLNkgDY3Gur
-         iTYsJyR8dNVDxC4o7XemY+Bz5WsIMFUlf8l/2eWx5LdYUMbJk/MM/K8jj82DhaX1fmQW
-         11tg==
-X-Gm-Message-State: AOAM533AtlE8h6Y8FcOrUhu/R9Zl+QA1UIyvthVuPRPeTYMnCxL/rq49
-        S7vf0BsGOCU5l4HBEGbuKA==
-X-Google-Smtp-Source: ABdhPJwYDuX0YBr0ghAF5q2Z3W0G8nV9//YxCnJwp57gwK8cUcmcS4rq7IEJAlPQZESwfKHB2R+QCA==
-X-Received: by 2002:a92:b0d:: with SMTP id b13mr3323423ilf.225.1590532298662;
-        Tue, 26 May 2020 15:31:38 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id n21sm457321ioj.43.2020.05.26.15.31.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 15:31:38 -0700 (PDT)
-Received: (nullmailer pid 504590 invoked by uid 1000);
-        Tue, 26 May 2020 22:31:36 -0000
-Date:   Tue, 26 May 2020 16:31:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     linux-kernel@vger.kernel.org, Linux-imx@nxp.com,
-        shawnguo@kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, s.hauer@pengutronix.de,
-        mturquette@baylibre.com, festevam@gmail.com, kernel@pengutronix.de
-Subject: Re: [PATCH V5 5/5] dt-bindings: clock: Convert i.MX6UL clock to
- json-schema
-Message-ID: <20200526223136.GA504539@bogus>
-References: <1589328684-1397-1-git-send-email-Anson.Huang@nxp.com>
- <1589328684-1397-6-git-send-email-Anson.Huang@nxp.com>
+        id S2390554AbgEZWlX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 18:41:23 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34517 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389755AbgEZWlW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 18:41:22 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jdiG4-0002VP-Iz; Tue, 26 May 2020 22:41:16 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: versatile: remove redundant assignment to pointer clk
+Date:   Tue, 26 May 2020 23:41:16 +0100
+Message-Id: <20200526224116.63549-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589328684-1397-6-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 13 May 2020 08:11:24 +0800, Anson Huang wrote:
-> Convert the i.MX6UL clock binding to DT schema format using json-schema.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> Changes since V4:
-> 	- add descriptions for interrupts and each item of it.
-> ---
->  .../devicetree/bindings/clock/imx6ul-clock.txt     | 13 -----
->  .../devicetree/bindings/clock/imx6ul-clock.yaml    | 66 ++++++++++++++++++++++
->  2 files changed, 66 insertions(+), 13 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/imx6ul-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+The pointer clk is being initialized with a value that is never read
+and is being updated with a new value later on. The initialization
+is redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/versatile/clk-versatile.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/versatile/clk-versatile.c b/drivers/clk/versatile/clk-versatile.c
+index fd54d5c0251c..8ed7a179f651 100644
+--- a/drivers/clk/versatile/clk-versatile.c
++++ b/drivers/clk/versatile/clk-versatile.c
+@@ -56,7 +56,7 @@ static const struct clk_icst_desc versatile_auxosc_desc __initconst = {
+ static void __init cm_osc_setup(struct device_node *np,
+ 				const struct clk_icst_desc *desc)
+ {
+-	struct clk *clk = ERR_PTR(-EINVAL);
++	struct clk *clk;
+ 	const char *clk_name = np->name;
+ 	const char *parent_name;
+ 
+-- 
+2.25.1
+
