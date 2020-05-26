@@ -6,61 +6,70 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 872B8C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E744C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 66E4F20849
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:21:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD5B20B80
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590535283;
-	bh=B/D8/uZtiKLu2TUhAcx6w8Zxt89261ATSEoYhw3GLs8=;
+	s=default; t=1590535537;
+	bh=3VAu+XWIsGweeYZ+uYgB3cxi1cpn5/qaWPh5DXRYEBE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=nU5e6Cp47SC0DyoeAtLD65vreSx6uPmVpMD7rRIh+wLce0C+BQJPlELgnl+lStws0
-	 DIjwsdm/Lbaqdq+7naTDOUxJolVmPdMzKAMq726MTcALyrLw/kMlVYFohfG5hgA/Hy
-	 YBx65eQ6pI6viwsGAaxZFjW1JueJ9uT0gCP9T4LQ=
+	b=GJuDdajD2yp2KJVaYDWdcxzBazBAwqVSWwjP7umaJEofKo/Un+yTdwjzej95o8fKg
+	 sFGnUUMy/II9fvqmR09zTHQ7oex3S1vQFZ16Pupg8GTQK1XcWhzc4lh4ZF880v8Yqz
+	 gjUc70S/kZhqdWLE7bzNEwz/YOnRAreP76RhSW20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389325AbgEZXVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 19:21:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35958 "EHLO mail.kernel.org"
+        id S1725601AbgEZXZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 19:25:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36294 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389261AbgEZXVT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 19:21:19 -0400
+        id S1725265AbgEZXZg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 19:25:36 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1AE8206D5;
-        Tue, 26 May 2020 23:21:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01450206F1;
+        Tue, 26 May 2020 23:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590535278;
-        bh=B/D8/uZtiKLu2TUhAcx6w8Zxt89261ATSEoYhw3GLs8=;
+        s=default; t=1590535536;
+        bh=3VAu+XWIsGweeYZ+uYgB3cxi1cpn5/qaWPh5DXRYEBE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Po7IDX1lE+FxVS7Kh5l7yoQkShihjFBhk8l8iJnSVegD8GzK3MR5ZIfPdzzZoUlR9
-         k5CGbT2g1ntSIH6rlawkZPqnMwmjZnU3bjQQRsbrE6QP4tVi6dKNf6X3gsvIqxAJyZ
-         Abn/mfJ2Yx8ut8Rph6Ce+wvwcHsjsJvgQP6P2jHM=
+        b=pQit+cEq1GaFUW3N5qn+cylwgFDCIUfY+UfMF4Y0iS5MGJ18Gw7ohWvqMZ3Ns9bkN
+         +4HD9tZ0rTkfFJ32hkpiuC6V3j1Mr9VhcD0Ngtj3yON1xXnar34j5kBVvh3y9EEwAA
+         ae3ENhP3DN/v5+KJurim6Xj6Enfnc2iQOiSykABo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200524210615.17035-2-jonathan@marek.ca>
-References: <20200524210615.17035-1-jonathan@marek.ca> <20200524210615.17035-2-jonathan@marek.ca>
-Subject: Re: [PATCH 01/10] clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
+In-Reply-To: <20200518081644.23683-1-geert+renesas@glider.be>
+References: <20200518081644.23683-1-geert+renesas@glider.be>
+Subject: Re: [PATCH v2] dt-bindings: clock: renesas: cpg: Convert to json-schema
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Date:   Tue, 26 May 2020 16:21:18 -0700
-Message-ID: <159053527806.88029.14584721858766224777@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 26 May 2020 16:25:35 -0700
+Message-ID: <159053553529.88029.4978813116099634278@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Marek (2020-05-24 14:06:02)
-> 0x44 isn't a register offset, it is the value that goes into CAL_L_VAL.
+Quoting Geert Uytterhoeven (2020-05-18 01:16:44)
+> Convert the Renesas Clock Pulse Generator (CPG) Device Tree
+> binding documentation to json-schema, combining support for:
+>   - R-Mobile APE6 (R8A73A4) and A1 (R8A7740),
+>   - R-Car M1 (R8A7778) and H1 (R8A7779),
+>   - RZ/A1 (R7S72100),
+>   - SH-Mobile AG5 (SH73A0).
 >=20
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> Keep the example for R-Mobile A1, which shows most properties.
+> Drop the consumer examples, as they do not belong here.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
-Any fixes tag?
+Acked-by: Stephen Boyd <sboyd@kernel.org>
