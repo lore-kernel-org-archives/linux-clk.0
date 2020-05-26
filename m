@@ -6,81 +6,90 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6641EC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86537C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3E08C2078C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:05:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD78207D3
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 23:06:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590534343;
-	bh=e2QX2PER2r0ACcoealfB5rbpO8NhJ+Emjfw22FjXdyc=;
+	s=default; t=1590534418;
+	bh=Mrrxu5rbrEWO+ye/Jf6HWnjx+C15G0oR591gYkxr2wo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YKm+C7pcMtC+eeDdRXrKtQI+0lfCB3H+2bx9Wpv1hQZgGqLhLJ8QJPVCMB6fcj5xM
-	 bd92lYrek0h/Ct1q1SbHixVMsMMN90tuzlcygRlbGLACFsC5aNyq/n+/7BvVpsUjwK
-	 br+Ge1cRnfKGJmc3/M34GDRXrrM4TYUmwgh5Mops=
+	b=WM0SpgKGX1Xbf9JJN1sPe33jE4Z5h0UtPoy8/gFk32cEpfUiI1AxfQ89tAmsHcGoA
+	 DMKu1m3PnU0CFcq3RZgrvlTdWqbeImukl6L16wbrtIGait8u6qDBPS1ayt6bzVrBMX
+	 X0D+Q2aHvvl7MMPPB/I+R469DxbexIheLQCDT5Ec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390996AbgEZXFn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 19:05:43 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:43073 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389565AbgEZXFm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 19:05:42 -0400
-Received: by mail-il1-f194.google.com with SMTP id l20so22164998ilj.10;
-        Tue, 26 May 2020 16:05:41 -0700 (PDT)
+        id S2390478AbgEZXG6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 19:06:58 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:36399 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389802AbgEZXG5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 19:06:57 -0400
+Received: by mail-io1-f65.google.com with SMTP id y18so3502692iow.3;
+        Tue, 26 May 2020 16:06:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=2oYPgM1BtR439Mfpid4h6QvwH7miODS6soRM9HPdtmM=;
-        b=VeqJDgrql00O53CQ8fGVzNG/iYrcwCF1W1FS6VkiyYTS+Ry2BSJsVhNsg0CMa/uloJ
-         whNPE2AvQ9u4Lr+CDh0rAk+kq+rWzBa2u9/jg0DGKC76A+IHS7VRjtEfMQzK5lzlwnbR
-         QNXKVWzXZvZ5zXXbL1qHShC8gtxZv/HBOjcVLjEMtTHkWR3Qt+kMDXgItsZ3UtVckpN5
-         TeGAj4+znjxi++5jvkOWcPxWzM3KPJ3J4csu+p9y5GnFCLWgtG/2Mu3OZ95Cg32lNXrh
-         tVwESVhDu0qxJPvMHJbNR49KAH5CeDfrtQkKJE98phFTaDIRwHBBeKjR2tg/OuKAXNLY
-         AQxQ==
-X-Gm-Message-State: AOAM531JCwHaK7XZQQE+MKIr7itlhsiJe+GSyEWnkWnWFcD0aUope0wv
-        +PZHZF8fi6eF7+N/T5DomQ==
-X-Google-Smtp-Source: ABdhPJyBcSvWgTEJyZu7WnBFc0wCdUtMbWcguCU5wrtNSwGUZAEBzYVIN4zA/3rvIXr6KxxEurglbw==
-X-Received: by 2002:a92:c742:: with SMTP id y2mr3207192ilp.126.1590534341592;
-        Tue, 26 May 2020 16:05:41 -0700 (PDT)
+        bh=qM7yTTkdzgug0yRlfKz1J9d+bTctskYEmlS+YtPQUx0=;
+        b=Hfe5jJZchQp8XxbQ/bQTbhliu6gGjU9T16K2/1rfBMxWlc1TFYxDVXqsWB7prbSc0P
+         CW667+eHmAA1bPwGSgET4mwlM6MQKVGHRbWEkdH1Xn7TEpFDzjIG/nsQMRkXzbeOf01H
+         DOePZ6ZraYCSzJFnEnSYekCFz699D+9H2z+jaQdFfkRPIEIJIbXr1U0QtrNBk58es5mV
+         TzCqT6J13o7i6+1EXuEcxDjFHTZSWzekGQZtcNkcWYbhx9VwANjdLA9MX3Dk5ijTK4id
+         elKzWukPdtuYyqoSzYoqXaMgN3au6gIY9eDtAaBKHicFcSq88FncWr+zhjGo5Fs5G8nF
+         j4qA==
+X-Gm-Message-State: AOAM532STG1SLIspTPazuP7e0u3XUwl5eEHWMtIAqcqbuSRkHnBd4dpg
+        nNnXtVcEG8szv3a0J3hU88NcnM4=
+X-Google-Smtp-Source: ABdhPJyliFM4XLARzE8rOlqfLPrXTbRE98ugFuGjKDNnMdP2uaXdGeeFWhb3mLqV1iWF0F+VV0o1kg==
+X-Received: by 2002:a02:3406:: with SMTP id x6mr32885jae.24.1590534416486;
+        Tue, 26 May 2020 16:06:56 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id 4sm722115ilc.34.2020.05.26.16.05.40
+        by smtp.gmail.com with ESMTPSA id l21sm737449ili.8.2020.05.26.16.06.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 May 2020 16:05:41 -0700 (PDT)
-Received: (nullmailer pid 558228 invoked by uid 1000);
-        Tue, 26 May 2020 23:05:40 -0000
-Date:   Tue, 26 May 2020 17:05:40 -0600
+        Tue, 26 May 2020 16:06:56 -0700 (PDT)
+Received: (nullmailer pid 560264 invoked by uid 1000);
+        Tue, 26 May 2020 23:06:55 -0000
+Date:   Tue, 26 May 2020 17:06:55 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 09/13] dt-bindings: clock: Make marvell,mmp2-clock a
- power controller
-Message-ID: <20200526230540.GA557537@bogus>
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 12/13] dt-bindings: clock: Add Marvell MMP Audio Clock
+ Controller binding
+Message-ID: <20200526230655.GA559890@bogus>
 References: <20200519224151.2074597-1-lkundrak@v3.sk>
- <20200519224151.2074597-10-lkundrak@v3.sk>
+ <20200519224151.2074597-13-lkundrak@v3.sk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200519224151.2074597-10-lkundrak@v3.sk>
+In-Reply-To: <20200519224151.2074597-13-lkundrak@v3.sk>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 20, 2020 at 12:41:47AM +0200, Lubomir Rintel wrote:
-> This is a binding for the MMP2 power management units. As such apart from
-> providing the clocks, they also manage the power islands.
+On Wed, 20 May 2020 00:41:50 +0200, Lubomir Rintel wrote:
+> This describes the bindings for a controller that generates master and bit
+> clocks for the I2S interface.
 > 
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > 
 > ---
-> Changes since v2:
-> - Added this patch
+> Changes since v1:
+> - Fix commit message wording
+> - Define MMP2_CLK_AUDIO_NR_CLKS
+> - Make clock ids start at 0, not 1
+> - Fix dt-bindings/clock/marvell,mmp2-audio.h file name
+> - Rename node from "clocks" to "clock-controller"
 > 
->  .../devicetree/bindings/clock/marvell,mmp2-clock.yaml        | 5 +++++
->  1 file changed, 5 insertions(+)
+>  .../clock/marvell,mmp2-audio-clock.yaml       | 74 +++++++++++++++++++
+>  .../dt-bindings/clock/marvell,mmp2-audio.h    | 10 +++
+>  2 files changed, 84 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/marvell,mmp2-audio-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/marvell,mmp2-audio.h
+> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
