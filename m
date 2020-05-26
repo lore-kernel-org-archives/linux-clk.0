@@ -2,96 +2,111 @@ Return-Path: <SRS0=OzFb=7I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8749C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 09:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F5DC433E1
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 09:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A92D5207CB
-	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 09:19:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590484766;
-	bh=pQ9fSIsd2546ytSpDQuQx2cfrsXYFihGA5BoJ2QU+ds=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
-	b=mypbXo7YGN1704+hyDiwOazXBQ5WpYzAsqy2pCd6P3+dcOMFjSo1ZkPscoCET2AIE
-	 V9+FLTEWNrvuly2cSp/OGW9y5/kelc/d3GCgbTaAXc/gi8aNeEiOh8jEIZRYIkgQZq
-	 A8BHCDzfpKsaue9+RGmT/QPLGP2O/SEzIwrPct2E=
+	by mail.kernel.org (Postfix) with ESMTP id 73D83205CB
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 09:37:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nexus-software-ie.20150623.gappssmtp.com header.i=@nexus-software-ie.20150623.gappssmtp.com header.b="FNc4aIV0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731749AbgEZJTV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 05:19:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57572 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731600AbgEZJTU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 05:19:20 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A7C82073B;
-        Tue, 26 May 2020 09:19:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590484760;
-        bh=pQ9fSIsd2546ytSpDQuQx2cfrsXYFihGA5BoJ2QU+ds=;
-        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-        b=n+3mDJ0XDwFUiVHYZkKbTC2uE5yIjCtnlRYbS8jwqSCDc7Cui5pUHoUegUZePsW4s
-         WYWFddgcOpEBwGbXLF71WExMKCgY+mOfSOpeozhUTOWCMV8y+uE4U2O1rnDSa+oHvG
-         LIzJVsrejlOYQFvW4u31p/rSDKJa9NMjmAPjb++4=
-Date:   Tue, 26 May 2020 10:19:17 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     "dillon.minfei@gmail.com" <dillon.minfei@gmail.com>,
-        linus.walleij@linaro.org
-Cc:     linux-stm32@st-md-mailman.stormreply.com,
-        linux-spi@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
-In-Reply-To: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com>
-References: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com>
-Subject: Re: [PATCH v5 0/8] Enable ili9341 and l3gd20 on stm32f429-disco
-Message-Id: <159048475756.7363.2129939912077382888.b4-ty@kernel.org>
+        id S2388468AbgEZJhr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 05:37:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57778 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388464AbgEZJhq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 05:37:46 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97F91C08C5C3
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2020 02:37:45 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id j16so7272138wrb.7
+        for <linux-clk@vger.kernel.org>; Tue, 26 May 2020 02:37:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=nexus-software-ie.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zKgkx1RN+yOQz5t5MmLQDLEnUMA9zwlAKS6pKOreKZY=;
+        b=FNc4aIV0nhulL4pN4Z88kKa4a79yXjgO7FI8T76etE4vtRUUh9t/HH+YRM7VFHS2ay
+         n/0LqPWK9UNVH2Bo5dEVeRHWvrn9fdBi/z1hUfb4jujqGmcwAfK/QDngGUkWTLdrndf1
+         wDucR67QFkeCQd6TGpLQNakoGmVGAW5tGG/DWWSwlGcL+CG0VhJB2QhjW1NK0XlUUjE7
+         Ni/VX5WekMngIpi6qy6WlEHLTXQ1TweR2TG+w+B4Nq0qjvxFf7LB0FYa60tPDK+Z/hTq
+         dMmrq1HFfkc06E/JUaNF6K5/iPT/K3W3d51vq/yLUXYz/p3/t31o1IeGTczThkCuX9NC
+         7xoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zKgkx1RN+yOQz5t5MmLQDLEnUMA9zwlAKS6pKOreKZY=;
+        b=kpoalDoiByuzsJK5pV145JVuko4SXVZQKLLBb5Jhyhh30jFjqifoiytEW7dqObcFkC
+         +mTloR3BpMukMLejynOeHO1DgR4czv8TBlv7J3CgunPLfjGCu8t/lRpWjQlIqoghUYEx
+         0oxQGA7gJtz/JfhMe0pq0dPx7cx2sJOK5aEZGiI/w4VxJpbpfGdKkOXj8+sxXnnGfBpy
+         lgyE76D1vDwaQTwlSh9WUwf8ZOAO1EGHlOTh6m+zZwxjRsG7zJslZmrq+lHfX5cOftrp
+         pC+xegmK/tzoY83QuRGvfD1O2P8ilBRItnP+Oyi/bY7fxr8gBgIo447ShJMWwnCivJy2
+         pgcw==
+X-Gm-Message-State: AOAM53012lPChzvXe2x9h42DPkw4PuxjyRUvtXz3K6mgwTEkVwHmhFL8
+        tQnYuMHrEQVYtJ8xLh2Pj9JIbA==
+X-Google-Smtp-Source: ABdhPJzfEXYdCF/DEyjlvvWvfNcMNSgFSqWgMZJUcODo9tJ+VjhsEhG1votkhojXE9haIoAN3q15Tw==
+X-Received: by 2002:a5d:4d01:: with SMTP id z1mr18065341wrt.29.1590485864008;
+        Tue, 26 May 2020 02:37:44 -0700 (PDT)
+Received: from [192.168.0.38] ([176.61.57.127])
+        by smtp.gmail.com with ESMTPSA id b185sm388031wmd.3.2020.05.26.02.37.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 26 May 2020 02:37:43 -0700 (PDT)
+Subject: Re: [PATCH v5 2/2] clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock
+ Controller
+To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org, robh+dt@kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        shawn.guo@linaro.org, p.zabel@pengutronix.de,
+        vincent.knecht@mailoo.org, konradybcio@gmail.com
+References: <20200517131348.688405-1-bryan.odonoghue@linaro.org>
+ <20200517131348.688405-3-bryan.odonoghue@linaro.org>
+From:   Bryan O'Donoghue <pure.logic@nexus-software.ie>
+Message-ID: <af35d732-08bf-fe95-3c98-063b32fe992a@nexus-software.ie>
+Date:   Tue, 26 May 2020 10:38:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.5.0
+MIME-Version: 1.0
+In-Reply-To: <20200517131348.688405-3-bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 25 May 2020 11:45:40 +0800, dillon.minfei@gmail.com wrote:
-> V5's update based on Mark Brown's suggestion, use 'SPI_MASTER_MUST_RX'
-> for SPI_SIMPLEX_RX mode on stm32 spi controller.
+On 17/05/2020 14:13, Bryan O'Donoghue wrote:
+> This patch adds support for the MSM8939 GCC. The MSM8939 is based on the
+> MSM8916. MSM8939 is compatible in several ways with MSM8916 but, has
+> additional functional blocks added which require additional PLL sources. In
+> some cases functional blocks from the MSM8916 have different clock sources
+> or different supported frequencies.
 > 
-> V5:
-> 1 instead of add send dummy data out under SIMPLEX_RX mode,
->    add flags 'SPI_CONTROLLER_MUST_TX' for stm32 spi driver
-> 2 bypass 'SPI_CONTROLLER_MUST_TX' and 'SPI_CONTROLLER_MUST_RX' under
-> 'SPI_3WIRE' mode
-> 
-> [...]
+> Cc: Andy Gross <agross@kernel.org>
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
+> Tested-by: Vincent Knecht <vincent.knecht@mailoo.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-Applied to
+ping
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+just sending a reminder on this one
 
-Thanks!
-
-[1/2] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX' support for stm32f4
-      commit: 61367d0b8f5edf5146059ba8b79ce4e4485340b2
-[2/2] spi: flags 'SPI_CONTROLLER_MUST_RX' and 'SPI_CONTROLLER_MUST_TX' can't be coexit with 'SPI_3WIRE' mode
-      commit: aee67fe879e5030a2f5e1d9af3cb5b2a1027e78a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
