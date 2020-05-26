@@ -1,107 +1,104 @@
-Return-Path: <SRS0=dPrR=7H=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=OzFb=7I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6984CC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 21:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFF2C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 02:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4D33D2071C
-	for <linux-clk@archiver.kernel.org>; Mon, 25 May 2020 21:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 958AC207D8
+	for <linux-clk@archiver.kernel.org>; Tue, 26 May 2020 02:43:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="jrwl5nQm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389242AbgEYVwu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 May 2020 17:52:50 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:32951 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389092AbgEYVwt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 17:52:49 -0400
-Received: from mail-qk1-f178.google.com ([209.85.222.178]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MHWzP-1jqlHq1QJt-00DaxZ; Mon, 25 May 2020 23:52:47 +0200
-Received: by mail-qk1-f178.google.com with SMTP id w3so13173217qkb.6;
-        Mon, 25 May 2020 14:52:47 -0700 (PDT)
-X-Gm-Message-State: AOAM532dBVGiJkStP64p4jc+69s4sum8zw9ngUIACcv/U9YQd9cDUdiR
-        h1X0pOOKvAAIq97XRzmop5ZFGrHT3zm+ygkjxoA=
-X-Google-Smtp-Source: ABdhPJy+xHghXFmMlIvXmBRJxJZ2x5N0RRarCPcbtKCSzDVGCRYiV7Cm/MjIMfxIPBg33mUpBL3hSsl3q6ZIFHDOEio=
-X-Received: by 2002:a37:908:: with SMTP id 8mr14677582qkj.3.1590443566109;
- Mon, 25 May 2020 14:52:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200515145311.1580134-1-thierry.reding@gmail.com> <20200515145311.1580134-8-thierry.reding@gmail.com>
-In-Reply-To: <20200515145311.1580134-8-thierry.reding@gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 25 May 2020 23:52:30 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
-Message-ID: <CAK8P3a0kqjt8UNxe2ruRDOJNedOcqWxP-i5y2uW6YsaMNJgejg@mail.gmail.com>
-Subject: Re: [GIT PULL 07/11] memory: tegra: Changes for v5.8-rc1
-To:     Thierry Reding <thierry.reding@gmail.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        "open list:TEGRA ARCHITECTURE SUPPORT" <linux-tegra@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S2388485AbgEZCnK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 May 2020 22:43:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:63446 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388428AbgEZCnK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 May 2020 22:43:10 -0400
+X-UUID: 4a9a0bf8295c41558350d89cd6b0d0ec-20200526
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=diGs7P/c4KSIhXYc7oj93Qp0T+jxxg9AoG2TnBsAgcc=;
+        b=jrwl5nQmSk9CjJiebW6NI+m7HX6Z/CkhYX75eqncInbLj+uu3ULF4PgQZrT4HmiPsohy2VUtzv0CoJ3sKRQEUU1d+4+OHss1CqFoIJKAlpjmWFAaojTFtUauOmKUwonHxraNNYw91ubXBD8QrMQhbQkZNovafXBsqlHGCPY2vv8=;
+X-UUID: 4a9a0bf8295c41558350d89cd6b0d0ec-20200526
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1215273139; Tue, 26 May 2020 10:43:06 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 26 May 2020 10:42:57 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 26 May 2020 10:43:03 +0800
+Message-ID: <1590460982.28324.17.camel@mtksdaap41>
+Subject: Re: [PATCH v1] clk: mediatek: assign the initial value to
+ clk_init_data of mtk_mux
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Nicolas Boichat <drinkcat@chromium.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
+        James Liao <jamesjj.liao@mediatek.com>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        Owen Chen <owen.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 26 May 2020 10:43:02 +0800
+In-Reply-To: <1abb3571-75ad-10d8-ff62-17be270b5b71@gmail.com>
+References: <1590388889-28382-1-git-send-email-weiyi.lu@mediatek.com>
+         <1abb3571-75ad-10d8-ff62-17be270b5b71@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:tL126tmUHCvaHT298oNszCXfK7n0l3iszztIPEXHTV2lTw5Ghe+
- s+VzLI0AlsllhMABj65Ch5pI0MJvkNi4B+d0ppFIPzCZ0eYiNZ56/mEAWKaGB1H9UmVCPfc
- TUPStrCTAVMu80i5MQ9M/uF+dGl4tylOOm9eDoEtt6mUePLPbscA5yY8m3VQKx0lulsp//5
- 5THbAtbRXoKbO+DlSKz9g==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:qINHKYyHzE4=:cQrDru2FmBaobTlrOeA2Yk
- mBbtxkRxpclfSTTMHpXYwzzNSRpCaX7nn+YDYAAhbR0wnF7QFA6jcoVpTrfavVvrYGndItXZK
- 3GKdnatRAoOgOO+8q92jPntMLjYzstcWLMj29eUSnVfk20DIwDUO1wAmVmabXmxG2rpyGlkdC
- J2h5ak7/8iMR5DCy7dAQdUAfA9BUIc6gFk59CSrXctbzVRIgSepVeIMH5ZDcelzC4bbiRzbRz
- VGAmOJpGuWozKzGCil2JXc63uhxFdwc99p0DAYYdY3bnRXmJOyiB4jTGEBRV21uRr/Igy7oUT
- zrbYfXYEn1XrPZvlJFqXEg99fQUE/ySV0aWdZMfj+zWt9h6FIaQZ4JsgxAbJVAhTsQ3WAtN1U
- HAbQlPPKqEHPhuJUWcI8sSOIuiaOzjwVfbrDc+3m8KeNXDRXwKQnU7i2aLH+TfKI3Ct8PXi9F
- ek5mlb9jppmZRGyyYnNapYVtc1QGrtVzyP8UXMF9p8rapKmFNPZu1NqAlIJ7+FxE9FtX4hsi1
- DmPq1zJsmuVkAtr2jknNS9hrjQiVOYpr+fIH8qs/sqtR9s735rB86zOxYAlGcuw6GDlG7L348
- Bcvdo1G5oTP8fBlovd+sM5F+7n9JW+xDSjwX5ut43/J0foLTrCVHpzg6VI0PGbZzgnYQijIPA
- iKmS5EsUU0gHpVYxsJqbKBp4tuqPvWfKgFFpFu/gs8OYk5GyTZ9G2ukX5xXTS2LQ0wFBSqLKn
- k2fDoCuQlb97dLyHzoHIcRvXwTFIANY2uwX0tRR7l3b4yQA3H53/LFBUyq5re0F4mXVaLKC5d
- +z0/lQy58lH5IJzPsPpURW9MqN1CF/C8SNI1f/Aoo0BvVZwKVg=
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+X-TM-SNTS-SMTP: DDDB6C0F3A8AA9AC19A3F7982F4108E532DADCCD36F602FF9C91EF042C7AAF1B2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 15, 2020 at 4:53 PM Thierry Reding <thierry.reding@gmail.com> wrote:
+T24gTW9uLCAyMDIwLTA1LTI1IGF0IDExOjA4ICswMjAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
+Og0KPiANCj4gT24gMjUvMDUvMjAyMCAwODo0MSwgV2VpeWkgTHUgd3JvdGU6DQo+ID4gSXQnZCBi
+ZSBkYW5nZXJvdXMgd2hlbiBzdHJ1Y3QgY2xrX2NvcmUgaGF2ZSBuZXcgbWVtZWJlcnMuDQo+ID4g
+QWRkIHRoZSBtaXNzaW5nIGluaXRpYWwgdmFsdWUgdG8gY2xrX2luaXRfZGF0YS4NCj4gPiANCj4g
+DQo+IFNvcnJ5IEkgZG9uJ3QgcmVhbGx5IHVuZGVyc3RhbmQgdGhpcyBjb21taXQgbWVzc2FnZSwg
+Y2FuIHBsZWFzZSBleHBsYWluLg0KPiBJbiBhbnkgY2FzZSBpZiB0aGlzIGlzIGEgcHJvYmxlbSwg
+dGhlbiB3ZSBwcm9iYWJseSB3ZSBzaG91bGQgZml4IGl0IGZvciBhbGwgZHJpdmVycy4NCj4gQXBh
+cnQgZnJvbSBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstY3B1bXV4LmMNCj4gDQoNCkFjdHVhbGx5
+LCB3ZSB3ZXJlIGxvb2tpbmcgaW50byBhbiBhbmRyb2lkIGtlcm5lbCBwYXRjaCAiQU5EUk9JRDog
+R0tJOg0KY2xrOiBBZGQgc3VwcG9ydCBmb3Igdm9sdGFnZSB2b3RpbmciIFsxXQ0KDQpJbiB0aGlz
+IHBhdGNoLCB0aGVyZSBhZGRzIGEgbmV3IG1lbWJlciBzdHJ1Y3QgY2xrX3ZkZF9jbGFzcwkqdmRk
+X2NsYXNzOw0KaW4gc3RydWN0IGNsa19pbml0X2RhdGEgYW5kIHN0cnVjdCBjbGtfY29yZQ0KDQpB
+bmQgdGhlbiBpbiBjbGtfcmVnaXN0ZXIoLi4uKQ0KY29yZS0+dmRkX2NsYXNzID0gaHctPmluaXQt
+PnZkZF9jbGFzczsNCg0KSW4gbWFueSBjbG9jayBBUElzLCBpdCB3aWxsIGNoZWNrIHRoZSBjb3Jl
+LT52ZGRfY2xhc3MgdG8gc2VsZWN0IHRoZQ0KY29ycmVjdCBjb250cm9sIGZsb3cuDQpTbywgaWYg
+d2UgZG9uJ3QgYXNzaWduIGFuIGluaXRpYWwgdmFsdWUgdG8gY2xrX2luaXRfZGF0YSBvZiBtdGtf
+bXV4DQpjbG9jayB0eXBlLCBzb21ldGhpbmcgbWlnaHQgZ28gd3JvbmcuIEFuZCBhc3NpZ25pbmcg
+YW4gaW5pdGlhbCB2YWx1ZQ0KbWlnaHQgYmUgdGhlIGVhc2llc3QgYW5kIGdvb2Qgd2F5IHRvIGF2
+b2lkIHN1Y2ggcHJvYmxlbSBpZiBhbnkgbmV3IGNsb2NrDQpzdXBwb3J0IGFkZGVkIGluIHRoZSBm
+dXR1cmUuDQoNClsxXSBodHRwczovL2FuZHJvaWQtcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20vYy9r
+ZXJuZWwvY29tbW9uLysvMTI3ODA0Ng0KDQo+IEl0J3MgYSB3aWRlbHkgdXNlZCBwYXR0ZXJuOg0K
+PiAkIGdpdCBncmVwICJzdHJ1Y3QgY2xrX2luaXRfZGF0YSBpbml0OyJ8IHdjIC1sDQo+IDIzNQ0K
+PiANCj4gUmVnYXJkcywNCj4gTWF0dGhpYXMNCj4gDQo+ID4gRml4ZXM6IGEzYWU1NDk5MTdmMSAo
+ImNsazogbWVkaWF0ZWs6IEFkZCBuZXcgY2xrbXV4IHJlZ2lzdGVyIEFQSSIpDQo+ID4gQ2M6IDxz
+dGFibGVAdmdlci5rZXJuZWwub3JnPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlaXlpIEx1IDx3ZWl5
+aS5sdUBtZWRpYXRlay5jb20+DQo+ID4gLS0tDQo+ID4gIGRyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
+ay1tdXguYyB8IDIgKy0NCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRl
+bGV0aW9uKC0pDQo+ID4gDQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
+ay1tdXguYyBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdXguYw0KPiA+IGluZGV4IDc2Zjlj
+ZDAuLjE0ZTEyN2UgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11
+eC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5jDQo+ID4gQEAgLTE2
+MCw3ICsxNjAsNyBAQCBzdHJ1Y3QgY2xrICptdGtfY2xrX3JlZ2lzdGVyX211eChjb25zdCBzdHJ1
+Y3QgbXRrX211eCAqbXV4LA0KPiA+ICAJCQkJIHNwaW5sb2NrX3QgKmxvY2spDQo+ID4gIHsNCj4g
+PiAgCXN0cnVjdCBtdGtfY2xrX211eCAqY2xrX211eDsNCj4gPiAtCXN0cnVjdCBjbGtfaW5pdF9k
+YXRhIGluaXQ7DQo+ID4gKwlzdHJ1Y3QgY2xrX2luaXRfZGF0YSBpbml0ID0ge307DQo+ID4gIAlz
+dHJ1Y3QgY2xrICpjbGs7DQo+ID4gIA0KPiA+ICAJY2xrX211eCA9IGt6YWxsb2Moc2l6ZW9mKCpj
+bGtfbXV4KSwgR0ZQX0tFUk5FTCk7DQo+ID4gDQoNCg==
 
->
-> ----------------------------------------------------------------
-> memory: tegra: Changes for v5.8-rc1
->
-> Contains a few cleanup patches and an implementation to scale the EMC
-> frequency on Tegra210 systems.
-
-I don't mind taking the memory driver patches, but it seems odd that this
-pull request has so many drivers/clk changes but does not mention that
-in the pull request, and does not Cc the clk maintainers or include Acks
-from them.
-
-I would assume that the reason for this is that you have based
-the memory controller changes on a branch that was already
-accepted by the clk maintainers in to their tree, but when you do that
-please be more explicit so I know what is going on.
-
-Waiting for clarification before I can pull this.
-
-      Arnd
-
-> Dmitry Osipenko (9):
->       dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
->       clk: tegra: Add custom CCLK implementation
->       clk: tegra: pll: Add pre/post rate-change hooks
->       clk: tegra: cclk: Add helpers for handling PLLX rate changes
->       clk: tegra20: Use custom CCLK implementation
->       clk: tegra30: Use custom CCLK implementation
-
-> Joseph Lo (7):
->       dt-bindings: memory: tegra: Add external memory controller binding for Tegra210
->       clk: tegra: Add PLLP_UD and PLLMB_UD for Tegra210
->       clk: tegra: Export functions for EMC clock scaling
->       clk: tegra: Implement Tegra210 EMC clock
->       clk: tegra: Remove the old emc_mux clock for Tegra210
