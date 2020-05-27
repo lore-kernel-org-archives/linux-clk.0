@@ -2,123 +2,120 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F62BC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 13:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2985C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 14:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 21EB32078B
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 13:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57D5207D8
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 14:13:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387771AbgE0Nk4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 09:40:56 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:54367 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387627AbgE0Nk4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 09:40:56 -0400
-Received: from localhost.localdomain ([149.172.98.151]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1MxHLs-1ipQ2O23r6-00xZeZ; Wed, 27 May 2020 15:40:44 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: versatile: undo some dependency changes
-Date:   Wed, 27 May 2020 15:40:33 +0200
-Message-Id: <20200527134043.807045-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.26.2
+        id S1729655AbgE0ON0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 10:13:26 -0400
+Received: from out29-195.mail.aliyun.com ([115.124.29.195]:51036 "EHLO
+        out29-195.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726069AbgE0ONZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 10:13:25 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07963113|-1;CH=blue;DM=|OVERLOAD|false|;DS=CONTINUE|ham_regular_dialog|0.0599157-0.000270983-0.939813;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16367;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HePcScp_1590588801;
+Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HePcScp_1590588801)
+          by smtp.aliyun-inc.com(10.147.42.241);
+          Wed, 27 May 2020 22:13:22 +0800
+Subject: Re: [PATCH v10 3/6] dt-bindings: clock: Add X1830 bindings.
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
+References: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
+ <20200526144044.71413-5-zhouyanjie@wanyeetech.com>
+ <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <0b9b0be5-ed49-d113-6296-787f496f241a@wanyeetech.com>
+Date:   Wed, 27 May 2020 22:13:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:oX8d96/3agk6HQYMnHtVprdFalOQlNymeCToneAXooVriuWLRR+
- c/h+AwhIj6fC9vUzuz5Aa2eLCM3DNnwR+1QROcwAEUOdv4Lulkj+kNPH+g7+VS00QAnl+gr
- c/dD0CTtn4iEhMxVhrytOTGK3BdJav61Y5VWmm06MbbfbRJF+wr0RM02TJCmEuNKu6GocqM
- fVPA8dCdLvlOl5QyMJoIg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:8aMReIkVdqU=:yhFX2lu64OasDPFeHhky3H
- IC/WFCqnWvNVHYf5ttpwJsFmp8RmKdFCdbWyOd18oY93TMgMHBSi8BG4PNcmAcoOCzQbTAjVe
- 2n0FO4gp/b8z0cbzciNh1NhDV0DzamUtNPfAS8PAhkfrmKZw8elLwnUZMZOT7mBFEkOgGvNzZ
- ThhEgJyTv2JKI3sgBiQKIbZb8GRfvZJ3uGyje0aDEnZvabf/qwD8lcTjl9Ke1tA3R3Uli1pIv
- YoMV4J4lZrUpvBNy8Hszb8VvYzzsmcfUTxRdAdpHfd6a6WiVtbzPYQCTCu0UYPfSgoXCDkm6k
- Bl9xZ1P2tqJTpSTlI7fKnvmoU/cyRIE/E3ra0bIx1xIbMaptle12QYTc16RCVzmhe62aBMJ7J
- Ml2ZBk2UrFyq8fbq0BoH6b/xnigNotBVskzXNTlpg+GA5iAgAVBC468xVXlMixGq51OsYx4ur
- ikKJLzdpwjh+l5Ci1t7KLGorX51y2xm09nP3NGro/PAOMBUOC8JaaVCUxTy5QkjoWIveWwXfv
- f4Vh12dELsS0OTHvouycvZJ7B8ti+36fqacZ///KhnekwVAtgGhn4/3MJCplRbvNIPV9c8jfG
- pAmlZjnk/57dsb0vHyc7IO4OW+Lm6F8ZoFYg6K+W66eZNwPy269MjncCjaCFa2B7xl+/Ys+ug
- +mW0eawTP/R9H0IE7cOoAfPolwNq2bevSAywLpxhuuU/cgovHRbYKgMBRInSn2LkLb7YkIoPU
- L7z0bsXHv515uZ0R8FsS5miYtqW8nxOfNOvXXjBtw9udx3Qz5UiemItenrFyhRpLkCQzgja/D
- vToTOthP83fSoshZtvzcCxjjx3RTDLF3cS67SJ6JCc5FYsPm2E=
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SP810 and ICST are selected by a couple of platforms, most but
-not all in the versatile family:
+Hi Stephen,
 
-WARNING: unmet direct dependencies detected for CLK_SP810
-  Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_VERSATILE [=n]
-  Selected by [y]:
-  - ARCH_REALVIEW [=y] && (ARCH_MULTI_V5 [=n] || ARCH_MULTI_V6 [=n] ||
-ARCH_MULTI_V7 [=y])
+I may have misunderstood what you meant (I did not notice that you have 
+taken other v10 patches, so I sent the entire v11 series by mistake), do 
+I need to resend the split bindings patches separately again?
 
-WARNING: unmet direct dependencies detected for ICST
-  Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_VERSATILE [=n]
-  Selected by [y]:
-  - ARCH_REALVIEW [=y] && (ARCH_MULTI_V5 [=n] || ARCH_MULTI_V6 [=n] || ARCH_MULTI_V7 [=y])
-  - ARCH_VEXPRESS [=y] && ARCH_MULTI_V7 [=y]
-  - ARCH_ZYNQ [=y] && ARCH_MULTI_V7 [=y]
+Thanks and best regards!
 
-Change back the Kconfig logic to allow these to be selected
-without the main option.
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/versatile/Kconfig | 22 ++++++++++++----------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
-index a0ed412e8396..a557886d813e 100644
---- a/drivers/clk/versatile/Kconfig
-+++ b/drivers/clk/versatile/Kconfig
-@@ -7,6 +7,18 @@ menuconfig COMMON_CLK_VERSATILE
- 
- if COMMON_CLK_VERSATILE
- 
-+config CLK_VEXPRESS_OSC
-+	tristate "Clock driver for Versatile Express OSC clock generators"
-+	depends on VEXPRESS_CONFIG
-+	select REGMAP_MMIO
-+	default y if ARCH_VEXPRESS
-+	---help---
-+	  Simple regmap-based driver driving clock generators on Versatile
-+	  Express platforms hidden behind its configuration infrastructure,
-+	  commonly known as OSCs.
-+
-+endif
-+
- config ICST
- 	bool "Clock driver for ARM Reference designs ICST"
- 	select REGMAP_MMIO
-@@ -22,14 +34,4 @@ config CLK_SP810
- 	  Supports clock muxing (REFCLK/TIMCLK to TIMERCLKEN0-3) capabilities
- 	  of the ARM SP810 System Controller cell.
- 
--config CLK_VEXPRESS_OSC
--	tristate "Clock driver for Versatile Express OSC clock generators"
--	depends on VEXPRESS_CONFIG
--	select REGMAP_MMIO
--	default y if ARCH_VEXPRESS
--	---help---
--	  Simple regmap-based driver driving clock generators on Versatile
--	  Express platforms hidden behind its configuration infrastructure,
--	  commonly known as OSCs.
- 
--endif
--- 
-2.26.2
-
+在 2020/5/27 下午4:12, Stephen Boyd 写道:
+> Quoting 周琰杰 (Zhou Yanjie) (2020-05-26 07:40:41)
+>> Add the clock bindings for the X1830 Soc from Ingenic.
+>>
+>> Signed-off-by: \u5468\u7430\u6770 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>
+>> Notes:
+>>      v2->v3:
+>>      Adjust order from [3/5] in v2 to [4/5] in v3.
+>>      
+>>      v3->v4:
+>>      Adjust order from [4/5] in v3 to [3/4] in v4.
+>>      
+>>      v4->v5:
+>>      Rebase on top of kernel 5.6-rc1.
+>>      
+>>      v5->v6:
+>>      Add missing part of X1830's CGU.
+>>      
+>>      v6->v7:
+>>      No change.
+>>      
+>>      v7->v8:
+>>      Rebase on top of linux-next.
+>>      
+>>      v8->v9:
+>>      No change.
+>>      
+>>      v9->v10:
+>>      Add missing "X1830_CLK_TCU".
+>>
+>>   .../devicetree/bindings/clock/ingenic,cgu.yaml     |  2 +
+>>   include/dt-bindings/clock/x1830-cgu.h              | 55 ++++++++++++++++++++++
+>>   2 files changed, 57 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/x1830-cgu.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+> This file is in Rob's DT tree staged for the next release, not in the
+> clk tree. Can you split this patch into two, one for the compatible
+> update and another for the header file update and send again? Then Rob
+> can pick up the yaml file change and I can pick up the header file
+> change.
+>
+>> index 0281cd1d7e1b..a952d5811823 100644
+>> --- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+>> @@ -25,6 +25,7 @@ select:
+>>             - ingenic,jz4770-cgu
+>>             - ingenic,jz4780-cgu
+>>             - ingenic,x1000-cgu
+>> +          - ingenic,x1830-cgu
+>>     required:
+>>       - compatible
+>>   
+>> @@ -51,6 +52,7 @@ properties:
+>>           - ingenic,jz4770-cgu
+>>           - ingenic,jz4780-cgu
+>>           - ingenic,x1000-cgu
+>> +        - ingenic,x1830-cgu
+>>         - const: simple-mfd
+>>       minItems: 1
+>>
