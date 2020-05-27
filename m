@@ -2,88 +2,77 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1374AC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE3CC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:55:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D37222078C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:49:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IHURO0ex"
+	by mail.kernel.org (Postfix) with ESMTP id 408442078C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:55:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590558954;
+	bh=PcP0elMmxsxvC2yH2JORrMx/2zoxr/+2rXhvhlQJreI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=Mc3rIF1jVJpAcrdg+hFy4CuGPjCvTu+b6pXeHZVZ9oX1RubzUoZvr9Yn4+mlcBlUh
+	 zsKZQPoi8atEKmgfdNHEsVStDluX6J0vKnLBRJ9m3acR0T8e/O9RoYq1c1k9XTSbmz
+	 G6IKiCnVj7JSaWtizyJi56xokdDzx6WZvvhYx5tM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725843AbgE0FtV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 01:49:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48442 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbgE0FtV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 01:49:21 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA529C03E96E
-        for <linux-clk@vger.kernel.org>; Tue, 26 May 2020 22:49:20 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id b6so27405102ljj.1
-        for <linux-clk@vger.kernel.org>; Tue, 26 May 2020 22:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Ey3RUpCGa5Aox52KZ5G497GPuu8CFMaGOEj0YfbRCE=;
-        b=IHURO0exP8ThsysvtvUVDN5cTBjZW1A5ogekeUUqLNeYB2FGz4d/s/pWf9IREZvWh9
-         6f3oUSCkM5uanpvYDqHX3Mm1dW6YEvprJ2NdjOmDgkcMox49wszIokbgRyhNb/ash0mu
-         qYG2m30mWdIbE6HauFvsy7lUAeG0MY1Cm+vBQsDVjJpR9COGe8J5mWSqMVoOZlsvr2IP
-         oU15BvzZaVmPzyM5p78RnO4P8b+XQ8wJv69PMeJ0ggxtY8eq28DwZ3LeT+ptx8vU9z0A
-         KVTOsFtyrGmTzfq1xSBTHeSDuo80Ah7EpSzJJflNND68IyDuCgHx9iUdQKy9CgFuAM0I
-         +6vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Ey3RUpCGa5Aox52KZ5G497GPuu8CFMaGOEj0YfbRCE=;
-        b=qPAiAtlTIYsdqhC9TD0QK/w2+GYynaHEsnNxo5FZLIJUHdt8jzXP6lh5+Vxmh2+v7w
-         FaRo4TvYp85ljPNtpUkU4XbDz7ziFLw0nCUa7J0fbCgz2cEjf4EPqGmJQnc5medxPdaX
-         rucIgwGJaCXVt04jfjmWYoPpUqZvSoGtABr+f7rkSOyfp5ozbG8Tlzot1eXlMU/LAuo7
-         BIBT8aGc2KUijySK+JSMPWpE5dAQ++Y4GNs5txXSXf/DcGQH1iDGUdPHCg+avKTD/McC
-         eBx2/mHJjh8C4RmsUhgye0ySTPQZgjqq05v26Q+p5jMp2T4qIomgNd2RxgPQJo5SXCnF
-         1YyQ==
-X-Gm-Message-State: AOAM533HVQ2P3HnXQ4Dv7avMcA4bR6UK5sJy/M/AHwZbVhgqAkRkYDju
-        vmvZgHW3+fVAVEaUzvcFZ3O1Qr+02WYHnN9G4igF2w==
-X-Google-Smtp-Source: ABdhPJwnO7GDTOtyL2kiFe3jVfkqBAg7nq2J7SDhBgiLgtUefNePgtYaoje9dfB2Zk33EfyfNamq1jgS7Fz6Jg4SKys=
-X-Received: by 2002:a2e:8e91:: with SMTP id z17mr2117948ljk.144.1590558559281;
- Tue, 26 May 2020 22:49:19 -0700 (PDT)
+        id S1726907AbgE0Fzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 01:55:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44600 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbgE0Fzu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 01:55:50 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AD90206F1;
+        Wed, 27 May 2020 05:55:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590558950;
+        bh=PcP0elMmxsxvC2yH2JORrMx/2zoxr/+2rXhvhlQJreI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=OhocTK+Uz/yQpuW5nOGw7pZ64VE+pkmrKgYxsJ2bRR0uxGgVQ2y0o9D4cPASOhtDi
+         BO4Dxh6HPtbHVS6xKrNo17LfFDr5RI1a1n7MSnYtLvgbpoQO6Agjwr3JRq27IRQQnj
+         jTwS8Lc73ngULTpqDPrjBZ6AgWcHKM0PZlKadvBI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200526224116.63549-1-colin.king@canonical.com>
-In-Reply-To: <20200526224116.63549-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 27 May 2020 07:49:08 +0200
-Message-ID: <CACRpkdb7s77aOnQxMQ=Gi9zcy_fz37PZ5E3+vk0=P5N8wjA6sw@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: remove redundant assignment to pointer clk
-To:     Colin King <colin.king@canonical.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200330231617.17079-3-digetx@gmail.com>
+References: <20200330231617.17079-1-digetx@gmail.com> <20200330231617.17079-3-digetx@gmail.com>
+Subject: Re: [PATCH v1 2/5] clk: Introduce clk_round_rate_unboundly()
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Tue, 26 May 2020 22:55:49 -0700
+Message-ID: <159055894944.88029.2029223648098859689@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 27, 2020 at 12:41 AM Colin King <colin.king@canonical.com> wrote:
+Quoting Dmitry Osipenko (2020-03-30 16:16:14)
+> In same cases it may be desired to round clock's rate without taking into
+> account current min/max requests made by the clock's users. One example is
+> building up OPP table based on a possible clock rates.
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> The pointer clk is being initialized with a value that is never read
-> and is being updated with a new value later on. The initialization
-> is redundant and can be removed.
->
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Shouldn't the OPP table come from firmware/DT? I don't quite understand
+why we're generating OPP tables on top of the rate rounding API.
+clk_round_rate() is supposed to tell us what rate we'll get if we call
+clk_set_rate() with the same arguments. An unboundly version of that
+doesn't make sense.=20
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+I wonder if perhaps the clk provider should be populating OPP tables in
+this case? Or basically anything besides adding another clk consumer API
+to solve this problem. Who is the caller? Something later in this
+series?
