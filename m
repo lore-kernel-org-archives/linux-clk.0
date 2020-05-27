@@ -2,147 +2,75 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F3DC433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BD7CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 18:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E9A5E20899
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072992075A
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 18:06:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388544AbgE0R7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 13:59:23 -0400
-Received: from out28-51.mail.aliyun.com ([115.124.28.51]:45141 "EHLO
-        out28-51.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388711AbgE0R7V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 13:59:21 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07486626|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.65544-0.000441388-0.344119;FP=12402340102660461614|1|1|7|0|-1|-1|-1;HT=e01a16368;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.HeTcPrZ_1590602337;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeTcPrZ_1590602337)
-          by smtp.aliyun-inc.com(10.147.43.95);
-          Thu, 28 May 2020 01:59:17 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
-Subject: [PATCH v12 1/7] clk: Ingenic: Remove unnecessary spinlock when reading registers.
-Date:   Thu, 28 May 2020 01:56:29 +0800
-Message-Id: <20200527175635.5558-2-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200527175635.5558-1-zhouyanjie@wanyeetech.com>
-References: <20200527175635.5558-1-zhouyanjie@wanyeetech.com>
+        id S2389135AbgE0SGL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 14:06:11 -0400
+Received: from out28-99.mail.aliyun.com ([115.124.28.99]:39888 "EHLO
+        out28-99.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388628AbgE0SGL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 14:06:11 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.09056586|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.00537309-0.000193602-0.994433;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03300;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.HeTMIqm_1590602766;
+Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeTMIqm_1590602766)
+          by smtp.aliyun-inc.com(10.147.41.143);
+          Thu, 28 May 2020 02:06:07 +0800
+Subject: Re: [PATCH v11 4/7] dt-bindings: clock: Add X1830 clock bindings.
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, sernia.zhou@foxmail.com,
+        sboyd@kernel.org, zhenwenjin@gmail.com, mturquette@baylibre.com,
+        yanfei.li@ingenic.com, aric.pzqi@ingenic.com, paul@crapouillou.net,
+        dongsheng.qiu@ingenic.com, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org, rick.tyliu@ingenic.com,
+        linux-clk@vger.kernel.org
+References: <20200527085449.55573-1-zhouyanjie@wanyeetech.com>
+ <20200527085449.55573-5-zhouyanjie@wanyeetech.com>
+ <20200527173436.GA2411605@bogus>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <04bae797-0267-ad07-68dc-0bf98d8be59b@wanyeetech.com>
+Date:   Thu, 28 May 2020 02:06:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200527173436.GA2411605@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is not necessary to use spinlock when reading registers,
-so remove it from cgu.c.
+Hi Rob,
 
-Suggested-by: Paul Cercueil <paul@crapouillou.net>
-Suggested-by: Paul Burton <paulburton@kernel.org>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
----
+Could you take [3/11] in your tree? Stephen says the file named 
+"ingenic,cgu.yaml" is not in clk tree, but it is in your DT tree staged 
+for the next release, maybe you pick up the yaml file and he pick up the 
+header file is a good idea.
 
-Notes:
-    v2:
-    New patch.
-    
-    v2->v3:
-    Adjust order from [5/5] in v2 to [1/5] in v3.
-    
-    v3->v4:
-    Remove the spinlock around ingenic_cgu_gate_get().
-    
-    v4->v5:
-    Rebase on top of kernel 5.6-rc1.
-    
-    v5->v6:
-    No change.
-    
-    v6->v7:
-    No change.
-    
-    v7->v8:
-    No change.
-    
-    v8->v9:
-    No change.
-    
-    v9->v10:
-    No change.
-    
-    v10->v11:
-    No change.
-    
-    v11->v12:
-    No change.
+Thanks and best regards!
 
- drivers/clk/ingenic/cgu.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
-
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 6e963031cd87..ab1302ad1450 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -76,16 +76,13 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	const struct ingenic_cgu_pll_info *pll_info;
- 	unsigned m, n, od_enc, od;
- 	bool bypass;
--	unsigned long flags;
- 	u32 ctl;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 	BUG_ON(clk_info->type != CGU_CLK_PLL);
- 	pll_info = &clk_info->pll;
- 
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
- 
- 	m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
- 	m += pll_info->m_offset;
-@@ -259,12 +256,9 @@ static int ingenic_pll_is_enabled(struct clk_hw *hw)
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
- 	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
--	unsigned long flags;
- 	u32 ctl;
- 
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
- 
- 	return !!(ctl & BIT(pll_info->enable_bit));
- }
-@@ -562,16 +556,12 @@ static int ingenic_clk_is_enabled(struct clk_hw *hw)
- 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info;
--	unsigned long flags;
- 	int enabled = 1;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 
--	if (clk_info->type & CGU_CLK_GATE) {
--		spin_lock_irqsave(&cgu->lock, flags);
-+	if (clk_info->type & CGU_CLK_GATE)
- 		enabled = !ingenic_cgu_gate_get(cgu, &clk_info->gate);
--		spin_unlock_irqrestore(&cgu->lock, flags);
--	}
- 
- 	return enabled;
- }
--- 
-2.11.0
-
+在 2020/5/28 上午1:34, Rob Herring 写道:
+> On Wed, 27 May 2020 16:54:46 +0800, 周琰杰 (Zhou Yanjie) wrote:
+>> Add the clock bindings for the X1830 Soc from Ingenic.
+>>
+>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> ---
+>>
+>> Notes:
+>>      v11:
+>>      New patch, split from [3/6] in v10.
+>>
+>>   include/dt-bindings/clock/x1830-cgu.h | 55 +++++++++++++++++++++++++++++++++++
+>>   1 file changed, 55 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/x1830-cgu.h
+>>
+> Acked-by: Rob Herring <robh@kernel.org>
