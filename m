@@ -2,68 +2,68 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECED8C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 15:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED219C433E3
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 15:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C323620899
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 15:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB22020873
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 15:58:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="RWjXR2Rf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aqEwTemr"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="Nj0JRBg0";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AbeO0tAo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390058AbgE0PtX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 11:49:23 -0400
-Received: from new1-smtp.messagingengine.com ([66.111.4.221]:48071 "EHLO
+        id S2390076AbgE0Pt0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 11:49:26 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:54373 "EHLO
         new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387574AbgE0PtU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 11:49:20 -0400
+        by vger.kernel.org with ESMTP id S2390061AbgE0PtZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 11:49:25 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id D79CB581FE2;
-        Wed, 27 May 2020 11:49:18 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 80EF6581FF0;
+        Wed, 27 May 2020 11:49:23 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 27 May 2020 11:49:18 -0400
+  by compute4.internal (MEProxy); Wed, 27 May 2020 11:49:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm2; bh=Rj9Ye5tKBtVnumXch/RtSXG284
-        Fs6hT2LHuSvNhJJxc=; b=RWjXR2RfJJh/uG9hH9SfAHIxO6agPpwsiQBD3aeIY3
-        mQLshdm+fRxMGBPIwXY7btjka/azfD59OL61hUOD2rcgtWa2k7x7crcTE0D+OoG/
-        WdPKIgqzFpeEzR8rGiUPUXpZCLfwPDyl/LoqFRM27zwmg1sYO1Ktc7Yn74LQiG3X
-        SfuToX07ECuTCsnz2m5LURrV/wWx4uPHJYJuHNTytY7nTbv/emGO3xqLpamhKB2/
-        BWGECNkmbBBuSH5wjc+lAgQeWvTuWwXr1TIMV2FymDRDqzJxaNX9CA102fxIC2qq
-        sNMq3armovlDawiNgidm70DZ/9XHzSmdEg/Vvz2zcFfg==
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm2; bh=JS2UKqRBYPadW
+        vDMXsMwdmCOk/vh+t2B16LPXJpi9Ps=; b=Nj0JRBg0iY8fzLsKwLcvMLUdYTJjv
+        2cdBT/hXX4w7p0QipcKLmlguVouTTGfHCH033T8oZag3qRW1kuPempSYfMpCUnbZ
+        qb8XdX4fw1/JoT7DWKO2y01L2GCC3p2yEDv1/Umn4FIwTrg8sSagLasShJF6HF8F
+        oQM88zECePTw2qf3HTMt0+GzufzE8lKwK2KvxVfGAUguxeXC0ch0ApiX60yRS7v9
+        CcN6ZG6RJtUtHG7FKeMyiloiUqycf2D1tPyia5HC1nbhfa4TO16TSmVQK3HF7XFB
+        jvv9pcB+M6ErC8RcqcYFcWJs4Kh7z+A0lwAM5T+Odmig5zyfB4GB6Ew1A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=Rj9Ye5tKBtVnumXch
-        /RtSXG284Fs6hT2LHuSvNhJJxc=; b=aqEwTemr5nAXNqGkbc4sAfhx+FNmP8Oct
-        l1UPbHMlf6QhzjIrpUA1kd+DQytXotZn0pGiR5ob5tzgTAcWjrnu6yotpj+MBBN/
-        OH2VN88PDpa/dvzPKCV4CzU/cGf1qArpwpjIK7GWpBOXPtOPicHrYZRMKQBFxFx5
-        wI4DDuY2v+wfhXdJSqZmExgCmX2CqJ4/4if/CbAuq4+qftTe/iwHtu3SbWrFnHX/
-        JXxDjYSSBL+Jp7r3k3qNBek0s5ghjOZCPGlzdyOB1W/l/eFobQftQ9I+l0lcjuhj
-        ZVTwDJksjXM7oUKIH/JzUv/u87KMSoV4bJq1a//Mrm0Wby52B4xtg==
-X-ME-Sender: <xms:_YvOXm3ymeQy6rr81BkwARQn4pbNnPkZk0Y9HNiHCH1ZetA5s4fHFg>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=JS2UKqRBYPadWvDMXsMwdmCOk/vh+t2B16LPXJpi9Ps=; b=AbeO0tAo
+        NaodgRmxdhYn10Eufk/75eknWlBSIzTTbBvcdDHIeatxtA/UTpLbzTDVGXuAMlaP
+        ZiDItfAVP7bjqlOTKZJif2M1BPwk3cFgXyc0FN5HxzwaRA4Z/9EhrZ1oF8F0f0JJ
+        4Bi4hZUaCXWSrCjLJ8WKFgooseYH9T1GeVsOFX+lmp8KVyKud9jWSOPuKMIwmJ3W
+        S6ov4F1BPeHz/eQ8pK2YLzBuCFIPv3piz1IomDyZqvjLjY+w3K+7S53eVFjPaMXK
+        pn7svUl6prAbCitYbfkAUYJxoNqqgKS1IkEUKiGK2Ci+x1X7Rmc5VR7YWMmDuuGK
+        d9YeM4A8UpxOxA==
+X-ME-Sender: <xms:A4zOXvQUbCpL073Nzl95SPp88_wkm31NN89u6e_cCzPvQS70TzAsDQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddvgedgkeefucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    govehorghsthgrlhdqhfeguddvqddtvdculdduhedtmdenucfjughrpefhvffufffkofgg
-    gfestdekredtredttdenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrgigih
-    hmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtthgvrhhnpefgteejgeelvdfhuedt
-    vdffueekveekudekuddtieelieelhfeuveekfeevkeeghfenucffohhmrghinhepkhgvrh
-    hnvghlrdhorhhgpdhrrghsphgsvghrrhihphhirdgtohhmnecukfhppeeltddrkeelrdei
-    kedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:_YvOXpFCzO_XPvvQCf8112_ZE0Ura9vduko18W-KbjZjSMHNHjYtXQ>
-    <xmx:_YvOXu710rD7iZfbel8O1QtL-9xPXb0ph_jybZzzusGgo19T9HMOCg>
-    <xmx:_YvOXn32ETNiapsHlTgRLC92WpK5SKI7MBEwiC-zpblMwuDuU33TRg>
-    <xmx:_ovOXmckB-_B3fiW35XFVthEqXKnIMNIkX39oMFwonAdmXLypapvYw>
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepvdevjeduiedtuddtteeuiefgiedukeevjeevuddttddvtdefkedvleeufeej
+    leeknecuffhomhgrihhnpehrtgguvghvrdhnrhenucfkphepledtrdekledrieekrdejie
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgig
+    ihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:A4zOXgxAvlsdVZLvxvwLd1OZDBMrlQzp6OtxJgzfkFGg88XNQSVXNQ>
+    <xmx:A4zOXk1l_GeoaFpQ-27l1C_0DQDjRq_X9SxqgnTLXDugTzK9ThnK2w>
+    <xmx:A4zOXvC7WXfdpyWqIwtSOJz5ItkOuGQdvbEYOWgfSH6vqtkeWF_Cjw>
+    <xmx:A4zOXpYj9AYGu4u2KrWr5R0rIljRDNm2LwOcdEeLGitYjDgBabz9eA>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id EE37E328005D;
-        Wed, 27 May 2020 11:49:16 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 221A2328005D;
+        Wed, 27 May 2020 11:49:23 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Eric Anholt <eric@anholt.net>
@@ -74,16 +74,17 @@ Cc:     dri-devel@lists.freedesktop.org,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
         Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Kamal Dasu <kdasu.kdev@gmail.com>, linux-clk@vger.kernel.org,
+        Maxime Ripard <maxime@cerno.tech>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v3 000/105] drm/vc4: Support BCM2711 Display Pipeline
-Date:   Wed, 27 May 2020 17:47:30 +0200
-Message-Id: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 004/105] clk: bcm: Add BCM2711 DVP driver
+Date:   Wed, 27 May 2020 17:47:34 +0200
+Message-Id: <6615a61b8af240e3d10f8890e4b2462ccdaac9b9.1590594512.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
+References: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -91,242 +92,190 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+The HDMI block has a block that controls clocks and reset signals to the
+HDMI0 and HDMI1 controllers.
 
-Here's a (pretty long) series to introduce support in the VC4 DRM driver
-for the display pipeline found in the BCM2711 (and thus the RaspberryPi 4).
+Let's expose that through a clock driver implementing a clock and reset
+provider.
 
-The main differences are that there's two HDMI controllers and that there's
-more pixelvalve now. Those pixelvalve come with a mux in the HVS that still
-have only 3 FIFOs. Both of those differences are breaking a bunch of
-expectations in the driver, so we first need a good bunch of cleanup and
-reworks to introduce support for the new controllers.
-
-Similarly, the HDMI controller has all its registers shuffled and split in
-multiple controllers now, so we need a bunch of changes to support this as
-well.
-
-Only the HDMI support is enabled for now (even though the DPI output has
-been tested too).
-
-This is based on the firmware clocks series sent separately:
-https://lore.kernel.org/lkml/cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech/
-
-Let me know if you have any comments
-Maxime
-
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: devicetree@vger.kernel.org
-Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-Cc: linux-clk@vger.kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>
 Cc: Stephen Boyd <sboyd@kernel.org>
-
-Changes from v2:
-  - Rebased on top of next-20200526
-  - Split the firmware clock series away
-  - Removed the stuck pixel (with all the subsequent pixels being shifted
-    by one
-  - Fixed the writeback issue too.
-  - Fix the dual output
-  - Fixed the return value of phy_get_cp_current
-  - Enhanced the comment on the reset delay
-  - Increase the max width and height
-  - Made a proper Kconfig option for the DVP clock driver
-  - Fixed the alsa card name collision
-
-Changes from v1:
-  - Rebased on top of 5.7-rc1
-  - Run checkpatch
-  - Added audio support
-  - Fixed some HDMI timeouts
-  - Swiched to clk_hw_register_gate_parent_data
-  - Reorder Kconfig symbols in drivers/i2c/busses
-  - Make the firmware clocks a child of the firmware node
-  - Switch DVP clock driver to clk_hw interface
-  - constify raspberrypi_clk_data in raspberrypi_clock_property
-  - Don't mark firmware clocks as IGNORE_UNUSED
-  - Change from reset_ms to reset_us in reset-simple, and add a bit more
-    comments
-  - Remove generic clk patch to test if a NULL pointer is returned
-  - Removed misleading message in the is_prepared renaming patch commit
-    message
-  - Constify HDMI controller variants
-  - Fix a bug in the allocation size of the clk data array
-  - Added a mention in the DT binding conversion patches about the breakage
-  - Merged a few fixes from kbuild
-  - Fixed a few bisection and CEC build issues
-  - Collected Acked-by and Reviewed-by
-  - Change Dave email address to raspberrypi.com
-
-Dave Stevenson (6):
-  drm/vc4: Add support for the BCM2711 HVS5
-  drm/vc4: plane: Improve LBM usage
-  drm/vc4: hdmi: Use reg-names to retrieve the HDMI audio registers
-  drm/vc4: hdmi: Reset audio infoframe on encoder_enable if previously streaming
-  drm/vc4: hdmi: Set the b-frame marker to the match ALSA's default.
-  drm/vc4: hdmi: Add audio-related callbacks
-
-Maxime Ripard (99):
-  reset: Move reset-simple header out of drivers/reset
-  reset: simple: Add reset callback
-  dt-bindings: clock: Add BCM2711 DVP binding
-  clk: bcm: Add BCM2711 DVP driver
-  ARM: dts: bcm2711: Add HDMI DVP
-  dt-bindings: display: Convert VC4 bindings to schemas
-  dt-bindings: display: vc4: dpi: Add missing clock-names property
-  dt-bindings: display: vc4: dsi: Add missing clock properties
-  dt-bindings: display: vc4: hdmi: Add missing clock-names property
-  dt-bindings: display: vc4: Document BCM2711 VC5
-  drm/vc4: drv: Add include guards
-  drm/vc4: drv: Support BCM2711
-  dt-bindings: display: Add support for the BCM2711 HVS
-  drm/vc4: hvs: Boost the core clock during modeset
-  drm/vc4: plane: Move planes creation to its own function
-  drm/vc4: plane: Move additional planes creation to driver
-  drm/vc4: plane: Register all the planes at once
-  drm/vc4: plane: Create overlays for any CRTC
-  drm/vc4: plane: Create more planes
-  drm/vc4: crtc: Rename SoC data structures
-  drm/vc4: crtc: Switch to of_device_get_match_data
-  drm/vc4: crtc: Move crtc state to common header
-  drm/vc4: crtc: Deal with different number of pixel per clock
-  drm/vc4: crtc: Use a shared interrupt
-  drm/vc4: crtc: Turn static const variable into a define
-  drm/vc4: crtc: Restrict HACT_ACT setup to DSI
-  drm/vc4: crtc: Move the cob allocation outside of bind
-  drm/vc4: crtc: Rename HVS channel to output
-  drm/vc4: crtc: Use local chan variable
-  drm/vc4: crtc: Enable and disable the PV in atomic_enable / disable
-  drm/vc4: crtc: Assign output to channel automatically
-  drm/vc4: crtc: Add FIFO depth to vc4_crtc_data
-  drm/vc4: crtc: Add function to compute FIFO level bits
-  drm/vc4: crtc: Rename HDMI encoder type to HDMI0
-  drm/vc4: crtc: Add HDMI1 encoder type
-  drm/vc4: crtc: Remove redundant call to drm_crtc_enable_color_mgmt
-  drm/vc4: crtc: Disable color management for HVS5
-  drm/vc4: crtc: Turn pixelvalve reset into a function
-  drm/vc4: crtc: Move HVS mode config to HVS file
-  drm/vc4: crtc: Move PV dump to config_pv
-  drm/vc4: crtc: Move HVS init and close to a function
-  drm/vc4: crtc: Move the HVS gamma LUT setup to our init function
-  drm/vc4: hvs: Make sure our channel is reset
-  drm/vc4: hvs: Remove mode_set_nofb
-  drm/vc4: crtc: Remove mode_set_nofb
-  drm/vc4: crtc: Remove redundant pixelvalve reset
-  drm/vc4: crtc: Move HVS channel init before the PV initialisation
-  drm/vc4: encoder: Add finer-grained encoder callbacks
-  drm/vc4: crtc: Add a delay after disabling the PixelValve output
-  drm/vc4: crtc: Clear the PixelValve FIFO on disable
-  drm/vc4: crtc: Clear the PixelValve FIFO during configuration
-  drm/vc4: hvs: Make the stop_channel function public
-  drm/vc4: hvs: Introduce a function to get the assigned FIFO
-  drm/vc4: crtc: Move the CRTC disable out
-  drm/vc4: drv: Disable the CRTC at boot time
-  dt-bindings: display: vc4: pv: Add BCM2711 pixel valves
-  drm/vc4: crtc: Add BCM2711 pixelvalves
-  drm/vc4: crtc: Make state functions public
-  drm/vc4: crtc: Split CRTC data in two
-  drm/vc4: crtc: Only access the PixelValve registers if we have to
-  drm/vc4: crtc: Move the CRTC initialisation to a separate function
-  drm/vc4: crtc: Change the HVS5 test for of_device_is_compatible
-  drm/vc4: crtc: Move the txp_armed function to the TXP
-  drm/vc4: txp: Turn the TXP into a CRTC of its own
-  drm/vc4: crtc: Remove the feed_txp tests
-  drm/vc4: hdmi: Use debugfs private field
-  drm/vc4: hdmi: Move structure to header
-  drm/vc4: hdmi: rework connectors and encoders
-  drm/vc4: hdmi: Remove DDC argument to connector_init
-  drm/vc4: hdmi: Rename hdmi to vc4_hdmi
-  drm/vc4: hdmi: Move accessors to vc4_hdmi
-  drm/vc4: hdmi: Use local vc4_hdmi directly
-  drm/vc4: hdmi: Add container_of macros for encoders and connectors
-  drm/vc4: hdmi: Pass vc4_hdmi to CEC code
-  drm/vc4: hdmi: Remove vc4_dev hdmi pointer
-  drm/vc4: hdmi: Remove vc4_hdmi_connector
-  drm/vc4: hdmi: Introduce resource init and variant
-  drm/vc4: hdmi: Implement a register layout abstraction
-  drm/vc4: hdmi: Add reset callback
-  drm/vc4: hdmi: Add PHY init and disable function
-  drm/vc4: hdmi: Add PHY RNG enable / disable function
-  drm/vc4: hdmi: Add a CSC setup callback
-  drm/vc4: hdmi: Store the encoder type in the variant structure
-  drm/vc4: hdmi: Deal with multiple debugfs files
-  drm/vc4: hdmi: Move CEC init to its own function
-  drm/vc4: hdmi: Add CEC support flag
-  drm/vc4: hdmi: Remove unused CEC_CLOCK_DIV define
-  drm/vc4: hdmi: Rename drm_encoder pointer in mode_valid
-  drm/vc4: hdmi: Adjust HSM clock rate depending on pixel rate
-  drm/vc4: hdmi: Use clk_set_min_rate instead
-  drm/vc4: hdmi: Deal with multiple ALSA cards
-  drm/vc4: hdmi: Remove register dumps in enable
-  drm/vc4: hdmi: Always recenter the HDMI FIFO
-  drm/vc4: hdmi: Implement finer-grained hooks
-  drm/vc4: hdmi: Do the VID_CTL configuration at once
-  drm/vc4: hdmi: Switch to blank pixels when disabled
-  drm/vc4: hdmi: Support the BCM2711 HDMI controllers
-  dt-bindings: display: vc4: hdmi: Add BCM2711 HDMI controllers bindings
-  ARM: dts: bcm2711: Enable the display pipeline
-
- Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml           |   47 ++-
- Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt              |  174 +--------
- Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml        |  109 +++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml         |   72 +++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml        |   84 ++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml        |   80 ++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml         |   53 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml |   45 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml         |   37 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml         |   42 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml         |   35 ++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml         |   44 ++-
- MAINTAINERS                                                             |    2 +-
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts                                   |   46 ++-
- arch/arm/boot/dts/bcm2711.dtsi                                          |  130 +++++-
- drivers/clk/bcm/Kconfig                                                 |   11 +-
- drivers/clk/bcm/Makefile                                                |    1 +-
- drivers/clk/bcm/clk-bcm2711-dvp.c                                       |  127 ++++++-
- drivers/gpu/drm/vc4/Makefile                                            |    1 +-
- drivers/gpu/drm/vc4/vc4_crtc.c                                          |  776 ++++++++++++++---------------------
- drivers/gpu/drm/vc4/vc4_drv.c                                           |    9 +-
- drivers/gpu/drm/vc4/vc4_drv.h                                           |  105 ++++-
- drivers/gpu/drm/vc4/vc4_hdmi.c                                          | 1610 ++++++++++++++++++++++++++++++++++++++++++------------------------------
- drivers/gpu/drm/vc4/vc4_hdmi.h                                          |  183 ++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_phy.c                                      |  520 +++++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h                                     |  451 ++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hvs.c                                           |  362 +++++++++++++++-
- drivers/gpu/drm/vc4/vc4_kms.c                                           |  191 ++++++++-
- drivers/gpu/drm/vc4/vc4_plane.c                                         |  271 +++++++++---
- drivers/gpu/drm/vc4/vc4_regs.h                                          |  176 +++-----
- drivers/gpu/drm/vc4/vc4_txp.c                                           |  109 ++++-
- drivers/reset/reset-simple.c                                            |   23 +-
- drivers/reset/reset-simple.h                                            |   41 +--
- drivers/reset/reset-socfpga.c                                           |    3 +-
- drivers/reset/reset-sunxi.c                                             |    3 +-
- drivers/reset/reset-uniphier-glue.c                                     |    3 +-
- include/linux/reset/reset-simple.h                                      |   48 ++-
- 37 files changed, 4510 insertions(+), 1514 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml
- delete mode 100644 Documentation/devicetree/bindings/display/brcm,bcm-vc4.txt
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dpi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-dsi0.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hdmi.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-v3d.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2835-vec.yaml
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Cc: devicetree@vger.kernel.org
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+---
+ drivers/clk/bcm/Kconfig           |  11 +++-
+ drivers/clk/bcm/Makefile          |   1 +-
+ drivers/clk/bcm/clk-bcm2711-dvp.c | 127 +++++++++++++++++++++++++++++++-
+ 3 files changed, 139 insertions(+)
  create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi.h
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_phy.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_regs.h
- delete mode 100644 drivers/reset/reset-simple.h
- create mode 100644 include/linux/reset/reset-simple.h
 
-base-commit: ec9e6942c9f16390e530c2aea2a565f95fe6e929
+diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+index 8c83977a7dc4..784f12c72365 100644
+--- a/drivers/clk/bcm/Kconfig
++++ b/drivers/clk/bcm/Kconfig
+@@ -1,4 +1,15 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++
++config CLK_BCM2711_DVP
++	tristate "Broadcom BCM2711 DVP support"
++	depends on ARCH_BCM2835 ||COMPILE_TEST
++	depends on COMMON_CLK
++	default ARCH_BCM2835
++	select RESET_SIMPLE
++	help
++	  Enable common clock framework support for the Broadcom BCM2711
++	  DVP Controller.
++
+ config CLK_BCM2835
+ 	bool "Broadcom BCM2835 clock support"
+ 	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
+diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+index 0070ddf6cdd2..2c1349062147 100644
+--- a/drivers/clk/bcm/Makefile
++++ b/drivers/clk/bcm/Makefile
+@@ -6,6 +6,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-kona-setup.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm281xx.o
+ obj-$(CONFIG_CLK_BCM_KONA)	+= clk-bcm21664.o
+ obj-$(CONFIG_COMMON_CLK_IPROC)	+= clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
++obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2711-dvp.o
+ obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2835.o
+ obj-$(CONFIG_CLK_BCM2835)	+= clk-bcm2835-aux.o
+ obj-$(CONFIG_CLK_RASPBERRYPI)	+= clk-raspberrypi.o
+diff --git a/drivers/clk/bcm/clk-bcm2711-dvp.c b/drivers/clk/bcm/clk-bcm2711-dvp.c
+new file mode 100644
+index 000000000000..c1c4b5857d32
+--- /dev/null
++++ b/drivers/clk/bcm/clk-bcm2711-dvp.c
+@@ -0,0 +1,127 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++// Copyright 2020 Cerno
++
++#include <linux/clk-provider.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/reset/reset-simple.h>
++
++#define DVP_HT_RPI_SW_INIT	0x04
++#define DVP_HT_RPI_MISC_CONFIG	0x08
++
++#define NR_CLOCKS	2
++#define NR_RESETS	6
++
++struct clk_dvp {
++	struct clk_hw_onecell_data	*data;
++	struct reset_simple_data	reset;
++};
++
++static const struct clk_parent_data clk_dvp_parent = {
++	.index	= 0,
++};
++
++static int clk_dvp_probe(struct platform_device *pdev)
++{
++	struct clk_hw_onecell_data *data;
++	struct resource *res;
++	struct clk_dvp *dvp;
++	void __iomem *base;
++	int ret;
++
++	dvp = devm_kzalloc(&pdev->dev, sizeof(*dvp), GFP_KERNEL);
++	if (!dvp)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, dvp);
++
++	dvp->data = devm_kzalloc(&pdev->dev,
++				 struct_size(dvp->data, hws, NR_CLOCKS),
++				 GFP_KERNEL);
++	if (!dvp->data)
++		return -ENOMEM;
++	data = dvp->data;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	dvp->reset.rcdev.owner = THIS_MODULE;
++	dvp->reset.rcdev.nr_resets = NR_RESETS;
++	dvp->reset.rcdev.ops = &reset_simple_ops;
++	dvp->reset.rcdev.of_node = pdev->dev.of_node;
++	dvp->reset.membase = base + DVP_HT_RPI_SW_INIT;
++	spin_lock_init(&dvp->reset.lock);
++
++	ret = reset_controller_register(&dvp->reset.rcdev);
++	if (ret)
++		return ret;
++
++	data->hws[0] = clk_hw_register_gate_parent_data(&pdev->dev,
++							"hdmi0-108MHz",
++							&clk_dvp_parent, 0,
++							base + DVP_HT_RPI_MISC_CONFIG, 3,
++							CLK_GATE_SET_TO_DISABLE,
++							&dvp->reset.lock);
++	if (IS_ERR(data->hws[0])) {
++		ret = PTR_ERR(data->hws[0]);
++		goto unregister_reset;
++	}
++
++	data->hws[1] = clk_hw_register_gate_parent_data(&pdev->dev,
++							"hdmi1-108MHz",
++							&clk_dvp_parent, 0,
++							base + DVP_HT_RPI_MISC_CONFIG, 4,
++							CLK_GATE_SET_TO_DISABLE,
++							&dvp->reset.lock);
++	if (IS_ERR(data->hws[1])) {
++		ret = PTR_ERR(data->hws[1]);
++		goto unregister_clk0;
++	}
++
++	data->num = NR_CLOCKS;
++	ret = of_clk_add_hw_provider(pdev->dev.of_node, of_clk_hw_onecell_get,
++				     data);
++	if (ret)
++		goto unregister_clk1;
++
++	return 0;
++
++unregister_clk1:
++	clk_hw_unregister_gate(data->hws[1]);
++
++unregister_clk0:
++	clk_hw_unregister_gate(data->hws[0]);
++
++unregister_reset:
++	reset_controller_unregister(&dvp->reset.rcdev);
++	return ret;
++};
++
++static int clk_dvp_remove(struct platform_device *pdev)
++{
++	struct clk_dvp *dvp = platform_get_drvdata(pdev);
++	struct clk_hw_onecell_data *data = dvp->data;
++
++	clk_hw_unregister_gate(data->hws[1]);
++	clk_hw_unregister_gate(data->hws[0]);
++	reset_controller_unregister(&dvp->reset.rcdev);
++
++	return 0;
++}
++
++static const struct of_device_id clk_dvp_dt_ids[] = {
++	{ .compatible = "brcm,brcm2711-dvp", },
++	{ /* sentinel */ }
++};
++
++static struct platform_driver clk_dvp_driver = {
++	.probe	= clk_dvp_probe,
++	.remove	= clk_dvp_remove,
++	.driver	= {
++		.name		= "brcm2711-dvp",
++		.of_match_table	= clk_dvp_dt_ids,
++	},
++};
++module_platform_driver(clk_dvp_driver);
 -- 
 git-series 0.9.1
