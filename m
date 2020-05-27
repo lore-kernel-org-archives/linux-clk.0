@@ -4,71 +4,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9B2C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 00:15:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E2BC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 00:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE5E206C3
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 00:15:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C802088E
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 00:54:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590538518;
-	bh=zGice6jKCkqlnjdMIbO4/jRRAGT8tgSKxow3DZdlnTg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=vMoq1iTSK91SaCr2QHqFZRvRsLLzWB0dNNJUCa7/yqx7BivqL7jYzITsWDCPUWFWL
-	 jSH9DFEsvhqI6TYi9Gky+I79sl2HHy1y5z0pOzR4p1k3uqIImddaPVOWJBm3kKJOWv
-	 Sl1TPZyA7NCz5VdejAAKvNTi3uLhyE6LO0X48qeI=
+	s=default; t=1590540878;
+	bh=C0iLNV0TnmumdcX/nLipUY2ZgVkTaesmXymdhubIH+s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=I/oZXQxusbcS5zBnQs79K0rxoQyqVc23qfhteI5pA1BnkqvJOiwhTPGm83jv6FZmd
+	 K2d0TxS0kKeRlpvmMjyNhRJkuaTtsA5yJQDnsSnfddhOk24PwMhhJZ5vMJFxAMzi7V
+	 Js5VBcpLwzcSFZxFVuXyN52miBXd6jzlmgSaVldo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbgE0APR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 20:15:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45828 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725969AbgE0APQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 20:15:16 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04F01206C3;
-        Wed, 27 May 2020 00:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590538516;
-        bh=zGice6jKCkqlnjdMIbO4/jRRAGT8tgSKxow3DZdlnTg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=W1TH0ZIeo+CiQHQuRF+Iq0wiautB8h4BRP1s5i2iiCcgEAZZAsNROeDs23rI99i7B
-         qMcvWBQQ2uaAm6v6p8JP9JShujcV/VVLISuhGnFQwr8I/g5MlGXQrWNOOSHGptvU0l
-         n1ji/RSjpUHFtp4Fnszfa7FPO48a2d+tUrSzCUec=
-Content-Type: text/plain; charset="utf-8"
+        id S1727088AbgE0Ayi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 20:54:38 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:32902 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726701AbgE0Ayi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 May 2020 20:54:38 -0400
+Received: by mail-io1-f67.google.com with SMTP id k18so24223371ion.0;
+        Tue, 26 May 2020 17:54:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=LQ0AEtFdgMYX11AAAtMlvJCMw5YRfrXYb6pTIuRGDRE=;
+        b=jcbQ4U9JLhZvr19u5GglcsMRLnuZeUF7rrIO0y5aWCm9+AHWSLexRhLtxN6OjXclwo
+         Oe9v4MiLNSRqiJdRtDNIlfHHlJ90tKI1vWEQ2JLrzISEPBvfo/Jc8t+mJqsGFML2KncO
+         xCNe7pVnBMqtxHdHVH0ycTAdgHK37Lbx2nt9GBhXSv4SgzpAYA/YibKEmYpa1qsyF3jW
+         Kjdkscn3XDehKV5YFHS43cPbu47XgiatMq57tnHULkEYTaqah1bF7pWinrKDStYIsKKB
+         F/hG62PcQpYeQcb0AjpG8KZPnaGk+qFA0J/HZmLsNJAEKPPxfj9C33nFb8NZtQ58CFE0
+         Nfvg==
+X-Gm-Message-State: AOAM533fbHvbNYCa7sBE6ENNTIDqnZWHgatguzy+WouzSq6ZCHz35NvX
+        xeFDqkhSuH/BIwL9TjPPXA==
+X-Google-Smtp-Source: ABdhPJxk3+nRGpfBbG0rGSRpyT1TEqAiEij6VgOVAAYR53jqwRo4TgZGHe7pWZA+llYpQJAmlqeWZw==
+X-Received: by 2002:a6b:7017:: with SMTP id l23mr4890125ioc.140.1590540877119;
+        Tue, 26 May 2020 17:54:37 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id c7sm821178ilf.36.2020.05.26.17.54.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 17:54:36 -0700 (PDT)
+Received: (nullmailer pid 781634 invoked by uid 1000);
+        Wed, 27 May 2020 00:54:35 -0000
+Date:   Tue, 26 May 2020 18:54:35 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     zhenwenjin@gmail.com, linux-clk@vger.kernel.org,
+        dongsheng.qiu@ingenic.com, sboyd@kernel.org,
+        sernia.zhou@foxmail.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, mturquette@baylibre.com,
+        paul@crapouillou.net, linux-kernel@vger.kernel.org,
+        aric.pzqi@ingenic.com
+Subject: Re: [PATCH v10 3/6] dt-bindings: clock: Add X1830 bindings.
+Message-ID: <20200527005435.GA781399@bogus>
+References: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
+ <20200526144044.71413-5-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200521052728.2141377-1-vkoul@kernel.org>
-References: <20200521052728.2141377-1-vkoul@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc: Fix parent for gpll0_out_even
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jonathan Marek <jonathan@marek.ca>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Vinod Koul <vkoul@kernel.org>
-Date:   Tue, 26 May 2020 17:15:15 -0700
-Message-ID: <159053851521.88029.14881547817872478672@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200526144044.71413-5-zhouyanjie@wanyeetech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2020-05-20 22:27:28)
-> Documentation says that gpll0 is parent of gpll0_out_even, somehow
-> driver coded that as bi_tcxo, so fix it
->=20
-> Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver =
-for SM8150")
-> Reported-by: Jonathan Marek <jonathan@marek.ca>
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+On Tue, 26 May 2020 22:40:41 +0800, 周琰杰 (Zhou Yanjie) wrote:
+> Add the clock bindings for the X1830 Soc from Ingenic.
+> 
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
+> 
+> Notes:
+>     v2->v3:
+>     Adjust order from [3/5] in v2 to [4/5] in v3.
+> 
+>     v3->v4:
+>     Adjust order from [4/5] in v3 to [3/4] in v4.
+> 
+>     v4->v5:
+>     Rebase on top of kernel 5.6-rc1.
+> 
+>     v5->v6:
+>     Add missing part of X1830's CGU.
+> 
+>     v6->v7:
+>     No change.
+> 
+>     v7->v8:
+>     Rebase on top of linux-next.
+> 
+>     v8->v9:
+>     No change.
+> 
+>     v9->v10:
+>     Add missing "X1830_CLK_TCU".
+> 
+>  .../devicetree/bindings/clock/ingenic,cgu.yaml     |  2 +
+>  include/dt-bindings/clock/x1830-cgu.h              | 55 ++++++++++++++++++++++
+>  2 files changed, 57 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/x1830-cgu.h
+> 
 
-Applied to clk-fixes
+Reviewed-by: Rob Herring <robh@kernel.org>
