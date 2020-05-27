@@ -2,125 +2,103 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC735C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 09:17:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E40C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 09:51:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7BDCD2084C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 09:17:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93ACC2151B
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 09:51:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590571060;
-	bh=uj+VcJwxkpklmPgy3gadF9fMpUuRFAx2IxDyKKwUYjQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=d8IvfG5Vk+jhVcdMAMZcAznVAaxOr7gNp8n4/9KRYAb7yAhIYTVKm+FV3ok3H1LWO
-	 DMfLBpC3eKbdvFAjRttiSNz2CH+tAijxEwH3irf+5cx1TIojb/GP71yxDphdAPpLDq
-	 t+Ju4i8OJVo800BiOz6ncqjG2Ahc0GqOc+20E2Qs=
+	s=default; t=1590573072;
+	bh=0vToCKDKiiwhvCQ/ZH06T4deAF0FOse4LBq9EGr0Hdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kRXnQogGD4cOnR5ZbVSqNF2WzVFbkLsv8C3YaulkFpQszp538kYTXEEJ4pUCJiF46
+	 oe2tO/m7KkG/ZES7gYUf3gVeTALepVbZLmkPejwd2zYwGOZs5JEW5r/fFy5H1skNUX
+	 57UKmSIVayKEzu4qamMO+c10bQWjoLwBNAwZ2QmI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726026AbgE0JRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 05:17:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40534 "EHLO mail.kernel.org"
+        id S1729215AbgE0JvM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 05:51:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725820AbgE0JRk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 05:17:40 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1725822AbgE0JvM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 05:51:12 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5BFA02084C;
-        Wed, 27 May 2020 09:17:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8B3520B80;
+        Wed, 27 May 2020 09:51:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590571059;
-        bh=uj+VcJwxkpklmPgy3gadF9fMpUuRFAx2IxDyKKwUYjQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=APTlp4+GzRdPiU2yOYmZla3pudgN/B7c+J6/X75D1qd8Y/R8dazrJCYwgjfc29RRX
-         n/kNkqW0mclE5s4i6PemxBK+65EqkcikWSRdofb7GJHWTyQVrW7/qgMzYD1tZQdxYL
-         EUUla8ViZtwvYMfirc04GcjZN7Oq7idq3JplCI+k=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1590573071;
+        bh=0vToCKDKiiwhvCQ/ZH06T4deAF0FOse4LBq9EGr0Hdk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nVI+eY/sUvYRSX+c+Adp5mbuGsFalnf0pXTPCNoiZDzr18dCfz9a0UVW1SQjVdQOT
+         +GPqBAiQlp1MZCLnbvrTSC1VicjdfKmeCzHwVVwfMOOVW1nCw1H+fYqzrff1b1L/MY
+         tRakSOtkBjQYqVrvvfLbmRmqcEhRvThMG5/cDsK4=
+Date:   Wed, 27 May 2020 10:51:09 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     dillon.minfei@gmail.com
+Cc:     robh+dt@kernel.org, p.zabel@pengutronix.de,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, mturquette@baylibre.com, sboyd@kernel.org,
+        andy.shevchenko@gmail.com, noralf@tronnes.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        dillonhua@gmail.com
+Subject: Re: [PATCH v6 8/9] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX'
+ support for stm32f4
+Message-ID: <20200527095109.GA5308@sirena.org.uk>
+References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+ <1590564453-24499-9-git-send-email-dillon.minfei@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200519170440.294601-1-jbrunet@baylibre.com>
-References: <20200519170440.294601-1-jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: add api to get clk consummer from clk_hw
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Wed, 27 May 2020 02:17:38 -0700
-Message-ID: <159057105860.88029.17177553048016076314@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Content-Disposition: inline
+In-Reply-To: <1590564453-24499-9-git-send-email-dillon.minfei@gmail.com>
+X-Cookie: Drop in any mailbox.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-05-19 10:04:40)
-> clk_register() is deprecated. Using 'clk' member of struct clk_hw is
-> discouraged. With this constrainst, it is difficult for driver to
 
-s/constrainst/constraint/
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> register clocks using the clk_hw API and then use the clock with
-> the consummer API
-
-s/consummer/consumer/
-
+On Wed, May 27, 2020 at 03:27:32PM +0800, dillon.minfei@gmail.com wrote:
+> From: dillon min <dillon.minfei@gmail.com>
 >=20
-> This add a simple helper, clk_hw_get_clk(), to get a struct clk from
-> a struct clk_hw. Like other clk_get() variant, each call to this helper
-> must be balanced with a call to clk_put().
->=20
-> Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> in l3gd20 driver startup, there is a setup failed error return from
+> stm32 spi driver
 
-I like it!
+Please do not submit new versions of already applied patches, please
+submit incremental updates to the existing code.  Modifying existing
+commits creates problems for other users building on top of those
+commits so it's best practice to only change pubished git commits if
+absolutely essential.
 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 6fd23ce3cb03..d9946e192cbc 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3625,6 +3625,23 @@ struct clk *clk_hw_create_clk(struct device *dev, =
-struct clk_hw *hw,
->         return clk;
->  }
-> =20
-> +/**
-> + * clk_hw_get_clk: get clk consummer given an clk_hw
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
 
-s/consummer/consumer/
+-----BEGIN PGP SIGNATURE-----
 
-> + * @hw: clk_hw associated with the clk being consumed
-> + *
-> + * Returns: new clk consummer
-> + * This is the function to be used by providers which need
-> + * to get a consummer clk and act on the clock element
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl7OOAkACgkQJNaLcl1U
+h9BjiAf9Ffv3ggcuNoWfvMQqMqMQaCF/81yq+JEuOCOw+nSFwBift/d6Q7Z7HWCh
+k0/gPFT+7ED90XyQWUYuDOrUuQWiqQn8UP5p2IhQDAbvY9Zr3jnDTScTPx4FSf9m
+xGGbKV0iWy7z78mHngcLf++zQtDzzZLjhK+U4CxVz5htfuOkTdDeIorLUZJnYdBH
+tZKEYJ92tDX3perBnTRtca5zIEIo7JWv6ITSh6UTFELxx0D44W6NOS7z2W3kZ7HO
+KeUa7lsUfxWs5hF11j959HVj5BG0CFVa/cA4o2dGd5aaDwXjeASUzngGM0DqNPhY
+KPzFjTZ70Yj4eNCZVnKrXNGoe9KAoQ==
+=8sEd
+-----END PGP SIGNATURE-----
 
-s/consummer/consumer/
-
-> + * Calls to this function must be balanced with calls clk_put()
-
-calls to clk_put()
-
-> + */
-> +struct clk *clk_hw_get_clk(struct clk_hw *hw)
-
-Can it also take a const char *id argument? That will let us "name" the
-clk structure for situations where we want to keep track of who is using
-the clk pointer for things. If that doesn't seem useful then I suppose
-we can pass a string like "clk_hw_get_clk" for con_id below and hope it
-doesn't become useful later.
-
-> +{
-> +       struct device *dev =3D hw->core->dev;
-> +
-> +       return clk_hw_create_clk(dev, hw, dev_name(dev), NULL);
-> +}
-> +EXPORT_SYMBOL(clk_hw_get_clk);
-> +
->  static int clk_cpy_name(const char **dst_p, const char *src, bool must_e=
-xist)
->  {
->         const char *dst;
+--G4iJoqBmSsgzjUCe--
