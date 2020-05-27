@@ -2,48 +2,47 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02FFDC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 393E6C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD23920704
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16AB720873
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:33:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590546614;
-	bh=a/3K3G+F2KEbekWTjK3Q4wJsBRNJHvwitw+VbA3Qjyw=;
+	s=default; t=1590546783;
+	bh=gk+v1W3sTYJPEzW3+3ygR/9TYoYK2pJAj1PW78DaVuM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=CBBeb2ebnqB+K/leTypxABen7q5gJuAttKU6/B9zFwE2euelTaafq/Qumzm3W2LWq
-	 71PNWa3S0z8FxoeLJ+99GobeOJFpIQpDHf8havJKrDVHjZnztt0YT7yhXtvH+VUorB
-	 JQvr1OMmrpxMXLxdFtv8MzH8RZ8KXLcLYqI8Z/o4=
+	b=Er9eoConsk3+ulliSd6fmsXF+R5quo/ykXxFCR9+YY+WtAr3GI3H0xzfZU9PHujkE
+	 sqHX71CkT1Nuc1s0xS/73i9I6M2Ol8sKTRojostJkPyjDDF88+2FKzH9ndK0APKaOp
+	 +cKHHua/laxvwr0SSw/IjlZX2PsjzSVaO1PZKvEY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbgE0CaO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 22:30:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40624 "EHLO mail.kernel.org"
+        id S1728098AbgE0CdC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 22:33:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbgE0CaO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 22:30:14 -0400
+        id S1728066AbgE0CdC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 22:33:02 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6324207CB;
-        Wed, 27 May 2020 02:30:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05A4D20704;
+        Wed, 27 May 2020 02:33:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590546614;
-        bh=a/3K3G+F2KEbekWTjK3Q4wJsBRNJHvwitw+VbA3Qjyw=;
+        s=default; t=1590546782;
+        bh=gk+v1W3sTYJPEzW3+3ygR/9TYoYK2pJAj1PW78DaVuM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=i4F/6991OhNBRbSdPhbG/BMLIRj9vbZkPwnsrQLVvnjUnAMZYnvD+9cVHTJm5ZntH
-         C97Q+6Zkz+pY2+/ui0FIHMaRr9sm/zXbbfbaCuTBJ+NC0OtUCFs9dg2EdS+f0hREPa
-         nfAF7g9Q4fTxjZcBmfxCqTrp72TRtCcK8A4r87Xs=
+        b=2nQt1LVAcYcVnZ9lRugFlh5sQH7zpKj709aMUZzOF3D8WtdIuSCk8otZ9/Dz0AObC
+         JgDxMzmaqcob+gBBhqSqx8DMxMHB0eiBxM+EAo3kegeNBQHK16rh2dK1UU0wBDE5Or
+         0/jxVUJCTjdv/WaxpFvC37MLQnMmvzs1ak4r030g=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1590314686-11749-5-git-send-email-sivaprak@codeaurora.org>
-References: <1590314686-11749-1-git-send-email-sivaprak@codeaurora.org> <1590314686-11749-5-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH V5 4/8] clk: qcom: Add DT bindings for ipq6018 apss clock controller
+In-Reply-To: <1590314686-11749-6-git-send-email-sivaprak@codeaurora.org>
+References: <1590314686-11749-1-git-send-email-sivaprak@codeaurora.org> <1590314686-11749-6-git-send-email-sivaprak@codeaurora.org>
+Subject: Re: [PATCH V5 5/8] clk: qcom: Add ipq6018 apss clock controller
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
 To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
@@ -51,43 +50,22 @@ To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
         jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         mturquette@baylibre.com, robh+dt@kernel.org
-Date:   Tue, 26 May 2020 19:30:13 -0700
-Message-ID: <159054661322.88029.16916819048155217664@swboyd.mtv.corp.google.com>
+Date:   Tue, 26 May 2020 19:33:01 -0700
+Message-ID: <159054678130.88029.13011652297143700687@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-05-24 03:04:42)
-> add dt-binding for ipq6018 apss clock controller
-
-Capitalize 'add' because it starts the sentence.
-
+Quoting Sivaprakash Murugesan (2020-05-24 03:04:43)
+> The CPU on Qualcomm ipq6018 devices are clocked primarily by a aplha PLL
+> and xo which are connected to a mux and enable block.
+>=20
+> Add support for the mux and enable block which feeds the CPU on ipq6018
+> devices.
 >=20
 > Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 > ---
->  include/dt-bindings/clock/qcom,apss-ipq.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
->=20
-> diff --git a/include/dt-bindings/clock/qcom,apss-ipq.h b/include/dt-bindi=
-ngs/clock/qcom,apss-ipq.h
-> new file mode 100644
-> index 0000000..77b6e05
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,apss-ipq.h
-> @@ -0,0 +1,12 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-> + */
-> +
-> +#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
-> +#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
-> +
-> +#define APCS_ALIAS0_CLK_SRC                    0
-> +#define APCS_ALIAS0_CORE_CLK                   1
 
-Will this be extended in the future? I hope that this is the only two
-clks we expect to see in this file.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
