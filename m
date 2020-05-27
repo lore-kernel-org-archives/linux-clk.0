@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE85CC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B0BC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8012088E
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B00982088E
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:48:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590543953;
-	bh=skOAIEeMhgTujA9wPOiBgduSAdizU8SP6hViN2DQrRQ=;
+	s=default; t=1590544129;
+	bh=VZwcUR9cJJ5Xu2VihzOLcu/j5MKsW+XtUi/R0QgbwUw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=dUsQzAezVQp2PL75nYEpSdKv2tg27GjYNERxvhqgG4dW2IWhBJY60pyhKksCl8rDR
-	 vk7x7K2/3Ih/L/BejdlQLqdIm8lhCW8d2jVLIw8GlctW1HEZLXeoJcIUkxrMwk8DOC
-	 0vIbAEUxzMTWyNAm2yx3Owz1Hl0CJnN4Q06oeoPU=
+	b=nwZnuNhRix6z7q9dgGEeaS1A6cuAboE3Plye+9BQ64+g3o/v5nhupSpGwovfPBsIV
+	 sBWec+pZkIDbreSvDrvOPj+qOMbux7gQqJd2xnr/8yZjhZU6jb8l7PqeAoahQZfHC+
+	 Il1Dgxmibt21wVU+/UonGra4AfLV8Z3O6DAZqxAU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726742AbgE0Bpx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 21:45:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50952 "EHLO mail.kernel.org"
+        id S1727022AbgE0Bst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 21:48:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbgE0Bpx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 21:45:53 -0400
+        id S1726482AbgE0Bst (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 21:48:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9DD9207CB;
-        Wed, 27 May 2020 01:45:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78235207CB;
+        Wed, 27 May 2020 01:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590543952;
-        bh=skOAIEeMhgTujA9wPOiBgduSAdizU8SP6hViN2DQrRQ=;
+        s=default; t=1590544128;
+        bh=VZwcUR9cJJ5Xu2VihzOLcu/j5MKsW+XtUi/R0QgbwUw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=m1UHcX10J4hDkADzaerFDSfUmqzo4V2ra928S1MlVKmf2RFyIbStAEVifXu+WYtZA
-         MGS+Pag/PWppgtZ0l0onCy7U/4CIXIfeHxCr4Q5Mg+IaZ5q+zYLqLp0xowY4VYcGhw
-         RUxWq4aZVlYBR6bN1AblLGyQLwgjhSvTqu4lUHyg=
+        b=hk2+02Bi3/1PeI7+An0+K2JTNQSaqNnXeXmc24FjgomYp+FUKQfSUw6UGEd7oNxnE
+         D9Z/pUExuq9THOLTg9PAKUx3sU5T4/bq95CkfGVruMnIJbaqt4etVrkVZ7X+xgBcs2
+         61fQWm/nrfti/FenmV7aih1qvNA5eLusl7zBPQdw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200403083040.37748-1-yuehaibing@huawei.com>
-References: <20200403083040.37748-1-yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] clk: zynqmp: Make zynqmp_clk_get_max_divisor static
+In-Reply-To: <8dce2be13195aab20c6b11fca6af0fffe22d5241.1587102634.git.rahul.tanwar@linux.intel.com>
+References: <cover.1587102634.git.rahul.tanwar@linux.intel.com> <8dce2be13195aab20c6b11fca6af0fffe22d5241.1587102634.git.rahul.tanwar@linux.intel.com>
+Subject: Re: [PATCH v8 1/2] dt-bindings: clk: intel: Add bindings document & header file for CGU
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     m.tretter@pengutronix.de, michal.simek@xilinx.com,
-        mturquette@baylibre.com, rajan.vaja@xilinx.com,
-        tejas.patel@xilinx.com, yuehaibing@huawei.com
-Date:   Tue, 26 May 2020 18:45:52 -0700
-Message-ID: <159054395204.88029.15482859565178482479@swboyd.mtv.corp.google.com>
+Cc:     robh@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        andriy.shevchenko@intel.com, qi-ming.wu@intel.com,
+        yixin.zhu@linux.intel.com, cheol.yong.kim@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com
+Date:   Tue, 26 May 2020 18:48:47 -0700
+Message-ID: <159054412768.88029.14426898331029456551@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting YueHaibing (2020-04-03 01:30:40)
-> Fix sparse warning:
+Quoting Rahul Tanwar (2020-04-16 22:54:46)
+> Clock generation unit(CGU) is a clock controller IP of Intel's Lightning
+> Mountain(LGM) SoC. Add DT bindings include file and document for CGU clock
+> controller driver of LGM.
 >=20
-> drivers/clk/zynqmp/divider.c:259:5: warning:
->  symbol 'zynqmp_clk_get_max_divisor' was not declared. Should it be stati=
-c?
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 > ---
 
 Applied to clk-next
