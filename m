@@ -2,145 +2,102 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8481C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 04:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4761C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 893812078C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 04:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B0D32078C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:36:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0a8r1jZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbgE0ERA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 00:17:00 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:60880 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726961AbgE0ERA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 00:17:00 -0400
-Received: from [10.130.0.52] (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9AxJuqu6c1e1385AA--.411S3;
-        Wed, 27 May 2020 12:16:47 +0800 (CST)
-Subject: Re: [PATCH 2/2] clk: Remove CONFIG_ARCH_HISI check for subdir
- hisilicon
-To:     kbuild test robot <lkp@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <1590377516-32117-2-git-send-email-yangtiezhu@loongson.cn>
- <202005270245.sb1paW0C%lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <88bb8736-735e-cc74-8d62-901950c6af4b@loongson.cn>
-Date:   Wed, 27 May 2020 12:16:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1725613AbgE0Fg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 01:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46532 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725265AbgE0Fgz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 01:36:55 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0A2C061A0F;
+        Tue, 26 May 2020 22:36:55 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id v63so11338553pfb.10;
+        Tue, 26 May 2020 22:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e1I6YF+VJ57pEb1USvw1okp6yWunIg/IfHp9i2omTR0=;
+        b=F0a8r1jZcLSsqVhoGtMU61xccI5tarnT5nhRMAICnfjsL9bASyXrz43UyQu0EWXlLz
+         sno2Oo9jK1ypU2ZvQ3qFXqvp7EiVmqEwPGSeN3DRp4AGsbFitXFigM0rrCmVIZ0L45yg
+         PVHtYchZ1Mukrux08wrh1QF/CXst5ayVSlTC7fchD0pXKxe+DLj3hEwuuAtz350u2ahU
+         V8OOsBMuB+J6Rf5vlHZMkeBBj1L4EibLk9NnlpLsy1T0PA7NG+fF+ephdSRw45Ir0s0W
+         /gBGl7TsRNriBmQc6UlYdz02TqZNKv0Lc8TwM1sUQbBnaALhYcb4BgqZQKqNcN8CRNqL
+         S4fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e1I6YF+VJ57pEb1USvw1okp6yWunIg/IfHp9i2omTR0=;
+        b=ClAUsy3FZTw5gt6eTTDsUIwdtv+EpqlWzcMJocuE6aS9PkfbVR+BCLkiEnvsIlKafF
+         1vcyRx95n8VUQ5uVG43fS04T5uOH9mWBTguN/nwpyD3N+jfsr/ClDWX2XI0WSxOWKyly
+         pMNrH0+B93eGaTLIfXj19AqklTeHmGeYjJ2wrxg5MHdpjCpEkV5xl3+4wkMnix102HTQ
+         2MsDQsNJTgwM8lSukfpJE+264tm6lSVFMKtXPXe/BGwN/5PRIBDyJ/PRZabyVogDRaBL
+         /Y6EXLT4PANulu+6crR8craztl7uoub7sPx2oFMN3tOXfvj5GgiEXMqFfo9Ds2u0lT5V
+         kWSw==
+X-Gm-Message-State: AOAM532cJiWcqCHamc/fKj4AFz+hryr5pU0Uyl2yX67OIJicwxmmenHr
+        z8MApigC6yZgAGZWyBMzCgU=
+X-Google-Smtp-Source: ABdhPJzoMBCx1CJhWyfTUVqZ/X+/E5f1uED5yGsoIj9ZGhO45fOqKyN0oUFquW+/Aeyxuq5vfTwkIw==
+X-Received: by 2002:a63:24a:: with SMTP id 71mr2475497pgc.184.1590557815341;
+        Tue, 26 May 2020 22:36:55 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id r34sm1092406pgl.38.2020.05.26.22.36.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 May 2020 22:36:54 -0700 (PDT)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [RESEND PATCH v2 0/4] add mipi_csi_xx gate clocks for SC9863A
+Date:   Wed, 27 May 2020 13:36:34 +0800
+Message-Id: <20200527053638.31439-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <202005270245.sb1paW0C%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf9AxJuqu6c1e1385AA--.411S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr13JryxWF1fKrW8Cw48Zwb_yoWrKw1kpa
-        1kGFWxAw18JFW8WrZrJFWUuFyF9FW7ta48CFZ7ZryvqFn8G3y8tw40gr97WF4Ygr1kZw40
-        g3y8Gw48u3yjyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-        1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-        6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-        0_Gr1lF7xvr2IY64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7Mxk0xIA0c2IEe2xFo4CE
-        bIxvr21lc2xSY4AK67AK6r45MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-        67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-        x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY
-        6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa
-        73UjIFyTuYvjfUe89NUUUUU
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/27/2020 02:55 AM, kbuild test robot wrote:
-> Hi Tiezhu,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v5.7-rc7 next-20200526]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Tiezhu-Yang/clk-hisilicon-Use-correct-return-value-about-hisi_reset_init/20200525-113342
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: i386-tinyconfig (attached as .config)
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-Hi,
+mipi_csi_xx clocks are used by camera sensors. These clocks cannot be
+accessed (even read) if their parent gate clock is disabled. So this
+patchset also add a check to parent clocks when reading these gate
+clocks which marked with the specific flag (SPRD_GATE_NON_AON).
 
-Thanks for your report.
+changes from v1:
+* added Rob's acked-by;
 
-I find that both CONFIG_ARCH_HISI and CONFIG_COMPILE_TEST are not
-set in .config, if one of them is set, the build will be success.
+Chunyan Zhang (4):
+  clk: sprd: check its parent status before reading gate clock
+  dt-bindings: clk: sprd: add mipi_csi_xx clocks for SC9863A
+  clk: sprd: add dt-bindings include for mipi_csi_xx clocks
+  clk: sprd: add mipi_csi_xx gate clocks
 
-But when used with this patch and this .config, I think it is
-better to check CONFIG_COMMON_CLK and CONFIG_CLKDEV_LOOKUP or
-just check CONFIG_ARCH_HISI before build the following files
-"clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o"
-in drivers/clk/hisilicon/Makefile to avoid the build failure.
+ .../bindings/clock/sprd,sc9863a-clk.yaml      |  1 +
+ drivers/clk/sprd/gate.c                       |  7 ++++
+ drivers/clk/sprd/gate.h                       |  9 ++++++
+ drivers/clk/sprd/sc9863a-clk.c                | 32 +++++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9863a-clk.h  |  5 +++
+ 5 files changed, 54 insertions(+)
 
-I will verify it and then send v2.
-
-Thanks,
-Tiezhu Yang
-
-> compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
-> reproduce (this is a W=1 build):
->          # save the attached .config to linux build tree
->          make W=1 ARCH=i386
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kbuild test robot <lkp@intel.com>
->
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
->
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_fixed_rate':
->>> clk.c:(.text+0x9e): undefined reference to `clk_register_fixed_rate'
->>> ld: clk.c:(.text+0xdf): undefined reference to `clk_unregister_fixed_rate'
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_fixed_factor':
->>> clk.c:(.text+0x117): undefined reference to `clk_register_fixed_factor'
->>> ld: clk.c:(.text+0x158): undefined reference to `clk_unregister_fixed_factor'
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_mux':
->>> clk.c:(.text+0x1cb): undefined reference to `clk_register_mux_table'
->>> ld: clk.c:(.text+0x1f2): undefined reference to `clk_register_clkdev'
->>> ld: clk.c:(.text+0x21a): undefined reference to `clk_unregister_mux'
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_divider':
->>> clk.c:(.text+0x2c9): undefined reference to `clk_register_divider_table'
-> ld: clk.c:(.text+0x2e3): undefined reference to `clk_register_clkdev'
->>> ld: clk.c:(.text+0x311): undefined reference to `clk_unregister_divider'
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_gate':
->>> clk.c:(.text+0x36c): undefined reference to `clk_register_gate'
-> ld: clk.c:(.text+0x393): undefined reference to `clk_register_clkdev'
->>> ld: clk.c:(.text+0x3bb): undefined reference to `clk_unregister_gate'
-> ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_gate_sep':
->>> clk.c:(.text+0x425): undefined reference to `clk_register_clkdev'
-> ld: drivers/clk/hisilicon/clk.o: in function `hi6220_clk_register_divider':
->>> clk.c:(.init.text+0x5d): undefined reference to `clk_register_clkdev'
-> ld: drivers/clk/hisilicon/clkgate-separated.o: in function `hisi_register_clkgate_sep':
->>> clkgate-separated.c:(.text+0xf0): undefined reference to `clk_register'
-> ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_set_rate':
->>> clkdivider-hi6220.c:(.text+0x16): undefined reference to `divider_get_val'
-> ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_recalc_rate':
->>> clkdivider-hi6220.c:(.text+0x8a): undefined reference to `divider_recalc_rate'
-> ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_round_rate':
->>> clkdivider-hi6220.c:(.text+0xa9): undefined reference to `clk_hw_get_parent'
->>> ld: clkdivider-hi6220.c:(.text+0xbd): undefined reference to `divider_round_rate_parent'
-> ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_register_clkdiv':
->>> clkdivider-hi6220.c:(.text+0x1c5): undefined reference to `clk_register'
-> ld: drivers/clk/hisilicon/clk-hisi-phase.o: in function `clk_register_hisi_phase':
->>> clk-hisi-phase.c:(.text+0x121): undefined reference to `devm_clk_register'
-> ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+-- 
+2.20.1
 
