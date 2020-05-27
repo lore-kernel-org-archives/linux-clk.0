@@ -2,66 +2,80 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075CFC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3EEC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:08:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB7012089D
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:03:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E14720899
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 01:08:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590541402;
-	bh=L8D3Mt2ic80N/BfYGvtKAAnSlms9gGMG6yYwHNvf/JM=;
+	s=default; t=1590541698;
+	bh=gEQCahnR2XMMiWuyGv9OLa98c7dUNuD50Z8vXWxnv1s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=s0UJdGI/kvVih6DsBjedICLoeAnJnNIPOvJBwaeGb4qhcVBBGww+COKCKNxFiBT0W
-	 +zqsB8b1RYLIA3usmR9Yy9bQ4cUbX7Gzg+mkLi0hyVhxVxhrh0D9qrbv9/SE7nbnGe
-	 eKkV30gC3I+VTWKJCQyURZMDEW4JudDXJEEe/jRU=
+	b=W63jEoLJ3mD91UBscacIbK7Y/2awX1IDtIFxtQ9cKWHeQiECE0QzWakl8Pxag4bgP
+	 EcxN94lEqFqVgX1mTnZnLeQkKnFxL7C6wjFdciNx1RyfTdKyH39I3kPF5mYGiROAEG
+	 Pv8W/ZTFNlfsbGPJvkT24ZMouXitZAgme8wf49Og=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbgE0BDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 21:03:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33988 "EHLO mail.kernel.org"
+        id S1728107AbgE0BIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 21:08:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727072AbgE0BDW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 21:03:22 -0400
+        id S1728092AbgE0BIR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 21:08:17 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CB2420888;
-        Wed, 27 May 2020 01:03:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77F922088E;
+        Wed, 27 May 2020 01:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590541402;
-        bh=L8D3Mt2ic80N/BfYGvtKAAnSlms9gGMG6yYwHNvf/JM=;
+        s=default; t=1590541697;
+        bh=gEQCahnR2XMMiWuyGv9OLa98c7dUNuD50Z8vXWxnv1s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ePmFt/T05flUISMih64oKPY8Qdm0yPx466a1bP9trG2UQ2+Q1XJdr0SgQ3DFeJuBx
-         JyPlAWB9KtlMahp+9yo47Ud98gEMDkpjBm91Jp5qXKm3Fp/hzji2HXTPK7xeAw+GOC
-         Ed9Io2Jb5v/x7FlrY8GUZhzTYLUvATVXfCwWuvpI=
+        b=Pr3AovO/66JVsQ6pMOFxy3X3OQ2+GE39lheSQKMxSP/jIN6snMAwzNKg1bDAhZUJp
+         tLPe/YEGL7n54na79S06oG9hjY3SBm7bQ3zYo7eV1aIu0A6W1ukXZIFA5x9vAH+Vol
+         5CCJvEAtXiKHfrON8DlLGdYlwrplmm/iuOeptsNE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200527010057.57877-1-sboyd@kernel.org>
-References: <20200527010057.57877-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: zynqmp: Mark zynqmp_clk_get_max_divisor() static
+In-Reply-To: <1584048699-24186-3-git-send-email-jolly.shah@xilinx.com>
+References: <1584048699-24186-1-git-send-email-jolly.shah@xilinx.com> <1584048699-24186-3-git-send-email-jolly.shah@xilinx.com>
+Subject: Re: [PATCH v2 2/2] drivers: clk: zynqmp: Update fraction clock check from custom type flags
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tejas Patel <tejas.patel@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>,
         Jolly Shah <jolly.shah@xilinx.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Date:   Tue, 26 May 2020 18:03:21 -0700
-Message-ID: <159054140141.88029.6524841404404802642@swboyd.mtv.corp.google.com>
+To:     Jolly Shah <jolly.shah@xilinx.com>, arm@kernel.org,
+        linux-clk@vger.kernel.org, michal.simek@xilinx.com,
+        mturquette@baylibre.com, olof@lixom.net
+Date:   Tue, 26 May 2020 18:08:16 -0700
+Message-ID: <159054169658.88029.371843532116000844@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2020-05-26 18:00:57)
-> This function isn't used outside this file. Mark it static to silence
-> sparse.
+Quoting Jolly Shah (2020-03-12 14:31:39)
+> From: Tejas Patel <tejas.patel@xilinx.com>
 >=20
-> Cc: Jolly Shah <jolly.shah@xilinx.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+> Older firmware version sets BIT(13) in clkflag to mark a
+> divider as fractional divider. Updated firmware version sets BIT(4)
+> in type flags to mark a divider as fractional divider since
+> BIT(13) is defined as CLK_DUTY_CYCLE_PARENT in the common clk
+> framework flags.
+>=20
+> To support both old and new firmware version, consider BIT(13) from
+> clkflag and BIT(4) from type_flag to check if divider is fractional
+> or not.
+>=20
+> To maintain compatibility BIT(13) of clkflag in firmware will not be
+> used in future for any purpose and will be marked as unused.
 
-Applied to clk-next
+Why are we mixing the firmware flags with the ccf flags? They shouldn't
+be the same. The firmware should have its own 'flag numberspace' that is
+distinct from the common clk framework's 'flag numberspace'. Please fix
+the code.
