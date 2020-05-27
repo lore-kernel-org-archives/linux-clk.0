@@ -3,109 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF34C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 03:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA9AC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 03:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D374620704
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 03:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACED2084C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 03:14:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590549106;
-	bh=6cFuzz5VZ5TvXscnHkWRGdYskgy6ptj61K2CrwaExMM=;
+	s=default; t=1590549262;
+	bh=Cum1L2le/T0Vli/1oJgj9yXnah5bCcZ7M+9h6Nq8jOs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=q1wKeyTunCM8HUC7fdUbvxSsKpj9l2MVn7zcWRLknOwvF9yfems9Wj5rDP8Wr4mK1
-	 WJolu90klsYHEmPEjWavgNrgps0RSUsWtMFY7B2UutJyiNK48AH+xAZCBEgC8ba+X6
-	 Ymu2KrQXPIhSnvixQytDROyMmT7z62JhiLsKbYBM=
+	b=qTI047X4C38erdXj37nV5aVLyR+poxOVZhq0IBUVEI6rlHpCrz7enN74oLr6lAKnm
+	 BFMRVxzrHKG3oeoArAKes/4ioZIcFM+s28KDNkGMh1rAIcgkGvJbdcMd+Zi2c/w4mA
+	 SA6DXsyoF2KNyzNt3RJIxphwmMbLHjysFsqFqNQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbgE0DLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 23:11:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54024 "EHLO mail.kernel.org"
+        id S1728267AbgE0DOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 23:14:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbgE0DLq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 23:11:46 -0400
+        id S1725893AbgE0DOW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 23:14:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8954D206C3;
-        Wed, 27 May 2020 03:11:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE41B206DF;
+        Wed, 27 May 2020 03:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590549105;
-        bh=6cFuzz5VZ5TvXscnHkWRGdYskgy6ptj61K2CrwaExMM=;
+        s=default; t=1590549262;
+        bh=Cum1L2le/T0Vli/1oJgj9yXnah5bCcZ7M+9h6Nq8jOs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D+aHxMzDG3uSTDyfydyuhQ4X7ehm072A6iFKdU9Ms94eXWUKO3fUL3rCl1wSqc1nV
-         P4151DiGp5JWvKBTAqKNwJ3I1R3E1K7HdQiy8CUDO9YuzLjqvuM/BXwlAlO+oaKE7B
-         fkWHBLqi2bnQ+f1yRVioiaBN0p19M1YvK7vBPslQ=
+        b=tmMR4ZMNM6AdsZqUpzWNqgP7jAsJM105b6RPT5Ucbk5r8EayAtpwWsRJ7KUW3EbHx
+         PAj4GwJZvaCUK2u8dN1QXYydTunOxDRr5VewNvRYmP8EF6YreiXKpfH/JKPZX67WkF
+         UQjcS+tK8/HtTG15jb4uJUigFK49piff0js9XtKc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1589707344-8871-3-git-send-email-tdas@codeaurora.org>
-References: <1589707344-8871-1-git-send-email-tdas@codeaurora.org> <1589707344-8871-3-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v2 2/4] dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
+In-Reply-To: <20200519030036.1785-1-zhang.lyra@gmail.com>
+References: <20200519030036.1785-1-zhang.lyra@gmail.com>
+Subject: Re: [PATCH 1/2] clk: sprd: mark the local clock symbols static
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 26 May 2020 20:11:44 -0700
-Message-ID: <159054910485.88029.14861222587907627358@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Tue, 26 May 2020 20:14:21 -0700
+Message-ID: <159054926118.88029.4068340884703067794@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-05-17 02:22:22)
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscor=
-ecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.=
-yaml
-> new file mode 100644
-> index 0000000..c025a0ae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
-> @@ -0,0 +1,101 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sc7180-lpasscorecc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm LPASS Core Clock Controller Binding for SC7180
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Qualcomm LPASS core clock control module which supports the clocks and
-> +  power domains on SC7180.
-> +
-> +  See also:
-> +  - dt-bindings/clock/qcom,lpasscorecc-sc7180.h
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,sc7180-lpasshm
-> +      - qcom,sc7180-lpasscorecc
-> +
-> +  clocks:
-> +    items:
-> +      - description: gcc_lpass_sway clock from GCC
-> +
-> +  clock-names:
-> +    items:
-> +      - const: gcc_lpass_sway
+Quoting Chunyan Zhang (2020-05-18 20:00:35)
+> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+>=20
+> There's a few pll gate clocks which were not marked with static, and
+> those clock are used only in the current file, so add static key word
+> for them.
+>=20
+> Fixes: 0e4b8a2349f3 ("clk: sprd: add clocks support for SC9863A")
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> ---
 
-As said on patch #4, maybe "iface" instead?
-
-> +
-> +  power-domains:
-> +    items:
-> +      - description: LPASS CORE HM GSDCR
-> +
+Applied to clk-next
