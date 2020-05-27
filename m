@@ -2,135 +2,177 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA76C433E4
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BCA0C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 305C5214F1
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E4E420FC3
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:27:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LLxklYnN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729140AbgE0HP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 03:15:57 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:60396 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728821AbgE0HP5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 03:15:57 -0400
-Received: from linux.localdomain (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxr2ugE85eDIs5AA--.467S2;
-        Wed, 27 May 2020 15:15:44 +0800 (CST)
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: [PATCH v2 1/2] clk: hisilicon: Use correct return value about hisi_reset_init()
-Date:   Wed, 27 May 2020 15:15:42 +0800
-Message-Id: <1590563743-30707-1-git-send-email-yangtiezhu@loongson.cn>
-X-Mailer: git-send-email 2.1.0
-X-CM-TRANSID: AQAAf9Dxr2ugE85eDIs5AA--.467S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr1kZF4kKF13Ar18Xw4fKrg_yoW5WF1rpF
-        48JFW2ya4Yga17XFnrXrZ0yFy5Za42gayUGFW8Z3sxZwn8JrWUZr1fury8Xayqqrs3KFWa
-        9r40kr48uayjyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUkv14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-        CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-        2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJV
-        W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4x
-        MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr
-        0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0E
-        wIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJV
-        W8JwCI42IY6xAIw20EY4v20xvaj40_Zr0_Wr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF
-        0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUfpnQUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+        id S1728984AbgE0H1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 03:27:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35394 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728303AbgE0H1l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 03:27:41 -0400
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1450AC061A0F;
+        Wed, 27 May 2020 00:27:41 -0700 (PDT)
+Received: by mail-pg1-x542.google.com with SMTP id c75so11386662pga.3;
+        Wed, 27 May 2020 00:27:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8/pnqpOF5kxfkVhRDe0RiihBA49v54di4gIOur7X7TI=;
+        b=LLxklYnNzudxPlgcrT/fJNH2MPem+uGxJgHfy7oOISPLHa6ikpirtHb4EbdRGht7SY
+         WvJUMfY8ftB39R8dNXZmU0Tsi2+8gVyzbQCdw8JVrCCtOYOTkA4VPmul/BxC4cxSn7b2
+         pJcm00a/TAQ3Hkvjqm+ckwrHB8AcyPl9jNbg/EnnpbvIKqDkgcQMjJZnehn3ZjSV+LbB
+         YopiG1L1bRkwjA1To3JPFquX6uVMApyoXGMGTYtvF5qp8ill3bfFy8od9hHGwd+ADjFS
+         C4AH+ZC+zqbKPpKFcdUQ4GzSfrAoHBsQ5Drwozv/8sGHx5h3hzJvvdBCpRm14Hg22v5Q
+         a5Rw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8/pnqpOF5kxfkVhRDe0RiihBA49v54di4gIOur7X7TI=;
+        b=ltujOWTqbkJ7aXCuOVgK85f1s86baCew6Yxyjx2tmJCKanpIObHvMaA6YX9rVclbp/
+         G67Uekb3uXqtp+7sSEDHKZ9t71y3i21YrV2Ki/BPUMrWWBY4D/5KVlOaqmo5u2FwdpvB
+         nTzPwDTR/bLDEmnqUVPlutnRM6CLhnoKzMt/cr4Ug1BIwXidFK7poUS030DGAwKHuRqZ
+         mnmW3opoaDvHmgerxa4xQGS/Pte9mq3oQFER8ZkXYUDplrJW2akBRNtnamywJ1a0tS3h
+         W9AG4ynFvRPXzqN6Jry/p7qYN8qt1/acl5h1q0kg4fxSO0sfdiOR3+m/0Ptz+5ZwJeoW
+         Gheg==
+X-Gm-Message-State: AOAM531bwlbnxzrzTrWaXdYEHAJbOI0yxYLkEKxjnCZcf51EqYbSOAWt
+        jOe99hWulse+3RBnjIjlg6Q=
+X-Google-Smtp-Source: ABdhPJxTLPr+jP/ArwpWxHxmn/pRT0kb8dD0HedLtdqVNcsMKzf6roH/kNinnVypb58H7dXiI1M8vg==
+X-Received: by 2002:a63:fd57:: with SMTP id m23mr2859284pgj.325.1590564460640;
+        Wed, 27 May 2020 00:27:40 -0700 (PDT)
+Received: from fmin-OptiPlex-7060.nreal.work ([103.206.191.44])
+        by smtp.gmail.com with ESMTPSA id q201sm1371842pfq.40.2020.05.27.00.27.35
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 27 May 2020 00:27:40 -0700 (PDT)
+From:   dillon.minfei@gmail.com
+To:     robh+dt@kernel.org, p.zabel@pengutronix.de,
+        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
+        thierry.reding@gmail.com, sam@ravnborg.org, airlied@linux.ie,
+        daniel@ffwll.ch, mturquette@baylibre.com, sboyd@kernel.org,
+        andy.shevchenko@gmail.com, noralf@tronnes.org,
+        linus.walleij@linaro.org, broonie@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        dillonhua@gmail.com, dillon min <dillon.minfei@gmail.com>
+Subject: [PATCH v6 0/9] Enable ili9341 and l3gd20 on stm32f429-disco
+Date:   Wed, 27 May 2020 15:27:24 +0800
+Message-Id: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The return value about hisi_reset_init() is not correct, fix it.
+From: dillon min <dillon.minfei@gmail.com>
 
-Fixes: e9a2310fb689 ("reset: hisilicon: fix potential NULL pointer dereference")
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
+V6:
+1 separate '[PATCH v5 5/8]' patchs to two, each one has a Fixes tags according
+  to Stephen Boyd's suggestion
+2 fix panel-ilitek-ili9341 compile warning 'warning: Function parameter or
+  member xxx not described in xxx' with W=1
 
-v2:
-  - No changes, just add "Fixes:" tag
+V5's update based on Mark Brown's suggestion, use 'SPI_MASTER_MUST_RX'
+for SPI_SIMPLEX_RX mode on stm32 spi controller.
 
- drivers/clk/hisilicon/clk-hi3519.c      | 4 ++--
- drivers/clk/hisilicon/crg-hi3516cv300.c | 4 ++--
- drivers/clk/hisilicon/crg-hi3798cv200.c | 4 ++--
- drivers/clk/hisilicon/reset.c           | 4 ++--
- 4 files changed, 8 insertions(+), 8 deletions(-)
+V5:
+1 instead of add send dummy data out under SIMPLEX_RX mode,
+  add flags 'SPI_CONTROLLER_MUST_TX' for stm32 spi driver
+2 bypass 'SPI_CONTROLLER_MUST_TX' and 'SPI_CONTROLLER_MUST_RX' under
+  'SPI_3WIRE' mode
 
-diff --git a/drivers/clk/hisilicon/clk-hi3519.c b/drivers/clk/hisilicon/clk-hi3519.c
-index ad0c7f3..803fa66 100644
---- a/drivers/clk/hisilicon/clk-hi3519.c
-+++ b/drivers/clk/hisilicon/clk-hi3519.c
-@@ -149,8 +149,8 @@ static int hi3519_clk_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	crg->rstc = hisi_reset_init(pdev);
--	if (!crg->rstc)
--		return -ENOMEM;
-+	if (IS_ERR(crg->rstc))
-+		return PTR_ERR(crg->rstc);
- 
- 	crg->clk_data = hi3519_clk_register(pdev);
- 	if (IS_ERR(crg->clk_data)) {
-diff --git a/drivers/clk/hisilicon/crg-hi3516cv300.c b/drivers/clk/hisilicon/crg-hi3516cv300.c
-index 5d4e61c..c2af03d 100644
---- a/drivers/clk/hisilicon/crg-hi3516cv300.c
-+++ b/drivers/clk/hisilicon/crg-hi3516cv300.c
-@@ -271,8 +271,8 @@ static int hi3516cv300_crg_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 
- 	crg->rstc = hisi_reset_init(pdev);
--	if (!crg->rstc)
--		return -ENOMEM;
-+	if (IS_ERR(crg->rstc))
-+		return PTR_ERR(crg->rstc);
- 
- 	crg->clk_data = crg->funcs->register_clks(pdev);
- 	if (IS_ERR(crg->clk_data)) {
-diff --git a/drivers/clk/hisilicon/crg-hi3798cv200.c b/drivers/clk/hisilicon/crg-hi3798cv200.c
-index 08a19ba..66fd6a9 100644
---- a/drivers/clk/hisilicon/crg-hi3798cv200.c
-+++ b/drivers/clk/hisilicon/crg-hi3798cv200.c
-@@ -354,8 +354,8 @@ static int hi3798cv200_crg_probe(struct platform_device *pdev)
- 		return -ENOENT;
- 
- 	crg->rstc = hisi_reset_init(pdev);
--	if (!crg->rstc)
--		return -ENOMEM;
-+	if (IS_ERR(crg->rstc))
-+		return PTR_ERR(crg->rstc);
- 
- 	crg->clk_data = crg->funcs->register_clks(pdev);
- 	if (IS_ERR(crg->clk_data)) {
-diff --git a/drivers/clk/hisilicon/reset.c b/drivers/clk/hisilicon/reset.c
-index 93cee17..f17d15f 100644
---- a/drivers/clk/hisilicon/reset.c
-+++ b/drivers/clk/hisilicon/reset.c
-@@ -93,11 +93,11 @@ struct hisi_reset_controller *hisi_reset_init(struct platform_device *pdev)
- 
- 	rstc = devm_kmalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
- 	if (!rstc)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 
- 	rstc->membase = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(rstc->membase))
--		return NULL;
-+		return rstc->membase;
- 
- 	spin_lock_init(&rstc->lock);
- 	rstc->rcdev.owner = THIS_MODULE;
+V4:
+  According to alexandre torgue's suggestion, combine ili9341 and
+  l3gd20's modification on stm32f429-disco board to one patchset.
+
+Changes:
+
+ili9341:
+
+1 update ili9341 panel driver according to Linus's suggestion
+2 drop V1's No.5 patch, sumbit new changes for clk-stm32f4
+3 merge l3gd20's change to this patchset
+
+V3:
+1 merge original tiny/ili9341.c driver to panel/panel-ilitek-ili9341.c
+  to support serial spi & parallel rgb interface in one driver.
+2 update ilitek,ili9341.yaml dts binding documentation.
+3 update stm32f429-disco dts binding
+
+V2:
+1 verify ilitek,ili9341.yaml with make O=../linux-stm32
+  dt_binding_check
+  DT_SCHEMA_FILES=Documentation/devicetree/bindings/display/panel/
+  ilitek,ili9341.yaml
+
+V1:
+1 add ili9341 drm panel driver
+2 add ltdc, spi5 controller for stm32f429-disco
+3 add ltdc, spi5 pin map for stm32f429-disco
+4 add docs about ili9341
+5 fix ltdc driver loading hang in clk set rate bug
+
+
+L3gd20:
+
+V3:
+1 merge stm32f429-disco dtbs binding with ili9341 part
+
+V2:
+1 insert blank line at stm32f420-disco.dts line 143
+2 add more description for l3gd20 in commit message
+
+V1:
+1 enable spi5 controller on stm32f429-disco (dts)
+2 add spi5 pinmap for stm32f429-disco  (dts)
+3 add SPI_SIMPLEX_RX, SPI_3WIRE_RX support for stm32f4
+
+
+dillon min (9):
+  ARM: dts: stm32: Add dma config for spi5
+  ARM: dts: stm32: Add pin map for ltdc & spi5 on stm32f429-disco board
+  ARM: dts: stm32: enable ltdc binding with ili9341, gyro l3gd20 on    
+    stm32429-disco board
+  dt-bindings: display: panel: Add ilitek ili9341 panel bindings
+  clk: stm32: Fix stm32f429's ltdc driver hang in set clock rate
+  clk: stm32: Fix ltdc's clock turn off by clk_disable_unused() after
+    kernel     startup
+  drm/panel: Add ilitek ili9341 panel driver
+  spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX' support for stm32f4
+  spi: flags 'SPI_CONTROLLER_MUST_RX' and 'SPI_CONTROLLER_MUST_TX' can't
+    be     coexit with 'SPI_3WIRE' mode
+
+ .../bindings/display/panel/ilitek,ili9341.yaml     |   69 ++
+ arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |   67 +
+ arch/arm/boot/dts/stm32f429-disco.dts              |   48 +
+ arch/arm/boot/dts/stm32f429.dtsi                   |    3 +
+ drivers/clk/clk-stm32f4.c                          |    7 +-
+ drivers/gpu/drm/panel/Kconfig                      |   12 +
+ drivers/gpu/drm/panel/Makefile                     |    1 +
+ drivers/gpu/drm/panel/panel-ilitek-ili9341.c       | 1288 ++++++++++++++++++++
+ drivers/spi/spi-stm32.c                            |   19 +-
+ drivers/spi/spi.c                                  |    3 +-
+ 10 files changed, 1508 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+
 -- 
-2.1.0
+2.7.4
 
