@@ -2,80 +2,112 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6C8CC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38148C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9494A207E8
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:10:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590563415;
-	bh=5f88nzMEqPegezJKOkJqZXoqontH74AXnh+2bhAJsmo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=DoOTLHGp6tOCcQac030JTwvcGERmash1TbQogM8a6VaSgCnmBX5xLskVlvvHg/WOT
-	 LOYJmxwU73brRZUnyDKwXAnixAw+7bPFAwQa5p1URfR+4nM4j3O0/9Pkr5ru00MBYE
-	 EbJnSdTrTbzDnZsrmCXlJmfikfyBmbc7PkbRyxiU=
+	by mail.kernel.org (Postfix) with ESMTP id 225D8208B8
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbgE0HKP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 03:10:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726025AbgE0HKP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 03:10:15 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 879B22078C;
-        Wed, 27 May 2020 07:10:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590563414;
-        bh=5f88nzMEqPegezJKOkJqZXoqontH74AXnh+2bhAJsmo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=t5cNX77+4RbiAEdrszt2vjDDTNux0be5OEVSAxqKUyMPYEKG6r+VUtx/2z9tO08B6
-         otpHXxk42k57ptJbk56rY8zXBpE+fImfz6Lz0Ir3aSShqx6hTwaG6hfuGw/GEhj5uI
-         F0Mpf+dwsLgmBUY6Q5bL2XeUP1Q3zkVIZZzLUtzg=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200508220238.4883-1-rikard.falkeborn@gmail.com>
-References: <20200508220238.4883-1-rikard.falkeborn@gmail.com>
-Subject: Re: [PATCH] clk: bcm2835: Constify struct debugfs_reg32
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>
-To:     Rikard Falkeborn <rikard.falkeborn@gmail.com>, eric@anholt.net,
-        f.fainelli@gmail.com, mturquette@baylibre.com,
-        nsaenzjulienne@suse.de, rjui@broadcom.com, sbranden@broadcom.com,
-        wahrenst@gmx.net
-Date:   Wed, 27 May 2020 00:10:13 -0700
-Message-ID: <159056341376.88029.8430380128281240784@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        id S1728934AbgE0HP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 03:15:56 -0400
+Received: from mail.loongson.cn ([114.242.206.163]:60390 "EHLO loongson.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728611AbgE0HP4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 03:15:56 -0400
+Received: from linux.localdomain (unknown [113.200.148.30])
+        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxr2ugE85eDIs5AA--.467S3;
+        Wed, 27 May 2020 15:15:45 +0800 (CST)
+From:   Tiezhu Yang <yangtiezhu@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: [PATCH v2 2/2] clk: Remove CONFIG_ARCH_HISI check for subdir hisilicon in Makefile
+Date:   Wed, 27 May 2020 15:15:43 +0800
+Message-Id: <1590563743-30707-2-git-send-email-yangtiezhu@loongson.cn>
+X-Mailer: git-send-email 2.1.0
+In-Reply-To: <1590563743-30707-1-git-send-email-yangtiezhu@loongson.cn>
+References: <1590563743-30707-1-git-send-email-yangtiezhu@loongson.cn>
+X-CM-TRANSID: AQAAf9Dxr2ugE85eDIs5AA--.467S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zw45JFWxJw45Ww4fWF45KFg_yoW8ZryDpa
+        n5tr47JryqqF47KFZ7ArW2kFyYqan2qFWDKFyUZ345Zrn8JFWYvw4IgryxtF4xWr48GFW3
+        W393u3yfCF1jk37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDU0xBIdaVrnRJUUUBq14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
+        x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+        Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
+        8EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1l
+        e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
+        8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
+        jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc2xSY4AK67AK6r4xMxAIw2
+        8IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
+        x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrw
+        CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
+        42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
+        80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjCPfJUUUUU==
+X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rikard Falkeborn (2020-05-08 15:02:38)
-> bcm2835_debugfs_clock_reg32 is never changed and can therefore be made
-> const.
->=20
-> This allows the compiler to put it in the text section instead of the
-> data section.
->=20
-> Before:
->    text    data     bss     dec     hex filename
->   26598   16088      64   42750    a6fe drivers/clk/bcm/clk-bcm2835.o
->=20
-> After:
->    text    data     bss     dec     hex filename
->   26662   16024      64   42750    a6fe drivers/clk/bcm/clk-bcm2835.o
->=20
-> Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-> ---
+If CONFIG_ARCH_HISI is not set but COMPILE_TEST is set, some files
+in the subdir hisilicon can not be built due to CONFIG_ARCH_HISI
+check in drivers/clk/Makefile.
 
-Applied to clk-next
+Since the related configs in drivers/clk/hisilicon/Kconfig depend
+on ARCH_HISI, so remove CONFIG_ARCH_HISI check for subdir hisilicon
+in drivers/clk/Makefile.
+
+At the same time, we should add CONFIG_ARCH_HISI check for the
+common files in drivers/clk/hisilicon/Makefile, otherwise there
+exists build failure about undefined reference function when both
+CONFIG_ARCH_HISI and COMPILE_TEST are not set.
+
+Link: https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org/thread/AVXZQX33S7ZVVK7D5VKLTTH7MOBEEBNB/
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
+---
+
+v2:
+  - Fix the build failure reported by kbuild test robot
+
+ drivers/clk/Makefile           | 2 +-
+ drivers/clk/hisilicon/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index f4169cc..81045ec 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -79,7 +79,7 @@ obj-y					+= bcm/
+ obj-$(CONFIG_ARCH_BERLIN)		+= berlin/
+ obj-$(CONFIG_ARCH_DAVINCI)		+= davinci/
+ obj-$(CONFIG_H8300)			+= h8300/
+-obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
++obj-y					+= hisilicon/
+ obj-y					+= imgtec/
+ obj-y					+= imx/
+ obj-y					+= ingenic/
+diff --git a/drivers/clk/hisilicon/Makefile b/drivers/clk/hisilicon/Makefile
+index b2441b9..4695d6c 100644
+--- a/drivers/clk/hisilicon/Makefile
++++ b/drivers/clk/hisilicon/Makefile
+@@ -3,7 +3,7 @@
+ # Hisilicon Clock specific Makefile
+ #
+ 
+-obj-y	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
++obj-$(CONFIG_ARCH_HISI)	+= clk.o clkgate-separated.o clkdivider-hi6220.o clk-hisi-phase.o
+ 
+ obj-$(CONFIG_ARCH_HI3xxx)	+= clk-hi3620.o
+ obj-$(CONFIG_ARCH_HIP04)	+= clk-hip04.o
+-- 
+2.1.0
+
