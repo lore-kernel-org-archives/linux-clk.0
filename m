@@ -4,65 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8909DC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:14:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79214C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 69AB7216C4
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7BE206F1
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590567260;
-	bh=sNNmG0cTdLLy7b3yFmzQ1Wka7gK77HZTE8IJ1WgDr5g=;
+	s=default; t=1590567315;
+	bh=IeNNmPjcTgw7gsx+2CfxhulT1t+d85+ymfBAlrXmt2M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=PMFSairp4TSxskplBlSZo98w38uHd0PVD3h3gcPJSa3PZd+QM1qEQI1qEnmJn5Ugf
-	 RZyMzI9lRI4pO7gELg6JgWORfJp/pR73clbvs7k9JexkqxmiWZo9tiGyItYWkRN+os
-	 lMVE93saUBOeMqAkXb9OuAgd9Hnvw2nFRK6lwO6g=
+	b=I0vjWb7VQDTFp4ja0egchgwRoZeplRfO5+HtUhigNsD20PU2O6LZzIm/2M3ca+cqW
+	 tA8B9mchGxpIVrtjPKEAlZE0HHXQNRugUeKg7zWDCjku+FLOwM2zD+MNJfqLW9KVM5
+	 nlwANdpdO+LDG1kBK7FjAd35qi6TiyrBhisqPvls=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388030AbgE0IOU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 04:14:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33398 "EHLO mail.kernel.org"
+        id S2387610AbgE0IPP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 04:15:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387566AbgE0IOT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 04:14:19 -0400
+        id S2387552AbgE0IPO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 04:15:14 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D5C2215A4;
-        Wed, 27 May 2020 08:14:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7DAA21531;
+        Wed, 27 May 2020 08:15:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590567259;
-        bh=sNNmG0cTdLLy7b3yFmzQ1Wka7gK77HZTE8IJ1WgDr5g=;
+        s=default; t=1590567313;
+        bh=IeNNmPjcTgw7gsx+2CfxhulT1t+d85+ymfBAlrXmt2M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=B5Vd4iwJGZ/B+rETNRCUGw9OdegjBIFMpPIZZ+zcav6kbxIlaW0uIoAuej7D4Vesd
-         x/IbJ5Z8EUYiE7jcboRBrls30PAlp67QqD084Zv5SJMbA6Mj/37q/2jWp8OtB6aYUO
-         UhL23ilKa1Sb08bZ2j3RehdIWXNTHt58pup2400Q=
+        b=ZYY6vnEV9kajxAkUARYha4A5QVEJ+Bth2Nr/ZyVfWBsCPJUstx2JO2wDFIbHBOKU6
+         PfiItLUs2FJWoTrCqcLqIqugLsoZkkgVxIR5H/W7LeIjGa7B/LReGAiKRFd7LIhCDM
+         DbYOfpppu4aS9seOltHF4HnvG19LMYaDbFV5FfAQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200322140740.3970-1-avolmat@me.com>
-References: <20200322140740.3970-1-avolmat@me.com>
-Subject: Re: [PATCH] clk: clk-flexgen: fix clock-critical handling
+In-Reply-To: <20200408203616.4031-1-eajames@linux.ibm.com>
+References: <20200408203616.4031-1-eajames@linux.ibm.com>
+Subject: Re: [PATCH] clk: ast2600: Fix AHB clock divider for A1
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     patrice.chotard@st.com, avolmat@me.com
-To:     Alain Volmat <avolmat@me.com>, lee.jones@linaro.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Wed, 27 May 2020 01:14:18 -0700
-Message-ID: <159056725840.88029.11402589340387170761@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        joel@jms.id.au, Eddie James <eajames@linux.ibm.com>
+To:     Eddie James <eajames@linux.ibm.com>, linux-clk@vger.kernel.org
+Date:   Wed, 27 May 2020 01:15:13 -0700
+Message-ID: <159056731319.88029.1548166710007070918@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alain Volmat (2020-03-22 07:07:40)
-> Fixes an issue leading to having all clocks following a critical
-> clocks marked as well as criticals.
+Quoting Eddie James (2020-04-08 13:36:16)
+> The latest specs for the AST2600 A1 chip include some different bit
+> definitions for calculating the AHB clock divider. Implement these in
+> order to get the correct AHB clock value in Linux.
 >=20
-> Fixes: fa6415affe20 ("clk: st: clk-flexgen: Detect critical clocks")
->=20
-> Signed-off-by: Alain Volmat <avolmat@me.com>
-> ---
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
 
-Applied to clk-next
+Any Fixes tag for this patch? Seems like it is fixing something.
