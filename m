@@ -2,93 +2,123 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B549C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 12:25:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F62BC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 13:40:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0772620899
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 12:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EB32078B
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 13:40:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728513AbgE0MZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 08:25:02 -0400
-Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:38005 "EHLO
-        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726267AbgE0MZB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 08:25:01 -0400
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-01.qualcomm.com with ESMTP; 27 May 2020 05:25:00 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg03-sd.qualcomm.com with ESMTP; 27 May 2020 05:24:57 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 21E4621800; Wed, 27 May 2020 17:54:56 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH V6 0/5] Add APSS clock controller support for IPQ6018
-Date:   Wed, 27 May 2020 17:54:47 +0530
-Message-Id: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S2387771AbgE0Nk4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 09:40:56 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:54367 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387627AbgE0Nk4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 09:40:56 -0400
+Received: from localhost.localdomain ([149.172.98.151]) by
+ mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 1MxHLs-1ipQ2O23r6-00xZeZ; Wed, 27 May 2020 15:40:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: versatile: undo some dependency changes
+Date:   Wed, 27 May 2020 15:40:33 +0200
+Message-Id: <20200527134043.807045-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:oX8d96/3agk6HQYMnHtVprdFalOQlNymeCToneAXooVriuWLRR+
+ c/h+AwhIj6fC9vUzuz5Aa2eLCM3DNnwR+1QROcwAEUOdv4Lulkj+kNPH+g7+VS00QAnl+gr
+ c/dD0CTtn4iEhMxVhrytOTGK3BdJav61Y5VWmm06MbbfbRJF+wr0RM02TJCmEuNKu6GocqM
+ fVPA8dCdLvlOl5QyMJoIg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8aMReIkVdqU=:yhFX2lu64OasDPFeHhky3H
+ IC/WFCqnWvNVHYf5ttpwJsFmp8RmKdFCdbWyOd18oY93TMgMHBSi8BG4PNcmAcoOCzQbTAjVe
+ 2n0FO4gp/b8z0cbzciNh1NhDV0DzamUtNPfAS8PAhkfrmKZw8elLwnUZMZOT7mBFEkOgGvNzZ
+ ThhEgJyTv2JKI3sgBiQKIbZb8GRfvZJ3uGyje0aDEnZvabf/qwD8lcTjl9Ke1tA3R3Uli1pIv
+ YoMV4J4lZrUpvBNy8Hszb8VvYzzsmcfUTxRdAdpHfd6a6WiVtbzPYQCTCu0UYPfSgoXCDkm6k
+ Bl9xZ1P2tqJTpSTlI7fKnvmoU/cyRIE/E3ra0bIx1xIbMaptle12QYTc16RCVzmhe62aBMJ7J
+ Ml2ZBk2UrFyq8fbq0BoH6b/xnigNotBVskzXNTlpg+GA5iAgAVBC468xVXlMixGq51OsYx4ur
+ ikKJLzdpwjh+l5Ci1t7KLGorX51y2xm09nP3NGro/PAOMBUOC8JaaVCUxTy5QkjoWIveWwXfv
+ f4Vh12dELsS0OTHvouycvZJ7B8ti+36fqacZ///KhnekwVAtgGhn4/3MJCplRbvNIPV9c8jfG
+ pAmlZjnk/57dsb0vHyc7IO4OW+Lm6F8ZoFYg6K+W66eZNwPy269MjncCjaCFa2B7xl+/Ys+ug
+ +mW0eawTP/R9H0IE7cOoAfPolwNq2bevSAywLpxhuuU/cgovHRbYKgMBRInSn2LkLb7YkIoPU
+ L7z0bsXHv515uZ0R8FsS5miYtqW8nxOfNOvXXjBtw9udx3Qz5UiemItenrFyhRpLkCQzgja/D
+ vToTOthP83fSoshZtvzcCxjjx3RTDLF3cS67SJ6JCc5FYsPm2E=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The CPU on Qualcomm's IPQ6018 devices are primarily fed by APSS PLL and XO,
-these are connected to a clock mux and enable block.
+SP810 and ICST are selected by a couple of platforms, most but
+not all in the versatile family:
 
-This patch series adds support for these clocks and inturn enables clocks
-required for CPU freq.
+WARNING: unmet direct dependencies detected for CLK_SP810
+  Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_VERSATILE [=n]
+  Selected by [y]:
+  - ARCH_REALVIEW [=y] && (ARCH_MULTI_V5 [=n] || ARCH_MULTI_V6 [=n] ||
+ARCH_MULTI_V7 [=y])
 
-[V6]
- * Split mailbox driver from this series, mailbox changes will sent as a
-   separate series
- * Addressed review comments from Stephen
-[V5]
- * Addressed Bjorn comments on apss clk and dt-bindings
- * Patch 2 depends on a53 pll dt-bindings
-   https://www.spinics.net/lists/linux-clk/msg48358.html  
-[V4]
- * Re-written PLL found on IPQ platforms as a separate driver
- * Addressed stephen's comments on apss clock controller and pll
- * Addressed Rob's review comments on bindings
- * moved a53 pll binding from this series as it is not applicable, will send
-   it separately.
-[V3]
- * Fixed dt binding check error in patch2
-   dt-bindings: clock: Add YAML schemas for QCOM A53 PLL
-[V2]
- * Restructred the patch series as there are two different HW blocks,
-   the mux and enable belongs to the apcs block and PLL has a separate HW
-   block.
- * Converted qcom mailbox and qcom a53 pll documentation to yaml.
- * Addressed review comments from Stephen, Rob and Sibi where it is applicable.
- * Changed this cover letter to state the purpose of this patch series
+WARNING: unmet direct dependencies detected for ICST
+  Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_VERSATILE [=n]
+  Selected by [y]:
+  - ARCH_REALVIEW [=y] && (ARCH_MULTI_V5 [=n] || ARCH_MULTI_V6 [=n] || ARCH_MULTI_V7 [=y])
+  - ARCH_VEXPRESS [=y] && ARCH_MULTI_V7 [=y]
+  - ARCH_ZYNQ [=y] && ARCH_MULTI_V7 [=y]
 
-Sivaprakash Murugesan (5):
-  dt-bindings: clock: add ipq6018 a53 pll compatible
-  clk: qcom: Add ipq apss pll driver
-  clk: qcom: Add DT bindings for ipq6018 apss clock controller
-  clk: qcom: Add ipq6018 apss clock controller
-  arm64: dts: ipq6018: Add support for apss pll
+Change back the Kconfig logic to allow these to be selected
+without the main option.
 
- .../devicetree/bindings/clock/qcom,a53pll.yaml     |  18 ++++
- arch/arm64/boot/dts/qcom/ipq6018.dtsi              |   8 ++
- drivers/clk/qcom/Kconfig                           |  19 ++++
- drivers/clk/qcom/Makefile                          |   2 +
- drivers/clk/qcom/apss-ipq-pll.c                    |  95 ++++++++++++++++++
- drivers/clk/qcom/apss-ipq6018.c                    | 106 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,apss-ipq.h          |  12 +++
- 7 files changed, 260 insertions(+)
- create mode 100644 drivers/clk/qcom/apss-ipq-pll.c
- create mode 100644 drivers/clk/qcom/apss-ipq6018.c
- create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/clk/versatile/Kconfig | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
+diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+index a0ed412e8396..a557886d813e 100644
+--- a/drivers/clk/versatile/Kconfig
++++ b/drivers/clk/versatile/Kconfig
+@@ -7,6 +7,18 @@ menuconfig COMMON_CLK_VERSATILE
+ 
+ if COMMON_CLK_VERSATILE
+ 
++config CLK_VEXPRESS_OSC
++	tristate "Clock driver for Versatile Express OSC clock generators"
++	depends on VEXPRESS_CONFIG
++	select REGMAP_MMIO
++	default y if ARCH_VEXPRESS
++	---help---
++	  Simple regmap-based driver driving clock generators on Versatile
++	  Express platforms hidden behind its configuration infrastructure,
++	  commonly known as OSCs.
++
++endif
++
+ config ICST
+ 	bool "Clock driver for ARM Reference designs ICST"
+ 	select REGMAP_MMIO
+@@ -22,14 +34,4 @@ config CLK_SP810
+ 	  Supports clock muxing (REFCLK/TIMCLK to TIMERCLKEN0-3) capabilities
+ 	  of the ARM SP810 System Controller cell.
+ 
+-config CLK_VEXPRESS_OSC
+-	tristate "Clock driver for Versatile Express OSC clock generators"
+-	depends on VEXPRESS_CONFIG
+-	select REGMAP_MMIO
+-	default y if ARCH_VEXPRESS
+-	---help---
+-	  Simple regmap-based driver driving clock generators on Versatile
+-	  Express platforms hidden behind its configuration infrastructure,
+-	  commonly known as OSCs.
+ 
+-endif
 -- 
-2.7.4
+2.26.2
 
