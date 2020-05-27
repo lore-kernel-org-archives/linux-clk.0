@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96332C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE00CC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71BC220873
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:39:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A50207CB
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:40:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590547199;
-	bh=rRk0cxGlFOisiUI6iZo/i2T81WZrcr6lxzYbxwBlOZY=;
+	s=default; t=1590547205;
+	bh=I7TqSAwfWBOpOAdgjioDZiBGAbGwtR4XDmYXXxOZd+4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=FC4CDBSZH0hi1VACnHC2yfUGWnyEnlyKIdh2TexpytEJrgti5lJHPZ5E3JwmcvgQo
-	 mMFsxdLasJHhxjV01HWJD+3RtXo5PwF3ojdL6F+cDcsQCmPzFhH4lxLakNh9tzh+4e
-	 XQXQ1JWAxBkkosmFeyzgb+Wcz/gAiYmH53KMe28A=
+	b=DvJv2COhrB/w99FRP/pj9wpWz8pG78B0eREf+6cSRwX4UF6ZCl9NlrXiCfPKzmv3i
+	 vwX8PIZrSVPOcI8znA3BWMWfujcjOv2YUSByyL14hbqOzaTZPxui0r+6xgezus/wsZ
+	 q7jnVyvd5N00/L+Del3xSfHf3rTF5LuAAPUEEvGg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727897AbgE0Cj7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 22:39:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44312 "EHLO mail.kernel.org"
+        id S1728144AbgE0CkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 22:40:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbgE0Cj6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 22:39:58 -0400
+        id S1727799AbgE0CkC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 22:40:02 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B82C207CB;
-        Wed, 27 May 2020 02:39:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3477E208FE;
+        Wed, 27 May 2020 02:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590547198;
-        bh=rRk0cxGlFOisiUI6iZo/i2T81WZrcr6lxzYbxwBlOZY=;
+        s=default; t=1590547202;
+        bh=I7TqSAwfWBOpOAdgjioDZiBGAbGwtR4XDmYXXxOZd+4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ADbo0VHHFvZcXsYjf3dEoUQiwaGgCknpUnx1wSZLqx13c6nYth7ElqFP9z2LIGRK4
-         IA8FGLF7tKfd8Nmg0iOuuhJROIRB+1QKGHklK2N9vHQRVX96p5yudEvxCpnNNeCoLX
-         /EGQkR92KBInAHZOQsj0cEFTgXyQwVob6pcUpqeE=
+        b=wYkTxuj0E7kfHRko5nK8495jKiVrJHVGwAuQPXqtpsBNdr8+y9lUEsi10cqk+RJQ4
+         PKoiAOGIOst33whMu0u1wj80Yh5vv2wvrrrmaxwZezGlOpq1OaE1fIhH3DsDudnKMF
+         snWim0ddSWFUllrh7HwS+h2Zm5wmPzAY2utqy6o8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200517131348.688405-2-bryan.odonoghue@linaro.org>
-References: <20200517131348.688405-1-bryan.odonoghue@linaro.org> <20200517131348.688405-2-bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v5 1/2] clk: qcom: Add DT bindings for MSM8939 GCC
+In-Reply-To: <20200517131348.688405-3-bryan.odonoghue@linaro.org>
+References: <20200517131348.688405-1-bryan.odonoghue@linaro.org> <20200517131348.688405-3-bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v5 2/2] clk: qcom: gcc-msm8939: Add MSM8939 Generic Clock Controller
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -52,26 +52,34 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
 To:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>, agross@kernel.org,
         bjorn.andersson@linaro.org, mturquette@baylibre.com,
         robh+dt@kernel.org
-Date:   Tue, 26 May 2020 19:39:57 -0700
-Message-ID: <159054719765.88029.7139951382004440958@swboyd.mtv.corp.google.com>
+Date:   Tue, 26 May 2020 19:40:01 -0700
+Message-ID: <159054720157.88029.16736730681303391570@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bryan O'Donoghue (2020-05-17 06:13:47)
-> Add compatible strings and the include files for the MSM8939 GCC.
+Quoting Bryan O'Donoghue (2020-05-17 06:13:48)
+> This patch adds support for the MSM8939 GCC. The MSM8939 is based on the
+> MSM8916. MSM8939 is compatible in several ways with MSM8916 but, has
+> additional functional blocks added which require additional PLL sources. =
+In
+> some cases functional blocks from the MSM8916 have different clock sources
+> or different supported frequencies.
 >=20
 > Cc: Andy Gross <agross@kernel.org>
 > Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
 > Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Philipp Zabel <p.zabel@pengutronix.de>
 > Cc: linux-arm-msm@vger.kernel.org
 > Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
 > Cc: linux-kernel@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Co-developed-by: Shawn Guo <shawn.guo@linaro.org>
+> Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
 > Tested-by: Vincent Knecht <vincent.knecht@mailoo.org>
 > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
