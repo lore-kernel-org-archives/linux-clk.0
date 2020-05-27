@@ -2,91 +2,123 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C041BC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A332C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D2792089D
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:34:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590600882;
-	bh=50/46HbEuZ8ktKy1hUSMZWqMKtiPAlEWhFNa2bVRYAg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N8jrjeBrwhcPjpJimYyqNtaD1GziiwkuTpuooE5ZdZ/SRCR1quL1xQzQIrdt3lHHA
-	 /RMkpcvG7Ivda19QOyOMZPszG4kQUAMudPnqeKh3JqSayIpgJrhqK6868rezMsj3A4
-	 NGT31qSI6DKsalIxjqJ8YjLecan7N6itro3OQyPo=
+	by mail.kernel.org (Postfix) with ESMTP id 719B520835
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 17:54:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391042AbgE0Rej (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 13:34:39 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44272 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390984AbgE0Rei (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 13:34:38 -0400
-Received: by mail-il1-f194.google.com with SMTP id j3so24851554ilk.11;
-        Wed, 27 May 2020 10:34:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=eEGnzOVokk32OQNCpauQqJQNJOfZnAg7FW8OPsQsazA=;
-        b=tgPHJi41241Jl1FnW1D0BwdwAspnveHQ28oeIiJAvAqA2vcuu6BUxUP7jwMaeecpl8
-         uCgIqwvAc3eJK/7FCNsLlojYlUnLExdbufJEs1m4JATERqkaFHvrFNSppbUd0m47bOJy
-         IzIfX1FC9ILCQwyH++vgk8J1BnsU4VwfyXDrXLXh9peg52RrYYv7kmJyq5YjlXT279U5
-         6/CRQyiv9kt5XWvzWkhMi3N835GHKZlSmOaiZu6HWLUinTzrxwqPMsqjfoHpVW2GucFF
-         pbeLWZ+DFdPvFh3BnISaaBDb/1Gn6ZtfCQpRwGWGYXhek48U+8jV90cn1rPbqRPB0Znn
-         PhfQ==
-X-Gm-Message-State: AOAM530UGzH57sY30n3T2eBgxZ7+jIHXJBMYUwd8+KXB9xP04GWGs04h
-        fJF1+trHxdsRY0Jx0TC9L8N6wsQ=
-X-Google-Smtp-Source: ABdhPJwCDC0YrgrZpF5OGosH4URn71w/FGNE+SY/vo39G7m9TPvQq8/pR56Uz7h1o49ErORUBE0HYw==
-X-Received: by 2002:a92:7414:: with SMTP id p20mr7037011ilc.77.1590600877820;
-        Wed, 27 May 2020 10:34:37 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id x8sm1869233ilo.81.2020.05.27.10.34.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 27 May 2020 10:34:37 -0700 (PDT)
-Received: (nullmailer pid 2411785 invoked by uid 1000);
-        Wed, 27 May 2020 17:34:36 -0000
-Date:   Wed, 27 May 2020 11:34:36 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     devicetree@vger.kernel.org, sernia.zhou@foxmail.com,
-        sboyd@kernel.org, zhenwenjin@gmail.com, mturquette@baylibre.com,
-        yanfei.li@ingenic.com, aric.pzqi@ingenic.com, paul@crapouillou.net,
-        dongsheng.qiu@ingenic.com, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, rick.tyliu@ingenic.com,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v11 4/7] dt-bindings: clock: Add X1830 clock bindings.
-Message-ID: <20200527173436.GA2411605@bogus>
-References: <20200527085449.55573-1-zhouyanjie@wanyeetech.com>
- <20200527085449.55573-5-zhouyanjie@wanyeetech.com>
+        id S2387814AbgE0RyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 13:54:10 -0400
+Received: from out28-173.mail.aliyun.com ([115.124.28.173]:49203 "EHLO
+        out28-173.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387653AbgE0RyK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 13:54:10 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07893082|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0599157-0.000270983-0.939813;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03310;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HeTFPHM_1590602042;
+Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeTFPHM_1590602042)
+          by smtp.aliyun-inc.com(10.147.43.230);
+          Thu, 28 May 2020 01:54:03 +0800
+Subject: Re: [PATCH v10 3/6] dt-bindings: clock: Add X1830 bindings.
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
+References: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
+ <20200526144044.71413-5-zhouyanjie@wanyeetech.com>
+ <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <08fe6e46-99d3-c66c-4f60-adf87f1b8edf@wanyeetech.com>
+Date:   Thu, 28 May 2020 01:54:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200527085449.55573-5-zhouyanjie@wanyeetech.com>
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 27 May 2020 16:54:46 +0800, 周琰杰 (Zhou Yanjie) wrote:
-> Add the clock bindings for the X1830 Soc from Ingenic.
-> 
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> ---
-> 
-> Notes:
->     v11:
->     New patch, split from [3/6] in v10.
-> 
->  include/dt-bindings/clock/x1830-cgu.h | 55 +++++++++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 include/dt-bindings/clock/x1830-cgu.h
-> 
+Hi Stephen,
 
-Acked-by: Rob Herring <robh@kernel.org>
+I'm very sorry, forgive my carelessness, communication with Paul 
+Cercueil made me realize that the modification of 
+"CLK_OF_DECLARE_DRIVER" mentioned in comments of [7/7] has never really 
+existed in the patch, v12 has fixed this problem, and split the patch 
+about bindings according to your requirements, it may be a good idea to 
+retake [4/7] and [7/7] of v12.
+
+Thanks and best regards!
+
+在 2020/5/27 下午4:12, Stephen Boyd 写道:
+> Quoting 周琰杰 (Zhou Yanjie) (2020-05-26 07:40:41)
+>> Add the clock bindings for the X1830 Soc from Ingenic.
+>>
+>> Signed-off-by: \u5468\u7430\u6770 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> Reviewed-by: Rob Herring <robh@kernel.org>
+>> ---
+>>
+>> Notes:
+>>      v2->v3:
+>>      Adjust order from [3/5] in v2 to [4/5] in v3.
+>>      
+>>      v3->v4:
+>>      Adjust order from [4/5] in v3 to [3/4] in v4.
+>>      
+>>      v4->v5:
+>>      Rebase on top of kernel 5.6-rc1.
+>>      
+>>      v5->v6:
+>>      Add missing part of X1830's CGU.
+>>      
+>>      v6->v7:
+>>      No change.
+>>      
+>>      v7->v8:
+>>      Rebase on top of linux-next.
+>>      
+>>      v8->v9:
+>>      No change.
+>>      
+>>      v9->v10:
+>>      Add missing "X1830_CLK_TCU".
+>>
+>>   .../devicetree/bindings/clock/ingenic,cgu.yaml     |  2 +
+>>   include/dt-bindings/clock/x1830-cgu.h              | 55 ++++++++++++++++++++++
+>>   2 files changed, 57 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/x1830-cgu.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+> This file is in Rob's DT tree staged for the next release, not in the
+> clk tree. Can you split this patch into two, one for the compatible
+> update and another for the header file update and send again? Then Rob
+> can pick up the yaml file change and I can pick up the header file
+> change.
+>
+>> index 0281cd1d7e1b..a952d5811823 100644
+>> --- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
+>> @@ -25,6 +25,7 @@ select:
+>>             - ingenic,jz4770-cgu
+>>             - ingenic,jz4780-cgu
+>>             - ingenic,x1000-cgu
+>> +          - ingenic,x1830-cgu
+>>     required:
+>>       - compatible
+>>   
+>> @@ -51,6 +52,7 @@ properties:
+>>           - ingenic,jz4770-cgu
+>>           - ingenic,jz4780-cgu
+>>           - ingenic,x1000-cgu
+>> +        - ingenic,x1830-cgu
+>>         - const: simple-mfd
+>>       minItems: 1
+>>
