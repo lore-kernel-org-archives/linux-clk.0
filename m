@@ -2,115 +2,104 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B399C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 10:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C0C1C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 11:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1B14A2075F
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 10:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4261A20888
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 11:00:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlA8n5lt"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="CDrjnmob"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbgE0Kqb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 06:46:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38022 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbgE0Kqa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 06:46:30 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B924C061A0F;
-        Wed, 27 May 2020 03:46:30 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id j3so23445007ilk.11;
-        Wed, 27 May 2020 03:46:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jV5qqlg6B+ZoGgVeaw+flUZDliIqHLZTV9SrChni80o=;
-        b=mlA8n5ltaxaXU5Jzq9gQDdiAdLm7WHNtzEPDDmBFHHI5aY7Pd0ha50AJnDMF9b5/Xm
-         Z2ZZRZAcqCMtYbCKXy3nceVZD3RnzhXQfF+FLoOHKH8bFRYpXfHoR4oHaf9m4htN+X4B
-         kHOeUbi0Es6U1y5RBtZATXe0Vo/gA2fGm6nOOsrDYa+k5mwPj63ViOoY1u9rdK/cGq+8
-         TNYJXlgXwwoTT32s8D0Fll3n5Ele44yw479wCHp13y6U/wV9kEPFVAgD6FH+dQ8sbV4q
-         7hsp0Qisu5/+NRQsczixdYHaJcgLXXiFIaskLiZHmpQiPYObZI0OhYc25SDBa5uqdRto
-         J8OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jV5qqlg6B+ZoGgVeaw+flUZDliIqHLZTV9SrChni80o=;
-        b=N5L3jLQjaFij+uE3WYhoqmzNVPi6mofdTAXFBdxgJIbqks5h+NYPwKJjAnZm5wsHWA
-         Do6OUwR2vIvh5RWr0h+VHdr0Itme56VEu3gln0ppNLNUfLf7viLuVw2jS7uHfum79bAo
-         91WRYLjysewqTDqkSHKySBrHGiHi1C9pU/qAfwituWNx7PILmC20JnqJexIZjlJCcRJC
-         wtcLfZwmUev1MOKiUPPB60mnoplJ8V5GRbAmhohwtJE7cFMEJknXI5M5jC7yOFpeDhRD
-         c+WOmU4uqN5SKOWoPGtTgPViHg7waqDNQfJxAxCAKSNW5LHAdogdTVXwJNJkr4Qju2EY
-         zcwg==
-X-Gm-Message-State: AOAM532bxiT9wyzBGCAVfNh6XIVUb8Lnkb54wNCwVsIeMd51JUDCeW5c
-        1xLXBsRoaBQLVyWYI/x2AyMsYleEADXzFO+SyaY=
-X-Google-Smtp-Source: ABdhPJxI8DmrhVOnjKvhDVgxWJ8+FIMyXLu/ryLZET7ClD2+54nQb9OTeBYG7x2X1lNxLOkc/LfdMlqtuwE8cn4F3ds=
-X-Received: by 2002:a92:dc85:: with SMTP id c5mr4964053iln.270.1590576390035;
- Wed, 27 May 2020 03:46:30 -0700 (PDT)
+        id S1729396AbgE0LA6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 07:00:58 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38299 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729371AbgE0LA6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 07:00:58 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1590577257; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
+ Subject: Sender; bh=ymHDh98wpD0ql5S8OT+2qdYkMs5fUdlbcxfmzMaxXsQ=; b=CDrjnmobB1ARZBJ+b5ZwnX5owFY7MJd64rNwVf5mbx61PASw/X7LgqxZC9VgR2utdjr7yg6a
+ WGwHfCDtqClwwTRjEoOHF1p4E2ooWCzBrhgQaPOQqiAPy4whuE8fpEGK5ur6qprmUO07lSkE
+ qj/hM8UmLTsYJsmX3rK4spkkRwM=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
+ 5ece4841bf0e32d254554d31 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 27 May 2020 11:00:17
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E056AC433C6; Wed, 27 May 2020 11:00:16 +0000 (UTC)
+Received: from [192.168.0.104] (unknown [49.207.133.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sivaprak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 69A12C433C9;
+        Wed, 27 May 2020 11:00:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 69A12C433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
+Subject: Re: [PATCH V5 4/8] clk: qcom: Add DT bindings for ipq6018 apss clock
+ controller
+To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+References: <1590314686-11749-1-git-send-email-sivaprak@codeaurora.org>
+ <1590314686-11749-5-git-send-email-sivaprak@codeaurora.org>
+ <159054661322.88029.16916819048155217664@swboyd.mtv.corp.google.com>
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Message-ID: <fc1a7c54-1c6f-2996-a610-4611e3788726@codeaurora.org>
+Date:   Wed, 27 May 2020 16:30:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
- <1590564453-24499-9-git-send-email-dillon.minfei@gmail.com> <20200527095109.GA5308@sirena.org.uk>
-In-Reply-To: <20200527095109.GA5308@sirena.org.uk>
-From:   dillon min <dillon.minfei@gmail.com>
-Date:   Wed, 27 May 2020 18:45:53 +0800
-Message-ID: <CAL9mu0JA=XRTj_HONQGtj74X05TAV0__dW2At0AAeymwNvJhEw@mail.gmail.com>
-Subject: Re: [PATCH v6 8/9] spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX'
- support for stm32f4
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, p.zabel@pengutronix.de,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        thierry.reding@gmail.com, Sam Ravnborg <sam@ravnborg.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Hua Dillon <dillonhua@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <159054661322.88029.16916819048155217664@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 27, 2020 at 5:51 PM Mark Brown <broonie@kernel.org> wrote:
+
+On 5/27/2020 8:00 AM, Stephen Boyd wrote:
+> Quoting Sivaprakash Murugesan (2020-05-24 03:04:42)
+>> add dt-binding for ipq6018 apss clock controller
+> Capitalize 'add' because it starts the sentence.
+ok.
 >
-> On Wed, May 27, 2020 at 03:27:32PM +0800, dillon.minfei@gmail.com wrote:
-> > From: dillon min <dillon.minfei@gmail.com>
-> >
-> > in l3gd20 driver startup, there is a setup failed error return from
-> > stm32 spi driver
->
-> Please do not submit new versions of already applied patches, please
-> submit incremental updates to the existing code.  Modifying existing
-> commits creates problems for other users building on top of those
-> commits so it's best practice to only change pubished git commits if
-> absolutely essential.
-
-Hi Mark,
-
-sorry, forget to remove these two patch from this submits, will not
-include it in later submits
-which ack other's review result.
-
-thanks.
-
-best regards
-
-Dillon,
+>> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+>> ---
+>>   include/dt-bindings/clock/qcom,apss-ipq.h | 12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>   create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
+>>
+>> diff --git a/include/dt-bindings/clock/qcom,apss-ipq.h b/include/dt-bindings/clock/qcom,apss-ipq.h
+>> new file mode 100644
+>> index 0000000..77b6e05
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,apss-ipq.h
+>> @@ -0,0 +1,12 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
+>> +#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
+>> +
+>> +#define APCS_ALIAS0_CLK_SRC                    0
+>> +#define APCS_ALIAS0_CORE_CLK                   1
+> Will this be extended in the future? I hope that this is the only two
+> clks we expect to see in this file.
+yes you're right. these are the only two clocks.
