@@ -2,121 +2,86 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3056C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA15C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9938F2078B
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 651362075A
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 08:30:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="kKdUUmpy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729367AbgE0I1k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 04:27:40 -0400
-Received: from out28-220.mail.aliyun.com ([115.124.28.220]:50240 "EHLO
-        out28-220.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729349AbgE0I1k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 04:27:40 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.08245211|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0548406-0.00016241-0.944997;FP=0|0|0|0|0|-1|-1|-1;HT=e01a16368;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HeHIDqW_1590568053;
-Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeHIDqW_1590568053)
-          by smtp.aliyun-inc.com(10.147.44.145);
-          Wed, 27 May 2020 16:27:34 +0800
-Subject: Re: [PATCH v10 3/6] dt-bindings: clock: Add X1830 bindings.
-To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
-References: <20200526144044.71413-1-zhouyanjie@wanyeetech.com>
- <20200526144044.71413-5-zhouyanjie@wanyeetech.com>
- <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <19e7793b-c7d1-e91f-c1d9-f3e7f6112360@wanyeetech.com>
-Date:   Wed, 27 May 2020 16:27:33 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387811AbgE0Ia1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 04:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45162 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387707AbgE0Ia0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 04:30:26 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F766C061A0F;
+        Wed, 27 May 2020 01:30:26 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id k8so3601504edq.4;
+        Wed, 27 May 2020 01:30:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SywmEh99ZiSZvvICfd9xcBs2ww3bg/rbWeS9Bx7NHo4=;
+        b=kKdUUmpyEMI1liiT7BKaxwaKB7ITFoRBD6XjMZtYP5yEu0Sg2lSDGmVc9bgK0/oMJ9
+         UVjrIjP9Zl5+zOsYEn58tDnLrS/TkX9b0pD1thO1oRQO4cgqxPxpYfd8xBaj1NFut8J6
+         a5UcHqrKM58int5Z1nczfhnIgbXUWwVe4xU2g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SywmEh99ZiSZvvICfd9xcBs2ww3bg/rbWeS9Bx7NHo4=;
+        b=VmbHVV5Q5A96XXmZsNCbrGGy/gMfmJtNQhnXL1pXYMgxmZvYt1xM78YLxvckYi/5zI
+         waCvhrH7sm3ifaMsrIs7xk1O/PSdbkTfeOCA6dpE8xalFpa45lnzJk42KwOj0TTaN5gz
+         mx+WQcu8lXsSyYbwY1qJavGDxzcgHlNOhJcBBbSweEJ1idbbm7AQZoffFmM5X1rswyG1
+         GTisaWedkmq9tNS+QIJuZNTFS6as2ZX1Pltow1EvfiTX7Opnhyx29vFHPda/IWCxLVz7
+         m27aHQrKVbhnFoLrkozSAEPdxRHrrw0s/VIhYLmVGQGwNt+iM8Et1YtynIR7qTxpGvfi
+         k/AQ==
+X-Gm-Message-State: AOAM531v2nh69kmGoIHK04E2Q9NqdrSBtvOzQT3wy+wb9uYki6GVHfKa
+        rGP/oT4Uhyo6vK/MrNbseMJt4d9WXinVnhOER1O0Z4gB
+X-Google-Smtp-Source: ABdhPJxN4wHJ/b/dfhahM4kiOD5BBlupG8Kp/judkuSegesYIMxpAUWv2vBj7UuqBV1XwT5sCxZFEh2G0dOjlwZXnpU=
+X-Received: by 2002:aa7:c944:: with SMTP id h4mr22510152edt.383.1590568225149;
+ Wed, 27 May 2020 01:30:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <159056716225.88029.7227987261941853085@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200408203616.4031-1-eajames@linux.ibm.com> <159056731319.88029.1548166710007070918@swboyd.mtv.corp.google.com>
+In-Reply-To: <159056731319.88029.1548166710007070918@swboyd.mtv.corp.google.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 27 May 2020 08:30:12 +0000
+Message-ID: <CACPK8XcQ3FXePSQ_2TnJZ6E_RsQb2LhMsPVt1d+CbjHmNoOOnQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: ast2600: Fix AHB clock divider for A1
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Eddie James <eajames@linux.ibm.com>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Wed, 27 May 2020 at 08:15, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Eddie James (2020-04-08 13:36:16)
+> > The latest specs for the AST2600 A1 chip include some different bit
+> > definitions for calculating the AHB clock divider. Implement these in
+> > order to get the correct AHB clock value in Linux.
+> >
+> > Signed-off-by: Eddie James <eajames@linux.ibm.com>
+>
+> Any Fixes tag for this patch? Seems like it is fixing something.
 
-在 2020/5/27 下午4:12, Stephen Boyd 写道:
-> Quoting 周琰杰 (Zhou Yanjie) (2020-05-26 07:40:41)
->> Add the clock bindings for the X1830 Soc from Ingenic.
->>
->> Signed-off-by: \u5468\u7430\u6770 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->> Reviewed-by: Rob Herring <robh@kernel.org>
->> ---
->>
->> Notes:
->>      v2->v3:
->>      Adjust order from [3/5] in v2 to [4/5] in v3.
->>      
->>      v3->v4:
->>      Adjust order from [4/5] in v3 to [3/4] in v4.
->>      
->>      v4->v5:
->>      Rebase on top of kernel 5.6-rc1.
->>      
->>      v5->v6:
->>      Add missing part of X1830's CGU.
->>      
->>      v6->v7:
->>      No change.
->>      
->>      v7->v8:
->>      Rebase on top of linux-next.
->>      
->>      v8->v9:
->>      No change.
->>      
->>      v9->v10:
->>      Add missing "X1830_CLK_TCU".
->>
->>   .../devicetree/bindings/clock/ingenic,cgu.yaml     |  2 +
->>   include/dt-bindings/clock/x1830-cgu.h              | 55 ++++++++++++++++++++++
->>   2 files changed, 57 insertions(+)
->>   create mode 100644 include/dt-bindings/clock/x1830-cgu.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
-> This file is in Rob's DT tree staged for the next release, not in the
-> clk tree. Can you split this patch into two, one for the compatible
-> update and another for the header file update and send again? Then Rob
-> can pick up the yaml file change and I can pick up the header file
-> change.
+It fixes the driver to work on the new hardware that didn't exist
+until now. I guess you could say:
 
+Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
 
-OK, I will do it right away.
+Cheers,
 
-
-Thansk and best regards!
-
-
->> index 0281cd1d7e1b..a952d5811823 100644
->> --- a/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
->> +++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.yaml
->> @@ -25,6 +25,7 @@ select:
->>             - ingenic,jz4770-cgu
->>             - ingenic,jz4780-cgu
->>             - ingenic,x1000-cgu
->> +          - ingenic,x1830-cgu
->>     required:
->>       - compatible
->>   
->> @@ -51,6 +52,7 @@ properties:
->>           - ingenic,jz4770-cgu
->>           - ingenic,jz4780-cgu
->>           - ingenic,x1000-cgu
->> +        - ingenic,x1830-cgu
->>         - const: simple-mfd
->>       minItems: 1
->>
+Joel
