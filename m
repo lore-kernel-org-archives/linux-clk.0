@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625CEC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:49:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B26C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38F892078C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:49:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7313F207E8
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 07:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590562187;
-	bh=Mk0WhkBIU2YaD9/TvTDR7cnluLj0/U9QGU8sM8xfkQY=;
+	s=default; t=1590562999;
+	bh=LhwzZ24hfZZZERXjwv0SCDky3MmpIWrKK1ViT7H5PAk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=uHZthaYNFn8Goaf6wVQRW5YoHu25p/W+Tg+XjZmCrFPjdsKSKBLzd6QUzNzdjh8MR
-	 Lnrymn/Wzx4OUQzgaZPAE7BBv1xKQA9Re99NknCBmNPLYe8w6lH17S9jYChR8ODqO0
-	 ZFvc20D2vMz2mX089DgQW2lR/cZs+2YJs2VI4sWs=
+	b=kaxzBRHdDMIz7vDUg6+AgBWauTNoeigcjnv6O+RAbxJX5dD1Ai6R0Fek61kIBgnYc
+	 KD6NX2MJ44JUp88mCSLg8yl/8IAoUHerDuUaW9riJoIFZwkmMHCwF1w7TE0mlTi/ZD
+	 OgK/QC0H0+kKf8jfFkulFSCaaBgWl5R0b5z7R9xQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728907AbgE0Gtr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 02:49:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33136 "EHLO mail.kernel.org"
+        id S1728409AbgE0HDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 03:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728611AbgE0Gtq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 02:49:46 -0400
+        id S1726025AbgE0HDT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 03:03:19 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43B4820787;
-        Wed, 27 May 2020 06:49:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E85207CB;
+        Wed, 27 May 2020 07:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590562186;
-        bh=Mk0WhkBIU2YaD9/TvTDR7cnluLj0/U9QGU8sM8xfkQY=;
+        s=default; t=1590562998;
+        bh=LhwzZ24hfZZZERXjwv0SCDky3MmpIWrKK1ViT7H5PAk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=t/jLS7Hn7JIrLhyly00O4MTUvM8vxasos/btmdCHde4Kfjcod0t6KxYiej7F+A9H5
-         HkTWW0NNbrKCBVwMGeELjC+OKMwQCjrF2wzoGayM+oVZXsqwZSPyXkhwf1qIYJzpRr
-         Y2fBI1is3w0dfNxNBJYIAm3mhy06JopaziSFi2xc=
+        b=tSeNvf8xROTQJAx1K3QWz2fmLTWCWIDKHQBVpNUyMIf1kjPdgTkhUpLSlmpmTQvYu
+         Cu3XCk/RAU33/h8rJ5ZQSZj4PzzuEurNELuVWI1nFF5+WmhTej4Zn7qgx0wpldILyq
+         2XNUQdrpZewLdaclffsYXC0o9+OKgz6AfJr34His=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <db082ca433f69533e4cdf41c80a0699a61aa285e.1587742492.git-series.maxime@cerno.tech>
-References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech> <db082ca433f69533e4cdf41c80a0699a61aa285e.1587742492.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH v2 15/91] clk: bcm: rpi: Pass the clocks data to the firmware function
+In-Reply-To: <1a25b4f079dcdc669d4b29d3658ef0b72be2651e.1587742492.git-series.maxime@cerno.tech>
+References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech> <1a25b4f079dcdc669d4b29d3658ef0b72be2651e.1587742492.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v2 20/91] clk: bcm: rpi: Discover the firmware clocks
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     dri-devel@lists.freedesktop.org,
         linux-rpi-kernel@lists.infradead.org,
@@ -56,23 +56,41 @@ Cc:     dri-devel@lists.freedesktop.org,
         linux-clk@vger.kernel.org
 To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Tue, 26 May 2020 23:49:45 -0700
-Message-ID: <159056218564.88029.2045421244450515235@swboyd.mtv.corp.google.com>
+Date:   Wed, 27 May 2020 00:03:17 -0700
+Message-ID: <159056299757.88029.2814367530440231587@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-04-24 08:33:56)
-> The raspberry_clock_property only takes the clock ID as an argument, but
-> now that we have a clock data structure it makes more sense to just pass
-> that structure instead.
+Quoting Maxime Ripard (2020-04-24 08:34:01)
+> The RaspberryPi4 firmware actually exposes more clocks than are currently
+> handled by the driver and we will need to change some of them directly
+> based on the pixel rate for the display related clocks, or the load for t=
+he
+> GPU.
+>=20
+> This rate change can have a number of side-effects, including adjusting t=
+he
+> various PLL voltages or the PLL parents. The firmware will also update
+> those clocks by itself for example if the SoC runs too hot.
+>=20
+> In order to make Linux play as nice as possible with those constraints, it
+> makes sense to rely on the firmware clocks as much as possible.
+>=20
+> Fortunately,t he firmware has an interface to discover the clocks it
+
+Fortunately, the
+
+> exposes.
+>=20
+> Let's use it to discover, register the clocks in the clocks framework and
+> then expose them through the device tree for consumers to use them.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: Stephen Boyd <sboyd@kernel.org>
 > Cc: linux-clk@vger.kernel.org
-> Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
 
