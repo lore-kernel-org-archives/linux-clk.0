@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7CD6C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:22:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C9FC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C7EA820E65
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1193207CB
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 02:22:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590546144;
-	bh=pLOLjdatirb33TNQ/xSfkJSHnzqTKSS4J4mW9ArbwO8=;
+	s=default; t=1590546145;
+	bh=1Y7J1NdYDG9N/vDOJYQc8LafLZ6M0SRIKC84TW68RBE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=dEjos9s4xpLgAvwasAcom5eeUPVytsTCEksiN6aDzw7geNEpEfJabPbxzLPuW4EvS
-	 c5TGDONrHQtXkY/qvvXYD5dmo+D4aBr9VjWGhJvP32I1n7NEC8tz2Q4rLBXsaEDSc8
-	 2R9WNQLGH731rLsN0pYo1ZvfyycNroTogR+wWNzw=
+	b=11sWgNoZ7Zy4MEv+aYy9Z81t5eqpFEG+8tksm2/lDl1rT7LXMCKnAdpXQqdKOX8ub
+	 xV13x/1HiPvdV5SO35TMIKhcsYeca6/7FaWj4NAa0sWMNxnxPkEcXuBiOjYoz60o3j
+	 4A6WKJRzkTF/BfJr0VpWYS6gmoREokyfUa9qK9VE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726408AbgE0CWV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 May 2020 22:22:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37348 "EHLO mail.kernel.org"
+        id S1726815AbgE0CWZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 May 2020 22:22:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbgE0CWV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 May 2020 22:22:21 -0400
+        id S1725826AbgE0CWY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 May 2020 22:22:24 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A286207CB;
-        Wed, 27 May 2020 02:22:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7051D20873;
+        Wed, 27 May 2020 02:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590546141;
-        bh=pLOLjdatirb33TNQ/xSfkJSHnzqTKSS4J4mW9ArbwO8=;
+        s=default; t=1590546144;
+        bh=1Y7J1NdYDG9N/vDOJYQc8LafLZ6M0SRIKC84TW68RBE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ePYPAd8WKPEzFoF8AWDgLL33HVvfsRaC2yqJ+LROpw0Jx8XLeDGWEjwNHOohuvCxf
-         845BL1ljCiYHWkrLagGgujvxgICdkhC+lwyQazhBrjOzCOY7GQbAgrGwRi8qoDNF8t
-         Pa4vJYReHEiXlbNOhLnoxIH7eJp2FBDuCzKXuTs4=
+        b=MyC3201OWySGnjrWvCe/P+rBJZd1I5SC+ILGIuSlT0h2fuhWy192SfQ3pKmi8ZMd5
+         Hel524FqTu8Y78oIZXYqEFx4P6UqExf284+JQrKsk+7d5h9NX1eFGv/kkUHwPv8kr7
+         M2mI8Bwn6lU2CRuh9SVu7g7/tDxBLIWI77Zu/+CA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1589709861-27580-2-git-send-email-tdas@codeaurora.org>
-References: <1589709861-27580-1-git-send-email-tdas@codeaurora.org> <1589709861-27580-2-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v2 1/3] clk: qcom: gcc: Add support for a new frequency for SC7180
+In-Reply-To: <1589709861-27580-3-git-send-email-tdas@codeaurora.org>
+References: <1589709861-27580-1-git-send-email-tdas@codeaurora.org> <1589709861-27580-3-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: Add gcc_sec_ctrl_clk_src clock ID
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -52,21 +52,18 @@ Cc:     David Brown <david.brown@linaro.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Tue, 26 May 2020 19:22:20 -0700
-Message-ID: <159054614033.88029.7512708640140771352@swboyd.mtv.corp.google.com>
+Date:   Tue, 26 May 2020 19:22:23 -0700
+Message-ID: <159054614359.88029.2985546320122491978@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-05-17 03:04:19)
-> There is a requirement to support 51.2MHz from GPLL6 for qup clocks,
-> thus update the frequency table and parent data/map to use the GPLL6
-> source PLL.
+Quoting Taniya Das (2020-05-17 03:04:20)
+> The gcc_sec_ctrl_clk_src clock is required to be controlled by the
+> secure controller driver.
 >=20
-> Fixes: 17269568f7267 ("clk: qcom: Add Global Clock controller (GCC) drive=
-r for SC7180")
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
 
