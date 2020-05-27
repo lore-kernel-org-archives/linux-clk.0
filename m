@@ -4,66 +4,75 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D4FC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9B8C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:47:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97DE5208DB
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04E932078C
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 06:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590561710;
-	bh=FcPwro708JAQxfwjtGT0lHjZkn35qfyICm3GqDRqE2U=;
+	s=default; t=1590562060;
+	bh=5+tlLkLihU00jqHmrP7H7SWlj+BNK7hJ7XmRaGHL96w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=TdXCF6mjno58SRdcshHSlv7E7azpSkfe8cWa751klCO2J8HEIWv6NTotx7xPA4TCX
-	 6eZlGBemtA1NpaaH9q1gFpa9hTIT546bmAj3lmRK77GCEow8vWK0Yd0j5EO+iZKH8n
-	 90xvvIrm1iXAHufnAIrXSRUrxRAE5ms4gscgfLRo=
+	b=B9lGsRGntCIpX71XYLZGYm7UAvT7VODELuMcV/Nr2Zbr5WEgTQO22xxP+tkJR9J3S
+	 gPvuk/KR7B+DVgayWTJTLhpWGyB8GFJsep/VILCmDEixpvMQABC1CDNrNJd8HW/IYn
+	 5VU6GaowDTNilFLS5HwEWGANrSYGdN9eLxwnZFfQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbgE0Glt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 02:41:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58520 "EHLO mail.kernel.org"
+        id S1726025AbgE0Grj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 02:47:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728803AbgE0Glt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 02:41:49 -0400
+        id S1725914AbgE0Grj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 02:47:39 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D12AA20776;
-        Wed, 27 May 2020 06:41:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D0ABC20787;
+        Wed, 27 May 2020 06:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590561708;
-        bh=FcPwro708JAQxfwjtGT0lHjZkn35qfyICm3GqDRqE2U=;
+        s=default; t=1590562058;
+        bh=5+tlLkLihU00jqHmrP7H7SWlj+BNK7hJ7XmRaGHL96w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=xSdNL81lANV76K5IRc8zUHIrWvbxSR3VSTujQ0YA30WU6trsKuUpkv+cAlsyz4Ja5
-         GJZ71ThpmpG78FvWSS2HzqWRvoWvf5oyBSw4sQLP5D/bQh/vM+b/RFKObMYZgAy3j1
-         SDRuA4HNWMe8tUrmeKK7ZY9lzFSDIEwEfOdwMqbU=
+        b=nZ0/4jIgaBAacgfigDF/ATTLFMH2+8osx1Ba1rg/F7Ox0XbAWloCR0TZG4GKia4Bd
+         ABwmIPWaiNEmptbBXpVCXTQd8TJQrLrGAS6A92GnC/aKmfjEKLvpvwzV5ZCYnFIVfG
+         egoj4X3fin0ToeOosPdQfr+/anpPn4ia9B0mIHZY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200527053638.31439-5-zhang.lyra@gmail.com>
-References: <20200527053638.31439-1-zhang.lyra@gmail.com> <20200527053638.31439-5-zhang.lyra@gmail.com>
-Subject: Re: [RESEND PATCH v2 4/4] clk: sprd: add mipi_csi_xx gate clocks
+In-Reply-To: <eeae1a92da7812f04a034498d3a1cb60e282fec7.1587742492.git-series.maxime@cerno.tech>
+References: <cover.d1e741d37e43e1ba2d2ecd93fc81d42a6df99d14.1587742492.git-series.maxime@cerno.tech> <eeae1a92da7812f04a034498d3a1cb60e282fec7.1587742492.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v2 06/91] clk: bcm: rpi: Statically init clk_init_data
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Tue, 26 May 2020 23:41:48 -0700
-Message-ID: <159056170805.88029.407778737144391406@swboyd.mtv.corp.google.com>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Eric Anholt <eric@anholt.net>, Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Tue, 26 May 2020 23:47:38 -0700
+Message-ID: <159056205813.88029.2378352854347673195@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chunyan Zhang (2020-05-26 22:36:38)
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Quoting Maxime Ripard (2020-04-24 08:33:47)
+> Instead of declaring the clk_init_data and then calling memset on it, just
+> initialise properly.
 >=20
-> mipi_csi_xx clocks are used by camera sensors.
->=20
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > ---
 
-Applied to clk-next
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
