@@ -2,41 +2,41 @@ Return-Path: <SRS0=u/0O=7J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EE3CC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:55:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7AEC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 408442078C
-	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A278206F1
+	for <linux-clk@archiver.kernel.org>; Wed, 27 May 2020 05:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590558954;
-	bh=PcP0elMmxsxvC2yH2JORrMx/2zoxr/+2rXhvhlQJreI=;
+	s=default; t=1590559037;
+	bh=gzYDsc4yTRXjwRrubCOSTfXhjkTXv+sPDRxNFrDrKAQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Mc3rIF1jVJpAcrdg+hFy4CuGPjCvTu+b6pXeHZVZ9oX1RubzUoZvr9Yn4+mlcBlUh
-	 zsKZQPoi8atEKmgfdNHEsVStDluX6J0vKnLBRJ9m3acR0T8e/O9RoYq1c1k9XTSbmz
-	 G6IKiCnVj7JSaWtizyJi56xokdDzx6WZvvhYx5tM=
+	b=pWoKrpngw9tWRSgFhCPGr4pXTvBlUM9PgQ1ZTcutDVfBtGuR/bbMdPuhxlcH0TZNN
+	 WoUrYlyYqgd8gkE+9fdZ1DTthkXLGQ4xkofase0sGD4hWleJdgQeghX8Hvs8dzKrti
+	 y0hS3F8gTfJ+FQ6P/LOwLhV9gXrCv5wswcisLmWU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbgE0Fzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 01:55:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44600 "EHLO mail.kernel.org"
+        id S1726487AbgE0F5P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 01:57:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbgE0Fzu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 01:55:50 -0400
+        id S1725819AbgE0F5O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 01:57:14 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AD90206F1;
-        Wed, 27 May 2020 05:55:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EDEB206F1;
+        Wed, 27 May 2020 05:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590558950;
-        bh=PcP0elMmxsxvC2yH2JORrMx/2zoxr/+2rXhvhlQJreI=;
+        s=default; t=1590559034;
+        bh=gzYDsc4yTRXjwRrubCOSTfXhjkTXv+sPDRxNFrDrKAQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OhocTK+Uz/yQpuW5nOGw7pZ64VE+pkmrKgYxsJ2bRR0uxGgVQ2y0o9D4cPASOhtDi
-         BO4Dxh6HPtbHVS6xKrNo17LfFDr5RI1a1n7MSnYtLvgbpoQO6Agjwr3JRq27IRQQnj
-         jTwS8Lc73ngULTpqDPrjBZ6AgWcHKM0PZlKadvBI=
+        b=PkJ1Lv2ZnQe9Yl0Jyj0rmKzdwjBpwkF3pBASWPbe2h0z7YiiNE1ZDdQ9e9cdOSWaP
+         VPscRnqc88YezlXaJVKsqR9RfzWE7DkOUwh/0LTJacAHi5CmMyY+WWPecqdNT0iEDm
+         x0rh+xgoYG2uegnWV+QKql2+rHN9FfRNHbM5b//Q=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
@@ -53,8 +53,8 @@ To:     Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         MyungJoo Ham <myungjoo.ham@samsung.com>,
         Thierry Reding <thierry.reding@gmail.com>
-Date:   Tue, 26 May 2020 22:55:49 -0700
-Message-ID: <159055894944.88029.2029223648098859689@swboyd.mtv.corp.google.com>
+Date:   Tue, 26 May 2020 22:57:13 -0700
+Message-ID: <159055903348.88029.4091179421954621221@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -65,14 +65,11 @@ Quoting Dmitry Osipenko (2020-03-30 16:16:14)
 > In same cases it may be desired to round clock's rate without taking into
 > account current min/max requests made by the clock's users. One example is
 > building up OPP table based on a possible clock rates.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/clk.c   | 49 +++++++++++++++++++++++++++++++++++----------
+>  include/linux/clk.h | 18 +++++++++++++++++
 
-Shouldn't the OPP table come from firmware/DT? I don't quite understand
-why we're generating OPP tables on top of the rate rounding API.
-clk_round_rate() is supposed to tell us what rate we'll get if we call
-clk_set_rate() with the same arguments. An unboundly version of that
-doesn't make sense.=20
-
-I wonder if perhaps the clk provider should be populating OPP tables in
-this case? Or basically anything besides adding another clk consumer API
-to solve this problem. Who is the caller? Something later in this
-series?
+BTW, please run get_maintainers.pl patches. Russell maintains
+include/linux/clk.h (the clk API). CCF implements it.
