@@ -2,88 +2,70 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D856C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 20:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7B9C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 22:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41C892075F
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 20:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590699298;
-	bh=fdwBsBBi2gph+b4Rn35p4McelgK2p8QTmaFJ+CG8FWo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RKpTW+CbWdWj5E/KTJRe7IURazjdWlTFGZq7ENHqo8vuTR5XNAYvmu8nu9+lmTEPQ
-	 1kSZj3PBTvVkMLt8eC+YLGmGEiNrBntT4qk9F6DXDEdeeHFfq4uF2XHQmzbVWj8ps6
-	 v44NC3dgt5TZaDZ8U+1k9/Qnut1L7/8UaCr93pd8=
+	by mail.kernel.org (Postfix) with ESMTP id 0B9D22074B
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 22:12:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407376AbgE1Uyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 May 2020 16:54:54 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:36928 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407319AbgE1Uyv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 May 2020 16:54:51 -0400
-Received: by mail-il1-f196.google.com with SMTP id r2so344613ila.4;
-        Thu, 28 May 2020 13:54:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=F7XQzSdkLERxE1acZynKbz0LO6ZEk9eeYt7e0P7o/i4=;
-        b=fsoxEmoNBRR+/Nxyj85Tkuz1t6sQD4fPaAuDNZX9mISBcWqYABek2dB1anCsd2zOtW
-         k1I2ZgXDoEpulE6hOBMpbE3Zzoq4W6Q7e3ra0cuBXn9JUtumHWDR/2p1H2KAFzxZP7E/
-         17b1/IH4tMzedK2S56RXFT7p4Go2i6i5Ex9oIBswu7dD4UlScFIQnwYL9e+LEE1cHxnI
-         Y+9zhtOvUmyFVf6lOKkg2jvb+3wsHnslNXatfLk4h/DmFDhglOsK7Dckw6pdgYLBz8+S
-         DhfTagaTqMUEcKRIFSRK56tlHhP9k7JMYt5XV9u7+6bRqNCh9Nqler9dVX/tSYkPVW38
-         9naQ==
-X-Gm-Message-State: AOAM533Rm7ogtYFxUj6YhQL/Tp+aW3jOKrNQzmSYRg0kIgHkD728lIl9
-        6zKwwsqDaE7ERKVgMbUc7Q==
-X-Google-Smtp-Source: ABdhPJwJ0d29vn4rlFs/ok0iRsHB+WCre4sY9IDtIjo+Gy98OKVrQLZryjqhEtVfFrk6ImB9DOVB2Q==
-X-Received: by 2002:a92:c809:: with SMTP id v9mr4494438iln.209.1590699290028;
-        Thu, 28 May 2020 13:54:50 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id y19sm2957545iod.41.2020.05.28.13.54.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 13:54:49 -0700 (PDT)
-Received: (nullmailer pid 658956 invoked by uid 1000);
-        Thu, 28 May 2020 20:54:47 -0000
-Date:   Thu, 28 May 2020 14:54:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     linux-arm-kernel@lists.infradead.org, kernel@pengutronix.de,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        festevam@gmail.com, Frank.Li@nxp.com, mturquette@baylibre.com,
-        shawnguo@kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, s.hauer@pengutronix.de,
-        sboyd@kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V2] dt-bindings: clock: Convert i.MX7D clock to
- json-schema
-Message-ID: <20200528205447.GA656972@bogus>
-References: <1589813554-20929-1-git-send-email-Anson.Huang@nxp.com>
+        id S2436886AbgE1WMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 May 2020 18:12:25 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:45708 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436887AbgE1WMY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 May 2020 18:12:24 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1jeQl9-0007zv-Hz; Thu, 28 May 2020 22:12:19 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: intel: remove redundant initialization of variable rate64
+Date:   Thu, 28 May 2020 23:12:19 +0100
+Message-Id: <20200528221219.535804-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1589813554-20929-1-git-send-email-Anson.Huang@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 18 May 2020 22:52:34 +0800, Anson Huang wrote:
-> Convert the i.MX7D clock binding to DT schema format using json-schema.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> Changes since V1:
-> 	- Update maintainer's e-mail address.
-> ---
->  .../devicetree/bindings/clock/imx7d-clock.txt      | 13 -----
->  .../devicetree/bindings/clock/imx7d-clock.yaml     | 64 ++++++++++++++++++++++
->  2 files changed, 64 insertions(+), 13 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/imx7d-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/imx7d-clock.yaml
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Applied, thanks!
+The variable rate64 is being initialized with a value that is never read
+and it is being updated later with a new value.  The initialization is
+redundant and can be removed.
+
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/x86/clk-cgu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
+index 802a7fa88535..56af0e04ec1e 100644
+--- a/drivers/clk/x86/clk-cgu.c
++++ b/drivers/clk/x86/clk-cgu.c
+@@ -538,7 +538,7 @@ lgm_clk_ddiv_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct lgm_clk_ddiv *ddiv = to_lgm_clk_ddiv(hw);
+ 	u32 div, ddiv1, ddiv2;
+ 	unsigned long flags;
+-	u64 rate64 = rate;
++	u64 rate64;
+ 
+ 	div = DIV_ROUND_CLOSEST_ULL((u64)*prate, rate);
+ 
+-- 
+2.25.1
+
