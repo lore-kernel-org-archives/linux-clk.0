@@ -2,93 +2,95 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B901C433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 01:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6F2C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 01:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E16A620FC3
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 01:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DEC8207CB
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 01:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590628429;
-	bh=nJ+OlQlFiclXQXrwSoo6jw5QuuCZENaXlRnmg76bdVU=;
+	s=default; t=1590631014;
+	bh=JPh9VqWlO6/GEoqC3u2uYd8L4jEnjtFsdsbXczjP7Bg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=fCuhCiwqayx8opm1O4Crd6c9sdCERdXYsMheQc0dU/ucGRsl+ghmR+oP0qYzx9ja9
-	 ocX1S7oW+d3p4OpK3BT0eyTQs6tGdG+0EzD8Bf0OAQG1qCXDH972ugrgUglWt2freI
-	 UcFDplvFPNEfK0PgbS/uGI7DONr/JmeMVgYk0qCA=
+	b=TTCYPvi50h/e/q9c8YCQ2tSfZKRAmdrU98/YxaTYnayRvPXospofje9tuVRBqI7u/
+	 sqWEu5At8Mrv5A7UDHv+WbmZuZPBDjerSeGCO5Om6g/mGDmv+smibuVcCNEgjyajiN
+	 QzWxCYrhRw6+9VsDdAtb7YR8Z3bOBMH7qgceoTaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgE1BNs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 21:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39690 "EHLO mail.kernel.org"
+        id S1726815AbgE1B4y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 21:56:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725795AbgE1BNr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 21:13:47 -0400
+        id S1725849AbgE1B4x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 21:56:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4ECA120C56;
-        Thu, 28 May 2020 01:13:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E2B0207CB;
+        Thu, 28 May 2020 01:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590628426;
-        bh=nJ+OlQlFiclXQXrwSoo6jw5QuuCZENaXlRnmg76bdVU=;
+        s=default; t=1590631013;
+        bh=JPh9VqWlO6/GEoqC3u2uYd8L4jEnjtFsdsbXczjP7Bg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=2D/F+K0OpuE2eplGl0zNvlJLvETSAOyub7sxF7k05vU5XdghXDCw0pBI9DPkvSvzx
-         ij21J1CMgSKM70EkJdMeFGKbWt++ODVfmnYweG/PQYzPBaFRExlRZA5PP+ccx7RVgl
-         QpFQolwgRzmarIV4udP/tIb/D/xnBe8+yNoe+cys=
+        b=N23kTYfh52xFeon1etjkNSjhcqiIQGJS5S7hkM/TEUVQlE6jTdhUBuoK4o+FePJqy
+         jO0kUfDvkWytrKDtzowKTt2cetZ/VzY5suJrFV9XfxYgWLf8sYeVpk8Mgb0tl2WDmy
+         o8GPys9KmPYJsPIY4FC1adLbIz3nGTGUKEKhe1/4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200527175635.5558-6-zhouyanjie@wanyeetech.com>
-References: <20200527175635.5558-1-zhouyanjie@wanyeetech.com> <20200527175635.5558-6-zhouyanjie@wanyeetech.com>
-Subject: Re: [PATCH v12 5/7] clk: Ingenic: Add CGU driver for X1830.
+In-Reply-To: <1590582292-13314-6-git-send-email-sivaprak@codeaurora.org>
+References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org> <1590582292-13314-6-git-send-email-sivaprak@codeaurora.org>
+Subject: Re: [PATCH V6 5/5] arm64: dts: ipq6018: Add support for apss pll
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
-To:     linux-clk@vger.kernel.org, Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Date:   Wed, 27 May 2020 18:13:45 -0700
-Message-ID: <159062842562.69627.2356351510003565560@swboyd.mtv.corp.google.com>
+Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Wed, 27 May 2020 18:56:52 -0700
+Message-ID: <159063101240.69627.8166973936029543160@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhou Yanjie (2020-05-27 10:56:33)
-> diff --git a/drivers/clk/ingenic/x1830-cgu.c b/drivers/clk/ingenic/x1830-=
-cgu.c
-> new file mode 100644
-> index 000000000000..29a637f4a2cc
-> --- /dev/null
-> +++ b/drivers/clk/ingenic/x1830-cgu.c
-> @@ -0,0 +1,443 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * X1830 SoC CGU driver
-> + * Copyright (c) 2019 \u5468\u7430\u6770 (Zhou Yanjie) <zhouyanjie@wanye=
-etech.com>
-> + */
+Quoting Sivaprakash Murugesan (2020-05-27 05:24:52)
+> Enable apss pll support.
+>=20
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> ---
+> [V6]
+>  * split the mailbox driver from this patch
+>  arch/arm64/boot/dts/qcom/ipq6018.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/=
+qcom/ipq6018.dtsi
+> index 1aa8d85..3956e44 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
+> @@ -300,6 +300,14 @@
+>                         #mbox-cells =3D <1>;
+>                 };
+> =20
+> +               apsspll: clock@b116000 {
+> +                       compatible =3D "qcom,ipq6018-a53pll";
+> +                       reg =3D <0x0b116000 0x40>;
+> +                       #clock-cells =3D <0>;
+> +                       clocks =3D <&xo>;
+> +                       clock-names =3D "xo";
+> +               };
 > +
-> +#include <linux/clk-provider.h>
-> +#include <linux/delay.h>
 
-Add linux/io.h here.
+I'd expect to see this inside an soc node. Also this doesn't go via clk
+tree so don't send it with the clk patches.
 
-> +#include <linux/of.h>
-> +
-> +#include <dt-bindings/clock/x1830-cgu.h>
-> +
-> +#include "cgu.h"
-[...]
-> +               return;
-> +       }
-> +
-> +       ingenic_cgu_register_syscore_ops(cgu);
-> +}
-> +CLK_OF_DECLARE_DRIVER(x1830_cgu, "ingenic,x1830-cgu", x1830_cgu_init);
-
-Same question about why this is DECLARE_DRIVER.
+>                 timer {
+>                         compatible =3D "arm,armv8-timer";
+>                         interrupts =3D <GIC_PPI 2 (GIC_CPU_MASK_SIMPLE(4)=
+ | IRQ_TYPE_LEVEL_LOW)>,
