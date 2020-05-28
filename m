@@ -2,96 +2,92 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 686EBC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 00:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C2F3C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 00:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0E5206DF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 00:38:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC405207CB
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 00:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590626301;
-	bh=cmSou5VE1UNh7bIXRNVGEpuB0HEm75DbJwXB1O6nCt8=;
+	s=default; t=1590627206;
+	bh=0n4zQAT8mJvU4sF96GyUq5+N5ztEIqb5MLKUV70GmuY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=X/K4tm/XrPbz+K6b7gUwifhWA5Alp0Yb1PxnCv21u2eufHhDLZ84VQR7/H4uY5A4l
-	 DPyokXJWWmHtgQiYI9sfU8pffZMoth1LxPW4YB8fQdFSyDHqHWIHI9XAPjemSMr8OF
-	 czbzUUAa2kdXSLEED1uMcIRe8ToZnR4fGLrBzk3I=
+	b=RdjJiO00giIK2SEGje5rU81f80Y5pAkC8xQ1DESGNdwowe6GdRYdNg+c9Hjf5oW5H
+	 a9TOVjorzX6QojPockvLekmZ1Ro0Rbj3B2eopywfdmTfr8p8/qn+frJdO3gsFhkZ12
+	 PVeIbYs+RTFgGxbfW83jrGuEHfJ6gVkNXH1pBw9E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725826AbgE1AiR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 20:38:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59020 "EHLO mail.kernel.org"
+        id S1725385AbgE1Ax0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 20:53:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbgE1AiR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 20:38:17 -0400
+        id S1725267AbgE1Ax0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 27 May 2020 20:53:26 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62F82206DF;
-        Thu, 28 May 2020 00:38:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C10BD207CB;
+        Thu, 28 May 2020 00:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590626296;
-        bh=cmSou5VE1UNh7bIXRNVGEpuB0HEm75DbJwXB1O6nCt8=;
+        s=default; t=1590627205;
+        bh=0n4zQAT8mJvU4sF96GyUq5+N5ztEIqb5MLKUV70GmuY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=I4zKjqrD5Xi60T8w5xlbBJOO1r9GlOycS6B77QnDNwNpYrmFm/Mm49/7WcydqN9MD
-         7zmIaEBqkLR64PKfIOcN/Fr4AFWAP5R6aB+10rKCIUr707orYGhMrsD9zmryXAniVQ
-         DcWGtigeJR5AmjNXretYcdxXURCwZqBJEC3mI4fM=
+        b=N2uNTLiyUhGAD/1N9T3eKa76o5PnQegZpd+T8UfOwqR2cjaDIdBn4YX6AEBDrDdl4
+         QaaFDByOHlZ3NmsSX01fbyoD+53HlIEbnUQIYrVbliFi5zy5NWjLSuHGZFS7SRPiWe
+         XLX+gdaCI8/4Hqakd1XTKopN4U82UTMujHZv+flc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3fcac59c-7a37-d4af-9d12-710d7af05845@gmail.com>
-References: <20200330231617.17079-1-digetx@gmail.com> <20200330231617.17079-3-digetx@gmail.com> <159055894944.88029.2029223648098859689@swboyd.mtv.corp.google.com> <3fcac59c-7a37-d4af-9d12-710d7af05845@gmail.com>
-Subject: Re: [PATCH v1 2/5] clk: Introduce clk_round_rate_unboundly()
+In-Reply-To: <20200328184958.16134-1-festevam@gmail.com>
+References: <20200328184958.16134-1-festevam@gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: dac: syscon-icst: Remove unneeded unit name
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Date:   Wed, 27 May 2020 17:38:15 -0700
-Message-ID: <159062629560.69627.6748976171636917991@swboyd.mtv.corp.google.com>
+Cc:     robh+dt@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        Fabio Estevam <festevam@gmail.com>
+To:     Fabio Estevam <festevam@gmail.com>, robh@kernel.org
+Date:   Wed, 27 May 2020 17:53:24 -0700
+Message-ID: <159062720498.69627.5411198594058635183@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Osipenko (2020-05-27 10:57:01)
-> 27.05.2020 08:55, Stephen Boyd \u043f\u0438\u0448\u0435\u0442:
-> > Quoting Dmitry Osipenko (2020-03-30 16:16:14)
-> >> In same cases it may be desired to round clock's rate without taking i=
-nto
-> >> account current min/max requests made by the clock's users. One exampl=
-e is
-> >> building up OPP table based on a possible clock rates.
-> >=20
-> > Shouldn't the OPP table come from firmware/DT? I don't quite understand
-> > why we're generating OPP tables on top of the rate rounding API.
-> > clk_round_rate() is supposed to tell us what rate we'll get if we call
-> > clk_set_rate() with the same arguments. An unboundly version of that
-> > doesn't make sense.=20
+Quoting Fabio Estevam (2020-03-28 11:49:58)
+> The following warnings are seen with 'make dt_binding_check':
 >=20
-> The OPP should come from the DT, but unfortunately DT and Tegra's
-> devfreq driver wasn't designed like that from the start, so it will take
-> some extra effort to re-do it properly now. I wanted to postpone that
-> effort a tad and get at least the basics upstreamed for the starter.
+> Documentation/devicetree/bindings/clock/arm,syscon-icst.example.dts:17.16=
+-24.11: Warning (unit_address_vs_reg): /example-0/clock@00: node has a unit=
+ name, but no reg or ranges property
+> Documentation/devicetree/bindings/clock/arm,syscon-icst.example.dts:17.16=
+-24.11: Warning (unit_address_format): /example-0/clock@00: unit name shoul=
+d not have leading 0s
 >=20
-> > I wonder if perhaps the clk provider should be populating OPP tables in
-> > this case? Or basically anything besides adding another clk consumer API
-> > to solve this problem. Who is the caller? Something later in this
-> > series?
+> Fix them by removing the unneeded clock unit name.
 >=20
-> I'll try to add a proper OPP table with freqs and voltages, will see how
-> it goes. We will need to do it sooner or later anyways. So perhaps it's
-> fine to drop the current approach with the clk_round_rate_unboundly()
-> and re-focus on a proper OPP implementation.
->=20
-> Thank you for getting back and replying to this topic :)
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
+> ---
 
-Alright, it sounds better to me if we can avoid a one off addition to
-the clk API in favor of implementing a proper OPP table from the start.
+Rob were you going to pick this up? Doesn't look like a critical warning
+to fix in v5.7 final right now.
+
+>  Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml=
+ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+> index de9a465096db..444aeea27db8 100644
+> --- a/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+> +++ b/Documentation/devicetree/bindings/clock/arm,syscon-icst.yaml
+> @@ -91,7 +91,7 @@ required:
+> =20
+>  examples:
+>    - |
+> -    vco1: clock@00 {
+> +    vco1: clock {
+>        compatible =3D "arm,impd1-vco1";
+>        #clock-cells =3D <0>;
+>        lock-offset =3D <0x08>;
