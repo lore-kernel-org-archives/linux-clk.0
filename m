@@ -2,125 +2,87 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8CCC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 02:27:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 155FEC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 03:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFCD2084C
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 02:27:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE73420C56
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 03:17:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbgE1C1x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 22:27:53 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:56000 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725901AbgE1C1x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 May 2020 22:27:53 -0400
-Received: from [10.130.0.52] (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxn96eIc9elfE5AA--.1049S3;
-        Thu, 28 May 2020 10:27:44 +0800 (CST)
-Subject: Re: [PATCH v4 1/2] clk: hisilicon: Use correct return value about
- hisi_reset_init()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-References: <1590590362-11570-1-git-send-email-yangtiezhu@loongson.cn>
- <159060638492.88029.3855641102752089121@swboyd.mtv.corp.google.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <51c21311-a301-1a55-3eb1-a11583e7df43@loongson.cn>
-Date:   Thu, 28 May 2020 10:27:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1726793AbgE1DRP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 May 2020 23:17:15 -0400
+Received: from out28-97.mail.aliyun.com ([115.124.28.97]:33075 "EHLO
+        out28-97.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726563AbgE1DRP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 23:17:15 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2034777|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0142839-7.76422e-05-0.985638;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03309;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.HeebJ-Y_1590635771;
+Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeebJ-Y_1590635771)
+          by smtp.aliyun-inc.com(10.147.42.22);
+          Thu, 28 May 2020 11:17:10 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
+Subject: [PATCH v13 0/7] Add support for the X1830 and fix bugs for X1000.
+Date:   Thu, 28 May 2020 11:15:42 +0800
+Message-Id: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.11.0
 MIME-Version: 1.0
-In-Reply-To: <159060638492.88029.3855641102752089121@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf9Dxn96eIc9elfE5AA--.1049S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cr47Gw43Aw1xGF4rAF18Xwb_yoW8ArWxpr
-        WxGFWS9r4Fqr17XrsxJa18CFs0v3Wfta1Yyry8Awn3Aan8JrWUAr4UGFy09FyrCFWUK3W5
-        tr4FkryrAayDJaUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvK14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-        6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE
-        67vIY487MxkIecxEwVAFwVW8JwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJV
-        W8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF
-        1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-        IIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF
-        0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-        VjvjDU0xZFpf9x0JUgVyxUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05/28/2020 03:06 AM, Stephen Boyd wrote:
-> Quoting Tiezhu Yang (2020-05-27 07:39:21)
->> The return value about hisi_reset_init() is not correct, fix it.
->>
->> Fixes: e9a2310fb689 ("reset: hisilicon: fix potential NULL pointer dereference")
-> hisi_reset_init() returns NULL on error in that commit. This patch
-> doesn't make sense.
+v10->v11:
+Split [3/6] in v10 to [3/7] in v11 and [4/7] in v11.
 
-Hi Stephen,
+v11->v12:
+Use "CLK_OF_DECLARE_DRIVER" instead "CLK_OF_DECLARE",
+this modification was mentioned in the comments, but
+did not really exist in the patch.
+Reported-by: Paul Cercueil <paul@crapouillou.net>
 
-The initial aim of this patch is to use correct return value about
-hisi_reset_init(), maybe NULL is OK, but the return value in this
-patch is more accurate.
+v12->v13:
+1.Add Rob Herring's Acked-by for [4/7].
+2.Add "#include <linux/io.h>" for writel/readl.
+3.Add a comment on why use "CLK_OF_DECLARE_DRIVER()".
+  Suggested-by: Stephen Boyd <sboyd@kernel.org>
 
-In the current code, it always returns -ENOMEM when call function
-hisi_reset_init() failed which is not proper, because in the function
-hisi_reset_init(), devm_platform_ioremap_resource() may returns -EINVAL,
--EBUSY or -ENOMEM if failed.
+周琰杰 (Zhou Yanjie) (7):
+  clk: Ingenic: Remove unnecessary spinlock when reading registers.
+  clk: Ingenic: Adjust cgu code to make it compatible with X1830.
+  dt-bindings: clock: Add documentation for X1830 bindings.
+  dt-bindings: clock: Add X1830 clock bindings.
+  clk: Ingenic: Add CGU driver for X1830.
+  dt-bindings: clock: Add and reorder ABI for X1000.
+  clk: X1000: Add FIXDIV for SSI clock of X1000.
 
-devm_platform_ioremap_resource()
-         devm_ioremap_resource()
-                 __devm_ioremap_resource()
+ .../devicetree/bindings/clock/ingenic,cgu.yaml     |   2 +
+ drivers/clk/ingenic/Kconfig                        |  10 +
+ drivers/clk/ingenic/Makefile                       |   1 +
+ drivers/clk/ingenic/cgu.c                          |  28 +-
+ drivers/clk/ingenic/cgu.h                          |   4 +
+ drivers/clk/ingenic/jz4725b-cgu.c                  |   4 +
+ drivers/clk/ingenic/jz4740-cgu.c                   |   4 +
+ drivers/clk/ingenic/jz4770-cgu.c                   |   8 +-
+ drivers/clk/ingenic/jz4780-cgu.c                   |   3 +
+ drivers/clk/ingenic/x1000-cgu.c                    | 123 +++++-
+ drivers/clk/ingenic/x1830-cgu.c                    | 448 +++++++++++++++++++++
+ include/dt-bindings/clock/x1000-cgu.h              |  64 +--
+ include/dt-bindings/clock/x1830-cgu.h              |  55 +++
+ 13 files changed, 705 insertions(+), 49 deletions(-)
+ create mode 100644 drivers/clk/ingenic/x1830-cgu.c
+ create mode 100644 include/dt-bindings/clock/x1830-cgu.h
 
-
-static void __iomem *
-__devm_ioremap_resource(struct device *dev, const struct resource *res,
-             enum devm_ioremap_type type)
-{
-     resource_size_t size;
-     void __iomem *dest_ptr;
-
-     BUG_ON(!dev);
-
-     if (!res || resource_type(res) != IORESOURCE_MEM) {
-         dev_err(dev, "invalid resource\n");
-         return IOMEM_ERR_PTR(-EINVAL);
-     }
-
-     size = resource_size(res);
-
-     if (!devm_request_mem_region(dev, res->start, size, dev_name(dev))) {
-         dev_err(dev, "can't request region for resource %pR\n", res);
-         return IOMEM_ERR_PTR(-EBUSY);
-     }
-
-     dest_ptr = __devm_ioremap(dev, res->start, size, type);
-     if (!dest_ptr) {
-         dev_err(dev, "ioremap failed for resource %pR\n", res);
-         devm_release_mem_region(dev, res->start, size);
-         dest_ptr = IOMEM_ERR_PTR(-ENOMEM);
-     }
-
-     return dest_ptr;
-}
-
-Thanks,
-Tiezhu Yang
-
->
->> Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
->> ---
->>
+-- 
+2.11.0
 
