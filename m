@@ -2,150 +2,143 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA257C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 03:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7B4C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 07:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B423320C56
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 03:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 492C4208FE
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 07:31:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="Uo/3TSRD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KJHyh6Xq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgE1DRR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 May 2020 23:17:17 -0400
-Received: from out28-125.mail.aliyun.com ([115.124.28.125]:60183 "EHLO
-        out28-125.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726773AbgE1DRQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 May 2020 23:17:16 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07484244|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.65544-0.000441388-0.344119;FP=12401073465265263918|3|1|7|0|-1|-1|-1;HT=e02c03311;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.HeebJ-Y_1590635771;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HeebJ-Y_1590635771)
-          by smtp.aliyun-inc.com(10.147.42.22);
-          Thu, 28 May 2020 11:17:12 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com, paul@crapouillou.net
-Subject: [PATCH v13 1/7] clk: Ingenic: Remove unnecessary spinlock when reading registers.
-Date:   Thu, 28 May 2020 11:15:43 +0800
-Message-Id: <20200528031549.13846-2-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
-References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
+        id S1726207AbgE1HbA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 May 2020 03:31:00 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:59857 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725747AbgE1HbA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 May 2020 03:31:00 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id B1C135801E3;
+        Thu, 28 May 2020 03:30:58 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 28 May 2020 03:30:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=DzfmDTRER5Rc6vqd8K3tdl/h7IL
+        LPrzRW6G6nM/VnN8=; b=Uo/3TSRDGuNYFTVIWjo5nW8GLeNnjf4YCBm0RvH8OIa
+        d9NQOKxlUg1FESR6IAXM5mj3dCtfSgJ52b9QgX4BbQXpaWRZ0V2mj5pbElDNg9xY
+        WoBkTMIQyU/2uLCVme027EGhgYmAZ/kBGpvEUjaTK8tB8zh7qLFjUq2y9M7CQlM5
+        MD+a0zkII7ReHXvr3Myih7oiMCzLIr6qJSbkdU96GdrU2l4xHKx0zu9/9B+e9Nh/
+        lH2L+GyXcRjyXo0v1AxKmSNI6EF6GfjfH7d6FDHnMymDy0hH5jhxxXgSNGIWnmZI
+        Dq68N3mnkUh8ZEoFVa0f+C8rDUU8HPjXpGGWgHElAbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=DzfmDT
+        RER5Rc6vqd8K3tdl/h7ILLPrzRW6G6nM/VnN8=; b=KJHyh6XqKlTQ4MP0B3XhzN
+        YCyIFUWT+oDBebBgN3cMKQVzEx6whQoljUpQimvyyMAUdxHNajzjv1Eb6YfSvxem
+        Kz+iXJhMpOpKhzTHpkOkRjMEVzADfZLY+cFKzpJbQxpOcmDfZlIKouu8MTaOnwDa
+        b4zKDMS9u1OPxxiV65/Et3WpQ+XDk9rQbMJuPZVmi9Ge6EXdzLxWcD5C6D85TWyh
+        i65iIRKZS8OVmdVXgZEv0KZwdYv6exg7SwCRISRFiD/SiqzrDgGwpm4kLxFEKEil
+        Q8izo1OUn4kMo6xOquuuYDXVcBbgRiqAbztXNUGaU+tzRVfiGRRSTDWokeT4Qz1w
+        ==
+X-ME-Sender: <xms:sWjPXoONJgJEwoEq_FYCUe_RM3crKMcoo7E-FPok9IxHzYT67Q46Rw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedruddvhedguddtudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihi
+    mhgvucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrg
+    htthgvrhhnpeevveefffduveeitdegtefhhfetueffteefffdvheevvdehteethedvleff
+    gfejvdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppeeltddrkeelrdeike
+    drjeeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomhep
+    mhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:sWjPXu8OSORrgT7dwCMcLRO_66K0n8kL-N8hkR8uECjCsK3NZ3NpZw>
+    <xmx:sWjPXvRtze0HzvnWIkUsiiK-OMC0eioiyU_5C_9VzsvjpWy-KMqdVQ>
+    <xmx:sWjPXgt1FAvnCaJsnGRpBcolBHLPyMjUSIl2wixGr4MHY17_SwWhmg>
+    <xmx:smjPXo7uLD9f6nuRyVwYhByDit7NnBfwK4Rpk_3NZeXwPXg38J9vyQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 32F0B30614FA;
+        Thu, 28 May 2020 03:30:57 -0400 (EDT)
+Date:   Thu, 28 May 2020 09:30:55 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Daniel Drake <drake@endlessm.com>
+Cc:     Jian-Hong Pan <jian-hong@endlessm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>
+Subject: Re: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipelin
+Message-ID: <20200528073055.znutrhkryzu3grrl@gilmour.lan>
+References: <20200427072342.5499-1-jian-hong@endlessm.com>
+ <20200428162152.ztsqp7nxqbwqrm6r@gilmour.lan>
+ <CAPpJ_efvtVzb_hvoVOeaePh7UdE13wOiiGaDBH38cToB-yhkUg@mail.gmail.com>
+ <20200507172158.cybtakpo6cxv6wcs@gilmour.lan>
+ <CAPpJ_efxenmSXt2OXkhkQ1jDJ59tyWBDUvmpyOB-bfPMDENQZg@mail.gmail.com>
+ <CAPpJ_ed9TMJjN8xS1_3saf5obQhULJSLNgQSAFxgiWM2QX9A7Q@mail.gmail.com>
+ <20200526102018.kznh6aglpkqlp6en@gilmour.lan>
+ <CAD8Lp467DiYWLwH6T1Jeq-uyN4VEuef-gGWw0_bBTtmSPr00Ag@mail.gmail.com>
+ <20200527091335.7wc3uy67lbz7j4di@gilmour.lan>
+ <CAD8Lp45ucK-yZ5G_DrUVA7rnxo58UF1LPUy65w2PCOcSxKx_Sg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="3roh2l2ctvp5d3wy"
+Content-Disposition: inline
+In-Reply-To: <CAD8Lp45ucK-yZ5G_DrUVA7rnxo58UF1LPUy65w2PCOcSxKx_Sg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is not necessary to use spinlock when reading registers,
-so remove it from cgu.c.
 
-Suggested-by: Paul Cercueil <paul@crapouillou.net>
-Suggested-by: Paul Burton <paulburton@kernel.org>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-Reviewed-by: Paul Cercueil <paul@crapouillou.net>
----
+--3roh2l2ctvp5d3wy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Notes:
-    v2:
-    New patch.
-    
-    v2->v3:
-    Adjust order from [5/5] in v2 to [1/5] in v3.
-    
-    v3->v4:
-    Remove the spinlock around ingenic_cgu_gate_get().
-    
-    v4->v5:
-    Rebase on top of kernel 5.6-rc1.
-    
-    v5->v6:
-    No change.
-    
-    v6->v7:
-    No change.
-    
-    v7->v8:
-    No change.
-    
-    v8->v9:
-    No change.
-    
-    v9->v10:
-    No change.
-    
-    v10->v11:
-    No change.
-    
-    v11->v12:
-    No change.
-    
-    v12->v13:
-    No change.
+Hi Daniel,
 
- drivers/clk/ingenic/cgu.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+On Wed, May 27, 2020 at 05:15:12PM +0800, Daniel Drake wrote:
+> On Wed, May 27, 2020 at 5:13 PM Maxime Ripard <maxime@cerno.tech> wrote:
+> > I'm about to send a v3 today or tomorrow, I can Cc you (and Jian-Hong) =
+if you
+> > want.
+>=20
+> That would be great, although given the potentially inconsistent
+> results we've been seeing so far it would be great if you could
+> additionally push a git branch somewhere.
+> That way we can have higher confidence that we are applying exactly
+> the same patches to the same base etc.
 
-diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-index 6e963031cd87..ab1302ad1450 100644
---- a/drivers/clk/ingenic/cgu.c
-+++ b/drivers/clk/ingenic/cgu.c
-@@ -76,16 +76,13 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
- 	const struct ingenic_cgu_pll_info *pll_info;
- 	unsigned m, n, od_enc, od;
- 	bool bypass;
--	unsigned long flags;
- 	u32 ctl;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 	BUG_ON(clk_info->type != CGU_CLK_PLL);
- 	pll_info = &clk_info->pll;
- 
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
- 
- 	m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
- 	m += pll_info->m_offset;
-@@ -259,12 +256,9 @@ static int ingenic_pll_is_enabled(struct clk_hw *hw)
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info = to_clk_info(ingenic_clk);
- 	const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
--	unsigned long flags;
- 	u32 ctl;
- 
--	spin_lock_irqsave(&cgu->lock, flags);
- 	ctl = readl(cgu->base + pll_info->reg);
--	spin_unlock_irqrestore(&cgu->lock, flags);
- 
- 	return !!(ctl & BIT(pll_info->enable_bit));
- }
-@@ -562,16 +556,12 @@ static int ingenic_clk_is_enabled(struct clk_hw *hw)
- 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
- 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
- 	const struct ingenic_cgu_clk_info *clk_info;
--	unsigned long flags;
- 	int enabled = 1;
- 
- 	clk_info = &cgu->clock_info[ingenic_clk->idx];
- 
--	if (clk_info->type & CGU_CLK_GATE) {
--		spin_lock_irqsave(&cgu->lock, flags);
-+	if (clk_info->type & CGU_CLK_GATE)
- 		enabled = !ingenic_cgu_gate_get(cgu, &clk_info->gate);
--		spin_unlock_irqrestore(&cgu->lock, flags);
--	}
- 
- 	return enabled;
- }
--- 
-2.11.0
+So I sent a new iteration yesterday, and of course forgot to cc you... Sorr=
+y for
+that.
 
+I've pushed my current branch here:
+https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git/log/?h=3D=
+rpi4-kms
+
+Maxime
+
+--3roh2l2ctvp5d3wy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXs9orwAKCRDj7w1vZxhR
+xWNfAQCCSr9BEd1oYBuyc+wf4o1Fm9s0OrK6oNnc5glpsNR6QAEAmnvx5c11Eczw
+/TJeEz41Q44p4bi3Fmipemloq5mY/g4=
+=elb0
+-----END PGP SIGNATURE-----
+
+--3roh2l2ctvp5d3wy--
