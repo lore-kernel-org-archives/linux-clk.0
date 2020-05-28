@@ -2,149 +2,172 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB98C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 14:22:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E80BC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 17:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B611320888
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 14:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6074120814
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 17:44:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t8tJG5mv"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="lOuHtDAF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391096AbgE1OWM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 May 2020 10:22:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40906 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391035AbgE1OWL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 May 2020 10:22:11 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 100D2C05BD1E;
-        Thu, 28 May 2020 07:22:11 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id n15so3166621pjt.4;
-        Thu, 28 May 2020 07:22:11 -0700 (PDT)
+        id S2405605AbgE1RoT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 May 2020 13:44:19 -0400
+Received: from mail-bn8nam12on2074.outbound.protection.outlook.com ([40.107.237.74]:21402
+        "EHLO NAM12-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2405581AbgE1RoR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 May 2020 13:44:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=MSZvAvDGmUasobwsjzeOQ97osDA8PHt1f58HaqUsUcaOmy5b/vIKdxh5Wz+VJLa6m+QjKkvve8+x/oSx2QzFI+6bP2/Cr1tIIaf031NbDCByQIGy9XDJ2daJERDjchaWDMgIPV32k7mGf+MknD3Jnsm5/Ib2zUYCSxkC7w/RNd9FrXPfwnP76PuxUrhemEB2fipNzeDZ345utxMwWkEdCan3FI1u4nEb83/fEP+ZidEWojSPRs8LAWj+FkpBxmwlaJb/gHCYGJCzyQ81ZOnZt1CUOvUp0cYEGUrxc2pDKF1lRs6mrrvSGt7VvCxOauNQeHscK7kSqIOAOiaYUz1V5g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ARMGmBC7HW1OcgFuP1OVScrr+HlnD9WLXkcM230gwbI=;
+ b=fzhafQWMYjcKsYaasqP+NNJpoQHcMab5OMPN7m9MpD/fmbcFYpVnGMs6l0xYsoALwVJ4nvRdn7XifzjHon5bjqteBAEA/00IruLM+UuAsD9h+al+X2rTHkkshN2RnyLkxYvctj88o/butGuL2qUvCd3OApPXkrvyoYMUyfFqCixKcwt1MC1jNmRXuzH/fHt7crh6NGDkG9SmYHlMWSM22R+TGdYaEQdkg+DS86/Rka4s6n3tjL4Uu39hbTQ6jZo30oc33hyzrJi3qijIbiPnF+f+h1bSR+URxooLv3k+5gts+MfdBdMxfVo8AX+xdx+SBwCvqopSKmg8DIM/DbqAXA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
+ dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
+ not signed); arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=wWwF/bnn9ZcbJfYK+03lCeXiM0oqQHMOv1ojVW5AqE4=;
-        b=t8tJG5mvH1xzHtWy9lfolS8Z5SK+IeWq2bqqiIG8Uc9CJCBKzXghkXX8/p4F5WEHDV
-         PlHaJz7KxOcxKPrJvCSdFRqhx9pImpYNt6lYdpOuwTzrF0iOfTDJzDzgITmRwFhFoeOg
-         VtnQLhWm8iPr+UEc64Bdw6tTVfN04K/uAjk3Wdrf79rUiODGo1q+6mIl7xfPEPngc7RP
-         3/WxyUHz7rjkK+v937kOWyYXQzqFPYvddtoc8W577qoE5TEZd5hNSFu+45O3hesI/JUO
-         1I6toFDX3x3RytZqiPQSc9rfPHWKdSFAeMti4faxVlH1LwOLaTUOQ7KlTEaoWSjwF7Ou
-         6Zng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wWwF/bnn9ZcbJfYK+03lCeXiM0oqQHMOv1ojVW5AqE4=;
-        b=oSZjDTuT19/UNXvHvjzDao7dnNT4tqI5mEbpJnK9qLmwrMgzTjeliqfB9hPb20qPVA
-         nZrtEa7CT62ufkmRGLGCj/nV6x0kaJ1wxQJC+qfiE8Kfu1XWfbtS1mtQ0odSmlkJOa9I
-         EA2PxlKJ3DLw3D7887FxXtpj7q/hlas48nUnIU/x5SPsERtcxfTj2lSJcgsnNlWqCECg
-         tw3Z/VK2kBZmGytg99zQ3IF1XMt9FxRqLRdzzzCAvKdUqx1/2JkDmFVxiuZ/f8SyxB5O
-         wB2PwV6B09jw49U9VpQCzM2hF2+phJxDcgmB+24MWdl5IlLYkx8Otywt1a93qZFhpiA8
-         EDxg==
-X-Gm-Message-State: AOAM532sZAfF9nneqBtZLfZjR3rAoKIk7jgXumPkESvK73tl8cDGWcYg
-        L0ZoTrix+1Ekua+N6/BZr/O36/lJ
-X-Google-Smtp-Source: ABdhPJzdi2KceMqeO7E/63+tTlQhot38qwIjBd3zpxPWOZm2KCHm3nr1Tu8bVrtUl2/OVu534jXuHw==
-X-Received: by 2002:a17:902:b289:: with SMTP id u9mr3803290plr.138.1590675730628;
-        Thu, 28 May 2020 07:22:10 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id w4sm2188394pfq.57.2020.05.28.07.22.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 07:22:10 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     sboyd@kernel.org, robh+dt@kernel.org, mturquette@baylibre.com
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH] clk: qcom: Add missing msm8998 ufs_unipro_core_clk_src
-Date:   Thu, 28 May 2020 07:22:05 -0700
-Message-Id: <20200528142205.44003-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ARMGmBC7HW1OcgFuP1OVScrr+HlnD9WLXkcM230gwbI=;
+ b=lOuHtDAFnT2ozdC4tXKC+xCuSrPiGPo85xsTbVE5lVZQGSRq1olJCxdmO2CBCW0cgs84tWm6RxO+rxQY7/uvbz8TNm8BnuPCv3a8dobhrwVS/dia/4zQRK6pc15eSRORQTMHuy33znM3xJG1FQpa96y8bWQ7E0olnV0O9+Za0ho=
+Received: from CY4PR18CA0050.namprd18.prod.outlook.com (2603:10b6:903:13f::12)
+ by BY5PR02MB6738.namprd02.prod.outlook.com (2603:10b6:a03:20e::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.19; Thu, 28 May
+ 2020 17:44:13 +0000
+Received: from CY1NAM02FT025.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:903:13f:cafe::ca) by CY4PR18CA0050.outlook.office365.com
+ (2603:10b6:903:13f::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.19 via Frontend
+ Transport; Thu, 28 May 2020 17:44:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT025.mail.protection.outlook.com (10.152.75.148) with Microsoft SMTP
+ Server id 15.20.3045.17 via Frontend Transport; Thu, 28 May 2020 17:44:12
+ +0000
+Received: from [149.199.38.66] (port=60114 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jeMZ4-0000VU-91; Thu, 28 May 2020 10:43:34 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <jolly.shah@xilinx.com>)
+        id 1jeMZg-0001ZX-6X; Thu, 28 May 2020 10:44:12 -0700
+Received: from [10.23.120.73]
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <jollys@xilinx.com>)
+        id 1jeMZW-0001Wx-08; Thu, 28 May 2020 10:44:02 -0700
+Subject: Re: [PATCH v2 2/2] drivers: clk: zynqmp: Update fraction clock check
+ from custom type flags
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Jolly Shah <jolly.shah@xilinx.com>, arm@kernel.org,
+        linux-clk@vger.kernel.org, michal.simek@xilinx.com,
+        mturquette@baylibre.com, olof@lixom.net
+Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tejas Patel <tejas.patel@xilinx.com>,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+References: <1584048699-24186-1-git-send-email-jolly.shah@xilinx.com>
+ <1584048699-24186-3-git-send-email-jolly.shah@xilinx.com>
+ <159054169658.88029.371843532116000844@swboyd.mtv.corp.google.com>
+From:   Jolly Shah <jolly.shah@xilinx.com>
+Message-ID: <2c8cd31a-46ba-ec6a-67a7-f3d9abe561ff@xilinx.com>
+Date:   Thu, 28 May 2020 10:44:01 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:68.0)
+ Gecko/20100101 Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <159054169658.88029.371843532116000844@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(376002)(396003)(136003)(39860400002)(346002)(46966005)(9786002)(336012)(44832011)(426003)(54906003)(83380400001)(26005)(8676002)(110136005)(31686004)(15650500001)(8936002)(82740400003)(356005)(2906002)(82310400002)(478600001)(186003)(31696002)(53546011)(47076004)(2616005)(107886003)(81166007)(70206006)(36756003)(5660300002)(70586007)(316002)(4326008)(43740500002);DIR:OUT;SFP:1101;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 449b2bf3-329d-4644-f6f0-08d8032ebbab
+X-MS-TrafficTypeDiagnostic: BY5PR02MB6738:
+X-Microsoft-Antispam-PRVS: <BY5PR02MB6738E358BE668024BB3ED4ECB88E0@BY5PR02MB6738.namprd02.prod.outlook.com>
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-Oob-TLC-OOBClassifiers: OLM:10000;
+X-Forefront-PRVS: 0417A3FFD2
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: QUyWsHSu4nAAwSQR+g4f2CRNGF36g/tcf3eZkd2MLg8kBfBMEX38AZo55PkpLL08K8AiNS10V0WcA7yRTFYvP3urMCXljXi51ICVyS9t2sZdTd8sstqwj7Li7fJ1WUMdyKfYUx2tprSTqpXc3XnhLSTAoaCh0ngm6TskNWwrJ8/UylVTSdD/iTM/He23Uyt2w8JyivEhe+ZUI2zwKOe5E41HxYh6ZRpwf8QrUqzAD7zp21g87Ty5lD4jHUR4f3pR3uWUjMeh8PTv/v844z3kHTdYBw8Q4Q0tXzCWH6OVmUMD8TovWI6wFGVtiv58Ud14oRzdQ9Ns614cWDmXheOhY021r4UdSsg+j9t4/rMXVQI6o9KVIQYt5lwGQgLKt89spL0rfuy9NuOwA0LNT1LwOaoje4H7HMtJA3w3lPQtHLrLi/667/C768sQ5J556KJc
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 May 2020 17:44:12.4793
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 449b2bf3-329d-4644-f6f0-08d8032ebbab
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR02MB6738
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ufs_unipro_core_clk_src is required to allow UFS to clock scale for power
-savings.
+Hi Stephan,
 
-Fixes: b5f5f525c547 ("clk: qcom: Add MSM8998 Global Clock Control (GCC) driver")
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- drivers/clk/qcom/gcc-msm8998.c               | 27 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8998.h |  1 +
- 2 files changed, 28 insertions(+)
+Thanks for the review.
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index df1d7056436c..9d7016bcd680 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -1110,6 +1110,27 @@ static struct clk_rcg2 ufs_axi_clk_src = {
- 	},
- };
- 
-+static const struct freq_tbl ftbl_ufs_unipro_core_clk_src[] = {
-+	F(37500000, P_GPLL0_OUT_MAIN, 16, 0, 0),
-+	F(75000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
-+	F(150000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 ufs_unipro_core_clk_src = {
-+	.cmd_rcgr = 0x76028,
-+	.mnd_width = 8,
-+	.hid_width = 5,
-+	.parent_map = gcc_parent_map_0,
-+	.freq_tbl = ftbl_ufs_unipro_core_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "ufs_unipro_core_clk_src",
-+		.parent_names = gcc_parent_names_0,
-+		.num_parents = 4,
-+		.ops = &clk_rcg2_ops,
-+	},
-+};
-+
- static const struct freq_tbl ftbl_usb30_master_clk_src[] = {
- 	F(19200000, P_XO, 1, 0, 0),
- 	F(60000000, P_GPLL0_OUT_MAIN, 10, 0, 0),
-@@ -2549,6 +2570,11 @@ static struct clk_branch gcc_ufs_unipro_core_clk = {
- 		.enable_mask = BIT(0),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_ufs_unipro_core_clk",
-+			.parent_names = (const char *[]){
-+				"ufs_unipro_core_clk_src",
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -2904,6 +2930,7 @@ static struct clk_regmap *gcc_msm8998_clocks[] = {
- 	[SDCC4_APPS_CLK_SRC] = &sdcc4_apps_clk_src.clkr,
- 	[TSIF_REF_CLK_SRC] = &tsif_ref_clk_src.clkr,
- 	[UFS_AXI_CLK_SRC] = &ufs_axi_clk_src.clkr,
-+	[UFS_UNIPRO_CORE_CLK_SRC] = &ufs_unipro_core_clk_src.clkr,
- 	[USB30_MASTER_CLK_SRC] = &usb30_master_clk_src.clkr,
- 	[USB30_MOCK_UTMI_CLK_SRC] = &usb30_mock_utmi_clk_src.clkr,
- 	[USB3_PHY_AUX_CLK_SRC] = &usb3_phy_aux_clk_src.clkr,
-diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-index 63e02dc32a0b..6a73a174f049 100644
---- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
-+++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
-@@ -183,6 +183,7 @@
- #define GCC_MSS_SNOC_AXI_CLK					174
- #define GCC_MSS_MNOC_BIMC_AXI_CLK				175
- #define GCC_BIMC_GFX_CLK					176
-+#define UFS_UNIPRO_CORE_CLK_SRC					177
- 
- #define PCIE_0_GDSC						0
- #define UFS_GDSC						1
--- 
-2.17.1
+ > ------Original Message------
+ > From: Stephen Boyd <sboyd@kernel.org>
+ > Sent:  Tuesday, May 26, 2020 6:08PM
+ > To: Jolly Shah <jolly.shah@xilinx.com>, Arm <arm@kernel.org>, 
+Linux-clk <linux-clk@vger.kernel.org>, Michal Simek 
+<michal.simek@xilinx.com>, Mturquette <mturquette@baylibre.com>, Olof 
+<olof@lixom.net>
+ > Cc: Rajan Vaja <rajanv@xilinx.com>, 
+Linux-arm-kernel@lists.infradead.org 
+<linux-arm-kernel@lists.infradead.org>, Linux-kernel@vger.kernel.org 
+<linux-kernel@vger.kernel.org>, Tejas Patel <tejas.patel@xilinx.com>, 
+Rajan Vaja <rajan.vaja@xilinx.com>, Jolly Shah <jolly.shah@xilinx.com>
+ > Subject: Re: [PATCH v2 2/2] drivers: clk: zynqmp: Update fraction 
+clock check from custom type flags
+ >
+> Quoting Jolly Shah (2020-03-12 14:31:39)
+>> From: Tejas Patel <tejas.patel@xilinx.com>
+>>
+>> Older firmware version sets BIT(13) in clkflag to mark a
+>> divider as fractional divider. Updated firmware version sets BIT(4)
+>> in type flags to mark a divider as fractional divider since
+>> BIT(13) is defined as CLK_DUTY_CYCLE_PARENT in the common clk
+>> framework flags.
+>>
+>> To support both old and new firmware version, consider BIT(13) from
+>> clkflag and BIT(4) from type_flag to check if divider is fractional
+>> or not.
+>>
+>> To maintain compatibility BIT(13) of clkflag in firmware will not be
+>> used in future for any purpose and will be marked as unused.
+> 
+> Why are we mixing the firmware flags with the ccf flags? They shouldn't
+> be the same. The firmware should have its own 'flag numberspace' that is
+> distinct from the common clk framework's 'flag numberspace'. Please fix
+> the code.
+> 
+
+Yes firmware flags are using separate numberspace now. Firmware 
+maintains CCF and firmware specific flags separately but earlier 
+CLK_FRAC was mistakenly defined in ccf flagspace and hence handled here 
+for backward compatibility. Driver takes care of not registering same 
+with CCF. Let me know if I misunderstood.
+
+Thanks,
+Jolly Shah
+
 
