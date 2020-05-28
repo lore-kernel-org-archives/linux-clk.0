@@ -2,70 +2,88 @@ Return-Path: <SRS0=GgXf=7K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D06B3C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 23:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 998F9C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 23:03:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A61752074B
-	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 23:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 667432074B
+	for <linux-clk@archiver.kernel.org>; Thu, 28 May 2020 23:03:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590706877;
-	bh=BjaPhLv7o3F9Baq35hcGqpi0Mk/SufIcuOaMQDHCS9c=;
+	s=default; t=1590707001;
+	bh=AwQh/Z5dE3PvNZvMfXgCYlntTVYdDkWce9DobLD86rE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=kDhiGfILjbQAOs6z/cOPJYHsp76S7g6P30M1pXdOv0f/3yIng11LcxNq1avg/Ac5F
-	 cvlfIPh/cKfgkJJdWXXyifFlXHG0rvP5rN63uR0/D4L8ihqIChfdLhtV+Wro+XmLcK
-	 /AX7upnspH9CjafBzTzSIqqLZiLOtfHlSpmJVHHc=
+	b=nT5YJJGmC04TwSkEaLqSh4aK6ORfvNCwrPz6HEUT128RViCCMVK447yj5ZMwanKis
+	 xPAWrrgYeMpJAEtY5uT2GehrroNxO7esi+hrZ6B/5PLTGXZL5wKhKuOSPgfgbqMg8X
+	 1pnaa8cSTLsXU2Jq6LcngEpD2jvsqbus2uzrcWQw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728589AbgE1XA7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 May 2020 19:00:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46298 "EHLO mail.kernel.org"
+        id S2437397AbgE1XDT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 May 2020 19:03:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727899AbgE1XAz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 May 2020 19:00:55 -0400
+        id S2437385AbgE1XDP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 May 2020 19:03:15 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B002074B;
-        Thu, 28 May 2020 23:00:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3206B207F9;
+        Thu, 28 May 2020 23:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590706855;
-        bh=BjaPhLv7o3F9Baq35hcGqpi0Mk/SufIcuOaMQDHCS9c=;
+        s=default; t=1590706995;
+        bh=AwQh/Z5dE3PvNZvMfXgCYlntTVYdDkWce9DobLD86rE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=P1T6h3goNb5Pe3t56fZFSyff4JfuW/pOATL+5x9+iVegZ36QKcaKYkXyDv4SHfVni
-         6kqffzJuvKhBpf2ykGLzze2sZd3t2q3qPKdPHu9zxEdxyGjY+Kh++JBtn/MOOK46yL
-         jaGpjXBITmL//5+If8qr08n/sGIkENepKN4yDNws=
+        b=KC0TwjgabgvXc4Y7ZE4f+fdTNNSpjXdSnNiU52VALuT/cB4nDEVYdbAS3g6Ae9iQ1
+         FxeIIzDgFsXqBc48e63Rm+XAGmMqhLIHl0F/7oRd2SJ6sfE8RqClhmsB+px2OMajbl
+         wpqzhX6rLTgYGH2lSMPz6Bkz5qeynkjSjUDx5nLM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200528221219.535804-1-colin.king@canonical.com>
-References: <20200528221219.535804-1-colin.king@canonical.com>
-Subject: Re: [PATCH][next] clk: intel: remove redundant initialization of variable rate64
+In-Reply-To: <1j8shbkhsq.fsf@starbuckisacylon.baylibre.com>
+References: <20200519170440.294601-1-jbrunet@baylibre.com> <CAFBinCBXTwKz81bQK3U1bv7vGiryhShijqh2hqaypPvLopvwNA@mail.gmail.com> <1j8shbkhsq.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH] clk: add api to get clk consummer from clk_hw
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
-        linux-clk@vger.kernel.org
-Date:   Thu, 28 May 2020 16:00:54 -0700
-Message-ID: <159070685467.69627.16613075011399178571@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Thu, 28 May 2020 16:03:14 -0700
+Message-ID: <159070699457.69627.14852370592791335742@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Colin King (2020-05-28 15:12:19)
-> From: Colin Ian King <colin.king@canonical.com>
+Quoting Jerome Brunet (2020-05-28 11:58:45)
 >=20
-> The variable rate64 is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+> On Wed 27 May 2020 at 22:07, Martin Blumenstingl <martin.blumenstingl@goo=
+glemail.com> wrote:
 >=20
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+> > Hi Jerome,
+> >
+> > On Tue, May 19, 2020 at 7:09 PM Jerome Brunet <jbrunet@baylibre.com> wr=
+ote:
+> > [...]
+> >> + * Calls to this function must be balanced with calls clk_put()
+> >> + */
+> >> +struct clk *clk_hw_get_clk(struct clk_hw *hw)
+> > I haven't looked at it myself yet, but would it be hard to have a
+> > devm_ variant of this function as well?
+>=20
+> Seems easy enough.
+> Stephen is this OK with you ?
+>=20
+> I'm just wondering if this devm_ function should use the device pointer
+> embedded in the clk_hw structure or have it as an argument ?
+>=20
+> The 1st option seems simpler but I'm not sure it is correct.
+>=20
+> Thoughts ?
+>=20
 
-Applied to clk-next
+devm API sounds OK to me. For now we can use the one embedded in the
+clk_hw structure and if we have to we can replace it with the one that
+the caller passes in. Hopefully we never need to do that because then it
+means we have drivers passing around clk_hw pointers instead of having
+the caller use proper clk_get() style APIs.
