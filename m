@@ -6,91 +6,94 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BCAC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 18:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9287AC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 19:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 03A5220776
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 18:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D93C207D4
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 19:14:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590776081;
-	bh=ymAIBEab5FPPSocmORa0t3x2q+8B8IbR04s9IZ3rwS8=;
+	s=default; t=1590779675;
+	bh=u2w5DMX9SLKz3u3UEB2CnBtE1clrrOYOtv93QhklISk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=K+h1Wv9yvuRtZWAgaNklifC2lSSyYSN21eTvH06MGN1AiqdxG9oMjUSR2JYGdf/KU
-	 79un+OlSsMUrqW0RrJ/HnR46p9948jKdGzkCNDGrKv6aCHGFzOugKZkbMpmj3/Rbsr
-	 9GOo2uEvnqIAft3EDIvbMgJ1k/aZJO7iLMt0yjqU=
+	b=Q+MlJyzzVxkHxlIq8ZYZKAfQQDKdKV/e5Hdy6RnlSE7q1PzfWjfloa0w6qwCEqvMy
+	 Pd7ze7Hr6Mvh/sOw/uAHydsKl9qPL0LLUrMAlsEUnylCXG/OUACPDfPEnUNGGoYCUH
+	 TQHo5DCKeuzeAOuEGTjm5xPSg+BgQQMlpjHV+NGY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726857AbgE2SOk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 14:14:40 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:41013 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725839AbgE2SOk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 14:14:40 -0400
-Received: by mail-il1-f193.google.com with SMTP id d1so3381527ila.8;
-        Fri, 29 May 2020 11:14:39 -0700 (PDT)
+        id S1726487AbgE2TOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 15:14:35 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:41119 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725865AbgE2TOe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 15:14:34 -0400
+Received: by mail-io1-f65.google.com with SMTP id o5so494090iow.8;
+        Fri, 29 May 2020 12:14:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cpRQ/sE4FwRCuliRnokEgxqnFdsexjORBq+C6UB3EhI=;
-        b=kz+WIsIP8Rguby+Po0t3vRSw3BU3rIWD8ZXEMDEBott5BQPhLpsG8dCeiWBq0ko7ow
-         JvYJZ/pXszhBcfh5rkyVEdUb1ZuPNtldwjupuqOvHNk7NlqwD4GPCuLDIeeT0RyrtcfG
-         ZAwP9C2QswEiBIMLJo8bFl0MqpQk4DyCHHUV7ehgEsUg0fCDlSBW9vD74o6yOkHwXXqW
-         UlNXr8MetKGMZwmb08PREl8mvpxCRBN3w/HeFZQLbxOfT/aNSWLaLq5YIJUWqbw9/4+r
-         HNg/G+8uh27APzrH/nwD/j7IjLO3b5RLUz5NeVrNyvKgKjD8b1M4Jy9CXDOkDJ4YUPLU
-         v5SA==
-X-Gm-Message-State: AOAM532lOKCL7iKaZnHbrmHP++sIEnTpLfEjNj0NfjZtSZmqY35cifXx
-        RZ0XGNX/h40kAgI+fbl54g==
-X-Google-Smtp-Source: ABdhPJzvi9bsOJFgClHgIdgjoPscdvkkEsnqnNIGf4ndljse4E6rFhgqWxD2dgYBIkQ7YzCNJ9ZWCA==
-X-Received: by 2002:a92:9c52:: with SMTP id h79mr8272285ili.252.1590776078779;
-        Fri, 29 May 2020 11:14:38 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=IMboAeBywaKQGMVGQN5Urn1Fr7u4wdf1ZFcW9jks0WY=;
+        b=ndxwWQcnLWl3xF3zoGGYusQ3VsFBtQNAxz8ZdqqBSBTWxwEfJv8TJu5dK12SwuICip
+         IX5rQNbnIc3HtQG7ahCEvpS7yVcTAylm5IyipfFj4cPGoKmQjdkGLQ5DYa0SFeKvJYKd
+         OlTZRW0W33dy0DegIY3UYmcZ35nROWcGRsnIH+EmzdHu+EUaMuoJV26w73lkrtIP2G2B
+         hEXotApj3HVd+8aP53Nf/knBF2ADhixxWvS52iyXasdbr8iIjbH+c+/XKjy4Jj5N4Q47
+         xD0yLmP2mDbD2pkINYGaZXTsYxzPcgFS3LU8urCFP+fytM052vrKc35APSFKyAlOnRwl
+         b2Zg==
+X-Gm-Message-State: AOAM532ScVvLkiCAlOj09BClNFNgVQKRLM6BLREfIB3P2XZFa19oyfAA
+        VznAR0dC31EozAYwxhv6lA==
+X-Google-Smtp-Source: ABdhPJy+ef3k9N4zyOPhHF5avCCR6xmI0bM0RJea8UC82QEtbVGkNrIQ1JvUNYzsLIzDtOpFHLzxzg==
+X-Received: by 2002:a6b:6414:: with SMTP id t20mr7908234iog.32.1590779673757;
+        Fri, 29 May 2020 12:14:33 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id j17sm5012580ilq.79.2020.05.29.11.14.37
+        by smtp.gmail.com with ESMTPSA id f1sm5307391ilh.17.2020.05.29.12.14.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 11:14:38 -0700 (PDT)
-Received: (nullmailer pid 2685148 invoked by uid 1000);
-        Fri, 29 May 2020 18:14:37 -0000
-Date:   Fri, 29 May 2020 12:14:37 -0600
+        Fri, 29 May 2020 12:14:32 -0700 (PDT)
+Received: (nullmailer pid 2779230 invoked by uid 1000);
+        Fri, 29 May 2020 19:14:31 -0000
+Date:   Fri, 29 May 2020 13:14:31 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-kernel@vger.kernel.org,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-clk@vger.kernel.org, Phil Elwell <phil@raspberrypi.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 02/25] dt-bindings: clock: Add a binding for the RPi
- Firmware clocks
-Message-ID: <20200529181437.GA2685096@bogus>
-References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech>
- <919e2f2f13583d4d53d0e95b81fc3fb8a7606107.1590594293.git-series.maxime@cerno.tech>
+To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
+        <zhouyanjie@wanyeetech.com>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
+        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
+        yanfei.li@ingenic.com, zhenwenjin@gmail.com,
+        sernia.zhou@foxmail.com, paul@crapouillou.net,
+        dongsheng.qiu@ingenic.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 3/7] dt-bindings: clock: Add documentation for X1830
+ bindings.
+Message-ID: <20200529191431.GA2779176@bogus>
+References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
+ <20200528031549.13846-4-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <919e2f2f13583d4d53d0e95b81fc3fb8a7606107.1590594293.git-series.maxime@cerno.tech>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200528031549.13846-4-zhouyanjie@wanyeetech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 27 May 2020 17:44:58 +0200, Maxime Ripard wrote:
-> The firmware running on the RPi VideoCore can be used to discover and
-> change the various clocks running in the BCM2711. Since devices will
-> need to use them through the DT, let's add a pretty simple binding.
+On Thu, 28 May 2020 11:15:45 +0800, 周琰杰 (Zhou Yanjie) wrote:
+> Add documentation for the clock bindings of the X1830 Soc from Ingenic.
 > 
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
->  Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+> 
+> Notes:
+>     v11:
+>     New patch, split from [3/6] in v10.
+> 
+>     v11->v12:
+>     No change.
+> 
+>     v12->v13:
+>     No change.
+> 
+>  Documentation/devicetree/bindings/clock/ingenic,cgu.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
