@@ -2,130 +2,111 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A838C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 06:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1ED0C433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 07:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D9589208A7
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 06:57:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="W791R7IM"
+	by mail.kernel.org (Postfix) with ESMTP id 9B6AF2151B
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 07:39:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725808AbgE2G5B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 02:57:01 -0400
-Received: from mail27.static.mailgun.info ([104.130.122.27]:50292 "EHLO
-        mail27.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725308AbgE2G5B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 02:57:01 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1590735420; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=5iWcCbiGZvVMQ5YMmDXPCoC0HJ2lp8gKX/3kGxQlqf0=;
- b=W791R7IMOK8vo6p60L+imiF0PcJJRlADJhFg3592+9Ihez+2nOtXrV9mfkUr3HQQq5d9NBXV
- zLXQqXUhqDVrmehu0v1/WY0u86piKocltAxoAyFc6Tz51Rsuq+n42akeJvJPoIKxE7b6pGk4
- Lh33WTSX8J5SKvft8xh1MBMSkPM=
-X-Mailgun-Sending-Ip: 104.130.122.27
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-west-2.postgun.com with SMTP id
- 5ed0b233809d90496789b209 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 29 May 2020 06:56:51
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 954CAC433CB; Fri, 29 May 2020 06:56:51 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id F38B0C433C9;
-        Fri, 29 May 2020 06:56:50 +0000 (UTC)
+        id S1725906AbgE2HjR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 03:39:17 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:53255 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726041AbgE2HjO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 03:39:14 -0400
+Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MRmsG-1jYYH41cmw-00TC0E for <linux-clk@vger.kernel.org>; Fri, 29 May 2020
+ 09:39:12 +0200
+Received: by mail-qk1-f180.google.com with SMTP id q8so1347639qkm.12
+        for <linux-clk@vger.kernel.org>; Fri, 29 May 2020 00:39:12 -0700 (PDT)
+X-Gm-Message-State: AOAM5306AF0Q7QyWYHwiRhKBsND1i0Rc0uA8S1bswV83Qrap2PMmzUKg
+        bL+xjlrqgJQbK8JIqvQY0PDZQCvOOxsTwaOIETA=
+X-Google-Smtp-Source: ABdhPJxQKYd4FlNgNoz2isNi0ebCTB3nvWDUEuOZMHLr8f8WtGdScxnBe7hCE28C3sqQ+FdC/w/xyW9EOP1Ihhx9Ghk=
+X-Received: by 2002:a37:554:: with SMTP id 81mr6509274qkf.394.1590737951276;
+ Fri, 29 May 2020 00:39:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 29 May 2020 12:26:50 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+References: <20200527181307.2482167-1-robh@kernel.org> <CAK8P3a27RkBkt5mnBeVJ-67MnJi29Dc+jYL2Q8JskaZ1W_XrKg@mail.gmail.com>
+ <CAL_JsqJ83UJ0Roy_NJBLXuvhPG2zBDod8ZgSGrEtpKSnYPtowQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqJ83UJ0Roy_NJBLXuvhPG2zBDod8ZgSGrEtpKSnYPtowQ@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 29 May 2020 09:38:54 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2S-8fvyiKTk+o876r1XMV6C=HipiRutSWSe0P2rdL4Xg@mail.gmail.com>
+Message-ID: <CAK8P3a2S-8fvyiKTk+o876r1XMV6C=HipiRutSWSe0P2rdL4Xg@mail.gmail.com>
+Subject: Re: [PATCH] clk: versatile: Fix kconfig dependency on COMMON_CLK_VERSATILE
+To:     Rob Herring <robh@kernel.org>
+List-Id: <soc.lore.kernel.org>
+Cc:     SoC Team <soc@kernel.org>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH 08/10] clk: qcom: Add graphics clock controller driver for
- SM8250
-In-Reply-To: <20200529011127.GJ279327@builder.lan>
-References: <20200524210615.17035-1-jonathan@marek.ca>
- <20200524210615.17035-9-jonathan@marek.ca>
- <c4d43cf01b6d014fdc2258abb94eb2c5@codeaurora.org>
- <20200529011127.GJ279327@builder.lan>
-Message-ID: <dbcb5c24f8888d6b0cfc63a80e310319@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michal Simek <michal.simek@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:8HC9sS9M0wo7KFoCPxvtTIjjG4LG9CHguERYtiTjcCXqaVzV7wh
+ T5h2u+cHxZJbjvFpWn1fHAeV9bG4ipivGmdsSYUSj6H8OjRHClQJ02Oc9gjHA21m2+tdKec
+ KUObrTDgfO4NwNekTHcyBr867LH0TSKWmXDP0n+vO+++9O/KQxIGgTa38QLHvBeKCm5Dqjf
+ nKdGvPnrp4/41qQy3f4PQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:466u57s88ls=:eR+hro1dB3x+bTqWEGbdAl
+ 50TahiqmOYdGp6VnOUFzOKrCuri4CQBvXkkQSAJkqmh1HRc6ye0oK9Zus9ImFSSSEy0BHk/x0
+ 5Qj+8gkg5pVnht7lZHZ4NMXs3vYbKMMHNV7hDgUGYGNZhOrNgikiEc46f1b63iOtmDOw3NHzp
+ ALYjOUvkdBk49NcwZK6LdV8xPclS14PWKAj9zgGCnlIzRFXsI+RkhHnQnzljNRvYcc/NaCqYE
+ fMfxz4wbvh5daOII5RzoPxDSkKI1bRR37lVvKtUbabj5PsTMiCW74raFgBZmf09+O4JUEESOp
+ GQbnLy0Gw8lgqAF8bONDbNEHItsEmhExFiXvuP9BqNz+Ki7dJVJRXto7XCc2GJIeTlgFQ5Gil
+ JBeZjTYdqZ79OtCfWkTTtS3+HkMSxyHU6rOxQWq3RCGQnsbZZDsA+Equr6VgTsw+LCtIRK9YR
+ bS7LYv9pPf/OAzdUuIaBuawX9oKErn/mh/R/uqrGuk6veD3n9xwxL69y6Md6emVWkIUoBTviT
+ OeJgXij3MUwobnA7Y7PgyVTRxMIzTBxPs+r13TC9ioY3G9s0G1oJphA+Zl6OG1H6TXx1pyIHO
+ 0ipPgIZp1Hw3PMOYOIsybJdAGm6Hq7mtlrIfuEGa/3rsr5oSZSsSVmlR4QTEQearpCn1WeBQQ
+ 5842kZYjflROVQ1YaJ5enQ410uZ9FGU6cZLrzD14JhoB9ZqiSi3QYD//R6tfyk80E/rF3d0c1
+ TrFuxXr/FJ+BxQWeocHaKVOjWRuxDjAlTz6bfuQiuW6u4/4eejtUZ2PbQB5ZYnUwQr1nOepRf
+ 0YXjxsZ1LA/1AgzcJ2Q71BzqySKbLZ6+4zm8MrdQdEJ+yUMaa0=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
+On Thu, May 28, 2020 at 11:29 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, May 28, 2020 at 5:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Wed, May 27, 2020 at 8:13 PM Rob Herring <robh@kernel.org> wrote:
+> > > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> > > index a0ed412e8396..8c1b0e8e8d32 100644
+> > > --- a/drivers/clk/versatile/Kconfig
+> > > +++ b/drivers/clk/versatile/Kconfig
+> > > @@ -1,11 +1,8 @@
+> > >  # SPDX-License-Identifier: GPL-2.0-only
+> > >
+> > > -menuconfig COMMON_CLK_VERSATILE
+> > > -       bool "Clock driver for ARM Reference designs" if COMPILE_TEST
+> > > -       default y if ARCH_INTEGRATOR || ARCH_REALVIEW || \
+> > > -               ARCH_VERSATILE || ARCH_VEXPRESS
+> > > -
+> > > -if COMMON_CLK_VERSATILE
+> > > +menu "Clock driver for ARM Reference designs"
+> > > +       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
+> > > +               ARCH_VERSATILE || ARCH_VEXPRESS || COMPILE_TEST
+> > >
+> >
+> > I've applied this version now but added ARCH_ZYNQ as an additional
+> > dependency to work around one of the warnings we got earlier.
+>
+> That's just spreading a copy-n-paste error. Why don't you apply the
+> Zynq patch I referenced if Michal never did?
 
-On 2020-05-29 06:41, Bjorn Andersson wrote:
-> On Mon 25 May 02:47 PDT 2020, Sai Prakash Ranjan wrote:
-> 
->> Hi Jonathan,
->> 
->> On 2020-05-25 02:36, Jonathan Marek wrote:
->> > Add support for the graphics clock controller found on SM8250
->> > based devices. This would allow graphics drivers to probe and
->> > control their clocks.
->> >
->> > This is copied from the downstream kernel, adapted for upstream.
->> > For example, GDSCs have been added.
->> >
->> > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
->> 
->> Since this is taken from downstream, maintain the original author's
->> signed-off and add yourself as the co-developer if you have done
->> any modifications. Same applies to all other patches.
->> 
-> 
-> I disagree with this.
-> 
-> As expressed in the commit message, this patch is based on the
-> downstream driver, not the individual patch.  As such, the _patch_ is
-> prepared by Jonathan and by his Signed-off-by certifies the origin of
-> the contribution per section 11.a or 11.b of submitting-patches.rst.
-> 
+Sorry I completely missed the reference from your previous email.
+I've applied that patch on top now, reverting the change I did in the
+process.
 
-I lost at the downstream driver vs the individual patch here. So the
-downstream driver is also an individual patch right or did I get
-something completely wrong.
+I had noticed that the Zynq Kconfig seemed rather odd, by my interpretation
+was that it had been added intentionally in order to use an existing clk
+controller driver for configurable logic on Zynq that was not part of the
+main DT file. As Michal already confirmed that it was just a mistake, I
+agree it should be removed.
 
-So if someone prepares a patch and includes a commit description
-saying it is taken from downstream, does it mean he is the author
-of that patch? Shouldn't the author be included in  "From: Author"
-and his signed-off appear first before the submitter's(also a 
-contributor)
-signed-off? Or is it because these clock data is auto generated and it
-doesnt really matter?
-
-> 
-> Regarding co-developed-by; this should not be used when "forwarding" an
-> existing patch. Per section 11.c the contributor should add their
-> Signed-off-by to certify the origin of the patch. Any modifications
-> should be documented in immediately proceeding the s-o-b, as described
-> later in section 11.
-> 
-
-Yes makes sense to not have co-developed-by for forwarding patch.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+      Arnd
