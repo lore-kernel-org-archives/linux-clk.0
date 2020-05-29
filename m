@@ -2,132 +2,132 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC5DFC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 17:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455C9C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 18:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 98FC22073B
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 17:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29BE020776
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 18:08:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590774926;
-	bh=CaWBweYUHJLnpP5y5YLi4i7cfVTLYabm/MMDjnk7Lek=;
+	s=default; t=1590775701;
+	bh=qTYivEoU0AquFIbyr3jrLEVL9N4s/lCnO0JKYUMFkI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=E+gSaMrWXwbdVFaHxWIGvfPvYQtnrJtoP8MafngRpeogi9i2bmUkyuUwg5GocoXCl
-	 KrsRDkQuWgGKSxBZc/qlGrTbJN4xfjJAFZFnnjgFwo3+SOwqIcdLO+VmQGsFp680FW
-	 Nl0MUoTt8tYYXmfk3oIKbzR8vUSD3AeoqyU3SEdU=
+	b=XLIA3grOsgk/l5e2PMSWI9eGG8ubrXF32D76dJdSJJraPhm7K7wtllVM2vg7t5sCj
+	 xnHP454BWSxjPVJXD8CEa3C8WQoIHFNVNy5IEqU5G4xvmE+AayNtw5ehvJGRdqmb9F
+	 ldTLTjnxhrKc4G1HWvE0JfK0apMCYVaI5GmyuL5M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbgE2Rz0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 13:55:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:39940 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbgE2Rz0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 13:55:26 -0400
-Received: by mail-io1-f65.google.com with SMTP id q8so254077iow.7;
-        Fri, 29 May 2020 10:55:25 -0700 (PDT)
+        id S1726487AbgE2SIS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 14:08:18 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:41172 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725901AbgE2SIR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 14:08:17 -0400
+Received: by mail-il1-f193.google.com with SMTP id d1so3362966ila.8;
+        Fri, 29 May 2020 11:08:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=sCElFn+makF2xMc8PNzE2ZdGJ2SF/IkCYZnmaXWZ07M=;
-        b=KwRTYO3GVz49OgLxTScBWlH2rqxuhPXxrcHA6AZL8tfnF5vOvbdIGxNHQy8F9FLs3k
-         czNdazm7wpPed7/mpCmwKt97KRRZTc2YcWXIpinP0xF/uDIEdZpd3X99ep6PbIlvVX84
-         FoWKWmIE2coM7Qf1Q3zeYjBE1GF1wUHFWntUv37SS2LDvl0X4Ky5ls4D/9wKnqy5Lvxg
-         aSamg1Cshe04DKh0ov66Exb8ua2CwepnxVRhxNUiH/k4TbJN42/zwznPJkflkPvjIvxv
-         w8NnHQqlDY8SuwrmbnfnmTajBqNwiSMG1vfHlSdkltYGo6M/1iT7gVfRFqHYs2Bicw43
-         EuaQ==
-X-Gm-Message-State: AOAM533hGY6WuoAOfsaMR1QWjX5NC/vbpGfwTOMXJtUXGCp4LRanhP4t
-        P29JNYHcgXH/o32sNiVN3A==
-X-Google-Smtp-Source: ABdhPJyGRSx1zsGx+aFM0ozLHvmn8pMnMIcHM8KSYgsavJtSR8i09xTEaDAwLEQvRAlf5guJKCIO+A==
-X-Received: by 2002:a05:6638:272:: with SMTP id x18mr8282523jaq.122.1590774925354;
-        Fri, 29 May 2020 10:55:25 -0700 (PDT)
+        bh=vXEj89uVqbm2TR9qCfeBSA0llFUWe8uVgOJllH027m8=;
+        b=B7WrIELh3mR5jbnUBA2JBaYxIu7jNi3O9hWfw8fN4f6tvTTJYclOkJJBXWipEuGysg
+         T0ubf0PP9IqPMuT+DHj7UJId4LIqUv2HG4UzUAgCftuW+rOkOkkHT1rxgoK8TlTFvjIn
+         1WTTsix+gT+rNUDOrL6ElQwft286QdMNAHsuwAKHR8vzngFFVShiZXf5jsKv3lg8KTTu
+         kSaTwCSvuawriN6VSzY1VBRcTKoGMIocQvI+WvOuOKg4bL19H+LDEaQV6W78K9pgj/wR
+         /+wMiEiFo0RWWpxhXNa2uRK7FNYE/lL/AmrEE+pDezII5ncv3jY9oABgigoiHf0/N+HX
+         1SQw==
+X-Gm-Message-State: AOAM531ebOYWbbh8KG3ldLY1MLZ78LQ94PCRxJQNdKXG47dVX8T16THx
+        7KssyRxawuTc4TUdZgNXYw==
+X-Google-Smtp-Source: ABdhPJzEuT+GCqhaaGqsGyzPWNzhk6k8IvDy8BrKUjIrFcXYbS75zuPpQOxpA1OMHxuq9Oiq92dpVA==
+X-Received: by 2002:a92:d989:: with SMTP id r9mr8473339iln.30.1590775696702;
+        Fri, 29 May 2020 11:08:16 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id c70sm2626688ila.42.2020.05.29.10.55.24
+        by smtp.gmail.com with ESMTPSA id z3sm4149669ior.45.2020.05.29.11.08.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 10:55:24 -0700 (PDT)
-Received: (nullmailer pid 2654498 invoked by uid 1000);
-        Fri, 29 May 2020 17:55:23 -0000
-Date:   Fri, 29 May 2020 11:55:23 -0600
+        Fri, 29 May 2020 11:08:15 -0700 (PDT)
+Received: (nullmailer pid 2674973 invoked by uid 1000);
+        Fri, 29 May 2020 18:08:14 -0000
+Date:   Fri, 29 May 2020 12:08:14 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Serge Semin <Sergey.Semin@baikalelectronics.ru>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-mips@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Serge Semin <fancer.lancer@gmail.com>
-Subject: Re: [PATCH v3 2/4] dt-bindings: clk: Add Baikal-T1 CCU Dividers
- binding
-Message-ID: <20200529175523.GA2654444@bogus>
-References: <20200526222056.18072-1-Sergey.Semin@baikalelectronics.ru>
- <20200526222056.18072-3-Sergey.Semin@baikalelectronics.ru>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V6 1/5] dt-bindings: clock: add ipq6018 a53 pll compatible
+Message-ID: <20200529180814.GA2672742@bogus>
+References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org>
+ <1590582292-13314-2-git-send-email-sivaprak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200526222056.18072-3-Sergey.Semin@baikalelectronics.ru>
+In-Reply-To: <1590582292-13314-2-git-send-email-sivaprak@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 27 May 2020 01:20:54 +0300, Serge Semin wrote:
-> After being gained by the CCU PLLs the signals must be transformed to
-> be suitable for the clock-consumers. This is done by a set of dividers
-> embedded into the CCU. A first block of dividers is used to create
-> reference clocks for AXI-bus of high-speed peripheral IP-cores of the
-> chip. The second block dividers alter the PLLs output signals to be then
-> consumed by SoC peripheral devices. Both block DT nodes are ordinary
-> clock-providers with standard set of properties supported. But in addition
-> to that each clock provider can be used to reset the corresponding clock
-> domain. This makes the AXI-bus and System Devices CCU DT nodes to be also
-> reset-providers.
+On Wed, May 27, 2020 at 05:54:48PM +0530, Sivaprakash Murugesan wrote:
+> cpus on ipq6018 are clocked by a53 pll, add device compatible for a53
+> pll found on ipq6018 devices.
 > 
-> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
-> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: linux-mips@vger.kernel.org
-> 
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 > ---
-> 
-> Changelog v2:
-> - Rearrange the SoBs.
-> - Combine AXI-bus and System Devices CCU bindings into a single file.
-> - Discard comments in the bindings file header.
-> - Add dual GPL/BSD license.
-> - Add spaces around the ASCII-graphics in the binding description.
-> - Remove reference to Documentation/devicetree/bindings/clock/clock-bindings.txt
->   file.
-> - Discard redundant object check against "/schemas/clock/clock.yaml#" schema.
-> - Discard redundant descriptions of "#clock-cells" and "#reset-cells"
->   properties.
-> - Discard "reg" property since the CCU dividers DT nodes are supposed be
->   children of the syscon-compatible system controller node.
-> - Remove "clock-output-names" property support.
-> - Replace "additionalProperties: false" with "unevaluatedProperties: false".
-> - Lowercase the nodes name in the examples.
-> - Use "clock-controller" node name suffix in the examples.
-> - Remove unnecessary comments in the clocks and resets dt-binding header
->   files.
-> - Discard label definitions in the examples.
-> 
-> Changelog v3:
-> - Get the reg property back even though the driver is using the parental
->   syscon regmap.
-> - The DT schema will live separately from the system controller, but the
->   corresponding sub-node of the later DT schema will $ref this one.
-> ---
->  .../bindings/clock/baikal,bt1-ccu-div.yaml    | 188 ++++++++++++++++++
->  include/dt-bindings/clock/bt1-ccu.h           |  32 +++
->  include/dt-bindings/reset/bt1-ccu.h           |  25 +++
->  3 files changed, 245 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/baikal,bt1-ccu-div.yaml
->  create mode 100644 include/dt-bindings/reset/bt1-ccu.h
-> 
+> * [V6]
+>     re-ordered compatible string, dropped Rob's review tag for this change.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Not really significant enough to drop it, but if you really want me to 
+stare at this again...
+
+>  .../devicetree/bindings/clock/qcom,a53pll.yaml         | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
+> index 20d2638..a4f2d01 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
+> @@ -15,6 +15,7 @@ description:
+>  
+>  properties:
+>    compatible:
+> +    const: qcom,ipq6018-a53pll
+>      const: qcom,msm8916-a53pll
+>  
+>    reg:
+> @@ -23,6 +24,14 @@ properties:
+>    '#clock-cells':
+>      const: 0
+>  
+> +  clocks:
+> +    items:
+> +      - description: board XO clock
+> +
+> +  clock-names:
+> +    items:
+> +      - const: xo
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -38,3 +47,12 @@ examples:
+>          reg = <0xb016000 0x40>;
+>          #clock-cells = <0>;
+>      };
+> +  #Example 2 - A53 PLL found on IPQ6018 devices
+> +  - |
+> +    a53pll_ipq: clock@b116000 {
+
+clock-controller@...
+
+> +        compatible = "qcom,ipq6018-a53pll";
+> +        reg = <0x0b116000 0x40>;
+> +        #clock-cells = <0>;
+> +        clocks = <&xo>;
+> +        clock-names = "xo";
+> +    };
+> -- 
+> 2.7.4
+> 
