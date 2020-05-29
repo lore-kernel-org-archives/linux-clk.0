@@ -6,89 +6,67 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64122C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D932C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3D4022074D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:02:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 179B32074D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:04:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590724956;
-	bh=SUeeMnXBQv07CP4CjczpzAFDq4JU1ywIaRU3dK0REGE=;
+	s=default; t=1590725080;
+	bh=icN1xVoNEquqsO3vPZMG0OwkUxZhilB7z8RIYLsMN2c=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=fG4JV1YfYZ4E40TyKlw7yUfWS0GPgDFm0c9isF5u4+zjXaJtjqxFjxrDCTtrB7nt3
-	 F1qm6YF2DBIdf3jvR+ShjImfwfUEG149/yW1aXWQptG6BJ9qePss3LGobzB/vWfmaK
-	 oDqPszk+YA5yJXtDdBl20CwGCNidLIbVX9WCEMN8=
+	b=Y35BZbGfi9pC9MmC221HvLWkiN+yChkORPIxeRTQq3hBAM1BvNPhfzjxhiaKyPAXB
+	 IsSy35yKici+QkexSISB+sW+rlS4qXUyQqJ0sNL2Y+/20sGxk+VfK5rj64ulCsTvLp
+	 JiRW4vUhxE1oh2JabCCObApMw9bF1YOqFig6lLs8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728452AbgE2ECf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 00:02:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37558 "EHLO mail.kernel.org"
+        id S1725817AbgE2EEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 00:04:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725810AbgE2ECe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 00:02:34 -0400
+        id S1725906AbgE2EEj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 00:04:39 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A00F20707;
-        Fri, 29 May 2020 04:02:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F2F020707;
+        Fri, 29 May 2020 04:04:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590724953;
-        bh=SUeeMnXBQv07CP4CjczpzAFDq4JU1ywIaRU3dK0REGE=;
+        s=default; t=1590725078;
+        bh=icN1xVoNEquqsO3vPZMG0OwkUxZhilB7z8RIYLsMN2c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DUZQ4UhXvN4PWoCll68uRt/AGJC2mWktTXUd0Cd4TFZLVmnrFmhxkSsnwC9KPFLLz
-         A6QH5dGvS1ERBFtiblS4E6dyYDKoWfCcBNuM1hpqo+G45+X3TTK5PQj9AcGCwanuSx
-         tJIxlHs6QBoSw80WCPcCHUlMB2+Ck+YercVJOygg=
+        b=CBJ3hX+KqttD/4zMUwhKYaErxOWrG3gsiTyRSRKV8bY2yHG00I3G3oESxlQiS5q3j
+         SJHeI7XpCIIuVy3d9pEAWarm2oIOScOxmhGkN5G/h65CUSGk296LeYfEwevl9qO83P
+         v4LUQx7vVT1tA6fGcXBTQk67/mDA1LOfd1W1e8r8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAHCN7xLtLPqZV7Qhs1zufzLES3LTh11yyAmOto7EwDQyDEvrVQ@mail.gmail.com>
-References: <20200502122126.188001-1-aford173@gmail.com> <20200502122126.188001-2-aford173@gmail.com> <20200512220537.GA14318@bogus> <CAHCN7xLtLPqZV7Qhs1zufzLES3LTh11yyAmOto7EwDQyDEvrVQ@mail.gmail.com>
-Subject: Re: [PATCH V2 2/3] clk: vc5: Enable addition output configurations of the Versaclock
+In-Reply-To: <20200404161537.2312297-1-aford173@gmail.com>
+References: <20200404161537.2312297-1-aford173@gmail.com>
+Subject: Re: [PATCH 1/2] clk: vc5: Add support for IDT VersaClock 5P49V6965
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Adam Ford-BE <aford@beaconembedded.com>,
-        Charles Stevens <charles.stevens@logicpd.com>,
+Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
+        Adam Ford <aford173@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Marek Vasut <marek.vasut@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>
-Date:   Thu, 28 May 2020 21:02:32 -0700
-Message-ID: <159072495287.69627.17133221754230289904@swboyd.mtv.corp.google.com>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Date:   Thu, 28 May 2020 21:04:37 -0700
+Message-ID: <159072507794.69627.14228374738181598965@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Adam Ford (2020-05-12 15:21:49)
-> On Tue, May 12, 2020 at 5:05 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Sat, May 02, 2020 at 07:21:25AM -0500, Adam Ford wrote:
-> > > The existing driver is expecting the Versaclock to be pre-programmed,
-> > > and only sets the output frequency.  Unfortunately, not all devices
-> > > are pre-programmed, and the Versaclock chip has more options beyond
-> > > just the frequency.
-> > >
-> > > This patch enables the following additional features:
-> > >
-> > >    - Programmable voltage: 1.8V, 2.5V, or 3.3V
-> > >    - Slew Percentage of normal: 85%, 90%, or 100%
-> > >    - Output Type: LVPECL, CMOS, HCSL, or LVDS
-> > >
-> > > Signed-off-by: Adam Ford <aford173@gmail.com>
-> >
-> >
-> > > diff --git a/include/dt-bindings/clk/versaclock.h b/include/dt-bindin=
-gs/clk/versaclock.h
-> > > new file mode 100644
-> > > index 000000000000..c6a6a0946564
-> > > --- /dev/null
-> > > +++ b/include/dt-bindings/clk/versaclock.h
-> >
-> > Belongs in binding patch.
+Quoting Adam Ford (2020-04-04 09:15:35)
+> Update IDT VersaClock 5 driver to support 5P49V6965.
 >=20
-> I can do that, but the binding patch will have to be applied before
-> the rest of the series, or the source won't build because it's
-> referencing the bindings.  Is that OK?
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+>=20
+> diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+>=20
+> index 24fef51fbcb5..fa96659f8023
+> --- a/drivers/clk/clk-versaclock5.c
 
-Yes that's usually how it works.
+Applied to clk-next
