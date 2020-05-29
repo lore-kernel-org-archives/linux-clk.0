@@ -2,87 +2,83 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BFEC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 02:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28627C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 03:57:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D6EF82075F
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 02:54:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0176A2074D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 03:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590720855;
-	bh=coWWgn98iVsK8p7DyOxIc4k156gQD1IaeA9rwQdrndk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=z586F7Y2YMc6wcwpbDT3z3cp47vpKlgksVyLequLIHu+m85gPrbzsB0fqMNwpXdgo
-	 kaBMdyw6yS8GpI6dQ9yTt7Rk/US5p06r5tDWT4Xla+QS/9hcg9KJWrnoSDCoIWuSJd
-	 ++W91PO55unq7ZxgPrVkM1TT34eEcrg32FKq+VNo=
+	s=default; t=1590724652;
+	bh=UQk/T016wJiZwyu2CR71gcGTRWBIZcKMHDB+t7J3PEY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Hs0SW1gZpUdsaPqE3/kfhw8cTxY+JXJSoM50YfzV2+ENCIcdMWf7kcI2xjxJewh2O
+	 pDic2Hnozk5TYJes0aNi4EvezFTr62WcOG1tHnAZN+zPsyUDLevSFiC7M6deuaQmCq
+	 RjRFrVbnK65k8ae65D/BU9Wnrtnq4aGUSxCt4yfk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406882AbgE2CyP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 May 2020 22:54:15 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:41937 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406871AbgE2CyN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 May 2020 22:54:13 -0400
-Received: by mail-il1-f193.google.com with SMTP id d1so1037404ila.8;
-        Thu, 28 May 2020 19:54:12 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=y66i92hbnAMVd56SYuoik3I3JL2I+Eab/POc6wP412M=;
-        b=pDCddYR0iIsm9hgfMuDqL3+wuX9zGZ+2+sl73mkBsoJY+JGAW1JM3JSuveOXlWy9gA
-         XMEkdPaBanONnxZdhhQugueaeGGhopX7ifKhmN1oxQ4pRkD/qwXq7VlW8urI/VBVQ30N
-         FR4iIHCfM1Fspam0DGzHt1/scPrMsdZJv3CfmSOWO74Ef3TsSbNmcvjDylQuSNg17uHV
-         2gNSbUGUQ5s/4tajg4EQxhj3Gl3/2aIhgalKP/0KrsR4wRopg7JKwY+fZ8YNQcMf2yr3
-         Qd/++X+5sY0ginRPCo1JHlsHLe4mjadYxjRZrp2P/U9Rxmduwd3puyOZ3eEPMa4IbLCL
-         NsBQ==
-X-Gm-Message-State: AOAM533Vwo8QIx8LPVAgbPwDlGtybA86oir4gmDEAAxxikPR4/HTJy+h
-        adskSRS/sDxznU1T70+gBw==
-X-Google-Smtp-Source: ABdhPJx0r59/Ul2jAtX3PMZbHxDUKVh9XGaJaNhEbfDtMhWWJJo8GaBV8+9BFVxbvD/i1BQIax8bqA==
-X-Received: by 2002:a92:400e:: with SMTP id n14mr5729979ila.300.1590720852244;
-        Thu, 28 May 2020 19:54:12 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id h23sm3310934ioj.39.2020.05.28.19.54.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 28 May 2020 19:54:11 -0700 (PDT)
-Received: (nullmailer pid 1180033 invoked by uid 1000);
-        Fri, 29 May 2020 02:54:10 -0000
-Date:   Thu, 28 May 2020 20:54:10 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     shawnguo@kernel.org, kernel@pengutronix.de, festevam@gmail.com,
-        s.trumtrar@pengutronix.de, s.hauer@pengutronix.de,
-        mturquette@baylibre.com, shc_work@mail.ru,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        linux-arm-kernel@lists.infradead.org, Linux-imx@nxp.com,
-        devicetree@vger.kernel.org, sboyd@kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 9/9] dt-bindings: clock: Convert i.MX1 clock to
- json-schema
-Message-ID: <20200529025410.GA1179683@bogus>
-References: <1590650879-18288-1-git-send-email-Anson.Huang@nxp.com>
- <1590650879-18288-10-git-send-email-Anson.Huang@nxp.com>
+        id S2388062AbgE2D5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 May 2020 23:57:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388051AbgE2D5a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 May 2020 23:57:30 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5C5720707;
+        Fri, 29 May 2020 03:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590724649;
+        bh=UQk/T016wJiZwyu2CR71gcGTRWBIZcKMHDB+t7J3PEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=sKLVJppNWW0spd8QTDJ14uzY/gLGtkXPtsRcTZOYfauWpkD1/ARhQCJe1CXGuA0ZF
+         hV68bJRHg3pNf0tTaM0tgRcAi2tj78vu59Icf6Yt1qen31DT6CojYSufvcdP7KMBxl
+         NCzCeFt4DVfZxjSVoE7JPk81BNDyFZfDp1+xRl7k=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.7-rc7
+Date:   Thu, 28 May 2020 20:57:29 -0700
+Message-Id: <20200529035729.202144-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.27.0.rc0.183.gde8f92d652-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1590650879-18288-10-git-send-email-Anson.Huang@nxp.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 28 May 2020 15:27:59 +0800, Anson Huang wrote:
-> Convert the i.MX1 clock binding to DT schema format using json-schema.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  .../devicetree/bindings/clock/imx1-clock.txt       | 26 ------------
->  .../devicetree/bindings/clock/imx1-clock.yaml      | 49 ++++++++++++++++++++++
->  2 files changed, 49 insertions(+), 26 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/imx1-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/imx1-clock.yaml
-> 
+The following changes since commit 852049594b9af58fa2972103699fd58a7ac165c6:
 
-Applied, thanks!
+  clk: ti: clkctrl: convert subclocks to use proper names also (2020-05-12 20:18:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to a76f274182f054481182c81cd62bb8794a5450a6:
+
+  clk: qcom: gcc: Fix parent for gpll0_out_even (2020-05-26 17:15:06 -0700)
+
+----------------------------------------------------------------
+Two fixes for the new SM8150 and SM8250 Qualcomm clk drivers
+to fix a randconfig build error and an incorrect parent mapping.
+
+----------------------------------------------------------------
+Jonathan Marek (1):
+      clk: qcom: sm8250 gcc depends on QCOM_GDSC
+
+Vinod Koul (1):
+      clk: qcom: gcc: Fix parent for gpll0_out_even
+
+ drivers/clk/qcom/Kconfig      | 1 +
+ drivers/clk/qcom/gcc-sm8150.c | 3 +--
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+Sent by a computer, using git, on the internet
