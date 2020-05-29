@@ -2,163 +2,90 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA36C433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 14:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA598C433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 16:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD162073B
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 14:04:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="URWVUOZq"
+	by mail.kernel.org (Postfix) with ESMTP id 8F6EE2100A
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 16:17:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590769059;
+	bh=YAe/SQtiau0TeUoIyQ5dRn4TMi0/OuLjw+eQkeMqbxk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OEKiAC/bkESa0kx/CrA9iK/s74x8h3apCsaKHrY1zDgqiUGrWOT3QkkNv41P2NDLv
+	 INQv0Sok0GOGhLgoIPf53I74o7lJ6/N2ebcj7Dvg0JerFxObW9GWp0uBhdJI25Yobc
+	 iefRZVQhL2oOM4WlKyrvQWIsvb8hQIFirwRDi2sk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbgE2OEj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 10:04:39 -0400
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:8703 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbgE2OEi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 10:04:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1590761078; x=1622297078;
-  h=references:from:to:cc:subject:in-reply-to:date:
-   message-id:mime-version;
-  bh=sAGWaqia1JF0ryeRDXVzFPeaOltQyl1NGW+wvlqDi/E=;
-  b=URWVUOZqjoRzONnnH/q05xZjn/+tJ5OFy7pO4A+Xk04NClzFwzEmk4o0
-   oCWnUXvIo8Wr+e7NX4gZd3ZxcXRAD91ziqCgppCunRr+bfiTFYkbpxvnr
-   yRJPrOPmoTdwXF89Mps9VhpjPZi0eYEoLE9KGjR2p9lCx2JEm2MTt6Kpi
-   1dNTJhotEvcLn4RhZUA0Q1SRj3UuAhNBR2cur/hAD4kAbfpqiyUtRjhSV
-   8GYqQJw47Wu3LzpeGDd1dAwwUKdE5YkCycXSX2rgERb7R6YAmHsEcSCIb
-   h++3ncSfc75VYDZJ0DWPYwEwcmUVFsLrokUlKsOY7EfsbW+oN3GThFvoF
-   Q==;
-IronPort-SDR: xpzqGjpyykV5Ih2wHq02FXx0AqsGr/X8yLZnO6sUmywda4kivT2QCL6RfgUMu/+Mo7l9o/BFdz
- eE5+qVqCa2lVZL5SDnAKAB9ZWgFApKonr+D6Tn6LKVvhGj0EMsHHtXKOQO4hBQk4pAhpJdC3/T
- oSeo8ia8aXe0OQprk4ftk7b2Q5mkFCr7fBh1lEuOKj3veab6yAchm6/zODKBhgT3fNGupVkkZX
- NyNMfNrLKlKmDbgry41qbg+dHhM/zAN07j+tX4W+FU0kPMqY2yjRRAJZ5m8BXBRwZSwDb8/s93
- CCI=
-X-IronPort-AV: E=Sophos;i="5.73,448,1583218800"; 
-   d="scan'208";a="76764161"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 29 May 2020 07:04:37 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 29 May 2020 07:04:40 -0700
-Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
- via Frontend Transport; Fri, 29 May 2020 07:04:25 -0700
-References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-11-lars.povlsen@microchip.com> <159054759981.88029.2630901114208720574@swboyd.mtv.corp.google.com>
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-List-Id: <soc.lore.kernel.org>
-CC:     Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>, SoC Team <soc@kernel.org>,
-        Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: Re: [PATCH 10/14] dt-bindings: clock: sparx5: Add Sparx5 SoC DPLL clock
-In-Reply-To: <159054759981.88029.2630901114208720574@swboyd.mtv.corp.google.com>
-Date:   Fri, 29 May 2020 16:04:32 +0200
-Message-ID: <87lflaq1lb.fsf@soft-dev15.microsemi.net>
+        id S1725914AbgE2QRj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 12:17:39 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:38043 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725681AbgE2QRi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 12:17:38 -0400
+Received: by mail-il1-f193.google.com with SMTP id q18so3044195ilm.5;
+        Fri, 29 May 2020 09:17:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=1WA+w4gWKVFAKdOjyjOP/tEtWPocATjUQITVK+3DOw8=;
+        b=PDY+zC261G1ze5ju591N9UrtXa3empNkOHi/d6aSVDxgN1Nty79WfF68uWvE6OvPd3
+         6KjVsuHnHZ5l+WeShXbBux6sAI1SzOUdyLyko/06X8jXUiJf+MsEnxIO4RmJz0GZstSA
+         p4hel2i10k519xHSGNdCc+CZ2KMstaolJMaytNUe/NP0Ex50v+6Mn0kf2zPWwFE9U2NH
+         PT4NV9n0gaIc7uW+WeoPdm91L8GUQB8IoEr27oF+BX2X8WMqjOtF8mANaRDzcZv65tTO
+         ANQyaB4BEtjGXZP/yDzLeAaOIpYmFDaKP7smGZhZfol/6n2Lbu/ZI848LnWdHNn0YEY9
+         DtnA==
+X-Gm-Message-State: AOAM5322RZm09Iwx18hoiEXZ4aY962uhLi2+HVcJtIUukOuM/xqqFNQ6
+        NuJ9eJi/3TQlnWs/TqKGAg==
+X-Google-Smtp-Source: ABdhPJzaiMsri3Ce6ct811n/Nx3VT+C3nOOEcWn2ikVVXzQHkkLZAWZnsnOcN0C90jGOSCtG3QTx+Q==
+X-Received: by 2002:a92:9142:: with SMTP id t63mr6838165ild.191.1590769056769;
+        Fri, 29 May 2020 09:17:36 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id j63sm1083926ilg.50.2020.05.29.09.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 May 2020 09:17:35 -0700 (PDT)
+Received: (nullmailer pid 2494095 invoked by uid 1000);
+        Fri, 29 May 2020 16:17:32 -0000
+Date:   Fri, 29 May 2020 10:17:32 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     dillon.minfei@gmail.com
+Cc:     robh+dt@kernel.org, alexandre.torgue@st.com, dillonhua@gmail.com,
+        daniel@ffwll.ch, linux-spi@vger.kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        sam@ravnborg.org, mcoquelin.stm32@gmail.com,
+        devicetree@vger.kernel.org, linus.walleij@linaro.org,
+        linux-arm-kernel@lists.infradead.org, thierry.reding@gmail.com,
+        sboyd@kernel.org, broonie@kernel.org, noralf@tronnes.org,
+        airlied@linux.ie, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com,
+        p.zabel@pengutronix.de, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v6 4/9] dt-bindings: display: panel: Add ilitek ili9341
+ panel bindings
+Message-ID: <20200529161732.GA2493963@bogus>
+References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+ <1590564453-24499-5-git-send-email-dillon.minfei@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1590564453-24499-5-git-send-email-dillon.minfei@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, 27 May 2020 15:27:28 +0800, dillon.minfei@gmail.com wrote:
+> From: dillon min <dillon.minfei@gmail.com>
+> 
+> Add documentation for "ilitek,ili9341" panel.
+> 
+> Signed-off-by: dillon min <dillon.minfei@gmail.com>
+> ---
+>  .../bindings/display/panel/ilitek,ili9341.yaml     | 69 ++++++++++++++++++++++
+>  1 file changed, 69 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
+> 
 
-Stephen Boyd writes:
-
-> Quoting Lars Povlsen (2020-05-13 05:55:28)
->> diff --git a/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml b/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
->> new file mode 100644
->> index 0000000000000..594007d8fc59a
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
->> @@ -0,0 +1,46 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/microchip,sparx5-dpll.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Microchip Sparx5 DPLL Clock
->> +
->> +maintainers:
->> +  - Lars Povlsen <lars.povlsen@microchip.com>
->> +
->> +description: |
->> +  The Sparx5 DPLL clock controller generates and supplies clock to
->> +  various peripherals within the SoC.
->> +
->> +  This binding uses common clock bindings
->> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
->
-> I don't think we need this sentence. Please drop it.
-
-OK. (Assuming the "This binding ..." part).
-
->
->> +
->> +properties:
->> +  compatible:
->> +    const: microchip,sparx5-dpll
->> +
->> +  reg:
->> +    items:
->> +      - description: dpll registers
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - '#clock-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  # Clock provider for eMMC:
->> +  - |
->> +    clks: clks@61110000c {
->
-> Node name should be clock-controller@61110000c
-
-Ok.
-
->
->> +         compatible = "microchip,sparx5-dpll";
->> +         #clock-cells = <1>;
->> +         reg = <0x1110000c 0x24>;
->
-> Does it consume any clks itself? I'd expect to see some sort of 'clocks'
-> property in this node.
->
->> +    };
-
-I changed the driver to use a fixed-rate input clock, replacing the
-BASE_CLOCK define(s). Additionally, I made the ahb_clock into
-fixed-factor clock using the A53 cpu clock as a base.
-
-So I updated the example and added 'clocks' to the schema.
-
-I will send you a new series shortly.
-
-Thank you for the comments.
-
---
-Lars Povlsen,
-Microchip
+Reviewed-by: Rob Herring <robh@kernel.org>
