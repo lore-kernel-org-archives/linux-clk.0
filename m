@@ -2,115 +2,193 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A61CC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6727EC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 06:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 461CC20C09
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:31:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590726707;
-	bh=vUX7nQGYANb7wtXorQxJhcu4PyfoL81nOGhO8sRAgpg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=u6kMtlcG4ym9URbvmToAhY0CTjgn62Ica12Haw9INT5How7dW77u9IEn4HypbuWZu
-	 orFpBLyWNziF5ZBXF3xBCaeAqg+K+OSv/1uZFnMyUVJtKGncTPn7E1l6tvyXNnMg98
-	 WLWXVzXZAcW6KM9kBfTSO3BI/nfwvPYfoVlXitjg=
+	by mail.kernel.org (Postfix) with ESMTP id 4B67520723
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 06:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725681AbgE2Ebr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 00:31:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49450 "EHLO mail.kernel.org"
+        id S1725901AbgE2Gb6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 02:31:58 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43250 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725562AbgE2Ebq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 00:31:46 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34B4C2075A;
-        Fri, 29 May 2020 04:31:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590726706;
-        bh=vUX7nQGYANb7wtXorQxJhcu4PyfoL81nOGhO8sRAgpg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XH6mIZD2vzGjqki+RL2Q1KuqTklDMievwePhR69uaZsnbKf++qt+QJTSNpJcyaGgL
-         3y1WAgO/A7wFnFfJWZM1xh6fJTpff9BHKmP+8fOWJ17somJDUvUcvqMyW4FU1by8Kp
-         ZSEyf2qGHhFFlx6Kb7b+DVK9/XexC+MpjsqUfPsg=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0936ce03-935d-d863-0bd1-a005ba1d40e0@loongson.cn>
-References: <1590590362-11570-1-git-send-email-yangtiezhu@loongson.cn> <159060638492.88029.3855641102752089121@swboyd.mtv.corp.google.com> <51c21311-a301-1a55-3eb1-a11583e7df43@loongson.cn> <159070775347.69627.5841986835404441281@swboyd.mtv.corp.google.com> <be070b91-4954-c66c-970c-a64f72eb54dc@loongson.cn> <159072469537.69627.2358538167030427315@swboyd.mtv.corp.google.com> <0936ce03-935d-d863-0bd1-a005ba1d40e0@loongson.cn>
-Subject: Re: [PATCH v4 1/2] clk: hisilicon: Use correct return value about hisi_reset_init()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Date:   Thu, 28 May 2020 21:31:45 -0700
-Message-ID: <159072670557.69627.15526584762592289463@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+        id S1725308AbgE2Gb5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 02:31:57 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 19940200087;
+        Fri, 29 May 2020 08:31:55 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 985C9200DAC;
+        Fri, 29 May 2020 08:31:49 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DBC31402A7;
+        Fri, 29 May 2020 14:31:42 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+        festevam@gmail.com, aisheng.dong@nxp.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH] dt-bindings: clock: Convert i.MX8QXP LPCG to json-schema
+Date:   Fri, 29 May 2020 14:21:39 +0800
+Message-Id: <1590733299-12051-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tiezhu Yang (2020-05-28 21:02:05)
-> On 05/29/2020 11:58 AM, Stephen Boyd wrote:
-> > Quoting Tiezhu Yang (2020-05-28 19:03:54)
-> >> On 05/29/2020 07:15 AM, Stephen Boyd wrote:
-> >>> Quoting Tiezhu Yang (2020-05-27 19:27:42)
-> >>>> On 05/28/2020 03:06 AM, Stephen Boyd wrote:
-> >>>>> Quoting Tiezhu Yang (2020-05-27 07:39:21)
-> >>>>>> The return value about hisi_reset_init() is not correct, fix it.
-> >>>>>>
-> >>>>>> Fixes: e9a2310fb689 ("reset: hisilicon: fix potential NULL pointer=
- dereference")
-> >>>>> hisi_reset_init() returns NULL on error in that commit. This patch
-> >>>>> doesn't make sense.
-> >>>> Hi Stephen,
-> >>>>
-> >>>> The initial aim of this patch is to use correct return value about
-> >>>> hisi_reset_init(), maybe NULL is OK, but the return value in this
-> >>>> patch is more accurate.
-> >>> The implementation of hisi_reset_init() that I see is this:
-> >>>
-> >>>
-> >>>        struct hisi_reset_controller *rstc;
-> >>>
-> >>>        rstc =3D devm_kmalloc(&pdev->dev, sizeof(*rstc), GFP_KERNEL);
-> >>>        if (!rstc)
-> >>>                return NULL;
-> >>>
-> >>>        rstc->membase =3D devm_platform_ioremap_resource(pdev, 0);
-> >>>        if (IS_ERR(rstc->membase))
-> >>>                return NULL;
-> >>>
-> >>>        spin_lock_init(&rstc->lock);
-> >>>        rstc->rcdev.owner =3D THIS_MODULE;
-> >>>        rstc->rcdev.ops =3D &hisi_reset_ops;
-> >>>        rstc->rcdev.of_node =3D pdev->dev.of_node;
-> >>>        rstc->rcdev.of_reset_n_cells =3D 2;
-> >>>        rstc->rcdev.of_xlate =3D hisi_reset_of_xlate;
-> >>>        reset_controller_register(&rstc->rcdev);
-> >>>
-> >>>        return rstc;
-> >>>
-> >>> And that returns NULL on an error and a valid pointer on success.
-> >>> Changing the code to check the return value of hisi_reset_init() for =
-an
-> >>> error pointer is simply wrong without updating hisi_reset_init() to
-> >>> return an error pointer on error. Where is the patch that changes
-> >>> hisi_reset_init() to return an error pointer?
-> >> Hi Stephen,
-> >>
-> >> Do you mean the following changes?
-> > Yes where is this change?
->=20
-> ERR_PTR(-ENOMEM) and ERR_CAST(rstc->membase)
->=20
+Convert the i.MX8QXP LPCG binding to DT schema format using json-schema.
 
-I think you didn't understand my question. I'm asking where is this
-patch applied to the kernel and what commit is it? I don't see it in the
-clk tree.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+ .../devicetree/bindings/clock/imx8qxp-lpcg.txt     | 51 ---------------
+ .../devicetree/bindings/clock/imx8qxp-lpcg.yaml    | 72 ++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 51 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
+deleted file mode 100644
+index 965cfa4..0000000
+--- a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
++++ /dev/null
+@@ -1,51 +0,0 @@
+-* NXP i.MX8QXP LPCG (Low-Power Clock Gating) Clock bindings
+-
+-The Low-Power Clock Gate (LPCG) modules contain a local programming
+-model to control the clock gates for the peripherals. An LPCG module
+-is used to locally gate the clocks for the associated peripheral.
+-
+-Note:
+-This level of clock gating is provided after the clocks are generated
+-by the SCU resources and clock controls. Thus even if the clock is
+-enabled by these control bits, it might still not be running based
+-on the base resource.
+-
+-Required properties:
+-- compatible:	Should be one of:
+-		  "fsl,imx8qxp-lpcg-adma",
+-		  "fsl,imx8qxp-lpcg-conn",
+-		  "fsl,imx8qxp-lpcg-dc",
+-		  "fsl,imx8qxp-lpcg-dsp",
+-		  "fsl,imx8qxp-lpcg-gpu",
+-		  "fsl,imx8qxp-lpcg-hsio",
+-		  "fsl,imx8qxp-lpcg-img",
+-		  "fsl,imx8qxp-lpcg-lsio",
+-		  "fsl,imx8qxp-lpcg-vpu"
+-- reg:		Address and length of the register set
+-- #clock-cells:	Should be <1>
+-
+-The clock consumer should specify the desired clock by having the clock
+-ID in its "clocks" phandle cell.
+-See the full list of clock IDs from:
+-include/dt-bindings/clock/imx8qxp-clock.h
+-
+-Examples:
+-
+-#include <dt-bindings/clock/imx8qxp-clock.h>
+-
+-conn_lpcg: clock-controller@5b200000 {
+-	compatible = "fsl,imx8qxp-lpcg-conn";
+-	reg = <0x5b200000 0xb0000>;
+-	#clock-cells = <1>;
+-};
+-
+-usdhc1: mmc@5b010000 {
+-	compatible = "fsl,imx8qxp-usdhc", "fsl,imx7d-usdhc";
+-	interrupt-parent = <&gic>;
+-	interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
+-	reg = <0x5b010000 0x10000>;
+-	clocks = <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_IPG_CLK>,
+-		 <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_PER_CLK>,
+-		 <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_HCLK>;
+-	clock-names = "ipg", "per", "ahb";
+-};
+diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+new file mode 100644
+index 0000000..d5b6825
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.yaml
+@@ -0,0 +1,72 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/imx8qxp-lpcg.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX8QXP LPCG (Low-Power Clock Gating) Clock bindings
++
++maintainers:
++  - Aisheng Dong <aisheng.dong@nxp.com>
++
++description: |
++  The Low-Power Clock Gate (LPCG) modules contain a local programming
++  model to control the clock gates for the peripherals. An LPCG module
++  is used to locally gate the clocks for the associated peripheral.
++
++  This level of clock gating is provided after the clocks are generated
++  by the SCU resources and clock controls. Thus even if the clock is
++  enabled by these control bits, it might still not be running based
++  on the base resource.
++
++  The clock consumer should specify the desired clock by having the clock
++  ID in its "clocks" phandle cell. See the full list of clock IDs from:
++  include/dt-bindings/clock/imx8-clock.h
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx8qxp-lpcg-adma
++      - fsl,imx8qxp-lpcg-conn
++      - fsl,imx8qxp-lpcg-dc
++      - fsl,imx8qxp-lpcg-dsp
++      - fsl,imx8qxp-lpcg-gpu
++      - fsl,imx8qxp-lpcg-hsio
++      - fsl,imx8qxp-lpcg-img
++      - fsl,imx8qxp-lpcg-lsio
++      - fsl,imx8qxp-lpcg-vpu
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++examples:
++  - |
++    #include <dt-bindings/clock/imx8-clock.h>
++    #include <dt-bindings/firmware/imx/rsrc.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    clock-controller@5b200000 {
++        compatible = "fsl,imx8qxp-lpcg-conn";
++        reg = <0x5b200000 0xb0000>;
++        #clock-cells = <1>;
++    };
++
++    mmc@5b010000 {
++        compatible = "fsl,imx8qxp-usdhc", "fsl,imx7d-usdhc";
++        interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
++        reg = <0x5b010000 0x10000>;
++        clocks = <&conn_lpcg IMX_CONN_LPCG_SDHC0_IPG_CLK>,
++                 <&conn_lpcg IMX_CONN_LPCG_SDHC0_PER_CLK>,
++                 <&conn_lpcg IMX_CONN_LPCG_SDHC0_HCLK>;
++        clock-names = "ipg", "per", "ahb";
++        power-domains = <&pd IMX_SC_R_SDHC_0>;
++        status = "disabled";
++    };
+-- 
+2.7.4
+
