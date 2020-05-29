@@ -6,86 +6,75 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCFE8C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 449ECC433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:26:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F13721582
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DE1207D3
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:26:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590726259;
-	bh=lFi0u1OCN7DS3Nx+qCcOJ3WY0Mze38rDYI7+wUCYVi8=;
+	s=default; t=1590726398;
+	bh=biY26RlQtZl+eOvAa3r0qNI+95AZPiHE6MWy69incsQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ery0Rt78jxd/yllTn9hlUYIksyuhg4jsu/+KJJpRHhvYzh4A9ps+MfF9g9zUQXPvk
-	 Tw14uivC41YADvDgbbwBf8E6L4co5de/xt4SGhJaqRSE+yQ0WyoheZXhGFXChb9lBr
-	 uA6bNp2jmiWqE6ch3AcIhAKiUyieGtJBcy09sqtA=
+	b=diWy0MJt0x+dlpM2VlcGD0EURIBzlBW4ij0WSbwf0U16Ja/UtpQ6LsAaKSMM3ziKd
+	 sk22BOzQssbjbOs6LAXIyKW23Bl0OXuaJSmdrunjbHPoH1gva+24iKfbkpHxrp1ENH
+	 b3q5nLV8zLV4uFf8AyLIAwyi5SC89V1zdTwLLupg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgE2EYM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 00:24:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47576 "EHLO mail.kernel.org"
+        id S1725601AbgE2E0h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 00:26:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbgE2EYK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 00:24:10 -0400
+        id S1725817AbgE2E0h (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 00:26:37 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDCC520814;
-        Fri, 29 May 2020 04:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0B7E2074D;
+        Fri, 29 May 2020 04:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590726249;
-        bh=lFi0u1OCN7DS3Nx+qCcOJ3WY0Mze38rDYI7+wUCYVi8=;
+        s=default; t=1590726397;
+        bh=biY26RlQtZl+eOvAa3r0qNI+95AZPiHE6MWy69incsQ=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vvunTao0bslrO3i537orWdUayXbC7ajkMnt3XUx7Put4e5vth1qh+C2iqmv0ZL+W/
-         mJHIUeXzjfMKpSj0C6G0ty2Hk+mKIKkNq65ebi6QVnGvZDMCFkknutDTvst/KV51gR
-         dWndcNnQ2iAH8KYc0VCUfTxPu9Epcv4Yb/NT2WMA=
+        b=uR/4VKmjPeu7nUm0lkHtc5fQuVyg9Cv8k9mjBTofLk9uGIZ+gv7NcC1inBtBriBu5
+         ydFYWUvxalNlqlw/nKCPjTvH8jWZ1TRiCEu7pDvB5+NSVdzR97iRZSQekgx7ct8aTp
+         2NgFtT9YMZWTQ17NB/enzc0fLu2TBOXJ+pMrMYyw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1582278742-1626-6-git-send-email-macpaul.lin@mediatek.com>
-References: <1582278742-1626-1-git-send-email-macpaul.lin@mediatek.com> <1582278742-1626-6-git-send-email-macpaul.lin@mediatek.com>
-Subject: Re: [PATCH 5/5] clk: mediatek: Add MT6765 clock support
+In-Reply-To: <1590560749-29136-1-git-send-email-weiyi.lu@mediatek.com>
+References: <1590560749-29136-1-git-send-email-weiyi.lu@mediatek.com>
+Subject: Re: [PATCH v2] clk: mediatek: assign the initial value to clk_init_data of mtk_mux
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Mediatek WSD Upstream <wsd_upstream@mediatek.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Evan Green <evgreen@chromium.org>,
-        Fabien Parent <fparent@baylibre.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Macpaul Lin <macpaul.lin@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ryder Lee <Ryder.Lee@mediatek.com>,
-        Sean Wang <Sean.Wang@mediatek.com>,
-        Shawn Guo <shawnguo@kernel.org>,
+Cc:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        srv_heupstream@mediatek.com, stable@vger.kernel.org,
         Weiyi Lu <weiyi.lu@mediatek.com>,
-        Will Deacon <will@kernel.org>, Yong Wu <yong.wu@mediatek.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        mtk01761 <wendell.lin@mediatek.com>
-Date:   Thu, 28 May 2020 21:24:09 -0700
-Message-ID: <159072624910.69627.8948903264567221142@swboyd.mtv.corp.google.com>
+        Owen Chen <owen.chen@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Date:   Thu, 28 May 2020 21:26:36 -0700
+Message-ID: <159072639634.69627.7492835408539422310@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Macpaul Lin (2020-02-21 01:52:22)
-> From: Owen Chen <owen.chen@mediatek.com>
+Quoting Weiyi Lu (2020-05-26 23:25:49)
+> When some new clock supports are introduced, e.g. [1]
+> it might lead to an error although it should be NULL because
+> clk_init_data is on the stack and it might have random values
+> if using without initialization.
+> Add the missing initial value to clk_init_data.
 >=20
-> Add MT6765 clock support, include topckgen, apmixedsys,
-> infracfg, mcucfg and subsystem clocks.
+> [1] https://android-review.googlesource.com/c/kernel/common/+/1278046
 >=20
-> Signed-off-by: Owen Chen <owen.chen@mediatek.com>
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+> Fixes: a3ae549917f1 ("clk: mediatek: Add new clkmux register API")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 > ---
 
 Applied to clk-next
