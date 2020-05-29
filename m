@@ -2,66 +2,101 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0831C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B95AC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8766B20810
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:11:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D46EC20810
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:14:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590786685;
-	bh=IKTLWQZ0nXrdPIln+K4BgJazMseCXQzHI5QAr6W3cPc=;
+	s=default; t=1590786864;
+	bh=yFRDxNh58uuyFlzO1eMMtyMIiJEIafrnBU49+xaJiK0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=VC7ByckR9NURvctV0gEyv0KUMO8kDlzRWMODQYfoeN3POQeyRWCMubugtV2Mg8VB3
-	 wdo/NCMLkOwJld0RTKtGav3vbGuG4dEoakMnGaVUsOa1imI9OI3XHyPtTx6z3Hxhxa
-	 FpM163tzd7PMLXI/krKrgNXiCZyKuPT9VkHOVyGY=
+	b=DgtIJj6SPNK941nl8xRy13OC7HKzgThpkD30SWoGIqbNiWo1L1cN4BSOrravJqcOk
+	 R3Y1b/GTMki6Cv9Wgkg6bv4W63Q2e+6jzfbSwe8aZb+C5ZsMRj4bcYlIXztXUV4ciB
+	 jQ0/nxG35rsk7puLVt7zz7rsB7cSqtR1eTh4GnEI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728482AbgE2VLZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 17:11:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34478 "EHLO mail.kernel.org"
+        id S1727964AbgE2VOY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 17:14:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbgE2VLY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 17:11:24 -0400
+        id S1727781AbgE2VOY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 17:14:24 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B38A206A4;
-        Fri, 29 May 2020 21:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98CFC206A4;
+        Fri, 29 May 2020 21:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590786684;
-        bh=IKTLWQZ0nXrdPIln+K4BgJazMseCXQzHI5QAr6W3cPc=;
+        s=default; t=1590786863;
+        bh=yFRDxNh58uuyFlzO1eMMtyMIiJEIafrnBU49+xaJiK0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tGHlB8v/jaGtTbWGJ/6kq/y9+mwMiy+z5eDkTJXNOMQRBj3SNMvm+FmD2JdlR7mcy
-         ru85udX+U94D62kwaVAJO6w8+4K64mXLQ0ZnQjKzNClmMveCwd7TzkX5rW6tc9uA00
-         WBQlDJhic4fsrbvT2Rz/5OxnzgbcrMIJFp30fQDY=
+        b=GS0eKtdXDrhQSWaEv2ZJrGcCCgEdw2uyumKYsrinyRHwzBmiAF+UBLaCa+JyDFyuy
+         IBx2/tDSI/M0ybyrpV8wfp1yBrCNgKwYbsMo3FxPOjydgzhYu8gAshvMc6oeFPCQ64
+         3N/s27HXfSxm90NUqDfh3FcPCyLh8I/P7HmeDxvM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200529191431.GA2779176@bogus>
-References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com> <20200528031549.13846-4-zhouyanjie@wanyeetech.com> <20200529191431.GA2779176@bogus>
-Subject: Re: [PATCH v13 3/7] dt-bindings: clock: Add documentation for X1830 bindings.
+In-Reply-To: <f11b46d7-0d94-b4b3-350a-19e5a98d5289@loongson.cn>
+References: <1590590362-11570-1-git-send-email-yangtiezhu@loongson.cn> <51c21311-a301-1a55-3eb1-a11583e7df43@loongson.cn> <159070775347.69627.5841986835404441281@swboyd.mtv.corp.google.com> <be070b91-4954-c66c-970c-a64f72eb54dc@loongson.cn> <159072469537.69627.2358538167030427315@swboyd.mtv.corp.google.com> <0936ce03-935d-d863-0bd1-a005ba1d40e0@loongson.cn> <159072670557.69627.15526584762592289463@swboyd.mtv.corp.google.com> <8e60fafd-724a-c4ef-b0a0-53e092ad6bdc@loongson.cn> <159074496638.69627.15702116074645440806@swboyd.mtv.corp.google.com> <f11b46d7-0d94-b4b3-350a-19e5a98d5289@loongson.cn>
+Subject: Re: [PATCH v4 1/2] clk: hisilicon: Use correct return value about hisi_reset_init()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        zhenwenjin@gmail.com, sernia.zhou@foxmail.com,
-        paul@crapouillou.net, dongsheng.qiu@ingenic.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Rob Herring <robh@kernel.org>,
-        Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Date:   Fri, 29 May 2020 14:11:23 -0700
-Message-ID: <159078668338.69627.5841582436445900180@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Xuefeng Li <lixuefeng@loongson.cn>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Tiezhu Yang <yangtiezhu@loongson.cn>
+Date:   Fri, 29 May 2020 14:14:22 -0700
+Message-ID: <159078686285.69627.11416031375116687757@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2020-05-29 12:14:31)
+Quoting Tiezhu Yang (2020-05-29 03:20:11)
+> On 05/29/2020 05:36 PM, Stephen Boyd wrote:
+> > Quoting Tiezhu Yang (2020-05-28 23:44:20)
+> >> On 05/29/2020 12:31 PM, Stephen Boyd wrote:
+> >>> Quoting Tiezhu Yang (2020-05-28 21:02:05)
+> >>> I think you didn't understand my question. I'm asking where is this
+> >>> patch applied to the kernel and what commit is it? I don't see it in =
+the
+> >>> clk tree.
+> >> Sorry for that, actually I do not quite understand what you mean.
+> >>
+> >> In my opinion, after the following commit,  when devm_ioremap_resource=
+()
+> >> is called in hisi_reset_init(), hisi_reset_init() still returns NULL a=
+nd
+> >> it only returns
+> >> -ENOMEM when call hisi_reset_init() failed, I think it may returns
+> >> -EINVAL, -EBUSY
+> >> or -ENOMEM if failed, this is what I want to fix.
+> >>
+> >> "reset: hisilicon: fix potential NULL pointer dereference"
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/d=
+rivers/clk/hisilicon/reset.c?h=3Dclk-next&id=3De9a2310fb689151166df7fd99710=
+93362d34bd79
+> >>
+> > This commit doesn't change the value that is returned by
+> > hisi_reset_init() on an error. It still returns NULL when an error
+> > happens.
 >=20
-> Acked-by: Rob Herring <robh@kernel.org>
+> Yes, I agree, but after this commit e9a2310fb689 ("reset:
+> hisilicon: fix potential NULL pointer dereference"), the
+> return value of hisi_reset_init() is not so correct because
+> it replaces devm_ioremap() with devm_ioremap_resource().
 
-Please apply to bindings tree Rob. The yaml conversion is in your tree.
+Where does the return value of hisi_reset_init() change in that commit?
+The usage of devm_ioremap_resource() vs. devm_ioremap() doesn't change
+the return value of hisi_reset_init().
+
+>=20
+> Do you think the code of this patch is OK but the "Fixes:" commit
+> is not accurate? If so, can we remove the "Fixes:" tag?
+>=20
+
+No. The patch is incorrect and the Fixes tag is incorrect.
