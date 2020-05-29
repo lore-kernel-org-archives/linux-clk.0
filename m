@@ -2,101 +2,109 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B95AC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C22B5C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D46EC20810
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F522071A
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:17:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590786864;
-	bh=yFRDxNh58uuyFlzO1eMMtyMIiJEIafrnBU49+xaJiK0=;
+	s=default; t=1590787041;
+	bh=sME8ruLxoroLuY9q/Uj9rGG2wjg9pRbFEdETtL61H4c=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=DgtIJj6SPNK941nl8xRy13OC7HKzgThpkD30SWoGIqbNiWo1L1cN4BSOrravJqcOk
-	 R3Y1b/GTMki6Cv9Wgkg6bv4W63Q2e+6jzfbSwe8aZb+C5ZsMRj4bcYlIXztXUV4ciB
-	 jQ0/nxG35rsk7puLVt7zz7rsB7cSqtR1eTh4GnEI=
+	b=0HULR/Fs4pzue4pzwdGaG3xwW0eUXFxtw8oCUzc0Hl18blNtFRxOfsiKLWhdWRpxq
+	 O/5ysR9LvMZUyuJHkeAeIdctD1TJiN3vrL1v1WSeDJfOXT1J+QY+W3Lw+UkQmoSoVX
+	 HVth3XMnSjo+reEcatIfpEX4En5N4Z9ebWZzAWLE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbgE2VOY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 17:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35944 "EHLO mail.kernel.org"
+        id S1728167AbgE2VRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 17:17:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbgE2VOY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 17:14:24 -0400
+        id S1727851AbgE2VRR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 17:17:17 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98CFC206A4;
-        Fri, 29 May 2020 21:14:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E984F206A4;
+        Fri, 29 May 2020 21:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590786863;
-        bh=yFRDxNh58uuyFlzO1eMMtyMIiJEIafrnBU49+xaJiK0=;
+        s=default; t=1590787037;
+        bh=sME8ruLxoroLuY9q/Uj9rGG2wjg9pRbFEdETtL61H4c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GS0eKtdXDrhQSWaEv2ZJrGcCCgEdw2uyumKYsrinyRHwzBmiAF+UBLaCa+JyDFyuy
-         IBx2/tDSI/M0ybyrpV8wfp1yBrCNgKwYbsMo3FxPOjydgzhYu8gAshvMc6oeFPCQ64
-         3N/s27HXfSxm90NUqDfh3FcPCyLh8I/P7HmeDxvM=
+        b=vhe6AHZO5O8RimaLFP7kzVzLRMLJhrLNePtmAG5uLBJjUaQ6JRJAYxPp8SIUcbzUs
+         DxbCTECsbuw/0iJvghP5Ltn4P3z1K0hDb6+5rMpyxS3TiIJ/PsmbweAge1MhAiQEHW
+         kQFaEt+erIFhX8IAvajkqKCxoc30++m7FjXXi7DA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f11b46d7-0d94-b4b3-350a-19e5a98d5289@loongson.cn>
-References: <1590590362-11570-1-git-send-email-yangtiezhu@loongson.cn> <51c21311-a301-1a55-3eb1-a11583e7df43@loongson.cn> <159070775347.69627.5841986835404441281@swboyd.mtv.corp.google.com> <be070b91-4954-c66c-970c-a64f72eb54dc@loongson.cn> <159072469537.69627.2358538167030427315@swboyd.mtv.corp.google.com> <0936ce03-935d-d863-0bd1-a005ba1d40e0@loongson.cn> <159072670557.69627.15526584762592289463@swboyd.mtv.corp.google.com> <8e60fafd-724a-c4ef-b0a0-53e092ad6bdc@loongson.cn> <159074496638.69627.15702116074645440806@swboyd.mtv.corp.google.com> <f11b46d7-0d94-b4b3-350a-19e5a98d5289@loongson.cn>
-Subject: Re: [PATCH v4 1/2] clk: hisilicon: Use correct return value about hisi_reset_init()
+In-Reply-To: <919e2f2f13583d4d53d0e95b81fc3fb8a7606107.1590594293.git-series.maxime@cerno.tech>
+References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech> <919e2f2f13583d4d53d0e95b81fc3fb8a7606107.1590594293.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v3 02/25] dt-bindings: clock: Add a binding for the RPi Firmware clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xuefeng Li <lixuefeng@loongson.cn>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Tiezhu Yang <yangtiezhu@loongson.cn>
-Date:   Fri, 29 May 2020 14:14:22 -0700
-Message-ID: <159078686285.69627.11416031375116687757@swboyd.mtv.corp.google.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Fri, 29 May 2020 14:17:16 -0700
+Message-ID: <159078703613.69627.13627047580756230984@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tiezhu Yang (2020-05-29 03:20:11)
-> On 05/29/2020 05:36 PM, Stephen Boyd wrote:
-> > Quoting Tiezhu Yang (2020-05-28 23:44:20)
-> >> On 05/29/2020 12:31 PM, Stephen Boyd wrote:
-> >>> Quoting Tiezhu Yang (2020-05-28 21:02:05)
-> >>> I think you didn't understand my question. I'm asking where is this
-> >>> patch applied to the kernel and what commit is it? I don't see it in =
-the
-> >>> clk tree.
-> >> Sorry for that, actually I do not quite understand what you mean.
-> >>
-> >> In my opinion, after the following commit,  when devm_ioremap_resource=
-()
-> >> is called in hisi_reset_init(), hisi_reset_init() still returns NULL a=
-nd
-> >> it only returns
-> >> -ENOMEM when call hisi_reset_init() failed, I think it may returns
-> >> -EINVAL, -EBUSY
-> >> or -ENOMEM if failed, this is what I want to fix.
-> >>
-> >> "reset: hisilicon: fix potential NULL pointer dereference"
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/d=
-rivers/clk/hisilicon/reset.c?h=3Dclk-next&id=3De9a2310fb689151166df7fd99710=
-93362d34bd79
-> >>
-> > This commit doesn't change the value that is returned by
-> > hisi_reset_init() on an error. It still returns NULL when an error
-> > happens.
+Quoting Maxime Ripard (2020-05-27 08:44:58)
+> The firmware running on the RPi VideoCore can be used to discover and
+> change the various clocks running in the BCM2711. Since devices will
+> need to use them through the DT, let's add a pretty simple binding.
 >=20
-> Yes, I agree, but after this commit e9a2310fb689 ("reset:
-> hisilicon: fix potential NULL pointer dereference"), the
-> return value of hisi_reset_init() is not so correct because
-> it replaces devm_ioremap() with devm_ioremap_resource().
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-Where does the return value of hisi_reset_init() change in that commit?
-The usage of devm_ioremap_resource() vs. devm_ioremap() doesn't change
-the return value of hisi_reset_init().
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
->=20
-> Do you think the code of this patch is OK but the "Fixes:" commit
-> is not accurate? If so, can we remove the "Fixes:" tag?
->=20
+> diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm283=
+5-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm=
+2835-firmware.yaml
+> index cec540c052b6..b48ed875eb8e 100644
+> --- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmw=
+are.yaml
+> +++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmw=
+are.yaml
+> @@ -22,6 +22,25 @@ properties:
+>        Phandle to the firmware device's Mailbox.
+>        (See: ../mailbox/mailbox.txt for more information)
+> =20
+> +  clocks:
+> +    type: object
+> +
+> +    properties:
+> +      compatible:
+> +        const: raspberrypi,firmware-clocks
+> +
+> +      "#clock-cells":
+> +        const: 1
+> +        description: >
 
-No. The patch is incorrect and the Fixes tag is incorrect.
+Just curious if this is the same as the | syntax? I haven't seen this
+used before.
+
+> +          The argument is the ID of the clocks contained by the
+> +          firmware messages.
+> +
