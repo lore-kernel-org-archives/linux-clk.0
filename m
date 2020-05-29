@@ -2,98 +2,68 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9287AC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 19:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FF8C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:10:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D93C207D4
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 19:14:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CD9F2054F
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 21:10:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590779675;
-	bh=u2w5DMX9SLKz3u3UEB2CnBtE1clrrOYOtv93QhklISk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Q+MlJyzzVxkHxlIq8ZYZKAfQQDKdKV/e5Hdy6RnlSE7q1PzfWjfloa0w6qwCEqvMy
-	 Pd7ze7Hr6Mvh/sOw/uAHydsKl9qPL0LLUrMAlsEUnylCXG/OUACPDfPEnUNGGoYCUH
-	 TQHo5DCKeuzeAOuEGTjm5xPSg+BgQQMlpjHV+NGY=
+	s=default; t=1590786636;
+	bh=5HkBsu2LoFJiNfJpQfYL/s0NCwlWMQqDFsNjLOxkeoA=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=PAdrLUx4vpvc7rX9tkJb6Mnv23VlDpehzBAs25wxWAIYSPcsmtCZi3l1FpXkZCYb2
+	 mRjnNOSg9yejeHLeZPXrnHuZxQS1tU31bFjUL7Nu4N0OVtgucPPyW/fCfngX7LwWge
+	 fBblZbtehgGuTvagVLKMyPe+p57xjt+DD/Kf/nuY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726487AbgE2TOf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 15:14:35 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41119 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbgE2TOe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 May 2020 15:14:34 -0400
-Received: by mail-io1-f65.google.com with SMTP id o5so494090iow.8;
-        Fri, 29 May 2020 12:14:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=IMboAeBywaKQGMVGQN5Urn1Fr7u4wdf1ZFcW9jks0WY=;
-        b=ndxwWQcnLWl3xF3zoGGYusQ3VsFBtQNAxz8ZdqqBSBTWxwEfJv8TJu5dK12SwuICip
-         IX5rQNbnIc3HtQG7ahCEvpS7yVcTAylm5IyipfFj4cPGoKmQjdkGLQ5DYa0SFeKvJYKd
-         OlTZRW0W33dy0DegIY3UYmcZ35nROWcGRsnIH+EmzdHu+EUaMuoJV26w73lkrtIP2G2B
-         hEXotApj3HVd+8aP53Nf/knBF2ADhixxWvS52iyXasdbr8iIjbH+c+/XKjy4Jj5N4Q47
-         xD0yLmP2mDbD2pkINYGaZXTsYxzPcgFS3LU8urCFP+fytM052vrKc35APSFKyAlOnRwl
-         b2Zg==
-X-Gm-Message-State: AOAM532ScVvLkiCAlOj09BClNFNgVQKRLM6BLREfIB3P2XZFa19oyfAA
-        VznAR0dC31EozAYwxhv6lA==
-X-Google-Smtp-Source: ABdhPJy+ef3k9N4zyOPhHF5avCCR6xmI0bM0RJea8UC82QEtbVGkNrIQ1JvUNYzsLIzDtOpFHLzxzg==
-X-Received: by 2002:a6b:6414:: with SMTP id t20mr7908234iog.32.1590779673757;
-        Fri, 29 May 2020 12:14:33 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id f1sm5307391ilh.17.2020.05.29.12.14.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 May 2020 12:14:32 -0700 (PDT)
-Received: (nullmailer pid 2779230 invoked by uid 1000);
-        Fri, 29 May 2020 19:14:31 -0000
-Date:   Fri, 29 May 2020 13:14:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     =?utf-8?B?5ZGo55Cw5p2wIChaaG91IFlhbmppZSk=?= 
-        <zhouyanjie@wanyeetech.com>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, sboyd@kernel.org,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, zhenwenjin@gmail.com,
-        sernia.zhou@foxmail.com, paul@crapouillou.net,
-        dongsheng.qiu@ingenic.com, devicetree@vger.kernel.org,
+        id S1728453AbgE2VKf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 17:10:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33544 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727851AbgE2VKE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 17:10:04 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.7-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590786603;
+        bh=5HkBsu2LoFJiNfJpQfYL/s0NCwlWMQqDFsNjLOxkeoA=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=Tr5TskIqoYzv2oLN88T1EHwQEBfxBI91WQXnLnRUtbgUUsY9rKE+ATT6tZp+TjXBk
+         b9vKCValEnFah0a+cm6RjcDymoMVvEMM4ZYmfSBE+A3IlnnYpvYy9ccvXL+wddKQ8P
+         P9OBeZlc/UU9feyR3ZZdbHRcuemZYhsdt44Ah3xA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200529035729.202144-1-sboyd@kernel.org>
+References: <20200529035729.202144-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200529035729.202144-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: a76f274182f054481182c81cd62bb8794a5450a6
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 170ee4d74781ed3d7b0f489c0b1c4debc33a2c1d
+Message-Id: <159078660363.32003.14223026968449351948.pr-tracker-bot@kernel.org>
+Date:   Fri, 29 May 2020 21:10:03 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 3/7] dt-bindings: clock: Add documentation for X1830
- bindings.
-Message-ID: <20200529191431.GA2779176@bogus>
-References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
- <20200528031549.13846-4-zhouyanjie@wanyeetech.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200528031549.13846-4-zhouyanjie@wanyeetech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 28 May 2020 11:15:45 +0800, 周琰杰 (Zhou Yanjie) wrote:
-> Add documentation for the clock bindings of the X1830 Soc from Ingenic.
-> 
-> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
-> 
-> Notes:
->     v11:
->     New patch, split from [3/6] in v10.
-> 
->     v11->v12:
->     No change.
-> 
->     v12->v13:
->     No change.
-> 
->  Documentation/devicetree/bindings/clock/ingenic,cgu.yaml | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+The pull request you sent on Thu, 28 May 2020 20:57:29 -0700:
 
-Acked-by: Rob Herring <robh@kernel.org>
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/170ee4d74781ed3d7b0f489c0b1c4debc33a2c1d
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
