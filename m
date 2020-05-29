@@ -2,74 +2,67 @@ Return-Path: <SRS0=l6vu=7L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B0AEC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA4EC433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 432A52074D
-	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA6DF2072D
+	for <linux-clk@archiver.kernel.org>; Fri, 29 May 2020 04:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1590725103;
-	bh=FlyUjyOP4FM41Bcscldp32wDJjQaZEJKpmRVmpZePso=;
+	s=default; t=1590725245;
+	bh=h0pxr9/wzLOF/9tz6TDv1ocdVyQnEr4jdBl3VKWu6Zs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=AcxuXRJU9R3Z03+jyLvwmHXPLOeQ93+rNPnJGCHZl2JEhJ+MpoSuzR9TswKZJP/mB
-	 ilMB0Et8wai9swChxxi6wn10G+LBLBhfVV6QLe+VZvLSgtOVOrxKeCEyv9UJyUoVUY
-	 l4/4lgzAZ5Gdv5bb+NyjsQ3a7v54DQC+D6YVshP0=
+	b=QcXnF/Y1dXRK002lq1K6fVwIHmP1Y/5oosV64I7gzxn9uLQy7m8y/DPSvLYBK3jbO
+	 JXvma/ZD2VGV62TJDzO8zN06mipSXslLc+RovLsW/S84RrtlPo63Z1Iz0cBukJbj9A
+	 ZGKe52BVvYyAExmNU9stN8GQANYthOTLv4mOsNMw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbgE2EFC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 May 2020 00:05:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38250 "EHLO mail.kernel.org"
+        id S1725906AbgE2EHZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 May 2020 00:07:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725906AbgE2EFC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 May 2020 00:05:02 -0400
+        id S1725884AbgE2EHY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 29 May 2020 00:07:24 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C386920707;
-        Fri, 29 May 2020 04:05:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3463220723;
+        Fri, 29 May 2020 04:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1590725101;
-        bh=FlyUjyOP4FM41Bcscldp32wDJjQaZEJKpmRVmpZePso=;
+        s=default; t=1590725244;
+        bh=h0pxr9/wzLOF/9tz6TDv1ocdVyQnEr4jdBl3VKWu6Zs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lCy5HLXTlg/Qt9DywquVvJP+RvqU017BYblNDIaMN+i3WVR2OF+sLDGP0iAeUgsK7
-         wtbBGYuHA+V2IwfvtR64TPL9C4BYIz932iuFaNI7mGNTGDAap63XWu2bglx1LmULAs
-         wB04d8EKPVeSM8ttTtewL66MfPAPeyq+BI8+i24U=
+        b=CHq95+kZOxfgFU58Zs4UZF12+xWI7UbACdIs7Xr1QTy+PP52K+8qHPgi/fP5VoWVx
+         lE5aUUsDKCQGTEB6m6dHVJ5CY87umFj9wn27nIjWPiwhbyB5cq4yXF+8U/rfGfI+66
+         4BHkmlO/qiuV5KPnhy44kH9zIHzZLKawAKoCuCkI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200404161537.2312297-2-aford173@gmail.com>
-References: <20200404161537.2312297-1-aford173@gmail.com> <20200404161537.2312297-2-aford173@gmail.com>
-Subject: Re: [PATCH 2/2] dt: Add bindings for IDT VersaClock 5P49V5925
+In-Reply-To: <20200311134115.13257-2-Eugeniy.Paltsev@synopsys.com>
+References: <20200311134115.13257-1-Eugeniy.Paltsev@synopsys.com> <20200311134115.13257-2-Eugeniy.Paltsev@synopsys.com>
+Subject: Re: [PATCH 1/3] CLK: HSDK: CGU: check if PLL is bypassed first
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     aford@beaconembedded.com, charles.stevens@logicpd.com,
-        Adam Ford <aford173@gmail.com>,
+Cc:     linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Date:   Thu, 28 May 2020 21:05:00 -0700
-Message-ID: <159072510097.69627.8792842688307323141@swboyd.mtv.corp.google.com>
+        Alexey Brodkin <Alexey.Brodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        linux-clk@vger.kernel.org
+Date:   Thu, 28 May 2020 21:07:23 -0700
+Message-ID: <159072524355.69627.3014845775029445369@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Adam Ford (2020-04-04 09:15:36)
-> IDT VersaClock 5 5P49V6965 has 5 clock outputs, 4 fractional dividers.
+Quoting Eugeniy Paltsev (2020-03-11 06:41:13)
+> If PLL is bypassed the EN (enable) bit has no effect on
+> output clock.
 >=20
-> Signed-off-by: Adam Ford <aford173@gmail.com>
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt =
-b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-> index 05a245c9df08..bcff681a4bd0 100644
-> --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+> ---
 
 Applied to clk-next
-
-BTW, the patch format threw my scripts off because there isn't a triple
-dash after the SoB line.
