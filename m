@@ -2,128 +2,82 @@ Return-Path: <SRS0=dTPI=7M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46582C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 30 May 2020 16:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63BCDC433DF
+	for <linux-clk@archiver.kernel.org>; Sat, 30 May 2020 18:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 189D920801
-	for <linux-clk@archiver.kernel.org>; Sat, 30 May 2020 16:23:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="uhsW5CKm";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZvoSsfXj"
+	by mail.kernel.org (Postfix) with ESMTP id 3D48020774
+	for <linux-clk@archiver.kernel.org>; Sat, 30 May 2020 18:14:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1590862457;
+	bh=nkYFO52Wz9gD47nkE3uJCDtB/pInehNr3iZBDa1Wc/0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=q/HZkcuX9lAvHCSEFOOm5dOBi/vxr6WZM736VAuXyCneNMkeuKdrM9cjLoaPslAT7
+	 KfY1uWCgzGbg6qXIrNwK+zE56f4hVncOQ9cs9H8Oy6UrsevbwB3tUGx5sHgiZVCC4Q
+	 qvtDFwEMB79Po54dleBjV4gpWGmT5cFNRRGnUsh8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728998AbgE3QXs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 30 May 2020 12:23:48 -0400
-Received: from wnew2-smtp.messagingengine.com ([64.147.123.27]:50245 "EHLO
-        wnew2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728797AbgE3QXs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 30 May 2020 12:23:48 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 513F799C;
-        Sat, 30 May 2020 12:23:46 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Sat, 30 May 2020 12:23:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=tRLW7jASUA/7qXtyJTN53ouwzXK
-        3073xV/nniK6Mf4A=; b=uhsW5CKmUl1aJaOAfdh+QYD9tqgFP39Ex0uTI+pP8fR
-        8oUyDYfz6fFaEndkj5cyalHj9BV/cW63qo9BSZGBF2n7LI+zhUJSA58nokZSB72f
-        LBsBPsb7T30/Pkgvv/5H3voPyI+i7n007k/+LxsgY/t3rG1aJj9wc+1PWv8bE6f2
-        hssG0/UL09QSfPD1VGJUbJQm/82cjVsIRP+0VNI5C88SecQpxqTG6ZOhgPFP9c5h
-        RB7ebZCIrTGUJ3spfwkDUeX6RgMtUfAKIyMWHRqXOidckqru2XlFOxKBtY4s39Sz
-        izeaTah0ofp0+QmZBER7YOfyjcANV63CaeAdfMcIqww==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=tRLW7j
-        ASUA/7qXtyJTN53ouwzXK3073xV/nniK6Mf4A=; b=ZvoSsfXjppjshWsm6G2JiB
-        R7d+mxzHmGnuooTiDjePiCBlVp8ZqAB7oF5HhvnRkkw71UYsgaVjAD/cvUABL1Iy
-        4Gh8u4eRqAjSG/taQnXFNzEY3jRuDPDiHYgmD++v6Ip4SpymMq4+QS2GnE1ZpBoi
-        df2p0DPBuvDTI3vlewryv5UrJFA5aaaC2BWkf6dMnbD7XV4+KauePcKl2s/E+ObY
-        EJo7CLnLtgFg3gHpAUWK5T7QVPFcnXZZ1pA+5mD1uLk+xZ1RHV/JVZrLZ1Tj8t8S
-        OnDX8wuT5xwbUirMyow7qWZ69Z7IDziBKWWYgsI0pLW8WJPqUw1UMNtELq7xsdDQ
-        ==
-X-ME-Sender: <xms:kIjSXmQf8AIxBTw2y82qdT_16CqT5XwJZFhwvOI8xJdc5lSVenEu3g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeftddgleekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:kIjSXrxRl-x5yT4N4YFfGJPVvFJ4UIKXkF7xWdf4vCWmASGHUTQXNg>
-    <xmx:kIjSXj0NjQin7VXxUgn4mY2SJ_ckR0Vl--lS1mkZxMrJxHweEw23qw>
-    <xmx:kIjSXiDdEr1iNkm0p0VzK5fZVpGjPzu0HhtjPfggQJe5rYzw9VTBzg>
-    <xmx:kYjSXuOFGXeF5r1AzCUppMP4sZLILnoXoQkFnoVQr4wjeEh_2qANGoDwdOI>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 875933280059;
-        Sat, 30 May 2020 12:23:44 -0400 (EDT)
-Date:   Sat, 30 May 2020 18:23:43 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 02/25] dt-bindings: clock: Add a binding for the RPi
- Firmware clocks
-Message-ID: <20200530162343.6a26bfojrmnkimh3@gilmour>
-References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech>
- <919e2f2f13583d4d53d0e95b81fc3fb8a7606107.1590594293.git-series.maxime@cerno.tech>
- <159078703613.69627.13627047580756230984@swboyd.mtv.corp.google.com>
+        id S1728999AbgE3SOQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 30 May 2020 14:14:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728927AbgE3SOQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 30 May 2020 14:14:16 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FB3E20722;
+        Sat, 30 May 2020 18:14:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1590862456;
+        bh=nkYFO52Wz9gD47nkE3uJCDtB/pInehNr3iZBDa1Wc/0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SbQEc+DVB6cII+RbY747UmgUGE+2mj0+nBAlMXNV7uorN68DFc1aM/S5oUiNjtPPD
+         tv1DUEG0AZTfNo+P78YB5oihselIftCf6c1PZXZ5e2nCWXoBkXTUnh5AqOcXhnvSoC
+         SXaexHPxLL+66U8yK0BtMMtflK/kQY4vFfxiWjHk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="q6u7kxg7uz4ypprh"
-Content-Disposition: inline
-In-Reply-To: <159078703613.69627.13627047580756230984@swboyd.mtv.corp.google.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200526222056.18072-2-Sergey.Semin@baikalelectronics.ru>
+References: <20200526222056.18072-1-Sergey.Semin@baikalelectronics.ru> <20200526222056.18072-2-Sergey.Semin@baikalelectronics.ru>
+Subject: Re: [PATCH v3 1/4] dt-bindings: clk: Add Baikal-T1 CCU PLLs binding
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>,
+        Arnd Bergmann <arnd@arndb.de>, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Date:   Sat, 30 May 2020 11:14:15 -0700
+Message-ID: <159086245542.69627.16106186464838114976@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---q6u7kxg7uz4ypprh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Stephen,
-
-Thanks for your review :)
-
-On Fri, May 29, 2020 at 02:17:16PM -0700, Stephen Boyd wrote:
-> > +      "#clock-cells":
-> > +        const: 1
-> > +        description: >
+Quoting Serge Semin (2020-05-26 15:20:53)
+> Baikal-T1 Clocks Control Unit is responsible for transformation of a
+> signal coming from an external oscillator into clocks of various
+> frequencies to propagate them then to the corresponding clocks
+> consumers (either individual IP-blocks or clock domains). In order
+> to create a set of high-frequency clocks the external signal is
+> firstly handled by the embedded into CCU PLLs. So the corresponding
+> dts-node is just a normal clock-provider node with standard set of
+> properties. Note as being part of the Baikal-T1 System Controller its
+> DT node is supposed to be a child the system controller node.
 >=20
-> Just curious if this is the same as the | syntax? I haven't seen this
-> used before.
+> Signed-off-by: Serge Semin <Sergey.Semin@baikalelectronics.ru>
+> Cc: Alexey Malahov <Alexey.Malahov@baikalelectronics.ru>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: linux-mips@vger.kernel.org
+>=20
+> ---
 
-It differs on how it keeps the formatting of text below. | will keep the
-formatting as is, > will leave the formatting to whatever is going to use i=
-t.
-
-Maxime
-
---q6u7kxg7uz4ypprh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXtKIjwAKCRDj7w1vZxhR
-xWouAQCgq7KmeDnD6Gdb9kx0K/yZKnUJF1mt0Y62LZ9jZNWYbAEApzWnR7SP6Tg6
-efcwInK571yukcmFjFrQ8InCGpkMigk=
-=w9yk
------END PGP SIGNATURE-----
-
---q6u7kxg7uz4ypprh--
+Applied to clk-next
