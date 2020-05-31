@@ -2,61 +2,62 @@ Return-Path: <SRS0=+3nK=7N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C7BC433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D78C433E1
+	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 77A81207BB
-	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:47:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4301D2074B
+	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:47:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eP15yulH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XvoEGpZv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbgEaRrD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 May 2020 13:47:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37436 "EHLO
+        id S1728367AbgEaRrN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 May 2020 13:47:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37470 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbgEaRrC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 May 2020 13:47:02 -0400
-Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43A85C061A0E;
-        Sun, 31 May 2020 10:47:02 -0700 (PDT)
-Received: by mail-wr1-x442.google.com with SMTP id x14so9247660wrp.2;
-        Sun, 31 May 2020 10:47:02 -0700 (PDT)
+        with ESMTP id S1728356AbgEaRrM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 May 2020 13:47:12 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0E5FC061A0E;
+        Sun, 31 May 2020 10:47:11 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id e1so9225476wrt.5;
+        Sun, 31 May 2020 10:47:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0igUM99u6qi0G2V9QHiKNIc+/Cm62S0GvQJm5Z6yraI=;
-        b=eP15yulHnOheIw44ncZUq2rVU/kWIIjQ51dynpgDc7ik+73HqCU6wNUlwCxROjyqFT
-         eCiV7qFJSjAfnfbwBs129WmT45YHyv0LEg/bdKmiS+IuRTR24PzFIGW6ujzHtYtVSABr
-         3OjuzaaLvJuQ0AKHOwoAvFe45B6H2sBtY/2NpEUtmu8sC18ZVQSF09fe+kchygYwYtgd
-         BIFMAI2LsFCNP1bFED3IBO4ruIGhcZXXFSMKNz8a8bm9YIGNeE1DycoTMIyTfSs+nyRb
-         MIHsqEn/Pz4L0zVREX3R92OSRkogU/Af0WkTFIa0A1CSk54JnzG0ar5zxDq2lzrnY/hK
-         +ugg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Apb34Y5mhNacDrU1rx2psi6gaGwQEoz5vjWu7x/Ef0U=;
+        b=XvoEGpZvtz3IzVo6WRsG6NhVjWsEda/DiQ8tQvn9fsQtEWp30Eego3WWXDT7fYiUsW
+         yWzh3iSacIClmNBkScAFoPssDirtaNcnRB+I+jD/e5eSxtpA5ChlLZLUH0wWqdTdbjZX
+         I4yk4C3rJBEMGU5jtoH3ceclWUQRCkgKfzLbjLxYJgk2ScTezE5QJsd+V79HCzgb6RKX
+         mAB0DLYYAPnc2xmXzYHdn4qI83vFVAVW3Iw1Uw4Pfp3Ztkh+DNIqRFx05LP1tConFzYA
+         EGGQbUbbST5wtNIwWSdgGuMPD6snXxMskNvI2YvwzNDuLlvkMigzkFSh3vWNCp3v81MT
+         izfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0igUM99u6qi0G2V9QHiKNIc+/Cm62S0GvQJm5Z6yraI=;
-        b=FLpNTlgVwpFTFlnfwDpuvr3/seW/KwNwY+34P/yEFyLaCYrdd8Pveo93ZQpIBHQHof
-         N4kD0219dZbNo4nur5mHPx5VrSryBQEjAxTyd9u+er1YcLMzfG7iR6031YoSOVOU1e9S
-         DANYcIcbu/LD8rpYI/vOP0q4a7dI95nSgogcegzvS39GAbOC/hHaup1TFX7Wm089hZ6J
-         8+FVAnVcHGKU6dM46re4Jlw5lRgizJXC/aP9vDx7LZqb4Xv5hi8Xh3lq5ECtvelpYTK6
-         I1nTcNVgpwlihekHehd7Cqfa37z0Fsep5Qw0Ur1ca7VjF+YMUptUSkT2K1/dvi9VF6wH
-         7eLw==
-X-Gm-Message-State: AOAM530xuXoYbviKXWTE7xtDKmTkj+71qzPqYONJ0IVNVYqwTboUa+nV
-        Brapqvkhj2lcL8XypXJ3UWs=
-X-Google-Smtp-Source: ABdhPJyTv1d7YcEb2pEVi4URbVPgL7HdLi/EU2CphoV+LO8URSwLmHF+DGnvsNadjC5gRxVvj2pwYQ==
-X-Received: by 2002:adf:80f0:: with SMTP id 103mr17371010wrl.232.1590947220924;
-        Sun, 31 May 2020 10:47:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Apb34Y5mhNacDrU1rx2psi6gaGwQEoz5vjWu7x/Ef0U=;
+        b=eSb5dhqfeOyzYVnq+76XYcfPvjgfL90xJcGASvrIljxce0kr6zds100ZGHgLcTd2bo
+         BBcl3/r9PLVd3V6bvetchP/G7kI5yU1bBG5FsjR00hu4Bl1dpkIrspSFFagaAY5HffZg
+         6v6HmaDfY2g8LZsYTPeSvyBLrM/G2am2S4lY5TjKcFnLwrueoUuMiLt52HKk0pT0niGc
+         Dfg7QX8E55jxqeCOwUcYCMe/O1OjLbaxo2fLexIcQXoo4pio2WWQ3A+VBETk5+5cklhP
+         YCx+zRqMR+FVvVjvGY+WiFl0My1iVgMUuVXn/X9BqBYDLr3f/odK9UD7UFVAT1ogTpye
+         x8rw==
+X-Gm-Message-State: AOAM530exZdpy3SsfP8+msVHMdcn7cY6YO24v/XDxTR/uLAro7OvH9M3
+        iGugcQfmTzTALeRYYy7JaIk=
+X-Google-Smtp-Source: ABdhPJy7BTu6+E1X2iBW08zO8EHSyQ5TZYYjMhP0mvIpNLUd/3SJYLrLYyS/81TqOiUzrodh0a+POA==
+X-Received: by 2002:a5d:4a8a:: with SMTP id o10mr18016677wrq.222.1590947230431;
+        Sun, 31 May 2020 10:47:10 -0700 (PDT)
 Received: from localhost.localdomain (abad130.neoplus.adsl.tpnet.pl. [83.6.167.130])
-        by smtp.googlemail.com with ESMTPSA id x186sm9716494wmg.8.2020.05.31.10.46.59
+        by smtp.googlemail.com with ESMTPSA id x186sm9716494wmg.8.2020.05.31.10.47.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 31 May 2020 10:47:00 -0700 (PDT)
+        Sun, 31 May 2020 10:47:09 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 Cc:     Konrad Dybcio <konradybcio@gmail.com>,
         Andy Gross <agross@kernel.org>,
@@ -67,10 +68,12 @@ Cc:     Konrad Dybcio <konradybcio@gmail.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/4] Add msm8992 GCC driver
-Date:   Sun, 31 May 2020 19:46:06 +0200
-Message-Id: <20200531174612.260113-1-konradybcio@gmail.com>
+Subject: [PATCH 3/4] arm64: dts: Adjust msm8992 DTS to use the correct GCC driver
+Date:   Sun, 31 May 2020 19:46:09 +0200
+Message-Id: <20200531174612.260113-4-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200531174612.260113-1-konradybcio@gmail.com>
+References: <20200531174612.260113-1-konradybcio@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 To:     unlisted-recipients:; (no To-header on input)
@@ -79,33 +82,63 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This SoC is very similar to msm8994, but features
-less clocks (as in no UFS or PCIE1-related ones,
-for example). This implementation also adds support
-for GDSCs and resets, which are lacking in the current
-8994 driver and I can't test them over there, as I don't
-have a device featuring that SoC. Qualcomm also 
-separates 8992 and 8994 drivers on downstream kernels,
-so I find this appropriate.
+This commit adds the necessary includes and corrects the
+compatible string for the msm8992 GCC driver. It also
+renames "clock_gcc" to "gcc" to follow the style used in
+other device trees.
 
-Konrad Dybcio (4):
-  drivers: clk: qcom: Add msm8992 GCC driver
-  Add compatible strings and the include files for the msm8992 GCC.
-  arm64: dts: Adjust msm8992 DTS to use the correct GCC driver
-  driver: clk: Add msm8992 GCC Kconfig and Makefile entries
+Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
- .../devicetree/bindings/clock/qcom,gcc.yaml   |    2 +
- arch/arm64/boot/dts/qcom/msm8992.dtsi         |   15 +-
- drivers/clk/qcom/Kconfig                      |    8 +
- drivers/clk/qcom/Makefile                     |    1 +
- drivers/clk/qcom/gcc-msm8992.c                | 2429 +++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-msm8992.h  |  144 +
- include/dt-bindings/reset/qcom,gcc-msm8992.h  |    8 +
- 7 files changed, 2600 insertions(+), 7 deletions(-)
- create mode 100644 drivers/clk/qcom/gcc-msm8992.c
- create mode 100644 include/dt-bindings/clock/qcom,gcc-msm8992.h
- create mode 100644 include/dt-bindings/reset/qcom,gcc-msm8992.h
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 81fed16fcee6..7f618f6183d8 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -3,7 +3,8 @@
+  */
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+-#include <dt-bindings/clock/qcom,gcc-msm8994.h>
++#include <dt-bindings/clock/qcom,gcc-msm8992.h>
++#include <dt-bindings/reset/qcom,gcc-msm8992.h>
+ 
+ / {
+ 	model = "Qualcomm Technologies, Inc. MSM 8992";
+@@ -275,8 +276,8 @@ blsp1_uart2: serial@f991e000 {
+ 			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_LOW>;
+ 			status = "disabled";
+ 			clock-names = "core", "iface";
+-			clocks = <&clock_gcc GCC_BLSP1_UART2_APPS_CLK>,
+-				<&clock_gcc GCC_BLSP1_AHB_CLK>;
++			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>,
++				<&gcc GCC_BLSP1_AHB_CLK>;
+ 		};
+ 
+ 		blsp2_uart2: serial@f995e000 {
+@@ -289,8 +290,8 @@ blsp2_uart2: serial@f995e000 {
+ 				<&gcc GCC_BLSP2_AHB_CLK>;
+ 		};
+ 
+-		clock_gcc: clock-controller@fc400000 {
+-			compatible = "qcom,gcc-msm8994";
++		gcc: clock-controller@fc400000 {
++			compatible = "qcom,gcc-msm8992";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
+@@ -306,8 +307,8 @@ sdhci1: mmc@f9824900 {
+ 					<GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "hc_irq", "pwr_irq";
+ 
+-			clocks = <&clock_gcc GCC_SDCC1_APPS_CLK>,
+-				<&clock_gcc GCC_SDCC1_AHB_CLK>;
++			clocks = <&gcc GCC_SDCC1_APPS_CLK>,
++				<&gcc GCC_SDCC1_AHB_CLK>;
+ 			clock-names = "core", "iface";
+ 
+ 			pinctrl-names = "default", "sleep";
 -- 
 2.26.2
 
