@@ -2,101 +2,156 @@ Return-Path: <SRS0=+3nK=7N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B36DBC433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46BE2C433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 19:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97269207BB
-	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 17:50:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AA9A206DA
+	for <linux-clk@archiver.kernel.org>; Sun, 31 May 2020 19:31:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TWiYxGu6"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yoeFpNJ+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728167AbgEaRue (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 May 2020 13:50:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37988 "EHLO
+        id S1725991AbgEaTbR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 31 May 2020 15:31:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbgEaRud (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 May 2020 13:50:33 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:e::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1509C061A0E;
-        Sun, 31 May 2020 10:50:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description;
-        bh=t5o4BK2xKZN+N/stDYG7dBasqIdG794v6sxkRmMBFD8=; b=TWiYxGu61btEaO8hn8j32LXiw3
-        X5LqG4cxMFKkuL0yEG7F17BPTgwZHGSmrA3IncOV/BplW/J932GuQ6jN/PWZiVZMtTtLYV5LModnf
-        aCAfm56XvyKX7dFRiZNgQFyJSY55MsPaSOoJkpA5ov6lAESunTN24k4avHzC+TzA+4Ddnj669PPf5
-        zAJDAMlO/9NPOwL7tzqPCBCH36VkYpVeULkLuk9M9KUTqQYXrrrfVSJWnRY7wgqkbpfJcyqQXfmgY
-        QdPreXeP7Sg7ix21HpOdaxjI+1pl+l0a1yAyLbYJEdC1Zr9lYiOkneyS0shxidtt8QPYyk3qN8ALD
-        qeibsgTA==;
-Received: from [2601:1c0:6280:3f0::19c2]
-        by bombadil.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
-        id 1jfS6O-0001DW-JC; Sun, 31 May 2020 17:50:28 +0000
-Subject: Re: [PATCH 4/4] driver: clk: Add msm8992 GCC Kconfig and Makefile
- entries
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200531174612.260113-1-konradybcio@gmail.com>
- <20200531174612.260113-5-konradybcio@gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <d5813ebc-dcb2-afc2-7a7e-71e73113f8fc@infradead.org>
-Date:   Sun, 31 May 2020 10:50:26 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        with ESMTP id S1726081AbgEaTbR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 31 May 2020 15:31:17 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BC4C05BD43
+        for <linux-clk@vger.kernel.org>; Sun, 31 May 2020 12:31:16 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id q11so9413143wrp.3
+        for <linux-clk@vger.kernel.org>; Sun, 31 May 2020 12:31:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=K7gaS/RyXysP8XSZO8VW4EjVKZZX26nytji80U6hsMY=;
+        b=yoeFpNJ+AseffVizMDPduAqqWvYGR7BQmrl+MDzHjoDY9K2v+cLFgirieqtS0PqQ3a
+         +VTIvLQAs/SVxvOr/kdurO4JmFDfV8609wIJad9ybEr7Ihc3UGy9F8znq3h6nVmtkxNh
+         xCfXfyQrBkcRGkECDMCx+uwAHLBt8iVW8XwCpAPfQf77EBK6ZHchoOiLmzueaKvUSyYA
+         y9TOu86u+HGIsoGdnYdCLNKnAGmhLCmOnzMD/jkfb1u5cXqQGxa9agYoi9qa21agPqWI
+         x/BuLafgYeI0HFQM3inFbeXY2/f87wM4LmQyYfWgKekm+g621FpzRNucUFIs82/eOYmt
+         iuVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=K7gaS/RyXysP8XSZO8VW4EjVKZZX26nytji80U6hsMY=;
+        b=LXYSEkrZXeJXbMmcX/o+kTmFweA7wOyGz0nIm/D7sg9iaEk5TRFapD4oF+8g0FB/qp
+         7Dw/3CDOJzVUk9H+8tJYRXxHtv5eGEF+m3CZgMPyps4TlGu+lMGHrgP7V588K6OWdq5L
+         u/uJW2Pm4scwqy633Q7aZhqSKEVt4QHaWp+B3YZdAUxHOwFLOFITkzFULd1NqyVIR4Aj
+         lDQE9b+DWkNudUEnem5wt7e79B9HRLkkiNUC8QsnlsI2SyVikhDCI72WtLwGFlDW0mHV
+         LIE/MPYsu7upO1u7WV4tTWIimgeb+WbPPYurU/XUN9gMO1VHN4BXsLqG3P8tsTMUq8Vf
+         cLDA==
+X-Gm-Message-State: AOAM530RG3bkgXu0xuHUxQTuvVj/pWd9JaMxq3DM2hqdSO/tPuQGrAx0
+        8Ya7QvEt8P6sHMeVsV20cdr7gg==
+X-Google-Smtp-Source: ABdhPJytocb9A9TtDKbdZE0MZ2PiWgscC7HCd7dwvCd7A/ytwz5tGlXtyT8nR8tVO74J9u9xjXE06w==
+X-Received: by 2002:adf:9106:: with SMTP id j6mr17964678wrj.216.1590953475177;
+        Sun, 31 May 2020 12:31:15 -0700 (PDT)
+Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id o10sm18189197wrq.40.2020.05.31.12.31.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 31 May 2020 12:31:14 -0700 (PDT)
+Date:   Sun, 31 May 2020 21:31:11 +0200
+From:   LABBE Corentin <clabbe@baylibre.com>
+To:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
+        mturquette@baylibre.com, sboyd@kernel.org, axboe@kernel.dk
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-ide@vger.kernel.org
+Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
+Message-ID: <20200531193111.GA15331@Red>
+References: <20200319074401.GA4116@Red>
 MIME-Version: 1.0
-In-Reply-To: <20200531174612.260113-5-konradybcio@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200319074401.GA4116@Red>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 5/31/20 10:46 AM, Konrad Dybcio wrote:
-> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
-> ---
->  drivers/clk/qcom/Kconfig  | 8 ++++++++
->  drivers/clk/qcom/Makefile | 1 +
->  2 files changed, 9 insertions(+)
+On Thu, Mar 19, 2020 at 08:44:01AM +0100, LABBE Corentin wrote:
+> Hello
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 11ec6f466467..d102b4015289 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -197,6 +197,14 @@ config MSM_MMCC_8974
->  	  Say Y if you want to support multimedia devices such as display,
->  	  graphics, video encode/decode, camera, etc.
->  
-> +config MSM_GCC_8992
-> +	tristate "MSM8992 Global Clock Controller"
-> +	select QCOM_GDSC
-> +	help
-> +	  Support for the global clock controller on msm8992 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  i2c, USB, SD/eMMC, PCIe, etc.
+> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
+> [    0.492810] +5V_SATA: supplied by +5V_SYS
+> [    0.493230] +12V_SATA: supplied by +VDD_MUX
+> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
+> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
+> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
+> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
+> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
+> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
+> [   35.694269] +5V_SATA: disabling
+> [   35.697438] +12V_SATA: disabling
+> 
+> I have bisected this problem:
+> git bisect start
+> # bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+> git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
+> # good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
+> git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
+> # good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
+> git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
+> # good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
+> git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
+> # bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
+> git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
+> # good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
+> git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
+> # bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
+> git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
+> # bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
+> git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
+> # good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
+> git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
+> # bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
+> git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
+> # good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
+> git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
+> # good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
+> git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
+> # bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
+> git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
+> # bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
+> git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
+> # bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
+> git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
+> # bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+> git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
+> # first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
+> 
 
-	  I2C
-please.
+Hello
 
-> +
->  config MSM_GCC_8994
->  	tristate "MSM8994 Global Clock Controller"
->  	help
+I have digged a bit more and with the following "patch" I have now access to sata again
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index 0b212cf2e794..b4e2020051d5 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -1602,7 +1603,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
+        unsigned long input_rate;
+ 
+        if (clk_pll_is_enabled(hw))
+-               return 0;
++               pr_info("%s %s\n", __func__, clk_hw_get_name(&pll->hw));
+ 
+        input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
 
+This patch lead to a probed ahci, and I can see "clk_plle_tegra114_enable pll_e" in messages.
 
--- 
-~Randy
+So the bad part of bff1cef5f23afbe49f5ebd766980dc612f5e9d0a is found.
+As additional information, my previous kernel has CONFIG_PHY_TEGRA_XUSB=m (since firmware is on rootfs which is on sata)
+but with this sata fail the same, having CONFIG_PHY_TEGRA_XUSB=y (and so xusb firmware in kernel) seems "necessary" for having SATA working.
 
+Regards
