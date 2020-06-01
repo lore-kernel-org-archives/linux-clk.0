@@ -2,123 +2,116 @@ Return-Path: <SRS0=aY9V=7O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E451C433E1
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 03:54:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AF0CC433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 07:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 49A752076B
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 03:54:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CADA20734
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 07:43:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bs5r+W2J"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="C4f7EYcz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727924AbgFADyG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 31 May 2020 23:54:06 -0400
-Received: from mail-am6eur05on2087.outbound.protection.outlook.com ([40.107.22.87]:13703
-        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        id S1725999AbgFAHnl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jun 2020 03:43:41 -0400
+Received: from mail-eopbgr10071.outbound.protection.outlook.com ([40.107.1.71]:58887
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727050AbgFADyF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 31 May 2020 23:54:05 -0400
+        id S1725935AbgFAHnk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Jun 2020 03:43:40 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X+Nrigny+0wZxFD55mfWlC19UugyLVrWTRbDsaWQZNgDBu8ktKlaZmnD2DWRAb9mymzgQGj1cpDJIfPMSytb7xSmduwJOKXyru3FzYzXS6eE6e+vSs3JcGvW5D1Y+EHrDBMzW3nk7fILBZwoc0Mp4WUfTRWwNbb9xbhYOeST841KAlxVRhCz34OeFy3gcuGm37EFjJ7t3T1xgPP5S5bUrb/kGpOgvtu7NX/up0AcEmIg/vpNw3E7vprQjIWTqKtM8aUg+T+tCLZCvIC23/mUAHOCW7JyO1/w986TbU8B5tIbD4BDlnstKx4/xoIK3HlMafr3DjSDrdHg2P0/gLw/ew==
+ b=QTut3K0klCc/prrnLFhyguAewnpBsKtKdwih6nctXsjdguEBlVE75FMTiqGgX66j3lkR/VseQUWbsUnh7TU6cDy7feFg6PW+7T15MEvznBXw6QxGy0toRygC7AFko6k/9FmPbXIqbHeWUJm3t7ktP5VULpfR+ub4AYQg680q/WITC+FptFOXRerKnCV3NzVcFttk6vMIrE3x3pF6JjW7lceAFvImyCJj3fsXWp6BjWnTBbTt+oV7/QdbgQE6Pauh6Fc1eKYTqJOqqPvtcmmKoc2htV8J8NlSuKnmOi/t1XlEpJRSD3v67SlWWzaaUJqyN7kJ5EAuzBPGAsGHDBRbYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZvpJmM62ji+KohxQ8u/BkIjRnZ7++RLYseC9Eit9cfQ=;
- b=d5S5ScYNjL33+i1kbrb4naQfDFNki5WiCpO54aHVTC5vtxfEJWY/UUO+fkxpcg/8rPiPailVkLClucIGiIqMvWaEzs8otPYqY+DAknzPOSifT7OTjx0POYsrmzjulzudReud8HfZ/xJ7HjFCF0k8JM2aL680e2Fife53pA5TjAPEmTsnoi2Bymb+zTGIQs5bGj7kAMnvcJMYgLQsoJKWlVVuXW1UP55Ax+YG0kqNwhESJXkFd5OblXSolmcrGjXBun8Q6gzZ0zhBBSH3crwmPdj4hITe4i1L3KZhXMX+NJohdsigdIfpIKI7f9VpxW3JVOyBhrlVmCQB1B+G1ppvjw==
+ bh=RoK29iLef5lr99A9FfnGNN8n024RREy+zWVfGJNg2I8=;
+ b=Y05nqmZM5pZbQULEOhTlxGp9nxLvseh00+QnUwTQCX7U2G/YFjbiNntZkzvekaVGdbD47sQgvFCEjl9SGlt7gY6m3jbj767V9p4Z4Rv93QC/6MOwZmVgcHlxuoPVlOJTmEcUKknv9Fw2McpL54HQhOJ8t5A3Ao51UQwEvR0XD/rIDHr861pL38d9VdisLHXBDFC+ktAcyA5GYASuAGAo22bF98B8uutj0peFBPvdClycneMpQxhIyLH/wOiDDx4/jYvqg3qWBAxve12SVxuFNT0w+mxB98f/4UbJZxRplOKxxUlWNJnDDFWu+eMjw326iYP8AU9XOb3OF+b6CzJREQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZvpJmM62ji+KohxQ8u/BkIjRnZ7++RLYseC9Eit9cfQ=;
- b=bs5r+W2JIDpd8SjujiK5aKqIiZJw+cRx5NqisURxB1mi1YV9XKzV8dbAvyh37KiuSGT6+Th+qy7jtaC4SpLeUyo+RJXzIypvsI5k9Y+CzZoKbxk1D61SLlemU9sb/EKJuHJxRJW6tO6GhX6aqSqPUd0vgC5QQuUEJZCCAi0onVQ=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2920.eurprd04.prod.outlook.com (2603:10a6:4:9d::16) with
+ bh=RoK29iLef5lr99A9FfnGNN8n024RREy+zWVfGJNg2I8=;
+ b=C4f7EYczKho95L5gjzJFGXwO0BZxzZefOZo1qraXuE4KBmLdUTxxxlAAc2gbsaVQjbLBV6lfMjs3fECFNQCXM0JcmdfgWxW3MvYzh+psaAboNVI//2ChpEU9L82NNMcX7J7BzHzuoBP5N5wqBixk5C+JonxRALQgCFsL7N4VbBY=
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com (2603:10a6:20b:2::14)
+ by AM6PR04MB5160.eurprd04.prod.outlook.com (2603:10a6:20b:e::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.19; Mon, 1 Jun
- 2020 03:54:01 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.3045.022; Mon, 1 Jun 2020
- 03:54:01 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de,
-        aisheng.dong@nxp.com, robh+dt@kernel.org, sboyd@kernel.org,
-        linux@rempel-privat.de, jaswinder.singh@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        l.stach@pengutronix.de, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 3/3] clk: imx8mp: add mu root clk
-Date:   Mon,  1 Jun 2020 11:43:19 +0800
-Message-Id: <1590982999-7149-4-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1590982999-7149-1-git-send-email-peng.fan@nxp.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.22; Mon, 1 Jun
+ 2020 07:43:36 +0000
+Received: from AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3c6c:a0e9:9a4e:c51d]) by AM6PR04MB4966.eurprd04.prod.outlook.com
+ ([fe80::3c6c:a0e9:9a4e:c51d%7]) with mapi id 15.20.3045.024; Mon, 1 Jun 2020
+ 07:43:36 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        "jaswinder.singh@linaro.org" <jaswinder.singh@linaro.org>,
+        Anson Huang <anson.huang@nxp.com>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH V2 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
+Thread-Topic: [PATCH V2 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
+Thread-Index: AQHWN8hCZjmk5RkUXEC5rON2mzz/bajDYM4Q
+Date:   Mon, 1 Jun 2020 07:43:36 +0000
+Message-ID: <AM6PR04MB496668011F3AB2BEEEE6D1E1808A0@AM6PR04MB4966.eurprd04.prod.outlook.com>
 References: <1590982999-7149-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR03CA0096.apcprd03.prod.outlook.com
- (2603:1096:4:7c::24) To DB6PR0402MB2760.eurprd04.prod.outlook.com
- (2603:10a6:4:a1::14)
+ <1590982999-7149-2-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1590982999-7149-2-git-send-email-peng.fan@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 3458bd1f-1301-4715-3956-08d805ff7e3f
+x-ms-traffictypediagnostic: AM6PR04MB5160:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR04MB5160E97D65F65EC753ACC8BA808A0@AM6PR04MB5160.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:126;
+x-forefront-prvs: 0421BF7135
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 35lsrjIvMARJuuuTYjvU+6plaWCjFiQykfoFvuhpmR41vCw5ezK9EuG2X4dERIMM7Z5cQ5ktSyZl1js4aAawshFuslJ9zQi5/zGbzjtKEoHWfn82YFa0DprVpXW/5fOHX7ocFEU37gZgRKD01hbptEaG0tg0DfzK9bMfrAdqoewBf/3ADHOMzriHIXLdSeZPFUuWgJXKdZfTGOo0O9AK5+TXHwY6RCPLfzbNVIsuX//ddyi38cZGsU4D9svnOqvWLMJmWqrPO/lcoxy/bU4Diw15GRpzCpzaz7+PA2AHI1v/ybWDqe9pauGR/5oBTolr6FPjTrMMykjIk3Baz+Vyd4782J88iPeyn/Ui7uZkHvLXwZJQ7X3aKLBqbtcx1Oyh
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB4966.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(396003)(366004)(376002)(346002)(136003)(39860400002)(2906002)(44832011)(7416002)(71200400001)(76116006)(66556008)(64756008)(66946007)(66446008)(54906003)(66476007)(5660300002)(186003)(316002)(110136005)(7696005)(4326008)(478600001)(26005)(8676002)(9686003)(6636002)(8936002)(86362001)(55016002)(52536014)(6506007)(33656002)(558084003)(15585785002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: YCZ7DHOi8+e1aG/5go0/txCatjgJR13pvSgZPeopz0RfkzqbEYnCYfouSQfhu42m9ack+DQMOeIpiVxrmYjlAV12r5B0awrJ1kgbu/iSiSMZRGRcuWyIYTx5Hce54nrFvr0SVEveB4OJ31DID+CsyPY6Fgqa28yCDY+EtJNzH4hAZ+Qb5ujVTrQLpGkZOwijL4yzoOwxWwktEow8X/VvPZfBpPuTK5ua3HwGuLzPXXuNDdXexHVCLIqYXhLCs0HetUSzQobf6CEF/rvSo2hbNl5F4cfjoaNti/Y+TbcBXM5Ed4wa0pd9zwcxAHhLY5V/l/lsgSa8o9x9nRgsCiIT/HHgQ3sNv+jGxJOkf3cPJNvrGbw9ymU39Z6IS9zk+J1zWmrGLoQFEocpAZUDC9Np3Lc4N2MqlylQ47qBeROjqTR4TnaVVCL1bxT0FvV83Emr90KkGqvWwF/k8bLostMo4rPPuZYumpgNzLyhlvY7z3U=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR03CA0096.apcprd03.prod.outlook.com (2603:1096:4:7c::24) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3066.7 via Frontend Transport; Mon, 1 Jun 2020 03:53:55 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 562a2846-ead5-47c7-6de8-08d805df6b63
-X-MS-TrafficTypeDiagnostic: DB6PR0402MB2920:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB6PR0402MB29208A0C73C8DA66F3DDA307888A0@DB6PR0402MB2920.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
-X-Forefront-PRVS: 0421BF7135
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HI9Cfxls5qWDdr7H3UDW+xiMlwwP1xq+ibYfO4QtDtE852s3vKmF84PlANAQm8JWWmQ6ytXvvr+GsI53hJEIH6pyn5UMImdFqAojxSID3jtNyU35FEIbltfkdrQPmIcoCk1ucDcaIrN9b/RIlq5B4WHX+xMmi95dGJS6GLVJe3OB4WC/2ZL+Vov8QYyIi3H/RsuICKx8ctKA55dcX3KnVMbC/jrPpAUf0w+3tKBRR5JYF+GfEgmPknCr4D0ubj+fW2d/xAxBWSbfdyaq+P5p4o6uhKla4d8ejb/BmY9nPiDnx42TqrdrT1rfw4lMLynMGEHCmX1TfifXTVLzxoiKarAnUBRjZJyQHsabFiHvqJr6vLjnYw63sIxkigkgOqvlBtFsPigdEfZ5H8TJvyAwsNwYf2gUySRKeQyIyeN9v8s=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(396003)(136003)(346002)(39860400002)(376002)(36756003)(4326008)(6486002)(8936002)(6666004)(8676002)(7416002)(6506007)(9686003)(6512007)(478600001)(69590400007)(16526019)(26005)(316002)(52116002)(5660300002)(66946007)(66476007)(2906002)(66556008)(86362001)(186003)(956004)(83380400001)(2616005)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: d5WnHW6qRhBlBidB+S3xyhI7ZMURk9tV0mInehdcPrN7g5Ud/ey5Cq6TK4SKwx5tPe76uQcY0Lofy1UaE1XMxAxu90p+hn1YqaCdmG743gYU6w5EMwCd7MpY+4RePZZhBppAlW8gxdwPTANajm2REbGczYaQr/bgb6fx+lEGp7ajFj4TP/pbndC5ATFu2mlHixeMeQWU+91NrD3ynOhJ8nvhSgUa6NPvTJ72jZFwYk1SKci/HYLsgAdKJh60vbBquQBUuwEHZKeg6fJOaKa2hRX5Oy4PlL/jJ8cBeszb1unsy+P8M7ERPL8ppE6X4Z+Syeo6Wo/U8H7u137R3XVGOdLnvjVfUCJRddi6CBdcIjm7vYF9EEPBndNEE2vkMwH7wv0OBhq1y2EgJ9A7NRPKu+1ChQVU5LXnigO/QYVqOAmFBOe1wNaRMV5pbTObmXWPfZE4blXJT6UwKNpPXyC8WG+9ZOmte9Iw93+JT20cj23by5MFSn3YE3bownfekzMX
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 562a2846-ead5-47c7-6de8-08d805df6b63
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2020 03:54:01.4347
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3458bd1f-1301-4715-3956-08d805ff7e3f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Jun 2020 07:43:36.4897
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: f8C6ojl56knBrSUTokC3sP1kyCZz2oAZBm160NvXtv9/AI58nhRCTAhDfeLWzK+mEO6R3PUedMNIBbx7fdBCFA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2920
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3zc7nyYFLA2EAEPZIErSd+do/HBTwPobwlmHTrCC7IaNvGurZWRAN3xvhvVOzHBTvZDdIDz/YiRKNTCCQ5P6sw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB5160
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
-
-Add mu root clk for mu mailbox usage.
-
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
----
- drivers/clk/imx/clk-imx8mp.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index b4d9db9d5bf1..ca747712400f 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -680,6 +680,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_I2C2_ROOT] = imx_clk_hw_gate4("i2c2_root_clk", "i2c2", ccm_base + 0x4180, 0);
- 	hws[IMX8MP_CLK_I2C3_ROOT] = imx_clk_hw_gate4("i2c3_root_clk", "i2c3", ccm_base + 0x4190, 0);
- 	hws[IMX8MP_CLK_I2C4_ROOT] = imx_clk_hw_gate4("i2c4_root_clk", "i2c4", ccm_base + 0x41a0, 0);
-+	hws[IMX8MP_CLK_MU_ROOT] = imx_clk_hw_gate4("mu_root_clk", "ipg_root", ccm_base + 0x4210, 0);
- 	hws[IMX8MP_CLK_OCOTP_ROOT] = imx_clk_hw_gate4("ocotp_root_clk", "ipg_root", ccm_base + 0x4220, 0);
- 	hws[IMX8MP_CLK_PCIE_ROOT] = imx_clk_hw_gate4("pcie_root_clk", "pcie_aux", ccm_base + 0x4250, 0);
- 	hws[IMX8MP_CLK_PWM1_ROOT] = imx_clk_hw_gate4("pwm1_root_clk", "pwm1", ccm_base + 0x4280, 0);
--- 
-2.16.4
-
+PiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5AbnhwLmNvbT4NCj4gU2VudDogTW9uZGF5LCBKdW5l
+IDEsIDIwMjAgMTE6NDMgQU0NCj4gDQo+IEFkZCBpLk1YOE1RL00vTi9QIGNvbXBhdGlibGUgc3Ry
+aW5nIHRvIHN1cHBvcnQgaS5NWDhNIFNvQ3MNCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFu
+IDxwZW5nLmZhbkBueHAuY29tPg0KDQpSZXZpZXdlZC1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5n
+LmRvbmdAbnhwLmNvbT4NCg0KQlRXLCBBbnNvbiwgDQp3aWxsIHlvdSBjb250aW51ZSB0byBoZWxw
+IGNvbnZlcnQgTVUgYmluZGluZyBpbnRvIGpzb24gc2NoZW1hcz8NCg0KUmVnYXJkcw0KQWlzaGVu
+Zw0K
