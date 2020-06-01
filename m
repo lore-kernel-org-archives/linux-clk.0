@@ -2,86 +2,131 @@ Return-Path: <SRS0=aY9V=7O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FA9C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 19:36:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78317C433DF
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 20:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3487620776
-	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 19:36:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591040202;
-	bh=xLw+tlg5Ya7G23FRwVuk0LpveeWH40gTWVGtW4vXxI0=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=GP2lWrW7a8xqjRBgIFurVJoq50BgHyJL9h24tuF6OtDdcNhSv7G+WJrVac3Nvm4/r
-	 VNLwgO5uED78ds123n1g6rdILpyaQimXNbjHjuOTpPmxrnqxz9bkQBgk39U2AI3xbk
-	 nL+7lVnJ6IvdZ1Lx9fRYpiQhdfU4mJOzI4bQiPgk=
+	by mail.kernel.org (Postfix) with ESMTP id 5725A20734
+	for <linux-clk@archiver.kernel.org>; Mon,  1 Jun 2020 20:09:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728676AbgFATgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jun 2020 15:36:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58768 "EHLO mail.kernel.org"
+        id S1728209AbgFAUJg convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 1 Jun 2020 16:09:36 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:33986 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728059AbgFATgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Jun 2020 15:36:37 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28DEE206E2;
-        Mon,  1 Jun 2020 19:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591040197;
-        bh=xLw+tlg5Ya7G23FRwVuk0LpveeWH40gTWVGtW4vXxI0=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=Eh1WKgxZex7GNj0rq0S/8F6FSNXsHMJe6jX5aNN3ShW+dNEBZHcpp07X0Yp9wXVW+
-         UWmByAECBPKkWMaJarsVvshCo87ULjTMAGXUjgfFliWTI7sU4k4qhXT7shNjE19I62
-         QGYRlumSxCTolgcpRwfESKh6uX0d995xDAv8fgGg=
-Content-Type: text/plain; charset="utf-8"
+        id S1728381AbgFAUJf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 1 Jun 2020 16:09:35 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1jfqkQ-0004eb-4t; Mon, 01 Jun 2020 22:09:26 +0200
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
+        <mylene.josserand@collabora.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kever.yang@rock-chips.com, geert@linux-m68k.org,
+        kernel@collabora.com
+Subject: Re: [PATCH v3 1/1] clk: rockchip: rk3288: Handle clock tree for rk3288w
+Date:   Mon, 01 Jun 2020 22:09:25 +0200
+Message-ID: <8288442.SvGebX2C5V@diego>
+In-Reply-To: <20200601151442.156184-2-mylene.josserand@collabora.com>
+References: <20200601151442.156184-1-mylene.josserand@collabora.com> <20200601151442.156184-2-mylene.josserand@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <824cd7bb-0971-d387-4b78-75c36ddf2f66@codeaurora.org>
-References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org> <1590582292-13314-5-git-send-email-sivaprak@codeaurora.org> <159063116486.69627.5280506237179820811@swboyd.mtv.corp.google.com> <824cd7bb-0971-d387-4b78-75c36ddf2f66@codeaurora.org>
-Subject: Re: [PATCH V6 4/5] clk: qcom: Add ipq6018 apss clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Mon, 01 Jun 2020 12:36:36 -0700
-Message-ID: <159104019638.69627.9161269856470136421@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-06-01 05:41:15)
-> On 5/28/2020 7:29 AM, Stephen Boyd wrote:
-> > Quoting Sivaprakash Murugesan (2020-05-27 05:24:51)
-> >> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-i=
-pq6018.c
-> >> new file mode 100644
-> >> index 0000000..004f7e1
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> >> @@ -0,0 +1,106 @@
-> >> +       P_XO,
-> >> +       P_APSS_PLL_EARLY,
-> >> +};
-> >> +
-> >> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] =3D=
- {
-> >> +       { .fw_name =3D "xo" },
-> >> +       { .fw_name =3D "pll" },
-> > This pll clk is not described in the binding. Please add it there.
->=20
-> Sorry I did not get this, this PLL is not directly defined in this=20
-> driver and it comes
->=20
-> from dts. do you still want to describe it in binding?
->=20
+Hi Mylène,
 
-Yes, there should be a clock-names property for "pll" and a clocks
-property in the binding document. I didn't see that.
+Am Montag, 1. Juni 2020, 17:14:42 CEST schrieb Mylène Josserand:
+> The revision rk3288w has a different clock tree about "hclk_vio"
+> clock, according to the BSP kernel code.
+> 
+> This patch handles this difference by detecting which device-tree
+> we are using. If it is a "rockchip,rk3288-cru", let's register
+> the clock tree as it was before. If the compatible is
+> "rockchip,rk3288w-cru", we will apply the difference according to this
+> version of this SoC.
+> 
+> Noticed that this new device-tree compatible must be handled by
+> bootloader.
+> 
+> Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
+
+approach looks good, but you should also update the clock-controller
+dt-binding for the new compatible.
+
+Style nits below.
+
+
+> ---
+>  drivers/clk/rockchip/clk-rk3288.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+> index cc2a177bbdbf..5018d2f1e54c 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -425,8 +425,6 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+>  	COMPOSITE(0, "aclk_vio0", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
+>  			RK3288_CLKSEL_CON(31), 6, 2, MFLAGS, 0, 5, DFLAGS,
+>  			RK3288_CLKGATE_CON(3), 0, GFLAGS),
+> -	DIV(0, "hclk_vio", "aclk_vio0", 0,
+> -			RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+>  	COMPOSITE(0, "aclk_vio1", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
+>  			RK3288_CLKSEL_CON(31), 14, 2, MFLAGS, 8, 5, DFLAGS,
+>  			RK3288_CLKGATE_CON(3), 2, GFLAGS),
+> @@ -819,6 +817,16 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
+>  	INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
+>  };
+>  
+> +static struct rockchip_clk_branch rk3288w_hclkvio_branch[] __initdata = {
+> +	DIV(0, "hclk_vio", "aclk_vio1", 0,
+> +	    RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+
+please keep indentations as they were, the sub-lines starting where they
+are is actually intentional :-)
+
+
+> +};
+> +
+> +static struct rockchip_clk_branch rk3288_hclkvio_branch[] __initdata = {
+> +	DIV(0, "hclk_vio", "aclk_vio0", 0,
+> +	    RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+
+same here
+
+> +};
+> +
+>  static const char *const rk3288_critical_clocks[] __initconst = {
+>  	"aclk_cpu",
+>  	"aclk_peri",
+> @@ -936,6 +944,14 @@ static void __init rk3288_clk_init(struct device_node *np)
+>  				   RK3288_GRF_SOC_STATUS1);
+>  	rockchip_clk_register_branches(ctx, rk3288_clk_branches,
+>  				  ARRAY_SIZE(rk3288_clk_branches));
+> +
+> +	if (of_device_is_compatible(np, "rockchip,rk3288w-cru"))
+> +		rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
+> +					       ARRAY_SIZE(rk3288w_hclkvio_branch));
+> +	else
+> +		rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
+> +					       ARRAY_SIZE(rk3288_hclkvio_branch));
+> +
+>  	rockchip_clk_protect_critical(rk3288_critical_clocks,
+>  				      ARRAY_SIZE(rk3288_critical_clocks));
+>  
+> 
+
+
+
+
