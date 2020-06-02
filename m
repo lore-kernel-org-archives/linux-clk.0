@@ -2,148 +2,139 @@ Return-Path: <SRS0=BrPq=7P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E01C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 01:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2ACC433E1
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 05:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4C74A2073B
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 01:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9822E206A2
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 05:25:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728175AbgFBBnr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 1 Jun 2020 21:43:47 -0400
-Received: from mail.loongson.cn ([114.242.206.163]:59122 "EHLO loongson.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725825AbgFBBnq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 1 Jun 2020 21:43:46 -0400
-Received: from [10.130.0.52] (unknown [113.200.148.30])
-        by mail.loongson.cn (Coremail) with SMTP id AQAAf9Dxz2nBrtVeLHQ8AA--.2202S3;
-        Tue, 02 Jun 2020 09:43:29 +0800 (CST)
-Subject: Re: [PATCH v4 2/2] clk: Allow COMPILE_TEST for subdir hisilicon in
- Makefile
-To:     kbuild test robot <lkp@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <1590590362-11570-2-git-send-email-yangtiezhu@loongson.cn>
- <202006010557.pUApller%lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xuefeng Li <lixuefeng@loongson.cn>
-From:   Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <3b371f54-3ee3-0248-b9d7-1b766449dffc@loongson.cn>
-Date:   Tue, 2 Jun 2020 09:43:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        id S1728305AbgFBFZF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jun 2020 01:25:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59600 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728280AbgFBFZE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jun 2020 01:25:04 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 633FAC061A0E
+        for <linux-clk@vger.kernel.org>; Mon,  1 Jun 2020 22:25:04 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jfzPu-0002KI-09; Tue, 02 Jun 2020 07:24:50 +0200
+Received: from ore by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ore@pengutronix.de>)
+        id 1jfzPs-0002Lz-VZ; Tue, 02 Jun 2020 07:24:48 +0200
+Date:   Tue, 2 Jun 2020 07:24:48 +0200
+From:   Oleksij Rempel <o.rempel@pengutronix.de>
+To:     peng.fan@nxp.com
+Cc:     shawnguo@kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de,
+        aisheng.dong@nxp.com, robh+dt@kernel.org, sboyd@kernel.org,
+        linux@rempel-privat.de, jaswinder.singh@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        l.stach@pengutronix.de, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH V3 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
+Message-ID: <20200602052448.fxepmwltc4465q4i@pengutronix.de>
+References: <1590999602-29482-1-git-send-email-peng.fan@nxp.com>
+ <1590999602-29482-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <202006010557.pUApller%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf9Dxz2nBrtVeLHQ8AA--.2202S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3Wr13ZF47WFyxGFyfCr4Durg_yoWxAFWUpa
-        n5CFy8t3W8JFWUW3y3GayUWw1fuanrtFy8CFZ3X3yUXFn8XrW8t3yqgFyfGF4qgr1kZw48
-        u34UGw48u34jyFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-        9KBjDU0xBIdaVrnRJUUUvl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-        rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-        1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-        6r4UJwA2z4x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr
-        1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
-        7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
-        1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE
-        67vIY487MxkIecxEwVAFwVWkMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-        4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-        67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-        x0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_WFyUJVCq3wCI42IY
-        6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvj
-        DU0xZFpf9x0JUChFxUUUUU=
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="c2h6m5xrkl3f4s3k"
+Content-Disposition: inline
+In-Reply-To: <1590999602-29482-2-git-send-email-peng.fan@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 07:18:57 up 199 days, 20:37, 185 users,  load average: 0.07, 0.08,
+ 0.05
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/01/2020 05:05 AM, kbuild test robot wrote:
-> Hi Tiezhu,
->
-> Thank you for the patch! Yet something to improve:
->
-> [auto build test ERROR on clk/clk-next]
-> [also build test ERROR on v5.7-rc7 next-20200529]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system. BTW, we also suggest to use '--base' option to specify the
-> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
->
-> url:    https://github.com/0day-ci/linux/commits/Tiezhu-Yang/clk-hisilicon-Use-correct-return-value-about-hisi_reset_init/20200527-233606
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> config: openrisc-randconfig-r021-20200531 (attached as .config)
-> compiler: or1k-linux-gcc (GCC) 9.3.0
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # save the attached .config to linux build tree
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-9.3.0 make.cross ARCH=openrisc
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kbuild test robot <lkp@intel.com>
 
-Hi,
+--c2h6m5xrkl3f4s3k
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for your report, please ignore this patch.
-
->
-> All errors (new ones prefixed by >>, old ones prefixed by <<):
->
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_fixed_rate':
->>> clk.c:(.text+0x158): undefined reference to `clk_register_fixed_rate'
-> clk.c:(.text+0x158): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_fixed_rate'
-> or1k-linux-ld: clk.c:(.text+0x220): undefined reference to `clk_unregister_fixed_rate'
-> clk.c:(.text+0x220): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_unregister_fixed_rate'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_fixed_factor':
->>> clk.c:(.text+0x2a0): undefined reference to `clk_register_fixed_factor'
-> clk.c:(.text+0x2a0): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_fixed_factor'
-> or1k-linux-ld: clk.c:(.text+0x370): undefined reference to `clk_unregister_fixed_factor'
-> clk.c:(.text+0x370): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_unregister_fixed_factor'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_mux':
->>> clk.c:(.text+0x434): undefined reference to `clk_register_mux_table'
-> clk.c:(.text+0x434): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_mux_table'
-> or1k-linux-ld: clk.c:(.text+0x464): undefined reference to `clk_register_clkdev'
-> clk.c:(.text+0x464): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_clkdev'
-> or1k-linux-ld: clk.c:(.text+0x528): undefined reference to `clk_unregister_mux'
-> clk.c:(.text+0x528): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_unregister_mux'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_divider':
->>> clk.c:(.text+0x6e8): undefined reference to `clk_register_divider_table'
-> clk.c:(.text+0x6e8): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_divider_table'
-> or1k-linux-ld: clk.c:(.text+0x718): undefined reference to `clk_register_clkdev'
-> clk.c:(.text+0x718): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_register_clkdev'
-> or1k-linux-ld: clk.c:(.text+0x7d0): undefined reference to `clk_unregister_divider'
-> clk.c:(.text+0x7d0): relocation truncated to fit: R_OR1K_INSN_REL_26 against undefined symbol `clk_unregister_divider'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_gate':
->>> clk.c:(.text+0x870): undefined reference to `clk_register_gate'
-> clk.c:(.text+0x870): additional relocation overflows omitted from the output
-> or1k-linux-ld: clk.c:(.text+0x8a0): undefined reference to `clk_register_clkdev'
-> or1k-linux-ld: clk.c:(.text+0x960): undefined reference to `clk_unregister_gate'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_register_gate_sep':
->>> clk.c:(.text+0xa4c): undefined reference to `clk_register_clkdev'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hisi_clk_init':
-> clk.c:(.text+0xb5c): undefined reference to `of_clk_src_onecell_get'
-> or1k-linux-ld: clk.c:(.text+0xb6c): undefined reference to `of_clk_src_onecell_get'
-> or1k-linux-ld: clk.c:(.text+0xb70): undefined reference to `of_clk_add_provider'
-> or1k-linux-ld: drivers/clk/hisilicon/clk.o: in function `hi6220_clk_register_divider':
->>> clk.c:(.init.text+0xe0): undefined reference to `clk_register_clkdev'
-> or1k-linux-ld: drivers/clk/hisilicon/clkgate-separated.o: in function `hisi_register_clkgate_sep':
->>> clkgate-separated.c:(.text+0x2b4): undefined reference to `clk_register'
-> or1k-linux-ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_set_rate':
->>> clkdivider-hi6220.c:(.text+0x30): undefined reference to `divider_get_val'
-> or1k-linux-ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_round_rate':
->>> clkdivider-hi6220.c:(.text+0x15c): undefined reference to `clk_hw_get_parent'
-> or1k-linux-ld: clkdivider-hi6220.c:(.text+0x180): undefined reference to `divider_round_rate_parent'
-> or1k-linux-ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_clkdiv_recalc_rate':
->>> clkdivider-hi6220.c:(.text+0x214): undefined reference to `divider_recalc_rate'
-> or1k-linux-ld: drivers/clk/hisilicon/clkdivider-hi6220.o: in function `hi6220_register_clkdiv':
->>> clkdivider-hi6220.c:(.text+0x380): undefined reference to `clk_register'
-> or1k-linux-ld: drivers/clk/hisilicon/clk-hisi-phase.o: in function `clk_register_hisi_phase':
->>> clk-hisi-phase.c:(.text+0x2f0): undefined reference to `devm_clk_register'
+On Mon, Jun 01, 2020 at 04:20:00PM +0800, peng.fan@nxp.com wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Add i.MX8MQ/M/N/P compatible string to support i.MX8M SoCs
+>=20
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+>  Documentation/devicetree/bindings/mailbox/fsl,mu.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt b/Docum=
+entation/devicetree/bindings/mailbox/fsl,mu.txt
+> index 26b7a88c2fea..906377acf2cd 100644
+> --- a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> @@ -18,7 +18,8 @@ Messaging Unit Device Node:
+>  Required properties:
+>  -------------------
+>  - compatible :	should be "fsl,<chip>-mu", the supported chips include
+> -		imx6sx, imx7s, imx8qxp, imx8qm.
+> +		imx6sx, imx7s, imx8qxp, imx8qm, imx8mq, imx8mm, imx8mn,
+> +		imx8mp.
+>  		The "fsl,imx6sx-mu" compatible is seen as generic and should
+>  		be included together with SoC specific compatible.
+>  		There is a version 1.0 MU on imx7ulp, use "fsl,imx7ulp-mu"
+> --=20
+> 2.16.4
+>=20
+>=20
 
+Hi Peng,
+
+The fsl,mu.yaml was already taken by Rob, so one or other patch will
+break by merge. I assume you should drop this change.
+
+
+Regards,
+Oleksij
+--=20
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+
+--c2h6m5xrkl3f4s3k
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEERBNZvwSgvmcMY/T74omh9DUaUbMFAl7V4pgACgkQ4omh9DUa
+UbObbg//WhWLqmjlyeR0A0GCaFvcBoDzS1TBdruVqmmFsGcgHhnHeH3c3STzS8ig
+cvnCfziAkNQLbRiqqPZO9J2n39SIX/Nps2JujTRTUldgKYK4/OTge15skrNTXQDD
+R/J3a6HaqgFPDTjEMzgjOe/1MvMtJrao1Ej4sJ08BSkQICy/GOPzVGy7/VeSFF1g
+3X6Z8lzHsU2BdS5IzTwQGEWVZ2JkEnK8qmyTHFL7HFjpNgh7CWwv34u2GAaeaC8/
+HnpfPA1JI2WEHbv+fVxMZjx04cmbHXFclp2qPu8skAgcEJMB1+UelVUPuXDgvqlj
+0kE2SgPeVtgX+IWWqaUbZh5f3baAUXu/I+miACCeLCV3SBcDJMDI7G5N4KV8mMu4
+QzXzHXVSEshTKSNx8rj6v04TSycrD/F5zArIfy04dnkoWd9ZZuwDR2BzQziHQqUa
+STPlogKn80dqho1oScRU0UtVTJtnk/SH8AgNatL+vJZbD4x4eW5ntE1LiU5oUfUR
+VvbsdhCPduN2QvTv+cENBC6BzqONJMDumHgY/8RirvqvfL2zSFxKwtAu9q5ay56r
+0Lkv2AQhn8d49EbEebxIPSM++gdUEw5usf/pbRT0J+YHPAviTZkhovjCAuPlli9D
+VKZHRW2V7rsbv4BArG8SpKGFDuHLgFNDZvaI+aM0HqiGYrS/hbM=
+=YyCu
+-----END PGP SIGNATURE-----
+
+--c2h6m5xrkl3f4s3k--
