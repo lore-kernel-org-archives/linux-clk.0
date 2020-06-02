@@ -2,192 +2,174 @@ Return-Path: <SRS0=BrPq=7P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07279C433E1
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 08:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F099C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 08:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D7868206C3
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 08:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B85A206A2
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 08:39:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FdZyRvUS"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zjRFqhv5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbgFBIUE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jun 2020 04:20:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58298 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbgFBIUE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jun 2020 04:20:04 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A78EC03E97D
-        for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2020 01:20:02 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id q11so2423095wrp.3
-        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2020 01:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=ucrKANAavc1NtdTnXRC9YmP/hh/YfnXjx8eiS0Iol/Q=;
-        b=FdZyRvUSL0wlJKAQLjX0RYOmaRlwJyOk9yFO3Oj3DuhLsONvhCZMZhZmgfWfkDNdPr
-         7ww5coZ4a9/fvqiXRA+HEk+RzYDBJfPSVHzZ/0q/S1HUbZsW2XRMz4ZucaF3OlJP7ozC
-         62sFDvx+ak+W1cfo1UyseCBnmQ/Tvj3gddBViTbO4PA8gDcity8HtsGNjpiMTIPxgqAy
-         ObsSCga5PAIOjZwwIASDczGbpG54ciygDdrRDJiv9jQL2EV4dEbnnZM9M4mxVflaUa7O
-         ZXgbRyp0bfb+67lZs9WhO0x6ZiNF5PS7DeYvYHLZJb/ZJWugDR1r/vAll/JKw9+UOAHw
-         UL5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=ucrKANAavc1NtdTnXRC9YmP/hh/YfnXjx8eiS0Iol/Q=;
-        b=F2RoauNmrkcXNZYOKxP6laa8ihsbmNBWGehrQ7wgzWg6l7vY8Lncu6y+SPlpQ1WWDH
-         I7AgIl/euGUOdzDEX+CD1/fvti3cKLqRZOe3WXdDj7aMRcdutLAtTiT+RbBo2lP9qdLY
-         r/u8MgLymqOe2aXk1lU/WM405TvuKxxlinHTZfSOF99vdXotGLsc0V7kc0j138qbcp8g
-         XWxqfhwASBWHYAI+21CnxAD1/S76FPQB6i6cv5Qt6gN+6Uc37HkXQhJdHgTk0BBhqHpE
-         O0dee9Bu1HLIDeO9PhfPTZOrBb7y0OmL3glMwFA8hnjWpux7rZvnTnPUtjdn80IkfzIj
-         p9Pw==
-X-Gm-Message-State: AOAM533NZJaS5PYohJlNEOXWDZogjFxrTFchuNtYNY2HciWUMKsnl9aD
-        irwfgLmR1/WCLZRU+bY968GgjQ==
-X-Google-Smtp-Source: ABdhPJziqtJ8towpdAmhrxob1OLK+VXu4+yoez2i5EtTZF4PeeAOc3/k3KaHbihgaipMRXQMQ/YIBQ==
-X-Received: by 2002:adf:97cb:: with SMTP id t11mr15492995wrb.314.1591086001045;
-        Tue, 02 Jun 2020 01:20:01 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id h5sm2746408wrw.85.2020.06.02.01.19.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 02 Jun 2020 01:20:00 -0700 (PDT)
-Date:   Tue, 2 Jun 2020 10:19:58 +0200
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
-        pgaikwad@nvidia.com, pdeschrijver@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org, axboe@kernel.dk,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-ide@vger.kernel.org
-Subject: Re: tegra124-jetson-tk1: sata doesnt work since 5.2
-Message-ID: <20200602081958.GA21773@Red>
-References: <20200319074401.GA4116@Red>
- <20200531193111.GA15331@Red>
- <ff9923ca-1d02-ab5e-c335-83ee2e993061@gmail.com>
+        id S1726198AbgFBIjf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jun 2020 04:39:35 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:44217 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbgFBIjf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jun 2020 04:39:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1591087174; x=1622623174;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version;
+  bh=5oSerVw4BUQ1JnWRjiKwnbjMfhGlmnPWZ9idp3chc+k=;
+  b=zjRFqhv5M3r0zwGkUD5i2LiNnp6m7DpLcE5qgVcf784esxprEfBISV9y
+   zsmyAryr61/wd7BxPm1IDhTxssMkxEjJuwQvYSO/6D/HnTJxE872JhlRV
+   85eSfwNWcqZeS0HDo0EsBRAN6TcLpDbE4aeiOAT2BB2FdlS34vsF+LGRI
+   NRRNU/NjUywiijUeGz5UhCVy+DXaFr0broUIc+BWAp3an9UocOPRCWLia
+   fQajAzBdXrV6oRD4Ey6u3ZBNeLkWotjMEhq3xx/rg7ebkTasUMjHCJqIK
+   YiFYBaJcIS1YjGRtJi6+jc9aI/3UDSMnPI4UgK1aur6m32cFp5L+DpERg
+   g==;
+IronPort-SDR: CGzwFgZnx38dfzy3f8q8Xm+puJ33BFnb4DM1BvkqwaF38Hj7IETfB7dGjdAjeim4iMDvI27Bgb
+ +yICiF7lLYVnRVeN2quM6SHW3LNULatRt9IgxD6Hmrc5Mj67Nzo2VUMQ4fhnN8yNRMhhUTlXTw
+ 6KLcvdEp5R6EdhQyGXTqq9+eC3ANvPCnHJ4q7XthvQrOvAPk/fETg5WqPtmUavy+SYUKK8t1lJ
+ womw9WDinln+Lxa2xf8VRHl+rSWUFvWeazBmzkbVMb22LOT8PYyiB7Ovsoosv7e9z3TLTsGs4F
+ G5g=
+X-IronPort-AV: E=Sophos;i="5.73,463,1583218800"; 
+   d="scan'208";a="81897758"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 02 Jun 2020 01:39:34 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 2 Jun 2020 01:39:33 -0700
+Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Tue, 2 Jun 2020 01:39:18 -0700
+References: <20200513125532.24585-1-lars.povlsen@microchip.com> <20200513125532.24585-11-lars.povlsen@microchip.com> <20200528021826.GA3221035@bogus>
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Rob Herring <robh@kernel.org>
+List-Id: <soc.lore.kernel.org>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        SoC Team <soc@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Olof Johansson <olof@lixom.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: Re: [PATCH 10/14] dt-bindings: clock: sparx5: Add Sparx5 SoC DPLL clock
+In-Reply-To: <20200528021826.GA3221035@bogus>
+Date:   Tue, 2 Jun 2020 10:39:29 +0200
+Message-ID: <87h7vtq2ta.fsf@soft-dev15.microsemi.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ff9923ca-1d02-ab5e-c335-83ee2e993061@gmail.com>
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 01, 2020 at 05:30:37PM +0300, Dmitry Osipenko wrote:
-> 31.05.2020 22:31, LABBE Corentin пишет:
-> > On Thu, Mar 19, 2020 at 08:44:01AM +0100, LABBE Corentin wrote:
-> >> Hello
-> >>
-> >> sata doesnt work on tegra124-jetson-tk1 on next and master and at least since 5.2 (but 5.1 works).
-> >> [    0.492810] +5V_SATA: supplied by +5V_SYS
-> >> [    0.493230] +12V_SATA: supplied by +VDD_MUX
-> >> [    2.088675] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >> [    2.097643] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >> [    3.314776] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >> [    3.323658] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >> [    5.236964] tegra-ahci 70027000.sata: 70027000.sata supply ahci not found, using dummy regulator
-> >> [    5.245867] tegra-ahci 70027000.sata: 70027000.sata supply phy not found, using dummy regulator
-> >> [    5.254706] tegra-ahci 70027000.sata: 70027000.sata supply target not found, using dummy regulator
-> >> [    5.310270] phy phy-sata.6: phy poweron failed --> -110
-> >> [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI controller: -110
-> >> [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -110
-> >> [   35.694269] +5V_SATA: disabling
-> >> [   35.697438] +12V_SATA: disabling
-> >>
-> >> I have bisected this problem:
-> >> git bisect start
-> >> # bad: [22c58fd70ca48a29505922b1563826593b08cc00] Merge tag 'armsoc-soc' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
-> >> git bisect bad 22c58fd70ca48a29505922b1563826593b08cc00
-> >> # good: [67e38f578aaebf34fc1278bbe45a78ee8c73dd33] ARM: ep93xx: move pinctrl interfaces into include/linux/soc
-> >> git bisect good 67e38f578aaebf34fc1278bbe45a78ee8c73dd33
-> >> # good: [80f232121b69cc69a31ccb2b38c1665d770b0710] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next
-> >> git bisect good 80f232121b69cc69a31ccb2b38c1665d770b0710
-> >> # good: [e57ccca1ba33e1d92cc3bbf8b6304a46948844b0] Merge tag 'sound-5.2-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound
-> >> git bisect good e57ccca1ba33e1d92cc3bbf8b6304a46948844b0
-> >> # bad: [983dfa4b6ee556563f7963348e4e2f97fc8a15b8] Merge tag 'for-linus-5.2-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/rw/uml
-> >> git bisect bad 983dfa4b6ee556563f7963348e4e2f97fc8a15b8
-> >> # good: [8e4ff713ce313dcabbb60e6ede1ffc193e67631f] Merge tag 'rtc-5.2' of git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux
-> >> git bisect good 8e4ff713ce313dcabbb60e6ede1ffc193e67631f
-> >> # bad: [b970afcfcabd63cd3832e95db096439c177c3592] Merge tag 'powerpc-5.2-1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/powerpc/linux
-> >> git bisect bad b970afcfcabd63cd3832e95db096439c177c3592
-> >> # bad: [601e6bcc4ef02bda2831d5ac8133947b5edf597b] Merge git://git.kernel.org/pub/scm/linux/kernel/git/davem/net
-> >> git bisect bad 601e6bcc4ef02bda2831d5ac8133947b5edf597b
-> >> # good: [7e9c62bdb41af76974d594da89854a6aba645e58] Merge branches 'clk-sa', 'clk-aspeed', 'clk-samsung', 'clk-ingenic' and 'clk-zynq' into clk-next
-> >> git bisect good 7e9c62bdb41af76974d594da89854a6aba645e58
-> >> # bad: [0caf000817353cfc5db22363ecdac63b83d3a3f9] Merge branch 'clk-ti' into clk-next
-> >> git bisect bad 0caf000817353cfc5db22363ecdac63b83d3a3f9
-> >> # good: [5816b74581b45cf086a84ab14e13354a65e8e22c] Merge branches 'clk-hisi', 'clk-lochnagar', 'clk-allwinner', 'clk-rockchip' and 'clk-qoriq' into clk-next
-> >> git bisect good 5816b74581b45cf086a84ab14e13354a65e8e22c
-> >> # good: [7b4c162e03d47e037f8ee773c3e300eefb599a83] clk: at91: Mark struct clk_range as const
-> >> git bisect good 7b4c162e03d47e037f8ee773c3e300eefb599a83
-> >> # bad: [e71f4d385878671991e200083c7d30eb4ca8e99a] clk: tegra: divider: Mark Memory Controller clock as read-only
-> >> git bisect bad e71f4d385878671991e200083c7d30eb4ca8e99a
-> >> # bad: [924ee3d551c9deb16090230b824988bd37e72aa8] clk: tegra: emc: Don't enable EMC clock manually
-> >> git bisect bad 924ee3d551c9deb16090230b824988bd37e72aa8
-> >> # bad: [40db569d6769ffa3864fd1b89616b1a7323568a8] clk: tegra: Fix PLLM programming on Tegra124+ when PMC overrides divider
-> >> git bisect bad 40db569d6769ffa3864fd1b89616b1a7323568a8
-> >> # bad: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
-> >> git bisect bad bff1cef5f23afbe49f5ebd766980dc612f5e9d0a
-> >> # first bad commit: [bff1cef5f23afbe49f5ebd766980dc612f5e9d0a] clk: tegra: Don't enable already enabled PLLs
-> >>
-> > 
-> > Hello
-> > 
-> > I have digged a bit more and with the following "patch" I have now access to sata again
-> > diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> > index 0b212cf2e794..b4e2020051d5 100644
-> > --- a/drivers/clk/tegra/clk-pll.c
-> > +++ b/drivers/clk/tegra/clk-pll.c
-> > @@ -1602,7 +1603,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
-> >         unsigned long input_rate;
-> >  
-> >         if (clk_pll_is_enabled(hw))
-> > -               return 0;
-> > +               pr_info("%s %s\n", __func__, clk_hw_get_name(&pll->hw));
-> >  
-> >         input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
-> > 
-> > This patch lead to a probed ahci, and I can see "clk_plle_tegra114_enable pll_e" in messages.
-> > 
-> > So the bad part of bff1cef5f23afbe49f5ebd766980dc612f5e9d0a is found.
-> 
-> Hello Labbe,
-> 
-> Looks like indeed this PLLE change should be reverted. I see that the
-> code disables PLLE before changing its configuration, so apparently the
-> enable-check shouldn't be needed.
-> 
-> > As additional information, my previous kernel has CONFIG_PHY_TEGRA_XUSB=m (since firmware is on rootfs which is on sata)
-> > but with this sata fail the same, having CONFIG_PHY_TEGRA_XUSB=y (and so xusb firmware in kernel) seems "necessary" for having SATA working.
-> 
-> Sounds like PLLE needs to be enabled for SATA, but ahci-tegra driver
-> doesn't do that.
-> 
-> Could you please try this change:
-> 
-> --- >8 ---
-> diff --git a/drivers/clk/tegra/clk-tegra124.c
-> b/drivers/clk/tegra/clk-tegra124.c
-> index e931319dcc9d..7dbc14652830 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1330,6 +1330,7 @@ static struct tegra_clk_init_table
-> common_init_table[] __initdata = {
->  	{ TEGRA124_CLK_I2S3_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
->  	{ TEGRA124_CLK_I2S4_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
->  	{ TEGRA124_CLK_VIMCLK_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-> +	{ TEGRA124_CLK_PLL_E, TEGRA124_CLK_CLK_MAX, 0, 1 },
->  	/* must be the last entry */
->  	{ TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
->  };
-> --- >8 ---
 
-This patch alone does not fix the issue.
+Rob Herring writes:
+
+> On Wed, May 13, 2020 at 02:55:28PM +0200, Lars Povlsen wrote:
+>> This add the DT bindings documentation for the Sparx5 SoC DPLL clock
+>>
+>> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+>> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+>> ---
+>>  .../bindings/clock/microchip,sparx5-dpll.yaml | 46 +++++++++++++++++++
+>>  1 file changed, 46 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml b/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
+>> new file mode 100644
+>> index 0000000000000..594007d8fc59a
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
+>> @@ -0,0 +1,46 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/microchip,sparx5-dpll.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Microchip Sparx5 DPLL Clock
+>> +
+>> +maintainers:
+>> +  - Lars Povlsen <lars.povlsen@microchip.com>
+>> +
+>> +description: |
+>> +  The Sparx5 DPLL clock controller generates and supplies clock to
+>> +  various peripherals within the SoC.
+>> +
+>> +  This binding uses common clock bindings
+>> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: microchip,sparx5-dpll
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: dpll registers
+>
+> For a single entry, just:
+>
+> maxItems: 1
+
+Ok.
+
+>
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  # Clock provider for eMMC:
+>> +  - |
+>> +    clks: clks@61110000c {
+>
+> clock-controller@1110000c {
+>
+
+Got that.
+
+>> +         compatible = "microchip,sparx5-dpll";
+>> +         #clock-cells = <1>;
+>> +         reg = <0x1110000c 0x24>;
+>
+> Looks like this is a sub-block in some other h/w block. What's the
+> parent device? That should be described and this should be part of it
+> either as a single node or a child node. Without a complete view of what
+> this block has I can't provide any guidance.
+
+No, as Alex noted to a similar comment in the temp. sensor driver, the
+chip is using packed register spaces predominantly. So don't put too
+much into the register offsets.
+
+---Lars
+
+>
+> Rob
+
+--
+Lars Povlsen,
+Microchip
