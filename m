@@ -2,110 +2,171 @@ Return-Path: <SRS0=BrPq=7P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE90C433E2
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 10:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E25C433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 11:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ABA82206E2
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 10:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D0E20772
+	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 11:04:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="RnmLLWR0"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="aIy8vP+K";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ALBmZRsP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726606AbgFBKr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jun 2020 06:47:28 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:33129 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726429AbgFBKr2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jun 2020 06:47:28 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1591094847; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
- Subject: Sender; bh=KmJ3nT5wP6W5LJoeHmFVqVcNCLtBatXw/8h8arB12JM=; b=RnmLLWR0s4SgPma/1nqjh2aWiVXrE4Y1CqHHLas1qjLdyS3kt13W7yS7By+p/GWUtTrclpd5
- pIm5RJf0S+pPBGErWq59/rMP4I6ughdPs4ljKyDbpKvT/3XA8H11KgWHpO0nbPNZEaFW3QgE
- 9HrMbwOCS4cNfgYKq0M/uCcoC+0=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n11.prod.us-west-2.postgun.com with SMTP id
- 5ed62e3f8e09c0ae0922b756 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 02 Jun 2020 10:47:27
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id DEB3EC43387; Tue,  2 Jun 2020 10:47:26 +0000 (UTC)
-Received: from [192.168.0.100] (unknown [49.207.141.73])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67E8FC433C9;
-        Tue,  2 Jun 2020 10:47:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 67E8FC433C9
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH V6 4/5] clk: qcom: Add ipq6018 apss clock controller
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org>
- <1590582292-13314-5-git-send-email-sivaprak@codeaurora.org>
- <159063116486.69627.5280506237179820811@swboyd.mtv.corp.google.com>
- <824cd7bb-0971-d387-4b78-75c36ddf2f66@codeaurora.org>
- <159104019638.69627.9161269856470136421@swboyd.mtv.corp.google.com>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <4266555a-5e4f-4340-1b3c-487a70805751@codeaurora.org>
-Date:   Tue, 2 Jun 2020 16:17:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1725921AbgFBLEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jun 2020 07:04:53 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:43471 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726007AbgFBLEs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jun 2020 07:04:48 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id EB8E4580358;
+        Tue,  2 Jun 2020 07:04:46 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 02 Jun 2020 07:04:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=7HHu7QfhHPpbXmDpTyynkqVQP/G
+        clpO7AEZNhrh18AI=; b=aIy8vP+KnWZJ7Wf1/SCoo6xVtD/CybIu+f41jnVDctk
+        mghK2ZoehPVR/pBqde7vP0EIuI09trWMcuDBV5yhQ0ruBKPsi1tvT2SvU2w7+nRJ
+        lYDb7rahyhtbta0Vz4UF7afYtPQuwvGdNQZxnsiqTgJ2lr6z9iWkHvI6hicVh615
+        ryawe7MLMKCYqZEnYAzx3dQWaNmCRPgk0bzU2b8Z6uXrGVMg0dduLlPUztqjp4r7
+        GGLIodDa0N/EU3pdjrQZ63y53q+3JkTjyaNmQloVFY6w/d4wqFNpHwN7K7BaX7VT
+        Nsl/HEOYUXQxfFXvoSrBmVqc2p8QMVP8YDXGFhiqb6g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=7HHu7Q
+        fhHPpbXmDpTyynkqVQP/GclpO7AEZNhrh18AI=; b=ALBmZRsP1UmYVWy5MGtSX/
+        yVQJSgV67x/vocs6vTLBI11RLGNu2ddAB4vBj9hTsw0bDRYjALwxL5H1nCp01vAw
+        PDhl76FpRx/wFK/Qp6xfesrGx3wBpGvpvJLQ5+ZFJ/kTO8GI3Fijy+6Q+kBEBY9T
+        MMszDb1OA2htuqQdYU3EMfKc68O+VWSG9vf9rhjVG+QVFhYmnpJOe1downiocJRr
+        ift3puUverNRaH3bvINmX0nQkK/N179dawyAJNS2L/ew7C2VTjxXI8kc2gq9oKWn
+        OxGtZPTr8k5QCj1GPsUcofcuCQtRML1lzycZ3GeHDwL8rnArwXKzQUou/gnMy7eg
+        ==
+X-ME-Sender: <xms:TDLWXvVzsNCTt5urJTCaPct8dQOyGp4jvMqZx4vP7MtXFq8mfIWxFw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudefjedgvdehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttdejnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepheelgfehhfefiefgfeegteeuveeigffhffdvtdeuffffleekgeefudejfefh
+    veelnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpghhithhhuhgsrdgtohhmnecukf
+    hppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
+    pehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:TDLWXnmZIQf_q2O5GHzhfmsRyX8opdaSiINEdBhnYs3ohpunkfczUA>
+    <xmx:TDLWXrZmHZoIiIAYPEyOEdi5d7gXXqaW4qH0LG6k8KTuGoZ7W4zh0A>
+    <xmx:TDLWXqWrd9F80PBtbW7KN9lv6aiumBHrs8RQVnmnC8uWl_p9bnKpLQ>
+    <xmx:TjLWXqj_kuI4y1vFcu1864cESgkisqX6bLB-F4M2AxdbEU0hfi2nPA>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C46EF30624E4;
+        Tue,  2 Jun 2020 07:04:43 -0400 (EDT)
+Date:   Tue, 2 Jun 2020 13:04:42 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Jian-Hong Pan <jian-hong@endlessm.com>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>
+Subject: Re: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipelin
+Message-ID: <20200602110442.2ceuymhwuomvjj6i@gilmour>
+References: <CAPpJ_efvtVzb_hvoVOeaePh7UdE13wOiiGaDBH38cToB-yhkUg@mail.gmail.com>
+ <20200507172158.cybtakpo6cxv6wcs@gilmour.lan>
+ <CAPpJ_efxenmSXt2OXkhkQ1jDJ59tyWBDUvmpyOB-bfPMDENQZg@mail.gmail.com>
+ <CAPpJ_ed9TMJjN8xS1_3saf5obQhULJSLNgQSAFxgiWM2QX9A7Q@mail.gmail.com>
+ <20200526102018.kznh6aglpkqlp6en@gilmour.lan>
+ <CAD8Lp467DiYWLwH6T1Jeq-uyN4VEuef-gGWw0_bBTtmSPr00Ag@mail.gmail.com>
+ <20200527091335.7wc3uy67lbz7j4di@gilmour.lan>
+ <CAD8Lp45ucK-yZ5G_DrUVA7rnxo58UF1LPUy65w2PCOcSxKx_Sg@mail.gmail.com>
+ <20200528073055.znutrhkryzu3grrl@gilmour.lan>
+ <CAPpJ_ec1KRwUrHGVVZrReaDPz4iga-Nvj5H652-tTKmkXL=Xmg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <159104019638.69627.9161269856470136421@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5pdc5mmeqmvo6ueh"
+Content-Disposition: inline
+In-Reply-To: <CAPpJ_ec1KRwUrHGVVZrReaDPz4iga-Nvj5H652-tTKmkXL=Xmg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 6/2/2020 1:06 AM, Stephen Boyd wrote:
-> Quoting Sivaprakash Murugesan (2020-06-01 05:41:15)
->> On 5/28/2020 7:29 AM, Stephen Boyd wrote:
->>> Quoting Sivaprakash Murugesan (2020-05-27 05:24:51)
->>>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss-ipq6018.c
->>>> new file mode 100644
->>>> index 0000000..004f7e1
->>>> --- /dev/null
->>>> +++ b/drivers/clk/qcom/apss-ipq6018.c
->>>> @@ -0,0 +1,106 @@
->>>> +       P_XO,
->>>> +       P_APSS_PLL_EARLY,
->>>> +};
->>>> +
->>>> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] = {
->>>> +       { .fw_name = "xo" },
->>>> +       { .fw_name = "pll" },
->>> This pll clk is not described in the binding. Please add it there.
->> Sorry I did not get this, this PLL is not directly defined in this
->> driver and it comes
->>
->> from dts. do you still want to describe it in binding?
->>
-> Yes, there should be a clock-names property for "pll" and a clocks
-> property in the binding document. I didn't see that.
+--5pdc5mmeqmvo6ueh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These are defined in
+Hi,
 
-https://lkml.org/lkml/2020/5/27/658and
+On Mon, Jun 01, 2020 at 03:58:26PM +0800, Jian-Hong Pan wrote:
+> Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B45=E6=9C=8828=E6=
+=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:30=E5=AF=AB=E9=81=93=EF=BC=9A
+> >
+> > Hi Daniel,
+> >
+> > On Wed, May 27, 2020 at 05:15:12PM +0800, Daniel Drake wrote:
+> > > On Wed, May 27, 2020 at 5:13 PM Maxime Ripard <maxime@cerno.tech> wro=
+te:
+> > > > I'm about to send a v3 today or tomorrow, I can Cc you (and Jian-Ho=
+ng) if you
+> > > > want.
+> > >
+> > > That would be great, although given the potentially inconsistent
+> > > results we've been seeing so far it would be great if you could
+> > > additionally push a git branch somewhere.
+> > > That way we can have higher confidence that we are applying exactly
+> > > the same patches to the same base etc.
+> >
+> > So I sent a new iteration yesterday, and of course forgot to cc you... =
+Sorry for
+> > that.
+> >
+> > I've pushed my current branch here:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git/log/?=
+h=3Drpi4-kms
+>=20
+> Thanks to Maxime!
+>=20
+> I have tried your repository on branch rpi4-kms.  The DRM VC4 is used!
+> But got some issues:
+> 1. Some weird error message in dmesg.  Not sure it is related, or not
+> [    5.219321] [drm:vc5_hdmi_init_resources] *ERROR* Failed to get
+> HDMI state machine clock
+> https://gist.github.com/starnight/3f317dca121065a361cf08e91225e389
 
-https://lkml.org/lkml/2020/5/27/659
+That's a deferred probing. The first time the HDMI driver is being
+probed, the firmware clock driver has not been probed yet. It's making
+another attempt later on, which succeeds.
 
-it has been defined as part of mailbox binding, since this driver does
+> 2. The screen flashes suddenly sometimes.
+>=20
+> 3. The higher resolutions, like 1920x1080 ... are lost after hot
+> re-plug HDMI cable (HDMI0)
 
-not have a dts node and it is child of apcs mailbox driver.
+I'm not sure on how to exactly reproduce those issues (or what they are)
+though, can you expand on this?
 
+Maxime
+
+--5pdc5mmeqmvo6ueh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXtYySgAKCRDj7w1vZxhR
+xfUBAP46Th1pk7x3jxfXvrbbwj1VxBv4kbEOV1Bu98RJiU1LywD/RjzWHXndJXmh
+fEI26r6ziCy/1OpEIZxssHX9I6WnfQ4=
+=suuo
+-----END PGP SIGNATURE-----
+
+--5pdc5mmeqmvo6ueh--
