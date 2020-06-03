@@ -2,123 +2,100 @@ Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B33C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 03:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D97DC433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 05:31:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D85B42074B
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 03:46:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="F1b9fqGs"
+	by mail.kernel.org (Postfix) with ESMTP id 0A739206E6
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 05:31:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591162319;
+	bh=jcNjRebtGEGF7OHTOpZIQrFoXxBn7By/a9J0O9eUj+Y=;
+	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
+	b=2gLRyvZMNJCTR6xs1PqkRyzlirDQD4wDoh5A5ay1/bEDmxo2T3uwpMyFIoqY8bXG9
+	 8zA6SkRLDUaHykNcRyQJfFoF1SZYhVuCNAkhh+wOyBCnXkc+1rfGhP9F9SQwfLuyaI
+	 fC9/7tCT2Mr+dcuzFhU4iv6mKfvm4VBLlr338b18=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726061AbgFCDqv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jun 2020 23:46:51 -0400
-Received: from mail-db8eur05on2075.outbound.protection.outlook.com ([40.107.20.75]:32598
-        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726039AbgFCDqt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 2 Jun 2020 23:46:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Ks+wZpr9/3G76HAcslMzjrvusgwgRFG4JTCOp2tqMVg5KaySJrzFweKfmX0Nl0TWXp+k+sHycM1AzqjcGaxeoiLzgm1AJ6wq2IUr05FfC1I8DNqQhRM4zthMImnLnIHMPmJS16FWIgyjZnrzmdmCqNT9FGvjZP8ym1kleXuJjSTON/uP6J/6Zk1pos8H9IoPswD981/JDLZ7mhtVx/DFrfeqkL2FgWhAHmpeY3WQyjAb+AtDLC3TMjkwwLQKhL5C1DivQ/SAJDUTOwabNcA1PZ/smZZx4vWmd1+HN9LG5U4YwEO3w9PcmyLCfyjgsdGT3PpYGol9ic+g5pnoC6jgdQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8ruvIzOSMZF3SHzfC80qeNDBWE4NIJ+y4nAukjDkwis=;
- b=C2JaauzkPhfya6SPV+Neqd2CO7YElFqXbN1NH51JN7rx8uSbvGz1ss2kMPObbPURxT0n3qod7Ejtv6tKX3seuTEb0/4jOvgQjJ/D7pAScbHy15ao62dZCZvPe0ETNgTEdvsUkDJbAI04nQNJXdB5THj4bxlQ/oP5i2f9Wijfo4CRL+nKMoje0dOAC7KHsQSXbfhRswyrUt0FF2K3VfYI1dVL7YBt3O/cbfkbmOB0QPoAIntI88GCkP7jkkmGG6sLsxzqrrgiEGtIoHp7lxhaXYlxBbqoHx2AwLUkFFzsAL8lpeLI74JCo4AdYZ+3DF2W8P/AD18SCMbEisSPQZxE+w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8ruvIzOSMZF3SHzfC80qeNDBWE4NIJ+y4nAukjDkwis=;
- b=F1b9fqGsodhq1mOgpOSdmnZVvS8sue6cguYDxisKxVCa2PzL/k2AczpiLrq23RU+ogUpVUnFEDGsC6X+v7+NTBWgBOPSpd3695K6Jcgh72ehRAzYkluqTbppacGWVrmehG1IjyebCUhrlpIdkOtA3lp4zW49m471GDsnUMMhZag=
-Authentication-Results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
- by DB6PR0402MB2870.eurprd04.prod.outlook.com (2603:10a6:4:9a::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.22; Wed, 3 Jun
- 2020 03:46:46 +0000
-Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
- ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.3066.018; Wed, 3 Jun 2020
- 03:46:46 +0000
-From:   peng.fan@nxp.com
-To:     shawnguo@kernel.org, fabio.estevam@nxp.com, kernel@pengutronix.de,
-        aisheng.dong@nxp.com, robh+dt@kernel.org, sboyd@kernel.org,
-        linux@rempel-privat.de
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-imx@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
-        l.stach@pengutronix.de, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V4 2/2] clk: imx8mp: add mu root clk
-Date:   Wed,  3 Jun 2020 11:36:00 +0800
-Message-Id: <1591155360-26173-3-git-send-email-peng.fan@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1591155360-26173-1-git-send-email-peng.fan@nxp.com>
-References: <1591155360-26173-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0113.apcprd01.prod.exchangelabs.com
- (2603:1096:4:40::17) To DB6PR0402MB2760.eurprd04.prod.outlook.com
- (2603:10a6:4:a1::14)
+        id S1725828AbgFCFb6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 01:31:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725275AbgFCFb6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Jun 2020 01:31:58 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA8C72065C;
+        Wed,  3 Jun 2020 05:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591162317;
+        bh=jcNjRebtGEGF7OHTOpZIQrFoXxBn7By/a9J0O9eUj+Y=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=wAMWMMwCHBjbm/o3TC6OfFpQGJsCZZb5Q9kmmX2Jftvzfx2A0ID7ocYrScjo2smV8
+         TWNvBd/0LvLPifoc7OZqyCevCDo/BVuUISmHRDUV7cM/3QtHO9PEGnebkvZiRI44kf
+         875TE2CDZ3ATQ94tpu/lkC2eilbj5HPgA1y0DV2U=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-Received: from localhost.localdomain (119.31.174.66) by SG2PR01CA0113.apcprd01.prod.exchangelabs.com (2603:1096:4:40::17) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.3066.18 via Frontend Transport; Wed, 3 Jun 2020 03:46:41 +0000
-X-Mailer: git-send-email 2.7.4
-X-Originating-IP: [119.31.174.66]
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 4608e8c7-2d6c-4716-69bd-08d80770bcdf
-X-MS-TrafficTypeDiagnostic: DB6PR0402MB2870:
-X-MS-Exchange-Transport-Forked: True
-X-Microsoft-Antispam-PRVS: <DB6PR0402MB2870B81A255284BA8A58C9FE88880@DB6PR0402MB2870.eurprd04.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:1079;
-X-Forefront-PRVS: 04238CD941
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 7G/hNQKbosNlOzJNp1P0v9iXHSQC1gMIGo6vIoCgw7x2WxfbEGPqc9Blv1tdExGSLf0mJNzW1W4ljndYrUSaYDCq6N8v7Fzeh9JWVtlz5FKmkbveStL2V0RozS/ZUFllt3A+jUXzDX0HRMkBmiuUvwVEyVri3piBjvG9rwkVG5GbtoJALSxXsQKDEljQnPl1X31Xj7dFREuHMzNeZDLMnRT0dyE2JDtlU8soroOtHQHA8aiTqWZAvowZg1pcK1PGpnes6v5h+bWwBbVkSX6vU/f/Ur5+GkKnjCYQqusZcgirEeui23nLnBURZMxTa3V4v26oyhQg1fnz12qKoq9Nkuko+ExEBl5MAMcNzyzBQRa9I9AEdrgkCVAOpEvysxIfkgYBhSKyokAjnR0vbEl9+hKzsDNKtADNAUgUvsqQINg=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(346002)(136003)(366004)(396003)(376002)(6486002)(478600001)(2616005)(6506007)(4326008)(26005)(956004)(6666004)(9686003)(7416002)(6512007)(86362001)(16526019)(186003)(66946007)(36756003)(8676002)(5660300002)(8936002)(2906002)(83380400001)(316002)(69590400007)(66556008)(52116002)(66476007)(32563001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData: S4hEHOW5k+cvZt8bRIilDQcYvpsYwKiIhVDC15Uia32VAjaY1fWwtdIh2zgfG9fM21XDpAbBZ7cxmPoUGF7FO7USCESfwa5bC9nT9hgDnvqzJS9NWEbFeQSkrP6OtRqeY55KtlwaHYfktAlp/L51uTcBiC1/c4lzGd9Q7mCY6Vr4cvhrGmSs6mmSM+gaVMSX+zq0Km+0XNp3GAzkdtJ/NvKi2B4fRgfMU1be6A2yVI6KG7Els9oOJ+o/GvP9qnJf7WM4OrLdg8UafonlanZK1lGdvnEsZSCGQyI+3dQRwW8tdX0lYI8rK1D5o1ltUmQwjo0wPUlHuRapOCeWQ3Yz1Fq6tM9Buz7CxQgcfB2PC9caI2ymitt4SguyDr00KnTYBm0AsgM0urWQxNDDBdVma2laoc57W/6ugxybGVEktGwaA7H/U6BQ2JjYUYIyjgfOi4M88vGIkY1/KQKNUtPGTj/U5Xq6L7/4ww0BEcQcsROzilrq7JWLawhWTykw5xTA
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4608e8c7-2d6c-4716-69bd-08d80770bcdf
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2020 03:46:46.2643
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: c9s/9Dva7zABX09cz+fBvTZ51UQYnuIfCDDNgqniNUz6SY7wvUoLbSkCMchsvg1pmBKKRbaOiG4HnZYgjpcaSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2870
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <4266555a-5e4f-4340-1b3c-487a70805751@codeaurora.org>
+References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org> <1590582292-13314-5-git-send-email-sivaprak@codeaurora.org> <159063116486.69627.5280506237179820811@swboyd.mtv.corp.google.com> <824cd7bb-0971-d387-4b78-75c36ddf2f66@codeaurora.org> <159104019638.69627.9161269856470136421@swboyd.mtv.corp.google.com> <4266555a-5e4f-4340-1b3c-487a70805751@codeaurora.org>
+Subject: Re: [PATCH V6 4/5] clk: qcom: Add ipq6018 apss clock controller
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org
+Date:   Tue, 02 Jun 2020 22:31:56 -0700
+Message-ID: <159116231690.69627.14045441534011952150@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Quoting Sivaprakash Murugesan (2020-06-02 03:47:20)
+>=20
+> On 6/2/2020 1:06 AM, Stephen Boyd wrote:
+> > Quoting Sivaprakash Murugesan (2020-06-01 05:41:15)
+> >> On 5/28/2020 7:29 AM, Stephen Boyd wrote:
+> >>> Quoting Sivaprakash Murugesan (2020-05-27 05:24:51)
+> >>>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss=
+-ipq6018.c
+> >>>> new file mode 100644
+> >>>> index 0000000..004f7e1
+> >>>> --- /dev/null
+> >>>> +++ b/drivers/clk/qcom/apss-ipq6018.c
+> >>>> @@ -0,0 +1,106 @@
+> >>>> +       P_XO,
+> >>>> +       P_APSS_PLL_EARLY,
+> >>>> +};
+> >>>> +
+> >>>> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] =
+=3D {
+> >>>> +       { .fw_name =3D "xo" },
+> >>>> +       { .fw_name =3D "pll" },
+> >>> This pll clk is not described in the binding. Please add it there.
+> >> Sorry I did not get this, this PLL is not directly defined in this
+> >> driver and it comes
+> >>
+> >> from dts. do you still want to describe it in binding?
+> >>
+> > Yes, there should be a clock-names property for "pll" and a clocks
+> > property in the binding document. I didn't see that.
+>=20
+> These are defined in
+>=20
+> https://lkml.org/lkml/2020/5/27/658and
+>=20
+> https://lkml.org/lkml/2020/5/27/659
+>=20
+> it has been defined as part of mailbox binding, since this driver does
+>=20
+> not have a dts node and it is child of apcs mailbox driver.
+>=20
 
-Add mu root clk for mu mailbox usage.
-
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index b4d9db9d5bf1..ca747712400f 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -680,6 +680,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MP_CLK_I2C2_ROOT] = imx_clk_hw_gate4("i2c2_root_clk", "i2c2", ccm_base + 0x4180, 0);
- 	hws[IMX8MP_CLK_I2C3_ROOT] = imx_clk_hw_gate4("i2c3_root_clk", "i2c3", ccm_base + 0x4190, 0);
- 	hws[IMX8MP_CLK_I2C4_ROOT] = imx_clk_hw_gate4("i2c4_root_clk", "i2c4", ccm_base + 0x41a0, 0);
-+	hws[IMX8MP_CLK_MU_ROOT] = imx_clk_hw_gate4("mu_root_clk", "ipg_root", ccm_base + 0x4210, 0);
- 	hws[IMX8MP_CLK_OCOTP_ROOT] = imx_clk_hw_gate4("ocotp_root_clk", "ipg_root", ccm_base + 0x4220, 0);
- 	hws[IMX8MP_CLK_PCIE_ROOT] = imx_clk_hw_gate4("pcie_root_clk", "pcie_aux", ccm_base + 0x4250, 0);
- 	hws[IMX8MP_CLK_PWM1_ROOT] = imx_clk_hw_gate4("pwm1_root_clk", "pwm1", ccm_base + 0x4280, 0);
--- 
-2.16.4
-
+Ah alright. Sounds good.
