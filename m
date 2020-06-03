@@ -2,81 +2,130 @@ Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD01C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 21:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F94C433E1
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF76207D0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 21:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591221542;
-	bh=bG694Z1X/g0cz+3ydC7MrxJgPWTI9MNwlVNzgabAQpc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=r6tZQ6BYlZrYWcC0jbQ/RaiFeHqDsRSpIA9vhvzTYWSVUNE9i0h5u9wHaOtFtJhtC
-	 exgB8Ls7wtTMGlv0BeLH9j4O8yiVMJkNHfrtLDBsy02tWTaKEW7/KXeQKHDW+Xe1Zd
-	 dkKBvEt+5EgSmPbI0wrUfERk6HjJloGQ0gZkAZck=
+	by mail.kernel.org (Postfix) with ESMTP id 7DEFC20810
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oLglV2NF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbgFCV67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jun 2020 17:58:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46818 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725922AbgFCV66 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Jun 2020 17:58:58 -0400
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B13B207D0;
-        Wed,  3 Jun 2020 21:58:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591221538;
-        bh=bG694Z1X/g0cz+3ydC7MrxJgPWTI9MNwlVNzgabAQpc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=C0EqvJxRgn7C7eJE3bee+mhegLwWCqMYruNH8EFYeZEpca1dUbur8vepANEmM4D2h
-         Xjfa15trH++Ax4rZS64DaIqUYDKByyESOIGISy0BT6CNSiRFo81FPMGiPXDclDvvZ2
-         ThXijie937+TXbsaITUeUsp7Ere4T98m/6Oow51g=
-Received: by mail-ot1-f45.google.com with SMTP id v17so3203363ote.0;
-        Wed, 03 Jun 2020 14:58:58 -0700 (PDT)
-X-Gm-Message-State: AOAM532l1N6ekbmW3yLyTEpt6/fNsO/21q6lzOXgvjkzKF4InNVzdPwW
-        Nx9Mj4Ls2/dyr+RcWByx34Y7AQ5kTtrU1S6KQg==
-X-Google-Smtp-Source: ABdhPJy4IsVGYDhLYERMjF2wCFHQWTVglTGafLNce+hvxMjpqsGUWZniKT8a62dbG+w21svvLRVjQYYO0Na2rx5zZUU=
-X-Received: by 2002:a05:6830:549:: with SMTP id l9mr1513425otb.129.1591221537765;
- Wed, 03 Jun 2020 14:58:57 -0700 (PDT)
+        id S1726434AbgFCXcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 19:32:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55622 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbgFCXcR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 19:32:17 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FCBC08C5C2
+        for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2020 16:32:16 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id 185so2645105pgb.10
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2020 16:32:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z79mte9tXyXKJqcwg2to640Wx2Eg5qdbPrxISPqquNw=;
+        b=oLglV2NFfWcYacYEWd+TtydM20VTgwWe1gq21Fthy+SgsdpnjxFQ4Ga6u1Qy8QOuhq
+         1+c/7ALdx0vchA5G8glRAPu5IZRrjlpO6MXFnSd1l4xnQge821R1YpyaThNWtUXXRQkZ
+         BdWautw1YEzJ6ceFFpGiknqeHem+S3a8xUfFg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z79mte9tXyXKJqcwg2to640Wx2Eg5qdbPrxISPqquNw=;
+        b=Ux4IkSROOwPAfwR4DqX0R4ayYU5oK+VJFi8K8bXGL/YwqhSRheYRCd7AmpDYN1N3Zp
+         fFoANwjWFAggyiEd2VfRpJRBFEbNn27J3E+Ta43ERb0gn3F78qfxK3N74nxT+x2j/kM3
+         r3hXlq1mInDatP+64nTNy4Cd0HxvgIcvdyy6YiynA6srhv+iiLp5Bcpm0W1BgfSVzhXN
+         MJBaw37Josj1xVnldLtscnjGB7ZjWKQy3f9c/Z3fAnm/Sa7gXxQmUf4GBZCEe63catPt
+         gNvnXPAiepp7RMFM4WCupgVBi7vwOb8sK1D/b2w3ulsb6astZYHpbx1+TDQ1dCUmgZ7m
+         DaKQ==
+X-Gm-Message-State: AOAM5320uX1SfQrK03gzMI+mBe3030c+RQSPCMo978RFEKUeFW2I+rvc
+        5QTB3IAEHW3Fx7EXghE6wyzBpA==
+X-Google-Smtp-Source: ABdhPJzEnF0voBtIhVxbXIY3ed6bQ+lYw39TPSGZER6ztQVM7GNLumS6Ixq11iEOXvbkyysEKAiNmA==
+X-Received: by 2002:aa7:9a93:: with SMTP id w19mr1488633pfi.155.1591227136432;
+        Wed, 03 Jun 2020 16:32:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id j8sm3442213pjw.11.2020.06.03.16.32.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jun 2020 16:32:12 -0700 (PDT)
+From:   Kees Cook <keescook@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-mm@kvack.org, clang-built-linux@googlegroups.com
+Subject: [PATCH 03/10] b43: Remove uninitialized_var() usage
+Date:   Wed,  3 Jun 2020 16:31:56 -0700
+Message-Id: <20200603233203.1695403-4-keescook@chromium.org>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20200603233203.1695403-1-keescook@chromium.org>
+References: <20200603233203.1695403-1-keescook@chromium.org>
 MIME-Version: 1.0
-References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
- <20200528031549.13846-4-zhouyanjie@wanyeetech.com> <20200529191431.GA2779176@bogus>
- <159078668338.69627.5841582436445900180@swboyd.mtv.corp.google.com>
-In-Reply-To: <159078668338.69627.5841582436445900180@swboyd.mtv.corp.google.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 3 Jun 2020 15:58:42 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKQgSsd4ZgLrSSZifpB=1eqdgr503YyrWB1qmECd0z4VQ@mail.gmail.com>
-Message-ID: <CAL_JsqKQgSsd4ZgLrSSZifpB=1eqdgr503YyrWB1qmECd0z4VQ@mail.gmail.com>
-Subject: Re: [PATCH v13 3/7] dt-bindings: clock: Add documentation for X1830 bindings.
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Zhou Yanjie <zhouyanjie@wanyeetech.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, zhenwenjin@gmail.com,
-        sernia.zhou@foxmail.com, Paul Cercueil <paul@crapouillou.net>,
-        dongsheng.qiu@ingenic.com, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, May 29, 2020 at 3:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Rob Herring (2020-05-29 12:14:31)
-> >
-> > Acked-by: Rob Herring <robh@kernel.org>
->
-> Please apply to bindings tree Rob. The yaml conversion is in your tree.
+Using uninitialized_var() is dangerous as it papers over real bugs[1]
+(or can in the future), and suppresses unrelated compiler warnings (e.g.
+"unused variable"). If the compiler thinks it is uninitialized, either
+simply initialize the variable or make compiler changes. As a precursor
+to removing[2] this[3] macro[4], just initialize this variable to NULL,
+and make the (unreachable!) code do a conditional test.
 
-Done.
+[1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
+[2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
+[3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
+[4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
 
-Rob
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ drivers/net/wireless/broadcom/b43/phy_n.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+index d3c001fa8eb4..88cdcea10d61 100644
+--- a/drivers/net/wireless/broadcom/b43/phy_n.c
++++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+@@ -4222,7 +4222,7 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
+ 	u32 rfpwr_offset;
+ 	u8 pga_gain, pad_gain;
+ 	int i;
+-	const s16 *uninitialized_var(rf_pwr_offset_table);
++	const s16 *rf_pwr_offset_table = NULL;
+ 
+ 	table = b43_nphy_get_tx_gain_table(dev);
+ 	if (!table)
+@@ -4256,9 +4256,13 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
+ 			pga_gain = (table[i] >> 24) & 0xf;
+ 			pad_gain = (table[i] >> 19) & 0x1f;
+ 			if (b43_current_band(dev->wl) == NL80211_BAND_2GHZ)
+-				rfpwr_offset = rf_pwr_offset_table[pad_gain];
++				rfpwr_offset = rf_pwr_offset_table
++						? rf_pwr_offset_table[pad_gain]
++						: 0;
+ 			else
+-				rfpwr_offset = rf_pwr_offset_table[pga_gain];
++				rfpwr_offset = rf_pwr_offset_table
++						? rf_pwr_offset_table[pga_gain]
++						: 0;
+ 		} else {
+ 			pga_gain = (table[i] >> 24) & 0xF;
+ 			if (b43_current_band(dev->wl) == NL80211_BAND_2GHZ)
+-- 
+2.25.1
+
