@@ -2,165 +2,81 @@ Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B6FC433E1
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 18:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD01C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 21:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF5CD206A2
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 18:20:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sBcv4qkb"
+	by mail.kernel.org (Postfix) with ESMTP id 4FF76207D0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 21:59:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591221542;
+	bh=bG694Z1X/g0cz+3ydC7MrxJgPWTI9MNwlVNzgabAQpc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=r6tZQ6BYlZrYWcC0jbQ/RaiFeHqDsRSpIA9vhvzTYWSVUNE9i0h5u9wHaOtFtJhtC
+	 exgB8Ls7wtTMGlv0BeLH9j4O8yiVMJkNHfrtLDBsy02tWTaKEW7/KXeQKHDW+Xe1Zd
+	 dkKBvEt+5EgSmPbI0wrUfERk6HjJloGQ0gZkAZck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725926AbgFCSUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jun 2020 14:20:35 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:39331 "EHLO m43-7.mailgun.net"
+        id S1726462AbgFCV67 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 17:58:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbgFCSUc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Jun 2020 14:20:32 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1591208431; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=w6HeEmRM3pXLn2ekFS+/1eTGwOSBEOg/dSAacEoqx8k=;
- b=sBcv4qkbmYHtfPYObV/1XWCShPC+iOMkESgCoiUGiVIRenWJd/7/Pmw2827YGD6hEdZeTF99
- w/mOTLQa93bNCewLJE/VNp8uaMSEceUq/VoPmKWiLBjalUH683S96vpzFmS1q5ThDVQQyolC
- H+cojxRb+QvvNUQo4aOdFgzPBaU=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n11.prod.us-east-1.postgun.com with SMTP id
- 5ed7e9e82738686126fb37db (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 03 Jun 2020 18:20:24
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E3DF9C43391; Wed,  3 Jun 2020 18:20:23 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        id S1725922AbgFCV66 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 3 Jun 2020 17:58:58 -0400
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 35F91C433C6;
-        Wed,  3 Jun 2020 18:20:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B13B207D0;
+        Wed,  3 Jun 2020 21:58:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591221538;
+        bh=bG694Z1X/g0cz+3ydC7MrxJgPWTI9MNwlVNzgabAQpc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=C0EqvJxRgn7C7eJE3bee+mhegLwWCqMYruNH8EFYeZEpca1dUbur8vepANEmM4D2h
+         Xjfa15trH++Ax4rZS64DaIqUYDKByyESOIGISy0BT6CNSiRFo81FPMGiPXDclDvvZ2
+         ThXijie937+TXbsaITUeUsp7Ere4T98m/6Oow51g=
+Received: by mail-ot1-f45.google.com with SMTP id v17so3203363ote.0;
+        Wed, 03 Jun 2020 14:58:58 -0700 (PDT)
+X-Gm-Message-State: AOAM532l1N6ekbmW3yLyTEpt6/fNsO/21q6lzOXgvjkzKF4InNVzdPwW
+        Nx9Mj4Ls2/dyr+RcWByx34Y7AQ5kTtrU1S6KQg==
+X-Google-Smtp-Source: ABdhPJy4IsVGYDhLYERMjF2wCFHQWTVglTGafLNce+hvxMjpqsGUWZniKT8a62dbG+w21svvLRVjQYYO0Na2rx5zZUU=
+X-Received: by 2002:a05:6830:549:: with SMTP id l9mr1513425otb.129.1591221537765;
+ Wed, 03 Jun 2020 14:58:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 03 Jun 2020 23:50:23 +0530
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+References: <20200528031549.13846-1-zhouyanjie@wanyeetech.com>
+ <20200528031549.13846-4-zhouyanjie@wanyeetech.com> <20200529191431.GA2779176@bogus>
+ <159078668338.69627.5841582436445900180@swboyd.mtv.corp.google.com>
+In-Reply-To: <159078668338.69627.5841582436445900180@swboyd.mtv.corp.google.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 3 Jun 2020 15:58:42 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKQgSsd4ZgLrSSZifpB=1eqdgr503YyrWB1qmECd0z4VQ@mail.gmail.com>
+Message-ID: <CAL_JsqKQgSsd4ZgLrSSZifpB=1eqdgr503YyrWB1qmECd0z4VQ@mail.gmail.com>
+Subject: Re: [PATCH v13 3/7] dt-bindings: clock: Add documentation for X1830 bindings.
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Zhou Yanjie <zhouyanjie@wanyeetech.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH 08/10] clk: qcom: Add graphics clock controller driver for
- SM8250
-In-Reply-To: <20200603180943.GX11847@yoga>
-References: <20200524210615.17035-1-jonathan@marek.ca>
- <20200524210615.17035-9-jonathan@marek.ca>
- <c4d43cf01b6d014fdc2258abb94eb2c5@codeaurora.org>
- <20200529011127.GJ279327@builder.lan>
- <dbcb5c24f8888d6b0cfc63a80e310319@codeaurora.org>
- <20200603180943.GX11847@yoga>
-Message-ID: <7b2620cf98dc915307d2a29f05eca454@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
+        yanfei.li@ingenic.com, zhenwenjin@gmail.com,
+        sernia.zhou@foxmail.com, Paul Cercueil <paul@crapouillou.net>,
+        dongsheng.qiu@ingenic.com, devicetree@vger.kernel.org,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn,
+On Fri, May 29, 2020 at 3:11 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Rob Herring (2020-05-29 12:14:31)
+> >
+> > Acked-by: Rob Herring <robh@kernel.org>
+>
+> Please apply to bindings tree Rob. The yaml conversion is in your tree.
 
-On 2020-06-03 23:39, Bjorn Andersson wrote:
-> On Thu 28 May 23:56 PDT 2020, Sai Prakash Ranjan wrote:
-> 
->> Hi Bjorn,
->> 
->> On 2020-05-29 06:41, Bjorn Andersson wrote:
->> > On Mon 25 May 02:47 PDT 2020, Sai Prakash Ranjan wrote:
->> >
->> > > Hi Jonathan,
->> > >
->> > > On 2020-05-25 02:36, Jonathan Marek wrote:
->> > > > Add support for the graphics clock controller found on SM8250
->> > > > based devices. This would allow graphics drivers to probe and
->> > > > control their clocks.
->> > > >
->> > > > This is copied from the downstream kernel, adapted for upstream.
->> > > > For example, GDSCs have been added.
->> > > >
->> > > > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
->> > >
->> > > Since this is taken from downstream, maintain the original author's
->> > > signed-off and add yourself as the co-developer if you have done
->> > > any modifications. Same applies to all other patches.
->> > >
->> >
->> > I disagree with this.
->> >
->> > As expressed in the commit message, this patch is based on the
->> > downstream driver, not the individual patch.  As such, the _patch_ is
->> > prepared by Jonathan and by his Signed-off-by certifies the origin of
->> > the contribution per section 11.a or 11.b of submitting-patches.rst.
->> >
->> 
->> I lost at the downstream driver vs the individual patch here. So the
->> downstream driver is also an individual patch right or did I get
->> something completely wrong.
->> 
-> 
-> The downstream driver is the result of a series of patches, by various
-> people, whom all use their Signed-off-by to denote that what they add 
-> is
-> conforming to the given license and that they have permission to
-> contribute to the project.
-> 
->> So if someone prepares a patch and includes a commit description
->> saying it is taken from downstream, does it mean he is the author
->> of that patch?
-> 
-> No, but I think the wording here is wrong. The patch is not taken from
-> downstream, it's based on downstream code.
-> 
->> Shouldn't the author be included in  "From: Author"
->> and his signed-off appear first before the submitter's(also a 
->> contributor)
->> signed-off?
-> 
-> It should, in the case that what is contributed is the forwarding of a
-> patch found somewhere.
-> 
-> But as I said before, Jonathan does through his S-o-b state that his
-> patch is based on previous work that is covered under appropriate open
-> source license and that he has the right under that license to
-> contribute said work.
-> 
-> As such, his patch is meeting the requirements.
-> 
-> 
-> The other part is how to give credit to authors of the original work,
-> Jonathan does that by stating that it's based on work in the downstream
-> kernel - which is quite typical to how it's done.
-> 
->> Or is it because these clock data is auto generated and it
->> doesnt really matter?
->> 
-> 
-> No. The author and s-o-b relates to license compliance, as such the
-> person who committed the auto generated work will sign off that the
-> content is license compliant and he/she is allowed to contribute it to
-> the project.
-> 
+Done.
 
-Thanks for these nice explanations.
-
-Regards,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
+Rob
