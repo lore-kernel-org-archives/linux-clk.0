@@ -2,82 +2,88 @@ Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F13F3C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 13:13:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 506C5C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 14:04:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C926020738
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 13:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B962206A2
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 14:04:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="B+sJbp19"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzaodNJg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725834AbgFCNNk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jun 2020 09:13:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44546 "EHLO
+        id S1725834AbgFCOER (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 10:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725780AbgFCNNk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 09:13:40 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BBDC08C5C1
-        for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2020 06:13:39 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id k26so2009968wmi.4
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2020 06:13:39 -0700 (PDT)
+        with ESMTP id S1725833AbgFCOER (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 10:04:17 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B877C08C5C0;
+        Wed,  3 Jun 2020 07:04:16 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id s1so2915875ljo.0;
+        Wed, 03 Jun 2020 07:04:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=YvTYA3i3ql71PlM8AImNAHj0MEK/O19mMWzQp9IXa1c=;
-        b=B+sJbp19CMkL1IePV7SRjLL3NuueuIDnhgcTjsWMypxSEFEsr4Xi3kdwOgDaCnhtja
-         v29EADJmF0KGTZpbhsDR3QCgYXtMEc+HiHQ6Wn4GSp6Bbh3D2zyfB1Ah9AaTYU5/wFSv
-         uO4p5rj3+oMPLRlfhLADZ8bsB4BoiRx0kAKBS9fHGAVJ/q5UqIZOzOqTSWvV/ZytASMH
-         06f4JyIz/jAyxn5a1WoqF9OWvMLLOeAzMm5aAI19ioVk8O5JEYxbFFksq5eCtWkcD7AJ
-         GDEfI7umcefJunD1gNX8h/Mn+DQ/JzAmVulGKhFhb9DmnjcdaYGG7smoXTBZPlGdmA/o
-         l/yQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O6mpNiafUZcG8Fhsf6HGMpDE9adAt7StKtXsaBM0T+Q=;
+        b=AzaodNJg3VOQsiRKHbO9Hv77PErwygfjIXwX/tZEOBvMuWgNon7cmaNX9ap58Ub6sy
+         xv65blgx6PJMU1TF8Y646ZifjYkZMRqUCWALOcIfkiQyX/WQzFUH7ID8r8/4M4m1Y7XT
+         aGi/EgZAKKgWtJNghfbufOtb4i2MFsFtVYN8BmjtMm+mjDU2WNqDDcCslw1yrJtMz+wl
+         BdNj8TovUnYjP6JU7pQGq0FUVeG9Z6ByEOEW/oLszVatQulUqTbMUVX5wtDmwOeyrMUp
+         ZwaGO3xDdWtdXqS/e9cAVemIum5KxR+IRHqTtE0d3GAdKmO7EgS5Bxsx/evWOzarvseR
+         8AUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=YvTYA3i3ql71PlM8AImNAHj0MEK/O19mMWzQp9IXa1c=;
-        b=BBf5HGpeZCbyzDo5uERnNG7iqHF6bdcBHbpL7PcKDZORu/eT5eliryIPqCIdxZuYiK
-         QyWrxE7P0T4C29lZIrjd7m5a2/vew3F4vUSx+GjWissq+TmC1b8EONLFBDaZ6+qYoOhe
-         5FdWbQZZk4Va9k/72lC3nAOgmaSobtSn4An829ADHwx75dsN1R9UyoFUK1VBndsxkLSH
-         BEsmiJBTEG5YSCYw4Qu3G4h0whX4zyNj79bU1Roj3RvCWRUj6zFJ2XPOkJj2f6PbYMQY
-         CL1NINyURjjjntMEAx7GxbcQFadhPEwZSHZaGs0i24ZePhiKBa/zO0YZXC+k8DKIHZOK
-         YuyA==
-X-Gm-Message-State: AOAM530hLBO3Bj1HLQpTHRMVLYIJm7A62JlTIGTYvm04307m1PlGCMdZ
-        Qgo+ifpd9Gionut9ZxKeLekTxQ==
-X-Google-Smtp-Source: ABdhPJz+8uZwZ5cW2ShXPRloMcUIcKMg45z3XnlS1ugHLPn7vS7DyOPoTzg6JGlGZfSiZeZmIvoBFQ==
-X-Received: by 2002:a05:600c:1:: with SMTP id g1mr8478525wmc.142.1591190018583;
-        Wed, 03 Jun 2020 06:13:38 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id l204sm3103888wmf.19.2020.06.03.06.13.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jun 2020 06:13:37 -0700 (PDT)
-Date:   Wed, 3 Jun 2020 15:13:35 +0200
-From:   LABBE Corentin <clabbe@baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O6mpNiafUZcG8Fhsf6HGMpDE9adAt7StKtXsaBM0T+Q=;
+        b=gnFUuSTjVNT8i7Rt1+nvGCNXsUZgWMrTcTqWRKa0Pa9rKMBvyYA3ioes76S0NsIuao
+         nrK7AOk2ff2X9MTFT8v5l2gNMFwLHSEQSKWi6VAKZ1xUVef/S6zud63m5CLDo1SmsjnZ
+         O/tK+vb0xn1GU80qm7m6H2Sj18c6hkZZXrlkMvU6ZS9HxoROZHnkxj7irt67HMUmWHjZ
+         1CcFRHHfkxNIEtToR272hXYX4cgVOiO1WihRTRsDVR8imT885kauMf3Kia/CDMx9Q5uD
+         pRmObH1bCxRBQR4oDUBt3rEaOa1DbtOPvHkxCeEDHVKwWJ0TE9LUy5E8S1j26epUWApa
+         I3cg==
+X-Gm-Message-State: AOAM533sXe4R8sx+44UnJCAHypKmttfa9mSOxxgehxMC5vQubiupNEJ4
+        +E2KP3v5PiDJ/OaL5ABPXhhxm58w
+X-Google-Smtp-Source: ABdhPJwIHwZbtDzrrkI6X6CYF0aYFzM9eU5acE44LyeiwdNt+9wuEMC8oGiskmYOBKVFbcAlxv47rg==
+X-Received: by 2002:a2e:8747:: with SMTP id q7mr1973693ljj.459.1591193054336;
+        Wed, 03 Jun 2020 07:04:14 -0700 (PDT)
+Received: from [192.168.2.145] (109-252-173-94.dynamic.spd-mgts.ru. [109.252.173.94])
+        by smtp.googlemail.com with ESMTPSA id a15sm489634ljn.105.2020.06.03.07.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 03 Jun 2020 07:04:13 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clk: tegra: Always program PLL_E when enabled
 To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: tegra: Always program PLL_E when enabled
-Message-ID: <20200603131335.GA3597@Red>
+        LABBE Corentin <clabbe@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 References: <20200603111923.3545261-1-thierry.reding@gmail.com>
  <20200603111923.3545261-2-thierry.reding@gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0433a4b9-f5a4-e92f-7101-cbc4e1e6ef8d@gmail.com>
+Date:   Wed, 3 Jun 2020 17:04:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 In-Reply-To: <20200603111923.3545261-2-thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 03, 2020 at 01:19:23PM +0200, Thierry Reding wrote:
+03.06.2020 14:19, Thierry Reding пишет:
 > From: Thierry Reding <treding@nvidia.com>
 > 
 > Commit bff1cef5f23a ("clk: tegra: Don't enable already enabled PLLs")
@@ -115,10 +121,6 @@ On Wed, Jun 03, 2020 at 01:19:23PM +0200, Thierry Reding wrote:
 >  	input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
 >  
 >  	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
-> -- 
-> 2.24.1
 > 
 
-Tested-by: Corentin Labbe <clabbe@baylibre.com>
-
-Thanks
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
