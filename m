@@ -1,148 +1,149 @@
-Return-Path: <SRS0=BrPq=7P=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0195C433E2
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 23:33:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D5C433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 03:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9ECC520738
-	for <linux-clk@archiver.kernel.org>; Tue,  2 Jun 2020 23:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC19620738
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 03:10:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JKBZK0fK"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ONIB8cm8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726223AbgFBXdC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 2 Jun 2020 19:33:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58760 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727898AbgFBXdC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 2 Jun 2020 19:33:02 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 16980C08C5C2
-        for <linux-clk@vger.kernel.org>; Tue,  2 Jun 2020 16:33:02 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id d128so115983wmc.1
-        for <linux-clk@vger.kernel.org>; Tue, 02 Jun 2020 16:33:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gRIfKnJl6SPT0TJEscdrNR/IF4u0o0KTS5V3RmcEUyM=;
-        b=JKBZK0fKK1R/SWy7yxMUC8suZIyxultiSmdoxR3UvAqPTsEh9pJ12gIrHrzxSaP/wJ
-         1KwHQ4uoqdDgRKP0rUf2ngjWH7KZegwN3bN3V0kq9BXoNNPADqqSu7p+CrNekbPkRtfT
-         XY2cvpv2j70n9V+knYIMoo6y+UfAxd1/go08NJBEzjSHP9N5MB0RJKmI28BhLy7XlwqM
-         lCJxePHePQ8cjXxRuURh2oe5D/XWTn2F/3MKpL6fOZbesn/sVSh3daVKWyOccvCXi45v
-         Iu9yNec0gWwQRQBwywqYhtf4mEyXK3s/RT4q/DGWc/HUW/7/sM2ur/sD8LjJgaMuomWc
-         LLwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gRIfKnJl6SPT0TJEscdrNR/IF4u0o0KTS5V3RmcEUyM=;
-        b=DCFUjHhih7I+rhcnmH98PdxMQhBME24z313hDVYEFr/jjqCtHW7LC5HMl168bFGJLl
-         Mb1hdC1bfESst/8oQ87CDArzd4JtX+QxpzCUpQ4fisxWRqcETLtiuvP4jbUgHuabRvuQ
-         sZxlz4JR96i4B6Na6umzCbdw3/Hy+4HXKfc1HSdvq6TiyNTqUhcSBxV8PaykhKEDq2sn
-         eifoyMDF5TspUphU7gk/I9utpJXEOsuaq/idtp/W7XwAtMtPy/OqvCgaFTsqRvwC6sZv
-         qlTTfR97/di/knM6k4NivpxYJ7hm05KjanLshwop03eAiKZvRt7JX0RUDMX9mm2iWVZt
-         l7SQ==
-X-Gm-Message-State: AOAM533567jE11aXHn6KUTHY7bWZuIMXVbeO/c579fxn/WqtqQ7l3yYy
-        eV0Z4AQ5srUU6j0eNome+Xm1ZNr89qE=
-X-Google-Smtp-Source: ABdhPJwcp1KiPxegia0Y7JYvV9kaPCj1e5qD1uO6/BUPm79pbtxCR2NUJxnMNO9b3KYzZzZvZw3CLg==
-X-Received: by 2002:a1c:5987:: with SMTP id n129mr5999760wmb.60.1591140780694;
-        Tue, 02 Jun 2020 16:33:00 -0700 (PDT)
-Received: from [192.168.0.38] ([176.61.57.127])
-        by smtp.gmail.com with ESMTPSA id l18sm418067wmj.22.2020.06.02.16.32.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 02 Jun 2020 16:33:00 -0700 (PDT)
-Subject: Re: [PATCH 1/4] drivers: clk: qcom: Add msm8992 GCC driver
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200531174612.260113-1-konradybcio@gmail.com>
- <20200531174612.260113-2-konradybcio@gmail.com>
-From:   Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Message-ID: <7e618280-ecb8-cf1a-5243-737e56278662@linaro.org>
-Date:   Wed, 3 Jun 2020 00:33:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.5.0
-MIME-Version: 1.0
-In-Reply-To: <20200531174612.260113-2-konradybcio@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S1725876AbgFCDKa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 2 Jun 2020 23:10:30 -0400
+Received: from mail-db8eur05on2072.outbound.protection.outlook.com ([40.107.20.72]:14304
+        "EHLO EUR05-DB8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725780AbgFCDKa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 2 Jun 2020 23:10:30 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VsWwH8+/3pcssC2jGUMqjibiGkhPBkPsEHBmMLrLQ3nSZvBP9TnrB5AP7o6ILx1yMxozMbh1x7qfU0yyQaFNmFnojNVWee/aFQsbvk5RaUI2EvLxtNOdEPEfYo0Q+jtDNNW5W4YRoDLYFA5LHGeH25YQbx/9Vy1+sksgXAi1BOZ0BoDb0cTOs7MLIeW/bEvtBOxZen9kdl5sOPrRFtGL1ffHZVRgRUVnGHaS0hIPAmXAzROw3fYX7Fh/JuzBkgxPzvBPQgJ42ZQnzx3YNGSe60IZAXBQ5jcT0Hy7SSoEVyQu294HsSnQ5JkEq2uOWv0vHazgvDtYiqPTmTB47Tqd2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OaacibbE2lJDFxGLIyaKuAdMHmp7SHzDFyr2oUF8GoQ=;
+ b=XqfYC5qySbjYZqL2XGy8o5tNHG2+SGItmu5umxz+faVdDRJlopYSqJ+Qcwj7kWn+bKge9B9gBOEceJzBp/05x483+yOoITqMnjqEwIS8c3nvdNCcuEffpZXxObRHt2v5kVL78Lw+DJJ5nmoQADmiNIkyiNp9tUKeOB19XooeUUMlJqYujj2hstXXCXpOK2Vsdsp7VdGTyEupqN3sbHvstCdjwP17e3f152mEMbC4q1EKMfV/Y4NsethBSavPdCcfGxXdSZ5LbVjdc+R5ql8Fre8nT8ZIFdHehudbHRUvuq3anMHNsdZmAKOovqktjBdsukbKmaE0pZBZeOc665QZ4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OaacibbE2lJDFxGLIyaKuAdMHmp7SHzDFyr2oUF8GoQ=;
+ b=ONIB8cm8KpqwsDt2CfWVhxI0l0HUiHyD/KY9qT2YwB9ma1Us5S6gB+YqD3EPTcLtSZ2A5g+fTSy8N4qNbfJTYmi8l1d6mtXd0HpsHs7KTUuk54rMxypElNfbHB0MR2XhV8UwDfausE+dLyo/+/itEhoNgEzBykkmyj9Rkq+3HGg=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0402MB2886.eurprd04.prod.outlook.com (2603:10a6:4:97::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3045.19; Wed, 3 Jun
+ 2020 03:10:26 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::d17b:d767:19c3:b871%6]) with mapi id 15.20.3066.018; Wed, 3 Jun 2020
+ 03:10:26 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux@rempel-privat.de" <linux@rempel-privat.de>,
+        "jaswinder.singh@linaro.org" <jaswinder.singh@linaro.org>
+CC:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH V3 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
+Thread-Topic: [PATCH V3 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
+Thread-Index: AQHWN+7rKaBs4BAoiEu6e8UDHht806jGOLUQ
+Date:   Wed, 3 Jun 2020 03:10:26 +0000
+Message-ID: <DB6PR0402MB2760B88C0C1519203DE49A0E88880@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <1590999602-29482-1-git-send-email-peng.fan@nxp.com>
+ <1590999602-29482-2-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1590999602-29482-2-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: nxp.com; dkim=none (message not signed)
+ header.d=none;nxp.com; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: fa2bea13-0d5c-41b4-9bd5-08d8076ba9c6
+x-ms-traffictypediagnostic: DB6PR0402MB2886:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR0402MB2886596288BCCAACC4AFF62788880@DB6PR0402MB2886.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 04238CD941
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GYXbeSpllnmHvmqo0pb9I/wZWn8jHu6+2figSL+s0EIswnj2rgBVZPhOgdwloiz2OQJwBmjUWIZRSCnPDEIrBRxRtl+cMziQkwZkw2L23PXCMo11pL8jkgkxQem2hQ/hGDauRyHSUlQ9LdQFYAwOKlFKj6dw17RiaQlGTDmaUqHwAXq6jpdm4qBurl6xNDcMdSj810i2/TWHBKBHx1uW8UOFooG8ESYaraE8hqfONYjsdOW+Jxw79JpKH4m9VFlVYOrBzoIDGSmSY7etDil1CuMP8Q5ohGFxign+USZXHNIchHEAXXuUBP+D7L9UqLDaOVGjY0XFfNJ4WgPKVnFHNgfxE56hEzTUlgaltjEp+k+sQ/MdT19nB7LZccv5spEfKeWYmfHgp6oP1CMwul0xwRVU+sIlAoWMz5R/LtiUnkqkz7uE/XJs4W32M4aUdiRbvFGb/yY546POZHIGE9Pyhg==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(52536014)(186003)(2906002)(33656002)(4326008)(44832011)(7416002)(15650500001)(7696005)(966005)(8936002)(8676002)(26005)(5660300002)(54906003)(110136005)(316002)(478600001)(6506007)(66946007)(76116006)(83380400001)(9686003)(64756008)(55016002)(66476007)(86362001)(71200400001)(66556008)(66446008)(15585785002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: MhFTtc/maOkcxzKwB3xxmNu3r4B0J8+HoOEGfz2t4B1PGMgQeimQNV5jAqEVBSqLoS3SDR2pqaWlNrhZaMofe/HA+Tvd91Bf6twYUjX5Q/LQwSMxvRLJzEU/eUWBwG94CjrKuxLfBMq0MeQwMLhlAfAvhsDLno1HwqQbZ0Lfiv6pvsPi3JlDMvMEgViD5MT0C/Y/R9JvRUqTldMfFvAkYc8dggdpMd4ChQ4XhAvMLTCLJQWeW2kiCi1RUMY6kqR8ubnok4gwHUBJxwHyMORbSYRrEQObor/VVE7rhl7fuuq3rib8Puz2R3BTI+Ud6nuXRxjMvY5y3L7rND5RKJEf2RTnG8XiiDNvQHBNIavBstH2IhsO4AeAC/YQCglScoGY5RrdcR8ZTjbvpHqmk18zdbUv3Dl6Vp3rt61fgeyljeGtOnk3y6HsbUHk7hvxTFSl30AlofgzFlX0UDQ79nllZfzMEDD3c7s5BYAhoDjkWWfy9FiGB/3nSYB9b3n/E+RN
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fa2bea13-0d5c-41b4-9bd5-08d8076ba9c6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Jun 2020 03:10:26.3126
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AqHHuhqy1klS5oRBfihilKEz0Pb3Or6bfMBherm7aT9YSlNOaFnADCSawpzNMv2yehxQ1Gpyy4+rpN2ldgJT8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2886
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31/05/2020 18:46, Konrad Dybcio wrote:
+> Subject: [PATCH V3 1/3] dt-bindings: mailbox: imx-mu: support i.MX8M
 
-> +static struct clk_fixed_factor xo = {
-> +	.mult = 1,
-> +	.div = 1,
-> +	.hw.init = &(struct clk_init_data)
-> +	{
-> +		.name = "xo",
-> +		.parent_names = (const char *[]) { "xo_board" },
-> +		.num_parents = 1,
-> +		.ops = &clk_fixed_factor_ops,
-> +	},
-> +};
+I'll drop this patch for yaml update, since https://lkml.org/lkml/2020/6/1/=
+370
+includes imx8mq/mm/n/p.
 
-I think you can drop that, and use the DTS definition.
+Thanks,
+Peng.
 
-xo_board: xo_board {
-     compatible = "fixed-clock";
-     #clock-cells = <0>;
-     clock-frequency = <19200000>;
-};
-
-sleep_clk: sleep_clk {
-     compatible = "fixed-clock";
-     #clock-cells = <0>;
-     clock-frequency = <32768>;
-};
-
-clock_gcc: clock-controller@fc400000 {
-     compatible = "qcom,gcc-msm8994";
-     #clock-cells = <1>;
-     #reset-cells = <1>;
-     #power-domain-cells = <1>;
-     reg = <0xfc400000 0x2000>;
-
-+    clock-names = "xo",
-+                  "sleep_clk";
-+    clocks = <&xo_board>,
-+             <&sleep_clk>;
-
-};
-
-
-> +static int gcc_msm8992_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct clk *clk;
-> +
-> +	clk = devm_clk_register(dev, &xo.hw);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-
-You should drop this too.
-
-
-> +MODULE_ALIAS("platform:gcc-msm8992");
-
-and that.
-
----
-bod
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Add i.MX8MQ/M/N/P compatible string to support i.MX8M SoCs
+>=20
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/mailbox/fsl,mu.txt | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> index 26b7a88c2fea..906377acf2cd 100644
+> --- a/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> +++ b/Documentation/devicetree/bindings/mailbox/fsl,mu.txt
+> @@ -18,7 +18,8 @@ Messaging Unit Device Node:
+>  Required properties:
+>  -------------------
+>  - compatible :	should be "fsl,<chip>-mu", the supported chips include
+> -		imx6sx, imx7s, imx8qxp, imx8qm.
+> +		imx6sx, imx7s, imx8qxp, imx8qm, imx8mq, imx8mm, imx8mn,
+> +		imx8mp.
+>  		The "fsl,imx6sx-mu" compatible is seen as generic and should
+>  		be included together with SoC specific compatible.
+>  		There is a version 1.0 MU on imx7ulp, use "fsl,imx7ulp-mu"
+> --
+> 2.16.4
 
