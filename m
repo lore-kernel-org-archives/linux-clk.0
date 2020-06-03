@@ -2,100 +2,156 @@ Return-Path: <SRS0=Wk/U=7Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D97DC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 05:31:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75269C433E1
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 09:17:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A739206E6
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 05:31:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591162319;
-	bh=jcNjRebtGEGF7OHTOpZIQrFoXxBn7By/a9J0O9eUj+Y=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=2gLRyvZMNJCTR6xs1PqkRyzlirDQD4wDoh5A5ay1/bEDmxo2T3uwpMyFIoqY8bXG9
-	 8zA6SkRLDUaHykNcRyQJfFoF1SZYhVuCNAkhh+wOyBCnXkc+1rfGhP9F9SQwfLuyaI
-	 fC9/7tCT2Mr+dcuzFhU4iv6mKfvm4VBLlr338b18=
+	by mail.kernel.org (Postfix) with ESMTP id 56A5F2068D
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 09:17:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WvfWywp4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725828AbgFCFb6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jun 2020 01:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725275AbgFCFb6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 3 Jun 2020 01:31:58 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA8C72065C;
-        Wed,  3 Jun 2020 05:31:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591162317;
-        bh=jcNjRebtGEGF7OHTOpZIQrFoXxBn7By/a9J0O9eUj+Y=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=wAMWMMwCHBjbm/o3TC6OfFpQGJsCZZb5Q9kmmX2Jftvzfx2A0ID7ocYrScjo2smV8
-         TWNvBd/0LvLPifoc7OZqyCevCDo/BVuUISmHRDUV7cM/3QtHO9PEGnebkvZiRI44kf
-         875TE2CDZ3ATQ94tpu/lkC2eilbj5HPgA1y0DV2U=
-Content-Type: text/plain; charset="utf-8"
+        id S1725854AbgFCJRs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 05:17:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36032 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725355AbgFCJRr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 05:17:47 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AF8CC05BD43;
+        Wed,  3 Jun 2020 02:17:46 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id k22so1415138qtm.6;
+        Wed, 03 Jun 2020 02:17:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=84iaa6ox5weH7kefZdUhLMHC+fH+BOKw3QcA2B/VmwY=;
+        b=WvfWywp49Q714kxln+0+02WSqRP8wSpnNGiuDnpd+unfvOxdjThdcruD9b5rvKrQ9A
+         KUvvsDPLb88ujZNbNSZcZ30zZNYNilcRuzvUTYZy9eDBQ4ToL82B9FHGIxoltgg1SdqO
+         NEwvXzSadMFQwW4Am8pVQHo133JHkgZASzQNipoTowtHlZ0JWxcWgfSly0GKM0u8zid1
+         unSgCpNmme60GsRbMy3tCfs7/gyljmFtX/IMnx+mouQJY8KPUKO0twYUjo767QuWpWbZ
+         LnhQI8aFMQfHZqo6TYU5Etz0LKH8LcaawyYrRsFfXUh4k5DHPjDzitGGpj0usXwbm08G
+         pcng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=84iaa6ox5weH7kefZdUhLMHC+fH+BOKw3QcA2B/VmwY=;
+        b=t/xWeGX7WCQ+kq8y8dEckuTz7sTqqbKWi+ghucN0U2kx/J2w55xoYyZuc8nydfMynA
+         /CcmetP+E3dFghbrmniP8bsD/PknN7Y/2XCMJt4lplXOnqGJp5IZFporxqV23hVGDamr
+         LRl4p0b/ooi4mL4+sIJBNwsVLT4o1cg2R7s4VrweSPFydmOEE4TipsBCdEdztRBdytfW
+         pT3tZjT+mms7Qb0EsYT5oC16JwpjAntlSc3iG7d3SoAlqZXNrFdE5uDr3Z/4q+9Zk7Qn
+         OYFQk20IE20WuTd6H6XqWvJgLaaKC5ydq7yR807dRaKKQqrxcyvtzy6yXazoDB1I1QjB
+         AZJw==
+X-Gm-Message-State: AOAM533AbxvXPxej0fmqxh86GekM+Nk5K/DhmzgJa2AjJaiiU36fZM/i
+        Y0X4nartEEuupqd+FVKAu3Zx44QEMf6WWkwXxFY=
+X-Google-Smtp-Source: ABdhPJzTpwCjvdBNmr/2AurTsBqmgDRRKdUKkL/Y4n9mpC9/kMnCGqC9klUkvGW1xqFqbxX66ajpJHlxLVYO6sbk4Qc=
+X-Received: by 2002:ac8:260b:: with SMTP id u11mr31717479qtu.380.1591175865574;
+ Wed, 03 Jun 2020 02:17:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4266555a-5e4f-4340-1b3c-487a70805751@codeaurora.org>
-References: <1590582292-13314-1-git-send-email-sivaprak@codeaurora.org> <1590582292-13314-5-git-send-email-sivaprak@codeaurora.org> <159063116486.69627.5280506237179820811@swboyd.mtv.corp.google.com> <824cd7bb-0971-d387-4b78-75c36ddf2f66@codeaurora.org> <159104019638.69627.9161269856470136421@swboyd.mtv.corp.google.com> <4266555a-5e4f-4340-1b3c-487a70805751@codeaurora.org>
-Subject: Re: [PATCH V6 4/5] clk: qcom: Add ipq6018 apss clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-Date:   Tue, 02 Jun 2020 22:31:56 -0700
-Message-ID: <159116231690.69627.14045441534011952150@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+References: <20200408160044.2550437-1-arnd@arndb.de>
+In-Reply-To: <20200408160044.2550437-1-arnd@arndb.de>
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+Date:   Wed, 3 Jun 2020 17:17:34 +0800
+Message-ID: <CABOV4+WerpJqsy0-uBPBZfpnDaPn56fn0Zvv1aMUJJSjEqGhAQ@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] clk: sprd: fix compile-testing
+To:     Arnd Bergmann <arnd@arndb.de>, sboyd@kernel.org
+Cc:     catalin.marinas@arm.com, will@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-kernel@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-06-02 03:47:20)
->=20
-> On 6/2/2020 1:06 AM, Stephen Boyd wrote:
-> > Quoting Sivaprakash Murugesan (2020-06-01 05:41:15)
-> >> On 5/28/2020 7:29 AM, Stephen Boyd wrote:
-> >>> Quoting Sivaprakash Murugesan (2020-05-27 05:24:51)
-> >>>> diff --git a/drivers/clk/qcom/apss-ipq6018.c b/drivers/clk/qcom/apss=
--ipq6018.c
-> >>>> new file mode 100644
-> >>>> index 0000000..004f7e1
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/clk/qcom/apss-ipq6018.c
-> >>>> @@ -0,0 +1,106 @@
-> >>>> +       P_XO,
-> >>>> +       P_APSS_PLL_EARLY,
-> >>>> +};
-> >>>> +
-> >>>> +static const struct clk_parent_data parents_apcs_alias0_clk_src[] =
-=3D {
-> >>>> +       { .fw_name =3D "xo" },
-> >>>> +       { .fw_name =3D "pll" },
-> >>> This pll clk is not described in the binding. Please add it there.
-> >> Sorry I did not get this, this PLL is not directly defined in this
-> >> driver and it comes
-> >>
-> >> from dts. do you still want to describe it in binding?
-> >>
-> > Yes, there should be a clock-names property for "pll" and a clocks
-> > property in the binding document. I didn't see that.
->=20
-> These are defined in
->=20
-> https://lkml.org/lkml/2020/5/27/658and
->=20
-> https://lkml.org/lkml/2020/5/27/659
->=20
-> it has been defined as part of mailbox binding, since this driver does
->=20
-> not have a dts node and it is child of apcs mailbox driver.
->=20
+On Thu, Apr 9, 2020 at 2:57 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> I got a build failure with CONFIG_ARCH_SPRD=m when the
+> main portion of the clock driver failed to get linked into
+> the kernel:
+>
+> ERROR: modpost: "sprd_pll_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_comp_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_clk_probe" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_clk_regmap_init" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
+> ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+> ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+> ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
+>
+> This is a combination of two trivial bugs:
+>
+> - A platform should not be 'tristate', it should be a 'bool' symbol
+>   like the other platforms, if only for consistency, and to avoid
+>   surprises like this one.
+>
+> - The clk Makefile does not traverse into the sprd subdirectory
+>   if the platform is disabled but the drivers are enabled for
+>   compile-testing.
+>
+> Fixing either of the two would be sufficient to address the link failure,
+> but for correctness, both need to be changed.
+>
+> Fixes: 2b1b799d7630 ("arm64: change ARCH_SPRD Kconfig to tristate")
+> Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Ah alright. Sounds good.
+Hi,
+
+This patch seems not been applied to next branch? I haven't seen it on
+linux-next.
+Arnd, can you please pick it to your tree.
+In case you need my ack:
+Acked-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+
+Thanks,
+Chunyan
+
+> ---
+>  arch/arm64/Kconfig.platforms | 2 +-
+>  drivers/clk/Makefile         | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 55d70cfe0f9e..3c7e310fd8bf 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -248,7 +248,7 @@ config ARCH_TEGRA
+>           This enables support for the NVIDIA Tegra SoC family.
+>
+>  config ARCH_SPRD
+> -       tristate "Spreadtrum SoC platform"
+> +       bool "Spreadtrum SoC platform"
+>         help
+>           Support for Spreadtrum ARM based SoCs
+>
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f4169cc2fd31..60e811d3f226 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -105,7 +105,7 @@ obj-$(CONFIG_CLK_SIFIVE)            += sifive/
+>  obj-$(CONFIG_ARCH_SIRF)                        += sirf/
+>  obj-$(CONFIG_ARCH_SOCFPGA)             += socfpga/
+>  obj-$(CONFIG_PLAT_SPEAR)               += spear/
+> -obj-$(CONFIG_ARCH_SPRD)                        += sprd/
+> +obj-y                                  += sprd/
+>  obj-$(CONFIG_ARCH_STI)                 += st/
+>  obj-$(CONFIG_ARCH_STRATIX10)           += socfpga/
+>  obj-$(CONFIG_ARCH_SUNXI)               += sunxi/
+> --
+> 2.26.0
+>
