@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B8CC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E86F8C433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8F98F207D0
-	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3BC4207ED
+	for <linux-clk@archiver.kernel.org>; Wed,  3 Jun 2020 23:32:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fiQwobOm"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BLpfxw/6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbgFCXc1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 3 Jun 2020 19:32:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55644 "EHLO
+        id S1726762AbgFCXcg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 3 Jun 2020 19:32:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbgFCXcX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 19:32:23 -0400
-Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 833F2C08C5C2
-        for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2020 16:32:19 -0700 (PDT)
-Received: by mail-pg1-x541.google.com with SMTP id r10so2654686pgv.8
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2020 16:32:19 -0700 (PDT)
+        with ESMTP id S1726604AbgFCXc1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 3 Jun 2020 19:32:27 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A36FC0085D0
+        for <linux-clk@vger.kernel.org>; Wed,  3 Jun 2020 16:32:21 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id n9so1386229plk.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jun 2020 16:32:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OzsXBVjaZ9OyhsxAhNYMGGdoHV1Ey3EdXUcZrl9vzVM=;
-        b=fiQwobOmB8JfoctwPcv9w7of7+WQd9TYcia/JYyZCbsrU9Y8/1P+jBMjyrycCzGPks
-         k3E6rjY6DJsSHcxaDq1Tu7Q/DfBMxQ8rMeh/wfYcOaVB5kbniYqtcSsHt+OsYLHdKBZx
-         t2PGOxXperAYxdbLB/SYYU6TMLn1K13kfox0Q=
+        bh=AV3zPGZvUQ01fJNeRdN9RcESkWzhMr4mEDUODLN9pLA=;
+        b=BLpfxw/6wXWpxKYLlCAZ21WRkm9IiS+h8QcGOpAouQszh1iMLWmw9T4KLc9TZj8hYc
+         dx6tovtKtkGDVrQF1aoFfpozdX8eHpFDTKu0YVHCTw220bEnL7QHVusBdzlPQyI7mtxq
+         CBiuNg7P/T3Joe2o1yRIOs+RMoUmvb0p/GaJk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OzsXBVjaZ9OyhsxAhNYMGGdoHV1Ey3EdXUcZrl9vzVM=;
-        b=tEpOgzkOF87Rm1j/FciQPS0Ph45IAKJiUCC9QXa+mVg7/Tq5hyhLZqzGV7snMlKG5e
-         WxuR0pp+1Uan/mm+a1nL/MRY4VNzeBhmWDtyFqXhHU3uy25oS4ta+hnKe3IhmoeeU4Yi
-         lITnUB35q9hBWJ9GtCyZ7/PriXbuYVKRVuEAKJKBPD5fMZC0qIjA3f/TMbySm4VBbSLo
-         XDxbuPn36NkpDcSVAsFUpPxWnCb4jf5kTdF/H+vXx88sFnfz/fRU65hrdwLcgPNlUFs1
-         73e4QGZVLf1swi1p/+qXsBriyiyJFj/Pd4imWNpyJZu2ATiu7pNQ6zCiNpDDJWvRwcYS
-         q5Jg==
-X-Gm-Message-State: AOAM531KgMcZzhFuK1emNL6KOlYrlwxOEL5rg3V7PVicMUZaAYkKYUdq
-        haDwaEb3/OYr0hK+SdMj5B/B0g==
-X-Google-Smtp-Source: ABdhPJx+2U9hKaJOBj6eBoL3ylJxwEvHjFbKnopLLfUC+crlAi7qwt10Oa3/8CNVIO6wXkejTT/bbA==
-X-Received: by 2002:a62:27c6:: with SMTP id n189mr1466796pfn.277.1591227139068;
-        Wed, 03 Jun 2020 16:32:19 -0700 (PDT)
+        bh=AV3zPGZvUQ01fJNeRdN9RcESkWzhMr4mEDUODLN9pLA=;
+        b=bNguLCshtXyXWsmPC7KNSPT3y4ZbwOEWExA+T2lckSOqxC9KRcHPrk41AooRyVMlgG
+         LCrZq0XYkxlUF5KEpCjfIfTWGISAV0ibdK/39qQGIw5S7ELAvuAR4ycIp7SqY1z5RcVe
+         T87SF6mdR3NbrGAzMC6SUeDaJDpw3hIaaSOqBF1dcFOuMlwV0bf6c1hxo/gSLl0bDYEj
+         GGRPsU35yL6JJkJULLdHWzCNAp+SvZf/uciiml30YpBHVuzHoeXSP4BnRL3jyS30zugl
+         Lcgzrgkhdtx1TKxPETl+M1sEB/mSeH6ed9Y4T0owS6gtU6s4DKrR82/M3IhpDa59ZVR7
+         Smsg==
+X-Gm-Message-State: AOAM531kNGncsNoilbDOHp0H0R4rviZmgFFcy4UjjzIy4VQ5KIQ/KaPD
+        D8i1xx+O0XmYrvVzoVVojYQ+IA==
+X-Google-Smtp-Source: ABdhPJwKQWXIp6h2GXr8CdJrjHWBz+VhwNoB6SucfRbGarsMlcrgSptDV/HFlzDMl3tG4M3PfRVvsQ==
+X-Received: by 2002:a17:90a:36aa:: with SMTP id t39mr2389819pjb.185.1591227140733;
+        Wed, 03 Jun 2020 16:32:20 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id x1sm2647707pfn.76.2020.06.03.16.32.15
+        by smtp.gmail.com with ESMTPSA id c123sm2738945pfb.102.2020.06.03.16.32.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 03 Jun 2020 16:32:16 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -67,13 +67,14 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-spi@vger.kernel.org,
         linux-mm@kvack.org, clang-built-linux@googlegroups.com
-Subject: [PATCH 08/10] checkpatch: Remove awareness of uninitialized_var() macro
-Date:   Wed,  3 Jun 2020 16:32:01 -0700
-Message-Id: <20200603233203.1695403-9-keescook@chromium.org>
+Subject: [PATCH 07/10] spi: davinci: Remove uninitialized_var() usage
+Date:   Wed,  3 Jun 2020 16:32:00 -0700
+Message-Id: <20200603233203.1695403-8-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200603233203.1695403-1-keescook@chromium.org>
 References: <20200603233203.1695403-1-keescook@chromium.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -81,13 +82,16 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Using uninitialized_var() is dangerous as it papers over real bugs[1]
-(or can in the future), and suppresses unrelated compiler warnings
-(e.g. "unused variable"). If the compiler thinks it is uninitialized,
-either simply initialize the variable or make compiler changes.
+(or can in the future), and suppresses unrelated compiler warnings (e.g.
+"unused variable"). If the compiler thinks it is uninitialized, either
+simply initialize the variable or make compiler changes. As a precursor
+to removing[2] this[3] macro[4], just remove this variable since it was
+actually unused:
 
-In preparation for removing[2] the[3] macro[4], effectively revert
-commit 16b7f3c89907 ("checkpatch: avoid warning about uninitialized_var()")
-and remove all remaining mentions of uninitialized_var().
+drivers/spi/spi-davinci.c: In function ‘davinci_spi_bufs’:
+drivers/spi/spi-davinci.c:579:11: warning: unused variable ‘rx_buf_count’ [-Wunused-variable]
+  579 |  unsigned rx_buf_count;
+      |           ^~~~~~~~~~~~
 
 [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
 [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
@@ -96,62 +100,21 @@ and remove all remaining mentions of uninitialized_var().
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- scripts/checkpatch.pl | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/spi/spi-davinci.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index b83be177edf0..e9f8146600d0 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -838,7 +838,6 @@ our $FuncArg = qr{$Typecast{0,1}($LvalOrFunc|$Constant|$String)};
- our $declaration_macros = qr{(?x:
- 	(?:$Storage\s+)?(?:[A-Z_][A-Z0-9]*_){0,2}(?:DEFINE|DECLARE)(?:_[A-Z0-9]+){1,6}\s*\(|
- 	(?:$Storage\s+)?[HLP]?LIST_HEAD\s*\(|
--	(?:$Storage\s+)?${Type}\s+uninitialized_var\s*\(|
- 	(?:SKCIPHER_REQUEST|SHASH_DESC|AHASH_REQUEST)_ON_STACK\s*\(
- )};
+diff --git a/drivers/spi/spi-davinci.c b/drivers/spi/spi-davinci.c
+index f71c497393a6..f50c0c79cbdf 100644
+--- a/drivers/spi/spi-davinci.c
++++ b/drivers/spi/spi-davinci.c
+@@ -576,7 +576,6 @@ static int davinci_spi_bufs(struct spi_device *spi, struct spi_transfer *t)
+ 	u32 errors = 0;
+ 	struct davinci_spi_config *spicfg;
+ 	struct davinci_spi_platform_data *pdata;
+-	unsigned uninitialized_var(rx_buf_count);
  
-@@ -4075,7 +4074,7 @@ sub process {
- 		}
- 
- # check for function declarations without arguments like "int foo()"
--		if ($line =~ /(\b$Type\s*$Ident)\s*\(\s*\)/) {
-+		if ($line =~ /(\b$Type\s+$Ident)\s*\(\s*\)/) {
- 			if (ERROR("FUNCTION_WITHOUT_ARGS",
- 				  "Bad function definition - $1() should probably be $1(void)\n" . $herecurr) &&
- 			    $fix) {
-@@ -6271,8 +6270,7 @@ sub process {
- 			if (defined $cond) {
- 				substr($s, 0, length($cond), '');
- 			}
--			if ($s =~ /^\s*;/ &&
--			    $function_name ne 'uninitialized_var')
-+			if ($s =~ /^\s*;/)
- 			{
- 				WARN("AVOID_EXTERNS",
- 				     "externs should be avoided in .c files\n" .  $herecurr);
-@@ -6291,17 +6289,13 @@ sub process {
- 		}
- 
- # check for function declarations that have arguments without identifier names
--# while avoiding uninitialized_var(x)
- 		if (defined $stat &&
--		    $stat =~ /^.\s*(?:extern\s+)?$Type\s*(?:($Ident)|\(\s*\*\s*$Ident\s*\))\s*\(\s*([^{]+)\s*\)\s*;/s &&
--		    (!defined($1) ||
--		     (defined($1) && $1 ne "uninitialized_var")) &&
--		     $2 ne "void") {
--			my $args = trim($2);
-+		    $stat =~ /^.\s*(?:extern\s+)?$Type\s*(?:$Ident|\(\s*\*\s*$Ident\s*\))\s*\(\s*([^{]+)\s*\)\s*;/s &&
-+		    $1 ne "void") {
-+			my $args = trim($1);
- 			while ($args =~ m/\s*($Type\s*(?:$Ident|\(\s*\*\s*$Ident?\s*\)\s*$balanced_parens)?)/g) {
- 				my $arg = trim($1);
--				if ($arg =~ /^$Type$/ &&
--					$arg !~ /enum\s+$Ident$/) {
-+				if ($arg =~ /^$Type$/ && $arg !~ /enum\s+$Ident$/) {
- 					WARN("FUNCTION_ARGUMENTS",
- 					     "function definition argument '$arg' should also have an identifier name\n" . $herecurr);
- 				}
+ 	dspi = spi_master_get_devdata(spi->master);
+ 	pdata = &dspi->pdata;
 -- 
 2.25.1
 
