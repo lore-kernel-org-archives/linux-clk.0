@@ -2,552 +2,281 @@ Return-Path: <SRS0=d3cq=7R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B6BC433DF
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94159C433E2
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6F8342075B
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZ3MoxFC"
+	by mail.kernel.org (Postfix) with ESMTP id 65949207D5
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:46:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1591267562;
+	bh=7HIqpsm0tm+2XExfq0AzdkL8CefjTuY4JD+t1WaHJ4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=V5tu7zbkS2UfZ0lVuGPXqkWItjnnDs6A2aLnduNcLRhwH4uOOdCFe3VlYbCUD382X
+	 uH+PdJ+fl5cD4GHESmmDT6ZXkDd9qQKILB93ANjBYH1C428OwCEEhuXoTQ4YlfBuu+
+	 fPgrAlutIy1p8isZPsyFvSoJHZVoe3BmSNuDAY7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728266AbgFDKav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Jun 2020 06:30:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44716 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728262AbgFDKau (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jun 2020 06:30:50 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DD9C03E97D
-        for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2020 03:30:50 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id q25so5066449wmj.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2020 03:30:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=jsVd11sIANIK7sfrmixWsGT0pUQUrSCmhUcuCBbqAfI=;
-        b=WZ3MoxFCN8BpLxg7Oectl+U3aKE83iMTMqSQoY/YWx+C+Kr2+umkWLr3yny9H21i9M
-         8IRjkdrpDB+xNIxO24ckU0cO5UjTsTdHIW4ntTYHpWpeV2aX7XanQgD8cwr/y2VvYA38
-         X0iItq80WY5oY6oKNOo7Tam8aFwOeVkGAjGyuMZgccTPLE+YlrWdmQ31e/UuYf7ym10n
-         4Rp65ve/blp1wiOEbUY59/0+6VMLi1AzIyXymp1OrI9LrS9wqkwv6UCcfPS6UzPjoVBH
-         a5vTDhJno9n9Kl/NAkQskDOm18pLD1FxArve8QqH8otq7/p8jOoIwJhpgNVk5XnFlsjw
-         ghvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=jsVd11sIANIK7sfrmixWsGT0pUQUrSCmhUcuCBbqAfI=;
-        b=FgbyGBfkEBrAKjAdK6jsZl4NvjtDjEU7WK4Cxad6P9SWzfcrm3s1V+S8hhIBn2HgMS
-         j/QHw9I2xH316eanR4mEfZBJwXtIGXc51oDqEu6GjU6X9adolpfRGb4UOBo5HApFjCVx
-         DTjnYaN6Pjzhv9A57i3Hlt2CS9epbDR39GjMSbqrceuT7txoNsI9hWr7BniDVH1tnN1h
-         NYGxBX8vcIWRHSx7XWmuAt/OWuImiaeMHDPCHNTuvJ1b36Zh8hWwyLOZen2odC96sUZ2
-         mKjnfC5JjQE3jhshAs7kiZXDEdCrJdNAdAr0mg1wgU7GV/BzpqaZAjCH949LJQ45RHJb
-         Bp4g==
-X-Gm-Message-State: AOAM532ZQOcOVC+Y8DqL02Xx9zYSiFAybgBj62clH9MlmSUZMAVNeAT5
-        kun37766WMkcSN3i0AJRlG15ryKbraZSxg==
-X-Google-Smtp-Source: ABdhPJwHRJ/ScTiU/qcEivX7zv/WD68KMVc9AXraBADlC42Qpl3pUSj0RWlWV21+1BNjnRaOgZ+cNg==
-X-Received: by 2002:a1c:9d96:: with SMTP id g144mr3288178wme.126.1591266648988;
-        Thu, 04 Jun 2020 03:30:48 -0700 (PDT)
-Received: from localhost.localdomain ([88.122.66.28])
-        by smtp.gmail.com with ESMTPSA id n19sm6510164wmi.33.2020.06.04.03.30.47
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jun 2020 03:30:48 -0700 (PDT)
-From:   Loic Poulain <loic.poulain@linaro.org>
-To:     sboyd@kernel.org, bjorn.andersson@linaro.org
-Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
-        Ilia Lin <ilialin@codeaurora.org>
-Subject: [PATCH v2 4/4] arch: arm64: dts: msm8996: Add opp and thermal
-Date:   Thu,  4 Jun 2020 12:35:27 +0200
-Message-Id: <1591266927-24976-5-git-send-email-loic.poulain@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
-References: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
+        id S1726050AbgFDKpy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jun 2020 06:45:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725854AbgFDKpx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 4 Jun 2020 06:45:53 -0400
+Received: from localhost (unknown [213.57.247.131])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0ADEF206A2;
+        Thu,  4 Jun 2020 10:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1591267552;
+        bh=7HIqpsm0tm+2XExfq0AzdkL8CefjTuY4JD+t1WaHJ4Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nXIxctdaDUfVJdM+aVx4FqqdFME3BCC7lIl7cnNWHBv+Ri7byDCS4FFYYUN6Ee9x6
+         Z1bV+VEf2rZESvfw5OOW4VO+j4l7ZmhyfBLlgMR7rWLCtPVrCC1bEr6rIYpehp+eNL
+         h2ZQ25FifK80ZDfBN33Btek9OiE549FI31YqnKcA=
+Date:   Thu, 4 Jun 2020 13:45:49 +0300
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-mm@kvack.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH 09/10] treewide: Remove uninitialized_var() usage
+Message-ID: <20200604104549.GC8834@unreal>
+References: <20200603233203.1695403-1-keescook@chromium.org>
+ <20200603233203.1695403-10-keescook@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200603233203.1695403-10-keescook@chromium.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
-Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 338 ++++++++++++++++++++++++++++++++--
- 1 file changed, 323 insertions(+), 15 deletions(-)
+On Wed, Jun 03, 2020 at 04:32:02PM -0700, Kees Cook wrote:
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings
+> (e.g. "unused variable"). If the compiler thinks it is uninitialized,
+> either simply initialize the variable or make compiler changes.
+>
+> I preparation for removing[2] the[3] macro[4], remove all remaining
+> needless uses with the following script:
+>
+> git grep '\buninitialized_var\b' | cut -d: -f1 | sort -u | \
+> 	xargs perl -pi -e \
+> 		's/\buninitialized_var\(([^\)]+)\)/\1/g;
+> 		 s:\s*/\* (GCC be quiet|to make compiler happy) \*/$::g;'
+>
+> drivers/video/fbdev/riva/riva_hw.c was manually tweaked to avoid
+> pathological white-space.
+>
+> No outstanding warnings were found building allmodconfig with GCC 9.3.0
+> for x86_64, i386, arm64, arm, powerpc, powerpc64le, s390x, mips, sparc64,
+> alpha, and m68k.
+>
+> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
+> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
+> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
+>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/arm/mach-sa1100/assabet.c                   |  2 +-
+>  arch/arm/mm/alignment.c                          |  2 +-
+>  arch/ia64/kernel/process.c                       |  2 +-
+>  arch/ia64/mm/discontig.c                         |  2 +-
+>  arch/ia64/mm/tlb.c                               |  2 +-
+>  arch/mips/lib/dump_tlb.c                         |  2 +-
+>  arch/mips/mm/init.c                              |  2 +-
+>  arch/mips/mm/tlb-r4k.c                           |  6 +++---
+>  arch/powerpc/kvm/book3s_64_mmu_radix.c           |  2 +-
+>  arch/powerpc/kvm/book3s_pr.c                     |  2 +-
+>  arch/powerpc/kvm/powerpc.c                       |  2 +-
+>  arch/powerpc/platforms/52xx/mpc52xx_pic.c        |  2 +-
+>  arch/s390/kernel/smp.c                           |  2 +-
+>  arch/x86/kernel/quirks.c                         | 10 +++++-----
+>  arch/x86/kvm/mmu/mmu.c                           |  2 +-
+>  arch/x86/kvm/mmu/paging_tmpl.h                   |  2 +-
+>  arch/x86/kvm/x86.c                               |  2 +-
+>  block/blk-merge.c                                |  2 +-
+>  drivers/acpi/acpi_pad.c                          |  2 +-
+>  drivers/ata/libata-scsi.c                        |  2 +-
+>  drivers/atm/zatm.c                               |  2 +-
+>  drivers/block/drbd/drbd_nl.c                     |  6 +++---
+>  drivers/block/rbd.c                              |  2 +-
+>  drivers/clk/clk-gate.c                           |  2 +-
+>  drivers/clk/spear/clk-vco-pll.c                  |  2 +-
+>  drivers/crypto/nx/nx-842-powernv.c               |  2 +-
+>  drivers/firewire/ohci.c                          | 14 +++++++-------
+>  drivers/gpu/drm/bridge/sil-sii8620.c             |  2 +-
+>  drivers/gpu/drm/drm_edid.c                       |  2 +-
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c          |  6 +++---
+>  drivers/gpu/drm/i915/display/intel_fbc.c         |  2 +-
+>  drivers/gpu/drm/i915/gt/intel_lrc.c              |  2 +-
+>  drivers/gpu/drm/i915/intel_uncore.c              |  2 +-
+>  drivers/gpu/drm/rockchip/dw-mipi-dsi-rockchip.c  |  4 ++--
+>  drivers/i2c/busses/i2c-rk3x.c                    |  2 +-
+>  drivers/ide/ide-acpi.c                           |  2 +-
+>  drivers/ide/ide-atapi.c                          |  2 +-
+>  drivers/ide/ide-io-std.c                         |  4 ++--
+>  drivers/ide/ide-io.c                             |  8 ++++----
+>  drivers/ide/ide-sysfs.c                          |  2 +-
+>  drivers/ide/umc8672.c                            |  2 +-
+>  drivers/idle/intel_idle.c                        |  2 +-
+>  drivers/infiniband/core/uverbs_cmd.c             |  4 ++--
+>  drivers/infiniband/hw/cxgb4/cm.c                 |  2 +-
+>  drivers/infiniband/hw/cxgb4/cq.c                 |  2 +-
+>  drivers/infiniband/hw/mlx4/qp.c                  |  6 +++---
+>  drivers/infiniband/hw/mlx5/cq.c                  |  6 +++---
+>  drivers/infiniband/hw/mlx5/devx.c                |  2 +-
+>  drivers/infiniband/hw/mlx5/qp.c                  |  2 +-
+>  drivers/infiniband/hw/mthca/mthca_qp.c           | 10 +++++-----
+>  drivers/infiniband/sw/siw/siw_qp_rx.c            |  2 +-
+>  drivers/input/serio/serio_raw.c                  |  2 +-
+>  drivers/input/touchscreen/sur40.c                |  2 +-
+>  drivers/iommu/intel-iommu.c                      |  2 +-
+>  drivers/md/dm-io.c                               |  2 +-
+>  drivers/md/dm-ioctl.c                            |  2 +-
+>  drivers/md/dm-snap-persistent.c                  |  2 +-
+>  drivers/md/dm-table.c                            |  2 +-
+>  drivers/md/dm-writecache.c                       |  2 +-
+>  drivers/md/raid5.c                               |  2 +-
+>  drivers/media/dvb-frontends/rtl2832.c            |  2 +-
+>  drivers/media/tuners/qt1010.c                    |  4 ++--
+>  drivers/media/usb/gspca/vicam.c                  |  2 +-
+>  drivers/media/usb/uvc/uvc_video.c                |  8 ++++----
+>  drivers/memstick/host/jmb38x_ms.c                |  2 +-
+>  drivers/memstick/host/tifm_ms.c                  |  2 +-
+>  drivers/mmc/host/sdhci.c                         |  2 +-
+>  drivers/mtd/nand/raw/nand_ecc.c                  |  2 +-
+>  drivers/mtd/nand/raw/s3c2410.c                   |  2 +-
+>  drivers/mtd/parsers/afs.c                        |  4 ++--
+>  drivers/mtd/ubi/eba.c                            |  2 +-
+>  drivers/net/can/janz-ican3.c                     |  2 +-
+>  drivers/net/ethernet/broadcom/bnx2.c             |  4 ++--
+>  .../net/ethernet/mellanox/mlx5/core/pagealloc.c  |  4 ++--
+>  drivers/net/ethernet/neterion/s2io.c             |  2 +-
+>  drivers/net/ethernet/qlogic/qla3xxx.c            |  2 +-
+>  drivers/net/ethernet/sun/cassini.c               |  2 +-
+>  drivers/net/ethernet/sun/niu.c                   |  6 +++---
+>  drivers/net/wan/z85230.c                         |  2 +-
+>  drivers/net/wireless/ath/ath10k/core.c           |  2 +-
+>  drivers/net/wireless/ath/ath6kl/init.c           |  2 +-
+>  drivers/net/wireless/ath/ath9k/init.c            |  2 +-
+>  drivers/net/wireless/broadcom/b43/debugfs.c      |  2 +-
+>  drivers/net/wireless/broadcom/b43/dma.c          |  2 +-
+>  drivers/net/wireless/broadcom/b43/lo.c           |  2 +-
+>  drivers/net/wireless/broadcom/b43/phy_n.c        |  2 +-
+>  drivers/net/wireless/broadcom/b43/xmit.c         | 12 ++++++------
+>  .../net/wireless/broadcom/b43legacy/debugfs.c    |  2 +-
+>  drivers/net/wireless/broadcom/b43legacy/main.c   |  2 +-
+>  drivers/net/wireless/intel/iwlegacy/3945.c       |  2 +-
+>  drivers/net/wireless/intel/iwlegacy/4965-mac.c   |  2 +-
+>  .../net/wireless/realtek/rtlwifi/rtl8192cu/hw.c  |  4 ++--
+>  drivers/pci/pcie/aer.c                           |  2 +-
+>  drivers/platform/x86/hdaps.c                     |  4 ++--
+>  drivers/scsi/dc395x.c                            |  2 +-
+>  drivers/scsi/pm8001/pm8001_hwi.c                 |  2 +-
+>  drivers/scsi/pm8001/pm80xx_hwi.c                 |  2 +-
+>  drivers/ssb/driver_chipcommon.c                  |  4 ++--
+>  drivers/tty/cyclades.c                           |  2 +-
+>  drivers/tty/isicom.c                             |  2 +-
+>  drivers/usb/musb/cppi_dma.c                      |  2 +-
+>  drivers/usb/storage/sddr55.c                     |  4 ++--
+>  drivers/vhost/net.c                              |  6 +++---
+>  drivers/video/fbdev/matrox/matroxfb_maven.c      |  6 +++---
+>  drivers/video/fbdev/pm3fb.c                      |  6 +++---
+>  drivers/video/fbdev/riva/riva_hw.c               |  3 +--
+>  drivers/virtio/virtio_ring.c                     |  6 +++---
+>  fs/afs/dir.c                                     |  2 +-
+>  fs/afs/security.c                                |  2 +-
+>  fs/dlm/netlink.c                                 |  2 +-
+>  fs/erofs/data.c                                  |  4 ++--
+>  fs/erofs/zdata.c                                 |  2 +-
+>  fs/f2fs/data.c                                   |  2 +-
+>  fs/fat/dir.c                                     |  2 +-
+>  fs/fuse/control.c                                |  4 ++--
+>  fs/fuse/cuse.c                                   |  2 +-
+>  fs/fuse/file.c                                   |  2 +-
+>  fs/gfs2/aops.c                                   |  2 +-
+>  fs/gfs2/bmap.c                                   |  2 +-
+>  fs/gfs2/lops.c                                   |  2 +-
+>  fs/hfsplus/unicode.c                             |  2 +-
+>  fs/isofs/namei.c                                 |  4 ++--
+>  fs/jffs2/erase.c                                 |  2 +-
+>  fs/nfsd/nfsctl.c                                 |  2 +-
+>  fs/ocfs2/alloc.c                                 |  4 ++--
+>  fs/ocfs2/dir.c                                   | 14 +++++++-------
+>  fs/ocfs2/extent_map.c                            |  4 ++--
+>  fs/ocfs2/namei.c                                 |  2 +-
+>  fs/ocfs2/refcounttree.c                          |  2 +-
+>  fs/ocfs2/xattr.c                                 |  2 +-
+>  fs/omfs/file.c                                   |  2 +-
+>  fs/overlayfs/copy_up.c                           |  4 ++--
+>  fs/ubifs/commit.c                                |  6 +++---
+>  fs/ubifs/dir.c                                   |  2 +-
+>  fs/ubifs/file.c                                  |  4 ++--
+>  fs/ubifs/journal.c                               |  4 ++--
+>  fs/ubifs/lpt.c                                   |  2 +-
+>  fs/ubifs/tnc.c                                   |  6 +++---
+>  fs/ubifs/tnc_misc.c                              |  4 ++--
+>  fs/udf/balloc.c                                  |  2 +-
+>  fs/xfs/xfs_bmap_util.c                           |  2 +-
+>  include/net/flow_offload.h                       |  2 +-
+>  kernel/async.c                                   |  4 ++--
+>  kernel/audit.c                                   |  2 +-
+>  kernel/debug/kdb/kdb_io.c                        |  2 +-
+>  kernel/dma/debug.c                               |  2 +-
+>  kernel/events/core.c                             |  2 +-
+>  kernel/events/uprobes.c                          |  2 +-
+>  kernel/exit.c                                    |  2 +-
+>  kernel/futex.c                                   | 14 +++++++-------
+>  kernel/locking/lockdep.c                         | 16 ++++++++--------
+>  kernel/trace/ring_buffer.c                       |  2 +-
+>  lib/radix-tree.c                                 |  2 +-
+>  lib/test_lockup.c                                |  2 +-
+>  mm/frontswap.c                                   |  2 +-
+>  mm/ksm.c                                         |  2 +-
+>  mm/memcontrol.c                                  |  2 +-
+>  mm/memory.c                                      |  2 +-
+>  mm/mempolicy.c                                   |  4 ++--
+>  mm/page_alloc.c                                  |  2 +-
+>  mm/percpu.c                                      |  2 +-
+>  mm/slub.c                                        |  4 ++--
+>  mm/swap.c                                        |  4 ++--
+>  net/dccp/options.c                               |  2 +-
+>  net/ipv4/netfilter/nf_socket_ipv4.c              |  6 +++---
+>  net/ipv6/ip6_flowlabel.c                         |  2 +-
+>  net/ipv6/netfilter/nf_socket_ipv6.c              |  2 +-
+>  net/netfilter/nf_conntrack_ftp.c                 |  2 +-
+>  net/netfilter/nfnetlink_log.c                    |  2 +-
+>  net/netfilter/nfnetlink_queue.c                  |  4 ++--
+>  net/sched/cls_flow.c                             |  2 +-
+>  net/sched/sch_cake.c                             |  2 +-
+>  net/sched/sch_cbq.c                              |  2 +-
+>  net/sched/sch_fq_codel.c                         |  2 +-
+>  net/sched/sch_fq_pie.c                           |  2 +-
+>  net/sched/sch_hfsc.c                             |  2 +-
+>  net/sched/sch_htb.c                              |  2 +-
+>  net/sched/sch_sfq.c                              |  2 +-
+>  net/sunrpc/svcsock.c                             |  4 ++--
+>  net/sunrpc/xprtsock.c                            | 10 +++++-----
+>  net/tls/tls_sw.c                                 |  2 +-
+>  sound/core/control_compat.c                      |  2 +-
+>  sound/isa/sb/sb16_csp.c                          |  2 +-
+>  sound/usb/endpoint.c                             |  2 +-
+>  184 files changed, 284 insertions(+), 285 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 98634d5..0f73efe 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -7,6 +7,7 @@
- #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/soc/qcom,apr.h>
-+#include <dt-bindings/thermal/thermal.h>
- 
- / {
- 	interrupt-parent = <&intc>;
-@@ -43,6 +44,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 			L2_0: l2-cache {
- 			      compatible = "cache";
-@@ -57,6 +64,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 0>;
-+			operating-points-v2 = <&cluster0_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_0>;
- 		};
- 
-@@ -67,6 +80,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 			L2_1: l2-cache {
- 			      compatible = "cache";
-@@ -81,6 +100,12 @@
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SLEEP_0>;
- 			capacity-dmips-mhz = <1024>;
-+			clocks = <&kryocc 1>;
-+			operating-points-v2 = <&cluster1_opp>;
-+			/* cooling options */
-+			cooling-min-level = <0>;
-+			cooling-max-level = <15>;
-+			#cooling-cells = <2>;
- 			next-level-cache = <&L2_1>;
- 		};
- 
-@@ -424,7 +449,7 @@
- 				bits = <1 4>;
- 			};
- 
--			gpu_speed_bin: gpu_speed_bin@133 {
-+			speedbin_efuse: speedbin@133 {
- 				reg = <0x133 0x1>;
- 				bits = <5 3>;
- 			};
-@@ -642,7 +667,7 @@
- 			power-domains = <&mmcc GPU_GDSC>;
- 			iommus = <&adreno_smmu 0>;
- 
--			nvmem-cells = <&gpu_speed_bin>;
-+			nvmem-cells = <&speedbin_efuse>;
- 			nvmem-cell-names = "speed_bin";
- 
- 			qcom,gpu-quirk-two-pass-use-wfi;
-@@ -1703,8 +1728,9 @@
- 				};
- 			};
- 		};
-+
- 		kryocc: clock-controller@6400000 {
--			compatible = "qcom,apcc-msm8996";
-+			compatible = "qcom,msm8996-apcc";
- 			reg = <0x06400000 0x90000>;
- 			#clock-cells = <1>;
- 		};
-@@ -2172,6 +2198,229 @@
- 	sound: sound {
- 	};
- 
-+	cluster0_opp: opp_table0 {
-+		compatible = "operating-points-v2-qcom-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		/* Nominal fmax for now */
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-422400000 {
-+			opp-hz = /bits/ 64 <  422400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-844800000 {
-+			opp-hz = /bits/ 64 <  844800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-960000000 {
-+			opp-hz = /bits/ 64 <  960000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1228800000 {
-+			opp-hz = /bits/ 64 < 1228800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1593600000 {
-+			opp-hz = /bits/ 64 < 1593600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
-+	cluster1_opp: opp_table1 {
-+		compatible = "operating-points-v2-qcom-cpu";
-+		nvmem-cells = <&speedbin_efuse>;
-+		opp-shared;
-+
-+		/* Nominal fmax for now */
-+
-+		opp-307200000 {
-+			opp-hz = /bits/ 64 <  307200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-403200000 {
-+			opp-hz = /bits/ 64 <  403200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-480000000 {
-+			opp-hz = /bits/ 64 <  480000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-556800000 {
-+			opp-hz = /bits/ 64 <  556800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-652800000 {
-+			opp-hz = /bits/ 64 <  652800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-729600000 {
-+			opp-hz = /bits/ 64 <  729600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-806400000 {
-+			opp-hz = /bits/ 64 <  806400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-883200000 {
-+			opp-hz = /bits/ 64 <  883200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-940800000 {
-+			opp-hz = /bits/ 64 <  940800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1036800000 {
-+			opp-hz = /bits/ 64 < 1036800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1113600000 {
-+			opp-hz = /bits/ 64 < 1113600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1190400000 {
-+			opp-hz = /bits/ 64 < 1190400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1248000000 {
-+			opp-hz = /bits/ 64 < 1248000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1324800000 {
-+			opp-hz = /bits/ 64 < 1324800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1401600000 {
-+			opp-hz = /bits/ 64 < 1401600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1478400000 {
-+			opp-hz = /bits/ 64 < 1478400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1555200000 {
-+			opp-hz = /bits/ 64 < 1555200000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1632000000 {
-+			opp-hz = /bits/ 64 < 1632000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1708800000 {
-+			opp-hz = /bits/ 64 < 1708800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1785600000 {
-+			opp-hz = /bits/ 64 < 1785600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1824000000 {
-+			opp-hz = /bits/ 64 < 1824000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1920000000 {
-+			opp-hz = /bits/ 64 < 1920000000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-1996800000 {
-+			opp-hz = /bits/ 64 < 1996800000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2073600000 {
-+			opp-hz = /bits/ 64 < 2073600000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+		opp-2150400000 {
-+			opp-hz = /bits/ 64 < 2150400000 >;
-+			opp-supported-hw = <0x77>;
-+			clock-latency-ns = <200000>;
-+		};
-+	};
-+
- 	thermal-zones {
- 		cpu0-thermal {
- 			polling-delay-passive = <250>;
-@@ -2180,18 +2429,33 @@
- 			thermal-sensors = <&tsens0 3>;
- 
- 			trips {
--				cpu0_alert0: trip-point@0 {
-+				cpu_alert0: cpu_alert0 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn0: cpu_warn0 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu0_crit: cpu_crit {
-+				cpu_crit0: cpu_crit0 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert0>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn0>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu1-thermal {
-@@ -2201,18 +2465,33 @@
- 			thermal-sensors = <&tsens0 5>;
- 
- 			trips {
--				cpu1_alert0: trip-point@0 {
-+				cpu_alert1: cpu_alert1 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn1: cpu_warn1 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu1_crit: cpu_crit {
-+				cpu_crit1: cpu_crit1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert1>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn1>;
-+					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu2-thermal {
-@@ -2222,18 +2501,32 @@
- 			thermal-sensors = <&tsens0 8>;
- 
- 			trips {
--				cpu2_alert0: trip-point@0 {
-+				cpu_alert2: cpu_alert2 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn2: cpu_warn2 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu2_crit: cpu_crit {
-+				cpu_crit2: cpu_crit2 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert2>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn2>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		cpu3-thermal {
-@@ -2243,18 +2536,33 @@
- 			thermal-sensors = <&tsens0 10>;
- 
- 			trips {
--				cpu3_alert0: trip-point@0 {
-+				cpu_alert3: cpu_alert3 {
- 					temperature = <75000>;
- 					hysteresis = <2000>;
-+					type = "active";
-+				};
-+				cpu_warn3: cpu_warn3 {
-+					temperature = <90000>;
-+					hysteresis = <2000>;
- 					type = "passive";
- 				};
--
--				cpu3_crit: cpu_crit {
-+				cpu_crit3: trip1 {
- 					temperature = <110000>;
- 					hysteresis = <2000>;
- 					type = "critical";
- 				};
- 			};
-+
-+			cooling-maps {
-+				map0 {
-+					trip = <&cpu_alert3>;
-+					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
-+				};
-+				map1 {
-+					trip = <&cpu_warn3>;
-+					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
-+				};
-+			};
- 		};
- 
- 		gpu-thermal-top {
--- 
-2.7.4
-
+Thanks,
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com> # drivers/infiniband and mlx4/mlx5
