@@ -2,99 +2,125 @@ Return-Path: <SRS0=d3cq=7R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BBCC433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 17:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0EFEC433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 17:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F3FB420772
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 17:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3D4B206DC
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 17:58:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dp1MW0oL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbgFDRwz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Jun 2020 13:52:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47206 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730055AbgFDRwz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 4 Jun 2020 13:52:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E54FEB145;
-        Thu,  4 Jun 2020 17:52:56 +0000 (UTC)
-Message-ID: <686a471d634ea8133225465ef56e87db0c268b08.camel@suse.de>
-Subject: Re: [PATCH v3 04/25] clk: bcm: rpi: Allow the driver to be probed
- by DT
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Date:   Thu, 04 Jun 2020 19:52:52 +0200
-In-Reply-To: <fa709f71b27aadf987685f7cae2a65cc3cef8e3d.1590594293.git-series.maxime@cerno.tech>
-References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech>
-         <fa709f71b27aadf987685f7cae2a65cc3cef8e3d.1590594293.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-5JNHvVCP8Vjojb354f3u"
-User-Agent: Evolution 3.36.2 
+        id S1730393AbgFDR6D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jun 2020 13:58:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57562 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730389AbgFDR6C (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jun 2020 13:58:02 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65DEBC08C5C6
+        for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2020 10:58:01 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id b27so6995454qka.4
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2020 10:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ylFM7xcrRPttXnSFsxxMsniM496bjo9TahOp0BQ4KWQ=;
+        b=dp1MW0oLsIVpf8P1GqlJ7ywKbTALgi380UyzwJhLZxxjLZbExXSS3+DNraBRJx+RxA
+         2YNRIqPWKCJwUAt2Ionyk91M424aXFCth771TTbwhKuAi/5z09C6/Wr39Wytw6IFYat4
+         ROGMU+gTfjKOfKx/KnMfK4lHl61/+H90NG+NU9ft1Ad329Ugd8oNWQRmnDyTDrH84VcG
+         NHqJ/pa7Z8WtA7tv5ssR9OBolcmhh/Z0Chu/DqhjQRZD68jbMjVitMLn9/18eeVfDBtl
+         W6iFo32dBc0/Xz9TBC1xS9lWFSwriSPTsiMKkjJI2/Fy1v0kJA0h8NiDLZa3m0zxOiRF
+         iMLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ylFM7xcrRPttXnSFsxxMsniM496bjo9TahOp0BQ4KWQ=;
+        b=aWf4LIGKCxZbg+CvwcDCMjQtO97WTBFfr9vL+p97O02x6JMztBm8QAQ19Kf5zJmZlD
+         Kyx8nFKS7Tu33INYkk05vuFJd4+qxxnnqksPehj/N1e4/3FH6hnx+jTN/RxKRQNAeUjK
+         9KugBleyg2j+MoVU+S1qLJy8s791XZxVrftqbxKA+eGj7MPkXDDkDwuAlT/1qwxNpgGV
+         tc7TLt4IlrbC9IEqWc0wwEYNgdilef2AUNYb6c45fWn9VOs/qyVBKm/ryPsKHvQFtzLM
+         gN+FvFSRKC90eksXFNr1GdjpwkOg6LQ61NhMo5YD/3JVQgf3YAdPHuAM6RBgU39MSwAN
+         1izg==
+X-Gm-Message-State: AOAM533na+a1GbGHlfUWS/THa0o1Afc6VrapG2xSRWI8N+tXipWjvKcY
+        Uydxa0LtrVIU4aePJeLfX3nY2g==
+X-Google-Smtp-Source: ABdhPJzYt2lslt13YiEsonKEZ+jBx4HFt1d65mCYXH6vxqHPQIS81ppOdKBUfUx77lLK8R8poNgzug==
+X-Received: by 2002:ae9:ebd2:: with SMTP id b201mr5788109qkg.409.1591293480332;
+        Thu, 04 Jun 2020 10:58:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-48-30.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.48.30])
+        by smtp.gmail.com with ESMTPSA id t43sm5788444qtj.85.2020.06.04.10.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 04 Jun 2020 10:57:59 -0700 (PDT)
+Received: from jgg by mlx with local (Exim 4.93)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1jgu7r-001H95-GE; Thu, 04 Jun 2020 14:57:59 -0300
+Date:   Thu, 4 Jun 2020 14:57:59 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-ide@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-spi@vger.kernel.org,
+        linux-mm@kvack.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH 09/10] treewide: Remove uninitialized_var() usage
+Message-ID: <20200604175759.GQ6578@ziepe.ca>
+References: <20200603233203.1695403-1-keescook@chromium.org>
+ <20200603233203.1695403-10-keescook@chromium.org>
+ <20200604132306.GO6578@ziepe.ca>
+ <202006040757.0DFC3F28E@keescook>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202006040757.0DFC3F28E@keescook>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jun 04, 2020 at 07:59:40AM -0700, Kees Cook wrote:
+> On Thu, Jun 04, 2020 at 10:23:06AM -0300, Jason Gunthorpe wrote:
+> > On Wed, Jun 03, 2020 at 04:32:02PM -0700, Kees Cook wrote:
+> > > Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> > > (or can in the future), and suppresses unrelated compiler warnings
+> > > (e.g. "unused variable"). If the compiler thinks it is uninitialized,
+> > > either simply initialize the variable or make compiler changes.
+> > > 
+> > > I preparation for removing[2] the[3] macro[4], remove all remaining
+> > > needless uses with the following script:
+> > > 
+> > > git grep '\buninitialized_var\b' | cut -d: -f1 | sort -u | \
+> > > 	xargs perl -pi -e \
+> > > 		's/\buninitialized_var\(([^\)]+)\)/\1/g;
+> > > 		 s:\s*/\* (GCC be quiet|to make compiler happy) \*/$::g;'
+> > > 
+> > > drivers/video/fbdev/riva/riva_hw.c was manually tweaked to avoid
+> > > pathological white-space.
+> > > 
+> > > No outstanding warnings were found building allmodconfig with GCC 9.3.0
+> > > for x86_64, i386, arm64, arm, powerpc, powerpc64le, s390x, mips, sparc64,
+> > > alpha, and m68k.
+> > 
+> > At least in the infiniband part I'm confident that old gcc versions
+> > will print warnings after this patch.
+> > 
+> > As the warnings are wrong, do we care? Should old gcc maybe just -Wno-
+> > the warning?
+> 
+> I *think* a lot of those are from -Wmaybe-uninitialized, but Linus just
+> turned that off unconditionally in v5.7:
+> 78a5255ffb6a ("Stop the ad-hoc games with -Wno-maybe-initialized")
 
---=-5JNHvVCP8Vjojb354f3u
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Yah, that alone is justification enough to do this purge.
 
-On Wed, 2020-05-27 at 17:45 +0200, Maxime Ripard wrote:
-> The current firmware clock driver for the RaspberryPi can only be probed =
-by
-> manually registering an associated platform_device.
->=20
-> While this works fine for cpufreq where the device gets attached a clkdev
-> lookup, it would be tedious to maintain a table of all the devices using
-> one of the clocks exposed by the firmware.
->=20
-> Since the DT on the other hand is the perfect place to store those
-> associations, make the firmware clocks driver probe-able through the devi=
-ce
-> tree so that we can represent it as a node.
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
-
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-Regards,
-Nicolas
-
-
---=-5JNHvVCP8Vjojb354f3u
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7ZNPQACgkQlfZmHno8
-x/7QSgf+N2DZ3A9e3w5mGFDvyDImTCJqEJksKxOB75OrbevGZ/0LEqWXC+2knZxX
-tbe2reBeGQtJqVvlnHu3R0uf7pDZjVbaVoP7D2GElHxAMxFOZF8gSLVMHqXwvUAp
-bzM4aY4XMBUlHHm7gUfYsheOmnbvcxl85xMjvWNtyPfbQOo6/2VmwC7GAWXSEo+V
-bL60xyNa2S+CfWmKg5FDhSMLqYjBgG8SueUx/4ZQn9NKmeEmMOyg+xpsfH6jCkvj
-JewhAAjmDMav2+UiJeaTzzYjHQJi0JP2Z1mTBW5dZewx05w9+Se35X8fEDbay3ir
-YLWn9ERhnjFq2xSF8IxdCsYYwBOvFw==
-=aO6R
------END PGP SIGNATURE-----
-
---=-5JNHvVCP8Vjojb354f3u--
-
+Jason
