@@ -2,67 +2,68 @@ Return-Path: <SRS0=d3cq=7R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3679AC433E3
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94B6BC433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7ED20738
-	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F8342075B
+	for <linux-clk@archiver.kernel.org>; Thu,  4 Jun 2020 10:30:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mTJqvmGN"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WZ3MoxFC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbgFDKas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 4 Jun 2020 06:30:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44704 "EHLO
+        id S1728266AbgFDKav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 4 Jun 2020 06:30:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728198AbgFDKas (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jun 2020 06:30:48 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14344C03E96E
-        for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2020 03:30:48 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id q25so5066290wmj.0
-        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2020 03:30:48 -0700 (PDT)
+        with ESMTP id S1728262AbgFDKau (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 4 Jun 2020 06:30:50 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74DD9C03E97D
+        for <linux-clk@vger.kernel.org>; Thu,  4 Jun 2020 03:30:50 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id q25so5066449wmj.0
+        for <linux-clk@vger.kernel.org>; Thu, 04 Jun 2020 03:30:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7LkstVVZ0Z7/A0rNIitgO7sT6Shr589QHsP27AASiPo=;
-        b=mTJqvmGN2Fcpozud69HS3edwktrG6ROK5PU7wVMXmY6q7nD4CwsuSwTCD1CvDHl3Ow
-         L2WSJhTfWV4z85ALqL67OgV9d3OzoAWVeawagPwe90V3OMyqXR1tgregnxvVfGmBpNO+
-         gZ25DCrg+aZPOh4xtXxgPAJf/IeDcrqqE2cDqUGCUXBAyszV4xCsq+6BsEEDdPbZ0xRB
-         7i/J+0e1n8pz25PCh/5tgkQZfzSH5c1ztQLKDCOiStHnXeTiyuvCvMO6s+SGa9pTCj5+
-         A6aLta27a1PRVCk4sFDJCbC5arzvjeZSKPHCMitUraVeUvSfy6m3h38HZrTktJmWYeK2
-         hvLw==
+        bh=jsVd11sIANIK7sfrmixWsGT0pUQUrSCmhUcuCBbqAfI=;
+        b=WZ3MoxFCN8BpLxg7Oectl+U3aKE83iMTMqSQoY/YWx+C+Kr2+umkWLr3yny9H21i9M
+         8IRjkdrpDB+xNIxO24ckU0cO5UjTsTdHIW4ntTYHpWpeV2aX7XanQgD8cwr/y2VvYA38
+         X0iItq80WY5oY6oKNOo7Tam8aFwOeVkGAjGyuMZgccTPLE+YlrWdmQ31e/UuYf7ym10n
+         4Rp65ve/blp1wiOEbUY59/0+6VMLi1AzIyXymp1OrI9LrS9wqkwv6UCcfPS6UzPjoVBH
+         a5vTDhJno9n9Kl/NAkQskDOm18pLD1FxArve8QqH8otq7/p8jOoIwJhpgNVk5XnFlsjw
+         ghvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7LkstVVZ0Z7/A0rNIitgO7sT6Shr589QHsP27AASiPo=;
-        b=qI3A4EV59DyTW4ac2qgBH0OWYmoXHRvKeiYrUxTC92dB69WH10aO8WBtzK2qZuilyt
-         ll/8aVDq+n966fF06ClpoEQ0wtyOi54XWkjRSttulfojZRObbgYjaiTHuN89h9oxKtSL
-         +oGjuu/pXQYcnFeOG5XTIfe++MAGB6iORowhMU4lhE3NHpLWzwZNhgbeCdgn5Drz6iGV
-         DWcoXg5wKbYNrh4scPAZ06FNYh7LeiwQNiXunm0TJO7OPzlzBApsXGEdDCQvziF9UVtj
-         c2dRrAeRsJoWmeX9mnNL5YsZ+imqDWKqtuJd96oBFy55nzcVzs0BXDftdoPvaHdphGEK
-         elmg==
-X-Gm-Message-State: AOAM530U9oXvXeD2b/hemaUnL6txM3VodmnUkLi9AJgAzD3DHhn0om2u
-        hE/vYRbUfhn0NDgXxY/gaHNxJw==
-X-Google-Smtp-Source: ABdhPJwhO8CiXEouSoNf10zBAT+pdksGBOMn4HKHRoJ/o6brIT+u1KLKuHBvezSS/v5d85NX0EFdbw==
-X-Received: by 2002:a1c:9e13:: with SMTP id h19mr3505995wme.107.1591266645968;
-        Thu, 04 Jun 2020 03:30:45 -0700 (PDT)
+        bh=jsVd11sIANIK7sfrmixWsGT0pUQUrSCmhUcuCBbqAfI=;
+        b=FgbyGBfkEBrAKjAdK6jsZl4NvjtDjEU7WK4Cxad6P9SWzfcrm3s1V+S8hhIBn2HgMS
+         j/QHw9I2xH316eanR4mEfZBJwXtIGXc51oDqEu6GjU6X9adolpfRGb4UOBo5HApFjCVx
+         DTjnYaN6Pjzhv9A57i3Hlt2CS9epbDR39GjMSbqrceuT7txoNsI9hWr7BniDVH1tnN1h
+         NYGxBX8vcIWRHSx7XWmuAt/OWuImiaeMHDPCHNTuvJ1b36Zh8hWwyLOZen2odC96sUZ2
+         mKjnfC5JjQE3jhshAs7kiZXDEdCrJdNAdAr0mg1wgU7GV/BzpqaZAjCH949LJQ45RHJb
+         Bp4g==
+X-Gm-Message-State: AOAM532ZQOcOVC+Y8DqL02Xx9zYSiFAybgBj62clH9MlmSUZMAVNeAT5
+        kun37766WMkcSN3i0AJRlG15ryKbraZSxg==
+X-Google-Smtp-Source: ABdhPJwHRJ/ScTiU/qcEivX7zv/WD68KMVc9AXraBADlC42Qpl3pUSj0RWlWV21+1BNjnRaOgZ+cNg==
+X-Received: by 2002:a1c:9d96:: with SMTP id g144mr3288178wme.126.1591266648988;
+        Thu, 04 Jun 2020 03:30:48 -0700 (PDT)
 Received: from localhost.localdomain ([88.122.66.28])
-        by smtp.gmail.com with ESMTPSA id n19sm6510164wmi.33.2020.06.04.03.30.44
+        by smtp.gmail.com with ESMTPSA id n19sm6510164wmi.33.2020.06.04.03.30.47
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 04 Jun 2020 03:30:45 -0700 (PDT)
+        Thu, 04 Jun 2020 03:30:48 -0700 (PDT)
 From:   Loic Poulain <loic.poulain@linaro.org>
 To:     sboyd@kernel.org, bjorn.andersson@linaro.org
 Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH v2 2/4] clk: qcom: Add CPU clock driver for msm8996
-Date:   Thu,  4 Jun 2020 12:35:25 +0200
-Message-Id: <1591266927-24976-3-git-send-email-loic.poulain@linaro.org>
+        linux-clk@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>,
+        Ilia Lin <ilialin@codeaurora.org>
+Subject: [PATCH v2 4/4] arch: arm64: dts: msm8996: Add opp and thermal
+Date:   Thu,  4 Jun 2020 12:35:27 +0200
+Message-Id: <1591266927-24976-5-git-send-email-loic.poulain@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
 References: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
@@ -71,655 +72,482 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Each of the CPU clusters (Power and Perf) on msm8996 are
-clocked via 2 PLLs, a primary and alternate. There are also
-2 Mux'es, a primary and secondary all connected together
-as shown below
-
-                             +-------+
-              XO             |       |
-          +------------------>0      |
-                             |       |
-                   PLL/2     | SMUX  +----+
-                     +------->1      |    |
-                     |       |       |    |
-                     |       +-------+    |    +-------+
-                     |                    +---->0      |
-                     |                         |       |
-+---------------+    |             +----------->1      | CPU clk
-|Primary PLL    +----+ PLL_EARLY   |           |       +------>
-|               +------+-----------+    +------>2 PMUX |
-+---------------+      |                |      |       |
-                       |   +------+     |   +-->3      |
-                       +--^+  ACD +-----+   |  +-------+
-+---------------+          +------+         |
-|Alt PLL        |                           |
-|               +---------------------------+
-+---------------+         PLL_EARLY
-
-The primary PLL is what drives the CPU clk, except for times
-when we are reprogramming the PLL itself (for rate changes) when
-we temporarily switch to an alternate PLL. A subsequent patch adds
-support to switch between primary and alternate PLL during rate
-changes.
-
-The primary PLL operates on a single VCO range, between 600MHz
-and 3GHz. However the CPUs do support OPPs with frequencies
-between 300MHz and 600MHz. In order to support running the CPUs
-at those frequencies we end up having to lock the PLL at twice
-the rate and drive the CPU clk via the PLL/2 output and SMUX.
-
-So for frequencies above 600MHz we follow the following path
- Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-and for frequencies between 300MHz and 600MHz we follow
- Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-
-ACD stands for Adaptive Clock Distribution and is used to
-detect voltage droops.
-
-Co-developed-by: Rajendra Nayak <rnayak@codeaurora.org>
-Co-developed-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
 Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
 ---
- drivers/clk/qcom/Kconfig         |   8 +
- drivers/clk/qcom/Makefile        |   1 +
- drivers/clk/qcom/clk-alpha-pll.h |   6 +
- drivers/clk/qcom/clk-cpu-8996.c  | 538 +++++++++++++++++++++++++++++++++++++++
- 4 files changed, 553 insertions(+)
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ arch/arm64/boot/dts/qcom/msm8996.dtsi | 338 ++++++++++++++++++++++++++++++++--
+ 1 file changed, 323 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index abb121f..87b515d 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -37,6 +37,14 @@ config QCOM_CLK_APCS_MSM8916
- 	  Say Y if you want to support CPU frequency scaling on devices
- 	  such as msm8916.
+diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+index 98634d5..0f73efe 100644
+--- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+@@ -7,6 +7,7 @@
+ #include <dt-bindings/clock/qcom,mmcc-msm8996.h>
+ #include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/soc/qcom,apr.h>
++#include <dt-bindings/thermal/thermal.h>
  
-+config QCOM_CLK_APCC_MSM8996
-+	tristate "MSM8996 CPU Clock Controller"
-+	select QCOM_KRYO_L2_ACCESSORS
-+	help
-+	  Support for the CPU clock controller on msm8996 devices.
-+	  Say Y if you want to support CPU clock scaling using CPUfreq
-+	  drivers for dyanmic power management.
-+
- config QCOM_CLK_RPM
- 	tristate "RPM based Clock Controller"
- 	depends on MFD_QCOM_RPM
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 691efbf..0084ead 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -41,6 +41,7 @@ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
- obj-$(CONFIG_MSM_MMCC_8998) += mmcc-msm8998.o
- obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
- obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
-+obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
- obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
- obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
- obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 704674a..1ba82be 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -47,6 +47,12 @@ struct pll_vco {
- 	u32 val;
- };
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -43,6 +44,12 @@
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 			L2_0: l2-cache {
+ 			      compatible = "cache";
+@@ -57,6 +64,12 @@
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&kryocc 0>;
++			operating-points-v2 = <&cluster0_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_0>;
+ 		};
  
-+#define VCO(a, b, c) { \
-+	.val = a,\
-+	.min_freq = b,\
-+	.max_freq = c,\
-+}
-+
- /**
-  * struct clk_alpha_pll - phase locked loop (PLL)
-  * @offset: base address of registers
-diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
-new file mode 100644
-index 0000000..77a2d28
---- /dev/null
-+++ b/drivers/clk/qcom/clk-cpu-8996.c
-@@ -0,0 +1,538 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+
-+/*
-+ * Each of the CPU clusters (Power and Perf) on msm8996 are
-+ * clocked via 2 PLLs, a primary and alternate. There are also
-+ * 2 Mux'es, a primary and secondary all connected together
-+ * as shown below
-+ *
-+ *                              +-------+
-+ *               XO             |       |
-+ *           +------------------>0      |
-+ *                              |       |
-+ *                    PLL/2     | SMUX  +----+
-+ *                      +------->1      |    |
-+ *                      |       |       |    |
-+ *                      |       +-------+    |    +-------+
-+ *                      |                    +---->0      |
-+ *                      |                         |       |
-+ * +---------------+    |             +----------->1      | CPU clk
-+ * |Primary PLL    +----+ PLL_EARLY   |           |       +------>
-+ * |               +------+-----------+    +------>2 PMUX |
-+ * +---------------+      |                |      |       |
-+ *                        |   +------+     |   +-->3      |
-+ *                        +--^+  ACD +-----+   |  +-------+
-+ * +---------------+          +------+         |
-+ * |Alt PLL        |                           |
-+ * |               +---------------------------+
-+ * +---------------+         PLL_EARLY
-+ *
-+ * The primary PLL is what drives the CPU clk, except for times
-+ * when we are reprogramming the PLL itself (for rate changes) when
-+ * we temporarily switch to an alternate PLL.
-+ *
-+ * The primary PLL operates on a single VCO range, between 600MHz
-+ * and 3GHz. However the CPUs do support OPPs with frequencies
-+ * between 300MHz and 600MHz. In order to support running the CPUs
-+ * at those frequencies we end up having to lock the PLL at twice
-+ * the rate and drive the CPU clk via the PLL/2 output and SMUX.
-+ *
-+ * So for frequencies above 600MHz we follow the following path
-+ *  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-+ * and for frequencies between 300MHz and 600MHz we follow
-+ *  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-+ *
-+ * ACD stands for Adaptive Clock Distribution and is used to
-+ * detect voltage droops.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <soc/qcom/kryo-l2-accessors.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-regmap.h"
-+
-+enum _pmux_input {
-+	DIV_2_INDEX = 0,
-+	PLL_INDEX,
-+	ACD_INDEX,
-+	ALT_INDEX,
-+	NUM_OF_PMUX_INPUTS
-+};
-+
-+#define DIV_2_THRESHOLD		600000000
-+#define PWRCL_REG_OFFSET 0x0
-+#define PERFCL_REG_OFFSET 0x80000
-+#define MUX_OFFSET	0x40
-+#define ALT_PLL_OFFSET	0x100
-+#define SSSCTL_OFFSET 0x160
-+
-+static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
-+	[PLL_OFF_L_VAL] = 0x04,
-+	[PLL_OFF_ALPHA_VAL] = 0x08,
-+	[PLL_OFF_USER_CTL] = 0x10,
-+	[PLL_OFF_CONFIG_CTL] = 0x18,
-+	[PLL_OFF_CONFIG_CTL_U] = 0x1c,
-+	[PLL_OFF_TEST_CTL] = 0x20,
-+	[PLL_OFF_TEST_CTL_U] = 0x24,
-+	[PLL_OFF_STATUS] = 0x28,
-+};
-+
-+static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
-+	[PLL_OFF_L_VAL] = 0x04,
-+	[PLL_OFF_ALPHA_VAL] = 0x08,
-+	[PLL_OFF_ALPHA_VAL_U] = 0x0c,
-+	[PLL_OFF_USER_CTL] = 0x10,
-+	[PLL_OFF_USER_CTL_U] = 0x14,
-+	[PLL_OFF_CONFIG_CTL] = 0x18,
-+	[PLL_OFF_TEST_CTL] = 0x20,
-+	[PLL_OFF_TEST_CTL_U] = 0x24,
-+	[PLL_OFF_STATUS] = 0x28,
-+};
-+
-+/* PLLs */
-+
-+static const struct alpha_pll_config hfpll_config = {
-+	.l = 60,
-+	.config_ctl_val = 0x200d4aa8,
-+	.config_ctl_hi_val = 0x006,
-+	.pre_div_mask = BIT(12),
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_pll = {
-+	.offset = PERFCL_REG_OFFSET,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "perfcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_pll = {
-+	.offset = PWRCL_REG_OFFSET,
-+	.regs = prim_pll_regs,
-+	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "pwrcl_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_huayra_ops,
-+	},
-+};
-+
-+static const struct pll_vco alt_pll_vco_modes[] = {
-+	VCO(3,  250000000,  500000000),
-+	VCO(2,  500000000,  750000000),
-+	VCO(1,  750000000, 1000000000),
-+	VCO(0, 1000000000, 2150400000),
-+};
-+
-+static const struct alpha_pll_config altpll_config = {
-+	.l = 16,
-+	.vco_val = 0x3 << 20,
-+	.vco_mask = 0x3 << 20,
-+	.config_ctl_val = 0x4001051b,
-+	.post_div_mask = 0x3 << 8,
-+	.post_div_val = 0x1 << 8,
-+	.main_output_mask = BIT(0),
-+	.early_output_mask = BIT(3),
-+};
-+
-+static struct clk_alpha_pll perfcl_alt_pll = {
-+	.offset = PERFCL_REG_OFFSET + ALT_PLL_OFFSET,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+static struct clk_alpha_pll pwrcl_alt_pll = {
-+	.offset = PWRCL_REG_OFFSET + ALT_PLL_OFFSET,
-+	.regs = alt_pll_regs,
-+	.vco_table = alt_pll_vco_modes,
-+	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
-+	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_alt_pll",
-+		.parent_names = (const char *[]){ "xo" },
-+		.num_parents = 1,
-+		.ops = &clk_alpha_pll_hwfsm_ops,
-+	},
-+};
-+
-+struct clk_cpu_8996_mux {
-+	u32	reg;
-+	u8	shift;
-+	u8	width;
-+	struct notifier_block nb;
-+	struct clk_hw	*pll;
-+	struct clk_hw	*pll_div_2;
-+	struct clk_regmap clkr;
-+};
-+
-+static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data);
-+
-+#define to_clk_cpu_8996_mux_nb(_nb) \
-+	container_of(_nb, struct clk_cpu_8996_mux, nb)
-+
-+static inline struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
-+{
-+	return container_of(to_clk_regmap(hw), struct clk_cpu_8996_mux, clkr);
-+}
-+
-+static u8 clk_cpu_8996_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	u32 mask = GENMASK(cpuclk->width - 1, 0);
-+	u32 val;
-+
-+	regmap_read(clkr->regmap, cpuclk->reg, &val);
-+	val >>= cpuclk->shift;
-+
-+	return val & mask;
-+}
-+
-+static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_regmap *clkr = to_clk_regmap(hw);
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	u32 mask = GENMASK(cpuclk->width + cpuclk->shift - 1, cpuclk->shift);
-+	u32 val;
-+
-+	val = index;
-+	val <<= cpuclk->shift;
-+
-+	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
-+}
-+
-+static int clk_cpu_8996_mux_determine_rate(struct clk_hw *hw,
-+					   struct clk_rate_request *req)
-+{
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
-+	struct clk_hw *parent = cpuclk->pll;
-+
-+	if (cpuclk->pll_div_2 && req->rate < DIV_2_THRESHOLD) {
-+		if (req->rate < (DIV_2_THRESHOLD / 2))
-+			return -EINVAL;
-+
-+		parent = cpuclk->pll_div_2;
-+	}
-+
-+	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
-+	req->best_parent_hw = parent;
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_cpu_8996_mux_ops = {
-+	.set_parent = clk_cpu_8996_mux_set_parent,
-+	.get_parent = clk_cpu_8996_mux_get_parent,
-+	.determine_rate = clk_cpu_8996_mux_determine_rate,
-+};
-+
-+static struct clk_cpu_8996_mux pwrcl_smux = {
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"pwrcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux perfcl_smux = {
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
-+	.shift = 2,
-+	.width = 2,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_smux",
-+		.parent_names = (const char *[]){
-+			"xo",
-+			"perfcl_pll_main",
-+		},
-+		.num_parents = 2,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux pwrcl_pmux = {
-+	.reg = PWRCL_REG_OFFSET + MUX_OFFSET,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &pwrcl_pll.clkr.hw,
-+	.pll_div_2 = &pwrcl_smux.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "pwrcl_pmux",
-+		.parent_names = (const char *[]){
-+			"pwrcl_smux",
-+			"pwrcl_pll",
-+			"pwrcl_pll_acd",
-+			"pwrcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		/* CPU clock is critical and should never be gated */
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static struct clk_cpu_8996_mux perfcl_pmux = {
-+	.reg = PERFCL_REG_OFFSET + MUX_OFFSET,
-+	.shift = 0,
-+	.width = 2,
-+	.pll = &perfcl_pll.clkr.hw,
-+	.pll_div_2 = &perfcl_smux.clkr.hw,
-+	.nb.notifier_call = cpu_clk_notifier_cb,
-+	.clkr.hw.init = &(struct clk_init_data) {
-+		.name = "perfcl_pmux",
-+		.parent_names = (const char *[]){
-+			"perfcl_smux",
-+			"perfcl_pll",
-+			"perfcl_pll_acd",
-+			"perfcl_alt_pll",
-+		},
-+		.num_parents = 4,
-+		.ops = &clk_cpu_8996_mux_ops,
-+		/* CPU clock is critical and should never be gated */
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	},
-+};
-+
-+static const struct regmap_config cpu_msm8996_regmap_config = {
-+	.reg_bits		= 32,
-+	.reg_stride		= 4,
-+	.val_bits		= 32,
-+	.max_register		= 0x80210,
-+	.fast_io		= true,
-+	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
-+};
-+
-+struct clk_regmap *cpu_msm8996_clks[] = {
-+	&perfcl_pll.clkr,
-+	&pwrcl_pll.clkr,
-+	&perfcl_alt_pll.clkr,
-+	&pwrcl_alt_pll.clkr,
-+	&perfcl_smux.clkr,
-+	&pwrcl_smux.clkr,
-+	&perfcl_pmux.clkr,
-+	&pwrcl_pmux.clkr,
-+};
-+
-+static int qcom_cpu_clk_msm8996_register_clks(struct device *dev,
-+					      struct regmap *regmap)
-+{
-+	int i, ret;
-+
-+	perfcl_smux.pll = clk_hw_register_fixed_factor(dev, "perfcl_pll_main",
-+						       "perfcl_pll",
-+						       CLK_SET_RATE_PARENT,
-+						       1, 2);
-+	if (IS_ERR(perfcl_smux.pll)) {
-+		dev_err(dev, "Failed to initialize perfcl_pll_main\n");
-+		return PTR_ERR(perfcl_smux.pll);
-+	}
-+
-+	pwrcl_smux.pll = clk_hw_register_fixed_factor(dev, "pwrcl_pll_main",
-+						      "pwrcl_pll",
-+						      CLK_SET_RATE_PARENT,
-+						      1, 2);
-+	if (IS_ERR(pwrcl_smux.pll)) {
-+		dev_err(dev, "Failed to initialize pwrcl_pll_main\n");
-+		clk_hw_unregister(perfcl_smux.pll);
-+		return PTR_ERR(pwrcl_smux.pll);
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(cpu_msm8996_clks); i++) {
-+		ret = devm_clk_register_regmap(dev, cpu_msm8996_clks[i]);
-+		if (ret) {
-+			clk_hw_unregister(perfcl_smux.pll);
-+			clk_hw_unregister(pwrcl_smux.pll);
-+			return ret;
-+		}
-+	}
-+
-+	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
-+	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
-+	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
-+
-+	/* Enable alt PLLs */
-+	clk_prepare_enable(pwrcl_alt_pll.clkr.hw.clk);
-+	clk_prepare_enable(perfcl_alt_pll.clkr.hw.clk);
-+
-+	clk_notifier_register(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	clk_notifier_register(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+
-+	return ret;
-+}
-+
-+static int qcom_cpu_clk_msm8996_unregister_clks(void)
-+{
-+	int ret = 0;
-+
-+	ret = clk_notifier_unregister(pwrcl_pmux.clkr.hw.clk, &pwrcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_notifier_unregister(perfcl_pmux.clkr.hw.clk, &perfcl_pmux.nb);
-+	if (ret)
-+		return ret;
-+
-+	clk_hw_unregister(perfcl_smux.pll);
-+	clk_hw_unregister(pwrcl_smux.pll);
-+
-+	return 0;
-+}
-+
-+#define CPU_AFINITY_MASK 0xFFF
-+#define PWRCL_CPU_REG_MASK 0x3
-+#define PERFCL_CPU_REG_MASK 0x103
-+
-+#define L2ACDCR_REG 0x580ULL
-+#define L2ACDTD_REG 0x581ULL
-+#define L2ACDDVMRC_REG 0x584ULL
-+#define L2ACDSSCR_REG 0x589ULL
-+
-+static DEFINE_SPINLOCK(qcom_clk_acd_lock);
-+static void __iomem *base;
-+
-+static void qcom_cpu_clk_msm8996_acd_init(void __iomem *base)
-+{
-+	u64 hwid;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&qcom_clk_acd_lock, flags);
-+
-+	hwid = read_cpuid_mpidr() & CPU_AFINITY_MASK;
-+
-+	kryo_l2_set_indirect_reg(L2ACDTD_REG, 0x00006a11);
-+	kryo_l2_set_indirect_reg(L2ACDDVMRC_REG, 0x000e0f0f);
-+	kryo_l2_set_indirect_reg(L2ACDSSCR_REG, 0x00000601);
-+
-+	if (PWRCL_CPU_REG_MASK == (hwid | PWRCL_CPU_REG_MASK)) {
-+		writel(0xf, base + PWRCL_REG_OFFSET + SSSCTL_OFFSET);
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
-+	}
-+
-+	if (PERFCL_CPU_REG_MASK == (hwid | PERFCL_CPU_REG_MASK)) {
-+		kryo_l2_set_indirect_reg(L2ACDCR_REG, 0x002c5ffd);
-+		writel(0xf, base + PERFCL_REG_OFFSET + SSSCTL_OFFSET);
-+	}
-+
-+	spin_unlock_irqrestore(&qcom_clk_acd_lock, flags);
-+}
-+
-+static int cpu_clk_notifier_cb(struct notifier_block *nb, unsigned long event,
-+			       void *data)
-+{
-+	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_nb(nb);
-+	struct clk_notifier_data *cnd = data;
-+	int ret;
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw, ALT_INDEX);
-+		qcom_cpu_clk_msm8996_acd_init(base);
-+		break;
-+	case POST_RATE_CHANGE:
-+		if (cnd->new_rate < DIV_2_THRESHOLD)
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  DIV_2_INDEX);
-+		else
-+			ret = clk_cpu_8996_mux_set_parent(&cpuclk->clkr.hw,
-+							  ACD_INDEX);
-+		break;
-+	default:
-+		ret = 0;
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+};
-+
-+static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct clk_hw_onecell_data *data;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, struct_size(data, hws, 2), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	regmap = devm_regmap_init_mmio(dev, base, &cpu_msm8996_regmap_config);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	ret = qcom_cpu_clk_msm8996_register_clks(dev, regmap);
-+	if (ret)
-+		return ret;
-+
-+	qcom_cpu_clk_msm8996_acd_init(base);
-+
-+	data->hws[0] = &pwrcl_pmux.clkr.hw;
-+	data->hws[1] = &perfcl_pmux.clkr.hw;
-+	data->num = 2;
-+
-+	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
-+}
-+
-+static int qcom_cpu_clk_msm8996_driver_remove(struct platform_device *pdev)
-+{
-+	return qcom_cpu_clk_msm8996_unregister_clks();
-+}
-+
-+static const struct of_device_id qcom_cpu_clk_msm8996_match_table[] = {
-+	{ .compatible = "qcom,msm8996-apcc" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, qcom_cpu_clk_msm8996_match_table);
-+
-+static struct platform_driver qcom_cpu_clk_msm8996_driver = {
-+	.probe = qcom_cpu_clk_msm8996_driver_probe,
-+	.remove = qcom_cpu_clk_msm8996_driver_remove,
-+	.driver = {
-+		.name = "qcom-msm8996-apcc",
-+		.of_match_table = qcom_cpu_clk_msm8996_match_table,
-+	},
-+};
-+module_platform_driver(qcom_cpu_clk_msm8996_driver);
-+
-+MODULE_DESCRIPTION("QCOM MSM8996 CPU Clock Driver");
-+MODULE_LICENSE("GPL v2");
+@@ -67,6 +80,12 @@
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 			L2_1: l2-cache {
+ 			      compatible = "cache";
+@@ -81,6 +100,12 @@
+ 			enable-method = "psci";
+ 			cpu-idle-states = <&CPU_SLEEP_0>;
+ 			capacity-dmips-mhz = <1024>;
++			clocks = <&kryocc 1>;
++			operating-points-v2 = <&cluster1_opp>;
++			/* cooling options */
++			cooling-min-level = <0>;
++			cooling-max-level = <15>;
++			#cooling-cells = <2>;
+ 			next-level-cache = <&L2_1>;
+ 		};
+ 
+@@ -424,7 +449,7 @@
+ 				bits = <1 4>;
+ 			};
+ 
+-			gpu_speed_bin: gpu_speed_bin@133 {
++			speedbin_efuse: speedbin@133 {
+ 				reg = <0x133 0x1>;
+ 				bits = <5 3>;
+ 			};
+@@ -642,7 +667,7 @@
+ 			power-domains = <&mmcc GPU_GDSC>;
+ 			iommus = <&adreno_smmu 0>;
+ 
+-			nvmem-cells = <&gpu_speed_bin>;
++			nvmem-cells = <&speedbin_efuse>;
+ 			nvmem-cell-names = "speed_bin";
+ 
+ 			qcom,gpu-quirk-two-pass-use-wfi;
+@@ -1703,8 +1728,9 @@
+ 				};
+ 			};
+ 		};
++
+ 		kryocc: clock-controller@6400000 {
+-			compatible = "qcom,apcc-msm8996";
++			compatible = "qcom,msm8996-apcc";
+ 			reg = <0x06400000 0x90000>;
+ 			#clock-cells = <1>;
+ 		};
+@@ -2172,6 +2198,229 @@
+ 	sound: sound {
+ 	};
+ 
++	cluster0_opp: opp_table0 {
++		compatible = "operating-points-v2-qcom-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		/* Nominal fmax for now */
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-422400000 {
++			opp-hz = /bits/ 64 <  422400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-844800000 {
++			opp-hz = /bits/ 64 <  844800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-960000000 {
++			opp-hz = /bits/ 64 <  960000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1228800000 {
++			opp-hz = /bits/ 64 < 1228800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1593600000 {
++			opp-hz = /bits/ 64 < 1593600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
++	cluster1_opp: opp_table1 {
++		compatible = "operating-points-v2-qcom-cpu";
++		nvmem-cells = <&speedbin_efuse>;
++		opp-shared;
++
++		/* Nominal fmax for now */
++
++		opp-307200000 {
++			opp-hz = /bits/ 64 <  307200000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-403200000 {
++			opp-hz = /bits/ 64 <  403200000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-480000000 {
++			opp-hz = /bits/ 64 <  480000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-556800000 {
++			opp-hz = /bits/ 64 <  556800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-652800000 {
++			opp-hz = /bits/ 64 <  652800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-729600000 {
++			opp-hz = /bits/ 64 <  729600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-806400000 {
++			opp-hz = /bits/ 64 <  806400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-883200000 {
++			opp-hz = /bits/ 64 <  883200000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-940800000 {
++			opp-hz = /bits/ 64 <  940800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1036800000 {
++			opp-hz = /bits/ 64 < 1036800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1113600000 {
++			opp-hz = /bits/ 64 < 1113600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1190400000 {
++			opp-hz = /bits/ 64 < 1190400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1248000000 {
++			opp-hz = /bits/ 64 < 1248000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1324800000 {
++			opp-hz = /bits/ 64 < 1324800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1401600000 {
++			opp-hz = /bits/ 64 < 1401600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1478400000 {
++			opp-hz = /bits/ 64 < 1478400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1555200000 {
++			opp-hz = /bits/ 64 < 1555200000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1632000000 {
++			opp-hz = /bits/ 64 < 1632000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1708800000 {
++			opp-hz = /bits/ 64 < 1708800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1785600000 {
++			opp-hz = /bits/ 64 < 1785600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1824000000 {
++			opp-hz = /bits/ 64 < 1824000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1920000000 {
++			opp-hz = /bits/ 64 < 1920000000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-1996800000 {
++			opp-hz = /bits/ 64 < 1996800000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2073600000 {
++			opp-hz = /bits/ 64 < 2073600000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++		opp-2150400000 {
++			opp-hz = /bits/ 64 < 2150400000 >;
++			opp-supported-hw = <0x77>;
++			clock-latency-ns = <200000>;
++		};
++	};
++
+ 	thermal-zones {
+ 		cpu0-thermal {
+ 			polling-delay-passive = <250>;
+@@ -2180,18 +2429,33 @@
+ 			thermal-sensors = <&tsens0 3>;
+ 
+ 			trips {
+-				cpu0_alert0: trip-point@0 {
++				cpu_alert0: cpu_alert0 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn0: cpu_warn0 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu0_crit: cpu_crit {
++				cpu_crit0: cpu_crit0 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert0>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn0>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu1-thermal {
+@@ -2201,18 +2465,33 @@
+ 			thermal-sensors = <&tsens0 5>;
+ 
+ 			trips {
+-				cpu1_alert0: trip-point@0 {
++				cpu_alert1: cpu_alert1 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn1: cpu_warn1 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu1_crit: cpu_crit {
++				cpu_crit1: cpu_crit1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert1>;
++					cooling-device = <&CPU0 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn1>;
++					cooling-device = <&CPU0 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu2-thermal {
+@@ -2222,18 +2501,32 @@
+ 			thermal-sensors = <&tsens0 8>;
+ 
+ 			trips {
+-				cpu2_alert0: trip-point@0 {
++				cpu_alert2: cpu_alert2 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn2: cpu_warn2 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu2_crit: cpu_crit {
++				cpu_crit2: cpu_crit2 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert2>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn2>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		cpu3-thermal {
+@@ -2243,18 +2536,33 @@
+ 			thermal-sensors = <&tsens0 10>;
+ 
+ 			trips {
+-				cpu3_alert0: trip-point@0 {
++				cpu_alert3: cpu_alert3 {
+ 					temperature = <75000>;
+ 					hysteresis = <2000>;
++					type = "active";
++				};
++				cpu_warn3: cpu_warn3 {
++					temperature = <90000>;
++					hysteresis = <2000>;
+ 					type = "passive";
+ 				};
+-
+-				cpu3_crit: cpu_crit {
++				cpu_crit3: trip1 {
+ 					temperature = <110000>;
+ 					hysteresis = <2000>;
+ 					type = "critical";
+ 				};
+ 			};
++
++			cooling-maps {
++				map0 {
++					trip = <&cpu_alert3>;
++					cooling-device = <&CPU2 THERMAL_NO_LIMIT 7>;
++				};
++				map1 {
++					trip = <&cpu_warn3>;
++					cooling-device = <&CPU2 8 THERMAL_NO_LIMIT>;
++				};
++			};
+ 		};
+ 
+ 		gpu-thermal-top {
 -- 
 2.7.4
 
