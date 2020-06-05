@@ -6,25 +6,24 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 517F4C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A09CCC433E1
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:42:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 339FC207D0
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C37920772
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:42:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbgFEKiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jun 2020 06:38:06 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56358 "EHLO mx2.suse.de"
+        id S1726617AbgFEKmt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jun 2020 06:42:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58814 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbgFEKiG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jun 2020 06:38:06 -0400
+        id S1726465AbgFEKms (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jun 2020 06:42:48 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 803E3ABBE;
-        Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
-Message-ID: <c9ae665f45d8669e6834e7f6a006698496542d68.camel@suse.de>
-Subject: Re: [PATCH v3 18/25] clk: bcm: rpi: Make the PLLB registration
- function return a clk_hw
+        by mx2.suse.de (Postfix) with ESMTP id 7AD1FAB5C;
+        Fri,  5 Jun 2020 10:42:49 +0000 (UTC)
+Message-ID: <6ae138d4ed6633ec34e5199d0672dc54fec4db43.camel@suse.de>
+Subject: Re: [PATCH v3 19/25] clk: bcm: rpi: Add DT provider for the clocks
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     Maxime Ripard <maxime@cerno.tech>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -35,12 +34,12 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Phil Elwell <phil@raspberrypi.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 05 Jun 2020 12:38:00 +0200
-In-Reply-To: <be60ef4f29c929e633363a4473aa119f69ace7a0.1590594293.git-series.maxime@cerno.tech>
+Date:   Fri, 05 Jun 2020 12:42:44 +0200
+In-Reply-To: <58f0ca794ae24bb2026b3051d1f5cd0affab42ee.1590594293.git-series.maxime@cerno.tech>
 References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech>
-         <be60ef4f29c929e633363a4473aa119f69ace7a0.1590594293.git-series.maxime@cerno.tech>
+         <58f0ca794ae24bb2026b3051d1f5cd0affab42ee.1590594293.git-series.maxime@cerno.tech>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-GKBfxlAyyMcO4y1FBBUP"
+        protocol="application/pgp-signature"; boundary="=-pWlr8403LQFYMCkvS4sV"
 User-Agent: Evolution 3.36.2 
 MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
@@ -49,22 +48,14 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-GKBfxlAyyMcO4y1FBBUP
+--=-pWlr8403LQFYMCkvS4sV
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2020-05-27 at 17:45 +0200, Maxime Ripard wrote:
-> The raspberrypi_register_pllb has been returning an integer so far to
-> notify whether the functions has exited successfully or not.
->=20
-> However, the OF provider functions in the clock framework require access =
-to
-> the clk_hw structure so that we can expose those clocks to device tree
-> consumers.
->=20
-> Since we'll want that for the future clocks, let's return a clk_hw pointe=
-r
-> instead of the return code.
+> For the upcoming registration of the clocks provided by the firmware, mak=
+e
+> sure it's exposed to the device tree providers.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: linux-clk@vger.kernel.org
@@ -78,22 +69,22 @@ Regards,
 Nicolas
 
 
---=-GKBfxlAyyMcO4y1FBBUP
+--=-pWlr8403LQFYMCkvS4sV
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7aIIgACgkQlfZmHno8
-x/49AQf+NEJCsV2JOsSPe7EgOc95gd6JyUWOEua0ulSmnIKXlzz0Slu/WTt5dq3K
-y1rmylaZUECzHLB/iMw0VxIovd0VAMRwef24x7c5Xu6SWAIjr7XSihennsgwU9kp
-KOqPvC2IejaU/bW0aMBYb7jWr21cRqtSU4FMwUK73mtdg4kjHmE+o2sXGTDMSdLF
-kTUZJAJCMAAQl36As1gk6xpiQnvAqkphJIfULpQGjsn2WxDa6tmHER1Pu1SjLQ/x
-5O12dePkhZhg+MlTWq8/v+o1KXIGOd5L7MfkgulGqKZbPV1lXrVkBMiyDEByh0K1
-WYSdPQF9hRXjmAsFwkCo/8LVUKgm7w==
-=zDZM
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7aIaQACgkQlfZmHno8
+x/7qIAf/QtFeVelhKGGX//nLMMPHMSUDAT+xooDh+izo7bG7E6VDA9Vbbbc/XYLY
+m6mp5zgjei5fCM9oX3SzBPOe4YdOBQv2qDls3SGSITzILz7oj23yzxLYukyoRufX
+HAS7r/v2oZS8BsWt5IPQV2OgDR2rbEjYwkIhlwxmkljZOEhfcKs7SqLSN5JQjMeF
+cJ7wFDjP/u//gR3dW87iVE+Uq97YLnNr5jJEPUtPXLvnjLCbTbgaokFr7RfhOmQz
+BTmqC1koG6IV44VA+gd5+Xlqg5WCDJv2wkYeIg/U+eimusvT6u8vlrCuZ0pKKtX6
+UnuNPItXMELJO3DpN0f0c5S7J7Ut/w==
+=Vwou
 -----END PGP SIGNATURE-----
 
---=-GKBfxlAyyMcO4y1FBBUP--
+--=-pWlr8403LQFYMCkvS4sV--
 
