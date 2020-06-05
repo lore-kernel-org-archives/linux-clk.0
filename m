@@ -2,143 +2,214 @@ Return-Path: <SRS0=bD2q=7S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 265E8C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 17:57:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC77C433DF
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 18:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 00081207ED
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 17:57:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=anholt-net.20150623.gappssmtp.com header.i=@anholt-net.20150623.gappssmtp.com header.b="HWlIvo8G"
+	by mail.kernel.org (Postfix) with ESMTP id A33F82077D
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 18:11:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbgFER5L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jun 2020 13:57:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55188 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbgFER5L (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jun 2020 13:57:11 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2F46C08C5C3
-        for <linux-clk@vger.kernel.org>; Fri,  5 Jun 2020 10:57:10 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id b6so12853363ljj.1
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jun 2020 10:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=anholt-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YYnGgbB/yUYHLwRnIgeOB2yfvVDg5PB29KwRpcC2gN4=;
-        b=HWlIvo8Gx/GfSgNGX7LbvmwrB8R2/UprUCF6ZpGdTm5eFaUvsIhs/YyhRxIi6C0Bgu
-         eKvjCs9vk7Z007hp+pg8+29RTakK0BG4LfZ6KfTBUENIJULV/m/bqBnWIrwsUs1JUM8/
-         1/NGt2NwWfaMLuXqDXVe3Io4BwZBxhMbAeR1RevZ7FRe6WgNb1P0/6bzp39+eac5SSI0
-         IJ2t/onuc/NeLjFksiSRP+9/3pOoJpsXpFqF1xvY2lFz/Ngtj3zgOT8AEn6f/pRSyZwx
-         xSg9J8jx/18GSu+o8jK2uEzV4XTjjcqiZW53KhDmRBA/9Xatc7A9DzNlyF1ysAUOFHM0
-         xEvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YYnGgbB/yUYHLwRnIgeOB2yfvVDg5PB29KwRpcC2gN4=;
-        b=IwBDIj1PR7voH8Y8CsVsYgi4bNARfJwvIiILAwDhReMFvZxg30d/ZFMvyXwZfG8gMq
-         3FJbiDo/9Fo2C3xYM2NmQWrlWH3GjVeidIrtSBplJmbSrNsQ3HFwp8/XuExwRY5vj45T
-         Jb5Vwy6R0Q1S/8aQX832SFP74j8R1oECxWT0g/BctwdfN+tKCj0lE3xpgcWw7CIkezYG
-         7Dir6Zq+5xmTmfoJrw+Z87jnIgXkXF1O7YEF0QMj4MGpC+QAmf7uzcJSSTUCkszvJQk4
-         5yYMaHSKbdJwvLHrl717nxCEWjVMFOeLV5zEiYRTQHS1sLrkzZtGAhBCpPCYqlIEQUgU
-         RInA==
-X-Gm-Message-State: AOAM531Q/mQS5bWenGEWrURnU352x2hvjYrixLPBsI97MYMUq4aJ3b9p
-        665WCvpmDAatKKm6I6rSADZSO1I3JXg1XLshO/By4Q==
-X-Google-Smtp-Source: ABdhPJz1QchXGicuq/e4UbyBXjj2+Lh2IaK3OLii9lagU/34toEvTJek1PSUAitdFBhMHfD0XxPR6jfp824v8PIIWqE=
-X-Received: by 2002:a2e:8705:: with SMTP id m5mr5176522lji.269.1591379829143;
- Fri, 05 Jun 2020 10:57:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
- <6615a61b8af240e3d10f8890e4b2462ccdaac9b9.1590594512.git-series.maxime@cerno.tech>
-In-Reply-To: <6615a61b8af240e3d10f8890e4b2462ccdaac9b9.1590594512.git-series.maxime@cerno.tech>
-From:   Eric Anholt <eric@anholt.net>
-Date:   Fri, 5 Jun 2020 10:56:58 -0700
-Message-ID: <CADaigPUOJMwR0y6CjVpu5+nPAvejbCvEQNLEC+EKq9haBaQynw@mail.gmail.com>
+        id S1726351AbgFESLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jun 2020 14:11:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47988 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726077AbgFESLG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jun 2020 14:11:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D2843AF48;
+        Fri,  5 Jun 2020 18:11:07 +0000 (UTC)
+Message-ID: <977dd9ba222d8c513b09743da5cb53fd14bfd9a0.camel@suse.de>
 Subject: Re: [PATCH v3 004/105] clk: bcm: Add BCM2711 DVP driver
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
+Cc:     devicetree@vger.kernel.org, Tim Gover <tim.gover@raspberrypi.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, Eric Anholt <eric@anholt.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Fri, 05 Jun 2020 20:11:01 +0200
+In-Reply-To: <20200605174329.hf5d6oulmcewzw63@gilmour.lan>
+References: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
+         <6615a61b8af240e3d10f8890e4b2462ccdaac9b9.1590594512.git-series.maxime@cerno.tech>
+         <faacbc33174e77500e04e609a654c5810045cb42.camel@suse.de>
+         <20200605174329.hf5d6oulmcewzw63@gilmour.lan>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-+FKCCfaEGN1+KOjI+Hug"
+User-Agent: Evolution 3.36.2 
+MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, May 27, 2020 at 8:49 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
-> The HDMI block has a block that controls clocks and reset signals to the
-> HDMI0 and HDMI1 controllers.
->
-> Let's expose that through a clock driver implementing a clock and reset
-> provider.
->
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Cc: devicetree@vger.kernel.org
-> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/bcm/Kconfig           |  11 +++-
->  drivers/clk/bcm/Makefile          |   1 +-
->  drivers/clk/bcm/clk-bcm2711-dvp.c | 127 +++++++++++++++++++++++++++++++-
->  3 files changed, 139 insertions(+)
->  create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
->
-> diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> index 8c83977a7dc4..784f12c72365 100644
-> --- a/drivers/clk/bcm/Kconfig
-> +++ b/drivers/clk/bcm/Kconfig
-> @@ -1,4 +1,15 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> +
-> +config CLK_BCM2711_DVP
-> +       tristate "Broadcom BCM2711 DVP support"
-> +       depends on ARCH_BCM2835 ||COMPILE_TEST
-> +       depends on COMMON_CLK
-> +       default ARCH_BCM2835
-> +       select RESET_SIMPLE
-> +       help
-> +         Enable common clock framework support for the Broadcom BCM2711
-> +         DVP Controller.
-> +
->  config CLK_BCM2835
->         bool "Broadcom BCM2835 clock support"
->         depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
-> diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> index 0070ddf6cdd2..2c1349062147 100644
-> --- a/drivers/clk/bcm/Makefile
-> +++ b/drivers/clk/bcm/Makefile
-> @@ -6,6 +6,7 @@ obj-$(CONFIG_CLK_BCM_KONA)      += clk-kona-setup.o
->  obj-$(CONFIG_CLK_BCM_KONA)     += clk-bcm281xx.o
->  obj-$(CONFIG_CLK_BCM_KONA)     += clk-bcm21664.o
->  obj-$(CONFIG_COMMON_CLK_IPROC) += clk-iproc-armpll.o clk-iproc-pll.o clk-iproc-asiu.o
-> +obj-$(CONFIG_CLK_BCM2835)      += clk-bcm2711-dvp.o
->  obj-$(CONFIG_CLK_BCM2835)      += clk-bcm2835.o
->  obj-$(CONFIG_CLK_BCM2835)      += clk-bcm2835-aux.o
->  obj-$(CONFIG_CLK_RASPBERRYPI)  += clk-raspberrypi.o
 
-I do think that single driver is the right model here, but I noticed
-that you're not using your new CONFIG_ symbol.  With that fixed, r-b
-from me.
+--=-+FKCCfaEGN1+KOjI+Hug
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(though I'd also recommend devm_platform_get_and_ioremap_resource and
-devm_reset_controller_register())
+On Fri, 2020-06-05 at 19:43 +0200, Maxime Ripard wrote:
+> Hi Nicolas,
+>=20
+> On Thu, Jun 04, 2020 at 07:26:07PM +0200, Nicolas Saenz Julienne wrote:
+> > On Wed, 2020-05-27 at 17:47 +0200, Maxime Ripard wrote:
+> > > The HDMI block has a block that controls clocks and reset signals to =
+the
+> > > HDMI0 and HDMI1 controllers.
+> >=20
+> > Why not having two separate drivers?
+>=20
+> They share the same address space, so it wouldn't really make sense to
+> split it into two drivers and an MFD, especially when the clock/reset
+> association is fairly common.
+
+Fair enough.
+
+>=20
+> > > Let's expose that through a clock driver implementing a clock and res=
+et
+> > > provider.
+> > >=20
+> > > Cc: Michael Turquette <mturquette@baylibre.com>
+> > > Cc: Stephen Boyd <sboyd@kernel.org>
+> > > Cc: Rob Herring <robh+dt@kernel.org>
+> > > Cc: linux-clk@vger.kernel.org
+> > > Cc: devicetree@vger.kernel.org
+> > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > > ---
+> > >  drivers/clk/bcm/Kconfig           |  11 +++-
+> > >  drivers/clk/bcm/Makefile          |   1 +-
+> > >  drivers/clk/bcm/clk-bcm2711-dvp.c | 127 ++++++++++++++++++++++++++++=
++++-
+> > >  3 files changed, 139 insertions(+)
+> > >  create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
+> > >=20
+> > > diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
+> > > index 8c83977a7dc4..784f12c72365 100644
+> > > --- a/drivers/clk/bcm/Kconfig
+> > > +++ b/drivers/clk/bcm/Kconfig
+> > > @@ -1,4 +1,15 @@
+> > >  # SPDX-License-Identifier: GPL-2.0-only
+> > > +
+> > > +config CLK_BCM2711_DVP
+> > > +	tristate "Broadcom BCM2711 DVP support"
+> > > +	depends on ARCH_BCM2835 ||COMPILE_TEST
+> > > +	depends on COMMON_CLK
+> > > +	default ARCH_BCM2835
+> > > +	select RESET_SIMPLE
+> > > +	help
+> > > +	  Enable common clock framework support for the Broadcom BCM2711
+> > > +	  DVP Controller.
+> > > +
+> > >  config CLK_BCM2835
+> > >  	bool "Broadcom BCM2835 clock support"
+> > >  	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
+> > > diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
+> > > index 0070ddf6cdd2..2c1349062147 100644
+> > > --- a/drivers/clk/bcm/Makefile
+> > > +++ b/drivers/clk/bcm/Makefile
+> > > @@ -6,6 +6,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-kona-setup.o
+> > >  obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-bcm281xx.o
+> > >  obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-bcm21664.o
+> > >  obj-$(CONFIG_COMMON_CLK_IPROC)	+=3D clk-iproc-armpll.o clk-iproc-pll=
+.o
+> > > clk-iproc-asiu.o
+> > > +obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2711-dvp.o
+> > >  obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2835.o
+> > >  obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2835-aux.o
+> > >  obj-$(CONFIG_CLK_RASPBERRYPI)	+=3D clk-raspberrypi.o
+> > > diff --git a/drivers/clk/bcm/clk-bcm2711-dvp.c b/drivers/clk/bcm/clk-
+> > > bcm2711-
+> > > dvp.c
+> > > new file mode 100644
+> > > index 000000000000..c1c4b5857d32
+> > > --- /dev/null
+> > > +++ b/drivers/clk/bcm/clk-bcm2711-dvp.c
+> > > @@ -0,0 +1,127 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > > +// Copyright 2020 Cerno
+> > > +
+> > > +#include <linux/clk-provider.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/platform_device.h>
+> > > +#include <linux/reset-controller.h>
+> > > +#include <linux/reset/reset-simple.h>
+> > > +
+> > > +#define DVP_HT_RPI_SW_INIT	0x04
+> > > +#define DVP_HT_RPI_MISC_CONFIG	0x08
+> > > +
+> > > +#define NR_CLOCKS	2
+> > > +#define NR_RESETS	6
+> > > +
+> > > +struct clk_dvp {
+> > > +	struct clk_hw_onecell_data	*data;
+> > > +	struct reset_simple_data	reset;
+> > > +};
+> > > +
+> > > +static const struct clk_parent_data clk_dvp_parent =3D {
+> > > +	.index	=3D 0,
+> > > +};
+> > > +
+> > > +static int clk_dvp_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct clk_hw_onecell_data *data;
+> > > +	struct resource *res;
+> > > +	struct clk_dvp *dvp;
+> > > +	void __iomem *base;
+> > > +	int ret;
+> > > +
+> > > +	dvp =3D devm_kzalloc(&pdev->dev, sizeof(*dvp), GFP_KERNEL);
+> > > +	if (!dvp)
+> > > +		return -ENOMEM;
+> > > +	platform_set_drvdata(pdev, dvp);
+> > > +
+> > > +	dvp->data =3D devm_kzalloc(&pdev->dev,
+> > > +				 struct_size(dvp->data, hws, NR_CLOCKS),
+> > > +				 GFP_KERNEL);
+> > > +	if (!dvp->data)
+> > > +		return -ENOMEM;
+> > > +	data =3D dvp->data;
+> > > +
+> > > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > +	base =3D devm_ioremap_resource(&pdev->dev, res);
+> >=20
+> > I think the cool function to use these days is
+> > devm_platform_get_and_ioremap_resource().
+>=20
+> i'll change it, thanks!
+
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+Regards,
+Nicolas
+
+
+--=-+FKCCfaEGN1+KOjI+Hug
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7airUACgkQlfZmHno8
+x/6RAwgAoMvooAyRe7S9Zeth+KfsqdhHw7fSaIfcyW+1B1hAhY9U35yLYXdM9MqY
+aYWnkeHuMN+ic3frCKcxnR4ySNuiDgvYl9jFOhaEZZePo7dnVoLVrOTaMBs421SQ
+0+roDhCtWXx2tUMKkNLK7w7YRMyDrHP0xFO0+3gFV0k4dD4bBQYwTpT7Yz9k6Big
+wDDlyAeh+Tj5UlMZ7ADJx4Du6nPMDk0P/urKo0AyrnegExOBwlDLKDInRHZg5+G8
+VzgHMoQylpyo3hTBHpSYv2ZXtk3MwvJHi22o42gDzKSfsy6xCrI+/FxdJ+JFmd5i
+Eb0zIV6tEQZNERBn5IILIGn3CWeKzA==
+=i89s
+-----END PGP SIGNATURE-----
+
+--=-+FKCCfaEGN1+KOjI+Hug--
+
