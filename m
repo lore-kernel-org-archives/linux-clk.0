@@ -2,185 +2,129 @@ Return-Path: <SRS0=bD2q=7S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 804DFC433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 15:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01452C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 16:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5AA85206DB
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 15:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7630207D3
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 16:14:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="jEHhHx9B";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OphJkDRA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/GhGmZW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728118AbgFEPNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jun 2020 11:13:14 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:60067 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726601AbgFEPNN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jun 2020 11:13:13 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id DBB138E7;
-        Fri,  5 Jun 2020 11:13:11 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 05 Jun 2020 11:13:12 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=VbpvAVCUnsPFSpK3oSSzAp0uVqp
-        GePbm13cRTcImBvI=; b=jEHhHx9BX/kWeienCimDjVFn8kxZA9a0xz4mCXIMQkT
-        kimz89OdtBb22YkYSKmFbhCOtylqDGUWQk5zA7gBV8No/y0NrajZow4An1pJ/3/x
-        oIwAC9ic6oZSAyE9q+jui4mbMkzfk6IqrQwvlTTEQ5bR5yTPtJECFGZkCweacrNy
-        UHCexwhmK3GtqVGWwk1ek308TNz3TyOekpL0z7c8dTXJAXN++w1X07J6ir3dasPS
-        3PtKk9lX2j7nV/R1fES1niXKbau5DO42I9NJpDpRHwcV3Z7IBV8FtnccxQbkb61s
-        1MmvYx1Mx1zzCE2QZlgjdMpkuigH39M3Pk9LyFfiR1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=VbpvAV
-        CUnsPFSpK3oSSzAp0uVqpGePbm13cRTcImBvI=; b=OphJkDRAM94t6mGOS3+LGx
-        1ZF+30KNo0Gv1pI8V1cVuY/Dy+bAt+/JZxfk1QeprT9uIp4DdEY2zEqQlw0OU9Mf
-        g7H1x24ackvUhNn3T7IFcKeessqgYK/BnvFenPSB2QJtg4HCifV5zzKWxyHg8xki
-        LXQOq/T0QaUetcjYuMoo2Zqpjk9SoVOCo3T8StZvFLWj0a1RDRUBxo5nRya4MB0P
-        iFNVs2vgFq/awLTkCiAhFKM80mxRvPVz1YWCrqLtQVNAanHTv+qXqYwfyXb4k+h7
-        3QaBGVWe55x09tdRg4QjqNugMolAKVHWHyB17mPY0Z9D0PdYVW4m1FqG9ie5B2Iw
-        ==
-X-ME-Sender: <xms:BGHaXszE6jCQt3UqXhv_rpK-h5ydbx5e0K9fIODa1lbA1h2fcZDzBQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudegfedgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujgesghdtre
-    ertddtjeenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrgigihhmvgestggv
-    rhhnohdrthgvtghhqeenucggtffrrghtthgvrhhnpeeutdfgjeeuudehvefgvedvtedtud
-    elfffgffekledtffekgedukeejueevieegudenucfkphepledtrdekledrieekrdejieen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigih
-    hmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:BGHaXgQvy1wn6p2e7o7S_OSWeDCmx6eR30VwmPn-7YK9mu6AjtMw7g>
-    <xmx:BGHaXuX00NXX5LGAMEHvRqjEQRNG5vXJM8YYYT4N2NXYV0QwhG7O-A>
-    <xmx:BGHaXqhv_WNqjpCMLG7pt29jUj990Xa3yBofV98mw_NMD960Q-jUlQ>
-    <xmx:B2HaXi5JEQDk4McYhDkEso2_BbUpevJz_UdJNorqTGnvu3K4X4urb4p-_N0>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F2F973280059;
-        Fri,  5 Jun 2020 11:13:07 -0400 (EDT)
-Date:   Fri, 5 Jun 2020 17:13:06 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     wens <wens@csie.org>,
-        =?utf-8?B?5p2O5oms6Z+s?= <frank@allwinnertech.com>,
-        "linus.walleij" <linus.walleij@linaro.org>
-Cc:     robh+dt <robh+dt@kernel.org>, mturquette <mturquette@baylibre.com>,
-        sboyd <sboyd@kernel.org>, "p.zabel" <p.zabel@pengutronix.de>,
-        =?utf-8?B?6buE54OB55Sf?= <huangshuosheng@allwinnertech.com>,
-        "tiny.windzz" <tiny.windzz@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>
-Subject: Re: =?utf-8?B?5Zue5aSN77yaW1BBVENIIDIvNF0gcGluY3RybA==?=
- =?utf-8?Q?=3A?= sunxi: add support for the Allwinner A100 pin controller
-Message-ID: <20200605151306.kqmyj673kux4sbaa@gilmour.lan>
-References: <20200522030743.10204-1-frank@allwinnertech.com>
- <20200522030743.10204-3-frank@allwinnertech.com>
- <20200522152803.twvfvuhd6ztunvll@gilmour.lan>
- <8c7a8eeb-f4ea-4df7-b381-5aeab6dd170a.frank@allwinnertech.com>
+        id S1726044AbgFEQOn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jun 2020 12:14:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38954 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725944AbgFEQOm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 5 Jun 2020 12:14:42 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA165C08C5C2;
+        Fri,  5 Jun 2020 09:14:41 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id 64so5096993pfg.8;
+        Fri, 05 Jun 2020 09:14:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eOl8Flzh5QfUAmLnA9UWhjEFQAgb6tPF02nTEzrngmE=;
+        b=o/GhGmZWIxJqhVDJKsQKGbPLqyjuawNYlFwCMSB1dmIOnfTQOWz+gyD8F4W9+foEip
+         sGduLULJG3sp/+AjRqE7W7sqIbpzF2ncOlDLUlwBVeO7u63L6GeeAJoLYaYkLFetqG3E
+         cz1WbWSYBHkNRKVGkVnDkY4ZkLUKwviwZlOaDS2pzxWLrpS/5HQ7hthbe7Su8fHi+iim
+         I2io55Tb7ZkkiWMfLsORboU0m+a4utgq3W2V8f7U83kFohzNiF3NHOyEZy+TTW4bxcht
+         O7tpsqxzHlkh8w48zv4OFSjGN8q5TA5nkf3R5zWuI5LGR/xmCGyGJRCgk4jIUrsDggjR
+         wqYQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eOl8Flzh5QfUAmLnA9UWhjEFQAgb6tPF02nTEzrngmE=;
+        b=e7Dp2bKlOXURHR5+3S6wEVQffRDJYxhLdaDHtKDy1nf1g3nDAb1MaykksqInqz4VfY
+         yrS05sgRe8gcRNmXJ/Q7K3Rl3d0wMcKC1CgUg0K089T2OSSIZNx+E0RfZ+gj1nNTQj9K
+         ctmSuQDRwVSM+5Ys0eDLCobck3VtSKI7eWQs2xobXrHVn00JA+nJQ0pDkGw3ezbSQJk9
+         wIPH6Y6CR6XItCi/6L+O+Y7PoxVjBD1P7uReGDmtYnZ2uP2LEOD5Klhb554MQcwbhruC
+         ihXDPSZ1QH0XegZVJ2nsWzmyqpmqdYmSonvuhvoFZ74rlCJc2oJ2Qx7bAl63oRb4Y3wT
+         C0vQ==
+X-Gm-Message-State: AOAM531og9G4j88KoKNAgs7HlyiLC20ONFm7o/ZjhQbOIffLzu69+X9C
+        tfYuLHkIQMrrFru4Bu6qo2M=
+X-Google-Smtp-Source: ABdhPJx+oYs7CN1MRuADp7QymAO8VtA4DAeydYgA4KPRUXclZZTlBFTS70qpwF1A3FJ1zbMweHcCNQ==
+X-Received: by 2002:a63:6447:: with SMTP id y68mr9800595pgb.395.1591373681240;
+        Fri, 05 Jun 2020 09:14:41 -0700 (PDT)
+Received: from suzukaze.ipads-lab.se.sjtu.edu.cn ([202.120.40.82])
+        by smtp.gmail.com with ESMTPSA id g19sm63576pfo.209.2020.06.05.09.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 05 Jun 2020 09:14:40 -0700 (PDT)
+From:   Chuhong Yuan <hslester96@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Markus Elfring <Markus.Elfring@web.de>,
+        Akshu Agrawal <Akshu.Agrawal@amd.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Daniel Kurtz <djkurtz@chromium.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Chuhong Yuan <hslester96@gmail.com>
+Subject: [PATCH v2] clk: clk-st: Add missed return value checks in st_clk_probe()
+Date:   Sat,  6 Jun 2020 00:14:30 +0800
+Message-Id: <20200605161430.2513121-1-hslester96@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zkd5ahwpreyajhe3"
-Content-Disposition: inline
-In-Reply-To: <8c7a8eeb-f4ea-4df7-b381-5aeab6dd170a.frank@allwinnertech.com>
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Return values were not checked after calls of the following functions.
+  - clk_hw_register_mux
+  - clk_hw_register_gate
+  - devm_clk_hw_register_clkdev
 
---zkd5ahwpreyajhe3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thus add error detection and the corresponding exception handling.
 
-Hi Frank,
+Return the value from the function call "devm_clk_hw_register_clkdev"
+at the end of this function implementation.
 
-On Wed, Jun 03, 2020 at 05:44:36PM +0800, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
-> >> + SUNXI_PIN(SUNXI_PINCTRL_PIN(F, 0),
-> >> +  SUNXI_FUNCTION(0x0, "gpio_in"),
-> >> +  SUNXI_FUNCTION(0x1, "gpio_out"),
-> >> +  SUNXI_FUNCTION(0x2, "mmc0"),  /* D1 */
-> >> +  SUNXI_FUNCTION(0x3, "jtag"),  /* MS1 */
-> >> +  SUNXI_FUNCTION(0x4, "jtag"),  /* MS_GPU */
-> >
-> >We should use another name here, since the code will just pick the first=
- one and
-> >ignore the second. What about jtag-gpu?
->=20
-> The underscores are used in front, so changing it to jtag_gpu may be more=
- consistent.
+Fixes: 421bf6a1f061 ("clk: x86: Add ST oscout platform clock")
+Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+---
+Changes in v2:
+  - Modify description.
 
-Yep, that makes sense
+ drivers/clk/x86/clk-st.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> >> + SUNXI_PIN(SUNXI_PINCTRL_PIN(B, 7),
-> >> +  SUNXI_FUNCTION(0x0, "gpio_in"),
-> >> +  SUNXI_FUNCTION(0x1, "gpio_out"),
-> >> +  SUNXI_FUNCTION(0x2, "spdif"),  /* DIN */
-> >> +  SUNXI_FUNCTION(0x3, "i2s0"),  /* DOUT0 */
-> >> +  SUNXI_FUNCTION(0x4, "i2s0"),  /* DIN1 */
-> >
-> >I guess the second one would be i2s1?
->=20
-> No, each i2s may have many inputs and outputs.=20
->=20
->  SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 19),
->      SUNXI_FUNCTION(0x0, "gpio_in"),
->               SUNXI_FUNCTION(0x1, "gpio_out"),
->               SUNXI_FUNCTION(0x2, "cir0"),          /* IN */
->               SUNXI_FUNCTION(0x3, "i2s3_dout3"),       /* DOUT3 */
->               SUNXI_FUNCTION(0x4, "i2s3_din3"),       /* DIN3 */
->               SUNXI_FUNCTION(0x5, "ledc"),
->               SUNXI_FUNCTION_IRQ_BANK(0x6, 6, 19)),
->=20
-> Considering that the same pin has multiple same functions,=20
-> so add a suffix, like i2s3_dout3 and i2s3_din3?  =20
->=20
-> Or specify muxsel in the device tree may be another solution.
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+index 25d4b97aff9b..e6ee6ea2568b 100644
+--- a/drivers/clk/x86/clk-st.c
++++ b/drivers/clk/x86/clk-st.c
+@@ -46,16 +46,20 @@ static int st_clk_probe(struct platform_device *pdev)
+ 		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
+ 		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
+ 
++	if (IS_ERR(hws[ST_CLK_MUX]))
++		return PTR_ERR(hws[ST_CLK_MUX]);
++
+ 	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
+ 
+ 	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
+ 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+ 		CLK_GATE_SET_TO_DISABLE, NULL);
+ 
+-	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
+-				    NULL);
++	if (IS_ERR(hws[ST_CLK_GATE]))
++		return PTR_ERR(hws[ST_CLK_GATE]);
+ 
+-	return 0;
++	return devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE],
++					   "oscout1", NULL);
+ }
+ 
+ static int st_clk_remove(struct platform_device *pdev)
+-- 
+2.26.2
 
-Having muxsel is not really an option. We have two sets of bindings to
-maintain already, adding a third one would make it fairly hard to
-maintain. And the second binding we support is the generic pinctrl
-binding, so I'm not really sure why we would want to move away from
-that.
-
-And I'm not really fond of having a suffix either. It kind of breaks the
-consistency we had so far, and ideally I'd like to keep that.
-
-Chen-Yu, Linus? Any input on that one?
-
-> >> + SUNXI_PIN(SUNXI_PINCTRL_PIN(H, 2),
-> >> +  SUNXI_FUNCTION(0x0, "gpio_in"),
-> >> +  SUNXI_FUNCTION(0x1, "gpio_out"),
-> >> +  SUNXI_FUNCTION(0x2, "i2c1"),  /* SCK */
-> >> +  SUNXI_FUNCTION(0x3, "cpu"),  /* CUR_W */
-> >
-> >What is "cpu" supposed to be?
->=20
-> As far as I know, this is a function that has never been used.
-> The hardware guy said that it can be used to control the CPU to reduce th=
-e current.
-
-Ok. Do we really need to add it right now if we don't really know what
-it's going to be used for?
-
-Thanks!
-Maxime
-
---zkd5ahwpreyajhe3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXtphAgAKCRDj7w1vZxhR
-xcOpAP9hPMQZE8RjquYSY0OYJtT3YHX6GtIBD2qqFYRYTe/y5AEA/ArnzVS22UCR
-AAiE1kWBxSfADLmvwqJuQ7ofyhPp/AE=
-=FjvJ
------END PGP SIGNATURE-----
-
---zkd5ahwpreyajhe3--
