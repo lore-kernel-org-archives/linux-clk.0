@@ -6,41 +6,41 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABCB9C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517F4C433DF
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D7AB20772
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 339FC207D0
+	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726465AbgFEKeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jun 2020 06:34:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55158 "EHLO mx2.suse.de"
+        id S1726540AbgFEKiG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 5 Jun 2020 06:38:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56358 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726367AbgFEKeh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jun 2020 06:34:37 -0400
+        id S1726465AbgFEKiG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 5 Jun 2020 06:38:06 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 182A9B1BA;
-        Fri,  5 Jun 2020 10:34:39 +0000 (UTC)
-Message-ID: <9c3d28922f343bcb19243894d3385a8fe1fb3606.camel@suse.de>
-Subject: Re: [PATCH v3 17/25] clk: bcm: rpi: Split pllb clock hooks
+        by mx2.suse.de (Postfix) with ESMTP id 803E3ABBE;
+        Fri,  5 Jun 2020 10:38:07 +0000 (UTC)
+Message-ID: <c9ae665f45d8669e6834e7f6a006698496542d68.camel@suse.de>
+Subject: Re: [PATCH v3 18/25] clk: bcm: rpi: Make the PLLB registration
+ function return a clk_hw
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc:     linux-rpi-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Fri, 05 Jun 2020 12:34:32 +0200
-In-Reply-To: <10e269b4c3c5cf38eba9c0684341b191b9ab7abe.1590594293.git-series.maxime@cerno.tech>
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 05 Jun 2020 12:38:00 +0200
+In-Reply-To: <be60ef4f29c929e633363a4473aa119f69ace7a0.1590594293.git-series.maxime@cerno.tech>
 References: <cover.662a8d401787ef33780d91252a352de91dc4be10.1590594293.git-series.maxime@cerno.tech>
-         <10e269b4c3c5cf38eba9c0684341b191b9ab7abe.1590594293.git-series.maxime@cerno.tech>
+         <be60ef4f29c929e633363a4473aa119f69ace7a0.1590594293.git-series.maxime@cerno.tech>
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-kBBCKrUQb2v8gZXGREOB"
+        protocol="application/pgp-signature"; boundary="=-GKBfxlAyyMcO4y1FBBUP"
 User-Agent: Evolution 3.36.2 
 MIME-Version: 1.0
 Sender: linux-clk-owner@vger.kernel.org
@@ -49,18 +49,22 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---=-kBBCKrUQb2v8gZXGREOB
+--=-GKBfxlAyyMcO4y1FBBUP
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, 2020-05-27 at 17:45 +0200, Maxime Ripard wrote:
-> The driver only supports the pllb for now and all the clock framework hoo=
-ks
-> are a mix of the generic firmware interface and the specifics of the pllb=
-.
-> Since we will support more clocks in the future let's split the generic a=
-nd
-> specific hooks
+> The raspberrypi_register_pllb has been returning an integer so far to
+> notify whether the functions has exited successfully or not.
+>=20
+> However, the OF provider functions in the clock framework require access =
+to
+> the clk_hw structure so that we can expose those clocks to device tree
+> consumers.
+>=20
+> Since we'll want that for the future clocks, let's return a clk_hw pointe=
+r
+> instead of the return code.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: linux-clk@vger.kernel.org
@@ -74,22 +78,22 @@ Regards,
 Nicolas
 
 
---=-kBBCKrUQb2v8gZXGREOB
+--=-GKBfxlAyyMcO4y1FBBUP
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7aH7gACgkQlfZmHno8
-x/4xWwf/RYRgzsbakQqmxDtyx2MpHrL5pyM3SCfIlrEoNmp0pInOHxEiPDyM4gHG
-M1nMPJiZqDKXKYbbTXB4LkzLt7OelM3FEtgUiZYUOiKk/kKmFeXdXpRUY9yLtcGg
-mwypxmeNKfXXX7NAH+UOuuvxv1luAgeW+FP8hGQVoDp12R6TDScRHHJu9OJC/2CO
-fWwOCU4ROOiIqbPAL/YdOXdfEN62D6AJhDIoviS1zU4QG0+pMsxdERkcGac1Hr26
-lDYR8ManeMQPO03IUZGcOKcDdY2iflgzaQvFBvSHeFiOIkGYucDFMF0q173q+O8X
-S+mbc0Xe4WLmffWUA6EmQ0s73kLt6w==
-=ayQ0
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7aIIgACgkQlfZmHno8
+x/49AQf+NEJCsV2JOsSPe7EgOc95gd6JyUWOEua0ulSmnIKXlzz0Slu/WTt5dq3K
+y1rmylaZUECzHLB/iMw0VxIovd0VAMRwef24x7c5Xu6SWAIjr7XSihennsgwU9kp
+KOqPvC2IejaU/bW0aMBYb7jWr21cRqtSU4FMwUK73mtdg4kjHmE+o2sXGTDMSdLF
+kTUZJAJCMAAQl36As1gk6xpiQnvAqkphJIfULpQGjsn2WxDa6tmHER1Pu1SjLQ/x
+5O12dePkhZhg+MlTWq8/v+o1KXIGOd5L7MfkgulGqKZbPV1lXrVkBMiyDEByh0K1
+WYSdPQF9hRXjmAsFwkCo/8LVUKgm7w==
+=zDZM
 -----END PGP SIGNATURE-----
 
---=-kBBCKrUQb2v8gZXGREOB--
+--=-GKBfxlAyyMcO4y1FBBUP--
 
