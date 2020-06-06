@@ -1,215 +1,97 @@
-Return-Path: <SRS0=bD2q=7S=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=F3u8=7T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCC77C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 18:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0BCC433E0
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Jun 2020 10:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A33F82077D
-	for <linux-clk@archiver.kernel.org>; Fri,  5 Jun 2020 18:11:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 888C42073E
+	for <linux-clk@archiver.kernel.org>; Sat,  6 Jun 2020 10:55:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbgFESLI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 5 Jun 2020 14:11:08 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47988 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbgFESLG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 5 Jun 2020 14:11:06 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D2843AF48;
-        Fri,  5 Jun 2020 18:11:07 +0000 (UTC)
-Message-ID: <977dd9ba222d8c513b09743da5cb53fd14bfd9a0.camel@suse.de>
-Subject: Re: [PATCH v3 004/105] clk: bcm: Add BCM2711 DVP driver
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     devicetree@vger.kernel.org, Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, Eric Anholt <eric@anholt.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Fri, 05 Jun 2020 20:11:01 +0200
-In-Reply-To: <20200605174329.hf5d6oulmcewzw63@gilmour.lan>
-References: <cover.aaf2100bd7da4609f8bcb8216247d4b4e4379639.1590594512.git-series.maxime@cerno.tech>
-         <6615a61b8af240e3d10f8890e4b2462ccdaac9b9.1590594512.git-series.maxime@cerno.tech>
-         <faacbc33174e77500e04e609a654c5810045cb42.camel@suse.de>
-         <20200605174329.hf5d6oulmcewzw63@gilmour.lan>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-+FKCCfaEGN1+KOjI+Hug"
-User-Agent: Evolution 3.36.2 
-MIME-Version: 1.0
+        id S1728726AbgFFKzQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 6 Jun 2020 06:55:16 -0400
+Received: from alexa-out-sd-01.qualcomm.com ([199.106.114.38]:60628 "EHLO
+        alexa-out-sd-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728161AbgFFKzP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 6 Jun 2020 06:55:15 -0400
+Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
+  by alexa-out-sd-01.qualcomm.com with ESMTP; 06 Jun 2020 03:55:14 -0700
+Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
+  by ironmsg01-sd.qualcomm.com with ESMTP; 06 Jun 2020 03:55:10 -0700
+Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
+        id D14862147A; Sat,  6 Jun 2020 16:25:08 +0530 (IST)
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        sivaprak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V7 0/4] Add APSS clock controller support for IPQ6018
+Date:   Sat,  6 Jun 2020 16:25:03 +0530
+Message-Id: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The CPU on Qualcomm's IPQ6018 devices are primarily fed by APSS PLL and XO,
+these are connected to a clock mux and enable block.
 
---=-+FKCCfaEGN1+KOjI+Hug
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch series adds support for these clocks and inturn enables clocks
+required for CPU freq.
 
-On Fri, 2020-06-05 at 19:43 +0200, Maxime Ripard wrote:
-> Hi Nicolas,
->=20
-> On Thu, Jun 04, 2020 at 07:26:07PM +0200, Nicolas Saenz Julienne wrote:
-> > On Wed, 2020-05-27 at 17:47 +0200, Maxime Ripard wrote:
-> > > The HDMI block has a block that controls clocks and reset signals to =
-the
-> > > HDMI0 and HDMI1 controllers.
-> >=20
-> > Why not having two separate drivers?
->=20
-> They share the same address space, so it wouldn't really make sense to
-> split it into two drivers and an MFD, especially when the clock/reset
-> association is fairly common.
+[V7]
+ * Removed dts patch from this series, will send that separately
+ * Addressed Rob's minor comment on the binding
+ * Patch 1 depends on a53 pll bindings
+   https://lkml.org/lkml/2020/5/4/60
+[V6]
+ * Split mailbox driver from this series, mailbox changes will sent as a
+   separate series
+ * Addressed review comments from Stephen
+[V5]
+ * Addressed Bjorn comments on apss clk and dt-bindings
+ * Patch 2 depends on a53 pll dt-bindings
+   https://www.spinics.net/lists/linux-clk/msg48358.html  
+[V4]
+ * Re-written PLL found on IPQ platforms as a separate driver
+ * Addressed stephen's comments on apss clock controller and pll
+ * Addressed Rob's review comments on bindings
+ * moved a53 pll binding from this series as it is not applicable, will send
+   it separately.
+[V3]
+ * Fixed dt binding check error in patch2
+   dt-bindings: clock: Add YAML schemas for QCOM A53 PLL
+[V2]
+ * Restructred the patch series as there are two different HW blocks,
+   the mux and enable belongs to the apcs block and PLL has a separate HW
+   block.
+ * Converted qcom mailbox and qcom a53 pll documentation to yaml.
+ * Addressed review comments from Stephen, Rob and Sibi where it is applicable.
+ * Changed this cover letter to state the purpose of this patch series
 
-Fair enough.
+Sivaprakash Murugesan (4):
+  dt-bindings: clock: add ipq6018 a53 pll compatible
+  clk: qcom: Add ipq apss pll driver
+  clk: qcom: Add DT bindings for ipq6018 apss clock controller
+  clk: qcom: Add ipq6018 apss clock controller
 
->=20
-> > > Let's expose that through a clock driver implementing a clock and res=
-et
-> > > provider.
-> > >=20
-> > > Cc: Michael Turquette <mturquette@baylibre.com>
-> > > Cc: Stephen Boyd <sboyd@kernel.org>
-> > > Cc: Rob Herring <robh+dt@kernel.org>
-> > > Cc: linux-clk@vger.kernel.org
-> > > Cc: devicetree@vger.kernel.org
-> > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > > ---
-> > >  drivers/clk/bcm/Kconfig           |  11 +++-
-> > >  drivers/clk/bcm/Makefile          |   1 +-
-> > >  drivers/clk/bcm/clk-bcm2711-dvp.c | 127 ++++++++++++++++++++++++++++=
-+++-
-> > >  3 files changed, 139 insertions(+)
-> > >  create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
-> > >=20
-> > > diff --git a/drivers/clk/bcm/Kconfig b/drivers/clk/bcm/Kconfig
-> > > index 8c83977a7dc4..784f12c72365 100644
-> > > --- a/drivers/clk/bcm/Kconfig
-> > > +++ b/drivers/clk/bcm/Kconfig
-> > > @@ -1,4 +1,15 @@
-> > >  # SPDX-License-Identifier: GPL-2.0-only
-> > > +
-> > > +config CLK_BCM2711_DVP
-> > > +	tristate "Broadcom BCM2711 DVP support"
-> > > +	depends on ARCH_BCM2835 ||COMPILE_TEST
-> > > +	depends on COMMON_CLK
-> > > +	default ARCH_BCM2835
-> > > +	select RESET_SIMPLE
-> > > +	help
-> > > +	  Enable common clock framework support for the Broadcom BCM2711
-> > > +	  DVP Controller.
-> > > +
-> > >  config CLK_BCM2835
-> > >  	bool "Broadcom BCM2835 clock support"
-> > >  	depends on ARCH_BCM2835 || ARCH_BRCMSTB || COMPILE_TEST
-> > > diff --git a/drivers/clk/bcm/Makefile b/drivers/clk/bcm/Makefile
-> > > index 0070ddf6cdd2..2c1349062147 100644
-> > > --- a/drivers/clk/bcm/Makefile
-> > > +++ b/drivers/clk/bcm/Makefile
-> > > @@ -6,6 +6,7 @@ obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-kona-setup.o
-> > >  obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-bcm281xx.o
-> > >  obj-$(CONFIG_CLK_BCM_KONA)	+=3D clk-bcm21664.o
-> > >  obj-$(CONFIG_COMMON_CLK_IPROC)	+=3D clk-iproc-armpll.o clk-iproc-pll=
-.o
-> > > clk-iproc-asiu.o
-> > > +obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2711-dvp.o
-> > >  obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2835.o
-> > >  obj-$(CONFIG_CLK_BCM2835)	+=3D clk-bcm2835-aux.o
-> > >  obj-$(CONFIG_CLK_RASPBERRYPI)	+=3D clk-raspberrypi.o
-> > > diff --git a/drivers/clk/bcm/clk-bcm2711-dvp.c b/drivers/clk/bcm/clk-
-> > > bcm2711-
-> > > dvp.c
-> > > new file mode 100644
-> > > index 000000000000..c1c4b5857d32
-> > > --- /dev/null
-> > > +++ b/drivers/clk/bcm/clk-bcm2711-dvp.c
-> > > @@ -0,0 +1,127 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +// Copyright 2020 Cerno
-> > > +
-> > > +#include <linux/clk-provider.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/reset-controller.h>
-> > > +#include <linux/reset/reset-simple.h>
-> > > +
-> > > +#define DVP_HT_RPI_SW_INIT	0x04
-> > > +#define DVP_HT_RPI_MISC_CONFIG	0x08
-> > > +
-> > > +#define NR_CLOCKS	2
-> > > +#define NR_RESETS	6
-> > > +
-> > > +struct clk_dvp {
-> > > +	struct clk_hw_onecell_data	*data;
-> > > +	struct reset_simple_data	reset;
-> > > +};
-> > > +
-> > > +static const struct clk_parent_data clk_dvp_parent =3D {
-> > > +	.index	=3D 0,
-> > > +};
-> > > +
-> > > +static int clk_dvp_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct clk_hw_onecell_data *data;
-> > > +	struct resource *res;
-> > > +	struct clk_dvp *dvp;
-> > > +	void __iomem *base;
-> > > +	int ret;
-> > > +
-> > > +	dvp =3D devm_kzalloc(&pdev->dev, sizeof(*dvp), GFP_KERNEL);
-> > > +	if (!dvp)
-> > > +		return -ENOMEM;
-> > > +	platform_set_drvdata(pdev, dvp);
-> > > +
-> > > +	dvp->data =3D devm_kzalloc(&pdev->dev,
-> > > +				 struct_size(dvp->data, hws, NR_CLOCKS),
-> > > +				 GFP_KERNEL);
-> > > +	if (!dvp->data)
-> > > +		return -ENOMEM;
-> > > +	data =3D dvp->data;
-> > > +
-> > > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +	base =3D devm_ioremap_resource(&pdev->dev, res);
-> >=20
-> > I think the cool function to use these days is
-> > devm_platform_get_and_ioremap_resource().
->=20
-> i'll change it, thanks!
+ .../devicetree/bindings/clock/qcom,a53pll.yaml     |  18 ++++
+ drivers/clk/qcom/Kconfig                           |  19 ++++
+ drivers/clk/qcom/Makefile                          |   2 +
+ drivers/clk/qcom/apss-ipq-pll.c                    |  95 ++++++++++++++++++
+ drivers/clk/qcom/apss-ipq6018.c                    | 106 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,apss-ipq.h          |  12 +++
+ 6 files changed, 252 insertions(+)
+ create mode 100644 drivers/clk/qcom/apss-ipq-pll.c
+ create mode 100644 drivers/clk/qcom/apss-ipq6018.c
+ create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
 
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-Regards,
-Nicolas
-
-
---=-+FKCCfaEGN1+KOjI+Hug
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7airUACgkQlfZmHno8
-x/6RAwgAoMvooAyRe7S9Zeth+KfsqdhHw7fSaIfcyW+1B1hAhY9U35yLYXdM9MqY
-aYWnkeHuMN+ic3frCKcxnR4ySNuiDgvYl9jFOhaEZZePo7dnVoLVrOTaMBs421SQ
-0+roDhCtWXx2tUMKkNLK7w7YRMyDrHP0xFO0+3gFV0k4dD4bBQYwTpT7Yz9k6Big
-wDDlyAeh+Tj5UlMZ7ADJx4Du6nPMDk0P/urKo0AyrnegExOBwlDLKDInRHZg5+G8
-VzgHMoQylpyo3hTBHpSYv2ZXtk3MwvJHi22o42gDzKSfsy6xCrI+/FxdJ+JFmd5i
-Eb0zIV6tEQZNERBn5IILIGn3CWeKzA==
-=i89s
------END PGP SIGNATURE-----
-
---=-+FKCCfaEGN1+KOjI+Hug--
+-- 
+2.7.4
 
