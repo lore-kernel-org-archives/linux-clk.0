@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381BEC433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52737C433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1082720801
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25BA5206C3
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:21:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591661892;
-	bh=Y/PQsvmcP7ojJNDQ/LzfHMFXOeqcGVLKs741dczTlTk=;
+	s=default; t=1591662081;
+	bh=otPiUuOD4KPszx0jfuOEfJp3SN2g/6T5J0y2DSIW3mY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oS71ywWbdMsicj+WF+qbG16uqitiMJeXRYuYoj13ntk3B3vn8IRqml0AIYdR763Eq
-	 +uFu3XcDnjBi7C1ARUCIO3afWM+VM5dHbVhfB8BeMduRXhdvC3hgLrjpNmDkXnhUIX
-	 AzTPizicGaNjO4Ro9TwMNWEKK9bbXOum3gYMGK0A=
+	b=1A0bbmRY1DW//zHmB6/Ed1HYhxS1Wq+NzhRhW0zgYhBk8ORjFCT2Vg4Ctcb9dPvuR
+	 +X8kU1ATySjFs+DXGVkTTGLPQcQ/4Z0YJ1eBFxCG82dj7+i+QR4yonFfG7mCGu1AJO
+	 be+Qp1ddBBa+o0gOQmkGsjPfX+mCD8seiDk/+xaA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbgFIASG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jun 2020 20:18:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41036 "EHLO mail.kernel.org"
+        id S1730095AbgFHXRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jun 2020 19:17:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729622AbgFHXSm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:18:42 -0400
+        id S1730533AbgFHXRw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:17:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E0082086A;
-        Mon,  8 Jun 2020 23:18:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4D10C2083E;
+        Mon,  8 Jun 2020 23:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658322;
-        bh=Y/PQsvmcP7ojJNDQ/LzfHMFXOeqcGVLKs741dczTlTk=;
+        s=default; t=1591658272;
+        bh=otPiUuOD4KPszx0jfuOEfJp3SN2g/6T5J0y2DSIW3mY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rHnuhcwXPMaAVD6F19ef99kkKlo6ZR2PrYSn80TFtIzNiHuFdedahGDtBViPuyO8n
-         V6Jh2XebFagKnbye70NlIOUab69VkRGpLd83Qv38BLpihj4152qXQA/DSWWTo+7t0Q
-         Zy02KdjPmZ4zhV0HQ1+KhD0NwFnOi/k2SM4NqRNs=
+        b=YWMbSl0mWXb2NOfYWIbxZacz9NlfqsJJ9H7Tq7avk/rr4eFyvFMGy1KqbBM8WhILW
+         o/qngdEZMNTFWs0rCEbd0LEzEeKxqDGKBsDJ9MTBklUUJxGAcMq1Iz5F0Bbm6sEG5P
+         0sNYLhDG1G+UTlx194qRtdc1i0flNPMikW8Ulxd4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vinod Koul <vkoul@kernel.org>, Jonathan Marek <jonathan@marek.ca>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+Cc:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 322/606] clk: qcom: gcc: Fix parent for gpll0_out_even
-Date:   Mon,  8 Jun 2020 19:07:27 -0400
-Message-Id: <20200608231211.3363633-322-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 278/606] clk: ti: am33xx: fix RTC clock parent
+Date:   Mon,  8 Jun 2020 19:06:43 -0400
+Message-Id: <20200608231211.3363633-278-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -60,38 +59,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Vinod Koul <vkoul@kernel.org>
+From: Tero Kristo <t-kristo@ti.com>
 
-[ Upstream commit a76f274182f054481182c81cd62bb8794a5450a6 ]
+[ Upstream commit dc6dbd51009fc412729c307161f442c0a08618f4 ]
 
-Documentation says that gpll0 is parent of gpll0_out_even, somehow
-driver coded that as bi_tcxo, so fix it
+Right now, trying to use RTC purely with the ti-sysc / clkctrl framework
+fails to enable the RTC module properly. Based on experimentation, this
+appears to be because RTC is sourced from the clkdiv32k optional clock.
+TRM is not very clear on this topic, but fix the RTC to use the proper
+source clock nevertheless.
 
-Fixes: 2a1d7eb854bb ("clk: qcom: gcc: Add global clock controller driver for SM8150")
-Reported-by: Jonathan Marek <jonathan@marek.ca>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Link: https://lkml.kernel.org/r/20200521052728.2141377-1-vkoul@kernel.org
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Link: https://lkml.kernel.org/r/20200424152301.4018-1-t-kristo@ti.com
+Acked-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-sm8150.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/ti/clk-33xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 20877214acff..e3959ff5cb55 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -75,8 +75,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpll0_out_even",
- 		.parent_data = &(const struct clk_parent_data){
--			.fw_name = "bi_tcxo",
--			.name = "bi_tcxo",
-+			.hw = &gpll0.clkr.hw,
- 		},
- 		.num_parents = 1,
- 		.ops = &clk_trion_pll_postdiv_ops,
+diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
+index e001b9bcb6bf..7dc30dd6c8d5 100644
+--- a/drivers/clk/ti/clk-33xx.c
++++ b/drivers/clk/ti/clk-33xx.c
+@@ -212,7 +212,7 @@ static const struct omap_clkctrl_reg_data am3_mpu_clkctrl_regs[] __initconst = {
+ };
+ 
+ static const struct omap_clkctrl_reg_data am3_l4_rtc_clkctrl_regs[] __initconst = {
+-	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
++	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk-24mhz-clkctrl:0000:0" },
+ 	{ 0 },
+ };
+ 
 -- 
 2.25.1
 
