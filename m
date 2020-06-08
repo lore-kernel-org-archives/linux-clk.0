@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED44C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7578C433DF
 	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 13:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1992B2072F
+	by mail.kernel.org (Postfix) with ESMTP id A43B12076A
 	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 13:23:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbgFHNXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1729813AbgFHNXf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 8 Jun 2020 09:23:35 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:41892 "EHLO inva020.nxp.com"
+Received: from inva020.nxp.com ([92.121.34.13]:41830 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729130AbgFHNXd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Jun 2020 09:23:33 -0400
+        id S1729796AbgFHNXb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Jun 2020 09:23:31 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E1E481A1033;
-        Mon,  8 Jun 2020 15:23:31 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E41221A103A;
+        Mon,  8 Jun 2020 15:23:28 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EAA2F1A0120;
-        Mon,  8 Jun 2020 15:23:21 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 93A521A1033;
+        Mon,  8 Jun 2020 15:23:18 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A1A7740299;
-        Mon,  8 Jun 2020 21:23:04 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3E86440307;
+        Mon,  8 Jun 2020 21:23:00 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
         kernel@pengutronix.de, festevam@gmail.com, mturquette@baylibre.com,
@@ -39,9 +39,9 @@ To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH 7/9] clk: imx8mp: Support module build
-Date:   Mon,  8 Jun 2020 21:12:14 +0800
-Message-Id: <1591621936-11886-8-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH 5/9] clk: imx8mm: Support module build
+Date:   Mon,  8 Jun 2020 21:12:12 +0800
+Message-Id: <1591621936-11886-6-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1591621936-11886-1-git-send-email-Anson.Huang@nxp.com>
 References: <1591621936-11886-1-git-send-email-Anson.Huang@nxp.com>
@@ -51,35 +51,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support building i.MX8MP clock driver as module.
+Support building i.MX8MM clock driver as module.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
  drivers/clk/imx/Kconfig      | 2 +-
- drivers/clk/imx/clk-imx8mp.c | 1 +
+ drivers/clk/imx/clk-imx8mm.c | 1 +
  2 files changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index 3ad1b63..7443302 100644
+index 54ad2ee..4e0f214 100644
 --- a/drivers/clk/imx/Kconfig
 +++ b/drivers/clk/imx/Kconfig
-@@ -23,7 +23,7 @@ config CLK_IMX8MN
- 	    Build the driver for i.MX8MN CCM Clock Driver
+@@ -9,7 +9,7 @@ config MXC_CLK_SCU
+ 	depends on IMX_SCU
  
- config CLK_IMX8MP
--	bool "IMX8MP CCM Clock Driver"
-+	tristate "IMX8MP CCM Clock Driver"
+ config CLK_IMX8MM
+-	bool "IMX8MM CCM Clock Driver"
++	tristate "IMX8MM CCM Clock Driver"
  	depends on ARCH_MXC
  	select MXC_CLK
  	help
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index b4d9db9..8517837 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -772,3 +772,4 @@ static struct platform_driver imx8mp_clk_driver = {
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index b793264..1e8242d 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -657,3 +657,4 @@ static struct platform_driver imx8mm_clk_driver = {
  	},
  };
- module_platform_driver(imx8mp_clk_driver);
+ module_platform_driver(imx8mm_clk_driver);
 +MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
