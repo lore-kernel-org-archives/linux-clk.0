@@ -2,177 +2,210 @@ Return-Path: <SRS0=IYdx=7V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29357C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 09:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60DC7C433DF
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 09:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EC2D7206D5
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 09:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 389B62076A
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 09:50:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sartura-hr.20150623.gappssmtp.com header.i=@sartura-hr.20150623.gappssmtp.com header.b="mx5PE7c9"
+	dkim=pass (2048-bit key) header.d=sartura-hr.20150623.gappssmtp.com header.i=@sartura-hr.20150623.gappssmtp.com header.b="hkDyJPIW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbgFHJn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jun 2020 05:43:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54592 "EHLO
+        id S1729272AbgFHJuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jun 2020 05:50:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729166AbgFHJn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jun 2020 05:43:28 -0400
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 58DC7C08C5C5
-        for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2020 02:43:28 -0700 (PDT)
-Received: by mail-ot1-x342.google.com with SMTP id e5so13083842ote.11
-        for <linux-clk@vger.kernel.org>; Mon, 08 Jun 2020 02:43:28 -0700 (PDT)
+        with ESMTP id S1729196AbgFHJuA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jun 2020 05:50:00 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17AAC08C5C4
+        for <linux-clk@vger.kernel.org>; Mon,  8 Jun 2020 02:49:59 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id mb16so17560849ejb.4
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jun 2020 02:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sartura-hr.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TYEy+8z/tFUxcc58fN1UDywpoBpG6q97Kp55SPoLlFQ=;
-        b=mx5PE7c9S7yIQQey9oDYYV9HhPDwCCObLL9zMXO5gI1cq1fvp8xBoTeX/bB9/tcr94
-         xvd46Fe5pNQ0KZgTlZt6KqIbH4Ba8t0gt616S9V9UoeG3GZaL5Nqv1clWU+GCJ6/hUK6
-         6kgZhSKtE5KQo498/9wTDNy3FdRqcBrQVdMmaj2ktDgYvHLq7vNmGMZCukXeqxXlk0tQ
-         cs02Wh3rUj0F0kdy17AJyVtg2hgl6N++aPUkgwKJTAGCq4nhtk4+O+j0c+bnhSas4ZvO
-         sfmJvEaew56pHY9q+yfgTM7xGRCkr1OrTzu4+T4NRW/5r8Yq7jx7vWvjBaas3JsWWyP0
-         7nIg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bowu5S2kLRuujMs4c7peqMpp/j0/TN2F5Fz+wpb7ydQ=;
+        b=hkDyJPIWslLC9m9KSdfkJN50IY+SjmiZM6B4D1trkHnzwxFSKZBby522cIEJnmrIBb
+         lotbEeWNLZQBjUnqQ1+N2eeJ5NeqInEGrM73s5a2BdseJH2JZ/dhW2LZWGLMQmT/H63V
+         l6s9HGAL4H6Xe0oKLIMQliPy6K0gF96V+4oPH6qmzlUPNu+cQLrUN8E/VswoeMCGy0Vx
+         XaAGKzPyOYww2P8na1SvJb459iEWK8wc59bhuue+Q17YP0zUdHTyE0JtO+BN+F2jZrJg
+         BbJAPn7OGTjP+p5oFpIjc/8k4MNv9cT9Xv8q1ZASOgbqVN2yO/4vJ7s5uATSgbKghbRK
+         784Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TYEy+8z/tFUxcc58fN1UDywpoBpG6q97Kp55SPoLlFQ=;
-        b=mMh87n0b835tapBgRhzYrREglgRD8OGsecRg/T1PLa7YtWDtKhLF38yUQXp8ZsJVAK
-         JV/5Sztv/bHCR3aOG9JxnURq5KS0S8KzuUUSJTlhsrmLG9CXX2qD5CBHbIX4WiT9TiIA
-         towJFPvE9Ee2APXSJCtyoOG1VXeKzH4QMaWhsYDqNJA7Muu/eA0gJ+AOzQRJKGieSCQ8
-         NcTJPy7kt9eAbZJ3pMphL/H8Ilh4wgKvsCUz+gElbueRfLYSukJoifRYELps9L8auP4T
-         rNGwGVzPxYgMlapSR8glAYqBywHb9BomNSeidUjcYCtrpzlae1bLR1+SGPquP43HsTmM
-         dHew==
-X-Gm-Message-State: AOAM532MD6ycyGGse+YDIsQSzqb59ZPUFlfm+yu2/t+RrXQBWrp6715C
-        WPy/lR4/EX1/FN3Za7kBBC9oVErNePZY7EUNCfc2ig==
-X-Google-Smtp-Source: ABdhPJzch/7ONQ8ZPK1KBOpA7Dst9zDuZ3FJ4djIcjndSpwGsnxcucHOb/OqZROcfPYD8G+gcU9sU93ZNxGx5tHguyQ=
-X-Received: by 2002:a05:6830:60d:: with SMTP id w13mr16894582oti.243.1591609407458;
- Mon, 08 Jun 2020 02:43:27 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200604120905.1344074-1-robert.marko@sartura.hr>
- <202006050445.tiQi7ZvY%lkp@intel.com> <CA+HBbNFpHugbM6LDGAtJHj4ZAz-K5ojkovaVZ04V3QJS-hytUw@mail.gmail.com>
- <20200608090705.GA1597633@ubuntu-n2-xlarge-x86>
-In-Reply-To: <20200608090705.GA1597633@ubuntu-n2-xlarge-x86>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bowu5S2kLRuujMs4c7peqMpp/j0/TN2F5Fz+wpb7ydQ=;
+        b=Drfba8fUWrbdRniLdEGuclxRPHO1/KUZ5ayvwQrkPVcqzvzLR/NJeApfmDkeXAb1dq
+         ITW8m2YFs+C7A0WrNuDe69MpI+6TbhbKspZpyqgR3V99W6xXpp7iXAItMe9bxisjtPvh
+         a3V+bS00Zr8hOyrmpQszyZJPgT1p2CGpNp5HgFpMjwfRXwL2kBIW8yzLs9k5Z6bgoRWM
+         ZKHYqkfriayjuKbyhPJqXItNmYEddpEw50pnXxVrDxcex0chVahhVOLUuIfJ1Ciib8f/
+         1SITVSjHjY8aIwNT+nzj/y6inHuNgWfLC91MlKJYSB7rlbfqHEupfOegTNuRy5QSf4BI
+         4e4g==
+X-Gm-Message-State: AOAM5319Y5Bd+f8vQ17lnTFTpVSjQBvdbFioRnuBIN8HHJY2vR5uNCVZ
+        e5MWsDk9vZudAXtCCGhcrkPZhQ==
+X-Google-Smtp-Source: ABdhPJw6zPYO7Ns1y9ZYS2jdqo5E8/ZXxETtL5izFfAKlRPo2xWy2hfeIyBsJJhlo1e/0t5i5zbFCw==
+X-Received: by 2002:a17:906:6c82:: with SMTP id s2mr19815065ejr.215.1591609798352;
+        Mon, 08 Jun 2020 02:49:58 -0700 (PDT)
+Received: from localhost.localdomain (dh207-96-217.xnet.hr. [88.207.96.217])
+        by smtp.googlemail.com with ESMTPSA id d11sm7354549edy.79.2020.06.08.02.49.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 08 Jun 2020 02:49:57 -0700 (PDT)
 From:   Robert Marko <robert.marko@sartura.hr>
-Date:   Mon, 8 Jun 2020 11:43:16 +0200
-Message-ID: <CA+HBbNFPtHK3AJBnY3TOG67tciW01rEoYaaAu+A7GP0pdcTsvw@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: ipq4019: fix apss cpu overclocking
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     kernel test robot <lkp@intel.com>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        Abhishek Sahu <absahu@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
-        Christian Lamparter <chunkeey@gmail.com>,
-        John Crispin <john@phrozen.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Christian Lamparter <chunkeey@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Luka Perkov <luka.perkov@sartura.hr>
+Subject: [PATCH] clk: qcom: ipq4019: fix apss cpu overclocking
+Date:   Mon,  8 Jun 2020 11:47:15 +0200
+Message-Id: <20200608094714.382149-1-robert.marko@sartura.hr>
+X-Mailer: git-send-email 2.26.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 8, 2020 at 11:07 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Mon, Jun 08, 2020 at 10:54:34AM +0200, Robert Marko wrote:
-> > On Thu, Jun 4, 2020 at 10:25 PM kernel test robot <lkp@intel.com> wrote:
-> > >
-> > > Hi Robert,
-> > >
-> > > I love your patch! Perhaps something to improve:
-> > >
-> > > [auto build test WARNING on clk/clk-next]
-> > > [also build test WARNING on v5.7 next-20200604]
-> > > [if your patch is applied to the wrong git tree, please drop us a note to help
-> > > improve the system. BTW, we also suggest to use '--base' option to specify the
-> > > base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
-> > >
-> > > url:    https://github.com/0day-ci/linux/commits/Robert-Marko/clk-qcom-ipq4019-fix-apss-cpu-overclocking/20200605-002859
-> > > base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-> > > config: x86_64-allyesconfig (attached as .config)
-> > > compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project ac47588bc4ff5927a01ed6fcd269ce86aba52a7c)
-> > > reproduce (this is a W=1 build):
-> > >         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
-> > >         chmod +x ~/bin/make.cross
-> > >         # install x86_64 cross compiling tool for clang build
-> > >         # apt-get install binutils-x86-64-linux-gnu
-> > >         # save the attached .config to linux build tree
-> > >         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=x86_64
-> > >
-> > > If you fix the issue, kindly add following tag as appropriate
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > >
-> > > All warnings (new ones prefixed by >>, old ones prefixed by <<):
-> > >
-> > > >> drivers/clk/qcom/gcc-ipq4019.c:1247:24: warning: no previous prototype for function 'qcom_find_freq_close' [-Wmissing-prototypes]
-> > > const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
-> > > ^
-> > > drivers/clk/qcom/gcc-ipq4019.c:1247:7: note: declare 'static' if the function is not intended to be used outside of this translation unit
-> > > const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
-> > > ^
-> > > static
-> > > 1 warning generated.
-> > >
-> > > vim +/qcom_find_freq_close +1247 drivers/clk/qcom/gcc-ipq4019.c
-> > >
-> > >   1245
-> > >   1246
-> > > > 1247  const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
-> > >   1248                                               unsigned long rate)
-> > >   1249  {
-> > >   1250          const struct freq_tbl *last = NULL;
-> > >   1251
-> > >   1252          for ( ; f->freq; f++) {
-> > >   1253                  if (rate == f->freq)
-> > >   1254                          return f;
-> > >   1255
-> > >   1256                  if (f->freq > rate) {
-> > >   1257                          if (!last ||
-> > >   1258                             (f->freq - rate) < (rate - last->freq))
-> > >   1259                                  return f;
-> > >   1260                          else
-> > >   1261                                  return last;
-> > >   1262                  }
-> > >   1263                  last = f;
-> > >   1264          }
-> > >   1265
-> > >   1266          return last;
-> > >   1267  }
-> > >   1268
-> > >
-> > > ---
-> > > 0-DAY CI Kernel Test Service, Intel Corporation
-> > > https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
-> >
->
-> <moved post to the bottom>
->
-> > Sorry for asking, but are these warnings relevant?
-> > GCC9.3 does not throw them
-> >
-> > Regards
-> > Robert
-> >
->
-> It should if you are using make W=1, this is not a clang specific
-> warning (it just happens that clang was the compiler for this report).
+From: Christian Lamparter <chunkeey@gmail.com>
 
-Thanks, W=1 does indeed show the warning along with a not evaluated return.
->
-> It looks like qcom_find_freq_close is only used in
-> drivers/clk/qcom/gcc-ipq4019.c, in which case it should be marked
-> static.
-Thanks, it does indeed solve the warning.
-I will send a v2 today.
+There's an interaction issue between the clk changes:"
+clk: qcom: ipq4019: Add the apss cpu pll divider clock node
+clk: qcom: ipq4019: remove fixed clocks and add pll clocks
+" and the cpufreq-dt.
 
-Regards,
-Robert
->
-> Cheers,
-> Nathan
+cpufreq-dt is now spamming the kernel-log with the following:
+
+[ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
+for freq 761142857 (-34)
+
+This only happens on certain devices like the Compex WPJ428
+and AVM FritzBox!4040. However, other devices like the Asus
+RT-AC58U and Meraki MR33 work just fine.
+
+The issue stem from the fact that all higher CPU-Clocks
+are achieved by switching the clock-parent to the P_DDRPLLAPSS
+(ddrpllapss). Which is set by Qualcomm's proprietary bootcode
+as part of the DDR calibration.
+
+For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
+at round 533 MHz (ddrpllsdcc = 190285714 Hz).
+
+whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
+clocked at a slightly higher 537 MHz ( ddrpllsdcc = 192000000 Hz).
+
+This patch attempts to fix the issue by modifying
+clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate()
+to use a new qcom_find_freq_close() function, which returns the closest
+matching frequency, instead of the next higher. This way, the SoC in
+the FB4040 (with its max clock speed of 710.4 MHz) will no longer
+try to overclock to 761 MHz.
+
+Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clock node")
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+Signed-off-by: John Crispin <john@phrozen.org>
+Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+Cc: Luka Perkov <luka.perkov@sartura.hr>
+---
+Changes from v1 to v2:
+* Resolve warnings discovered by the kbot
+* Return the return of regmap_update_bits instead of not using it at all
+
+ drivers/clk/qcom/gcc-ipq4019.c | 36 ++++++++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index ef5137fd50f3..62fa17a4291c 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -1243,6 +1243,29 @@ static const struct clk_fepll_vco gcc_fepll_vco = {
+ 	.reg = 0x2f020,
+ };
+ 
++
++static const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl *f,
++					     unsigned long rate)
++{
++	const struct freq_tbl *last = NULL;
++
++	for ( ; f->freq; f++) {
++		if (rate == f->freq)
++			return f;
++
++		if (f->freq > rate) {
++			if (!last ||
++			   (f->freq - rate) < (rate - last->freq))
++				return f;
++			else
++				return last;
++		}
++		last = f;
++	}
++
++	return last;
++}
++
+ /*
+  * Round rate function for APSS CPU PLL Clock divider.
+  * It looks up the frequency table and returns the next higher frequency
+@@ -1255,7 +1278,7 @@ static long clk_cpu_div_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_hw *p_hw;
+ 	const struct freq_tbl *f;
+ 
+-	f = qcom_find_freq(pll->freq_tbl, rate);
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -1278,7 +1301,7 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	u32 mask;
+ 	int ret;
+ 
+-	f = qcom_find_freq(pll->freq_tbl, rate);
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
+ 	if (!f)
+ 		return -EINVAL;
+ 
+@@ -1292,7 +1315,7 @@ static int clk_cpu_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	 */
+ 	udelay(1);
+ 
+-	return 0;
++	return ret;
+ };
+ 
+ /*
+@@ -1305,6 +1328,7 @@ static unsigned long
+ clk_cpu_div_recalc_rate(struct clk_hw *hw,
+ 			unsigned long parent_rate)
+ {
++	const struct freq_tbl *f;
+ 	struct clk_fepll *pll = to_clk_fepll(hw);
+ 	u32 cdiv, pre_div;
+ 	u64 rate;
+@@ -1325,7 +1349,11 @@ clk_cpu_div_recalc_rate(struct clk_hw *hw,
+ 	rate = clk_fepll_vco_calc_rate(pll, parent_rate) * 2;
+ 	do_div(rate, pre_div);
+ 
+-	return rate;
++	f = qcom_find_freq_close(pll->freq_tbl, rate);
++	if (!f)
++		return rate;
++
++	return f->freq;
+ };
+ 
+ static const struct clk_ops clk_regmap_cpu_div_ops = {
+-- 
+2.26.2
+
