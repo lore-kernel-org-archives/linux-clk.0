@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52737C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851A7C433E1
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:39:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 25BA5206C3
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56569206C3
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591662081;
-	bh=otPiUuOD4KPszx0jfuOEfJp3SN2g/6T5J0y2DSIW3mY=;
+	s=default; t=1591663179;
+	bh=BNvDn/c37fRzH+yDqVcvmJifUx/6tklM+D/+BV8N+oI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1A0bbmRY1DW//zHmB6/Ed1HYhxS1Wq+NzhRhW0zgYhBk8ORjFCT2Vg4Ctcb9dPvuR
-	 +X8kU1ATySjFs+DXGVkTTGLPQcQ/4Z0YJ1eBFxCG82dj7+i+QR4yonFfG7mCGu1AJO
-	 be+Qp1ddBBa+o0gOQmkGsjPfX+mCD8seiDk/+xaA=
+	b=MH413RC9P1VQlnDTkui8aPzxZNb3ruSYMdu+NulcA7bxAmqTe2VSmuDVKJEoh1W+/
+	 ycGqNKGNPmWtV6LAYx/PL+fhUcY6u151PZnfpaO5PQDSVnslAGujeBQCCT5EpPeabt
+	 WN6n8EqRfwvC3k3dJSMhF1RZgBXdhTjwRiTtZSLE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730095AbgFHXRw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:17:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39804 "EHLO mail.kernel.org"
+        id S1729281AbgFHXNU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jun 2020 19:13:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730533AbgFHXRw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:17:52 -0400
+        id S1729271AbgFHXNT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Jun 2020 19:13:19 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D10C2083E;
-        Mon,  8 Jun 2020 23:17:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 187A720C09;
+        Mon,  8 Jun 2020 23:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591658272;
-        bh=otPiUuOD4KPszx0jfuOEfJp3SN2g/6T5J0y2DSIW3mY=;
+        s=default; t=1591657998;
+        bh=BNvDn/c37fRzH+yDqVcvmJifUx/6tklM+D/+BV8N+oI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YWMbSl0mWXb2NOfYWIbxZacz9NlfqsJJ9H7Tq7avk/rr4eFyvFMGy1KqbBM8WhILW
-         o/qngdEZMNTFWs0rCEbd0LEzEeKxqDGKBsDJ9MTBklUUJxGAcMq1Iz5F0Bbm6sEG5P
-         0sNYLhDG1G+UTlx194qRtdc1i0flNPMikW8Ulxd4=
+        b=GBGF+ET8TEmr78EQWOvzLpVDFATDWpxx5Pfu9lg/TsZCVckbH+eYEq39mL2Og/Zzp
+         5OZnj7xI7kyL8LmU9K48KlRi+epLTw3AcxPIociRoYMP5Buzz63RX+82Jss+YA4VNd
+         IYaayO5viUf+dFGQP3bnP4M+0pRS8TVOj62DBeZY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>,
+Cc:     Marc Zyngier <maz@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.6 278/606] clk: ti: am33xx: fix RTC clock parent
-Date:   Mon,  8 Jun 2020 19:06:43 -0400
-Message-Id: <20200608231211.3363633-278-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.6 056/606] clk: Unlink clock if failed to prepare or enable
+Date:   Mon,  8 Jun 2020 19:03:01 -0400
+Message-Id: <20200608231211.3363633-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
 References: <20200608231211.3363633-1-sashal@kernel.org>
@@ -59,39 +60,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+From: Marc Zyngier <maz@kernel.org>
 
-[ Upstream commit dc6dbd51009fc412729c307161f442c0a08618f4 ]
+commit 018d4671b9bbd4a5c55cf6eab3e1dbc70a50b66e upstream.
 
-Right now, trying to use RTC purely with the ti-sysc / clkctrl framework
-fails to enable the RTC module properly. Based on experimentation, this
-appears to be because RTC is sourced from the clkdiv32k optional clock.
-TRM is not very clear on this topic, but fix the RTC to use the proper
-source clock nevertheless.
+On failing to prepare or enable a clock, remove the core structure
+from the list it has been inserted as it is about to be freed.
 
-Reported-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Link: https://lkml.kernel.org/r/20200424152301.4018-1-t-kristo@ti.com
-Acked-by: Tony Lindgren <tony@atomide.com>
+This otherwise leads to random crashes when subsequent clocks get
+registered, during which parsing of the clock tree becomes adventurous.
+
+Observed with QEMU's RPi-3 emulation.
+
+Fixes: 12ead77432f2 ("clk: Don't try to enable critical clocks if prepare failed")
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Link: https://lkml.kernel.org/r/20200505140953.409430-1-maz@kernel.org
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/clk/ti/clk-33xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index e001b9bcb6bf..7dc30dd6c8d5 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -212,7 +212,7 @@ static const struct omap_clkctrl_reg_data am3_mpu_clkctrl_regs[] __initconst = {
- };
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 305544b68b8a..f22b7aed6e64 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3512,6 +3512,9 @@ static int __clk_core_init(struct clk_core *core)
+ out:
+ 	clk_pm_runtime_put(core);
+ unlock:
++	if (ret)
++		hlist_del_init(&core->child_node);
++
+ 	clk_prepare_unlock();
  
- static const struct omap_clkctrl_reg_data am3_l4_rtc_clkctrl_regs[] __initconst = {
--	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk_32768_ck" },
-+	{ AM3_L4_RTC_RTC_CLKCTRL, NULL, CLKF_SW_SUP, "clk-24mhz-clkctrl:0000:0" },
- 	{ 0 },
- };
- 
+ 	if (!ret)
 -- 
 2.25.1
 
