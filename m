@@ -2,146 +2,97 @@ Return-Path: <SRS0=IYdx=7V=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C28C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 12:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76C7C433DF
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 13:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 41B1F2074B
-	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 12:30:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="g1OhfxSf"
+	by mail.kernel.org (Postfix) with ESMTP id 787392076A
+	for <linux-clk@archiver.kernel.org>; Mon,  8 Jun 2020 13:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbgFHMar (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jun 2020 08:30:47 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:63712 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729628AbgFHMaq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 8 Jun 2020 08:30:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1591619445; x=1623155445;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=DqVy/lhHPIGLZ2gVhB+SkFZeyg+IWDog1e2aJcvmuys=;
-  b=g1OhfxSf5bNH9eAHqIYKROqAvUjUVp3nWW1gh82kObKtTEJMjCi7u/kS
-   4ODNpg64G444b0cON5Z98FKcDZJxRryfUoQp5JUbkJbaY5vcof0mGC2uR
-   mDOsuMwTePtyywqvq9jXo5OQtwkitq3T7TkxHY82KN3Hp+Isv+rS/MNT+
-   quRkeYQtfAbgrnEfwFQAPvX8i9zOY6rYLgdByMmmbL/FYkLIR8qYNIdbf
-   hDvjxvcmE4T7sxpZ+6kkqbNZr86UY0JchhZZGgWzfclw541hESHCi6XwM
-   /xOewbTChL9GP8OJcSK1o5UpnC6YD4LfVX++c3CTp8TjZ5snElnh4rw/L
-   g==;
-IronPort-SDR: BrcHFuJ/CQnl0R+wYshXSuibM0g4Hv44Xsj9CFkUwDVQh+f3qllEPIsWKCCnWEPOVK4fTqlzS/
- VBQv+MUopWl4M1on8o/VU19//2S0q5NG2ttiUNiROeXy3A4knhTuk4NcA2Z5a3RkZLwDLViwDU
- AtXaPMkH7UNmQ3VjPPe5lCx/QJXeWml2xlcbSSjA26dPupO4VfYZhxJ3I5ZY+4Q/armI/ZOGO8
- oOBz5R0WgFHfQIGZmg6r4QS+dJX8D6/zuXhzEdaudAeOR5AA77oTieC9Ov0R6soxulLTqMOyDC
- 4+c=
-X-IronPort-AV: E=Sophos;i="5.73,487,1583218800"; 
-   d="scan'208";a="79311433"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Jun 2020 05:30:44 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Mon, 8 Jun 2020 05:30:44 -0700
-Received: from soft-dev15.microsemi.net (10.10.115.15) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Mon, 8 Jun 2020 05:30:39 -0700
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-To:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 00/10] Adding support for Microchip Sparx5 SoC
-Date:   Mon, 8 Jun 2020 14:30:14 +0200
-Message-ID: <20200608123024.5330-1-lars.povlsen@microchip.com>
-X-Mailer: git-send-email 2.27.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+        id S1728022AbgFHNXO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jun 2020 09:23:14 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:47988 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727003AbgFHNXN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Jun 2020 09:23:13 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9647B20008C;
+        Mon,  8 Jun 2020 15:23:11 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A939B200DF5;
+        Mon,  8 Jun 2020 15:23:01 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 52FE740297;
+        Mon,  8 Jun 2020 21:22:49 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, mturquette@baylibre.com,
+        sboyd@kernel.org, oleksandr.suvorov@toradex.com,
+        stefan.agner@toradex.com, arnd@arndb.de, abel.vesa@nxp.com,
+        peng.fan@nxp.com, aisheng.dong@nxp.com, tglx@linutronix.de,
+        allison@lohutok.net, gregkh@linuxfoundation.org, info@metux.net,
+        leonard.crestez@nxp.com, fugang.duan@nxp.com,
+        daniel.baluta@nxp.com, yuehaibing@huawei.com, sfr@canb.auug.org.au,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH 0/9] Support building i.MX8 SoCs clock driver as module
+Date:   Mon,  8 Jun 2020 21:12:07 +0800
+Message-Id: <1591621936-11886-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series adds support for Microchip Sparx5 SoC, the CPU
-system of a advanced, TSN capable gigabit switch. The CPU is an armv8
-x 2 CPU core (A53).
+Nowdays, there are more and more requirements of building SoC specific
+drivers as modules, such as Android GKI (generic kernel image), this patch
+set support building i.MX8 SoCs clock drivers as modules, including
+i.MX8MQ/MM/MN/MP/QXP, the common clock modules are: mxc-clk.ko for
+i.MX8MQ/MM/MN/MP, mxc-clk-scu.ko for i.MX8QXP and later SoCs with SCU inside,
+normally, each platform can ONLY insmod 1 common i.MX clock driver and
+its own SoC clock driver.
 
-Although this is an ARM core, it shares some peripherals with the
-Microsemi Ocelot SoC.
+Since i.MX common clk driver will support module build and no longer selected
+by default, so for i.MX ARMv7 platforms, need to manually select it to
+make build pass.
 
-Changes in v2:
-- Misc fixes to bindings/arm/microchip,sparx5.yaml
-- Changed clock driver to platform driver, among other fixes
-- arch/arm64/boot/dts/microchip/sparx5.dtsi:
- - Added pmu and psci node, using PSCI
- - Updates to GICv3 register spaces (GICV/GICH)
- - Updated timer interrupt specifiers
-- pinctrl: ocelot: Fixed symbol clashes from powerpc
-- pinctrl: ocelot: Patches already in next-20200605 have been removed
-    from this series.
+Anson Huang (9):
+  clk: composite: Export clk_hw_register_composite()
+  ARM: imx: Select MXC_CLK for ARCH_MXC
+  clk: imx: Support building SCU clock driver as module
+  clk: imx: Support building i.MX common clock driver as module
+  clk: imx8mm: Support module build
+  clk: imx8mn: Support module build
+  clk: imx8mp: Support module build
+  clk: imx8mq: Support module build
+  clk: imx8qxp: Support module build
 
-Lars Povlsen (10):
-  dt-bindings: arm: sparx5: Add documentation for Microchip Sparx5 SoC
-  arm64: sparx5: Add support for Microchip 2xA53 SoC
-  arm64: dts: sparx5: Add basic cpu support
-  arm64: dts: sparx5: Add pinctrl support
-  pinctrl: ocelot: Add Sparx5 SoC support
-  dt-bindings: clock: sparx5: Add Sparx5 SoC DPLL clock
-  dt-bindings: clock: sparx5: Add bindings include file
-  clk: sparx5: Add Sparx5 SoC DPLL clock driver
-  arm64: dts: sparx5: Add Sparx5 SoC DPLL clock
-  arm64: dts: sparx5: Add i2c devices, i2c muxes
+ arch/arm/mach-imx/Kconfig          |  1 +
+ drivers/clk/clk-composite.c        |  1 +
+ drivers/clk/imx/Kconfig            | 20 ++++++++++++--------
+ drivers/clk/imx/Makefile           | 30 +++++++-----------------------
+ drivers/clk/imx/clk-composite-8m.c |  1 +
+ drivers/clk/imx/clk-cpu.c          |  1 +
+ drivers/clk/imx/clk-frac-pll.c     |  1 +
+ drivers/clk/imx/clk-gate2.c        |  1 +
+ drivers/clk/imx/clk-imx8mm.c       |  1 +
+ drivers/clk/imx/clk-imx8mn.c       |  1 +
+ drivers/clk/imx/clk-imx8mp.c       |  1 +
+ drivers/clk/imx/clk-imx8mq.c       |  1 +
+ drivers/clk/imx/clk-imx8qxp-lpcg.c |  1 +
+ drivers/clk/imx/clk-imx8qxp.c      |  1 +
+ drivers/clk/imx/clk-lpcg-scu.c     |  1 +
+ drivers/clk/imx/clk-pll14xx.c      |  4 ++++
+ drivers/clk/imx/clk-scu.c          |  5 +++++
+ drivers/clk/imx/clk-sscg-pll.c     |  1 +
+ drivers/clk/imx/clk.c              | 28 ++++++++++++++++++++++------
+ 19 files changed, 64 insertions(+), 37 deletions(-)
 
- .../bindings/arm/microchip,sparx5.yaml        |  65 +++
- .../bindings/clock/microchip,sparx5-dpll.yaml |  52 +++
- .../devicetree/bindings/mfd/syscon.yaml       |   1 +
- MAINTAINERS                                   |   9 +
- arch/arm64/Kconfig.platforms                  |  14 +
- arch/arm64/boot/dts/Makefile                  |   1 +
- arch/arm64/boot/dts/microchip/Makefile        |   4 +
- arch/arm64/boot/dts/microchip/sparx5.dtsi     | 213 +++++++++
- .../boot/dts/microchip/sparx5_pcb125.dts      |  21 +
- .../boot/dts/microchip/sparx5_pcb134.dts      |  17 +
- .../dts/microchip/sparx5_pcb134_board.dtsi    | 252 ++++++++++
- .../boot/dts/microchip/sparx5_pcb134_emmc.dts |  17 +
- .../boot/dts/microchip/sparx5_pcb135.dts      |  17 +
- .../dts/microchip/sparx5_pcb135_board.dtsi    |  92 ++++
- .../boot/dts/microchip/sparx5_pcb135_emmc.dts |  17 +
- .../boot/dts/microchip/sparx5_pcb_common.dtsi |  19 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-sparx5.c                      | 312 +++++++++++++
- drivers/pinctrl/pinctrl-ocelot.c              | 431 +++++++++++++++++-
- include/dt-bindings/clock/microchip,sparx5.h  |  23 +
- 20 files changed, 1577 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/microchip,sparx5.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/microchip,sparx5-dpll.yaml
- create mode 100644 arch/arm64/boot/dts/microchip/Makefile
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi
- create mode 100644 drivers/clk/clk-sparx5.c
- create mode 100644 include/dt-bindings/clock/microchip,sparx5.h
+-- 
+2.7.4
 
---
-2.27.0
