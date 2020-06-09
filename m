@@ -2,180 +2,113 @@ Return-Path: <SRS0=69cD=7W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C07EBC433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:15:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBDDC433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9888E20734
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:15:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B3C20734
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591737339;
-	bh=SxQV2Ugt3zKyDWzjvtu7SIHBUY5zdgcRwPzOteTbB8I=;
+	s=default; t=1591737373;
+	bh=e26IpfGJ9WhIIDdNAB2BegdKpPxmPKMY/Is6gl++1es=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=grDncWb5rFp7iwoBWZeYSGZS4h4EuOJaI3+nl3GpgSwPBACj0t34Ac7ZzN9K5DeT3
-	 s/nnhW1HsSKYuwIhOnvaGbhaim7L7wMhJOVwkIf2YzHzF4d5vBxu9dQ6rZ2/qbpH63
-	 EKsY808yGBlUDYyaZ7s22uueOsAKRa4nXDdMGKXU=
+	b=PRfwEPuuW88mMNT3kKMlYaYuvLaC5J/2+iSK1xvX3IamaRXKcjgIqNa7cuChYKGOf
+	 mC0qaNjdJ1ULstKUT2GFPNu0oeAAICxZf3TduSpiwIgOBUKkRmbBpHopA+zm73dDzV
+	 Y9YEIZoaO6PJq2E0g+q99S3BPAhv1x1SpUYLYxOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbgFIVPj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jun 2020 17:15:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
+        id S1726938AbgFIVQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jun 2020 17:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38810 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726395AbgFIVPi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Jun 2020 17:15:38 -0400
+        id S1726395AbgFIVQK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Jun 2020 17:16:10 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4410206D5;
-        Tue,  9 Jun 2020 21:15:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14EB0206D5;
+        Tue,  9 Jun 2020 21:16:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591737337;
-        bh=SxQV2Ugt3zKyDWzjvtu7SIHBUY5zdgcRwPzOteTbB8I=;
+        s=default; t=1591737370;
+        bh=e26IpfGJ9WhIIDdNAB2BegdKpPxmPKMY/Is6gl++1es=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=zVbV7IZfMHOC5Q3MDct9SsP4YHZHXvS2i6yQS9lpdNllBBaEqi/NtLf5V83PXjy1u
-         WdbGM+hQ+pwOo/U3rwCTMLbKoty3V84TugkrK9PhV3umD+TB3GkaD3S0rsoaxGhmeg
-         8oPia7m7TbB1ZQCEMWObMBnIXgEBo4bAyIul2RmI=
+        b=FHDziFwD/dq7QDdliYeGTcN1ASQzrlpy/nXiO8tY7COvOY8lJSQnK5B2MtWqTpBXz
+         oW71W1X4mMgrDI9YcqWIDMAOfZcMF+Xy3YWHm9FVxwWeWppV24HA4SWHZunLxby0Qg
+         Xo1DNTY6ue0ejJZCrNc+nFrQSfKEYJ5FQMnfay98=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200608094714.382149-1-robert.marko@sartura.hr>
-References: <20200608094714.382149-1-robert.marko@sartura.hr>
-Subject: Re: [PATCH] clk: qcom: ipq4019: fix apss cpu overclocking
+In-Reply-To: <202005310615.TVwTAUgp%lkp@intel.com>
+References: <202005310615.TVwTAUgp%lkp@intel.com>
+Subject: Re: [clk:clk-mediatek 5/6] drivers/clk/mediatek/clk-mt6765.c:537:35: warning: unused variable 'ifr0_cg_regs'
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Christian Lamparter <chunkeey@gmail.com>,
-        John Crispin <john@phrozen.org>,
-        Robert Marko <robert.marko@sartura.hr>,
-        Luka Perkov <luka.perkov@sartura.hr>
-To:     Robert Marko <robert.marko@sartura.hr>, agross@kernel.org,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Tue, 09 Jun 2020 14:15:36 -0700
-Message-ID: <159173733699.242598.1278531930794428520@swboyd.mtv.corp.google.com>
+Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Macpaul Lin <macpaul.lin@mediatek.com>
+To:     "Owen, Chen," <owen.chen@mediatek.com>,
+        kbuild test robot <lkp@intel.com>
+Date:   Tue, 09 Jun 2020 14:16:09 -0700
+Message-ID: <159173736939.242598.14069411610834841250@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Robert Marko (2020-06-08 02:47:15)
-> From: Christian Lamparter <chunkeey@gmail.com>
+Quoting kbuild test robot (2020-05-30 15:25:16)
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk=
+-mediatek
+> head:   571cfadcc628dd5591444f7289e27445ea732f4c
+> commit: 1aca9939bf72893887cb7e3455e44c864bada2f9 [5/6] clk: mediatek: Add=
+ MT6765 clock support
+> config: x86_64-allyesconfig (attached as .config)
+> compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project 2388=
+a096e7865c043e83ece4e26654bd3d1a20d5)
+> reproduce (this is a W=3D1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbi=
+n/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # install x86_64 cross compiling tool for clang build
+>         # apt-get install binutils-x86-64-linux-gnu
+>         git checkout 1aca9939bf72893887cb7e3455e44c864bada2f9
+>         # save the attached .config to linux build tree
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang make.cross AR=
+CH=3Dx86_64=20
 >=20
-> There's an interaction issue between the clk changes:"
-> clk: qcom: ipq4019: Add the apss cpu pll divider clock node
-> clk: qcom: ipq4019: remove fixed clocks and add pll clocks
-> " and the cpufreq-dt.
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kbuild test robot <lkp@intel.com>
 >=20
-> cpufreq-dt is now spamming the kernel-log with the following:
+> All warnings (new ones prefixed by >>, old ones prefixed by <<):
 >=20
-> [ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
-> for freq 761142857 (-34)
+> >> drivers/clk/mediatek/clk-mt6765.c:537:35: warning: unused variable 'if=
+r0_cg_regs' [-Wunused-const-variable]
+> static const struct mtk_gate_regs ifr0_cg_regs =3D {
+> ^
+> >> drivers/clk/mediatek/clk-mt6765.c:543:35: warning: unused variable 'if=
+r1_cg_regs' [-Wunused-const-variable]
+> static const struct mtk_gate_regs ifr1_cg_regs =3D {
+> ^
+> 2 warnings generated.
 >=20
-> This only happens on certain devices like the Compex WPJ428
-> and AVM FritzBox!4040. However, other devices like the Asus
-> RT-AC58U and Meraki MR33 work just fine.
+> vim +/ifr0_cg_regs +537 drivers/clk/mediatek/clk-mt6765.c
 >=20
-> The issue stem from the fact that all higher CPU-Clocks
-> are achieved by switching the clock-parent to the P_DDRPLLAPSS
-> (ddrpllapss). Which is set by Qualcomm's proprietary bootcode
-> as part of the DDR calibration.
+>    536 =20
+>  > 537  static const struct mtk_gate_regs ifr0_cg_regs =3D {
+>    538          .set_ofs =3D 0x200,
+>    539          .clr_ofs =3D 0x200,
+>    540          .sta_ofs =3D 0x200,
+>    541  };
+>    542 =20
+>  > 543  static const struct mtk_gate_regs ifr1_cg_regs =3D {
+>    544          .set_ofs =3D 0x74,
+>    545          .clr_ofs =3D 0x74,
+>    546          .sta_ofs =3D 0x74,
+>    547  };
+>    548 =20
 >=20
-> For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
-> at round 533 MHz (ddrpllsdcc =3D 190285714 Hz).
->=20
-> whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
-> clocked at a slightly higher 537 MHz ( ddrpllsdcc =3D 192000000 Hz).
->=20
-> This patch attempts to fix the issue by modifying
-> clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate=
-()
-> to use a new qcom_find_freq_close() function, which returns the closest
-> matching frequency, instead of the next higher. This way, the SoC in
-> the FB4040 (with its max clock speed of 710.4 MHz) will no longer
-> try to overclock to 761 MHz.
 
-Why are the OPP tables not properly indicating the frequencies that
-should be chosen? The rounding policy should presumably be matching the
-frequency exactly vs. relying on some sort of rounding policy to fix it.
-
->=20
-> Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clo=
-ck node")
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> Signed-off-by: John Crispin <john@phrozen.org>
-> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
-> Cc: Luka Perkov <luka.perkov@sartura.hr>
-> ---
-> Changes from v1 to v2:
-
-Please update subject of the patch to indicate patch version (i.e.
-PATCHv2 and next time PATCHv3, not just PATCH).
-
-> * Resolve warnings discovered by the kbot
-> * Return the return of regmap_update_bits instead of not using it at all
->=20
->  drivers/clk/qcom/gcc-ipq4019.c | 36 ++++++++++++++++++++++++++++++----
->  1 file changed, 32 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq401=
-9.c
-> index ef5137fd50f3..62fa17a4291c 100644
-> --- a/drivers/clk/qcom/gcc-ipq4019.c
-> +++ b/drivers/clk/qcom/gcc-ipq4019.c
-> @@ -1243,6 +1243,29 @@ static const struct clk_fepll_vco gcc_fepll_vco =
-=3D {
->         .reg =3D 0x2f020,
->  };
-> =20
-> +
-> +static const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl=
- *f,
-
-Please call it qcom_find_freq_closest() instead.
-
-> +                                            unsigned long rate)
-> +{
-> +       const struct freq_tbl *last =3D NULL;
-> +
-> +       for ( ; f->freq; f++) {
-> +               if (rate =3D=3D f->freq)
-> +                       return f;
-> +
-> +               if (f->freq > rate) {
-> +                       if (!last ||
-> +                          (f->freq - rate) < (rate - last->freq))
-
-> +                               return f;
-> +                       else
-> +                               return last;
-
-	if (...)
-		return ...;
-	else
-
-should be replaced with
-
-	if (...)
-		return ...;
-
-	...
-
-but I also wonder if it would be clearer with some sort of 'break' and
-then 'return f' type of logic.
-
-> +               }
-> +               last =3D f;
-> +       }
-> +
-> +       return last;
-> +}
-
-Please relocate this to common.c in the qcom directory.
-
-> +
->  /*
->   * Round rate function for APSS CPU PLL Clock divider.
->   * It looks up the frequency table and returns the next higher frequency
+Thanks. I'm just going to pile a patch on top of clk-next to remove
+these two structures.
