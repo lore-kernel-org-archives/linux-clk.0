@@ -2,121 +2,103 @@ Return-Path: <SRS0=69cD=7W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F90BC433E1
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 08:09:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC601C433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 11:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7CD1E20814
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 08:09:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98FF320814
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 11:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="pj/t/FlG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8W9VqQY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbgFIIIw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jun 2020 04:08:52 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:35563 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728146AbgFIIIi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jun 2020 04:08:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1591690118; x=1623226118;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CVX3KheKEZUyLSS073Y9Q703DmBTx+PPKOvv792Yx6Q=;
-  b=pj/t/FlG4MINsruym3n3i+xFlmLam2o+fdA+Wej2Ce9XGi7LaD0qLtcf
-   RM/8FClPj2cGxpZVPiuz9AuHnn9g9wdUHO1WWuKw0Es08b1VtPTmDZmTz
-   OPYTtRqYOUURqUIMMVpcmHfv/N16XuLvke2n9DDTJNByn5BsxYXtN6vQ/
-   zXMQoYpH6OXCaVUUjVg1ywrCbhLM9j4s3W6z9YStG2hQYhzdoDkt/bwBp
-   9td4Gp9AsdRk1uXNHh3fItFFBf3H1WgfmYHgPedgQOgrUZLhOaPDhQTHC
-   o/l5w+n59x1aTDZOIopRo3qrCifBcRzIpYD3Jv71BisUz16GHmdT93xUA
-   Q==;
-IronPort-SDR: xnpxjOnPkOs999EkK6zJ9UllPwRvBrkLSbWE3RXdU0eiOAfXLEbxa1g0Xdu+z54Bjj4IZU7Pc4
- MCgLQxd6FCpzDXIcOnaqOq9RoOE9xbr+GPOMQmIatWOwxpWrqd3rDhX8jki57HmNGTiFKOrobB
- PKeGA8lU3SjbM0hsYdSQOeBpip6JAKMaJYXmw/hUvRyoiZERrRcJiWtcdl5+CfWXtuXjTOains
- RdaM4pzIkygcrxEbgo1RvkZ2QbPmL+GmI5phLrn91y3rAAFT0Zy59FJIR13RqO4/fEsD0HccHS
- W3E=
-X-IronPort-AV: E=Sophos;i="5.73,491,1583218800"; 
-   d="scan'208";a="79412848"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 09 Jun 2020 01:08:35 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1847.3; Tue, 9 Jun 2020 01:08:31 -0700
-Received: from soft-dev15.microsemi.net (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1847.3 via Frontend Transport; Tue, 9 Jun 2020 01:08:29 -0700
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-To:     Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>,
-        "Linus Walleij" <linus.walleij@linaro.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2 07/10] dt-bindings: clock: sparx5: Add bindings include file
-Date:   Tue, 9 Jun 2020 10:07:06 +0200
-Message-ID: <20200609080709.9654-7-lars.povlsen@microchip.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200609080709.9654-1-lars.povlsen@microchip.com>
-References: <20200608123024.5330-1-lars.povlsen@microchip.com>
- <20200609080709.9654-1-lars.povlsen@microchip.com>
+        id S1727916AbgFILJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jun 2020 07:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35862 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727906AbgFILJD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jun 2020 07:09:03 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29400C05BD1E;
+        Tue,  9 Jun 2020 04:09:03 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id c3so20786370wru.12;
+        Tue, 09 Jun 2020 04:09:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h2QWlVvw4wMKxc+Ci1vOHG2QgW2mAuzBv8Io5LaqvsY=;
+        b=J8W9VqQY47yQ3goeW3AiZJ5iJ+v+clrOD3aA3OeD9dUgQmmjMW66bxrsz8bxNHf01G
+         JZOmIh1wEQw8cJ3S47Dxnrak4Agc+skqReoktOthEI42eh10c+gJuhbuY++z1IPY40Sw
+         XgCWC+KjyJ8rn0A+E+UmJxoJVe2uRfInHNh+EPGMUvjBUhHg0sjDboEs2olUjRprD6Ve
+         MgPPkT2nL57j43LAytSt3oZ7HD3ceOHYfDCRheMjnloTjPgwgxRMuJmtkpt9fZ+1fhNF
+         2luElT0L3weZLr1z9SWccJurfTCptjXNFprbS2ugIlYNeqAnutnzy+k0ayt75WM9cmAo
+         mgoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=h2QWlVvw4wMKxc+Ci1vOHG2QgW2mAuzBv8Io5LaqvsY=;
+        b=lz/iyIUB44bgxUMDt8ZjEuZz/pEww0eKAl6elceAbTjihfa6H+sOBhH/ZjHFr7GMn6
+         fivchpyxojy/Cq6L01o+bXHNzXVYuxYcjVZA6d+gB9w5DSE/MIYicsfL/zUtUTedpPDl
+         NETXN0akYyH8dGY5oMkms6Ljdg4Sj1ms605tNwANn3OlWm/EBmLZcxE81sBaNMtSScCr
+         pCdUopAVmHYZE0z8NRYebT6qkK9O+Fp8P1COtnA4KAlO1YK3oyUPVqbRtXQst1jawRJ7
+         Dobz5SJS83A/8UN6cTG224bcYIORqheZFo2739BYcsRSFOAO5cTThzew3g86tCBH2cPa
+         /yDQ==
+X-Gm-Message-State: AOAM5336xrSpWjhCjV1zcyCa6eKp263F75N2VV/s2bQgKrIKkPSFciiQ
+        5Tj/8ioPM9ZGi3CaZcMzT2E=
+X-Google-Smtp-Source: ABdhPJy6NSqRlaJHFiqgB5y5VcHEXb+bOeM3VNkWU8A02NM2pDVyEvDQDt+uk8yfwIGYHEbZQP5r/A==
+X-Received: by 2002:adf:a449:: with SMTP id e9mr3814645wra.294.1591700941883;
+        Tue, 09 Jun 2020 04:09:01 -0700 (PDT)
+Received: from skynet.lan (28.red-83-49-61.dynamicip.rima-tde.net. [83.49.61.28])
+        by smtp.gmail.com with ESMTPSA id u3sm2988203wrw.89.2020.06.09.04.09.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 09 Jun 2020 04:09:01 -0700 (PDT)
+From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, f.fainelli@gmail.com,
+        bcm-kernel-feedback-list@broadcom.com, lkp@intel.com,
+        jonas.gorski@gmail.com, f4bug@amsat.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
+        <noltari@gmail.com>
+Subject: [PATCH] clk: bcm63xx-gate: fix last clock availability
+Date:   Tue,  9 Jun 2020 13:08:46 +0200
+Message-Id: <20200609110846.4029620-1-noltari@gmail.com>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Sparx5 support 9 different clock outputs. This include file has
-defines for each supported clock ordinal.
+In order to make the last clock available, maxbit has to be set to the
+highest bit value plus 1.
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+Fixes: 1c099779c1e2 ("clk: add BCM63XX gated clock controller driver")
+Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
 ---
- include/dt-bindings/clock/microchip,sparx5.h | 23 ++++++++++++++++++++
- 1 file changed, 23 insertions(+)
- create mode 100644 include/dt-bindings/clock/microchip,sparx5.h
+ drivers/clk/bcm/clk-bcm63xx-gate.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/microchip,sparx5.h b/include/dt-bindings/clock/microchip,sparx5.h
-new file mode 100644
-index 0000000000000..4b04dabacec2c
---- /dev/null
-+++ b/include/dt-bindings/clock/microchip,sparx5.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2019 Microchip Inc.
-+ *
-+ * Author: Lars Povlsen <lars.povlsen@microchip.com>
-+ */
-+
-+#ifndef _DT_BINDINGS_CLK_SPARX5_H
-+#define _DT_BINDINGS_CLK_SPARX5_H
-+
-+#define CLK_ID_CORE	0
-+#define CLK_ID_DDR	1
-+#define CLK_ID_CPU2	2
-+#define CLK_ID_ARM2	3
-+#define CLK_ID_AUX1	4
-+#define CLK_ID_AUX2	5
-+#define CLK_ID_AUX3	6
-+#define CLK_ID_AUX4	7
-+#define CLK_ID_SYNCE	8
-+
-+#define N_CLOCKS	9
-+
-+#endif
---
-2.27.0
+diff --git a/drivers/clk/bcm/clk-bcm63xx-gate.c b/drivers/clk/bcm/clk-bcm63xx-gate.c
+index 98e884957db8..911a29bd744e 100644
+--- a/drivers/clk/bcm/clk-bcm63xx-gate.c
++++ b/drivers/clk/bcm/clk-bcm63xx-gate.c
+@@ -155,6 +155,7 @@ static int clk_bcm63xx_probe(struct platform_device *pdev)
+ 
+ 	for (entry = table; entry->name; entry++)
+ 		maxbit = max_t(u8, maxbit, entry->bit);
++	maxbit++;
+ 
+ 	hw = devm_kzalloc(&pdev->dev, struct_size(hw, data.hws, maxbit),
+ 			  GFP_KERNEL);
+-- 
+2.26.2
+
