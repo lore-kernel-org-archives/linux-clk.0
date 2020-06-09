@@ -2,70 +2,180 @@ Return-Path: <SRS0=69cD=7W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC29C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 20:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07EBC433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:15:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDB42076A
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 20:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9888E20734
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 21:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591735545;
-	bh=FQIs4tePx//1D6KMmaz9yjlTM6qx4AFNCuoeejrUMEw=;
+	s=default; t=1591737339;
+	bh=SxQV2Ugt3zKyDWzjvtu7SIHBUY5zdgcRwPzOteTbB8I=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=elIhdGqdrHlc9w7XMTP5xog5DWR7J5K+3IY8rzkww4TzuLJSil/qIwNdb/K8d+YJX
-	 iU5+F3WESFuiSnKdVYohqFC/F4uyuaPpKfrH4eBkHSDFd9B7LcpxNzKmABn6unKIIW
-	 BRdBiP0hXNLOK29eT5CbHdUOwI/IvpP/+YYJnLEY=
+	b=grDncWb5rFp7iwoBWZeYSGZS4h4EuOJaI3+nl3GpgSwPBACj0t34Ac7ZzN9K5DeT3
+	 s/nnhW1HsSKYuwIhOnvaGbhaim7L7wMhJOVwkIf2YzHzF4d5vBxu9dQ6rZ2/qbpH63
+	 EKsY808yGBlUDYyaZ7s22uueOsAKRa4nXDdMGKXU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728430AbgFIUpl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jun 2020 16:45:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50078 "EHLO mail.kernel.org"
+        id S1726940AbgFIVPj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jun 2020 17:15:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727005AbgFIUpk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 9 Jun 2020 16:45:40 -0400
+        id S1726395AbgFIVPi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 9 Jun 2020 17:15:38 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E1632068D;
-        Tue,  9 Jun 2020 20:45:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4410206D5;
+        Tue,  9 Jun 2020 21:15:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591735540;
-        bh=FQIs4tePx//1D6KMmaz9yjlTM6qx4AFNCuoeejrUMEw=;
+        s=default; t=1591737337;
+        bh=SxQV2Ugt3zKyDWzjvtu7SIHBUY5zdgcRwPzOteTbB8I=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=D8UOBA0ZkKvIPyEePFqKdIjrx9XjAVdGw1ebjLdsP8+/K+FFbBvsSIDMdpet2Uq/Y
-         L+4JUEDOWUY4i5ZWziYBiGEBBiSD7noxe7Nzm5Fl9xK0L9tcifeBbCbb2mRa/DsVr/
-         ckoyKbJh9GTGI3M6vC6/w1af6Xq/w2+TXsLc28Sk=
+        b=zVbV7IZfMHOC5Q3MDct9SsP4YHZHXvS2i6yQS9lpdNllBBaEqi/NtLf5V83PXjy1u
+         WdbGM+hQ+pwOo/U3rwCTMLbKoty3V84TugkrK9PhV3umD+TB3GkaD3S0rsoaxGhmeg
+         8oPia7m7TbB1ZQCEMWObMBnIXgEBo4bAyIul2RmI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200602172435.70282-1-colin.king@canonical.com>
-References: <20200602172435.70282-1-colin.king@canonical.com>
-Subject: Re: [PATCH] clk: baikal-t1: remove redundant assignment to variable 'divider'
+In-Reply-To: <20200608094714.382149-1-robert.marko@sartura.hr>
+References: <20200608094714.382149-1-robert.marko@sartura.hr>
+Subject: Re: [PATCH] clk: qcom: ipq4019: fix apss cpu overclocking
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Colin King <colin.king@canonical.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Serge Semin <Sergey.Semin@baikalelectronics.ru>,
-        linux-clk@vger.kernel.org
-Date:   Tue, 09 Jun 2020 13:45:39 -0700
-Message-ID: <159173553955.242598.16478893358446362532@swboyd.mtv.corp.google.com>
+Cc:     Christian Lamparter <chunkeey@gmail.com>,
+        John Crispin <john@phrozen.org>,
+        Robert Marko <robert.marko@sartura.hr>,
+        Luka Perkov <luka.perkov@sartura.hr>
+To:     Robert Marko <robert.marko@sartura.hr>, agross@kernel.org,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com
+Date:   Tue, 09 Jun 2020 14:15:36 -0700
+Message-ID: <159173733699.242598.1278531930794428520@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Colin King (2020-06-02 10:24:35)
-> From: Colin Ian King <colin.king@canonical.com>
+Quoting Robert Marko (2020-06-08 02:47:15)
+> From: Christian Lamparter <chunkeey@gmail.com>
 >=20
-> The variable divider is being initialized with a value that is never read
-> and it is being updated later with a new value.  The initialization is
-> redundant and can be removed.
+> There's an interaction issue between the clk changes:"
+> clk: qcom: ipq4019: Add the apss cpu pll divider clock node
+> clk: qcom: ipq4019: remove fixed clocks and add pll clocks
+> " and the cpufreq-dt.
 >=20
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
+> cpufreq-dt is now spamming the kernel-log with the following:
+>=20
+> [ 1099.190658] cpu cpu0: dev_pm_opp_set_rate: failed to find current OPP
+> for freq 761142857 (-34)
+>=20
+> This only happens on certain devices like the Compex WPJ428
+> and AVM FritzBox!4040. However, other devices like the Asus
+> RT-AC58U and Meraki MR33 work just fine.
+>=20
+> The issue stem from the fact that all higher CPU-Clocks
+> are achieved by switching the clock-parent to the P_DDRPLLAPSS
+> (ddrpllapss). Which is set by Qualcomm's proprietary bootcode
+> as part of the DDR calibration.
+>=20
+> For example, the FB4040 uses 256 MiB Nanya NT5CC128M16IP clocked
+> at round 533 MHz (ddrpllsdcc =3D 190285714 Hz).
+>=20
+> whereas the 128 MiB Nanya NT5CC64M16GP-DI in the ASUS RT-AC58U is
+> clocked at a slightly higher 537 MHz ( ddrpllsdcc =3D 192000000 Hz).
+>=20
+> This patch attempts to fix the issue by modifying
+> clk_cpu_div_round_rate(), clk_cpu_div_set_rate(), clk_cpu_div_recalc_rate=
+()
+> to use a new qcom_find_freq_close() function, which returns the closest
+> matching frequency, instead of the next higher. This way, the SoC in
+> the FB4040 (with its max clock speed of 710.4 MHz) will no longer
+> try to overclock to 761 MHz.
 
-Applied to clk-next
+Why are the OPP tables not properly indicating the frequencies that
+should be chosen? The rounding policy should presumably be matching the
+frequency exactly vs. relying on some sort of rounding policy to fix it.
+
+>=20
+> Fixes: d83dcacea18 ("clk: qcom: ipq4019: Add the apss cpu pll divider clo=
+ck node")
+> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
+> Signed-off-by: John Crispin <john@phrozen.org>
+> Signed-off-by: Robert Marko <robert.marko@sartura.hr>
+> Cc: Luka Perkov <luka.perkov@sartura.hr>
+> ---
+> Changes from v1 to v2:
+
+Please update subject of the patch to indicate patch version (i.e.
+PATCHv2 and next time PATCHv3, not just PATCH).
+
+> * Resolve warnings discovered by the kbot
+> * Return the return of regmap_update_bits instead of not using it at all
+>=20
+>  drivers/clk/qcom/gcc-ipq4019.c | 36 ++++++++++++++++++++++++++++++----
+>  1 file changed, 32 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq401=
+9.c
+> index ef5137fd50f3..62fa17a4291c 100644
+> --- a/drivers/clk/qcom/gcc-ipq4019.c
+> +++ b/drivers/clk/qcom/gcc-ipq4019.c
+> @@ -1243,6 +1243,29 @@ static const struct clk_fepll_vco gcc_fepll_vco =
+=3D {
+>         .reg =3D 0x2f020,
+>  };
+> =20
+> +
+> +static const struct freq_tbl *qcom_find_freq_close(const struct freq_tbl=
+ *f,
+
+Please call it qcom_find_freq_closest() instead.
+
+> +                                            unsigned long rate)
+> +{
+> +       const struct freq_tbl *last =3D NULL;
+> +
+> +       for ( ; f->freq; f++) {
+> +               if (rate =3D=3D f->freq)
+> +                       return f;
+> +
+> +               if (f->freq > rate) {
+> +                       if (!last ||
+> +                          (f->freq - rate) < (rate - last->freq))
+
+> +                               return f;
+> +                       else
+> +                               return last;
+
+	if (...)
+		return ...;
+	else
+
+should be replaced with
+
+	if (...)
+		return ...;
+
+	...
+
+but I also wonder if it would be clearer with some sort of 'break' and
+then 'return f' type of logic.
+
+> +               }
+> +               last =3D f;
+> +       }
+> +
+> +       return last;
+> +}
+
+Please relocate this to common.c in the qcom directory.
+
+> +
+>  /*
+>   * Round rate function for APSS CPU PLL Clock divider.
+>   * It looks up the frequency table and returns the next higher frequency
