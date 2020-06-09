@@ -2,137 +2,280 @@ Return-Path: <SRS0=69cD=7W=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7869C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 837A4C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 03:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97AC62072F
-	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 00:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591663209;
-	bh=7j31ytWFpCdfw0FB5VRFDqkG3S0rIAW1hLa6rqGWXpc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OKPm3lpJdYpfx07dWNSF5bEFJ952HV0btukbIXgTy3/B3mVOYhr4YkzX2gpxrH+AS
-	 pSaFamwyMMtL/R8A0mjvk7oe22q0/XZWuTKlfwuYX7mB9rPExpqwC5h7F7H+sn9kjZ
-	 7RizZSSsMfSjwE7G2KSUjUE88JfvtfARY6oMnnxU=
+	by mail.kernel.org (Postfix) with ESMTP id 5F2752078C
+	for <linux-clk@archiver.kernel.org>; Tue,  9 Jun 2020 03:38:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="X7+N0nXd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbgFHXNL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 8 Jun 2020 19:13:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60934 "EHLO mail.kernel.org"
+        id S1726765AbgFIDip (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 8 Jun 2020 23:38:45 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:61848 "EHLO m43-7.mailgun.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729222AbgFHXNF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 8 Jun 2020 19:13:05 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726918AbgFIDio (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 8 Jun 2020 23:38:44 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1591673923; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=gj5L2L5Kq70eW9k326LM/3poAponas8UdRiylaFEIws=; b=X7+N0nXdtoBsaI+fQeZ1+MLc1eyoXLWpbAEpRaiJSCI1SOrZjvsySN23FsZ4eD4yDv/r/epP
+ prR+WDx7KmG9M7hezqI2ZaB9MLqbGehh3AYO8kWdZRvEayZBLR6VLom0sPGBfUdIyU6RtI/i
+ Amvp/ZnYMUVtY21E89OLMk8f6ok=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n15.prod.us-west-2.postgun.com with SMTP id
+ 5edf0442754b69016453468a (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 09 Jun 2020 03:38:42
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 8F855C433CA; Tue,  9 Jun 2020 03:38:42 +0000 (UTC)
+Received: from tanmshah-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47CF720B80;
-        Mon,  8 Jun 2020 23:13:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591657985;
-        bh=7j31ytWFpCdfw0FB5VRFDqkG3S0rIAW1hLa6rqGWXpc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DeRUjI2rPln0Y4WqmO0OU++AmvA3uDLWqrfZXwjEXlRkmms9SDtz0Yu2v3HVAbUN+
-         C+cX0lKyQg+zl/Yx83d9qI+1SxCLGgfItiGtID8of/ZHQN73Iv2LC4AqG+zaKudaNn
-         qhfKql2smJFT+dwAzl1pPOVyNNzRcxaPq5qWzaMs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.6 045/606] clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks
-Date:   Mon,  8 Jun 2020 19:02:50 -0400
-Message-Id: <20200608231211.3363633-45-sashal@kernel.org>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200608231211.3363633-1-sashal@kernel.org>
-References: <20200608231211.3363633-1-sashal@kernel.org>
+        (Authenticated sender: tanmay)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 00791C433C6;
+        Tue,  9 Jun 2020 03:38:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 00791C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tanmay@codeaurora.org
+From:   Tanmay Shah <tanmay@codeaurora.org>
+To:     devicetree@vger.kernel.org
+Cc:     sam@ravnborg.org, swboyd@chromium.org, seanpaul@chromium.org,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        chandanu@codeaurora.org, robdclark@gmail.com,
+        abhinavk@codeaurora.org, nganji@codeaurora.org,
+        dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+        Vara Reddy <varar@codeaurora.org>,
+        Tanmay Shah <tanmay@codeaurora.org>
+Subject: [PATCH v6 1/5] dt-bindings: msm/dp: add bindings of DP/DP-PLL driver for Snapdragon
+Date:   Mon,  8 Jun 2020 20:38:18 -0700
+Message-Id: <20200609033818.9028-1-tanmay@codeaurora.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Justin Swartz <justin.swartz@risingedge.co.za>
+From: Chandan Uddaraju <chandanu@codeaurora.org>
 
-commit cec9d101d70a3509da9bd2e601e0b242154ce616 upstream.
+Add bindings for Snapdragon DisplayPort controller driver.
 
-The following changes prevent the unrecoverable freezes and rcu_sched
-stall warnings experienced in each of my attempts to take advantage of
-lima.
+Changes in V2:
+Provide details about sel-gpio
 
-Replace the COMPOSITE_NOGATE definition of aclk_gpu_pre with a
-COMPOSITE that retains the selection of HDMIPHY as the PLL source, but
-instead makes uses of the aclk_gpu PLL source gate and parent names
-defined by mux_pll_src_4plls_p rather than mux_aclk_gpu_pre_p.
+Changes in V4:
+Provide details about max dp lanes
+Change the commit text
 
-Remove the now unused mux_aclk_gpu_pre_p and the four named but also
-unused definitions (cpll_gpu, gpll_gpu, hdmiphy_gpu and usb480m_gpu)
-of the aclk_gpu PLL source gate.
+Changes in V5:
+moved dp.txt to yaml file
 
-Use the correct gate offset for aclk_gpu and aclk_gpu_noc.
+Changes in v6:
+- Squash all AUX LUT properties into one pattern Property
+- Make aux-cfg[0-9]-settings properties optional
+- Remove PLL/PHY bindings from DP controller dts
+- Add DP clocks description
+- Remove _clk suffix from clock names
+- Rename pixel clock to stream_pixel
+- Remove redundant bindings (GPIO, PHY, HDCP clock, etc..)
+- Fix indentation
+- Add Display Port as interface of DPU in DPU bindings
+  and add port mapping accordingly.
 
-Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
-Cc: stable@vger.kernel.org
-Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
-[double-checked against SoC manual and added fixes tag]
-Link: https://lore.kernel.org/r/20200114162503.7548-1-justin.swartz@risingedge.co.za
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Chandan Uddaraju <chandanu@codeaurora.org>
+Signed-off-by: Vara Reddy <varar@codeaurora.org>
+Signed-off-by: Tanmay Shah <tanmay@codeaurora.org>
 ---
- drivers/clk/rockchip/clk-rk3228.c | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+ .../devicetree/bindings/display/msm/dp-sc7180.yaml | 142 +++++++++++++++++++++
+ .../devicetree/bindings/display/msm/dpu.txt        |   8 ++
+ 2 files changed, 150 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
 
-diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
-index d17cfb7a3ff4..d7243c09cc84 100644
---- a/drivers/clk/rockchip/clk-rk3228.c
-+++ b/drivers/clk/rockchip/clk-rk3228.c
-@@ -156,8 +156,6 @@ PNAME(mux_i2s_out_p)		= { "i2s1_pre", "xin12m" };
- PNAME(mux_i2s2_p)		= { "i2s2_src", "i2s2_frac", "xin12m" };
- PNAME(mux_sclk_spdif_p)		= { "sclk_spdif_src", "spdif_frac", "xin12m" };
+diff --git a/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml b/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
+new file mode 100644
+index 0000000..5fdb915
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
+@@ -0,0 +1,142 @@
++# SPDX-License-Identifier: (GPL-2.0-only  OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/display/msm/dp-sc7180.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Display Port Controller.
++
++maintainers:
++  - Chandan Uddaraju <chandanu@codeaurora.org>
++  - Vara Reddy <varar@codeaurora.org>
++  - Tanmay Shah <tanmay@codeaurora.org>
++
++description: |
++  Device tree bindings for MSM Display Port which supports DP host controllers
++  that are compatible with VESA Display Port interface specification.
++
++properties:
++  compatible:
++    items:
++      - const: qcom,dp-display
++
++  cell-index:
++    description: Specifies the controller instance.
++
++  reg:
++    items:
++      - description: DP controller registers
++
++  interrupts:
++    description: The interrupt signal from the DP block.
++
++  clocks:
++    description: List of clock specifiers for clocks needed by the device.
++    items:
++      - description: Display Port AUX clock
++      - description: Display Port Link clock
++      - description: Link interface clock between DP and PHY
++      - description: Display Port Pixel clock
++      - description: Root clock generator for pixel clock
++
++  clock-names:
++    description: |
++      Device clock names in the same order as mentioned in clocks property.
++      The required clocks are mentioned below.
++    items:
++      - const: core_aux
++      - const: ctrl_link
++      - const: ctrl_link_iface
++      - const: stream_pixel
++      - const: pixel_rcg
++  "#clock-cells":
++    const: 1
++
++  vdda-1p2-supply:
++    description: phandle to vdda 1.2V regulator node.
++
++  vdda-0p9-supply:
++    description: phandle to vdda 0.9V regulator node.
++
++  data-lanes = <0 1>:
++    type: object
++    description: Maximum number of lanes that can be used for Display port.
++
++  ports:
++    description: |
++       Contains display port controller endpoint subnode.
++       remote-endpoint: |
++         For port@0, set to phandle of the connected panel/bridge's
++         input endpoint. For port@1, set to the DPU interface output.
++         Documentation/devicetree/bindings/graph.txt and
++         Documentation/devicetree/bindings/media/video-interfaces.txt.
++
++patternProperties:
++  "^aux-cfg([0-9])-settings$":
++    type: object
++    description: |
++      Specifies the DP AUX configuration [0-9] settings.
++      The first entry in this array corresponds to the register offset
++      within DP AUX, while the remaining entries indicate the
++      programmable values.
++
++required:
++  - compatible
++  - cell-index
++  - reg
++  - interrupts
++  - clocks
++  - clock-names
++  - vdda-1p2-supply
++  - vdda-0p9-supply
++  - data-lanes
++  - ports
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
++    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
++    msm_dp: displayport-controller@ae90000{
++        compatible = "qcom,dp-display";
++        cell-index = <0>;
++        reg = <0 0xae90000 0 0x1400>;
++        reg-names = "dp_controller";
++
++        interrupt-parent = <&display_subsystem>;
++        interrupts = <12 0>;
++
++        clocks = <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
++                 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
++                 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
++                 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
++                 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
++        clock-names = "core_aux",
++                      "ctrl_link",
++                      "ctrl_link_iface", "stream_pixel",
++                      "pixel_rcg";
++        #clock-cells = <1>;
++
++        vdda-1p2-supply = <&vreg_l3c_1p2>;
++        vdda-0p9-supply = <&vreg_l4a_0p8>;
++
++        data-lanes = <0 1>;
++
++        ports {
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            port@0 {
++                reg = <0>;
++                dp_in: endpoint {
++                    remote-endpoint = <&dpu_intf0_out>;
++                };
++            };
++
++            port@1 {
++                reg = <1>;
++                dp_out: endpoint {
++                };
++            };
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/display/msm/dpu.txt b/Documentation/devicetree/bindings/display/msm/dpu.txt
+index 551ae26..30c8ab4 100644
+--- a/Documentation/devicetree/bindings/display/msm/dpu.txt
++++ b/Documentation/devicetree/bindings/display/msm/dpu.txt
+@@ -65,6 +65,7 @@ Required properties:
  
--PNAME(mux_aclk_gpu_pre_p)	= { "cpll_gpu", "gpll_gpu", "hdmiphy_gpu", "usb480m_gpu" };
--
- PNAME(mux_uart0_p)		= { "uart0_src", "uart0_frac", "xin24m" };
- PNAME(mux_uart1_p)		= { "uart1_src", "uart1_frac", "xin24m" };
- PNAME(mux_uart2_p)		= { "uart2_src", "uart2_frac", "xin24m" };
-@@ -468,16 +466,9 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 			RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
- 			RK2928_CLKGATE_CON(2), 8, GFLAGS),
+ 	Port 0 -> DPU_INTF1 (DSI1)
+ 	Port 1 -> DPU_INTF2 (DSI2)
++	Port 2 -> DPU_INTF0 (DP)
  
--	GATE(0, "cpll_gpu", "cpll", 0,
--			RK2928_CLKGATE_CON(3), 13, GFLAGS),
--	GATE(0, "gpll_gpu", "gpll", 0,
--			RK2928_CLKGATE_CON(3), 13, GFLAGS),
--	GATE(0, "hdmiphy_gpu", "hdmiphy", 0,
--			RK2928_CLKGATE_CON(3), 13, GFLAGS),
--	GATE(0, "usb480m_gpu", "usb480m", 0,
-+	COMPOSITE(0, "aclk_gpu_pre", mux_pll_src_4plls_p, 0,
-+			RK2928_CLKSEL_CON(34), 5, 2, MFLAGS, 0, 5, DFLAGS,
- 			RK2928_CLKGATE_CON(3), 13, GFLAGS),
--	COMPOSITE_NOGATE(0, "aclk_gpu_pre", mux_aclk_gpu_pre_p, 0,
--			RK2928_CLKSEL_CON(34), 5, 2, MFLAGS, 0, 5, DFLAGS),
- 
- 	COMPOSITE(SCLK_SPI0, "sclk_spi0", mux_pll_src_2plls_p, 0,
- 			RK2928_CLKSEL_CON(25), 8, 1, MFLAGS, 0, 7, DFLAGS,
-@@ -582,8 +573,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
- 	GATE(0, "pclk_peri_noc", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 2, GFLAGS),
- 
- 	/* PD_GPU */
--	GATE(ACLK_GPU, "aclk_gpu", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 14, GFLAGS),
--	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 15, GFLAGS),
-+	GATE(ACLK_GPU, "aclk_gpu", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(7), 14, GFLAGS),
-+	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(7), 15, GFLAGS),
- 
- 	/* PD_BUS */
- 	GATE(0, "sclk_initmem_mbist", "aclk_cpu", 0, RK2928_CLKGATE_CON(8), 1, GFLAGS),
+ Optional properties:
+ - assigned-clocks: list of clock specifiers for clocks needing rate assignment
+@@ -136,6 +137,13 @@ Example:
+ 						remote-endpoint = <&dsi1_in>;
+ 					};
+ 				};
++
++				port@2 {
++					reg = <2>;
++					dpu_intf0_out: endpoint {
++						remote-endpoint = <&dp_in>;
++					};
++				};
+ 			};
+ 		};
+ 	};
 -- 
-2.25.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
