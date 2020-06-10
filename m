@@ -2,65 +2,63 @@ Return-Path: <SRS0=eZcb=7X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 394B7C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 02:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBD7C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 02:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17A142074B
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 02:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B56F720734
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 02:27:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SeQRnNQy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Grf9txbo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725954AbgFJCX1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 9 Jun 2020 22:23:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
+        id S1725944AbgFJC1W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 9 Jun 2020 22:27:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725798AbgFJCX0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jun 2020 22:23:26 -0400
-Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AB23C05BD1E;
-        Tue,  9 Jun 2020 19:23:25 -0700 (PDT)
-Received: by mail-pl1-x642.google.com with SMTP id y17so346558plb.8;
-        Tue, 09 Jun 2020 19:23:25 -0700 (PDT)
+        with ESMTP id S1725798AbgFJC1W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 9 Jun 2020 22:27:22 -0400
+Received: from mail-pg1-x541.google.com (mail-pg1-x541.google.com [IPv6:2607:f8b0:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C77B1C05BD1E;
+        Tue,  9 Jun 2020 19:27:20 -0700 (PDT)
+Received: by mail-pg1-x541.google.com with SMTP id e9so289514pgo.9;
+        Tue, 09 Jun 2020 19:27:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:references:from:message-id:date:user-agent:mime-version
          :in-reply-to:content-language:content-transfer-encoding;
-        bh=jHeSUddA32B2eduTi1qXwNDxzJjrZCcCzMHGeBTM2yE=;
-        b=SeQRnNQyzPCAgpGMdg26dUVg3jqXElJ0x/PJKZFtIuoe3Wml3m/UsPZXWsrJY973Nu
-         DcqEFQx466/ZpftjEA3tZbqbaIyNts//EJffrR6DGdcZXiQQlZLS6/yC+fMYRWnt199v
-         0hzZLFwVKmu758RgCJtWV+gmLmgyicPIq41rK/eKYhCigm4Nqu1iWn2xlMcQgy/g7DZO
-         w3VtERV0waJbKBUrHrZulcpgT2kPNnwQs+TGgy6qwNYjfoR2O6pxPFG7RYIeRuIaZM2q
-         TbE0zcdz2maHLo3yZdeHe1UrmaI0Tu4nDcuBKnoQZp+VNVX/udfrCcEq0ciSPps9rkpu
-         dndQ==
+        bh=M3n1PIZINjO5wXKsa5OsSBOrWdpmZl2e0Ljs5D4+x+A=;
+        b=Grf9txboa2IHZWpL56f3G236b2zzXxsyPUf7W0zbQ4JQqgtOb/2j8pF5p8XDi2lhDc
+         +bHUHezXWBwxlg5tS58L0s+L7l4DfJ6V/WDjgxXFlOZrSqm0qMvu6g8SSgfMEIG+6T5K
+         goV1umFTBNl5gOZUHMQyZhg6kxanUmOdF5fAV3nQualNIXtbnIjQikmGayVLqd7lWuFk
+         x8rThK1h92gRxNw6M4lyeph1pYbq9h2AcQLLON93csttKipWHM72au9TF4eLkevCpBOv
+         68KyOkQqNDP53818jfNn7GjSDL6zhQQQV9WbrD2svDHnA6mz3N5IjE9i5MPd6Z9aBJff
+         9Aqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=jHeSUddA32B2eduTi1qXwNDxzJjrZCcCzMHGeBTM2yE=;
-        b=gDLSJ3oWxbS3CzDjK/8AWoSteAp+QhwMWXixLBR9BHHSX+03bwOuokGV1Qby1DdEBb
-         dMJPmH973cKxmBZS+zS68QuT9/LRiTpRKFo/CjmD22E5Ln67ZoqYo2MqbT/+vmV17uIh
-         oFmrHxBjRQLYw1eIu8W/3MCzbfA8JeSkGdfuF4AA3XvLWBhMYiWWB2D0vkhVmKuB7c3X
-         c2Puvf/XyFXpuOkt8LQVz0eDO+uWkIPePxAb6YAlkHPOWLiLkDc8uGpMBccS/CA+ULzN
-         gABtsTEo/IimogJCIKusgrvUmR/sNaYkA8nwXxggM0EnEwxFbmd6jFDP9Q/AZ8s0i2z/
-         RmMg==
-X-Gm-Message-State: AOAM532Dvabx8ab3zbt8AExcndiW9t/VhZ6wEj70VFTZaGxQNOB2k5e5
-        aC+ZpTQoiXcKyUkqRW2nxY1Y4Hmq
-X-Google-Smtp-Source: ABdhPJysfragYbTihcd5EuVMIl48ya3K9aszbRpyiRPGqPCxakW0/aAAbk/O2vflOG78j0LnTsu+Vw==
-X-Received: by 2002:a17:902:a505:: with SMTP id s5mr1129099plq.20.1591755804533;
-        Tue, 09 Jun 2020 19:23:24 -0700 (PDT)
+        bh=M3n1PIZINjO5wXKsa5OsSBOrWdpmZl2e0Ljs5D4+x+A=;
+        b=RsdraxkOGsKwULWMXPky4cNoOSzU4N/11IRUEnZvZk8qt8QQnyWObzhsquuY2OWjjK
+         Ecz7rTeTgWb/NV8Bzl+V4YzLppUujLUOUg+EHvKGj8U8/w6XG6R9lOJ7PxPw8WqgjEuc
+         mBb/WfiD6j9qjCYlNe4HlgujyigJUmGiMNtA7BZTCLob3/+PkvI0sTFG9SO8jM0+J/MY
+         zLIaNQFNcJSbp8+9swmL7E1Ejk9U1EIOuQHOQCJPiSK0JzuCxxd0wXBJFuyx7kJO0yxv
+         uiOU6u1YiVB/bMSw+d7bj8FgVk/t2LDfY4Pt/KL0eaz0tRLflqpktBHJnim0HiQxe5ff
+         a84A==
+X-Gm-Message-State: AOAM532929/p89Ja6259gC0IN67FIM/JD8uxcwJA72ZLuVUunURFmVR+
+        4haBgZggGBltkpAS/gntIpuwMiVc
+X-Google-Smtp-Source: ABdhPJwVOTx0//wDjSMoRutArPa8yG+dfKYWbsQpdSTjM57l0uKCbObERZ6HKGhi0jUVczW58BR1YA==
+X-Received: by 2002:a63:3347:: with SMTP id z68mr843497pgz.61.1591756039687;
+        Tue, 09 Jun 2020 19:27:19 -0700 (PDT)
 Received: from [10.230.188.43] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id j12sm11145939pfd.21.2020.06.09.19.23.22
+        by smtp.gmail.com with ESMTPSA id 85sm11089397pfz.145.2020.06.09.19.27.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jun 2020 19:23:23 -0700 (PDT)
-Subject: Re: [PATCH 1/2] dt-bindings: clock: bcm63xx: add 6318 gated clock
- bindings
+        Tue, 09 Jun 2020 19:27:18 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clk: bcm63xx-gate: add BCM6318 support
 To:     =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
         mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
@@ -69,14 +67,14 @@ To:     =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
 References: <20200609113049.4035426-1-noltari@gmail.com>
- <20200609113049.4035426-2-noltari@gmail.com>
+ <20200609113049.4035426-3-noltari@gmail.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <add637f5-2ab8-5aa0-a36f-dc221624fbfc@gmail.com>
-Date:   Tue, 9 Jun 2020 19:23:21 -0700
+Message-ID: <1367fcf3-24ed-9106-a329-da5f8e168e17@gmail.com>
+Date:   Tue, 9 Jun 2020 19:27:16 -0700
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Firefox/68.0 Thunderbird/68.9.0
 MIME-Version: 1.0
-In-Reply-To: <20200609113049.4035426-2-noltari@gmail.com>
+In-Reply-To: <20200609113049.4035426-3-noltari@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -88,10 +86,34 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 6/9/2020 4:30 AM, Álvaro Fernández Rojas wrote:
-> Add BCM6318 to the binding documentation for the gated clock controllers found
-> on BCM63xx SoCs.
-> 
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> +static const struct clk_bcm63xx_table_entry bcm6318_clocks[] = {
+> +	{ .name = "adsl_asb", .bit = 0, },
+> +	{ .name = "usb_asb", .bit = 1, },
+> +	{ .name = "mips_asb", .bit = 2, },
+> +	{ .name = "pcie_asb", .bit = 3, },
+> +	{ .name = "phymips_asb", .bit = 4, },
+> +	{ .name = "robosw_asb", .bit = 5, },
+> +	{ .name = "sar_asb", .bit = 6, },
+> +	{ .name = "sdr_asb", .bit = 7, },
+> +	{ .name = "swreg_asb", .bit = 8, },
+> +	{ .name = "periph_asb", .bit = 9, },
+> +	{ .name = "cpubus160", .bit = 10, },
+> +	{ .name = "adsl", .bit = 11, },
+> +	{ .name = "sar124", .bit = 12, },
+
+Nit: this should be sar125
+
+> +	{ .name = "mips", .bit = 13, .flags = CLK_IS_CRITICAL, },
+> +	{ .name = "pcie", .bit = 14, },
+> +	{ .name = "robosw250", .bit = 16, },
+> +	{ .name = "robosw025", .bit = 17, },
+> +	{ .name = "sdr", .bit = 19, .flags = CLK_IS_CRITICAL, },
+> +	{ .name = "usb", .bit = 20, },
+
+This should probably be "usbd" to indicate this is the USB device clock
+(not host)
+
+With that fixed:
 
 Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 -- 
