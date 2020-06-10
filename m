@@ -2,95 +2,149 @@ Return-Path: <SRS0=eZcb=7X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F128C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 572A5C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 15:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC18207F9
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3016D206F4
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 15:14:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioj0E5CL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipyMb0wx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbgFJOJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 10:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60524 "EHLO
+        id S1730062AbgFJPOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 11:14:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42418 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbgFJOJE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 10:09:04 -0400
-Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E115C03E96B;
-        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
-Received: by mail-wr1-x431.google.com with SMTP id x6so2406722wrm.13;
-        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
+        with ESMTP id S1728095AbgFJPOQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 11:14:16 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45AE3C03E96B;
+        Wed, 10 Jun 2020 08:14:16 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id y17so2685554wrn.11;
+        Wed, 10 Jun 2020 08:14:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=3F1gyxKHBurPb/9ok1v4N24kKX2n+9TWOucrfqchLWY=;
-        b=ioj0E5CLNbfjs5oCFAoQKIzYeZBkUzsBNDPcTEesJcSJ6K2WjEvS0sIXyNdZBne2fA
-         YVFOwVpX6Kvagq0fqimlc2N6UHRM3yksJYSb7cdJeqS69EwbPc7lWT+HhdtAD/Sl8MoY
-         LCK4KOoGz/PNI2oe94EnCJZhuHdMPSJZrfkrCERMqgfai5qijCfK4HEipycaa+0Q1CZb
-         jU1hc5X10bIoud+iLtWn8xlol613jWOuAg/hpOKsShywXzBWw8RLjXFtn4XT5b+9hCSC
-         G03APnvbzi4imW3NZmsUKI/D10zqfJWQqo+3rNODPeenxyc17qu4TDyRwkaMioqpAhUc
-         eK1g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=u6ZBh3xhLtnUwFe/9xqitT47OizAqnS3qUaRaKdrxcw=;
+        b=ipyMb0wxF/MyREsILFzJtU8gHR5aUzsw0s0daHQqbH7uM6WRpP4JA8biPGvx8slP/V
+         I0ugUP+QkSviFaGewLZ7pkZDezLRPWJhkHHM9Tk5c+n71n0DtHxjMvPScHnKH0k6O5mH
+         KmQQT2TZpS4YDkm6EmYgdbeqjUsWK6Uzi00K4yIAovFk+l+h+7mo9fi46jcudyPX8LZO
+         Y9ITq0aKrxNUYNWfa2g1FCNXrmgLA/ea+u8h4C3gvRf6tf2Pb7eAh5Erqfrk7924IGfl
+         u/RIs41wmg7mUAcuVwwAHIUU1/11Cn8/DacYgHMyVhCCQ3BBvlNqPtVbx646WTFjYOrB
+         w7SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=3F1gyxKHBurPb/9ok1v4N24kKX2n+9TWOucrfqchLWY=;
-        b=RrFYsjk9leu5TjRiTyB93r40aixrwBx7dO3hQO/T43qxqfSp9+gcyTvo+N9QHKuZuh
-         F8m83/ozqVnHlDuRz8MY2K7SXCaF+MaKd0tFHbb1JXsmSB5GK7gdB5pdIlAVyaDxZ4T8
-         o/UBnyhsEgaPekF+KfQAoJOxRxiOC9WcI4PGvSbdj2pMU063HN+4bbpR9RyTvClIPaoc
-         nR+hSIKRlZFMiG4f2kFE1c6vYRI6ts9aR7Z2zGtdqGoDamCRj3IKCzIrsrnvuSpOXmzM
-         G+cGB4yeRZG6IaIh0x4DJ0kONQF6/lHDry22K74uEB+YIsfmSXOGQYtGdnncU0Ob+atG
-         O3HA==
-X-Gm-Message-State: AOAM530kiFixfLw1KmRSFT1tj5+FdXPcEZ2JvFOnCM3790Sm3erqGTSh
-        WstyicpFmz16gzV7IF6reIY=
-X-Google-Smtp-Source: ABdhPJz+sj/GScpXnuaN0U+4nlhrlDJQgiftq51b43NZYNgW3u6u9jGX7pG3KxZLtkZNex4KR2PtwA==
-X-Received: by 2002:a5d:4bcb:: with SMTP id l11mr4180112wrt.363.1591798142300;
-        Wed, 10 Jun 2020 07:09:02 -0700 (PDT)
-Received: from skynet.lan (28.red-83-49-61.dynamicip.rima-tde.net. [83.49.61.28])
-        by smtp.gmail.com with ESMTPSA id r5sm8565883wrq.0.2020.06.10.07.09.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 07:09:01 -0700 (PDT)
-From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        f.fainelli@gmail.com, bcm-kernel-feedback-list@broadcom.com,
-        julia.lawall@lip6.fr, f4bug@amsat.org, jonas.gorski@gmail.com,
-        lkp@intel.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
-        <noltari@gmail.com>
-Subject: [PATCH v2 0/2] clk: bcm63xx-gate: add BCM6318 support
-Date:   Wed, 10 Jun 2020 16:08:56 +0200
-Message-Id: <20200610140858.207329-1-noltari@gmail.com>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200609113049.4035426-1-noltari@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=u6ZBh3xhLtnUwFe/9xqitT47OizAqnS3qUaRaKdrxcw=;
+        b=sTn30x5Cm2FCx9b2NJX+S89MCOIXVqVr8kqErxvwvyfMxZ948KrJty8Sga3imCiH8R
+         lF/tb1D5OiO4HK0WPAmp1C22+qh9dQf84tHPAZPWm2X+jut4BG+6rcWr2aRv7FnrydnM
+         6Xut8OCo4oTLfCFffEfajqYbQdmdK+UTwtoUcm0tYpet/3g1FzM4oA1+Y7CZV7sJ8400
+         hRCMGK8npdJO4QQxuHSKrc913ZEPI7jqmXCVnzgJ9syHv8jQft5UHEyYCTgCjAXPNZq7
+         Oo3P/V9+wT93qFB95mlXrr8V9fWuO3CkPE+UdKvTYHoOlbfpp8fSgdU0ZY+UiUqVFdLl
+         fEXA==
+X-Gm-Message-State: AOAM532wiDgr28Ntm/93w9t+7Pjby6f9xHm6WnEuiWlARPXOvXHmXJJE
+        rKvGAwadsc+WJBk1tP9kOSiuR63Z
+X-Google-Smtp-Source: ABdhPJw8Odfle0VCYRg7uO5cn7CQ/GpvarHxi2OiUUCx4yB1jEgciHij0GrTptZw8PPkEqtzM34CxQ==
+X-Received: by 2002:adf:ecc2:: with SMTP id s2mr4721645wro.60.1591802054688;
+        Wed, 10 Jun 2020 08:14:14 -0700 (PDT)
+Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
+        by smtp.gmail.com with ESMTPSA id v19sm26227wml.26.2020.06.10.08.14.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jun 2020 08:14:13 -0700 (PDT)
+Subject: Re: [PATCH 2/2] clk: bcm63xx-gate: add BCM6318 support
+To:     =?UTF-8?Q?Philippe_Mathieu-Daud=c3=a9?= <f4bug@amsat.org>,
+        =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Jonas Gorski <jonas.gorski@gmail.com>,
+        kbuild test robot <lkp@intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        open list <linux-kernel@vger.kernel.org>
 References: <20200609113049.4035426-1-noltari@gmail.com>
+ <20200609113049.4035426-3-noltari@gmail.com>
+ <1367fcf3-24ed-9106-a329-da5f8e168e17@gmail.com>
+ <3E897527-55EB-47DB-99ED-C737725F0F9E@gmail.com>
+ <CAAdtpL7dUZ2RqkrqSxiZxDbp4qY-KdtSc7CyuR+rbnRRA2Yvrw@mail.gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <93c429b1-31f4-95c2-1bd9-b3756b396f3a@gmail.com>
+Date:   Wed, 10 Jun 2020 08:14:09 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Firefox/68.0 Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAAdtpL7dUZ2RqkrqSxiZxDbp4qY-KdtSc7CyuR+rbnRRA2Yvrw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the gated clock controllers found on the BCM6318.
 
-Álvaro Fernández Rojas (2):
-  dt-bindings: clock: bcm63xx: add 6318 gated clock bindings
-  clk: bcm63xx-gate: add BCM6318 support
 
- .../bindings/clock/brcm,bcm63xx-clocks.txt    |  2 +
- drivers/clk/bcm/clk-bcm63xx-gate.c            | 44 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
+On 6/10/2020 1:29 AM, Philippe Mathieu-Daudé wrote:
+> Hi,
+> 
+> On Wed, Jun 10, 2020 at 8:13 AM Álvaro Fernández Rojas
+> <noltari@gmail.com> wrote:
+>>
+>> Hi Florian,
+>>
+>>> El 10 jun 2020, a las 4:27, Florian Fainelli <f.fainelli@gmail.com> escribió:
+>>>
+>>>
+>>>
+>>> On 6/9/2020 4:30 AM, Álvaro Fernández Rojas wrote:
+>>>> +static const struct clk_bcm63xx_table_entry bcm6318_clocks[] = {
+>>>> +    { .name = "adsl_asb", .bit = 0, },
+>>>> +    { .name = "usb_asb", .bit = 1, },
+>>>> +    { .name = "mips_asb", .bit = 2, },
+>>>> +    { .name = "pcie_asb", .bit = 3, },
+>>>> +    { .name = "phymips_asb", .bit = 4, },
+>>>> +    { .name = "robosw_asb", .bit = 5, },
+>>>> +    { .name = "sar_asb", .bit = 6, },
+>>>> +    { .name = "sdr_asb", .bit = 7, },
+>>>> +    { .name = "swreg_asb", .bit = 8, },
+>>>> +    { .name = "periph_asb", .bit = 9, },
+>>>> +    { .name = "cpubus160", .bit = 10, },
+>>>> +    { .name = "adsl", .bit = 11, },
+>>>> +    { .name = "sar124", .bit = 12, },
+>>>
+>>> Nit: this should be sar125
+>>
+>> Nice catch, I will fix this in v2.
+>>
+>>>
+>>>> +    { .name = "mips", .bit = 13, .flags = CLK_IS_CRITICAL, },
+>>>> +    { .name = "pcie", .bit = 14, },
+>>>> +    { .name = "robosw250", .bit = 16, },
+>>>> +    { .name = "robosw025", .bit = 17, },
+>>>> +    { .name = "sdr", .bit = 19, .flags = CLK_IS_CRITICAL, },
+>>>> +    { .name = "usb", .bit = 20, },
+>>>
+>>> This should probably be "usbd" to indicate this is the USB device clock
+>>> (not host)
+>>
+>> Ok, I will change it. I got confused by the fact that both (usbd and usbh) were present on 6318_map_part.h:
+>> #define USBD_CLK_EN         (1 << 20)
+>> #define USBH_CLK_EN         (1 << 20)
+> 
+> Is there a datasheet to verify that?
 
+Not a public one, but I can confirm this is correct given the internal
+datasheet.
 -- 
-2.26.2
-
+Florian
