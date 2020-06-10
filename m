@@ -2,62 +2,61 @@ Return-Path: <SRS0=eZcb=7X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A989C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F128C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED6BA206F7
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC18207F9
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 14:09:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aCneJ/Rg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioj0E5CL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbgFJOJM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 10:09:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60530 "EHLO
+        id S1726997AbgFJOJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 10:09:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729621AbgFJOJG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 10:09:06 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2CD6C03E96F;
-        Wed, 10 Jun 2020 07:09:05 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id k26so1965330wmi.4;
-        Wed, 10 Jun 2020 07:09:05 -0700 (PDT)
+        with ESMTP id S1726841AbgFJOJE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 10:09:04 -0400
+Received: from mail-wr1-x431.google.com (mail-wr1-x431.google.com [IPv6:2a00:1450:4864:20::431])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E115C03E96B;
+        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
+Received: by mail-wr1-x431.google.com with SMTP id x6so2406722wrm.13;
+        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KzxDdWHYnpz+UV20TRPo/jYL7PQqEKAVp/cR0HQ2iGA=;
-        b=aCneJ/RgvE7ihulcdPqsMvrXm4lRmQ0b6MBM2yEfoGrn0Wr4oP3iSo0ieYIbqWFogO
-         YTEDUe6Jzmc3+qkKGsxIxUI2ftwbf1vTEWc495pmxYeMkvaXma4wS/pjSYuzdwv+kjrG
-         1W/HsX3m7irH1GtjpZnCWN2vh1MoEoTiq/00FXoA1hK3bSTTONrvJm6IjApu03Mvpn/O
-         2fdl1gCLBDvbg8Yc+ddQpKALchwBMeZ93OA5svylHZBnJUdsAlmxCvy9dRj9Twc/xz19
-         V/4MhD2EnazLxlwq/N0sItFpo5uPZIszIDpMFG8aiVEY4zeNVgaloI92+gUhhsdyc5VY
-         Fbpg==
+        bh=3F1gyxKHBurPb/9ok1v4N24kKX2n+9TWOucrfqchLWY=;
+        b=ioj0E5CLNbfjs5oCFAoQKIzYeZBkUzsBNDPcTEesJcSJ6K2WjEvS0sIXyNdZBne2fA
+         YVFOwVpX6Kvagq0fqimlc2N6UHRM3yksJYSb7cdJeqS69EwbPc7lWT+HhdtAD/Sl8MoY
+         LCK4KOoGz/PNI2oe94EnCJZhuHdMPSJZrfkrCERMqgfai5qijCfK4HEipycaa+0Q1CZb
+         jU1hc5X10bIoud+iLtWn8xlol613jWOuAg/hpOKsShywXzBWw8RLjXFtn4XT5b+9hCSC
+         G03APnvbzi4imW3NZmsUKI/D10zqfJWQqo+3rNODPeenxyc17qu4TDyRwkaMioqpAhUc
+         eK1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KzxDdWHYnpz+UV20TRPo/jYL7PQqEKAVp/cR0HQ2iGA=;
-        b=ApcxZK3/YScxQgqnGEb4TvVlhFVUNC0dGbKUUuW8QhDJXFjMQA4YUKLvkYXqceTFdI
-         DbCuzsIYQErIRORF1Oz/6DTROR6vSocGJYnt232B1/myfKiTxIAp+Rrs2dr/mJSB53rL
-         vYThLV+//m6hKf1h7lSTzZKIohYN7ON+l+yqMdI+ymqh+mZtI7/235NhlYDzoDwYVcNt
-         FjJFjcRTjil10nYsGDPbXJqI0/VpHjmqpMA+H0HesOfsmP+vZdnylq3O56COqyW18UiY
-         gi85t1oKTE7EPOv1q5gtenO96NHP2UMl2RHqklJm6PyMbTWsP+lX6z6N+u8l5ncJLiww
-         xgMg==
-X-Gm-Message-State: AOAM532TdVTYxhKayMQnw2esLC58TmBFKHbIL16VVbUjBaTrmDO19NaP
-        /RYJ9MRSIZRyRmyhzZ7/paU=
-X-Google-Smtp-Source: ABdhPJwjA1lzuZpA0iQqJVOU45YWAyA1FnmOrVMGhFR8zeqt5kx6TcJYW/D0bGDI7jZypR2TyuydqA==
-X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr3674074wmb.168.1591798144457;
-        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
+        bh=3F1gyxKHBurPb/9ok1v4N24kKX2n+9TWOucrfqchLWY=;
+        b=RrFYsjk9leu5TjRiTyB93r40aixrwBx7dO3hQO/T43qxqfSp9+gcyTvo+N9QHKuZuh
+         F8m83/ozqVnHlDuRz8MY2K7SXCaF+MaKd0tFHbb1JXsmSB5GK7gdB5pdIlAVyaDxZ4T8
+         o/UBnyhsEgaPekF+KfQAoJOxRxiOC9WcI4PGvSbdj2pMU063HN+4bbpR9RyTvClIPaoc
+         nR+hSIKRlZFMiG4f2kFE1c6vYRI6ts9aR7Z2zGtdqGoDamCRj3IKCzIrsrnvuSpOXmzM
+         G+cGB4yeRZG6IaIh0x4DJ0kONQF6/lHDry22K74uEB+YIsfmSXOGQYtGdnncU0Ob+atG
+         O3HA==
+X-Gm-Message-State: AOAM530kiFixfLw1KmRSFT1tj5+FdXPcEZ2JvFOnCM3790Sm3erqGTSh
+        WstyicpFmz16gzV7IF6reIY=
+X-Google-Smtp-Source: ABdhPJz+sj/GScpXnuaN0U+4nlhrlDJQgiftq51b43NZYNgW3u6u9jGX7pG3KxZLtkZNex4KR2PtwA==
+X-Received: by 2002:a5d:4bcb:: with SMTP id l11mr4180112wrt.363.1591798142300;
+        Wed, 10 Jun 2020 07:09:02 -0700 (PDT)
 Received: from skynet.lan (28.red-83-49-61.dynamicip.rima-tde.net. [83.49.61.28])
-        by smtp.gmail.com with ESMTPSA id r5sm8565883wrq.0.2020.06.10.07.09.03
+        by smtp.gmail.com with ESMTPSA id r5sm8565883wrq.0.2020.06.10.07.09.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 07:09:04 -0700 (PDT)
+        Wed, 10 Jun 2020 07:09:01 -0700 (PDT)
 From:   =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
         <noltari@gmail.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -68,13 +67,12 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?=C3=81lvaro=20Fern=C3=A1ndez=20Rojas?= 
         <noltari@gmail.com>
-Subject: [PATCH v2 2/2] clk: bcm63xx-gate: add BCM6318 support
-Date:   Wed, 10 Jun 2020 16:08:58 +0200
-Message-Id: <20200610140858.207329-3-noltari@gmail.com>
+Subject: [PATCH v2 0/2] clk: bcm63xx-gate: add BCM6318 support
+Date:   Wed, 10 Jun 2020 16:08:56 +0200
+Message-Id: <20200610140858.207329-1-noltari@gmail.com>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <20200610140858.207329-1-noltari@gmail.com>
+In-Reply-To: <20200609113049.4035426-1-noltari@gmail.com>
 References: <20200609113049.4035426-1-noltari@gmail.com>
- <20200610140858.207329-1-noltari@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -85,76 +83,14 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Add support for the gated clock controllers found on the BCM6318.
 
-Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
----
- v2: correct names for sar125 and usbd
+Álvaro Fernández Rojas (2):
+  dt-bindings: clock: bcm63xx: add 6318 gated clock bindings
+  clk: bcm63xx-gate: add BCM6318 support
 
- drivers/clk/bcm/clk-bcm63xx-gate.c | 44 ++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ .../bindings/clock/brcm,bcm63xx-clocks.txt    |  2 +
+ drivers/clk/bcm/clk-bcm63xx-gate.c            | 44 +++++++++++++++++++
+ 2 files changed, 46 insertions(+)
 
-diff --git a/drivers/clk/bcm/clk-bcm63xx-gate.c b/drivers/clk/bcm/clk-bcm63xx-gate.c
-index 98e884957db8..fce6746cc607 100644
---- a/drivers/clk/bcm/clk-bcm63xx-gate.c
-+++ b/drivers/clk/bcm/clk-bcm63xx-gate.c
-@@ -40,6 +40,48 @@ static const struct clk_bcm63xx_table_entry bcm3368_clocks[] = {
- 	{ },
- };
- 
-+static const struct clk_bcm63xx_table_entry bcm6318_clocks[] = {
-+	{ .name = "adsl_asb", .bit = 0, },
-+	{ .name = "usb_asb", .bit = 1, },
-+	{ .name = "mips_asb", .bit = 2, },
-+	{ .name = "pcie_asb", .bit = 3, },
-+	{ .name = "phymips_asb", .bit = 4, },
-+	{ .name = "robosw_asb", .bit = 5, },
-+	{ .name = "sar_asb", .bit = 6, },
-+	{ .name = "sdr_asb", .bit = 7, },
-+	{ .name = "swreg_asb", .bit = 8, },
-+	{ .name = "periph_asb", .bit = 9, },
-+	{ .name = "cpubus160", .bit = 10, },
-+	{ .name = "adsl", .bit = 11, },
-+	{ .name = "sar125", .bit = 12, },
-+	{ .name = "mips", .bit = 13, .flags = CLK_IS_CRITICAL, },
-+	{ .name = "pcie", .bit = 14, },
-+	{ .name = "robosw250", .bit = 16, },
-+	{ .name = "robosw025", .bit = 17, },
-+	{ .name = "sdr", .bit = 19, .flags = CLK_IS_CRITICAL, },
-+	{ .name = "usbd", .bit = 20, },
-+	{ .name = "hsspi", .bit = 25, },
-+	{ .name = "pcie25", .bit = 27, },
-+	{ .name = "phymips", .bit = 28, },
-+	{ .name = "afe", .bit = 29, },
-+	{ .name = "qproc", .bit = 30, },
-+	{ },
-+};
-+
-+static const struct clk_bcm63xx_table_entry bcm6318_ubus_clocks[] = {
-+	{ .name = "adsl-ubus", .bit = 0, },
-+	{ .name = "arb-ubus", .bit = 1, .flags = CLK_IS_CRITICAL, },
-+	{ .name = "mips-ubus", .bit = 2, .flags = CLK_IS_CRITICAL, },
-+	{ .name = "pcie-ubus", .bit = 3, },
-+	{ .name = "periph-ubus", .bit = 4, .flags = CLK_IS_CRITICAL, },
-+	{ .name = "phymips-ubus", .bit = 5, },
-+	{ .name = "robosw-ubus", .bit = 6, },
-+	{ .name = "sar-ubus", .bit = 7, },
-+	{ .name = "sdr-ubus", .bit = 8, },
-+	{ .name = "usb-ubus", .bit = 9, },
-+	{ },
-+};
-+
- static const struct clk_bcm63xx_table_entry bcm6328_clocks[] = {
- 	{ .name = "phy_mips", .bit = 0, },
- 	{ .name = "adsl_qproc", .bit = 1, },
-@@ -217,6 +259,8 @@ static int clk_bcm63xx_remove(struct platform_device *pdev)
- 
- static const struct of_device_id clk_bcm63xx_dt_ids[] = {
- 	{ .compatible = "brcm,bcm3368-clocks", .data = &bcm3368_clocks, },
-+	{ .compatible = "brcm,bcm6318-clocks", .data = &bcm6318_clocks, },
-+	{ .compatible = "brcm,bcm6318-ubus-clocks", .data = &bcm6318_ubus_clocks, },
- 	{ .compatible = "brcm,bcm6328-clocks", .data = &bcm6328_clocks, },
- 	{ .compatible = "brcm,bcm6358-clocks", .data = &bcm6358_clocks, },
- 	{ .compatible = "brcm,bcm6362-clocks", .data = &bcm6362_clocks, },
 -- 
 2.26.2
 
