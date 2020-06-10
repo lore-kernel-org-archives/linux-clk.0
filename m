@@ -2,102 +2,117 @@ Return-Path: <SRS0=eZcb=7X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16493C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:30:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 265D0C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 11:46:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E12E22078C
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:30:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB4772074B
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 11:46:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DTECFQ0b"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qJkJvsLS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726794AbgFJIa3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 04:30:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36142 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbgFJIaT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 04:30:19 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D528FC08C5C2
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 01:30:18 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id c3so1203449wru.12
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 01:30:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Ig0Wg2PIvyajjV/Y8eTgJWpGeC/XcG4G3xO3aXfG82k=;
-        b=DTECFQ0bjRfKJQiLq6V7fYnNYoGstQHaivOezI/tvE4vNkfVsM5E+kOKCoYZrkWQ8E
-         07GF1OJ5g89l8Y6gsIetG5pftx0NdqTjpqPtKZKz/6k2dNaBn0Z2SZK7FL8znkkPohpW
-         HS4BhLMugMY/q8R5tJQpq/MO5S9ZvJufVJS7ly/CpFL8AcdC+V1rLVnb2QYsa9abzIq/
-         /pkQXuimNoTYoAIT9Am96pH2sY5EGmV8T+apfWzqDUUqtOuPKCoL8mz5V4Bj00tV3YWn
-         euzCn5ZW9BftwIV05sEavFlk+ntT59KS5ZrP/UDs3u+URzOGKPukGgvjcQyNePbfNKO/
-         pM7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Ig0Wg2PIvyajjV/Y8eTgJWpGeC/XcG4G3xO3aXfG82k=;
-        b=TtV2Nv+k7k4maUfd7TcfZIebdpK8RHiHog3maPrxIn6iCYPoLIpl21DVyuBwqB9LdP
-         EqBycxMM4KIRTC5yHqHjvFKiq35KU1l50raY5w8UQi9Qo3qgMopTKi86L1zOFBW62nVd
-         U5TiMICJjBflnDLpa1/dr2v1AmqcJKylLyv6CUqgjTArETyWtQ727UWzKNtQbE3W20GX
-         +6Jn3A0/dY367TGc/CMQX0ShsALctH6YCiaLzI8G0yE3/CaIn6/Vig5LILcO+0yBJe9e
-         Vv9HG44J72e876ZoPpUhP7LNe7yn5ucypue0/vq/b1SyxP8Lh0Bb3NOb3QM9x2/hSjjj
-         3jvw==
-X-Gm-Message-State: AOAM533t35mrmy5afSHkFpAt6yvQ8TMzf3/peV9U3Q+0TxQNbXG07p8a
-        4Hp3x67So2NFXjk+lRoqoVESxMg4+ICuuQ==
-X-Google-Smtp-Source: ABdhPJxEeONnboKWlWlksQ0crqvdegr2mYAnJsEUGnJkTWBViWL1BgmpvfotRC7sgx0kvGovhCXAgA==
-X-Received: by 2002:adf:ea11:: with SMTP id q17mr2261311wrm.75.1591777817239;
-        Wed, 10 Jun 2020 01:30:17 -0700 (PDT)
-Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:22:5867:d2c6:75f4])
-        by smtp.gmail.com with ESMTPSA id u13sm6958974wrp.53.2020.06.10.01.30.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jun 2020 01:30:16 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com, devicetree@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 1/2] dt-bindings: clk: g12a-clkc: Add NNA CLK Source clock IDs
-Date:   Wed, 10 Jun 2020 10:30:11 +0200
-Message-Id: <20200610083012.5024-2-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20200610083012.5024-1-narmstrong@baylibre.com>
-References: <20200610083012.5024-1-narmstrong@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728468AbgFJLqK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 07:46:10 -0400
+Received: from mx1.tq-group.com ([62.157.118.193]:65308 "EHLO mx1.tq-group.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728481AbgFJLqK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Jun 2020 07:46:10 -0400
+X-Greylist: delayed 429 seconds by postgrey-1.27 at vger.kernel.org; Wed, 10 Jun 2020 07:46:09 EDT
+IronPort-SDR: QOZnzLdhziz0cwun+NJ8W3bVxIjr4WurjR7RBNs4PBZO+Eb4Cgyr5zPweL+8mSj6YsEbaDN2oE
+ yVyWBhjMjAx+FoPoTJaFmc475fQXEyR96zKYUjy8ME6u4HtTtbe+nC+gR+OFbp44C9q6yQlE//
+ NSHTzJ/4cDO9l/gq+Lm9eRINWtHlLBQR8nnCcEUOapEbihwnSDXM4zehioYXN8E0AtJisXu69N
+ x14ySQG6VyUDFc61pV37PvrmTvEYO79jCuxY98akt+3QqcGqywHHsxq9HTm8la7hujvDPdkkSS
+ BBg=
+X-IronPort-AV: E=Sophos;i="5.73,495,1583190000"; 
+   d="scan'208";a="12636204"
+Received: from unknown (HELO tq-pgp-pr1.tq-net.de) ([192.168.6.15])
+  by mx1-pgp.tq-group.com with ESMTP; 10 Jun 2020 13:38:59 +0200
+Received: from mx1.tq-group.com ([192.168.6.7])
+  by tq-pgp-pr1.tq-net.de (PGP Universal service);
+  Wed, 10 Jun 2020 13:38:59 +0200
+X-PGP-Universal: processed;
+        by tq-pgp-pr1.tq-net.de on Wed, 10 Jun 2020 13:38:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1591789139; x=1623325139;
+  h=from:to:cc:subject:date:message-id;
+  bh=SCPwkIJO8ixVT8Es4oQfUibnuDS4476i4fJI4A1Ujgc=;
+  b=qJkJvsLSmJ0AZEo35xr3qVmsvWZkLFV9cPCtPxx3UWgWxVeDhbl36dll
+   5Lsp0gy/SbtXH3Gk7qc0Cktq3R+G0wyPx2M/1o7A/QjqODIFQmk3bvgVu
+   KuYMG2zrkK9VHkNM+hI045ghDiruzoqxwmnvJM+Om6Oxn/MPzd5jQQH9G
+   RtHNGPGZ9E9swqwY7rDbM71MWbVOLVd/dUGMr1dWTedfQihoXqqnC3CoS
+   3Uh1vAPvqizcsQUWweKhNkPpHtNtDNYo1VzHVEzCxr8Rw+nPy3zMNlmJw
+   c/7aMOWWJF9ThCgK+mpYyzglBbEZE5E7F4g7EgdHe/JPXLo7XSHE7uHYu
+   g==;
+IronPort-SDR: XUMlzlBV9h+REJeElJ2SARd/3O9iFEv8HKlxt0IDyFYU61iu+17k6VmCs3aBQXJ544Ayp9ykVO
+ trIxKllXl0WKtlRuwCaRoODAizg/ZePSwvDfYzJiKc/v6anKBOZNML3BlSXUQCYpOp5c22nE2G
+ +9FbHR+NgshCATn3WbujTigBuSB8l6ByO2Ht1tLfqj+EWYZ7kOZhXyLO2pjBh/+dGjpXmAm42N
+ ltv9OmbZMc2ETh26zGY8XwWroosOMxBRNk+VgijpPwhU6blJFysmFukDQEA1GKnMPnErim7r6W
+ 6cA=
+X-IronPort-AV: E=Sophos;i="5.73,495,1583190000"; 
+   d="scan'208";a="12636203"
+Received: from vtuxmail01.tq-net.de ([10.115.0.20])
+  by mx1.tq-group.com with ESMTP; 10 Jun 2020 13:38:59 +0200
+Received: from schifferm-ubuntu4.tq-net.de (schifferm-ubuntu4.tq-net.de [10.117.49.26])
+        by vtuxmail01.tq-net.de (Postfix) with ESMTPA id 31011280065;
+        Wed, 10 Jun 2020 13:38:59 +0200 (CEST)
+From:   Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Krummsdorf <michael.krummsdorf@tq-group.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Subject: [PATCH] clk: qoriq: add LS1021A core pll mux options
+Date:   Wed, 10 Jun 2020 13:38:37 +0200
+Message-Id: <20200610113837.27117-1-matthias.schiffer@ew.tq-group.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Dmitry Shmidt <dimitrysh@google.com>
+From: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
 
-This adds the Neural Network Accelerator IP source clocks.
+This allows to clock the cores with 1 GHz, 500 MHz and 250 MHz.
 
-Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
+Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 ---
- include/dt-bindings/clock/g12a-clkc.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk-qoriq.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-index b0d65d73db96..40d49940d8a8 100644
---- a/include/dt-bindings/clock/g12a-clkc.h
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -145,5 +145,7 @@
- #define CLKID_CPU3_CLK				255
- #define CLKID_SPICC0_SCLK			258
- #define CLKID_SPICC1_SCLK			261
-+#define CLKID_NNA_AXI_CLK			264
-+#define CLKID_NNA_CORE_CLK			267
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 374afcab89af..5942e9874bc0 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -244,6 +244,14 @@ static const struct clockgen_muxinfo clockgen2_cmux_cgb = {
+ 	},
+ };
  
- #endif /* __G12A_CLKC_H */
++static const struct clockgen_muxinfo ls1021a_cmux = {
++	{
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV4 },
++	}
++};
++
+ static const struct clockgen_muxinfo ls1028a_hwa1 = {
+ 	{
+ 		{ CLKSEL_VALID, PLATFORM_PLL, PLL_DIV1 },
+@@ -577,7 +585,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 	{
+ 		.compat = "fsl,ls1021a-clockgen",
+ 		.cmux_groups = {
+-			&t1023_cmux
++			&ls1021a_cmux
+ 		},
+ 		.cmux_to_group = {
+ 			0, -1
 -- 
-2.22.0
+2.17.1
 
