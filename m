@@ -2,123 +2,88 @@ Return-Path: <SRS0=eZcb=7X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CDFC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3A9C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8851D20734
-	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:29:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F1B2064C
+	for <linux-clk@archiver.kernel.org>; Wed, 10 Jun 2020 08:30:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="O3FQn37F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgFJI3p convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 04:29:45 -0400
-Received: from mail-ej1-f67.google.com ([209.85.218.67]:46879 "EHLO
-        mail-ej1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726424AbgFJI3p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 04:29:45 -0400
-Received: by mail-ej1-f67.google.com with SMTP id p20so1543952ejd.13;
-        Wed, 10 Jun 2020 01:29:43 -0700 (PDT)
+        id S1726424AbgFJIaS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 04:30:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36132 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726147AbgFJIaR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 04:30:17 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D79CC03E96F
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 01:30:17 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id h5so1227643wrc.7
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 01:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7qPvfAK/wIPUWfgqcjzBx41M5rLQsIgGSEZcayEYX00=;
+        b=O3FQn37Fw3dtMfw8SHlpmRruARSNx8N74Lbw/4/ptHL+LNio0fm7wjTBotWaYwVSz3
+         4oy5ByC/54ljbNGuRvxSQNrTfw3cuisPIm0I2GNYTq7axQGCBJ8QwslTPzkl3L4ShVwF
+         Hy18ra+U8NdU8JWLBzIw8eWkcUbSN1xPE7YE/k4O3Ai2zCyhUxV2zWAqrLUXOnUbW3i8
+         injhSJjF2Urlm2O5UWnm/gGdjh2zTYMWNOfWd5XiYFvHzABBqVz6NwxmxM4XizSyWF1e
+         VOJoZzZys/yzUtovAowiySYbNi4lPeC7viiqLivn8zYAY7Yo4WEzGgugorTaD1aqpcoW
+         NuQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FDSNWzEU1BCo6wG/cdIC3mu6f2xb06oIyPX8U4p2La0=;
-        b=nG6Purdq6ub66hKETSZxcqLCzaIHIIL4KgpgNjsW+FEHBZIMOXMQyk2SecPPxM1/2A
-         x+VMFCg6wnWL+mkuNJDvFeHdLpHhrzUYtnuYGsAL9f5B4yBBp5g965vNAVsQ7Yyc46Dy
-         ox3QiB5n+RALtawxU/UKA5rjpu/1Msh+Krtx2tDsyS92Wc86CE/48DENExl+cn9ZHLva
-         ORheGGqoj3B6jnI86o5dNWAeGgvOldGUd1F6uc4fa8KR6MYN5j5kTm5IwMiscJS1KeAj
-         E7ztG4o6QvE3QZ68zZHmI0hafSRwtO7/XihnV3j6aEVOverjRbjBpYy3EFO0vp+ksbdp
-         JMSQ==
-X-Gm-Message-State: AOAM532vpShi8vYLU/7pF7fTOKxpK8n/fDI7f4yjsvOiq8aehF0wwAcR
-        WcMI1/exLwZ1WxHeTDzsAqyAQGkW+kVrkmUU6PQ=
-X-Google-Smtp-Source: ABdhPJxOEtPuPOmj6dC8S4CZ/xJTRRt5rhm7PcV4cCO58Wg9TMbFQP8d/SywDEkq0BNkQlzSPKMmCP8/XoHZ7bIpl94=
-X-Received: by 2002:a17:907:4096:: with SMTP id nm6mr2343355ejb.4.1591777782737;
- Wed, 10 Jun 2020 01:29:42 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7qPvfAK/wIPUWfgqcjzBx41M5rLQsIgGSEZcayEYX00=;
+        b=JBSt6Q4dSTUrIcxM22UU/xjAvqoQaW2vNelljFYMsrK9lpMUf/WmLk6Y4stYbpdlRk
+         ZpRa7rDYg8Aug1d2Vaozu/wuETBqWfeZyfYaa3WOWohmvklM1Ym4KV63JKRrwHrOTqta
+         ml4XNgu8AOzOY3HoWGshNgC26ZwRNwkkLI0NFvzN2cqPwr7HiYsKaF4gu/44nJdjhjjS
+         K+VRXeeclCtT8Y02uFrPo/vBH2oRGlCXE/PVVLRsCqNP3hKAVvKwgqF7plFhev5lBYqW
+         xV4X+ryp+DK2RK2eGj+z2RBm6ProDG9bv/yGwiundCEJeL4RPZOXEOIIvbJkEunIdCvB
+         tpOQ==
+X-Gm-Message-State: AOAM531lcFxLzONcBXBhIA14D8QS5m2KirDuCIZ1NsfgCpYiejbFelyW
+        yZOiNGtlWVwqt6TW3Cga0hZ/JQ==
+X-Google-Smtp-Source: ABdhPJxZayRZhbDG1jRiWiM/W4R2KNOE8PzRBwn1FswUR3YH+jLRTZo8j6B+3fmNEqqWXEDnTF+1Rg==
+X-Received: by 2002:adf:93a3:: with SMTP id 32mr2321138wrp.344.1591777815512;
+        Wed, 10 Jun 2020 01:30:15 -0700 (PDT)
+Received: from bender.baylibre.local ([2a01:e35:2ec0:82b0:22:5867:d2c6:75f4])
+        by smtp.gmail.com with ESMTPSA id u13sm6958974wrp.53.2020.06.10.01.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2020 01:30:14 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 0/2] clk: meson: g12a: Add the NNA source clocks
+Date:   Wed, 10 Jun 2020 10:30:10 +0200
+Message-Id: <20200610083012.5024-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-References: <20200609113049.4035426-1-noltari@gmail.com> <20200609113049.4035426-3-noltari@gmail.com>
- <1367fcf3-24ed-9106-a329-da5f8e168e17@gmail.com> <3E897527-55EB-47DB-99ED-C737725F0F9E@gmail.com>
-In-Reply-To: <3E897527-55EB-47DB-99ED-C737725F0F9E@gmail.com>
-From:   =?UTF-8?Q?Philippe_Mathieu=2DDaud=C3=A9?= <f4bug@amsat.org>
-Date:   Wed, 10 Jun 2020 10:29:31 +0200
-Message-ID: <CAAdtpL7dUZ2RqkrqSxiZxDbp4qY-KdtSc7CyuR+rbnRRA2Yvrw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: bcm63xx-gate: add BCM6318 support
-To:     =?UTF-8?B?w4FsdmFybyBGZXJuw6FuZGV6IFJvamFz?= <noltari@gmail.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        Jonas Gorski <jonas.gorski@gmail.com>,
-        kbuild test robot <lkp@intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+This patchset adds the Neural Network Accelerator source clocks present
+on the Amlogic SM1 SoCs family.
 
-On Wed, Jun 10, 2020 at 8:13 AM Álvaro Fernández Rojas
-<noltari@gmail.com> wrote:
->
-> Hi Florian,
->
-> > El 10 jun 2020, a las 4:27, Florian Fainelli <f.fainelli@gmail.com> escribió:
-> >
-> >
-> >
-> > On 6/9/2020 4:30 AM, Álvaro Fernández Rojas wrote:
-> >> +static const struct clk_bcm63xx_table_entry bcm6318_clocks[] = {
-> >> +    { .name = "adsl_asb", .bit = 0, },
-> >> +    { .name = "usb_asb", .bit = 1, },
-> >> +    { .name = "mips_asb", .bit = 2, },
-> >> +    { .name = "pcie_asb", .bit = 3, },
-> >> +    { .name = "phymips_asb", .bit = 4, },
-> >> +    { .name = "robosw_asb", .bit = 5, },
-> >> +    { .name = "sar_asb", .bit = 6, },
-> >> +    { .name = "sdr_asb", .bit = 7, },
-> >> +    { .name = "swreg_asb", .bit = 8, },
-> >> +    { .name = "periph_asb", .bit = 9, },
-> >> +    { .name = "cpubus160", .bit = 10, },
-> >> +    { .name = "adsl", .bit = 11, },
-> >> +    { .name = "sar124", .bit = 12, },
-> >
-> > Nit: this should be sar125
->
-> Nice catch, I will fix this in v2.
->
-> >
-> >> +    { .name = "mips", .bit = 13, .flags = CLK_IS_CRITICAL, },
-> >> +    { .name = "pcie", .bit = 14, },
-> >> +    { .name = "robosw250", .bit = 16, },
-> >> +    { .name = "robosw025", .bit = 17, },
-> >> +    { .name = "sdr", .bit = 19, .flags = CLK_IS_CRITICAL, },
-> >> +    { .name = "usb", .bit = 20, },
-> >
-> > This should probably be "usbd" to indicate this is the USB device clock
-> > (not host)
->
-> Ok, I will change it. I got confused by the fact that both (usbd and usbh) were present on 6318_map_part.h:
-> #define USBD_CLK_EN         (1 << 20)
-> #define USBH_CLK_EN         (1 << 20)
+Dmitry Shmidt (2):
+  dt-bindings: clk: g12a-clkc: Add NNA CLK Source clock IDs
+  clk: meson: g12a: Add support for NNA CLK source clocks
 
-Is there a datasheet to verify that?
+ drivers/clk/meson/g12a.c              | 119 ++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h              |   7 +-
+ include/dt-bindings/clock/g12a-clkc.h |   2 +
+ 3 files changed, 127 insertions(+), 1 deletion(-)
 
->
-> >
-> > With that fixed:
-> >
-> > Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
-> > --
-> > Florian
->
+-- 
+2.22.0
+
