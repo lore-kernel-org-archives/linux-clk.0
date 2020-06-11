@@ -2,116 +2,117 @@ Return-Path: <SRS0=Q/ZM=7Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58462C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C65C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:23:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 340492078D
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F772078D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:23:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="kfDiEnlE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GuviQ1dt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbgFKJLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Jun 2020 05:11:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58910 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726790AbgFKJLF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jun 2020 05:11:05 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 04499ACBD;
-        Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
-Message-ID: <dd44eff2babb57cc9034e8de85162d0a1516e15f.camel@suse.de>
-Subject: Re: [PATCH v4 25/27] clk: bcm2835: Allow custom CCF flags for the
- PLLs
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Tim Gover <tim.gover@raspberrypi.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        id S1726839AbgFKJX0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Jun 2020 05:23:26 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:42883 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726830AbgFKJXZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jun 2020 05:23:25 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 08248580189;
+        Thu, 11 Jun 2020 05:23:23 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 11 Jun 2020 05:23:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=KT8aImVSVqlrbrlR88jQFQocoP
+        NuLOplGRWjjaiH9wg=; b=kfDiEnlEf+G08a7sPegVXiHu9QVSPpUp/oqWZSYkB3
+        XgCDvBS9Ah03kQ3SOirbB0YIfvrJFEuszUidvSGwWnOS6Graez0Kc7V3tmhYKqRg
+        NpbupVKRZNsLvivgRqqYA39I41qME9baTSNN1tb/cJKDDinRs1cJawZGqjjs1Bjg
+        oEP+oK4pt4dkJK2do0oqKjCx/vhH3OD0OzgiFL9xSvAh5qwDlwCaGVdjQcYTVCQx
+        eDEqmXRoFeiVnUHG83Hw0rTPednG0wSF2nTjOI4s0K7oGWLPXsHrYEDygbQY+hDE
+        PJGNf7NHReSBCOH6sDD+I02HNINnmnBsGG7nNrfT5zYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=KT8aImVSVqlrbrlR8
+        8jQFQocoPNuLOplGRWjjaiH9wg=; b=GuviQ1dt2l1NP/edva45O9ZAXRMqVqSTF
+        DdeiAYMkfB4axltL9nLaNRFsWfW7g47bDvtri4Prg0qLCYGxdgzwkD+DcgrCgs7E
+        XilueAE7JIFXd+0CvhIfbhnFjSWOfF/+Qx7SJR7HnaFezuVrP8jVO9YvlsS8ZWDz
+        HlCK4kT9tHKIfHkW1iYvSwP79Ugu39U6AVHsZl5F8TQtNGfqahTq6YJ/6spVnKbk
+        EUC9yUGt/vwr6UVYB6fWq00NsJlOnVYcRiSNsLLianG6FkbF1e3xCH7MghlkkUBl
+        Zaoj/ZlOgGW3tyKS+A+6APw2UfbWrbD0gxs2vvJbw5iyE80EaPdRg==
+X-ME-Sender: <xms:CPjhXnj1n0_WFUb2hKy_YfCounKQEIlI0bty8P2uQ1MKfEFRm-2kUQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehkedgudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnhepjeffheduvddvvdelhfegleelfffgieejvdehgfeijedtieeuteejteefueekjeeg
+    necukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:CPjhXkBwO0DKloQYmKnZFW0_ov58slXXLPWgqXtH9Yx8_g7vL-idTA>
+    <xmx:CPjhXnGjiLKiAOjXyKq4Zy39d4OeGvKrKuz_uzTL6lAsiOnI0YFzhw>
+    <xmx:CPjhXkSJFLboPzj8AkUxZ1OBRVW9MLg4qR7-MoG894JUNj0WXnn1qg>
+    <xmx:CvjhXgeDLjT4ZlC-J4u3CP6HGd7hgu8MYJ1u-RsQq8u_A0S4yQj77w>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 910E63280059;
+        Thu, 11 Jun 2020 05:23:20 -0400 (EDT)
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-rpi-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
         Phil Elwell <phil@raspberrypi.com>,
-        linux-arm-kernel@lists.infradead.org
-Date:   Thu, 11 Jun 2020 11:11:00 +0200
-In-Reply-To: <abfae9fb4bfd76cd83d5ae97499b97b56b5dee58.1591860665.git-series.maxime@cerno.tech>
-References: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
-         <abfae9fb4bfd76cd83d5ae97499b97b56b5dee58.1591860665.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-fOGfccOwdRSSTyMd7woJ"
-User-Agent: Evolution 3.36.2 
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v4 0/3] clk: bcm: Add BCM2711 DVP driver
+Date:   Thu, 11 Jun 2020 11:23:14 +0200
+Message-Id: <cover.4c4625a8e076f3163b800b3d8986b282ee98d908.1591867332.git-series.maxime@cerno.tech>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
---=-fOGfccOwdRSSTyMd7woJ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Here is yet another smaller patches series that got stripped out of the
+huge HDMI one.
 
-Hi Maxime,
+Since it depends at build time on patches already queued by Philipp in
+reset/next, maybe we should merge the clock driver in the reset tree with
+the Acks of Stephen and Mike?
 
-On Thu, 2020-06-11 at 09:32 +0200, Maxime Ripard wrote:
-> While some clock types allow for each clock to specify its own custom
-> flags, the PLLs can't. We will need this for the PLLB, so let's add it.
->=20
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.=
-c
-> index 32f5c13be9d1..846ea68b2c73 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -421,6 +421,7 @@ struct bcm2835_pll_data {
->  	u32 reference_enable_mask;
->  	/* Bit in CM_LOCK to indicate when the PLL has locked. */
->  	u32 lock_mask;
-> +	u32 flags;
-> =20
->  	const struct bcm2835_pll_ana_bits *ana;
-> =20
-> @@ -1310,7 +1311,7 @@ static struct clk_hw *bcm2835_register_pll(struct
-> bcm2835_cprman *cprman,
->  	init.num_parents =3D 1;
->  	init.name =3D pll_data->name;
->  	init.ops =3D &bcm2835_pll_clk_ops;
-> -	init.flags =3D CLK_IGNORE_UNUSED;
-> +	init.flags =3D data->flags | CLK_IGNORE_UNUSED;
+Maxime
 
-This should be 'pll_data->flags'.
+Changes from v3:
+  - Switch to devm_platform_get_and_ioremap_resource and devm_reset_controller_register
+  - Actually use the Kconfig symbol in the Makefile
 
-With that fixed:
+Maxime Ripard (3):
+  dt-bindings: clock: Add BCM2711 DVP binding
+  clk: bcm: Add BCM2711 DVP driver
+  ARM: dts: bcm2711: Add HDMI DVP
 
-Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+ Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml |  47 +++-
+ arch/arm/boot/dts/bcm2711.dtsi                                |  15 +-
+ drivers/clk/bcm/Kconfig                                       |  11 +-
+ drivers/clk/bcm/Makefile                                      |   1 +-
+ drivers/clk/bcm/clk-bcm2711-dvp.c                             | 120 +++++++-
+ 5 files changed, 194 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/brcm,bcm2711-dvp.yaml
+ create mode 100644 drivers/clk/bcm/clk-bcm2711-dvp.c
 
-Regards,
-Nicolas
-
-
---=-fOGfccOwdRSSTyMd7woJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7h9SQACgkQlfZmHno8
-x/5hGAgArrdyadJsxlxAD7oIdzlj8Q+2RKvz1lT4pRALZz06U0yhqAoIB/CswueU
-z4TmOiXuOAhOI53ZDdEZSWA4XFO5rmgcSr19N6VWK9pRZ35FSMXE8wHVcqRSiMFH
-R25RpkYUzKbhyP9DqazaR8a31a8HCrXwITH/miNGrD4xzos56i7DenXKku74HwcW
-bk0UKLJ1iU35NtDGA8U22c4O2UOkqhySKV1ytFB8Td34U0q/nwJmSmRFn0960FZJ
-F4oUfqKnqTTKZ7mrqp03iXL/eSip1cbYhJaTc0TQrAeazyPQO3SWa7uZelB1YpKO
-XZF4NzdTne7NXjbTrgr4kUXrvotDXg==
-=NtVc
------END PGP SIGNATURE-----
-
---=-fOGfccOwdRSSTyMd7woJ--
-
+base-commit: 192e08e14e37b78e83cc2f5b9eb5a15a7d71c4e2
+-- 
+git-series 0.9.1
