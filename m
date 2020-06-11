@@ -2,93 +2,292 @@ Return-Path: <SRS0=Q/ZM=7Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C95DC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 11:21:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFE8C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 14:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA0BF20760
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 11:21:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FBEA2072F
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 14:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbgFKLVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Jun 2020 07:21:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33546 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727907AbgFKLVL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 11 Jun 2020 07:21:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 12DD4ABE4;
-        Thu, 11 Jun 2020 11:21:13 +0000 (UTC)
-Message-ID: <4298d8db6dec26317f591271ee15041e0c12f6fd.camel@suse.de>
-Subject: Re: [PATCH v4 00/27] clk: bcm: rpi: Add support for BCM2711
- firmware clocks
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Kamal Dasu <kdasu.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 11 Jun 2020 13:21:07 +0200
-In-Reply-To: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
-References: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-qp5pvNknzd1S2ihuXchJ"
-User-Agent: Evolution 3.36.2 
-MIME-Version: 1.0
+        id S1728318AbgFKO2v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Jun 2020 10:28:51 -0400
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:25936 "EHLO
+        alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726657AbgFKO2v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jun 2020 10:28:51 -0400
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 11 Jun 2020 19:58:44 +0530
+Received: from c-sanm-linux.qualcomm.com ([10.206.25.31])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 11 Jun 2020 19:58:18 +0530
+Received: by c-sanm-linux.qualcomm.com (Postfix, from userid 2343233)
+        id 7135F2AC7; Thu, 11 Jun 2020 19:58:17 +0530 (IST)
+From:   Sandeep Maheswaram <sanm@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Sandeep Maheswaram <sanm@codeaurora.org>
+Subject: [PATCH 2/2] usb: dwc3: Host wake up support from system suspend
+Date:   Thu, 11 Jun 2020 19:58:03 +0530
+Message-Id: <1591885683-29514-3-git-send-email-sanm@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1591885683-29514-1-git-send-email-sanm@codeaurora.org>
+References: <1591885683-29514-1-git-send-email-sanm@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Avoiding phy powerdown in host mode so that it can be wake up by devices.
+Set usb controller wakeup capable when wakeup capable devices are
+connected to the host.
 
---=-qp5pvNknzd1S2ihuXchJ
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
+---
+ drivers/usb/dwc3/core.c      | 47 ++++++++++++++++++++++++++-----
+ drivers/usb/dwc3/core.h      |  1 +
+ drivers/usb/dwc3/dwc3-qcom.c | 66 +++++++++++++++++++++++++++++++++-----------
+ 3 files changed, 91 insertions(+), 23 deletions(-)
 
-On Thu, 2020-06-11 at 09:31 +0200, Maxime Ripard wrote:
-> Hi,
->=20
-> Since the whole DRM/HDMI support began to grow fairly big, I've chosen
-> to split away the two discussions between the firmware clocks and the
-> HDMI support.
->=20
-> Let me know what you think,
-> Maxime
->=20
-
-With patch #25 manually fixed, the series is:
-
-Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-
-Regards,
-Nicolas
-
-
---=-qp5pvNknzd1S2ihuXchJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7iE6MACgkQlfZmHno8
-x/79PAgAp182wijp2dGoNNw89NchByhUXSoq3HViFvOMpA7tfknoLrvB2AF6YQXX
-2ve3ki9iwHaWWKFd58GmLurPDR7RcIVFHAtLT2RPwpbbf9RV8KiYp47xtBHZh8yg
-3oK9JGFkqfVh0qzEmbZ8xrOGqoNIRCNtty4tnzz5om+3ZL2xx3qETHIhiKVygxyu
-WS4nja+AQEG9wkqOGE+JXvi0kErid/NBN7dOH+QP2SH5GgpIeOjNTW36TPAkAzEv
-p5e2Ou504Ryah3il9bWZb/5r0O0njK4O8HJxPhw1k7S9vINYC50ucBTa+dZjYeU/
-/bl9Rt12SAtkbpaNEOm7n45tIqGRHA==
-=K1r7
------END PGP SIGNATURE-----
-
---=-qp5pvNknzd1S2ihuXchJ--
+diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+index 25c686a7..8370350 100644
+--- a/drivers/usb/dwc3/core.c
++++ b/drivers/usb/dwc3/core.c
+@@ -31,15 +31,19 @@
+ #include <linux/usb/gadget.h>
+ #include <linux/usb/of.h>
+ #include <linux/usb/otg.h>
++#include <linux/usb/hcd.h>
+ 
+ #include "core.h"
+ #include "gadget.h"
+ #include "io.h"
+ 
+ #include "debug.h"
++#include "../host/xhci.h"
+ 
+ #define DWC3_DEFAULT_AUTOSUSPEND_DELAY	5000 /* ms */
+ 
++bool need_phy_for_wakeup;
++
+ /**
+  * dwc3_get_dr_mode - Validates and sets dr_mode
+  * @dwc: pointer to our context structure
+@@ -1627,10 +1631,36 @@ static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+ 	return ret;
+ }
+ 
++static void dwc3_set_phy_speed_flags(struct dwc3 *dwc)
++{
++
++	int i, num_ports;
++	u32 reg;
++	struct usb_hcd	*hcd = platform_get_drvdata(dwc->xhci);
++	struct xhci_hcd	*xhci_hcd = hcd_to_xhci(hcd);
++
++	dwc->hs_phy_flags &= ~(PHY_MODE_USB_HOST_HS | PHY_MODE_USB_HOST_LS);
++
++	reg = readl(&xhci_hcd->cap_regs->hcs_params1);
++
++	num_ports = HCS_MAX_PORTS(reg);
++	for (i = 0; i < num_ports; i++) {
++		reg = readl(&xhci_hcd->op_regs->port_status_base + i*0x10);
++		if (reg & PORT_PE) {
++			if (DEV_HIGHSPEED(reg) || DEV_FULLSPEED(reg))
++				dwc->hs_phy_flags |= PHY_MODE_USB_HOST_HS;
++			else if (DEV_LOWSPEED(reg))
++				dwc->hs_phy_flags |= PHY_MODE_USB_HOST_LS;
++		}
++	}
++	phy_set_mode(dwc->usb2_generic_phy, dwc->hs_phy_flags);
++}
++
+ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ {
+ 	unsigned long	flags;
+ 	u32 reg;
++	struct usb_hcd  *hcd = platform_get_drvdata(dwc->xhci);
+ 
+ 	switch (dwc->current_dr_role) {
+ 	case DWC3_GCTL_PRTCAP_DEVICE:
+@@ -1643,9 +1673,10 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
+ 		dwc3_core_exit(dwc);
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_HOST:
++		dwc3_set_phy_speed_flags(dwc);
+ 		if (!PMSG_IS_AUTO(msg)) {
+-			dwc3_core_exit(dwc);
+-			break;
++			if (usb_wakeup_enabled_descendants(hcd->self.root_hub))
++				need_phy_for_wakeup = true;
+ 		}
+ 
+ 		/* Let controller to suspend HSPHY before PHY driver suspends */
+@@ -1705,11 +1736,13 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
+ 		break;
+ 	case DWC3_GCTL_PRTCAP_HOST:
+ 		if (!PMSG_IS_AUTO(msg)) {
+-			ret = dwc3_core_init_for_resume(dwc);
+-			if (ret)
+-				return ret;
+-			dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
+-			break;
++			if (!need_phy_for_wakeup) {
++				ret = dwc3_core_init_for_resume(dwc);
++				if (ret)
++					return ret;
++				dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
++				break;
++			}
+ 		}
+ 		/* Restore GUSB2PHYCFG bits that were modified in suspend */
+ 		reg = dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0));
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index 013f42a..ff02d41 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -1094,6 +1094,7 @@ struct dwc3 {
+ 	struct phy		*usb3_generic_phy;
+ 
+ 	bool			phys_ready;
++	int			hs_phy_flags;
+ 
+ 	struct ulpi		*ulpi;
+ 	bool			ulpi_ready;
+diff --git a/drivers/usb/dwc3/dwc3-qcom.c b/drivers/usb/dwc3/dwc3-qcom.c
+index 1dfd024..ec183646 100644
+--- a/drivers/usb/dwc3/dwc3-qcom.c
++++ b/drivers/usb/dwc3/dwc3-qcom.c
+@@ -19,6 +19,7 @@
+ #include <linux/usb/of.h>
+ #include <linux/reset.h>
+ #include <linux/iopoll.h>
++#include <linux/usb/hcd.h>
+ 
+ #include "core.h"
+ 
+@@ -192,21 +193,34 @@ static int dwc3_qcom_register_extcon(struct dwc3_qcom *qcom)
+ 
+ static void dwc3_qcom_disable_interrupts(struct dwc3_qcom *qcom)
+ {
++	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
++
+ 	if (qcom->hs_phy_irq) {
+ 		disable_irq_wake(qcom->hs_phy_irq);
+ 		disable_irq_nosync(qcom->hs_phy_irq);
+ 	}
++	if (dwc->hs_phy_flags & PHY_MODE_USB_HOST_LS) {
++		if (qcom->dp_hs_phy_irq) {
++			disable_irq_wake(qcom->dp_hs_phy_irq);
++			disable_irq_nosync(qcom->dp_hs_phy_irq);
++		}
++	} else if (dwc->hs_phy_flags & PHY_MODE_USB_HOST_HS) {
++		if (qcom->dm_hs_phy_irq) {
++			disable_irq_wake(qcom->dm_hs_phy_irq);
++			disable_irq_nosync(qcom->dm_hs_phy_irq);
++		}
++	} else {
+ 
+-	if (qcom->dp_hs_phy_irq) {
+-		disable_irq_wake(qcom->dp_hs_phy_irq);
+-		disable_irq_nosync(qcom->dp_hs_phy_irq);
+-	}
++		if (qcom->dp_hs_phy_irq) {
++			disable_irq_wake(qcom->dp_hs_phy_irq);
++			disable_irq_nosync(qcom->dp_hs_phy_irq);
++		}
+ 
+-	if (qcom->dm_hs_phy_irq) {
+-		disable_irq_wake(qcom->dm_hs_phy_irq);
+-		disable_irq_nosync(qcom->dm_hs_phy_irq);
++		if (qcom->dm_hs_phy_irq) {
++			disable_irq_wake(qcom->dm_hs_phy_irq);
++			disable_irq_nosync(qcom->dm_hs_phy_irq);
++		}
+ 	}
+-
+ 	if (qcom->ss_phy_irq) {
+ 		disable_irq_wake(qcom->ss_phy_irq);
+ 		disable_irq_nosync(qcom->ss_phy_irq);
+@@ -215,21 +229,34 @@ static void dwc3_qcom_disable_interrupts(struct dwc3_qcom *qcom)
+ 
+ static void dwc3_qcom_enable_interrupts(struct dwc3_qcom *qcom)
+ {
++	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
++
+ 	if (qcom->hs_phy_irq) {
+ 		enable_irq(qcom->hs_phy_irq);
+ 		enable_irq_wake(qcom->hs_phy_irq);
+ 	}
++	if (dwc->hs_phy_flags & PHY_MODE_USB_HOST_LS) {
++		if (qcom->dp_hs_phy_irq) {
++			enable_irq(qcom->dp_hs_phy_irq);
++			enable_irq_wake(qcom->dp_hs_phy_irq);
++		}
++	} else if (dwc->hs_phy_flags & PHY_MODE_USB_HOST_HS) {
++		if (qcom->dm_hs_phy_irq) {
++			enable_irq(qcom->dm_hs_phy_irq);
++			enable_irq_wake(qcom->dm_hs_phy_irq);
++		}
++	} else {
+ 
+-	if (qcom->dp_hs_phy_irq) {
+-		enable_irq(qcom->dp_hs_phy_irq);
+-		enable_irq_wake(qcom->dp_hs_phy_irq);
+-	}
++		if (qcom->dp_hs_phy_irq) {
++			enable_irq(qcom->dp_hs_phy_irq);
++			enable_irq_wake(qcom->dp_hs_phy_irq);
++		}
+ 
+-	if (qcom->dm_hs_phy_irq) {
+-		enable_irq(qcom->dm_hs_phy_irq);
+-		enable_irq_wake(qcom->dm_hs_phy_irq);
++		if (qcom->dm_hs_phy_irq) {
++			enable_irq(qcom->dm_hs_phy_irq);
++			enable_irq_wake(qcom->dm_hs_phy_irq);
++		}
+ 	}
+-
+ 	if (qcom->ss_phy_irq) {
+ 		enable_irq(qcom->ss_phy_irq);
+ 		enable_irq_wake(qcom->ss_phy_irq);
+@@ -240,6 +267,11 @@ static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
+ {
+ 	u32 val;
+ 	int i;
++	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
++	struct usb_hcd  *hcd = platform_get_drvdata(dwc->xhci);
++
++	if (usb_wakeup_enabled_descendants(hcd->self.root_hub))
++		device_init_wakeup(qcom->dev, 1);
+ 
+ 	if (qcom->is_suspended)
+ 		return 0;
+@@ -262,6 +294,8 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
+ 	int ret;
+ 	int i;
+ 
++	device_init_wakeup(qcom->dev, 0);
++
+ 	if (!qcom->is_suspended)
+ 		return 0;
+ 
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
 
