@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B55C433E1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0DDC433E2
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 07:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6ED5C2083E
+	by mail.kernel.org (Postfix) with ESMTP id A93622083E
 	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 07:33:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="IFZb6JsG";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ssEg4w+A"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ItR4oLac";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s23cuXZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbgFKHdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Jun 2020 03:33:24 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:46625 "EHLO
+        id S1727023AbgFKHc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Jun 2020 03:32:58 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:43103 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727028AbgFKHdA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jun 2020 03:33:00 -0400
+        by vger.kernel.org with ESMTP id S1727007AbgFKHc5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jun 2020 03:32:57 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 204FB5800D2;
-        Thu, 11 Jun 2020 03:32:59 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id F0EE95800D2;
+        Thu, 11 Jun 2020 03:32:55 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 11 Jun 2020 03:32:59 -0400
+  by compute4.internal (MEProxy); Thu, 11 Jun 2020 03:32:55 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=87eNKXUXLK3tl
-        nLtCpRNlpSIF8WfpGhrUkNfAEF99uc=; b=IFZb6JsGyK0+Os7+kTFRv7txRH3XX
-        yGLogFr7P8lvUGhJ36u3+JoT/H5mJ1bigee++ilUK9A7ZTtUTChoJSO3/fkzCYd0
-        tI2D/PzcjfgcZ7hGYVPTyp3DOXNNi2WH4BMC6/jv2qL6QOi4oh/B4pCdhi/ogaDy
-        vwwAAhs2ELQ7MFXQPE37ICBV7z+HeQ78/UzfcVEADe/QhQH7CX+1+D0HqU1+a0N0
-        eqg8fpkNgidy2Drygq955EsKfSOU+veyeupXvLHGoic2OBWqcjy7cTmf6Dn4bMHV
-        Kt1X+aCZyr9YDWe5aJSc3roQpgUmZrlnF7jlaEZ+xS6yobvMsDPfiKMhg==
+        :mime-version:content-transfer-encoding; s=fm3; bh=50dNnUGcZ5mn3
+        FPiDe0yy/zqxPcf3960haBgPL103hs=; b=ItR4oLacezTkGfIT3ev3BMPcn06Nv
+        MavgOPdH7yd7P0ST7WWlSjiB9vNAmdyM6ahQrfWTrKoV5szjba+RAt6rjFPZCk9S
+        +o1WcwccLS4F+8gw+QTDZz9CvHGwMtlWnFh14lP+Qxc/j1cj/xr0ZxARlJZg5Zyy
+        mF75BfW6t2uLakogKq1SL5ogNjIr8vMF1DD8YE63b/25TlDnCkLMPLEowE6AFTlK
+        G2LrJGb2wZWXMoUuYyyTyQSvinnTgsOPLeQii3/8tTfQSNpdydIqWWGJrbjLMXMb
+        MyJhaFoEgTASGE5mz7HO12nw9aTXw4WHtfDrk1MaV+Sbg5Kgg77Z439DQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=87eNKXUXLK3tlnLtCpRNlpSIF8WfpGhrUkNfAEF99uc=; b=ssEg4w+A
-        lHGNMSnnGn9RyQqMzWyiUjR1kzh29XjKn3oUXcQohPbG5Him68yJn9Yq0fCFjTMY
-        FazuQSw/E58z8MFJnpJCx67f/uO9ra94cjN5Zi0TTVkNzIs/Y4lE9+BkKTDZxenF
-        coIh6wJGTkQdLSFedJKEIMLDIwCjuoCWUS1fv4dCh8Nj8HDsx/lkm2zpIQXJhsF3
-        ss245+qcLJxTGLYfWcW//nfBOhnEIJeEvoJMRsvt9/btgde5BsX22Gvn56FVXAbY
-        l1tRLbF2QfS6DpxA97cuDcg+kShJwmQFbYZpNczSzU6NssDCRjt60V9FcIxocHFE
-        KZdjHMgniZYZoQ==
-X-ME-Sender: <xms:Kt7hXkXzm8do_fD0UKZCBjXODeYiaeCiqNsuq__rRzCWkWP1YG70Vw>
+        fm3; bh=50dNnUGcZ5mn3FPiDe0yy/zqxPcf3960haBgPL103hs=; b=s23cuXZ0
+        X2KU4J1QAFq7p+vMv7n3Gs81KwXjKyYM/Xd2CjEbg8OV6Jt+QYZV1svBeVp8lmsh
+        MdKCYZIyMsdXSX81VVltmV1FE0mo/wl8bDbMY8k9ysDquUuORb/DvsWVpaRTP1/b
+        xYi+7tFyTjntwhYPp75iW0krvYpSRsORUDemTc9ynv8uSbXXLb0cep6A4ixttiZQ
+        PjPXwRat6JALg4cIZ0aRMaAiH71bvpoQbYx7IzWOQ3zPXpQt4PneXwctMnymT+ch
+        SNimtptBEWy1cl7TaW/qx4MVGxM3ym6rOZdpj5fictNEWQGTnxo6R8ryTDb9t2oS
+        Up3tBFP6lsTnKg==
+X-ME-Sender: <xms:J97hXkdoH0xUnlS7x2W21F2q0jpV5dItodK3j3D560-OVvBlAVUWaw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehjedguddvvdcutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
     necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
@@ -56,13 +56,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehjedguddvvdcutefuodetgg
     htthgvrhhnpedvkeelveefffekjefhffeuleetleefudeifeehuddugffghffhffehveev
     heehvdenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedvtd
     enucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:K97hXomuiHtV4EStS_8H1RaJopXsc7uzUYe8TxIVUgEtOumIU3M-bA>
-    <xmx:K97hXoa-rRHeIkYgw4F4ERhRgwoADU-w1AaA60zRQuZ8S6Bbzijwuw>
-    <xmx:K97hXjXvkbzsXo4IfIHqYIc9Le5VZgR2HolqQYP-blhyoD7oZcWbaA>
-    <xmx:K97hXo5UAaVqa1IGdD343OGBT-aurH-giRiO9KiZOvgH-8Vz2L_l9g>
+X-ME-Proxy: <xmx:J97hXmNMeZyxZPb2cHVTlSuAOSySMAlJ-0AL2jlUyIkSZ-0ko0UDZg>
+    <xmx:J97hXljQ6tbHL4QbPZxFrecQVYePlZz6l67MSqGKUGHYb7i_B0-PRQ>
+    <xmx:J97hXp8xLR-k1RXPeVvHBkVytyQV9fF8ixvOykZUmujqHxdLlX3IhA>
+    <xmx:J97hXuB-zgbjmMS_SZV_OJIb4E-Ig1WDEeiOGzeUjUmPUjSLAA_MMw>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B30ED3280059;
-        Thu, 11 Jun 2020 03:32:58 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8CBA33280059;
+        Thu, 11 Jun 2020 03:32:55 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -74,9 +74,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v4 24/27] ARM: dts: bcm2711: Add firmware clocks node
-Date:   Thu, 11 Jun 2020 09:32:13 +0200
-Message-Id: <262190e38d34c4b009f417f2f4de1c73d5e4993f.1591860665.git-series.maxime@cerno.tech>
+Subject: [PATCH v4 22/27] clk: bcm: rpi: Give firmware clocks a name
+Date:   Thu, 11 Jun 2020 09:32:11 +0200
+Message-Id: <bdfe97621e5473dbcea3b8402cc5929a7e60565e.1591860665.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
 References: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
@@ -87,29 +87,54 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Now that we have a clock driver for the clocks exposed by the firmware,
-let's add the device tree nodes for it.
+We've registered the firmware clocks using their ID as name, but it's much
+more convenient to register them using their proper name. Since the
+firmware doesn't provide it, we have to duplicate it.
 
+Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/bcm/clk-raspberrypi.c | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-index c7f1d97e69bb..222d7825e1ab 100644
---- a/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-+++ b/arch/arm/boot/dts/bcm2711-rpi-4-b.dts
-@@ -69,6 +69,11 @@
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index 11a62bde5203..adc0bb56008a 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -36,6 +36,23 @@ enum rpi_firmware_clk_id {
+ 	RPI_FIRMWARE_NUM_CLK_ID,
  };
  
- &firmware {
-+	firmware_clocks: clocks {
-+		compatible = "raspberrypi,firmware-clocks";
-+		#clock-cells = <1>;
-+	};
++static char *rpi_firmware_clk_names[] = {
++	[RPI_FIRMWARE_EMMC_CLK_ID]	= "emmc",
++	[RPI_FIRMWARE_UART_CLK_ID]	= "uart",
++	[RPI_FIRMWARE_ARM_CLK_ID]	= "arm",
++	[RPI_FIRMWARE_CORE_CLK_ID]	= "core",
++	[RPI_FIRMWARE_V3D_CLK_ID]	= "v3d",
++	[RPI_FIRMWARE_H264_CLK_ID]	= "h264",
++	[RPI_FIRMWARE_ISP_CLK_ID]	= "isp",
++	[RPI_FIRMWARE_SDRAM_CLK_ID]	= "sdram",
++	[RPI_FIRMWARE_PIXEL_CLK_ID]	= "pixel",
++	[RPI_FIRMWARE_PWM_CLK_ID]	= "pwm",
++	[RPI_FIRMWARE_HEVC_CLK_ID]	= "hevc",
++	[RPI_FIRMWARE_EMMC2_CLK_ID]	= "emmc2",
++	[RPI_FIRMWARE_M2MC_CLK_ID]	= "m2mc",
++	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	= "pixel-bvb",
++};
 +
- 	expgpio: gpio {
- 		compatible = "raspberrypi,firmware-gpio";
- 		gpio-controller;
+ #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
+ #define RPI_FIRMWARE_STATE_WAIT_BIT	BIT(1)
+ 
+@@ -343,7 +360,9 @@ static struct clk_hw *raspberrypi_clk_register(struct raspberrypi_clk *rpi,
+ 	data->rpi = rpi;
+ 	data->id = id;
+ 
+-	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL, "fw-clk-%u", id);
++	init.name = devm_kasprintf(rpi->dev, GFP_KERNEL,
++				   "fw-clk-%s",
++				   rpi_firmware_clk_names[id]);
+ 	init.ops = &raspberrypi_firmware_clk_ops;
+ 	init.flags = CLK_GET_RATE_NOCACHE;
+ 
 -- 
 git-series 0.9.1
