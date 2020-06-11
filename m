@@ -2,164 +2,116 @@ Return-Path: <SRS0=Q/ZM=7Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8152C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 07:34:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58462C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1E522074B
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 07:34:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="k+zCE/7I";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eWrU3Wxl"
+	by mail.kernel.org (Postfix) with ESMTP id 340492078D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbgFKHcX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 11 Jun 2020 03:32:23 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:39587 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726679AbgFKHcW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 11 Jun 2020 03:32:22 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 7C3D35800D1;
-        Thu, 11 Jun 2020 03:32:21 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 11 Jun 2020 03:32:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=zmFIcZ3GkZ4CCs+528F5WWfO04
-        q/aDJFP1TROWwgfjU=; b=k+zCE/7IG5loKNTVcux+qAQUSwMIOVhvo9wLr3Zg1H
-        CnxIqQNfO2blrbLQRo3kDIRpObLJTaURH2WCJcEqBTZAcjSWV6f93xFwbWXA+dfh
-        WaS1xT/72f2x73D7DScUmRMQR4lQnl0hAazhPQ/9bZ1lQkRpPBVeC9SaPzf7xAeF
-        CDL30a4OruOW1BAYEfBdL9+8LYwt5mi8BMNmhhLaxHmESu/6W0a13LpZ5Zsw98dZ
-        FFuhfPSPDPb3ErwpbsU30dM8bWLlYqoXYFsGXUcO2as0K5/f3YDSDP+xX4r2GuOi
-        HJsaMSrYbjGnrHUoa0P6168/RRgcZ9aJake5yhW01/SQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=zmFIcZ3GkZ4CCs+52
-        8F5WWfO04q/aDJFP1TROWwgfjU=; b=eWrU3WxlZMMOT/OhskKznyQ8w4VsoEVFC
-        Qy8CR1FS7PHT6WV0TFyPrUde0Iij9jJdjdC7g8ZoAUs0K/b7HX5jLb34eQcyn7rJ
-        F6GsM3zqBE9S672zHOyi9JiwwzZfLAPnJbTA/J6a7G2ZGS33Jmf/ugOjLTBiOHEh
-        mlBOAanAfLQQbI3xU92AIswiPL+Luhro9t/p+KukdgsbEdAGNOulQ3KVaYPTFwkm
-        tNgTtEsH0n/tMz9vMDlkDlycPWYLIFQ6zceef8Ic5+EiDTp5DtsRJ0BwPm5Bkzux
-        +1dJ01zDiOWXgcgzAQ/LRdScKfT7QPfF04jLrCxNzKS4Oa6fVlUfg==
-X-ME-Sender: <xms:BN7hXsgd7Z1tkQuk7TG4AiaZo8kThlTJ1wIKOT6qnzPGvkVhkpBjrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudehjedguddvvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefhvffufffkofgggfestdekredtredttdenucfhrhhomhepofgrgihimhgv
-    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
-    gvrhhnpeejffehuddvvddvlefhgeelleffgfeijedvhefgieejtdeiueetjeetfeeukeej
-    geenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:BN7hXlB6DXPOmgD16xaD2uNgal0oCnlNbvEOib_oQoWc3g8FOrlbYA>
-    <xmx:BN7hXkFMwTHAnmS_X1v-I8lFQqkgqQfzobh58DQY8OgT12e1d6BfdQ>
-    <xmx:BN7hXtRJn8gVipj-Z4LX2CcSZCv0E0C1uZVnWuhE8dFeLszEald-aw>
-    <xmx:Bd7hXv7TTrc5pUvwpUHkvB835KFl2DgGW65jdNXR-pIGREeat_aA6Q>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5BC0F3280064;
-        Thu, 11 Jun 2020 03:32:20 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        id S1726883AbgFKJLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 11 Jun 2020 05:11:05 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58910 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726790AbgFKJLF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 11 Jun 2020 05:11:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 04499ACBD;
+        Thu, 11 Jun 2020 09:11:06 +0000 (UTC)
+Message-ID: <dd44eff2babb57cc9034e8de85162d0a1516e15f.camel@suse.de>
+Subject: Re: [PATCH v4 25/27] clk: bcm2835: Allow custom CCF flags for the
+ PLLs
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Tim Gover <tim.gover@raspberrypi.com>,
         Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v4 00/27] clk: bcm: rpi: Add support for BCM2711 firmware clocks
-Date:   Thu, 11 Jun 2020 09:31:49 +0200
-Message-Id: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.26.2
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 11 Jun 2020 11:11:00 +0200
+In-Reply-To: <abfae9fb4bfd76cd83d5ae97499b97b56b5dee58.1591860665.git-series.maxime@cerno.tech>
+References: <cover.58c6e44891ff5bf61052b5804f7da9b5ba074840.1591860665.git-series.maxime@cerno.tech>
+         <abfae9fb4bfd76cd83d5ae97499b97b56b5dee58.1591860665.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-fOGfccOwdRSSTyMd7woJ"
+User-Agent: Evolution 3.36.2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-Since the whole DRM/HDMI support began to grow fairly big, I've chosen
-to split away the two discussions between the firmware clocks and the
-HDMI support.
+--=-fOGfccOwdRSSTyMd7woJ
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let me know what you think,
-Maxime
+Hi Maxime,
 
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: devicetree@vger.kernel.org
-Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
+On Thu, 2020-06-11 at 09:32 +0200, Maxime Ripard wrote:
+> While some clock types allow for each clock to specify its own custom
+> flags, the PLLs can't. We will need this for the PLLB, so let's add it.
+>=20
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+>  drivers/clk/bcm/clk-bcm2835.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.=
+c
+> index 32f5c13be9d1..846ea68b2c73 100644
+> --- a/drivers/clk/bcm/clk-bcm2835.c
+> +++ b/drivers/clk/bcm/clk-bcm2835.c
+> @@ -421,6 +421,7 @@ struct bcm2835_pll_data {
+>  	u32 reference_enable_mask;
+>  	/* Bit in CM_LOCK to indicate when the PLL has locked. */
+>  	u32 lock_mask;
+> +	u32 flags;
+> =20
+>  	const struct bcm2835_pll_ana_bits *ana;
+> =20
+> @@ -1310,7 +1311,7 @@ static struct clk_hw *bcm2835_register_pll(struct
+> bcm2835_cprman *cprman,
+>  	init.num_parents =3D 1;
+>  	init.name =3D pll_data->name;
+>  	init.ops =3D &bcm2835_pll_clk_ops;
+> -	init.flags =3D CLK_IGNORE_UNUSED;
+> +	init.flags =3D data->flags | CLK_IGNORE_UNUSED;
 
-Changes from v3:
-  - Moved the firmware structure to the driver, and changed for u32
-  - Prevented cache issues with MMIO driver
-  - Removed message when discovering min and max rates
-  - Added the gathered tags
+This should be 'pll_data->flags'.
 
-Changes from v2:
-  - Rebased on top of next-20200526
-  - Split away from the HDMI series
-  - Fixed an of_node leakage in the firmware driver
-  - Fixed an of_node leakage in the firmware clocks driver
-  - Added the min/max rate retrieval to all the firmware clocks
-  - Added proper name for the firmware clocks
-  - Removed the PLLB setup from the firmware clocks and moved it back to
-    the MMIO driver
+With that fixed:
 
-Florian Fainelli (1):
-  dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML
+Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 
-Maxime Ripard (26):
-  dt-bindings: clock: Add a binding for the RPi Firmware clocks
-  firmware: rpi: Only create clocks device if we don't have a node for it
-  clk: bcm: rpi: Allow the driver to be probed by DT
-  clk: bcm: rpi: Statically init clk_init_data
-  clk: bcm: rpi: Use clk_hw_register for pllb_arm
-  clk: bcm: rpi: Remove global pllb_arm clock pointer
-  clk: bcm: rpi: Make sure pllb_arm is removed
-  clk: bcm: rpi: Remove pllb_arm_lookup global pointer
-  clk: bcm: rpi: Switch to clk_hw_register_clkdev
-  clk: bcm: rpi: Make sure the clkdev lookup is removed
-  clk: bcm: rpi: Use CCF boundaries instead of rolling our own
-  clk: bcm: rpi: Create a data structure for the clocks
-  clk: bcm: rpi: Add clock id to data
-  clk: bcm: rpi: Pass the clocks data to the firmware function
-  clk: bcm: rpi: Rename is_prepared function
-  clk: bcm: rpi: Split pllb clock hooks
-  clk: bcm: rpi: Make the PLLB registration function return a clk_hw
-  clk: bcm: rpi: Add DT provider for the clocks
-  clk: bcm: rpi: Add an enum for the firmware clocks
-  clk: bcm: rpi: Discover the firmware clocks
-  clk: bcm: rpi: Give firmware clocks a name
-  Revert "clk: bcm2835: remove pllb"
-  ARM: dts: bcm2711: Add firmware clocks node
-  clk: bcm2835: Allow custom CCF flags for the PLLs
-  clk: bcm2835: Don't cache the PLLB rate
-  clk: bcm: rpi: Remove the quirks for the CPU clock
+Regards,
+Nicolas
 
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt  |  14 +---
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml |  59 ++++++++++++++-
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts                                       |   5 +-
- drivers/clk/bcm/clk-bcm2835.c                                               |  34 ++++++--
- drivers/clk/bcm/clk-raspberrypi.c                                           | 311 +++++++++++++++++++++++++++++++++++++++++++-----------------------------
- drivers/firmware/raspberrypi.c                                              |  14 +++-
- 6 files changed, 294 insertions(+), 143 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
 
-base-commit: 192e08e14e37b78e83cc2f5b9eb5a15a7d71c4e2
--- 
-git-series 0.9.1
+--=-fOGfccOwdRSSTyMd7woJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7h9SQACgkQlfZmHno8
+x/5hGAgArrdyadJsxlxAD7oIdzlj8Q+2RKvz1lT4pRALZz06U0yhqAoIB/CswueU
+z4TmOiXuOAhOI53ZDdEZSWA4XFO5rmgcSr19N6VWK9pRZ35FSMXE8wHVcqRSiMFH
+R25RpkYUzKbhyP9DqazaR8a31a8HCrXwITH/miNGrD4xzos56i7DenXKku74HwcW
+bk0UKLJ1iU35NtDGA8U22c4O2UOkqhySKV1ytFB8Td34U0q/nwJmSmRFn0960FZJ
+F4oUfqKnqTTKZ7mrqp03iXL/eSip1cbYhJaTc0TQrAeazyPQO3SWa7uZelB1YpKO
+XZF4NzdTne7NXjbTrgr4kUXrvotDXg==
+=NtVc
+-----END PGP SIGNATURE-----
+
+--=-fOGfccOwdRSSTyMd7woJ--
+
