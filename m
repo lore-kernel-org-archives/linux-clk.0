@@ -2,98 +2,80 @@ Return-Path: <SRS0=Q/ZM=7Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E02BC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA77C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 02:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2EAE20801
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591837729;
-	bh=4lVbfj0iU6Saaa7Z4qVl2VtAyMqNYUbAA+x/WtKhr9M=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Wm9vXVvRJv/1fO36hPo/UQBDhCCMLJGqWCT4sZh3kVFVHaXJMRcK1ummeRyF/LPXW
-	 24OxSI4samCMnEjwG96qRoN1gx8Hlj0QwLeLMdMDZaM1rhq31WR4/oRLMMb+8tu40n
-	 PmSbEFLWFHXiEGDiLT6FvdOQ4O/bdvBCKBnuXUkE=
+	by mail.kernel.org (Postfix) with ESMTP id 2D88E2078D
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 02:20:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lUsPqWw4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbgFKBIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 21:08:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbgFKBIs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Jun 2020 21:08:48 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45F562078D;
-        Thu, 11 Jun 2020 01:08:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591837728;
-        bh=4lVbfj0iU6Saaa7Z4qVl2VtAyMqNYUbAA+x/WtKhr9M=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=G7/WKhVHrCRIbwcRNEuXBo1bRED43MAAETtya0HTekvJKt5paxQCR2X8Vy5JcylWb
-         QE3Mo4uUsCQu+NvwxSScaZiLNW0MJmc4CLge7p7BCTAtiZ/REnKu5seG0fWN8z5zhh
-         ei5SpSYX17a9fzjq7xMqkK4z8VPVhc4mSjePbFWE=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        id S1726279AbgFKCUA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 22:20:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726163AbgFKCT7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 10 Jun 2020 22:19:59 -0400
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC4BC08C5C1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 19:19:58 -0700 (PDT)
+Received: by mail-pj1-x102c.google.com with SMTP id k2so1616684pjs.2
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jun 2020 19:19:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Qp13tuvoDI624Us4erIpZQOfzK+3SpKh+xFk7AN7Uf4=;
+        b=lUsPqWw4x6rYCi4XZYGhdSOrQyAmNtnaNDse54/afYWKoVwkgkEiNCljvJ11ohhvUK
+         3R5Q4AUSjwKUwv+LMkxqNStA6eJMEd3nzG/bzPR+KJLHhkGduQ+4hxT4xcUlCIKlSIhX
+         BYPBvlXY2Ky3vg/bQtzZcBywcpvHiy+aOgs0yAZh3uiykS4j5Q6OxKSQk6wJosdMtC5Y
+         ACy+PmcHEeK9/Zo63OPRrjvEtxUc/ybKjHWtHplU1dtqIQon7SUHztuzCs994ITB0Z0V
+         mNr3SylVpy9EPNnhxOdjW2XCtvg7N2KzxDiKV4yC29BNNLL3r6WvOCspkQEKdJnXOG1t
+         ZzDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Qp13tuvoDI624Us4erIpZQOfzK+3SpKh+xFk7AN7Uf4=;
+        b=GZjfDUQNvcET2YdH0Ye0sPrfqkdnau5VBqkWeH8zRm/WbZQyvC/Bm38iJB6+Y+xro7
+         KbQnv7lPi7grCrIwYLI7XiRtlati7wh888mO9tRD1Peb/EqoyoVSUWicKE8VULSEmTJ+
+         GfRxoXen+St8tXUTQTLjzrRdOC9ex/qHHnuMADFFZLHSuVLeOvU+ePRn5xw0tmBe4Yzi
+         S/FG2Jd/Mdl7ZcyfHfZ+Xbd7GVLxlw1YjRGZiY0+YQejEMYcTIA/9zdlD3fV1QM7kqWh
+         MjU52YCdsLXJOHDGSfnLUN9tkx+V6rvSV42GOXCi05H2/6s61jP7nI638f9vBXPMt2d2
+         eKAA==
+X-Gm-Message-State: AOAM532qo0OWaVy93iiwWvx3v1tW337/2E75RlzJ/AadZD5135XkutwB
+        yaCFUct0QFZq0pdPA17NP4Qz5maQUIvov1LS
+X-Google-Smtp-Source: ABdhPJynzgVcp2VsqSj4PcEe53ujlCSsAAc1/y6TPLWPVE1Wng4isAycXDiFrxFHkxX/Qz+AbqEjVg==
+X-Received: by 2002:a17:90a:6706:: with SMTP id n6mr6122684pjj.13.1591841997366;
+        Wed, 10 Jun 2020 19:19:57 -0700 (PDT)
+Received: from ola-2jp9dv2.garmin.com ([2605:a601:ac62:2200:56bf:64ff:fe6f:26a])
+        by smtp.gmail.com with ESMTPSA id i19sm947488pjz.4.2020.06.10.19.19.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jun 2020 19:19:56 -0700 (PDT)
+From:   Sarang Mairal <sarangmairal@gmail.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Cc:     Sarang Mairal <sarangmairal@gmail.com>
+Subject: Re: [PATCH] clk: add function documentation for clk_hw_round_rate()
+Date:   Wed, 10 Jun 2020 21:19:40 -0500
+Message-Id: <20200611021941.786-1-sarangmairal@gmail.com>
+X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200610151744.35478-1-sarangmairal@gmail.com>
 References: <20200610151744.35478-1-sarangmairal@gmail.com>
-Subject: Re: [PATCH] clk: add function documentation for clk_hw_round_rate()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sarang Mairal <sarangmairal@gmail.com>
-To:     Sarang Mairal <sarangmairal@gmail.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Wed, 10 Jun 2020 18:08:47 -0700
-Message-ID: <159183772766.242598.9437068405376794038@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sarang Mairal (2020-06-10 08:17:44)
-> Information about usage and prerequisites for this API.
->=20
-> Signed-off-by: Sarang Mairal <sarangmairal@gmail.com>
-> ---
->  drivers/clk/clk.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 407f6919604c..9cb9bc67a165 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1400,6 +1400,19 @@ int __clk_determine_rate(struct clk_hw *hw, struct=
- clk_rate_request *req)
->  }
->  EXPORT_SYMBOL_GPL(__clk_determine_rate);
-> =20
-> +/**
-> + * clk_hw_round_rate - round the given rate for a hw clk
-> + * @hw: the hw clk for which we are rounding a rate
-> + * @rate: the rate which is to be rounded
-> + *
-> + * Takes in a rate as input and rounds it to a rate that the clk can act=
-ually
-> + * use which is then returned. If clk doesn't support round_rate operati=
-on
-> + * then the parent rate is returned.
-> + *
-> + * Useful for clk providers to call from within clk_ops such as .round_r=
-ate,
-> + * .determine_rate. Requires prepare_lock to be held before calling this
-> + * function.
+> I think we can use the 'Return:' and the 'Context:' sections in
+> kernel-doc[1]. Can you reword using those please?
+Yes, nice suggestion! Thanks.
 
-I think we can use the 'Return:' and the 'Context:' sections in
-kernel-doc[1]. Can you reword using those please?
+Hopefully v2 addresses your expectation.
 
-> + */
->  unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
->  {
->         int ret;
-
-[1] Documentation/doc-guide/kernel-doc.rst
+-Regards,
+Sarang.
