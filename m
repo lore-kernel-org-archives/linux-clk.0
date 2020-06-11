@@ -2,89 +2,98 @@ Return-Path: <SRS0=Q/ZM=7Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A84C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E02BC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C408720848
-	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2EAE20801
+	for <linux-clk@archiver.kernel.org>; Thu, 11 Jun 2020 01:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1591837604;
-	bh=W6LKa2P4P/rOjYxLOpN3TGjHxp6jobdkYSFv//1nxqI=;
+	s=default; t=1591837729;
+	bh=4lVbfj0iU6Saaa7Z4qVl2VtAyMqNYUbAA+x/WtKhr9M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=TNwLP/M0V2Hihwm5+r13xXCiIOIyra3jShHcF4IHXDM0KOkFYEhw7oRm9AZa3NTO3
-	 vWbnNa7wBB4cOazfIblngZVs32dlqeJhlhG4x5YUxXV45oKBKv0LnP2/TrWRCq+Wlr
-	 ma/xXr3dO9mVhURy0mlPwbMo33ic+1Zs4W3DFtL0=
+	b=Wm9vXVvRJv/1fO36hPo/UQBDhCCMLJGqWCT4sZh3kVFVHaXJMRcK1ummeRyF/LPXW
+	 24OxSI4samCMnEjwG96qRoN1gx8Hlj0QwLeLMdMDZaM1rhq31WR4/oRLMMb+8tu40n
+	 PmSbEFLWFHXiEGDiLT6FvdOQ4O/bdvBCKBnuXUkE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726268AbgFKBGo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 10 Jun 2020 21:06:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46534 "EHLO mail.kernel.org"
+        id S1726268AbgFKBIs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 10 Jun 2020 21:08:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726163AbgFKBGn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 10 Jun 2020 21:06:43 -0400
+        id S1726163AbgFKBIs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 10 Jun 2020 21:08:48 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 643962078D;
-        Thu, 11 Jun 2020 01:06:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45F562078D;
+        Thu, 11 Jun 2020 01:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1591837603;
-        bh=W6LKa2P4P/rOjYxLOpN3TGjHxp6jobdkYSFv//1nxqI=;
+        s=default; t=1591837728;
+        bh=4lVbfj0iU6Saaa7Z4qVl2VtAyMqNYUbAA+x/WtKhr9M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=p5Ws/B7v9A2CtqbLecns1vXEfFust/09wjIA3exRacTuoXpAUu1lFo/8oQi1QviGH
-         rWzf2rT+Jx9bbxyjuuDKAZ99lRt4PBEKCa6Ia+lB0qKC2dS7eA5KYoR0vt+H6Q2ioR
-         eddd++OO/z0hFuBbX8Tdf2N+8e0S9oruT9rl4AJE=
+        b=G7/WKhVHrCRIbwcRNEuXBo1bRED43MAAETtya0HTekvJKt5paxQCR2X8Vy5JcylWb
+         QE3Mo4uUsCQu+NvwxSScaZiLNW0MJmc4CLge7p7BCTAtiZ/REnKu5seG0fWN8z5zhh
+         ei5SpSYX17a9fzjq7xMqkK4z8VPVhc4mSjePbFWE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3ac34bd7-bc5b-bc04-99ba-8ba3c5a9a691@codeaurora.org>
-References: <1589707344-8871-1-git-send-email-tdas@codeaurora.org> <1589707344-8871-5-git-send-email-tdas@codeaurora.org> <159054904061.88029.1394425232497625411@swboyd.mtv.corp.google.com> <3ac34bd7-bc5b-bc04-99ba-8ba3c5a9a691@codeaurora.org>
-Subject: Re: [PATCH v2 4/4] clk: qcom: lpass: Add support for LPASS clock controller for SC7180
+In-Reply-To: <20200610151744.35478-1-sarangmairal@gmail.com>
+References: <20200610151744.35478-1-sarangmairal@gmail.com>
+Subject: Re: [PATCH] clk: add function documentation for clk_hw_round_rate()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 10 Jun 2020 18:06:42 -0700
-Message-ID: <159183760269.242598.3005455698894049563@swboyd.mtv.corp.google.com>
+Cc:     Sarang Mairal <sarangmairal@gmail.com>
+To:     Sarang Mairal <sarangmairal@gmail.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+Date:   Wed, 10 Jun 2020 18:08:47 -0700
+Message-ID: <159183772766.242598.9437068405376794038@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-06-10 10:11:49)
-> On 5/27/2020 8:40 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2020-05-17 02:22:24)
-> >> +       if (ret)
-> >> +               return ret;
-> >> +
-> >> +       lpass_core_cc_sc7180_regmap_config.name =3D "lpass_core_cc";
-> >> +       regmap =3D qcom_cc_map(pdev, &lpass_core_cc_sc7180_desc);
-> >> +       if (IS_ERR(regmap))
-> >> +               return PTR_ERR(regmap);
-> >> +
-> >> +       /*
-> >> +        * Keep the CLK always-ON
-> >=20
-> > Why? Presumably to make sure we can access the lpass sysnoc path all the
-> > time?
-> >=20
+Quoting Sarang Mairal (2020-06-10 08:17:44)
+> Information about usage and prerequisites for this API.
 >=20
-> This is an always ON clock from HW, just making sure to keep it enabled.
-
-I'm not following. Hardware says it must always be enabled? If it isn't
-enabled is it even possible to write this register?
-
+> Signed-off-by: Sarang Mairal <sarangmairal@gmail.com>
+> ---
+>  drivers/clk/clk.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >=20
-> >> +        * LPASS_AUDIO_CORE_SYSNOC_SWAY_CORE_CLK
-> >> +        */
-> >> +       regmap_update_bits(regmap, 0x24000, BIT(0), BIT(0));
-> >> +
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 407f6919604c..9cb9bc67a165 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1400,6 +1400,19 @@ int __clk_determine_rate(struct clk_hw *hw, struct=
+ clk_rate_request *req)
+>  }
+>  EXPORT_SYMBOL_GPL(__clk_determine_rate);
+> =20
+> +/**
+> + * clk_hw_round_rate - round the given rate for a hw clk
+> + * @hw: the hw clk for which we are rounding a rate
+> + * @rate: the rate which is to be rounded
+> + *
+> + * Takes in a rate as input and rounds it to a rate that the clk can act=
+ually
+> + * use which is then returned. If clk doesn't support round_rate operati=
+on
+> + * then the parent rate is returned.
+> + *
+> + * Useful for clk providers to call from within clk_ops such as .round_r=
+ate,
+> + * .determine_rate. Requires prepare_lock to be held before calling this
+> + * function.
+
+I think we can use the 'Return:' and the 'Context:' sections in
+kernel-doc[1]. Can you reword using those please?
+
+> + */
+>  unsigned long clk_hw_round_rate(struct clk_hw *hw, unsigned long rate)
+>  {
+>         int ret;
+
+[1] Documentation/doc-guide/kernel-doc.rst
