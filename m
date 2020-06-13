@@ -2,29 +2,28 @@ Return-Path: <SRS0=zeGh=72=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D5EC433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Jun 2020 06:27:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD47C433DF
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Jun 2020 07:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 044FF207D8
-	for <linux-clk@archiver.kernel.org>; Sat, 13 Jun 2020 06:27:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB0D20739
+	for <linux-clk@archiver.kernel.org>; Sat, 13 Jun 2020 07:28:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbgFMG1J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 13 Jun 2020 02:27:09 -0400
-Received: from relay-2.mailobj.net ([213.182.54.5]:48763 "EHLO
+        id S1726424AbgFMH2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 13 Jun 2020 03:28:10 -0400
+Received: from relay-2.mailobj.net ([213.182.54.5]:53868 "EHLO
         relay-2.mailobj.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbgFMG1J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Jun 2020 02:27:09 -0400
+        with ESMTP id S1725771AbgFMH2I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 13 Jun 2020 03:28:08 -0400
 Received: from v-1.localdomain (v-1.in.mailobj.net [192.168.90.191])
-        by relay-2.mailobj.net (Postfix) with SMTP id 1317512EB;
-        Sat, 13 Jun 2020 08:27:06 +0200 (CEST)
+        by relay-2.mailobj.net (Postfix) with SMTP id 7782612F5;
+        Sat, 13 Jun 2020 09:28:06 +0200 (CEST)
 Received: by ip-25.net-c.com [213.182.54.25] with ESMTP
-        Sat, 13 Jun 2020 08:28:01 +0200 (CEST)
-X-EA-Auth: gCDkemgpab3r57raDVk3e6dU6QG0VvILS+PktL2zvaf02NHZKw8aazvbCo2bQXdeoms2YKGELTJ6kqWAggZLhPikVC84GhWGWUeRUvRoXTI=
+        Sat, 13 Jun 2020 09:29:01 +0200 (CEST)
+X-EA-Auth: l5PGjICbplBVFZcRa5FKA2zra6KgVtI3bKKlzxVI4zWQmjSg40+RR3Y7KSoqMunuUU5MCzo2jPXSnQAq/d8vl53sNJi8as1PHh4Ozu9DOYM=
 From:   Vincent Knecht <vincent.knecht@mailoo.org>
 To:     sboyd@kernel.org
 Cc:     konradybcio@gmail.com, Vincent Knecht <vincent.knecht@mailoo.org>,
@@ -33,13 +32,11 @@ Cc:     konradybcio@gmail.com, Vincent Knecht <vincent.knecht@mailoo.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
         linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH v3 1/4] clk: qcom: smd: Add support for MSM8936 rpm clocks
-Date:   Sat, 13 Jun 2020 08:26:39 +0200
-Message-Id: <20200613062642.1213591-2-vincent.knecht@mailoo.org>
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/4] Add SMD RPM support for MSM8936
+Date:   Sat, 13 Jun 2020 09:27:41 +0200
+Message-Id: <20200613072745.1249003-1-vincent.knecht@mailoo.org>
 X-Mailer: git-send-email 2.25.4
-In-Reply-To: <20200613062642.1213591-1-vincent.knecht@mailoo.org>
-References: <20200613062642.1213591-1-vincent.knecht@mailoo.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -47,94 +44,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing definition of rpm clk for msm8936 soc (also used by msm8939)
+changes since v3:
+- added my missing Signed-off-by to patch 3
 
-Signed-off-by: Vincent Knecht <vincent.knecht@mailoo.org>
----
- drivers/clk/qcom/clk-smd-rpm.c         | 50 ++++++++++++++++++++++++++
- include/dt-bindings/clock/qcom,rpmcc.h |  2 ++
- 2 files changed, 52 insertions(+)
+changes since v2:
+- fixed build error by adding forgotten qcom,rpmcc.h changes in patch 1
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 52f63ad787ba..de42f012af57 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -452,6 +452,55 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8916 = {
- 	.num_clks = ARRAY_SIZE(msm8916_clks),
- };
- 
-+/* msm8936 */
-+DEFINE_CLK_SMD_RPM(msm8936, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8936, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-+DEFINE_CLK_SMD_RPM(msm8936, bimc_clk, bimc_a_clk, QCOM_SMD_RPM_MEM_CLK, 0);
-+DEFINE_CLK_SMD_RPM(msm8936, sysmmnoc_clk, sysmmnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
-+DEFINE_CLK_SMD_RPM_QDSS(msm8936, qdss_clk, qdss_a_clk, QCOM_SMD_RPM_MISC_CLK, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, bb_clk1, bb_clk1_a, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, bb_clk2, bb_clk2_a, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, rf_clk1, rf_clk1_a, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8936, rf_clk2, rf_clk2_a, 5);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, bb_clk1_pin, bb_clk1_a_pin, 1);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, bb_clk2_pin, bb_clk2_a_pin, 2);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, rf_clk1_pin, rf_clk1_a_pin, 4);
-+DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8936, rf_clk2_pin, rf_clk2_a_pin, 5);
-+
-+static struct clk_smd_rpm *msm8936_clks[] = {
-+	[RPM_SMD_PCNOC_CLK]		= &msm8936_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK]		= &msm8936_pcnoc_a_clk,
-+	[RPM_SMD_SNOC_CLK]		= &msm8936_snoc_clk,
-+	[RPM_SMD_SNOC_A_CLK]		= &msm8936_snoc_a_clk,
-+	[RPM_SMD_BIMC_CLK]		= &msm8936_bimc_clk,
-+	[RPM_SMD_BIMC_A_CLK]		= &msm8936_bimc_a_clk,
-+	[RPM_SMD_SYSMMNOC_CLK]		= &msm8936_sysmmnoc_clk,
-+	[RPM_SMD_SYSMMNOC_A_CLK]	= &msm8936_sysmmnoc_a_clk,
-+	[RPM_SMD_QDSS_CLK]		= &msm8936_qdss_clk,
-+	[RPM_SMD_QDSS_A_CLK]		= &msm8936_qdss_a_clk,
-+	[RPM_SMD_BB_CLK1]		= &msm8936_bb_clk1,
-+	[RPM_SMD_BB_CLK1_A]		= &msm8936_bb_clk1_a,
-+	[RPM_SMD_BB_CLK2]		= &msm8936_bb_clk2,
-+	[RPM_SMD_BB_CLK2_A]		= &msm8936_bb_clk2_a,
-+	[RPM_SMD_RF_CLK1]		= &msm8936_rf_clk1,
-+	[RPM_SMD_RF_CLK1_A]		= &msm8936_rf_clk1_a,
-+	[RPM_SMD_RF_CLK2]		= &msm8936_rf_clk2,
-+	[RPM_SMD_RF_CLK2_A]		= &msm8936_rf_clk2_a,
-+	[RPM_SMD_BB_CLK1_PIN]		= &msm8936_bb_clk1_pin,
-+	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8936_bb_clk1_a_pin,
-+	[RPM_SMD_BB_CLK2_PIN]		= &msm8936_bb_clk2_pin,
-+	[RPM_SMD_BB_CLK2_A_PIN]		= &msm8936_bb_clk2_a_pin,
-+	[RPM_SMD_RF_CLK1_PIN]		= &msm8936_rf_clk1_pin,
-+	[RPM_SMD_RF_CLK1_A_PIN]		= &msm8936_rf_clk1_a_pin,
-+	[RPM_SMD_RF_CLK2_PIN]		= &msm8936_rf_clk2_pin,
-+	[RPM_SMD_RF_CLK2_A_PIN]		= &msm8936_rf_clk2_a_pin,
-+};
-+
-+static const struct rpm_smd_clk_desc rpm_clk_msm8936 = {
-+		.clks = msm8936_clks,
-+		.num_clks = ARRAY_SIZE(msm8936_clks),
-+};
-+
- /* msm8974 */
- DEFINE_CLK_SMD_RPM(msm8974, pnoc_clk, pnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8974, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
-@@ -768,6 +817,7 @@ static const struct rpm_smd_clk_desc rpm_clk_msm8998 = {
- 
- static const struct of_device_id rpm_smd_clk_match_table[] = {
- 	{ .compatible = "qcom,rpmcc-msm8916", .data = &rpm_clk_msm8916 },
-+	{ .compatible = "qcom,rpmcc-msm8936", .data = &rpm_clk_msm8936 },
- 	{ .compatible = "qcom,rpmcc-msm8974", .data = &rpm_clk_msm8974 },
- 	{ .compatible = "qcom,rpmcc-msm8976", .data = &rpm_clk_msm8976 },
- 	{ .compatible = "qcom,rpmcc-msm8996", .data = &rpm_clk_msm8996 },
-diff --git a/include/dt-bindings/clock/qcom,rpmcc.h b/include/dt-bindings/clock/qcom,rpmcc.h
-index ae74c43c485d..4a0238ccf9f2 100644
---- a/include/dt-bindings/clock/qcom,rpmcc.h
-+++ b/include/dt-bindings/clock/qcom,rpmcc.h
-@@ -133,5 +133,7 @@
- #define RPM_SMD_RF_CLK3_A			87
- #define RPM_SMD_RF_CLK3_PIN			88
- #define RPM_SMD_RF_CLK3_A_PIN			89
-+#define RPM_SMD_SYSMMNOC_CLK			90
-+#define RPM_SMD_SYSMMNOC_A_CLK			91
- 
- #endif
+changes since v1:
+- added a forgotten patch that adds the compat string to the driver
+
+Konrad Dybcio (1):
+  drivers: soc: Add MSM8936 SMD RPM compatible
+
+Vincent Knecht (3):
+  clk: qcom: smd: Add support for MSM8936 rpm clocks
+  dt-bindings: clock: rpmcc: Document MSM8936 compatible
+  dt-bindings: soc: qcom: Document MSM8936 SMD RPM
+
+ .../devicetree/bindings/clock/qcom,rpmcc.txt  |  1 +
+ .../bindings/soc/qcom/qcom,smd-rpm.txt        |  1 +
+ drivers/clk/qcom/clk-smd-rpm.c                | 50 +++++++++++++++++++
+ drivers/soc/qcom/smd-rpm.c                    |  1 +
+ include/dt-bindings/clock/qcom,rpmcc.h        |  2 +
+ 5 files changed, 55 insertions(+)
+
 -- 
 2.25.4
 
