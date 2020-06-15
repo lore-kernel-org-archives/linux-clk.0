@@ -2,67 +2,66 @@ Return-Path: <SRS0=Um2U=74=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA80C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5E3C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EE7A420578
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2727E20578
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ndiYe/ou";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Nm/75rO8"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="kSWtpuY7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NWj7ObKc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729467AbgFOInE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:43:04 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:57591 "EHLO
+        id S1729059AbgFOIlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 04:41:25 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:38213 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729134AbgFOIl2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:28 -0400
+        by vger.kernel.org with ESMTP id S1728746AbgFOIlY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:24 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E4A4358014B;
-        Mon, 15 Jun 2020 04:41:26 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id A708058014B;
+        Mon, 15 Jun 2020 04:41:22 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:26 -0400
+  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=IX0gao1Puvchr
-        YEbeUvqw+7GMUKbR2y6MVj5PQ2uSsI=; b=ndiYe/ou8UPWu1R4C4jmnzO1T7idE
-        j8eyGFcVk78jW9taqbpJ2cGNkg49qnowHdtx855Qz27CmAT6xeFUl1Rq+HVLm7rZ
-        cYhBuOdCvxVDmp1DmNa/ySK9AvLBMBoL2ysXgnQr/gQ1OfICvKXcq0AdZJ3ci/BZ
-        pzYC8bskdksgUbb9u2KVEmMRUH6kusp9qfHWnLO3H3oIvvi0w5uD7MsiDsYPrevn
-        eGACaBIZTTzXGpTopXwrTTqP/kyOtmUuptBGbjpTDc3aKvYJ9ZNXODmX6ZX5FOEh
-        bQBtN3HKaoCaALDgIt95Jhn/ovNlSma1rnfhEbYKE3+rs9zNbc9JFPkDw==
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=+bVqouurUT66sh/V7qCOyewZgm
+        Om4zf5CsQ/aE+/nKM=; b=kSWtpuY7oh3nIVsB84U6kHntMyzLB0ovAVGNekE7np
+        4ivgzbWK5JYFKUMhlcFd3C/nHb24yGvLtD1k12L8b5mM2GGnrmX0d47Y2dtN+ziA
+        eqj1Uz+jKw4jT+yakN9U9bn9cHGQEsUN41K4oYYi/97opR/WebbXQsWRr48bY+GO
+        qbRIb7n6A0eT91SM/lgcEBe6lpQZzUh0tmAZrvWN7l37fcqcNaMGtANg1knYsHr5
+        cVUxAShxxnsoPI6UJ+Xo3X/UOXf+eUa7vZ4pEoMUwYaxSrOtAdKS7I3EHYvyAqyj
+        bk5IXU35J/10o/NuWhEboR4bN/qpSwI+rvaj30XIkm7A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=IX0gao1PuvchrYEbeUvqw+7GMUKbR2y6MVj5PQ2uSsI=; b=Nm/75rO8
-        lOpe2Gun3qrPNFjtT6mu4kUqiFsvcOzo2jB2qve61ImMpWAuYaWBCtidKAHjIrzo
-        BfV18mn1kvHhytpM1J/QqwrIrhE1O5TW5GVuggsNnpD9Zvo5muZQnGeOM+3XueiH
-        5lIDp2+4Xd3SXi3bmkjzPDizvEHH/YP5bST8AAcRFScNRpe8U/g95ejniUJqe0Xo
-        pCYLD9p/31Rh1AQNNYOGcYWo3R9JicirjTnaOQix1f0eEpsOBiYbzkLmJP6rRwHN
-        wztHqNzZyM/ZJymw1J+YLOc5GLDbHJ3fwKbsTmTVe5jsqOaBZLDK7GVDrsTP2QeZ
-        tEFM4s6NSHnKGA==
-X-ME-Sender: <xms:NjTnXiQR1zjZuOJAhGRibQXbQAeWG6n_PyDETJPuuXXjOVsP8PyaKg>
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=+bVqouurUT66sh/V7
+        qCOyewZgmOm4zf5CsQ/aE+/nKM=; b=NWj7ObKcJQBQy+eooDtaDS2Ih/HIGgCGh
+        WhVqoSjo5CsmyejghNKWR83bOtfkd00RD/v72A/VRSZQhQ0zBt4wq6uhoVZiyj+z
+        umLJpy+FTqiacJxT9xVIiJUMogJk+CFbLv/fg1oN3nr5PWWeeIEpBpPz/y6Ft4Di
+        tpn/vodjy0/u2LQ5P+4R/dyRl5J0XmvZou+d+SZhQ3QRRSkxezQHsJkQOLy4hQP2
+        7DKNx/z4yI3J6wlDClmNJQPsHwlP/weUxRz7HH5hshhp+/nI93+ZX2MGlSHte0G7
+        YqO/l0/vIfjg+XA8/Ew8r5nOsuOy636BRHtGigXJaU6jkt8qwj0/A==
+X-ME-Sender: <xms:MDTnXnpsfFhhR2bsMQHexTsgsblBhHRS5T-6Dfx4QAxc3Cy3DWk8TQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeikedgtdeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:NjTnXnzAHrrMkkosn3FaPLcY0EIt1lf9MvLIUWkujRIMUo8KTa-tKA>
-    <xmx:NjTnXv20t9G6h6AmbombXHVDAxmD6kuz4CG7yQMamKLUNrkQ39UHDw>
-    <xmx:NjTnXuDJ8tv1olUvqg-EPY0PIbasrZI7sHknKT0o-3jfebvE_Eq1AQ>
-    <xmx:NjTnXqMizlRhIzbflFDipb83ugdzLSyNBszuiLJlD-kCAn60LO_E6w>
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcu
+    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
+    hrnhepjeffheduvddvvdelhfegleelfffgieejvdehgfeijedtieeuteejteefueekjeeg
+    necukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:MDTnXhro3Yr_tKP-qPuJLu8iXlGaa--icM2hbEkqPnVdAooS55MneA>
+    <xmx:MDTnXkOHW_pxue5L2YeWi9aEaYSm7YkrvoExN0jQCGwa_3mqdKv3Jg>
+    <xmx:MDTnXq41JuW2CM3AHUII2yM7SllYfSwD-zsecLhOBTanerD2FbHf_A>
+    <xmx:MjTnXmwwGZSIwjsKQKUlVjD2wzRm5R9TMjedPgAemWXkWppyKlfS3w>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 822693280059;
-        Mon, 15 Jun 2020 04:41:26 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 33FDE3280064;
+        Mon, 15 Jun 2020 04:41:20 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -74,13 +73,13 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v5 04/27] clk: bcm: rpi: Allow the driver to be probed by DT
-Date:   Mon, 15 Jun 2020 10:40:44 +0200
-Message-Id: <cb8203b862e386ac6c3df3eff0bb5a238b6ec97a.1592210452.git-series.maxime@cerno.tech>
+        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v5 00/27] clk: bcm: rpi: Add support for BCM2711 firmware clocks
+Date:   Mon, 15 Jun 2020 10:40:40 +0200
+Message-Id: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.26.2
-In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -88,66 +87,85 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The current firmware clock driver for the RaspberryPi can only be probed by
-manually registering an associated platform_device.
+Hi,
 
-While this works fine for cpufreq where the device gets attached a clkdev
-lookup, it would be tedious to maintain a table of all the devices using
-one of the clocks exposed by the firmware.
+Since the whole DRM/HDMI support began to grow fairly big, I've chosen
+to split away the two discussions between the firmware clocks and the
+HDMI support.
 
-Since the DT on the other hand is the perfect place to store those
-associations, make the firmware clocks driver probe-able through the device
-tree so that we can represent it as a node.
+Let me know what you think,
+Maxime
 
-Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: devicetree@vger.kernel.org
+Cc: Kamal Dasu <kdasu.kdev@gmail.com>
 Cc: linux-clk@vger.kernel.org
-Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- drivers/clk/bcm/clk-raspberrypi.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 1654fd0eedc9..8610355bda47 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -255,8 +255,16 @@ static int raspberrypi_clk_probe(struct platform_device *pdev)
- 	struct raspberrypi_clk *rpi;
- 	int ret;
- 
--	firmware_node = of_find_compatible_node(NULL, NULL,
--					"raspberrypi,bcm2835-firmware");
-+	/*
-+	 * We can be probed either through the an old-fashioned
-+	 * platform device registration or through a DT node that is a
-+	 * child of the firmware node. Handle both cases.
-+	 */
-+	if (dev->of_node)
-+		firmware_node = of_get_parent(dev->of_node);
-+	else
-+		firmware_node = of_find_compatible_node(NULL, NULL,
-+							"raspberrypi,bcm2835-firmware");
- 	if (!firmware_node) {
- 		dev_err(dev, "Missing firmware node\n");
- 		return -ENOENT;
-@@ -300,9 +308,16 @@ static int raspberrypi_clk_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static const struct of_device_id raspberrypi_clk_match[] = {
-+	{ .compatible = "raspberrypi,firmware-clocks" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, raspberrypi_clk_match);
-+
- static struct platform_driver raspberrypi_clk_driver = {
- 	.driver = {
- 		.name = "raspberrypi-clk",
-+		.of_match_table = raspberrypi_clk_match,
- 	},
- 	.probe          = raspberrypi_clk_probe,
- 	.remove		= raspberrypi_clk_remove,
+Changes from v4:
+  - Rebased on 5.8-rc1
+  - Added more tags
+  - Fixed a typo in a variable name
+
+Changes from v3:
+  - Moved the firmware structure to the driver, and changed for u32
+  - Prevented cache issues with MMIO driver
+  - Removed message when discovering min and max rates
+  - Added the gathered tags
+
+Changes from v2:
+  - Rebased on top of next-20200526
+  - Split away from the HDMI series
+  - Fixed an of_node leakage in the firmware driver
+  - Fixed an of_node leakage in the firmware clocks driver
+  - Added the min/max rate retrieval to all the firmware clocks
+  - Added proper name for the firmware clocks
+  - Removed the PLLB setup from the firmware clocks and moved it back to
+    the MMIO driver
+
+Florian Fainelli (1):
+  dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML
+
+Maxime Ripard (26):
+  dt-bindings: clock: Add a binding for the RPi Firmware clocks
+  firmware: rpi: Only create clocks device if we don't have a node for it
+  clk: bcm: rpi: Allow the driver to be probed by DT
+  clk: bcm: rpi: Statically init clk_init_data
+  clk: bcm: rpi: Use clk_hw_register for pllb_arm
+  clk: bcm: rpi: Remove global pllb_arm clock pointer
+  clk: bcm: rpi: Make sure pllb_arm is removed
+  clk: bcm: rpi: Remove pllb_arm_lookup global pointer
+  clk: bcm: rpi: Switch to clk_hw_register_clkdev
+  clk: bcm: rpi: Make sure the clkdev lookup is removed
+  clk: bcm: rpi: Use CCF boundaries instead of rolling our own
+  clk: bcm: rpi: Create a data structure for the clocks
+  clk: bcm: rpi: Add clock id to data
+  clk: bcm: rpi: Pass the clocks data to the firmware function
+  clk: bcm: rpi: Rename is_prepared function
+  clk: bcm: rpi: Split pllb clock hooks
+  clk: bcm: rpi: Make the PLLB registration function return a clk_hw
+  clk: bcm: rpi: Add DT provider for the clocks
+  clk: bcm: rpi: Add an enum for the firmware clocks
+  clk: bcm: rpi: Discover the firmware clocks
+  clk: bcm: rpi: Give firmware clocks a name
+  Revert "clk: bcm2835: remove pllb"
+  ARM: dts: bcm2711: Add firmware clocks node
+  clk: bcm2835: Allow custom CCF flags for the PLLs
+  clk: bcm2835: Don't cache the PLLB rate
+  clk: bcm: rpi: Remove the quirks for the CPU clock
+
+ Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt  |  14 +---
+ Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml |  59 ++++++++++++++-
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts                                       |   5 +-
+ drivers/clk/bcm/clk-bcm2835.c                                               |  34 ++++++--
+ drivers/clk/bcm/clk-raspberrypi.c                                           | 311 +++++++++++++++++++++++++++++++++++++++++++-----------------------------
+ drivers/firmware/raspberrypi.c                                              |  14 +++-
+ 6 files changed, 294 insertions(+), 143 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+
+base-commit: b3a9e3b9622ae10064826dccb4f7a52bd88c7407
 -- 
 git-series 0.9.1
