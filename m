@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A3DC433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88771C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:42:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1017120578
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675092053B
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="b0Syra3U";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NP89kzCd"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="SUg3kHkJ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tbFKE7/Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729241AbgFOIlr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:41:47 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:36647 "EHLO
+        id S1729369AbgFOImj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 04:42:39 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:37983 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729226AbgFOIln (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:43 -0400
+        by vger.kernel.org with ESMTP id S1729237AbgFOIlr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:47 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C56EF58014B;
-        Mon, 15 Jun 2020 04:41:42 -0400 (EDT)
+        by mailnew.nyi.internal (Postfix) with ESMTP id E768258014F;
+        Mon, 15 Jun 2020 04:41:45 -0400 (EDT)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:42 -0400
+  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=NwC80/cm603O+
-        ywg+BGnSjJaMSMbm5A5w1hmeDpyxCw=; b=b0Syra3U5hL/ukKyQtLhRJwdn0FAp
-        H5V+/mYgrM/H36t+czdhca36wmDrOB4BQFeckOKfgia0UZZfmBSpdRE/qsfV8uva
-        VBlu8UaOoXFZAoFD+uPz8V1yYMRgNK8oxxUBzRgx7aFNocVbQVFtB5KXzJ9FBSzz
-        75BU8ddQzHD9Kgql6o1xlmlTYPFpYGxKWdynZvCUNMzPH0GjO3z4q5kuplXw0B4Y
-        ZtWt5CUVO2v48vjkJxM9W0dDxS680jHxKaa660lJRAokG4m7KfCehSpYGcVnVJ/9
-        IwhJpP5oDZdy6/zTDmUdLabBVDGwH1g/2pwBaaXgENYtpohXvoQAIx0wQ==
+        :mime-version:content-transfer-encoding; s=fm3; bh=KRqld367kMSHi
+        Xes4D71sSmAl9sm713CRvYZUaoStF8=; b=SUg3kHkJxSeo2Jtu1cMKcUwvUAtu8
+        hMy+YOoEh2CkRnHuRoEN4gGWFRTjidUMjqXs//0SZXwADLvLRcZ9Ca0XNiUNpWTN
+        tW0Jn82LRKT1tKNZcdbyT2DM5+6rxvD8I5xOsyVh2qziK31PKMpJSR5MzpOnyJmZ
+        MetTUYemebS/HOSOrZbOwhIcSgHxTahyUplaVHnMKftMEcT1URtoE3GArCgUblVs
+        ThF9OAExYPsK+QvA45ze/TRhzsMeom6ZRJ2bJ5u1yqj1smBh/RU4giYs/2MPTe3M
+        RM903A2WeIggRSAgxPvVoVVpPppOj0n+ZlU3uYkOUVnIDP8biUD2tZoBQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=NwC80/cm603O+ywg+BGnSjJaMSMbm5A5w1hmeDpyxCw=; b=NP89kzCd
-        noeB5pYQ8cee18jBNcSLRI0A1mIdw9NCnhqeVB6jtRB8umf/tFDO5mQUJDDTP9xZ
-        rZC5DErBpgnFzTGWHs6sqpI2WwRVjca2dcWBaq3Qk/P0LcmAYAqgE7mtZ8Zi72Ty
-        b8DjN2oDbsL/CoMeMNTAW6RjmbFrWM66S8wwGHaWI9ZI4iGDVnRc1Hp/nlDBfYVX
-        KiuyHQF38rpbSsH4gGdjvHUb/BwCFNwVHhw2TZI4gNaC0FE1pRmuuTodrvoztgVY
-        v9sUOpbeOBabULYCaq2EiluBn3KpN7QFdij1J9VID1d/OKp6eY+SEp4PM1pmgMFX
-        BwvMDmFm+PzVBw==
-X-ME-Sender: <xms:RjTnXsfuuw8gEfmRUIy4w3FRtRDCwE71w5hk8I-mKaZQewQPCKaaeQ>
+        fm3; bh=KRqld367kMSHiXes4D71sSmAl9sm713CRvYZUaoStF8=; b=tbFKE7/Y
+        +91xjwE8pwr383H1EpgtAv1POJk3qYCmXW3bHiJJR7G5+whyLMUCxqc86leg4zZX
+        kBMfq1YLUpk5h8UkLraxt9+LtRZKUx+DLLSbEbivtok/zB4HS9yuyswV7er0iFMk
+        4FoGqIIER28/a+8FHPJzc5LQH2H11PTpu1905rVQKFy3SveB4KbkETZ6zyia6z9y
+        SadWbb339MxTPq1wiFF5T2f961YvNHnAOzP9y1Tv+ZXCNtg6BslqG7keSakpIkc3
+        4PN0tIZUfM5ls4HWHaH8CSzjNZDT8e49ya3gd+Pw6pNby0iOXLKOqLrfyi7eSpZj
+        ZoQlbpICzi3GZg==
+X-ME-Sender: <xms:STTnXjiFSmAy_ABDg4NLaz0cZPonN0OCWEzQyojXmZEw7XvNU7iQmg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeikedgtdeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
     vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
     htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepuddtne
+    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepudegne
     curfgrrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
-X-ME-Proxy: <xmx:RjTnXuOQ9YSeD-sGjc6XYPct0ABBqk-aG8-ebOZZlO3zi3dlJOcP9Q>
-    <xmx:RjTnXtj6Xp_Y7VRE0XJl5NOGEQWiRKISz4vLiseCmJZW-NyJrzKlGg>
-    <xmx:RjTnXh9K0gSc29jUrLlTh7FyzgsVYCQIdSvEv7UEgZW-g6fjs5oLog>
-    <xmx:RjTnXqIwGjHx6JqMnAUoSRDc9KZ2xgjsUeeBEZPuC7Cjsdr4eta-Ag>
+X-ME-Proxy: <xmx:STTnXgAlAZtKJqlSgOPZWTsPzEy2JQwsTzKRwguvItlmTvZLRXKwHQ>
+    <xmx:STTnXjEZGxr_ew0ydmsGaiNk8sR071KAuWRX3li4JgK01sOEUp5uXg>
+    <xmx:STTnXgQsO3KBK_YVgq9tC4__TNzx9z1Wqwrv8UYyS3i_Toz7EZ4GnQ>
+    <xmx:STTnXsdVQwacgpIa1wvg1_YLa359C2ibhfYyAjUAapoe45eoRiC87Q>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5F78F3280064;
-        Mon, 15 Jun 2020 04:41:42 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8943D3280065;
+        Mon, 15 Jun 2020 04:41:45 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -75,9 +75,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Maxime Ripard <maxime@cerno.tech>
-Subject: [PATCH v5 14/27] clk: bcm: rpi: Add clock id to data
-Date:   Mon, 15 Jun 2020 10:40:54 +0200
-Message-Id: <e23c37961b97b027e21efa3b818578970f88527a.1592210452.git-series.maxime@cerno.tech>
+Subject: [PATCH v5 16/27] clk: bcm: rpi: Rename is_prepared function
+Date:   Mon, 15 Jun 2020 10:40:56 +0200
+Message-Id: <ac93cc4e245316bb7e7426ac5ab0de8f3d919731.1592210452.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
 References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
@@ -88,10 +88,11 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The driver has really only supported one clock so far and has hardcoded the
-ID used in communications with the firmware in all the functions
-implementing the clock framework hooks. Let's store that in the clock data
-structure so that we can support more clocks later on.
+The raspberrypi_fw_pll_is_on function doesn't only apply to PLL
+registered in the driver, but any clock exposed by the firmware.
+
+Since we also implement the is_prepared hook, make the function
+consistent with the other function names.
 
 Cc: Michael Turquette <mturquette@baylibre.com>
 Cc: linux-clk@vger.kernel.org
@@ -100,79 +101,30 @@ Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- drivers/clk/bcm/clk-raspberrypi.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ drivers/clk/bcm/clk-raspberrypi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 00735704eabc..97ac04604b0a 100644
+index 3fce49a65a79..58ac1b104429 100644
 --- a/drivers/clk/bcm/clk-raspberrypi.c
 +++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -39,6 +39,9 @@ struct raspberrypi_clk {
+@@ -85,7 +85,7 @@ static int raspberrypi_clock_property(struct rpi_firmware *firmware,
+ 	return 0;
+ }
  
- struct raspberrypi_clk_data {
- 	struct clk_hw hw;
-+
-+	unsigned int id;
-+
- 	struct raspberrypi_clk *rpi;
- };
+-static int raspberrypi_fw_pll_is_on(struct clk_hw *hw)
++static int raspberrypi_fw_is_prepared(struct clk_hw *hw)
+ {
+ 	struct raspberrypi_clk_data *data =
+ 		container_of(hw, struct raspberrypi_clk_data, hw);
+@@ -166,7 +166,7 @@ static int raspberrypi_pll_determine_rate(struct clk_hw *hw,
+ }
  
-@@ -91,7 +94,7 @@ static int raspberrypi_fw_pll_is_on(struct clk_hw *hw)
- 
- 	ret = raspberrypi_clock_property(rpi->firmware,
- 					 RPI_FIRMWARE_GET_CLOCK_STATE,
--					 RPI_FIRMWARE_ARM_CLK_ID, &val);
-+					 data->id, &val);
- 	if (ret)
- 		return 0;
- 
-@@ -110,8 +113,7 @@ static unsigned long raspberrypi_fw_pll_get_rate(struct clk_hw *hw,
- 
- 	ret = raspberrypi_clock_property(rpi->firmware,
- 					 RPI_FIRMWARE_GET_CLOCK_RATE,
--					 RPI_FIRMWARE_ARM_CLK_ID,
--					 &val);
-+					 data->id, &val);
- 	if (ret)
- 		return ret;
- 
-@@ -129,8 +131,7 @@ static int raspberrypi_fw_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 
- 	ret = raspberrypi_clock_property(rpi->firmware,
- 					 RPI_FIRMWARE_SET_CLOCK_RATE,
--					 RPI_FIRMWARE_ARM_CLK_ID,
--					 &new_rate);
-+					 data->id, &new_rate);
- 	if (ret)
- 		dev_err_ratelimited(rpi->dev, "Failed to change %s frequency: %d",
- 				    clk_hw_get_name(hw), ret);
-@@ -183,6 +184,7 @@ static int raspberrypi_register_pllb(struct raspberrypi_clk *rpi)
- 	if (!data)
- 		return -ENOMEM;
- 	data->rpi = rpi;
-+	data->id = RPI_FIRMWARE_ARM_CLK_ID;
- 
- 	/* All of the PLLs derive from the external oscillator. */
- 	init.parent_names = (const char *[]){ "osc" };
-@@ -194,8 +196,7 @@ static int raspberrypi_register_pllb(struct raspberrypi_clk *rpi)
- 	/* Get min & max rates set by the firmware */
- 	ret = raspberrypi_clock_property(rpi->firmware,
- 					 RPI_FIRMWARE_GET_MIN_CLOCK_RATE,
--					 RPI_FIRMWARE_ARM_CLK_ID,
--					 &min_rate);
-+					 data->id, &min_rate);
- 	if (ret) {
- 		dev_err(rpi->dev, "Failed to get %s min freq: %d\n",
- 			init.name, ret);
-@@ -204,8 +205,7 @@ static int raspberrypi_register_pllb(struct raspberrypi_clk *rpi)
- 
- 	ret = raspberrypi_clock_property(rpi->firmware,
- 					 RPI_FIRMWARE_GET_MAX_CLOCK_RATE,
--					 RPI_FIRMWARE_ARM_CLK_ID,
--					 &max_rate);
-+					 data->id, &max_rate);
- 	if (ret) {
- 		dev_err(rpi->dev, "Failed to get %s max freq: %d\n",
- 			init.name, ret);
+ static const struct clk_ops raspberrypi_firmware_pll_clk_ops = {
+-	.is_prepared = raspberrypi_fw_pll_is_on,
++	.is_prepared = raspberrypi_fw_is_prepared,
+ 	.recalc_rate = raspberrypi_fw_pll_get_rate,
+ 	.set_rate = raspberrypi_fw_pll_set_rate,
+ 	.determine_rate = raspberrypi_pll_determine_rate,
 -- 
 git-series 0.9.1
