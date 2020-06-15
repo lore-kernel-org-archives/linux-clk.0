@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E38C433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 13:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 060E1C433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 13:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2976E207DD
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 13:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D743E207FF
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 13:33:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="de9XEMGH"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ryIzruox"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730525AbgFONdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 09:33:16 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:62202 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730490AbgFONdK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 09:33:10 -0400
+        id S1730565AbgFONd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 09:33:29 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:17348 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730554AbgFONd0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 09:33:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1592227989; x=1623763989;
+  t=1592228007; x=1623764007;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=OfjrgFqxC4YpgYvKJBrBidnChD7zWXKAufdDWAQ763k=;
-  b=de9XEMGHvtal+f9NwuMazl7T1IMzmB3g+XZrDyfaTWx2+en4qquySYIK
-   HwN6FtdmsX05bteoC3lQy///+ZCLQcwqFXAL3kIECGraBEH1G/mUXaoTw
-   o1ZsZYUhuXNnyqpmO+alKItq5sqxpRN5j+olDuyLedsVK0BM14tLs5eMt
-   XUHEIRVOT2YDU5f2eqWcu2dc7KGoqqunJkwTFJsygu8HpE/jNSiVgQxka
-   mXvaybK6yu4IgbSk2eAEMhj0+HLhQCWAf0kaio3yd0Xp3gdC5onxFbdWx
-   eDLUh5aeri/LYB5knV5pwXGvEj03f7yoOl05ytZDOolWRTVMKoHsLq8w/
-   g==;
-IronPort-SDR: pcP5YkJvnHWVnX/TRA42eDm6gLd1ZkLGpyrUo4FJYAxUFHrx413+TfexCnZZ+X2faq6KPoGc30
- yppo0ebu0z5po1MJ4K7f9n8dxQ3qujpiNfSeenxntW4ipTojBEKo99PUpVd7eZJZqRDOvoavYP
- cs3Rf4fNgtwaqhiBAsQYEn+I25P1N5H2mCBP/3Rlq7wexl4ua6Tv8SV7ph4/cHnVmV7l5mqv2w
- vKBqmPtloGi6HyP2wCwkhzaBbfdfSg22MgQV4JPfpKl3jYK2LZEf+xturQfcZ7E89PRDofz9T8
- iAU=
+  bh=PlGFyq8svdSYU3/J9GBx20Uos9sZx6kCHVGZBs4VueM=;
+  b=ryIzruoxdvo4LxfSPIsVsyBdwLUWcbaqY6iL0REX6eJbkx+xT5XQtdyu
+   lglQxAnD9F5uV/YcBKKjNYjEWok7JCXgq7ZdBD8criOySB8tBXxkRjlLi
+   AD2K0AXf6G5j2UTCmKgDF48gZEtx+eDtpLjARTlXfaYsdAV3COHiEgr3y
+   hXpCi0k8fFBfoqj5X0+prTpkxLOPXHOpFr+7GJm83qpFqdrT5baDn9thg
+   G2WBspa1rWU3h+BTLiH67fs+VglQvyAWblLbSv+00MSEBvkmzLzMGUswl
+   wu/yi/AfMwILp1xLUpCeA/KWoor0sFbkqZziFFWw7qdq+XX0CuvKqgHmB
+   A==;
+IronPort-SDR: kaHDv3vv/0hAZgV/lk/lK69WoEhZXNxanltD4raO1dtLWB4igQx2ohjw5opO8uz2uAOrPsa76f
+ VRHt8a49Ce9Y3juyfXoFFqT/fSwKR398aQU2svkiyvxVxkHmIz8b5AD/7+C5zDnwCxPF4gQM6T
+ 0xAqLr6kXkMcNH7z18xb59k2qJOwGVMO9INNN/jGeOp8hV9frYW6i1wwHSCRHwfOfblkthrixF
+ LPaGTh9UEOALgR7LEqfXH238x0zNVlE0JVIrmM3Ent6rKPK0doZBNn/vZ2ry7sroRK0DrZcex9
+ Ajs=
 X-IronPort-AV: E=Sophos;i="5.73,514,1583218800"; 
-   d="scan'208";a="83619456"
+   d="scan'208";a="79480529"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2020 06:33:08 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2020 06:33:26 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 15 Jun 2020 06:33:04 -0700
+ 15.1.1979.3; Mon, 15 Jun 2020 06:33:25 -0700
 Received: from soft-dev15.microsemi.net (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 15 Jun 2020 06:33:04 -0700
+ 15.1.1979.3 via Frontend Transport; Mon, 15 Jun 2020 06:33:22 -0700
 From:   Lars Povlsen <lars.povlsen@microchip.com>
 List-Id: <soc.lore.kernel.org>
 To:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
@@ -65,9 +65,9 @@ CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v3 03/10] arm64: dts: sparx5: Add basic cpu support
-Date:   Mon, 15 Jun 2020 15:32:35 +0200
-Message-ID: <20200615133242.24911-4-lars.povlsen@microchip.com>
+Subject: [PATCH v3 08/10] clk: sparx5: Add Sparx5 SoC DPLL clock driver
+Date:   Mon, 15 Jun 2020 15:32:40 +0200
+Message-ID: <20200615133242.24911-9-lars.povlsen@microchip.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200615133242.24911-1-lars.povlsen@microchip.com>
 References: <20200615133242.24911-1-lars.povlsen@microchip.com>
@@ -79,387 +79,345 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds the basic DT structure for the Microchip Sparx5 SoC, and the
-reference boards, pcb125, pcb134 and pcb135. The two latter have a
-NAND vs a eMMC centric variant (as a mount option).
+This adds a device driver for the Sparx5 SoC DPLL clock
 
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 ---
- MAINTAINERS                                   |   1 +
- arch/arm64/boot/dts/Makefile                  |   1 +
- arch/arm64/boot/dts/microchip/Makefile        |   4 +
- arch/arm64/boot/dts/microchip/sparx5.dtsi     | 142 ++++++++++++++++++
- .../boot/dts/microchip/sparx5_pcb125.dts      |  17 +++
- .../boot/dts/microchip/sparx5_pcb134.dts      |  17 +++
- .../dts/microchip/sparx5_pcb134_board.dtsi    |  10 ++
- .../boot/dts/microchip/sparx5_pcb134_emmc.dts |  17 +++
- .../boot/dts/microchip/sparx5_pcb135.dts      |  17 +++
- .../dts/microchip/sparx5_pcb135_board.dtsi    |  10 ++
- .../boot/dts/microchip/sparx5_pcb135_emmc.dts |  17 +++
- .../boot/dts/microchip/sparx5_pcb_common.dtsi |  15 ++
- 12 files changed, 268 insertions(+)
- create mode 100644 arch/arm64/boot/dts/microchip/Makefile
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts
- create mode 100644 arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-sparx5.c | 312 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 313 insertions(+)
+ create mode 100644 drivers/clk/clk-sparx5.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 13553b77ed4f7..20056e369e9e4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2117,6 +2117,7 @@ M:	Steen Hegelund <Steen.Hegelund@microchip.com>
- M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Supported
-+F:	arch/arm64/boot/dts/microchip/
- N:	sparx5
- 
- ARM/MIOA701 MACHINE SUPPORT
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index f19b762c008d8..9680a7f20c307 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -17,6 +17,7 @@ subdir-y += intel
- subdir-y += lg
- subdir-y += marvell
- subdir-y += mediatek
-+subdir-y += microchip
- subdir-y += nvidia
- subdir-y += qcom
- subdir-y += realtek
-diff --git a/arch/arm64/boot/dts/microchip/Makefile b/arch/arm64/boot/dts/microchip/Makefile
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index ca9af11d33913..da8fcf147eb13 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
+ obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
++obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
+ obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
+ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
+diff --git a/drivers/clk/clk-sparx5.c b/drivers/clk/clk-sparx5.c
 new file mode 100644
-index 0000000000000..c6e0313eea0f9
+index 0000000000000..c2e7aa0214ebd
 --- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/Makefile
-@@ -0,0 +1,4 @@
-+# SPDX-License-Identifier: GPL-2.0
-+dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb125.dtb
-+dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb134.dtb sparx5_pcb134_emmc.dtb
-+dtb-$(CONFIG_ARCH_SPARX5) += sparx5_pcb135.dtb sparx5_pcb135_emmc.dtb
-diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-new file mode 100644
-index 0000000000000..4a54b7d039167
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
-@@ -0,0 +1,142 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++++ b/drivers/clk/clk-sparx5.c
+@@ -0,0 +1,312 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
++ * Microchip Sparx5 SoC Clock driver.
++ *
++ * Copyright (c) 2019 Microchip Inc.
++ *
++ * Author: Lars Povlsen <lars.povlsen@microchip.com>
 + */
 +
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <linux/io.h>
++#include <linux/module.h>
++#include <linux/clk-provider.h>
++#include <linux/bitfield.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/slab.h>
++#include <linux/platform_device.h>
++#include <dt-bindings/clock/microchip,sparx5.h>
 +
-+/ {
-+	compatible = "microchip,sparx5";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <1>;
++#define PLL_DIV		GENMASK(7, 0)
++#define PLL_PRE_DIV	GENMASK(10, 8)
++#define PLL_ROT_DIR	BIT(11)
++#define PLL_ROT_SEL	GENMASK(13, 12)
++#define PLL_ROT_ENA	BIT(14)
++#define PLL_CLK_ENA	BIT(15)
 +
-+	aliases {
-+		serial0 = &uart0;
-+		serial1 = &uart1;
-+	};
++#define MAX_SEL 4
++#define MAX_PRE BIT(3)
 +
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
++static const u8 sel_rates[MAX_SEL] = { 0, 2*8, 2*4, 2*2 };
 +
-+	cpus {
-+		#address-cells = <2>;
-+		#size-cells = <0>;
-+		cpu-map {
-+			cluster0 {
-+				core0 {
-+					cpu = <&cpu0>;
-+				};
-+				core1 {
-+					cpu = <&cpu1>;
-+				};
-+			};
-+		};
-+		cpu0: cpu@0 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <0x0 0x0>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+		cpu1: cpu@1 {
-+			compatible = "arm,cortex-a53";
-+			device_type = "cpu";
-+			reg = <0x0 0x1>;
-+			enable-method = "psci";
-+			next-level-cache = <&L2_0>;
-+		};
-+		L2_0: l2-cache0 {
-+			compatible = "cache";
-+		};
-+	};
-+
-+	arm-pmu {
-+		compatible = "arm,cortex-a53-pmu";
-+		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&cpu0>, <&cpu1>;
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	clocks: clocks {
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+		ahb_clk: ahb-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <250000000>;
-+		};
-+		sys_clk: sys-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+			clock-frequency = <625000000>;
-+		};
-+	};
-+
-+	axi: axi@600000000 {
-+		compatible = "simple-bus";
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		gic: interrupt-controller@600300000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			interrupt-controller;
-+			reg = <0x6 0x00300000 0x10000>,	/* GIC Dist */
-+			      <0x6 0x00340000 0xc0000>,	/* GICR */
-+			      <0x6 0x00200000 0x2000>,	/* GICC */
-+			      <0x6 0x00210000 0x2000>,  /* GICV */
-+			      <0x6 0x00220000 0x2000>;  /* GICH */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		uart0: serial@600100000 {
-+			compatible = "ns16550a";
-+			reg = <0x6 0x00100000 0x20>;
-+			clocks = <&ahb_clk>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@600102000 {
-+			compatible = "ns16550a";
-+			reg = <0x6 0x00102000 0x20>;
-+			clocks = <&ahb_clk>;
-+			reg-io-width = <4>;
-+			reg-shift = <2>;
-+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			status = "disabled";
-+		};
-+
-+		timer1: timer@600105000 {
-+			compatible = "snps,dw-apb-timer";
-+			reg = <0x6 0x00105000 0x1000>;
-+			clocks = <&ahb_clk>;
-+			clock-names = "timer";
-+			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
-new file mode 100644
-index 0000000000000..d7f985f7ee020
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb125.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb_common.dtsi"
-+
-+/ {
-+	model = "Sparx5 PCB125 Reference Board";
-+	compatible = "microchip,sparx5-pcb125", "microchip,sparx5";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x10000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb134.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb134.dts
-new file mode 100644
-index 0000000000000..feee4e99ff57c
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb134.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb134_board.dtsi"
-+
-+/ {
-+	model = "Sparx5 PCB134 Reference Board (NAND)";
-+	compatible = "microchip,sparx5-pcb134", "microchip,sparx5";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x10000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
-new file mode 100644
-index 0000000000000..005cf6babb9b3
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb_common.dtsi"
-+
-+/{
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts
-new file mode 100644
-index 0000000000000..10081a66961bb
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb134_emmc.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb134_board.dtsi"
-+
-+/ {
-+	model = "Sparx5 PCB134 Reference Board (eMMC enabled)";
-+	compatible = "microchip,sparx5-pcb134", "microchip,sparx5";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x10000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb135.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb135.dts
-new file mode 100644
-index 0000000000000..20e409a9be196
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb135.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb135_board.dtsi"
-+
-+/ {
-+	model = "Sparx5 PCB135 Reference Board (NAND)";
-+	compatible = "microchip,sparx5-pcb135", "microchip,sparx5";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x10000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
-new file mode 100644
-index 0000000000000..005cf6babb9b3
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
-@@ -0,0 +1,10 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb_common.dtsi"
-+
-+/{
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts b/arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts
-new file mode 100644
-index 0000000000000..741f0e12260e5
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb135_emmc.dts
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5_pcb135_board.dtsi"
-+
-+/ {
-+	model = "Sparx5 PCB135 Reference Board (eMMC enabled)";
-+	compatible = "microchip,sparx5-pcb135", "microchip,sparx5";
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x00000000 0x10000000>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi
-new file mode 100644
-index 0000000000000..1f99d0db1284f
---- /dev/null
-+++ b/arch/arm64/boot/dts/microchip/sparx5_pcb_common.dtsi
-@@ -0,0 +1,15 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2020 Microchip Technology Inc. and its subsidiaries.
-+ */
-+
-+/dts-v1/;
-+#include "sparx5.dtsi"
-+
-+&uart0 {
-+	status = "okay";
++static const char *clk_names[N_CLOCKS] = {
++	"core", "ddr", "cpu2", "arm2",
++	"aux1", "aux2", "aux3", "aux4",
++	"synce",
 +};
 +
-+&uart1 {
-+	status = "okay";
++struct s5_hw_clk {
++	struct clk_hw hw;
++	void __iomem *reg;
++	int index;
 +};
++
++struct s5_clk_data {
++	void __iomem *base;
++	struct s5_hw_clk s5_hw[N_CLOCKS];
++};
++
++struct s5_pll_conf {
++	int freq;
++	u8 div;
++	bool rot_ena;
++	u8 rot_sel;
++	u8 rot_dir;
++	u8 pre_div;
++};
++
++#define to_s5_pll(hw) container_of(hw, struct s5_hw_clk, hw)
++
++static unsigned long s5_calc_freq(unsigned long parent_rate,
++				  const struct s5_pll_conf *conf)
++{
++	unsigned long rate = parent_rate / conf->div;
++
++	if (conf->rot_ena) {
++		int sign = conf->rot_dir ? -1 : 1;
++		int divt = sel_rates[conf->rot_sel] * (1 + conf->pre_div);
++		int divb = divt + sign;
++
++		rate = mult_frac(rate, divt, divb);
++		rate = roundup(rate, 1000);
++	}
++
++	return rate;
++}
++
++static void s5_search_fractional(unsigned long rate,
++				 unsigned long parent_rate,
++				 int div,
++				 struct s5_pll_conf *conf)
++{
++	struct s5_pll_conf best;
++	ulong cur_offset, best_offset = rate;
++	int d, i, j;
++
++	memset(conf, 0, sizeof(*conf));
++	conf->div = div;
++	conf->rot_ena = 1;	/* Fractional rate */
++
++	for (d = 0; best_offset > 0 && d <= 1 ; d++) {
++		conf->rot_dir = !!d;
++		for (i = 0; best_offset > 0 && i < MAX_PRE; i++) {
++			conf->pre_div = i;
++			for (j = 1; best_offset > 0 && j < MAX_SEL; j++) {
++				conf->rot_sel = j;
++				conf->freq = s5_calc_freq(parent_rate, conf);
++				cur_offset = abs(rate - conf->freq);
++				if (cur_offset < best_offset) {
++					best_offset = cur_offset;
++					best = *conf;
++				}
++			}
++		}
++	}
++
++	/* Best match */
++	*conf = best;
++}
++
++static unsigned long s5_calc_params(unsigned long rate,
++				    unsigned long parent_rate,
++				    struct s5_pll_conf *conf)
++{
++	if (parent_rate % rate) {
++		struct s5_pll_conf alt1, alt2;
++		int div;
++
++		div = DIV_ROUND_CLOSEST_ULL(parent_rate, rate);
++		s5_search_fractional(rate, parent_rate, div, &alt1);
++
++		/* Straight match? */
++		if (alt1.freq == rate) {
++			*conf = alt1;
++		} else {
++			/* Try without rounding divider */
++			div = parent_rate / rate;
++			if (div != alt1.div) {
++				s5_search_fractional(rate, parent_rate, div,
++						     &alt2);
++				/* Select the better match */
++				if (abs(rate - alt1.freq) <
++				    abs(rate - alt2.freq))
++					*conf = alt1;
++				else
++					*conf = alt2;
++			}
++		}
++	} else {
++		/* Straight fit */
++		memset(conf, 0, sizeof(*conf));
++		conf->div = parent_rate / rate;
++	}
++
++	return conf->freq;
++}
++
++static int s5_pll_enable(struct clk_hw *hw)
++{
++	struct s5_hw_clk *pll = to_s5_pll(hw);
++	u32 val = readl(pll->reg);
++
++	val |= PLL_CLK_ENA;
++	writel(val, pll->reg);
++
++	return 0;
++}
++
++static void s5_pll_disable(struct clk_hw *hw)
++{
++	struct s5_hw_clk *pll = to_s5_pll(hw);
++	u32 val = readl(pll->reg);
++
++	val &= ~PLL_CLK_ENA;
++	writel(val, pll->reg);
++}
++
++static int s5_pll_set_rate(struct clk_hw *hw,
++			   unsigned long rate,
++			   unsigned long parent_rate)
++{
++	struct s5_hw_clk *pll = to_s5_pll(hw);
++	struct s5_pll_conf conf;
++	unsigned long eff_rate;
++	u32 val;
++
++	eff_rate = s5_calc_params(rate, parent_rate, &conf);
++	if (eff_rate != rate)
++		return -EOPNOTSUPP;
++
++	val = readl(pll->reg) & PLL_CLK_ENA;
++	val |= FIELD_PREP(PLL_DIV, conf.div);
++	if (conf.rot_ena) {
++		val |= PLL_ROT_ENA;
++		val |= FIELD_PREP(PLL_ROT_SEL, conf.rot_sel);
++		val |= FIELD_PREP(PLL_PRE_DIV, conf.pre_div);
++		if (conf.rot_dir)
++			val |= PLL_ROT_DIR;
++	}
++	writel(val, pll->reg);
++
++	return 0;
++}
++
++static unsigned long s5_pll_recalc_rate(struct clk_hw *hw,
++					unsigned long parent_rate)
++{
++	struct s5_hw_clk *pll = to_s5_pll(hw);
++	struct s5_pll_conf conf;
++	u32 val;
++
++	val = readl(pll->reg);
++
++	if (val & PLL_CLK_ENA) {
++		conf.div     = FIELD_GET(PLL_DIV, val);
++		conf.pre_div = FIELD_GET(PLL_PRE_DIV, val);
++		conf.rot_ena = FIELD_GET(PLL_ROT_ENA, val);
++		conf.rot_dir = FIELD_GET(PLL_ROT_DIR, val);
++		conf.rot_sel = FIELD_GET(PLL_ROT_SEL, val);
++
++		conf.freq = s5_calc_freq(parent_rate, &conf);
++	} else
++		conf.freq = 0;
++
++	return conf.freq;
++}
++
++static long s5_pll_round_rate(struct clk_hw *hw, unsigned long rate,
++			      unsigned long *parent_rate)
++{
++	struct s5_pll_conf conf;
++
++	return s5_calc_params(rate, *parent_rate, &conf);
++}
++
++static const struct clk_ops s5_pll_ops = {
++	.enable		= s5_pll_enable,
++	.disable	= s5_pll_disable,
++	.set_rate	= s5_pll_set_rate,
++	.round_rate	= s5_pll_round_rate,
++	.recalc_rate	= s5_pll_recalc_rate,
++};
++
++static struct clk_hw *s5_clk_hw_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct s5_clk_data *s5_clk = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx >= N_CLOCKS) {
++		pr_err("%s: invalid index %u\n", __func__, idx);
++		return ERR_PTR(-EINVAL);
++	}
++
++	return &s5_clk->s5_hw[idx].hw;
++}
++
++static int s5_clk_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	int i, ret;
++	struct s5_clk_data *s5_clk;
++	const char *parent_name;
++	struct clk_init_data init = {
++		.ops = &s5_pll_ops,
++		.parent_names = &parent_name,
++		.num_parents = 1,
++	};
++
++	s5_clk = devm_kzalloc(dev, sizeof(*s5_clk), GFP_KERNEL);
++	if (!s5_clk)
++		return -ENOMEM;
++
++	s5_clk->base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(s5_clk->base))
++		return PTR_ERR(s5_clk->base);
++
++	parent_name = of_clk_get_parent_name(np, 0);
++	if (!parent_name) {
++		dev_err(dev, "%pOFn: missing parent clock\n", np);
++		return -EINVAL;
++	}
++
++	for (i = 0; i < N_CLOCKS; i++) {
++		struct s5_hw_clk *s5_hw = &s5_clk->s5_hw[i];
++
++		init.name = clk_names[i];
++		s5_hw->index = i;
++		s5_hw->reg = s5_clk->base + (i * sizeof(u32));
++		s5_hw->hw.init = &init;
++		ret = devm_clk_hw_register(dev, &s5_hw->hw);
++		if (ret) {
++			dev_err(dev, "failed to register %s clock\n",
++				init.name);
++			return ret;
++		}
++	}
++
++	return of_clk_add_hw_provider(np, s5_clk_hw_get, s5_clk);
++}
++
++static int s5_clk_remove(struct platform_device *pdev)
++{
++	of_clk_del_provider(pdev->dev.of_node);
++
++	return 0;
++}
++
++static const struct of_device_id s5_clk_dt_ids[] = {
++	{ .compatible = "microchip,sparx5-dpll", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, s5_clk_dt_ids);
++
++static struct platform_driver s5_clk_driver = {
++	.probe  = s5_clk_probe,
++	.remove = s5_clk_remove,
++	.driver = {
++		.name = "sparx5-clk",
++		.of_match_table = s5_clk_dt_ids,
++	},
++};
++builtin_platform_driver(s5_clk_driver);
 -- 
 2.27.0
 
