@@ -2,93 +2,96 @@ Return-Path: <SRS0=Um2U=74=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A70C5C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 16:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA626C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 16:21:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 78D8E2078A
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 16:20:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592238005;
-	bh=zFjCTaLeN85KqyfWkg+7aFEmJdjbAAay09n1tlUYszI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=navwJzlcu9B4rO5PUHKfifvTuClhantOHUiSjwSTYb4+MkyOIfUmcVbR6S7/vVY3j
-	 m7OkVW5rOd1HnFb0fItw7UBV5pLM1n5eawzhoj1VCFnSWFbHK6UtxXQ8NF9Hpgposh
-	 d3COpOJdAPwVmvKkHSxqlK96MSXSAme/nVShr+MU=
+	by mail.kernel.org (Postfix) with ESMTP id 90D8C207D4
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 16:21:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730773AbgFOQUF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 12:20:05 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:35164 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729637AbgFOQUD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 12:20:03 -0400
-Received: by mail-il1-f195.google.com with SMTP id l6so15896349ilo.2;
-        Mon, 15 Jun 2020 09:20:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=uvbped+Dn13FUPq8GHew9vUB2jQNtfi2nsvSR22TQ8s=;
-        b=O8WwzAdrGJSmRW4kO6ymUFm+5981B07F21evWCILK+R0Zc8iicKlKf5lSshUOtfKu2
-         a0SQW3edpRj3hfWnxb2ujFk/P77byVq9AR6NOiO8furkCUXA57kFVAyAuFsaXIr9sGNN
-         Hltfj4xW+5rs9z+bw0irA9KC79soHQs8bzz1tlsQ3yEzMnI304bj3XKDiZZ0EaktOIFj
-         eKM6yW05BL7H8zyYOGmna9/H5aQ4UZqbaCMdoTCd6OuGKM3DKlEEzluZzkkuiHU3XC2Q
-         +4UIHDBW4Ft8pmCgoj9Ehd34xfuZVKootVwU9vs5xz0LaC2UXZTnv4z5wnch2z9oQVf1
-         MKhQ==
-X-Gm-Message-State: AOAM532f58MD3dEmqFEkpMudDhMA7DTEIcL6GkwDKeIqfW5YejhPdG34
-        UTuD7miZToOrMZwjdPQCzQ==
-X-Google-Smtp-Source: ABdhPJyWS/sstoBhKxILy/hcjEoOyepMM2wljkSKlbRqyuvaRgoPm9BvD7ypFBgSLyiSfGmJvM3WIg==
-X-Received: by 2002:a92:dc89:: with SMTP id c9mr27936223iln.238.1592238002603;
-        Mon, 15 Jun 2020 09:20:02 -0700 (PDT)
-Received: from xps15 ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id i10sm8149137ilp.28.2020.06.15.09.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 09:20:02 -0700 (PDT)
-Received: (nullmailer pid 1884267 invoked by uid 1000);
-        Mon, 15 Jun 2020 16:20:00 -0000
-Date:   Mon, 15 Jun 2020 10:20:00 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Linux-imx@nxp.com, festevam@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
-        s.hauer@pengutronix.de, shawnguo@kernel.org,
-        mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, robh+dt@kernel.org
-Subject: Re: [PATCH V2] dt-bindings: clock: Convert imx7ulp clock to
- json-schema
-Message-ID: <20200615162000.GA1884157@bogus>
-References: <1591234387-15059-1-git-send-email-Anson.Huang@nxp.com>
+        id S1730842AbgFOQVd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 12:21:33 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53326 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730569AbgFOQVd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 15 Jun 2020 12:21:33 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0317CAE61;
+        Mon, 15 Jun 2020 16:21:34 +0000 (UTC)
+Message-ID: <53b387b2754ef837b9fb2b02e2032d49553d7d88.camel@suse.de>
+Subject: Re: [PATCH v4 2/3] clk: bcm: Add BCM2711 DVP driver
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Date:   Mon, 15 Jun 2020 18:21:29 +0200
+In-Reply-To: <bb60d97fc76b61c2eabef5a02ebd664c0f57ede0.1591867332.git-series.maxime@cerno.tech>
+References: <cover.4c4625a8e076f3163b800b3d8986b282ee98d908.1591867332.git-series.maxime@cerno.tech>
+         <bb60d97fc76b61c2eabef5a02ebd664c0f57ede0.1591867332.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-lv0HnO+bl/4v3cTYOsCP"
+User-Agent: Evolution 3.36.3 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1591234387-15059-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 04 Jun 2020 09:33:07 +0800, Anson Huang wrote:
-> Convert the i.MX7ULP clock binding to DT schema format using json-schema,
-> the original binding doc is actually for two clock modules(SCG and PCC),
-> so split it to two binding docs, and the MPLL(mipi PLL) is NOT supposed
-> to be in clock module, so remove it from binding doc as well.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> Changes since V1:
-> 	- add "additionalProperties: false".
-> ---
->  .../devicetree/bindings/clock/imx7ulp-clock.txt    | 103 ------------------
->  .../bindings/clock/imx7ulp-pcc-clock.yaml          | 121 +++++++++++++++++++++
->  .../bindings/clock/imx7ulp-scg-clock.yaml          |  99 +++++++++++++++++
->  3 files changed, 220 insertions(+), 103 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-pcc-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-scg-clock.yaml
-> 
 
-Applied, thanks!
+--=-lv0HnO+bl/4v3cTYOsCP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, 2020-06-11 at 11:23 +0200, Maxime Ripard wrote:
+> The HDMI block has a block that controls clocks and reset signals to the
+> HDMI0 and HDMI1 controllers.
+>=20
+> Let's expose that through a clock driver implementing a clock and reset
+> provider.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
+
+Reviewed-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+
+Regards,
+Nicolas
+
+
+--=-lv0HnO+bl/4v3cTYOsCP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl7noAkACgkQlfZmHno8
+x/5p6Af8ChXihgt4rnC/MbdwQfP/MnNvS5Lzj0o0OUcJ6MedH4wdRT9EbkG2mIbA
+3l7g+YJKn+TrPvGberRpV3/j6YnnjFZeLwC6GTkIKjwo8mkNmjH4U5nu7WSzimm6
+lq87Lwo+Rg76vL6FGjJ0nLQ3W2ebJGMqTInr5JSR0WLePQgLjGkEyCwNvtPNTDiw
+wcG5GmimQtjgCNqxoyaMn5yHuBKlB5Izbo+1R4AegSiyf0nailXAO5lqFC/LD695
+7aAdy2dLjqnktBq1/yBr0eUE6WIH39YfM/Lul5hHFMBWjag7XsDyzIzPWFaG2TU+
+J7V/jydOsVs/cx3/RdcSYgzdZsxMlw==
+=gQcw
+-----END PGP SIGNATURE-----
+
+--=-lv0HnO+bl/4v3cTYOsCP--
+
