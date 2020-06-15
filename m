@@ -2,148 +2,121 @@ Return-Path: <SRS0=Um2U=74=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C492EC433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37279C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A33EE2067B
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163D320738
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="rf/sB6ar";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oM+16xZp"
+	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="0kZKh1Sb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729534AbgFOInQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:43:16 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:33837 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728852AbgFOIlZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:25 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id C6964580157;
-        Mon, 15 Jun 2020 04:41:23 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=xWZqdsHt+6XnG
-        lVmmHecqtGqe51QGLTcTPJqY9E6BXQ=; b=rf/sB6arnc1rND9DFy0oopvGGDlOx
-        9R4Evuyf9zSzrEqCXE3gMPmarxr2ADeEy96zP9j6UF77BUF0xsuQCkJrM1t4gpMX
-        JutrSVIyn/spmcqkV4lNZvWWMou3ZvTc/HqqJilkelAgtnMkFuiiZo+ZXIUinj7x
-        wzv7BHWS4wFFrrNjSaeBq/LZvvtjzT62JoDgPQgEFT4pF7ghlELOwx+x/2IH6qpd
-        Kgdvfycq8sSy9s6pWrhO/gD89ygdS/G7eGXsM467Np4Kpw6TLgTheUgsxxgg7VDS
-        UJWV9pEJmQ0jP8xJCQYpF8cEhePnLOIfobnr7mxp5Q/gntKVf/DkX59RQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=xWZqdsHt+6XnGlVmmHecqtGqe51QGLTcTPJqY9E6BXQ=; b=oM+16xZp
-        T0R3Uk1tSSYAhpivxYh0eamwxEVhI2QDzAQkxt82csqPBPS2FuePDoxP3ksQpvVT
-        PJ34BidMOEJvTX/NW756o3VjrJsVh/UfhQOIK/SFuF3dF5szgzmdMxJuIFU4Nz9y
-        ui3epPrNL0ToRgQKuqIDv7oSS+gwjVte/aiytIiu8lQ02OLbXXrxVJm9qchxLouC
-        L1XFfpCncBpY+vMED9wRP+fEKHYnjrvjVbILRdpp34nZBhtx+hARHsz2O/iICOyL
-        xt5eU3ZimB3q2MQD6zpUPM8XQnS0x3tO2ph0LdZr1qb/uLKh2eDTw3KD1CvPe32c
-        YCSBU+UKBBiRrA==
-X-ME-Sender: <xms:MzTnXgdCc6IdKnIEaqKKL_i6S-e1sli8WddaLPbnTMk-yfKUfR2m6A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeikedgtdeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
-    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:MzTnXiODz_AwCfZteVWHNfhM5LcpCIWYh2vRnBn1E5NPomqYcLZaSQ>
-    <xmx:MzTnXhig0C0dMu5u5uC8U1_yYbCXq4JD9rqk4jZZTs7YUKyeVQPPAw>
-    <xmx:MzTnXl8mrZyaenU93X5IGKDYnGUOWk_XfLjB40OKo7cPhR19I6ARUw>
-    <xmx:MzTnXsF9Fp7jW6TKW7vQNi_nfGTLb_OTKoeeY7PfFHn_RLjyejVxkw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 5C5253280063;
-        Mon, 15 Jun 2020 04:41:23 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v5 02/27] dt-bindings: clock: Add a binding for the RPi Firmware clocks
-Date:   Mon, 15 Jun 2020 10:40:42 +0200
-Message-Id: <f6105207e7ef5a5ea8d7a1774faf989d341a25f5.1592210452.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.26.2
-In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
+        id S1729171AbgFOIuj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 04:50:39 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37884 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728496AbgFOIuj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:50:39 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 05F8lwYA021890;
+        Mon, 15 Jun 2020 10:49:53 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=STMicroelectronics;
+ bh=VJv/B5BqqCzIrb2NhvcIyxQJgblrWvMESlW9XtRoNEA=;
+ b=0kZKh1SbuXWQB7p9qxsFxBRqM5mfwfpwfQppSZHbAi7aGlAxJMn6HF+ePByVUQeWhP5n
+ KHEOUmeg4EKm8z+vwmjt3IOBgkxpIr2YfeCVj8ChuRaXXCTBuIspiTs1/dAn8wURSGv3
+ Y6blL4F1iGve6mV/JSA2Pyx58BOe+zFpXoYwH56D9UtIt/jTmZ8DZ9aR36vl+fmDipKB
+ R2v0LPU2N1A8tx4U+bnCxdr1YQs9SwTSs/TW9vbPuAGsUovU8eMdffUak45+mjdEPJwW
+ S7cPK9U9RSfiHWTSauFsD/Mg20ZYaYQu+bkEKaSI52QL+y3Vo08SpxeK1fP9HowPDr67 wQ== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 31mnph0ecj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 15 Jun 2020 10:49:53 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 76ACA10002A;
+        Mon, 15 Jun 2020 10:49:45 +0200 (CEST)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 4485B2BE225;
+        Mon, 15 Jun 2020 10:49:45 +0200 (CEST)
+Received: from lmecxl0912.tpe.st.com (10.75.127.51) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 15 Jun
+ 2020 10:49:44 +0200
+Subject: Re: [PATCH v6 0/9] Enable ili9341 and l3gd20 on stm32f429-disco
+To:     <dillon.minfei@gmail.com>, <robh+dt@kernel.org>,
+        <p.zabel@pengutronix.de>, <mcoquelin.stm32@gmail.com>,
+        <thierry.reding@gmail.com>, <sam@ravnborg.org>, <airlied@linux.ie>,
+        <daniel@ffwll.ch>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <andy.shevchenko@gmail.com>, <noralf@tronnes.org>,
+        <linus.walleij@linaro.org>, <broonie@kernel.org>
+CC:     <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-spi@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-clk@vger.kernel.org>,
+        <dillonhua@gmail.com>
+References: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <bfb78ded-11bf-e9e3-4211-5fa86c6e0f0f@st.com>
+Date:   Mon, 15 Jun 2020 10:49:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1590564453-24499-1-git-send-email-dillon.minfei@gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.51]
+X-ClientProxiedBy: SFHDAG4NODE3.st.com (10.75.127.12) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.216,18.0.687
+ definitions=2020-06-15_01:2020-06-15,2020-06-15 signatures=0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The firmware running on the RPi VideoCore can be used to discover and
-change the various clocks running in the BCM2711. Since devices will
-need to use them through the DT, let's add a pretty simple binding.
+Hi Dillon,
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org
-Cc: devicetree@vger.kernel.org
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Reviewed-by: Rob Herring <robh+dt@kernel.org>
-Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
----
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+On 5/27/20 9:27 AM, dillon.minfei@gmail.com wrote:
+> From: dillon min <dillon.minfei@gmail.com>
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-index cec540c052b6..b48ed875eb8e 100644
---- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-+++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-@@ -22,6 +22,25 @@ properties:
-       Phandle to the firmware device's Mailbox.
-       (See: ../mailbox/mailbox.txt for more information)
- 
-+  clocks:
-+    type: object
-+
-+    properties:
-+      compatible:
-+        const: raspberrypi,firmware-clocks
-+
-+      "#clock-cells":
-+        const: 1
-+        description: >
-+          The argument is the ID of the clocks contained by the
-+          firmware messages.
-+
-+    required:
-+      - compatible
-+      - "#clock-cells"
-+
-+    additionalProperties: false
-+
- required:
-   - compatible
-   - mboxes
-@@ -31,5 +50,10 @@ examples:
-     firmware {
-         compatible = "raspberrypi,bcm2835-firmware", "simple-bus";
-         mboxes = <&mailbox>;
-+
-+        firmware_clocks: clocks {
-+            compatible = "raspberrypi,firmware-clocks";
-+            #clock-cells = <1>;
-+        };
-     };
- ...
--- 
-git-series 0.9.1
+...
+
+> dillon min (9):
+>    ARM: dts: stm32: Add dma config for spi5
+>    ARM: dts: stm32: Add pin map for ltdc & spi5 on stm32f429-disco board
+>    ARM: dts: stm32: enable ltdc binding with ili9341, gyro l3gd20 on
+>      stm32429-disco board
+>    dt-bindings: display: panel: Add ilitek ili9341 panel bindings
+>    clk: stm32: Fix stm32f429's ltdc driver hang in set clock rate
+>    clk: stm32: Fix ltdc's clock turn off by clk_disable_unused() after
+>      kernel     startup
+>    drm/panel: Add ilitek ili9341 panel driver
+>    spi: stm32: Add 'SPI_SIMPLEX_RX', 'SPI_3WIRE_RX' support for stm32f4
+>    spi: flags 'SPI_CONTROLLER_MUST_RX' and 'SPI_CONTROLLER_MUST_TX' can't
+>      be     coexit with 'SPI_3WIRE' mode
+> 
+>   .../bindings/display/panel/ilitek,ili9341.yaml     |   69 ++
+>   arch/arm/boot/dts/stm32f4-pinctrl.dtsi             |   67 +
+>   arch/arm/boot/dts/stm32f429-disco.dts              |   48 +
+>   arch/arm/boot/dts/stm32f429.dtsi                   |    3 +
+>   drivers/clk/clk-stm32f4.c                          |    7 +-
+>   drivers/gpu/drm/panel/Kconfig                      |   12 +
+>   drivers/gpu/drm/panel/Makefile                     |    1 +
+>   drivers/gpu/drm/panel/panel-ilitek-ili9341.c       | 1288 ++++++++++++++++++++
+>   drivers/spi/spi-stm32.c                            |   19 +-
+>   drivers/spi/spi.c                                  |    3 +-
+>   10 files changed, 1508 insertions(+), 9 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/display/panel/ilitek,ili9341.yaml
+>   create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9341.c
+> 
+
+DT patches (patch 1 to 3) applied on stm32-next. I assume that binding 
+one will go with drm/panel driver patch.
+
+Thanks
+Alex
