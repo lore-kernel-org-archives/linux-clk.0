@@ -7,64 +7,62 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 823B8C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA753C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:41:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2152053B
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA18A2053B
+	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 08:41:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="HgHswBun";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="leTiVQkd"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="fiDYs8Mv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nsRGIJ0N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbgFOIlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 04:41:25 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:40995 "EHLO
+        id S1729193AbgFOIlg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 15 Jun 2020 04:41:36 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:36183 "EHLO
         new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728593AbgFOIlY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:24 -0400
+        by vger.kernel.org with ESMTP id S1729177AbgFOIlf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 04:41:35 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id A8281580152;
-        Mon, 15 Jun 2020 04:41:22 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:22 -0400
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3F04458014B;
+        Mon, 15 Jun 2020 04:41:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 15 Jun 2020 04:41:33 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=ahwKxryje7yYY
-        JgNWO5F+i8OgzYhgmjWgkqak5/geXk=; b=HgHswBuntG9g6N2TV/djTiR4LPhfg
-        QtZlJ4FXQRZbTRGdWcBenTvZDFNVSpHubUISRkW0i2aHxYWu/2F5O9muEng6hT5t
-        U4veHv3Q01VrVfvPi6ljeVUSHr04HLNbGgz8IhzAKbPXLTWFDBqow7UQEaway8/V
-        AJ6pcS3MQBxaofL9Mh4E9RorFTdTdzPy5LG2C0OdSYO3rRxJT5O2QheyjAK7T1CH
-        51Mj4RFt3B1xvMSokDuVpSi+p5QCUKv+bwr1ercvaGJ4mCYhCRJtlQ9bYONsoxp+
-        AUHZ/9g3SNB52i2FmS6yGLzqKlOammVKZDIgPFmIbc7e2HjoOq2wC6f1A==
+        :mime-version:content-transfer-encoding; s=fm3; bh=sS6BwBFUiZXRU
+        4wm/8LzjilpwHkbk9SalRSRG+6ui94=; b=fiDYs8MvSbDQG2KQXX6FoEXJqQJ4N
+        DnIwo19eH8PZsrSi0YBTtAs/bwEMArJ2JX1EH8JBkK6vxJ4T/HB9c4Xyyq4MEq8+
+        UO5KssK/C/5j3LAQZ4lFmdsyUlwiWWoImmytvi7VozhdTljWobJ/OrIEr4+QZIwr
+        J+rDPCFrHMbdUl9zhl4UBeoIb0RqZkWJTDeOEbXcl3oc7ylpgYVjynCldvT0KWNW
+        wa7RoeMDpdbQHScWjGMx62xQJiX5QjsXzKCWkm86q8guLg/06gjZv2DeGMLkVbOL
+        O0TVpsJHde4IT+Uw0evYGyuJQUIUHCQJhv2lS5NmeDdSd1MDbmyXMuU2A==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm3; bh=ahwKxryje7yYYJgNWO5F+i8OgzYhgmjWgkqak5/geXk=; b=leTiVQkd
-        xEScMXIxp0yiJnxzcsHBf0ztX9tTzQfasomtNnWv2AdeQHcbp+TIzMkRky9VvrBr
-        pRmNkeuYWtb+17sbnV4m+WAYBcL1cinLvbaeGVnV8qGLempx5BPzIz97mNh6mqfC
-        7XEp1HDs2x3cL9Dd0V03nK8qPvYE6fpC++tpUgWr63lWTqSZk2AllLTroVvZ3xF8
-        z4mrai9zglmu/KViUPpVZvT4qQRhlpSRYWGZFTBklV8SN5atHX93YR9x7Zx+du02
-        FOm3pvjwhceDCZN8RpIblpnX2pUMEhF6wUKHLniltqDrzMgVPndKVPfRTwxGNT7z
-        E+BojTp61F9+sA==
-X-ME-Sender: <xms:MjTnXsx1H_uh_-I7UjuZJTo2JraW0bRZcUmJ2H1JcYoawI5lNSggmw>
+        fm3; bh=sS6BwBFUiZXRU4wm/8LzjilpwHkbk9SalRSRG+6ui94=; b=nsRGIJ0N
+        QFDKi2WxjqG/acAnjyYj70l3B4r2mRfcDcHfEYVFycj4qhCV8zYKIfb4vmu8zr/K
+        cX2NhDkyOWlH1YTJjcmWEkZYVmjaYJlvEDimwseRTfhy1YH8kgvcDPIISSXci5sA
+        R6bte7gz8LX1+Bu1imqXG2eguTDbNEZGnCq5/vb3CND4LGerzPPH5c7KbRaiupM0
+        Lpje8PfUZcMwp7TBrnZO9GhatdWbhP50asb6NqZITKL8Ys2Xk91tlIZJwAnwDPUN
+        gG0diqVbzU8tZOZLK6dDQQqlPBIpKp7GAEYyIkW3IKQlQ4crs7bJ5HvubX2Wskgj
+        vjIe8AbglfiqGQ==
+X-ME-Sender: <xms:PTTnXujS12lDjgK_VzP8Zn6Xdyb-o6sW8YXzph8qp_yD7QNlU8nw1w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudeikedgtdeiucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    govehorghsthgrlhdqhfeguddvqddtvdculdduhedtmdenucfjughrpefhvffufffkofgj
-    fhgggfestdekredtredttdenucfhrhhomhepofgrgihimhgvucftihhprghrugcuoehmrg
-    igihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtthgvrhhnpeevjeeijedtvefg
-    fffgjeeugffguedtleetkeegteeufedtuddttdfgfffhgfeuffenucffohhmrghinhepug
-    gvvhhitggvthhrvggvrdhorhhgnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvg
-    hrnhhordhtvggthh
-X-ME-Proxy: <xmx:MjTnXgSMQPhQko92Vko8E0GdNWk8AwJYGUEUKh3l7ASwya00DWaqCg>
-    <xmx:MjTnXuWNVzTnz39zFri7EIUlLodxMSnJm8QrBdX595XHYb491fQmyQ>
-    <xmx:MjTnXqiUwpyVIq_tTU7vjUQ9bVu5Ek04iRq5DcdaaMTyQdnrlsWy7w>
-    <xmx:MjTnXi5KcgSF2wnUI-z5wmuGE2eb6t_BLfUU8DIJyvzgOfA9Ss5icw>
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepvdekleevfeffkeejhfffueelteelfeduieefheduudfggffhhfffheevveeh
+    hedvnecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgepieenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:PTTnXvBYN96YTQzpThqGDJuorYh2xorHfxfvwk7ZdiAIb5pucSUKaQ>
+    <xmx:PTTnXmHWGGyocwr_EtvnIk6FSkPDOmuO37s8Axz_cBdbVLfFl2R92Q>
+    <xmx:PTTnXnTZfVt8calBLTgKmo2HapQmH7UGd8kgKGl_SN9yDb_CugKbEQ>
+    <xmx:PTTnXjc_TFxP9Ke_g9HKfymok_7uUrPKeJXW7e0WYKaJTL67vyYFyA>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C26CD30614FA;
-        Mon, 15 Jun 2020 04:41:21 -0400 (EDT)
+        by mail.messagingengine.com (Postfix) with ESMTPA id D04C23280060;
+        Mon, 15 Jun 2020 04:41:32 -0400 (EDT)
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -76,11 +74,10 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH v5 01/27] dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML
-Date:   Mon, 15 Jun 2020 10:40:41 +0200
-Message-Id: <5bc0b9be8544b07300fccab4d4f26e5e5d8e62b2.1592210452.git-series.maxime@cerno.tech>
+        Maxime Ripard <maxime@cerno.tech>
+Subject: [PATCH v5 08/27] clk: bcm: rpi: Make sure pllb_arm is removed
+Date:   Mon, 15 Jun 2020 10:40:48 +0200
+Message-Id: <34254ed1556614658e5dad5cca4cf4fe617df7fc.1592210452.git-series.maxime@cerno.tech>
 X-Mailer: git-send-email 2.26.2
 In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
 References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
@@ -91,81 +88,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+The pllb_arm clock was created at probe time, but was never removed if
+something went wrong later in probe, or if the driver was ever removed from
+the system.
 
-Convert the Raspberry Pi BCM2835 firmware binding document to YAML.
-Verified with dt_binding_check and dtbs_check.
+Now that we are using clk_hw_register(), we can just use its managed variant
+to take care of that for us.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 ---
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt  | 14 --------------
- Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml | 35 +++++++++++++++++++++++++++++++++++
- 2 files changed, 35 insertions(+), 14 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
+ drivers/clk/bcm/clk-raspberrypi.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
-deleted file mode 100644
-index 6824b3180ffb..000000000000
---- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.txt
-+++ /dev/null
-@@ -1,14 +0,0 @@
--Raspberry Pi VideoCore firmware driver
--
--Required properties:
--
--- compatible:		Should be "raspberrypi,bcm2835-firmware"
--- mboxes:		Phandle to the firmware device's Mailbox.
--			  (See: ../mailbox/mailbox.txt for more information)
--
--Example:
--
--firmware {
--	compatible = "raspberrypi,bcm2835-firmware";
--	mboxes = <&mailbox>;
--};
-diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-new file mode 100644
-index 000000000000..cec540c052b6
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-@@ -0,0 +1,35 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/bcm/raspberrypi,bcm2835-firmware.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Raspberry Pi VideoCore firmware driver
-+
-+maintainers:
-+  - Eric Anholt <eric@anholt.net>
-+  - Stefan Wahren <wahrenst@gmx.net>
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: raspberrypi,bcm2835-firmware
-+      - const: simple-bus
-+
-+  mboxes:
-+    $ref: '/schemas/types.yaml#/definitions/phandle'
-+    description: |
-+      Phandle to the firmware device's Mailbox.
-+      (See: ../mailbox/mailbox.txt for more information)
-+
-+required:
-+  - compatible
-+  - mboxes
-+
-+examples:
-+  - |
-+    firmware {
-+        compatible = "raspberrypi,bcm2835-firmware", "simple-bus";
-+        mboxes = <&mailbox>;
-+    };
-+...
+diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
+index b21dd6ddc4fe..d62605861028 100644
+--- a/drivers/clk/bcm/clk-raspberrypi.c
++++ b/drivers/clk/bcm/clk-raspberrypi.c
+@@ -240,7 +240,7 @@ static int raspberrypi_register_pllb_arm(struct raspberrypi_clk *rpi)
+ {
+ 	int ret;
+ 
+-	ret = clk_hw_register(rpi->dev, &raspberrypi_clk_pllb_arm.hw);
++	ret = devm_clk_hw_register(rpi->dev, &raspberrypi_clk_pllb_arm.hw);
+ 	if (ret) {
+ 		dev_err(rpi->dev, "Failed to initialize pllb_arm\n");
+ 		return ret;
+@@ -250,7 +250,6 @@ static int raspberrypi_register_pllb_arm(struct raspberrypi_clk *rpi)
+ 						NULL, "cpu0");
+ 	if (!rpi->pllb_arm_lookup) {
+ 		dev_err(rpi->dev, "Failed to initialize pllb_arm_lookup\n");
+-		clk_hw_unregister_fixed_factor(&raspberrypi_clk_pllb_arm.hw);
+ 		return -ENOMEM;
+ 	}
+ 
 -- 
 git-series 0.9.1
