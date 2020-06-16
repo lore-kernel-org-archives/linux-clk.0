@@ -2,239 +2,218 @@ Return-Path: <SRS0=U6aT=75=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59C0C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 05:52:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8F43C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 06:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A600820734
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 05:52:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hLIF+av2"
+	by mail.kernel.org (Postfix) with ESMTP id 941EC20810
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 06:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592289416;
+	bh=MiClSic9tiH3exzOAeHVb53Fy19wA+P/5nm1SXYHs4s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hhZI2QrLTdPrELgMJKrzELYQQdsU3ZzolW8PL4skYQE/6+JuFGdpytMAMTxCd3QoQ
+	 Lj+RkD26KEY/pn4qgKbqj64Zjn+KyF4Rs2M3U7LV0yX1Kfqa/ZDMdjUAjq5a5gyViy
+	 ee8t8NZAq0Mthf9cnUj0e8c+tJuBt7HvRg3Rp3YI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgFPFwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Jun 2020 01:52:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbgFPFwa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2020 01:52:30 -0400
-Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473D0C03E96A
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 22:52:30 -0700 (PDT)
-Received: by mail-pj1-x1044.google.com with SMTP id i4so1038731pjd.0
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 22:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d9xJ0w/BClyOU092ahHJOYPA0Zd7qJvi8iGNSD3HOMY=;
-        b=hLIF+av2hKjEnvdfsOw1kuNALuVGB/jpUN85+Vi8wctLXJe0Qa+tvq1RIckYau3Me8
-         H7hVnpLmBqDFkMmhSNuDsaI/y7+ZSw6UGfHHG5nwn68mHDqZ2Hkmc9GTDDpv+2ufraC/
-         czJyLITRhOFHmD2zFEfzB0U/FdJx0efdLWqPc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=d9xJ0w/BClyOU092ahHJOYPA0Zd7qJvi8iGNSD3HOMY=;
-        b=uHhAoqYmxuUYa0dG30mc06t0iub4M7xZrmndPnE+NDw4Aq185WQPwpXFKuLypfKXcD
-         kQyrl9TX5Knh8pLUtuZTxUUwG4kHeVPDln7LAH8h4zyEWzDh8Jfmfyfcwn3dWnku7dtc
-         kKAjoDzyEbqjn4DvPSC6U+IB9IaNXxjrp1PflNTgTporhO7lth3+1YHcNmqz4M4XITM8
-         WosagOsjCg6FOvbsUfRVr4txpsgAS5/hKn9+fuVKaufLFBGh7TPMsauBRGknEFQ2gKma
-         SS8JxzjH7IlMk3srT0fR2DExBL7VKByiUrRziYddX6AjIBJmsoiPdtZq+ra9byANyZRa
-         NNIw==
-X-Gm-Message-State: AOAM531weYyZPrGLAkzqkdjX614eGuN3CQyiFRV8Rk9jbzQMu3dl7UIP
-        t2Wm6ALSs7IKo6XSNGGMLRC/Az7Lksg=
-X-Google-Smtp-Source: ABdhPJw606OdXdLtePjQNNUgZfXeodkoPRiJRfIuUGFaK3Dzlt6PpLBKI6QYoXdvsjzLyVTWIL0R+Q==
-X-Received: by 2002:a17:902:7288:: with SMTP id d8mr759202pll.18.1592286749249;
-        Mon, 15 Jun 2020 22:52:29 -0700 (PDT)
-Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
-        by smtp.gmail.com with ESMTPSA id s11sm15176073pfh.204.2020.06.15.22.52.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 22:52:28 -0700 (PDT)
-From:   Ikjoon Jang <ikjn@chromium.org>
-To:     linux-clk@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        Ikjoon Jang <ikjn@chromium.org>
-Subject: [PATCH] clk: Provide future parent in clk notification
-Date:   Tue, 16 Jun 2020 13:52:23 +0800
-Message-Id: <20200616055223.119360-1-ikjn@chromium.org>
-X-Mailer: git-send-email 2.27.0.290.gba653c62da-goog
+        id S1725979AbgFPGgw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jun 2020 02:36:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44932 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbgFPGgw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Jun 2020 02:36:52 -0400
+Received: from localhost (unknown [171.61.66.58])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EB0920734;
+        Tue, 16 Jun 2020 06:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592289411;
+        bh=MiClSic9tiH3exzOAeHVb53Fy19wA+P/5nm1SXYHs4s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kUfxqYU6EGRPw1vd/VF4GAq4hpIDKPjfgIB0rXIUBWVI1jAPy2RAFf/M3GUll85cn
+         wIRDUz9ONdpzSFRrBBiSsM2Dcj1XSKsxxu74uuRm5BIlkuF9RMr+mUmbM2uZMrWALl
+         /zsp/DImZPBu7SgAT/dlqTZ4+Io8PiIIXXSPfZZI=
+Date:   Tue, 16 Jun 2020 12:06:44 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Wesley Cheng <wcheng@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jack Pham <jackp@codeaurora.org>
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: sm8150: Add USB and PHY device
+ nodes
+Message-ID: <20200616063644.GA2324254@vkoul-mobl>
+References: <1586566362-21450-1-git-send-email-wcheng@codeaurora.org>
+ <1586566362-21450-3-git-send-email-wcheng@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1586566362-21450-3-git-send-email-wcheng@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Current clk notification handlers cannot know its new parent in
-PRE_RATE_CHANGE event. This patch simply adds parent clk to
-clk_notifier_data so the child clk is now able to know its future
-parent prior to reparenting.
+On 10-04-20, 17:52, Wesley Cheng wrote:
+> From: Jack Pham <jackp@codeaurora.org>
+> 
+> Add device nodes for the USB3 controller, QMP SS PHY and
+> SNPS HS PHY.
 
-Change-Id: I099a784d5302a93951bdc6254d85f8df8c770462
-Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
----
- drivers/clk/clk.c   | 30 +++++++++++++++++-------------
- include/linux/clk.h |  9 ++++++---
- 2 files changed, 23 insertions(+), 16 deletions(-)
+Bjorn, can you please review/pick this.. I dont see this in -rc1
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 3f588ed06ce3..62c4e7b50ae5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1458,6 +1458,7 @@ EXPORT_SYMBOL_GPL(clk_round_rate);
- /**
-  * __clk_notify - call clk notifier chain
-  * @core: clk that is changing rate
-+ * @parent: new parent of core
-  * @msg: clk notifier type (see include/linux/clk.h)
-  * @old_rate: old clk rate
-  * @new_rate: new clk rate
-@@ -1469,13 +1470,15 @@ EXPORT_SYMBOL_GPL(clk_round_rate);
-  * called if all went well, or NOTIFY_STOP or NOTIFY_BAD immediately if
-  * a driver returns that.
-  */
--static int __clk_notify(struct clk_core *core, unsigned long msg,
--		unsigned long old_rate, unsigned long new_rate)
-+static int __clk_notify(struct clk_core *core, struct clk_core *parent,
-+			unsigned long msg, unsigned long old_rate,
-+			unsigned long new_rate)
- {
- 	struct clk_notifier *cn;
- 	struct clk_notifier_data cnd;
- 	int ret = NOTIFY_DONE;
- 
-+	cnd.parent = parent ? parent->hw->clk : NULL;
- 	cnd.old_rate = old_rate;
- 	cnd.new_rate = new_rate;
- 
-@@ -1597,7 +1600,7 @@ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
- 	 * & ABORT_RATE_CHANGE notifiers
- 	 */
- 	if (core->notifier_count && msg)
--		__clk_notify(core, msg, old_rate, core->rate);
-+		__clk_notify(core, core->parent, msg, old_rate, core->rate);
- 
- 	hlist_for_each_entry(child, &core->children, child_node)
- 		__clk_recalc_rates(child, msg);
-@@ -1834,7 +1837,7 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
- /**
-  * __clk_speculate_rates
-  * @core: first clk in the subtree
-- * @parent_rate: the "future" rate of clk's parent
-+ * @parent: the "future" parent of core
-  *
-  * Walks the subtree of clks starting with clk, speculating rates as it
-  * goes and firing off PRE_RATE_CHANGE notifications as necessary.
-@@ -1846,7 +1849,7 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
-  * take on the rate of its parent.
-  */
- static int __clk_speculate_rates(struct clk_core *core,
--				 unsigned long parent_rate)
-+				 struct clk_core *parent)
- {
- 	struct clk_core *child;
- 	unsigned long new_rate;
-@@ -1854,11 +1857,12 @@ static int __clk_speculate_rates(struct clk_core *core,
- 
- 	lockdep_assert_held(&prepare_lock);
- 
--	new_rate = clk_recalc(core, parent_rate);
-+	new_rate = clk_recalc(core, parent ? parent->rate : 0);
- 
- 	/* abort rate change if a driver returns NOTIFY_BAD or NOTIFY_STOP */
- 	if (core->notifier_count)
--		ret = __clk_notify(core, PRE_RATE_CHANGE, core->rate, new_rate);
-+		ret = __clk_notify(core, parent, PRE_RATE_CHANGE,
-+				   core->rate, new_rate);
- 
- 	if (ret & NOTIFY_STOP_MASK) {
- 		pr_debug("%s: clk notifier callback for clock %s aborted with error %d\n",
-@@ -1867,7 +1871,7 @@ static int __clk_speculate_rates(struct clk_core *core,
- 	}
- 
- 	hlist_for_each_entry(child, &core->children, child_node) {
--		ret = __clk_speculate_rates(child, new_rate);
-+		ret = __clk_speculate_rates(child, core);
- 		if (ret & NOTIFY_STOP_MASK)
- 			break;
- 	}
-@@ -1996,7 +2000,8 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
- 		return NULL;
- 
- 	if (core->notifier_count) {
--		ret = __clk_notify(core, event, core->rate, core->new_rate);
-+		ret = __clk_notify(core, core->parent, event,
-+				   core->rate, core->new_rate);
- 		if (ret & NOTIFY_STOP_MASK)
- 			fail_clk = core;
- 	}
-@@ -2098,7 +2103,8 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_core_disable_unprepare(parent);
- 
- 	if (core->notifier_count && old_rate != core->rate)
--		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-+		__clk_notify(core, core->parent, POST_RATE_CHANGE,
-+			     old_rate, core->rate);
- 
- 	if (core->flags & CLK_RECALC_NEW_RATES)
- 		(void)clk_calc_new_rates(core, core->new_rate);
-@@ -2479,7 +2485,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- {
- 	int ret = 0;
- 	int p_index = 0;
--	unsigned long p_rate = 0;
- 
- 	lockdep_assert_held(&prepare_lock);
- 
-@@ -2508,7 +2513,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 					__func__, parent->name, core->name);
- 			return p_index;
- 		}
--		p_rate = parent->rate;
- 	}
- 
- 	ret = clk_pm_runtime_get(core);
-@@ -2516,7 +2520,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
- 		return ret;
- 
- 	/* propagate PRE_RATE_CHANGE notifications */
--	ret = __clk_speculate_rates(core, p_rate);
-+	ret = __clk_speculate_rates(core, parent);
- 
- 	/* abort if a driver objects */
- 	if (ret & NOTIFY_STOP_MASK)
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 7fd6a1febcf4..e246e160b290 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -60,16 +60,19 @@ struct clk_notifier {
- /**
-  * struct clk_notifier_data - rate data to pass to the notifier callback
-  * @clk: struct clk * being changed
-+ * @parent: new parent of this clk
-  * @old_rate: previous rate of this clk
-  * @new_rate: new rate of this clk
-  *
-  * For a pre-notifier, old_rate is the clk's rate before this rate
-- * change, and new_rate is what the rate will be in the future.  For a
-- * post-notifier, old_rate and new_rate are both set to the clk's
-- * current rate (this was done to optimize the implementation).
-+ * change, new_rate is what the rate will be in the future, and parent is
-+ * new parent of the clk after new_rate is applied, For a post-notifier,
-+ * parent, old_rate, and new_rate are all set to the clk's current state.
-+ * (this was done to optimize the implementation).
-  */
- struct clk_notifier_data {
- 	struct clk		*clk;
-+	struct clk		*parent;
- 	unsigned long		old_rate;
- 	unsigned long		new_rate;
- };
+> 
+> Signed-off-by: Jack Pham <jackp@codeaurora.org>
+> Signed-off-by: Wesley Cheng <wcheng@codeaurora.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Reviewed-by: Vinod Koul <vkoul@kernel.org>
+> Tested-by: Vinod Koul <vinod.koul@linaro.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8150-mtp.dts | 21 ++++++++
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi    | 92 +++++++++++++++++++++++++++++++++
+>  2 files changed, 113 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> index 8ab1661..6c6325c 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+> @@ -408,3 +408,24 @@
+>  	vdda-pll-supply = <&vreg_l3c_1p2>;
+>  	vdda-pll-max-microamp = <19000>;
+>  };
+> +
+> +&usb_1_hsphy {
+> +	status = "okay";
+> +	vdda-pll-supply = <&vdd_usb_hs_core>;
+> +	vdda33-supply = <&vdda_usb_hs_3p1>;
+> +	vdda18-supply = <&vdda_usb_hs_1p8>;
+> +};
+> +
+> +&usb_1_qmpphy {
+> +	status = "okay";
+> +	vdda-phy-supply = <&vreg_l3c_1p2>;
+> +	vdda-pll-supply = <&vdda_usb_ss_dp_core_1>;
+> +};
+> +
+> +&usb_1 {
+> +	status = "okay";
+> +};
+> +
+> +&usb_1_dwc3 {
+> +	dr_mode = "peripheral";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> index 141c21d..a36512d 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -621,6 +621,98 @@
+>  			};
+>  		};
+>  
+> +		usb_1_hsphy: phy@88e2000 {
+> +			compatible = "qcom,sm8150-usb-hs-phy",
+> +							"qcom,usb-snps-hs-7nm-phy";
+> +			reg = <0 0x088e2000 0 0x400>;
+> +			status = "disabled";
+> +			#phy-cells = <0>;
+> +
+> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +			clock-names = "ref";
+> +
+> +			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
+> +		};
+> +
+> +		usb_1_qmpphy: phy@88e9000 {
+> +			compatible = "qcom,sm8150-qmp-usb3-phy";
+> +			reg = <0 0x088e9000 0 0x18c>,
+> +			      <0 0x088e8000 0 0x10>;
+> +			reg-names = "reg-base", "dp_com";
+> +			status = "disabled";
+> +			#clock-cells = <1>;
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_CLKREF_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>;
+> +			clock-names = "aux", "ref_clk_src", "ref", "com_aux";
+> +
+> +			resets = <&gcc GCC_USB3_DP_PHY_PRIM_BCR>,
+> +				 <&gcc GCC_USB3_PHY_PRIM_BCR>;
+> +			reset-names = "phy", "common";
+> +
+> +			usb_1_ssphy: lanes@88e9200 {
+> +				reg = <0 0x088e9200 0 0x200>,
+> +				      <0 0x088e9400 0 0x200>,
+> +				      <0 0x088e9c00 0 0x218>,
+> +				      <0 0x088e9600 0 0x200>,
+> +				      <0 0x088e9800 0 0x200>,
+> +				      <0 0x088e9a00 0 0x100>;
+> +				#phy-cells = <0>;
+> +				clocks = <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+> +				clock-names = "pipe0";
+> +				clock-output-names = "usb3_phy_pipe_clk_src";
+> +			};
+> +		};
+> +
+> +		usb_1: usb@a6f8800 {
+> +			compatible = "qcom,sm8150-dwc3", "qcom,dwc3";
+> +			reg = <0 0x0a6f8800 0 0x400>;
+> +			status = "disabled";
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +			dma-ranges;
+> +
+> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
+> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
+> +				 <&gcc GCC_USB3_SEC_CLKREF_CLK>;
+> +			clock-names = "cfg_noc", "core", "iface", "mock_utmi",
+> +				      "sleep", "xo";
+> +
+> +			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+> +					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
+> +			assigned-clock-rates = <19200000>, <150000000>;
+> +
+> +			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 486 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 488 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 489 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "hs_phy_irq", "ss_phy_irq",
+> +					  "dm_hs_phy_irq", "dp_hs_phy_irq";
+> +
+> +			power-domains = <&gcc USB30_PRIM_GDSC>;
+> +
+> +			resets = <&gcc GCC_USB30_PRIM_BCR>;
+> +
+> +			usb_1_dwc3: dwc3@a600000 {
+> +				compatible = "snps,dwc3";
+> +				reg = <0 0x0a600000 0 0xcd00>;
+> +				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+> +				snps,dis_u2_susphy_quirk;
+> +				snps,dis_enblslpm_quirk;
+> +				phys = <&usb_1_hsphy>, <&usb_1_ssphy>;
+> +				phy-names = "usb2-phy", "usb3-phy";
+> +			};
+> +		};
+> +
+>  		aoss_qmp: power-controller@c300000 {
+>  			compatible = "qcom,sm8150-aoss-qmp";
+>  			reg = <0x0 0x0c300000 0x0 0x100000>;
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+
 -- 
-2.27.0.290.gba653c62da-goog
-
+~Vinod
