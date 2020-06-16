@@ -2,181 +2,76 @@ Return-Path: <SRS0=U6aT=75=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15152C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 16:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E335BC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 20:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED16C20882
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 16:32:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fpond.eu header.i=@fpond.eu header.b="ACe1Xc2y"
+	by mail.kernel.org (Postfix) with ESMTP id B459B2078D
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 20:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592339062;
+	bh=f0CYZfAZ2s1wrAZbRRwKWczpWjC2SMPXg5adaVXXyE8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=VWG92vqiWThis26Dm98KISlJ0V7GVQawJiKctfup4rOxp4yBObc91hDmQug7PgRFI
+	 FHzWXTKLq3JUtwNqoL2w9ztApWQ3JFjs6In8joyKvHpuDfyFvrseKAYcPhfueeCyCM
+	 on4xwZxdvsknFMbCeL85Fqnw+bIMzLI687/LCdKc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730611AbgFPQcp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Jun 2020 12:32:45 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:31658 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730588AbgFPQco (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2020 12:32:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1592325161;
-        s=strato-dkim-0002; d=fpond.eu;
-        h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=YW8YukbR/Awfdi4y3TVUB6fSqkbnAE/XV10hcN4ZauI=;
-        b=ACe1Xc2yD1hmN4LrU4MKwwH6nXzSljBErtaEHJ59FyotDBmwJ91ndBQMMcsrC3WkuS
-        y7JvUss0oXcspBn6XcQkS5J1JzVxLFH7PC1UeYaKWsENBABLUbjv5e+yHnmbXATv0VAq
-        3BHJZfzjSke0d7bjHRtdHB2IOILyfow9BRN6UhTVTPxD6GyiyOctCxuPCdHkqaR8SzRH
-        ZvAuzOtmYHqJMlkHrc4OUfN8sIIc0jx6n27HJyWI5/rBht4zUJRq8WF5zncPQFVI/8NQ
-        DvqNvDxYVYVt5ixyASpqedKuRcY84A4mHGI0NYb23u0Zv5Hp9z1oKBa5GY6QfI8KO8gq
-        wVBw==
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73dmm4I5W0/AvA67Ot4fvR8WdEaEuFwQ=="
-X-RZG-CLASS-ID: mo00
-Received: from groucho.site
-        by smtp.strato.de (RZmta 46.10.4 DYNA|AUTH)
-        with ESMTPSA id a0ab6bw5GGQcFwT
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Tue, 16 Jun 2020 18:26:38 +0200 (CEST)
-From:   Ulrich Hecht <uli+renesas@fpond.eu>
-To:     linux-renesas-soc@vger.kernel.org
-Cc:     linux-clk@vger.kernel.org, wsa@the-dreams.de, geert@linux-m68k.org,
-        magnus.damm@gmail.com, Ulrich Hecht <uli+renesas@fpond.eu>
-Subject: [PATCH v4 2/3] clk: renesas: rcar-gen3: mark RWDT clocks as critical
-Date:   Tue, 16 Jun 2020 18:26:25 +0200
-Message-Id: <20200616162626.27944-3-uli+renesas@fpond.eu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200616162626.27944-1-uli+renesas@fpond.eu>
-References: <20200616162626.27944-1-uli+renesas@fpond.eu>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726856AbgFPUYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jun 2020 16:24:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbgFPUYW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 16 Jun 2020 16:24:22 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 476482078D;
+        Tue, 16 Jun 2020 20:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592339062;
+        bh=f0CYZfAZ2s1wrAZbRRwKWczpWjC2SMPXg5adaVXXyE8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yetVL13XCxbItEOy3Zqhd0JHAxVDzLn8wYC4acq79axyXzez3XPhTta6AquZmyny5
+         ea4aKRUfpoqsihfOVK4o3zSQ76iTlY3Bc6OYqRRG42cp2mu6l5IwmoJJlNiRO161Hu
+         CmeYfFT/PVRJtn+nUAuR2r4jyrGMIfm+7P/OcUgw=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
+Subject: [PATCH 1/3] dt-bindings: agilex: add NAND_X_CLK and NAND_ECC_CLK
+Date:   Tue, 16 Jun 2020 15:24:15 -0500
+Message-Id: <20200616202417.14376-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ensures RWDT remains alert throughout the boot process if enabled.
+Add the NAND_X_CLK and NAND_ECC_CLK clocks.
 
-This patch applies the change to the following SoCs: r8a7795,
-r8a7796, r8a77965, r8a77970, r8a77980, r8a77990 and r8a77995.
-
-Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- drivers/clk/renesas/r8a7795-cpg-mssr.c  | 2 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 2 +-
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 1 +
- drivers/clk/renesas/r8a77970-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a77980-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 1 +
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 +-
- 7 files changed, 7 insertions(+), 5 deletions(-)
+ include/dt-bindings/clock/agilex-clock.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/r8a7795-cpg-mssr.c b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-index ff5b3020cb03..068018ae3c6e 100644
---- a/drivers/clk/renesas/r8a7795-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7795-cpg-mssr.c
-@@ -287,10 +287,10 @@ static struct mssr_mod_clk r8a7795_mod_clks[] __initdata = {
- };
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+index f19cf8ccbdd2..06feca07e08e 100644
+--- a/include/dt-bindings/clock/agilex-clock.h
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -65,6 +65,8 @@
+ #define AGILEX_SDMMC_CLK		50
+ #define AGILEX_SPI_M_CLK		51
+ #define AGILEX_USB_CLK			52
+-#define AGILEX_NUM_CLKS			53
++#define AGILEX_NAND_X_CLK		53
++#define AGILEX_NAND_ECC_CLK		54
++#define AGILEX_NUM_CLKS			55
  
- static const unsigned int r8a7795_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--
- /*
-  * CPG Clock Data
-  */
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index e8d466dbc7f9..2cd6e3876fbd 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -262,10 +262,10 @@ static struct mssr_mod_clk r8a7796_mod_clks[] __initdata = {
- };
- 
- static const unsigned int r8a7796_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--
- /*
-  * CPG Clock Data
-  */
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index 7a05a2fc1cc6..2b55a06ac5cf 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -263,6 +263,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a77965_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
-diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-index cbed3769a100..0f59c84229a8 100644
---- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
-@@ -165,10 +165,10 @@ static const struct mssr_mod_clk r8a77970_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a77970_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--
- /*
-  * CPG Clock Data
-  */
-diff --git a/drivers/clk/renesas/r8a77980-cpg-mssr.c b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-index 7227f675e61f..9fe372286c1e 100644
---- a/drivers/clk/renesas/r8a77980-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77980-cpg-mssr.c
-@@ -180,10 +180,10 @@ static const struct mssr_mod_clk r8a77980_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a77980_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--
- /*
-  * CPG Clock Data
-  */
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index 8eda2e3e2480..2b97ab61d044 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -245,6 +245,7 @@ static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a77990_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 056ebf3e70e2..5b4691117b47 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -183,10 +183,10 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
- };
- 
- static const unsigned int r8a77995_crit_mod_clks[] __initconst = {
-+	MOD_CLK_ID(402),	/* RWDT */
- 	MOD_CLK_ID(408),	/* INTC-AP (GIC) */
- };
- 
--
- /*
-  * CPG Clock Data
-  */
+ #endif	/* __AGILEX_CLOCK_H */
 -- 
-2.20.1
+2.17.1
 
