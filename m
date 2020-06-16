@@ -1,144 +1,240 @@
-Return-Path: <SRS0=Um2U=74=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=U6aT=75=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C16C433E4
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 19:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D59C0C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 05:52:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3C4220756
-	for <linux-clk@archiver.kernel.org>; Mon, 15 Jun 2020 19:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A600820734
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 05:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QBeg3rvb"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hLIF+av2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbgFOTcy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 15 Jun 2020 15:32:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56734 "EHLO
+        id S1726858AbgFPFwb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jun 2020 01:52:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38916 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbgFOTcx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 15 Jun 2020 15:32:53 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A57CEC08C5C4
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 12:32:52 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id g12so7203048pll.10
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 12:32:52 -0700 (PDT)
+        with ESMTP id S1726052AbgFPFwa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2020 01:52:30 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 473D0C03E96A
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 22:52:30 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id i4so1038731pjd.0
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jun 2020 22:52:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZjAXfZy5BudfnO86h+8mAf1S7F89/y7Ht34uQW17/+U=;
-        b=QBeg3rvb86U6Tj0IyJR5u6BBRDaGksrhbixbVGEFMNAmYYAm2vi8ezn7Pzjsx+8Y/N
-         0spIQQjXlTeZa6JYxyI0WQLYZewE/IOrv1eu80kZOYOGkcIsaJYdoUbYKY8F56IoVrW7
-         todjyiaALbdigpVH6qkq1a3bhohRwm98ntcpI=
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d9xJ0w/BClyOU092ahHJOYPA0Zd7qJvi8iGNSD3HOMY=;
+        b=hLIF+av2hKjEnvdfsOw1kuNALuVGB/jpUN85+Vi8wctLXJe0Qa+tvq1RIckYau3Me8
+         H7hVnpLmBqDFkMmhSNuDsaI/y7+ZSw6UGfHHG5nwn68mHDqZ2Hkmc9GTDDpv+2ufraC/
+         czJyLITRhOFHmD2zFEfzB0U/FdJx0efdLWqPc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZjAXfZy5BudfnO86h+8mAf1S7F89/y7Ht34uQW17/+U=;
-        b=Pt152UiH9m9BdMXKyEZgsnCh5QEWwVMykjVXzn9xI+/k8S4bbHkLkAk8ibBvpfReot
-         t/2PFJTSgRs+R6MCxEYMzNw3m3KHDfE4bjHwhdHnAY+hZvP3gvq8LNZ0hpRRdeJKCNoN
-         fwKXPLRQp6/9DTUrwnyCy/XoBG49ckNfGc/8iSdy86F3z4f7UtJb3M5qlB4Wf4u7Chfj
-         cYuko4bp6DwVAXlG56B9VMbB13Du13c3Hu5vTcsLoaveOppV7VQXXdFJYfbrEBgAM2B8
-         PlO62xPjIrTsDx5izMy/A1Nk80wtLCKO0Z7IgXgflm+wl46uydCUvsFc0v859A54eC6G
-         8W3g==
-X-Gm-Message-State: AOAM531rML6TqhyRKRJC7CbxzcbFVUfATTABFIG3gQx9tFMX0BncIDoZ
-        aFB9kYEF/OgpdkTGJGiBcO0tlA==
-X-Google-Smtp-Source: ABdhPJxugszkh+55zcQ6ID8nCD+Y2mp2lHGMEtD9VsXD4kV92TrXKjIOZPR9BYw/ID9xL1GXxiQnCg==
-X-Received: by 2002:a17:90b:23d2:: with SMTP id md18mr774459pjb.179.1592249571413;
-        Mon, 15 Jun 2020 12:32:51 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id n189sm14973604pfn.108.2020.06.15.12.32.49
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=d9xJ0w/BClyOU092ahHJOYPA0Zd7qJvi8iGNSD3HOMY=;
+        b=uHhAoqYmxuUYa0dG30mc06t0iub4M7xZrmndPnE+NDw4Aq185WQPwpXFKuLypfKXcD
+         kQyrl9TX5Knh8pLUtuZTxUUwG4kHeVPDln7LAH8h4zyEWzDh8Jfmfyfcwn3dWnku7dtc
+         kKAjoDzyEbqjn4DvPSC6U+IB9IaNXxjrp1PflNTgTporhO7lth3+1YHcNmqz4M4XITM8
+         WosagOsjCg6FOvbsUfRVr4txpsgAS5/hKn9+fuVKaufLFBGh7TPMsauBRGknEFQ2gKma
+         SS8JxzjH7IlMk3srT0fR2DExBL7VKByiUrRziYddX6AjIBJmsoiPdtZq+ra9byANyZRa
+         NNIw==
+X-Gm-Message-State: AOAM531weYyZPrGLAkzqkdjX614eGuN3CQyiFRV8Rk9jbzQMu3dl7UIP
+        t2Wm6ALSs7IKo6XSNGGMLRC/Az7Lksg=
+X-Google-Smtp-Source: ABdhPJw606OdXdLtePjQNNUgZfXeodkoPRiJRfIuUGFaK3Dzlt6PpLBKI6QYoXdvsjzLyVTWIL0R+Q==
+X-Received: by 2002:a17:902:7288:: with SMTP id d8mr759202pll.18.1592286749249;
+        Mon, 15 Jun 2020 22:52:29 -0700 (PDT)
+Received: from ikjn-p920.tpe.corp.google.com ([2401:fa00:1:10:254e:2b40:ef8:ee17])
+        by smtp.gmail.com with ESMTPSA id s11sm15176073pfh.204.2020.06.15.22.52.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jun 2020 12:32:50 -0700 (PDT)
-Date:   Mon, 15 Jun 2020 12:32:49 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        b43-dev@lists.infradead.org,
-        Network Development <netdev@vger.kernel.org>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-spi@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Saravana Kannan <saravanak@google.com>
-Subject: Re: [PATCH 05/10] ide: Remove uninitialized_var() usage
-Message-ID: <202006151231.74D2315450@keescook>
-References: <20200603233203.1695403-1-keescook@chromium.org>
- <20200603233203.1695403-6-keescook@chromium.org>
- <CAKwvOdm5zDide5RuppY_jG=r46=UMdVJBrkBqD5x=dOMTG9cZg@mail.gmail.com>
- <202006041318.B0EA9059C7@keescook>
- <CAKwvOdk3Wc1gC0UMsFZsZqQ8n_bkPjNAJo5u3nfcyXcBaZCMHw@mail.gmail.com>
+        Mon, 15 Jun 2020 22:52:28 -0700 (PDT)
+From:   Ikjoon Jang <ikjn@chromium.org>
+To:     linux-clk@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Ikjoon Jang <ikjn@chromium.org>
+Subject: [PATCH] clk: Provide future parent in clk notification
+Date:   Tue, 16 Jun 2020 13:52:23 +0800
+Message-Id: <20200616055223.119360-1-ikjn@chromium.org>
+X-Mailer: git-send-email 2.27.0.290.gba653c62da-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdk3Wc1gC0UMsFZsZqQ8n_bkPjNAJo5u3nfcyXcBaZCMHw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 04, 2020 at 01:29:44PM -0700, Nick Desaulniers wrote:
-> On Thu, Jun 4, 2020 at 1:20 PM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Thu, Jun 04, 2020 at 12:29:17PM -0700, Nick Desaulniers wrote:
-> > > On Wed, Jun 3, 2020 at 4:32 PM Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > Using uninitialized_var() is dangerous as it papers over real bugs[1]
-> > > > (or can in the future), and suppresses unrelated compiler warnings (e.g.
-> > > > "unused variable"). If the compiler thinks it is uninitialized, either
-> > > > simply initialize the variable or make compiler changes. As a precursor
-> > > > to removing[2] this[3] macro[4], just remove this variable since it was
-> > > > actually unused:
-> > > >
-> > > > drivers/ide/ide-taskfile.c:232:34: warning: unused variable 'flags' [-Wunused-variable]
-> > > >         unsigned long uninitialized_var(flags);
-> > > >                                         ^
-> > > >
-> > > > [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
-> > > > [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
-> > > > [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
-> > > > [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
-> > > >
-> > > > Signed-off-by: Kees Cook <keescook@chromium.org>
-> > >
-> > > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> >
-> > Thanks for the reviews!
-> >
-> > > Fixes ce1e518190ea ("ide: don't disable interrupts during kmap_atomic()")
-> >
-> > I originally avoided adding Fixes tags because I didn't want these
-> > changes backported into a -stable without -Wmaybe-uninitialized
-> > disabled, but in these cases (variable removal), that actually does make
-> > sense. Thanks!
-> 
-> Saravana showed me a cool trick for quickly finding commits that
-> removed a particular identifier that I find faster than `git blame` or
-> vim-fugitive for the purpose of Fixes tags:
-> $ git log -S <string> <file>
+Current clk notification handlers cannot know its new parent in
+PRE_RATE_CHANGE event. This patch simply adds parent clk to
+clk_notifier_data so the child clk is now able to know its future
+parent prior to reparenting.
 
-Ah yes, I always have to look up "-S". Good reminder!
+Change-Id: I099a784d5302a93951bdc6254d85f8df8c770462
+Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+---
+ drivers/clk/clk.c   | 30 +++++++++++++++++-------------
+ include/linux/clk.h |  9 ++++++---
+ 2 files changed, 23 insertions(+), 16 deletions(-)
 
-> I've added it to our wiki:
-> https://github.com/ClangBuiltLinux/linux/wiki/Command-line-tips-and-tricks#for-finding-which-commit-may-have-removed-a-string-try.
-> I should update the first tip; what was your suggestion for
-> constraining the search to the current remote?
-
-Ah cool. I've updated it now. It was really to narrow to a "known set of
-tags", and Linus's tree's tags always start with "v".
-
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 3f588ed06ce3..62c4e7b50ae5 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1458,6 +1458,7 @@ EXPORT_SYMBOL_GPL(clk_round_rate);
+ /**
+  * __clk_notify - call clk notifier chain
+  * @core: clk that is changing rate
++ * @parent: new parent of core
+  * @msg: clk notifier type (see include/linux/clk.h)
+  * @old_rate: old clk rate
+  * @new_rate: new clk rate
+@@ -1469,13 +1470,15 @@ EXPORT_SYMBOL_GPL(clk_round_rate);
+  * called if all went well, or NOTIFY_STOP or NOTIFY_BAD immediately if
+  * a driver returns that.
+  */
+-static int __clk_notify(struct clk_core *core, unsigned long msg,
+-		unsigned long old_rate, unsigned long new_rate)
++static int __clk_notify(struct clk_core *core, struct clk_core *parent,
++			unsigned long msg, unsigned long old_rate,
++			unsigned long new_rate)
+ {
+ 	struct clk_notifier *cn;
+ 	struct clk_notifier_data cnd;
+ 	int ret = NOTIFY_DONE;
+ 
++	cnd.parent = parent ? parent->hw->clk : NULL;
+ 	cnd.old_rate = old_rate;
+ 	cnd.new_rate = new_rate;
+ 
+@@ -1597,7 +1600,7 @@ static void __clk_recalc_rates(struct clk_core *core, unsigned long msg)
+ 	 * & ABORT_RATE_CHANGE notifiers
+ 	 */
+ 	if (core->notifier_count && msg)
+-		__clk_notify(core, msg, old_rate, core->rate);
++		__clk_notify(core, core->parent, msg, old_rate, core->rate);
+ 
+ 	hlist_for_each_entry(child, &core->children, child_node)
+ 		__clk_recalc_rates(child, msg);
+@@ -1834,7 +1837,7 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+ /**
+  * __clk_speculate_rates
+  * @core: first clk in the subtree
+- * @parent_rate: the "future" rate of clk's parent
++ * @parent: the "future" parent of core
+  *
+  * Walks the subtree of clks starting with clk, speculating rates as it
+  * goes and firing off PRE_RATE_CHANGE notifications as necessary.
+@@ -1846,7 +1849,7 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+  * take on the rate of its parent.
+  */
+ static int __clk_speculate_rates(struct clk_core *core,
+-				 unsigned long parent_rate)
++				 struct clk_core *parent)
+ {
+ 	struct clk_core *child;
+ 	unsigned long new_rate;
+@@ -1854,11 +1857,12 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 
+ 	lockdep_assert_held(&prepare_lock);
+ 
+-	new_rate = clk_recalc(core, parent_rate);
++	new_rate = clk_recalc(core, parent ? parent->rate : 0);
+ 
+ 	/* abort rate change if a driver returns NOTIFY_BAD or NOTIFY_STOP */
+ 	if (core->notifier_count)
+-		ret = __clk_notify(core, PRE_RATE_CHANGE, core->rate, new_rate);
++		ret = __clk_notify(core, parent, PRE_RATE_CHANGE,
++				   core->rate, new_rate);
+ 
+ 	if (ret & NOTIFY_STOP_MASK) {
+ 		pr_debug("%s: clk notifier callback for clock %s aborted with error %d\n",
+@@ -1867,7 +1871,7 @@ static int __clk_speculate_rates(struct clk_core *core,
+ 	}
+ 
+ 	hlist_for_each_entry(child, &core->children, child_node) {
+-		ret = __clk_speculate_rates(child, new_rate);
++		ret = __clk_speculate_rates(child, core);
+ 		if (ret & NOTIFY_STOP_MASK)
+ 			break;
+ 	}
+@@ -1996,7 +2000,8 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
+ 		return NULL;
+ 
+ 	if (core->notifier_count) {
+-		ret = __clk_notify(core, event, core->rate, core->new_rate);
++		ret = __clk_notify(core, core->parent, event,
++				   core->rate, core->new_rate);
+ 		if (ret & NOTIFY_STOP_MASK)
+ 			fail_clk = core;
+ 	}
+@@ -2098,7 +2103,8 @@ static void clk_change_rate(struct clk_core *core)
+ 		clk_core_disable_unprepare(parent);
+ 
+ 	if (core->notifier_count && old_rate != core->rate)
+-		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
++		__clk_notify(core, core->parent, POST_RATE_CHANGE,
++			     old_rate, core->rate);
+ 
+ 	if (core->flags & CLK_RECALC_NEW_RATES)
+ 		(void)clk_calc_new_rates(core, core->new_rate);
+@@ -2479,7 +2485,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ {
+ 	int ret = 0;
+ 	int p_index = 0;
+-	unsigned long p_rate = 0;
+ 
+ 	lockdep_assert_held(&prepare_lock);
+ 
+@@ -2508,7 +2513,6 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 					__func__, parent->name, core->name);
+ 			return p_index;
+ 		}
+-		p_rate = parent->rate;
+ 	}
+ 
+ 	ret = clk_pm_runtime_get(core);
+@@ -2516,7 +2520,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 		return ret;
+ 
+ 	/* propagate PRE_RATE_CHANGE notifications */
+-	ret = __clk_speculate_rates(core, p_rate);
++	ret = __clk_speculate_rates(core, parent);
+ 
+ 	/* abort if a driver objects */
+ 	if (ret & NOTIFY_STOP_MASK)
+diff --git a/include/linux/clk.h b/include/linux/clk.h
+index 7fd6a1febcf4..e246e160b290 100644
+--- a/include/linux/clk.h
++++ b/include/linux/clk.h
+@@ -60,16 +60,19 @@ struct clk_notifier {
+ /**
+  * struct clk_notifier_data - rate data to pass to the notifier callback
+  * @clk: struct clk * being changed
++ * @parent: new parent of this clk
+  * @old_rate: previous rate of this clk
+  * @new_rate: new rate of this clk
+  *
+  * For a pre-notifier, old_rate is the clk's rate before this rate
+- * change, and new_rate is what the rate will be in the future.  For a
+- * post-notifier, old_rate and new_rate are both set to the clk's
+- * current rate (this was done to optimize the implementation).
++ * change, new_rate is what the rate will be in the future, and parent is
++ * new parent of the clk after new_rate is applied, For a post-notifier,
++ * parent, old_rate, and new_rate are all set to the clk's current state.
++ * (this was done to optimize the implementation).
+  */
+ struct clk_notifier_data {
+ 	struct clk		*clk;
++	struct clk		*parent;
+ 	unsigned long		old_rate;
+ 	unsigned long		new_rate;
+ };
 -- 
-Kees Cook
+2.27.0.290.gba653c62da-goog
+
