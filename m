@@ -2,320 +2,127 @@ Return-Path: <SRS0=U6aT=75=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E2B5C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 10:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CF4C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 12:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08FB4207BC
-	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 10:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC65207C4
+	for <linux-clk@archiver.kernel.org>; Tue, 16 Jun 2020 12:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cBsuKjhL"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="BAHU/pAe";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UIDDPxWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbgFPKzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 16 Jun 2020 06:55:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57496 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbgFPKzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2020 06:55:33 -0400
-Received: from mail-pj1-x1043.google.com (mail-pj1-x1043.google.com [IPv6:2607:f8b0:4864:20::1043])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B091C08C5C3
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2020 03:55:32 -0700 (PDT)
-Received: by mail-pj1-x1043.google.com with SMTP id a45so1075189pje.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jun 2020 03:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:in-reply-to:references
-         :subject:from:cc:to:date:message-id:user-agent;
-        bh=P0rgsD9Ct3sLOZeZyHD1bcKF15pZ4X0Ei5Mx+pWd/mE=;
-        b=cBsuKjhLkk1YAPB7IC/X7x2KOOKUVv74p6wbbgrNn2JTfuq18XCdwqJyCWw++F2IzP
-         JuI0h9NIrPM+DIvEQvk3oL6QP06TuIZbGoca4/oVtHisrsbqt3wA7YbjQnZqPnw9b/F+
-         WbPuH9UTZHbsPLWtIuJ4xuPU9Y6qNi0DhSKpI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding
-         :in-reply-to:references:subject:from:cc:to:date:message-id
-         :user-agent;
-        bh=P0rgsD9Ct3sLOZeZyHD1bcKF15pZ4X0Ei5Mx+pWd/mE=;
-        b=b3BdmtHccElgaZqZw05GKuTsAzmQMuHKB/qglpS0E0VaCDiLvFv++n6lkREqxKL5R4
-         iA9SBB+oqL+Z15/g5X5TfHi3W0euQudsqrcmzLMl4EO3Bo/IsRZqXgeynPzaxVHvVTIM
-         P2x86G+t2ZPsib6s8Tv/bTzovu8ORsdk8Rj/WsuOoyxvFwlk6TmD2pV7pam0X0eJbill
-         KsJF0QyHkLn1kFFo0F5Kd48+5PvQFVEOqSSWCRKKZePT43ggQxh1vcTl88XcL7mrsIGf
-         at7NW97fE3hBpyzHA2WHmnhNBZOnyOtmE+RUkY/wFYbKqlhg/drpGFWJnK8VpOyoVBP4
-         ohwA==
-X-Gm-Message-State: AOAM533IzHRzAALWkoSHbtI82h1wLxXrht7n+eYIc+gPYjYLzJLQC5m3
-        tnBxx64k5rqmeWQtS14BxypkmBVwBqU=
-X-Google-Smtp-Source: ABdhPJzuT0DcmntlVBwDdeDpH39DGEE13XccI71h8P1IxymNV+mNcmeovPxHUeQTw13PqWjyh0ScDw==
-X-Received: by 2002:a17:90a:c5:: with SMTP id v5mr2281693pjd.226.1592304930604;
-        Tue, 16 Jun 2020 03:55:30 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id p30sm14059553pgn.58.2020.06.16.03.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jun 2020 03:55:29 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1726606AbgFPMQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 16 Jun 2020 08:16:47 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:50313 "EHLO
+        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725843AbgFPMQq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 16 Jun 2020 08:16:46 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 0F4F258022A;
+        Tue, 16 Jun 2020 08:16:45 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Tue, 16 Jun 2020 08:16:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=q9eVcFed6me6zfjtvNk1obWG+SN
+        i2fnGdjrskD0vSG4=; b=BAHU/pAeM2scQGmMJ0hhcXovaHhPr34Xzz0ChofdSJg
+        AbngtQzbdsT7IerRj1Z1T5xkSME4ko5EOFNaMDWtlnUNKkDtgQx8lEByQatHXC+W
+        i11GKw2L2mJCSxb6Ovn5yQuKO6H9Xf9oKpa4LHg6jRzhZCDMh/oJAjew9Th3TNbH
+        c9EZ8FtFcWUjVJq/GUxiUSwnXIY8GQYkWuBq78+J9ZwmP1RVB81Kf17eWqeY+8Wb
+        1k67hGDTa03Pq9CKD+mphuZ8qBsEn9ILBPVFDvbjhjzCE60mDq9F8HzwewemcU3t
+        z3Ys55/lZEZCtEEcREdgROoCw43S+7fnCgfM1Eped/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=q9eVcF
+        ed6me6zfjtvNk1obWG+SNi2fnGdjrskD0vSG4=; b=UIDDPxWGVNnO2saImDFp4B
+        +bhlEotEEI/0Az/S9cQm9LMspnTo7S4IS3SmERDhhUeC0vYxLM3OlAL3KUzrlUun
+        v3T7yC0SO9eMs1tk0nH01iShh6+urULcFjrxkJ2ayWEj2iSgvJV6GwFclaxA8xrF
+        CXB2A87ZeGgEwRfUsJg6j6wu6yj2kIcnJmpVwXJq+xkHyszgiwBPxfX1DnP/d4yF
+        bbVa2npUz6VprOfF8wAdA44+Q2+1OneFdSXHD8DEWb4K5dFcwwd+EZ0vrHNKsqj+
+        grHQUbcGqD9gGd5l8xP595frNA2sf9bQNeN/jqnQXljnBdbDVlqHgDQJNUpIGGFQ
+        ==
+X-ME-Sender: <xms:LLjoXiUWFpcp-6aNeYQZMr10z6NghfcX-JKiF9jaB6MYwVMrPZ-1LA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudejtddgheefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
+    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:LLjoXunHXvSuz4MdOPO4yUkIKHWS-G0gMmh6WktCHNEt6PcpQYcLDg>
+    <xmx:LLjoXmbMIoR76LZEpL2Tww1pGkXEXzzpUPrtvmHPKhZDSekUlxoJsg>
+    <xmx:LLjoXpUXYK2Pfp-lvrXSbNcOzK18o-6NQ71VY69t5ZGM885RYMGkng>
+    <xmx:LbjoXm6aVegWGcdleeGvE_4GmmmiCjxtz-Bb7cm__1AVd8F6-_sPsg>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id E6F793280063;
+        Tue, 16 Jun 2020 08:16:43 -0400 (EDT)
+Date:   Tue, 16 Jun 2020 14:16:41 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>, linux-clk@vger.kernel.org,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v4 3/3] ARM: dts: bcm2711: Add HDMI DVP
+Message-ID: <20200616121641.jpoz237p43sbndg2@gilmour.lan>
+References: <cover.4c4625a8e076f3163b800b3d8986b282ee98d908.1591867332.git-series.maxime@cerno.tech>
+ <e22222ca7f41b960e9bb1a31e0dd2de95b8c0cd1.1591867332.git-series.maxime@cerno.tech>
+ <810816166d8ef554e1bb1f4a2b39ea0b8a1a3d5b.camel@suse.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d6db52a33ac787c0fe6134ca32c06007@codeaurora.org>
-References: <20200609033818.9028-1-tanmay@codeaurora.org> <159175530931.242598.4696487926885071106@swboyd.mtv.corp.google.com> <d6db52a33ac787c0fe6134ca32c06007@codeaurora.org>
-Subject: Re: [PATCH v6 1/5] dt-bindings: msm/dp: add bindings of DP/DP-PLL driver for Snapdragon
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     devicetree@vger.kernel.org, sam@ravnborg.org,
-        seanpaul@chromium.org, freedreno@lists.freedesktop.org,
-        linux-arm-msm@vger.kernel.org, chandanu@codeaurora.org,
-        robdclark@gmail.com, abhinavk@codeaurora.org,
-        nganji@codeaurora.org, dri-devel@lists.freedesktop.org,
-        linux-clk@vger.kernel.org, Vara Reddy <varar@codeaurora.org>
-To:     tanmay@codeaurora.org
-Date:   Tue, 16 Jun 2020 03:55:28 -0700
-Message-ID: <159230492894.62212.17830740055624171310@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ci3vlkf364l5m74a"
+Content-Disposition: inline
+In-Reply-To: <810816166d8ef554e1bb1f4a2b39ea0b8a1a3d5b.camel@suse.de>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting tanmay@codeaurora.org (2020-06-11 13:07:09)
-> On 2020-06-09 19:15, Stephen Boyd wrote:
-> > Quoting Tanmay Shah (2020-06-08 20:38:18)
-> >> diff --git=20
-> >> a/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml=20
-> >> b/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
-> >> new file mode 100644
-> >> index 0000000..5fdb915
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/display/msm/dp-sc7180.yaml
-> >=20
-> > Typically the file name matches the compatible string. But the
-> > compatible string is just qcom,dp-display. Maybe the compatible string
-> > should be qcom,sc7180-dp? Notice that the SoC number comes first as is
-> > preferred.
-> >=20
-> These bindings will be similar for upcoming SOC as well.
-> So just for understanding, when we add new SOC do we create new file=20
-> with same bidings
-> with SOC number in new file name?
-> Instead we can keep this file's name as qcom,dp-display.yaml (same as=20
-> compatible const) and we can include SOC number in compatible enum ?
-> some examples:
-> https://patchwork.kernel.org/patch/11448357/
-> https://patchwork.kernel.org/patch/11164619/
 
-Yes that works too. It's really up to robh here.
+--ci3vlkf364l5m74a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Nicolas,
+
+On Mon, Jun 15, 2020 at 06:26:19PM +0200, Nicolas Saenz Julienne wrote:
+> On Thu, 2020-06-11 at 11:23 +0200, Maxime Ripard wrote:
+> > Now that we have a driver for the DVP, let's add its DT node.
 > >=20
-> >> @@ -0,0 +1,142 @@
-> >> +# SPDX-License-Identifier: (GPL-2.0-only  OR BSD-2-Clause)
-> >> +%YAML 1.2
-> >> +---
-> >> +$id: http://devicetree.org/schemas/display/msm/dp-sc7180.yaml#
-> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> +
-> >> +title: Qualcomm Display Port Controller.
-> >> +
-> >> +maintainers:
-> >> +  - Chandan Uddaraju <chandanu@codeaurora.org>
-> >> +  - Vara Reddy <varar@codeaurora.org>
-> >> +  - Tanmay Shah <tanmay@codeaurora.org>
-> >> +
-> >> +description: |
-> >> +  Device tree bindings for MSM Display Port which supports DP host=20
-> >> controllers
-> >> +  that are compatible with VESA Display Port interface specification.
-> >> +
-> >> +properties:
-> >> +  compatible:
-> >> +    items:
-> >> +      - const: qcom,dp-display
-> >> +
-> >> +  cell-index:
-> >> +    description: Specifies the controller instance.
-> >> +
-> >> +  reg:
-> >> +    items:
-> >> +      - description: DP controller registers
-> >> +
-> >> +  interrupts:
-> >> +    description: The interrupt signal from the DP block.
-> >> +
-> >> +  clocks:
-> >> +    description: List of clock specifiers for clocks needed by the=20
-> >> device.
-> >> +    items:
-> >> +      - description: Display Port AUX clock
-> >> +      - description: Display Port Link clock
-> >> +      - description: Link interface clock between DP and PHY
-> >> +      - description: Display Port Pixel clock
-> >> +      - description: Root clock generator for pixel clock
-> >> +
-> >> +  clock-names:
-> >> +    description: |
-> >> +      Device clock names in the same order as mentioned in clocks=20
-> >> property.
-> >> +      The required clocks are mentioned below.
-> >> +    items:
-> >> +      - const: core_aux
-> >> +      - const: ctrl_link
-> >> +      - const: ctrl_link_iface
-> >> +      - const: stream_pixel
-> >> +      - const: pixel_rcg
-> >=20
-> > Why not just 'pixel'? And why is the root clk generator important? It
-> > looks like this binding should be using the assigned clock parents
-> > property instead so that it doesn't have to call clk_set_parent()
-> > explicitly.
-> >=20
-> Are we talking about renaming stream_pixel to pixel only?
-> We divide clocks in categories: core, control and stream clock.
-> Similar terminology will be used in subsequent driver patches as well.
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > ---
 >=20
-> We can remove pixel_rcg use assigned clock parents property and remove=20
-> clk_set_parent
-> from driver.
+> I can take this patch, but I guess the rest should go trough the clock tr=
+ee.
+> Is it OK with you?
 
-Cool. Using assigned clock parents is good.
+We have a build dependency on the reset framework for that driver, so it
+should rather go through the reset tree (or Philipp should make an
+immutable branch that the clk maintainers can merge).
 
->=20
-> >> +  "#clock-cells":
-> >> +    const: 1
-> >> +
-> >> +  vdda-1p2-supply:
-> >> +    description: phandle to vdda 1.2V regulator node.
-> >> +
-> >> +  vdda-0p9-supply:
-> >> +    description: phandle to vdda 0.9V regulator node.
-> >> +
-> >> +  data-lanes =3D <0 1>:
-> >=20
-> > Is this correct? We can have =3D <value> in the property name? Also fee=
-ls
-> > generic and possibly should come from the phy binding instead of from
-> > the controller binding.
-> >=20
-> We are using this property in DP controller programming sequence such as =
+Maxime
 
-> link training.
-> So I think we can keep this here.
-> You are right about <value>. <0 1> part should be in example only. It=20
-> was passing through dt_binding_check though.
-> Here it should be like:
-> data-lanes:
-> minItems:1
-> maxItems:4
+--ci3vlkf364l5m74a
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Ok.
+-----BEGIN PGP SIGNATURE-----
 
->=20
-> >> +    type: object
-> >> +    description: Maximum number of lanes that can be used for Display=
-=20
-> >> port.
-> >> +
-> >> +  ports:
-> >> +    description: |
-> >> +       Contains display port controller endpoint subnode.
-> >> +       remote-endpoint: |
-> >> +         For port@0, set to phandle of the connected panel/bridge's
-> >> +         input endpoint. For port@1, set to the DPU interface output.
-> >> +         Documentation/devicetree/bindings/graph.txt and
-> >> +        =20
-> >> Documentation/devicetree/bindings/media/video-interfaces.txt.
-> >> +
-> >> +patternProperties:
-> >> +  "^aux-cfg([0-9])-settings$":
-> >> +    type: object
-> >> +    description: |
-> >> +      Specifies the DP AUX configuration [0-9] settings.
-> >> +      The first entry in this array corresponds to the register=20
-> >> offset
-> >> +      within DP AUX, while the remaining entries indicate the
-> >> +      programmable values.
-> >=20
-> > I'd prefer this was removed from the binding and hardcoded in the=20
-> > driver
-> > until we can understand what the values are. If they're not
-> > understandable then they most likely don't change and should be done in
-> > the driver.
-> >=20
-> Typically customers tune these values by working with vendor. So for=20
-> different boards it can be different. Even though it is hard for=20
-> customers to do this themselves, these are still board specific and=20
-> belong to dts. As requested earlier, we have added default values=20
-> already and made these properties optional but, we would like to keep it =
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXui4KQAKCRDj7w1vZxhR
+xR6QAQDrS5Zm0rFCB485zOO5ySoYqmG8mz7ONQ28lCcVXz77/AD9FfLXEu+FTL5M
+nXMtMehcZqAyWNkNLhs4fiYUEQ69yQ4=
+=oeEm
+-----END PGP SIGNATURE-----
 
-> in bindings so we can have option to tune them as required.
-
-If they're in the binding then they should make sense instead of just
-being random values. So please move the defaults to the driver and
-have human understandable DT properties to tune these settings. This has
-been done for the qcom USB phy already (see things like
-qcom,hstx-trim-value for example).
-
-> >> +
-> >> +required:
-> >> +  - compatible
-> >> +  - cell-index
-> >> +  - reg
-> >> +  - interrupts
-> >> +  - clocks
-> >> +  - clock-names
-> >> +  - vdda-1p2-supply
-> >> +  - vdda-0p9-supply
-> >> +  - data-lanes
-> >> +  - ports
-> >> +
-> >> +examples:
-> >> +  - |
-> >> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> >> +    #include <dt-bindings/clock/qcom,dispcc-sdm845.h>
-> >> +    #include <dt-bindings/clock/qcom,gcc-sdm845.h>
-> >> +    msm_dp: displayport-controller@ae90000{
-> >> +        compatible =3D "qcom,dp-display";
-> >> +        cell-index =3D <0>;
-> >> +        reg =3D <0 0xae90000 0 0x1400>;
-> >> +        reg-names =3D "dp_controller";
-> >> +
-> >> +        interrupt-parent =3D <&display_subsystem>;
-> >> +        interrupts =3D <12 0>;
-> >> +
-> >> +        clocks =3D <&dispcc DISP_CC_MDSS_DP_AUX_CLK>,
-> >> +                 <&dispcc DISP_CC_MDSS_DP_LINK_CLK>,
-> >> +                 <&dispcc DISP_CC_MDSS_DP_LINK_INTF_CLK>,
-> >> +                 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK>,
-> >> +                 <&dispcc DISP_CC_MDSS_DP_PIXEL_CLK_SRC>;
-> >> +        clock-names =3D "core_aux",
-> >> +                      "ctrl_link",
-> >> +                      "ctrl_link_iface", "stream_pixel",
-> >> +                      "pixel_rcg";
-> >> +        #clock-cells =3D <1>;
-> >> +
-> >> +        vdda-1p2-supply =3D <&vreg_l3c_1p2>;
-> >> +        vdda-0p9-supply =3D <&vreg_l4a_0p8>;
-> >> +
-> >> +        data-lanes =3D <0 1>;
-> >> +
-> >> +        ports {
-> >> +            #address-cells =3D <1>;
-> >> +            #size-cells =3D <0>;
-> >> +
-> >> +            port@0 {
-> >> +                reg =3D <0>;
-> >> +                dp_in: endpoint {
-> >> +                    remote-endpoint =3D <&dpu_intf0_out>;
-> >> +                };
-> >> +            };
-> >> +
-> >> +            port@1 {
-> >> +                reg =3D <1>;
-> >> +                dp_out: endpoint {
-> >> +                };
-> >> +            };
-> >> +        };
-> >> +    };
-> >=20
-> > I believe there should be a '...' here.
-> I think you mean signature is missing? If not could you please explain?
-
-No I mean there should be a triple dot at the end.
+--ci3vlkf364l5m74a--
