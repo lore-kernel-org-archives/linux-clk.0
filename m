@@ -2,94 +2,84 @@ Return-Path: <SRS0=YmV3=76=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838BCC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 21:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3649FC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 22:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5097621534
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 21:40:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="STIQ91+m"
+	by mail.kernel.org (Postfix) with ESMTP id 0BFD12184D
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 22:18:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592432305;
+	bh=D5bbCEiWFwi5ijhmE4iq3GumgRgrcYXrR+dhiHw2LNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=xUiFHoJNRBm3MapvfAao1DegLQY3CEnD/RRjVnkLVwinSuE1k+7nypMMXbX2aKrq8
+	 S0EwhpCRU6bu7O4BTN5OSMpPqh7IFlgL9UOXk4qVuODBcVzG+0H1fd7PfssNcfVstK
+	 Ywm+B/PXjAO8Mln7M92CfwIDHuoILVoyJJTZQD9U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbgFQVk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 17:40:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41432 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726868AbgFQVk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Jun 2020 17:40:58 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C4DC06174E;
-        Wed, 17 Jun 2020 14:40:57 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id r7so3962121wro.1;
-        Wed, 17 Jun 2020 14:40:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=L8KQGYBNXCs44/bdoqCRORNs1kx4kRZ8Xd0B+XPcWlQ=;
-        b=STIQ91+m6JuleAes4P5UdW4kW6ecexAAcwd95QzWO0ocf+lpG74ag4wecLCIYg+nsC
-         zr3UqChiw7EVoYpRPzjbIXHDtdkJUhtzINvCUkp+FhuBpzs76SXLQ6i6kdKVxzAfspU6
-         p6Yl71sO4l71ECbA+SyUZqaC/v+WUJWS0VizYb3DS9mXSY09VP09wQiL7siAGx4WLp8x
-         Eyj3dXKKQa7/dh7OU2tnuB5EzXGcjG1Q10lXc0WM4w1Xd2IAO99Kdj/f7NbB4tG7UwPM
-         NSx/D2QVGcZ/Z5VFauIAUbmihZPDIR/2o3O2XpMfd5hFEj0oyCo6e4288r0TRy9cYPAd
-         oBNg==
+        id S1726848AbgFQWSU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 18:18:20 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:36329 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbgFQWST (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Jun 2020 18:18:19 -0400
+Received: by mail-il1-f193.google.com with SMTP id a13so3918571ilh.3;
+        Wed, 17 Jun 2020 15:18:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=L8KQGYBNXCs44/bdoqCRORNs1kx4kRZ8Xd0B+XPcWlQ=;
-        b=MAaLjVvQeVewAwzm6Pdk8FAd5QXddJpVok011lw/J7xAO0d4zFxjEBnm+L1DTAiw0H
-         TejipUpaOIF/u68WE22gmFs8d/xajj/a9+azPdXtKnYyY/2/IbukTQ9iaghMgpmaQr22
-         27/adAa+y0KuQVP++nnqJqfaSxLG97UwPJWY0Rk87VF2DVVWBNoSwbELlp/ZESlExKEK
-         eSDZgU6eJtXbJisRA4tdOsB5YBwzBP+kSJmJo8bHPQu4dA6KLmDE9Gfck39auxi/r9uh
-         2dTy0zpWLjHpArkd91Hq/c12/04aTasyzlr6YFFd7TSqNlkzeTiHn7X2ih0IX87oOtR/
-         8qkw==
-X-Gm-Message-State: AOAM5325+L4dMLxM3nZOI9LMvA+dCmiRF8skmNTSuUOQ1lZ3crtI/bhW
-        OuBkQ+oWsY48eXeWF+4Pn93IMEGe
-X-Google-Smtp-Source: ABdhPJzMdWex6wUFcFECN0CEWPasEMZbh90C++J8UTRk4A1GUy5WzH/OGa6jFsQFkZ2aKNlPQzROvA==
-X-Received: by 2002:adf:910e:: with SMTP id j14mr1176209wrj.278.1592430055834;
-        Wed, 17 Jun 2020 14:40:55 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id y16sm910876wro.71.2020.06.17.14.40.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jun 2020 14:40:55 -0700 (PDT)
-Subject: Re: [PATCH 8/8] clk: bcm63xx-gate: switch to dt-bindings definitions
-To:     =?UTF-8?Q?=c3=81lvaro_Fern=c3=a1ndez_Rojas?= <noltari@gmail.com>,
-        mturquette@baylibre.com, sboyd@kernel.org, f.fainelli@gmail.com,
-        bcm-kernel-feedback-list@broadcom.com, robh+dt@kernel.org,
-        julia.lawall@lip6.fr, jonas.gorski@gmail.com, lkp@intel.com,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
-References: <20200615090231.2932696-1-noltari@gmail.com>
- <20200615090231.2932696-9-noltari@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <80971cc7-3a69-730b-e3b0-bd963d47ed47@gmail.com>
-Date:   Wed, 17 Jun 2020 14:40:50 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Firefox/68.0 Thunderbird/68.9.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Uz7g0bB18ztxeQgM+/H4yxv4w/AtkVlw+WDwFr6g8Ao=;
+        b=gKnmsvCwb1c5MwxE5ncNighG3ZLEm6eIoRgbRC8yJE56pcW7BSSH4W+uR6GuBbWpIG
+         df1d6wKOi7ahmSH7A5zqdexHYNk1y0y8Ksr/2LgeKznv0DlOHZrTwzTDUtTNNii5rqnS
+         4zkUEvKHsUYE6gsf60Rq+j0zXHUstfKtrylEwCjFXBRCzRZqmt7OVD3Ou6WYuot0F4LE
+         QlXEZBFJW6r2nVv0ZshZKokJoWj1T2Y8t7oOdFGYJ5LKk4lQYzZr2Uf8mOUDLHA9gGq2
+         RvZHVECmk/hzh4RNFHvcrVEPup8aWMUCz/Dj93jpSCiIEdjYWonFJ/NpCDZ8nj8m9G+5
+         A++Q==
+X-Gm-Message-State: AOAM532u1V6Am3S1iVlDJvBpHZ3xZLAsb9aE4T6kSVWg/ZAo5blB/b91
+        PPlDn/ahcrh2KT1AxbtxPQ==
+X-Google-Smtp-Source: ABdhPJwldBKKgVwMhWTp6+BTPDjZ5+GjxiMRxxsH5coqpGLhBPEg/c67Ti4jXWHLFczF1LllOIWBwg==
+X-Received: by 2002:a92:cb03:: with SMTP id s3mr1132707ilo.161.1592432298592;
+        Wed, 17 Jun 2020 15:18:18 -0700 (PDT)
+Received: from xps15 ([64.188.179.253])
+        by smtp.gmail.com with ESMTPSA id t72sm552531ilk.23.2020.06.17.15.18.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jun 2020 15:18:18 -0700 (PDT)
+Received: (nullmailer pid 2934152 invoked by uid 1000);
+        Wed, 17 Jun 2020 22:18:17 -0000
+Date:   Wed, 17 Jun 2020 16:18:17 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        Dmitry Shmidt <dimitrysh@google.com>, jbrunet@baylibre.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] dt-bindings: clk: g12a-clkc: Add NNA CLK Source
+ clock IDs
+Message-ID: <20200617221817.GA2934098@bogus>
+References: <20200610083012.5024-1-narmstrong@baylibre.com>
+ <20200610083012.5024-2-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20200615090231.2932696-9-noltari@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200610083012.5024-2-narmstrong@baylibre.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 6/15/2020 2:02 AM, Álvaro Fernández Rojas wrote:
-> Now that there are header files for each SoC, let's use them in the
-> bcm63xx-gate controller driver.
+On Wed, 10 Jun 2020 10:30:11 +0200, Neil Armstrong wrote:
+> From: Dmitry Shmidt <dimitrysh@google.com>
 > 
-> Signed-off-by: Álvaro Fernández Rojas <noltari@gmail.com>
+> This adds the Neural Network Accelerator IP source clocks.
+> 
+> Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  include/dt-bindings/clock/g12a-clkc.h | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Acked-by: Rob Herring <robh@kernel.org>
