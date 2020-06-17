@@ -2,179 +2,211 @@ Return-Path: <SRS0=YmV3=76=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E74C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 15:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8781FC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 16:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A698820734
-	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 15:08:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62F7221556
+	for <linux-clk@archiver.kernel.org>; Wed, 17 Jun 2020 16:48:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PjRd+YJa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PbDQlkyl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726854AbgFQPI6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 11:08:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37062 "EHLO
+        id S1727793AbgFQQsk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 12:48:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726848AbgFQPI5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Jun 2020 11:08:57 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2A51C061755
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2020 08:08:56 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id h5so2726420wrc.7
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jun 2020 08:08:56 -0700 (PDT)
+        with ESMTP id S1727106AbgFQQs2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 17 Jun 2020 12:48:28 -0400
+Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8E8C06174E;
+        Wed, 17 Jun 2020 09:48:28 -0700 (PDT)
+Received: by mail-ej1-x644.google.com with SMTP id dr13so3135353ejc.3;
+        Wed, 17 Jun 2020 09:48:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=+VNaCgKeSAnsN+2G9TGu/G00Sb3RTAWKbG0yrAPTqfc=;
-        b=PjRd+YJaVQBUHQNA2/1ldZGAZDRGPLRJx6vn4bQ/rNkgw9VAr96cilJKYUFZfEaDA+
-         HzU3AK3wJJQUDymlKwFpdQU8KjP99QeVmcn0bJsycQ7Wq5D+9EtJX0t2wxQ9iKJUqtbY
-         tx+yLFVYPNGBR+uRQxD/S1Rez637Q7fxDxX81mpy6WoiSnRsothG21jfzqCrGGP5bkqy
-         0GzHx/6bP6bsZjd8PkZSKBQpPddWd2Udbro03r3t9L7GMOohEYk3boX0FZsEtZ4ewoB8
-         zXP8f2QUPfY9jxga/X7alS3BShywjSYVxo2Sty0oyjTNRupb+B3rgvceGjh8LZWY2PMt
-         xrqg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=6fVxLcF2XQJKtsCVrWUPWiIVRqtIIhB/4u8XgaRXYq8=;
+        b=PbDQlkylV8BzQ62QxvxU6i6zJ2z8rgpr4t36HTDAIUFbnjVkXEApnIwTiW6slNgUe8
+         FHdD7C9BjKXgEU77ydCgBJYAAcFTD7lZ7DFZ63+hBGZzBMkOENA8uuManPfMuhsStJcw
+         BbxnzmjNDi8e4ke9bS/G7tgJqeJvum6lGjlsMSaYJZr8nS6HVXnmyi+Z7NdK75jMV3D2
+         gYDlXcqW4RY2HNmvZZNDGM6wQyI0ZlWwirkYAhr2dOD/zB8E9lQztARmsugF0ILTZyT3
+         tGIeex77E1MIS5TnWqGTPnGeNLNGXLkbDl1qrCXnqNNfv6p9LNXEXuKIe7ryfyRD7XwQ
+         kI/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+VNaCgKeSAnsN+2G9TGu/G00Sb3RTAWKbG0yrAPTqfc=;
-        b=IAP7Bx4D2AyWg3EuNXlYqkh6ZjKKDlJ0R3Hhyh4EryjLMjKHgxMXQ6kIyPpfcdzFWA
-         P+eu9cC96hp0gXZB3xEiYZ/qhfoMdgOsfyVz7Vhg+THbehCsxWRRWv89H9l3a098eWIi
-         5nwXIQvrYxUNhc2Q3pqlaKRbyaZpoTWwTmJnkrm0ZpTCEXse4OR/pG+geP4kmRJIyAAZ
-         5QZDqNbz7Vz2NGn15dMUrLBuJrRrzc8tERqU7Qk+w3RgTAcV9S1+L8fepeRwZVEI8iAl
-         fnZO+LF39XLt0GneRnowSTdkJj8GSphV/oEW7wSxGCdIc5xqpRBLGH0mIDO8qUodDFxK
-         YGmw==
-X-Gm-Message-State: AOAM530iQIsI8uHYf29asj8zZXemARghyPjX/oNiHiZKXLuRvB0XhgpJ
-        n12O2qzSUlTuECYoNjr3TFUITg==
-X-Google-Smtp-Source: ABdhPJxX7JM0uX3X/Kwlok22E/PAQtWSfiY6CgMnhY7NTYOH/rojgKo8V80hqDPFuNDj3usNnCAXbA==
-X-Received: by 2002:a5d:4a4d:: with SMTP id v13mr1522923wrs.142.1592406534608;
-        Wed, 17 Jun 2020 08:08:54 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id j18sm35640740wrn.59.2020.06.17.08.08.52
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=6fVxLcF2XQJKtsCVrWUPWiIVRqtIIhB/4u8XgaRXYq8=;
+        b=g59DUv0nF2kFcPSZG84P1KJaz7isIwsbAl0lqayj2Abnf23itYnP1g3ai/CrV56ciw
+         Me+zJeMJI6zYxvQ6cuEQfrxgbrK5gbXBu2vGEOxG5kWa9xTE/qu2SqqgSEzjkSGdnBzB
+         XTI4mgj42h+hnHKeMyzl82bT6dxD9DqCnpnznrScYTWM2+y09dBN+w4e1niKZlxZEGC3
+         qOaqx1aPxRZMROr74EoW6fWBUkJbauURCmK++ycUiO6jeDnpgiu5BmRzL5fcH1u+Njrp
+         341y1vhYEuqTGo11Xn5PYSuh9014sYnWQi2uMU/Qs/hOWz1mWQm32kFnReXGnp3TkAhN
+         hY4A==
+X-Gm-Message-State: AOAM5305+h1C6I0wkxfU24/t/IBrqAMkWxQq8vZrXpUjyvY1XOfdX2Yu
+        Bo9Jzu4z8slrYPjXATeWW8A=
+X-Google-Smtp-Source: ABdhPJzvfkBjdaEucnW6Yw9j2N0utHDwTtXn2MmFds5w5ZZP1PDzlH/1fl3mYO0+UhnDesHXQctLAQ==
+X-Received: by 2002:a17:906:cc58:: with SMTP id mm24mr97135ejb.134.1592412506965;
+        Wed, 17 Jun 2020 09:48:26 -0700 (PDT)
+Received: from localhost.localdomain ([188.24.129.96])
+        by smtp.gmail.com with ESMTPSA id v3sm127124edj.89.2020.06.17.09.48.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jun 2020 08:08:53 -0700 (PDT)
-Date:   Wed, 17 Jun 2020 16:08:50 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 00/17] Modularizing Versatile Express
-Message-ID: <20200617150850.t23gwj3p2qnduq2a@holly.lan>
-References: <20200429205825.10604-1-robh@kernel.org>
+        Wed, 17 Jun 2020 09:48:26 -0700 (PDT)
+From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-actions@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 09/11] clk: actions: Add Actions S500 SoC Reset Management Unit support
+Date:   Wed, 17 Jun 2020 19:48:09 +0300
+Message-Id: <e361b46511756070277ff10f94e1735bb69cc300.1592407030.git.cristian.ciocaltea@gmail.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <cover.1592407030.git.cristian.ciocaltea@gmail.com>
+References: <cover.1592407030.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200429205825.10604-1-robh@kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Apr 29, 2020 at 03:58:09PM -0500, Rob Herring wrote:
-> This series enables building various Versatile Express platform drivers
-> as modules. The primary target is the Fast Model FVP which is supported
-> in Android. As Android is moving towards their GKI, or generic kernel,
-> the hardware support has to be in modules. Currently ARCH_VEXPRESS
-> enables several built-in only drivers. Some of these are needed, but
-> some are only needed for older 32-bit VExpress platforms and can just
-> be disabled. For FVP, the pl111 display driver is needed. The pl111
-> driver depends on vexpress-osc clocks which had a dependency chain of
-> vexpress-config --> vexpress-syscfg --> vexpress-sysreg. These
-> components relied on fixed initcall ordering and didn't support deferred
-> probe which would have complicated making them modules. All these levels
-> of abstraction are needlessly complicated, so this series simplifies
-> things a bit by merging the vexpress-config and vexpress-syscfg
-> functionality.
-> 
-> There's a couple of other pieces to this which I've sent out separately
-> as they don't have dependencies with this series. The cross subsystem
-> dependencies in this series are mainly the ordering of enabling drivers
-> as modules.
+Add Reset Management Unit (RMU) support for Actions Semi S500 SoC.
 
-This series results in the vexpress-a15 console not coming up until very
-late in the boot process because the console arch_initcall() ends up
-being deferred because it's dependencies are no longer use
-core_initcall() to ensure they get in first.
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+---
+ drivers/clk/actions/owl-s500.c | 80 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
 
-Is there a problem registering vexpress-osc, vexpress-sysreg and
-vexpress-config as core_initcall's so the console behaves nicely
-when they are all compiled as built-ins?
+diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
+index 025a8f6d6482..3bce72301c65 100644
+--- a/drivers/clk/actions/owl-s500.c
++++ b/drivers/clk/actions/owl-s500.c
+@@ -10,6 +10,8 @@
+  *
+  * Copyright (c) 2018 LSI-TEC - Caninos Loucos
+  * Author: Edgar Bernardi Righi <edgar.righi@lsitec.org.br>
++ *
++ * Copyright (c) 2020 Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -23,8 +25,10 @@
+ #include "owl-gate.h"
+ #include "owl-mux.h"
+ #include "owl-pll.h"
++#include "owl-reset.h"
+ 
+ #include <dt-bindings/clock/actions,s500-cmu.h>
++#include <dt-bindings/reset/actions,s500-reset.h>
+ 
+ #define CMU_COREPLL			(0x0000)
+ #define CMU_DEVPLL			(0x0004)
+@@ -497,20 +501,96 @@ static struct clk_hw_onecell_data s500_hw_clks = {
+ 	.num = CLK_NR_CLKS,
+ };
+ 
++static const struct owl_reset_map s500_resets[] = {
++	[RESET_DMAC]	= { CMU_DEVRST0, BIT(0) },
++	[RESET_NORIF]	= { CMU_DEVRST0, BIT(1) },
++	[RESET_DDR]	= { CMU_DEVRST0, BIT(2) },
++	[RESET_NANDC]	= { CMU_DEVRST0, BIT(3) },
++	[RESET_SD0]	= { CMU_DEVRST0, BIT(4) },
++	[RESET_SD1]	= { CMU_DEVRST0, BIT(5) },
++	[RESET_PCM1]	= { CMU_DEVRST0, BIT(6) },
++	[RESET_DE]	= { CMU_DEVRST0, BIT(7) },
++	[RESET_LCD]	= { CMU_DEVRST0, BIT(8) },
++	[RESET_SD2]	= { CMU_DEVRST0, BIT(9) },
++	[RESET_DSI]	= { CMU_DEVRST0, BIT(10) },
++	[RESET_CSI]	= { CMU_DEVRST0, BIT(11) },
++	[RESET_BISP]	= { CMU_DEVRST0, BIT(12) },
++	[RESET_KEY]	= { CMU_DEVRST0, BIT(14) },
++	[RESET_GPIO]	= { CMU_DEVRST0, BIT(15) },
++	[RESET_AUDIO]	= { CMU_DEVRST0, BIT(17) },
++	[RESET_PCM0]	= { CMU_DEVRST0, BIT(18) },
++	[RESET_VDE]	= { CMU_DEVRST0, BIT(19) },
++	[RESET_VCE]	= { CMU_DEVRST0, BIT(20) },
++	[RESET_GPU3D]	= { CMU_DEVRST0, BIT(22) },
++	[RESET_NIC301]	= { CMU_DEVRST0, BIT(23) },
++	[RESET_LENS]	= { CMU_DEVRST0, BIT(26) },
++	[RESET_PERIPHRESET] = { CMU_DEVRST0, BIT(27) },
++	[RESET_USB2_0]	= { CMU_DEVRST1, BIT(0) },
++	[RESET_TVOUT]	= { CMU_DEVRST1, BIT(1) },
++	[RESET_HDMI]	= { CMU_DEVRST1, BIT(2) },
++	[RESET_HDCP2TX]	= { CMU_DEVRST1, BIT(3) },
++	[RESET_UART6]	= { CMU_DEVRST1, BIT(4) },
++	[RESET_UART0]	= { CMU_DEVRST1, BIT(5) },
++	[RESET_UART1]	= { CMU_DEVRST1, BIT(6) },
++	[RESET_UART2]	= { CMU_DEVRST1, BIT(7) },
++	[RESET_SPI0]	= { CMU_DEVRST1, BIT(8) },
++	[RESET_SPI1]	= { CMU_DEVRST1, BIT(9) },
++	[RESET_SPI2]	= { CMU_DEVRST1, BIT(10) },
++	[RESET_SPI3]	= { CMU_DEVRST1, BIT(11) },
++	[RESET_I2C0]	= { CMU_DEVRST1, BIT(12) },
++	[RESET_I2C1]	= { CMU_DEVRST1, BIT(13) },
++	[RESET_USB3]	= { CMU_DEVRST1, BIT(14) },
++	[RESET_UART3]	= { CMU_DEVRST1, BIT(15) },
++	[RESET_UART4]	= { CMU_DEVRST1, BIT(16) },
++	[RESET_UART5]	= { CMU_DEVRST1, BIT(17) },
++	[RESET_I2C2]	= { CMU_DEVRST1, BIT(18) },
++	[RESET_I2C3]	= { CMU_DEVRST1, BIT(19) },
++	[RESET_ETHERNET] = { CMU_DEVRST1, BIT(20) },
++	[RESET_CHIPID]	= { CMU_DEVRST1, BIT(21) },
++	[RESET_USB2_1]	= { CMU_DEVRST1, BIT(22) },
++	[RESET_WD0RESET] = { CMU_DEVRST1, BIT(24) },
++	[RESET_WD1RESET] = { CMU_DEVRST1, BIT(25) },
++	[RESET_WD2RESET] = { CMU_DEVRST1, BIT(26) },
++	[RESET_WD3RESET] = { CMU_DEVRST1, BIT(27) },
++	[RESET_DBG0RESET] = { CMU_DEVRST1, BIT(28) },
++	[RESET_DBG1RESET] = { CMU_DEVRST1, BIT(29) },
++	[RESET_DBG2RESET] = { CMU_DEVRST1, BIT(30) },
++	[RESET_DBG3RESET] = { CMU_DEVRST1, BIT(31) },
++};
++
+ static struct owl_clk_desc s500_clk_desc = {
+ 	.clks	    = s500_clks,
+ 	.num_clks   = ARRAY_SIZE(s500_clks),
+ 
+ 	.hw_clks    = &s500_hw_clks,
++
++	.resets     = s500_resets,
++	.num_resets = ARRAY_SIZE(s500_resets),
+ };
+ 
+ static int s500_clk_probe(struct platform_device *pdev)
+ {
+ 	struct owl_clk_desc *desc;
++	struct owl_reset *reset;
++	int ret;
+ 
+ 	desc = &s500_clk_desc;
+ 	owl_clk_regmap_init(pdev, desc);
+ 
++	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
++	if (!reset)
++		return -ENOMEM;
++
++	reset->rcdev.of_node = pdev->dev.of_node;
++	reset->rcdev.ops = &owl_reset_ops;
++	reset->rcdev.nr_resets = desc->num_resets;
++	reset->reset_map = desc->resets;
++	reset->regmap = desc->regmap;
++
++	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
++	if (ret)
++		dev_err(&pdev->dev, "Failed to register reset controller\n");
++
+ 	return owl_clk_probe(&pdev->dev, desc->hw_clks);
+ }
+ 
+-- 
+2.27.0
 
-
-Daniel.
-
-
-
-
-> 
-> A complete git branch is here[1]. Tested on Fast Model FVP Rev C.
-> 
-> v2:
-> The major change is a boot fix for 32-bit VExpress platforms with patch 3.
-> I also dropped 'power/reset: vexpress: Support building as a module' as it
-> was incomplete and not needed for this series.
-> 
-> Rob
-> 
-> [1] git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git vexpress-modules-v4
-> 
-> Rob Herring (16):
->   ARM: vexpress: Move vexpress_flags_set() into arch code
->   arm64: vexpress: Don't select CONFIG_POWER_RESET_VEXPRESS
->   amba: Retry adding deferred devices at late_initcall
->   clk: versatile: Rework kconfig structure
->   clk: versatile: Only enable SP810 on 32-bit by default
->   clk: vexpress-osc: Use the devres clock API variants
->   clk: vexpress-osc: Support building as a module
->   mfd: vexpress-sysreg: Drop selecting CONFIG_CLKSRC_MMIO
->   mfd: vexpress-sysreg: Drop unused syscon child devices
->   mfd: vexpress-sysreg: Use devres API variants
->   mfd: vexpress-sysreg: Support building as a module
->   bus: vexpress-config: Merge vexpress-syscfg into vexpress-config
->   bus: vexpress-config: simplify config bus probing
->   vexpress: Move setting master site to vexpress-config bus
->   bus: vexpress-config: Support building as module
->   ARM: vexpress: Don't select VEXPRESS_CONFIG
-> 
->  arch/arm/mach-integrator/Kconfig         |   1 -
->  arch/arm/mach-realview/Kconfig           |   1 -
->  arch/arm/mach-versatile/Kconfig          |   1 -
->  arch/arm/mach-vexpress/Kconfig           |   4 -
->  arch/arm/mach-vexpress/core.h            |   1 +
->  arch/arm/mach-vexpress/dcscb.c           |   1 +
->  arch/arm/mach-vexpress/v2m.c             |  23 ++
->  arch/arm64/Kconfig.platforms             |   3 -
->  drivers/amba/bus.c                       |  14 +-
->  drivers/bus/Kconfig                      |   2 +-
->  drivers/bus/vexpress-config.c            | 354 ++++++++++++++++++-----
->  drivers/clk/Makefile                     |   2 +-
->  drivers/clk/versatile/Kconfig            |  24 +-
->  drivers/clk/versatile/clk-vexpress-osc.c |  20 +-
->  drivers/mfd/Kconfig                      |   5 +-
->  drivers/mfd/vexpress-sysreg.c            |  99 +------
->  drivers/misc/Kconfig                     |   9 -
->  drivers/misc/Makefile                    |   1 -
->  drivers/misc/vexpress-syscfg.c           | 280 ------------------
->  include/linux/vexpress.h                 |  30 --
->  20 files changed, 354 insertions(+), 521 deletions(-)
->  delete mode 100644 drivers/misc/vexpress-syscfg.c
-> 
-> 
-> base-commit: 8f3d9f354286745c751374f5f1fcafee6b3f3136
-> ---
-> 2.20.1
