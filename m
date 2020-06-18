@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0AE5C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E01C1C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 925DA20885
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:46:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6A6E20890
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbgFRLqt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jun 2020 07:46:49 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45197 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726946AbgFRLqs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 07:46:48 -0400
-Received: by mail-oi1-f193.google.com with SMTP id p70so4750563oic.12;
-        Thu, 18 Jun 2020 04:46:47 -0700 (PDT)
+        id S1727788AbgFRLts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jun 2020 07:49:48 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37599 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbgFRLtr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 07:49:47 -0400
+Received: by mail-ot1-f66.google.com with SMTP id v13so4279658otp.4;
+        Thu, 18 Jun 2020 04:49:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IfSQztYSPvnNTRTHNXQ8aizcfc8xAWVkgC98ujeiDUM=;
-        b=hxsRupqRQulf8Jh0UILooU4/psNIkzpZsb1eZccJKdIM/1LZPNvQRz67eNiV1nfdNk
-         PVLY0suhxh4jFjeaNNwieBHVtctJC9c9kXcU99iUn3uAbXW9DRsVEcc7NCt1+qus8LJU
-         wt/j/s/CoYFSz1kkh1fRKuXnJdE8ZVEXj42tZp6bWdk4OKjYBySoXws7U1vL7q0oKE8g
-         DTXy4On+O6G7MONUcCls1vyN1MDGrAv3vCy0jayS/R7YW85QMvW02HZ5DSLygCLjxMAI
-         Ilu+4zj8QQ4NvK2AO9ie+A0KKMykBcjuA+Q4T4sce4TJTaXiTfx+gbthOrz7Yd2JO6M5
-         D4dw==
-X-Gm-Message-State: AOAM532dBT9rcIGXe8q4BOuHx6VYru+5KNZXJPPWVWezgRCnNzp+cTpk
-        PvmyMG1WsofKQH9mcA0YWL7x+pVUXqi3Hqm81OXuzg==
-X-Google-Smtp-Source: ABdhPJwzX8tLwqS1A0bMxxdu7tTeBNInb4j/BCF68g6VrUw68OfyBRmbuffZmFERhb0utdaSzVyGWjaNBNG5JThwmvw=
-X-Received: by 2002:a54:4006:: with SMTP id x6mr2423596oie.148.1592480807406;
- Thu, 18 Jun 2020 04:46:47 -0700 (PDT)
+        bh=nz3DP0kIuKaqIce7U50AwSyDG8O6ikDysLwGRYoKy20=;
+        b=CTacjTPmhROIHwsIvzf1Pm7U8rPUwt8G/fWcpiBWpEWq1TUSa3uhfsIqOpd+9rkfI6
+         bzE+VvpW02I1U1Tl2s2HxAsVWE4toVY8bKMIJMgPkCCdHKS+fO5GrEriJBrnLV/4lLN9
+         N2a3YxVlc40MA8IbF1nIQh38EMT3pQuLk824Y2FOqzuZsQZ9YvNDVGNblP9SU1FstEWJ
+         4V7ezVa38OJC2ce2Km4szWd2QDMZASQqrfHLpGYk8ONAADUmXHeMB1kIMnOH3FvEPmBr
+         Rb1f/6qq/ms920pgC+TBCpYbz+ZXm1bV/rueulwHBXpBv2S77o1SOPCk9QGDVBDvgfwU
+         902Q==
+X-Gm-Message-State: AOAM53197XnLfVa2nlDvdsqEkPyVmvohxY4ayvCTo6PluGcc8PbM8KKI
+        pyjzNCF4AIvdNr3uaCt3gki0UPgV0raNwfbMs6w=
+X-Google-Smtp-Source: ABdhPJzq1keajHjhqtJRP7uxEqr5waylgrQW7FbLL7H2zOU4npAu8KmKwZX/14aevAf4v3CKrRde/QplOjnQx7tJHcc=
+X-Received: by 2002:a05:6830:141a:: with SMTP id v26mr3082718otp.250.1592480987379;
+ Thu, 18 Jun 2020 04:49:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200616162626.27944-1-uli+renesas@fpond.eu> <20200616162626.27944-2-uli+renesas@fpond.eu>
-In-Reply-To: <20200616162626.27944-2-uli+renesas@fpond.eu>
+References: <20200616162626.27944-1-uli+renesas@fpond.eu> <20200616162626.27944-3-uli+renesas@fpond.eu>
+In-Reply-To: <20200616162626.27944-3-uli+renesas@fpond.eu>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 18 Jun 2020 13:46:35 +0200
-Message-ID: <CAMuHMdVyya9g4T-AJDXCkNB70H58N-yHVFSYMMvYA24+YmU--A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] clk: renesas: cpg-mssr: mark clocks as critical
- only if on at boot
+Date:   Thu, 18 Jun 2020 13:49:36 +0200
+Message-ID: <CAMuHMdV0OdubU1KPT+XBFj2153AH-hvzdVHpY_2n8+uC02L8aA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] clk: renesas: rcar-gen3: mark RWDT clocks as critical
 To:     Ulrich Hecht <uli+renesas@fpond.eu>
 Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -55,13 +54,18 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Uli,
+
 On Tue, Jun 16, 2020 at 6:26 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
-> This allows us to add the RWDT clock to the list of critical clocks without
-> keeping it enabled needlessly if not used.
+> Ensures RWDT remains alert throughout the boot process if enabled.
 >
-> Changing the semantics of crit_mod_clks in this way is safe for the current
-> user (INTC-AP) because it is never off at boot time.
->
+> This patch applies the change to the following SoCs: r8a7795,
+> r8a7796, r8a77965, r8a77970, r8a77980, r8a77990 and r8a77995.
+
+As "r8a7795" and "r8a7796" are a bit vague, I hope you don't mind if I
+expand them to "r8a77950, r8a77951" resp. "r8a77960, r8a77961" while
+applying.
+
 > Signed-off-by: Ulrich Hecht <uli+renesas@fpond.eu>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
