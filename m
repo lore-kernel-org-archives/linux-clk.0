@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1887DC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6665C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:51:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E955520776
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:49:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C656C20776
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448542;
-	bh=YGX0lrnfxqvr/T0mkwVDpFrgfYUGjzlfvTyPYgsITqY=;
+	s=default; t=1592448689;
+	bh=4FcXTmBI3ToMgwgwOnHW8RJF6LSROopdCHbwF1pRfEQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h6DSqsWvGMALu+J020DV4XAoENfLRf2z6Xl6IcWzP/om0GKzBjzS7bJsflYK7bpDQ
-	 /yxup+98HniFb+cNggd65sHLeObYJaH6zXujvNolUdWeTGI/0cS97iw33f9zwdfRV2
-	 OZwa1NFfjEp58eMD8zkHPpJnlbrb0HJkJ3jx/2Pg=
+	b=RQoUiLt5wrUYLT/uTSQ6iYEreQbnAXbwuAVFXGqzUhkXd3JOOvRI3ZSwgy+wxDqts
+	 b6YEjGoX8gSqeLvUDtlmRVuZ8io/wAhJKacyRJn85FM6+A4fh4qUYpdo18rfEMZlF7
+	 I8Evd6E9mcWWPIJhGYxn7VL+pid3ZrNvgPic9aCc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728532AbgFRCtB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:49:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36440 "EHLO mail.kernel.org"
+        id S1727992AbgFRBJA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:09:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728269AbgFRBJo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:09:44 -0400
+        id S1727985AbgFRBI6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:08:58 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19E6021D7E;
-        Thu, 18 Jun 2020 01:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC73621D79;
+        Thu, 18 Jun 2020 01:08:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442584;
-        bh=YGX0lrnfxqvr/T0mkwVDpFrgfYUGjzlfvTyPYgsITqY=;
+        s=default; t=1592442537;
+        bh=4FcXTmBI3ToMgwgwOnHW8RJF6LSROopdCHbwF1pRfEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ByQITHnCSDbR7BToO+0RZvFIIgKGpv+vqRMOSLCnxbV7pHChj8PsZ8U+xNLN6P3Pv
-         uuhYnwag/CnCKRQehEBg2IAVSk8B4tD+fCXvXG2RJ76XWADz7NYJOilJzTjwM/sdD8
-         2L1fvN3tutiXIayo8kViPhvmH/tY8QIg+ZcEsW/w=
+        b=wpArZbs4Iuruxr4nHwFHHDWjUiGs3tMAqyFh991mmAiIxEyiuiKtqcKJwE5G2Rt87
+         qofSxZiGjWm+qv6SHd0hm1i8dF7q08qL1Ley0tv/LCMALd0P3fZ2up9oEa3zl8W1nY
+         +SD0zEQbJ9COsJ23PA7x5C+TVTgZScf9Tl2zdRwA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Tejas Patel <tejas.patel@xilinx.com>,
-        Jolly Shah <jolly.shah@xilinx.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.7 075/388] clk: zynqmp: fix memory leak in zynqmp_register_clocks
-Date:   Wed, 17 Jun 2020 21:02:52 -0400
-Message-Id: <20200618010805.600873-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 039/388] clk: samsung: Mark top ISP and CAM clocks on Exynos542x as critical
+Date:   Wed, 17 Jun 2020 21:02:16 -0400
+Message-Id: <20200618010805.600873-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -62,98 +61,90 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 58b0fb86260063f86afecaebf4056c876fff2a19 ]
+[ Upstream commit e47bd937e602bb4379546095d1bd0b9871fa60c2 ]
 
-This is detected by kmemleak running on zcu102 board:
+The TOP 'aclk*_isp', 'aclk550_cam', 'gscl_wa' and 'gscl_wb' clocks must
+be kept enabled all the time to allow proper access to power management
+control for the ISP and CAM power domains. The last two clocks, although
+related to GScaler device and GSCL power domain, provides also the
+I_WRAP_CLK signal to MIPI CSIS0/1 devices, which are a part of CAM power
+domain and are needed for proper power on/off sequence.
 
-unreferenced object 0xffffffc877e48180 (size 128):
-comm "swapper/0", pid 1, jiffies 4294892909 (age 315.436s)
-hex dump (first 32 bytes):
-64 70 5f 76 69 64 65 6f 5f 72 65 66 5f 64 69 76 dp_video_ref_div
-31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 1...............
-backtrace:
-[<00000000c9be883b>] __kmalloc_track_caller+0x200/0x380
-[<00000000f02c3809>] kvasprintf+0x7c/0x100
-[<00000000e51dde4d>] kasprintf+0x60/0x80
-[<0000000092298b05>] zynqmp_register_clocks+0x29c/0x398
-[<00000000faaff182>] zynqmp_clock_probe+0x3cc/0x4c0
-[<000000005f5986f0>] platform_drv_probe+0x58/0xa8
-[<00000000d5810136>] really_probe+0xd8/0x2a8
-[<00000000f5b671be>] driver_probe_device+0x5c/0x100
-[<0000000038f91fcf>] __device_attach_driver+0x98/0xb8
-[<000000008a3f2ac2>] bus_for_each_drv+0x74/0xd8
-[<000000001cb2783d>] __device_attach+0xe0/0x140
-[<00000000c268031b>] device_initial_probe+0x24/0x30
-[<000000006998de4b>] bus_probe_device+0x9c/0xa8
-[<00000000647ae6ff>] device_add+0x3c0/0x610
-[<0000000071c14bb8>] of_device_add+0x40/0x50
-[<000000004bb5d132>] of_platform_device_create_pdata+0xbc/0x138
+Currently there are no drivers for the devices, which are part of CAM and
+ISP power domains yet. This patch only fixes the race between disabling
+the unused power domains and disabling unused clocks, which randomly
+resulted in the following error during boot:
 
-This is because that when num_nodes is larger than 1, clk_out is
-allocated using kasprintf for these nodes but only the last node's
-clk_out is freed.
+Power domain CAM disable failed
+Power domain ISP disable failed
 
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
-Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
-Link: https://lkml.kernel.org/r/1583185843-20707-5-git-send-email-jolly.shah@xilinx.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 318fa46cc60d ("clk/samsung: exynos542x: mark some clocks as critical")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/zynqmp/clkc.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-index 10e89f23880b..b66c3a62233a 100644
---- a/drivers/clk/zynqmp/clkc.c
-+++ b/drivers/clk/zynqmp/clkc.c
-@@ -558,7 +558,7 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
- {
- 	int j;
- 	u32 num_nodes, clk_dev_id;
--	char *clk_out = NULL;
-+	char *clk_out[MAX_NODES];
- 	struct clock_topology *nodes;
- 	struct clk_hw *hw = NULL;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index c9e5a1fb6653..edb2363c735a 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -540,7 +540,7 @@ static const struct samsung_div_clock exynos5800_div_clks[] __initconst = {
  
-@@ -572,16 +572,16 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
- 		 * Intermediate clock names are postfixed with type of clock.
- 		 */
- 		if (j != (num_nodes - 1)) {
--			clk_out = kasprintf(GFP_KERNEL, "%s%s", clk_name,
-+			clk_out[j] = kasprintf(GFP_KERNEL, "%s%s", clk_name,
- 					    clk_type_postfix[nodes[j].type]);
- 		} else {
--			clk_out = kasprintf(GFP_KERNEL, "%s", clk_name);
-+			clk_out[j] = kasprintf(GFP_KERNEL, "%s", clk_name);
- 		}
- 
- 		if (!clk_topology[nodes[j].type])
- 			continue;
- 
--		hw = (*clk_topology[nodes[j].type])(clk_out, clk_dev_id,
-+		hw = (*clk_topology[nodes[j].type])(clk_out[j], clk_dev_id,
- 						    parent_names,
- 						    num_parents,
- 						    &nodes[j]);
-@@ -590,9 +590,12 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
- 				     __func__,  clk_dev_id, clk_name,
- 				     PTR_ERR(hw));
- 
--		parent_names[0] = clk_out;
-+		parent_names[0] = clk_out[j];
- 	}
--	kfree(clk_out);
-+
-+	for (j = 0; j < num_nodes; j++)
-+		kfree(clk_out[j]);
-+
- 	return hw;
- }
- 
+ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+ 	GATE(CLK_ACLK550_CAM, "aclk550_cam", "mout_user_aclk550_cam",
+-				GATE_BUS_TOP, 24, 0, 0),
++				GATE_BUS_TOP, 24, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+ };
+@@ -943,25 +943,25 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(0, "aclk300_jpeg", "mout_user_aclk300_jpeg",
+ 			GATE_BUS_TOP, 4, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk333_432_isp0", "mout_user_aclk333_432_isp0",
+-			GATE_BUS_TOP, 5, 0, 0),
++			GATE_BUS_TOP, 5, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk300_gscl", "mout_user_aclk300_gscl",
+ 			GATE_BUS_TOP, 6, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk333_432_gscl", "mout_user_aclk333_432_gscl",
+ 			GATE_BUS_TOP, 7, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk333_432_isp", "mout_user_aclk333_432_isp",
+-			GATE_BUS_TOP, 8, 0, 0),
++			GATE_BUS_TOP, 8, CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_PCLK66_GPIO, "pclk66_gpio", "mout_user_pclk66_gpio",
+ 			GATE_BUS_TOP, 9, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk66_psgen", "mout_user_aclk66_psgen",
+ 			GATE_BUS_TOP, 10, CLK_IGNORE_UNUSED, 0),
+ 	GATE(0, "aclk266_isp", "mout_user_aclk266_isp",
+-			GATE_BUS_TOP, 13, 0, 0),
++			GATE_BUS_TOP, 13, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk166", "mout_user_aclk166",
+ 			GATE_BUS_TOP, 14, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_ACLK333, "aclk333", "mout_user_aclk333",
+ 			GATE_BUS_TOP, 15, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk400_isp", "mout_user_aclk400_isp",
+-			GATE_BUS_TOP, 16, 0, 0),
++			GATE_BUS_TOP, 16, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk400_mscl", "mout_user_aclk400_mscl",
+ 			GATE_BUS_TOP, 17, CLK_IS_CRITICAL, 0),
+ 	GATE(0, "aclk200_disp1", "mout_user_aclk200_disp1",
+@@ -1161,8 +1161,10 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 			GATE_IP_GSCL1, 3, 0, 0),
+ 	GATE(CLK_SMMU_FIMCL1, "smmu_fimcl1", "dout_gscl_blk_333",
+ 			GATE_IP_GSCL1, 4, 0, 0),
+-	GATE(CLK_GSCL_WA, "gscl_wa", "sclk_gscl_wa", GATE_IP_GSCL1, 12, 0, 0),
+-	GATE(CLK_GSCL_WB, "gscl_wb", "sclk_gscl_wb", GATE_IP_GSCL1, 13, 0, 0),
++	GATE(CLK_GSCL_WA, "gscl_wa", "sclk_gscl_wa", GATE_IP_GSCL1, 12,
++			CLK_IS_CRITICAL, 0),
++	GATE(CLK_GSCL_WB, "gscl_wb", "sclk_gscl_wb", GATE_IP_GSCL1, 13,
++			CLK_IS_CRITICAL, 0),
+ 	GATE(CLK_SMMU_FIMCL3, "smmu_fimcl3,", "dout_gscl_blk_333",
+ 			GATE_IP_GSCL1, 16, 0, 0),
+ 	GATE(CLK_FIMC_LITE3, "fimc_lite3", "aclk333_432_gscl",
 -- 
 2.25.1
 
