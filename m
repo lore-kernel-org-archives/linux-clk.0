@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B485C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:41:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3EBC433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 012E221D7A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:41:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A97F21D93
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448064;
-	bh=G3npwubaEKnd3PGv+uBeBKcI2zNcuNgQoVB37CCG5rs=;
+	s=default; t=1592448200;
+	bh=nZiTh/x0+BJwJJK5EHwTZcOVVxfwS36S2zGYTDgC4ZU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YTRENoYv3a5os0f+U5A6FQNAjGWQZA8iPsA4KBy8Y+Q2M7RNJQQ4sT9Fth9afTNVD
-	 L/yoBdGC4Dl1f6KtspQQnj2mY1RWrG5foDA++pxzMjNS0kS7e2zKLZ2+VTe8VgWXzg
-	 5kw2RtxvNe7SWFi9tB3ePKBurd/5y/0W0ncgQTlA=
+	b=bkikrVQsdqhnbri7PntQhHlT641tMPiOVv2AOCSteqfEx9/2tXQveWHu7CRjKc7KW
+	 nS7EiKPueE3EIPPjAAYtNvf7PNNhDuwMsu3Im9vKiEU4536hKi92hqljBUV0all9rU
+	 XhAViqtFW7d2yhCRgvjhDH3yuf3PTxeiteVwfEfE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbgFRBMc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:12:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
+        id S1728782AbgFRBLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:11:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728918AbgFRBMc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:12:32 -0400
+        id S1728745AbgFRBLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:11:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEDD020EDD;
-        Thu, 18 Jun 2020 01:12:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CA2E21974;
+        Thu, 18 Jun 2020 01:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442751;
-        bh=G3npwubaEKnd3PGv+uBeBKcI2zNcuNgQoVB37CCG5rs=;
+        s=default; t=1592442698;
+        bh=nZiTh/x0+BJwJJK5EHwTZcOVVxfwS36S2zGYTDgC4ZU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N4g0EsoKLEgbgSAfzAp3MqeVdFts08JAjMcW5MwkkAdJE+/DARZPPFkxE+2zaNcJw
-         vAbqbLSbFpAkJ1PZYqlNYFB1CK0wWQr9fOI36T+JWg1ppUapxQebya1fJFCcyNkjbX
-         0PCHSlgS45AJQUxKzNSJP0Z1Yo90+Q+J8oCLJrVQ=
+        b=pkBgkTForBTTz7VuKwDRtFnFgF0uth22pPe8HWvv/eR2EzEDHNtctM1s6peFUozzm
+         clqDAKZtJ5n6L9YsFkPmFdNHX38nE29A5PpwkvyXCBmzR80W3vy5xhDbUQIci1OCLc
+         eQ3gC0GlSm2sLmtGXDorDHNbco7jNGy41ajTCpu0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tero Kristo <t-kristo@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 203/388] clk: ti: composite: fix memory leak
-Date:   Wed, 17 Jun 2020 21:05:00 -0400
-Message-Id: <20200618010805.600873-203-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.7 161/388] clk: meson: meson8b: Don't rely on u-boot to init all GP_PLL registers
+Date:   Wed, 17 Jun 2020 21:04:18 -0400
+Message-Id: <20200618010805.600873-161-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -61,36 +60,81 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit c7c1cbbc9217ebb5601b88d138d4a5358548de9d ]
+[ Upstream commit a29ae8600d50ece1856b062a39ed296b8b952259 ]
 
-The parent_names is never released for a component clock definition,
-causing some memory leak. Fix by releasing it once it is no longer
-needed.
+Not all u-boot versions initialize the HHI_GP_PLL_CNTL[2-5] registers.
+In that case all HHI_GPLL_PLL_CNTL[1-5] registers are 0x0 and when
+booting Linux the PLL fails to lock.
+The initialization sequence from u-boot is:
+- put the PLL into reset
+- write 0x59C88000 to HHI_GP_PLL_CNTL2
+- write 0xCA463823 to HHI_GP_PLL_CNTL3
+- write 0x0286A027 to HHI_GP_PLL_CNTL4
+- write 0x00003000 to HHI_GP_PLL_CNTL5
+- set M, N, OD and the enable bit
+- take the PLL out of reset
+- check if it has locked
+- disable the PLL
 
-Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Link: https://lkml.kernel.org/r/20200429131341.4697-2-t-kristo@ti.com
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+In Linux we already initialize M, N, OD, the enable and the reset bits.
+Also the HHI_GP_PLL_CNTL[2-5] registers with these magic values (the
+exact meaning is unknown) so the PLL can lock when the vendor u-boot did
+not initialize these registers yet.
+
+Fixes: b882964b376f21 ("clk: meson: meson8b: add support for the GP_PLL clock on Meson8m2")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lore.kernel.org/r/20200501215717.735393-1-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/composite.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/meson/meson8b.c | 9 +++++++++
+ drivers/clk/meson/meson8b.h | 4 ++++
+ 2 files changed, 13 insertions(+)
 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index 6a89936ba03a..eaa43575cfa5 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -196,6 +196,7 @@ static void __init _register_composite(void *user,
- 		if (!cclk->comp_clks[i])
- 			continue;
- 		list_del(&cclk->comp_clks[i]->link);
-+		kfree(cclk->comp_clks[i]->parent_names);
- 		kfree(cclk->comp_clks[i]);
- 	}
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 5f375799ce46..11f6b868cf2b 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -1918,6 +1918,13 @@ static struct clk_regmap meson8b_mali = {
+ 	},
+ };
  
++static const struct reg_sequence meson8m2_gp_pll_init_regs[] = {
++	{ .reg = HHI_GP_PLL_CNTL2,	.def = 0x59c88000 },
++	{ .reg = HHI_GP_PLL_CNTL3,	.def = 0xca463823 },
++	{ .reg = HHI_GP_PLL_CNTL4,	.def = 0x0286a027 },
++	{ .reg = HHI_GP_PLL_CNTL5,	.def = 0x00003000 },
++};
++
+ static const struct pll_params_table meson8m2_gp_pll_params_table[] = {
+ 	PLL_PARAMS(182, 3),
+ 	{ /* sentinel */ },
+@@ -1951,6 +1958,8 @@ static struct clk_regmap meson8m2_gp_pll_dco = {
+ 			.width   = 1,
+ 		},
+ 		.table = meson8m2_gp_pll_params_table,
++		.init_regs = meson8m2_gp_pll_init_regs,
++		.init_count = ARRAY_SIZE(meson8m2_gp_pll_init_regs),
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+ 		.name = "gp_pll_dco",
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index c889fbeec30f..c91fb07fcb65 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -20,6 +20,10 @@
+  * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+  */
+ #define HHI_GP_PLL_CNTL			0x40  /* 0x10 offset in data sheet */
++#define HHI_GP_PLL_CNTL2		0x44  /* 0x11 offset in data sheet */
++#define HHI_GP_PLL_CNTL3		0x48  /* 0x12 offset in data sheet */
++#define HHI_GP_PLL_CNTL4		0x4C  /* 0x13 offset in data sheet */
++#define HHI_GP_PLL_CNTL5		0x50  /* 0x14 offset in data sheet */
+ #define HHI_VIID_CLK_DIV		0x128 /* 0x4a offset in data sheet */
+ #define HHI_VIID_CLK_CNTL		0x12c /* 0x4b offset in data sheet */
+ #define HHI_GCLK_MPEG0			0x140 /* 0x50 offset in data sheet */
 -- 
 2.25.1
 
