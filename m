@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C14D0C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E72E8C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97CD02192A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C70D0206E2
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:34:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592447271;
-	bh=kCjSyXO6zz3ZUcp39RHJO7Kc3CAczW6G8wj8OXTDw7c=;
+	s=default; t=1592447698;
+	bh=yxjlZXBHSwssaqDKkjpPc3u3wRsrsKwzGkwMtEVmXMw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BRCGXCFnPw4BhPEpQSEQHNaw9wBfQrwhyIa9y455AOTYHTHDz1rGLnxMtfs8BYgfG
-	 +PbxM1MEVpIcjcXJNJIJenvpLmdTeIbO1kvXReaeEBHoFojYs5b/DGOAgL9Z9HP/+d
-	 12Jd5ZgQDYfXsYScrorcfWIHUyHXf192sL9CozMw=
+	b=OxSe3OiE5kBOpVQvjfVsf7lh+RflI9chGInktjUcw3Qkq4NTEJLiNSSpmC1uYl2uv
+	 upRGdyX8RD9U2IvEssIOBnHYJ7zYwTImccfIw3UG13wqK0sXoVfYifWntmi4jRC5d1
+	 QcHjRaqiA1D7VRxb1UYs1JKlMV9PMNKQS64nFNGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729597AbgFRBQf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:16:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47322 "EHLO mail.kernel.org"
+        id S1728262AbgFRCe4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 22:34:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728138AbgFRBQf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:16:35 -0400
+        id S1727777AbgFRBOX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:14:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E955B21D79;
-        Thu, 18 Jun 2020 01:16:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 136B9221F0;
+        Thu, 18 Jun 2020 01:14:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442994;
-        bh=kCjSyXO6zz3ZUcp39RHJO7Kc3CAczW6G8wj8OXTDw7c=;
+        s=default; t=1592442862;
+        bh=yxjlZXBHSwssaqDKkjpPc3u3wRsrsKwzGkwMtEVmXMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pfzm2EiJhiNrUFsB0mLO+NQRo/eNHQz7j4Hd+x7xmyeN70Siv/9VEs/QEWm2uBBBA
-         KuV3vnit8GsCPFyGVQBunwSHVhIFVLgegrWvg1cWCCgVdtyzsaLaxSu4gpOSrSvTGD
-         kA77t05vH8eKlRDmqo2wqtrJIQN1EuYLfSvNH9hE=
+        b=tThE2/P6lgln4Nj0KFtkreybaiC0tWn/b2VYDR/5lYndMbdPvZkU2VK/6tSrYqDJm
+         KOmHiWbh2+wXA+1MGVS+PDtfBNVu0HNhQkhx4gsNvCbIEbnBgYPblwZaLwsOJ/S5VR
+         J+dbygA3/XSQk3vZTar4SrQ4FImtshLKft+ibHwE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 002/266] clk: sunxi: Fix incorrect usage of round_down()
-Date:   Wed, 17 Jun 2020 21:12:07 -0400
-Message-Id: <20200618011631.604574-2-sashal@kernel.org>
+Cc:     Eddie James <eajames@linux.ibm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 291/388] clk: ast2600: Fix AHB clock divider for A1
+Date:   Wed, 17 Jun 2020 21:06:28 -0400
+Message-Id: <20200618010805.600873-291-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
-References: <20200618011631.604574-1-sashal@kernel.org>
+In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
+References: <20200618010805.600873-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,37 +58,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+From: Eddie James <eajames@linux.ibm.com>
 
-[ Upstream commit ee25d9742dabed3fd18158b518f846abeb70f319 ]
+[ Upstream commit 2d491066ccd4286538450c227fc5094ceb04b494 ]
 
-round_down() can only round to powers of 2. If round_down() is asked
-to round to something that is not a power of 2, incorrect results are
-produced. The incorrect results can be both too large and too small.
+The latest specs for the AST2600 A1 chip include some different bit
+definitions for calculating the AHB clock divider. Implement these in
+order to get the correct AHB clock value in Linux.
 
-Instead, use rounddown() which can round to any number.
-
-Fixes: 6a721db180a2 ("clk: sunxi: Add A31 clocks support")
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Link: https://lkml.kernel.org/r/20200408203616.4031-1-eajames@linux.ibm.com
+Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk-ast2600.c | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 27201fd26e44..e1aa1fbac48a 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -90,7 +90,7 @@ static void sun6i_a31_get_pll1_factors(struct factors_request *req)
- 	 * Round down the frequency to the closest multiple of either
- 	 * 6 or 16
- 	 */
--	u32 round_freq_6 = round_down(freq_mhz, 6);
-+	u32 round_freq_6 = rounddown(freq_mhz, 6);
- 	u32 round_freq_16 = round_down(freq_mhz, 16);
+diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+index 392d01705b97..99afc949925f 100644
+--- a/drivers/clk/clk-ast2600.c
++++ b/drivers/clk/clk-ast2600.c
+@@ -642,14 +642,22 @@ static const u32 ast2600_a0_axi_ahb_div_table[] = {
+ 	2, 2, 3, 5,
+ };
  
- 	if (round_freq_6 > round_freq_16)
+-static const u32 ast2600_a1_axi_ahb_div_table[] = {
+-	4, 6, 2, 4,
++static const u32 ast2600_a1_axi_ahb_div0_tbl[] = {
++	3, 2, 3, 4,
++};
++
++static const u32 ast2600_a1_axi_ahb_div1_tbl[] = {
++	3, 4, 6, 8,
++};
++
++static const u32 ast2600_a1_axi_ahb200_tbl[] = {
++	3, 4, 3, 4, 2, 2, 2, 2,
+ };
+ 
+ static void __init aspeed_g6_cc(struct regmap *map)
+ {
+ 	struct clk_hw *hw;
+-	u32 val, div, chip_id, axi_div, ahb_div;
++	u32 val, div, divbits, chip_id, axi_div, ahb_div;
+ 
+ 	clk_hw_register_fixed_rate(NULL, "clkin", NULL, 0, 25000000);
+ 
+@@ -679,11 +687,22 @@ static void __init aspeed_g6_cc(struct regmap *map)
+ 	else
+ 		axi_div = 2;
+ 
++	divbits = (val >> 11) & 0x3;
+ 	regmap_read(map, ASPEED_G6_SILICON_REV, &chip_id);
+-	if (chip_id & BIT(16))
+-		ahb_div = ast2600_a1_axi_ahb_div_table[(val >> 11) & 0x3];
+-	else
++	if (chip_id & BIT(16)) {
++		if (!divbits) {
++			ahb_div = ast2600_a1_axi_ahb200_tbl[(val >> 8) & 0x3];
++			if (val & BIT(16))
++				ahb_div *= 2;
++		} else {
++			if (val & BIT(16))
++				ahb_div = ast2600_a1_axi_ahb_div1_tbl[divbits];
++			else
++				ahb_div = ast2600_a1_axi_ahb_div0_tbl[divbits];
++		}
++	} else {
+ 		ahb_div = ast2600_a0_axi_ahb_div_table[(val >> 11) & 0x3];
++	}
+ 
+ 	hw = clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1, axi_div * ahb_div);
+ 	aspeed_g6_clk_data->hws[ASPEED_CLK_AHB] = hw;
 -- 
 2.25.1
 
