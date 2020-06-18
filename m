@@ -2,52 +2,53 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D1A4C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE7BC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3719120CC7
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD3E720EDD
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:14:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592442692;
-	bh=ugz/FRCBTs2WMkvKZaWcLiNIAiqR8i+sTXBhORd1pbQ=;
+	s=default; t=1592442853;
+	bh=wKX1ufoesJrahDJvQwblpOGk12X8sdXC+leoopU/RTc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kmz6vQ2KWWbaxvpvXfmXunDN87sqU2q+iNA41Py9V9dtTgeUjmqZDoOQ6kb4D6yxv
-	 f5lYRJNwT5NeTvQvCPOyxs9o/ADEW9HCXeqjbFjrwH+xGmafwvia/dH5xpvrg0LyrF
-	 Af0XzOzgmUqy5XK9+QGfztuc/zZN5n1uyJLWpa8w=
+	b=JndqaTCLTjyBT6KZrmynYuPjScJwyvyL2eaJirxGJxcN0ftqSPXeP1xIpu8jmx1L5
+	 4UxviVR98iQD9G4ppVXUBaxWIA9/lzyCRaBdUXs5bTjoTf7O6Jnmz2iIHrF4xjNfUz
+	 XvdLbRsO7Me79WVllRFkSEke+HvmJ8mmGLxGeBuo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbgFRBL3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:11:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39300 "EHLO mail.kernel.org"
+        id S1729299AbgFRBON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:14:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728733AbgFRBL0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:11:26 -0400
+        id S1729296AbgFRBOL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:14:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 06D0321D7B;
-        Thu, 18 Jun 2020 01:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32C7D221EA;
+        Thu, 18 Jun 2020 01:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442685;
-        bh=ugz/FRCBTs2WMkvKZaWcLiNIAiqR8i+sTXBhORd1pbQ=;
+        s=default; t=1592442851;
+        bh=wKX1ufoesJrahDJvQwblpOGk12X8sdXC+leoopU/RTc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDJfJdRZfM1lgezqVWMsRWAQlQW+Fnn+fQT60acegepX6IM3LyzzkWarjnnGsSSDR
-         4YXYYvzmbW52zAnZanlyv/GN2udR44JdE32yKE5s1w7ynmygcidIh/VPBjKG3oJkBJ
-         pFDigaTdSox+XnKPW1UgovpeV4bneXzw2RxeFdnI=
+        b=iqqMZg+A59ECaGSP7IROXrwRlMldBoc74sbbyZx622l8y1WeT45N08JWHwhr4RqI4
+         I3/P1QsbVJn3PnlFRpU90wivbn9E6Ls8i0/e3ddLm0zBCUK8Bqqt0IoAyy7bCUQG+s
+         2KLqR2lHUiV3UOewtpV+BSyGL7TsUKfnxYT29Hoo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.7 152/388] clk: meson: meson8b: Fix the polarity of the RESET_N lines
-Date:   Wed, 17 Jun 2020 21:04:09 -0400
-Message-Id: <20200618010805.600873-152-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 282/388] clk: bcm2835: Fix return type of bcm2835_register_gate
+Date:   Wed, 17 Jun 2020 21:06:19 -0400
+Message-Id: <20200618010805.600873-282-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -60,165 +61,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 0d3051c790ed2ef6bd91b92b07220313f06b95b3 ]
+[ Upstream commit f376c43bec4f8ee8d1ba5c5c4cfbd6e84fb279cb ]
 
-CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST and
-CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE are active low. This means:
-- asserting them requires setting the register value to 0
-- de-asserting them requires setting the register value to 1
+bcm2835_register_gate is used as a callback for the clk_register member
+of bcm2835_clk_desc, which expects a struct clk_hw * return type but
+bcm2835_register_gate returns a struct clk *.
 
-Set the register value accordingly for these two reset lines by setting
-the inverted the register value compared to all other reset lines.
+This discrepancy is hidden by the fact that bcm2835_register_gate is
+cast to the typedef bcm2835_clk_register by the _REGISTER macro. This
+turns out to be a control flow integrity violation, which is how this
+was noticed.
 
-Fixes: 189621726bc2f6 ("clk: meson: meson8b: register the built-in reset controller")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20200417184127.1319871-3-martin.blumenstingl@googlemail.com
+Change the return type of bcm2835_register_gate to be struct clk_hw *
+and use clk_hw_register_gate to do so. This should be a non-functional
+change as clk_register_gate calls clk_hw_register_gate anyways but this
+is needed to avoid issues with further changes.
+
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1028
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lkml.kernel.org/r/20200516080806.1459784-1-natechancellor@gmail.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 79 ++++++++++++++++++++++++++-----------
- 1 file changed, 56 insertions(+), 23 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index ac4a883acd2a..ecd78cdca8ce 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3506,54 +3506,87 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- static const struct meson8b_clk_reset_line {
- 	u32 reg;
- 	u8 bit_idx;
-+	bool active_low;
- } meson8b_clk_reset_bits[] = {
- 	[CLKC_RESET_L2_CACHE_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 30
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 30,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_AXI_64_TO_128_BRIDGE_A5_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 29
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 29,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_SCU_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 28
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 28,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU3_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 27
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 27,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU2_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 26
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 26,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU1_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 25
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 25,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU0_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 24
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 24,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_GLOBAL_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 18
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 18,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_AXI_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 17
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 17,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_ABP_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 16
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 16,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_AXI_64_TO_128_BRIDGE_MMC_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL1, .bit_idx = 30
-+		.reg = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 30,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_CLK_CNTL_SOFT_RESET] = {
--		.reg = HHI_VID_CLK_CNTL, .bit_idx = 15
-+		.reg = HHI_VID_CLK_CNTL,
-+		.bit_idx = 15,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_POST] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 7
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 7,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_PRE] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 3
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 3,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 1
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 1,
-+		.active_low = true,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 0
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 0,
-+		.active_low = true,
- 	},
- };
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index ded13ccf768e..7c845c293af0 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1448,13 +1448,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	return &clock->hw;
+ }
  
-@@ -3562,22 +3595,22 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
+-static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
++static struct clk_hw *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ 					 const struct bcm2835_gate_data *data)
  {
- 	struct meson8b_clk_reset *meson8b_clk_reset =
- 		container_of(rcdev, struct meson8b_clk_reset, reset);
--	unsigned long flags;
- 	const struct meson8b_clk_reset_line *reset;
-+	unsigned int value = 0;
-+	unsigned long flags;
+-	return clk_register_gate(cprman->dev, data->name, data->parent,
+-				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_GATE_BIT, 0, &cprman->regs_lock);
++	return clk_hw_register_gate(cprman->dev, data->name, data->parent,
++				    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
++				    cprman->regs + data->ctl_reg,
++				    CM_GATE_BIT, 0, &cprman->regs_lock);
+ }
  
- 	if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
- 		return -EINVAL;
- 
- 	reset = &meson8b_clk_reset_bits[id];
- 
-+	if (assert != reset->active_low)
-+		value = BIT(reset->bit_idx);
-+
- 	spin_lock_irqsave(&meson_clk_lock, flags);
- 
--	if (assert)
--		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
--				   BIT(reset->bit_idx), BIT(reset->bit_idx));
--	else
--		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
--				   BIT(reset->bit_idx), 0);
-+	regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
-+			   BIT(reset->bit_idx), value);
- 
- 	spin_unlock_irqrestore(&meson_clk_lock, flags);
- 
+ typedef struct clk_hw *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
 -- 
 2.25.1
 
