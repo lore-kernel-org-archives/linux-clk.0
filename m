@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B3EBC433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47BA8C433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A97F21D93
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 256C721534
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:43:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448200;
-	bh=nZiTh/x0+BJwJJK5EHwTZcOVVxfwS36S2zGYTDgC4ZU=;
+	s=default; t=1592448217;
+	bh=3i9CW9vR+vvaNTTVUkiKlJA0CPyN9WMXuwYIQbi6hqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bkikrVQsdqhnbri7PntQhHlT641tMPiOVv2AOCSteqfEx9/2tXQveWHu7CRjKc7KW
-	 nS7EiKPueE3EIPPjAAYtNvf7PNNhDuwMsu3Im9vKiEU4536hKi92hqljBUV0all9rU
-	 XhAViqtFW7d2yhCRgvjhDH3yuf3PTxeiteVwfEfE=
+	b=HtHBAuruG6ye8ZoPqy65QlEOJ+JmWK2cX+uWw6+CAqzNN4UF3iNoulOMJ+96Y7dRU
+	 0Mk03aUpqPx+kVOdTIVPGUDml4xLyK1CRiebWoI7GUaM9g2nIzaZItAt33PIoJ78Bb
+	 h1ge6wbvUbgC2GBdepmiagOkb25qsvgqD1ztG3Rc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbgFRBLo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:11:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39640 "EHLO mail.kernel.org"
+        id S1728107AbgFRBLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:11:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728745AbgFRBLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:11:38 -0400
+        id S1728018AbgFRBL2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:11:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA2E21974;
-        Thu, 18 Jun 2020 01:11:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54E6620CC7;
+        Thu, 18 Jun 2020 01:11:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442698;
-        bh=nZiTh/x0+BJwJJK5EHwTZcOVVxfwS36S2zGYTDgC4ZU=;
+        s=default; t=1592442687;
+        bh=3i9CW9vR+vvaNTTVUkiKlJA0CPyN9WMXuwYIQbi6hqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pkBgkTForBTTz7VuKwDRtFnFgF0uth22pPe8HWvv/eR2EzEDHNtctM1s6peFUozzm
-         clqDAKZtJ5n6L9YsFkPmFdNHX38nE29A5PpwkvyXCBmzR80W3vy5xhDbUQIci1OCLc
-         eQ3gC0GlSm2sLmtGXDorDHNbco7jNGy41ajTCpu0=
+        b=UaHqaSGKuMBNSO4GVdz+Dg6V22FOVcHsEnveuLNmMydlIsEWdmyIMB4ETRnq4XW9L
+         42uobZyg0uN/OtzNQgaw1Iy2kR04RR4mfKJxmRD506vWcX7RMcph/k24YSn3WluH0B
+         WKY36q+uPO1xAOnqYghKMPLRxr74VcuzZVvwrBDc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
@@ -45,9 +45,9 @@ Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.7 161/388] clk: meson: meson8b: Don't rely on u-boot to init all GP_PLL registers
-Date:   Wed, 17 Jun 2020 21:04:18 -0400
-Message-Id: <20200618010805.600873-161-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 153/388] clk: meson: meson8b: Fix the vclk_div{1, 2, 4, 6, 12}_en gate bits
+Date:   Wed, 17 Jun 2020 21:04:10 -0400
+Message-Id: <20200618010805.600873-153-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -62,79 +62,77 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit a29ae8600d50ece1856b062a39ed296b8b952259 ]
+[ Upstream commit 8bb629cfb28f4dad9d47f69249366e50ae5edc25 ]
 
-Not all u-boot versions initialize the HHI_GP_PLL_CNTL[2-5] registers.
-In that case all HHI_GPLL_PLL_CNTL[1-5] registers are 0x0 and when
-booting Linux the PLL fails to lock.
-The initialization sequence from u-boot is:
-- put the PLL into reset
-- write 0x59C88000 to HHI_GP_PLL_CNTL2
-- write 0xCA463823 to HHI_GP_PLL_CNTL3
-- write 0x0286A027 to HHI_GP_PLL_CNTL4
-- write 0x00003000 to HHI_GP_PLL_CNTL5
-- set M, N, OD and the enable bit
-- take the PLL out of reset
-- check if it has locked
-- disable the PLL
+The DIV{1,2,4,6,12}_EN bits are actually located in HHI_VID_CLK_CNTL
+register:
+- HHI_VID_CLK_CNTL[0] = DIV1_EN
+- HHI_VID_CLK_CNTL[1] = DIV2_EN
+- HHI_VID_CLK_CNTL[2] = DIV4_EN
+- HHI_VID_CLK_CNTL[3] = DIV6_EN
+- HHI_VID_CLK_CNTL[4] = DIV12_EN
 
-In Linux we already initialize M, N, OD, the enable and the reset bits.
-Also the HHI_GP_PLL_CNTL[2-5] registers with these magic values (the
-exact meaning is unknown) so the PLL can lock when the vendor u-boot did
-not initialize these registers yet.
+Update the bits accordingly so we will enable the bits in the correct
+register once we switch these clocks to be mutable.
 
-Fixes: b882964b376f21 ("clk: meson: meson8b: add support for the GP_PLL clock on Meson8m2")
+Fixes: 6cb57c678bb70e ("clk: meson: meson8b: add the read-only video clock trees")
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20200501215717.735393-1-martin.blumenstingl@googlemail.com
+Link: https://lore.kernel.org/r/20200417184127.1319871-4-martin.blumenstingl@googlemail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 9 +++++++++
- drivers/clk/meson/meson8b.h | 4 ++++
- 2 files changed, 13 insertions(+)
+ drivers/clk/meson/meson8b.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 5f375799ce46..11f6b868cf2b 100644
+index ecd78cdca8ce..5f375799ce46 100644
 --- a/drivers/clk/meson/meson8b.c
 +++ b/drivers/clk/meson/meson8b.c
-@@ -1918,6 +1918,13 @@ static struct clk_regmap meson8b_mali = {
- 	},
- };
+@@ -1213,7 +1213,7 @@ static struct clk_regmap meson8b_vclk_in_en = {
  
-+static const struct reg_sequence meson8m2_gp_pll_init_regs[] = {
-+	{ .reg = HHI_GP_PLL_CNTL2,	.def = 0x59c88000 },
-+	{ .reg = HHI_GP_PLL_CNTL3,	.def = 0xca463823 },
-+	{ .reg = HHI_GP_PLL_CNTL4,	.def = 0x0286a027 },
-+	{ .reg = HHI_GP_PLL_CNTL5,	.def = 0x00003000 },
-+};
-+
- static const struct pll_params_table meson8m2_gp_pll_params_table[] = {
- 	PLL_PARAMS(182, 3),
- 	{ /* sentinel */ },
-@@ -1951,6 +1958,8 @@ static struct clk_regmap meson8m2_gp_pll_dco = {
- 			.width   = 1,
- 		},
- 		.table = meson8m2_gp_pll_params_table,
-+		.init_regs = meson8m2_gp_pll_init_regs,
-+		.init_count = ARRAY_SIZE(meson8m2_gp_pll_init_regs),
+ static struct clk_regmap meson8b_vclk_div1_gate = {
+ 	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VID_CLK_DIV,
++		.offset = HHI_VID_CLK_CNTL,
+ 		.bit_idx = 0,
  	},
  	.hw.init = &(struct clk_init_data){
- 		.name = "gp_pll_dco",
-diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
-index c889fbeec30f..c91fb07fcb65 100644
---- a/drivers/clk/meson/meson8b.h
-+++ b/drivers/clk/meson/meson8b.h
-@@ -20,6 +20,10 @@
-  * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
-  */
- #define HHI_GP_PLL_CNTL			0x40  /* 0x10 offset in data sheet */
-+#define HHI_GP_PLL_CNTL2		0x44  /* 0x11 offset in data sheet */
-+#define HHI_GP_PLL_CNTL3		0x48  /* 0x12 offset in data sheet */
-+#define HHI_GP_PLL_CNTL4		0x4C  /* 0x13 offset in data sheet */
-+#define HHI_GP_PLL_CNTL5		0x50  /* 0x14 offset in data sheet */
- #define HHI_VIID_CLK_DIV		0x128 /* 0x4a offset in data sheet */
- #define HHI_VIID_CLK_CNTL		0x12c /* 0x4b offset in data sheet */
- #define HHI_GCLK_MPEG0			0x140 /* 0x50 offset in data sheet */
+@@ -1243,7 +1243,7 @@ static struct clk_fixed_factor meson8b_vclk_div2_div = {
+ 
+ static struct clk_regmap meson8b_vclk_div2_div_gate = {
+ 	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VID_CLK_DIV,
++		.offset = HHI_VID_CLK_CNTL,
+ 		.bit_idx = 1,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -1273,7 +1273,7 @@ static struct clk_fixed_factor meson8b_vclk_div4_div = {
+ 
+ static struct clk_regmap meson8b_vclk_div4_div_gate = {
+ 	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VID_CLK_DIV,
++		.offset = HHI_VID_CLK_CNTL,
+ 		.bit_idx = 2,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -1303,7 +1303,7 @@ static struct clk_fixed_factor meson8b_vclk_div6_div = {
+ 
+ static struct clk_regmap meson8b_vclk_div6_div_gate = {
+ 	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VID_CLK_DIV,
++		.offset = HHI_VID_CLK_CNTL,
+ 		.bit_idx = 3,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
+@@ -1333,7 +1333,7 @@ static struct clk_fixed_factor meson8b_vclk_div12_div = {
+ 
+ static struct clk_regmap meson8b_vclk_div12_div_gate = {
+ 	.data = &(struct clk_regmap_gate_data){
+-		.offset = HHI_VID_CLK_DIV,
++		.offset = HHI_VID_CLK_CNTL,
+ 		.bit_idx = 4,
+ 	},
+ 	.hw.init = &(struct clk_init_data){
 -- 
 2.25.1
 
