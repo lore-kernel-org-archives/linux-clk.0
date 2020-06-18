@@ -2,128 +2,96 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7191C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A6CC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:40:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B44FB207D8
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="I9pzrWDe"
+	by mail.kernel.org (Postfix) with ESMTP id E00DB20734
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:40:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbgFRLet (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jun 2020 07:34:49 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:21807 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728261AbgFRLeL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 07:34:11 -0400
-X-UUID: 727a8d93be484cf38b0cce88d0ec8727-20200618
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=hw1Pb8jVQk9FC4VBMjRDMJKfMp8kJn7O5WM3f/NAK3Y=;
-        b=I9pzrWDeR3L1ilz8GlkAFVNlwhrc38UXhd9YtRESy9AfoWZOPapGnwkhGd0bbZ6P1vJ1j1Jp9Tm1srnjv1NoF6Kiw0q3v/HJSDojKY81TuCXVEDJwWB+ariMDb8y73PedUnpFIySOhK5Ke9r17xJaZRfBYLgApTKg4AJH2dxAtI=;
-X-UUID: 727a8d93be484cf38b0cce88d0ec8727-20200618
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 218966080; Thu, 18 Jun 2020 19:34:05 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 18 Jun 2020 19:34:02 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 18 Jun 2020 19:34:02 +0800
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
+        id S1728255AbgFRLkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jun 2020 07:40:00 -0400
+Received: from smtp4-g21.free.fr ([212.27.42.4]:41390 "EHLO smtp4-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726919AbgFRLkA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Jun 2020 07:40:00 -0400
+Received: from [192.168.1.91] (unknown [77.207.133.132])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp4-g21.free.fr (Postfix) with ESMTPSA id B309219F5B2;
+        Thu, 18 Jun 2020 13:38:37 +0200 (CEST)
+Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>
-CC:     mtk01761 <wendell.lin@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Hanks Chen <hanks.chen@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v6 3/7] pinctrl: mediatek: avoid virtual gpio trying to set reg
-Date:   Thu, 18 Jun 2020 19:33:34 +0800
-Message-ID: <1592480018-3340-4-git-send-email-hanks.chen@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
-References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
+Message-ID: <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
+Date:   Thu, 18 Jun 2020 13:38:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
+In-Reply-To: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Zm9yIHZpcnR1YWwgZ3Bpb3MsIHRoZXkgc2hvdWxkIG5vdCBkbyByZWcgc2V0dGluZyBhbmQNCnNo
-b3VsZCBiZWhhdmUgYXMgZXhwZWN0ZWQgZm9yIGVpbnQgZnVuY3Rpb24uDQoNClNpZ25lZC1vZmYt
-Ynk6IEhhbmtzIENoZW4gPGhhbmtzLmNoZW5AbWVkaWF0ZWsuY29tPg0KU2lnbmVkLW9mZi1ieTog
-TWFycyBDaGVuZyA8bWFycy5jaGVuZ0BtZWRpYXRlay5jb20+DQotLS0NCiBkcml2ZXJzL3BpbmN0
-cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMgfCAgIDI1ICsrKysrKysrKysrKysr
-KysrKysrKysNCiBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYy
-LmggfCAgICAxICsNCiBkcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1wYXJpcy5jICAg
-ICAgICAgfCAgICA3ICsrKysrKw0KIDMgZmlsZXMgY2hhbmdlZCwgMzMgaW5zZXJ0aW9ucygrKQ0K
-DQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1v
-bi12Mi5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5j
-DQppbmRleCBiNzdiMThmLi5jNTNlMmMzIDEwMDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL21l
-ZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12Mi5jDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVk
-aWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmMNCkBAIC0yNDMsNiArMjQzLDI4IEBAIHN0YXRp
-YyBpbnQgbXRrX3h0X2ZpbmRfZWludF9udW0oc3RydWN0IG10a19waW5jdHJsICpodywgdW5zaWdu
-ZWQgbG9uZyBlaW50X24pDQogCXJldHVybiBFSU5UX05BOw0KIH0NCiANCisvKg0KKyAqIFZpcnR1
-YWwgR1BJTyBvbmx5IHVzZWQgaW5zaWRlIFNPQyBhbmQgbm90IGJlaW5nIGV4cG9ydGVkIHRvIG91
-dHNpZGUgU09DLg0KKyAqIFNvbWUgbW9kdWxlcyB1c2UgdmlydHVhbCBHUElPIGFzIGVpbnQgKGUu
-Zy4gcG1pZiBvciB1c2IpLg0KKyAqIEluIE1USyBwbGF0Zm9ybSwgZXh0ZXJuYWwgaW50ZXJydXB0
-IChFSU5UKSBhbmQgR1BJTyBpcyAxLTEgbWFwcGluZw0KKyAqIGFuZCB3ZSBjYW4gc2V0IEdQSU8g
-YXMgZWludC4NCisgKiBCdXQgc29tZSBtb2R1bGVzIHVzZSBzcGVjaWZpYyBlaW50IHdoaWNoIGRv
-ZXNuJ3QgaGF2ZSByZWFsIEdQSU8gcGluLg0KKyAqIFNvIHdlIHVzZSB2aXJ0dWFsIEdQSU8gdG8g
-bWFwIGl0Lg0KKyAqLw0KKw0KK2Jvb2wgbXRrX2lzX3ZpcnRfZ3BpbyhzdHJ1Y3QgbXRrX3BpbmN0
-cmwgKmh3LCB1bnNpZ25lZCBpbnQgZ3Bpb19uKQ0KK3sNCisJY29uc3Qgc3RydWN0IG10a19waW5f
-ZGVzYyAqZGVzYzsNCisJYm9vbCB2aXJ0X2dwaW8gPSBmYWxzZTsNCisNCisJZGVzYyA9IChjb25z
-dCBzdHJ1Y3QgbXRrX3Bpbl9kZXNjICopJmh3LT5zb2MtPnBpbnNbZ3Bpb19uXTsNCisNCisJaWYg
-KGRlc2MtPmZ1bmNzICYmICFkZXNjLT5mdW5jc1tkZXNjLT5laW50LmVpbnRfbV0ubmFtZSkNCisJ
-CXZpcnRfZ3BpbyA9IHRydWU7DQorDQorCXJldHVybiB2aXJ0X2dwaW87DQorfQ0KKw0KIHN0YXRp
-YyBpbnQgbXRrX3h0X2dldF9ncGlvX24odm9pZCAqZGF0YSwgdW5zaWduZWQgbG9uZyBlaW50X24s
-DQogCQkJICAgICB1bnNpZ25lZCBpbnQgKmdwaW9fbiwNCiAJCQkgICAgIHN0cnVjdCBncGlvX2No
-aXAgKipncGlvX2NoaXApDQpAQCAtMjk1LDYgKzMxNyw5IEBAIHN0YXRpYyBpbnQgbXRrX3h0X3Nl
-dF9ncGlvX2FzX2VpbnQodm9pZCAqZGF0YSwgdW5zaWduZWQgbG9uZyBlaW50X24pDQogCWlmIChl
-cnIpDQogCQlyZXR1cm4gZXJyOw0KIA0KKwlpZiAobXRrX2lzX3ZpcnRfZ3BpbyhodywgZ3Bpb19u
-KSkNCisJCXJldHVybiAwOw0KKw0KIAlkZXNjID0gKGNvbnN0IHN0cnVjdCBtdGtfcGluX2Rlc2Mg
-KikmaHctPnNvYy0+cGluc1tncGlvX25dOw0KIA0KIAllcnIgPSBtdGtfaHdfc2V0X3ZhbHVlKGh3
-LCBkZXNjLCBQSU5DVFJMX1BJTl9SRUdfTU9ERSwNCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0
-cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmggYi9kcml2ZXJzL3BpbmN0cmwvbWVk
-aWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYyLmgNCmluZGV4IDI3ZGYwODcuLmJkMDc5ZjRmIDEw
-MDY0NA0KLS0tIGEvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtbXRrLWNvbW1vbi12
-Mi5oDQorKysgYi9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsvcGluY3RybC1tdGstY29tbW9uLXYy
-LmgNCkBAIC0zMTUsNCArMzE1LDUgQEAgaW50IG10a19waW5jb25mX2Fkdl9kcml2ZV9zZXQoc3Ry
-dWN0IG10a19waW5jdHJsICpodywNCiBpbnQgbXRrX3BpbmNvbmZfYWR2X2RyaXZlX2dldChzdHJ1
-Y3QgbXRrX3BpbmN0cmwgKmh3LA0KIAkJCSAgICAgIGNvbnN0IHN0cnVjdCBtdGtfcGluX2Rlc2Mg
-KmRlc2MsIHUzMiAqdmFsKTsNCiANCitib29sIG10a19pc192aXJ0X2dwaW8oc3RydWN0IG10a19w
-aW5jdHJsICpodywgdW5zaWduZWQgaW50IGdwaW9fbik7DQogI2VuZGlmIC8qIF9fUElOQ1RSTF9N
-VEtfQ09NTU9OX1YyX0ggKi8NCmRpZmYgLS1naXQgYS9kcml2ZXJzL3BpbmN0cmwvbWVkaWF0ZWsv
-cGluY3RybC1wYXJpcy5jIGIvZHJpdmVycy9waW5jdHJsL21lZGlhdGVrL3BpbmN0cmwtcGFyaXMu
-Yw0KaW5kZXggOTBhNDMyYi4uYTIzYzE4MiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvcGluY3RybC9t
-ZWRpYXRlay9waW5jdHJsLXBhcmlzLmMNCisrKyBiL2RyaXZlcnMvcGluY3RybC9tZWRpYXRlay9w
-aW5jdHJsLXBhcmlzLmMNCkBAIC03NjksNiArNzY5LDEzIEBAIHN0YXRpYyBpbnQgbXRrX2dwaW9f
-Z2V0X2RpcmVjdGlvbihzdHJ1Y3QgZ3Bpb19jaGlwICpjaGlwLCB1bnNpZ25lZCBpbnQgZ3BpbykN
-CiAJaWYgKGdwaW8gPj0gaHctPnNvYy0+bnBpbnMpDQogCQlyZXR1cm4gLUVJTlZBTDsNCiANCisJ
-LyoNCisJICogIlZpcnR1YWwiIEdQSU9zIGFyZSBhbHdheXMgYW5kIG9ubHkgdXNlZCBmb3IgaW50
-ZXJydXB0cw0KKwkgKiBTaW5jZSB0aGV5IGFyZSBvbmx5IHVzZWQgZm9yIGludGVycnVwdHMsIHRo
-ZXkgYXJlIGFsd2F5cyBpbnB1dHMNCisJICovDQorCWlmIChtdGtfaXNfdmlydF9ncGlvKGh3LCBn
-cGlvKSkNCisJCXJldHVybiAxOw0KKw0KIAlkZXNjID0gKGNvbnN0IHN0cnVjdCBtdGtfcGluX2Rl
-c2MgKikmaHctPnNvYy0+cGluc1tncGlvXTsNCiANCiAJZXJyID0gbXRrX2h3X2dldF92YWx1ZSho
-dywgZGVzYywgUElOQ1RSTF9QSU5fUkVHX0RJUiwgJnZhbHVlKTsNCi0tIA0KMS43LjkuNQ0K
+Hello everyone,
 
+In my opinion, the small and simple devm_add() helper
+(and its cousin, devm_vadd) can help make devm code
+slightly easier to write and maintain.
+
+Would anyone care to agree or disagree? :-)
+
+Regards.
+
+
+On 10/03/2020 11:11, Marc Gonzalez wrote:
+
+> Differences from v4 to v5
+> x Fix the grammar in devm_add comments [Geert]
+> x Undo an unrelated change in devm_clk_put [Geert]
+> 
+> Differences from v3 to v4
+> x Add a bunch of kerneldoc above devm_add() [Greg KH]
+> x Split patch in two [Greg KH]
+> 
+> Differences from v2 to v3
+> x Make devm_add() return an error-code rather than the raw data pointer
+>   (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
+> x Provide a variadic version devm_vadd() to work with structs as suggested
+>   by Geert
+> x Don't use nested ifs in clk_devm* implementations (hopefully simpler
+>   code logic to follow) as suggested by Geert
+> 
+> Marc Gonzalez (2):
+>   devres: Provide new helper for devm functions
+>   clk: Use devm_add in managed functions
+> 
+>  drivers/base/devres.c    | 28 ++++++++++++
+>  drivers/clk/clk-devres.c | 97 +++++++++++++++-------------------------
+>  include/linux/device.h   |  3 ++
+>  3 files changed, 67 insertions(+), 61 deletions(-)
