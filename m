@@ -2,54 +2,56 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 320D6C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:47:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBE1C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0339F221F6
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05A142220B
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592444824;
-	bh=egjh4KR1n2yvreET00hqFOEmkwK3ljyyUEcCR/XFy2w=;
+	s=default; t=1592444955;
+	bh=fGKTLP95sbZfnZ9+Q6Kij6h2zYSX7kKXwqsIwZlt73g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BeBSfwZrDBt1B7B5QL8fuRmgMDb6KhG25CEZQc7eXeL3V9/NIe4XzpZNGdjYA0Oa8
-	 mZDTIaYcnHyyflivlPthCnmuX4Z2t6ERa2Xh5MLIAxDNXFCTfcwQ2DjRQ/MBdlERth
-	 ewnjYHDOxRpLLlvzSoB9XNuAxdvVU9YRqJBk6ca4=
+	b=hZPNipBmQxMPRUS7n8fygOzGTedpRi4Wi4xlwbCh4+mgMxm3OObcRpAbXm5ay58z5
+	 1XNJiG5T+eMheYGzEaYnj/K8JresJ2VnqIsIldfZ18ImRn5LvtE0o4b9RG08rwpfq9
+	 2LC4lLwMpNqsTHaqeFY7Zg54Iv6yLv3T5jPNGbZM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730462AbgFRBq7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:46:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36952 "EHLO mail.kernel.org"
+        id S1731923AbgFRB1o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:27:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732081AbgFRB2W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:28:22 -0400
+        id S1731918AbgFRB1m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:27:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5560221F3;
-        Thu, 18 Jun 2020 01:28:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5976722226;
+        Thu, 18 Jun 2020 01:27:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443702;
-        bh=egjh4KR1n2yvreET00hqFOEmkwK3ljyyUEcCR/XFy2w=;
+        s=default; t=1592443662;
+        bh=fGKTLP95sbZfnZ9+Q6Kij6h2zYSX7kKXwqsIwZlt73g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HGRrari0kKo9lXrbNg6hDOfkQplMvvOz/Cfd5PAtBR70F//HiQkD8p7K+dkswprcR
-         +jiKKQ59F8qarPfiAD34tYEe4W60Zn5GL/AgnQzt024GTXzH6W7t3CP3k7KVUSvB4A
-         m25c0MS6QqZKfG6C5xL7VYBgbANGpaq9qCz+mh9w=
+        b=XMW4mq4OSnF6WXEhN3faexYvvqJGtGEZUcGWr8k7YRa5q5r09Mv3FLD9wbEKMgFwy
+         B4njDpO5NipYO4RtYefFGOBGagC6fJgs/vUeaIoDP2V7dvWhxPxCgGFz/dfInzzNHa
+         7lMKfmG1xrFUaJMMLXksJ5Y9czEuw/56pa7flnOA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        Maxime Ripard <maxime@cerno.tech>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 02/80] clk: sunxi: Fix incorrect usage of round_down()
-Date:   Wed, 17 Jun 2020 21:27:01 -0400
-Message-Id: <20200618012819.609778-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 080/108] clk: bcm2835: Fix return type of bcm2835_register_gate
+Date:   Wed, 17 Jun 2020 21:25:32 -0400
+Message-Id: <20200618012600.608744-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200618012819.609778-1-sashal@kernel.org>
-References: <20200618012819.609778-1-sashal@kernel.org>
+In-Reply-To: <20200618012600.608744-1-sashal@kernel.org>
+References: <20200618012600.608744-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,37 +61,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit ee25d9742dabed3fd18158b518f846abeb70f319 ]
+[ Upstream commit f376c43bec4f8ee8d1ba5c5c4cfbd6e84fb279cb ]
 
-round_down() can only round to powers of 2. If round_down() is asked
-to round to something that is not a power of 2, incorrect results are
-produced. The incorrect results can be both too large and too small.
+bcm2835_register_gate is used as a callback for the clk_register member
+of bcm2835_clk_desc, which expects a struct clk_hw * return type but
+bcm2835_register_gate returns a struct clk *.
 
-Instead, use rounddown() which can round to any number.
+This discrepancy is hidden by the fact that bcm2835_register_gate is
+cast to the typedef bcm2835_clk_register by the _REGISTER macro. This
+turns out to be a control flow integrity violation, which is how this
+was noticed.
 
-Fixes: 6a721db180a2 ("clk: sunxi: Add A31 clocks support")
-Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+Change the return type of bcm2835_register_gate to be struct clk_hw *
+and use clk_hw_register_gate to do so. This should be a non-functional
+change as clk_register_gate calls clk_hw_register_gate anyways but this
+is needed to avoid issues with further changes.
+
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1028
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lkml.kernel.org/r/20200516080806.1459784-1-natechancellor@gmail.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi/clk-sunxi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index f2c9274b8bd5..369164f0bd0e 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -98,7 +98,7 @@ static void sun6i_a31_get_pll1_factors(struct factors_request *req)
- 	 * Round down the frequency to the closest multiple of either
- 	 * 6 or 16
- 	 */
--	u32 round_freq_6 = round_down(freq_mhz, 6);
-+	u32 round_freq_6 = rounddown(freq_mhz, 6);
- 	u32 round_freq_16 = round_down(freq_mhz, 16);
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 5f8082d89131..6db4204e5d5d 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1483,13 +1483,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	return &clock->hw;
+ }
  
- 	if (round_freq_6 > round_freq_16)
+-static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
++static struct clk_hw *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ 					 const struct bcm2835_gate_data *data)
+ {
+-	return clk_register_gate(cprman->dev, data->name, data->parent,
+-				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_GATE_BIT, 0, &cprman->regs_lock);
++	return clk_hw_register_gate(cprman->dev, data->name, data->parent,
++				    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
++				    cprman->regs + data->ctl_reg,
++				    CM_GATE_BIT, 0, &cprman->regs_lock);
+ }
+ 
+ typedef struct clk_hw *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
 -- 
 2.25.1
 
