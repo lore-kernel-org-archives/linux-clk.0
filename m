@@ -4,51 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C145BC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BC4C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:39:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 962572192A
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:37:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40178221E6
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592444220;
-	bh=4QSC8Ljfn6FxpVmcydTjb9LszvyA3+6lF5P6FG0NLQI=;
+	s=default; t=1592444381;
+	bh=BNNH8wXOLzEpdqTfYme0mxdsQXeu5vh/B7BXxU0daxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KJpc/kMFss1SkTBFp/fvlDAEiDd0Qi1ffrZ+uoh4RqghTvwavKg/BRmW8RTkoPwbo
-	 NEmDqZjcdtfK3LbmYY+uHLFCRF/rkW5twiO7iqkj9ZOXT47Ja9BYygYNmIp8T/kM45
-	 wJVhgX+O3XVhixrv+iEg1AduYQygpr+DLWSC5OAM=
+	b=mmNyZOdF5VdIgfPSy2w/7bU1jl/5A9s9G0MGCxsAVPbtwtbLfNQyJH+2HLhaOF6lY
+	 0QR5XMVHvuDnIdCrkHgy+iOOP331BL2SHvNTFSjs6pge6zLYHI+QPoYV49JDpLs6fm
+	 ajpPlrPeXNZ3Rx/JEMlpb/iLkIhGcxY76Lk8y4is=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbgFRBg7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:36:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41130 "EHLO mail.kernel.org"
+        id S1732485AbgFRBaR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:30:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732637AbgFRBav (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:30:51 -0400
+        id S1732474AbgFRBaL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:30:11 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A3C7206DB;
-        Thu, 18 Jun 2020 01:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0E7E22251;
+        Thu, 18 Jun 2020 01:30:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443851;
-        bh=4QSC8Ljfn6FxpVmcydTjb9LszvyA3+6lF5P6FG0NLQI=;
+        s=default; t=1592443810;
+        bh=BNNH8wXOLzEpdqTfYme0mxdsQXeu5vh/B7BXxU0daxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zxLyCvA3WBYlMiVkWR4chlmFzOugfH5A1JJZcHDU2atfAsGJe7EBlT6fmQtxIfcFB
-         bY6VTf49/m3pgJp+qmG6bktBn2RDXtEWZwnn0EuoskazKX4Uo5iIKq0RRIdcotczfr
-         LdKe3DOQd0NL85bPP1q4hNnfi0y4FSJ6Br5bRzKU=
+        b=V8P5VEUZczWEN4tKUrVm99RMBZGwzr2qQSCIcHZICz0FztF0y8RoN4AcI24HPBakN
+         HuIJPHFML6r3zJCzmLHr51WwleJxNVwG8PsXzzgWNc45IBcNr+0YJTvH3avELqOvqC
+         DKtpUPZX6pB3ijjG+wPf9ATIBegCQZoAn5leO+yA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tero Kristo <t-kristo@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 35/60] clk: ti: composite: fix memory leak
-Date:   Wed, 17 Jun 2020 21:29:39 -0400
-Message-Id: <20200618013004.610532-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 04/60] clk: qcom: msm8916: Fix the address location of pll->config_reg
+Date:   Wed, 17 Jun 2020 21:29:08 -0400
+Message-Id: <20200618013004.610532-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618013004.610532-1-sashal@kernel.org>
 References: <20200618013004.610532-1-sashal@kernel.org>
@@ -61,36 +63,92 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-[ Upstream commit c7c1cbbc9217ebb5601b88d138d4a5358548de9d ]
+[ Upstream commit f47ab3c2f5338828a67e89d5f688d2cef9605245 ]
 
-The parent_names is never released for a component clock definition,
-causing some memory leak. Fix by releasing it once it is no longer
-needed.
+During the process of debugging a processor derived from the msm8916 which
+we found the new processor was not starting one of its PLLs.
 
-Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Link: https://lkml.kernel.org/r/20200429131341.4697-2-t-kristo@ti.com
-Acked-by: Tony Lindgren <tony@atomide.com>
+After tracing the addresses and writes that downstream was doing and
+comparing to upstream it became obvious that we were writing to a different
+register location than downstream when trying to configure the PLL.
+
+This error is also present in upstream msm8916.
+
+As an example clk-pll.c::clk_pll_recalc_rate wants to write to
+pll->config_reg updating the bit-field POST_DIV_RATIO. That bit-field is
+defined in PLL_USER_CTL not in PLL_CONFIG_CTL. Taking the BIMC PLL as an
+example
+
+lm80-p0436-13_c_qc_snapdragon_410_processor_hrd.pdf
+
+0x01823010 GCC_BIMC_PLL_USER_CTL
+0x01823014 GCC_BIMC_PLL_CONFIG_CTL
+
+This pattern is repeated for gpll0, gpll1, gpll2 and bimc_pll.
+
+This error is likely not apparent since the bootloader will already have
+initialized these PLLs.
+
+This patch corrects the location of config_reg from PLL_CONFIG_CTL to
+PLL_USER_CTL for all relevant PLLs on msm8916.
+
+Fixes commit 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
+
+Cc: Georgi Djakov <georgi.djakov@linaro.org>
+Cc: Andy Gross <agross@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Link: https://lkml.kernel.org/r/20200329124116.4185447-1-bryan.odonoghue@linaro.org
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/ti/composite.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/gcc-msm8916.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
-index dbef218fe5ec..14201c52b44b 100644
---- a/drivers/clk/ti/composite.c
-+++ b/drivers/clk/ti/composite.c
-@@ -228,6 +228,7 @@ static void __init _register_composite(struct clk_hw *hw,
- 		if (!cclk->comp_clks[i])
- 			continue;
- 		list_del(&cclk->comp_clks[i]->link);
-+		kfree(cclk->comp_clks[i]->parent_names);
- 		kfree(cclk->comp_clks[i]);
- 	}
- 
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index 95a4dd290f35..d7dd0417ef5e 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -270,7 +270,7 @@ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x21004,
+ 	.m_reg = 0x21008,
+ 	.n_reg = 0x2100c,
+-	.config_reg = 0x21014,
++	.config_reg = 0x21010,
+ 	.mode_reg = 0x21000,
+ 	.status_reg = 0x2101c,
+ 	.status_bit = 17,
+@@ -297,7 +297,7 @@ static struct clk_pll gpll1 = {
+ 	.l_reg = 0x20004,
+ 	.m_reg = 0x20008,
+ 	.n_reg = 0x2000c,
+-	.config_reg = 0x20014,
++	.config_reg = 0x20010,
+ 	.mode_reg = 0x20000,
+ 	.status_reg = 0x2001c,
+ 	.status_bit = 17,
+@@ -324,7 +324,7 @@ static struct clk_pll gpll2 = {
+ 	.l_reg = 0x4a004,
+ 	.m_reg = 0x4a008,
+ 	.n_reg = 0x4a00c,
+-	.config_reg = 0x4a014,
++	.config_reg = 0x4a010,
+ 	.mode_reg = 0x4a000,
+ 	.status_reg = 0x4a01c,
+ 	.status_bit = 17,
+@@ -351,7 +351,7 @@ static struct clk_pll bimc_pll = {
+ 	.l_reg = 0x23004,
+ 	.m_reg = 0x23008,
+ 	.n_reg = 0x2300c,
+-	.config_reg = 0x23014,
++	.config_reg = 0x23010,
+ 	.mode_reg = 0x23000,
+ 	.status_reg = 0x2301c,
+ 	.status_bit = 17,
 -- 
 2.25.1
 
