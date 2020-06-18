@@ -2,51 +2,53 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53FA0C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF40C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 26BE522243
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F779221FC
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:58:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592445498;
-	bh=Ztf0MFblqY398kSpaTyXtwRSKN22Zy4kdj7XYww3BJU=;
+	s=default; t=1592445505;
+	bh=05pmoUWdk4gxx0NrL0RsI5BRsRPG5iHnJzBpVnrU088=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zAb3Lqt8h/OZnz7DCgcHDC3CeHMOZhMkEH9TGbIhzzHr8N8cb2cAEzqXe4Cbc9FiI
-	 fqVVTP8Jag+QeMHdHs1BVP2vfHtPUED9cqFxjGD3GwLpR7tyIykYMv1FcNX/L4L14m
-	 LKWKi/ZX6Lgf/+OCdNecX5VcVapvmRSOIUOZ5jpk=
+	b=jkzgx3FfpuVCzytnQup5Dk2QxDsTShSGDaGJOR05u8N+tc2sgywwJoRY0+eKZ25BY
+	 HlE9+o8tOZhhKqRnGpWDRlmi/oYucCQF7NxQ68NMyGeOcbq4pbJR6oaihsDVT4P6kL
+	 NpPDsd6Cr2J8hkF5Xe2o3Mc2T8IVLdhswmivlujs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729876AbgFRB6H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:58:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59868 "EHLO mail.kernel.org"
+        id S1730968AbgFRB6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:58:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731327AbgFRBY7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:24:59 -0400
+        id S1729858AbgFRBY4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:24:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1198221E9;
-        Thu, 18 Jun 2020 01:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D71121974;
+        Thu, 18 Jun 2020 01:24:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443499;
-        bh=Ztf0MFblqY398kSpaTyXtwRSKN22Zy4kdj7XYww3BJU=;
+        s=default; t=1592443495;
+        bh=05pmoUWdk4gxx0NrL0RsI5BRsRPG5iHnJzBpVnrU088=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c7qf1LhZ7LfJNZjexkox74btfOEZKIhFTK+icEmumws3Iv7TSQbHDG100a249sbFi
-         2dqXTHjB0kYFUT6AXhVrStujOj/S8QNoMtjPXRP0e3OnoPy9AzQoSpnIyJyBuvhxCT
-         oS6EXCRiMi5FXH6iD1e+uMymE5gtfOWP/Goefmu0=
+        b=YC2O/gMeSn0EOEIT1nszVZ2NnVzOGsRWc5AkgpvrV3hk+CA2cPuWt3EXOkU9U7tmP
+         oVWdpimZu93btcan4Odopb/OcaRmgOGdAuWAeQfhA0hWaYuy83B0m5ofucpw5jqdOF
+         4IarTbeOAHz8O512Zps/FYzrqr/ecWjTVZ4BP0/0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 125/172] clk: sprd: return correct type of value for _sprd_pll_recalc_rate
-Date:   Wed, 17 Jun 2020 21:21:31 -0400
-Message-Id: <20200618012218.607130-125-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 122/172] clk: bcm2835: Fix return type of bcm2835_register_gate
+Date:   Wed, 17 Jun 2020 21:21:28 -0400
+Message-Id: <20200618012218.607130-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618012218.607130-1-sashal@kernel.org>
 References: <20200618012218.607130-1-sashal@kernel.org>
@@ -59,39 +61,57 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit c2f30986d418f26abefc2eec90ebf06716c970d2 ]
+[ Upstream commit f376c43bec4f8ee8d1ba5c5c4cfbd6e84fb279cb ]
 
-The function _sprd_pll_recalc_rate() defines return value to unsigned
-long, but it would return a negative value when malloc fail, changing
-to return its parent_rate makes more sense, since if the callback
-.recalc_rate() is not set, the framework returns the parent_rate as
-well.
+bcm2835_register_gate is used as a callback for the clk_register member
+of bcm2835_clk_desc, which expects a struct clk_hw * return type but
+bcm2835_register_gate returns a struct clk *.
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Link: https://lkml.kernel.org/r/20200519030036.1785-2-zhang.lyra@gmail.com
-Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
+This discrepancy is hidden by the fact that bcm2835_register_gate is
+cast to the typedef bcm2835_clk_register by the _REGISTER macro. This
+turns out to be a control flow integrity violation, which is how this
+was noticed.
+
+Change the return type of bcm2835_register_gate to be struct clk_hw *
+and use clk_hw_register_gate to do so. This should be a non-functional
+change as clk_register_gate calls clk_hw_register_gate anyways but this
+is needed to avoid issues with further changes.
+
+Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
+Link: https://github.com/ClangBuiltLinux/linux/issues/1028
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Link: https://lkml.kernel.org/r/20200516080806.1459784-1-natechancellor@gmail.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/bcm/clk-bcm2835.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 640270f51aa5..eb8862752c2b 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -105,7 +105,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index 7bef0666ae7e..1c093fb35ebe 100644
+--- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1447,13 +1447,13 @@ static struct clk_hw *bcm2835_register_clock(struct bcm2835_cprman *cprman,
+ 	return &clock->hw;
+ }
  
- 	cfg = kcalloc(regs_num, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg)
--		return -ENOMEM;
-+		return parent_rate;
+-static struct clk *bcm2835_register_gate(struct bcm2835_cprman *cprman,
++static struct clk_hw *bcm2835_register_gate(struct bcm2835_cprman *cprman,
+ 					 const struct bcm2835_gate_data *data)
+ {
+-	return clk_register_gate(cprman->dev, data->name, data->parent,
+-				 CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
+-				 cprman->regs + data->ctl_reg,
+-				 CM_GATE_BIT, 0, &cprman->regs_lock);
++	return clk_hw_register_gate(cprman->dev, data->name, data->parent,
++				    CLK_IGNORE_UNUSED | CLK_SET_RATE_GATE,
++				    cprman->regs + data->ctl_reg,
++				    CM_GATE_BIT, 0, &cprman->regs_lock);
+ }
  
- 	for (i = 0; i < regs_num; i++)
- 		cfg[i] = sprd_pll_read(pll, i);
+ typedef struct clk_hw *(*bcm2835_clk_register)(struct bcm2835_cprman *cprman,
 -- 
 2.25.1
 
