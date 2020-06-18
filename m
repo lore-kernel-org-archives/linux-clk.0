@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC928C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E00EC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE1DF21707
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:52:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 593EF20899
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448775;
-	bh=7nE8C1YbYrTwvD5y/SKbRWoc0Mb/3j5lKq5bUoSzKQc=;
+	s=default; t=1592448810;
+	bh=kCjSyXO6zz3ZUcp39RHJO7Kc3CAczW6G8wj8OXTDw7c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sk6xBf8jJAiJibZTkM0CcS6rcfB/Y+2Q4kcMKdCNpJmixKCJovaaqbBBLMhU9hM+I
-	 C31G2f97qaRcHdaTBauaPIdgtNPoUvaGrXt3Zx/kyGAS5Ny0qMbeobuvpKMXyQFynx
-	 qH5KSMWXZpbpcqE2OXvF4SRZnH9h++CAphOrEmr4=
+	b=snaSeBH/oxZjLPp8dEJuz06liv7W0MW6EOuYIfU5872rBjvbwj6zLBNedb9dWWvRE
+	 O+dN8kcE2oCFl7930oTReGwbuPjSeId4yq1109GbjZ8tRiRWNtdUR7do+dCKwxAvBk
+	 vgXbYaHRl8+I+e5wSgtX12ieVc47fkGG6pMPZEOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729269AbgFRCws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:52:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33914 "EHLO mail.kernel.org"
+        id S1728015AbgFRCx3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 22:53:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbgFRBIV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:08:21 -0400
+        id S1726946AbgFRBIK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:08:10 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F16021974;
-        Thu, 18 Jun 2020 01:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67C8B21D79;
+        Thu, 18 Jun 2020 01:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442500;
-        bh=7nE8C1YbYrTwvD5y/SKbRWoc0Mb/3j5lKq5bUoSzKQc=;
+        s=default; t=1592442490;
+        bh=kCjSyXO6zz3ZUcp39RHJO7Kc3CAczW6G8wj8OXTDw7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TnqdQ+ulZu53UiHj+PNH05dh7gx7LQBwrwtVhgMSqbjWA19CxDgCABpWPyvcfp6dh
-         mrEOAsGyYaMuHx5m0GGxKdlR2m2Ct36qyUa4JOUVrzg1DP0bUwzvHH8F3pDGYDEamH
-         CzUBeWJTFc4ox8lsvbNKzX0xYXxPzpVAkacc/a2g=
+        b=apFuvBh2ch1WGaUlIQmMvh+0o7p2pAJxBPUrS+pYQzTBCeAh8bWPddtXCDxhCa6ot
+         7Psf/OZzN0vgdbt/h3ygaQzH0eJHPNKkjt+qUxj5PjS0I0QToq4v2vKQxtsqnEp3Nn
+         eqv3R71BHcB5ZdhXUFVLqzrVigwpeFYuh9DmPhyQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 011/388] clk: qcom: msm8916: Fix the address location of pll->config_reg
-Date:   Wed, 17 Jun 2020 21:01:48 -0400
-Message-Id: <20200618010805.600873-11-sashal@kernel.org>
+Cc:     Rikard Falkeborn <rikard.falkeborn@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.7 003/388] clk: sunxi: Fix incorrect usage of round_down()
+Date:   Wed, 17 Jun 2020 21:01:40 -0400
+Message-Id: <20200618010805.600873-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -63,92 +59,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+From: Rikard Falkeborn <rikard.falkeborn@gmail.com>
 
-[ Upstream commit f47ab3c2f5338828a67e89d5f688d2cef9605245 ]
+[ Upstream commit ee25d9742dabed3fd18158b518f846abeb70f319 ]
 
-During the process of debugging a processor derived from the msm8916 which
-we found the new processor was not starting one of its PLLs.
+round_down() can only round to powers of 2. If round_down() is asked
+to round to something that is not a power of 2, incorrect results are
+produced. The incorrect results can be both too large and too small.
 
-After tracing the addresses and writes that downstream was doing and
-comparing to upstream it became obvious that we were writing to a different
-register location than downstream when trying to configure the PLL.
+Instead, use rounddown() which can round to any number.
 
-This error is also present in upstream msm8916.
-
-As an example clk-pll.c::clk_pll_recalc_rate wants to write to
-pll->config_reg updating the bit-field POST_DIV_RATIO. That bit-field is
-defined in PLL_USER_CTL not in PLL_CONFIG_CTL. Taking the BIMC PLL as an
-example
-
-lm80-p0436-13_c_qc_snapdragon_410_processor_hrd.pdf
-
-0x01823010 GCC_BIMC_PLL_USER_CTL
-0x01823014 GCC_BIMC_PLL_CONFIG_CTL
-
-This pattern is repeated for gpll0, gpll1, gpll2 and bimc_pll.
-
-This error is likely not apparent since the bootloader will already have
-initialized these PLLs.
-
-This patch corrects the location of config_reg from PLL_CONFIG_CTL to
-PLL_USER_CTL for all relevant PLLs on msm8916.
-
-Fixes commit 3966fab8b6ab ("clk: qcom: Add MSM8916 Global Clock Controller support")
-
-Cc: Georgi Djakov <georgi.djakov@linaro.org>
-Cc: Andy Gross <agross@kernel.org>
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Link: https://lkml.kernel.org/r/20200329124116.4185447-1-bryan.odonoghue@linaro.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 6a721db180a2 ("clk: sunxi: Add A31 clocks support")
+Signed-off-by: Rikard Falkeborn <rikard.falkeborn@gmail.com>
+Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8916.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/sunxi/clk-sunxi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
-index 4e329a7baf2b..17e4a5a2a9fd 100644
---- a/drivers/clk/qcom/gcc-msm8916.c
-+++ b/drivers/clk/qcom/gcc-msm8916.c
-@@ -260,7 +260,7 @@ static struct clk_pll gpll0 = {
- 	.l_reg = 0x21004,
- 	.m_reg = 0x21008,
- 	.n_reg = 0x2100c,
--	.config_reg = 0x21014,
-+	.config_reg = 0x21010,
- 	.mode_reg = 0x21000,
- 	.status_reg = 0x2101c,
- 	.status_bit = 17,
-@@ -287,7 +287,7 @@ static struct clk_pll gpll1 = {
- 	.l_reg = 0x20004,
- 	.m_reg = 0x20008,
- 	.n_reg = 0x2000c,
--	.config_reg = 0x20014,
-+	.config_reg = 0x20010,
- 	.mode_reg = 0x20000,
- 	.status_reg = 0x2001c,
- 	.status_bit = 17,
-@@ -314,7 +314,7 @@ static struct clk_pll gpll2 = {
- 	.l_reg = 0x4a004,
- 	.m_reg = 0x4a008,
- 	.n_reg = 0x4a00c,
--	.config_reg = 0x4a014,
-+	.config_reg = 0x4a010,
- 	.mode_reg = 0x4a000,
- 	.status_reg = 0x4a01c,
- 	.status_bit = 17,
-@@ -341,7 +341,7 @@ static struct clk_pll bimc_pll = {
- 	.l_reg = 0x23004,
- 	.m_reg = 0x23008,
- 	.n_reg = 0x2300c,
--	.config_reg = 0x23014,
-+	.config_reg = 0x23010,
- 	.mode_reg = 0x23000,
- 	.status_reg = 0x2301c,
- 	.status_bit = 17,
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 27201fd26e44..e1aa1fbac48a 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -90,7 +90,7 @@ static void sun6i_a31_get_pll1_factors(struct factors_request *req)
+ 	 * Round down the frequency to the closest multiple of either
+ 	 * 6 or 16
+ 	 */
+-	u32 round_freq_6 = round_down(freq_mhz, 6);
++	u32 round_freq_6 = rounddown(freq_mhz, 6);
+ 	u32 round_freq_16 = round_down(freq_mhz, 16);
+ 
+ 	if (round_freq_6 > round_freq_16)
 -- 
 2.25.1
 
