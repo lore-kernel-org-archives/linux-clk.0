@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83713C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A59C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EBB1221FD
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9EF72220E
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 01:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592444525;
-	bh=grTMoYmHUjnzVf/gn68pvoeTwzVuwA9jfHoZouBcFWo=;
+	s=default; t=1592444567;
+	bh=RvTCFn4Y/pb0w9/1tnnkax2gSVbLbcvRmLSmjEwBzQ4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wXULXoaRuSo6dVnUPCMuwFCND9etgb984pjpxgcQfmNwmbLiPr1d1hz+oKqh0xK9h
-	 5mA+7MOZT2iERcvGQLjO+4uG56kVkJafSNXZ7YujkHDPaac3X874OYmPO/cy3tsO3m
-	 HRycMR7JgCVZPWz8VqDGGB6D9OMY2D8obYMMZTl8=
+	b=xKOOyLRbQJHHewy+h60JNh1GX3/WG4uSDucty4FcgSYg6PWD/esTz+1lDwIkOlN8V
+	 tUwZC7qznFaBalW5BDSjsWOGty+0vumLTxwMTY22zQMeXFnA0E/SSdFeGcsP8wt6Np
+	 KFltDYiuclOHpHxJaR+AVOyPDV5+2kxUk2ovqG3Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732324AbgFRBmE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:42:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38902 "EHLO mail.kernel.org"
+        id S1732222AbgFRBmk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:42:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732305AbgFRB3a (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:29:30 -0400
+        id S1732273AbgFRB3S (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:29:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2BA0322229;
-        Thu, 18 Jun 2020 01:29:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF7AB22240;
+        Thu, 18 Jun 2020 01:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443770;
-        bh=grTMoYmHUjnzVf/gn68pvoeTwzVuwA9jfHoZouBcFWo=;
+        s=default; t=1592443757;
+        bh=RvTCFn4Y/pb0w9/1tnnkax2gSVbLbcvRmLSmjEwBzQ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yRXkleAXMBoN67YTSAlQRVsigDnyZGfsaV3PQvzSmhUV8DcqQ5+2hiytPeCeoWFbH
-         6tFHF4cyEty3+ngcDVmTBh3XILFk6p+H9sQWL6z/0yqNO12h5bArqJRbCuJ42OPcow
-         rjCqOji+T00qn8UzYytzyD4mKwc7CuSxiapTbBas=
+        b=F6ueyZIjCFYwirqsvQVgJpZ2CPB+NOdL7xoXsATOzcMEsiJDU6wt9X/JPutsXMNyz
+         5YwLCOZ9Xo7Zd1q92cxHwo9Cm1mDxj+fSv5y+ky4gZtKPKjnxe3xTZgzyP+FHFRE3m
+         b+bDKKjH3XxuGdGZey05iGMooyIklirRQs0q9f2A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 54/80] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
-Date:   Wed, 17 Jun 2020 21:27:53 -0400
-Message-Id: <20200618012819.609778-54-sashal@kernel.org>
+Cc:     Tero Kristo <t-kristo@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 44/80] clk: ti: composite: fix memory leak
+Date:   Wed, 17 Jun 2020 21:27:43 -0400
+Message-Id: <20200618012819.609778-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618012819.609778-1-sashal@kernel.org>
 References: <20200618012819.609778-1-sashal@kernel.org>
@@ -60,66 +61,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Tero Kristo <t-kristo@ti.com>
 
-[ Upstream commit 25bdae0f1c6609ceaf55fe6700654f0be2253d8e ]
+[ Upstream commit c7c1cbbc9217ebb5601b88d138d4a5358548de9d ]
 
-Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
-match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
-a proper fix for Exynos I2S driver is ready.
+The parent_names is never released for a component clock definition,
+causing some memory leak. Fix by releasing it once it is no longer
+needed.
 
-This fixes the following synchronous abort issue revealed by the probe
-order change caused by the commit 93d2e4322aa7 ("of: platform: Batch
-fwnode parsing when adding all top level devices")
-
-Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
-Hardware name: Samsung TM2E board (DT)
-Workqueue: events deferred_probe_work_func
-pstate: 60000005 (nZCv daif -PAN -UAO)
-pc : samsung_i2s_probe+0x768/0x8f0
-lr : samsung_i2s_probe+0x688/0x8f0
-...
-Call trace:
- samsung_i2s_probe+0x768/0x8f0
- platform_drv_probe+0x50/0xa8
- really_probe+0x108/0x370
- driver_probe_device+0x54/0xb8
- __device_attach_driver+0x90/0xc0
- bus_for_each_drv+0x70/0xc8
- __device_attach+0xdc/0x140
- device_initial_probe+0x10/0x18
- bus_probe_device+0x94/0xa0
- deferred_probe_work_func+0x70/0xa8
- process_one_work+0x2a8/0x718
- worker_thread+0x48/0x470
- kthread+0x134/0x160
- ret_from_fork+0x10/0x1c
-Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
----[ end trace ccf721c9400ddbd6 ]---
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Reported-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Link: https://lkml.kernel.org/r/20200429131341.4697-2-t-kristo@ti.com
+Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5433.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/ti/composite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 09cdd35dc434..a082b026791a 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -1672,7 +1672,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
- 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
- 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
--			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
-+			ENABLE_SCLK_PERIC, 6,
-+			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
- 			5, CLK_SET_RATE_PARENT, 0),
- 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 1cf70f452e1e..3725b2e0c788 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -226,6 +226,7 @@ static void __init _register_composite(struct clk_hw *hw,
+ 		if (!cclk->comp_clks[i])
+ 			continue;
+ 		list_del(&cclk->comp_clks[i]->link);
++		kfree(cclk->comp_clks[i]->parent_names);
+ 		kfree(cclk->comp_clks[i]);
+ 	}
+ 
 -- 
 2.25.1
 
