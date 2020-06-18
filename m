@@ -2,92 +2,97 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8298CC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 16:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B2B6C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 17:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5BBFD20899
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 16:17:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="tDcZvIQh"
+	by mail.kernel.org (Postfix) with ESMTP id 29F2920734
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 17:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbgFRQRA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jun 2020 12:17:00 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:47517 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727114AbgFRQQ7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 12:16:59 -0400
-X-UUID: 8d6f9d2f59bf434f80a7ae0cf05ec8f9-20200619
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=Iw5MdckpEx2wQHfZxi4v7hZqKr+61I5sVoMJrktXj5o=;
-        b=tDcZvIQhLEnEvjxHAC9mX7MyH6/x23QUaGzFMqfZ1bXIsFRxYiExxRGUKQJBDkqZUjRcfLgBpyfu/K+OSZq0wv9psDK9EZ4+L0XX1OnIRzWal5fxF96dX1XOvtqqe+YMY2/C39RWxpA3XnQGnrmw/Rvts3uAaMHXnr+EK/ZfdPM=;
-X-UUID: 8d6f9d2f59bf434f80a7ae0cf05ec8f9-20200619
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1131090570; Fri, 19 Jun 2020 00:16:57 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Fri, 19 Jun 2020 00:16:52 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Fri, 19 Jun 2020 00:16:51 +0800
-Message-ID: <1592497015.10773.21.camel@mtkswgap22>
-Subject: Re: [PATCH v6 6/7] clk: mediatek: add UART0 clock support
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>
-Date:   Fri, 19 Jun 2020 00:16:55 +0800
-In-Reply-To: <a61ed70c-a360-f3af-e215-6377ea25a6ab@gmail.com>
-References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
-         <1592480018-3340-7-git-send-email-hanks.chen@mediatek.com>
-         <a61ed70c-a360-f3af-e215-6377ea25a6ab@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1727850AbgFRR4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jun 2020 13:56:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:56600 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729125AbgFRR4f (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 18 Jun 2020 13:56:35 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BD981101E;
+        Thu, 18 Jun 2020 10:56:34 -0700 (PDT)
+Received: from e121345-lin.cambridge.arm.com (e121345-lin.cambridge.arm.com [10.1.196.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D4C763F73C;
+        Thu, 18 Jun 2020 10:56:33 -0700 (PDT)
+From:   Robin Murphy <robin.murphy@arm.com>
+To:     heiko@sntech.de, mturquette@baylibre.com, sboyd@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [RESEND PATCH] Revert "clk: rockchip: fix wrong mmc sample phase shift for rk3328"
+Date:   Thu, 18 Jun 2020 18:56:29 +0100
+Message-Id: <c80eb52e34c03f817586b6b7912fbd4e31be9079.1589475794.git.robin.murphy@arm.com>
+X-Mailer: git-send-email 2.23.0.dirty
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: BF32A141C01CA4CBE6F5B3E0BD896765BF1D1AEE3E31B59103E3586B8D6FC1572000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gVGh1LCAyMDIwLTA2LTE4IGF0IDE3OjUxICswMjAwLCBNYXR0aGlhcyBCcnVnZ2VyIHdyb3Rl
-Og0KPiANCj4gT24gMTgvMDYvMjAyMCAxMzozMywgSGFua3MgQ2hlbiB3cm90ZToNCj4gPiBBZGQg
-TVQ2Nzc5IFVBUlQwIGNsb2NrIHN1cHBvcnQuDQo+ID4gDQo+IA0KPiBQbGVhc2UgYSBkZCBmaXhl
-cyB0YWc6DQo+IA0KPiBGaXhlczogNzEwNzc0ZTA0ODYxICgiY2xrOiBtZWRpYXRlazogQWRkIE1U
-Njc3OSBjbG9jayBzdXBwb3J0IikNCg0KR290IGl0LCBJJ2xsIGFkZCBpdCBpbiBuZXh0IHZlcnNp
-b24uDQoNCj4gDQo+ID4gU2lnbmVkLW9mZi1ieTogSGFua3MgQ2hlbiA8aGFua3MuY2hlbkBtZWRp
-YXRlay5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogbXRrMDE3NjEgPHdlbmRlbGwubGluQG1lZGlh
-dGVrLmNvbT4NCj4gDQo+IE11c3QgYmUgYSByZWFsIG5hbWUgbm90ICJtdGswMTc2MSINCg0KT29w
-cywgSSdsbCB1cGRhdGUgaGlzIG5hbWUuIA0KDQpUaGFuayB5b3UgZm9yIHlvdXIgY29tbWVudC4N
-Cg0KPiANCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS5jIHwg
-ICAgMiArKw0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspDQo+ID4gDQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYyBiL2RyaXZlcnMv
-Y2xrL21lZGlhdGVrL2Nsay1tdDY3NzkuYw0KPiA+IGluZGV4IDk3NjZjY2MuLjZlMGQzYTEgMTAw
-NjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS5jDQo+ID4gKysr
-IGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10Njc3OS5jDQo+ID4gQEAgLTkxOSw2ICs5MTks
-OCBAQA0KPiA+ICAJCSAgICAicHdtX3NlbCIsIDE5KSwNCj4gPiAgCUdBVEVfSU5GUkEwKENMS19J
-TkZSQV9QV00sICJpbmZyYV9wd20iLA0KPiA+ICAJCSAgICAicHdtX3NlbCIsIDIxKSwNCj4gPiAr
-CUdBVEVfSU5GUkEwKENMS19JTkZSQV9VQVJUMCwgImluZnJhX3VhcnQwIiwNCj4gPiArCQkgICAg
-InVhcnRfc2VsIiwgMjIpLA0KPiA+ICAJR0FURV9JTkZSQTAoQ0xLX0lORlJBX1VBUlQxLCAiaW5m
-cmFfdWFydDEiLA0KPiA+ICAJCSAgICAidWFydF9zZWwiLCAyMyksDQo+ID4gIAlHQVRFX0lORlJB
-MChDTEtfSU5GUkFfVUFSVDIsICJpbmZyYV91YXJ0MiIsDQo+ID4gDQoNCg==
+This reverts commit 82f4b67f018c88a7cc9337f0067ed3d6ec352648.
+
+According to a subsequent revert in the vendor kernel, the original
+change was based on unclear documentation and was in fact incorrect.
+
+Emprically, my board's HS200 eMMC at 200MHZ apparently gets lucky with a
+phase where this had no impact, but limiting max-frequency to 150MHz to
+match the nominal capability of the I/O pins made it virtually unusable,
+constantly throwing errors and retuning. With this revert, it starts
+behaving perfectly at 150MHz too.
+
+Fixes: 82f4b67f018c ("clk: rockchip: fix wrong mmc sample phase shift for rk3328")
+Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+---
+
+Resending with the edited commit log I actually meant, rather than the
+earlier draft I managed to generate the previuous patch from, since that
+one seems to have slipped through the cracks anyway.
+
+ybetter commit message
+ drivers/clk/rockchip/clk-rk3328.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+index c186a1985bf4..2429b7c2a8b3 100644
+--- a/drivers/clk/rockchip/clk-rk3328.c
++++ b/drivers/clk/rockchip/clk-rk3328.c
+@@ -808,22 +808,22 @@ static struct rockchip_clk_branch rk3328_clk_branches[] __initdata = {
+ 	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
+ 	    RK3328_SDMMC_CON0, 1),
+ 	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
+-	    RK3328_SDMMC_CON1, 0),
++	    RK3328_SDMMC_CON1, 1),
+ 
+ 	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
+ 	    RK3328_SDIO_CON0, 1),
+ 	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
+-	    RK3328_SDIO_CON1, 0),
++	    RK3328_SDIO_CON1, 1),
+ 
+ 	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
+ 	    RK3328_EMMC_CON0, 1),
+ 	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
+-	    RK3328_EMMC_CON1, 0),
++	    RK3328_EMMC_CON1, 1),
+ 
+ 	MMC(SCLK_SDMMC_EXT_DRV, "sdmmc_ext_drv", "clk_sdmmc_ext",
+ 	    RK3328_SDMMC_EXT_CON0, 1),
+ 	MMC(SCLK_SDMMC_EXT_SAMPLE, "sdmmc_ext_sample", "clk_sdmmc_ext",
+-	    RK3328_SDMMC_EXT_CON1, 0),
++	    RK3328_SDMMC_EXT_CON1, 1),
+ };
+ 
+ static const char *const rk3328_critical_clocks[] __initconst = {
+-- 
+2.23.0.dirty
 
