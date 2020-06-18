@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 773A0C433E3
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:20:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA5CC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5775B207E8
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:20:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C4FA20885
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592446828;
-	bh=XxGlDRotiiRAzgFAJ+3G9S76XZdUjrH/KH36vDL+ZJM=;
+	s=default; t=1592447043;
+	bh=VtHKZqz2xn017e+T2y5e0Ye8xv7zSR2bJF9S5Y+Nafo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JeiQ97Tkg/x5bXDG2ZYQ5rzxgkEjtPprlNqngmJLDrH70uu4r9tztzzdmb4ASw2u7
-	 r6CY6VqyW0YHBXpo0wjthQ7NlK1H/s/WTB+p6BotbCddAHPwFEPBdSLGlbs28+QeJm
-	 OUawyFPzHpWjoh5MBNq0lqansrEd2rq6oDWe6zAo=
+	b=MY24pEEFZWZ2Dt4wgpx2FR5NlKBLuP6u6nABbOfdl79wYaRlv3tCeB4jZdg5pAI4z
+	 4v9wJJWRkU0sUJN7qlttnNLRF3op8nwq2JbQCQnrz3SCs0cCeGt/yB85WeEdtXJk6Z
+	 75HlAcb7PSSfulr6HxcB9Kmppan9U79lLM9ICGtY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731931AbgFRCU1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:20:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50500 "EHLO mail.kernel.org"
+        id S1729603AbgFRCXz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 22:23:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730048AbgFRBS6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:18:58 -0400
+        id S1729825AbgFRBRt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:17:49 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88F0C21D80;
-        Thu, 18 Jun 2020 01:18:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EBA421D94;
+        Thu, 18 Jun 2020 01:17:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592443137;
-        bh=XxGlDRotiiRAzgFAJ+3G9S76XZdUjrH/KH36vDL+ZJM=;
+        s=default; t=1592443068;
+        bh=VtHKZqz2xn017e+T2y5e0Ye8xv7zSR2bJF9S5Y+Nafo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m54HLpST6SZLwnoXSpzNow/5N/bJjuFZpHrnIDSQr18F/TitbFVd0nIcmgOiAcgVu
-         xmXFxvRkirMZHgZxTUxFpduxks39HgM2fGfpxMBEsjgxM/8tDPfOqvmIL4X2UZnAd+
-         9kLJGIstDiRDpMhWRrg99F6o2SFB1E627NDLtSUY=
+        b=z2Guuey0nuXjE+4sf6oGbEjiUkmdL5qLQdo/L8MS9rXjgwBQkr5IvJaty8aDB5H8P
+         A5nu1CflQ5VMoUjy1jQKqEwcl7qNCDQtn3OEYIIEbtjVDxngnKOPG2RUK/b9hFpPI8
+         9smf7/T5yloaDscPTCaeMsqdlpdzZ1G6vEQVjuP4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Quanyang Wang <quanyang.wang@windriver.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Tejas Patel <tejas.patel@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 108/266] clk: meson: meson8b: Fix the polarity of the RESET_N lines
-Date:   Wed, 17 Jun 2020 21:13:53 -0400
-Message-Id: <20200618011631.604574-108-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 057/266] clk: zynqmp: fix memory leak in zynqmp_register_clocks
+Date:   Wed, 17 Jun 2020 21:13:02 -0400
+Message-Id: <20200618011631.604574-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618011631.604574-1-sashal@kernel.org>
 References: <20200618011631.604574-1-sashal@kernel.org>
@@ -60,164 +62,97 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Quanyang Wang <quanyang.wang@windriver.com>
 
-[ Upstream commit 0d3051c790ed2ef6bd91b92b07220313f06b95b3 ]
+[ Upstream commit 58b0fb86260063f86afecaebf4056c876fff2a19 ]
 
-CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST and
-CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE are active low. This means:
-- asserting them requires setting the register value to 0
-- de-asserting them requires setting the register value to 1
+This is detected by kmemleak running on zcu102 board:
 
-Set the register value accordingly for these two reset lines by setting
-the inverted the register value compared to all other reset lines.
+unreferenced object 0xffffffc877e48180 (size 128):
+comm "swapper/0", pid 1, jiffies 4294892909 (age 315.436s)
+hex dump (first 32 bytes):
+64 70 5f 76 69 64 65 6f 5f 72 65 66 5f 64 69 76 dp_video_ref_div
+31 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 1...............
+backtrace:
+[<00000000c9be883b>] __kmalloc_track_caller+0x200/0x380
+[<00000000f02c3809>] kvasprintf+0x7c/0x100
+[<00000000e51dde4d>] kasprintf+0x60/0x80
+[<0000000092298b05>] zynqmp_register_clocks+0x29c/0x398
+[<00000000faaff182>] zynqmp_clock_probe+0x3cc/0x4c0
+[<000000005f5986f0>] platform_drv_probe+0x58/0xa8
+[<00000000d5810136>] really_probe+0xd8/0x2a8
+[<00000000f5b671be>] driver_probe_device+0x5c/0x100
+[<0000000038f91fcf>] __device_attach_driver+0x98/0xb8
+[<000000008a3f2ac2>] bus_for_each_drv+0x74/0xd8
+[<000000001cb2783d>] __device_attach+0xe0/0x140
+[<00000000c268031b>] device_initial_probe+0x24/0x30
+[<000000006998de4b>] bus_probe_device+0x9c/0xa8
+[<00000000647ae6ff>] device_add+0x3c0/0x610
+[<0000000071c14bb8>] of_device_add+0x40/0x50
+[<000000004bb5d132>] of_platform_device_create_pdata+0xbc/0x138
 
-Fixes: 189621726bc2f6 ("clk: meson: meson8b: register the built-in reset controller")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lore.kernel.org/r/20200417184127.1319871-3-martin.blumenstingl@googlemail.com
+This is because that when num_nodes is larger than 1, clk_out is
+allocated using kasprintf for these nodes but only the last node's
+clk_out is freed.
+
+Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
+Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+Link: https://lkml.kernel.org/r/1583185843-20707-5-git-send-email-jolly.shah@xilinx.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 79 ++++++++++++++++++++++++++-----------
- 1 file changed, 56 insertions(+), 23 deletions(-)
+ drivers/clk/zynqmp/clkc.c | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index ab0b56daec54..52337a100a90 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3491,54 +3491,87 @@ static struct clk_regmap *const meson8b_clk_regmaps[] = {
- static const struct meson8b_clk_reset_line {
- 	u32 reg;
- 	u8 bit_idx;
-+	bool active_low;
- } meson8b_clk_reset_bits[] = {
- 	[CLKC_RESET_L2_CACHE_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 30
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 30,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_AXI_64_TO_128_BRIDGE_A5_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 29
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 29,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_SCU_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 28
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 28,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU3_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 27
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 27,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU2_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 26
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 26,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU1_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 25
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 25,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_CPU0_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 24
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 24,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_GLOBAL_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 18
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 18,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_AXI_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 17
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 17,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_A5_ABP_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL0, .bit_idx = 16
-+		.reg = HHI_SYS_CPU_CLK_CNTL0,
-+		.bit_idx = 16,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_AXI_64_TO_128_BRIDGE_MMC_SOFT_RESET] = {
--		.reg = HHI_SYS_CPU_CLK_CNTL1, .bit_idx = 30
-+		.reg = HHI_SYS_CPU_CLK_CNTL1,
-+		.bit_idx = 30,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_CLK_CNTL_SOFT_RESET] = {
--		.reg = HHI_VID_CLK_CNTL, .bit_idx = 15
-+		.reg = HHI_VID_CLK_CNTL,
-+		.bit_idx = 15,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_POST] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 7
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 7,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_SOFT_RESET_PRE] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 3
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 3,
-+		.active_low = false,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_POST] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 1
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 1,
-+		.active_low = true,
- 	},
- 	[CLKC_RESET_VID_DIVIDER_CNTL_RESET_N_PRE] = {
--		.reg = HHI_VID_DIVIDER_CNTL, .bit_idx = 0
-+		.reg = HHI_VID_DIVIDER_CNTL,
-+		.bit_idx = 0,
-+		.active_low = true,
- 	},
- };
- 
-@@ -3547,22 +3580,22 @@ static int meson8b_clk_reset_update(struct reset_controller_dev *rcdev,
+diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+index a11f93ecbf34..6f057ab9df03 100644
+--- a/drivers/clk/zynqmp/clkc.c
++++ b/drivers/clk/zynqmp/clkc.c
+@@ -558,7 +558,7 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
  {
- 	struct meson8b_clk_reset *meson8b_clk_reset =
- 		container_of(rcdev, struct meson8b_clk_reset, reset);
--	unsigned long flags;
- 	const struct meson8b_clk_reset_line *reset;
-+	unsigned int value = 0;
-+	unsigned long flags;
+ 	int j;
+ 	u32 num_nodes, clk_dev_id;
+-	char *clk_out = NULL;
++	char *clk_out[MAX_NODES];
+ 	struct clock_topology *nodes;
+ 	struct clk_hw *hw = NULL;
  
- 	if (id >= ARRAY_SIZE(meson8b_clk_reset_bits))
- 		return -EINVAL;
+@@ -572,16 +572,16 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
+ 		 * Intermediate clock names are postfixed with type of clock.
+ 		 */
+ 		if (j != (num_nodes - 1)) {
+-			clk_out = kasprintf(GFP_KERNEL, "%s%s", clk_name,
++			clk_out[j] = kasprintf(GFP_KERNEL, "%s%s", clk_name,
+ 					    clk_type_postfix[nodes[j].type]);
+ 		} else {
+-			clk_out = kasprintf(GFP_KERNEL, "%s", clk_name);
++			clk_out[j] = kasprintf(GFP_KERNEL, "%s", clk_name);
+ 		}
  
- 	reset = &meson8b_clk_reset_bits[id];
+ 		if (!clk_topology[nodes[j].type])
+ 			continue;
  
-+	if (assert != reset->active_low)
-+		value = BIT(reset->bit_idx);
+-		hw = (*clk_topology[nodes[j].type])(clk_out, clk_dev_id,
++		hw = (*clk_topology[nodes[j].type])(clk_out[j], clk_dev_id,
+ 						    parent_names,
+ 						    num_parents,
+ 						    &nodes[j]);
+@@ -590,9 +590,12 @@ static struct clk_hw *zynqmp_register_clk_topology(int clk_id, char *clk_name,
+ 				     __func__,  clk_dev_id, clk_name,
+ 				     PTR_ERR(hw));
+ 
+-		parent_names[0] = clk_out;
++		parent_names[0] = clk_out[j];
+ 	}
+-	kfree(clk_out);
 +
- 	spin_lock_irqsave(&meson_clk_lock, flags);
- 
--	if (assert)
--		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
--				   BIT(reset->bit_idx), BIT(reset->bit_idx));
--	else
--		regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
--				   BIT(reset->bit_idx), 0);
-+	regmap_update_bits(meson8b_clk_reset->regmap, reset->reg,
-+			   BIT(reset->bit_idx), value);
- 
- 	spin_unlock_irqrestore(&meson_clk_lock, flags);
++	for (j = 0; j < num_nodes; j++)
++		kfree(clk_out[j]);
++
+ 	return hw;
+ }
  
 -- 
 2.25.1
