@@ -2,135 +2,162 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A8FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 07:01:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79799C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 07:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A27C32088E
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 07:01:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="dD2ztfGZ"
+	by mail.kernel.org (Postfix) with ESMTP id 6048C21548
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 07:33:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727055AbgFRHBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jun 2020 03:01:43 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:22131 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727842AbgFRHBm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Jun 2020 03:01:42 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592463701; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
- Subject: Sender; bh=mKnfwSJZJmpEpaixsgLf4I8u4hOTMyn+oOvDxaMsXq0=; b=dD2ztfGZ+PhMX36ThbS+kidgeqmy6rIMAxFsAx/hZuco87m2qOv+o3iLpOK6qc47U0EA9lS3
- Z/5bg9VWyR/IEZkgGukXQMYxJGqQekHhwMD/CD9cCiDuYcOMrJNkABoO7gNH3A3TPJaUsjgC
- UEGrna0MfcY5kpVayYcfidvXb8Q=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n05.prod.us-east-1.postgun.com with SMTP id
- 5eeb1130a3d8a447437b0c6e (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Thu, 18 Jun 2020 07:01:04
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id D7256C433CB; Thu, 18 Jun 2020 07:01:03 +0000 (UTC)
-Received: from [192.168.0.101] (unknown [49.207.137.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD204C433C9;
-        Thu, 18 Jun 2020 07:01:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD204C433C9
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH V7 0/4] Add APSS clock controller support for IPQ6018
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <852c7804-b1b3-2d78-00f6-b67b9fd4e720@codeaurora.org>
-Date:   Thu, 18 Jun 2020 12:30:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S1728008AbgFRHdp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jun 2020 03:33:45 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:47028 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727010AbgFRHdo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 03:33:44 -0400
+Received: by mail-lf1-f65.google.com with SMTP id m26so2848295lfo.13;
+        Thu, 18 Jun 2020 00:33:42 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=V2LuQUDFIIF5jl6wVGVy4hB7QYtw6Q/zQUKKaqApImE=;
+        b=l7AhaIAlb31RPWcK/9tcQ8cCMaCr/3LP5PBkT5uoCdpwUGNXsYGHLxL4V6kjtlFius
+         BegrRLPAGfK0LQqFWGIc6j3/lk4xbJ/hSiTlKHQzbCQ3uX+Og3+YdiQpVMj7yUoHm6ob
+         05L6JFD9YMCv7k2G7WUBZ3T6aDDSwL1nbPitw3U8Qu9ff3fQZv69b/XFBzNZPUGtBkfD
+         c7ERRjAioiCDwkX0xiWAUZ81dCkVkJchWHTbPAgjiigx5Qjqh8AXme+0i1BVQzP8Coep
+         pYS6ij0tOC9yYH9EK+QLm9gcO5LjaypngiAid4BG4+Cq5i47t7x2YVVrDDywJI/Vf/gF
+         CL4Q==
+X-Gm-Message-State: AOAM530oghh3svvxFpJTtD1uVs01DzPJpq1+o2zNOcy79Hi+nTQnB3tB
+        mDzGqnLj8gVIfBjdKVzzc1M=
+X-Google-Smtp-Source: ABdhPJzhQPwQhZT7ChJeJQe7xVV2nqchjeSaUQ5xsLwlnbL7h83g4iEGu5DcJ3yDKPIb2+wZBqaZmw==
+X-Received: by 2002:a19:8252:: with SMTP id e79mr1610797lfd.103.1592465621241;
+        Thu, 18 Jun 2020 00:33:41 -0700 (PDT)
+Received: from localhost.localdomain (62-78-225-252.bb.dnainternet.fi. [62.78.225.252])
+        by smtp.gmail.com with ESMTPSA id u13sm453118ljo.75.2020.06.18.00.33.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jun 2020 00:33:40 -0700 (PDT)
+Date:   Thu, 18 Jun 2020 10:33:31 +0300
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-power@fi.rohmeurope.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: [PATCH v2] MAINTAINERS: Add entry for ROHM power management ICs
+Message-ID: <20200618073331.GA9403@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ping!
+Add entry for maintaining power management IC drivers for ROHM
+BD71837, BD71847, BD71850, BD71828, BD71878, BD70528 and BD99954.
 
-Hi Stephen,
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Sebastian Reichel <sre@kernel.org>
+---
+Morning Lee - could you take this in MFD? This is scattered all around
+different subsystems anyways... I guess crafting bunch of patches to
+each individual subsystems would just end up with lots of merge
+conflicts.
 
-Is it possible for you to review this series? We have regulators and few 
-other patches
+Changes from v1:
+- Dropped patch 2/2 (linear-ranges maintainer) which was already applied by Mark
+- Added shiny new ROHM linux-power list so that I am no longer the lonely
+  poor sod watching these at ROHM side :)
+- sort few files to alphabethical order as checkpatch now nagged about
+  that.
 
-depend on this patch, it would be great if you could provide your inputs 
-on this.
+v1 was here:
+https://lore.kernel.org/lkml/e11366fd280736844ae63791b6193bb84d6205bf.1589866138.git.matti.vaittinen@fi.rohmeurope.com/
 
-Thanks,
 
-Siva
+ MAINTAINERS | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-On 6/6/2020 4:25 PM, Sivaprakash Murugesan wrote:
-> The CPU on Qualcomm's IPQ6018 devices are primarily fed by APSS PLL and XO,
-> these are connected to a clock mux and enable block.
->
-> This patch series adds support for these clocks and inturn enables clocks
-> required for CPU freq.
->
-> [V7]
->   * Removed dts patch from this series, will send that separately
->   * Addressed Rob's minor comment on the binding
->   * Patch 1 depends on a53 pll bindings
->     https://lkml.org/lkml/2020/5/4/60
-> [V6]
->   * Split mailbox driver from this series, mailbox changes will sent as a
->     separate series
->   * Addressed review comments from Stephen
-> [V5]
->   * Addressed Bjorn comments on apss clk and dt-bindings
->   * Patch 2 depends on a53 pll dt-bindings
->     https://www.spinics.net/lists/linux-clk/msg48358.html
-> [V4]
->   * Re-written PLL found on IPQ platforms as a separate driver
->   * Addressed stephen's comments on apss clock controller and pll
->   * Addressed Rob's review comments on bindings
->   * moved a53 pll binding from this series as it is not applicable, will send
->     it separately.
-> [V3]
->   * Fixed dt binding check error in patch2
->     dt-bindings: clock: Add YAML schemas for QCOM A53 PLL
-> [V2]
->   * Restructred the patch series as there are two different HW blocks,
->     the mux and enable belongs to the apcs block and PLL has a separate HW
->     block.
->   * Converted qcom mailbox and qcom a53 pll documentation to yaml.
->   * Addressed review comments from Stephen, Rob and Sibi where it is applicable.
->   * Changed this cover letter to state the purpose of this patch series
->
-> Sivaprakash Murugesan (4):
->    dt-bindings: clock: add ipq6018 a53 pll compatible
->    clk: qcom: Add ipq apss pll driver
->    clk: qcom: Add DT bindings for ipq6018 apss clock controller
->    clk: qcom: Add ipq6018 apss clock controller
->
->   .../devicetree/bindings/clock/qcom,a53pll.yaml     |  18 ++++
->   drivers/clk/qcom/Kconfig                           |  19 ++++
->   drivers/clk/qcom/Makefile                          |   2 +
->   drivers/clk/qcom/apss-ipq-pll.c                    |  95 ++++++++++++++++++
->   drivers/clk/qcom/apss-ipq6018.c                    | 106 +++++++++++++++++++++
->   include/dt-bindings/clock/qcom,apss-ipq.h          |  12 +++
->   6 files changed, 252 insertions(+)
->   create mode 100644 drivers/clk/qcom/apss-ipq-pll.c
->   create mode 100644 drivers/clk/qcom/apss-ipq6018.c
->   create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
->
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 68f21d46614c..ce08617f63f5 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14704,6 +14704,13 @@ L:	linux-serial@vger.kernel.org
+ S:	Odd Fixes
+ F:	drivers/tty/serial/rp2.*
+ 
++ROHM BD99954 CHARGER IC
++R:	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
++L:	linux-power@fi.rohmeurope.com
++S:	Supported
++F:	drivers/power/supply/bd99954-charger.c
++F:	drivers/power/supply/bd99954-charger.h
++
+ ROHM BH1750 AMBIENT LIGHT SENSOR DRIVER
+ M:	Tomasz Duszynski <tduszyns@gmail.com>
+ S:	Maintained
+@@ -14721,6 +14728,31 @@ F:	drivers/mfd/bd9571mwv.c
+ F:	drivers/regulator/bd9571mwv-regulator.c
+ F:	include/linux/mfd/bd9571mwv.h
+ 
++ROHM POWER MANAGEMENT IC DEVICE DRIVERS
++R:	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
++L:	linux-power@fi.rohmeurope.com
++S:	Supported
++F:	Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
++F:	Documentation/devicetree/bindings/regulator/rohm,bd70528-regulator.txt
++F:	drivers/clk/clk-bd718x7.c
++F:	drivers/gpio/gpio-bd70528.c
++F:	drivers/gpio/gpio-bd71828.c
++F:	drivers/mfd/rohm-bd70528.c
++F:	drivers/mfd/rohm-bd71828.c
++F:	drivers/mfd/rohm-bd718x7.c
++F:	drivers/power/supply/bd70528-charger.c
++F:	drivers/regulator/bd70528-regulator.c
++F:	drivers/regulator/bd71828-regulator.c
++F:	drivers/regulator/bd718x7-regulator.c
++F:	drivers/regulator/rohm-regulator.c
++F:	drivers/rtc/rtc-bd70528.c
++F:	drivers/watchdog/bd70528_wdt.c
++F:	include/linux/mfd/rohm-bd70528.h
++F:	include/linux/mfd/rohm-bd71828.h
++F:	include/linux/mfd/rohm-bd718x7.h
++F:	include/linux/mfd/rohm-generic.h
++F:	include/linux/mfd/rohm-shared.h
++
+ ROSE NETWORK LAYER
+ M:	Ralf Baechle <ralf@linux-mips.org>
+ L:	linux-hams@vger.kernel.org
+
+base-commit: b3a9e3b9622ae10064826dccb4f7a52bd88c7407
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
