@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D9CC433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D346C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:38:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 983D4206E2
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB53206E2
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:38:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592447699;
-	bh=eKwEiCxEhxH2C04M+peJ8YJi/McYTubbRz14nOiE4so=;
+	s=default; t=1592447923;
+	bh=13GwXvTMOXsEYR0IfY7cgtgAMSISLoKBnsBmY4n0ne8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WWmwqkn8LZj+0Zq436Ze0u3EkN9ihBcVqo18K6obxMgu0Wvr068IyEsU/CXMTDzJI
-	 KT99RJ/3R047C/VLz8JNHO6vDDj9FCoWzsPBOCjBj5NGK0S8wsejXvngJa2ISW6X5V
-	 P+ZR/8OWkPQ+WFLuIS4HpWOH4KqvdNsxm1BEkd1Y=
+	b=0UImRo08iL4Lyqvjoc2bRnuszE8Z+jRG/nrhRSdHcrcvtCsbigQ/jt/wP5tT5t/BH
+	 BNHlxIpzl2zT9ocz7ZeFdbxd8QLe7lgsQ+gEzsn7xfZmq6HyXUC4jy96xC/+NAjOV4
+	 6Nfpkpli2iBVyBbqfB/ZxU2+FTBxhBUYF0vjhJOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733266AbgFRCe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 22:34:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44038 "EHLO mail.kernel.org"
+        id S1728145AbgFRBNV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:13:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727081AbgFRBOV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:14:21 -0400
+        id S1728497AbgFRBNR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:13:17 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D423C221F3;
-        Thu, 18 Jun 2020 01:14:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 07B9221D7E;
+        Thu, 18 Jun 2020 01:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442861;
-        bh=eKwEiCxEhxH2C04M+peJ8YJi/McYTubbRz14nOiE4so=;
+        s=default; t=1592442796;
+        bh=13GwXvTMOXsEYR0IfY7cgtgAMSISLoKBnsBmY4n0ne8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YJddcqz2IoqbdWeJjPotDS/4VRF3TqWpf1B99wuS/7z/wwy5y9rzvi4uyhtdcd/y+
-         sKbZ75bszW/FOXGr5ZN4oqV9ivQK385vZ2qvfAtL4o7+KIk6uTCyDjUfhCxerQsvds
-         Z4glXgpgYYwAwuIJUy8j2shboSqo78+xJt97qJEY=
+        b=sKWy91zrIqBODGqJloj7+6yLKiOsgbYb3vdeZnFZS04/m+7GmXDWTtLtEoewYDfEo
+         YDaZZc9hLeXt25IzXqnszTk+OCwS3G9FTGmBTlSIAMoirsi06uR7bgtA+nl8eTIbcl
+         RYfyf4EoGjzeJAwEGmzlXMY3SaVFQryljWviXFfQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 290/388] clk: sprd: return correct type of value for _sprd_pll_recalc_rate
-Date:   Wed, 17 Jun 2020 21:06:27 -0400
-Message-Id: <20200618010805.600873-290-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.7 238/388] clk: samsung: exynos5433: Add IGNORE_UNUSED flag to sclk_i2s1
+Date:   Wed, 17 Jun 2020 21:05:35 -0400
+Message-Id: <20200618010805.600873-238-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -59,39 +60,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit c2f30986d418f26abefc2eec90ebf06716c970d2 ]
+[ Upstream commit 25bdae0f1c6609ceaf55fe6700654f0be2253d8e ]
 
-The function _sprd_pll_recalc_rate() defines return value to unsigned
-long, but it would return a negative value when malloc fail, changing
-to return its parent_rate makes more sense, since if the callback
-.recalc_rate() is not set, the framework returns the parent_rate as
-well.
+Mark the SCLK clock for Exynos5433 I2S1 device with IGNORE_UNUSED flag to
+match its behaviour with SCLK clock for AUD_I2S (I2S0) device until
+a proper fix for Exynos I2S driver is ready.
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Link: https://lkml.kernel.org/r/20200519030036.1785-2-zhang.lyra@gmail.com
-Reviewed-by: Baolin Wang <baolin.wang7@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This fixes the following synchronous abort issue revealed by the probe
+order change caused by the commit 93d2e4322aa7 ("of: platform: Batch
+fwnode parsing when adding all top level devices")
+
+Internal error: synchronous external abort: 96000210 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 50 Comm: kworker/0:1 Not tainted 5.7.0-rc5+ #701
+Hardware name: Samsung TM2E board (DT)
+Workqueue: events deferred_probe_work_func
+pstate: 60000005 (nZCv daif -PAN -UAO)
+pc : samsung_i2s_probe+0x768/0x8f0
+lr : samsung_i2s_probe+0x688/0x8f0
+...
+Call trace:
+ samsung_i2s_probe+0x768/0x8f0
+ platform_drv_probe+0x50/0xa8
+ really_probe+0x108/0x370
+ driver_probe_device+0x54/0xb8
+ __device_attach_driver+0x90/0xc0
+ bus_for_each_drv+0x70/0xc8
+ __device_attach+0xdc/0x140
+ device_initial_probe+0x10/0x18
+ bus_probe_device+0x94/0xa0
+ deferred_probe_work_func+0x70/0xa8
+ process_one_work+0x2a8/0x718
+ worker_thread+0x48/0x470
+ kthread+0x134/0x160
+ ret_from_fork+0x10/0x1c
+Code: 17ffffaf d503201f f94086c0 91003000 (88dffc00)
+---[ end trace ccf721c9400ddbd6 ]---
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 15791484388f..13a322b2535a 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -106,7 +106,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
- 
- 	cfg = kcalloc(regs_num, sizeof(*cfg), GFP_KERNEL);
- 	if (!cfg)
--		return -ENOMEM;
-+		return parent_rate;
- 
- 	for (i = 0; i < regs_num; i++)
- 		cfg[i] = sprd_pll_read(pll, i);
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 4b1aa9382ad2..6f29ecd0442e 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -1706,7 +1706,8 @@ static const struct samsung_gate_clock peric_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_PCM1, "sclk_pcm1", "sclk_pcm1_peric",
+ 			ENABLE_SCLK_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_I2S1, "sclk_i2s1", "sclk_i2s1_peric",
+-			ENABLE_SCLK_PERIC, 6, CLK_SET_RATE_PARENT, 0),
++			ENABLE_SCLK_PERIC, 6,
++			CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_SCLK_SPI2, "sclk_spi2", "sclk_spi2_peric", ENABLE_SCLK_PERIC,
+ 			5, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI1, "sclk_spi1", "sclk_spi1_peric", ENABLE_SCLK_PERIC,
 -- 
 2.25.1
 
