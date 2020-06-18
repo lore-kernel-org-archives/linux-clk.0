@@ -2,96 +2,103 @@ Return-Path: <SRS0=qLgl=77=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A6CC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:40:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D63BC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:45:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E00DB20734
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:40:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 822092082F
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 11:45:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbgFRLkA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 18 Jun 2020 07:40:00 -0400
-Received: from smtp4-g21.free.fr ([212.27.42.4]:41390 "EHLO smtp4-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726919AbgFRLkA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 18 Jun 2020 07:40:00 -0400
-Received: from [192.168.1.91] (unknown [77.207.133.132])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp4-g21.free.fr (Postfix) with ESMTPSA id B309219F5B2;
-        Thu, 18 Jun 2020 13:38:37 +0200 (CEST)
-Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
-Message-ID: <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
-Date:   Thu, 18 Jun 2020 13:38:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1727062AbgFRLp2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 18 Jun 2020 07:45:28 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46746 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727784AbgFRLp2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 18 Jun 2020 07:45:28 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g7so4228048oti.13;
+        Thu, 18 Jun 2020 04:45:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3/GmHzHaJXfKPAE4Dhv91aGLVhmYtoCuc/JwKOn8/nI=;
+        b=oSvPp8ncOsb3JmMMQuMizeoBkNRXjwVo7FcPVdEsEb90MYGys5SSms0y5D1HWlNDrF
+         YKuxe2kmnFqB8YSBLipH3MgQc5sFSg5A1dHgfNbTtXLXHWZaog26CdQKdjX26Cyj3doS
+         rRl8Lt57RQ7BjhAyOgjLPgQPG3tMfi3BaoyRbeQJanxhnl7T1JGOtXRFJSOkl5mLcvti
+         FPu5wFZoc9qecMlGXhTXPFWx0NrEs18lLN3AueiLOjhPs2pNjWHdnZIQDZvxJI6P2pGR
+         KSXFWkMLjsSAo98nmSfMwkJyeGrVfB6zD8LVpzLRLQnps5AUgAs73grPQ2u+FALwtiIJ
+         ydFg==
+X-Gm-Message-State: AOAM533FKMTGC59noSZA9ccd1dfeTWfmDu28SLzmlVuPkz3OXmz4OWuq
+        nwMNlB/adq9Vv5BuxGh9XduPb61EQd+p3VXqIkRBWbyB
+X-Google-Smtp-Source: ABdhPJycsp05t8ByudTXOt3lT+dkPulFnzfATKph8iduA2TSPSvS+yA65IqLg+4Qt/n4J5ENA0aXyI1IxGR5oDYqZjI=
+X-Received: by 2002:a9d:c29:: with SMTP id 38mr2856813otr.107.1592480725841;
+ Thu, 18 Jun 2020 04:45:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200616162626.27944-1-uli+renesas@fpond.eu>
+In-Reply-To: <20200616162626.27944-1-uli+renesas@fpond.eu>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 18 Jun 2020 13:45:14 +0200
+Message-ID: <CAMuHMdW4m4Qr0QgCQiXofCbvB--MZzoxPty8+Q_bKi2Y5-PG8w@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] clk: renesas: cpg-mssr: add RWDT to critical clocks
+To:     Ulrich Hecht <uli+renesas@fpond.eu>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Magnus Damm <magnus.damm@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello everyone,
+Hi Uli,
 
-In my opinion, the small and simple devm_add() helper
-(and its cousin, devm_vadd) can help make devm code
-slightly easier to write and maintain.
+On Tue, Jun 16, 2020 at 6:26 PM Ulrich Hecht <uli+renesas@fpond.eu> wrote:
+> The purpose of this series is to allow a WDT that has been enabled by the
+> bootloader to survive these events:
+>
+> - deferred probing of the WDT device, which can lead the clock driver
+>   to disable the WDT clock until the WDT is re-probed, giving it a
+>   blind spot
+> - probe failure in the WDT driver
+>
+> Following a suggestion by Geert, this revision, instead of adding another
+> list of clocks with special handling, changes the semantics of the
+> crit_mod_clks[] array slightly by only marking clocks critical that are
+> enabled at boot time. That way it can be used for RWDT without forcing the
+> clock on unnecessarily.
+>
+> The other existing user of crit_mod_clks[] (INTC-AP) is always on at boot time
+> and should thus not be affected by this change.
+>
+> There are a number of Gen2 and RZ/G1 SoCs that have the RWDT clock declared
+> as critical already in order to allow SMP bringup code to work. That should
+> still work with this series applied, assuming that the WDT clock is on at
+> boot time.
 
-Would anyone care to agree or disagree? :-)
+It must be, as initial secondary CPU bringup runs very early.
 
-Regards.
+That does mean I will have to remove the RWDT clock from my debug code
+to disable all unused clocks during boot[1].
+Interestingly, the SMP bringup code still seems to work (on R-Car M2-W
+ES1.0) if the RWDT clock is disabled, both for initial bringup and
+manual CPU off/onlining later. And it keeps working if I move the debug
+code earlier (currently it runs after initial bringup).
 
+So we're all fine ;-)
 
-On 10/03/2020 11:11, Marc Gonzalez wrote:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git/log/?h=topic/renesas-debug
 
-> Differences from v4 to v5
-> x Fix the grammar in devm_add comments [Geert]
-> x Undo an unrelated change in devm_clk_put [Geert]
-> 
-> Differences from v3 to v4
-> x Add a bunch of kerneldoc above devm_add() [Greg KH]
-> x Split patch in two [Greg KH]
-> 
-> Differences from v2 to v3
-> x Make devm_add() return an error-code rather than the raw data pointer
->   (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
-> x Provide a variadic version devm_vadd() to work with structs as suggested
->   by Geert
-> x Don't use nested ifs in clk_devm* implementations (hopefully simpler
->   code logic to follow) as suggested by Geert
-> 
-> Marc Gonzalez (2):
->   devres: Provide new helper for devm functions
->   clk: Use devm_add in managed functions
-> 
->  drivers/base/devres.c    | 28 ++++++++++++
->  drivers/clk/clk-devres.c | 97 +++++++++++++++-------------------------
->  include/linux/device.h   |  3 ++
->  3 files changed, 67 insertions(+), 61 deletions(-)
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
