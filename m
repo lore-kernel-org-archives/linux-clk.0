@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D837FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B5CC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B7F3C21927
-	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436E220776
+	for <linux-clk@archiver.kernel.org>; Thu, 18 Jun 2020 02:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592448496;
-	bh=ihHrUJsOCew8oKzpD6uj34VNb3wBjlV3dDlrBrZhBnA=;
+	s=default; t=1592448526;
+	bh=2k53BUB6tR7j3zcSfFJF3SuY35bWiRwDUV7sos9HbBc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dMjQxmmrZZPY1iyaNmQxvNaZQZl6m6rViBPrJoqmmqk9JywxnJRlmqx9AqSwuwSYf
-	 zNKSA5qiF3C81jwRFc9xOFHyXsr2gF9yepunswJN5eFOXwm0E7ySJXgPp9wo8xMQAB
-	 KX+MCKbcoOaqMoEI4YCzpJu2UW88Mn3jHuORLcMo=
+	b=jXZ+NqotMiNZ9+w89BwVXMzzJqSqcmcnBVh8e+AYaaMvgmqjPdgi1wqY7ja281Uyr
+	 xIPvJN0DjyUOmiZIHU4UjRqryWshq49cZTmM7FdhHsHtrDpfihAo73zhVIxYiOrkX7
+	 8O5mjxsXVEjgEi17B6vwO2aVSe+lX+/nbR1bsHrI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbgFRBKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 17 Jun 2020 21:10:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36890 "EHLO mail.kernel.org"
+        id S1728318AbgFRBJu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 17 Jun 2020 21:09:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbgFRBKD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 17 Jun 2020 21:10:03 -0400
+        id S1728291AbgFRBJs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 17 Jun 2020 21:09:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E132221EA;
-        Thu, 18 Jun 2020 01:10:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A569921D7E;
+        Thu, 18 Jun 2020 01:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592442603;
-        bh=ihHrUJsOCew8oKzpD6uj34VNb3wBjlV3dDlrBrZhBnA=;
+        s=default; t=1592442588;
+        bh=2k53BUB6tR7j3zcSfFJF3SuY35bWiRwDUV7sos9HbBc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XEiYq+8LGen4idONssMiAplT1dl7YRgXqF1hCzlmixiAyPUr2hqIUwfOz9Zt2h1Ro
-         H1dgX5JG9GK3QtGVF7mS5HmQSzghzkytHEiAX/hG0tVMKpXpk6GmonbOsvG+7yyLjW
-         l4c97cgzeIvbzfQXKpn98g8LBMmB7eGeSsBAML70=
+        b=cL6t3U3cVIKa8IuCv3jKbz0Wn2IvU5oG2aMt7fSPM/JVIYJhRVDsIv4vQEgOP9zN8
+         QlnWh0zm76+1BV/+xYOE3A+Nx7uO4NkM+kydccMvTH8TJ8cwnOG40ArRJJ3FX54WXl
+         w9iFQIJiNkc9jYFH4fWo66qpUx6Uvq7E7UnnypCc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.7 089/388] clk: sprd: fix compile-testing
-Date:   Wed, 17 Jun 2020 21:03:06 -0400
-Message-Id: <20200618010805.600873-89-sashal@kernel.org>
+Cc:     Alain Volmat <avolmat@me.com>,
+        Patrice Chotard <patrice.chotard@st.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.7 078/388] clk: clk-flexgen: fix clock-critical handling
+Date:   Wed, 17 Jun 2020 21:02:55 -0400
+Message-Id: <20200618010805.600873-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200618010805.600873-1-sashal@kernel.org>
 References: <20200618010805.600873-1-sashal@kernel.org>
@@ -59,76 +59,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Alain Volmat <avolmat@me.com>
 
-[ Upstream commit b5f73d47f34b238221ac771b5fe4907df621d7cb ]
+[ Upstream commit a403bbab1a73d798728d76931cab3ff0399b9560 ]
 
-I got a build failure with CONFIG_ARCH_SPRD=m when the
-main portion of the clock driver failed to get linked into
-the kernel:
+Fixes an issue leading to having all clocks following a critical
+clocks marked as well as criticals.
 
-ERROR: modpost: "sprd_pll_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_comp_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_sc_gate_ops" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_clk_probe" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_clk_regmap_init" [drivers/clk/sprd/sc9863a-clk.ko] undefined!
-ERROR: modpost: "sprd_pll_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
-ERROR: modpost: "sprd_div_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
-ERROR: modpost: "sprd_mux_ops" [drivers/clk/sprd/sc9860-clk.ko] undefined!
-
-This is a combination of two trivial bugs:
-
-- A platform should not be 'tristate', it should be a 'bool' symbol
-  like the other platforms, if only for consistency, and to avoid
-  surprises like this one.
-
-- The clk Makefile does not traverse into the sprd subdirectory
-  if the platform is disabled but the drivers are enabled for
-  compile-testing.
-
-Fixing either of the two would be sufficient to address the link failure,
-but for correctness, both need to be changed.
-
-Fixes: 2b1b799d7630 ("arm64: change ARCH_SPRD Kconfig to tristate")
-Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
-Acked-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: fa6415affe20 ("clk: st: clk-flexgen: Detect critical clocks")
+Signed-off-by: Alain Volmat <avolmat@me.com>
+Link: https://lkml.kernel.org/r/20200322140740.3970-1-avolmat@me.com
+Reviewed-by: Patrice Chotard <patrice.chotard@st.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/Kconfig.platforms | 2 +-
- drivers/clk/Makefile         | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/st/clk-flexgen.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 55d70cfe0f9e..3c7e310fd8bf 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -248,7 +248,7 @@ config ARCH_TEGRA
- 	  This enables support for the NVIDIA Tegra SoC family.
+diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
+index 4413b6e04a8e..55873d4b7603 100644
+--- a/drivers/clk/st/clk-flexgen.c
++++ b/drivers/clk/st/clk-flexgen.c
+@@ -375,6 +375,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
+ 			break;
+ 		}
  
- config ARCH_SPRD
--	tristate "Spreadtrum SoC platform"
-+	bool "Spreadtrum SoC platform"
- 	help
- 	  Support for Spreadtrum ARM based SoCs
++		flex_flags &= ~CLK_IS_CRITICAL;
+ 		of_clk_detect_critical(np, i, &flex_flags);
  
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f4169cc2fd31..60e811d3f226 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -105,7 +105,7 @@ obj-$(CONFIG_CLK_SIFIVE)		+= sifive/
- obj-$(CONFIG_ARCH_SIRF)			+= sirf/
- obj-$(CONFIG_ARCH_SOCFPGA)		+= socfpga/
- obj-$(CONFIG_PLAT_SPEAR)		+= spear/
--obj-$(CONFIG_ARCH_SPRD)			+= sprd/
-+obj-y					+= sprd/
- obj-$(CONFIG_ARCH_STI)			+= st/
- obj-$(CONFIG_ARCH_STRATIX10)		+= socfpga/
- obj-$(CONFIG_ARCH_SUNXI)		+= sunxi/
+ 		/*
 -- 
 2.25.1
 
