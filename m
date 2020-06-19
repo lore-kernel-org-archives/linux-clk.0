@@ -2,77 +2,78 @@ Return-Path: <SRS0=8Vdj=AA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F35C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Jun 2020 08:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A66C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Jun 2020 09:37:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E5C14207FC
-	for <linux-clk@archiver.kernel.org>; Fri, 19 Jun 2020 08:19:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52E662080C
+	for <linux-clk@archiver.kernel.org>; Fri, 19 Jun 2020 09:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592554766;
-	bh=HA7ailzZtLyGM7+dSmDkKq58t5uhEiFR442OtgMD67A=;
+	s=default; t=1592559460;
+	bh=vjTpSmnTmmOv94IpDmGtPP99GpL12wdAHsgrEGDpfS0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ndMzG2Un6ZdRklK6Rs3im/HnPJubRxUx1CEk2xq0buaXFu8K1Dq/jed1/0x1TXTUf
-	 poZNzZM/nnWHdWHeMKg2A1HB8Sdk/1QCyvUC7CEWDyO8zQ4M9WxP8keKGkC0Iyuk/E
-	 2E+m4R2jS460arTeGsnwejxg8o2XDXyo2N93dtZ0=
+	b=eAzvNKlDs+sv2vYORkiqG21TjWxMOVmK6i+yCleNpB6kmfeS4lYc6kh92oVjF018c
+	 exKR0qG8Zfny0IBKUmAlmgUxHFAl2sAd6xaw28mLV+C4wJFSMICgPxX98GO4PsTc9y
+	 ct+aq70HevqBveivSSvSknA8QrvFtAz+tezpX2SI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731180AbgFSITG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Jun 2020 04:19:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44828 "EHLO mail.kernel.org"
+        id S1730380AbgFSJhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Jun 2020 05:37:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730828AbgFSISM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jun 2020 04:18:12 -0400
+        id S1729195AbgFSJhj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jun 2020 05:37:39 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983E9207FC;
-        Fri, 19 Jun 2020 08:17:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE5120786;
+        Fri, 19 Jun 2020 09:37:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592554658;
-        bh=HA7ailzZtLyGM7+dSmDkKq58t5uhEiFR442OtgMD67A=;
+        s=default; t=1592559458;
+        bh=vjTpSmnTmmOv94IpDmGtPP99GpL12wdAHsgrEGDpfS0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ra9354xvWkO2Dai0qmF2ZONN5WpMV3njHsp6+IXb73/Nr57X2Rn9FHLEXyyAG1bfV
-         VqoFAUrjsqiwX45sD6tRwf/ymM0j4XUVar4W6MSUCXw+EEKSxT+c2tJyTspJSca3hY
-         PVbhVwh+9NtcG5ZANMfTHj45MelhZioUy3ElHoGA=
+        b=1AJE04JNn56TsdMVZm9vO6voR+upA/wknlpCNJt7942CxnqoZyzuJDDBKYjQDd4/l
+         W3nDsaCvaAPbSzG66nwCLRZrfNfPhOMh1B+X/1dkby9154Iis2g0MHueQaVSQGfKcF
+         ELh9n6NzhkWboj+yZ6Ecvq9fl/vk9HHNh04veKw4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200618073331.GA9403@localhost.localdomain>
-References: <20200618073331.GA9403@localhost.localdomain>
-Subject: Re: [PATCH v2] MAINTAINERS: Add entry for ROHM power management ICs
+In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
+References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v5 00/27] clk: bcm: rpi: Add support for BCM2711 firmware clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sebastian Reichel <sre@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-power@fi.rohmeurope.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Date:   Fri, 19 Jun 2020 01:17:37 -0700
-Message-ID: <159255465783.62212.9583042633101060784@swboyd.mtv.corp.google.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Tim Gover <tim.gover@raspberrypi.com>,
+        Phil Elwell <phil@raspberrypi.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
+        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Fri, 19 Jun 2020 02:37:37 -0700
+Message-ID: <159255945796.62212.5838238989498858379@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matti Vaittinen (2020-06-18 00:33:31)
-> Add entry for maintaining power management IC drivers for ROHM
-> BD71837, BD71847, BD71850, BD71828, BD71878, BD70528 and BD99954.
+Quoting Maxime Ripard (2020-06-15 01:40:40)
+> Hi,
 >=20
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Sebastian Reichel <sre@kernel.org>
-> ---
+> Since the whole DRM/HDMI support began to grow fairly big, I've chosen
+> to split away the two discussions between the firmware clocks and the
+> HDMI support.
+>=20
+> Let me know what you think,
+> Maxime
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Do you want this to go through clk tree? Or looking for acks/review
+tags?
