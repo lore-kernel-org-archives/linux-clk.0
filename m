@@ -2,130 +2,108 @@ Return-Path: <SRS0=kEw8=AB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C327C433E5
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 15:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F73C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 16:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5C85223B6A
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 15:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1402623E53
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 16:14:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QDUi4+cS"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dJqnEphI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726919AbgFTP5Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Jun 2020 11:57:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59070 "EHLO
+        id S1727871AbgFTQOh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Jun 2020 12:14:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725957AbgFTP5I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 11:57:08 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EC82C0613EF
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 08:57:07 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id d10so3489926pls.5
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 08:57:07 -0700 (PDT)
+        with ESMTP id S1725880AbgFTQOh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 12:14:37 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF2FBC06174E;
+        Sat, 20 Jun 2020 09:14:36 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id l27so13592268ejc.1;
+        Sat, 20 Jun 2020 09:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=9tYajToBSjCKrMeO3oPfRpy8eb8n4thx7RWSAT9gnU0=;
-        b=QDUi4+cS/+VkJarQJer8i54NB6wrYUApoWkctsr63KwWXWXArOZDidsHLokQDZp1dW
-         eZ4mUUVqPLdtc98QdwYojIxlVjsSvdT6uJdK2Pr6SfHfX+CS5ufDjNUbv4fBIhf1Kcxv
-         MQ/YY9T6qSNqLt4/98fJo5BCZXSyE37vzBS0w=
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5h5wp3ORTZGg5e5YMKB8xdQFo3Gs3K18kYJZ7b2m2TE=;
+        b=dJqnEphIZ9aCR3dnamuWUmn7XcxtO80UGRVABq6YRlVHbfHbEQLES6ZGaZbUhUbUXR
+         cSCkI3szBJfP7LuvU//wqOt9FGRK/TKnzMjKl5/Svu0J6XfThgHu1XVW0RrND3nrN3QI
+         4hpRUScwefTOIALoskYBZt9XSVhM/uwRpmjFDaQLYALq2I5Sjj64KZq9c3HG7XbRmsmY
+         RmB5X1XWpUk/HD/gYOMXukfkqx8x5b+3xCALiv0laXLVKmce1kQ06vYvyGV40kKviBqG
+         yzP38MaT3Sob4sqJoyOZoPmEhE/BfzvsGM+qf0g+MQale2I1Z7KaQQyzMwZkzMNs5l3E
+         p1Ug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=9tYajToBSjCKrMeO3oPfRpy8eb8n4thx7RWSAT9gnU0=;
-        b=NCYbDCFvRDV111fXZw8Jp9jfoqYSLql6lsPxfKgrr/Kw/KES4X6KBcnlN1W8uknxEw
-         mmuvumDjZ2YcMchdCB4ANkO8cpF8NMdG/WdFcOCQjFXHBnuXkbpNz91KZfeOZBLkZsRS
-         ej5lYnFhVv7XQtQPGmZFG70r8Q9mAdj9lMb2z6/5IINE9Fr1P9m4h9A8HWSC++9TPnPP
-         J8W87xcRk4nK18VofFbpAnyAGEXv/20NdcC4OX1dS4n/ko06EqAwSzadcZK6cfHdxeC2
-         xa66Scvx9WchJntI46oer3Su7Luluj2P+MQETlgUpnkhLsf6Ab31yrfhp7bkgWhsPQK+
-         RShg==
-X-Gm-Message-State: AOAM530Z+P6uY1tdQVBhnizMVuN9naWptv0sUCzY2U9co2ubKjmdHsyX
-        1ak0GpnJ5HHBgTrxla6+NaBrKA==
-X-Google-Smtp-Source: ABdhPJxL62JhXi8o+nSID6QHqBiLZ4YAHSAeaQKUwiACFjUcLS2k4S/MAlD8WL4T8tKBotrZuujIYg==
-X-Received: by 2002:a17:902:b78a:: with SMTP id e10mr12682612pls.201.1592668627259;
-        Sat, 20 Jun 2020 08:57:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id y4sm8954278pfr.182.2020.06.20.08.57.05
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=5h5wp3ORTZGg5e5YMKB8xdQFo3Gs3K18kYJZ7b2m2TE=;
+        b=mTbZCNlrYEF7Bm3CQNyZe6Gzpvr9En1DhOR8+Kc12q8ANmd3UWbORwGANSmBdK70LX
+         HYlFCUCRJRk1GPVlBIGWa25xe/frs+MJSJtJtIm3XMfpZ6kAdbGOOqZRTqARTxEKp3mM
+         c+7U9MKa+SmLWSEaLZZjLxw+tJ6XjHE2qfODk91C6Q/iD70G8TR86w17CfR9OE8Ox1XK
+         hR3SBIV9N851opQ/gaMJYTd6HMd+1MjHUhwFbD1N27HEVER38FnLt3ScMDxu5a1fJkgL
+         zAqiDdnzGQXJNYT4yOHcRWGSvYtX+1yW3zuN2pa0nPh4DfBwEYK9BFnnyHQgEMdaHrUA
+         MgoA==
+X-Gm-Message-State: AOAM532D0oem4fARb/lRFCOZbWQmRdFJ0+V2RjccXyt4w4amxrycbryN
+        PXjcUAS3CQvcvBEJw9qUgbc=
+X-Google-Smtp-Source: ABdhPJz6vp1hbLrRNQlUxG58MU8/EMo2gCfh7fH9Nj4MsFkWxILUFGJzWYl3rl3ptvKLdtrRaFlN4g==
+X-Received: by 2002:a17:906:b207:: with SMTP id p7mr8271872ejz.23.1592669675716;
+        Sat, 20 Jun 2020 09:14:35 -0700 (PDT)
+Received: from localhost.localdomain (p200300f1371df700428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:371d:f700:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id v5sm7511031ejx.123.2020.06.20.09.14.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jun 2020 08:57:06 -0700 (PDT)
-Date:   Sat, 20 Jun 2020 08:57:04 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Sedat Dilek <sedat.dilek@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mm@kvack.org,
-        Clang-Built-Linux ML <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH v2 00/16] Remove uninitialized_var() macro
-Message-ID: <202006200854.B2D8F21@keescook>
-References: <20200620033007.1444705-1-keescook@chromium.org>
- <CA+icZUWpHRR7ukyepiUH1dR3r4GMi-s2crfwR5vTszdt1SUTQw@mail.gmail.com>
+        Sat, 20 Jun 2020 09:14:35 -0700 (PDT)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
+Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH] clk: meson: meson8b: Drop CLK_IS_CRITICAL from fclk_div2
+Date:   Sat, 20 Jun 2020 18:14:22 +0200
+Message-Id: <20200620161422.24114-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+icZUWpHRR7ukyepiUH1dR3r4GMi-s2crfwR5vTszdt1SUTQw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jun 20, 2020 at 09:03:34AM +0200, Sedat Dilek wrote:
-> On Sat, Jun 20, 2020 at 5:30 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > v2:
-> > - more special-cased fixes
-> > - add reviews
-> > v1: https://lore.kernel.org/lkml/20200603233203.1695403-1-keescook@chromium.org
-> >
-> > Using uninitialized_var() is dangerous as it papers over real bugs[1]
-> > (or can in the future), and suppresses unrelated compiler warnings
-> > (e.g. "unused variable"). If the compiler thinks it is uninitialized,
-> > either simply initialize the variable or make compiler changes.
-> >
-> > As recommended[2] by[3] Linus[4], remove the macro.
-> >
-> > Most of the 300 uses don't cause any warnings on gcc 9.3.0, so they're in
-> > a single treewide commit in this series. A few others needed to actually
-> > get cleaned up, and I broke those out into individual patches.
-> >
-> > The tree is:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/log/?h=kspp/uninit/macro
-> >
-> > -Kees
-> >
-> 
-> Hi Kees,
-> 
-> thanks for doing a v2 of your patchset.
-> 
-> As I saw Jason Yan providing some "uninitialized_var() macro" patches
-> to the MLs I pointen him to your tree "v1".
+Drop CLK_IS_CRITICAL from fclk_div2. This was added because we didn't
+know the relation between this clock and RGMII Ethernet. It turns out
+that fclk_div2 is used as "timing adjustment clock" to generate the RX
+delay on the MAC side - which was enabled by u-boot on Odriod-C1. When
+using the RX delay on the PHY side or not using a RX delay at all then
+this clock can be disabled.
 
-Thanks!
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-> BTW, I have tested your "v1" against Linux v5.7 (see [1]) - just
-> yesterday with Linux v5.7.5-rc1.
-> 
-> Is it possible to have a v2 of this patchset on top od Linux v5.7 - if
-> you do not mind.
-
-Since it's only going to be for post-v5.8, I'm fine skipping the v5.7
-testing. Mainly I'm looking at v5.8 and linux-next.
-
-Thanks for looking at it!
-
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index edc09d050ecf..3d826711c820 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -293,13 +293,6 @@ static struct clk_regmap meson8b_fclk_div2 = {
+ 			&meson8b_fclk_div2_div.hw
+ 		},
+ 		.num_parents = 1,
+-		/*
+-		 * FIXME: Ethernet with a RGMII PHYs is not working if
+-		 * fclk_div2 is disabled. it is currently unclear why this
+-		 * is. keep it enabled until the Ethernet driver knows how
+-		 * to manage this clock.
+-		 */
+-		.flags = CLK_IS_CRITICAL,
+ 	},
+ };
+ 
 -- 
-Kees Cook
+2.27.0
+
