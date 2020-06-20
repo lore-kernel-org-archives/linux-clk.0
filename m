@@ -4,63 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD58C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7904C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A28C22DA7
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FBC722DD3
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592620007;
-	bh=XyQRSgZK7Hy/N3rTtel5X2W9AMQrj2c4MSd9bF6kaF4=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=DLNWWd9GWxjZxCrtVPz64aelVsNF7psf63amtK2VgK0cIFsOFqjimHgDJSOzRv647
-	 g6Qq3NshfwpCTw+LlDsDnxWHUsUDA8Rh393k3jCmiG1tlSJZp340B28UT0vAjwUhOU
-	 +wYY9PXSIeBLvA3YXsY6Tbc0bovBMuRRd+mVVS1g=
+	s=default; t=1592620666;
+	bh=USMJrv5TGJ58rLPTaSDBTx79oPvTVt+Fh0aaM/+J3xo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=2QF2mhfTDD3O2LArZQsj5+GYf3cp0taqAAdjUJV4wVAGS9ReNjJ49/Weib7yWaC1+
+	 PlnszhsOgoSdWv9rZ5ahoW19CeJPzCNOUD+g4nAlGiD1kBbZ0ot4i+RFaaWei3A1fP
+	 jW8P0xxp7wld+aGIn4z5S+tXUmcYDQ3/cXtI9QTY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731826AbgFTC0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Jun 2020 22:26:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51700 "EHLO mail.kernel.org"
+        id S1731963AbgFTChq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Jun 2020 22:37:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731772AbgFTC0o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jun 2020 22:26:44 -0400
+        id S1731846AbgFTChq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jun 2020 22:37:46 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FD9A22DA7;
-        Sat, 20 Jun 2020 02:26:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A375022DBF;
+        Sat, 20 Jun 2020 02:37:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592620003;
-        bh=XyQRSgZK7Hy/N3rTtel5X2W9AMQrj2c4MSd9bF6kaF4=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=OsjiYIhvl9qI7IbEaX7uMPFzZJYny1CHAStIzZN4c0TBfognrTgV6Hc/xTGEgr+5+
-         mJW3TdtSpkxILBUkh1iC8Pl3l9X6HLqFsylBPV9nKQigst69OL8hT3VSbbj95ETiQQ
-         x2uZtJgMFcu8EXWkodya8LW1CAQ9wJlpa2nitiw8=
+        s=default; t=1592620665;
+        bh=USMJrv5TGJ58rLPTaSDBTx79oPvTVt+Fh0aaM/+J3xo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=2Pi8MIn0NaW3UiS8w8draZe8ULWUy2RAduxjVV80wrCfJLjCYrStFrkKMBj+PN1cX
+         bPbxc2SohBwO41prN+zhLnsRQCKSDyd80EgZMFzHgBL5kDqhayXkvSqT0sF4ZAR9Zz
+         16V7lfe37y8WnHcsmwA4d4DVcauUHWF8duKvEN18=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1591440907-20021-4-git-send-email-sivaprak@codeaurora.org>
-References: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org> <1591440907-20021-4-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH V7 3/4] clk: qcom: Add DT bindings for ipq6018 apss clock controller
+In-Reply-To: <20200616202417.14376-1-dinguyen@kernel.org>
+References: <20200616202417.14376-1-dinguyen@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: agilex: add NAND_X_CLK and NAND_ECC_CLK
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org,
-        sivaprak@codeaurora.org
-Date:   Fri, 19 Jun 2020 19:26:42 -0700
-Message-ID: <159262000293.62212.11609056599995521360@swboyd.mtv.corp.google.com>
+Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org
+To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
+Date:   Fri, 19 Jun 2020 19:37:44 -0700
+Message-ID: <159262066493.62212.8382323290185332150@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-06-06 03:55:06)
-> Add dt-binding for ipq6018 apss clock controller
+Quoting Dinh Nguyen (2020-06-16 13:24:15)
+> Add the NAND_X_CLK and NAND_ECC_CLK clocks.
 >=20
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 > ---
 
-Please pick up Rob's tag when resending this.
+Applied to clk-next
