@@ -4,63 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B34C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:37:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD78C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EB69322E01
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C06F32311D
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592620675;
-	bh=Vm5on1nH0ayTvuYLE/a0HWIMKRwLKeRoNDa1bDL46fU=;
+	s=default; t=1592623379;
+	bh=2HnlBkRLF7ByW7jdhl2LVoO9lFMmnDi8HAinor2wg74=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=HDJmXNPf51KH8VKWgEXN9U3r6ZKZVYqfAg9wiBakbsS95av+nfguZrCuBEt/c9n4H
-	 bkXsBrvanNNqEs5K4ii5T6pOxoljA618jW2ImUpkB7LeENK4T+PAbxb2SK/PEGvcnA
-	 HxMttnMJBoSqrzFv7C+1vpPjYhfRpIAMrk+74vdI=
+	b=Sf5kLxr27G3Vjz0Xvf2T0mOHcNufIYOHQMUkYB6uWOgLYLlXSY6fZI7F/YZafaZDR
+	 9n2ZcLpMouYg7hiTZzJLoxecwkTquMwih/cZqLq/usiCnBiBEGetP+WtqHlCdWbJsv
+	 u6vCe05z91S57J5uaRxxv4xvFjRp9z/oEgbDkvFs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731966AbgFTChy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Jun 2020 22:37:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60374 "EHLO mail.kernel.org"
+        id S1732601AbgFTDW7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Jun 2020 23:22:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731846AbgFTChy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jun 2020 22:37:54 -0400
+        id S1732271AbgFTDW7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jun 2020 23:22:59 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9945E22DBF;
-        Sat, 20 Jun 2020 02:37:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E144B2311B;
+        Sat, 20 Jun 2020 03:22:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592620673;
-        bh=Vm5on1nH0ayTvuYLE/a0HWIMKRwLKeRoNDa1bDL46fU=;
+        s=default; t=1592623379;
+        bh=2HnlBkRLF7ByW7jdhl2LVoO9lFMmnDi8HAinor2wg74=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=rCKCpLRusKTsx/GDFsZPOJJEBi2axSRfKntqjJWT9hYibWM5v5bKZWtXyu1jV/tH0
-         phewX1u5F5v7/5s+vl+s2c77BEJmeWl4lpNWTYqwgPawEYybDmz3Q4gQDl4Q3lZZCg
-         NS56bwe63hHWwEc2c+BXQcpuiYmMKhIXfzZPSP/4=
+        b=PbbATne29lk3/Dq9iGYrKoi848LMjPV5Lcp7tCVOoTSK8XPuhyi+wMwbj5zp9zfWh
+         AVbtrt23/zJrBm5NE442FMvclWJDeaGpXlrlaKdBB93Z+lIPhwYnnYl3/YDBmVurE2
+         yCgbgfZAd/r6KIFS4tgf63GCrLWmHFvxe7dhmJvg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200616202417.14376-3-dinguyen@kernel.org>
-References: <20200616202417.14376-1-dinguyen@kernel.org> <20200616202417.14376-3-dinguyen@kernel.org>
-Subject: Re: [PATCH 3/3] clk: socfpga: agilex: mpu_l2ram_clk should be mpu_ccu_clk
+In-Reply-To: <1591687933-19495-2-git-send-email-Anson.Huang@nxp.com>
+References: <1591687933-19495-1-git-send-email-Anson.Huang@nxp.com> <1591687933-19495-2-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH V2 1/9] clk: composite: Export clk_hw_register_composite()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org,
-        mturquette@baylibre.com, robh+dt@kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
-Date:   Fri, 19 Jun 2020 19:37:53 -0700
-Message-ID: <159262067301.62212.14526957244487353008@swboyd.mtv.corp.google.com>
+Cc:     Linux-imx@nxp.com
+To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
+        aisheng.dong@nxp.com, allison@lohutok.net, arnd@arndb.de,
+        daniel.baluta@nxp.com, festevam@gmail.com, fugang.duan@nxp.com,
+        gregkh@linuxfoundation.org, info@metux.net, kernel@pengutronix.de,
+        leonard.crestez@nxp.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux@armlinux.org.uk, mturquette@baylibre.com,
+        oleksandr.suvorov@toradex.com, peng.fan@nxp.com,
+        s.hauer@pengutronix.de, sfr@canb.auug.org.au, shawnguo@kernel.org,
+        stefan.agner@toradex.com, tglx@linutronix.de, yuehaibing@huawei.com
+Date:   Fri, 19 Jun 2020 20:22:58 -0700
+Message-ID: <159262337815.62212.6627329090856383673@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2020-06-16 13:24:17)
-> Preliminary documentation documented the mpu_l2ram_clk, but since then,
-> the mpu_l2ram_clk is no longer documented. It's now referred to as
-> mpu_ccu_clk.
+Quoting Anson Huang (2020-06-09 00:32:05)
+> Export clk_hw_register_composite() to support user built as module.
 >=20
-> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-> ---
+> ERROR: modpost: "clk_hw_register_composite" [drivers/clk/imx/mxc-clk.ko] =
+undefined!
 
-Applied to clk-next
+Get rid of these messages below. We don't care that make modules failed.
+
+> scripts/Makefile.modpost:111: recipe for target 'Module.symvers' failed
+> make[1]: *** [Module.symvers] Error 1
+> make[1]: *** Deleting file 'Module.symvers'
+> Makefile:1384: recipe for target 'modules' failed
+> make: *** [modules] Error 2
+>=20
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+
+Otherwise
+
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
