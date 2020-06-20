@@ -2,109 +2,65 @@ Return-Path: <SRS0=kEw8=AB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389C8C433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 01:06:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD58C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 17F3A22BEB
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 01:06:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="pzjCUVvt"
+	by mail.kernel.org (Postfix) with ESMTP id 4A28C22DA7
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 02:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592620007;
+	bh=XyQRSgZK7Hy/N3rTtel5X2W9AMQrj2c4MSd9bF6kaF4=;
+	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
+	b=DLNWWd9GWxjZxCrtVPz64aelVsNF7psf63amtK2VgK0cIFsOFqjimHgDJSOzRv647
+	 g6Qq3NshfwpCTw+LlDsDnxWHUsUDA8Rh393k3jCmiG1tlSJZp340B28UT0vAjwUhOU
+	 +wYY9PXSIeBLvA3YXsY6Tbc0bovBMuRRd+mVVS1g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbgFTBGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Jun 2020 21:06:41 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:23392 "EHLO m43-7.mailgun.net"
+        id S1731826AbgFTC0o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Jun 2020 22:26:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730293AbgFTBGj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 19 Jun 2020 21:06:39 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1592615199; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: To:
- Subject: Sender; bh=i+lpbCGwWh2tXc7P76pKSktyAwDvOkm0JAA1VAMKIWs=; b=pzjCUVvt9Rzo5NKJORfGSh63flj5sLSNdGPvR02in/91B27XaXFUiN7uufWvRSa7elWvVMRy
- wr9yPNh56dj3mw7QdhE1nLDiNH/mmalgyK0IcudQA4QG1LtKsAQJjk91AKOgiLu9BnzLLoVL
- cZqzoG7ad6U4ov/k/BpdAq5iyDo=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n14.prod.us-east-1.postgun.com with SMTP id
- 5eed6108bfb34e631c865cf5 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 20 Jun 2020 01:06:16
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4D393C43387; Sat, 20 Jun 2020 01:06:15 +0000 (UTC)
-Received: from [192.168.0.101] (unknown [49.207.137.108])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1731772AbgFTC0o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 19 Jun 2020 22:26:44 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6371EC433C8;
-        Sat, 20 Jun 2020 01:06:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6371EC433C8
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH V7 1/4] dt-bindings: clock: add ipq6018 a53 pll compatible
-To:     Stephen Boyd <sboyd@kernel.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org
-References: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org>
- <1591440907-20021-2-git-send-email-sivaprak@codeaurora.org>
- <159261339539.62212.17722723971033735363@swboyd.mtv.corp.google.com>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <efef8d40-1c89-76b5-261e-8801e4dbdf51@codeaurora.org>
-Date:   Sat, 20 Jun 2020 06:36:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FD9A22DA7;
+        Sat, 20 Jun 2020 02:26:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592620003;
+        bh=XyQRSgZK7Hy/N3rTtel5X2W9AMQrj2c4MSd9bF6kaF4=;
+        h=In-Reply-To:References:Subject:From:To:Date:From;
+        b=OsjiYIhvl9qI7IbEaX7uMPFzZJYny1CHAStIzZN4c0TBfognrTgV6Hc/xTGEgr+5+
+         mJW3TdtSpkxILBUkh1iC8Pl3l9X6HLqFsylBPV9nKQigst69OL8hT3VSbbj95ETiQQ
+         x2uZtJgMFcu8EXWkodya8LW1CAQ9wJlpa2nitiw8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <159261339539.62212.17722723971033735363@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1591440907-20021-4-git-send-email-sivaprak@codeaurora.org>
+References: <1591440907-20021-1-git-send-email-sivaprak@codeaurora.org> <1591440907-20021-4-git-send-email-sivaprak@codeaurora.org>
+Subject: Re: [PATCH V7 3/4] clk: qcom: Add DT bindings for ipq6018 apss clock controller
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        sivaprak@codeaurora.org
+Date:   Fri, 19 Jun 2020 19:26:42 -0700
+Message-ID: <159262000293.62212.11609056599995521360@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sivaprakash Murugesan (2020-06-06 03:55:06)
+> Add dt-binding for ipq6018 apss clock controller
+>=20
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> ---
 
-On 6/20/2020 6:06 AM, Stephen Boyd wrote:
-> Quoting Sivaprakash Murugesan (2020-06-06 03:55:04)
->> cpus on ipq6018 are clocked by a53 pll, add device compatible for a53
->> pll found on ipq6018 devices.
->>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->> [V7]
->>   * Addressed minor review comment from Rob
->>   .../devicetree/bindings/clock/qcom,a53pll.yaml         | 18 ++++++++++++++++++
->>   1 file changed, 18 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
->> index 20d2638..3161fab 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,a53pll.yaml
->> @@ -15,6 +15,7 @@ description:
->>   
->>   properties:
->>     compatible:
->> +    const: qcom,ipq6018-a53pll
->>       const: qcom,msm8916-a53pll
->>   
->>     reg:
-> I'm getting this error when running dt binding check:
->
-> ruamel.yaml.constructor.DuplicateKeyError: while constructing a mapping
->    in "<unicode string>", line 18, column 5
-> found duplicate key "const" with value "qcom,msm8916-a53pll" (original value: "qcom,ipq6018-a53pll")
->    in "<unicode string>", line 19, column 5
-
-This error started coming after updating the dt-schema version.
-
-Guess I need to replace const with enum to get rid of this error.
-
-will address this.
-
+Please pick up Rob's tag when resending this.
