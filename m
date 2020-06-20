@@ -2,93 +2,105 @@ Return-Path: <SRS0=kEw8=AB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C29C433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5369EC433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 55CF3246AE
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30C33246DD
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ejwQKsS9"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dMaCyk5r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbgFTVMO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Jun 2020 17:12:14 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36708 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728982AbgFTVML (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 17:12:11 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i3so15287068ljg.3
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 14:12:08 -0700 (PDT)
+        id S1729057AbgFTV2W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Jun 2020 17:28:22 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44369 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728988AbgFTV2W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 17:28:22 -0400
+Received: by mail-lj1-f194.google.com with SMTP id c17so15251932lji.11
+        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 14:28:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XJEVsWfbn8aRBSjCUjQoaB/zi3FIbrrLmSUqtBf4ufc=;
-        b=ejwQKsS9R74OVx4oleO34kJ/97nhPXE5oUxGSV3txe70SwiGWv62+473pSxKiEXCDL
-         U5tedGRDKcJ42HmweVyL/YeRulQyKi1SjAM3wF5aYfzAVtLFlSXfhdyjkmS73imjEvlu
-         mUf0ycwAmGlre8Y5z0bue63mfiIvmQf9NqndNnegmKmECrygz6SfWdTy7X3xxiGd+gRR
-         +yQfN3RYHAGEDVUXCzjyj1IrM2oscTM+NA2sd3pyB8aGw9ES6CX3evJhV43ja5C7okJ1
-         pGlD4rxPQ9+Lg427gcKNTxNbkPUt1/zLlPM8E2ZhiDJtCxpWA0tEg/WZnrnmtzOhiXsc
-         0PrA==
+        bh=doiVnpeZz6EAtF+e39qR7j8SwcJoFsavM/hNbCfLqRM=;
+        b=dMaCyk5rj0t13GaC05m6pfHgrVmAkqDcGWe/Aw36gXR7OcbEAac4PBq6IW1dkGlW8A
+         iNY2Z/fqeyYQCeQS2wSz6HnwCgj7wn503dK/K1XccKAGrOQ3D9/WDTXobNV1QCZtENgM
+         n0LeTgXZ56xLC3oHJGwUgYNIchSHbWcdeax05kfbmx+y/5jlKLBZjk/pwXtQ17NHnBW1
+         d5U1KDgK43yNdEMyfobXWTZqF8MOMPmie/M3W3lf8F+0+QSg4JVwgfX8gQz/NlJtZPU3
+         6RVVT4ndlrSTZUnFopUcjCJ2Uxt4XyxtwkWXi3oa3fy4CzD/vviVU/aW305KXamQ14+w
+         0NHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XJEVsWfbn8aRBSjCUjQoaB/zi3FIbrrLmSUqtBf4ufc=;
-        b=V50rNQK8ieAwSJuhqJfLMVdkyJyWMEgfFZmlUl4Qf7Rb0F+BE0xvzU/eZGv/53htRa
-         SL7FeUtsVHxHWrHD021HiQCxR7ze8GgcS60Jqd3Pgo40NNMx4w+iJXDXC6ATtHfAjMmg
-         1ruUdPONqtWLLwRVNl776GO+ITFBytnTDuJG4kXSI7hTaEXQdP5zOLXZJcHXap9yheG5
-         qpBQqv9I66q/tytsgvQKm8KKnz99YevBeO3ac19VzGKouDQMYcbKv9ITqZWBh/uT0onU
-         UPlOBPqwH7CSLzAWWGUoeIczeN9GGJVxV0Sf9uBE4prHBB6M7ifwrVO0vl25NOI9iihF
-         SqTg==
-X-Gm-Message-State: AOAM532VcvsssgKR4hc6f5KmBgqjIHQRSllu2HOTLXcy3B0fctCF2iJg
-        OCkVrVVU6WkIja1ReseMdfEhuoeO3SKCOP+aVIOTtQ==
-X-Google-Smtp-Source: ABdhPJyNzj8lntNB+gPdQZorIuGyuglVZ2GRN4JTEikAZoHXf3zt4iKWY8HyVoOjoJhJdUnny/FjxeRZZMdO0eg8d0w=
-X-Received: by 2002:a2e:351a:: with SMTP id z26mr4790421ljz.144.1592687468252;
- Sat, 20 Jun 2020 14:11:08 -0700 (PDT)
+        bh=doiVnpeZz6EAtF+e39qR7j8SwcJoFsavM/hNbCfLqRM=;
+        b=k/qyYYYEBuNnuX3/q9XvJaVVwvZD2FPppYJaHGZs7AnY7aWdQQlpHkQicTSXh/wi76
+         Ek35OcGWlyMAjy73XutFfooRkHsRzK+64aV0+HuE8+TmiHWatio8uZLAthUMIlVoIiXh
+         a9e2DDyvTeziTuuB9TAZCKNl/auhcu2Dho1DyyNetetT8K7sJhcRfgFNxhOGB2HGPBDt
+         7PYZgGoMKdZK4nblx0K0BWpPA1Vd60nYnbLbDZEHE8glnogwaYUvI8JA5KTw60FdTAhB
+         os9nGADYPPmtr1I39ESVbpd2SKFTgFqnmvRo3C+RTSkks6rsIWdeU3OtlO2wCPrJnBFp
+         NOQQ==
+X-Gm-Message-State: AOAM532KF6YIpdja+vUgkxlUjUEBQOi6FCx8OsERISxAaew7AAsPaEXj
+        D4Wu5jj7WTTTraaRWjTuyyhkzMxv2pHOkTb6kf/2jw==
+X-Google-Smtp-Source: ABdhPJxB9N+8xAoSiMjHclEoJhQGLQvt4YO+a0WPgzhjdSRi4sucZUPooGGNjhuqRmwkAGGKgnMCsQx+AqKXnb91A5E=
+X-Received: by 2002:a2e:a40f:: with SMTP id p15mr5291445ljn.286.1592688439815;
+ Sat, 20 Jun 2020 14:27:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200615133242.24911-1-lars.povlsen@microchip.com> <20200615133242.24911-6-lars.povlsen@microchip.com>
-In-Reply-To: <20200615133242.24911-6-lars.povlsen@microchip.com>
+References: <20200522030743.10204-1-frank@allwinnertech.com>
+ <20200522030743.10204-3-frank@allwinnertech.com> <20200522152803.twvfvuhd6ztunvll@gilmour.lan>
+ <8c7a8eeb-f4ea-4df7-b381-5aeab6dd170a.frank@allwinnertech.com>
+ <20200605151306.kqmyj673kux4sbaa@gilmour.lan> <CAEExFWutOjweJ_=WYKifebCPohStJdo0UJnHtmzvmhQ+VTb3kg@mail.gmail.com>
+In-Reply-To: <CAEExFWutOjweJ_=WYKifebCPohStJdo0UJnHtmzvmhQ+VTb3kg@mail.gmail.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 20 Jun 2020 23:10:57 +0200
-Message-ID: <CACRpkdaWZeMCNuwUNzyYd+g9Q75F_8o7K1Npxr46V+-Y4z-6wA@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] pinctrl: ocelot: Add Sparx5 SoC support
-To:     Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+Date:   Sat, 20 Jun 2020 23:27:08 +0200
+Message-ID: <CACRpkdYJeh0-cNbk++CdE664V+2wZirOt1CzfxT-Njp0nq5XxQ@mail.gmail.com>
+Subject: =?UTF-8?B?UmU6IOWbnuWkje+8mltQQVRDSCAyLzRdIHBpbmN0cmw6IHN1bnhpOiBhZGQgc3VwcG9ydA==?=
+        =?UTF-8?B?IGZvciB0aGUgQWxsd2lubmVyIEExMDAgcGluIGNvbnRyb2xsZXI=?=
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     Maxime Ripard <maxime@cerno.tech>, wens <wens@csie.org>,
+        =?UTF-8?B?5p2O5oms6Z+s?= <frank@allwinnertech.com>,
+        "robh+dt" <robh+dt@kernel.org>,
+        mturquette <mturquette@baylibre.com>, sboyd <sboyd@kernel.org>,
+        "p.zabel" <p.zabel@pengutronix.de>,
+        =?UTF-8?B?6buE54OB55Sf?= <huangshuosheng@allwinnertech.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
+        linux-gpio <linux-gpio@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 15, 2020 at 3:33 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+On Tue, Jun 16, 2020 at 11:27 AM Frank Lee <tiny.windzz@gmail.com> wrote:
+> HI Chen-Yu,  Linus,
+> On Fri, Jun 5, 2020 at 11:13 PM Maxime Ripard <maxime@cerno.tech> wrote:
 
-> This add support for Sparx5 pinctrl, using the ocelot drives as
-> basis. It adds pinconfig support as well, as supported by the
-> platform.
->
-> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
+> > > Considering that the same pin has multiple same functions,
+> > > so add a suffix, like i2s3_dout3 and i2s3_din3?
+> > >
+> > > Or specify muxsel in the device tree may be another solution.
+> >
+> > Having muxsel is not really an option. We have two sets of bindings to
+> > maintain already, adding a third one would make it fairly hard to
+> > maintain. And the second binding we support is the generic pinctrl
+> > binding, so I'm not really sure why we would want to move away from
+> > that.
+> >
+> > And I'm not really fond of having a suffix either. It kind of breaks the
+> > consistency we had so far, and ideally I'd like to keep that.
+> >
+> > Chen-Yu, Linus? Any input on that one?
 
-Is it fine if I just apply this driver to the pinctrl tree?
-Otherwise Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This is entirely up to the driver maintainer. They need to keep the
+code together and the naming consistent with how they perceive the
+hardware works and/or is intended to work.
 
 Yours,
 Linus Walleij
