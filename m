@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D4BEC433E1
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 14:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4F2C433E2
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 14:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DAC723BE5
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 14:49:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0BDD23BE5
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 14:49:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J7Q0k4xa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KI7Hid2+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbgFTOsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Jun 2020 10:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48632 "EHLO
+        id S1728414AbgFTOsi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Jun 2020 10:48:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48608 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728433AbgFTOsn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 10:48:43 -0400
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50FEEC06174E;
-        Sat, 20 Jun 2020 07:48:43 -0700 (PDT)
-Received: by mail-wm1-x344.google.com with SMTP id r9so10917673wmh.2;
-        Sat, 20 Jun 2020 07:48:43 -0700 (PDT)
+        with ESMTP id S1728387AbgFTOsg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 10:48:36 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B38BC06174E;
+        Sat, 20 Jun 2020 07:48:36 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id b6so12338541wrs.11;
+        Sat, 20 Jun 2020 07:48:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iDykADcxrijpqv/X+4zRhTKtVeA53wtr3kZ/KK6Yknc=;
-        b=J7Q0k4xazhrgTh5VPqb5vVtvVnAQUxeodb+dzDqLGvJrqG7htnM5ErZWBNI+q/ZQAE
-         vbidlWrnjRon7INnbfePJsJjulJYceMcyh1h4dJVt45HwIYq+kWTZwOyBY3yVCm2ZB9T
-         arTMjWuGitXg5AifgLdHFjyj+jOvOcbSmxSZ/GDLuLhG00r9spHWcwL72eEdpZ3qs0ve
-         gqAVhNZ99FVC/9z4sz51pdxuyVEqJgsGjYKO6g2uTeVo5gseMR+n9YYlBAylr1goZBKU
-         1usdXPoT/ubHobG3urVYurXB1FAx9R5wfOMnyxKhoxFfzEmt9o2oWozbpbiMrFuHyq/l
-         TpgQ==
+        bh=PCYX+4y1d3sit7Cy0bnnSZ/0gVVWMuNbGae/R+4UFWY=;
+        b=KI7Hid2+UGR8UrsUwGEY+cD1zAKNwD7P7JqaVeWeOTQKf3OxdjuYWKGcrTffN/3UJT
+         S1uyHRedsJ4mXBYt6TjfMOiDlEhHa1BmaBJgmDMmJ0OzWMfkTHd6P4KUyil1HOUTo8Si
+         gp6FNbW5yVuylNkL0oyFPDVRYrCajbkJCZTTu20EkaudGgFZeCDAySgIGwEZcpvDCnWP
+         w1z4ZHMwzKf3r2nXh+dLaUqjtdz4F8e4kLIwRdbYJjVpOipMYMmofsYyKfysZ2fEhMN8
+         ts3PE+uUeZv1XSjinYEoEGm/ZPD3w0HdKxhTPFRD395VhAnZ9qpsyuldiR4HXiYzFtBH
+         Ic7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iDykADcxrijpqv/X+4zRhTKtVeA53wtr3kZ/KK6Yknc=;
-        b=AS/xW3pG1Su+EtM21H7itbEzrTiAzSFkCqydIiSh8PR9BlAqW9T5PNhr1bznf5JEWR
-         D9bdpWwKtYqunPmzGeXgri3RbS3f5I0Ie5P1e1ZZ0NSB+D/EQik3JI9jRrNElijtTQWa
-         kBIa2IDE+sHVmp66lMTmhxXN/koH5HQEq6fZVS6SguvqGPJsTvyf4YKLjEQ4lTBhADgs
-         vUNkdByFUiQ/5cm65XI76F5I9nwloj262Rq8lz9Qq3vgKzD+G9t/3KvyHJA7LZk9S6HR
-         rDXJoOshYgfzCppNKA3xoParKVh6EYYX9SNa7Bqu9AUoiyxrIHyBbnmoiQN6ms7gbl2F
-         S1Dw==
-X-Gm-Message-State: AOAM5316NRm7Vu+LreuaNvuF+qwo5/ZYLKY8L7xY0334qYssKzyJ61/V
-        NcDeC+fvkaAyAGJ7C7JaLs8=
-X-Google-Smtp-Source: ABdhPJzK+JnkPaEomg+uDiJites2Z/svU9kDxcqK//WHNt1MFHp5Nkk3E0e4oqkFB2vOs0hnBGLuEQ==
-X-Received: by 2002:a7b:c113:: with SMTP id w19mr9542513wmi.161.1592664522060;
-        Sat, 20 Jun 2020 07:48:42 -0700 (PDT)
+        bh=PCYX+4y1d3sit7Cy0bnnSZ/0gVVWMuNbGae/R+4UFWY=;
+        b=sKguT8CrtSsqbwnn/r07KnYeM4mxBR5CBR9NY6Rfy1TZjJSp3YuNu99G7SIqFsJii1
+         GB3Yo9JHncr41hWlLgLW/9/MbsFOHYUJwl3AYMd8d7V3aoVfSSyO/1x3JlYptd8xI9Ux
+         oky/J87pIx/SVcdQiCdMFKKTFunIw1TwzRPej41+WV+mvjhFGcDt/QGCkL4Jrjo3Z7A5
+         9BJ5cPMS7SkpV70KExSeh1ZL6pVFMSgtxNUjJseSWeDHjBr5LMgmmlfvGt35mw0F+Tgp
+         urNCyJg2IpMHj0EaZVAFO9C5+bSXZPF1HyiXw56K17f17Q+JBbhJ2bpxlbq/ZJ/SkKnp
+         1HNA==
+X-Gm-Message-State: AOAM533/v+6mi0B7+nAH4JWuJwhqUs9HjJyHzWHmPFQckH833cdl5rQ6
+        Wmu7NB+jAdy1fGJJPKL/mR4=
+X-Google-Smtp-Source: ABdhPJx+fwpSJ7HchGBJIBA+lsOrCHBkLOyHiF8Zo7gXVFGhZy6xWwww2mi0w2zBqjv/B9twTy8tzw==
+X-Received: by 2002:a05:6000:108c:: with SMTP id y12mr9205057wrw.88.1592664515423;
+        Sat, 20 Jun 2020 07:48:35 -0700 (PDT)
 Received: from localhost.localdomain (abae138.neoplus.adsl.tpnet.pl. [83.6.168.138])
-        by smtp.googlemail.com with ESMTPSA id 63sm11928379wra.86.2020.06.20.07.48.40
+        by smtp.googlemail.com with ESMTPSA id 63sm11928379wra.86.2020.06.20.07.48.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jun 2020 07:48:41 -0700 (PDT)
+        Sat, 20 Jun 2020 07:48:35 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 To:     skrzynka@konradybcio.pl
 Cc:     Konrad Dybcio <konradybcio@gmail.com>,
@@ -74,9 +74,9 @@ Cc:     Konrad Dybcio <konradybcio@gmail.com>,
         Tony Luck <tony.luck@intel.com>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 15/21] arm64: dts: qcom: msm8994: Add BLSP2 UART2 node
-Date:   Sat, 20 Jun 2020 16:46:31 +0200
-Message-Id: <20200620144639.335093-16-konradybcio@gmail.com>
+Subject: [PATCH 13/21] arm64: dts: qcom: msm8994: Make comments C style
+Date:   Sat, 20 Jun 2020 16:46:29 +0200
+Message-Id: <20200620144639.335093-14-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200620144639.335093-1-konradybcio@gmail.com>
 References: <20200620144639.335093-1-konradybcio@gmail.com>
@@ -87,33 +87,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a BLSP2 UART2 node to enable serial connection.
-
 Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8994.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8994.dtsi | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-index df35c975c94c..20e859eb1318 100644
+index b1a3f1732d84..19c9ac30453e 100644
 --- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
 +++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-@@ -243,6 +243,15 @@ blsp1_uart2: serial@f991e000 {
- 				 <&gcc GCC_BLSP1_AHB_CLK>;
- 		};
+@@ -1,6 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-/* Copyright (c) 2013-2016, The Linux Foundation. All rights reserved.
+- */
++/* Copyright (c) 2013-2016, The Linux Foundation. All rights reserved. */
  
-+		blsp2_uart2: serial@f995e000 {
-+			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-+			reg = <0xf995e000 0x1000>;
-+			interrupt = <GIC_SPI 146 IRQ_TYPE_EDGE_FALLING>;
-+			clock-names = "core", "iface";
-+			clocks = <&gcc GCC_BLSP2_UART2_APPS_CLK>,
-+					<&gcc GCC_BLSP2_AHB_CLK>;
-+		};
-+
- 		spmi_bus: qcom,spmi@fc4c0000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0xfc4cf000 0x1000>,
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-msm8994.h>
+@@ -307,7 +306,7 @@ sdhc1: sdhci@f9824900 {
+ 
+ 	memory {
+ 		device_type = "memory";
+-		// We expect the bootloader to fill in the reg
++		/* We expect the bootloader to fill in the reg */
+ 		reg = <0 0 0 0>;
+ 	};
+ 
 -- 
 2.27.0
 
