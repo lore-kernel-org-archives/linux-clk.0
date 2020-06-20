@@ -2,105 +2,95 @@ Return-Path: <SRS0=kEw8=AB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5369EC433E0
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E2CC433DF
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:35:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30C33246DD
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:28:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB4D20836
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 21:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dMaCyk5r"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yWmHf50g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729057AbgFTV2W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 20 Jun 2020 17:28:22 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44369 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728988AbgFTV2W (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 17:28:22 -0400
-Received: by mail-lj1-f194.google.com with SMTP id c17so15251932lji.11
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 14:28:20 -0700 (PDT)
+        id S1729084AbgFTVfh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 20 Jun 2020 17:35:37 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44789 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729017AbgFTVfg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 20 Jun 2020 17:35:36 -0400
+Received: by mail-lf1-f68.google.com with SMTP id w15so7495787lfe.11
+        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 14:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=doiVnpeZz6EAtF+e39qR7j8SwcJoFsavM/hNbCfLqRM=;
-        b=dMaCyk5rj0t13GaC05m6pfHgrVmAkqDcGWe/Aw36gXR7OcbEAac4PBq6IW1dkGlW8A
-         iNY2Z/fqeyYQCeQS2wSz6HnwCgj7wn503dK/K1XccKAGrOQ3D9/WDTXobNV1QCZtENgM
-         n0LeTgXZ56xLC3oHJGwUgYNIchSHbWcdeax05kfbmx+y/5jlKLBZjk/pwXtQ17NHnBW1
-         d5U1KDgK43yNdEMyfobXWTZqF8MOMPmie/M3W3lf8F+0+QSg4JVwgfX8gQz/NlJtZPU3
-         6RVVT4ndlrSTZUnFopUcjCJ2Uxt4XyxtwkWXi3oa3fy4CzD/vviVU/aW305KXamQ14+w
-         0NHg==
+        bh=3+9QHb9ghdIy3+7pfNpTLxO6P2BWg5e6MpFuHAr7gQA=;
+        b=yWmHf50gZlST9gXFNybUAWe6FVywTFE5PUaafxbJ/1epTV0n+Lv+CpSwKOg1RuQf4K
+         BwifKjuxExz1QXAUp6i3sPeIKKMCw416sYVuOUHMGy/29//ZZq15vrTSJxbnc6bKNJ0G
+         QTyaGW0UrCqFXq8mLHTGFcRsQVmZW6+Dc0JjPBzPXys4RgobptufQsi0EgpjQvWRi12Q
+         ICJ84NCYkJ4XYldpNVIEac1hE4h/aaHAj9d7fQEPIbyjB7FEApSRhFREVIbIEThtDTEh
+         Pv3+NilD68wnMWf8PaAVKjjJDpgjze5uj2cfQmrVmqkVbxAbNSDe+OAOnxGyWU5MAsv4
+         OZ5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=doiVnpeZz6EAtF+e39qR7j8SwcJoFsavM/hNbCfLqRM=;
-        b=k/qyYYYEBuNnuX3/q9XvJaVVwvZD2FPppYJaHGZs7AnY7aWdQQlpHkQicTSXh/wi76
-         Ek35OcGWlyMAjy73XutFfooRkHsRzK+64aV0+HuE8+TmiHWatio8uZLAthUMIlVoIiXh
-         a9e2DDyvTeziTuuB9TAZCKNl/auhcu2Dho1DyyNetetT8K7sJhcRfgFNxhOGB2HGPBDt
-         7PYZgGoMKdZK4nblx0K0BWpPA1Vd60nYnbLbDZEHE8glnogwaYUvI8JA5KTw60FdTAhB
-         os9nGADYPPmtr1I39ESVbpd2SKFTgFqnmvRo3C+RTSkks6rsIWdeU3OtlO2wCPrJnBFp
-         NOQQ==
-X-Gm-Message-State: AOAM532KF6YIpdja+vUgkxlUjUEBQOi6FCx8OsERISxAaew7AAsPaEXj
-        D4Wu5jj7WTTTraaRWjTuyyhkzMxv2pHOkTb6kf/2jw==
-X-Google-Smtp-Source: ABdhPJxB9N+8xAoSiMjHclEoJhQGLQvt4YO+a0WPgzhjdSRi4sucZUPooGGNjhuqRmwkAGGKgnMCsQx+AqKXnb91A5E=
-X-Received: by 2002:a2e:a40f:: with SMTP id p15mr5291445ljn.286.1592688439815;
- Sat, 20 Jun 2020 14:27:19 -0700 (PDT)
+        bh=3+9QHb9ghdIy3+7pfNpTLxO6P2BWg5e6MpFuHAr7gQA=;
+        b=jt59db4z4iI4XvOyXfjEsYiddFibhj1QMgzCx29+2ekYk+3nlx+xeg91rq3493+vJz
+         sKMnqICcJswieo62BIgyTdyxblSdXrjMkA+LIqSUEtruEeVquylAs1cLlQEvcDXdF71q
+         wjsWqOessQDFK4nHKKGexNlR5t52zjFRwiFTvNmT6+qER+TpwzTBgHlcBsB+6ONmaRCC
+         NMYuTR8/g6ys+X+VYDhe8dUsYNz/GQYvjIioZloRo6lLtZZSLAYij4HspxS9OnGpn8Ct
+         Eazn5qHArlgcIKBWd7OYqW8nDkpnjB6BQDvcZPdbOb4Xww2ojIKOZnOim21/87NGcphJ
+         SjPA==
+X-Gm-Message-State: AOAM531TluoklUhbr+L6pkEvEjGxKnJZiKBxdiyENniMsanwAPkoiCuq
+        qcK8a/ZTFudL0qDWFnmT6Q68BDCSllVgGL9j8Xw5wg==
+X-Google-Smtp-Source: ABdhPJymDZLDq9jqFxfQFsgfJoOmYGGWijE0qWUIwgm6/kOFKN6HrfPAS9IzTxrDiH+cm72wLGp2koofZY5WkcS99zg=
+X-Received: by 2002:a19:7407:: with SMTP id v7mr5202141lfe.4.1592688874285;
+ Sat, 20 Jun 2020 14:34:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200522030743.10204-1-frank@allwinnertech.com>
- <20200522030743.10204-3-frank@allwinnertech.com> <20200522152803.twvfvuhd6ztunvll@gilmour.lan>
- <8c7a8eeb-f4ea-4df7-b381-5aeab6dd170a.frank@allwinnertech.com>
- <20200605151306.kqmyj673kux4sbaa@gilmour.lan> <CAEExFWutOjweJ_=WYKifebCPohStJdo0UJnHtmzvmhQ+VTb3kg@mail.gmail.com>
-In-Reply-To: <CAEExFWutOjweJ_=WYKifebCPohStJdo0UJnHtmzvmhQ+VTb3kg@mail.gmail.com>
+References: <20200618073331.GA9403@localhost.localdomain>
+In-Reply-To: <20200618073331.GA9403@localhost.localdomain>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 20 Jun 2020 23:27:08 +0200
-Message-ID: <CACRpkdYJeh0-cNbk++CdE664V+2wZirOt1CzfxT-Njp0nq5XxQ@mail.gmail.com>
-Subject: =?UTF-8?B?UmU6IOWbnuWkje+8mltQQVRDSCAyLzRdIHBpbmN0cmw6IHN1bnhpOiBhZGQgc3VwcG9ydA==?=
-        =?UTF-8?B?IGZvciB0aGUgQWxsd2lubmVyIEExMDAgcGluIGNvbnRyb2xsZXI=?=
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     Maxime Ripard <maxime@cerno.tech>, wens <wens@csie.org>,
-        =?UTF-8?B?5p2O5oms6Z+s?= <frank@allwinnertech.com>,
-        "robh+dt" <robh+dt@kernel.org>,
-        mturquette <mturquette@baylibre.com>, sboyd <sboyd@kernel.org>,
-        "p.zabel" <p.zabel@pengutronix.de>,
-        =?UTF-8?B?6buE54OB55Sf?= <huangshuosheng@allwinnertech.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
+Date:   Sat, 20 Jun 2020 23:34:23 +0200
+Message-ID: <CACRpkdZm2978CG0z=9eZMWk3RpOYzjtgFZ8REj1hZDBE7gwHZA@mail.gmail.com>
+Subject: Re: [PATCH v2] MAINTAINERS: Add entry for ROHM power management ICs
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Lee Jones <lee.jones@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-power@fi.rohmeurope.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jun 16, 2020 at 11:27 AM Frank Lee <tiny.windzz@gmail.com> wrote:
-> HI Chen-Yu,  Linus,
-> On Fri, Jun 5, 2020 at 11:13 PM Maxime Ripard <maxime@cerno.tech> wrote:
+On Thu, Jun 18, 2020 at 9:33 AM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
 
-> > > Considering that the same pin has multiple same functions,
-> > > so add a suffix, like i2s3_dout3 and i2s3_din3?
-> > >
-> > > Or specify muxsel in the device tree may be another solution.
-> >
-> > Having muxsel is not really an option. We have two sets of bindings to
-> > maintain already, adding a third one would make it fairly hard to
-> > maintain. And the second binding we support is the generic pinctrl
-> > binding, so I'm not really sure why we would want to move away from
-> > that.
-> >
-> > And I'm not really fond of having a suffix either. It kind of breaks the
-> > consistency we had so far, and ideally I'd like to keep that.
-> >
-> > Chen-Yu, Linus? Any input on that one?
+> Add entry for maintaining power management IC drivers for ROHM
+> BD71837, BD71847, BD71850, BD71828, BD71878, BD70528 and BD99954.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Sebastian Reichel <sre@kernel.org>
 
-This is entirely up to the driver maintainer. They need to keep the
-code together and the naming consistent with how they perceive the
-hardware works and/or is intended to work.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
