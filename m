@@ -7,61 +7,58 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C4CC433DF
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A79C433E2
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C029F23356
-	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:31:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EB62337F
+	for <linux-clk@archiver.kernel.org>; Sat, 20 Jun 2020 03:32:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ASP8ZYf5"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NXIjEZzm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733222AbgFTDbq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 19 Jun 2020 23:31:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58212 "EHLO
+        id S2387526AbgFTDcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 19 Jun 2020 23:32:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733220AbgFTDbQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jun 2020 23:31:16 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10C5AC05BD43
-        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2020 20:30:30 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id d10so2913095pls.5
-        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2020 20:30:30 -0700 (PDT)
+        with ESMTP id S1733077AbgFTDbB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 19 Jun 2020 23:31:01 -0400
+Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC6F5C0619F2
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2020 20:30:25 -0700 (PDT)
+Received: by mail-pf1-x442.google.com with SMTP id z63so5387689pfb.1
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jun 2020 20:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QE7doATfVKyRNIS6o4GV46rwBSEL831INB+q/+9Rmh4=;
-        b=ASP8ZYf5F8e3CyJ7PlH33MV/i7ui6qpJA/mDIbM14iTBLSGrg0GdC9kyTZr/lfh7CG
-         GXzC9dz7nRwrAYeG29S+Q/THEeaVI5eUgF5DSRnMeurjTMSJnbVmhuDSeU19AKii4S2r
-         YKBS0Qn5aMH95xmZNn8/myVX4U8ajBfLEQ9mc=
+        bh=7ExlyNd4C6Vtqo5InL4xGzXnaPAWUSdxdUBoxlRz8EM=;
+        b=NXIjEZzmAlY5fdC/DwXct9GYDHogfeUCrjSkTO4JXjF9UTv+cR2dEUWt3FWlTNaAHp
+         ArVHLS7GaAaX0GRdppC6MVL4iulBAnXl0RDRkmjEpohR99AIp9TcfcZKNXy8KweQ5j+M
+         qKbddjlMm6r/UiOtSlPQhvc966Inhn9BIPgP4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QE7doATfVKyRNIS6o4GV46rwBSEL831INB+q/+9Rmh4=;
-        b=evMIW42w5ByYsOIlZ42u859oTY0btlzXYv0Coat5kN62sq1AuSpIMVmKsjPkX+tAT2
-         cp3xCjqY7RnXz2pg4aCOOEVwuJ2pubzPSbSDnoa+njtDZXzOJuLXWQzd/4+vLfvUoH8c
-         L1HMjsr4sFyLQE//iF1a3q1P6jBaKtw8A3lNNmkWhEhFo0QQGpiO/WPNfSZ0HTgSAXHC
-         Aj4P8ndROkJmg3dxPXE1qNV4JnbPCZdLu4N1RE6DxmsNzR92arnqa64hUiSKwLXu2uqp
-         ofVD9B/Mybwiim99tm0dZdyvTMXWAYLjPKwz2EAaUMk3pt/rI35lwB99G+Bc5cM1+08B
-         ORTg==
-X-Gm-Message-State: AOAM533+1rlBKkeeE9qrJQP56nNOk2WoKI2dkbgCiYgebR4+pd8fg6+Y
-        OpNgwr+Jg3mt0zGFQDVlLZLJjA==
-X-Google-Smtp-Source: ABdhPJwXvH55Kn4Xp+SPGU8vAiaQb11ixD/33bxeYcW2UOZTzvT5qr6VlXigT0w5zzrZdxmh+dRSYw==
-X-Received: by 2002:a17:90a:220f:: with SMTP id c15mr6886989pje.129.1592623829622;
-        Fri, 19 Jun 2020 20:30:29 -0700 (PDT)
+        bh=7ExlyNd4C6Vtqo5InL4xGzXnaPAWUSdxdUBoxlRz8EM=;
+        b=JgiEsVSSzWTJUaAfTFunrY4JrnImo7yigpE9/G3W3fscRt66+LiriJsbLQQXGBieY3
+         25GgMriWhUHU5qYlwTkUrXzNEOjk5SwWTI4VXP00I0TSRwB59GSyjfNau7Hr72/z8zMm
+         WdGtZiB2zmqM8rhrMhb/tOtK2ZfZFa69wUhIJHsWRRT2kI78dQfrlah/PxKX6j23g9RP
+         EB3CpcC8WF0sa066y3WUwfJy3QRmbXDffxsFJUgI1WNDk9Xn6AB4rgXA/Y8GviQaSTiO
+         E7Rhme2plwtNOcgUD2ClJQAJYl4pKtUHF66+j3aXGe4B51IrGMX8BdLCxJ7cejA4GbEu
+         qd/Q==
+X-Gm-Message-State: AOAM5336bRRTCbGgKfWQO6o3Qgq3RINW0X/3zrQmw6N6Q7E0cg2JRH2u
+        yClSpYN1FOopilxb2A0WCIfZoA==
+X-Google-Smtp-Source: ABdhPJyAJ8Da6kpj1cpdp7acRpdjHPEasdxnBrzutMhIZjw6K4AKJtCbSzx12+H3IHWiTttzpZGpTg==
+X-Received: by 2002:a63:dd42:: with SMTP id g2mr5615212pgj.442.1592623825373;
+        Fri, 19 Jun 2020 20:30:25 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r7sm2178138pfc.183.2020.06.19.20.30.22
+        by smtp.gmail.com with ESMTPSA id n69sm7060385pjc.25.2020.06.19.20.30.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jun 2020 20:30:26 -0700 (PDT)
+        Fri, 19 Jun 2020 20:30:20 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kees Cook <keescook@chromium.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Bart van Assche <bvanassche@acm.org>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
         Alexander Potapenko <glider@google.com>,
         Joe Perches <joe@perches.com>,
         Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
@@ -71,9 +68,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-spi@vger.kernel.org, linux-mm@kvack.org,
         clang-built-linux@googlegroups.com
-Subject: [PATCH v2 16/16] compiler: Remove uninitialized_var() macro
-Date:   Fri, 19 Jun 2020 20:30:06 -0700
-Message-Id: <20200620033007.1444705-16-keescook@chromium.org>
+Subject: [PATCH v2 11/16] media: sur40: Remove uninitialized_var() usage
+Date:   Fri, 19 Jun 2020 20:30:02 -0700
+Message-Id: <20200620033007.1444705-12-keescook@chromium.org>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20200620033007.1444705-1-keescook@chromium.org>
 References: <20200620033007.1444705-1-keescook@chromium.org>
@@ -85,89 +82,53 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Using uninitialized_var() is dangerous as it papers over real bugs[1]
-(or can in the future), and suppresses unrelated compiler warnings
-(e.g. "unused variable"). If the compiler thinks it is uninitialized,
-either simply initialize the variable or make compiler changes.
+(or can in the future), and suppresses unrelated compiler warnings (e.g.
+"unused variable"). If the compiler thinks it is uninitialized, either
+simply initialize the variable or make compiler changes. As a precursor
+to removing[2] this[3] macro[4], just remove this variable since it was
+actually unused:
 
-As recommended[2] by[3] Linus[4], remove the macro. With the recent
-change to disable -Wmaybe-uninitialized in v5.7 in commit 78a5255ffb6a
-("Stop the ad-hoc games with -Wno-maybe-initialized"), this is likely
-the best time to make this treewide change.
+drivers/input/touchscreen/sur40.c:459:6: warning: variable 'packet_id' set but not used [-Wunused-but-set-variable]
+  459 |  u32 packet_id;
+      |      ^~~~~~~~~
+
+However, in keeping with the documentation desires outlined in commit
+335abaea7a27 ("Input: sur40 - silence unnecessary noisy debug output"),
+comment out the assignment instead of removing it.
 
 [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
 [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
 [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
 [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Reviewed-by: Bart van Assche <bvanassche@acm.org>
-Reviewed-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Tested-by: Nathan Chancellor <natechancellor@gmail.com>
-Tested-by: Sedat Dilek <sedat.dilek@gmail.com>
+Fixes: 335abaea7a27 ("Input: sur40 - silence unnecessary noisy debug output")
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/linux/compiler-clang.h | 2 --
- include/linux/compiler-gcc.h   | 6 ------
- tools/include/linux/compiler.h | 2 --
- tools/virtio/linux/kernel.h    | 2 --
- 4 files changed, 12 deletions(-)
+ drivers/input/touchscreen/sur40.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
-index ee37256ec8bd..f2371b83aaf2 100644
---- a/include/linux/compiler-clang.h
-+++ b/include/linux/compiler-clang.h
-@@ -5,8 +5,6 @@
- 
- /* Compiler specific definitions for Clang compiler */
- 
--#define uninitialized_var(x) x = *(&(x))
+diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+index 34d31c7ec8ba..620cdd7d214a 100644
+--- a/drivers/input/touchscreen/sur40.c
++++ b/drivers/input/touchscreen/sur40.c
+@@ -456,8 +456,6 @@ static void sur40_poll(struct input_dev *input)
+ {
+ 	struct sur40_state *sur40 = input_get_drvdata(input);
+ 	int result, bulk_read, need_blobs, packet_blobs, i;
+-	u32 uninitialized_var(packet_id);
 -
- /* same as gcc, this was present in clang-2.6 so we can assume it works
-  * with any version that can compile the kernel
-  */
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 7dd4e0349ef3..84e099a87383 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -59,12 +59,6 @@
- 	(typeof(ptr)) (__ptr + (off));					\
- })
+ 	struct sur40_header *header = &sur40->bulk_in_buffer->header;
+ 	struct sur40_blob *inblob = &sur40->bulk_in_buffer->blobs[0];
  
--/*
-- * A trick to suppress uninitialized variable warning without generating any
-- * code
-- */
--#define uninitialized_var(x) x = x
--
- #ifdef CONFIG_RETPOLINE
- #define __noretpoline __attribute__((__indirect_branch__("keep")))
- #endif
-diff --git a/tools/include/linux/compiler.h b/tools/include/linux/compiler.h
-index 9f9002734e19..2f2f4082225e 100644
---- a/tools/include/linux/compiler.h
-+++ b/tools/include/linux/compiler.h
-@@ -111,8 +111,6 @@
- # define noinline
- #endif
+@@ -491,7 +489,7 @@ static void sur40_poll(struct input_dev *input)
+ 		if (need_blobs == -1) {
+ 			need_blobs = le16_to_cpu(header->count);
+ 			dev_dbg(sur40->dev, "need %d blobs\n", need_blobs);
+-			packet_id = le32_to_cpu(header->packet_id);
++			/* packet_id = le32_to_cpu(header->packet_id); */
+ 		}
  
--#define uninitialized_var(x) x = *(&(x))
--
- #include <linux/types.h>
- 
- /*
-diff --git a/tools/virtio/linux/kernel.h b/tools/virtio/linux/kernel.h
-index 6683b4a70b05..1e14ab967c11 100644
---- a/tools/virtio/linux/kernel.h
-+++ b/tools/virtio/linux/kernel.h
-@@ -109,8 +109,6 @@ static inline void free_page(unsigned long addr)
- 	const typeof( ((type *)0)->member ) *__mptr = (ptr);	\
- 	(type *)( (char *)__mptr - offsetof(type,member) );})
- 
--#define uninitialized_var(x) x = x
--
- # ifndef likely
- #  define likely(x)	(__builtin_expect(!!(x), 1))
- # endif
+ 		/*
 -- 
 2.25.1
 
