@@ -2,190 +2,95 @@ Return-Path: <SRS0=YANp=AC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DC2C433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 07:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E5AC433DF
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 21:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 677EB2485F
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 07:02:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZ+AS67c"
+	by mail.kernel.org (Postfix) with ESMTP id 715B12529A
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 21:13:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729393AbgFUHCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Jun 2020 03:02:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729346AbgFUHCl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jun 2020 03:02:41 -0400
-Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DEE4C061795
-        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2020 00:02:41 -0700 (PDT)
-Received: by mail-pl1-x643.google.com with SMTP id n2so6060905pld.13
-        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2020 00:02:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=xb0+Y9vPTMcQDkSeRLOyeGz2sjTq3LszBLNa3wwZ2Xw=;
-        b=jZ+AS67ccgmGi4FrmKHcY1PNqxhnaxte2S5HSfVcT7Pfkz1P8RYqoy8TTJRwmQkLyS
-         IAPUbVc0TD0ZtWjDbw/7Czq3so2zJrkqJe7c9ES6epijdMzp093PEx5f1VRcWH6fpiIS
-         jZGRk8omBDEppBF+LjD1+OPxhu/6sjD9AokO9+DHzTA6AADt7sAgyXsmOrDDwvX/kCnC
-         YO/KSC5dRqXfn+U+X+Xi5tJ1lJrGijxAwWMZEJkkKZBhEyLxI/y+/NDpbjK2LhLTFX0H
-         K2wVd+cZFz8Lb7PR5TOcoZOYVLALah4Xj1oQTjnwOsFRIEP13a80H91QHaHfxfAFvQfX
-         0vaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=xb0+Y9vPTMcQDkSeRLOyeGz2sjTq3LszBLNa3wwZ2Xw=;
-        b=WZYXqjkty2vpF5rZnkMWWjjomIGUZ1W4p9WM16JuROwxpW+fHYItBdsAAvGAXNyGPI
-         2feevaRZOQyFMc8Y7meVG3liub7bTULJgjyooUOS9gjbZEd13TuYlyuxGaDVvt4Bmh5m
-         pztiqKmmBwdhMiGfYrTvoczZ/cBlCOyujXB2y/YqokNWYmIzFzBPz1ovfxHLnv95BElM
-         n55iMtB3Aus0+luinDDorwgudGtoJLtfReYxGIj0qG6qge04aoA/+/pKATyGALVMtJOv
-         aNcIZGyszCg82+9k5DMTqVQb+N6B9SSRsVncxXjhJA0WiMkozUavTdAKTR8Znr072V91
-         +RjA==
-X-Gm-Message-State: AOAM532JvmkMEs64pWtdrmJ5qvQOSiYWr90AHs5XLOC4jx4sdrdB/DH9
-        B4ke/21o/BB3C3Qw32o3i8CIcg==
-X-Google-Smtp-Source: ABdhPJwhAxNCfYKm7nQ0HvekdSEgQ5WgWWGYkMjG5eGC74+taPARCNb3JZY0EPMgnZ8gxGDrBZgEuA==
-X-Received: by 2002:a17:90a:1546:: with SMTP id y6mr12546523pja.92.1592722960975;
-        Sun, 21 Jun 2020 00:02:40 -0700 (PDT)
-Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 4sm10250231pfn.205.2020.06.21.00.02.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jun 2020 00:02:40 -0700 (PDT)
-Date:   Sat, 20 Jun 2020 23:59:53 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Loic Poulain <loic.poulain@linaro.org>, mturquette@baylibre.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 2/4] clk: qcom: Add CPU clock driver for msm8996
-Message-ID: <20200621065953.GB128451@builder.lan>
-References: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
- <1591266927-24976-3-git-send-email-loic.poulain@linaro.org>
- <159261287558.62212.16649006403982628548@swboyd.mtv.corp.google.com>
+        id S1730743AbgFUVNa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Jun 2020 17:13:30 -0400
+Received: from jabberwock.ucw.cz ([46.255.230.98]:40656 "EHLO
+        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730729AbgFUVNa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jun 2020 17:13:30 -0400
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+        id D74B91C0C0B; Sun, 21 Jun 2020 23:13:27 +0200 (CEST)
+Date:   Sun, 21 Jun 2020 23:13:27 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Hanks Chen <hanks.chen@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Andy Teng <andy.teng@mediatek.com>, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, wsd_upstream@mediatek.com,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>
+Subject: Re: [PATCH v6 1/7] dt-bindings: pinctrl: add bindings for MediaTek
+ MT6779 SoC
+Message-ID: <20200621211327.GA22512@amd>
+References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
+ <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Content-Disposition: inline
-In-Reply-To: <159261287558.62212.16649006403982628548@swboyd.mtv.corp.google.com>
+In-Reply-To: <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 19 Jun 17:27 PDT 2020, Stephen Boyd wrote:
 
-> Quoting Loic Poulain (2020-06-04 03:35:25)
-> > Each of the CPU clusters (Power and Perf) on msm8996 are
-> > clocked via 2 PLLs, a primary and alternate. There are also
-> > 2 Mux'es, a primary and secondary all connected together
-> > as shown below
-> > 
-> >                              +-------+
-> >               XO             |       |
-> >           +------------------>0      |
-> >                              |       |
-> >                    PLL/2     | SMUX  +----+
-> >                      +------->1      |    |
-> >                      |       |       |    |
-> >                      |       +-------+    |    +-------+
-> >                      |                    +---->0      |
-> >                      |                         |       |
-> > +---------------+    |             +----------->1      | CPU clk
-> > |Primary PLL    +----+ PLL_EARLY   |           |       +------>
-> > |               +------+-----------+    +------>2 PMUX |
-> > +---------------+      |                |      |       |
-> >                        |   +------+     |   +-->3      |
-> >                        +--^+  ACD +-----+   |  +-------+
-> > +---------------+          +------+         |
-> > |Alt PLL        |                           |
-> > |               +---------------------------+
-> > +---------------+         PLL_EARLY
-> > 
-> > The primary PLL is what drives the CPU clk, except for times
-> > when we are reprogramming the PLL itself (for rate changes) when
-> > we temporarily switch to an alternate PLL. A subsequent patch adds
-> > support to switch between primary and alternate PLL during rate
-> > changes.
-> > 
-> > The primary PLL operates on a single VCO range, between 600MHz
-> > and 3GHz. However the CPUs do support OPPs with frequencies
-> > between 300MHz and 600MHz. In order to support running the CPUs
-> > at those frequencies we end up having to lock the PLL at twice
-> > the rate and drive the CPU clk via the PLL/2 output and SMUX.
-> > 
-> > So for frequencies above 600MHz we follow the following path
-> >  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
-> > and for frequencies between 300MHz and 600MHz we follow
-> >  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
-> > 
-> > ACD stands for Adaptive Clock Distribution and is used to
-> > detect voltage droops.
-> > 
-> > Co-developed-by: Rajendra Nayak <rnayak@codeaurora.org>
-> > Co-developed-by: Ilia Lin <ilialin@codeaurora.org>
-> 
-> Co-developed-by should be combined with Signed-off-by tags.
-> 
-> From Documentation/process/submitting-patches.rst
-> 
-> "Co-developed-by: states that the patch was co-created by multiple developers;
-> it is a used to give attribution to co-authors (in addition to the author
-> attributed by the From: tag) when several people work on a single patch.  Since
-> Co-developed-by: denotes authorship, every Co-developed-by: must be immediately
-> followed by a Signed-off-by: of the associated co-author."  
-> 
-
-...which is not what happened here.
-
-By using Co-developed-by and a Signed-off-by one would state that
-Rajendra certifies the origin of any additions done by Ilia and Loic.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-Instead, Rajendra certified the origin of the original patch
-(presumably) per 11.a by his s-o-b, then Ilia took the patch in whole or
-part and certified that he can contribute it per 11.a or 11.c with his
-s-o-b, then finally Loic should do the same, by adding his s-o-b.
+On Thu 2020-06-18 19:33:32, Hanks Chen wrote:
+> From: Andy Teng <andy.teng@mediatek.com>
+>=20
+> Add devicetree bindings for MediaTek MT6779 pinctrl driver.
+>=20
+> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
 
-As such we should see three Signed-off-by here, preferably with [name:
-changelog] entries inbetween to document any modifications done to the
-patch.
 
-Regards,
-Bjorn
+> +              Pull up setings for 2 pull resistors, R0 and R1. User can
+> +              configure those special pins. Valid arguments are describe=
+d as below:
+> +              0: (R1, R0) =3D (0, 0) which means R1 disabled and R0 disa=
+ble.
 
-> > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
-> > ---
-> >  drivers/clk/qcom/Kconfig         |   8 +
-> >  drivers/clk/qcom/Makefile        |   1 +
-> >  drivers/clk/qcom/clk-alpha-pll.h |   6 +
-> >  drivers/clk/qcom/clk-cpu-8996.c  | 538 +++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 553 insertions(+)
-> >  create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
-> > 
-> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> > index abb121f..87b515d 100644
-> > --- a/drivers/clk/qcom/Kconfig
-> > +++ b/drivers/clk/qcom/Kconfig
-> > @@ -37,6 +37,14 @@ config QCOM_CLK_APCS_MSM8916
-> >           Say Y if you want to support CPU frequency scaling on devices
-> >           such as msm8916.
-> >  
-> > +config QCOM_CLK_APCC_MSM8996
-> > +       tristate "MSM8996 CPU Clock Controller"
-> > +       select QCOM_KRYO_L2_ACCESSORS
-> 
-> This needs to depend on ARM || ARM64 because it uses the kryo accessors which
-> are architecture specific instructions.
-> 
-> > +       help
-> > +         Support for the CPU clock controller on msm8996 devices.
-> > +         Say Y if you want to support CPU clock scaling using CPUfreq
-> > +         drivers for dyanmic power management.
-> > +
-> >  config QCOM_CLK_RPM
-> >         tristate "RPM based Clock Controller"
-> >         depends on MFD_QCOM_RPM
+Typo =3D> disabled.
+									Pavel
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl7vzXcACgkQMOfwapXb+vIqqwCglTA0lEa8VEKxU0Vujg79oJBg
+HVcAnix1JziV2PtZF5QBj/5FevH3NIA3
+=xAOo
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
