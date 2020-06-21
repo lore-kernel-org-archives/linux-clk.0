@@ -4,115 +4,188 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1CA1C433DF
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 06:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DC2C433E0
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 07:02:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9071724829
-	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 06:08:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 677EB2485F
+	for <linux-clk@archiver.kernel.org>; Sun, 21 Jun 2020 07:02:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eI396BnB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZ+AS67c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbgFUGIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 21 Jun 2020 02:08:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41432 "EHLO
+        id S1729393AbgFUHCm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 21 Jun 2020 03:02:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726354AbgFUGIJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jun 2020 02:08:09 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B71D6C061794
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 23:08:07 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id 35so6064639ple.0
-        for <linux-clk@vger.kernel.org>; Sat, 20 Jun 2020 23:08:07 -0700 (PDT)
+        with ESMTP id S1729346AbgFUHCl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 21 Jun 2020 03:02:41 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DEE4C061795
+        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2020 00:02:41 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id n2so6060905pld.13
+        for <linux-clk@vger.kernel.org>; Sun, 21 Jun 2020 00:02:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to;
-        bh=a+NZmNa85rn9+KPzd4vANmtBgY1PrDp2O3PiIlzp/9U=;
-        b=eI396BnBH0g9oNApINxy4c96cZa+zZqLRZLKqxwpBTblF3nx8HJYtA2DhrAFt2lsGl
-         nsPxyZUBvcdS3x1dPG+5Bs6J55PX1VcrkPee/0B/cJZn+9Uim19jDcDSK2l51OdA31gG
-         BGg3D0rmMeSk219JidiohAbx8ozUcmsPS8XIQQVqzfX6ilNoWiNUdQz9n3DZXZhiTEsY
-         DqSY487fcfwKsm5bEpNrSpmKWCNW3/l13lGKFBRRTVl/+RNIN6bvHQFH5ol3tuqqXxma
-         bIBL30uXj4bpdquI0nfYhgdqE7r2JUsM7WXDVr3Kb2lI0S25AuzCwq57z9mnyJMMvJRw
-         TkLw==
+        bh=xb0+Y9vPTMcQDkSeRLOyeGz2sjTq3LszBLNa3wwZ2Xw=;
+        b=jZ+AS67ccgmGi4FrmKHcY1PNqxhnaxte2S5HSfVcT7Pfkz1P8RYqoy8TTJRwmQkLyS
+         IAPUbVc0TD0ZtWjDbw/7Czq3so2zJrkqJe7c9ES6epijdMzp093PEx5f1VRcWH6fpiIS
+         jZGRk8omBDEppBF+LjD1+OPxhu/6sjD9AokO9+DHzTA6AADt7sAgyXsmOrDDwvX/kCnC
+         YO/KSC5dRqXfn+U+X+Xi5tJ1lJrGijxAwWMZEJkkKZBhEyLxI/y+/NDpbjK2LhLTFX0H
+         K2wVd+cZFz8Lb7PR5TOcoZOYVLALah4Xj1oQTjnwOsFRIEP13a80H91QHaHfxfAFvQfX
+         0vaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=a+NZmNa85rn9+KPzd4vANmtBgY1PrDp2O3PiIlzp/9U=;
-        b=Loy4/FCgkAskslUR5x5ssr4AY4FbOYjxP57dPpnKiYDapxE0OHLM22IP81JW6kAC8D
-         EYSrAJJ4k35jyZYTcug8Av/7WCUL3BN3xWXiK64zZEUM6uU1Xfq8NjMt4rMkogHAs13z
-         zaycXZXCTskD+P2FgcMgIET0e+D+HZF4Sn1nos7kzVMG4W6K7qlEEEq2Xmu5W4uHU1Pb
-         eHwL6O2HF9prsFrFy+2EfGExGUJaCOxvewKB/buh86MG0tFyNdWNLDoEAHsZSuHGtBXy
-         ab2ckLj2g9l09iBsJqojWoiXMkGWfmePPw0P4ZtroNGC5yJTKw5CK4xygiSykpcTcf1r
-         jG1A==
-X-Gm-Message-State: AOAM531wQq9TOLvXuMbfV0sBcdI1wRVqGBeb9RUzbcyuL5OTrLNUYrVc
-        0PgE0nAe6LoiWJN/pO2xTm7iZw==
-X-Google-Smtp-Source: ABdhPJwPxg0VeG81i9p0d0Xp/Ilpo4o1aNYtAJHzWFbGpThw1h1pxb4MXkRTHJzf7a17aSwY0Niqjg==
-X-Received: by 2002:a17:90b:1087:: with SMTP id gj7mr12163713pjb.124.1592719687047;
-        Sat, 20 Jun 2020 23:08:07 -0700 (PDT)
+        bh=xb0+Y9vPTMcQDkSeRLOyeGz2sjTq3LszBLNa3wwZ2Xw=;
+        b=WZYXqjkty2vpF5rZnkMWWjjomIGUZ1W4p9WM16JuROwxpW+fHYItBdsAAvGAXNyGPI
+         2feevaRZOQyFMc8Y7meVG3liub7bTULJgjyooUOS9gjbZEd13TuYlyuxGaDVvt4Bmh5m
+         pztiqKmmBwdhMiGfYrTvoczZ/cBlCOyujXB2y/YqokNWYmIzFzBPz1ovfxHLnv95BElM
+         n55iMtB3Aus0+luinDDorwgudGtoJLtfReYxGIj0qG6qge04aoA/+/pKATyGALVMtJOv
+         aNcIZGyszCg82+9k5DMTqVQb+N6B9SSRsVncxXjhJA0WiMkozUavTdAKTR8Znr072V91
+         +RjA==
+X-Gm-Message-State: AOAM532JvmkMEs64pWtdrmJ5qvQOSiYWr90AHs5XLOC4jx4sdrdB/DH9
+        B4ke/21o/BB3C3Qw32o3i8CIcg==
+X-Google-Smtp-Source: ABdhPJwhAxNCfYKm7nQ0HvekdSEgQ5WgWWGYkMjG5eGC74+taPARCNb3JZY0EPMgnZ8gxGDrBZgEuA==
+X-Received: by 2002:a17:90a:1546:: with SMTP id y6mr12546523pja.92.1592722960975;
+        Sun, 21 Jun 2020 00:02:40 -0700 (PDT)
 Received: from builder.lan (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id q36sm9700009pjq.18.2020.06.20.23.08.05
+        by smtp.gmail.com with ESMTPSA id 4sm10250231pfn.205.2020.06.21.00.02.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jun 2020 23:08:06 -0700 (PDT)
-Date:   Sat, 20 Jun 2020 23:05:19 -0700
+        Sun, 21 Jun 2020 00:02:40 -0700 (PDT)
+Date:   Sat, 20 Jun 2020 23:59:53 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     skrzynka@konradybcio.pl, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/21] regulator: qcom_smd: Fix pmi8994 label
-Message-ID: <20200621060519.GB2421@builder.lan>
-References: <20200620144639.335093-1-konradybcio@gmail.com>
- <20200620144639.335093-19-konradybcio@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Loic Poulain <loic.poulain@linaro.org>, mturquette@baylibre.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] clk: qcom: Add CPU clock driver for msm8996
+Message-ID: <20200621065953.GB128451@builder.lan>
+References: <1591266927-24976-1-git-send-email-loic.poulain@linaro.org>
+ <1591266927-24976-3-git-send-email-loic.poulain@linaro.org>
+ <159261287558.62212.16649006403982628548@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200620144639.335093-19-konradybcio@gmail.com>
+In-Reply-To: <159261287558.62212.16649006403982628548@swboyd.mtv.corp.google.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat 20 Jun 07:46 PDT 2020, Konrad Dybcio wrote:
+On Fri 19 Jun 17:27 PDT 2020, Stephen Boyd wrote:
 
-> s3 was mislabeled as s2. Fix it.
+> Quoting Loic Poulain (2020-06-04 03:35:25)
+> > Each of the CPU clusters (Power and Perf) on msm8996 are
+> > clocked via 2 PLLs, a primary and alternate. There are also
+> > 2 Mux'es, a primary and secondary all connected together
+> > as shown below
+> > 
+> >                              +-------+
+> >               XO             |       |
+> >           +------------------>0      |
+> >                              |       |
+> >                    PLL/2     | SMUX  +----+
+> >                      +------->1      |    |
+> >                      |       |       |    |
+> >                      |       +-------+    |    +-------+
+> >                      |                    +---->0      |
+> >                      |                         |       |
+> > +---------------+    |             +----------->1      | CPU clk
+> > |Primary PLL    +----+ PLL_EARLY   |           |       +------>
+> > |               +------+-----------+    +------>2 PMUX |
+> > +---------------+      |                |      |       |
+> >                        |   +------+     |   +-->3      |
+> >                        +--^+  ACD +-----+   |  +-------+
+> > +---------------+          +------+         |
+> > |Alt PLL        |                           |
+> > |               +---------------------------+
+> > +---------------+         PLL_EARLY
+> > 
+> > The primary PLL is what drives the CPU clk, except for times
+> > when we are reprogramming the PLL itself (for rate changes) when
+> > we temporarily switch to an alternate PLL. A subsequent patch adds
+> > support to switch between primary and alternate PLL during rate
+> > changes.
+> > 
+> > The primary PLL operates on a single VCO range, between 600MHz
+> > and 3GHz. However the CPUs do support OPPs with frequencies
+> > between 300MHz and 600MHz. In order to support running the CPUs
+> > at those frequencies we end up having to lock the PLL at twice
+> > the rate and drive the CPU clk via the PLL/2 output and SMUX.
+> > 
+> > So for frequencies above 600MHz we follow the following path
+> >  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+> > and for frequencies between 300MHz and 600MHz we follow
+> >  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+> > 
+> > ACD stands for Adaptive Clock Distribution and is used to
+> > detect voltage droops.
+> > 
+> > Co-developed-by: Rajendra Nayak <rnayak@codeaurora.org>
+> > Co-developed-by: Ilia Lin <ilialin@codeaurora.org>
 > 
-> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+> Co-developed-by should be combined with Signed-off-by tags.
+> 
+> From Documentation/process/submitting-patches.rst
+> 
+> "Co-developed-by: states that the patch was co-created by multiple developers;
+> it is a used to give attribution to co-authors (in addition to the author
+> attributed by the From: tag) when several people work on a single patch.  Since
+> Co-developed-by: denotes authorship, every Co-developed-by: must be immediately
+> followed by a Signed-off-by: of the associated co-author."  
+> 
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+...which is not what happened here.
+
+By using Co-developed-by and a Signed-off-by one would state that
+Rajendra certifies the origin of any additions done by Ilia and Loic.
+
+
+Instead, Rajendra certified the origin of the original patch
+(presumably) per 11.a by his s-o-b, then Ilia took the patch in whole or
+part and certified that he can contribute it per 11.a or 11.c with his
+s-o-b, then finally Loic should do the same, by adding his s-o-b.
+
+As such we should see three Signed-off-by here, preferably with [name:
+changelog] entries inbetween to document any modifications done to the
+patch.
 
 Regards,
 Bjorn
 
-> ---
->  drivers/regulator/qcom_smd-regulator.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+> > ---
+> >  drivers/clk/qcom/Kconfig         |   8 +
+> >  drivers/clk/qcom/Makefile        |   1 +
+> >  drivers/clk/qcom/clk-alpha-pll.h |   6 +
+> >  drivers/clk/qcom/clk-cpu-8996.c  | 538 +++++++++++++++++++++++++++++++++++++++
+> >  4 files changed, 553 insertions(+)
+> >  create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+> > 
+> > diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> > index abb121f..87b515d 100644
+> > --- a/drivers/clk/qcom/Kconfig
+> > +++ b/drivers/clk/qcom/Kconfig
+> > @@ -37,6 +37,14 @@ config QCOM_CLK_APCS_MSM8916
+> >           Say Y if you want to support CPU frequency scaling on devices
+> >           such as msm8916.
+> >  
+> > +config QCOM_CLK_APCC_MSM8996
+> > +       tristate "MSM8996 CPU Clock Controller"
+> > +       select QCOM_KRYO_L2_ACCESSORS
 > 
-> diff --git a/drivers/regulator/qcom_smd-regulator.c b/drivers/regulator/qcom_smd-regulator.c
-> index 53a64d856926..7f5c318c8259 100644
-> --- a/drivers/regulator/qcom_smd-regulator.c
-> +++ b/drivers/regulator/qcom_smd-regulator.c
-> @@ -821,7 +821,7 @@ static const struct rpm_regulator_data rpm_pm8994_regulators[] = {
->  static const struct rpm_regulator_data rpm_pmi8994_regulators[] = {
->  	{ "s1", QCOM_SMD_RPM_SMPB, 1, &pmi8994_ftsmps, "vdd_s1" },
->  	{ "s2", QCOM_SMD_RPM_SMPB, 2, &pmi8994_hfsmps, "vdd_s2" },
-> -	{ "s2", QCOM_SMD_RPM_SMPB, 3, &pmi8994_hfsmps, "vdd_s3" },
-> +	{ "s3", QCOM_SMD_RPM_SMPB, 3, &pmi8994_hfsmps, "vdd_s3" },
->  	{ "boost-bypass", QCOM_SMD_RPM_BBYB, 1, &pmi8994_bby, "vdd_bst_byp" },
->  	{}
->  };
-> -- 
-> 2.27.0
+> This needs to depend on ARM || ARM64 because it uses the kryo accessors which
+> are architecture specific instructions.
 > 
+> > +       help
+> > +         Support for the CPU clock controller on msm8996 devices.
+> > +         Say Y if you want to support CPU clock scaling using CPUfreq
+> > +         drivers for dyanmic power management.
+> > +
+> >  config QCOM_CLK_RPM
+> >         tristate "RPM based Clock Controller"
+> >         depends on MFD_QCOM_RPM
