@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F21BC433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DFE2C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5DDE92083E
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4418B2083E
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tfOLAiBa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUHC8Q2J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbgFVH6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 03:58:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52894 "EHLO
+        id S1729313AbgFVH63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 03:58:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbgFVH6M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 03:58:12 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C117BC061794;
-        Mon, 22 Jun 2020 00:58:11 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id h28so655482edz.0;
-        Mon, 22 Jun 2020 00:58:11 -0700 (PDT)
+        with ESMTP id S1729179AbgFVH6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 03:58:20 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75B5EC061795;
+        Mon, 22 Jun 2020 00:58:19 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id m21so12831887eds.13;
+        Mon, 22 Jun 2020 00:58:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=T9nXQS24IzdAIA5rd/n9W4KYIMOEsi4rl6eO3TNMu0Y=;
-        b=tfOLAiBau9aznFJa/bKhu0XtIQw1lmugYp/dimpgoc6KmzBe92ueJjdFZpvjELA4Nm
-         ZTqlA5itENZuXZuUkWYY9fa2lsS+XPU3Vhn/YyJEwQFT8p4s8nK9AT6ofvulf1bjVgbk
-         lY+FVeWoG/D9Vqq05R9aQUKleI6pejnbMfXZncnRlM5Tg+EL9RO3w4OWSsg5NE9Af05V
-         Be6ShGVCjqff//d+WRulHapqUPUM5I4ukxOPCRic8Pi1e7yFTgHm8JG+TQgDvMwr0ggN
-         M72TIK6L9HMwnVhBmoyn389e8haItIkVUxtyPETfswW2s3tZoGw5M490/2gyc49nm1ZA
-         l/Xw==
+        bh=dmx5+PM1K/5lxm0AgMbX1KNeUymmqik8gyqWBBLElnA=;
+        b=CUHC8Q2Jkg0GOviutIXExhCi05jWxbOmiRenHTLCNcDmwKfVksOFQJ8GaizrfKh9l/
+         UsSh/rjFAxAyU441iNMkO1wbkAdKlEqZ0YxGKh1n0X1jjoEiuK6hu0huN/RG6O58J87u
+         WLgPeLufnHz1YEB143HeDfRNx1koIfRx4P3JMTr7/PIWVdOPo3ZPHS5Ro8lJ+1XpNrkt
+         iYOlRYdc8HF3QzqP4wWkFKnDZNwX2T58hwPUQj8HKoYvAg6h5qaWzlYq1yGdz1luI35p
+         6/xDDEBN1MEpEeeAnlAwmgup3U9end7xLmd5pDiU1O8oA5wWtwgvGIIHhvWelgpQxp4p
+         e94A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=T9nXQS24IzdAIA5rd/n9W4KYIMOEsi4rl6eO3TNMu0Y=;
-        b=SewtVCwA8ZsCTpm3Zbc0eOJhcPFxE0YN7ltPjgF8PLhRHni3FVlQZCMN4x7WDQxrQu
-         PdYl0G25A+LVvYZHY+9yqE2R6CHc6cGPKzXxl9Uy/6KGC6B+olB6BHeTMgiQ0laZ8og/
-         DjUbXoAJZW5WbgBzXfkAlD/NUetYJVLg6SUpBftOpiQB8PVZllofp8yxmv6Gs1Ulbiu7
-         vPXsWb2gNdyURylcGCJn7+vZgDpKmvo/fV7BTL8xpLcgPHM1k+wnJrvzR5Hfvp4aTGRf
-         sMsgGTVXLtke8f/TMX4CAQtZvLbrimLhat78Hv1W9t6egDWUW8VLijmjh1TbuRAIoy4z
-         FdBg==
-X-Gm-Message-State: AOAM532vHfXySoFg2Nx8234SvjLcrRbWmGulAKZPK5KLwtl/Dg24dhqD
-        vGvff71QFhaehw2OOmGNz7A=
-X-Google-Smtp-Source: ABdhPJzGULkHG1G+P4LRMpZqGh9LrhcAVvZARST280Y+WbmTQXXRm5mm8RPLyaHGxnIkAFNIy+kw9A==
-X-Received: by 2002:a05:6402:128b:: with SMTP id w11mr15075087edv.377.1592812690495;
-        Mon, 22 Jun 2020 00:58:10 -0700 (PDT)
+        bh=dmx5+PM1K/5lxm0AgMbX1KNeUymmqik8gyqWBBLElnA=;
+        b=Mgwpm84VzI2qzKsnz3tss34DqX6cW+t1pCXnR3dPWlQlE8fPLlcCFf/10HCr7UOEBK
+         xzzeSLMQqPOpF6n7xByek6uFQpX1Yz37StVkh23ts7iHYRuhaJjzyyTYRhgHARDRh3zQ
+         a2Kya4OQDkdlYJeWKycN9BmlXQ+MUmAXnX39IJhT92PaOQonIz79Bmuo52zwcZlG+bMK
+         QChTkR1mS90D2qetdu0yJ0Bi6kd9L+/Wkg+4UkDTjl4NiWQK/B/dYGZPRDi0yLdDlcGA
+         kCXkdOvE8AQ2fjugUIGng1FZUld+oe+YPqYd5MTzAtrRn9U1DZZh5dauk5EWzvO9vW/s
+         JhvQ==
+X-Gm-Message-State: AOAM531Z7w8q4a7bs4Qry9MaVEj1k4MnAhv61+/tbJ118J9B3zrJMHcp
+        9aL6XY/mp/FE6zH2uy3vgHU=
+X-Google-Smtp-Source: ABdhPJxAaBjZs/NLzrsnd0Ru5pgSNCKpG8vAggElJQHx909DFc0kWahikFLSTaog5OX6gYZZxyPO5Q==
+X-Received: by 2002:aa7:cb52:: with SMTP id w18mr15951223edt.1.1592812698183;
+        Mon, 22 Jun 2020 00:58:18 -0700 (PDT)
 Received: from localhost.localdomain (abag196.neoplus.adsl.tpnet.pl. [83.6.170.196])
-        by smtp.googlemail.com with ESMTPSA id b4sm10511606ejp.40.2020.06.22.00.58.09
+        by smtp.googlemail.com with ESMTPSA id b4sm10511606ejp.40.2020.06.22.00.58.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2020 00:58:10 -0700 (PDT)
+        Mon, 22 Jun 2020 00:58:17 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 To:     skrzynka@konradybcio.pl
 Cc:     Konrad Dybcio <konradybcio@gmail.com>,
@@ -72,149 +72,273 @@ Cc:     Konrad Dybcio <konradybcio@gmail.com>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 5/8] arm64: dts: qcom: pm660(l): Add base dts files
-Date:   Mon, 22 Jun 2020 09:57:43 +0200
-Message-Id: <20200622075749.21925-6-konradybcio@gmail.com>
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        =?UTF-8?q?=C5=81ukasz=20Patron?= <priv.luk@gmail.com>
+Subject: [PATCH v2 7/8] arm64: dts: qcom: Add support for Sony Xperia XA2/Plus/Ultra (Nile platform)
+Date:   Mon, 22 Jun 2020 09:57:45 +0200
+Message-Id: <20200622075749.21925-8-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200622075749.21925-1-konradybcio@gmail.com>
 References: <20200622075749.21925-1-konradybcio@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add base DTS files for pm660(l) along with GPIOs, power-on and
-rtc nodes.
+Add device tree support for the Sony Xperia XA2, XA2 Plus and
+XA2 Ultra smartphones. They are all based on the Sony Nile
+platform (sdm630) and share a lot of common code. The
+differences are really minor, so a Nile-common DTSI
+has been created to reduce clutter.
+
+XA2 - Pioneer
+XA2 Plus - Voyager
+XA2 Ultra - Discovery
+
+The boards currently support:
+* Screen console
+* SDHCI
+* I2C
+* pstore log dump
+* GPIO keys
+* PSCI idle states
 
 Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+Tested-by: Łukasz Patron <priv.luk@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/pm660.dtsi  | 60 ++++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/pm660l.dtsi | 46 +++++++++++++++++++++
- 2 files changed, 106 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/pm660.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/pm660l.dtsi
+ arch/arm64/boot/dts/qcom/Makefile             |   3 +
+ .../sdm630-sony-xperia-nile-discovery.dts     |  13 ++
+ .../qcom/sdm630-sony-xperia-nile-pioneer.dts  |  13 ++
+ .../qcom/sdm630-sony-xperia-nile-voyager.dts  |  20 +++
+ .../dts/qcom/sdm630-sony-xperia-nile.dtsi     | 135 ++++++++++++++++++
+ 5 files changed, 184 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
 
-diff --git a/arch/arm64/boot/dts/qcom/pm660.dtsi b/arch/arm64/boot/dts/qcom/pm660.dtsi
+diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+index 0f2c33d611df..1cad7cb07574 100644
+--- a/arch/arm64/boot/dts/qcom/Makefile
++++ b/arch/arm64/boot/dts/qcom/Makefile
+@@ -16,6 +16,9 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-hp-envy-x2.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-lenovo-miix-630.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-mtp.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= sdm630-sony-xperia-nile-discovery.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= sdm630-sony-xperia-nile-pioneer.dtb
++dtb-$(CONFIG_ARCH_QCOM)	+= sdm630-sony-xperia-nile-voyager.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sdm660-xiaomi-lavender.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r1.dtb
+ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r2.dtb
+diff --git a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dts b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dts
 new file mode 100644
-index 000000000000..041f45264255
+index 000000000000..1312eebe76a1
 --- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/pm660.dtsi
-@@ -0,0 +1,60 @@
++++ b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dts
+@@ -0,0 +1,13 @@
 +// SPDX-License-Identifier: BSD-3-Clause
 +/*
 + * Copyright (c) 2020, Konrad Dybcio
 + */
 +
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/spmi/spmi.h>
-+#include <dt-bindings/input/linux-event-codes.h>
++/dts-v1/;
 +
-+&spmi_bus {
++#include "sdm630-sony-xperia-nile.dtsi"
 +
-+	pmic@0 {
-+		compatible = "qcom,pm660", "qcom,spmi-pmic";
-+		reg = <0x0 SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++/ {
++	model = "SoMC Discovery-RoW";
++	compatible = "sony,discovery-row", "qcom,sdm630", "qcom,sdm630-mtp";
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dts b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dts
+new file mode 100644
+index 000000000000..76f20ad5273f
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dts
+@@ -0,0 +1,13 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2020, Konrad Dybcio
++ */
 +
-+		rtc@6000 {
-+			compatible = "qcom,pm8941-rtc";
-+			reg = <0x6000>, <0x6100>;
-+			reg-names = "rtc", "alarm";
-+			interrupts = <0x0 0x61 0x1 IRQ_TYPE_EDGE_RISING>;
++/dts-v1/;
++
++#include "sdm630-sony-xperia-nile.dtsi"
++
++/ {
++	model = "SoMC Pioneer-RoW";
++	compatible = "sony,pioneer-row", "qcom,sdm630", "qcom,sdm630-mtp";
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dts b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dts
+new file mode 100644
+index 000000000000..82e54a73d172
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dts
+@@ -0,0 +1,20 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2020, Konrad Dybcio
++ */
++
++/dts-v1/;
++
++#include "sdm630-sony-xperia-nile.dtsi"
++
++/ {
++	model = "SoMC Voyager-RoW";
++	compatible = "sony,voyager-row", "qcom,sdm630", "qcom,sdm630-mtp";
++
++	chosen {
++		framebuffer@9d400000 {
++			reg = <0 0x9d400000 0 (2160 * 1080 * 4)>;
++			height = <2160>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
+new file mode 100644
+index 000000000000..af75ab211b5f
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
+@@ -0,0 +1,135 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Copyright (c) 2020, Konrad Dybcio
++ */
++
++/dts-v1/;
++
++#include "sdm630.dtsi"
++#include "pm660.dtsi"
++#include "pm660l.dtsi"
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++#include <dt-bindings/input/gpio-keys.h>
++
++/ {
++	/* required for bootloader to select correct board */
++	qcom,msm-id = <318 0>;
++	qcom,board-id = <8 1>;
++	qcom,pmic-id = <0x1001b 0x101011a 0x00 0x00 0x1001b 0x201011a 0x00 0x00>;
++
++	/* This part enables graphical output via bootloader-enabled display */
++	chosen {
++		bootargs = "earlycon=tty0 console=tty0";
++
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		stdout-path = "framebuffer0";
++
++		framebuffer0: framebuffer@9d400000 {
++		compatible = "simple-framebuffer";
++		reg = <0 0x9d400000 0 (1920 * 1080 * 4)>;
++		width = <1080>;
++		height = <1920>;
++		stride = <(1080 * 4)>;
++		format = "a8r8g8b8";
++		status= "okay";
++		};
++	};
++
++	reserved-memory {
++		#address-cells = <2>;
++		#size-cells = <2>;
++		ranges;
++
++		ramoops@ffc00000 {
++			compatible = "ramoops";
++			reg = <0x0 0xffc00000 0x0 0x100000>;
++			record-size = <0x10000>;
++			console-size = <0x60000>;
++			ftrace-size = <0x10000>;
++			pmsg-size = <0x20000>;
++			ecc-size = <16>;
++			status = "okay";
 +		};
 +
-+		pon: pon@800 {
-+			compatible = "qcom,pm8916-pon";
++		debug_region@ffb00000 {
++			reg = <0x00 0xffb00000 0x00 0x100000>;
++			no-map;
++		};
 +
-+			reg = <0x800>;
++		removed_region@85800000 {
++			reg = <0x00 0x85800000 0x00 0x3700000>;
++			no-map;
++		};
++	};
 +
-+			pwrkey {
-+				compatible = "qcom,pm8941-pwrkey";
-+				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-+				debounce = <15625>;
-+				bias-pull-up;
-+				linux,code = <KEY_POWER>;
++	soc {
++		gpio_keys {
++			status = "okay";
++			compatible = "gpio-keys";
++			input-name = "gpio-keys";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			autorepeat;
++
++			camera_focus {
++				label = "Camera Focus";
++				gpios = <&tlmm 64 GPIO_ACTIVE_LOW>;
++				linux,input-type = <1>;
++				linux,code = <KEY_CAMERA_FOCUS>;
++				debounce-interval = <15>;
 +			};
 +
++			camera_snapshot {
++				label = "Camera Snapshot";
++				gpios = <&tlmm 113 GPIO_ACTIVE_LOW>;
++				linux,input-type = <1>;
++				linux,code = <KEY_CAMERA>;
++				debounce-interval = <15>;
++			};
++
++			vol_down {
++				label = "Volume Down";
++				gpios = <&pm660l_gpios 7 GPIO_ACTIVE_LOW>;
++				linux,input-type = <1>;
++				linux,code = <KEY_VOLUMEDOWN>;
++				gpio-key,wakeup;
++				debounce-interval = <15>;
++			};
 +		};
 +
-+		pm660_gpios: gpios@c000 {
-+			compatible = "qcom,pm660-gpio";
-+			reg = <0xc000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			interrupts = <0 0xc0 0 IRQ_TYPE_NONE>,
-+				     <0 0xc1 0 IRQ_TYPE_NONE>,
-+				     <0 0xc2 0 IRQ_TYPE_NONE>,
-+				     <0 0xc3 0 IRQ_TYPE_NONE>,
-+				     <0 0xc4 0 IRQ_TYPE_NONE>,
-+				     <0 0xc5 0 IRQ_TYPE_NONE>,
-+				     <0 0xc6 0 IRQ_TYPE_NONE>,
-+				     <0 0xc7 0 IRQ_TYPE_NONE>,
-+				     <0 0xc8 0 IRQ_TYPE_NONE>,
-+				     <0 0xc9 0 IRQ_TYPE_NONE>,
-+				     <0 0xca 0 IRQ_TYPE_NONE>,
-+				     <0 0xcb 0 IRQ_TYPE_NONE>,
-+				     <0 0xcc 0 IRQ_TYPE_NONE>;
++		sdhci@c0c4000 {
++			status = "okay";
++
++			/* SoMC Nile platform's eMMC doesn't support HS200 mode */
++			/delete-property/ mmc-hs200-1_8v;
++		};
++
++		i2c@c175000 {
++			status = "okay";
++
++			/* Synaptics touchscreen */
++		};
++
++		i2c@c176000 {
++			status = "okay";
++
++			/* SMB1351 charger */
++		};
++
++		/* I2C3, 4, 5, 7 and 8 are disabled on this board. */
++
++		i2c@c1b6000 {
++			status = "okay";
++
++			/* NXP NFC */
++		};
++
++		serial@c1af000 {
++			status = "okay";
 +		};
 +	};
 +};
-diff --git a/arch/arm64/boot/dts/qcom/pm660l.dtsi b/arch/arm64/boot/dts/qcom/pm660l.dtsi
-new file mode 100644
-index 000000000000..5e0f1a6e3966
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/pm660l.dtsi
-@@ -0,0 +1,46 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2020, Konrad Dybcio
-+ */
-+
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/spmi/spmi.h>
-+#include <dt-bindings/input/linux-event-codes.h>
-+
-+&spmi_bus {
-+
-+	pmic@2 {
-+		compatible = "qcom,pm660l", "qcom,spmi-pmic";
-+		reg = <0x2 SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pm660l_gpios: gpios@c000 {
-+			compatible = "qcom,pm660l-gpio", "qcom,spmi-gpio";
-+			reg = <0xc000>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			#interrupt-cells = <2>;
-+			interrupts = <0x2 0xc0 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc1 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc2 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc3 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc4 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc5 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc6 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc7 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc8 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xc9 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xca 0x0 IRQ_TYPE_NONE>,
-+					 <0x2 0xcb 0x0 IRQ_TYPE_NONE>;
-+		};
-+	};
-+
-+	pmic@3 {
-+		compatible = "qcom,pm660l", "qcom,spmi-pmic";
-+		reg = <0x3 SPMI_USID>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+};
-+
 -- 
 2.27.0
 
