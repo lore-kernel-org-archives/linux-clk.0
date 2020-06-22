@@ -2,75 +2,89 @@ Return-Path: <SRS0=k8ID=AD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFDFC433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 04:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CA7C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 06:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 28380253E2
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 04:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D957C2541D
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 06:39:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DFK98p1w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726031AbgFVE2w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 00:28:52 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:44055 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726086AbgFVE2i (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 00:28:38 -0400
-Received: from unknown (HELO ironmsg03-sd.qualcomm.com) ([10.53.140.143])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 21 Jun 2020 21:28:38 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg03-sd.qualcomm.com with ESMTP; 21 Jun 2020 21:28:33 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 1EED1218CC; Mon, 22 Jun 2020 09:58:32 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        sivaprak@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V8 3/4] clk: qcom: Add DT bindings for ipq6018 apss clock controller
-Date:   Mon, 22 Jun 2020 09:58:11 +0530
-Message-Id: <1592800092-20533-4-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1592800092-20533-1-git-send-email-sivaprak@codeaurora.org>
-References: <1592800092-20533-1-git-send-email-sivaprak@codeaurora.org>
+        id S1726641AbgFVGjT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 02:39:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40720 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725933AbgFVGjT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 02:39:19 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C511CC061794;
+        Sun, 21 Jun 2020 23:39:18 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id mb16so16843514ejb.4;
+        Sun, 21 Jun 2020 23:39:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UTfi4b8erlafdjROIQMGSunv2DNbIWrzkDCZLv011tE=;
+        b=DFK98p1wLeynT/wsoxfmOQMAl5w+7qY8JSvESy9eH1v/rvYDHPqu6IAplDSWkC04md
+         rqCDl2dBYvoSQigQJdoB/KsF7/Tn87GvcgffgEpRtUHo7o2ztPJVrFxM2EbAnFDIShUP
+         Zxn/hkfTTH4BtxZWHV1qsmVaGAUZAdiYxkHTwFKFCZyMzLyxUQ4g3XTe1j7V6ST91Pfc
+         41qr2/WzM5MT5POyYA2Ia6YKiEoE+XjGGWODVXztEKFBp/tsGAJflQd+VUXVGUnn2WwN
+         hhMmUC05v4mzLSlbmXkOprdGl+B4knk7knd3YfWQpdPvwyAZwv/sotrPOueGnngf/3ft
+         x4qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UTfi4b8erlafdjROIQMGSunv2DNbIWrzkDCZLv011tE=;
+        b=eBTRG2m5Kea9JYj5APKa8qyRdHsb4ubo8aoPS/dayISVrfYkj9oazlDb4k+uaWgH0l
+         4trAiyWHodNnvQCszzoQLVfJtcBSjvXuv8iWB5pQ679+YEXrdGKnTI16T2EsuF2I3yDX
+         L8ihIlSeYpsP2f/Sp10q+Jeqy+4MOWqcB73R+tXg/6hhDKszt2Y1PEGiJoURLvfiOnf2
+         yZRtWzwWiJteWbZDoUDQT/DYgvtcAUFo+S1e75XWV6SsgbHMDS1k32lipr/+3coHAnFW
+         ZDPrQlSIBjafUnm68FJ0EVgG25upCCmdyt5lqi1ZoBYnRaR6bEuxKgJKghjkH2Uj9KRH
+         1VkQ==
+X-Gm-Message-State: AOAM5315cOvhHTqtOdvbx3/SPLRyyGlDZplTsBrWcJHkuqVZnizCGh8G
+        r2//Ql6of2surwzb8kgIjn83w0EVe634shSOtKw=
+X-Google-Smtp-Source: ABdhPJwmb95kBquCZL4hUerl8N+Bx61Cmy8RB0rTg0YvcGRWZm5k/9ODdc6AKUOl7Bp+hr+WaQeoZhRXeU7wRyWqVCs=
+X-Received: by 2002:a17:906:945:: with SMTP id j5mr14496147ejd.52.1592807957515;
+ Sun, 21 Jun 2020 23:39:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200621213806.551879-1-konradybcio@gmail.com>
+ <20200621213806.551879-7-konradybcio@gmail.com> <CANi4RBQ-o=K+X_AoZf_NvB19Hum0d9tpr6qjqPThsSNQZaj74A@mail.gmail.com>
+In-Reply-To: <CANi4RBQ-o=K+X_AoZf_NvB19Hum0d9tpr6qjqPThsSNQZaj74A@mail.gmail.com>
+From:   Konrad Dybcio <konradybcio@gmail.com>
+Date:   Mon, 22 Jun 2020 08:38:41 +0200
+Message-ID: <CAMS8qEW+7sjtdUcdUOcdDFCXSv2R4U4O-puyCP2utG_2rjBQ+A@mail.gmail.com>
+Subject: Re: [PATCH 6/8] arm64: dts: qcom: sdm630: Add sdm630 dts file
+To:     Alexey Minnekhanov <alexey.min@gmail.com>
+Cc:     skrzynka@konradybcio.pl, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add dt-binding for ipq6018 apss clock controller
+Qualcomm keeps them separate, so there's probably a good reason to,
+and I would prefer to do so as well. But if you guys really want it
+merged, then it's doable I guess..
 
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
----
-[V8]
- * took Ack from Rob
- include/dt-bindings/clock/qcom,apss-ipq.h | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,apss-ipq.h
-
-diff --git a/include/dt-bindings/clock/qcom,apss-ipq.h b/include/dt-bindings/clock/qcom,apss-ipq.h
-new file mode 100644
-index 000000000000..77b6e05492e2
---- /dev/null
-+++ b/include/dt-bindings/clock/qcom,apss-ipq.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
-+#define _DT_BINDINGS_CLOCK_QCA_APSS_IPQ6018_H
-+
-+#define APCS_ALIAS0_CLK_SRC			0
-+#define APCS_ALIAS0_CORE_CLK			1
-+
-+#endif
--- 
-2.7.4
-
+Regards
+Konrad
