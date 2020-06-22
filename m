@@ -2,61 +2,62 @@ Return-Path: <SRS0=k8ID=AD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F07C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA2DC433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EAF3F2083E
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A67720C09
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 07:58:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWkxKDTN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sqqJimki"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726574AbgFVH5z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 03:57:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52838 "EHLO
+        id S1726878AbgFVH6J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 03:58:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52872 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbgFVH5y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 03:57:54 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88080C061794;
-        Mon, 22 Jun 2020 00:57:54 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id g1so12870623edv.6;
-        Mon, 22 Jun 2020 00:57:54 -0700 (PDT)
+        with ESMTP id S1727998AbgFVH6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 03:58:05 -0400
+Received: from mail-ed1-x532.google.com (mail-ed1-x532.google.com [IPv6:2a00:1450:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1FFBC061794;
+        Mon, 22 Jun 2020 00:58:04 -0700 (PDT)
+Received: by mail-ed1-x532.google.com with SMTP id k8so12873256edq.4;
+        Mon, 22 Jun 2020 00:58:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BlKmF1D0UGNn/Ika+dFIWBekaBDdD9j5x4kuQyAHSyc=;
-        b=sWkxKDTN9QMoJsp5vMgghXsX7yqy93ZILTRHSPUSzK5/2yWgh/Wk/ggBdLfo/ct7Hq
-         eR5Q9IVzOEgvW6Tq8+blBtGPhbVEaK5B1Xm4SyXEBec5HKiUuYHR+HlM9Xkf4zp8x4SK
-         yFEAisydw1Msb5JhG0Zun4Vgjqc+E/Z1ku8UzAeYRJwYKhiOxwXYieXdz9WyivMCKjAY
-         gujxt64rH8cE8Xx71CJv44YJnp/e0AxWgFcIZ877FxVLXhUz6itlyMc3l6FFsBwupVeD
-         8CxaeHLR2bq3SeQ3ZYglLvpuL4AQlNlnnVyVzlk7VeoO4aiZ00iZjNHnjaKCmEHjGjqG
-         oKcw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=nzouIcqNeHmwTME7jVaUjFBAtS8z2sOjc/dsKSoeppE=;
+        b=sqqJimkiTu7IRJE5IFZNKQ6CmfrVpIe+bIAfK15kRWrQgdPR/PgM9Gmx7mSDshphvw
+         9AL/m4v/pn6feUYYfdYFKynhB+dTk2f+kzeGaPTYZpMbiXsJZYG7Yek+JEtAu/C1bnkT
+         PKpRHinlp4w8NiBe4VNItV9LHYnG5380XUZRUdGt/MSavJox1DUYzTHp7RO4c3nOtu6m
+         cJEtAynrKCjWqu8RB10HXSiL0bTc+QoAjTQdybU7svGHwbvMAa8bo7MQNQJsa9lGgpPe
+         2KpkIjpgqvTx2VZQYXpVAtdQQSMvx4JRId/YCJUmvgFZp+AT7C5riHbA9ewjSeQ59v1B
+         D8EQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BlKmF1D0UGNn/Ika+dFIWBekaBDdD9j5x4kuQyAHSyc=;
-        b=SUx1Rkkkg73rQzjmgk+w0ObSBX5CZkkbG094crlooucSZAmoVyKY46Yh/exx1Lzohc
-         nJUaHhWI6xSyPGKzQ60Hfrxpd+9hJGlRdmB9YcVObZvYyrjdjfYkOtNBq3i6bB2aDiQn
-         P7iXxfKkar9RHcRRZ95DzOd/S1oWIoxEmaq09ePNNtlPVT7wX1pzaz3rlFzyDYDtz/ro
-         +ao3C4g3eWKo58UbeGrqXMhzXLqQd1WCoJqcApzCxiAMGybf+QsSG3VxVu1YqZAPKUix
-         4xXlHghPAvgU5ZXZmjuKFLI4P10GRCbCxY7ydif03cF6B7pB0WSPw+td6KHp6e5N7pJ3
-         GN0w==
-X-Gm-Message-State: AOAM531ceK1v68s05j+6iHRvkS6Jk6UNLEt0zLjGI+tVvZkLX73ADkeY
-        tamog6BEul14jrnYg73Ey79ZNGO+DvA=
-X-Google-Smtp-Source: ABdhPJzH06LXkS0dWJgLI4oi0/GeM9j+P2AxpQ+ylej1vFw2ndtYXXglAUZZyDYdlQ825rxw9jBmAA==
-X-Received: by 2002:a50:9dc4:: with SMTP id l4mr16176792edk.52.1592812673258;
-        Mon, 22 Jun 2020 00:57:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nzouIcqNeHmwTME7jVaUjFBAtS8z2sOjc/dsKSoeppE=;
+        b=ZHaOv3EvqHGlIXPdleCrwYj/1coKL7QK3gQDDMxJjiNouGJHZwWfsLl0s7yrckvfUB
+         a2flrD21Gmt2kJUXF2CH1OOegAXf4r9AooDOLJ3rD0Ma3Jy5D6BT54YnpRLjhOu4KPXa
+         Z+Junp5PEcU2Tmq5jYiFLm3bF5q+hGSW5wAZaU2K4nDX0GX4/u1OsDypePK8MTThCWoC
+         g6liKchtxekMFe545tzyeSjh1NL1tB9NPM8s3tJulNqXBhP+hcU0obu6bxT/BXBUcp+z
+         5Tbi8qZGyu6K8jdXEVhhUNJRKjRhqy9jNpU38rHHEGhqGnTxkP5gkiAtLAQDgSJUsV9S
+         4+OA==
+X-Gm-Message-State: AOAM532UUa0jxxijIwGKKSmc+pDhtJ8jYJMYiDEPrxjOpkbQI83CkWdp
+        D4r+cuh7ckoBVLgaYA7sAVU=
+X-Google-Smtp-Source: ABdhPJwhZoxVmh3ooaVs5Mou9B6IGPM/3LOIVUFAVD3EpJIA6khP/+uJ99029Qqvg2zPs6n27vdAjQ==
+X-Received: by 2002:aa7:d28d:: with SMTP id w13mr15883695edq.336.1592812683594;
+        Mon, 22 Jun 2020 00:58:03 -0700 (PDT)
 Received: from localhost.localdomain (abag196.neoplus.adsl.tpnet.pl. [83.6.170.196])
-        by smtp.googlemail.com with ESMTPSA id b4sm10511606ejp.40.2020.06.22.00.57.51
+        by smtp.googlemail.com with ESMTPSA id b4sm10511606ejp.40.2020.06.22.00.58.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jun 2020 00:57:52 -0700 (PDT)
+        Mon, 22 Jun 2020 00:58:03 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 To:     skrzynka@konradybcio.pl
 Cc:     Konrad Dybcio <konradybcio@gmail.com>,
@@ -72,68 +73,38 @@ Cc:     Konrad Dybcio <konradybcio@gmail.com>,
         Tony Luck <tony.luck@intel.com>, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: [PATCH v2 0/8] Add support for Sony SDM630-based boards
-Date:   Mon, 22 Jun 2020 09:57:38 +0200
-Message-Id: <20200622075749.21925-1-konradybcio@gmail.com>
+Subject: [PATCH v2 3/8] soc: qcom: socinfo: Add socinfo entry for SDM630
+Date:   Mon, 22 Jun 2020 09:57:41 +0200
+Message-Id: <20200622075749.21925-4-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200622075749.21925-1-konradybcio@gmail.com>
+References: <20200622075749.21925-1-konradybcio@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-changes since v1:
-- fixed some indentation
-- fixed a typo in RPMCC
-- added Tested-bys
+This patch adds missing soc ID for SDM630.
 
-Konrad Dybcio (7):
-  pinctrl: qcom: spmi-gpio: Add pm660(l) compatibility
-  Documentation: Document pm660(l) SPMI GPIOs compatible
-  soc: qcom: socinfo: Add socinfo entry for SDM630
-  clk: qcom: smd: Add support for SDM660 rpm clocks
-  arm64: dts: qcom: pm660(l): Add base dts files
-  arm64: dts: qcom: sdm630: Add sdm630 dts file
-  arm64: dts: qcom: Add support for Sony Xperia XA2/Plus/Ultra (Nile
-    platform)
+Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+---
+ drivers/soc/qcom/socinfo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Martin Botka (1):
-  arm64: dts: qcom: Add support for Sony Xperia 10/10 Plus (Ganges
-    platform)
-
- .../devicetree/bindings/clock/qcom,rpmcc.txt  |   1 +
- .../bindings/pinctrl/qcom,pmic-gpio.txt       |   2 +
- arch/arm64/boot/dts/qcom/Makefile             |   5 +
- arch/arm64/boot/dts/qcom/pm660.dtsi           |  60 ++
- arch/arm64/boot/dts/qcom/pm660l.dtsi          |  46 +
- arch/arm64/boot/dts/qcom/sdm630-pins.dtsi     | 268 +++++
- .../qcom/sdm630-sony-xperia-ganges-kirin.dts  |  13 +
- .../dts/qcom/sdm630-sony-xperia-ganges.dtsi   |  40 +
- .../sdm630-sony-xperia-nile-discovery.dts     |  13 +
- .../qcom/sdm630-sony-xperia-nile-pioneer.dts  |  13 +
- .../qcom/sdm630-sony-xperia-nile-voyager.dts  |  20 +
- .../dts/qcom/sdm630-sony-xperia-nile.dtsi     | 135 +++
- arch/arm64/boot/dts/qcom/sdm630.dtsi          | 991 ++++++++++++++++++
- .../sdm636-sony-xperia-ganges-mermaid.dts     |  20 +
- drivers/clk/qcom/clk-smd-rpm.c                |  77 ++
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c      |   4 +
- drivers/soc/qcom/socinfo.c                    |   1 +
- include/dt-bindings/clock/qcom,rpmcc.h        |  10 +
- 18 files changed, 1719 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/pm660.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/pm660l.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-pins.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges-kirin.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-ganges.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-discovery.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-pioneer.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile-voyager.dts
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630-sony-xperia-nile.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm630.dtsi
- create mode 100644 arch/arm64/boot/dts/qcom/sdm636-sony-xperia-ganges-mermaid.dts
-
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index 5983c6ffb078..705f142ee588 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -202,6 +202,7 @@ static const struct soc_id soc_id[] = {
+ 	{ 310, "MSM8996AU" },
+ 	{ 311, "APQ8096AU" },
+ 	{ 312, "APQ8096SG" },
++	{ 318, "SDM630" },
+ 	{ 321, "SDM845" },
+ 	{ 341, "SDA845" },
+ };
 -- 
 2.27.0
 
