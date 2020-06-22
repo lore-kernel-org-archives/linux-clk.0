@@ -2,88 +2,152 @@ Return-Path: <SRS0=k8ID=AD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 996BFC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 18:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B91C433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 18:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6D05B2076A
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 18:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8798820738
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 18:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABekFSyv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g47As6pT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbgFVSCK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 14:02:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
+        id S1730229AbgFVSjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 14:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730179AbgFVSCJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 14:02:09 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DBD8C061573;
-        Mon, 22 Jun 2020 11:02:09 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id y10so4535240eje.1;
-        Mon, 22 Jun 2020 11:02:09 -0700 (PDT)
+        with ESMTP id S1730424AbgFVSjO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 14:39:14 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF266C061799
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 11:39:13 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id g12so7926272pll.10
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 11:39:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=N8ncUP5m23nGjZIgL4bF3D8cjQSnQ88Xff+6y4avOsc=;
-        b=ABekFSyvmWn68PLFbmT4LUVG8byPCMilHNm7vqnBdCBV55KzEnQ44pTMTSo26oUxdY
-         WAptexDHEh/V+fsg2OvEgwKbMYSgYUDyL6fZiSv1yESvqW76EuzP33sBE8IHnKB16Eus
-         GhZtYZDif3Q2YVkhzm87bR9EEF6sD5TXFTJQHyPOjPP9BT0mqcbA7M9TWVJ1DcTbqO2Y
-         CrQG/MWr3rPtas4jUchxF2P+zWu0bN208z8Ayki7ULmdpJ4Pz2EcWRqLQuHH93esan9r
-         LglKSKxuBw5Vo3YaGLEU/QzZM9CJ9R/+7eXHppK4C6rK0C1yXfz6awgN+GIU+cV8JVyC
-         H4ig==
+        bh=Gb+JetmJfxvfJpxHC8m6WwdUvvjtG/PEO/NrvZ7SUq0=;
+        b=g47As6pTItcLFTPBKcE7GoqTMDitRniLcUVZb/sgo6Z6hU1SBXf3XA30MossVWhFm+
+         WrZs8HM7KrKN7vIEe4hAi7PM9veaLBUBzmO1d6hg/ZrKjGDYlC+J8mnlzIu7m8jCiDVX
+         oUMZ6YXzkXP7P/9ND3v2M3GdghI0Eiq5bwNDzgs5cWvWuZbpdd3bSkITbG7/ShPdrwrX
+         oq7EH8OJ65SqfDB5bRXrhOWPzVNj9lb6ggrqKdEFfG/SWqJeDT88TfoVD+co4a3hK8cD
+         TZxZzP6pibR5VmEHPFJiQguXyVlIy2oApu1xDzwGn7gtMfXUFW3LNOourTReEdtotVmu
+         1u6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=N8ncUP5m23nGjZIgL4bF3D8cjQSnQ88Xff+6y4avOsc=;
-        b=iw2FLWf5d156lZBePTTzbO/vlozDoO7nE7r+gN1lX/cEy/dNWJlc7zLZTmWEiHTCJg
-         1dNwCIlo1gP+qIT4si44JgW8XQgDWk8GHeucA0eiBi6GVj5WnZA7vrcIqJEcx09R4EPQ
-         NUO5vw0g7wANoxaUowzCg7S1SVeqw+7VU57DtoHAXrY1bk8TVHKjOD0dhzIGJx5sArdP
-         inVXpHIv91N/VnRmWVAnfy8A+GwLZh9I4aMMIuXBPj5haX8rFLrypb5+hCUkV2I91dG2
-         sG3XyUzhLGGbJrOaO/IKwR/KI24+MBBOz7MBImOBm0hKhSY2zI+XpqfL87kLj8sENu5+
-         lVBg==
-X-Gm-Message-State: AOAM533OGValjMni62UHdSAZGMGHhcu92Hn3a90WJXyc5q5iIJdNZRB0
-        J7AZtwhUKl35mxIuK41hpkAYP51rEabpxf0EC4U=
-X-Google-Smtp-Source: ABdhPJzy1eOtcrb4Ztzzlpxz2vyV7gDQb2/lcT2CNnTSaKFW0lqCRQKUk68wF2yJdSqy2wwTVxnzLyyxbek301vQtt4=
-X-Received: by 2002:a17:906:f115:: with SMTP id gv21mr16115978ejb.340.1592848928328;
- Mon, 22 Jun 2020 11:02:08 -0700 (PDT)
+        bh=Gb+JetmJfxvfJpxHC8m6WwdUvvjtG/PEO/NrvZ7SUq0=;
+        b=NqH93KgUTC+tuZWzFKLl0EaKER1/I/D5ewV4RzsN2FqFvbBEfmc1m26/BgTmzyLudy
+         55/JScO7v7O5KnC6bVz/NrKCA7CUCe+DxfDsecjLNem5eeAHHFpMbq9k6z54VwaA6aWj
+         06bfx8WGZ/ce7P3Z4/vUFQiT511NVrDjEBKpgc9Q2uOPFNdN8/oX+e+6WSVykTuAdhUb
+         rGwMS/1ygzfzCq0dTVgZeswpIYIksllmylXoSLxgZMx3tw1XvhkZJfksnI0P7FY7YcNg
+         bnBQ7SitztgdhksJieR9jw2YpV5dLnq/AJVD4U0X4UdnIJCy36Zstr+c/dJrG88A+UPq
+         bMsA==
+X-Gm-Message-State: AOAM532Lw0v+hkNmPxwgOV8f95ygCi75xD3NDmvGbyzrxIfLoPlYrVUo
+        oBZCc6zsquTaWPuKHRIOZEHoF2Z8brndBDY1PpUAzQ==
+X-Google-Smtp-Source: ABdhPJxjYmvT3fQkCRcyhTKfiFZOdTkx+4rML9Oc+LRvsn6ucoVJwJ7PtyGZkVKmwrq2pv/vivr0Qr/enJgVlPaAiao=
+X-Received: by 2002:a17:902:fe8b:: with SMTP id x11mr20457257plm.179.1592851152937;
+ Mon, 22 Jun 2020 11:39:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200622075749.21925-1-konradybcio@gmail.com> <20200622075749.21925-7-konradybcio@gmail.com>
- <20200622174920.GS128451@builder.lan>
-In-Reply-To: <20200622174920.GS128451@builder.lan>
-From:   Konrad Dybcio <konradybcio@gmail.com>
-Date:   Mon, 22 Jun 2020 20:01:32 +0200
-Message-ID: <CAMS8qEUP0ojnzww6T46cMTtA2kA2hZxdjepQUF+-ACSFRvTSSg@mail.gmail.com>
-Subject: Re: [PATCH v2 6/8] arm64: dts: qcom: sdm630: Add sdm630 dts file
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     skrzynka@konradybcio.pl, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org
+References: <20200620033007.1444705-1-keescook@chromium.org> <20200620033007.1444705-12-keescook@chromium.org>
+In-Reply-To: <20200620033007.1444705-12-keescook@chromium.org>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 22 Jun 2020 11:39:01 -0700
+Message-ID: <CAKwvOdm7+8xhbMZRPq0+2X1hez=cNGf=psX7ofNUfqq9iY5ScA@mail.gmail.com>
+Subject: Re: [PATCH v2 11/16] media: sur40: Remove uninitialized_var() usage
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org,
+        Network Development <netdev@vger.kernel.org>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-spi@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Bjorn!
+On Fri, Jun 19, 2020 at 8:30 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings (e.g.
+> "unused variable"). If the compiler thinks it is uninitialized, either
+> simply initialize the variable or make compiler changes. As a precursor
+> to removing[2] this[3] macro[4], just remove this variable since it was
+> actually unused:
+>
+> drivers/input/touchscreen/sur40.c:459:6: warning: variable 'packet_id' set but not used [-Wunused-but-set-variable]
+>   459 |  u32 packet_id;
+>       |      ^~~~~~~~~
+>
+> However, in keeping with the documentation desires outlined in commit
+> 335abaea7a27 ("Input: sur40 - silence unnecessary noisy debug output"),
+> comment out the assignment instead of removing it.
+>
+> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
+> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
+> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
+>
+> Fixes: 335abaea7a27 ("Input: sur40 - silence unnecessary noisy debug output")
 
-Thanks for your review. I will address these issues and send a v3 shortly.
+Probably should comment out `/* u32 packet_id */` rather than removing
+it then, but that doesn't really matter. Either way,
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Regards
-Konrad
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  drivers/input/touchscreen/sur40.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/input/touchscreen/sur40.c b/drivers/input/touchscreen/sur40.c
+> index 34d31c7ec8ba..620cdd7d214a 100644
+> --- a/drivers/input/touchscreen/sur40.c
+> +++ b/drivers/input/touchscreen/sur40.c
+> @@ -456,8 +456,6 @@ static void sur40_poll(struct input_dev *input)
+>  {
+>         struct sur40_state *sur40 = input_get_drvdata(input);
+>         int result, bulk_read, need_blobs, packet_blobs, i;
+> -       u32 uninitialized_var(packet_id);
+> -
+>         struct sur40_header *header = &sur40->bulk_in_buffer->header;
+>         struct sur40_blob *inblob = &sur40->bulk_in_buffer->blobs[0];
+>
+> @@ -491,7 +489,7 @@ static void sur40_poll(struct input_dev *input)
+>                 if (need_blobs == -1) {
+>                         need_blobs = le16_to_cpu(header->count);
+>                         dev_dbg(sur40->dev, "need %d blobs\n", need_blobs);
+> -                       packet_id = le32_to_cpu(header->packet_id);
+> +                       /* packet_id = le32_to_cpu(header->packet_id); */
+>                 }
+>
+>                 /*
+> --
+> 2.25.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200620033007.1444705-12-keescook%40chromium.org.
+
+
+
+-- 
+Thanks,
+~Nick Desaulniers
