@@ -2,65 +2,64 @@ Return-Path: <SRS0=k8ID=AD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-19.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF5D2C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 17:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E36F0C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 17:04:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9FFDA20768
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 17:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C300F20644
+	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 17:04:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qyfkzOIs"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qKm/Whls"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729976AbgFVRAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 13:00:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52180 "EHLO
+        id S1729974AbgFVREc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 13:04:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52908 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729850AbgFVRAG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 13:00:06 -0400
-Received: from mail-pf1-x442.google.com (mail-pf1-x442.google.com [IPv6:2607:f8b0:4864:20::442])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9EC76C061798
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 10:00:06 -0700 (PDT)
-Received: by mail-pf1-x442.google.com with SMTP id q17so1468895pfu.8
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 10:00:06 -0700 (PDT)
+        with ESMTP id S1729873AbgFVREb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 13:04:31 -0400
+Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4AFDC061799
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 10:04:30 -0700 (PDT)
+Received: by mail-pl1-x641.google.com with SMTP id d10so5920709pls.5
+        for <linux-clk@vger.kernel.org>; Mon, 22 Jun 2020 10:04:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=5BGCSUQL5tzelRNBUzUtnoDU4FBOgbBEZDAqmf1y2tY=;
-        b=qyfkzOIs3IOcHqZGIEiR8JGq0nJVsevXD15ku29SFyXssZXEUC3c86hg9Gv/KJ2BHe
-         y3Hp8Hq1zqOS9OOFR3gNNpt0Qv7Nm37wmlte3OKeZWdMeR9NA90wXNwkm6gxb1GWESrg
-         FV+TpCchSKop95+zTyCexbHOPt326ZBObp2o6QnHWx5CQujP1LVI+R0x75IanRkYHnnq
-         8sIguoxvjbcrJCtaYT0jWDLSWi2vPjWi4gWLpfFDTJyQet65QDVBdYYTPy34m1tTALHH
-         MyJ02UqH4YfMYS1tNdV8DEY2h1OHgS9vwRBU8tnsCUN5ZqCoUAJ9paYX1bhDXSLYsgvR
-         L24A==
+        bh=+m5221Ut6o3WuT6BjiL72c05hVwdkXllFG7aX4yJx4M=;
+        b=qKm/WhlsQKDgGm0JFnkCdb0IzzhquY358SdW3YjXotmWgdudNMJZnXNXgvLG0UCoo9
+         7Cw6pnkmDWaW0NfZwL15NqU9yndpUvZfap4/r4/N0EchCfKEkHwdBZzA06x2GNQH+3Mt
+         J/3WYO6M5B8qpkeQr8fpVlBadLhCAZf2C9poaWq+QLaHYcQ0rGyiUjvhR65Bxkj+hA2b
+         s9+jLdjx7crDjAvCyWnbR0bBghdrf6Nltn1qYGOn5boJGAxwdb3AWa19DW56iVy38cNF
+         K25EWlpr0J4GIzjxfrzpPzlHwPqk4eyUHRflEds57fzvbDL6gzcelUVq6RZ2ZRqHOBVq
+         4aaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5BGCSUQL5tzelRNBUzUtnoDU4FBOgbBEZDAqmf1y2tY=;
-        b=S84m2BQzs6YRD2h+UmyRHvVsmL28B4LiAlK1VBpm7hiLVTWRgbq3Q7Vc3VJRw0iQm2
-         BaQamSl3clM+egcGOe7aDUJjobhUvOyLxWicvzUigtBB/gmNoPuIaQmG81008bpnV5PS
-         Ctp2SSl3BGAMFezHM2zz/x+GGazzEigKetU1gHOQMUOPOMcgj+valeURrOaHAfHCLZdo
-         CNCg6RrS1QRMQEHMi1PCK6RUxFdxxAZspkFm51Y9Uw1xF1W6ixljgCmF02dFqRFXkhVb
-         PHmLQtg9OGHNc3IJYmP6kHuaMXJSibkh1JpvhZ1Fz+RGc62Y28enDxhn5w4dZg6huHJR
-         Hs8A==
-X-Gm-Message-State: AOAM532D8m6Vrf5UKGMpcR7ey1t3eKHXro7MNwmYsVXuiiafhBlwWDOS
-        uTH0FkSDA8ZcKi5Jz+MYJI6rIREshjOr8TrODWuikQ==
-X-Google-Smtp-Source: ABdhPJzRctk7sbdkIMQOmqVpecK2ZcMwEAt3JEckAnE+NdDNoij2Ixhlu/aU/MySqDydTtISB1suO3tr/npvXJ5DjBc=
-X-Received: by 2002:aa7:9abc:: with SMTP id x28mr21131306pfi.39.1592845205633;
- Mon, 22 Jun 2020 10:00:05 -0700 (PDT)
+        bh=+m5221Ut6o3WuT6BjiL72c05hVwdkXllFG7aX4yJx4M=;
+        b=PL1ep8lGHPcmOaqcr73ewudaLMwXE8kA+0vuJFrtoLEsGX5TiBsPYkx5E2uQvc/ZC2
+         oCIeQ5S7vV+XB/cWaQIhUEPhPfna0tzzNXjodAJ89tTNsCN4L92WLpWVrG0gu7siLULv
+         kNNJCDrqyAmN3CwGdpVpMo6n19TyCHDpFU36MYPkSlDlgyXPP475mqRfgVnmjZBadsHN
+         VRzeswFLotlExmGZJTdciZmeCXWEYvnAGcf/MwkZnE/ozazVc0TQSZFqTO3DwmwqzvTP
+         kQTmUwLLvfA7moIuBBiMFqBBCTA9FUOyZuUXGNcdd4Y7Vi+Jw/fePoPF6kZjEs7jMeu8
+         1WcA==
+X-Gm-Message-State: AOAM532HEKkw6ozPKculZx5EFs+wEDahfDaQC1n41zNbu1BeftacSXw4
+        uQg624eN1ERKsNx2IfwRGCscnYb64fGFOnGjOQu6tQ==
+X-Google-Smtp-Source: ABdhPJwq3U6/P+kOQWrtaPsfC7pEtXaKjHv6HeLE+nRTnxPEDc+MHw061OC9xpPpZ7i7YIPBLzcZEdJFmiD+WA1tEsk=
+X-Received: by 2002:a17:90a:e2c4:: with SMTP id fr4mr19317188pjb.32.1592845469798;
+ Mon, 22 Jun 2020 10:04:29 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200620033007.1444705-1-keescook@chromium.org> <20200620033007.1444705-2-keescook@chromium.org>
-In-Reply-To: <20200620033007.1444705-2-keescook@chromium.org>
+References: <20200620033007.1444705-1-keescook@chromium.org> <20200620033007.1444705-5-keescook@chromium.org>
+In-Reply-To: <20200620033007.1444705-5-keescook@chromium.org>
 From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 22 Jun 2020 09:59:54 -0700
-Message-ID: <CAKwvOd=a+aSb5Scg=jD-jDfvnKJjOCVQ8CidgEo-39g2b2z-3A@mail.gmail.com>
-Subject: Re: [PATCH v2 01/16] docs: deprecated.rst: Add uninitialized_var()
+Date:   Mon, 22 Jun 2020 10:04:18 -0700
+Message-ID: <CAKwvOdmsXuqx-3Rt_KNFq4psAeFjG2-7qQaqkJ7dDqqmscUFNw@mail.gmail.com>
+Subject: Re: [PATCH v2 04/16] b43: Remove uninitialized_var() usage
 To:     Kees Cook <keescook@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
@@ -86,55 +85,43 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Fri, Jun 19, 2020 at 8:30 PM Kees Cook <keescook@chromium.org> wrote:
 >
-> Nothing should be using this macro, and the entire idea of tricking the
-> compiler into silencing such warnings is a mistake.
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings (e.g.
+> "unused variable"). If the compiler thinks it is uninitialized, either
+> simply initialize the variable or make compiler changes. As a precursor
+> to removing[2] this[3] macro[4], just initialize this variable to NULL.
+> No later NULL deref is possible due to the early returns outside of the
+> (phy->rev >= 7 && phy->rev < 19) case, which explicitly tests for NULL.
 >
+> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
+> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
+> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
+>
+> Fixes: 58619b14d106 ("b43: move under broadcom vendor directory")
 > Signed-off-by: Kees Cook <keescook@chromium.org>
 
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+I see three total uses of uninitialized_var() in this file, do we want
+to eliminate all of them?
 
 > ---
->  Documentation/process/deprecated.rst | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+>  drivers/net/wireless/broadcom/b43/phy_n.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/Documentation/process/deprecated.rst b/Documentation/process/deprecated.rst
-> index 652e2aa02a66..943a926ecbbb 100644
-> --- a/Documentation/process/deprecated.rst
-> +++ b/Documentation/process/deprecated.rst
-> @@ -51,6 +51,24 @@ to make sure their systems do not continue running in the face of
->  "unreachable" conditions. (For example, see commits like `this one
->  <https://git.kernel.org/linus/d4689846881d160a4d12a514e991a740bcb5d65a>`_.)
+> diff --git a/drivers/net/wireless/broadcom/b43/phy_n.c b/drivers/net/wireless/broadcom/b43/phy_n.c
+> index c33b4235839d..46db91846007 100644
+> --- a/drivers/net/wireless/broadcom/b43/phy_n.c
+> +++ b/drivers/net/wireless/broadcom/b43/phy_n.c
+> @@ -4222,7 +4222,7 @@ static void b43_nphy_tx_gain_table_upload(struct b43_wldev *dev)
+>         u32 rfpwr_offset;
+>         u8 pga_gain, pad_gain;
+>         int i;
+> -       const s16 *uninitialized_var(rf_pwr_offset_table);
+> +       const s16 *rf_pwr_offset_table = NULL;
 >
-> +uninitialized_var()
-> +-------------------
-> +For any compiler warnings about uninitialized variables, just add
-> +an initializer. Using the uninitialized_var() macro (or similar
-> +warning-silencing tricks) is dangerous as it papers over `real bugs
-> +<https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/>`_
-> +(or can in the future), and suppresses unrelated compiler warnings
-> +(e.g. "unused variable"). If the compiler thinks it is uninitialized,
-> +either simply initialize the variable or make compiler changes. Keep in
-> +mind that in most cases, if an initialization is obviously redundant,
-> +the compiler's dead-store elimination pass will make sure there are no
-> +needless variable writes.
-> +
-> +As Linus has said, this macro
-> +`must <https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/>`_
-> +`be <https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/>`_
-> +`removed <https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/>`_.
-> +
->  open-coded arithmetic in allocator arguments
->  --------------------------------------------
->  Dynamic size calculations (especially multiplication) should not be
+>         table = b43_nphy_get_tx_gain_table(dev);
+>         if (!table)
 > --
-> 2.25.1
->
-> --
-> You received this message because you are subscribed to the Google Groups "Clang Built Linux" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to clang-built-linux+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/clang-built-linux/20200620033007.1444705-2-keescook%40chromium.org.
-
-
 
 -- 
 Thanks,
