@@ -2,134 +2,113 @@ Return-Path: <SRS0=Bh1D=AE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38098C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 08:34:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4249FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 08:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 156FD20738
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 08:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592901254;
-	bh=xhJyNgexKUtQqsTRLYLgxO9uWTnpO1SU0yUZ5LR0Wo4=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=lPJLw2e+Dq1cA2d8WSCyCdr6z2a6k7fk7i8G+jZoIRjL7ZXRQVmR0MKD88SSy7ph1
-	 W6MOBDnz2T1y/W3gJ3+rbhxIvx6bQeAN+dIooWGmJ2qw9rsvINa0t518FOklhMg+X5
-	 BWXmoyD9Qdo7qM4T4IfE7Saw8kmsv89hEEI2ThV8=
+	by mail.kernel.org (Postfix) with ESMTP id 2AC3920738
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 08:49:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbgFWIeN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jun 2020 04:34:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731724AbgFWIeN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jun 2020 04:34:13 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17032072E;
-        Tue, 23 Jun 2020 08:34:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592901252;
-        bh=xhJyNgexKUtQqsTRLYLgxO9uWTnpO1SU0yUZ5LR0Wo4=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ks2iMxwjVDQaF6CrIGCOP56jLcSr3LgtnkdgSdDDO3INAZiCMtFiB9G+H2pjdqVM9
-         ne5m50sMrW5MA+Hy1L3pWaNWHCebIUoPgDYXFJsd1dKm4PAPsjsOEJ6Al8b4Fmv4jG
-         qiApvojFQ5MSp+dEZ3JOBZcz0UBhYVjP0s6GNScY=
-Content-Type: text/plain; charset="utf-8"
+        id S1731799AbgFWItT convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jun 2020 04:49:19 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40762 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731775AbgFWItT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jun 2020 04:49:19 -0400
+Received: by mail-oi1-f194.google.com with SMTP id t25so18183221oij.7;
+        Tue, 23 Jun 2020 01:49:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=KYYkTy+n5vlKKt6FVVpIMkxXIMyGrQIro4YFJXSFp/Q=;
+        b=Z49XcmnkJkCrXdxkwm0MB1QNxW2yEqKzNkNDq6y+FQyWJRqPBgQGJ49auccg2qeWKp
+         6jV32/Rnz2DqXY1q/cRcsvFEcSZ1OOQEkhFLfi/99EAUykfXP/SVTaWJsz8XoxO7a0kX
+         lEnRhd7I9LqG1miK831CZJKtywoCJBMgmw0B7D088LYHFBRdCFEThh/Lvdoug87UeDqs
+         tQn7PxtlYQce/jndNXC8xkGqkqWsKfmBEnSls9pBDcMzz4jRW1q7k4daOK+ryZuMc23B
+         5YI4L7KYJ0Ffoy5YZ0bFaYs8lWa+Ima76HAwrOTNGi3H3tS4kSHXOz/GFkXRXaDvaIFP
+         L3Uw==
+X-Gm-Message-State: AOAM5311R4Cvjv7XN7bJLmCSXU6DYgEuWShQCzbAKYN8xeKGjuo6u4sO
+        Li0UN164yoaPDa7/ySttL/z8n/61WvaGvjGu3nVvwQ==
+X-Google-Smtp-Source: ABdhPJyZuQJULxx3zeAGfh1M7qa212mqMA6kl+nmL+q8rj5M2TP5jMtfN8t8iYl5v54dJMOwofhHC5BjrzV1nV2gUFY=
+X-Received: by 2002:a54:4006:: with SMTP id x6mr14938101oie.148.1592902158608;
+ Tue, 23 Jun 2020 01:49:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM6PR04MB496690A045E0BFFF3D03AE0380940@AM6PR04MB4966.eurprd04.prod.outlook.com>
-References: <1591687933-19495-1-git-send-email-Anson.Huang@nxp.com> <1591687933-19495-4-git-send-email-Anson.Huang@nxp.com> <AM6PR04MB49660A10856A3746C7103394809A0@AM6PR04MB4966.eurprd04.prod.outlook.com> <DB3PR0402MB39163BC04E4E5F4F6A22F6D4F59A0@DB3PR0402MB3916.eurprd04.prod.outlook.com> <AM6PR04MB4966B94CFAE642E6AF5AEF79809B0@AM6PR04MB4966.eurprd04.prod.outlook.com> <159262367025.62212.11651547971712516448@swboyd.mtv.corp.google.com> <AM6PR04MB496690A045E0BFFF3D03AE0380940@AM6PR04MB4966.eurprd04.prod.outlook.com>
-Subject: RE: [PATCH V2 3/9] clk: imx: Support building SCU clock driver as module
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Stefan Agner <stefan.agner@toradex.com>, allison@lohutok.net,
-        arnd@arndb.de, festevam@gmail.com, gregkh@linuxfoundation.org,
-        info@metux.net, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        mturquette@baylibre.com, oleksandr.suvorov@toradex.com,
-        s.hauer@pengutronix.de, sfr@canb.auug.org.au, shawnguo@kernel.org,
-        tglx@linutronix.de, yuehaibing@huawei.com
-Date:   Tue, 23 Jun 2020 01:34:12 -0700
-Message-ID: <159290125202.62212.13172213909023205615@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+References: <20200212101651.9010-1-geert+renesas@glider.be>
+ <CAEbi=3fMRq++Eot+BEtCedeyhM65kTc+nS7=inCTR8MkT5srww@mail.gmail.com> <CAMuHMdU+VLpg5Yezo2Ea9v2vmvbA=nEcKObBgZYwjSV10OkY=A@mail.gmail.com>
+In-Reply-To: <CAMuHMdU+VLpg5Yezo2Ea9v2vmvbA=nEcKObBgZYwjSV10OkY=A@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 23 Jun 2020 10:49:07 +0200
+Message-ID: <CAMuHMdWaRw+61y4Ykk4niagPOtY3dL28fhtB=3jdR16ZODGgfg@mail.gmail.com>
+Subject: Re: [PATCH] nds32: Replace <linux/clk-provider.h> by <linux/of_clk.h>
+To:     Greentime Hu <green.hu@gmail.com>
+Cc:     Nick Hu <nickhu@andestech.com>, Vincent Chen <deanbo422@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng Dong (2020-06-22 20:42:19)
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Sent: Saturday, June 20, 2020 11:28 AM
-> > Subject: RE: [PATCH V2 3/9] clk: imx: Support building SCU clock driver=
- as
-> > module
-> >=20
-> > Quoting Aisheng Dong (2020-06-17 18:58:51)
-> > > > From: Anson Huang <anson.huang@nxp.com>
-> > > > > > +obj-$(CONFIG_MXC_CLK_SCU) +=3D mxc-clk-scu.o
-> > > > >
-> > > > > Like i.MX pinctrl, I'm not sure if it's really necessary to build
-> > > > > core libraries as modules. Probably the simplest way is only
-> > > > > building platform drivers part as module. And leave those core li=
-braries
-> > built in kernel.
-> > > > > This may make the code a bit cleaner.
-> > > > >
-> > > >
-> > > > Will discuss this with Linaro guys about it, previous requirement I
-> > > > received is all SoC specific modules need to be built as module.
-> > > >
-> > >
-> > > Okay. AFAIK it's not conflict.
-> > > You still make drivers into modules.
-> > > Only difference is for those common libraries part, we don't convert
-> > > them into module Which is less meaningless.
-> > >
-> >=20
-> > What is the benefit of making the core part of the SoC driver not a mod=
-ule?
->=20
-> Usually we could try to build it as module if it's not hard.
->=20
-> One question is sometimes those core part are shared with some platforms =
-which can't built as module.
-> For i.MX case, it's mainly patch 4:
-> [V2,4/9] clk: imx: Support building i.MX common clock driver as module
-> https://patchwork.kernel.org/patch/11594801/
->=20
-> Those libraries are also used by i.MX6&7 which can't build as module.
-> So we need an extra workaround patch to forcely 'select' it under arch/ar=
-m/mach-imx/Kconfig
-> [V2,2/9] ARM: imx: Select MXC_CLK for ARCH_MXC
-> https://patchwork.kernel.org/patch/11594793/
-> Then the users can't configure it as module in order to not break build.
->=20
-> If build-in those common libraries, the implementation could be a bit eas=
-ier and cleaner.
-> So I'm not sure if we still have to build them as module.
-> How would you suggest for such case?
+Hi Greentime,
 
-Stop using 'select MXC_CLK' when requiring the core library code?
-Instead, make it a 'depends' and then that will make depending modules
-(i.e. the SoC files) that want to be builtin force the core module to be
-builtin too. Other modular configs that depend on the core will still be
-modular.=20
+On Wed, Feb 12, 2020 at 1:25 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Wed, Feb 12, 2020 at 11:52 AM Greentime Hu <green.hu@gmail.com> wrote:
+> > Geert Uytterhoeven <geert+renesas@glider.be> 於 2020年2月12日 週三 下午6:16寫道：
+> > > The Andes platform code is not a clock provider, and just needs to call
+> > > of_clk_init().
+> > >
+> > > Hence it can include <linux/of_clk.h> instead of <linux/clk-provider.h>.
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > >  arch/nds32/kernel/time.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/nds32/kernel/time.c b/arch/nds32/kernel/time.c
+> > > index ac9d78ce3a818926..574a3d0a853980a9 100644
+> > > --- a/arch/nds32/kernel/time.c
+> > > +++ b/arch/nds32/kernel/time.c
+> > > @@ -2,7 +2,7 @@
+> > >  // Copyright (C) 2005-2017 Andes Technology Corporation
+> > >
+> > >  #include <linux/clocksource.h>
+> > > -#include <linux/clk-provider.h>
+> > > +#include <linux/of_clk.h>
+> > >
+> > >  void __init time_init(void)
+> > >  {
+> >
+> > Thank you, Geert.
+> >
+> > Let me know if you like to put in your tree or nds32's.
+> > Acked-by: Greentime Hu <green.hu@gmail.com>
+>
+> Please take it in the nds32 tree.
+> Thanks!
 
-I don't know why an architecture is selecting the clk code at all to be
-honest. That can be moved to the defconfig instead of in the
-architecture Kconfig and then you don't get a working system unless you
-select the MXC_CLK config from the configurator tool (menuconfig,
-nconfig, etc.) So ARCH_MXC shouldn't be in this discussion and the core
-module should be selectable by the configurator and that should be
-tristate and all SoC modules should depend on that core library module
-and be selectable too and those Kconfigs can be tristate or bool.
+And so you did. But it disappeared after June 12, when the nds32 tree
+was reset to v5.7, losing the following 2 commits:
+
+de9a5650b611014c52b1ad994f63253593d8eddf nds32: Replace
+<linux/clk-provider.h> by <linux/of_clk.h>
+d785c5a324cd8812720a409dc85050558281a567 nds32: configs: Cleanup
+CONFIG_CROSS_COMPILE
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
