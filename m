@@ -2,135 +2,101 @@ Return-Path: <SRS0=Bh1D=AE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6768EC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 12:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52716C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 12:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0DC20716
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 12:30:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWGfIOh/"
+	by mail.kernel.org (Postfix) with ESMTP id 27F4F20774
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 12:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592915993;
+	bh=Sf31bbv+NizJQ/qfUekYBQVAKaQoqsrAkLY4dLIG+kw=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:List-ID:From;
+	b=G5UHjuUzoQZe0tMBmyxNNRaEqmkg/kH3Vx21+j/GsQPkwRl4J2fTO+5KSgsWzJscH
+	 UqN7F0xYDm9Emi+W5rz8dKQXwCX9/WUQNNet2w1752hbD0MlGzUnk6IQ8W769UB7lk
+	 /kSUATPbXWmbs1g/DTtkqc+D4t00YHPtmBlQRmEE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732439AbgFWMaX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jun 2020 08:30:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36144 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729611AbgFWMaX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 23 Jun 2020 08:30:23 -0400
-Received: from mail-qt1-x842.google.com (mail-qt1-x842.google.com [IPv6:2607:f8b0:4864:20::842])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01926C061573;
-        Tue, 23 Jun 2020 05:30:22 -0700 (PDT)
-Received: by mail-qt1-x842.google.com with SMTP id u12so4752612qth.12;
-        Tue, 23 Jun 2020 05:30:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=hRrEey8Gnzl8K1ZpPYEbizHK74dAXBtjus76fCoxht0=;
-        b=cWGfIOh/rnqXFQBkkob13gFIctDjmYHP6M6sybFTtTw3ke+TrW/D3bnHeFd6TX1+AS
-         6/9/Pg5tAysIKQj5utZnqzCeBWJLF8x2zQhiLUS+YByxSNzgMgAVxeKtEOCMOFw4OG9Y
-         mjQ5y5acS2ZFOMfN4nr5EU/dlW754RefLImfaTPzAKYbEn1QY5uUpdinj4Pz4L8SCRol
-         NwNK+XJDijMfAxEpdIFxeVy/S34KbrL0FFMBNgaliOMEEsUATOrvq16nlmlQiQId8dpd
-         JCQmQ8fpS9YiDnzJUAhflCO2M5KdzryHxpyYgw+k40kR62uOdyVIOvfhaLzMSAjzVb/T
-         h5GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=hRrEey8Gnzl8K1ZpPYEbizHK74dAXBtjus76fCoxht0=;
-        b=fi9+MMZfVuvnEGKVJy9GVfPwXvOaPfIaHma4xjnz6JQ9kiSa7lnt23P22KC+PoO9Os
-         UYpJyK/tkhKVkmGDj/yrtXNm3Mu4vWch6qJcIbWt+x0isq95EO2s1lIshhu1he5cWueY
-         7C9rBSb5/wBCOWWPboFDPnkVrQao1sAac9Gs8NO5mpfJKZm/jEUWIU+2KjdX56pD/Uqx
-         7WqavDYx9zVjoBZHeAOWWxPhRqRgIjmy7/FP7YwvyHINM2PhuP53sbMDWT0Br3nAtf9p
-         PWKYjVSNp7+sT4XU9/xv4+6S0U1IwqeUfjR33cTJVrFLIrLGbHHgr5gQk1OLGNshq0JC
-         ARJg==
-X-Gm-Message-State: AOAM532vfeo1scQOZVzQIljL7XfosGul2pk8vWdwAG9yKbazmWLy9xp1
-        0R++zg4OyY3XwaQG8u+Z575RjFVegmMgkw0paiQI++Om
-X-Google-Smtp-Source: ABdhPJzh9j7xAgrjSNewg6VqZFbG/uDyIid/gQcYXoKCo1NLYreg1tki5DV2kTh69Y5ey0eR5Lqc4k4mIluLICiSPE0=
-X-Received: by 2002:ac8:4143:: with SMTP id e3mr20751737qtm.28.1592915421127;
- Tue, 23 Jun 2020 05:30:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200212101651.9010-1-geert+renesas@glider.be>
- <CAEbi=3fMRq++Eot+BEtCedeyhM65kTc+nS7=inCTR8MkT5srww@mail.gmail.com>
- <CAMuHMdU+VLpg5Yezo2Ea9v2vmvbA=nEcKObBgZYwjSV10OkY=A@mail.gmail.com> <CAMuHMdWaRw+61y4Ykk4niagPOtY3dL28fhtB=3jdR16ZODGgfg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWaRw+61y4Ykk4niagPOtY3dL28fhtB=3jdR16ZODGgfg@mail.gmail.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Tue, 23 Jun 2020 20:29:43 +0800
-Message-ID: <CAEbi=3ck8-p_HZ_mkMFEcWUnZOyFXM9NuYHDrXB9uj4GwmWZtg@mail.gmail.com>
-Subject: Re: [PATCH] nds32: Replace <linux/clk-provider.h> by <linux/of_clk.h>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Nick Hu <nickhu@andestech.com>, Vincent Chen <deanbo422@gmail.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1732652AbgFWMjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 23 Jun 2020 08:39:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729667AbgFWMjt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 23 Jun 2020 08:39:49 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4245220776;
+        Tue, 23 Jun 2020 12:39:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592915988;
+        bh=Sf31bbv+NizJQ/qfUekYBQVAKaQoqsrAkLY4dLIG+kw=;
+        h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+        b=nirshNN0aFNNjSoexxgBlu3LFSV/A7dCq9dEs54XwdLipJdJZI2dIMYBwVLzlOIux
+         gEJO2xMSvsDvUB9qSGN8dlNlAOyF/nqQpS3cKoYSGiNqpXkLYcPsyMR+u6Dd0DhSgQ
+         OeFAt7QY8Xs3Eu3wv3HphKRraiQpqo1IGrybx0gQ=
+Date:   Tue, 23 Jun 2020 13:39:46 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     skrzynka@konradybcio.pl, Konrad Dybcio <konradybcio@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Andy Gross <agross@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Colin Cross <ccross@android.com>
+In-Reply-To: <20200620144639.335093-1-konradybcio@gmail.com>
+References: <20200620144639.335093-1-konradybcio@gmail.com>
+Subject: Re: [PATCH 00/21] MSM8994 peripheral enablement, DTS updates
+Message-Id: <159291598139.44727.6998255676582744850.b4-ty@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> =E6=96=BC 2020=E5=B9=B46=E6=9C=88=
-23=E6=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=884:49=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> Hi Greentime,
->
-> On Wed, Feb 12, 2020 at 1:25 PM Geert Uytterhoeven <geert@linux-m68k.org>=
- wrote:
-> > On Wed, Feb 12, 2020 at 11:52 AM Greentime Hu <green.hu@gmail.com> wrot=
-e:
-> > > Geert Uytterhoeven <geert+renesas@glider.be> =E6=96=BC 2020=E5=B9=B42=
-=E6=9C=8812=E6=97=A5 =E9=80=B1=E4=B8=89 =E4=B8=8B=E5=8D=886:16=E5=AF=AB=E9=
-=81=93=EF=BC=9A
-> > > > The Andes platform code is not a clock provider, and just needs to =
-call
-> > > > of_clk_init().
-> > > >
-> > > > Hence it can include <linux/of_clk.h> instead of <linux/clk-provide=
-r.h>.
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > ---
-> > > >  arch/nds32/kernel/time.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/arch/nds32/kernel/time.c b/arch/nds32/kernel/time.c
-> > > > index ac9d78ce3a818926..574a3d0a853980a9 100644
-> > > > --- a/arch/nds32/kernel/time.c
-> > > > +++ b/arch/nds32/kernel/time.c
-> > > > @@ -2,7 +2,7 @@
-> > > >  // Copyright (C) 2005-2017 Andes Technology Corporation
-> > > >
-> > > >  #include <linux/clocksource.h>
-> > > > -#include <linux/clk-provider.h>
-> > > > +#include <linux/of_clk.h>
-> > > >
-> > > >  void __init time_init(void)
-> > > >  {
-> > >
-> > > Thank you, Geert.
-> > >
-> > > Let me know if you like to put in your tree or nds32's.
-> > > Acked-by: Greentime Hu <green.hu@gmail.com>
-> >
-> > Please take it in the nds32 tree.
-> > Thanks!
->
-> And so you did. But it disappeared after June 12, when the nds32 tree
-> was reset to v5.7, losing the following 2 commits:
->
-> de9a5650b611014c52b1ad994f63253593d8eddf nds32: Replace
-> <linux/clk-provider.h> by <linux/of_clk.h>
-> d785c5a324cd8812720a409dc85050558281a567 nds32: configs: Cleanup
-> CONFIG_CROSS_COMPILE
->
+On Sat, 20 Jun 2020 16:46:16 +0200, Konrad Dybcio wrote:
+> In this series I added support for various buses and peripherals
+> such as I2C or SMD RPM. I also did some housekeeping when it comes
+> to the DTS. This series also includes a new board (SoMC Kitakami
+> Sumire / Xperia Z5).
+> 
+> I have a MMCC driver coming along with GCC updates/completion
+> (almost ready, need to polish a few things) and I sincerely
+> hope somebody is going to write a 20nm DSI PLL driver (for 8992/4)
+> as I have no clue how that works.
+> 
+> [...]
 
-Thank you, Geert. It must be my mistake when I try to clean the next branch=
-.
-I just put these 2 commits back.
+Applied to
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+
+Thanks!
+
+[1/1] regulator: qcom_smd: Fix pmi8994 label
+      commit: 0d46f69881c34351b6ec523c31225b90ea89ee20
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
