@@ -1,63 +1,76 @@
-Return-Path: <SRS0=k8ID=AD=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Bh1D=AE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 621BDC433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 21:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41ECCC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 01:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3961920767
-	for <linux-clk@archiver.kernel.org>; Mon, 22 Jun 2020 21:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20BE120780
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 01:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1592877583;
+	bh=aclJpifwCB+SOaC8bKBEjlmHV5cHiAR0Ph4IBBeICTE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=WfCCcFRUGCkBodC7lQA8cwka+PECKkEogqd8w1+GDgT5KuJz+PGgpdQYSXu7I9Lfz
+	 EQhWr8e6Maf/ygH3Z0yyXjFYJZkvphnUEszPyTYXISn9Mbi6rCgl/8CwYHaVbucnUJ
+	 ks3QXTm7UOJAJhkWEi4GfxWWc+efaDmN2qB4gLhk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727076AbgFVVsI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 17:48:08 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:42327 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730646AbgFVVsC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 22 Jun 2020 17:48:02 -0400
-X-Originating-IP: 86.202.110.81
-Received: from localhost (lfbn-lyo-1-15-81.w86-202.abo.wanadoo.fr [86.202.110.81])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 1924B1C0002;
-        Mon, 22 Jun 2020 21:47:59 +0000 (UTC)
-Date:   Mon, 22 Jun 2020 23:47:59 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        Karl =?iso-8859-1?Q?Rudb=E6k?= Olsen <karl@micro-technic.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: at91: add sama5d3 pmc driver
-Message-ID: <20200622214759.GK131826@piout.net>
-References: <20200110223033.1261791-1-alexandre.belloni@bootlin.com>
- <37d11358-d3b5-10a1-72a3-93a03a6c1ea6@pengutronix.de>
+        id S1730590AbgFWB7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 21:59:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38690 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732069AbgFWB7R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jun 2020 21:59:17 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18E622075A;
+        Tue, 23 Jun 2020 01:59:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1592877557;
+        bh=aclJpifwCB+SOaC8bKBEjlmHV5cHiAR0Ph4IBBeICTE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=FUJEgBHEzMyUUT4fhXvOKgPLRUGJE7cAo7PdAr+TsVqgzFtLkT/RZD0g5wGTkixNu
+         VCKcbfwALk/YbRO5NW7iZm1sIyPMA10GFpBZ/YVMrmBgZ7tyK4pO3mzjeIHbwYrgqL
+         fdytbyV3XibJEOA90ia3uEhuJVgztLGqoFRq7T6M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <37d11358-d3b5-10a1-72a3-93a03a6c1ea6@pengutronix.de>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200622090252.36568-1-konradybcio@gmail.com>
+References: <20200622090252.36568-1-konradybcio@gmail.com>
+Subject: Re: [PATCH v3 1/1] clk: qcom: smd: Add support for SDM660 rpm clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Konrad Dybcio <konradybcio@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konradybcio@gmail.com>, skrzynka@konradybcio.pl
+Date:   Mon, 22 Jun 2020 18:59:16 -0700
+Message-ID: <159287755633.62212.14680448845942613971@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Quoting Konrad Dybcio (2020-06-22 02:02:52)
+> Add rpm smd clocks, PMIC and bus clocks which are required on
+> SDM630/660 (and APQ variants) for clients to vote on.
+>=20
+> changes since v2:
+> - separate from SDM630 enablement series
+> - fix indentation in Docs
+> - sort compatible strings alphabetically
+> - drop an accidental newline
+>=20
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+> ---
 
-On 22/06/2020 23:24:45+0200, Ahmad Fatoum wrote:
-> > +	regmap = syscon_node_to_regmap(np);
-> 
-> Shouldn't this be device_node_to_regmap for the same reasons outlined in your
-> 6956eb33 ("clk: at91: fix possible deadlock") commit?
-> 
-> Same question for at91sam9g45.c, sam9x60.c and at91sam9n12.c.
-> 
-
-Agreed, I guess you can send a patch fixing all the instances.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Applied to clk-next
