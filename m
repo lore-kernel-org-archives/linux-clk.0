@@ -6,80 +6,66 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6165AC433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 02:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F50CC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 02:08:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 339AE20720
-	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 02:07:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A48620768
+	for <linux-clk@archiver.kernel.org>; Tue, 23 Jun 2020 02:08:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1592878074;
-	bh=we5WmCVzt48ut9pkLyJImWtFpdDQxOoWy+a1m9PkbpU=;
+	s=default; t=1592878096;
+	bh=uW4WusswhVLgizDySNr71wzxeIDhK+OWpYozxZaa52g=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=R9bcMGFNGGZLLGQe9GA7nq3pTmJl/4+HFTqmTf+sV7DmmHHzmecDSZ4VvCY6cDjGb
-	 zlhD06Ismj8qxomzOlOkbGpoCHuV4rhxKgz+YmZznpWTHncJY2rxbjyi2sNLE+nvVa
-	 U0Hea7NFcMvwhk1PQZY2O4mxksCI9/USSwJqPlpo=
+	b=ZIKomDDEsRlAsQoiDceXhnd5cahhlvKEgHjzNYlnz2or/HsKlzGdouAj4tl9ncEvZ
+	 WPfwSBxGtHMFhOqfE/4PvvQvTKf7kKiZKsvhlOABfntaj0XmkmiLbs4s0fKcbfV2bx
+	 H5dQTEW1TLIJmPq8qSzX0yd/pCNhyZ4581eQQAes=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731425AbgFWCHy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 22 Jun 2020 22:07:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44744 "EHLO mail.kernel.org"
+        id S1731433AbgFWCIQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 22 Jun 2020 22:08:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730328AbgFWCHx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 22 Jun 2020 22:07:53 -0400
+        id S1730328AbgFWCIP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 22 Jun 2020 22:08:15 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C7D20720;
-        Tue, 23 Jun 2020 02:07:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45B7120720;
+        Tue, 23 Jun 2020 02:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1592878073;
-        bh=we5WmCVzt48ut9pkLyJImWtFpdDQxOoWy+a1m9PkbpU=;
+        s=default; t=1592878095;
+        bh=uW4WusswhVLgizDySNr71wzxeIDhK+OWpYozxZaa52g=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mRB5XR7hh7k+R+ykD5n2k9l6ijJs8RkwtQvZJ3He5oeAsR3hCxoRU1g30Geq5luv9
-         S8nfnjRcipZst25P1LUsoRTcaxcvrYloG8OFcdmDJ7JyeL0anXlYEX/zPXEmRH46iL
-         QRvH9DRa05FIKroqTuF6MLNtIAWY1HKyYMT9mygs=
+        b=YMe9EAm8d/uA85dqa18gaLyV9Dsx2KPu/Nci9FKJ28x1qKY7FWOsTVqThq2DTKx+C
+         TTfr1JQQjKxS6e19W00TTVHZADe3dGdzk4x2UVAwcD1LltPcAFgRBJNPynvzVffXS2
+         eNsOWmH2q8zTFY7ywBonQn8q1i9F7XyBPUKFpk/k=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200603111923.3545261-2-thierry.reding@gmail.com>
-References: <20200603111923.3545261-1-thierry.reding@gmail.com> <20200603111923.3545261-2-thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/2] clk: tegra: Always program PLL_E when enabled
+In-Reply-To: <1591155360-26173-3-git-send-email-peng.fan@nxp.com>
+References: <1591155360-26173-1-git-send-email-peng.fan@nxp.com> <1591155360-26173-3-git-send-email-peng.fan@nxp.com>
+Subject: Re: [PATCH V4 2/2] clk: imx8mp: add mu root clk
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        LABBE Corentin <clabbe@baylibre.com>,
-        Dmitry Osipenko <digetx@gmail.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-To:     Thierry Reding <thierry.reding@gmail.com>
-Date:   Mon, 22 Jun 2020 19:07:52 -0700
-Message-ID: <159287807271.62212.1561231041280024616@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-imx@nxp.com, leonard.crestez@nxp.com, daniel.baluta@nxp.com,
+        l.stach@pengutronix.de, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To:     aisheng.dong@nxp.com, fabio.estevam@nxp.com, kernel@pengutronix.de,
+        linux@rempel-privat.de, peng.fan@nxp.com, robh+dt@kernel.org,
+        shawnguo@kernel.org
+Date:   Mon, 22 Jun 2020 19:08:14 -0700
+Message-ID: <159287809463.62212.16531272768548193811@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2020-06-03 04:19:23)
-> From: Thierry Reding <treding@nvidia.com>
+Quoting peng.fan@nxp.com (2020-06-02 20:36:00)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> Commit bff1cef5f23a ("clk: tegra: Don't enable already enabled PLLs")
-> added checks to avoid enabling PLLs that have already been enabled by
-> the bootloader. However, the PLL_E configuration inherited from the
-> bootloader isn't necessarily the one that is needed for the kernel.
+> Add mu root clk for mu mailbox usage.
 >=20
-> This can cause SATA to fail like this:
->=20
->     [    5.310270] phy phy-sata.6: phy poweron failed --> -110
->     [    5.315604] tegra-ahci 70027000.sata: failed to power on AHCI cont=
-roller: -110
->     [    5.323022] tegra-ahci: probe of 70027000.sata failed with error -=
-110
->=20
-> Fix this by always programming the PLL_E. This ensures that any mis-
-> configuration by the bootloader will be overwritten by the kernel.
->=20
-> Fixes: bff1cef5f23a ("clk: tegra: Don't enable already enabled PLLs")
-> Reported-by: LABBE Corentin <clabbe@baylibre.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
