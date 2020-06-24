@@ -2,107 +2,111 @@ Return-Path: <SRS0=A9ZH=AF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CADF4C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 06:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AE0C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 07:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A52162088E
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 06:08:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mvpTvHX5"
+	by mail.kernel.org (Postfix) with ESMTP id EF9952082F
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 07:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388854AbgFXGIU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 02:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58036 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388164AbgFXGIU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jun 2020 02:08:20 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 93899C061573;
-        Tue, 23 Jun 2020 23:08:18 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id o2so1299478wmh.2;
-        Tue, 23 Jun 2020 23:08:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=J3AVCftaR9EPyVJSqZvDpFIlU9LAhorW3LOOtyD+8K4=;
-        b=mvpTvHX5ybEUwBm8lbbmhcm7Hb632yIgI6KI1i1azenZ+I3ggc9FqJDZwNHLXL3qos
-         5dwJL/iOANuTSGlR8vWIw1SrWmS85nbTWPF6V9W7HHTkJvLCYnMQ6HFJGNHx/8kVAIJH
-         brm41FjXgrhl8XZ4vJpFY24H11fOvruoV9kCE72crRSgVu6oVtI5xtQ9Jz2P7IeOlKSo
-         iR6a9tNwEgLkUvcL+sw7FxaLp1PtM+NM2o1XISKc4xtaoxIJ1w7uyyp5nR63MCmVVzRl
-         3dgJUkWoWZIXDH/FKWIj5Od6rqeYZpqmPrtv1JK+wjr0Jz3Oacmh/h8kvJW6jQdtNldu
-         2YEw==
+        id S2389739AbgFXHe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 03:34:26 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37301 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388489AbgFXHe0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jun 2020 03:34:26 -0400
+Received: by mail-ot1-f67.google.com with SMTP id v13so1042225otp.4;
+        Wed, 24 Jun 2020 00:34:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J3AVCftaR9EPyVJSqZvDpFIlU9LAhorW3LOOtyD+8K4=;
-        b=LPFmVBX1lGidbhS7VzFexuQQIp/eABOCKLi5JNLuyzTG8wRZX3fc5++bvUEED4y5ra
-         BshHa5wx6bu5ueu+NwI1DJsNvEfKAu1E2oiCMjTqan5MvSbSAS7MPt7sS2jUvGq/+oGA
-         xSZ1tphQilSlMXdG7OzPXtsG8N81OWhA1HQp/a8MCat7fkKIXiL8xiDH5k49NSrV6oPz
-         RlmT/UTvF22cnWY5qqqhuKiJgfkmItdCy4WQn3bjA45TK+p+UB7W7iYxyWM1B9IUloug
-         FfUx4D6BEXDJrVTRNaT1nvUmSu2vcYzt1Mcr3Of1QoLHdKuX9x5F+VlUJAu8TCkYMoZC
-         wuQg==
-X-Gm-Message-State: AOAM5303Ty4UMCh38+wVO6vlbDiJxUo2YrTZTnHVOFrRiYY8h+p1aHqj
-        94YLqQa2ajK6UBjrPrAB+RI=
-X-Google-Smtp-Source: ABdhPJxiESCVTYPKA7k2CylgKyTPo+uTpECT+lsNYvSmat+X3RolB7tU7PK118c4exFljWMvSRQoCw==
-X-Received: by 2002:a7b:c18f:: with SMTP id y15mr20639263wmi.85.1592978897172;
-        Tue, 23 Jun 2020 23:08:17 -0700 (PDT)
-Received: from ?IPv6:2a04:241e:500:9200:593:409e:3935:5922? ([2a04:241e:500:9200:593:409e:3935:5922])
-        by smtp.gmail.com with ESMTPSA id k185sm3352122wmk.47.2020.06.23.23.08.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jun 2020 23:08:16 -0700 (PDT)
-Subject: Re: [PATCH v4 0/6] PM / devfreq: Add dynamic scaling for imx8m ddr
- controller
-To:     Martin Kepplinger <martin.kepplinger@puri.sm>,
-        leonard.crestez@nxp.com
-Cc:     Anson.Huang@nxp.com, a.swigon@partner.samsung.com,
-        abailon@baylibre.com, abel.vesa@nxp.com, aisheng.dong@nxp.com,
-        angus@akkea.ca, cw00.choi@samsung.com, devicetree@vger.kernel.org,
-        fabio.estevam@nxp.com, georgi.djakov@linaro.org,
-        kernel@pengutronix.de, krzk@kernel.org, kyungmin.park@samsung.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-imx@nxp.com, linux-pm@vger.kernel.org, mark.rutland@arm.com,
-        martink@posteo.de, mka@chromium.org, mturquette@baylibre.com,
-        myungjoo.ham@samsung.com, ping.bai@nxp.com, rjw@rjwysocki.net,
-        robh@kernel.org, saravanak@google.com, sboyd@kernel.org,
-        shawnguo@kernel.org, viresh.kumar@linaro.org
-References: <cover.1573252696.git.leonard.crestez@nxp.com>
- <20200622135858.15891-1-martin.kepplinger@puri.sm>
-From:   Leonard Crestez <cdleonard@gmail.com>
-Message-ID: <e8440abf-e51f-9846-f2af-a1a44a7fd89a@gmail.com>
-Date:   Wed, 24 Jun 2020 09:08:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j5iJaAmcwIz93ZsJcMmiCbrU1gnAgWj1jKvFm1JtK38=;
+        b=NE1sTZZLk+CtEKLsY9GmDuJF+nCrHxYUXDYxESgF62X5cZZThxTBD80cg3TO0SuF0k
+         IZiim3QKwi2btGz1ucU4P/8IFZEjwSYysBJfZp79C6AiIPJ3xkTtMvPclhtGAqzqiBn5
+         452rlzZfc+bvNAjQXWpBMkMT2IQgsoCEY+d2+LiG1Ku1qWORO9WvkNfg8Hg5Jxo+vY9E
+         BdDzwUqY1S6fMVrgOiu8dXxaMCV8zvaGfhXY08KKQe83FQa5vfWkDsongQ7AG1oZFaSb
+         sBaCPi87DyeMEc49+GxvLaXz4afGpOyDcwOL3EDk7FWcjrt04cJNNy7XWE+mKS7gxbEz
+         ldiw==
+X-Gm-Message-State: AOAM531i4jVbQ8VQB6+J55vZsjX1NZ5jAJnLaq488J4NavvHtKK9Ktqf
+        6071GagnkTnwP9GtYnEnZ3JjJqgKY1Bk4FaYSG2SJAK6
+X-Google-Smtp-Source: ABdhPJysMLeTgnT1zZNYcM9UUaX0LYbwwd5YK/jR2CfMmZxWqVy6gv8jlfq9DQ03hq5B5ML5uSUVwBSO6NQzv9Qjgg8=
+X-Received: by 2002:a4a:b804:: with SMTP id g4mr22189953oop.40.1592984065134;
+ Wed, 24 Jun 2020 00:34:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200622135858.15891-1-martin.kepplinger@puri.sm>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200603154329.31579-1-aford173@gmail.com>
+In-Reply-To: <20200603154329.31579-1-aford173@gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 24 Jun 2020 09:34:13 +0200
+Message-ID: <CAMuHMdW1radtuje+z85TLXO8EAEdVYp3gF2ZE9aYbHUHdrY-Fg@mail.gmail.com>
+Subject: Re: [PATCH V3 1/3] clk: vc5: Allow Versaclock driver to support
+ multiple instances
+To:     Adam Ford <aford173@gmail.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 6/22/20 4:58 PM, Martin Kepplinger wrote:
-> hi Leondard,
-> 
-> before using this patchset I'd like to ask: Do you have plans to create
-> an update and push this forward? It is useful.
+Hi Adam,
 
-Hello.
+On Wed, Jun 3, 2020 at 5:44 PM Adam Ford <aford173@gmail.com> wrote:
+> Currently, the Versaclock driver is only expecting one instance and
+> uses hard-coded names for the various clock names.  Unfortunately,
+> this is a problem when there is more than one instance of the driver,
+> because the subsequent instantiations of the driver use the identical
+> name.  Each clock after the fist fails to load, because the clock
+> subsystem cannot handle two clocks with identical name.
 
-I am no longer with NXP and don't have access to imx hardware right now.
+Thanks for your patch, which is now commit f491276a51685987 ("clk: vc5:
+Allow Versaclock driver to support multiple instances") in clk-next.
 
-However the series that you replied to is very old and was accepted many 
-months ago. You shouldn't have to apply out-of-tree kernel patches.
+> This patch removes the hard-coded name arrays and uses kasprintf to
+> assign clock names based on names of their respective node and parent
+> node which gives each clock a unique identifying name.
+>
+> For a verasaclock node with a name like:
+>    versaclock5: versaclock_som@6a
+>
+> The updated clock names would appear like:
+>     versaclock_som.mux
+>        versaclock_som.out0_sel_i2cb
+>        versaclock_som.pfd
+>           versaclock_som.pll
+>              versaclock_som.fod3
+>                 versaclock_som.out4
+>              versaclock_som.fod2
+>                 versaclock_som.out3
+>              versaclock_som.fod1
+>                 versaclock_som.out2
+>              versaclock_som.fod0
+>                 versaclock_som.out1
 
---
-Regards,
-Leonard
+I'm afraid this won't help, as all versaclock nodes should be named
+"clock-controller@<unit-address>", as per DT generic node name
+recommendations.
+Incorporating the unit-address won't help, as you can have multiple
+i2c buses in the system.
+How do other drivers handle this?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
