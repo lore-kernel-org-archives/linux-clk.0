@@ -2,90 +2,87 @@ Return-Path: <SRS0=A9ZH=AF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11847C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 10:11:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC529C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 15:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CD08520C09
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 10:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E4B0206C0
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 15:09:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xZqQbfz7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IZWCTTbv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390088AbgFXKLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 06:11:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38988 "EHLO
+        id S2404370AbgFXPJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 11:09:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387962AbgFXKLd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jun 2020 06:11:33 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CECB9C061573
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2020 03:11:32 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id t194so1941050wmt.4
-        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2020 03:11:32 -0700 (PDT)
+        with ESMTP id S2404289AbgFXPJz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jun 2020 11:09:55 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99C4AC061573;
+        Wed, 24 Jun 2020 08:09:55 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id ga4so2779010ejb.11;
+        Wed, 24 Jun 2020 08:09:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=igZtrvoVRESa1OptkNZlf7jr2wxCNuT6tHPjKiqOH2Y=;
-        b=xZqQbfz7SczvKrDSaN7j6UnsFBhfXGEAdKPoRtxIkkmU+Fk1A8U0WuWhj5RlUn36gb
-         oEdZRYnoMZkHbxbJghWTTAMIJIqMVxEYZTo9Jd5xA6pP5bVkRp2d6HKhFk4dWN1ecwfR
-         XjADbrLnuibFwLv4BfXq7ioG8MA7dwNhVp2e3wFZBxzUrmrRUtMTvpNXr7H9G5Ii5M3W
-         Nw9o/HnY4pR5O8udEAuE+VEiln7XxBF9FJzVAr1isdys++0iL8KX1oztEPOwhluKnbRC
-         03uIWzrzxjOQfBxjxcr5URfZp4vn1+Tx/cNWWKNUfX+EcGUNJc4YeDO0jInCBVgis3V7
-         Rbsw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xqA0JkwflkTobMLTCr0ZvM2/SSPlycQMaw9fn8Bg9K4=;
+        b=IZWCTTbvlGPqVMTEvL+RCNLvtkr9ymy95LhJvsvrwruvDDDqo5l0my86UnhHTO7gVt
+         6OEg0WbvFoNuzHtr6gEqwafjZjinhukdU+JqzI4ImfvTa7Gps/iP/e2iws9tbIi3OOtE
+         4mqR0BKXcSEDy/lhdwjZe8KzJVQSf0dbyeiG7eMCJ03oGo1APEmJSLM2S3gtoGxqMI//
+         im5+0Abzi5O0tB4sApp5nb1fWpXXNhNplFggfPfoIK75ZaRH6Bm7VxstsH8X+rM2Ia1y
+         M4xTfNbtNL/6fLaoyf5l6/N5XC5BHgrqnbJ3HT6X5JGg8OrvQTB/bdVWIJRvvPN7zWjj
+         dlTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=igZtrvoVRESa1OptkNZlf7jr2wxCNuT6tHPjKiqOH2Y=;
-        b=kya8EC2tjzpowrWGMApBwOYvj6FIAQZMGnRIqm8AqPEhOh3zRLudaVehF2mDSUU87P
-         shSHT/eg5q5f7JIGeFTyYfSMzY221ZX2o0EXMfm4gs6xvdCtTH0SmZ6g79iyzSSxgHmp
-         CfGBtLqmrgagTPE+6CoVSAzTNCX2HBjeomPbE9wsmo0cae2jUBmznxCm3CD+E+rTrrnR
-         DEGCxisG18qM0LwNO65SQW3Llkw9EmTKBU5gSJ6n5scxy82RFnw2wRUx0vCmY+a18rTY
-         9OvwrrTG8VqR3NI31bh1DnDFRRxSznxQ5vO1EfiYa6so5Dk6lnLEmRE1WbVXBX2Qtvpu
-         1a1A==
-X-Gm-Message-State: AOAM5338gMwRvcLj2Upu3br9QI1FdFGUWkTPxob0IeC6Py+mHSQ+TL4/
-        N1z1+U9atLm/xq/QOBgeee+yTIOSOhM=
-X-Google-Smtp-Source: ABdhPJwgLFr0/kRDRVXP8K8wBpQtcOlMyFUgKez+F/Ly7c+/i/o83wAuC+PTRyhhEUV32a5BV3tn7A==
-X-Received: by 2002:a7b:c158:: with SMTP id z24mr30586736wmi.12.1592993491424;
-        Wed, 24 Jun 2020 03:11:31 -0700 (PDT)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 92sm18571397wrr.96.2020.06.24.03.11.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jun 2020 03:11:30 -0700 (PDT)
-References: <20200610083012.5024-1-narmstrong@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] clk: meson: g12a: Add the NNA source clocks
-In-reply-to: <20200610083012.5024-1-narmstrong@baylibre.com>
-Date:   Wed, 24 Jun 2020 12:11:29 +0200
-Message-ID: <1jpn9oixim.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xqA0JkwflkTobMLTCr0ZvM2/SSPlycQMaw9fn8Bg9K4=;
+        b=N7xDPRnwwrbZwgHgzOIh8On7Q5kTK1DtsFuyzRHVSZfqlDAw6J7LzTC7vc5fY2Ievi
+         xWW8jvYAdSo5YkaDrCGrDh1+3OH/pglTZAxbbDMz9vVz5WP4yNy5Cf3KABav46ZT1mYo
+         8OSxHcGkHaDZphYGqDkyZoLVcwS8A0Gf/XTkMpsDYUf5gMtIFtAvqeRxflyMVsmwg6K8
+         8sUP1YOu7HPeYaJvilpQoQn843++CFvdwTs8ksEJoiDNVeymtd7aD0PZZ0pK9nOlyzG4
+         NVKsTz8+WGAGkgafXFt3LCNqVdYVhZKdUo48a3/rV+02eNsob6WFFQ+Vt/KFt4yNiasN
+         Bv5A==
+X-Gm-Message-State: AOAM5321Efv9wlELZ4ok9QNnjLWNS/D/6XOxcQnxG7OezMOwFr6+bjNs
+        tY0z7XgdHagYFSNbh1xG/k4D+gSBJlOgKRPwAc0=
+X-Google-Smtp-Source: ABdhPJwqURAScm61PUoBnTTiAvio3Dy0kQw/f3E/f1hDwhw+981uq2BMzaiXIVf+D/uy7kNOieVVEHrsxWb61i75Flw=
+X-Received: by 2002:a17:906:7002:: with SMTP id n2mr7502548ejj.340.1593011394401;
+ Wed, 24 Jun 2020 08:09:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20200623230018.303776-1-konradybcio@gmail.com>
+In-Reply-To: <20200623230018.303776-1-konradybcio@gmail.com>
+From:   Konrad Dybcio <konradybcio@gmail.com>
+Date:   Wed, 24 Jun 2020 17:09:18 +0200
+Message-ID: <CAMS8qEVHxnAwC9fK69Pb4MEMWVEa9N7ZdkQCkXwvqC-JfQEfRA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] clk: qcom: smd: Add support for MSM8992/4 rpm clocks
+To:     skrzynka@konradybcio.pl
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+I should also note that for quite some time a hack [1]
+has been needed on some platforms for the RPMCC to register.
 
-On Wed 10 Jun 2020 at 10:30, Neil Armstrong <narmstrong@baylibre.com> wrote:
+This includes 8992/94, 8956/76 and possibly many more.
 
-> This patchset adds the Neural Network Accelerator source clocks present
-> on the Amlogic SM1 SoCs family.
->
-> Dmitry Shmidt (2):
->   dt-bindings: clk: g12a-clkc: Add NNA CLK Source clock IDs
->   clk: meson: g12a: Add support for NNA CLK source clocks
->
->  drivers/clk/meson/g12a.c              | 119 ++++++++++++++++++++++++++
->  drivers/clk/meson/g12a.h              |   7 +-
->  include/dt-bindings/clock/g12a-clkc.h |   2 +
->  3 files changed, 127 insertions(+), 1 deletion(-)
+With that commit, RPMCC registers fine.
 
-Applied, Thx
+[1] https://github.com/kholk/kernel-upstream/commit/5df7bb6e337c0a41b2cc6477cddc718d622d7545
+
+Regards
+Konrad
