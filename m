@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06032C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F53AC433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C9626207DD
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49402078D
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593045929;
-	bh=4EJKTeGmxhXd21FJI2zpa9B+gOQKhi/iMp10zYWR5u8=;
+	s=default; t=1593045934;
+	bh=UVIHxB2kQq7VMv5F7DuS8QacS9agH5AxTK6Agza3Z1A=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=x1oz3fsChDYGuqitPKYseWtryv15+TejKZt+EpU8lE2yjjIBSqeqihYxmT80aLCCr
-	 Wwkug3pCSNlVj13Tlzg4JL7mIxPf3PeU0nt8YinM3h28ssVj6Ch5LDDzxPfXzW4/g2
-	 S0GMiWwMIZATPL8AE0hMOWLnjAoCNiJSL8Q20WX8=
+	b=N6n5lprRkot0PSLjjo5ciDnjG4dIh0o9yy67dQQYd/3RfNVIytRVTZa/VjEozFOjX
+	 YU9ueH2B5rBukh4HnFt7XKItGGX3Oa8tt62+PBzYMJKTfE3ll/BFLC49N1+0LTevoF
+	 EvwAg2y9rinIKgBvsZKzZ1kU/pxlOsEI3XjEh86I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbgFYAp3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 20:45:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59280 "EHLO mail.kernel.org"
+        id S2389488AbgFYApe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 20:45:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388776AbgFYAp2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jun 2020 20:45:28 -0400
+        id S2388776AbgFYApe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jun 2020 20:45:34 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 813502078D;
-        Thu, 25 Jun 2020 00:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9835B207DD;
+        Thu, 25 Jun 2020 00:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593045928;
-        bh=4EJKTeGmxhXd21FJI2zpa9B+gOQKhi/iMp10zYWR5u8=;
+        s=default; t=1593045933;
+        bh=UVIHxB2kQq7VMv5F7DuS8QacS9agH5AxTK6Agza3Z1A=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZIsf8S3+7yEHCF0spHfihQXBwdMJi8U29W9I7ZSPM6fIWrQDXMAa1fHxCTlIxDhpZ
-         NQnYvkwuvU8B4bQYAhPvP9xj20d0FB6Q+I5FHRENepkg7PaVPQtCj4O+ja/M6F0yZZ
-         HMxkW800c6Wa9ns3dzEMjVAbalLDaTLaOarQTcBY=
+        b=KbtTG9iXsGOPyFT+eHyxvsu9m3OnOefknwSvGbj/i/5d9z4zVyQZEmNOAMTaXkhzJ
+         08VxavAixsuUlQtwV8FggoGFeFzWueqD0XFb1OwBX55ypGJSWqF51axoNh6ZKewI44
+         84/ngU53yB/Lks+LY9CG3oK2gli/g4yVM9hu3wSE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <97218559db643e62fdd2b5e3046a2a05b8c2e769.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <97218559db643e62fdd2b5e3046a2a05b8c2e769.1592210452.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH v5 18/27] clk: bcm: rpi: Make the PLLB registration function return a clk_hw
+In-Reply-To: <4d8dbe4aaae98b3d3812ad7c3dba53d645cadbaf.1592210452.git-series.maxime@cerno.tech>
+References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <4d8dbe4aaae98b3d3812ad7c3dba53d645cadbaf.1592210452.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v5 19/27] clk: bcm: rpi: Add DT provider for the clocks
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-rpi-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
@@ -55,25 +55,17 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Maxime Ripard <maxime@cerno.tech>
 To:     Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Wed, 24 Jun 2020 17:45:27 -0700
-Message-ID: <159304592785.62212.2642388326297780385@swboyd.mtv.corp.google.com>
+Date:   Wed, 24 Jun 2020 17:45:32 -0700
+Message-ID: <159304593293.62212.12371883147156783922@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-06-15 01:40:58)
-> The raspberrypi_register_pllb has been returning an integer so far to
-> notify whether the functions has exited successfully or not.
->=20
-> However, the OF provider functions in the clock framework require access =
-to
-> the clk_hw structure so that we can expose those clocks to device tree
-> consumers.
->=20
-> Since we'll want that for the future clocks, let's return a clk_hw pointer
-> instead of the return code.
+Quoting Maxime Ripard (2020-06-15 01:40:59)
+> For the upcoming registration of the clocks provided by the firmware, make
+> sure it's exposed to the device tree providers.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: linux-clk@vger.kernel.org
