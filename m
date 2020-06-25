@@ -1,4 +1,4 @@
-Return-Path: <SRS0=A9ZH=AF=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=6ucw=AG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,114 +6,92 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC3D9C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 22:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C21BC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A27C520E65
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jun 2020 22:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72992078D
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:40:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593038582;
-	bh=2qOOeWqSin4Sk3mrQE3OE4Gaj5+C3lnfNsT9FLEUq/E=;
+	s=default; t=1593045654;
+	bh=VT4fYgAE8cSrz3NM2ZpTOt2jz848PPE60lBQ+xXWg5w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=TbGDf3eGN8KA8BrItudHLYq6oi1Qf0PRXBjxSKGIWtW408HvvQObyiOR1X78qHLU6
-	 1ea2qO/YQX+tn7BfryzauAZcZuKqNKDg0cfj8Hdwx5iyih9ASziUsQuKNLc8h1VNJT
-	 VgdUq5YVlszmBujlaPtEnuV2ovIim3od1F7GdQoc=
+	b=HPPToC73q9wgDKw3wNSnILuO/hqHJtOnPcUzoJGHV5MLpqxWxldN11sWFNaX6Lwrh
+	 7DURniUkc3UYj6PxdX3DvMEUDsdgbU9FQPpbCXWydoG+eR/AGlWL8TAZsQwiRCb7hv
+	 sPv2YQZCsyqN1f7lMmHZUnVXSM9MmZHeRQPpylb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388763AbgFXWnC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 18:43:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39556 "EHLO mail.kernel.org"
+        id S2388527AbgFYAkx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 20:40:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388739AbgFXWnC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jun 2020 18:43:02 -0400
+        id S2388467AbgFYAkx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jun 2020 20:40:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5525B2065D;
-        Wed, 24 Jun 2020 22:43:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 909F720781;
+        Thu, 25 Jun 2020 00:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593038581;
-        bh=2qOOeWqSin4Sk3mrQE3OE4Gaj5+C3lnfNsT9FLEUq/E=;
+        s=default; t=1593045652;
+        bh=VT4fYgAE8cSrz3NM2ZpTOt2jz848PPE60lBQ+xXWg5w=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=OBWcVFZPJiUQ9b5nibHZITiKfn6+sO64TqaXwuDA90blUrv/FDKp3H6wMBuulQUWz
-         4Q1WxhUQXtHBL8N+ymTa4sHwjQAtVXp89l1zDRjWXmK9hyKAQf5Tp/KEqBh/kPd587
-         TJzapj4PsMh1XZg10Onm+pWiLhUxEFGacnQZDyzA=
+        b=rmMTivuD0aTc1HQpvXP3fevFCP0FVrh7hk+y/hfHEJSRu4xrcQrT7u++bN1TRv0d+
+         5AVf7VqGkzYeEsITcGarxtACbdYYgklqJUww1x7vvMLANKr7zodVRU8qrjsFVq2xDe
+         7OllJugvKVmQcHlW5i63s5L3BJ47n5jlbGn4y9gc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM6PR04MB496622897A67C4912715223A80950@AM6PR04MB4966.eurprd04.prod.outlook.com>
-References: <1591687933-19495-1-git-send-email-Anson.Huang@nxp.com> <AM6PR04MB4966B94CFAE642E6AF5AEF79809B0@AM6PR04MB4966.eurprd04.prod.outlook.com> <159262367025.62212.11651547971712516448@swboyd.mtv.corp.google.com> <AM6PR04MB496690A045E0BFFF3D03AE0380940@AM6PR04MB4966.eurprd04.prod.outlook.com> <159290125202.62212.13172213909023205615@swboyd.mtv.corp.google.com> <AM6PR04MB49664A8400CA0B0F7321EDDE80940@AM6PR04MB4966.eurprd04.prod.outlook.com> <159296027133.62212.18074403520585879907@swboyd.mtv.corp.google.com> <AM6PR04MB4966BA60F25AE60ABA8F883180950@AM6PR04MB4966.eurprd04.prod.outlook.com> <DB3PR0402MB39167FB012D9BCB4A5081BEDF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com> <AM6PR04MB496622897A67C4912715223A80950@AM6PR04MB4966.eurprd04.prod.outlook.com>
-Subject: RE: [PATCH V2 3/9] clk: imx: Support building SCU clock driver as module
+In-Reply-To: <159261242477.62212.2251732478648139482@swboyd.mtv.corp.google.com>
+References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <159255945796.62212.5838238989498858379@swboyd.mtv.corp.google.com> <bdc91c1b015d2f02bd0ea90ae81a122123c62b38.camel@suse.de> <159261103077.62212.7410836804489183937@swboyd.mtv.corp.google.com> <159261242477.62212.2251732478648139482@swboyd.mtv.corp.google.com>
+Subject: Re: [PATCH v5 00/27] clk: bcm: rpi: Add support for BCM2711 firmware clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-To:     Abel Vesa <abel.vesa@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Stefan Agner <stefan.agner@toradex.com>, allison@lohutok.net,
-        arnd@arndb.de, festevam@gmail.com, gregkh@linuxfoundation.org,
-        info@metux.net, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
-        mturquette@baylibre.com, oleksandr.suvorov@toradex.com,
-        s.hauer@pengutronix.de, sfr@canb.auug.org.au, shawnguo@kernel.org,
-        tglx@linutronix.de, yuehaibing@huawei.com
-Date:   Wed, 24 Jun 2020 15:43:00 -0700
-Message-ID: <159303858063.62212.4991053028281879719@swboyd.mtv.corp.google.com>
+Cc:     devicetree@vger.kernel.org, Tim Gover <tim.gover@raspberrypi.com>,
+        Kamal Dasu <kdasu.kdev@gmail.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        linux-kernel@vger.kernel.org, Phil Elwell <phil@raspberrypi.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Wed, 24 Jun 2020 17:40:51 -0700
+Message-ID: <159304565187.62212.8773518296142750910@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Aisheng Dong (2020-06-23 19:59:09)
-> > > > > -       bool
-> > > > > -       def_bool ARCH_MXC
-> > > > > +       tristate "IMX clock"
-> > > > > +       depends on ARCH_MXC
-> > > > >
-> > > > > But user can still set MXC_CLK to be m, either via make menuconfig
-> > > > > or
-> > > > defconfig.
-> > > >
-> > > > Isn't that what we want?
-> > >
-> > > No, if user set MXC_CLK to m, the build will break for i.MX6&7.
-> > >
-> > > > Why does ARCH_MXC being enabled mandate that it is builtin? Is some
-> > > > architecture level code calling into the clk driver?
-> > >
-> > >
-> > > It's mainly because there's no Kconfig options for i.MX6 &7 clock dri=
-vers.
-> > > It just reuses ARCH config CONFIG_SOC_XXX which can only be y.
-> > > e.g.
-> > > obj-$(CONFIG_SOC_IMX6Q)  +=3D clk-imx6q.o
-> > > obj-$(CONFIG_SOC_IMX6SL) +=3D clk-imx6sl.o
-> > > obj-$(CONFIG_SOC_IMX7ULP) +=3D clk-imx7ulp.o
-> > > obj-$(CONFIG_SOC_VF610)  +=3D clk-vf610.o ..
-> > >
-> > > If setting MXC_CLK to m, the platform clock drivers will fail to build
-> > > due to miss to find symbols defined in the common clock library by
-> > > CONFIG_MXC_CLK.
-> > > So we have to avoid users to be able to config MXC_CLK to m for i.MX6=
-&7.
-> > > Only depends on ARCH_MXC mean user still can set it to m.
+Quoting Stephen Boyd (2020-06-19 17:20:24)
+> Quoting Stephen Boyd (2020-06-19 16:57:10)
+> > Quoting Nicolas Saenz Julienne (2020-06-19 02:44:54)
+> > > On Fri, 2020-06-19 at 02:37 -0700, Stephen Boyd wrote:
+> > > > Quoting Maxime Ripard (2020-06-15 01:40:40)
+> > > > > Hi,
+> > > > >=20
+> > > > > Since the whole DRM/HDMI support began to grow fairly big, I've c=
+hosen
+> > > > > to split away the two discussions between the firmware clocks and=
+ the
+> > > > > HDMI support.
+> > > > >=20
+> > > > > Let me know what you think,
+> > > > > Maxime
+> > > >=20
+> > > > Do you want this to go through clk tree? Or looking for acks/review
+> > > > tags?
+> > > >=20
+> > >=20
+> > > FWIW I don't mind taking the device tree changes trough the RPi soc t=
+ree.
+> > >=20
 > >=20
-> > I think for i.MX6/7, although MXC_CLK is tristate, but it is selected by
-> > ARCH_MXC which is always "y", so MXC_CLK can ONLY be "y" even it is exp=
-licitly
-> > set to "m" in imx_v6_v7_defconfig file. So that means MXC_CLK can ONLY
-> > support built-in for i.MX6/7 SoCs, and that is what we want?
+> > Sounds good.
 > >=20
 >=20
-> Yes, I'm trying to explain to Stephen why we have to select MXC_CLK in AR=
-CH_MXC
-> And what issues we will met if not select it.
->=20
+> Just to clarify, that is just the dts patch? Or the binding patches too?
 
-Why aren't there options to enable clk-imx6q and clk-imx6sl in the
-clk/imx/Kconfig file? Those can be bool or tristate depending on if the
-SoC drivers use CLK_OF_DECLARE or not and depend on the mxc-clk library
-and SoC config we have in the makefile today.
+Ok. I'll push everything out now and you can tell me to undo that if
+it's wrong.
