@@ -2,80 +2,88 @@ Return-Path: <SRS0=6ucw=AG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC47C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 01:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF80C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 06:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64C0F2078D
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 01:15:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593047754;
-	bh=slMjPRa67K16YFPswiAcJrSACF0ga1IiQ1WSlFEumHI=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=g2oeKMkEZ+BD9v0jWI4bwqfVNFOjY/rb5ohcp/wl+yL2ap0UzLGdxZv/CU4mmvLi+
-	 hQ2KsUyuXE93sv/Yl7WPLww7mZE/dBzBUmfZdB8q0ge7JjQFR5aWz/75K0V+/sZxX5
-	 GClljIpmBERfbdFWNnh6Z64wZ5AJrQf0cmvqfKZI=
+	by mail.kernel.org (Postfix) with ESMTP id B31B120706
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 06:30:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="cy1rDnlb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389198AbgFYBPe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 21:15:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389183AbgFYBPd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jun 2020 21:15:33 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50ECC20578;
-        Thu, 25 Jun 2020 01:15:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593047733;
-        bh=slMjPRa67K16YFPswiAcJrSACF0ga1IiQ1WSlFEumHI=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ORIO8EoynDIzF4ep5xBiRUWrGI7/V+pgBWZbrlds84dQKm6M3vZj0f4EOlqqGlH0L
-         2ujQ8VsK5WcOcMUV78XQJmb9MN1tWxUiMywbWmNuKJI/sEOPGCyKAGKXVBZEMsvTZS
-         syXLvmJpugcCfTidoJ4ym2XEkVcwxR64pLP5TMnE=
-Content-Type: text/plain; charset="utf-8"
+        id S2390089AbgFYGax (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jun 2020 02:30:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57684 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726742AbgFYGau (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jun 2020 02:30:50 -0400
+Received: from mail-wr1-x442.google.com (mail-wr1-x442.google.com [IPv6:2a00:1450:4864:20::442])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CB05C0613ED
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2020 23:30:48 -0700 (PDT)
+Received: by mail-wr1-x442.google.com with SMTP id k6so4584339wrn.3
+        for <linux-clk@vger.kernel.org>; Wed, 24 Jun 2020 23:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=/WtZICZPQ7eo9m1fnE4Tuqm/DpL9l1L7AEtdtd4eeLo=;
+        b=cy1rDnlb74CJU/MmS8SRaNduOBK/IMcdSw6QZqU53dXfuDSXBWsKhLWPBtpvSq6r7E
+         RcO4czMDahxhH46p41SeRgYlbLwMnBq/09SQseikVk4HzykYYbMzM8T6kr+tjRaqkztA
+         DnobMe/WEX7kQEUUSio6g4avDlXq0b+zf/HSaZV8MXJLgeUXuo1MZZq5Jc1cBJT5yQxL
+         2cchTbSuzrOtQrhyZBe0q0IyZyMktMW+CNZnn+/2BLK+r15tjh3nPdg5/b2y/w0wqpap
+         xYq9i4GkjndGAJ1EoiuJ+wymjQLRuIJXw4OhMi9sYHR4MJPw16wMmAc81IBnFu1RlvmK
+         IRwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=/WtZICZPQ7eo9m1fnE4Tuqm/DpL9l1L7AEtdtd4eeLo=;
+        b=Wel4V1Em0kg4ZhrYxDgXoRKUJZ+zwUp9DsxQDWxV1jdFew03ti+03wGaJCJjX/CSWO
+         fJtZ94sZBifl2xXoTV6g+pXvIb1SR9x3P5j4QyY03Ec+OrthEnZoRAzgLLZRwRPnNStV
+         dg4W+IJIDU90/lzbOXBF/8ixZNlb040gOdDM0y3hpuANMzn/UyyUZzZIjRxzINiQJgaj
+         ETCTzpLqOdz+lYQU+gvYNoS6UD49PrEeA+jM3wWaFsxa1ysusUVjYlQtb97TkC6afz7N
+         HhR+vgy8/PPCN7IeglUARiib1463TrJ8DW5C+wUIPHaygecWl4DOMnC7QlAf8dYnyWns
+         kJeQ==
+X-Gm-Message-State: AOAM531PgevBdG30i5Wfy1Iir3uZPFjCxUO7DF3KUiA2tiwEne6Ynk68
+        +QOvSs81fuyvud3bJaEPvnLryQ==
+X-Google-Smtp-Source: ABdhPJyO0TdAwSeQKc88VNXDEhojZI+tFVF3RW4T8Yx0Xmn0VI4RIizGBQQrMbVogMt6Ij4FQCU3SA==
+X-Received: by 2002:a5d:630c:: with SMTP id i12mr13580708wru.158.1593066647171;
+        Wed, 24 Jun 2020 23:30:47 -0700 (PDT)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id p13sm19780863wrn.0.2020.06.24.23.30.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jun 2020 23:30:45 -0700 (PDT)
+References: <20200620161422.24114-1-martin.blumenstingl@googlemail.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: meson8b: Drop CLK_IS_CRITICAL from fclk_div2
+In-reply-to: <20200620161422.24114-1-martin.blumenstingl@googlemail.com>
+Date:   Thu, 25 Jun 2020 08:30:45 +0200
+Message-ID: <1j366jbqsq.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH v5 00/27] clk: bcm: rpi: Add support for BCM2711 firmware clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Kamal Dasu <kdasu.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Wed, 24 Jun 2020 18:15:32 -0700
-Message-ID: <159304773261.62212.983376627029743900@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-06-15 01:40:40)
-> Hi,
->=20
-> Since the whole DRM/HDMI support began to grow fairly big, I've chosen
-> to split away the two discussions between the firmware clocks and the
-> HDMI support.
->=20
 
-I see one problem.
+On Sat 20 Jun 2020 at 18:14, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-WARNING: modpost: missing MODULE_LICENSE() in drivers/clk/bcm/clk-bcm2711-d=
-vp.o
+> Drop CLK_IS_CRITICAL from fclk_div2. This was added because we didn't
+> know the relation between this clock and RGMII Ethernet. It turns out
+> that fclk_div2 is used as "timing adjustment clock" to generate the RX
+> delay on the MAC side - which was enabled by u-boot on Odriod-C1. When
+> using the RX delay on the PHY side or not using a RX delay at all then
+> this clock can be disabled.
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Can you send a followup patch to fix this?
+Applied. Thx
