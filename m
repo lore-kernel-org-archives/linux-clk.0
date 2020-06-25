@@ -2,195 +2,97 @@ Return-Path: <SRS0=6ucw=AG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B3E4C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 13:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC3DC433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 14:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4DDD1207E8
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 13:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCD24206C0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 14:47:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405059AbgFYN1k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jun 2020 09:27:40 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48403 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404872AbgFYN1k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jun 2020 09:27:40 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1joRui-0000Py-C0; Thu, 25 Jun 2020 13:27:36 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
-Date:   Thu, 25 Jun 2020 14:27:36 +0100
-Message-Id: <20200625132736.88832-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.27.0
+        id S2405408AbgFYOrE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jun 2020 10:47:04 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:38242 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405367AbgFYOrE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Jun 2020 10:47:04 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9C1011A04B0;
+        Thu, 25 Jun 2020 16:47:01 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8E8581A0489;
+        Thu, 25 Jun 2020 16:47:01 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7943F205A3;
+        Thu, 25 Jun 2020 16:47:01 +0200 (CEST)
+Date:   Thu, 25 Jun 2020 17:47:01 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Martin Kepplinger <martin.kepplinger@puri.sm>
+Cc:     Leonard Crestez <cdleonard@gmail.com>, leonard.crestez@nxp.com,
+        Anson.Huang@nxp.com, a.swigon@partner.samsung.com,
+        abailon@baylibre.com, aisheng.dong@nxp.com, angus@akkea.ca,
+        cw00.choi@samsung.com, devicetree@vger.kernel.org,
+        fabio.estevam@nxp.com, georgi.djakov@linaro.org,
+        kernel@pengutronix.de, krzk@kernel.org, kyungmin.park@samsung.com,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-imx@nxp.com, linux-pm@vger.kernel.org, mark.rutland@arm.com,
+        martink@posteo.de, mka@chromium.org, mturquette@baylibre.com,
+        myungjoo.ham@samsung.com, ping.bai@nxp.com, rjw@rjwysocki.net,
+        robh@kernel.org, saravanak@google.com, sboyd@kernel.org,
+        shawnguo@kernel.org, viresh.kumar@linaro.org
+Subject: Re: [PATCH v4 0/6] PM / devfreq: Add dynamic scaling for imx8m ddr
+ controller
+Message-ID: <20200625144701.6xa7sdlm5llr5z3p@fsr-ub1664-175>
+References: <cover.1573252696.git.leonard.crestez@nxp.com>
+ <20200622135858.15891-1-martin.kepplinger@puri.sm>
+ <e8440abf-e51f-9846-f2af-a1a44a7fd89a@gmail.com>
+ <b0f712d0-ea83-f073-f987-7bb33150f25d@puri.sm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b0f712d0-ea83-f073-f987-7bb33150f25d@puri.sm>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On 20-06-25 08:57:52, Martin Kepplinger wrote:
+> hi Leonard,
+> 
+> On 24.06.20 08:08, Leonard Crestez wrote:
+> > On 6/22/20 4:58 PM, Martin Kepplinger wrote:
+> >> hi Leondard,
+> >>
+> >> before using this patchset I'd like to ask: Do you have plans to create
+> >> an update and push this forward? It is useful.
+> > 
+> > Hello.
+> > 
+> > I am no longer with NXP and don't have access to imx hardware right now.
+> 
+> I guess it'll get even harder to get the ATF part for devfreq
+> implemented now :) Thanks for the update and all the best for your new
+> stuff.
+> 
+> > 
+> > However the series that you replied to is very old and was accepted many
+> > months ago. You shouldn't have to apply out-of-tree kernel patches.
+> > 
+> 
+> that particular series doesn't seem to be in mainline, see
+> https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Felixir.bootlin.com%2Flinux%2Flatest%2Fsource%2Fdrivers%2Fdevfreq%2Fimx8m-ddrc.c%23L283&amp;data=02%7C01%7Cabel.vesa%40nxp.com%7Cb00f437e756d4850238f08d818d51b59%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637286650857331523&amp;sdata=S7%2BN3%2BiTFkUW5YnmVzl36wEBlr%2BkTatGoDDrvY9XfTk%3D&amp;reserved=0
+> or do I miss something?
+> 
+> do you know who at nxp would be likely actively working on devfreq?
 
-There are a several places where printing an error message of
-init.name occurs after init.name has been kfree'd. Also the failure
-message is duplicated each time in the code. Fix this by adding
-a registration error failure path for these cases, moving the
-duplicated error messages to one common point and kfree'ing init.name
-only after it has been used.
+Hi Martin,
 
-Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
+I will be working on this in the following weeks.
 
-Before:
-   text	   data	    bss	    dec	    hex	filename
-  21057	   3960	     64	  25081	   61f9	drivers/clk/clk-versaclock5.o
-
-After:
-   text	   data	    bss	    dec	    hex	filename
-  20886	   3960	     64	  24910	   614e	drivers/clk/clk-versaclock5.o
-
-Addresses-Coverity: ("Use after free")
-Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multiple instances")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/clk-versaclock5.c | 51 +++++++++++++----------------------
- 1 file changed, 19 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 9a5fb3834b9a..1d8ee4b8b1f5 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -882,11 +882,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	init.parent_names = parent_names;
- 	vc5->clk_mux.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_mux);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	if (vc5->chip_info->flags & VC5_HAS_PFD_FREQ_DBL) {
- 		/* Register frequency doubler */
-@@ -900,12 +898,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		init.num_parents = 1;
- 		vc5->clk_mul.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_mul);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 	}
- 
- 	/* Register PFD */
-@@ -921,11 +916,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	init.num_parents = 1;
- 	vc5->clk_pfd.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pfd);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	/* Register PLL */
- 	memset(&init, 0, sizeof(init));
-@@ -939,11 +932,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	vc5->clk_pll.vc5 = vc5;
- 	vc5->clk_pll.hw.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_pll.hw);
-+	if (ret)
-+		goto err_clk_register;
- 	kfree(init.name); /* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
- 
- 	/* Register FODs */
- 	for (n = 0; n < vc5->chip_info->clk_fod_cnt; n++) {
-@@ -960,12 +951,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		vc5->clk_fod[n].vc5 = vc5;
- 		vc5->clk_fod[n].hw.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_fod[n].hw);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 	}
- 
- 	/* Register MUX-connected OUT0_I2C_SELB output */
-@@ -981,11 +969,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	vc5->clk_out[0].vc5 = vc5;
- 	vc5->clk_out[0].hw.init = &init;
- 	ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[0].hw);
--	kfree(init.name);	/* clock framework made a copy of the name */
--	if (ret) {
--		dev_err(&client->dev, "unable to register %s\n", init.name);
--		goto err_clk;
--	}
-+	if (ret)
-+		goto err_clk_register;
-+	kfree(init.name); /* clock framework made a copy of the name */
- 
- 	/* Register FOD-connected OUTx outputs */
- 	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++) {
-@@ -1008,17 +994,15 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 		vc5->clk_out[n].vc5 = vc5;
- 		vc5->clk_out[n].hw.init = &init;
- 		ret = devm_clk_hw_register(&client->dev, &vc5->clk_out[n].hw);
-+		if (ret)
-+			goto err_clk_register;
- 		kfree(init.name); /* clock framework made a copy of the name */
--		if (ret) {
--			dev_err(&client->dev, "unable to register %s\n",
--				init.name);
--			goto err_clk;
--		}
- 
- 		/* Fetch Clock Output configuration from DT (if specified) */
- 		ret = vc5_get_output_config(client, &vc5->clk_out[n]);
- 		if (ret)
- 			goto err_clk;
-+
- 	}
- 
- 	ret = of_clk_add_hw_provider(client->dev.of_node, vc5_of_clk_get, vc5);
-@@ -1029,6 +1013,9 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 
- 	return 0;
- 
-+err_clk_register:
-+	dev_err(&client->dev, "unable to register %s\n", init.name);
-+	kfree(init.name); /* clock framework made a copy of the name */
- err_clk:
- 	if (vc5->chip_info->flags & VC5_HAS_INTERNAL_XTAL)
- 		clk_unregister_fixed_rate(vc5->pin_xin);
--- 
-2.27.0
-
+> 
+> thanks,
+>                            martin
