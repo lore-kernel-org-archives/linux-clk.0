@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0123C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3B16C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACD7E207E8
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:44:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99BA7207DD
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593045896;
-	bh=Yfq9epKEOsnoqFKy7y+t/TuM8WxcBGwdRarD8vBYbTc=;
+	s=default; t=1593045903;
+	bh=YD3YYR+iajUHHt6vDxaXq7qFR40kc8HXKi2ii27jXLs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=0M9woeJz7vrr/NVOuLPnTxRQ78JJ7DSJp4b/2xcBhQb6GrXxr8HZRomlDdwIgvJh6
-	 DIxDVFkL/G45h2Kv5pg1Ai3E3nyyUSDbfrAlOADWhgz8O4fSPWCbaZp34mkw4pBDWe
-	 Tv3c9E+R1IbdQhZzpqphJgW068BjJSP2pEF30yaQ=
+	b=PjulNt507fC7TG90l6Y5sSGEXQeFuX+PUXYL5x/HaffT2QsN/tS+3NbrKYIUnIXzL
+	 qJGfFeOhjuU/wjVJanfAP8VNCaQ+lQlXwu8DOnyPXDYUl0OGSxDcPlMYmh5mkdWO4a
+	 GrA+tZQa1R+GdJ4T/37Ko/AFA2gROuHCeqoTnjv4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389067AbgFYAo4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 20:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58664 "EHLO mail.kernel.org"
+        id S2389047AbgFYApC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 20:45:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388987AbgFYAo4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jun 2020 20:44:56 -0400
+        id S2388987AbgFYApB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jun 2020 20:45:01 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7243207DD;
-        Thu, 25 Jun 2020 00:44:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 621B4207DD;
+        Thu, 25 Jun 2020 00:45:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593045895;
-        bh=Yfq9epKEOsnoqFKy7y+t/TuM8WxcBGwdRarD8vBYbTc=;
+        s=default; t=1593045901;
+        bh=YD3YYR+iajUHHt6vDxaXq7qFR40kc8HXKi2ii27jXLs=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=E3U3xLsTpkw0eEQB9wOe00wSo7toWVQSPlzeGVpaqzZWRL6FCXEPMnAeu0dPrU94e
-         Zo8x/kI6sHa9Sa0B8DSyKQgfEEwKiF/mEWsrApQ7UaQHO5WV2styvcwZl/buWkF7Y6
-         KJazsHn4lvpeybrr5ZKrCJuIbdRM06jr4S+njHAk=
+        b=Y/KZZzKzKDCqDZLRz3WiaaoDM/5JyZH64Mk+OV6BAkPky9EKimjOZFl834eqC4QBG
+         Ey+cRjkKgZ0VHjlqErAi9HH5RYe42A4qQL2QcmOH0GhVWfldPNU7lTcoHC+76pslmP
+         IepkSaIvC2H+0G9x6l814lnvPJLDX35xm6w2j6d8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ee7f508db226214fab4add7f93a351f4137c86a1.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <ee7f508db226214fab4add7f93a351f4137c86a1.1592210452.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH v5 13/27] clk: bcm: rpi: Create a data structure for the clocks
+In-Reply-To: <e23c37961b97b027e21efa3b818578970f88527a.1592210452.git-series.maxime@cerno.tech>
+References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <e23c37961b97b027e21efa3b818578970f88527a.1592210452.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v5 14/27] clk: bcm: rpi: Add clock id to data
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-rpi-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
@@ -55,23 +55,20 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Maxime Ripard <maxime@cerno.tech>
 To:     Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Wed, 24 Jun 2020 17:44:55 -0700
-Message-ID: <159304589502.62212.2964782757255663354@swboyd.mtv.corp.google.com>
+Date:   Wed, 24 Jun 2020 17:45:00 -0700
+Message-ID: <159304590078.62212.13471332170418330569@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-06-15 01:40:53)
-> So far the driver has really only been providing a single clock, and stor=
-ed
-> both the data associated to that clock in particular with the data
-> associated to the "controller".
->=20
-> Since we will change that in the future, let's decouple the clock data fr=
-om
-> the provider data.
+Quoting Maxime Ripard (2020-06-15 01:40:54)
+> The driver has really only supported one clock so far and has hardcoded t=
+he
+> ID used in communications with the firmware in all the functions
+> implementing the clock framework hooks. Let's store that in the clock data
+> structure so that we can support more clocks later on.
 >=20
 > Cc: Michael Turquette <mturquette@baylibre.com>
 > Cc: linux-clk@vger.kernel.org
