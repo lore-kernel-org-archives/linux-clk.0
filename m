@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02EFAC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C5F9C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C6367207DD
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B285207E8
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 00:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593045977;
-	bh=gnlllVEVjTFt6Hd4vAPi+nYTtxlVF6HKlz/NCG9gd7I=;
+	s=default; t=1593045983;
+	bh=9mPmJlPF2yBtCBMPCg1yDpeuNGPFh99AjFXW2uMVD6I=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Wx8CAx+20l5XJstClteLB4QSCDJfqhuf4avAIxW4PJdNsHoGCoO9G8LSlNfjcHld+
-	 CLBoYfB+EWudzK4AF+cbMEdDk5bO+PEPt8JkOi/ZqaAcG06636CShhYfYR8L8e540d
-	 CdTIZ5DvGIV/NQvUiCKiih5o98m8+t/cYxyiUnc0=
+	b=ZZoFo6zP7gOWrImMzg8ElFNJSiJAyl6S3HFb1SWO5r7YkrvC6KA+YYh85ACryhJgJ
+	 dtuV++8aQk49u5US4ubF2Zy8KoBp/yqTI+f+e9DH/WS1KSiLsTfVRzeFZM9UUaxHjO
+	 5rFEKPYJTlJxTu0Wl40ntCn09LKL2ofL/71/MsNo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389555AbgFYAqR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jun 2020 20:46:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60238 "EHLO mail.kernel.org"
+        id S2389571AbgFYAqW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jun 2020 20:46:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729175AbgFYAqQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jun 2020 20:46:16 -0400
+        id S1729175AbgFYAqW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jun 2020 20:46:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 918132078D;
-        Thu, 25 Jun 2020 00:46:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA1BB207DD;
+        Thu, 25 Jun 2020 00:46:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593045976;
-        bh=gnlllVEVjTFt6Hd4vAPi+nYTtxlVF6HKlz/NCG9gd7I=;
+        s=default; t=1593045981;
+        bh=9mPmJlPF2yBtCBMPCg1yDpeuNGPFh99AjFXW2uMVD6I=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=jcNTffsD6mpjdFU0gw0zkEzuf47ANktRekzjUZkk4WpE1SZMzjrVGhZ28ZV4Hd0Uh
-         2HlsVUMAQIcY8LwUx+LNuf75p31w4AIQ/btbixJO9nuE0N9RoFmriCiFbbnpYj7rPR
-         I3Nxje/eUxu2kElCNWkXcWf6huQiWv5Ec9LaPG0U=
+        b=l4IKIk6Wkd1PdnzMh+m9t8AkHxFEWfhtoyw0AD7yMuKvCte0+6irjuvJY511ZLMAj
+         rKNgppC+GPtR/TZxEpa3J1LlU+jH9WQW642MLNCCqQ6u/hXYrrN8FZRQaXJrs5zCPO
+         ToBmm7+B43Q6sOYYuhyI1miATOBPu2c4cLkvAwb4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <9864daba2f584ed49aee5ed1d2f4d48507c58197.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <9864daba2f584ed49aee5ed1d2f4d48507c58197.1592210452.git-series.maxime@cerno.tech>
-Subject: Re: [PATCH v5 26/27] clk: bcm2835: Don't cache the PLLB rate
+In-Reply-To: <acdf820c2f78a25dd7480a0c018b8b387acd013e.1592210452.git-series.maxime@cerno.tech>
+References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech> <acdf820c2f78a25dd7480a0c018b8b387acd013e.1592210452.git-series.maxime@cerno.tech>
+Subject: Re: [PATCH v5 27/27] clk: bcm: rpi: Remove the quirks for the CPU clock
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-rpi-kernel@lists.infradead.org,
         bcm-kernel-feedback-list@broadcom.com,
@@ -55,17 +55,18 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Maxime Ripard <maxime@cerno.tech>
 To:     Maxime Ripard <maxime@cerno.tech>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Wed, 24 Jun 2020 17:46:15 -0700
-Message-ID: <159304597593.62212.10576370083427696438@swboyd.mtv.corp.google.com>
+Date:   Wed, 24 Jun 2020 17:46:21 -0700
+Message-ID: <159304598103.62212.4509416139021904668@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-06-15 01:41:06)
-> The PLLB rate will be changed through the firmware clocks drivers and will
-> change behind this drivers' back, so we don't want to cache the rate.
+Quoting Maxime Ripard (2020-06-15 01:41:07)
+> The CPU clock has had so far a bunch of quirks to expose the clock tree
+> properly, but since we reverted to exposing them through the MMIO driver,
+> we can remove that code from the firmware driver.
 >=20
 > Acked-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
