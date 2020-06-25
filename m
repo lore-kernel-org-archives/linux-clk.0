@@ -2,87 +2,109 @@ Return-Path: <SRS0=6ucw=AG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B721C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 08:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C196C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 10:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4321A207FC
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 08:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 310DC206B7
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jun 2020 10:09:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="PTiM1sfe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390580AbgFYIRB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jun 2020 04:17:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34470 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390456AbgFYIRB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Jun 2020 04:17:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 85FBAAFCD;
-        Thu, 25 Jun 2020 08:16:59 +0000 (UTC)
-Message-ID: <03c2305fe0b5bcd26c1fe440ffe643f004ebbeb5.camel@suse.de>
-Subject: Re: [PATCH v5 24/27] ARM: dts: bcm2711: Add firmware clocks node
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Date:   Thu, 25 Jun 2020 10:16:56 +0200
-In-Reply-To: <9a6f113140b3115150bfb18ecb248a48d58562cf.1592210452.git-series.maxime@cerno.tech>
-References: <cover.98f979c2af2337c57217016d21d7c68e1ac2ce8a.1592210452.git-series.maxime@cerno.tech>
-         <9a6f113140b3115150bfb18ecb248a48d58562cf.1592210452.git-series.maxime@cerno.tech>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-mvJWUCSI4MCqcu6RhwOq"
-User-Agent: Evolution 3.36.3 
+        id S2390704AbgFYKJi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jun 2020 06:09:38 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:54417 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389915AbgFYKJh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jun 2020 06:09:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1593079777; x=1624615777;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=rnxg/SfWJqBp11CmjXPigJYLMp2gIu1Y+fOu8gptcnA=;
+  b=PTiM1sfeveXSzf52jGNuPmuamLALXMK21S2MoylueIRR24imEWqQ/5O2
+   rAJdoVH07Ofm1fX1spJUgPK8Xhow4oxA/DKMS8KUGwiAZZb4G7wuQMrQ0
+   IdWh9SnpMjqYJL1NvLpj+YR71UaXFL4wHgN21TLEHHzMNWW2Kbk04s7lR
+   fS3AqXbSMTTEfCRXGBiNZydiHkMwmeLgQ6hm/y3bxgz767WtGNMq6/3rz
+   HfkdKqhg+BDIwg/ryuR6mpgJ5lIvKtqr4hn8fwACfor20lA/qvVvSnCOg
+   KpFSZqJxLuSiipdd7WUaKqasvnpySW63PosCLiPY3FertR8WxbV+0e692
+   A==;
+IronPort-SDR: Nzc1KkoJRY2CYTb7HYfy6DHqtKQf3yvwU5AdJGRKj4WgEQeWQhTitPDXomGb9guBgdJTqnvr4b
+ ZNEnTrPBQQWpIE9xTELjrHldR5TWGNVegVJ40KyoJ+k7GnxWu/IhZIVtBZ/OuhZlb0W7cnnQg4
+ xsO5KL99AZ+vR36hCjMTx/Ru2odtDKOpvF/ztkNEi9iKOL0NVeyc9odg0T2v6mwWz5oF4n3caF
+ 5o79zhj3oj7PCx9GQqUiNiOcrrBWqITz8U/FCGRBnCWlmtTqKoKyEG2U6K+wAcWFlfovzQtFcJ
+ WXE=
+X-IronPort-AV: E=Sophos;i="5.75,278,1589266800"; 
+   d="scan'208";a="80856699"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 25 Jun 2020 03:09:37 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 25 Jun 2020 03:09:23 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Thu, 25 Jun 2020 03:09:31 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>, <linux-kernel@vger.kernel.org>
+CC:     <mturquette@linaro.org>, <bbrezillon@kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Claudiu Beznea" <claudiu.beznea@microchip.com>
+Subject: [PATCH 1/2] clk: at91: remove the checking of parent_name
+Date:   Thu, 25 Jun 2020 13:09:27 +0300
+Message-ID: <1593079768-9349-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+There is no need to check parent_name variable while assigning it to
+init.parent_names. parent_name variable is already checked at
+the beginning of at91_clk_register_sam9x5_peripheral() function.
+Same thing with init.num_parents: it could only be 1.
 
---=-mvJWUCSI4MCqcu6RhwOq
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Fixes: 6114067e437eb ("clk: at91: add PMC peripheral clocks")
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/clk/at91/clk-peripheral.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On Mon, 2020-06-15 at 10:41 +0200, Maxime Ripard wrote:
-> Now that we have a clock driver for the clocks exposed by the firmware,
-> let's add the device tree nodes for it.
->=20
-> Tested-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
-
-Applied for-next.
-
-Thanks!
-Nicolas
-
-
---=-mvJWUCSI4MCqcu6RhwOq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl70XXgACgkQlfZmHno8
-x/6Jjgf/RK/YBWcjRzmSnDYBO9CCoUVP8G3nVCvNSouvorVXK5Drrhkc8hKFV41V
-gEWpSzj06QNGUAXDFqDf6gr2d2VKa1pUyF0APE7PgwAm+xCjTrrmmmgg6DZDtVZi
-/2JIbiX6DSfl/Fm7e89h+w4PWRzRJSPi6RGKx+49YGiXyKYXWy/SjJqvlymvpdFV
-rneJSeEKfJfjAAy9nnpIW6hT/D9xeVjatMHGjFu3JAN/XY8q7begmXd3nGVlkT9f
-WdBakVBml6S0HpKEPDFWAtkzjetPJ1rmMT2g+QZozxFuor5cqvYWNXUCB69yKE4x
-PqtIRAhv3H1/A+DLSIw3u1+PEZtIQw==
-=dXqf
------END PGP SIGNATURE-----
-
---=-mvJWUCSI4MCqcu6RhwOq--
+diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
+index c2ab4860a2bf..4a0f40738fe3 100644
+--- a/drivers/clk/at91/clk-peripheral.c
++++ b/drivers/clk/at91/clk-peripheral.c
+@@ -111,8 +111,8 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
+ 
+ 	init.name = name;
+ 	init.ops = &peripheral_ops;
+-	init.parent_names = (parent_name ? &parent_name : NULL);
+-	init.num_parents = (parent_name ? 1 : 0);
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
+ 	init.flags = 0;
+ 
+ 	periph->id = id;
+@@ -340,8 +340,8 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
+ 
+ 	init.name = name;
+ 	init.ops = &sam9x5_peripheral_ops;
+-	init.parent_names = (parent_name ? &parent_name : NULL);
+-	init.num_parents = (parent_name ? 1 : 0);
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
+ 	init.flags = 0;
+ 
+ 	periph->id = id;
+-- 
+2.7.4
 
