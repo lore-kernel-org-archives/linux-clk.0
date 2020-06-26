@@ -4,60 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0530C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 13:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63259C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 13:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A7A132080C
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 13:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3110520663
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 13:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GQnd8g62"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zMODgyNp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725864AbgFZNwT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jun 2020 09:52:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37572 "EHLO
+        id S1728929AbgFZNyZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jun 2020 09:54:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728879AbgFZNwS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2020 09:52:18 -0400
-Received: from mail-pl1-x644.google.com (mail-pl1-x644.google.com [IPv6:2607:f8b0:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C6BBC03E97B
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2020 06:52:18 -0700 (PDT)
-Received: by mail-pl1-x644.google.com with SMTP id d10so4307516pls.5
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2020 06:52:18 -0700 (PDT)
+        with ESMTP id S1728874AbgFZNyZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2020 09:54:25 -0400
+Received: from mail-pl1-x642.google.com (mail-pl1-x642.google.com [IPv6:2607:f8b0:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D27DFC03E97A
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2020 06:54:24 -0700 (PDT)
+Received: by mail-pl1-x642.google.com with SMTP id bh7so4297315plb.11
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2020 06:54:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=vkfdqeVUI/su3DQ783AnuOft8liGgSL3jClLkDTp4UY=;
-        b=GQnd8g62dBM3UTGxkTLrYB6Bi3sDWOCthPfOY24u7iMn1hJo8BRIi0LKAiFPkODoC5
-         Lk0Vxa6ERv12ezALz49HAJyjPKsh80e5/Q6YdvGh8vjqTA6ZBqx5osR5uLpV95wwjnUK
-         L5+mKbZ6+4/4kYe4Poln3jPSLObbtdNe6DYKBq6U6aGinaxVTGRjji0J2So4rN4EkF8r
-         McrBTSAsUf1qY3fQYJ9Yr58LXY5Kb4PI5sy6X+FvM8OVKBqLXXg+fgvrbV7hmKW43E+c
-         VjX3ZLPPIIuEip3L2I850mBcmZpeuxcp+UV4clnuY0wtjjdSgPD/LYAACiWRgC9LEVDp
-         jmag==
+        bh=oMbNe3bvovs/HF4L4pFZ6HHy0t3ZDNuS6KDaRE+CO9g=;
+        b=zMODgyNpvqgSvfmhpS5ocDb2fyOJlPjvlHYiUmnneT/02SoUlBtXH/fRmO71OtRiBM
+         pqy6AgmVbJ6SQpw34Jj4lYyRt2iwQZt2pHUDOheXET5vzl+t2fr7mnj+tFOQb1lhVecU
+         19w+vR+D01H/tGFID+w9M+9czHAm9gqoYq2TwCbe1KHwGl38tKc4SCj/NvYXFj5EyqFg
+         WjgR+/oV6yf8v5PWwZ+9Fi1kGu4Xm7eMjCS2rp9FI+oU/tc+a3sdTPr6f0ONHa1Tpyz7
+         Q4e+1mSimc1+mTtGW9UXto5VF4rnRH1eLCUFHIelT7kEFwa06F0fHV5u8tg+uMuVa1H/
+         /lRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vkfdqeVUI/su3DQ783AnuOft8liGgSL3jClLkDTp4UY=;
-        b=Jq4JIRU4C2+3zjToCJrJnICmnWwjH5Xm3fEPleu0/UHww6SGLx7JUbOxGxqDgOVf6T
-         /rD56Qqri5I3OfEC+oij+1LRGX51ttEj6MqRNOMhzNVr9e4Ouywi2wxkhZcFbe9m4B2c
-         Gou1+4Se0JxNBvBoNcL6DwP9IxsXjFn3QWb3N72BjktBfB5aSoqsa3lGhZYfSHMmbw7j
-         XKp8ItUchURyh0fBKD6UQ3P4ivl18/GuLJEphdt1b1xz5hNsU3Jh3WIGp134sCUBLu8G
-         UEi+osehhp+AlUNHjKMJsGYs3/BPLOYsQ/lvL9LiGtsL2QHZiQfzQ9MiYSPPM/qxZjNN
-         0GOg==
-X-Gm-Message-State: AOAM532uqsT6MNlHfCfkgwAKGylhtFqvZXcIR73isVQYyc7S0cpaLc2H
-        aj8QaNizBbj5ciBSEvpSCLGK
-X-Google-Smtp-Source: ABdhPJy7UaGdsWs8Je1tfDfvQyzaIt6LkNtDGg2IYUTwtTmnV6mTf9yXL2BRzhLxRP2j1aog+TQZ/Q==
-X-Received: by 2002:a17:902:bb85:: with SMTP id m5mr2778337pls.267.1593179537839;
-        Fri, 26 Jun 2020 06:52:17 -0700 (PDT)
+        bh=oMbNe3bvovs/HF4L4pFZ6HHy0t3ZDNuS6KDaRE+CO9g=;
+        b=BjPK+3UM9AAOJG2hnxmeFJRHMxzsd28AuJ4oS7WsBl2HKAwwTDwWDt0rPfyzu98DRn
+         FA8VIPS5b5eQqv+Jp+MWRpsUhDCCXl6ko1aVIBo8iJzi/1Y4QjaFH/dhRuEI7gOozMO0
+         GPbK5qqwlOjtFq3LpSKehv04JgFYKUygjm5R4uujTW9xH2OI5QjKwvB/RhULQp4nLj86
+         /VFcnIwJzpH4oq/NcW4tk4GXj2jeg8iE1TDTpEs7ozFfrfMrZk00ABwsI3vInZ4vfo7v
+         MPg6CQIgGTmXjwVn4TYcsj9Kka+J9mi3vc4CzLkYKDZkzKIuhgFXWMj/WZ6J+J5Zb79X
+         l1lw==
+X-Gm-Message-State: AOAM5303O/0QrwQl38cy2lGGJ/SPja0h4ItRX8t3o4jb5bPj7DybPRfR
+        KMq0hecKElvJmxaCduc5S1GQ
+X-Google-Smtp-Source: ABdhPJzZ/XQHczKnQ1Sm/1IPTxvXLNgqgj4T9DiHLdtbLRBslZWLgu28jWeNZQ/+aJHxhoCVuljndQ==
+X-Received: by 2002:a17:90a:df8f:: with SMTP id p15mr3866933pjv.164.1593179663995;
+        Fri, 26 Jun 2020 06:54:23 -0700 (PDT)
 Received: from Mani-XPS-13-9360 ([2409:4072:6e11:8623:980f:4d73:2b9:f602])
-        by smtp.gmail.com with ESMTPSA id f200sm26216098pfa.62.2020.06.26.06.52.12
+        by smtp.gmail.com with ESMTPSA id y27sm3335138pgc.56.2020.06.26.06.54.18
         (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Jun 2020 06:52:17 -0700 (PDT)
-Date:   Fri, 26 Jun 2020 19:22:09 +0530
+        Fri, 26 Jun 2020 06:54:23 -0700 (PDT)
+Date:   Fri, 26 Jun 2020 19:24:16 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -68,149 +68,46 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-actions@lists.infradead.org
-Subject: Re: [PATCH v2 5/6] clk: actions: Add Actions S500 SoC Reset
- Management Unit support
-Message-ID: <20200626135209.GC8333@Mani-XPS-13-9360>
+Subject: Re: [PATCH v2 6/6] MAINTAINERS: Add reset binding entry for Actions
+ Semi Owl SoCs
+Message-ID: <20200626135415.GD8333@Mani-XPS-13-9360>
 References: <cover.1592941257.git.cristian.ciocaltea@gmail.com>
- <de224148c4ddee2de8354d7bcffdb49e2ab1edc2.1592941257.git.cristian.ciocaltea@gmail.com>
+ <c7db5abf78656af8d5a4ff8d677a08e03713c1f3.1592941257.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <de224148c4ddee2de8354d7bcffdb49e2ab1edc2.1592941257.git.cristian.ciocaltea@gmail.com>
+In-Reply-To: <c7db5abf78656af8d5a4ff8d677a08e03713c1f3.1592941257.git.cristian.ciocaltea@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jun 24, 2020 at 08:47:56PM +0300, Cristian Ciocaltea wrote:
-> Add Reset Management Unit (RMU) support for Actions Semi S500 SoC.
+On Wed, Jun 24, 2020 at 08:47:57PM +0300, Cristian Ciocaltea wrote:
+> Add a reset binding entry to match all members of Actions Semi Owl SoCs.
 > 
 > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+> ---
+>  MAINTAINERS | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7b5ffd646c6b..e6285c13bab0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1533,6 +1533,7 @@ F:	drivers/mmc/host/owl-mmc.c
+>  F:	drivers/pinctrl/actions/*
+>  F:	drivers/soc/actions/
+>  F:	include/dt-bindings/power/owl-*
+> +F:	include/dt-bindings/reset/actions,*-reset.h
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+You can just use, reset/actions,*
 
 Thanks,
 Mani
 
-> ---
-> Changes in v2:
->  - Remove copyright as indicated by Stephen
-> 
->  drivers/clk/actions/owl-s500.c | 78 ++++++++++++++++++++++++++++++++++
->  1 file changed, 78 insertions(+)
-> 
-> diff --git a/drivers/clk/actions/owl-s500.c b/drivers/clk/actions/owl-s500.c
-> index 025a8f6d6482..61bb224f6330 100644
-> --- a/drivers/clk/actions/owl-s500.c
-> +++ b/drivers/clk/actions/owl-s500.c
-> @@ -23,8 +23,10 @@
->  #include "owl-gate.h"
->  #include "owl-mux.h"
->  #include "owl-pll.h"
-> +#include "owl-reset.h"
->  
->  #include <dt-bindings/clock/actions,s500-cmu.h>
-> +#include <dt-bindings/reset/actions,s500-reset.h>
->  
->  #define CMU_COREPLL			(0x0000)
->  #define CMU_DEVPLL			(0x0004)
-> @@ -497,20 +499,96 @@ static struct clk_hw_onecell_data s500_hw_clks = {
->  	.num = CLK_NR_CLKS,
->  };
->  
-> +static const struct owl_reset_map s500_resets[] = {
-> +	[RESET_DMAC]	= { CMU_DEVRST0, BIT(0) },
-> +	[RESET_NORIF]	= { CMU_DEVRST0, BIT(1) },
-> +	[RESET_DDR]	= { CMU_DEVRST0, BIT(2) },
-> +	[RESET_NANDC]	= { CMU_DEVRST0, BIT(3) },
-> +	[RESET_SD0]	= { CMU_DEVRST0, BIT(4) },
-> +	[RESET_SD1]	= { CMU_DEVRST0, BIT(5) },
-> +	[RESET_PCM1]	= { CMU_DEVRST0, BIT(6) },
-> +	[RESET_DE]	= { CMU_DEVRST0, BIT(7) },
-> +	[RESET_LCD]	= { CMU_DEVRST0, BIT(8) },
-> +	[RESET_SD2]	= { CMU_DEVRST0, BIT(9) },
-> +	[RESET_DSI]	= { CMU_DEVRST0, BIT(10) },
-> +	[RESET_CSI]	= { CMU_DEVRST0, BIT(11) },
-> +	[RESET_BISP]	= { CMU_DEVRST0, BIT(12) },
-> +	[RESET_KEY]	= { CMU_DEVRST0, BIT(14) },
-> +	[RESET_GPIO]	= { CMU_DEVRST0, BIT(15) },
-> +	[RESET_AUDIO]	= { CMU_DEVRST0, BIT(17) },
-> +	[RESET_PCM0]	= { CMU_DEVRST0, BIT(18) },
-> +	[RESET_VDE]	= { CMU_DEVRST0, BIT(19) },
-> +	[RESET_VCE]	= { CMU_DEVRST0, BIT(20) },
-> +	[RESET_GPU3D]	= { CMU_DEVRST0, BIT(22) },
-> +	[RESET_NIC301]	= { CMU_DEVRST0, BIT(23) },
-> +	[RESET_LENS]	= { CMU_DEVRST0, BIT(26) },
-> +	[RESET_PERIPHRESET] = { CMU_DEVRST0, BIT(27) },
-> +	[RESET_USB2_0]	= { CMU_DEVRST1, BIT(0) },
-> +	[RESET_TVOUT]	= { CMU_DEVRST1, BIT(1) },
-> +	[RESET_HDMI]	= { CMU_DEVRST1, BIT(2) },
-> +	[RESET_HDCP2TX]	= { CMU_DEVRST1, BIT(3) },
-> +	[RESET_UART6]	= { CMU_DEVRST1, BIT(4) },
-> +	[RESET_UART0]	= { CMU_DEVRST1, BIT(5) },
-> +	[RESET_UART1]	= { CMU_DEVRST1, BIT(6) },
-> +	[RESET_UART2]	= { CMU_DEVRST1, BIT(7) },
-> +	[RESET_SPI0]	= { CMU_DEVRST1, BIT(8) },
-> +	[RESET_SPI1]	= { CMU_DEVRST1, BIT(9) },
-> +	[RESET_SPI2]	= { CMU_DEVRST1, BIT(10) },
-> +	[RESET_SPI3]	= { CMU_DEVRST1, BIT(11) },
-> +	[RESET_I2C0]	= { CMU_DEVRST1, BIT(12) },
-> +	[RESET_I2C1]	= { CMU_DEVRST1, BIT(13) },
-> +	[RESET_USB3]	= { CMU_DEVRST1, BIT(14) },
-> +	[RESET_UART3]	= { CMU_DEVRST1, BIT(15) },
-> +	[RESET_UART4]	= { CMU_DEVRST1, BIT(16) },
-> +	[RESET_UART5]	= { CMU_DEVRST1, BIT(17) },
-> +	[RESET_I2C2]	= { CMU_DEVRST1, BIT(18) },
-> +	[RESET_I2C3]	= { CMU_DEVRST1, BIT(19) },
-> +	[RESET_ETHERNET] = { CMU_DEVRST1, BIT(20) },
-> +	[RESET_CHIPID]	= { CMU_DEVRST1, BIT(21) },
-> +	[RESET_USB2_1]	= { CMU_DEVRST1, BIT(22) },
-> +	[RESET_WD0RESET] = { CMU_DEVRST1, BIT(24) },
-> +	[RESET_WD1RESET] = { CMU_DEVRST1, BIT(25) },
-> +	[RESET_WD2RESET] = { CMU_DEVRST1, BIT(26) },
-> +	[RESET_WD3RESET] = { CMU_DEVRST1, BIT(27) },
-> +	[RESET_DBG0RESET] = { CMU_DEVRST1, BIT(28) },
-> +	[RESET_DBG1RESET] = { CMU_DEVRST1, BIT(29) },
-> +	[RESET_DBG2RESET] = { CMU_DEVRST1, BIT(30) },
-> +	[RESET_DBG3RESET] = { CMU_DEVRST1, BIT(31) },
-> +};
-> +
->  static struct owl_clk_desc s500_clk_desc = {
->  	.clks	    = s500_clks,
->  	.num_clks   = ARRAY_SIZE(s500_clks),
->  
->  	.hw_clks    = &s500_hw_clks,
-> +
-> +	.resets     = s500_resets,
-> +	.num_resets = ARRAY_SIZE(s500_resets),
->  };
->  
->  static int s500_clk_probe(struct platform_device *pdev)
->  {
->  	struct owl_clk_desc *desc;
-> +	struct owl_reset *reset;
-> +	int ret;
->  
->  	desc = &s500_clk_desc;
->  	owl_clk_regmap_init(pdev, desc);
->  
-> +	reset = devm_kzalloc(&pdev->dev, sizeof(*reset), GFP_KERNEL);
-> +	if (!reset)
-> +		return -ENOMEM;
-> +
-> +	reset->rcdev.of_node = pdev->dev.of_node;
-> +	reset->rcdev.ops = &owl_reset_ops;
-> +	reset->rcdev.nr_resets = desc->num_resets;
-> +	reset->reset_map = desc->resets;
-> +	reset->regmap = desc->regmap;
-> +
-> +	ret = devm_reset_controller_register(&pdev->dev, &reset->rcdev);
-> +	if (ret)
-> +		dev_err(&pdev->dev, "Failed to register reset controller\n");
-> +
->  	return owl_clk_probe(&pdev->dev, desc->hw_clks);
->  }
+>  F:	include/linux/soc/actions/
+>  N:	owl
 >  
 > -- 
 > 2.27.0
