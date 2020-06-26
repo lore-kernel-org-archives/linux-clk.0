@@ -7,28 +7,28 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A574AC433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 17:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C2DFC433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 18:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7D90920836
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 17:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F8B0206E9
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 18:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="SdszneBv"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="creyvNKN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725806AbgFZR4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jun 2020 13:56:46 -0400
-Received: from mail-bn7nam10on2082.outbound.protection.outlook.com ([40.107.92.82]:6049
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
+        id S1725768AbgFZSq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jun 2020 14:46:28 -0400
+Received: from mail-eopbgr680059.outbound.protection.outlook.com ([40.107.68.59]:16100
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726441AbgFZR4p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Jun 2020 13:56:45 -0400
+        id S1725275AbgFZSq1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jun 2020 14:46:27 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Je6ofs7XFrTvDXpBEAy1ZYaw7OLNwOhvrvtHC7stfV4Xthc1LjOG8mp5VsA6HZAJHO0NoL1ph60pPyyo2iQ7BqMCiJuUZUdE0a8yrygUwq1VIbRZVm8MTZJJ/M+XZ1ywHpGSmCNW/6qQaBzW3s+7J81nSMfIhQY40jbHJiFnjvK3B98OphTMQJATTJZNPEx9vVwj29DlveZc+ZgTtZhDJ2F4VQ/QHeixzNGiaaR0cKBxl9YITkw9UXgNruZTuchqq5sAYpTvh+MoZWPBiN2xnGgPy0nhEoennGeLJQQzmnOTFkWhe+C4b0gtjFhnbY4BsPJvVxlI2CquIGg5tTP0sQ==
+ b=eX+c8Fzuk6MKxIEg+Dzo9lbicTtK3YuKCOzxz+//L1KVVQLJYgqosddoJKdcBUlDiAOErlypd0w81/+zdB8M2s6QdB5PzADLrBdxQ0wGb84HVF439wjFs0SDWVG2UyxI5/aFqeg0rTucDk97ArRxDIbkT71WbyL1auEWit4CbRgw3OoGYOKoDuD88t2sa/+uViDcpe7vOtS7pj4828QeUAe7cWVMd6wx+lUIqYdcmJXyKf8Cko2kVHNPSdZq4+I9pSktOyBV/NYjJEBGE8+opVulhyOakiNPocFZdmCtYh3b2P9lkclIWjh/WKZ1UdSYaR28zBm/Cf3Yknv5B5nCow==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xbAeHvHreXUXyxkAhOFMxfX4hCvPFwE3j1A8IigJyAY=;
- b=nN90JAxKcS7ccCW3oCB6mdj1TGFyACsN3VQTfUhXAE4WXlbUza0vrSZ881qFiXCGkPMkuaFLWY5/1hYaCxMCmKVVbOFazlRtFsqjyyGpRhpKV+EAQXFKiLHkt6Oo9uM9rQaFd/1NvMb4YGLxHmBssLmqpNXFQ5eSFwTByA+IR8mHqQHS2lYhmsrA5y0iSM+ub56AppO1M6tOrp9hptX1LZoGCpj/98b+XGf9BQTPxOArpI2SBvAZJtdsdCVRAee7Ty01RJSt22XHTFnurCNywsrTfdZLUgDnUfq2/0seridxs3Nh13+zDVvHYildJpiC0S0rkAjiouoQPn8r4IMaRA==
+ bh=udDkI7PA9XUuDOnRW2/GZ1GH501/S8h8hTn/kCZOe5w=;
+ b=hVdX5EBb/24P3roSmYyMK6zN4S5ki1zotm3P/RWz8oGYDk8CfZt257ovYCY/OsOQijZ030wv4c9BwBuNFNnXQsv7gD2MhP4LhJ+qXCIJkeIa1ETW9dtRRsEHNKK4h44I9s0KvlRXojFHGtUDx42wD3EUUCqZx1UEtoCw3ZyDXWgHoEqFf5K9f3kfTZjhm7f6ZGqxaKtShj8xvehEmFRPw31w9Z9agNYzfhtsOPfVi105rdjnhUgDkUvq9nQUE6lL9pNJnnDGIYfzlx7SmA837SD/VWSjdbJaU/T3AOgg+nw4GKKSsTkrb5rfSRn8sIkN2VSQbTwFpplVSzHoyZu0/A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  149.199.60.83) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=xilinx.com;
  dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
@@ -36,17 +36,18 @@ ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xbAeHvHreXUXyxkAhOFMxfX4hCvPFwE3j1A8IigJyAY=;
- b=SdszneBvD3s2seNLd7+wCy9mhq8UqZUeSde/ws3jDMIdM0BfGk2z3TS+2A93Jy3pcEPchCSQ93JqbijUDwn6lIbN9yLHX0VaNC0SDcMV93+CZIP/n6EAzFoSESK01879x+Ntc522OH/VbPSngwXg1/8NFEAFQsTvqop5Lf+aP9Q=
-Received: from CY1PR03CA0013.namprd03.prod.outlook.com (2603:10b6:600::23) by
- DM6PR02MB4457.namprd02.prod.outlook.com (2603:10b6:5:1f::19) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.3131.23; Fri, 26 Jun 2020 17:56:41 +0000
-Received: from CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
- (2603:10b6:600:0:cafe::58) by CY1PR03CA0013.outlook.office365.com
- (2603:10b6:600::23) with Microsoft SMTP Server (version=TLS1_2,
+ bh=udDkI7PA9XUuDOnRW2/GZ1GH501/S8h8hTn/kCZOe5w=;
+ b=creyvNKNa9lcM9d5PCwqN59DV9x42Av/Gig7np7znHOSqcpblARqPfITVdtk44ixtmr556OJIsddRFt7WNxIN1tU5h6CgLaukSyTqCcfgVNjgHpYiTXWooYsEceT70UoB0lqArldtrIRZDfkzYKlsrsYOPZpDUQRRtbjfeYEycc=
+Received: from CY4PR1701CA0012.namprd17.prod.outlook.com
+ (2603:10b6:910:5e::22) by BYAPR02MB4632.namprd02.prod.outlook.com
+ (2603:10b6:a03:5e::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.21; Fri, 26 Jun
+ 2020 18:46:21 +0000
+Received: from CY1NAM02FT032.eop-nam02.prod.protection.outlook.com
+ (2603:10b6:910:5e:cafe::e2) by CY4PR1701CA0012.outlook.office365.com
+ (2603:10b6:910:5e::22) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.20 via Frontend
- Transport; Fri, 26 Jun 2020 17:56:41 +0000
+ Transport; Fri, 26 Jun 2020 18:46:21 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
@@ -55,157 +56,454 @@ Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
  149.199.60.83 as permitted sender) receiver=protection.outlook.com;
  client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
 Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT055.mail.protection.outlook.com (10.152.74.80) with Microsoft SMTP
- Server id 15.20.3131.20 via Frontend Transport; Fri, 26 Jun 2020 17:56:41
+ CY1NAM02FT032.mail.protection.outlook.com (10.152.75.184) with Microsoft SMTP
+ Server id 15.20.3131.20 via Frontend Transport; Fri, 26 Jun 2020 18:46:21
  +0000
-Received: from [149.199.38.66] (port=53173 helo=xsj-pvapsmtp01)
+Received: from [149.199.38.66] (port=35413 helo=xsj-pvapsmtp01)
         by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
         (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1josZP-0004hI-Vd; Fri, 26 Jun 2020 10:55:23 -0700
+        id 1jotLT-0006D4-TU; Fri, 26 Jun 2020 11:45:03 -0700
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1josae-0007tX-TJ; Fri, 26 Jun 2020 10:56:40 -0700
-Received: from xsj-pvapsmtp01 (mailhost.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 05QHuW3b000761;
-        Fri, 26 Jun 2020 10:56:32 -0700
+        id 1jotMi-0000rA-ST; Fri, 26 Jun 2020 11:46:20 -0700
+Received: from xsj-pvapsmtp01 (xsj-pvapsmtp01.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id 05QIkGu4018038;
+        Fri, 26 Jun 2020 11:46:16 -0700
 Received: from [10.140.6.59] (helo=xhdshubhraj40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <shubhrajyoti.datta@xilinx.com>)
-        id 1josaW-0007oR-Dv; Fri, 26 Jun 2020 10:56:32 -0700
+        id 1jotMe-0000q1-37; Fri, 26 Jun 2020 11:46:16 -0700
 From:   Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 To:     linux-clk@vger.kernel.org
 Cc:     sboyd@kernel.org, robh+dt@kernel.org, gregkh@linuxfoundation.org,
         shubhrajyoti.datta@gmail.com, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, michals@xilinx.com,
         Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-Subject: [PATCH v5 1/8] dt-bindings: add documentation of xilinx clocking wizard
-Date:   Fri, 26 Jun 2020 23:26:18 +0530
-Message-Id: <1593194185-22394-2-git-send-email-shubhrajyoti.datta@xilinx.com>
+Subject: [PATCH v5 2/8] clk: clock-wizard: Add the clockwizard to clk directory
+Date:   Sat, 27 Jun 2020 00:16:05 +0530
+Message-Id: <1593197171-21747-1-git-send-email-shubhrajyoti.datta@xilinx.com>
 X-Mailer: git-send-email 2.1.1
-In-Reply-To: <1593194185-22394-1-git-send-email-shubhrajyoti.datta@xilinx.com>
-References: <1593194185-22394-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(396003)(346002)(376002)(39860400002)(136003)(46966005)(83380400001)(70206006)(6666004)(336012)(70586007)(6916009)(7696005)(26005)(44832011)(426003)(186003)(2616005)(316002)(107886003)(36756003)(8676002)(2906002)(81166007)(478600001)(966005)(9786002)(8936002)(82310400002)(82740400003)(5660300002)(47076004)(356005)(4326008);DIR:OUT;SFP:1101;
+X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(346002)(396003)(136003)(39860400002)(376002)(46966005)(70206006)(4326008)(478600001)(186003)(83380400001)(426003)(6666004)(336012)(82740400003)(30864003)(107886003)(36756003)(47076004)(5660300002)(81166007)(26005)(8936002)(6916009)(356005)(316002)(44832011)(66574015)(9786002)(82310400002)(8676002)(7696005)(2906002)(2616005)(70586007);DIR:OUT;SFP:1101;
 X-MS-PublicTrafficType: Email
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 853f45b1-509e-493d-df55-08d819fa47fd
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4457:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4457AAA947ADC34ABBA9DF30AA930@DM6PR02MB4457.namprd02.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 83c04e7b-f7c6-417d-7383-08d81a013824
+X-MS-TrafficTypeDiagnostic: BYAPR02MB4632:
+X-Microsoft-Antispam-PRVS: <BYAPR02MB4632494A77D3D900220DDF33AA930@BYAPR02MB4632.namprd02.prod.outlook.com>
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:628;
+X-MS-Oob-TLC-OOBClassifiers: OLM:549;
 X-Forefront-PRVS: 0446F0FCE1
 X-MS-Exchange-SenderADCheck: 1
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 3CRWL2vM0JQ1bPr0xaevzVlztpqk/xAJvieEUO6Db4LwxMbIygz6GXonKDJT6rSybBc4kirLypondjVwmlG1WJMsMDIEt4yPhHImcc1w9DIOEMifi6Xq/c6UcfsiCnrDk7ydUaW7X4BiGqnjS2JA0IULmrYpCpAFsbWjARDl1BrWG11lJ7uipOyABz/PrEULjkjVPxmxBHorUrCQfM7u6NCu1Sp4nz8I3h4vL2EMNlkoThUwW17RNkHmfXb/jUdlpiSEwq52KzMs2I2YqxvYnNO7x/b+z1TgogsVqKA1BfMveJffxzltelgtSW4BEDbBYQ+0poqAT2JiZM6tlfEhTbCmhIfavTIz7wFdv6navEV6YQXIysDQA585JTaB+E8W9xejA2pZl6sTKwcdGwpRic/mhKNFIEr1HGhC88cvp0kupmOjv5apKEMVZCBawYsNBzWuREjwHaSvjDUvo5tO1pu934dKM8zDgJLVOUF4StQ=
+X-Microsoft-Antispam-Message-Info: +G1IynGhviNjJdRuxntVoevBJo6v9t836LJHTnWnluaLO7hbCo0w/9VSW9GhAofmO6yq3saC/xwF7pKUM08iX8dAE0yrIYFtOU/Rf94HGflHmCgfHOTA4Vpq98XbewjTelCok4yW43KWPLhJho+dj7WX3Niwq79YgM3NY6xeUb//lp6sELvcTqerH5xCWYFRlHx2Va6JkG1Aa7vWtPDaMco+LOgbb3fzvPpMZLEC0Jpiv4eZm/rZN+Yj40dKGUKyeWd16Ku3537hCEOTVt+i9PZ9DV47+I/Q6Q7FhFOJP89WvlQo1khL2mqHEbiklrRPaA426KWA56KrmwidxBP+gnAusxFrglvE26r8+b+KWJu599VMgUoewvQp1i6TbepOi6LNygYOhGsKfspC/PC3pA==
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2020 17:56:41.3153
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2020 18:46:21.2007
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 853f45b1-509e-493d-df55-08d819fa47fd
+X-MS-Exchange-CrossTenant-Network-Message-Id: 83c04e7b-f7c6-417d-7383-08d81a013824
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT055.eop-nam02.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT032.eop-nam02.prod.protection.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4457
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4632
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the devicetree binding for the xilinx clocking wizard.
+Add clocking wizard driver to clk.
 
 Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 ---
-v4:
-change to yaml format
+ drivers/clk/Kconfig                 |   9 +
+ drivers/clk/Makefile                |   1 +
+ drivers/clk/clk-xlnx-clock-wizard.c | 338 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 348 insertions(+)
+ create mode 100644 drivers/clk/clk-xlnx-clock-wizard.c
 
- .../bindings/clock/xlnx,clocking-wizard.yaml       | 71 ++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 69934c0..5f66076 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -360,6 +360,15 @@ config COMMON_CLK_FIXED_MMIO
+ 	help
+ 	  Support for Memory Mapped IO Fixed clocks
+ 
++config COMMON_CLK_XLNX_CLKWZRD
++	tristate "Xilinx Clocking Wizard"
++	depends on COMMON_CLK && OF
++	help
++	  Support for the Xilinx Clocking Wizard IP core clock generator.
++	  Adds support for clocking wizard and compatible.
++	  This driver supports the Xilinx clocking wizard programmable clock
++	  synthesizer. The number of output is configurable in the design.
++
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/analogbits/Kconfig"
+ source "drivers/clk/baikal-t1/Kconfig"
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index ca9af11..f41287859 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_ARCH_VT8500)		+= clk-vt8500.o
+ obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
+ obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
+ obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
++obj-$(CONFIG_COMMON_CLK_XLNX_CLKWZRD)	+= clk-xlnx-clock-wizard.o
+ 
+ # please keep this section sorted lexicographically by directory path name
+ obj-y					+= actions/
+diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
 new file mode 100644
-index 0000000..5a8e991
+index 0000000..b31524a
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -0,0 +1,71 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/xlnx,clocking-wiz.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
++++ b/drivers/clk/clk-xlnx-clock-wizard.c
+@@ -0,0 +1,338 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Xilinx 'Clocking Wizard' driver
++ *
++ *  Copyright (C) 2013 - 2020 Xilinx
++ *
++ *  Sören Brinkmann <soren.brinkmann@xilinx.com>
++ *  Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
++ *
++ */
 +
-+title: Xilinx clocking wizard
++#include <linux/platform_device.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include <linux/slab.h>
++#include <linux/io.h>
++#include <linux/of.h>
++#include <linux/module.h>
++#include <linux/err.h>
 +
-+maintainers:
-+  - Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
++#define WZRD_NUM_OUTPUTS	7
++#define WZRD_ACLK_MAX_FREQ	250000000UL
 +
-+description: |
-+  The clocking wizard is a soft ip clocking block of Xilinx versal. It
-+  reads required input clock frequencies from the devicetree and acts as clock
-+  clock output.
++#define WZRD_CLK_CFG_REG(n)	(0x200 + 4 * (n))
 +
-+select: false
++#define WZRD_CLKOUT0_FRAC_EN	BIT(18)
++#define WZRD_CLKFBOUT_FRAC_EN	BIT(26)
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - xlnx,clocking-wizard
-+          - xlnx,clocking-wizard-6.0
++#define WZRD_CLKFBOUT_MULT_SHIFT	8
++#define WZRD_CLKFBOUT_MULT_MASK		(0xff << WZRD_CLKFBOUT_MULT_SHIFT)
++#define WZRD_DIVCLK_DIVIDE_SHIFT	0
++#define WZRD_DIVCLK_DIVIDE_MASK		(0xff << WZRD_DIVCLK_DIVIDE_SHIFT)
++#define WZRD_CLKOUT_DIVIDE_SHIFT	0
++#define WZRD_CLKOUT_DIVIDE_MASK		(0xff << WZRD_DIVCLK_DIVIDE_SHIFT)
 +
-+  "#clock-cells":
-+    const: 1
++enum clk_wzrd_int_clks {
++	wzrd_clk_mul,
++	wzrd_clk_mul_div,
++	wzrd_clk_int_max
++};
 +
-+  clocks:
-+    description: List of clock specifiers which are external input
-+      clocks to the given clock controller.
-+    items:
-+      - description: clock input
-+      - description: axi clock
++/**
++ * struct clk_wzrd:
++ * @clk_data:		Clock data
++ * @nb:			Notifier block
++ * @base:		Memory base
++ * @clk_in1:		Handle to input clock 'clk_in1'
++ * @axi_clk:		Handle to input clock 's_axi_aclk'
++ * @clks_internal:	Internal clocks
++ * @clkout:		Output clocks
++ * @speed_grade:	Speed grade of the device
++ * @suspended:		Flag indicating power state of the device
++ */
++struct clk_wzrd {
++	struct clk_onecell_data clk_data;
++	struct notifier_block nb;
++	void __iomem *base;
++	struct clk *clk_in1;
++	struct clk *axi_clk;
++	struct clk *clks_internal[wzrd_clk_int_max];
++	struct clk *clkout[WZRD_NUM_OUTPUTS];
++	unsigned int speed_grade;
++	bool suspended;
++};
 +
-+  clock-names:
-+    items:
-+      - const: clk_in1
-+      - const: s_axi_aclk
++#define to_clk_wzrd(_nb) container_of(_nb, struct clk_wzrd, nb)
 +
-+  speed-grade:
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32
-+      - enum: [1, 2, 3]
-+    description:
-+      Speed grade of the device.
-+    maxItems: 1
++/* maximum frequencies for input/output clocks per speed grade */
++static const unsigned long clk_wzrd_max_freq[] = {
++	800000000UL,
++	933000000UL,
++	1066000000UL
++};
 +
-+required:
-+  - compatible
-+  - "#clock-cells"
-+  - clocks
-+  - clock-names
-+  - speed-grade
++static int clk_wzrd_clk_notifier(struct notifier_block *nb, unsigned long event,
++				 void *data)
++{
++	unsigned long max;
++	struct clk_notifier_data *ndata = data;
++	struct clk_wzrd *clk_wzrd = to_clk_wzrd(nb);
 +
-+additionalProperties: false
++	if (clk_wzrd->suspended)
++		return NOTIFY_OK;
 +
-+examples:
-+  - |
-+    clock-generator@40040000 {
-+        #clock-cells = <1>;
-+        reg = <0x40040000 0x1000>;
-+        compatible = "xlnx,clk-wizard-1.0";
-+        speed-grade = <1>;
-+        clock-names = "clk_in1", "s_axi_aclk";
-+        clocks = <&clkc 15>, <&clkc 15>;
-+        clock-output-names = "clk_out1", "clk_out2",
-+        "clk_out3", "clk_out4", "clk_out5",
-+        "clk_out6", "clk_out7";
-+    };
-+...
++	if (ndata->clk == clk_wzrd->clk_in1)
++		max = clk_wzrd_max_freq[clk_wzrd->speed_grade - 1];
++	else if (ndata->clk == clk_wzrd->axi_clk)
++		max = WZRD_ACLK_MAX_FREQ;
++	else
++		return NOTIFY_DONE;	/* should never happen */
++
++	switch (event) {
++	case PRE_RATE_CHANGE:
++		if (ndata->new_rate > max)
++			return NOTIFY_BAD;
++		return NOTIFY_OK;
++	case POST_RATE_CHANGE:
++	case ABORT_RATE_CHANGE:
++	default:
++		return NOTIFY_DONE;
++	}
++}
++
++static int __maybe_unused clk_wzrd_suspend(struct device *dev)
++{
++	struct clk_wzrd *clk_wzrd = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(clk_wzrd->axi_clk);
++	clk_wzrd->suspended = true;
++
++	return 0;
++}
++
++static int __maybe_unused clk_wzrd_resume(struct device *dev)
++{
++	int ret;
++	struct clk_wzrd *clk_wzrd = dev_get_drvdata(dev);
++
++	ret = clk_prepare_enable(clk_wzrd->axi_clk);
++	if (ret) {
++		dev_err(dev, "unable to enable s_axi_aclk\n");
++		return ret;
++	}
++
++	clk_wzrd->suspended = false;
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(clk_wzrd_dev_pm_ops, clk_wzrd_suspend,
++			 clk_wzrd_resume);
++
++static int clk_wzrd_probe(struct platform_device *pdev)
++{
++	int i, ret;
++	u32 reg;
++	unsigned long rate;
++	const char *clk_name;
++	struct clk_wzrd *clk_wzrd;
++	struct resource *mem;
++	struct device_node *np = pdev->dev.of_node;
++
++	clk_wzrd = devm_kzalloc(&pdev->dev, sizeof(*clk_wzrd), GFP_KERNEL);
++	if (!clk_wzrd)
++		return -ENOMEM;
++	platform_set_drvdata(pdev, clk_wzrd);
++
++	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	clk_wzrd->base = devm_ioremap_resource(&pdev->dev, mem);
++	if (IS_ERR(clk_wzrd->base))
++		return PTR_ERR(clk_wzrd->base);
++
++	ret = of_property_read_u32(np, "speed-grade", &clk_wzrd->speed_grade);
++	if (!ret) {
++		if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
++			dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
++				 clk_wzrd->speed_grade);
++			clk_wzrd->speed_grade = 0;
++		}
++	}
++
++	clk_wzrd->clk_in1 = devm_clk_get(&pdev->dev, "clk_in1");
++	if (IS_ERR(clk_wzrd->clk_in1)) {
++		if (clk_wzrd->clk_in1 != ERR_PTR(-EPROBE_DEFER))
++			dev_err(&pdev->dev, "clk_in1 not found\n");
++		return PTR_ERR(clk_wzrd->clk_in1);
++	}
++
++	clk_wzrd->axi_clk = devm_clk_get(&pdev->dev, "s_axi_aclk");
++	if (IS_ERR(clk_wzrd->axi_clk)) {
++		if (clk_wzrd->axi_clk != ERR_PTR(-EPROBE_DEFER))
++			dev_err(&pdev->dev, "s_axi_aclk not found\n");
++		return PTR_ERR(clk_wzrd->axi_clk);
++	}
++	ret = clk_prepare_enable(clk_wzrd->axi_clk);
++	if (ret) {
++		dev_err(&pdev->dev, "enabling s_axi_aclk failed\n");
++		return ret;
++	}
++	rate = clk_get_rate(clk_wzrd->axi_clk);
++	if (rate > WZRD_ACLK_MAX_FREQ) {
++		dev_err(&pdev->dev, "s_axi_aclk frequency (%lu) too high\n",
++			rate);
++		ret = -EINVAL;
++		goto err_disable_clk;
++	}
++
++	/* we don't support fractional div/mul yet */
++	reg = readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
++		    WZRD_CLKFBOUT_FRAC_EN;
++	reg |= readl(clk_wzrd->base + WZRD_CLK_CFG_REG(2)) &
++		     WZRD_CLKOUT0_FRAC_EN;
++	if (reg)
++		dev_warn(&pdev->dev, "fractional div/mul not supported\n");
++
++	/* register multiplier */
++	reg = (readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
++		     WZRD_CLKFBOUT_MULT_MASK) >> WZRD_CLKFBOUT_MULT_SHIFT;
++	clk_name = kasprintf(GFP_KERNEL, "%s_mul", dev_name(&pdev->dev));
++	if (!clk_name) {
++		ret = -ENOMEM;
++		goto err_disable_clk;
++	}
++	clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
++			(&pdev->dev, clk_name,
++			 __clk_get_name(clk_wzrd->clk_in1),
++			 0, reg, 1);
++	kfree(clk_name);
++	if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul])) {
++		dev_err(&pdev->dev, "unable to register fixed-factor clock\n");
++		ret = PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul]);
++		goto err_disable_clk;
++	}
++
++	/* register div */
++	reg = (readl(clk_wzrd->base + WZRD_CLK_CFG_REG(0)) &
++			WZRD_DIVCLK_DIVIDE_MASK) >> WZRD_DIVCLK_DIVIDE_SHIFT;
++	clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
++	if (!clk_name) {
++		ret = -ENOMEM;
++		goto err_rm_int_clk;
++	}
++
++	clk_wzrd->clks_internal[wzrd_clk_mul_div] = clk_register_fixed_factor
++			(&pdev->dev, clk_name,
++			 __clk_get_name(clk_wzrd->clks_internal[wzrd_clk_mul]),
++			 0, 1, reg);
++	if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div])) {
++		dev_err(&pdev->dev, "unable to register divider clock\n");
++		ret = PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div]);
++		goto err_rm_int_clk;
++	}
++
++	/* register div per output */
++	for (i = WZRD_NUM_OUTPUTS - 1; i >= 0 ; i--) {
++		const char *clkout_name;
++
++		if (of_property_read_string_index(np, "clock-output-names", i,
++						  &clkout_name)) {
++			dev_err(&pdev->dev,
++				"clock output name not specified\n");
++			ret = -EINVAL;
++			goto err_rm_int_clks;
++		}
++		reg = readl(clk_wzrd->base + WZRD_CLK_CFG_REG(2) + i * 12);
++		reg &= WZRD_CLKOUT_DIVIDE_MASK;
++		reg >>= WZRD_CLKOUT_DIVIDE_SHIFT;
++		clk_wzrd->clkout[i] = clk_register_fixed_factor
++			(&pdev->dev, clkout_name, clk_name, 0, 1, reg);
++		if (IS_ERR(clk_wzrd->clkout[i])) {
++			int j;
++
++			for (j = i + 1; j < WZRD_NUM_OUTPUTS; j++)
++				clk_unregister(clk_wzrd->clkout[j]);
++			dev_err(&pdev->dev,
++				"unable to register divider clock\n");
++			ret = PTR_ERR(clk_wzrd->clkout[i]);
++			goto err_rm_int_clks;
++		}
++	}
++
++	kfree(clk_name);
++
++	clk_wzrd->clk_data.clks = clk_wzrd->clkout;
++	clk_wzrd->clk_data.clk_num = ARRAY_SIZE(clk_wzrd->clkout);
++	of_clk_add_provider(np, of_clk_src_onecell_get, &clk_wzrd->clk_data);
++
++	if (clk_wzrd->speed_grade) {
++		clk_wzrd->nb.notifier_call = clk_wzrd_clk_notifier;
++
++		ret = clk_notifier_register(clk_wzrd->clk_in1,
++					    &clk_wzrd->nb);
++		if (ret)
++			dev_warn(&pdev->dev,
++				 "unable to register clock notifier\n");
++
++		ret = clk_notifier_register(clk_wzrd->axi_clk, &clk_wzrd->nb);
++		if (ret)
++			dev_warn(&pdev->dev,
++				 "unable to register clock notifier\n");
++	}
++
++	return 0;
++
++err_rm_int_clks:
++	clk_unregister(clk_wzrd->clks_internal[1]);
++err_rm_int_clk:
++	kfree(clk_name);
++	clk_unregister(clk_wzrd->clks_internal[0]);
++err_disable_clk:
++	clk_disable_unprepare(clk_wzrd->axi_clk);
++
++	return ret;
++}
++
++static int clk_wzrd_remove(struct platform_device *pdev)
++{
++	int i;
++	struct clk_wzrd *clk_wzrd = platform_get_drvdata(pdev);
++
++	of_clk_del_provider(pdev->dev.of_node);
++
++	for (i = 0; i < WZRD_NUM_OUTPUTS; i++)
++		clk_unregister(clk_wzrd->clkout[i]);
++	for (i = 0; i < wzrd_clk_int_max; i++)
++		clk_unregister(clk_wzrd->clks_internal[i]);
++
++	if (clk_wzrd->speed_grade) {
++		clk_notifier_unregister(clk_wzrd->axi_clk, &clk_wzrd->nb);
++		clk_notifier_unregister(clk_wzrd->clk_in1, &clk_wzrd->nb);
++	}
++
++	clk_disable_unprepare(clk_wzrd->axi_clk);
++
++	return 0;
++}
++
++static const struct of_device_id clk_wzrd_ids[] = {
++	{ .compatible = "xlnx,clocking-wizard" },
++	{ .compatible = "xlnx,clocking-wizard-6.0" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
++
++static struct platform_driver clk_wzrd_driver = {
++	.driver = {
++		.name = "clk-wizard",
++		.of_match_table = clk_wzrd_ids,
++		.pm = &clk_wzrd_dev_pm_ops,
++	},
++	.probe = clk_wzrd_probe,
++	.remove = clk_wzrd_remove,
++};
++module_platform_driver(clk_wzrd_driver);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Soeren Brinkmann <soren.brinkmann@xilinx.com");
++MODULE_DESCRIPTION("Driver for the Xilinx Clocking Wizard IP core");
 -- 
 2.1.1
 
