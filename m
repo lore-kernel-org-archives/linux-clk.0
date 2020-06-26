@@ -2,68 +2,92 @@ Return-Path: <SRS0=uDsh=AH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63796C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 18:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B82F2C433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 20:58:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3616E2088E
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 18:58:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593197905;
-	bh=TGfEfT04MJtyB6NlAmXR6ddfNHAjn2Jz58o9zj04LPQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=NkPh8OR1wSrkYhTggKVmJOktTMXXGwT/8xiYvtyt0WHH0Ds5DMWsb/L9Ip32LoAxK
-	 qjbTBdRQT6Erm+cWDs5rrEM1Q3m+JluvOyK95NEMOpXBbqMniGRWmuztcrxlWQGNRc
-	 72sy4SGSPoKDw0JJHz1yGID7ONFepMSQV2duhR5A=
+	by mail.kernel.org (Postfix) with ESMTP id 99F982088E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 20:58:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbgFZS6Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jun 2020 14:58:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47734 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725283AbgFZS6Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Jun 2020 14:58:24 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E773420836;
-        Fri, 26 Jun 2020 18:58:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593197904;
-        bh=TGfEfT04MJtyB6NlAmXR6ddfNHAjn2Jz58o9zj04LPQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ffs/k8uGO0BMvavrGsn0anevAbhJNpMoR2Vm+8dfTKQs5l6oKwb37H1G6dOdrmfN7
-         rS7KMQbj8CAHv2cA0Qj4yl1/R3+uLRHOc/J0q86BEEN1iuJ127CG95QeJNkm/+AY6V
-         N+SDwLsXjRVXPux87TG2wwV6B6SNjtTCwwdascvE=
-Content-Type: text/plain; charset="utf-8"
+        id S1725803AbgFZU6u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jun 2020 16:58:50 -0400
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:52951 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbgFZU6u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2020 16:58:50 -0400
+X-Originating-IP: 86.202.110.81
+Received: from localhost (lfbn-lyo-1-15-81.w86-202.abo.wanadoo.fr [86.202.110.81])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id ABA74C0003;
+        Fri, 26 Jun 2020 20:58:47 +0000 (UTC)
+Date:   Fri, 26 Jun 2020 22:58:47 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
+        linux-kernel@vger.kernel.org, mturquette@linaro.org,
+        bbrezillon@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] clk: at91: remove the checking of parent_name
+Message-ID: <20200626205847.GW131826@piout.net>
+References: <1593079768-9349-1-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200626112513.90816-1-maxime@cerno.tech>
-References: <20200626112513.90816-1-maxime@cerno.tech>
-Subject: Re: [PATCH] clk: bcm: dvp: Add missing module informations
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Maxime Ripard <maxime@cerno.tech>
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Fri, 26 Jun 2020 11:58:23 -0700
-Message-ID: <159319790323.62212.8326522252296969810@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1593079768-9349-1-git-send-email-claudiu.beznea@microchip.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-06-26 04:25:13)
-> The driver for the DVP controller in the BCM2711 was missing the MODULE_*
-> macros resulting in a modpost warning at compilation.
->=20
-> Fixes: 1bc95972715a ("clk: bcm: Add BCM2711 DVP driver")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
+On 25/06/2020 13:09:27+0300, Claudiu Beznea wrote:
+> There is no need to check parent_name variable while assigning it to
+> init.parent_names. parent_name variable is already checked at
+> the beginning of at91_clk_register_sam9x5_peripheral() function.
+> Same thing with init.num_parents: it could only be 1.
+> 
+> Fixes: 6114067e437eb ("clk: at91: add PMC peripheral clocks")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Applied to clk-next
+> ---
+>  drivers/clk/at91/clk-peripheral.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
+> index c2ab4860a2bf..4a0f40738fe3 100644
+> --- a/drivers/clk/at91/clk-peripheral.c
+> +++ b/drivers/clk/at91/clk-peripheral.c
+> @@ -111,8 +111,8 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
+>  
+>  	init.name = name;
+>  	init.ops = &peripheral_ops;
+> -	init.parent_names = (parent_name ? &parent_name : NULL);
+> -	init.num_parents = (parent_name ? 1 : 0);
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+>  	init.flags = 0;
+>  
+>  	periph->id = id;
+> @@ -340,8 +340,8 @@ at91_clk_register_sam9x5_peripheral(struct regmap *regmap, spinlock_t *lock,
+>  
+>  	init.name = name;
+>  	init.ops = &sam9x5_peripheral_ops;
+> -	init.parent_names = (parent_name ? &parent_name : NULL);
+> -	init.num_parents = (parent_name ? 1 : 0);
+> +	init.parent_names = &parent_name;
+> +	init.num_parents = 1;
+>  	init.flags = 0;
+>  
+>  	periph->id = id;
+> -- 
+> 2.7.4
+> 
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
