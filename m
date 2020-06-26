@@ -2,105 +2,91 @@ Return-Path: <SRS0=uDsh=AH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B0FC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 16:04:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F95C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 16:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0CB92075D
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 16:04:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWmgsVPj"
+	by mail.kernel.org (Postfix) with ESMTP id 35BE8207E8
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jun 2020 16:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbgFZQEB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jun 2020 12:04:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57972 "EHLO
+        id S1726891AbgFZQXn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jun 2020 12:23:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32774 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbgFZQEB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2020 12:04:01 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2142C03E979;
-        Fri, 26 Jun 2020 09:04:00 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id h5so10001161wrc.7;
-        Fri, 26 Jun 2020 09:04:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ldOu+GBWkRUkKh/sbBFvoMeVdq/bBluTg0VXKcUZyJE=;
-        b=gWmgsVPjwvPb4wUvvt+CPJBQprsWz3CZNv5pJ2Or1vsCO38BJlvVEcno2wcKrr4O4u
-         34FpRlP39oCIBmP/f+3a6gdn+YFFSofU27B5zv+gIKOEfbNROIZGdql4CM88hV6KGbDD
-         eg+KA6YAvgqYLXkaoQ0bqPA12JMsZvApWCakIgc/+hmKkmnLf+Ulnc9YZ7RzntSl2ErX
-         PbtwdhRPWvh4iz4GU+i78/HYJUBDpxUc1p+uE4/IMEzvrDPO76+/OYxhDINX0YC6u4fu
-         k61KgsHsOcP/3WGA+CHfHxaKXzyFJIRwLkbYptJUsi6iP0f9FpPiQVF3cyRZc+BR7fKx
-         LzeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ldOu+GBWkRUkKh/sbBFvoMeVdq/bBluTg0VXKcUZyJE=;
-        b=bGc4rEhL4Cbq5MFgcuYm7FEJn04yQeobsaJmUo4PlSHjPMKESdgxOR2QpeRVcJ3jox
-         GlWvPR7AMcSSQ4x1W6ApOj+iQqqfEg0vKF8JeJqIO2ItT9CQHfLi6lKuYy3uH72YNXqp
-         UFjKsYwmyqZEVLeX1X0/1ClxrBW1aaeStnekccxWvzfsLR3ng0KI40GOC9SWFFahA7mF
-         E12RntwCwyjUg2j8yjdqYD7dcw9vHC3EFEcnd0j+yHxFpAaszJpFJhi3RGkcxFJdtC2k
-         5Dohk05kG5SqnuCDgN1uLgNsRZ4bnyVZnBxxqQwqhwPjmcHHzNhN9Fo1PCPlAeCb7f2n
-         g4aA==
-X-Gm-Message-State: AOAM533oFB5In1HO93TtUQpdNdRUOPrQ7J2Xr3BNvSdO6ADfeiBDF6ap
-        bVf3RTjUsz1ATPzWrrhnAX5J3I4d
-X-Google-Smtp-Source: ABdhPJyYFmssCU32/GBiykg1dcLN2/6jwQ9h5b6xQfOSvjH5diH7cq9mNIupawxGi1YWQZ8h6WQo/g==
-X-Received: by 2002:a5d:55c9:: with SMTP id i9mr4440636wrw.404.1593187439226;
-        Fri, 26 Jun 2020 09:03:59 -0700 (PDT)
-Received: from [10.230.189.192] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 207sm20205463wme.13.2020.06.26.09.03.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jun 2020 09:03:58 -0700 (PDT)
-Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware
- binding
-To:     Maxime Ripard <maxime@cerno.tech>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-References: <20200626115433.125735-1-maxime@cerno.tech>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <db449a41-8256-e1b3-abb6-d8835901edc8@gmail.com>
-Date:   Fri, 26 Jun 2020 09:03:55 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Firefox/68.0 Thunderbird/68.9.0
+        with ESMTP id S1726832AbgFZQXm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jun 2020 12:23:42 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F651C03E979
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jun 2020 09:23:42 -0700 (PDT)
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jor8a-0004qp-H9; Fri, 26 Jun 2020 18:23:36 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1jor8Z-0005kS-Jq; Fri, 26 Jun 2020 18:23:35 +0200
+Date:   Fri, 26 Jun 2020 18:23:35 +0200
+From:   Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Anson Huang <Anson.Huang@nxp.com>, linux-clk@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Remove redundant 'maxItems'
+Message-ID: <20200626162335.ddfc23czvknblmqx@pengutronix.de>
+References: <20200611194738.1480393-1-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gcokhkvcs44oti6s"
+Content-Disposition: inline
+In-Reply-To: <20200611194738.1480393-1-robh@kernel.org>
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+--gcokhkvcs44oti6s
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 6/26/2020 4:54 AM, Maxime Ripard wrote:
-> The RaspberryPi firmware binding uses two compatible, include simple-bus.
-> The select statement generated by default will thus select any node that
-> has simple-bus, not all of them being the raspberrypi firmware node.
-> 
-> This results in warnings being wrongfully reported. Let's add a custom
-> select statement to fix that.
-> 
-> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+On Thu, Jun 11, 2020 at 01:47:38PM -0600, Rob Herring wrote:
+> There's no need to specify 'maxItems' with the same value as the number
+> of entries in 'items'. A meta-schema update will catch future cases.
 
-Acked-by: Florian Fainelli <f.fainelli@gmail.com>
+Sounds reasonable,
 
-Thanks Maxime!
--- 
-Florian
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+
+--gcokhkvcs44oti6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEfnIqFpAYrP8+dKQLwfwUeK3K7AkFAl72IQQACgkQwfwUeK3K
+7AkkTAf+P/Ix8I1Qk1/xQYx03skU0vfyzMw0MExu5t68JfypxlbIJ5xAmxuc6iUC
+85scAvE5q44rK35snt5WmCMjWf5F/afqu/ZOAY4XTp/M3Eb2S0vt9eMJ77myyRrQ
+re3PzISpIlToIUpR1370R5KoQoSDcmKrUHE7vo8Op72CilADbLlitOOp0DVNl+kU
+3q32VL9eUCLbSHTv528iAbzVr/OYNn1Hmq6jHVZBN3Y/kSY2ayep1jguHHtjv7Mi
+WcnKEkNgtQMJTcNQuhIqmfXLjjlN3kBy8taEKkuGsobWq1E2yFQUiBboD1poMXXe
+WlcAYJ4803KbT1JSUf/h1JAXT8Qbmw==
+=laHj
+-----END PGP SIGNATURE-----
+
+--gcokhkvcs44oti6s--
