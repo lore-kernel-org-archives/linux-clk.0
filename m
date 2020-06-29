@@ -4,72 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3E09C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:43:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4854FC433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C319C206A1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:43:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FB512063A
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:44:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="IXmyZM/y"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="cakXMdhc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404002AbgF2Vnu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:43:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37568 "EHLO
+        id S1727808AbgF2VoA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:44:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbgF2Shs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:37:48 -0400
-Received: from mail-qk1-x742.google.com (mail-qk1-x742.google.com [IPv6:2607:f8b0:4864:20::742])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D963BC03141F
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:02 -0700 (PDT)
-Received: by mail-qk1-x742.google.com with SMTP id e11so15990025qkm.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:02 -0700 (PDT)
+        with ESMTP id S1727840AbgF2Shr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:37:47 -0400
+Received: from mail-qv1-xf42.google.com (mail-qv1-xf42.google.com [IPv6:2607:f8b0:4864:20::f42])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5957C031434
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:12 -0700 (PDT)
+Received: by mail-qv1-xf42.google.com with SMTP id a14so8004223qvq.6
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=fem3XNP+K3JU9MCaDCRGbzpn3Qjj+S6fTPpAXuau47M=;
-        b=IXmyZM/yRnHMX0W2VsnzlDaWZI/gIrdOGnVPWgA+2Kxtlsm4yBGwSUeP2xGUDv1KYx
-         ysOEPUN0Yf1dqDn3fjal1FFDnykYcc3fT8m1LMbYmnJ8CNQrn90e8PjsxNEWrn0fVA0h
-         lJk/GqLz6CmqU1mS/49tGnXa7GVxX3PRcW+YfeBzAPwpO86IUfVtSRYapv8eyk+gissX
-         in9N5q8c6+M6KL58t09k47Q5dcwMInAFOEFjr37pQ6Njfopi7K6y5rCTvKyjmaWA3Jmo
-         HPr2+RQ2/30V9ckiCKd+BkFCselNoTY+vcSiaP2qs3iVoEn5dEkE0ilLhDgW3Sw5wXoD
-         79AA==
+        bh=MEAgnaM7D2mpY2dMCdUXKcsS9ZNQb7s4gUJ6O4bO1VY=;
+        b=cakXMdhcddci1jYVi33hSFcTaWjtdUzX5bG+pUizoRKtavcztv5pEaTMcR3xhC3pwc
+         +oFlbm5GPeRBw6/yBHNsb2PyDNdKFFm6cLRFu/zWPqDKIvOXOvdhN1DSUWkxKIG6LYo7
+         7kuDTw4b5e4x8NwN5PFfMI26gd4OmiBKT4kbnvRmOOO/rEe0QQoio1VL2pUsNlGYIY9h
+         eY/oYmNlpRRKzpOVUzXibc/63n8GQvOUrjdP4mAiJ865Fn2NvzdH9ZhPFjWhgcGc/urt
+         gOmvnB8AoQFacwoRRRA8YESi0slDXE6DWDqu7dZyzgerrRtYZ0jk90J5sX3fxzoWzuAP
+         JPhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=fem3XNP+K3JU9MCaDCRGbzpn3Qjj+S6fTPpAXuau47M=;
-        b=oFsgcaJ3qfrqK755TXTcNRYSOJNjH9tPA7diaVuMC7EcG70ngQa7FbkdvNMffbQYs4
-         gUwv3DkrnKF4/oBlv9DcP0LwHOhcciUOdCZZXCFpcaU7DeKsI4XwHfT6UqRH9SJ8Jwwv
-         IVdXLRYsoAQubjyZcWhnvpI4zPzuPPYpWqX8EKZZNdQxXFsXHt9whj7QCwhQyoodnGRS
-         o3WHDutiSKS6DxgB65dVRY+3vDZsigcrigPkUVIDlfW5MOpaQ6bvZsQX8xDz6Q9Yo2Hu
-         tTd1UcpZ8xFR2LAoaEQQ9MlNEMnZKlHNP7bbb4sWeWde28d4ZQZcmOSAVW+4lhCqLaMf
-         EjIg==
-X-Gm-Message-State: AOAM531kJoGzMwZsk6pQ8qgOf1kJqqqHC9nI2C/6J/0TlAy6z0Klifxs
-        ekiDBgaXLFjOE53/ZXeiFkuxJw==
-X-Google-Smtp-Source: ABdhPJxy3AW0ebQa1q0sqz4u/+GdjEeyX7bZO37gJSu74AUtCI+D1DWF+pQRCB+c38adJFkCFtGJJg==
-X-Received: by 2002:a37:e4e:: with SMTP id 75mr16083443qko.81.1593451262110;
-        Mon, 29 Jun 2020 10:21:02 -0700 (PDT)
+        bh=MEAgnaM7D2mpY2dMCdUXKcsS9ZNQb7s4gUJ6O4bO1VY=;
+        b=e0B3fcMJH2DwhplZQ+IqdbQW5GTVjyTMOyqTTlesPw2a1k4wccKYsue524zWHWMDrP
+         7PRtjiSGcXhRsjgo07lGA9J9DZcWl69mtbYyC6/FXXOLEqLe60eeG5iXrLmOqZ/jbCyp
+         waaH/bXjHPmpZ3zqjtG0YpZ5ePm1L0h0CJTQteuWBdQTGd/0GQxihuaTRtFXByjC1kBV
+         7v92f5/ya3txdw19xsLwRtnu0PEuUcu4zwZNBfEUT5C3wQcy5LhQiZeI69L0YOjsrdZs
+         moOwJLozYVK2HUY73OpKncPkmiugwo3nO4HfORIPCpv9hdKkIWFd6TawibKi1aTnDs4X
+         G5Cw==
+X-Gm-Message-State: AOAM533YjHgQd856GtPONaErskRXqBs2aZhTtMYSQXVuYjOBfYZJLhW7
+        F2YeE8rDS2Z0+9UHMqIwDpCzyg==
+X-Google-Smtp-Source: ABdhPJyaLd6au1/0WA+lxGsA1HcU8jMvhnK/QtKjdcrss2tNZZ0jSr2bU65AOstsV9I+9d+Bn3UceA==
+X-Received: by 2002:a05:6214:9af:: with SMTP id du15mr16068477qvb.188.1593451271974;
+        Mon, 29 Jun 2020 10:21:11 -0700 (PDT)
 Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id q5sm408363qtf.12.2020.06.29.10.21.01
+        by smtp.gmail.com with ESMTPSA id q5sm408363qtf.12.2020.06.29.10.21.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 10:21:01 -0700 (PDT)
+        Mon, 29 Jun 2020 10:21:11 -0700 (PDT)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 02/13] clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
-Date:   Mon, 29 Jun 2020 13:20:32 -0400
-Message-Id: <20200629172049.30452-3-jonathan@marek.ca>
+Subject: [PATCH v2 08/13] clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers
+Date:   Mon, 29 Jun 2020 13:20:38 -0400
+Message-Id: <20200629172049.30452-9-jonathan@marek.ca>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200629172049.30452-1-jonathan@marek.ca>
 References: <20200629172049.30452-1-jonathan@marek.ca>
@@ -80,35 +78,148 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-0x44 isn't a register offset, it is the value that goes into CAL_L_VAL.
-
-Fixes: 548a909597d5 ("clk: qcom: clk-alpha-pll: Add support for Trion PLLs")
+All gpucc drivers need this, so move it to common code instead of
+duplicating it in every gpucc driver.
 
 Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- drivers/clk/qcom/clk-alpha-pll.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/qcom/gdsc.c         | 25 +++++++++++++++++++++++++
+ drivers/clk/qcom/gdsc.h         |  1 +
+ drivers/clk/qcom/gpucc-sc7180.c | 27 +--------------------------
+ drivers/clk/qcom/gpucc-sdm845.c | 27 +--------------------------
+ 4 files changed, 28 insertions(+), 52 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 9b2dfa08acb2..1325139173c9 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -56,7 +56,6 @@
- #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
- #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
- #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
--#define PLL_CAL_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 04944f11659b..628397703717 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -433,3 +433,28 @@ void gdsc_unregister(struct gdsc_desc *desc)
+ 	}
+ 	of_genpd_del_provider(dev->of_node);
+ }
++
++/*
++ * On SDM845+ the GPU GX domain is *almost* entirely controlled by the GMU
++ * running in the CX domain so the CPU doesn't need to know anything about the
++ * GX domain EXCEPT....
++ *
++ * Hardware constraints dictate that the GX be powered down before the CX. If
++ * the GMU crashes it could leave the GX on. In order to successfully bring back
++ * the device the CPU needs to disable the GX headswitch. There being no sane
++ * way to reach in and touch that register from deep inside the GPU driver we
++ * need to set up the infrastructure to be able to ensure that the GPU can
++ * ensure that the GX is off during this super special case. We do this by
++ * defining a GX gdsc with a dummy enable function and a "default" disable
++ * function.
++ *
++ * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
++ * driver. During power up, nothing will happen from the CPU (and the GMU will
++ * power up normally but during power down this will ensure that the GX domain
++ * is *really* off - this gives us a semi standard way of doing what we need.
++ */
++int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain)
++{
++	/* Do nothing but give genpd the impression that we were successful */
++	return 0;
++}
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index c36fc26dcdff..1896bfb2bbd1 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -68,6 +68,7 @@ struct gdsc_desc {
+ int gdsc_register(struct gdsc_desc *desc, struct reset_controller_dev *,
+ 		  struct regmap *);
+ void gdsc_unregister(struct gdsc_desc *desc);
++int gdsc_gx_do_nothing_enable(struct generic_pm_domain *domain);
+ #else
+ static inline int gdsc_register(struct gdsc_desc *desc,
+ 				struct reset_controller_dev *rcdev,
+diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
+index 7b656b6aeced..88a739b6fec3 100644
+--- a/drivers/clk/qcom/gpucc-sc7180.c
++++ b/drivers/clk/qcom/gpucc-sc7180.c
+@@ -170,37 +170,12 @@ static struct gdsc cx_gdsc = {
+ 	.flags = VOTABLE,
+ };
  
- const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
-@@ -115,7 +114,6 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_STATUS] = 0x30,
- 		[PLL_OFF_OPMODE] = 0x38,
- 		[PLL_OFF_ALPHA_VAL] = 0x40,
--		[PLL_OFF_CAL_VAL] = 0x44,
+-/*
+- * On SC7180 the GPU GX domain is *almost* entirely controlled by the GMU
+- * running in the CX domain so the CPU doesn't need to know anything about the
+- * GX domain EXCEPT....
+- *
+- * Hardware constraints dictate that the GX be powered down before the CX. If
+- * the GMU crashes it could leave the GX on. In order to successfully bring back
+- * the device the CPU needs to disable the GX headswitch. There being no sane
+- * way to reach in and touch that register from deep inside the GPU driver we
+- * need to set up the infrastructure to be able to ensure that the GPU can
+- * ensure that the GX is off during this super special case. We do this by
+- * defining a GX gdsc with a dummy enable function and a "default" disable
+- * function.
+- *
+- * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
+- * driver. During power up, nothing will happen from the CPU (and the GMU will
+- * power up normally but during power down this will ensure that the GX domain
+- * is *really* off - this gives us a semi standard way of doing what we need.
+- */
+-static int gx_gdsc_enable(struct generic_pm_domain *domain)
+-{
+-	/* Do nothing but give genpd the impression that we were successful */
+-	return 0;
+-}
+-
+ static struct gdsc gx_gdsc = {
+ 	.gdscr = 0x100c,
+ 	.clamp_io_ctrl = 0x1508,
+ 	.pd = {
+ 		.name = "gx_gdsc",
+-		.power_on = gx_gdsc_enable,
++		.power_on = gdsc_gx_do_nothing_enable,
  	},
- 	[CLK_ALPHA_PLL_TYPE_LUCID] =  {
- 		[PLL_OFF_L_VAL] = 0x04,
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = CLAMP_IO,
+diff --git a/drivers/clk/qcom/gpucc-sdm845.c b/drivers/clk/qcom/gpucc-sdm845.c
+index e40efba1bf7d..5663698b306b 100644
+--- a/drivers/clk/qcom/gpucc-sdm845.c
++++ b/drivers/clk/qcom/gpucc-sdm845.c
+@@ -131,37 +131,12 @@ static struct gdsc gpu_cx_gdsc = {
+ 	.flags = VOTABLE,
+ };
+ 
+-/*
+- * On SDM845 the GPU GX domain is *almost* entirely controlled by the GMU
+- * running in the CX domain so the CPU doesn't need to know anything about the
+- * GX domain EXCEPT....
+- *
+- * Hardware constraints dictate that the GX be powered down before the CX. If
+- * the GMU crashes it could leave the GX on. In order to successfully bring back
+- * the device the CPU needs to disable the GX headswitch. There being no sane
+- * way to reach in and touch that register from deep inside the GPU driver we
+- * need to set up the infrastructure to be able to ensure that the GPU can
+- * ensure that the GX is off during this super special case. We do this by
+- * defining a GX gdsc with a dummy enable function and a "default" disable
+- * function.
+- *
+- * This allows us to attach with genpd_dev_pm_attach_by_name() in the GPU
+- * driver. During power up, nothing will happen from the CPU (and the GMU will
+- * power up normally but during power down this will ensure that the GX domain
+- * is *really* off - this gives us a semi standard way of doing what we need.
+- */
+-static int gx_gdsc_enable(struct generic_pm_domain *domain)
+-{
+-	/* Do nothing but give genpd the impression that we were successful */
+-	return 0;
+-}
+-
+ static struct gdsc gpu_gx_gdsc = {
+ 	.gdscr = 0x100c,
+ 	.clamp_io_ctrl = 0x1508,
+ 	.pd = {
+ 		.name = "gpu_gx_gdsc",
+-		.power_on = gx_gdsc_enable,
++		.power_on = gdsc_gx_do_nothing_enable,
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+ 	.flags = CLAMP_IO | AON_RESET | POLL_CFG_GDSCR,
 -- 
 2.26.1
 
