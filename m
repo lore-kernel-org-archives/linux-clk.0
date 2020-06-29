@@ -2,140 +2,116 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FB0C433E3
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86901C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61F94208B6
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:23:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="l8oEpc8o";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jvAnAfyG"
+	by mail.kernel.org (Postfix) with ESMTP id 721E7215A4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390852AbgF2VWp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:22:45 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:58681 "EHLO
-        new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729596AbgF2Sv1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:51:27 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 805C058035E;
-        Mon, 29 Jun 2020 11:07:50 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 29 Jun 2020 11:07:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=WE1PSDJ6UR5jIFS55riBxt9LPeJ
-        Xh4U7NigTPnNX65A=; b=l8oEpc8ou0b31MaSG3xJyMa7ni1mk3WLjAf0+QKHhjs
-        AVpZBfZIOMlIwpRfzUZ14GCy22hl/ny7wF6EPd/RmE10onf4Ip8tNfeqRwOPe/KF
-        gPA9Mojv1xbR1GKjCgVa8zHPvuXzX/L9FcWYOtdSddgGtn8h1eG9jBxj75YJbHTK
-        AANJop2cVs8dOOdN/3CdbzUDXLfYiXtQNsQYaSDjYw02qjx1HRJeF5WHzMmAyjXS
-        3KhOuwB1qhHBpETNlNr2Wcj3pOWH0N/xGG6lycaJauSm7B8zbUUSEZMMBd+GhU53
-        6JgTxPN4HoKR9TklVbYstBJUuXqO1J9mbgHbuVlFbiA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=WE1PSD
-        J6UR5jIFS55riBxt9LPeJXh4U7NigTPnNX65A=; b=jvAnAfyGaqUn/08ZHsSqLO
-        uW19B9zLVT4SoApSBBkRM437Kkyd5+RLGxYcTd9L/oNbS6MJbqab7VsM98DbsCWO
-        4d+n8RBYK/BF0fHr9iBnrIaiiVmQvnFV3zkFgHUJ5uXQbG6usHTFF8bzNilFUc7u
-        VHSM1KJiVUTLlVmNRTKoIFa+4KuOnlVlYMVDSkofqAXPutOIj/pnE21k7/gu3pBQ
-        daqivTY5w3AmuBudK+2x1qoXFuOwCBazHChG9faFssJKqFPAI7ckWQyHm9tFFwxU
-        pbbe+PLQsGexmH8opjSu/KNzsplx1vR5KknkeXSlJ597pWOeC+sjwaFee54Bzuew
-        ==
-X-ME-Sender: <xms:wwP6XqWvknOfJkcPQBXZIqW8UorMwaNBI5C1ODdyBwTlMY09xUHPxw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudelledguddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
-    gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:wwP6XmkjVUmeiEdlJgUfigxWgJQVaqJmvthVxhwDQFDiMykoEnTrdA>
-    <xmx:wwP6XubBPGGFyYHtXHWC-1pZWDOV_FPhqmC25ASqd2-PXgI2_RfGwg>
-    <xmx:wwP6XhWf_nU3-9dDRfPGYtrX-iylRBw_6x4z_SVVOUOMQWduDd8qGA>
-    <xmx:xgP6XmWAWQwhFI3MhZjhHXi92Prz-GT5C9njmChD_WUolvvNS1KtFw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 0E01A3280060;
-        Mon, 29 Jun 2020 11:07:47 -0400 (EDT)
-Date:   Mon, 29 Jun 2020 17:07:45 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     robh+dt@kernel.org, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, srinivas.kandagatla@linaro.org,
-        linus.walleij@linaro.org, anarsoul@gmail.com,
-        tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
-        megous@megous.com, karlp@tweak.net.au, bage@linutronix.de,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        huangshuosheng@allwinnertech.com, liyong@allwinnertech.com
-Subject: Re: [PATCH v2 06/11] nvmem: sunxi-sid: add support for A100's SID
- controller
-Message-ID: <20200629150745.ettjdggv55gfxs5s@gilmour.lan>
-References: <20200622025907.32574-1-frank@allwinnertech.com>
- <20200622025907.32574-7-frank@allwinnertech.com>
+        id S1729096AbgF2V0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:26:39 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:35701 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391062AbgF2V0K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:26:10 -0400
+Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
+ mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1Mn1iT-1j99130zRf-00k9ZW; Mon, 29 Jun 2020 13:58:34 +0200
+Received: by mail-qk1-f175.google.com with SMTP id k18so14910846qke.4;
+        Mon, 29 Jun 2020 04:58:33 -0700 (PDT)
+X-Gm-Message-State: AOAM532L/5LO5TUz/wOFh/8bn+/7Oaq8qHC/H7WmOHrgpLBUdtx5rwV2
+        vpmir8ijxbtzgSXzO2S7eSTcJEj985na/+iZUuc=
+X-Google-Smtp-Source: ABdhPJxw4aQcyyOjqz6zdloYX0Zg8NLEiVrSGqKIRrgeB6TYwmUcJuTIitYyWyx3icLmYS7sF9chjW5BSGykMBVcb8E=
+X-Received: by 2002:a37:a282:: with SMTP id l124mr13904809qke.3.1593431913015;
+ Mon, 29 Jun 2020 04:58:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qt3qjbwfvcqzuc6s"
-Content-Disposition: inline
-In-Reply-To: <20200622025907.32574-7-frank@allwinnertech.com>
+References: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
+ <1593410042-10598-3-git-send-email-Anson.Huang@nxp.com> <CAK8P3a2ZL6_rV=2brNz=UDdji3mddF+1Nb6Ew+=n4j0-fNrCug@mail.gmail.com>
+ <DB3PR0402MB3916BA91E0F44EA5DAD6BF26F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916BA91E0F44EA5DAD6BF26F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 29 Jun 2020 13:58:17 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3igMrRNa1oR=d=9A-YNAmb+LXNRbwBk9zuJZq5tfvr9Q@mail.gmail.com>
+Message-ID: <CAK8P3a3igMrRNa1oR=d=9A-YNAmb+LXNRbwBk9zuJZq5tfvr9Q@mail.gmail.com>
+Subject: Re: [PATCH V3 02/10] init.h: Fix the __setup_param() macro for module build
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "oleksandr.suvorov@toradex.com" <oleksandr.suvorov@toradex.com>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:3UBpymz75L77s+ZBkM6AxNezIczom5vTWMfpVWjT2zNNZ2uI+Jk
+ gUwDS7fCBHdh7KRWiQV3MvL+yCDTKPuyeZEPTyce2r+BWozsosOwrahHhucAUaZAE4Tdxtn
+ Pvqq3EiEfKrWCUdaLiDDdHC1xtVJabUfX50XNDWg9SxBJVhfW8nT71NqP+u+UhGXckJQHbH
+ 72fapY9XfA5r0MDbF89LA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5MMYrR6kRDY=:5GXOgJLK93AGgu6E0y8kq9
+ vq0Fe+QJg7M+5vTz8nfKpeJvQ2aMUMKc/IGtM+qNzpR88DcKmcFWiqbRbAXUAmFF+UYGY5SLv
+ saAbHJD7HwTwNNeSV1ozIccPaP2YORPy+hCl9Xvfkdpm1E95+uDQ4cn1LqA9AsRiHwQnJx6d9
+ yWEyviDEUCB2+1wlxzfXq2uW83PJGswPMlmEyc9nWLNsnp3YXBwb+6581pv8+dTFnUHcMV83E
+ JQqU+6OKEtJ5ZqAhi/kLECRXfKLgpCwSvYR2m+N80I2r7K+X537xXwh3Tze9I5lDIq/cnd4+A
+ 9D+trY8GQCMeEz0b7IwRAvwjMMPXEPXyAQs9Df25WKt5eIZduAqYtzd9jue8NgnpO7FeVD7tb
+ r0iNLmD+iuLFTbYHOTmyFPgHDFUa7o7HKa2inZ5yQqBLixfT4hUXWMDi52zBBC7kJyHPz8wiV
+ H6t6lhXaET7WBC5CZOybuSGVAZx7RBmcqLzXR5EE36misXQaBW/R3s5AECcfiebj9zgCpQ6JP
+ jUarJrGCF99zAZT/IbaFgWZob8zs77H6ULxd5G6sWiWJzK7nvU+edpfRMwWf0othSjmR5Ox7y
+ fyioPFAnhY4sy8Qw3aNtV3tzYxwYF4pNT366oY6mKGnKTwciwBjyhh9nAyrASj3uZ4BgJYMfC
+ v8bwV6uLMhx2phd/nifmLjqWcA4o37Ckj0rPrLwMo3IViBhx+ZGBYjo71P6+7l+F+4FhABP/k
+ yUMSL4TEwesQOhi9MIXhwBrdxPpocjrGXTq8OogudK94VGTx/1pEsqbe9fIEgrxb1I9obmQ9C
+ DrpbclHNtx3V4Xj4aSxn/0XHE4ZKEyXSR22Tjb3i6klmZMBFus=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Jun 29, 2020 at 1:40 PM Anson Huang <anson.huang@nxp.com> wrote:
+> > Subject: Re: [PATCH V3 02/10] init.h: Fix the __setup_param() macro for
+> > module build
+> >
+> > On Mon, Jun 29, 2020 at 8:06 AM Anson Huang <Anson.Huang@nxp.com>
+> > wrote:
+> > >
+> > > Keep __setup_param() to use same parameters for both built in and
+> > > built as module, it can make the drivers which call it easier when the
+> > > drivers can be built in or built as module.
+> > >
+> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> >
+> > I wonder if we should instead drop the __setup() and __setup_param()
+> > definitions from the #else block here. This was clearly not used anywhere, and
+> > it sounds like any possible user is broken and should be changed to not use
+> > __setup() anyway.
+> >
+>
+>
+> It makes sense to drop the __setup() and __serup_param() in the #else block,
+> just use one definition for all cases, if no one objects, I will remove them in next patch series.
 
---qt3qjbwfvcqzuc6s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ok, sounds good. Note that there may be users of the plain __setup() that
+just get turned into nops right now. Usually those are already enclosed in
+"#ifndef MODULE", but if they are not, then removing the definition would cause
+a build error.
 
-On Mon, Jun 22, 2020 at 10:59:02AM +0800, Frank Lee wrote:
-> Add support for A100's SID controller.
->=20
-> Signed-off-by: Frank Lee <frank@allwinnertech.com>
-> ---
->  drivers/nvmem/sunxi_sid.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-> index e26ef1b..8ac074b 100644
-> --- a/drivers/nvmem/sunxi_sid.c
-> +++ b/drivers/nvmem/sunxi_sid.c
-> @@ -189,6 +189,11 @@ static int sunxi_sid_probe(struct platform_device *p=
-dev)
->  	.need_register_readout =3D true,
->  };
-> =20
-> +static const struct sunxi_sid_cfg sun50i_a100_cfg =3D {
-> +	.value_offset =3D 0x200,
-> +	.size =3D 0x100,
-> +};
-> +
+Have a look if you can find such instances, and either change the patch to
+add the missing "#ifndef MODULE" checks, or just drop the __setup_param()
+and leave the __setup() if it gets too complicated.
 
-It looks like it's the same tha nthe H3 / A64 then?
-
-If so, you can just reuse their compatible as fallback
-
-Maxime
-
---qt3qjbwfvcqzuc6s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXvoDwQAKCRDj7w1vZxhR
-xR1+AQDUmJ2eKxkSAKY8N3oAYv2RkDrEZNTRivNZeW/rTDtt1gD/fIJbT8KdkTtN
-Oq4B49fJoiJYQc72b1d+sdbscb9XAw4=
-=7lp0
------END PGP SIGNATURE-----
-
---qt3qjbwfvcqzuc6s--
+       Arnd
