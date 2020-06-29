@@ -2,86 +2,161 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 600DCC433E5
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 19:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92253C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 19:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4EFF72064B
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 19:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76FE720723
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 19:11:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="N7mXCg2N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbgF2TFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 15:05:39 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:41052 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730586AbgF2TEp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Jun 2020 15:04:45 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A543B200F17;
-        Mon, 29 Jun 2020 08:06:14 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CDE98200161;
-        Mon, 29 Jun 2020 08:06:03 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D326F4031F;
-        Mon, 29 Jun 2020 14:05:49 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     linux@armlinux.org.uk, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, mturquette@baylibre.com,
-        sboyd@kernel.org, oleksandr.suvorov@toradex.com,
-        stefan.agner@toradex.com, arnd@arndb.de, peng.fan@nxp.com,
-        abel.vesa@nxp.com, aisheng.dong@nxp.com, fugang.duan@nxp.com,
-        daniel.baluta@nxp.com, yuehaibing@huawei.com, sfr@canb.auug.org.au,
-        viro@zeniv.linux.org.uk, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 08/10] clk: imx8mp: Support module build
-Date:   Mon, 29 Jun 2020 13:54:00 +0800
-Message-Id: <1593410042-10598-9-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
-References: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1731048AbgF2TLR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 15:11:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43114 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730871AbgF2TLQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 15:11:16 -0400
+Received: from mail-ed1-x544.google.com (mail-ed1-x544.google.com [IPv6:2a00:1450:4864:20::544])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F72C031414
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 12:11:15 -0700 (PDT)
+Received: by mail-ed1-x544.google.com with SMTP id b15so13871246edy.7
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 12:11:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NroMd8DfMK868D8FL8lie3B1iaJmWDlvZoIY161nvvg=;
+        b=N7mXCg2NLcNbdNNrXCuFA8Af3Lc5aqsbv3Exg4+0dUr7yL0Eq863c9MSzQtN7Ej2vw
+         FnhLnser4TEh0nkGuUNgvLAl4qwmK0dQma56oE1xG4vHWnM3BWjEgd9njb06gyQkFBpu
+         tssbRMkIyNWgfrbRgqa+ealIZBwtD82n5H3qg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NroMd8DfMK868D8FL8lie3B1iaJmWDlvZoIY161nvvg=;
+        b=aGMnSooIgpAa7i7C5P7hv2ijB8zSdCBEdfL/mdZakLCpbJzYg0GDfdYBtREr0lwfIs
+         3eIPPFcT4/Zs0gw0E49sM4NSDRkzqMoadF0pAWWlgbXgeKrHrSnGhOpFa+yTT8eDomRP
+         g9T6IDo0rGo2LWcvYgq9p2kKQHElNP1A0+QaV55GzqV8jaoSKdun4pYz0YQLL1vcP8Vh
+         Mp57s/OHyDfQsIsn2s6OZObCW8KfHOujf6r2W90XtWzq9OqvRT3REeewxmwyFLJxwoZ8
+         bWrE/HspX5vFh1xicRCJWkNa4b1BohK2NPVAsEBB021Od5a2TDouVDO4hpdfDOSMCpBR
+         alOw==
+X-Gm-Message-State: AOAM531RK8tBwX0/sa0iLT+PtMXDKTp74geLLjWyeq1TeIQCgarGPBPF
+        qadVWoQytGioQ/Wt1j4+5295HTkw+22NXjY6sm9lMQ==
+X-Google-Smtp-Source: ABdhPJzL7uVA+dVAF1QW30vuD7NCdhEOj1gDC9CMkWqkDjC97pJ9HEtE2P1H5GL5MRzD06Y+IN1VY11+kv6zy8NRcWE=
+X-Received: by 2002:a50:c90d:: with SMTP id o13mr19293199edh.338.1593457874607;
+ Mon, 29 Jun 2020 12:11:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200602080644.11333-1-mylene.josserand@collabora.com> <20200602080644.11333-2-mylene.josserand@collabora.com>
+In-Reply-To: <20200602080644.11333-2-mylene.josserand@collabora.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Tue, 30 Jun 2020 00:41:03 +0530
+Message-ID: <CAMty3ZDx-_-VHEwjbV05GBb-hQbPpo21aZbCrQ+GTaoT_gxAMg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] clk: rockchip: rk3288: Handle clock tree for rk3288w
+To:     =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@collabora.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        kernel@collabora.com, linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Support building i.MX8MP clock driver as module.
+On Tue, Jun 2, 2020 at 1:37 PM Myl=C3=A8ne Josserand
+<mylene.josserand@collabora.com> wrote:
+>
+> The revision rk3288w has a different clock tree about "hclk_vio"
+> clock, according to the BSP kernel code.
+>
+> This patch handles this difference by detecting which device-tree
+> we are using. If it is a "rockchip,rk3288-cru", let's register
+> the clock tree as it was before. If the device-tree node is
+> "rockchip,rk3288w-cru", we will apply the difference with this
+> version of this SoC.
+>
+> Noticed that this new device-tree compatible must be handled in
+> bootloader such as u-boot.
+>
+> Signed-off-by: Myl=C3=A8ne Josserand <mylene.josserand@collabora.com>
+> ---
+>  drivers/clk/rockchip/clk-rk3288.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk=
+-rk3288.c
+> index cc2a177bbdbf..204976e2d0cb 100644
+> --- a/drivers/clk/rockchip/clk-rk3288.c
+> +++ b/drivers/clk/rockchip/clk-rk3288.c
+> @@ -425,8 +425,6 @@ static struct rockchip_clk_branch rk3288_clk_branches=
+[] __initdata =3D {
+>         COMPOSITE(0, "aclk_vio0", mux_pll_src_cpll_gpll_usb480m_p, CLK_IG=
+NORE_UNUSED,
+>                         RK3288_CLKSEL_CON(31), 6, 2, MFLAGS, 0, 5, DFLAGS=
+,
+>                         RK3288_CLKGATE_CON(3), 0, GFLAGS),
+> -       DIV(0, "hclk_vio", "aclk_vio0", 0,
+> -                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+>         COMPOSITE(0, "aclk_vio1", mux_pll_src_cpll_gpll_usb480m_p, CLK_IG=
+NORE_UNUSED,
+>                         RK3288_CLKSEL_CON(31), 14, 2, MFLAGS, 8, 5, DFLAG=
+S,
+>                         RK3288_CLKGATE_CON(3), 2, GFLAGS),
+> @@ -819,6 +817,16 @@ static struct rockchip_clk_branch rk3288_clk_branche=
+s[] __initdata =3D {
+>         INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, =
+IFLAGS),
+>  };
+>
+> +static struct rockchip_clk_branch rk3288w_hclkvio_branch[] __initdata =
+=3D {
+> +       DIV(0, "hclk_vio", "aclk_vio1", 0,
+> +                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+> +};
+> +
+> +static struct rockchip_clk_branch rk3288_hclkvio_branch[] __initdata =3D=
+ {
+> +       DIV(0, "hclk_vio", "aclk_vio0", 0,
+> +                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
+> +};
+> +
+>  static const char *const rk3288_critical_clocks[] __initconst =3D {
+>         "aclk_cpu",
+>         "aclk_peri",
+> @@ -936,6 +944,14 @@ static void __init rk3288_clk_init(struct device_nod=
+e *np)
+>                                    RK3288_GRF_SOC_STATUS1);
+>         rockchip_clk_register_branches(ctx, rk3288_clk_branches,
+>                                   ARRAY_SIZE(rk3288_clk_branches));
+> +
+> +       if (of_device_is_compatible(np, "rockchip,rk3288w-cru"))
+> +               rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branc=
+h,
+> +                                              ARRAY_SIZE(rk3288w_hclkvio=
+_branch));
+> +       else
+> +               rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch=
+,
+> +                                              ARRAY_SIZE(rk3288_hclkvio_=
+branch));
+> +
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No change.
----
- drivers/clk/imx/Kconfig      | 2 +-
- drivers/clk/imx/clk-imx8mp.c | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+Sorry for the late query on this. I am a bit unclear about this
+compatible change, does Linux expect to replace rockchip,rk3288-cru
+with rockchip,rk3288w-cru in bootloader if the chip is RK3288w? or
+append the existing cru compatible node with rockchip,rk3288w-cru?
+because replace new cru node make clock never probe since the
+CLK_OF_DECLARE checking rockchip,rk3288-cru
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index 5f537c3..0811bed 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -23,7 +23,7 @@ config CLK_IMX8MN
- 	    Build the driver for i.MX8MN CCM Clock Driver
- 
- config CLK_IMX8MP
--	bool "IMX8MP CCM Clock Driver"
-+	tristate "IMX8MP CCM Clock Driver"
- 	depends on ARCH_MXC
- 	select MXC_CLK
- 	help
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index ca74771..8582cb5 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -773,3 +773,4 @@ static struct platform_driver imx8mp_clk_driver = {
- 	},
- };
- module_platform_driver(imx8mp_clk_driver);
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
-
+Jagan.
