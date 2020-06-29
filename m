@@ -2,90 +2,101 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DFFC433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23DEC433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C1352065D
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADDCF206E2
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593468313;
-	bh=5DJkEWgfoZzrTC4GdUQL2z07RM8g3Zpqg0tTNNwHrOI=;
+	s=default; t=1593468426;
+	bh=lRerF/SA41TN2mvoUla+0+oziRMYObnjXEvz39m4tts=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GC5wBjLVrw3uldEXRsRAHo0DyblfyCwARH2iE9jBs4QlSc10SBx3AMyoxdpOGycms
-	 O3+6uR2onpiUa232T6GMlAbzBbhljZpDaj2eLpCe22EDXM4gQ7ZXPr+KoUjJCkqbY6
-	 DiMHoga5jeowhoFiOy5sb0kaf7UVheKbtV8nEgW8=
+	b=lyG7Sa1RBwFRxQc/4dLPLwzpieCUBDShvaqp9Vo6meN5ZEghafUvBDpTKyP5Ktgzr
+	 fTVmmd54V7+jtIgaqOm7UbOaadedx1bqmQwyLrlcYyYW0irfGZh0/ioHGAMNxyLqeR
+	 MuxxBIdcnGtQdpP6PHIeV4RJgIKUYVqv2Hs8W2ME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726174AbgF2WFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 18:05:08 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37067 "EHLO
+        id S1726112AbgF2WHG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 18:07:06 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34626 "EHLO
         mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391865AbgF2WFG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 18:05:06 -0400
-Received: by mail-io1-f68.google.com with SMTP id v6so5193838iob.4;
-        Mon, 29 Jun 2020 15:05:06 -0700 (PDT)
+        with ESMTP id S1726042AbgF2WHF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 18:07:05 -0400
+Received: by mail-io1-f68.google.com with SMTP id m81so18915193ioa.1;
+        Mon, 29 Jun 2020 15:07:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=/33WwvXDUgobqj85r5L3nzLt5ser+3dcQ28svWATI7k=;
-        b=mifdKd076vt1x5Ou7aR4oKqwHs2Fqnn/+OFDNsQXVfa6hHKR4yRnzFX/WQWnyg5rxn
-         mkdXsccScyk8qejLl092dkXpTsFrRFeCQoEhB2jXD2R/JDUBkhhs70kaLANQseD/fVwR
-         FHR8i+nUTHOdDunZLy5Esm7JsUm4UTILGPjvxarqKQqcIhso8tN0ZnRgss5b2oR9ybd3
-         wzYB1ZgspLoAPcOOsFmScLDu7FEZhJNASfDTroEiH3c8wGzwQcvqo1P4zmPQ8FWxykCL
-         6t/nLXPfGR0RyGF17614wKs+/06idorQlldid+QdvVUUp+OXC18oX1x8TT9nqV2WhvC5
-         c+tg==
-X-Gm-Message-State: AOAM5317VzWIU8D6C42s0zlRJCgfXNLpBWtQKb48FCfPst7flQstOf7k
-        I1UDQWo45w1TTAUE5PhVjrxOcTbkjw==
-X-Google-Smtp-Source: ABdhPJxVuYyuGtstqDJ8HOPThuovY3rPXcwWLAx5FKDmu1o5PgaYcJiB1dyG+EsqAE8S7/Upre6ZQQ==
-X-Received: by 2002:a05:6602:2dca:: with SMTP id l10mr18871444iow.163.1593468305897;
-        Mon, 29 Jun 2020 15:05:05 -0700 (PDT)
+        bh=aTZ9B4mZOC3u6XhEvkIjDDJ8V9Z1CqSWn34awXXpFyU=;
+        b=X5asjsrnX+MR/5pgyoE8BhQKLuA4RQYJ3NI/lv1PIi6qUQNXHEzEszVLrdkPH0FSwY
+         RMd3c0q9IdS8nc3/JZuTcifqtY2f3c47LNEWq7U5lFRYYMilyw/LWA9dkANXbfnhXrAP
+         figYAUp0dIiHzIpnR6IueXfrC+MQUehRZbtl6XamU+YJuH2DWVDkdiJTDEcm9k5OHR5c
+         XqVKBrnwZ5VpziNB3IwMY+QceUiZ2/Fx2DWAWB4qrzlSA8bPLNeNpNg2iWxF+ZoA62dj
+         GT+kP+NS63GlfpTMtmw3n5aC2vOw8x+qFC85n9LmsEzvCnljCNfwYTRywJBKln4MCecc
+         XHuw==
+X-Gm-Message-State: AOAM531AUFY1PNsGKMrreOo5VuF4q3BIHcnd094ulh86FxEj53EWpdZZ
+        2giuiYiA/qzHUWID0fKBXA==
+X-Google-Smtp-Source: ABdhPJwQPODKag52+jKjOlIgcMQ9ixhkEL1uQI1ey5yvtkF3Vx3wcQRTCGFf4L/38BTm3UO4PTFFCQ==
+X-Received: by 2002:a6b:1496:: with SMTP id 144mr18986662iou.6.1593468424346;
+        Mon, 29 Jun 2020 15:07:04 -0700 (PDT)
 Received: from xps15 ([64.188.179.255])
-        by smtp.gmail.com with ESMTPSA id o19sm543584iob.5.2020.06.29.15.05.04
+        by smtp.gmail.com with ESMTPSA id k3sm623934ils.8.2020.06.29.15.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 15:05:05 -0700 (PDT)
-Received: (nullmailer pid 3021658 invoked by uid 1000);
-        Mon, 29 Jun 2020 22:05:02 -0000
-Date:   Mon, 29 Jun 2020 16:05:02 -0600
+        Mon, 29 Jun 2020 15:07:03 -0700 (PDT)
+Received: (nullmailer pid 3026325 invoked by uid 1000);
+        Mon, 29 Jun 2020 22:07:02 -0000
+Date:   Mon, 29 Jun 2020 16:07:02 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        ulf.hansson@linaro.org, s.trumtrar@pengutronix.de,
-        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V4 3/3] dt-bindings: clock: Correct example in i.MX8QXP
- LPCG binding
-Message-ID: <20200629220502.GA3019731@bogus>
-References: <1592450578-30140-1-git-send-email-Anson.Huang@nxp.com>
- <1592450578-30140-3-git-send-email-Anson.Huang@nxp.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        sboyd@kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        michals@xilinx.com, gregkh@linuxfoundation.org,
+        shubhrajyoti.datta@gmail.com
+Subject: Re: [PATCH v5 1/8] dt-bindings: add documentation of xilinx clocking
+ wizard
+Message-ID: <20200629220702.GA3025945@bogus>
+References: <1593194185-22394-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+ <1593194185-22394-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1592450578-30140-3-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1593194185-22394-2-git-send-email-shubhrajyoti.datta@xilinx.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 11:22:58AM +0800, Anson Huang wrote:
-> In i.MX8QXP LPCG binding's example, "fsl,imx7d-usdhc" as fallback
-> compatible is incorrect, remove it to avoid below build error:
+On Fri, 26 Jun 2020 23:26:18 +0530, Shubhrajyoti Datta wrote:
+> Add the devicetree binding for the xilinx clocking wizard.
 > 
-> Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
-> mmc@5b010000: compatible: Additional items are not allowed ('fsl,imx7d-usdhc' was unexpected)
-> Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
-> mmc@5b010000: compatible: ['fsl,imx8qxp-usdhc', 'fsl,imx7d-usdhc'] is too long
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 > ---
-> New patch, to fix build error when patch #1 is added.
+> v4:
+> change to yaml format
+> 
+>  .../bindings/clock/xlnx,clocking-wizard.yaml       | 71 ++++++++++++++++++++++
+>  1 file changed, 71 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> 
 
-So, patch 1 should come last. I'll re-order when applying.
 
-Rob
+My bot found errors running 'make dt_binding_check' on your patch:
+
+Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml: $id: relative path/filename doesn't match actual path or filename
+	expected: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
+
+
+See https://patchwork.ozlabs.org/patch/1317919
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure dt-schema is up to date:
+
+pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
+
+Please check and re-submit.
+
