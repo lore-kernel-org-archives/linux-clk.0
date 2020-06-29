@@ -2,103 +2,127 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BE91C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B6FBC433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F18B7215A4
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3703920656
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:42:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="0Vr/iUCT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726120AbgF2V0t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:26:49 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:46583 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729086AbgF2V0q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:26:46 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1MC2o9-1jfjxx1pxV-00CQW9; Mon, 29 Jun 2020 13:59:08 +0200
-Received: by mail-qk1-f181.google.com with SMTP id j80so14938409qke.0;
-        Mon, 29 Jun 2020 04:59:08 -0700 (PDT)
-X-Gm-Message-State: AOAM531dNoRFCGQ5gU+WKgIQezUtMEXHMxzuOjwCEaKgGIXbfLmJtxX5
-        IUlkRwyKWfCdVH0F294m9CILhcAT/AMHyZym1bw=
-X-Google-Smtp-Source: ABdhPJwiHIrS/zcyAzwtI//A/mP+kmmPqCmXXzVgsA8QR3TbrjAPEDgdefcDhM7ibQGaLfv1MsgnsXjRn6wnP1Y+ubE=
-X-Received: by 2002:a37:b484:: with SMTP id d126mr14639824qkf.394.1593431947272;
- Mon, 29 Jun 2020 04:59:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
- <1593410042-10598-11-git-send-email-Anson.Huang@nxp.com> <CAK8P3a1W4Wxj0o3dtcjGq0L5VQqsH0=ntego=jmH2Von97+H-w@mail.gmail.com>
- <DB3PR0402MB3916911E2321760C65AB3293F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-In-Reply-To: <DB3PR0402MB3916911E2321760C65AB3293F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 29 Jun 2020 13:58:51 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a28=41imeva5nG-fSx5dPG52Um8hkZ2_=y7soOZ8p5bnw@mail.gmail.com>
-Message-ID: <CAK8P3a28=41imeva5nG-fSx5dPG52Um8hkZ2_=y7soOZ8p5bnw@mail.gmail.com>
-Subject: Re: [PATCH V3 10/10] clk: imx8qxp: Support module build
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
+        id S1726415AbgF2Vl6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:41:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37586 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727932AbgF2Sh6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:37:58 -0400
+Received: from mail-qk1-x744.google.com (mail-qk1-x744.google.com [IPv6:2607:f8b0:4864:20::744])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F792C031429
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:07 -0700 (PDT)
+Received: by mail-qk1-x744.google.com with SMTP id e13so15971910qkg.5
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=acMY/PDEeXIX2iUBf49C2Sg8svQXM/66G883KF7yr14=;
+        b=0Vr/iUCTL0YCeERQJU5A4XFXP9WRqstSxzdmUQD6ykn1ca7JzGnnei2ewZDfArLcSu
+         CYypdB2pqO57zT6zodFJ+ZD2IJlbzrIK+M+0o5ZTdkG8QVZhgL9zkp0H1qxCaw466lPK
+         6Bvj8YaLOMYtN4/izEybXm6/6yU52gkFLcOx+I3rM5FhrNY74YEXLbbNt48iXwhoEPPu
+         iXBbUAWO7sDhCLWBK888xnmlUL60CSL1wubqDtYE+gsqRKrAtDHB1OF8tXE7vDS8nrL4
+         PTrSsSyc3GZc2W9tFD0ZGVWlquLpWeYBoT0Xyb1zNWMo124SuQuu2KPXpOSkUPdRlH8B
+         rUHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=acMY/PDEeXIX2iUBf49C2Sg8svQXM/66G883KF7yr14=;
+        b=lmdwfjxrC0VtUC6AyPuTsu8d5o2GndZowHvnDVZQOn3mOrowv4DzYqOCDAVlW9p8TN
+         UhBVr/rtapj0E6xttyutodLItzkyEmjuykem21P9s/k0DOTs/RdkcQt2Dg/AnDHJEWC2
+         H0X9dyUIFwFcMxNIySdjsdfsETHeFbQF8cYAY7UZBfpaaSonUC6KJhWveX707xYjxL0E
+         4w9pRYMNarYtzgr3Kdu05YFHPfNHz9qAFgV3s1nJ6xbea2ncp6AfM2v/x2X0eAR+KSvS
+         MvViAeHyV8I0F6X1+iEvb+hcEnYR8sg9tO8Ua5LfzSICqilC0PLKqa1exfHFxM5KESL/
+         FJKQ==
+X-Gm-Message-State: AOAM530vQBVLYNMqGNqBaMYJRNtEdtjdaUfOPkwbK1ByL0blNHERMJ+Z
+        SNj3Aov2VNea8BKACkfJ0Zlfb85cGbw=
+X-Google-Smtp-Source: ABdhPJyEZvgI7BCAXGHakCfxARGoDPMIkgxM8m5Edq3X5e6ibIASdaGalKlTTXkySTsiXwmys77+LA==
+X-Received: by 2002:a05:620a:483:: with SMTP id 3mr15187886qkr.299.1593451266376;
+        Mon, 29 Jun 2020 10:21:06 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id q5sm408363qtf.12.2020.06.29.10.21.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2020 10:21:06 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "oleksandr.suvorov@toradex.com" <oleksandr.suvorov@toradex.com>,
-        Stefan Agner <stefan.agner@toradex.com>,
-        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Andy Duan <fugang.duan@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:EfD4DhoPrgKqPKihKT5z/Cx/um5RnkYhhXBAEVqqcd5KXJV3mGk
- FnkR4upRdwIFx6cIM2dkWoYHi8Mzs9c2uM17g4sHi3Atxqxd/0HjtCqRpqcLu9cgbti82X7
- gp5hNsJzQl4KMoXR+XK3XjWtOUkU6vZ6U4bOFFumXRZM5kwEKi0WL8xPLdhxglCdXFp2cyk
- ugWKHpW6biMesJyQj9BAQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:u4BHHFgnkr8=:wAptT75sXjOiKxyrZxJdjS
- FXEkX3heeqNYUeRtxlLPUpOc0NpOAkHhNiQatb1kzFE5jnsV1nq8sglceXECtLLcqNgVk1RHR
- 7z3rnjKVRnCzG+HHN96RneHuF1vCC5m5dDSe6+bSwIy3OHCaKAd1Balf8HoYr6y37gd8zu8qV
- /W+wLpOZgq35rdH9q2dEXjMbmWUhHCSvwN+/vUwqLb0cXijBEhKE+mPaBLbSrmeGgQszplK8m
- pIPOF3IQ4/DwrdJIJ3thfE4j7+jBlKatupe/L9P6ZG6MPD+Z/1SBSL8j2FvbPEghz61U3eiKz
- el0GHwqCX5KE9qm8XXhM5cbqQlTKN7QkEf5pDhO/H0gv3d032DWuw1VDtzLZQZZfsNUa6Cbz9
- fbagBwP+JYYyyarp8un2MDtEK1UWgS9+3YScR9ivmW4Mp6CzvxFCJvDmQkNo9Bxl3SzFUZIv9
- Qe2zXFp5SmLpxDdDo/kR9Vo5tg7CBGbLrKrSKj5bA3nc4KuE0NErLgYWIZeJvS6I+yT6Uxut3
- VVONUXAkrzuzq1zZuKw9Tt0cWX7s/IshFsrbPLW4+q8Bz5zr9/7jfFsuCW/UiYLigGqH1jVzi
- GTKB3+lQJ/9NgDobeUrgldXQcZz6tFW6F6AiCoX5CMPosr7vYDX2FYTuMFTLbLMTSP22s164T
- +0mLUuNANnnVJ4xvdSjO7PgLAG7FTRSMHNdDxmRBUo2m6okyEu2G96vPbmvkeW1jamGRNW+Ws
- RfCtxp0zW/IhHrapv8JGHSE1LhquxCTIqLsNutgoIpoeLD1l899EwDK5pnrthXpUlcWb8LLq1
- vb4oTofPY43GsXCGc3G0RLG0auiDPm0xDNf/L0FpVkByOabe/M=
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 05/13] clk: qcom: gcc: remove unnecessary vco_table from SM8150
+Date:   Mon, 29 Jun 2020 13:20:35 -0400
+Message-Id: <20200629172049.30452-6-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200629172049.30452-1-jonathan@marek.ca>
+References: <20200629172049.30452-1-jonathan@marek.ca>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jun 29, 2020 at 1:43 PM Anson Huang <anson.huang@nxp.com> wrote:
-> > Subject: Re: [PATCH V3 10/10] clk: imx8qxp: Support module build
-> >
-> > On Mon, Jun 29, 2020 at 8:06 AM Anson Huang <Anson.Huang@nxp.com>
-> > wrote:
-> > >
-> > > Support building i.MX8QXP clock driver as module.
-> > >
-> > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> >
-> > I would just combine the per-soc patches into one, as they all have the same
-> > changelog text.
->
-> OK, I will merge those patches with same changelog text into one patch.
-> But for i.MX8QXP clock driver, as I need to add more changes about module author
-> etc., I will keep it as a separate patch.
+The fixed alpha pll ops only use it for clamping in round_rate, which is
+unnecessary. This is consistent with SM8250 GCC not using vco_table.
 
-Ok, sounds good.
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ drivers/clk/qcom/gcc-sm8150.c | 10 ----------
+ 1 file changed, 10 deletions(-)
 
-      Arnd
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index d7778def37da..8e9b5b3cceaf 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -34,14 +34,8 @@ enum {
+ 	P_SLEEP_CLK,
+ };
+ 
+-static const struct pll_vco trion_vco[] = {
+-	{ 249600000, 2000000000, 0 },
+-};
+-
+ static struct clk_alpha_pll gpll0 = {
+ 	.offset = 0x0,
+-	.vco_table = trion_vco,
+-	.num_vco = ARRAY_SIZE(trion_vco),
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+@@ -85,8 +79,6 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
+ 
+ static struct clk_alpha_pll gpll7 = {
+ 	.offset = 0x1a000,
+-	.vco_table = trion_vco,
+-	.num_vco = ARRAY_SIZE(trion_vco),
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+@@ -105,8 +97,6 @@ static struct clk_alpha_pll gpll7 = {
+ 
+ static struct clk_alpha_pll gpll9 = {
+ 	.offset = 0x1c000,
+-	.vco_table = trion_vco,
+-	.num_vco = ARRAY_SIZE(trion_vco),
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+-- 
+2.26.1
+
