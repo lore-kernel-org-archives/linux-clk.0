@@ -2,331 +2,157 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8616C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A00C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7F34220656
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:46:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="PerDa+EE"
+	by mail.kernel.org (Postfix) with ESMTP id 0804320656
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:48:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbgF2Shp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 14:37:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbgF2Sho (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:37:44 -0400
-Received: from mail-qv1-xf41.google.com (mail-qv1-xf41.google.com [IPv6:2607:f8b0:4864:20::f41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D32C031422
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:04 -0700 (PDT)
-Received: by mail-qv1-xf41.google.com with SMTP id d12so8023807qvn.0
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mgDv4Rf3fgP1WVv6wT9BRKGCzb8IU1E1hjosgtpH4Dg=;
-        b=PerDa+EExgJbsaTj4afcMBdTTpqB7QeEaZD7Hjt7JYv6Qwz67muPOQO5BIzuOSWQVG
-         8/YqWuk98PY5t3Q17+SOb5L3qXNf2VBjC69uLmDGtY40oTtwStlvh5yBcvATPKjjCM8W
-         JlUmUAsocndTuo1IbT/Xd2FvtQuTMXFAhwRRyfKOAZuv3kDYamSy9P3WZ3ASAwr+RJuu
-         D/aG1J39VqnFb2wPwmWpsy6f8kexXox62Thlgx6fXtqlsl40LcJQLneJj1rDJoJgt1vb
-         mJWtLaqMCsfSf64cBmyxm5Byo1hGE++XdiBK5CGUdsmcdSE1Zap96boQrBqbvwIY+0cN
-         30Pg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mgDv4Rf3fgP1WVv6wT9BRKGCzb8IU1E1hjosgtpH4Dg=;
-        b=FF+XI0q66CsC5/w4vU6H+scPaNcEbff36g0PytvfJ925U2z/CZclVsKaafOwqQOslg
-         dqzkUu3IGqRbmjk5Feit7zWEBYCloQtE3aLl+WTEBiElne4SP7IXBGnFWVzWzPGxxI46
-         o/F31FmkU5dVvHSyVdSV9WhjQQdlOoQXuKJfldR930+e8IAcvS8EowJycb7t6/JSfhz5
-         +26UMyjb0NrACqQSmUqV4x0v3MFsIn+M2lS1ddNyWrclRGiMzoD8ZpQImiP6B30gVrC7
-         hiaEbVnfzNP4EtbbdLdo/91k5G4VfEpiZ/krMleaLd+lLE+q7268T1gD6jD4GZ9Da4Bj
-         jObQ==
-X-Gm-Message-State: AOAM5309rNMvfiGDocGanar2QSM/HvX41ssMHl9yr9ac0QfanfKqmYr1
-        joH1vbu59c8DuOJc10QS6fKwBA==
-X-Google-Smtp-Source: ABdhPJzl5MmbN0U4UGWGnJsUeRrfX6apXCSs4XkAmiWOobgEI+CQoODbWui3tUIKp2qdMHgm2rq9hw==
-X-Received: by 2002:a0c:8e8c:: with SMTP id x12mr16000233qvb.55.1593451263696;
-        Mon, 29 Jun 2020 10:21:03 -0700 (PDT)
-Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id q5sm408363qtf.12.2020.06.29.10.21.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 10:21:03 -0700 (PDT)
-From:   Jonathan Marek <jonathan@marek.ca>
-To:     linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 03/13] clk: qcom: clk-alpha-pll: same regs and ops for trion and lucid
-Date:   Mon, 29 Jun 2020 13:20:33 -0400
-Message-Id: <20200629172049.30452-4-jonathan@marek.ca>
-X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200629172049.30452-1-jonathan@marek.ca>
-References: <20200629172049.30452-1-jonathan@marek.ca>
+        id S1728387AbgF2VsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:48:04 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:40689 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726738AbgF2Vri (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:47:38 -0400
+Received: from mail-qk1-f171.google.com ([209.85.222.171]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1M9FX5-1jmoTe3Q7L-006Kx6; Mon, 29 Jun 2020 10:20:02 +0200
+Received: by mail-qk1-f171.google.com with SMTP id 145so12007381qke.9;
+        Mon, 29 Jun 2020 01:20:01 -0700 (PDT)
+X-Gm-Message-State: AOAM530sbVfuJA94k3vrJQDz6ZSK29J41Kkifk6IKi1sN5MPrNnlV795
+        epM+FY7dcAkv5NOauOC2GJPeh0BooGo0aC50fHg=
+X-Google-Smtp-Source: ABdhPJyUnGB5lqBVkayiYL6LOPjQm0GbNdG1eqe9pwBbPRXhINutqeEw0hdnpM5VoWHPcIjswlrjFzeL+cTcw8l/eUE=
+X-Received: by 2002:a37:a282:: with SMTP id l124mr13270383qke.3.1593418800617;
+ Mon, 29 Jun 2020 01:20:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1591687933-19495-1-git-send-email-Anson.Huang@nxp.com>
+ <AM6PR04MB4966B94CFAE642E6AF5AEF79809B0@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <159262367025.62212.11651547971712516448@swboyd.mtv.corp.google.com>
+ <AM6PR04MB496690A045E0BFFF3D03AE0380940@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <159290125202.62212.13172213909023205615@swboyd.mtv.corp.google.com>
+ <AM6PR04MB49664A8400CA0B0F7321EDDE80940@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <159296027133.62212.18074403520585879907@swboyd.mtv.corp.google.com>
+ <AM6PR04MB4966BA60F25AE60ABA8F883180950@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <DB3PR0402MB39167FB012D9BCB4A5081BEDF5950@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <AM6PR04MB496622897A67C4912715223A80950@AM6PR04MB4966.eurprd04.prod.outlook.com>
+ <159303858063.62212.4991053028281879719@swboyd.mtv.corp.google.com> <CAA+hA=RB3H_EqCMpCuide7WDqddaZu5=LmihU1pZaCPM8b8zng@mail.gmail.com>
+In-Reply-To: <CAA+hA=RB3H_EqCMpCuide7WDqddaZu5=LmihU1pZaCPM8b8zng@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 29 Jun 2020 10:19:44 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a2-1nFvw2rR1wws04fCmj6AyvcJ4RFwcJQ+xRPwDjUCaA@mail.gmail.com>
+Message-ID: <CAK8P3a2-1nFvw2rR1wws04fCmj6AyvcJ4RFwcJQ+xRPwDjUCaA@mail.gmail.com>
+Subject: Re: [PATCH V2 3/9] clk: imx: Support building SCU clock driver as module
+To:     Dong Aisheng <dongas86@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        Allison Randal <allison@lohutok.net>,
+        Fabio Estevam <festevam@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Enrico Weigelt <info@metux.net>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        oleksandr.suvorov@toradex.com,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        YueHaibing <yuehaibing@huawei.com>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:qRZ/7KKzWfBmnOFfHPJgOp20QegMhUqElr7vtzKIvVyb73Y5Ehr
+ WAjKUdW7QtbqIzz5UXbNPUFF00YwtvPja95QYNHiCIXwWBq23egHHIM6CqtvAO4CrcvIaT8
+ sTMSPP994qJOpZe1JEE+3xKArPzKas4+tf1RMDblDLwI6+vYKThQ1x1LQJs90uTf3TjePA5
+ v48q04Rcg+9oDWg/d5QHg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:YEJedntkUDE=:14GGG9Un7SeVj0ffCfXNat
+ 0Do9UEqySUcAvKcSH8AWuia6m4S+mLVru/RCS+Yf/QWQtZnUSNK/WoYN79iH9M5WxAOsiSp/7
+ MjcsQHYHX5e2tdeX0CuiBa2InsqVI747A5O2sNT0+JZIIkHZSN7syxnHVRDfskPba3mfIOkTx
+ q8p/MyBfruhMZDkyLkD8oswwGRY0Q+PpNj3/bW+AxNaYIn9M7KOm0nMvmdzyfHS1fQI+z+tfR
+ /KdFpmui1u8qxbYin/egUlk1ELPk6mKJ4R2QSvsSKJKlPxf3D4Rww0lG725jTFbJsoLnpGduW
+ Ps7G+yxlvXMyxK2lY2Z464kl6Y9bfUw0KQYcFn8v8DPqpoBzXtFSgei+Wu/Wn2gzmLvBlTUEf
+ c7ZA9Qhmv7NBsr1sNFPCaG0jA2aZWpApsFTAqwQc7FuzXN5zxg/lfPj49+rvzFYmSI6OWavHb
+ Xq2wt/LBq6mHNMZW8Wy0ZPa8uxE0JZ/pr8nxU6u9snn9+mSuTYyfptVQ3kC5RunF1h6/V+6nN
+ FFnDjzLPvlZRKfEougSOV6IBjkrVLvJk5yGwxKJR9NBPnpW/2xpQt84kkUvglQjpy3v5pqE6F
+ nxUyVnUHSfR/dv8cjMCHVYyHG3Vov46K5TbG/M8F4OntIbzyx2l+hheFCJNFs5b4TIwPViRPw
+ BL4I0q7q3HULUhL2ruiZ0aYH+3+pbo5DU1Z0sG5yZ+gNtUMj01T+AJW0oKCpsDQOdNGdG/cgH
+ VzBcBqPiDq/inuZbYV5giVyqY9MCcX74d8ehNFNaPU/LkUq/JUZJhTzm2cYZFcTRTlFcxJF3Z
+ CtkBftt5h7+1qPExHvqu7thRIxJbFQ96wHtNf0KU/uOytSZ8e4=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fixed ops were already identical, this adds support for non-fixed ops by
-sharing between trion and lucid.
+On Mon, Jun 29, 2020 at 9:18 AM Dong Aisheng <dongas86@gmail.com> wrote:
+> On Thu, Jun 25, 2020 at 6:43 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Aisheng Dong (2020-06-23 19:59:09)
+> > Why aren't there options to enable clk-imx6q and clk-imx6sl in the
+> > clk/imx/Kconfig file? Those can be bool or tristate depending on if the
+> > SoC drivers use CLK_OF_DECLARE or not and depend on the mxc-clk library
+> > and SoC config we have in the makefile today.
+>
+> Yes, we can do that in clk/imx/Kconfig as follows theoretically.
+> config CLK_IMX6Q
+>         bool
+>         def_bool ARCH_MXC && ARM
+>         select MXC_CLK
+>
+> But we have totally 15 platforms that need to change.
 
-This also changes the names for trion ops to be consistent with the rest.
+I would make that
 
-Note LUCID_PCAL_DONE is renamed to TRION_PCAL_DONE because it is wrong for
-lucid, LUCID_PCAL_DONE should be BIT(27). Next patch will address this.
+config CLK_IMX6Q
+         bool "Clock driver for NXP i.MX6Q"
+         depends on SOC_IMX6Q || COMPILE_TEST
+         default SOC_IMX6Q
+         select MXC_CLK
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/clk/qcom/clk-alpha-pll.c | 58 ++++++++++----------------------
- drivers/clk/qcom/clk-alpha-pll.h | 17 ++++++----
- drivers/clk/qcom/gcc-sm8150.c    |  8 ++---
- 3 files changed, 32 insertions(+), 51 deletions(-)
+> e.g.
+> drivers/clk/imx/Makefile
+> obj-$(CONFIG_SOC_IMX1)   += clk-imx1.o
+> obj-$(CONFIG_SOC_IMX21)  += clk-imx21.o
+> obj-$(CONFIG_SOC_IMX25)  += clk-imx25.o
+> obj-$(CONFIG_SOC_IMX27)  += clk-imx27.o
+> obj-$(CONFIG_SOC_IMX31)  += clk-imx31.o
+> obj-$(CONFIG_SOC_IMX35)  += clk-imx35.o
+> obj-$(CONFIG_SOC_IMX5)   += clk-imx5.o
+> obj-$(CONFIG_SOC_IMX6Q)  += clk-imx6q.o
+> obj-$(CONFIG_SOC_IMX6SL) += clk-imx6sl.o
+> obj-$(CONFIG_SOC_IMX6SLL) += clk-imx6sll.o
+> obj-$(CONFIG_SOC_IMX6SX) += clk-imx6sx.o
+> obj-$(CONFIG_SOC_IMX6UL) += clk-imx6ul.o
+> obj-$(CONFIG_SOC_IMX7D)  += clk-imx7d.o
+> obj-$(CONFIG_SOC_IMX7ULP) += clk-imx7ulp.o
+> obj-$(CONFIG_SOC_VF610)  += clk-vf610.o
+>
+> Not sure if it's really worth to do that.
+> The easiest way to address this issue is just select it in
+> arch/arm/mach-imx/Kconfig,
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 1325139173c9..be7ffeae21b1 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -101,21 +101,6 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
- 		[PLL_OFF_FRAC] = 0x38,
- 	},
- 	[CLK_ALPHA_PLL_TYPE_TRION] = {
--		[PLL_OFF_L_VAL] = 0x04,
--		[PLL_OFF_CAL_L_VAL] = 0x08,
--		[PLL_OFF_USER_CTL] = 0x0c,
--		[PLL_OFF_USER_CTL_U] = 0x10,
--		[PLL_OFF_USER_CTL_U1] = 0x14,
--		[PLL_OFF_CONFIG_CTL] = 0x18,
--		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
--		[PLL_OFF_CONFIG_CTL_U1] = 0x20,
--		[PLL_OFF_TEST_CTL] = 0x24,
--		[PLL_OFF_TEST_CTL_U] = 0x28,
--		[PLL_OFF_STATUS] = 0x30,
--		[PLL_OFF_OPMODE] = 0x38,
--		[PLL_OFF_ALPHA_VAL] = 0x40,
--	},
--	[CLK_ALPHA_PLL_TYPE_LUCID] =  {
- 		[PLL_OFF_L_VAL] = 0x04,
- 		[PLL_OFF_CAL_L_VAL] = 0x08,
- 		[PLL_OFF_USER_CTL] = 0x0c,
-@@ -154,9 +139,9 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
- #define PLL_OUT_MASK		0x7
- #define PLL_RATE_MARGIN		500
- 
--/* LUCID PLL specific settings and offsets */
--#define LUCID_PLL_CAL_VAL	0x44
--#define LUCID_PCAL_DONE		BIT(26)
-+/* TRION PLL specific settings and offsets */
-+#define TRION_PLL_CAL_VAL	0x44
-+#define TRION_PCAL_DONE		BIT(26)
- 
- #define pll_alpha_width(p)					\
- 		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
-@@ -910,14 +895,14 @@ const struct clk_ops clk_alpha_pll_hwfsm_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_hwfsm_ops);
- 
--const struct clk_ops clk_trion_fixed_pll_ops = {
-+const struct clk_ops clk_alpha_pll_fixed_trion_ops = {
- 	.enable = clk_trion_pll_enable,
- 	.disable = clk_trion_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
- };
--EXPORT_SYMBOL_GPL(clk_trion_fixed_pll_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_trion_ops);
- 
- static unsigned long
- clk_alpha_pll_postdiv_recalc_rate(struct clk_hw *hw, unsigned long parent_rate)
-@@ -1337,12 +1322,12 @@ clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  val << PLL_POST_DIV_SHIFT);
- }
- 
--const struct clk_ops clk_trion_pll_postdiv_ops = {
-+const struct clk_ops clk_alpha_pll_postdiv_trion_ops = {
- 	.recalc_rate = clk_trion_pll_postdiv_recalc_rate,
- 	.round_rate = clk_trion_pll_postdiv_round_rate,
- 	.set_rate = clk_trion_pll_postdiv_set_rate,
- };
--EXPORT_SYMBOL_GPL(clk_trion_pll_postdiv_ops);
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_trion_ops);
- 
- static long clk_alpha_pll_postdiv_fabia_round_rate(struct clk_hw *hw,
- 				unsigned long rate, unsigned long *prate)
-@@ -1397,13 +1382,13 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
-  * @regmap: register map
-  * @config: configuration to apply for pll
-  */
--void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+void clk_trion_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config)
- {
- 	if (config->l)
- 		regmap_write(regmap, PLL_L_VAL(pll), config->l);
- 
--	regmap_write(regmap, PLL_CAL_L_VAL(pll), LUCID_PLL_CAL_VAL);
-+	regmap_write(regmap, PLL_CAL_L_VAL(pll), TRION_PLL_CAL_VAL);
- 
- 	if (config->alpha)
- 		regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
-@@ -1456,13 +1441,13 @@ void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 	/* Place the PLL in STANDBY mode */
- 	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
- }
--EXPORT_SYMBOL_GPL(clk_lucid_pll_configure);
-+EXPORT_SYMBOL_GPL(clk_trion_pll_configure);
- 
- /*
-- * The Lucid PLL requires a power-on self-calibration which happens when the
-+ * The TRION PLL requires a power-on self-calibration which happens when the
-  * PLL comes out of reset. Calibrate in case it is not completed.
-  */
--static int alpha_pll_lucid_prepare(struct clk_hw *hw)
-+static int alpha_pll_trion_prepare(struct clk_hw *hw)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
- 	u32 regval;
-@@ -1470,7 +1455,7 @@ static int alpha_pll_lucid_prepare(struct clk_hw *hw)
- 
- 	/* Return early if calibration is not needed. */
- 	regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &regval);
--	if (regval & LUCID_PCAL_DONE)
-+	if (regval & TRION_PCAL_DONE)
- 		return 0;
- 
- 	/* On/off to calibrate */
-@@ -1481,7 +1466,7 @@ static int alpha_pll_lucid_prepare(struct clk_hw *hw)
- 	return ret;
- }
- 
--static int alpha_pll_lucid_set_rate(struct clk_hw *hw, unsigned long rate,
-+static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
- 				    unsigned long prate)
- {
- 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-@@ -1535,26 +1520,17 @@ static int alpha_pll_lucid_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return 0;
- }
- 
--const struct clk_ops clk_alpha_pll_lucid_ops = {
--	.prepare = alpha_pll_lucid_prepare,
-+const struct clk_ops clk_alpha_pll_trion_ops = {
-+	.prepare = alpha_pll_trion_prepare,
- 	.enable = clk_trion_pll_enable,
- 	.disable = clk_trion_pll_disable,
- 	.is_enabled = clk_trion_pll_is_enabled,
- 	.recalc_rate = clk_trion_pll_recalc_rate,
- 	.round_rate = clk_alpha_pll_round_rate,
--	.set_rate = alpha_pll_lucid_set_rate,
-+	.set_rate = alpha_pll_trion_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_ops);
- 
--const struct clk_ops clk_alpha_pll_fixed_lucid_ops = {
--	.enable = clk_trion_pll_enable,
--	.disable = clk_trion_pll_disable,
--	.is_enabled = clk_trion_pll_is_enabled,
--	.recalc_rate = clk_trion_pll_recalc_rate,
--	.round_rate = clk_alpha_pll_round_rate,
--};
--EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_ops);
--
- const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
- 	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
- 	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 704674a153b6..67f1fd271931 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -14,7 +14,7 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_BRAMMO,
- 	CLK_ALPHA_PLL_TYPE_FABIA,
- 	CLK_ALPHA_PLL_TYPE_TRION,
--	CLK_ALPHA_PLL_TYPE_LUCID,
-+	CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
- 	CLK_ALPHA_PLL_TYPE_MAX,
- };
- 
-@@ -128,18 +128,23 @@ extern const struct clk_ops clk_alpha_pll_fabia_ops;
- extern const struct clk_ops clk_alpha_pll_fixed_fabia_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_fabia_ops;
- 
--extern const struct clk_ops clk_alpha_pll_lucid_ops;
--extern const struct clk_ops clk_alpha_pll_fixed_lucid_ops;
-+extern const struct clk_ops clk_alpha_pll_trion_ops;
-+extern const struct clk_ops clk_alpha_pll_fixed_trion_ops;
-+extern const struct clk_ops clk_alpha_pll_postdiv_trion_ops;
-+
-+#define clk_alpha_pll_lucid_ops clk_alpha_pll_trion_ops
-+#define clk_alpha_pll_fixed_lucid_ops clk_alpha_pll_fixed_trion_ops
- extern const struct clk_ops clk_alpha_pll_postdiv_lucid_ops;
- 
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config);
- void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				const struct alpha_pll_config *config);
--void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+void clk_trion_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config);
-+#define clk_lucid_pll_configure(pll, regmap, config) \
-+	clk_trion_pll_configure(pll, regmap, config)
-+
- 
--extern const struct clk_ops clk_trion_fixed_pll_ops;
--extern const struct clk_ops clk_trion_pll_postdiv_ops;
- 
- #endif
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 55e9d6d75a0c..d7778def37da 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -53,7 +53,7 @@ static struct clk_alpha_pll gpll0 = {
- 				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
--			.ops = &clk_trion_fixed_pll_ops,
-+			.ops = &clk_alpha_pll_fixed_trion_ops,
- 		},
- 	},
- };
-@@ -79,7 +79,7 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
- 			.hw = &gpll0.clkr.hw,
- 		},
- 		.num_parents = 1,
--		.ops = &clk_trion_pll_postdiv_ops,
-+		.ops = &clk_alpha_pll_postdiv_trion_ops,
- 	},
- };
- 
-@@ -98,7 +98,7 @@ static struct clk_alpha_pll gpll7 = {
- 				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
--			.ops = &clk_trion_fixed_pll_ops,
-+			.ops = &clk_alpha_pll_fixed_trion_ops,
- 		},
- 	},
- };
-@@ -118,7 +118,7 @@ static struct clk_alpha_pll gpll9 = {
- 				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
--			.ops = &clk_trion_fixed_pll_ops,
-+			.ops = &clk_alpha_pll_fixed_trion_ops,
- 		},
- 	},
- };
--- 
-2.26.1
+Changing them can be a one or two patches, that's totally
+worth it IMHO.
 
+I really don't like the 'select' in arch/arm/mach-imx/Kconfig: if
+you've done the work to make the imx8 clk driver modular,
+I would expect to see the same at least tried for the other
+ones.
+
+For the clk drivers that cannot yet be 'tristate' because of the
+CLK_OF_DECLARE(), can you include a list of drivers
+that depend on the clocks being available during early
+boot?
+
+       Arnd
