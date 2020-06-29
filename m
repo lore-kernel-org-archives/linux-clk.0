@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0707CC433E3
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A716EC433E6
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:22:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D476821D7B
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 879B421707
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:22:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="VEtU5b+E";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="L6DQtBRb"
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="DWMlBHcz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="pm9xGVSB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbgF2Svq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 14:51:46 -0400
-Received: from new4-smtp.messagingengine.com ([66.111.4.230]:35733 "EHLO
+        id S1729041AbgF2Sv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 14:51:29 -0400
+Received: from new4-smtp.messagingengine.com ([66.111.4.230]:44623 "EHLO
         new4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726831AbgF2Sva (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:51:30 -0400
+        by vger.kernel.org with ESMTP id S1729333AbgF2Sv1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:51:27 -0400
 Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 14CE6580597;
-        Mon, 29 Jun 2020 11:21:17 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Mon, 29 Jun 2020 11:21:17 -0400
+        by mailnew.nyi.internal (Postfix) with ESMTP id 260DD5805B0;
+        Mon, 29 Jun 2020 11:01:11 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 29 Jun 2020 11:01:11 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
         date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm3; bh=krUOveEdR6vT0SBK3qtfa5n706o
-        ryNuDtBLGwOel0Fo=; b=VEtU5b+EqJvRVoGcecDwOgK9INc1igaqGpNTrbyWjp7
-        t4GknrXv7tKctUi5JWrH2p6O6uYYIDpxpq2pM/8mTaxmakYjDGs2EQutbHreQYwd
-        fJv+kZaW3ewSRuY8FVsI1HEbFNUwl4erX42gfLwEeTg1ns00ICau45mAoNseOhbC
-        8kD0h8BGjs8fPp3YjhpxkYlwLEC/2n2D77Szii/1UwuSkmfTTqEGQnnsoyY3GpIl
-        EHBhoY9KmtyUnCsveKv0MW5JG2xy2qCB6TaqQxf0mcFwx0IB64WHhkgiQN6O0lpn
-        DT8q0Ta5pesXagJSN5DYMMpMFpbUCjfwZIr1JA4Z/0w==
+        :content-type:in-reply-to; s=fm3; bh=sNYlobJ1pS1Ohf9R4+0abgm6IJT
+        CYCd2l6ZmNPrPlSA=; b=DWMlBHcziyoD7n2VBoKBMQ/YxDyKWpVBlvyx6I0Mh63
+        9N3BYcQcc0AXHNTyweL/38j0GtymQRJm/vEQIt0+ziKTYvGkfa456jewfOWYASdP
+        jQiCa8q3bughoOLiDZFN6fYcTjU/poinnWr3fL+yeeDASlUK4Tr8glC3Xx9d8yNZ
+        N92nANai38bPo9EBImtsSSEoElKxUTshUTkEmVNwQYKPLK94VGhppl7WLVessYkq
+        9Hd8OjLDSxi3/Vz1FOKjl7MLMFg4g5sw3uZAnoraTTqEv7Mn4vczwQ3WJIgN8YCi
+        Jbe+Hcf31HBgrmGrDLk3F6QlpBxeSRYcaRrkLMPrrqw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-type:date:from:in-reply-to
         :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=krUOve
-        EdR6vT0SBK3qtfa5n706oryNuDtBLGwOel0Fo=; b=L6DQtBRbaLn4l3ffIzF0Bw
-        bJfxa6fVOnQh9qO0p0mJrmSfuq9FDhIP89CuSO4gemX0ANlp8rukEIP6+d25PuP6
-        a3QSGPxF/k+Xcx7uqFlMQ2P4OF4kTh9ELsXnA5re3hD2MOlpZgMYXre6ehH5kS4a
-        cCxOeIagn8x5pSEn1VwUNGpbyjjxxHPsAy6Hdca09MtGrRJpAf6loosOhXjVBlR3
-        Ny+o5D6hqOsFi534Rc4VwRjOE/iQBXI0yjAY/wmsvZwTjr3/tXfURRfYZhIh+Mk8
-        hd14z5Ml3RtHtEw0mRB/nAAy5xb04b4c9LOIvEKkmyqZj/VrfLGJuhd6ky+jhXhA
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=sNYlob
+        J1pS1Ohf9R4+0abgm6IJTCYCd2l6ZmNPrPlSA=; b=pm9xGVSBedaUZC8oTh1pIw
+        BAJKleBBLVtKXvw2ZwfMWlr2Ht1mPO3POhWB4W+Ov7G3UOPsfew6wqB/hQIrwRBm
+        DLf9TAupo0jFjX7rVSg/niGfVU19fDrPcCiKC5ORpz3RMW8EGzJz2T+RGhQW9uE6
+        /PApegkh6ToIaBA7Mpq/HIVofzkT/bHpCcIW25Kkw7p1pSTFYptL0KC6WJp3Fxgf
+        dflOU+XzFNIv5laQKx21gzjz7MHce1LmKaJlOym8MYdE9fGA1xvyucQVjv2pC2CQ
+        m7qiqbbxp0dRfnT9DJTozlJot7vlwaBZoXwpjwvsxHt/jp2Xa/5dEfaXUp5RSDxA
         ==
-X-ME-Sender: <xms:6Qb6Xs5A65jiVMk-TBJ7E6MWYyS4QOEbvSnIUioCEO_-3JMTBBRYfA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudelledgudehucetufdoteggodetrfdotf
+X-ME-Sender: <xms:MwL6Xsj4Z9FZANkSVU2BdsHxlYDSvHYVhWy2MCECAneZHrUs6WoLcQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudelledgudduucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhepfffhvffukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeforgigihhm
@@ -56,14 +56,14 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduhedrudelledgudehucetufdoteggod
     htvghrnhepleekgeehhfdutdeljefgleejffehfffgieejhffgueefhfdtveetgeehieeh
     gedunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
     frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:6Qb6Xt7HQSIAah0eJg07s37QLKiq_njkDArZ0GZNou-AaxfXfxeVWA>
-    <xmx:6Qb6Xrflm2twAlFg4vyHYS5sN91S-uNRTR0cQNey4cTSqfSaVfk9JA>
-    <xmx:6Qb6XhKlWp2txSt5ptrbZvHChxtJtnYggh9FY3iKjY9qUnbEHvLN1w>
-    <xmx:7Qb6Xg7aRoYgPeksuOqXA0bw-zrOHrTGsRA0vVtbBGtdnNedV-Vj5g>
+X-ME-Proxy: <xmx:MwL6XlC5HqPkQ1Qsk95QLIv424Hp8uj956i4iB1kuXfKnZLq9-ZB_Q>
+    <xmx:MwL6XkEfszsWkaT_duTnZcLDtDklBuk0iDiCCdY7b5ArpyNn_VCReQ>
+    <xmx:MwL6XtQgKMx5Bj1CM_uV4higUE98YYcjMRQvOVXszmAIikdbb2V3Cg>
+    <xmx:NwL6XggX8VHAbnft1ZLigEObaHapWQkinOTPI8r1N7R4-gUZ3WQ7Yg>
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 83B73328005E;
-        Mon, 29 Jun 2020 11:21:13 -0400 (EDT)
-Date:   Mon, 29 Jun 2020 17:21:12 +0200
+        by mail.messagingengine.com (Postfix) with ESMTPA id DE1DE3067CA7;
+        Mon, 29 Jun 2020 11:01:06 -0400 (EDT)
+Date:   Mon, 29 Jun 2020 17:01:05 +0200
 From:   Maxime Ripard <maxime@cerno.tech>
 To:     Frank Lee <frank@allwinnertech.com>
 Cc:     robh+dt@kernel.org, wens@csie.org, mturquette@baylibre.com,
@@ -77,223 +77,105 @@ Cc:     robh+dt@kernel.org, wens@csie.org, mturquette@baylibre.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         huangshuosheng@allwinnertech.com, liyong@allwinnertech.com
-Subject: Re: [PATCH v2 09/11] arm64: allwinner: A100: add the basical
- Allwinner A100 DTSI file
-Message-ID: <20200629152112.fo3kgcztlutj66hc@gilmour.lan>
+Subject: Re: [PATCH v2 03/11] dt-bindings: pinctrl: sunxi: Add A100 pinctrl
+ bindings
+Message-ID: <20200629150105.5yisonmm34qlk4jh@gilmour.lan>
 References: <20200622025907.32574-1-frank@allwinnertech.com>
- <20200622025907.32574-10-frank@allwinnertech.com>
+ <20200622025907.32574-4-frank@allwinnertech.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lbejoaecuizw4km4"
+        protocol="application/pgp-signature"; boundary="ksr2pme4uhjoiziv"
 Content-Disposition: inline
-In-Reply-To: <20200622025907.32574-10-frank@allwinnertech.com>
+In-Reply-To: <20200622025907.32574-4-frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---lbejoaecuizw4km4
+--ksr2pme4uhjoiziv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Mon, Jun 22, 2020 at 10:59:05AM +0800, Frank Lee wrote:
-> Allwinner A100 is a new SoC with Cortex-A53 cores, this commit adds
-> the basical DTSI file of it, including the clock, i2c, pins, sid, ths,
-> and UART support.
+On Mon, Jun 22, 2020 at 10:58:59AM +0800, Frank Lee wrote:
+> Add device tree binding Documentation details for A100 pinctrl driver,
+> whic has an r pin controller and a pin controller with more irq lines.
 >=20
 > Signed-off-by: Frank Lee <frank@allwinnertech.com>
 > ---
->  arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi | 337 +++++++++++++++++++=
-++++++
->  1 file changed, 337 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml       | 72 +++++++++++++---=
+------
+>  1 file changed, 43 insertions(+), 29 deletions(-)
 >=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi b/arch/arm64/=
-boot/dts/allwinner/sun50i-a100.dtsi
-> new file mode 100644
-> index 0000000..5133897
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
-> @@ -0,0 +1,337 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> +/*
-> + * Copyright (c) 2020 Frank Lee <frank@allwinnertech.com>
-> + */
-> +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/sun50i-a100-ccu.h>
-> +#include <dt-bindings/clock/sun50i-a100-r-ccu.h>
-> +#include <dt-bindings/reset/sun50i-a100-ccu.h>
-> +#include <dt-bindings/reset/sun50i-a100-r-ccu.h>
-> +
-> +/ {
-> +	interrupt-parent =3D <&gic>;
-> +	#address-cells =3D <2>;
-> +	#size-cells =3D <2>;
-> +
-> +	cpus {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		cpu0: cpu@0 {
-> +			compatible =3D "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <0x0>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu@1 {
-> +			compatible =3D "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <0x1>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu@2 {
-> +			compatible =3D "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <0x2>;
-> +			enable-method =3D "psci";
-> +		};
-> +
-> +		cpu@3 {
-> +			compatible =3D "arm,armv8";
-> +			device_type =3D "cpu";
-> +			reg =3D <0x3>;
-> +			enable-method =3D "psci";
-> +		};
-> +	};
-> +
-> +	psci {
-> +		compatible =3D "arm,psci-1.0";
-> +		method =3D "smc";
-> +	};
-> +
-> +	iosc: internal-osc-clk {
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <16000000>;
-> +		clock-accuracy =3D <300000000>;
-> +		clock-output-names =3D "iosc";
-> +		#clock-cells =3D <0>;
-> +	};
-> +
-> +	dcxo24M: dcxo24M_clk {
+> diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a1=
+0-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-=
+a10-pinctrl.yaml
+> index bfefd09..2ac5eb5 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinct=
+rl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinct=
+rl.yaml
+> @@ -48,6 +48,8 @@ properties:
+>        - allwinner,sun9i-a80-r-pinctrl
+>        - allwinner,sun50i-a64-pinctrl
+>        - allwinner,sun50i-a64-r-pinctrl
+> +      - allwinner,sun50i-a100-pinctrl
+> +      - allwinner,sun50i-a100-r-pinctrl
+>        - allwinner,sun50i-h5-pinctrl
+>        - allwinner,sun50i-h6-pinctrl
+>        - allwinner,sun50i-h6-r-pinctrl
+> @@ -144,75 +146,87 @@ allOf:
+>    # FIXME: We should have the pin bank supplies here, but not a lot of
+>    # boards are defining it at the moment so it would generate a lot of
+>    # warnings.
+> -
+>    - if:
+>        properties:
+>          compatible:
+>            enum:
+> -            - allwinner,sun9i-a80-pinctrl
+> +            - allwinner,sun50i-a100-pinctrl
+> =20
+>      then:
+>        properties:
+>          interrupts:
+> -          minItems: 5
+> -          maxItems: 5
+> +          minItems: 7
+> +          maxItems: 7
+> =20
+>      else:
+>        if:
+>          properties:
+>            compatible:
+>              enum:
+> -              - allwinner,sun6i-a31-pinctrl
+> -              - allwinner,sun6i-a31s-pinctrl
+> -              - allwinner,sun50i-h6-pinctrl
+> +              - allwinner,sun9i-a80-pinctrl
 
-You shouldn't have underscores in the node names.
+The diff is a bit of a mess here. I guess you just added a new if with
+the A100 pinctrl compatible?
 
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <24000000>;
-> +		clock-output-names =3D "dcxo24M";
-> +		#clock-cells =3D <0>;
-> +	};
-> +
-> +	osc32k: osc32k_clk {
-
-Same thing here
-
-Also, ordering by node name here would be nice
-
-> +		compatible =3D "fixed-clock";
-> +		clock-frequency =3D <32768>;
-> +		clock-output-names =3D "osc32k";
-> +		#clock-cells =3D <0>;
-> +	};
-> +
-> +	timer {
-> +		compatible =3D "arm,armv8-timer";
-> +		interrupts =3D <GIC_PPI 13
-> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-> +			     <GIC_PPI 14
-> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-> +			     <GIC_PPI 11
-> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>,
-> +			     <GIC_PPI 10
-> +			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-> +	};
-
-Does it suffer from the same time instability than the one in the A64?
-If so, you probably want to enable the workaround too.
-
-> +	soc: soc {
-
-Do you really need a label for that node?
-
-> +		compatible =3D "simple-bus";
-> +		#address-cells =3D <2>;
-> +		#size-cells =3D <2>;
-
-Why do you need cells with 2 items here? You don't seem to be using
-them.
-
-> +		r_i2c0: i2c@7081400 {
-> +			compatible =3D "allwinner,sun6i-a31-i2c";
-> +			reg =3D <0x0 0x07081400 0x0 0x400>;
-> +			interrupts =3D <GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks =3D <&ccu CLK_BUS_I2C0>;
-> +			resets =3D <&ccu RST_BUS_I2C0>;
-> +			pinctrl-names =3D "default";
-> +			pinctrl-0 =3D <&r_i2c0_pins>;
-> +			status =3D "disabled";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +		};
-> +
-> +		r_i2c1: i2c@7081800 {
-> +			compatible =3D "allwinner,sun6i-a31-i2c";
-> +			reg =3D <0x0 0x07081800 0x0 0x400>;
-> +			interrupts =3D <GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks =3D <&ccu CLK_BUS_I2C1>;
-> +			resets =3D <&ccu RST_BUS_I2C1>;
-> +			pinctrl-names =3D "default";
-> +			pinctrl-0 =3D <&r_i2c1_pins>;
-> +			status =3D "disabled";
-> +			#address-cells =3D <1>;
-> +			#size-cells =3D <0>;
-> +		};
-> +	};
-
-The clocks and resets phandles and IDs don't look right
-
-> +	thermal-zones {
-> +		cpu_thermal_zone {
-> +			polling-delay-passive =3D <0>;
-> +			polling-delay =3D <0>;
-> +			thermal-sensors =3D <&ths 0>;
-> +		};
-
-Please add a new line here
-
-> +		gpu_thermal_zone{
-
-You should have a space here    ^=20
-
-> +			polling-delay-passive =3D <0>;
-> +			polling-delay =3D <0>;
-> +			thermal-sensors =3D <&ths 1>;
-> +		};
-
-newline
-
-> +		ddr_thermal_zone{
-
-space                           ^=20
+Also, since it's a new SoC and we don't really have to care about the
+existing DT for boards, it would be great if you could make the gpio
+banks supplies required.
 
 Thanks!
 Maxime
 
---lbejoaecuizw4km4
+--ksr2pme4uhjoiziv
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXvoG6AAKCRDj7w1vZxhR
-xRRCAQCSyQ9nHql6TEykxi9l3Cj8dRiNVK0CnZJ3fTQSc1l2AAD/fJV1R7VkbxZi
-OFU2QxjJ1CZU81YE8OkmeFr/wMlCsw8=
-=kgim
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXvoCMQAKCRDj7w1vZxhR
+xWPvAP9LZcafd4D2lCpgUabz+vBQk/jZ4yIiOaajI+Es0NedYwEAhxAGjP80TFrZ
+RAkD8uwHBQ+s2kLx229O2zmQ1CeFoQo=
+=jflY
 -----END PGP SIGNATURE-----
 
---lbejoaecuizw4km4--
+--ksr2pme4uhjoiziv--
