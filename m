@@ -1,190 +1,171 @@
-Return-Path: <SRS0=TD07=AJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D18D8C433DF
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Jun 2020 17:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1258CC433E3
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 18:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BE16820772
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Jun 2020 17:18:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7CDC21D81
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 18:38:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="OMKFcKDr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726645AbgF1RSW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 28 Jun 2020 13:18:22 -0400
-Received: from out28-3.mail.aliyun.com ([115.124.28.3]:34228 "EHLO
-        out28-3.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbgF1RST (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 28 Jun 2020 13:18:19 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.06478088|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0205103-0.000561625-0.978928;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03305;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.Hu3fckw_1593364687;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.Hu3fckw_1593364687)
-          by smtp.aliyun-inc.com(10.147.42.197);
-          Mon, 29 Jun 2020 01:18:15 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        paul@crapouillou.net, mturquette@baylibre.com,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH v2 2/3] clk: JZ4780: Reformat the code to align it.
-Date:   Mon, 29 Jun 2020 01:15:42 +0800
-Message-Id: <20200628171543.51478-3-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200628171543.51478-1-zhouyanjie@wanyeetech.com>
-References: <20200628171543.51478-1-zhouyanjie@wanyeetech.com>
+        id S1727921AbgF2Siu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 14:38:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37564 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727952AbgF2SiA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 14:38:00 -0400
+Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17351C031426
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:06 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id di5so3072449qvb.11
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 10:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=0ufJ+qo3NfI0pabE9TlU5wbhOS8NacG5qNuj9VUJYPk=;
+        b=OMKFcKDrueeyAPoA5OL/u+H5xzaq00FILSbTOVAi+N3SEtlp8hpaP/IDWZoxs0d4ew
+         +sBK5UiS0nXSrilEKSGD4wzUOszhbHGyMeJBzOvUx/hI0EUnxruMBe3zf1Qt/nhbXs0c
+         qoQeZsA6V9ZBnAN/4r+5B5IPeQqLi1kq2qEVl5jc/wPf8tX5twMJ4sPsnC3nBqjg4PyU
+         sQYDK1d2pUrg1xYUcsKlZSAPaTlbgvlOvVskif7nCYjrIx4SScOY0PSSUCGyt/V2o4jg
+         bI1WRU3euefu9A9HL6hgH9D+en/DXyshXvMsHWCGd8tJjX5lgiFIAtolwhQCAevaN2Sb
+         QUpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=0ufJ+qo3NfI0pabE9TlU5wbhOS8NacG5qNuj9VUJYPk=;
+        b=j9k0jMkDiMH8LU1YXU81RhnW4iA0hQJ7dR/+/TF6nU4MGZxlssNnjYtXkpcQYVFi4M
+         CV5NZwyKFt7lLA9gEvZPG16xzVA0lc+tlxZiSKR8Nt+8dREJKIALhUR+7wRtkWYtGhWH
+         xu4LnQosj6vPWPSZPPafPTZKkd0MoiVuyAFrhoSXndCKsiq24MfLPIaablXa6glgRE80
+         EtKGJ1kU2yCigK8rmiqa41ZckaG2UnZSftEKQEctOyWgrBfiMARU+yfcZUvzMDSTDu3o
+         ia2F5FsXAk2aRRz5GpS/6aUlVXlzX4hI/sodM5hYX8b9Z6M81BHCaT0OZROIAZpnqk6c
+         bX/g==
+X-Gm-Message-State: AOAM530rKn+KqYWVpZABdNch8X9Wk9DnEgCYUtS8pb1W52lsGzJRToxj
+        cZyTd24fpGDDOEL/3q9E22CAIQ==
+X-Google-Smtp-Source: ABdhPJz8pJS6NEBzMCzGxe3fMXEDZTIp+qlfGMxwpTu++ezpcDWHCsvWqMxpRKYmLhixDhcOZZ7X9w==
+X-Received: by 2002:a0c:800e:: with SMTP id 14mr6319433qva.92.1593451265173;
+        Mon, 29 Jun 2020 10:21:05 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id q5sm408363qtf.12.2020.06.29.10.21.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2020 10:21:04 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2 04/13] clk: qcom: clk-alpha-pll: use the right PCAL_DONE value for lucid pll
+Date:   Mon, 29 Jun 2020 13:20:34 -0400
+Message-Id: <20200629172049.30452-5-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
+In-Reply-To: <20200629172049.30452-1-jonathan@marek.ca>
+References: <20200629172049.30452-1-jonathan@marek.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Reformat the code (add one level of indentation before the values),
-to align the code in the macro definition section.
+Lucid PCAL_DONE is different from trion.
 
-Tested-by: 周正 (Zhou Zheng) <sernia.zhou@foxmail.com>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
+ drivers/clk/qcom/clk-alpha-pll.c | 28 ++++++++++++++++++++++++++--
+ drivers/clk/qcom/clk-alpha-pll.h |  2 +-
+ 2 files changed, 27 insertions(+), 3 deletions(-)
 
-Notes:
-    v2:
-    New patch.
-
- drivers/clk/ingenic/jz4780-cgu.c | 90 ++++++++++++++++++++--------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index e2e43bfe9697..20d6d5adfe8a 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -20,50 +20,50 @@
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index be7ffeae21b1..26139ef005e4 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -143,6 +143,9 @@ EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
+ #define TRION_PLL_CAL_VAL	0x44
+ #define TRION_PCAL_DONE		BIT(26)
  
- /* CGU register offsets */
- #define CGU_REG_CLOCKCONTROL	0x00
--#define CGU_REG_LCR			0x04
--#define CGU_REG_APLL		0x10
--#define CGU_REG_MPLL		0x14
--#define CGU_REG_EPLL		0x18
--#define CGU_REG_VPLL		0x1c
--#define CGU_REG_CLKGR0		0x20
--#define CGU_REG_OPCR		0x24
--#define CGU_REG_CLKGR1		0x28
--#define CGU_REG_DDRCDR		0x2c
--#define CGU_REG_VPUCDR		0x30
--#define CGU_REG_USBPCR		0x3c
--#define CGU_REG_USBRDT		0x40
--#define CGU_REG_USBVBFIL	0x44
--#define CGU_REG_USBPCR1		0x48
--#define CGU_REG_LP0CDR		0x54
--#define CGU_REG_I2SCDR		0x60
--#define CGU_REG_LP1CDR		0x64
--#define CGU_REG_MSC0CDR		0x68
--#define CGU_REG_UHCCDR		0x6c
--#define CGU_REG_SSICDR		0x74
--#define CGU_REG_CIMCDR		0x7c
--#define CGU_REG_PCMCDR		0x84
--#define CGU_REG_GPUCDR		0x88
--#define CGU_REG_HDMICDR		0x8c
--#define CGU_REG_MSC1CDR		0xa4
--#define CGU_REG_MSC2CDR		0xa8
--#define CGU_REG_BCHCDR		0xac
--#define CGU_REG_CLOCKSTATUS	0xd4
-+#define CGU_REG_LCR				0x04
-+#define CGU_REG_APLL			0x10
-+#define CGU_REG_MPLL			0x14
-+#define CGU_REG_EPLL			0x18
-+#define CGU_REG_VPLL			0x1c
-+#define CGU_REG_CLKGR0			0x20
-+#define CGU_REG_OPCR			0x24
-+#define CGU_REG_CLKGR1			0x28
-+#define CGU_REG_DDRCDR			0x2c
-+#define CGU_REG_VPUCDR			0x30
-+#define CGU_REG_USBPCR			0x3c
-+#define CGU_REG_USBRDT			0x40
-+#define CGU_REG_USBVBFIL		0x44
-+#define CGU_REG_USBPCR1			0x48
-+#define CGU_REG_LP0CDR			0x54
-+#define CGU_REG_I2SCDR			0x60
-+#define CGU_REG_LP1CDR			0x64
-+#define CGU_REG_MSC0CDR			0x68
-+#define CGU_REG_UHCCDR			0x6c
-+#define CGU_REG_SSICDR			0x74
-+#define CGU_REG_CIMCDR			0x7c
-+#define CGU_REG_PCMCDR			0x84
-+#define CGU_REG_GPUCDR			0x88
-+#define CGU_REG_HDMICDR			0x8c
-+#define CGU_REG_MSC1CDR			0xa4
-+#define CGU_REG_MSC2CDR			0xa8
-+#define CGU_REG_BCHCDR			0xac
-+#define CGU_REG_CLOCKSTATUS		0xd4
++/* LUCID PLL specific settings and offsets */
++#define LUCID_PCAL_DONE		BIT(27)
++
+ #define pll_alpha_width(p)					\
+ 		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
+ 				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
+@@ -1447,7 +1450,7 @@ EXPORT_SYMBOL_GPL(clk_trion_pll_configure);
+  * The TRION PLL requires a power-on self-calibration which happens when the
+  * PLL comes out of reset. Calibrate in case it is not completed.
+  */
+-static int alpha_pll_trion_prepare(struct clk_hw *hw)
++static int __alpha_pll_trion_prepare(struct clk_hw *hw, u32 pcal_done)
+ {
+ 	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
+ 	u32 regval;
+@@ -1455,7 +1458,7 @@ static int alpha_pll_trion_prepare(struct clk_hw *hw)
  
- /* bits within the OPCR register */
--#define OPCR_SPENDN0		BIT(7)
--#define OPCR_SPENDN1		BIT(6)
-+#define OPCR_SPENDN0			BIT(7)
-+#define OPCR_SPENDN1			BIT(6)
+ 	/* Return early if calibration is not needed. */
+ 	regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &regval);
+-	if (regval & TRION_PCAL_DONE)
++	if (regval & pcal_done)
+ 		return 0;
  
- /* bits within the USBPCR register */
--#define USBPCR_USB_MODE		BIT(31)
-+#define USBPCR_USB_MODE			BIT(31)
- #define USBPCR_IDPULLUP_MASK	(0x3 << 28)
--#define USBPCR_COMMONONN	BIT(25)
--#define USBPCR_VBUSVLDEXT	BIT(24)
-+#define USBPCR_COMMONONN		BIT(25)
-+#define USBPCR_VBUSVLDEXT		BIT(24)
- #define USBPCR_VBUSVLDEXTSEL	BIT(23)
--#define USBPCR_POR		BIT(22)
--#define USBPCR_SIDDQ		BIT(21)
--#define USBPCR_OTG_DISABLE	BIT(20)
-+#define USBPCR_POR				BIT(22)
-+#define USBPCR_SIDDQ			BIT(21)
-+#define USBPCR_OTG_DISABLE		BIT(20)
- #define USBPCR_COMPDISTUNE_MASK	(0x7 << 17)
--#define USBPCR_OTGTUNE_MASK	(0x7 << 14)
-+#define USBPCR_OTGTUNE_MASK		(0x7 << 14)
- #define USBPCR_SQRXTUNE_MASK	(0x7 << 11)
- #define USBPCR_TXFSLSTUNE_MASK	(0xf << 7)
- #define USBPCR_TXPREEMPHTUNE	BIT(6)
-@@ -81,13 +81,13 @@
- #define USBPCR1_REFCLKDIV_48	(0x2 << USBPCR1_REFCLKDIV_SHIFT)
- #define USBPCR1_REFCLKDIV_24	(0x1 << USBPCR1_REFCLKDIV_SHIFT)
- #define USBPCR1_REFCLKDIV_12	(0x0 << USBPCR1_REFCLKDIV_SHIFT)
--#define USBPCR1_USB_SEL		BIT(28)
--#define USBPCR1_WORD_IF0	BIT(19)
--#define USBPCR1_WORD_IF1	BIT(18)
-+#define USBPCR1_USB_SEL			BIT(28)
-+#define USBPCR1_WORD_IF0		BIT(19)
-+#define USBPCR1_WORD_IF1		BIT(18)
+ 	/* On/off to calibrate */
+@@ -1466,6 +1469,16 @@ static int alpha_pll_trion_prepare(struct clk_hw *hw)
+ 	return ret;
+ }
  
- /* bits within the USBRDT register */
--#define USBRDT_VBFIL_LD_EN	BIT(25)
--#define USBRDT_USBRDT_MASK	0x7fffff
-+#define USBRDT_VBFIL_LD_EN		BIT(25)
-+#define USBRDT_USBRDT_MASK		0x7fffff
++static int alpha_pll_trion_prepare(struct clk_hw *hw)
++{
++	return __alpha_pll_trion_prepare(hw, TRION_PCAL_DONE);
++}
++
++static int alpha_pll_lucid_prepare(struct clk_hw *hw)
++{
++	return __alpha_pll_trion_prepare(hw, LUCID_PCAL_DONE);
++}
++
+ static int alpha_pll_trion_set_rate(struct clk_hw *hw, unsigned long rate,
+ 				    unsigned long prate)
+ {
+@@ -1529,6 +1542,17 @@ const struct clk_ops clk_alpha_pll_trion_ops = {
+ 	.round_rate = clk_alpha_pll_round_rate,
+ 	.set_rate = alpha_pll_trion_set_rate,
+ };
++EXPORT_SYMBOL_GPL(clk_alpha_pll_trion_ops);
++
++const struct clk_ops clk_alpha_pll_lucid_ops = {
++	.prepare = alpha_pll_lucid_prepare,
++	.enable = clk_trion_pll_enable,
++	.disable = clk_trion_pll_disable,
++	.is_enabled = clk_trion_pll_is_enabled,
++	.recalc_rate = clk_trion_pll_recalc_rate,
++	.round_rate = clk_alpha_pll_round_rate,
++	.set_rate = alpha_pll_trion_set_rate,
++};
+ EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_ops);
  
- /* bits within the USBVBFIL register */
- #define USBVBFIL_IDDIGFIL_SHIFT	16
-@@ -95,11 +95,11 @@
- #define USBVBFIL_USBVBFIL_MASK	(0xffff)
+ const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 67f1fd271931..69337c1b5850 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -132,7 +132,7 @@ extern const struct clk_ops clk_alpha_pll_trion_ops;
+ extern const struct clk_ops clk_alpha_pll_fixed_trion_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_trion_ops;
  
- /* bits within the LCR register */
--#define LCR_PD_SCPU			BIT(31)
--#define LCR_SCPUS			BIT(27)
-+#define LCR_PD_SCPU				BIT(31)
-+#define LCR_SCPUS				BIT(27)
- 
- /* bits within the CLKGR1 register */
--#define CLKGR1_CORE1		BIT(15)
-+#define CLKGR1_CORE1			BIT(15)
- 
- static struct ingenic_cgu *cgu;
+-#define clk_alpha_pll_lucid_ops clk_alpha_pll_trion_ops
++extern const struct clk_ops clk_alpha_pll_lucid_ops;
+ #define clk_alpha_pll_fixed_lucid_ops clk_alpha_pll_fixed_trion_ops
+ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_ops;
  
 -- 
-2.11.0
+2.26.1
 
