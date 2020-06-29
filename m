@@ -2,95 +2,178 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68151C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C067C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4883B2073E
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1A0120672
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="D215U9Pl"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H9p2ftgM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732182AbgF2Ujo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:39:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57400 "EHLO
+        id S1732284AbgF2Uj4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 16:39:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731718AbgF2UjN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 16:39:13 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3943C061755;
-        Mon, 29 Jun 2020 13:39:12 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id a1so18153633ejg.12;
-        Mon, 29 Jun 2020 13:39:12 -0700 (PDT)
+        with ESMTP id S1729438AbgF2TOO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 15:14:14 -0400
+Received: from mail-vk1-xa41.google.com (mail-vk1-xa41.google.com [IPv6:2607:f8b0:4864:20::a41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A33C00860E
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 03:24:27 -0700 (PDT)
+Received: by mail-vk1-xa41.google.com with SMTP id v26so600290vkn.2
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 03:24:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VDcfDi33is5NY8p30BbC+tdqixJSzaPLxC/pjqPob+s=;
-        b=D215U9PlHx8PJ9SEK+W5s386BoBCjwOl7sEWwACwHjGfRs4myi0BKaXRwKfuiF2LgH
-         aTDMRGFRTdYU8Psuvc1vbWw4DbK9tURwNNRf9isVbJTOsg1FmT1N6Z67k3eRZ0M59jrf
-         dgt4RAOjy5T1Eu0yXfCnhDvheP6Uo7EpwhEaKlLUaFuHHdQv9WcRBJ0COXGyadig3/CP
-         e7fCuQLZr/A7RdsHg+s+MznW9E4P7yEqlGzuzdjO2ZqDeJt/WTEsTaj1esfsOy3p2uKC
-         Jd+2gjg25pyo0RmyBb+ZeMC725UaQsw9zq1NyX3XsPH/Ux9jNj4shk77aSwo5aofORWV
-         vnUw==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jXIzNUJKIGOWB+vmizHHKW6F1IB6+PeDc+RdNQZfG4E=;
+        b=H9p2ftgM6BDXXXU7ok8FHRr0sq4G6s1m37NDNFG1eDXJ2qFH1yJopBKuPGyReljBc2
+         kwUimi0R9cmeDvpOSRiQyQhHNeL/nurHP9Jh+UQbHEFANJyAEqzIRzvwW8/RZGiBJf0s
+         dBKMsE70llEhUl45joNctOxC5GYrj+/jp30sU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=VDcfDi33is5NY8p30BbC+tdqixJSzaPLxC/pjqPob+s=;
-        b=eyqRPUlCaTxFxx7iyq+8raThq+FvI/n2rfSud6/ER87PxZHzpUFoXPAKd8HY+CALuk
-         9ZFDVwGfdEfy0RHtWdNJbk9ASP+AgFoKE7zjYlhKjuLRE1T2FKfR5BLdXzuloRcDucbJ
-         B+rkmZdQu/VbtJZjUgMSqtB3Mx750IusQoYFglE1aP1a8A/0FnoYD8763P+29noE6KBE
-         RuaxIocgZFt2ooNs/gMaEqWUzHEVLGFFGhWcqtE0kJkajS1+Y+E+C3tJniBX6lbysDQq
-         bdyA6o5kqG3GEWwBoQxqg0aWhfQJZowWRrsG/C3NocPIPEwRrfgkdBn+sSOaIwWwLj5u
-         svgw==
-X-Gm-Message-State: AOAM530k4UjWZABHcuCUcV8SZsZXc/QmRGEMR1uK+WBw61CKeyXqX1yR
-        VKLkRVQwxi4AL7B9Rq2R+Y0=
-X-Google-Smtp-Source: ABdhPJznGeaPUprOzPLGXLcxSwmKDdYs7ILTrx7FQdFileRyIvg1SNNGT6TjxGnbAO7dm9g6osvOkQ==
-X-Received: by 2002:a17:906:364e:: with SMTP id r14mr5016296ejb.258.1593463151413;
-        Mon, 29 Jun 2020 13:39:11 -0700 (PDT)
-Received: from localhost.localdomain (p200300f137396800428d5cfffeb99db8.dip0.t-ipconnect.de. [2003:f1:3739:6800:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id j24sm706741edp.22.2020.06.29.13.39.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 13:39:10 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     jbrunet@baylibre.com, linux-amlogic@lists.infradead.org
-Cc:     narmstrong@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/2] clk: meson8b: add two missing gate clocks
-Date:   Mon, 29 Jun 2020 22:39:02 +0200
-Message-Id: <20200629203904.2989007-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.27.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jXIzNUJKIGOWB+vmizHHKW6F1IB6+PeDc+RdNQZfG4E=;
+        b=qZbBpp4Y4JD8kLBMgT6I52wAA6v3+Zetxmd23Z4UjjSQU9sMWyJ0RmJZ/woZyHwt7+
+         /zERpV1dyop5TelGtksBDZAMazGLdaItFZZdjr7KIvU9q9dl11JR4A5qZ8eSXz7BjePW
+         0PhAb5jqy30RjUxLg6vtZ1MOH+aGaZHwMYGKa2ECuPTPmQpJGc+nbdt7oMa3BPma3KeW
+         VbqeYRXsWQ/5a6Qil1GlCGRcazSEPtfMHHdOXeuwcA8OqWtDZaR3abJrRTyHdM1JA4nP
+         /VZBY3BR7t+4Va5XfSaOsp1Hw5C5ftzAonQIKjTvRb0IM1KP80vFuGt/BGeeBbCAPhaq
+         u1Jg==
+X-Gm-Message-State: AOAM532ygMu6APLEYcVumZfj+SmlHoH3mivaNCDWCGNL5jHjPBhmJ1o6
+        qmSIZdZft3v0Cf/QSuYs5r9MkXqG+ERFeEcTNljlXg==
+X-Google-Smtp-Source: ABdhPJwbhBKd5emQSa+NeM2N/t2NxnVvt7PQYuLqxuOf9/8087m6YgWuvv1HZwoG38pvPAxhwYkyo0VJbv0pY52R32g=
+X-Received: by 2002:a1f:17c1:: with SMTP id 184mr9308345vkx.51.1593426266169;
+ Mon, 29 Jun 2020 03:24:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20200616055223.119360-1-ikjn@chromium.org> <159293933210.62212.706350398043250620@swboyd.mtv.corp.google.com>
+In-Reply-To: <159293933210.62212.706350398043250620@swboyd.mtv.corp.google.com>
+From:   Ikjoon Jang <ikjn@chromium.org>
+Date:   Mon, 29 Jun 2020 18:24:15 +0800
+Message-ID: <CAATdQgA4aoGWtuWb6AWpzD-VSfPV5u7++0rUoQN-cjwA7UpcVA@mail.gmail.com>
+Subject: Re: [PATCH] clk: Provide future parent in clk notification
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-While trying to figure out how to set up the video clocks on the 32-bit
-SoCs I found that the current clock tree is missing two gates. This adds
-the missing gates based on evidence found in the public S805 datasheet,
-the GXBB clock driver and 3.10 vendor kernel.
+On Wed, Jun 24, 2020 at 3:08 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Ikjoon Jang (2020-06-15 22:52:23)
+> > Current clk notification handlers cannot know its new parent in
+> > PRE_RATE_CHANGE event. This patch simply adds parent clk to
+> > clk_notifier_data so the child clk is now able to know its future
+> > parent prior to reparenting.
+>
+> Yes, but why is that important?
 
-I didn't add any Fixes tag because this clock tree is still read-only
-and the HDMI PLL (the top-most clock in this tree) needs more work as
-well.
+Basically I wondered if there are some cases needed to check more
+conditions other than
+clock rate (e.g. parent clock's internal properties).
 
+In my case,  now I'm trying to make a wrapper clock on a mux clock which has
+a rate adjustable PLL clock and a fixed temporary clock as its parents.
 
-Martin Blumenstingl (2):
-  clk: meson: meson8b: add the vclk_en gate clock
-  clk: meson: meson8b: add the vclk2_en gate clock
+clkPLL   clkTMP
+        \     /
+      clkMUX
 
- drivers/clk/meson/meson8b.c | 60 ++++++++++++++++++++++++++++++-------
- drivers/clk/meson/meson8b.h |  4 ++-
- 2 files changed, 53 insertions(+), 11 deletions(-)
+Current device driver is using three different clocks specified from
+the device tree
+and the driver handles clocks like this way to change operating clock speed.
 
--- 
-2.27.0
+clk_set_parent(clkMUX, clkTMP);
+clk_set_rate(clkPLL, HZ);
+udelay(10);
+clk_set_parent(clkMUX, clkPLL);
 
+Now what I want to do is to supply only one clock to a device node,
+make the driver
+call clk_set_rate() only, and clkMUX 's notification handler does
+set_parent() things instead.
+So it's good to know that clkMUX's rate changing is not caused by
+clk_set_parent() and
+deny its rate changing when an inappropriate parent is set.
+
+Sorry for the long story for a simple reason, and maybe there could be
+a more plausible reason
+for this in near future?
+
+>
+> >
+> > Change-Id: I099a784d5302a93951bdc6254d85f8df8c770462
+>
+> Please remove these.
+
+Oops, thanks!
+
+>
+> > Signed-off-by: Ikjoon Jang <ikjn@chromium.org>
+> > ---
+> >  drivers/clk/clk.c   | 30 +++++++++++++++++-------------
+> >  include/linux/clk.h |  9 ++++++---
+> >  2 files changed, 23 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > index 3f588ed06ce3..62c4e7b50ae5 100644
+> > --- a/drivers/clk/clk.c
+> > +++ b/drivers/clk/clk.c
+> > @@ -1846,7 +1849,7 @@ static int __clk_set_parent(struct clk_core *core, struct clk_core *parent,
+> >   * take on the rate of its parent.
+> >   */
+> >  static int __clk_speculate_rates(struct clk_core *core,
+> > -                                unsigned long parent_rate)
+> > +                                struct clk_core *parent)
+> >  {
+> >         struct clk_core *child;
+> >         unsigned long new_rate;
+> > @@ -1854,11 +1857,12 @@ static int __clk_speculate_rates(struct clk_core *core,
+> >
+> >         lockdep_assert_held(&prepare_lock);
+> >
+> > -       new_rate = clk_recalc(core, parent_rate);
+> > +       new_rate = clk_recalc(core, parent ? parent->rate : 0);
+> >
+> >         /* abort rate change if a driver returns NOTIFY_BAD or NOTIFY_STOP */
+> >         if (core->notifier_count)
+> > -               ret = __clk_notify(core, PRE_RATE_CHANGE, core->rate, new_rate);
+> > +               ret = __clk_notify(core, parent, PRE_RATE_CHANGE,
+> > +                                  core->rate, new_rate);
+> >
+> >         if (ret & NOTIFY_STOP_MASK) {
+> >                 pr_debug("%s: clk notifier callback for clock %s aborted with error %d\n",
+> > @@ -1867,7 +1871,7 @@ static int __clk_speculate_rates(struct clk_core *core,
+> >         }
+> >
+> >         hlist_for_each_entry(child, &core->children, child_node) {
+> > -               ret = __clk_speculate_rates(child, new_rate);
+> > +               ret = __clk_speculate_rates(child, core);
+>
+> How does this work? core->rate isn't assigned yet when we're speculating
+> rates down the tree to the leaves. So that clk_recalc() in the above
+> hunk would need to save the rate away, which is wrong because it isn't
+> changed yet, for this line to make sense.
+>
+Yes, you're right, this was simply wrong..
+
+> Given that I had to read this for a few minutes to figure this out it
+> seems that trying to combine the parent and the rate as arguments is
+> actually more complicated than adding another parameter. Please just add
+> another argument.
+>
+> >                 if (ret & NOTIFY_STOP_MASK)
+> >                         break;
+> >         }
+
+Agree,
+Thank you for the review.
