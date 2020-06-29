@@ -4,97 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D7BFC433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F4F0C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6EDBD206A1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEA2206A5
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:53:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593467300;
-	bh=pHWXkpDmMnzt9/atnFVWTOS9Q9wcOY5N5scI8iSGDa4=;
+	s=default; t=1593467630;
+	bh=uQiadOMZ3uEfWQnv8fMX1w6chwspqEv0Mi50OtEKkKk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=d5c+LM60o46RNSNmSFz8wj7erVi+XGyhrTbi+RhSZ5GmCScqgv6N4mBTve7pr7aFA
-	 NfON1giDt1H7nUkVxdE9DlxbmzUwm2i2Uf+44aOd6KR0lgp0VUQ2wlc5CavNvFRxk5
-	 CSEBIRyixzgX6lIRDInytFn0N9BZdXweT2ln4hcQ=
+	b=KFqc51HDujh6HPhKtd8kJ314epawj3xWu41FIvtLT+bQ2rsh2PzzH81FAWWenel+7
+	 WzCASnZhjY9RS4e2DRKVOWHbGLcgiYeJ5VM2TBpHv0UzWWXl1EMsoWEJTAgHru49aJ
+	 X9QG1VNLq8P7Stij1LzFUkZeYtP+dLOoqeFHv1h4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404272AbgF2VsT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:48:19 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38672 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404255AbgF2VsJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:48:09 -0400
-Received: by mail-io1-f68.google.com with SMTP id f6so3231010ioj.5;
-        Mon, 29 Jun 2020 14:48:08 -0700 (PDT)
+        id S2404641AbgF2Vxg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:53:36 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37466 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404461AbgF2Vxf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:53:35 -0400
+Received: by mail-io1-f65.google.com with SMTP id v6so5163812iob.4;
+        Mon, 29 Jun 2020 14:53:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=wGWmyGXfNATJETlByWIEZ13t4eNzYwD3JHETLNfxb54=;
-        b=LSTQHAqoIoV/qaZ7TayTtaGHtNbbU7i50/njuRYKApJYi5gEpkVGwdXkB8vXP2xdsk
-         ysyi5ajs/I2ER9KBGj8+FdLPeUk8NJJgtiU2kYrYe8LvmeJZVEegydgAFgSmUidGI5WE
-         XRSdYwZpFaVKH9pNYAuiBhl4LeC0cjIdybvKY0LCYUMqPuHFiCci7zW8rPSRUHfyHuvy
-         H/wxaPx+sjuP4DW/i4PbZTOq8/BgZvYCxkrQq9+BHaNs1n2gpQcaogkhoQvBW95ajTAK
-         lcIRPfmdOKKvOR8GTecazz47RjfNvCGq1WXPpHwSQ4GAS/yciphyChc6sEuD6dZ1XKTl
-         K5qQ==
-X-Gm-Message-State: AOAM531m6d+RoibLzHPJ5tXG+6acAXaykD8ExqP0U9wwrSS/kSIyu9wP
-        oLPMdakqjKQrvQRXi7jXsA==
-X-Google-Smtp-Source: ABdhPJwEfRn6dYm/O5ro6RnMRhK1qWiklysncseXKlDL5Wp1cyeVC6ap1ygyNz6c3jdV70Ag3tnIxg==
-X-Received: by 2002:a6b:1496:: with SMTP id 144mr18920446iou.6.1593467288379;
-        Mon, 29 Jun 2020 14:48:08 -0700 (PDT)
+        bh=TqO9zSccC03uQUBHdnGu8Ma3JV07Cz0JDvsVx9Gx0ZY=;
+        b=BI5j2klROPkAw5y71Nus7JZg2kw4DRN35t07NRJ8k7ia18GH/E0t3shkmjJ18jl0SP
+         /rTnVa2UbnSnJNgWxI8OFen9vWgatI3pPXPj/4WMXjJxvxFdSfI8ywNrCw+WR8YrlARO
+         mTaMURwB9Z0RPIn2mWLBE3qw5vk2hYKNR44yqIGVs0T5bLDvpLknUc7eTNupVfliVRya
+         yVSNAzcpr7e6v2Yuir7Nod8b0MTrOaH4d/ss5+Sjr+y+jmc320xfXlce2YPHTYuC5Z+2
+         BMCB9J5u9DHwASyI2AxdIoxbMR+zKhJu9ae7SVdM6q14yX88MEBetp6EFiJLHf2B1XDL
+         0GPA==
+X-Gm-Message-State: AOAM530wCbae5J3sg6I2a4rDTIcR9/v6t5Jp3l6xGyiG5A8bpLNxhtph
+        jaQqtkoVLIj2QHFMncrWsw==
+X-Google-Smtp-Source: ABdhPJyIbG7PIhmtfb8YhLKR5Xh3nGklRFT+QTShHlA/Rx0Efb1UteRJRihqMm1UaKN8nH02gpJ1Xw==
+X-Received: by 2002:a05:6638:2601:: with SMTP id m1mr9213481jat.43.1593467614612;
+        Mon, 29 Jun 2020 14:53:34 -0700 (PDT)
 Received: from xps15 ([64.188.179.255])
-        by smtp.gmail.com with ESMTPSA id k3sm601299ils.8.2020.06.29.14.48.06
+        by smtp.gmail.com with ESMTPSA id t12sm604000ilo.80.2020.06.29.14.53.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 14:48:07 -0700 (PDT)
-Received: (nullmailer pid 2985144 invoked by uid 1000);
-        Mon, 29 Jun 2020 21:48:05 -0000
-Date:   Mon, 29 Jun 2020 15:48:05 -0600
+        Mon, 29 Jun 2020 14:53:34 -0700 (PDT)
+Received: (nullmailer pid 2994774 invoked by uid 1000);
+        Mon, 29 Jun 2020 21:53:31 -0000
+Date:   Mon, 29 Jun 2020 15:53:31 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, ulf.hansson@linaro.org, sboyd@kernel.org,
-        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
-        festevam@gmail.com, s.hauer@pengutronix.de, robh+dt@kernel.org,
-        s.trumtrar@pengutronix.de, devicetree@vger.kernel.org,
-        shawnguo@kernel.org, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org, Linux-imx@nxp.com
-Subject: Re: [PATCH V4 1/3] dt-bindings: mmc: Convert imx esdhc to json-schema
-Message-ID: <20200629214805.GA2983242@bogus>
-References: <1592450578-30140-1-git-send-email-Anson.Huang@nxp.com>
+To:     Hanks Chen <hanks.chen@mediatek.com>
+Cc:     wsd_upstream@mediatek.com, linux-gpio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        linux-kernel@vger.kernel.org, mtk01761 <wendell.lin@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>, linux-clk@vger.kernel.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v6 1/7] dt-bindings: pinctrl: add bindings for MediaTek
+ MT6779 SoC
+Message-ID: <20200629215331.GA2991039@bogus>
+References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
+ <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1592450578-30140-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 18 Jun 2020 11:22:56 +0800, Anson Huang wrote:
-> Convert the i.MX ESDHC binding to DT schema format using json-schema
+On Thu, 18 Jun 2020 19:33:32 +0800, Hanks Chen wrote:
+> From: Andy Teng <andy.teng@mediatek.com>
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> Add devicetree bindings for MediaTek MT6779 pinctrl driver.
+> 
+> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
 > ---
-> No change.
-> ---
->  .../devicetree/bindings/mmc/fsl-imx-esdhc.txt      |  67 -----------
->  .../devicetree/bindings/mmc/fsl-imx-esdhc.yaml     | 124 +++++++++++++++++++++
->  2 files changed, 124 insertions(+), 67 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.txt
->  create mode 100644 Documentation/devicetree/bindings/mmc/fsl-imx-esdhc.yaml
+>  .../bindings/pinctrl/mediatek,mt6779-pinctrl.yaml  |  210 ++++++++++++++++++++
+>  1 file changed, 210 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
 > 
 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml: mmc@5b010000: compatible: Additional items are not allowed ('fsl,imx7d-usdhc' was unexpected)
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml: mmc@5b010000: compatible: ['fsl,imx8qxp-usdhc', 'fsl,imx7d-usdhc'] is too long
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/clock/imx35-clock.example.dt.yaml: esdhc@53fb4000: $nodename:0: 'esdhc@53fb4000' does not match '^mmc(@.*)?$'
+Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dts:21:18: fatal error: dt-bindings/pinctrl/mt6779-pinfunc.h: No such file or directory
+         #include <dt-bindings/pinctrl/mt6779-pinfunc.h>
+                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+scripts/Makefile.lib:315: recipe for target 'Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dt.yaml' failed
+make[1]: *** [Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.example.dt.yaml] Error 1
+make[1]: *** Waiting for unfinished jobs....
+Makefile:1347: recipe for target 'dt_binding_check' failed
+make: *** [dt_binding_check] Error 2
 
 
-See https://patchwork.ozlabs.org/patch/1311722
+See https://patchwork.ozlabs.org/patch/1312018
 
 If you already ran 'make dt_binding_check' and didn't see the above
 error(s), then make sure dt-schema is up to date:
@@ -102,4 +114,11 @@ error(s), then make sure dt-schema is up to date:
 pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
 
 Please check and re-submit.
+
+
+
+Here, you need patch 2 to come first or merge it into this patch as it 
+is part of the binding.
+
+Rob
 
