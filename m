@@ -7,67 +7,70 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B38DC433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:19:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E32C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DC93820720
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:19:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 939E7206A1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:19:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="Fspc3HTn"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="Tn7k1LrS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbgF2VTo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 17:19:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35634 "EHLO
+        id S1727115AbgF2VT4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 17:19:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390823AbgF2VSm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:18:42 -0400
-Received: from mail-qk1-x743.google.com (mail-qk1-x743.google.com [IPv6:2607:f8b0:4864:20::743])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BC50C08C5DB
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:42 -0700 (PDT)
-Received: by mail-qk1-x743.google.com with SMTP id 80so16689773qko.7
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:42 -0700 (PDT)
+        with ESMTP id S2388524AbgF2VSj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:18:39 -0400
+Received: from mail-qv1-xf44.google.com (mail-qv1-xf44.google.com [IPv6:2607:f8b0:4864:20::f44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A97BDC061755
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:38 -0700 (PDT)
+Received: by mail-qv1-xf44.google.com with SMTP id u8so8334162qvj.12
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=acMY/PDEeXIX2iUBf49C2Sg8svQXM/66G883KF7yr14=;
-        b=Fspc3HTnPU2vcRkiRJAJxQPq78eYYZV+us/6igL1nLqS3ngZ1TlmhE7a0HHo1k3EHY
-         A3wQheAcxGYvvGEwHQqv2SnicWeEuPnsdrFnW9hZ0RpjBvtqwrVdFkSvnbxbu2hpKEit
-         MayGVZfijC8nQPQnPJwK8LBWSsqKxaQILvNOoMmbwqV/5mVhqa281u38Td63X9Coe4vu
-         FeEGjXts1z7cFevdrf6qm1PKRCMY4JCA1Ddw33je3QHK5yC6zhVDmsy759wK/bfzCZI6
-         Ei2gl6s+K7fzzb/4wzXoKeIWEgW4kaPji8i/e0fSI73emPRyooiCmdIsik18dRm1bF2U
-         pYjg==
+        bh=fem3XNP+K3JU9MCaDCRGbzpn3Qjj+S6fTPpAXuau47M=;
+        b=Tn7k1LrSf6XKp3W/qTgokaoOKLSCFtf27xTvqer3ndaiwop4QHiDEM23VnFfwUDOgM
+         XDAR87wg5GP+0k3okcCl+xyT0NeMeaTl5Bakkw7HjqZPrvCWqnx4dXpJMd3DbXs3wMrw
+         W9tkaULO5Q45zP8HPcLC+3Puvov43Zd4IZFd2Cna98Rdsmx/SlAn1zq9pHaMvNXt96Sh
+         9FuKfOFhkm6kysPox8IfpCLVdfvKqEQ8diFyFkYAZv0bgXtq979BoYthFq/Cu2EqtQhO
+         6SRPn08pDCCaRxdc/tVSeEh0yIbtFQu2+nJlENRauG3jRfDxk6um3Ze8fhVEtiNI4KCj
+         T7uQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=acMY/PDEeXIX2iUBf49C2Sg8svQXM/66G883KF7yr14=;
-        b=Ccm7NztLkje8Xt/my9LCBoRG8kzuVoAqo/2ejd/Tw0z+6a97mKfySIxG9EzPx353ES
-         cqYur4UqSq7zA42UO27wcDSo9juRHI7nYNynWUf6LwU6d7Y+BqcSwV42R3FGxCk1Ad0x
-         VdriY7kZPSexiCJhATctIL2sYp2g30WelyKN2tmg442Y1GjYnDLrPLHPm6xIuQPsSXU9
-         PKu+Pb9nFb0ccYNkyGdiAGqAlQ/FSxfeYF9n2s/uDVdHHlJ3k2VRWqg02BwY/l+1iJ0f
-         gTYKoZbRwAt7CtgPxZbOvIYRYbTQQsCrseLievhGOeShtrcAE3AXe5OS6W9+3YgCYErG
-         lPqQ==
-X-Gm-Message-State: AOAM532bWLkrIebXDKawLBFXRePHV0bV6eEJLis4tMJefMYb/QWFAA0v
-        LGBoEoBp1L+28SFByr60TaHaFw==
-X-Google-Smtp-Source: ABdhPJz+BGeCLxFQMQCd/PD/1w073yqw0PjakwVkOCQ6o9hCFIkPo5bsYLiQ2WYLWW2eCsYpQc9Jig==
-X-Received: by 2002:a37:e307:: with SMTP id y7mr16063257qki.489.1593465521371;
-        Mon, 29 Jun 2020 14:18:41 -0700 (PDT)
+        bh=fem3XNP+K3JU9MCaDCRGbzpn3Qjj+S6fTPpAXuau47M=;
+        b=Ej3Gz1W1nsyp4NqWFsfK2l/aDp0eREyNWDsj6Z4briQXL8jQ7Qm5c17W3hoxOyBNxQ
+         ziguGMWBWlkuUwx11wM5vrCzBBuP54jghnT7owtrPllLcLB28d2StO6ma8hRY5nEXW2Y
+         qz7nPAx7l/o/9SZufKN94XkmxR7s9P22YKn7oybgsQei/tzrjgj+AWaN9xAU/q3mOmeA
+         3qHaL9eFmKgM7Q4+QXoAxKt2xR8ZhYeUXQnjuwgmTbiO7x3ZWttmUuEqAFTOmTFvy8iJ
+         GjKrj5hvBVv8PEBB/9LWEsGkEVtKcw0OWrX91IMhDUImnedfAIM2zCJGVBYGimNAfmCN
+         Vkyg==
+X-Gm-Message-State: AOAM532tRrGfHn1sBTzOtvBykDnUevdcKrefcQZna0yHBimnTCxnLL6G
+        dWMVfgrFcLGwLyI9hxVgGUbaow==
+X-Google-Smtp-Source: ABdhPJxYmnj3766wz3xNh58qo4J2m0WHk33PlfNR2bMI/LND57nvTL+xKqmU8/aYTiLbBPg0aET2PQ==
+X-Received: by 2002:ad4:42ad:: with SMTP id e13mr7374289qvr.89.1593465517926;
+        Mon, 29 Jun 2020 14:18:37 -0700 (PDT)
 Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id b196sm1169078qkg.11.2020.06.29.14.18.40
+        by smtp.gmail.com with ESMTPSA id b196sm1169078qkg.11.2020.06.29.14.18.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 14:18:41 -0700 (PDT)
+        Mon, 29 Jun 2020 14:18:37 -0700 (PDT)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        Vinod Koul <vkoul@kernel.org>,
         linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
         linux-kernel@vger.kernel.org (open list)
-Subject: [RESEND PATCH v2 05/13] clk: qcom: gcc: remove unnecessary vco_table from SM8150
-Date:   Mon, 29 Jun 2020 17:17:11 -0400
-Message-Id: <20200629211725.2592-6-jonathan@marek.ca>
+Subject: [RESEND PATCH v2 02/13] clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
+Date:   Mon, 29 Jun 2020 17:17:08 -0400
+Message-Id: <20200629211725.2592-3-jonathan@marek.ca>
 X-Mailer: git-send-email 2.26.1
 In-Reply-To: <20200629211725.2592-1-jonathan@marek.ca>
 References: <20200629211725.2592-1-jonathan@marek.ca>
@@ -78,51 +81,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The fixed alpha pll ops only use it for clamping in round_rate, which is
-unnecessary. This is consistent with SM8250 GCC not using vco_table.
+0x44 isn't a register offset, it is the value that goes into CAL_L_VAL.
+
+Fixes: 548a909597d5 ("clk: qcom: clk-alpha-pll: Add support for Trion PLLs")
 
 Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- drivers/clk/qcom/gcc-sm8150.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index d7778def37da..8e9b5b3cceaf 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -34,14 +34,8 @@ enum {
- 	P_SLEEP_CLK,
- };
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 9b2dfa08acb2..1325139173c9 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -56,7 +56,6 @@
+ #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
+ #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
+ #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
+-#define PLL_CAL_VAL(p)		((p)->offset + (p)->regs[PLL_OFF_CAL_VAL])
  
--static const struct pll_vco trion_vco[] = {
--	{ 249600000, 2000000000, 0 },
--};
--
- static struct clk_alpha_pll gpll0 = {
- 	.offset = 0x0,
--	.vco_table = trion_vco,
--	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
- 	.clkr = {
- 		.enable_reg = 0x52000,
-@@ -85,8 +79,6 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
- 
- static struct clk_alpha_pll gpll7 = {
- 	.offset = 0x1a000,
--	.vco_table = trion_vco,
--	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
- 	.clkr = {
- 		.enable_reg = 0x52000,
-@@ -105,8 +97,6 @@ static struct clk_alpha_pll gpll7 = {
- 
- static struct clk_alpha_pll gpll9 = {
- 	.offset = 0x1c000,
--	.vco_table = trion_vco,
--	.num_vco = ARRAY_SIZE(trion_vco),
- 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TRION],
- 	.clkr = {
- 		.enable_reg = 0x52000,
+ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
+@@ -115,7 +114,6 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_STATUS] = 0x30,
+ 		[PLL_OFF_OPMODE] = 0x38,
+ 		[PLL_OFF_ALPHA_VAL] = 0x40,
+-		[PLL_OFF_CAL_VAL] = 0x44,
+ 	},
+ 	[CLK_ALPHA_PLL_TYPE_LUCID] =  {
+ 		[PLL_OFF_L_VAL] = 0x04,
 -- 
 2.26.1
 
