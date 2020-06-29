@@ -3,81 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54958C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7422BC433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3F19720720
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:47:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F58F20663
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 20:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389455AbgF2Uqn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 16:46:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43394 "EHLO
+        id S1731573AbgF2Usx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 16:48:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43352 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731544AbgF2TNw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 15:13:52 -0400
-X-Greylist: delayed 371 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Mon, 29 Jun 2020 05:15:27 PDT
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [IPv6:2a00:da80:fff0:2::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EC62C00E3F5;
-        Mon, 29 Jun 2020 05:15:27 -0700 (PDT)
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id CF41A1C0C0E; Mon, 29 Jun 2020 14:09:12 +0200 (CEST)
-Date:   Mon, 29 Jun 2020 14:09:11 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     skrzynka@konradybcio.pl, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: Add support for Sony Xperia
- XA2/Plus/Ultra (Nile platform)
-Message-ID: <20200629120911.GA1319@bug>
-References: <20200621213806.551879-1-konradybcio@gmail.com>
- <20200621213806.551879-8-konradybcio@gmail.com>
+        with ESMTP id S1731510AbgF2TNs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 15:13:48 -0400
+Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33299C014AFC;
+        Mon, 29 Jun 2020 00:59:50 -0700 (PDT)
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: myjosserand)
+        with ESMTPSA id EA3EF2A1D14
+Subject: Re: [PATCH v4 0/2] ARM: Add Rockchip rk3288w support
+To:     Heiko Stuebner <heiko@sntech.de>, robh+dt@kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, kernel@collabora.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20200602080644.11333-1-mylene.josserand@collabora.com>
+ <159238429476.1470505.6023847362048785737.b4-ty@sntech.de>
+From:   Mylene Josserand <mylene.josserand@collabora.com>
+Message-ID: <66bfd77c-83e4-3689-d8c1-c5ae47b40f02@collabora.com>
+Date:   Mon, 29 Jun 2020 09:59:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200621213806.551879-8-konradybcio@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <159238429476.1470505.6023847362048785737.b4-ty@sntech.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+Hello Heiko,
 
-> +    soc {
-> +        gpio_keys {
-> +            status = "okay";
-> +            compatible = "gpio-keys";
-> +            input-name = "gpio-keys";
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +            autorepeat;
+On 6/17/20 10:58 AM, Heiko Stuebner wrote:
+> On Tue, 2 Jun 2020 10:06:42 +0200, Mylène Josserand wrote:
+>> Context
+>> -------
+>>
+>> Here is my V4 of my patches that add the support for the Rockchip
+>> RK3288w which is a revision of the RK3288. It is mostly the same SOC
+>> except for, at least, one clock tree which is different.
+>> This difference is only known by looking at the BSP kernel [1].
+>>
+>> [...]
+> 
+> Applied, thanks!
 
-Do you really want autorepeat on keys like camera focus?
+Thank you!
 
-> +            vol_down {
-> +                label = "Volume Down";
-> +                gpios = <&pm660l_gpios 7 GPIO_ACTIVE_LOW>;
-> +                linux,input-type = <1>;
-> +                linux,code = <KEY_VOLUMEDOWN>;
-> +                gpio-key,wakeup;
-> +                debounce-interval = <15>;
-> +            };
+Best regards,
+Mylène
 
-No volume up?
-									Pavel
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+> 
+> [1/2] clk: rockchip: Handle clock tree for rk3288w variant
+>        commit: 1627f683636df70fb25358b0a7b39a24e8fce5bf
+> [2/2] dt-bindings: clocks: add rk3288w variant compatible
+>        commit: 00bd404144241155653bb0d0c15be51e4e6983aa
+> 
+> Best regards,
+> 
+
