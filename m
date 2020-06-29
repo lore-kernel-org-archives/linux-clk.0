@@ -2,100 +2,90 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670D5C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DFFC433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52EB92076C
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:01:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C1352065D
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 22:05:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593468313;
+	bh=5DJkEWgfoZzrTC4GdUQL2z07RM8g3Zpqg0tTNNwHrOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GC5wBjLVrw3uldEXRsRAHo0DyblfyCwARH2iE9jBs4QlSc10SBx3AMyoxdpOGycms
+	 O3+6uR2onpiUa232T6GMlAbzBbhljZpDaj2eLpCe22EDXM4gQ7ZXPr+KoUjJCkqbY6
+	 DiMHoga5jeowhoFiOy5sb0kaf7UVheKbtV8nEgW8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390975AbgF2WBY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 18:01:24 -0400
-Received: from jabberwock.ucw.cz ([46.255.230.98]:52970 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404683AbgF2WBX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 18:01:23 -0400
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id 213821C0C82; Tue, 30 Jun 2020 00:01:21 +0200 (CEST)
-Date:   Tue, 30 Jun 2020 00:01:20 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     skrzynka@konradybcio.pl, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 7/8] arm64: dts: qcom: Add support for Sony Xperia
- XA2/Plus/Ultra (Nile platform)
-Message-ID: <20200629220120.GC26513@amd>
-References: <20200621213806.551879-1-konradybcio@gmail.com>
- <20200621213806.551879-8-konradybcio@gmail.com>
- <20200629120911.GA1319@bug>
- <CAMS8qEXdoX1Zpm660sOMM9b2rni9qXM_7rAi9kkzFBQYmL3EgQ@mail.gmail.com>
+        id S1726174AbgF2WFI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 18:05:08 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37067 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391865AbgF2WFG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 18:05:06 -0400
+Received: by mail-io1-f68.google.com with SMTP id v6so5193838iob.4;
+        Mon, 29 Jun 2020 15:05:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/33WwvXDUgobqj85r5L3nzLt5ser+3dcQ28svWATI7k=;
+        b=mifdKd076vt1x5Ou7aR4oKqwHs2Fqnn/+OFDNsQXVfa6hHKR4yRnzFX/WQWnyg5rxn
+         mkdXsccScyk8qejLl092dkXpTsFrRFeCQoEhB2jXD2R/JDUBkhhs70kaLANQseD/fVwR
+         FHR8i+nUTHOdDunZLy5Esm7JsUm4UTILGPjvxarqKQqcIhso8tN0ZnRgss5b2oR9ybd3
+         wzYB1ZgspLoAPcOOsFmScLDu7FEZhJNASfDTroEiH3c8wGzwQcvqo1P4zmPQ8FWxykCL
+         6t/nLXPfGR0RyGF17614wKs+/06idorQlldid+QdvVUUp+OXC18oX1x8TT9nqV2WhvC5
+         c+tg==
+X-Gm-Message-State: AOAM5317VzWIU8D6C42s0zlRJCgfXNLpBWtQKb48FCfPst7flQstOf7k
+        I1UDQWo45w1TTAUE5PhVjrxOcTbkjw==
+X-Google-Smtp-Source: ABdhPJxVuYyuGtstqDJ8HOPThuovY3rPXcwWLAx5FKDmu1o5PgaYcJiB1dyG+EsqAE8S7/Upre6ZQQ==
+X-Received: by 2002:a05:6602:2dca:: with SMTP id l10mr18871444iow.163.1593468305897;
+        Mon, 29 Jun 2020 15:05:05 -0700 (PDT)
+Received: from xps15 ([64.188.179.255])
+        by smtp.gmail.com with ESMTPSA id o19sm543584iob.5.2020.06.29.15.05.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jun 2020 15:05:05 -0700 (PDT)
+Received: (nullmailer pid 3021658 invoked by uid 1000);
+        Mon, 29 Jun 2020 22:05:02 -0000
+Date:   Mon, 29 Jun 2020 16:05:02 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        ulf.hansson@linaro.org, s.trumtrar@pengutronix.de,
+        aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V4 3/3] dt-bindings: clock: Correct example in i.MX8QXP
+ LPCG binding
+Message-ID: <20200629220502.GA3019731@bogus>
+References: <1592450578-30140-1-git-send-email-Anson.Huang@nxp.com>
+ <1592450578-30140-3-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="R+My9LyyhiUvIEro"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMS8qEXdoX1Zpm660sOMM9b2rni9qXM_7rAi9kkzFBQYmL3EgQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1592450578-30140-3-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jun 18, 2020 at 11:22:58AM +0800, Anson Huang wrote:
+> In i.MX8QXP LPCG binding's example, "fsl,imx7d-usdhc" as fallback
+> compatible is incorrect, remove it to avoid below build error:
+> 
+> Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
+> mmc@5b010000: compatible: Additional items are not allowed ('fsl,imx7d-usdhc' was unexpected)
+> Documentation/devicetree/bindings/clock/imx8qxp-lpcg.example.dt.yaml:
+> mmc@5b010000: compatible: ['fsl,imx8qxp-usdhc', 'fsl,imx7d-usdhc'] is too long
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> New patch, to fix build error when patch #1 is added.
 
---R+My9LyyhiUvIEro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So, patch 1 should come last. I'll re-order when applying.
 
-On Mon 2020-06-29 14:15:32, Konrad Dybcio wrote:
-> > Do you really want autorepeat on keys like camera focus?
->=20
-> I miiiight want to reconsider that when it will actually be in use
-> :)
-
-Heh.
-
-Okay, so... I want a Linux phone. I have N900 and Droid 4 at the
-moment. I'll have something useful real soon now --
-https://maemo-leste.github.io/maemo-leste-thirteenth-update-april-may-june-=
-2020.html
-=2E
-
-OTOH... if you get useful mainline support for XA2 (or any other
-modern Sony)... be sure to let me know. Droid 4 has only 1GB RAM :-(.
-
-Best regards,
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---R+My9LyyhiUvIEro
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl76ZLAACgkQMOfwapXb+vIGtACfXOLd6RroYBKp7PosAeOohWKK
-Fk0AnR8eCWQ3Q7TeKYd4CS7/dEgHQy5s
-=cMLV
------END PGP SIGNATURE-----
-
---R+My9LyyhiUvIEro--
+Rob
