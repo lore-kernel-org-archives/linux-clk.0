@@ -2,75 +2,78 @@ Return-Path: <SRS0=5xJ2=AK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C503C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:20:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 081F9C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DD39320720
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:19:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7E3A204EC
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jun 2020 21:20:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="AanS3XjB"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="oBVPmbK7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728128AbgF2VT6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1731792AbgF2VT6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Mon, 29 Jun 2020 17:19:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35602 "EHLO
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390508AbgF2VSh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:18:37 -0400
+        with ESMTP id S1731650AbgF2VSg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 17:18:36 -0400
 Received: from mail-qv1-xf43.google.com (mail-qv1-xf43.google.com [IPv6:2607:f8b0:4864:20::f43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D179C08C5DB
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:37 -0700 (PDT)
-Received: by mail-qv1-xf43.google.com with SMTP id h18so8355199qvl.3
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:37 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69230C03E97A
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:36 -0700 (PDT)
+Received: by mail-qv1-xf43.google.com with SMTP id a14so8358637qvq.6
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 14:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=NKjRYvSAJqWIMQCbW26UX9pAyMFbyr2ycBY9k4qgOjc=;
-        b=AanS3XjBFVvZhERGSYMHPqip2OE/GKUgQZew83gSLNDTPelKlayFH5CvtU4PLHC9WZ
-         6+1fJakggROPnITVmvkQHNeZ8cWokGpG1ooxDNBXKtLWZRjNX8/uuV9jTOYAm71exxkM
-         /iW1b6gjaVpFwPq7M4VJAcXrJ32h6vm1kaLxZqx2rm2XSF90hltwNZA1NhjoY2UJYo+6
-         vCQ1Q/KN2Ai9Pov8IwlwtS9K9P3k/wLfy+uR7SX9ANRMnhuCfKRjcuCSI9PcMlFBklbt
-         nfo2avGZhrLjgSFICY64ZwRwIdd92tZFCGdhLDz41ova2Kpmpwqfgtu+FkUIUELkbxs4
-         jdBQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VQkFfkkA31JOV3zD6GN1+JAepXXLzSYJr6ThdL4AJWw=;
+        b=oBVPmbK7BuBk9iy5wv1Xu3RoNDgE1InrFOtYwW6eD/vUBuLizp+u0B9+OUPexecHlW
+         +2fNJezcMrBHgtRXirsrNI4HRFAVsCcBHR2ltT9vPFNxtml+gpGdYmF/PmXMPZ+YJUsb
+         nVL2orS00Pb+x6UiwfoMc4KPLReThSsdyoPNOjHQP6XDUq08v6WYk5EI7ChkVUau/ua9
+         /F4z3F/3EzI++UPRNI4R3JYxI5IM6voYNOPTjd6fdOgjNrBl4ga9opbNfyMym9VjndP6
+         QnuwtRoJ0n8NBb+k8D++QZ9cJeRYJP2dlNnpgFtiVPoY+10MeKlUAEsUCM0uFv78+aFy
+         kTMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=NKjRYvSAJqWIMQCbW26UX9pAyMFbyr2ycBY9k4qgOjc=;
-        b=mwDF61fmPkBVcBz/XCNhCMIFVE8ABfaIFwbNKNrN7zeL/q0Q5mV5H/1bE8NK2ifPPl
-         CESXGia3j1IEZ/0nRq+5MMTln9Tze/Cv3hJqtT3c9bi65f2h1TyuLVBoBZgLcP2BvPb/
-         KsO2Y6shPUky7HWHyA+sPYRckRbeW4kXdmtjP4Pfqdo5H/hITq8iNlhUsvG729aFjvrq
-         DWXuXjflsS982ZL8IoVoUKzfA3gsM6gpA4/NtkOWi2zpYtkLk/6isliNnMHwmIHmuYL5
-         ZQjysTg9NY6j3V86IqeEBX1rj+O9hJJyROsPLV+gD/Y2nQK2CpJm6cN5Y/jOtfF+7Tei
-         yx4g==
-X-Gm-Message-State: AOAM531ycEit+U2AbcB5V9RmbmwieiLKQK8qUxiYt7HtFbNOFs1Y7QQA
-        871VsHA/LhSizdzCz2Nj+vbbBg==
-X-Google-Smtp-Source: ABdhPJyD8cfPh+iEnnTUKmGkLuaQfR2EA4VVnwMebrGdkzOFb2snHc0LTGO8Ex3ued7dqgVphbIUBg==
-X-Received: by 2002:a05:6214:328:: with SMTP id j8mr2923727qvu.75.1593465516657;
-        Mon, 29 Jun 2020 14:18:36 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VQkFfkkA31JOV3zD6GN1+JAepXXLzSYJr6ThdL4AJWw=;
+        b=rgek5ab5Ax2hXGAa/Akbzc0xJpJzE3mB6D7/rWe6jZ1qV59iycz5jK0g0CU3hNyRM+
+         v7LgN3OGopE1M/5jgrHibThmdT6IuoSF76xDLssY/YJ4WDGvAcVOurIMcjNne8uvMl3A
+         aJ6xvGgflL0fQMk9cAgQtleHloidy6+ilb9H3tHIZpWBYUrA2RSfdyME27u7kyvWngkq
+         sh1+jQwX+MUkg1qt3RccTx3buLKjlyugmnHjOlRcNrqIVb6P5qZ8a/RpRLgspkcb9el3
+         TllviuWRSzgrcbMsQ/+cMc90ZYxyYERTplC/Tzp7Eoj65Xz9QBCT/cbwf20HQesHkL1/
+         SAFA==
+X-Gm-Message-State: AOAM532JHIKKIotlQgo/ORXSTHO26p0Ic7jt5CtxTVS6VkoIqFXi9aue
+        8vE8nCIPJj3NU3t1TjPT585dog==
+X-Google-Smtp-Source: ABdhPJybhecniRdYDGry+hooybXHKs+inJvNXIVa/OgWZd5nuVw0fV7/T0A/nK/BZp8YCc6gpSfWsQ==
+X-Received: by 2002:a0c:fd84:: with SMTP id p4mr17228790qvr.175.1593465515584;
+        Mon, 29 Jun 2020 14:18:35 -0700 (PDT)
 Received: from localhost.localdomain ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id b196sm1169078qkg.11.2020.06.29.14.18.35
+        by smtp.gmail.com with ESMTPSA id b196sm1169078qkg.11.2020.06.29.14.18.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jun 2020 14:18:36 -0700 (PDT)
+        Mon, 29 Jun 2020 14:18:35 -0700 (PDT)
 From:   Jonathan Marek <jonathan@marek.ca>
 To:     linux-arm-msm@vger.kernel.org
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
         linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [RESEND PATCH v2 01/13] clk: qcom: gcc: fix sm8150 GPU and NPU clocks
-Date:   Mon, 29 Jun 2020 17:17:07 -0400
-Message-Id: <20200629211725.2592-2-jonathan@marek.ca>
+        linux-kernel@vger.kernel.org (open list),
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+Subject: [RESEND PATCH v2 00/13] Enable GPU for SM8150 and SM8250
+Date:   Mon, 29 Jun 2020 17:17:06 -0400
+Message-Id: <20200629211725.2592-1-jonathan@marek.ca>
 X-Mailer: git-send-email 2.26.1
-In-Reply-To: <20200629211725.2592-1-jonathan@marek.ca>
-References: <20200629211725.2592-1-jonathan@marek.ca>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -78,69 +81,66 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Fix the parents and set BRANCH_HALT_SKIP. From the downstream driver it
-should be a 500us delay and not skip, however this matches what was done
-for other clocks that had 500us delay in downstream.
+This series adds the missing clock drivers and dts nodes to enable
+the GPU on both SM8150 and SM8250.
 
-Fixes: f73a4230d5bb ("clk: qcom: gcc: Add GPU and NPU clocks for SM8150")
+Note an extra patch [1] is still required for GPU to work on SM8250.
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/clk/qcom/gcc-sm8150.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Changes in V2:
+* Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the newly added
+  SM8150 GPU gcc clocks
+* Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL"
+* Added yaml schemas to gpucc dt-bindings patches
+* Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers" and changed
+  gpucc patches to use it.
+* Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
+* Added missing rpmh regulator level for sm8250 GPU clock levels
+* Use sm8150/sm8250 iommu compatibles in dts
+* Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc clocks in dts
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 72524cf11048..55e9d6d75a0c 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -1617,6 +1617,7 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
- };
- 
- static struct clk_branch gcc_gpu_gpll0_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52004,
- 		.enable_mask = BIT(15),
-@@ -1632,13 +1633,14 @@ static struct clk_branch gcc_gpu_gpll0_clk_src = {
- };
- 
- static struct clk_branch gcc_gpu_gpll0_div_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52004,
- 		.enable_mask = BIT(16),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_gpu_gpll0_div_clk_src",
- 			.parent_hws = (const struct clk_hw *[]){
--				&gcc_gpu_gpll0_clk_src.clkr.hw },
-+				&gpll0_out_even.clkr.hw },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
-@@ -1729,6 +1731,7 @@ static struct clk_branch gcc_npu_cfg_ahb_clk = {
- };
- 
- static struct clk_branch gcc_npu_gpll0_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52004,
- 		.enable_mask = BIT(18),
-@@ -1744,13 +1747,14 @@ static struct clk_branch gcc_npu_gpll0_clk_src = {
- };
- 
- static struct clk_branch gcc_npu_gpll0_div_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x52004,
- 		.enable_mask = BIT(19),
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gcc_npu_gpll0_div_clk_src",
- 			.parent_hws = (const struct clk_hw *[]){
--				&gcc_npu_gpll0_clk_src.clkr.hw },
-+				&gpll0_out_even.clkr.hw },
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
+[1] https://gist.github.com/flto/784f1aca761ebf2fe6c105719a4a04ca
+
+Jonathan Marek (13):
+  clk: qcom: gcc: fix sm8150 GPU and NPU clocks
+  clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
+  clk: qcom: clk-alpha-pll: same regs and ops for trion and lucid
+  clk: qcom: clk-alpha-pll: use the right PCAL_DONE value for lucid pll
+  clk: qcom: gcc: remove unnecessary vco_table from SM8150
+  dt-bindings: clock: Introduce SM8150 QCOM Graphics clock bindings
+  dt-bindings: clock: Introduce SM8250 QCOM Graphics clock bindings
+  clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers
+  clk: qcom: Add graphics clock controller driver for SM8150
+  clk: qcom: Add graphics clock controller driver for SM8250
+  dt-bindings: power: Add missing rpmpd rpmh regulator level
+  arm64: dts: qcom: add sm8150 GPU nodes
+  arm64: dts: qcom: add sm8250 GPU nodes
+
+ .../bindings/clock/qcom,sm8150-gpucc.yaml     |  74 +++
+ .../bindings/clock/qcom,sm8250-gpucc.yaml     |  74 +++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          | 136 ++++++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi          | 143 ++++++
+ drivers/clk/qcom/Kconfig                      |  16 +
+ drivers/clk/qcom/Makefile                     |   2 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  70 ++-
+ drivers/clk/qcom/clk-alpha-pll.h              |  15 +-
+ drivers/clk/qcom/gcc-sm8150.c                 |  26 +-
+ drivers/clk/qcom/gdsc.c                       |  25 +
+ drivers/clk/qcom/gdsc.h                       |   1 +
+ drivers/clk/qcom/gpucc-sc7180.c               |  27 +-
+ drivers/clk/qcom/gpucc-sdm845.c               |  27 +-
+ drivers/clk/qcom/gpucc-sm8150.c               | 421 ++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8250.c               | 450 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sm8150.h |  40 ++
+ include/dt-bindings/clock/qcom,gpucc-sm8250.h |  40 ++
+ include/dt-bindings/power/qcom-rpmpd.h        |   1 +
+ 18 files changed, 1479 insertions(+), 109 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8150-gpucc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
+ create mode 100644 drivers/clk/qcom/gpucc-sm8150.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8150.h
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8250.h
+
 -- 
 2.26.1
 
