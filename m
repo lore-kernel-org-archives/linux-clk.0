@@ -2,122 +2,295 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A847C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 07:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7394C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 08:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0FF462073E
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 07:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95C32207F5
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 08:27:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwrOy5cC"
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="CbgtUtIu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbgF3HLV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 03:11:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
+        id S1731430AbgF3I1c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 04:27:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730637AbgF3HLT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 03:11:19 -0400
-Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A12FC03E97B
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 00:11:19 -0700 (PDT)
-Received: by mail-wr1-x441.google.com with SMTP id h5so18964952wrc.7
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 00:11:19 -0700 (PDT)
+        with ESMTP id S1731393AbgF3I1Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 04:27:25 -0400
+Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6466EC03E97B
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 01:27:25 -0700 (PDT)
+Received: by mail-vs1-xe41.google.com with SMTP id 190so10712315vsr.9
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 01:27:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=K64/PWzIdJHy6AMq0CI1QxWBigdrJv6e4jIUjK6qkD0=;
-        b=QwrOy5cCVRKI+Mspy8/CQFQQfjsIENqMArQcy6wu3W/FJtySPw8sfwnWO6wClLrdPR
-         0t7Oiq1odHqpiKZG0L2OYdCDBz/1WEJDhsvFhR//xeQ+2hO6Kr80/All8equ1NCLTOYN
-         2/Ydpyf3BWL3S6vyhCzZjGJZ4Qyn+y9NQfGiCgPf7TIoaIiHJQP4IiMFN8r/07C7ELzy
-         dLV8FWsyiBN80NWS+vmM6O+PaF6qF/lrtht7CavF0JYAIsmWriZykdA2mxyKPqUTEJDw
-         5WbXMJysulDXVFL02NFQ7frxgHN6CQpEVRjgjy+zybl6G0giruv4u8Qi6HcD/A3fcC2+
-         en8g==
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=6TyFilXliZJy2d+mBi1GXmZQ03QK7DtnI0MwvDeR4fk=;
+        b=CbgtUtIunRLER4yB3euokUNze9d9uxoJ5Et643+JAhV/AIM/JYGkYp6wRKA+vfY3iA
+         0uAQm/XS5fyEGuSP7fCODzq4WOnnMcbmJ3gK/o7JvnSLN1jQgwmxlvglyiLRjWQ9d1DK
+         G3oWjo9EGntTmCL7rmn/GPZCW7KRREtAD50RPfxk0lOEeSZjbAH7pHnFKQGbA6j+xBDZ
+         YCrEtI4B5ozVcVfRq8vw+uwZ1TvuHkFwgPk+KeC/7qDjTeidEp2fCBxslutoxYfOjZgv
+         jaOhjuq5zqInQz6/KQJkx4+ZKXAhWTrchC/3PioCwpcUw6VsdjcUFu4TAzROH7ulEu72
+         TY0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=K64/PWzIdJHy6AMq0CI1QxWBigdrJv6e4jIUjK6qkD0=;
-        b=L9a6LDnWE7yHSCXHsULfy6Uw38TBGQ4cLXpOQK+avA2Dl1WBn72A5uc1zOrgcvr4TN
-         8DYqdUtkNll5rSzCirm+uYlnGHAHnrqN2MfvnnhlpQQ+zZiwXxeyKxqjdfFji2ZslB1D
-         9KpUlYZzNwdPmUgj3vq99Ilfo1C5jn5gzhbK4a/3GH2oviCndghsmN+MOOlW6+3O3Y02
-         cOta+fJg/5/lA8Nj+jjfR0oJGQUCuMrpUaV1mORZPLOfHYOnMvSlICc+lrwFUzIih9QS
-         6scG//tRD0kQacr2/FhrnVGdKri2WOBHVOKXVyrOpPfbHDxGMC70KL0bJ8qpmDMsaSze
-         gy4w==
-X-Gm-Message-State: AOAM531ULecSxH3msZp7dikoGI2+oAmSH77gvSKMS4Z7b79WJdU8f0nP
-        9EU2zVYK/GMWO0tz/Efk/IVdig==
-X-Google-Smtp-Source: ABdhPJwZssKxM2tBc6NCDnk4r2tWfyhz2turH5uFie+KVPTCYv0GHzeKD3NWkCZuHCFBkEVXD3Bc/Q==
-X-Received: by 2002:adf:f350:: with SMTP id e16mr19880821wrp.43.1593501077875;
-        Tue, 30 Jun 2020 00:11:17 -0700 (PDT)
-Received: from dell ([2.27.35.144])
-        by smtp.gmail.com with ESMTPSA id k20sm2459432wmi.27.2020.06.30.00.11.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jun 2020 00:11:17 -0700 (PDT)
-Date:   Tue, 30 Jun 2020 08:11:15 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Sebastian Reichel <sre@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-power@fi.rohmeurope.com, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v2] MAINTAINERS: Add entry for ROHM power management ICs
-Message-ID: <20200630071115.GG1179328@dell>
-References: <20200618073331.GA9403@localhost.localdomain>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=6TyFilXliZJy2d+mBi1GXmZQ03QK7DtnI0MwvDeR4fk=;
+        b=KCbhxhrYKt/UaHiGdRdlRtIzLnx8MqbaRDJEjEAmDRf+hEFeVPUYa4YZs8rcNzNxJf
+         36IgltLzJkICNCk1zSwILY3AjD23j/gwl2SXcltyIJFixZyq+tiU1lw1bZ6HNIC69pf3
+         OH9JhXy60jnetpf2fYchgf08u9UakwQsyRaHiZ67wHydZKiyKOeFxy62yDglNS0cLzwn
+         n44SMPZHj/kkCs4gdalQl8XKjik9/4X7ZEGubBaW9bZ9x89jgWAAjSo11b0nonqlZwkk
+         /aKYuQ55zm8JtG1DKO66w2bJXnC9D/w7nuARHmx8tHE77AZmNC2yxUanm8inRm7kySzS
+         qXfQ==
+X-Gm-Message-State: AOAM531PEQ7VOV5h8Pwavy2wFeYcDR+p/A1S8UMC9AI05Y3YHj1a/0rf
+        RFrieZdA8WmBKO5HlRHA6Bz3WV/mxztjWUgSYGGgGhCSH0+kBQ==
+X-Google-Smtp-Source: ABdhPJyu6oqHNp3qR9Yq9yQ9alWgxok3aKdKZ7hxGD+ds4LcjTYsN+j/e8KcUWZCfBJjn6S0Y/kxY+eIMGTPHFoTH10=
+X-Received: by 2002:a67:1e45:: with SMTP id e66mr13255904vse.95.1593505644125;
+ Tue, 30 Jun 2020 01:27:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200618073331.GA9403@localhost.localdomain>
+References: <CAPpJ_efxenmSXt2OXkhkQ1jDJ59tyWBDUvmpyOB-bfPMDENQZg@mail.gmail.com>
+ <CAPpJ_ed9TMJjN8xS1_3saf5obQhULJSLNgQSAFxgiWM2QX9A7Q@mail.gmail.com>
+ <20200526102018.kznh6aglpkqlp6en@gilmour.lan> <CAD8Lp467DiYWLwH6T1Jeq-uyN4VEuef-gGWw0_bBTtmSPr00Ag@mail.gmail.com>
+ <20200527091335.7wc3uy67lbz7j4di@gilmour.lan> <CAD8Lp45ucK-yZ5G_DrUVA7rnxo58UF1LPUy65w2PCOcSxKx_Sg@mail.gmail.com>
+ <20200528073055.znutrhkryzu3grrl@gilmour.lan> <CAPpJ_ec1KRwUrHGVVZrReaDPz4iga-Nvj5H652-tTKmkXL=Xmg@mail.gmail.com>
+ <20200602110442.2ceuymhwuomvjj6i@gilmour> <CAPpJ_eePgLxO5URB3V5aeNMvBHOp+vXrW=+6SnVt4mB9J8oR+Q@mail.gmail.com>
+ <20200629142145.aa2vdfkgeugrze4c@gilmour.lan>
+In-Reply-To: <20200629142145.aa2vdfkgeugrze4c@gilmour.lan>
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+Date:   Tue, 30 Jun 2020 16:26:20 +0800
+Message-ID: <CAPpJ_efVO9HxrYzbrZgYpcniX30YtvthcYAc=AOabLsThkO02Q@mail.gmail.com>
+Subject: Re: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipelin
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Daniel Drake <drake@endlessm.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Eric Anholt <eric@anholt.net>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Linux Upstreaming Team <linux@endlessm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 18 Jun 2020, Matti Vaittinen wrote:
+Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B46=E6=9C=8829=E6=97=
+=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8810:21=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> Hi!
+>
+> On Fri, Jun 05, 2020 at 04:44:51PM +0800, Jian-Hong Pan wrote:
+> > Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B46=E6=9C=882=E6=
+=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:04=E5=AF=AB=E9=81=93=EF=BC=9A
+> > >
+> > > Hi,
+> > >
+> > > On Mon, Jun 01, 2020 at 03:58:26PM +0800, Jian-Hong Pan wrote:
+> > > > Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B45=E6=9C=88=
+28=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:30=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+> > > > >
+> > > > > Hi Daniel,
+> > > > >
+> > > > > On Wed, May 27, 2020 at 05:15:12PM +0800, Daniel Drake wrote:
+> > > > > > On Wed, May 27, 2020 at 5:13 PM Maxime Ripard <maxime@cerno.tec=
+h> wrote:
+> > > > > > > I'm about to send a v3 today or tomorrow, I can Cc you (and J=
+ian-Hong) if you
+> > > > > > > want.
+> > > > > >
+> > > > > > That would be great, although given the potentially inconsisten=
+t
+> > > > > > results we've been seeing so far it would be great if you could
+> > > > > > additionally push a git branch somewhere.
+> > > > > > That way we can have higher confidence that we are applying exa=
+ctly
+> > > > > > the same patches to the same base etc.
+> > > > >
+> > > > > So I sent a new iteration yesterday, and of course forgot to cc y=
+ou... Sorry for
+> > > > > that.
+> > > > >
+> > > > > I've pushed my current branch here:
+> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git=
+/log/?h=3Drpi4-kms
+> > > >
+> > > > Thanks to Maxime!
+> > > >
+> > > > I have tried your repository on branch rpi4-kms.  The DRM VC4 is us=
+ed!
+> > > > But got some issues:
+> > > > 1. Some weird error message in dmesg.  Not sure it is related, or n=
+ot
+> > > > [    5.219321] [drm:vc5_hdmi_init_resources] *ERROR* Failed to get
+> > > > HDMI state machine clock
+> > > > https://gist.github.com/starnight/3f317dca121065a361cf08e91225e389
+> > >
+> > > That's a deferred probing. The first time the HDMI driver is being
+> > > probed, the firmware clock driver has not been probed yet. It's makin=
+g
+> > > another attempt later on, which succeeds.
+> > >
+> > > > 2. The screen flashes suddenly sometimes.
+> >
+> > I append drm.debug=3D0x3 to boot command.  Whenever, the screen flashes=
+,
+> > I notice the logs like this:
+> >
+> > Jun 01 15:22:40 endless kernel: [drm:drm_calc_timestamping_constants]
+> > crtc 64: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
+> > Jun 01 15:22:40 endless kernel: [drm:drm_calc_timestamping_constants]
+> > crtc 64: clock 148500 kHz framedur 16666666 linedur 14814
+> > Jun 01 15:22:40 endless kernel: [drm:drm_vblank_enable] enabling
+> > vblank on crtc 3, ret: 0
+> > Jun 01 15:22:40 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
+: 159 (2)
+> > Jun 01 15:22:40 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
+: 154 (1)
+> > Jun 01 15:22:40 endless kernel: [drm:vblank_disable_fn] disabling
+> > vblank on crtc 3
+> > Jun 01 15:22:42 endless kernel: [drm:drm_ioctl] pid=3D584, dev=3D0xe200=
+,
+> > auth=3D1, DRM_IOCTL_MODE_CURSOR
+> > Jun 01 15:22:42 endless kernel: [drm:drm_ioctl] pid=3D584, dev=3D0xe200=
+,
+> > auth=3D1, DRM_IOCTL_MODE_CURSOR2
+> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_get] OBJ ID: 159 (=
+1)
+> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_get] OBJ ID: 154 (=
+1)
+> > Jun 01 15:22:42 endless kernel: [drm:drm_calc_timestamping_constants]
+> > crtc 64: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
+> > Jun 01 15:22:42 endless kernel: [drm:drm_calc_timestamping_constants]
+> > crtc 64: clock 148500 kHz framedur 16666666 linedur 14814
+> > Jun 01 15:22:42 endless kernel: [drm:drm_vblank_enable] enabling
+> > vblank on crtc 3, ret: 0
+> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
+: 159 (2)
+> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
+: 154 (2)
+> >
+> > Here is the full log
+> > https://gist.github.com/starnight/85d641819839eddc7a55ca7173990a56
+> >
+> > > > 3. The higher resolutions, like 1920x1080 ... are lost after hot
+> > > > re-plug HDMI cable (HDMI0)
+> >
+> > I should explain this in more detail.  Here are the steps to reproduce
+> > this issue:
+> > 1. Before unplug the HDMI cable from HDMI0 port.
+> > $ xrandr
+> > Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 2048 x 2048
+> > HDMI-1 connected primary 1920x1080+0+0 (normal left inverted right x
+> > axis y axis) 521mm x 293mm
+> >    1920x1080     60.00*+  50.00    59.94
+> >    1920x1080i    60.00    50.00    59.94
+> >    1680x1050     59.88
+> >    1280x1024     75.02    60.02
+> >    1440x900      59.90
+> >    1280x960      60.00
+> >    1152x864      75.00
+> >    1280x720      60.00    50.00    59.94
+> >    1440x576      50.00
+> >    1024x768      75.03    70.07    60.00
+> >    1440x480      60.00    59.94
+> >    832x624       74.55
+> >    800x600       72.19    75.00    60.32    56.25
+> >    720x576       50.00
+> >    720x480       60.00    59.94
+> >    640x480       75.00    72.81    66.67    60.00    59.94
+> >    720x400       70.08
+> > HDMI-2 disconnected (normal left inverted right x axis y axis)
+> >
+> > 2. Unplug the HDMI cable from HDMI0 port.
+> > 3. Plug the HDMI cable to **HDMI1** port.
+> > $ xrandr
+> > Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 2048 x 2048
+> > HDMI-1 disconnected (normal left inverted right x axis y axis)
+> > HDMI-2 connected primary 1920x1080+0+0 (normal left inverted right x
+> > axis y axis) 521mm x 293mm
+> >    1920x1080     60.00*+  50.00    59.94
+> >    1920x1080i    60.00    50.00    59.94
+> >    1680x1050     59.88
+> >    1280x1024     75.02    60.02
+> >    1440x900      59.90
+> >    1280x960      60.00
+> >    1152x864      75.00
+> >    1280x720      60.00    50.00    59.94
+> >    1440x576      50.00
+> >    1024x768      75.03    70.07    60.00
+> >    1440x480      60.00    59.94
+> >    832x624       74.55
+> >    800x600       72.19    75.00    60.32    56.25
+> >    720x576       50.00
+> >    720x480       60.00    59.94
+> >    640x480       75.00    72.81    66.67    60.00    59.94
+> >    720x400       70.08
+> >
+> > 4. Unplug the HDMI cable from **HDMI1** port.
+> > 5. Plug the HDMI cable back to HDMI0 port.
+> > $ xrandr
+> > Screen 0: minimum 320 x 200, current 1368 x 768, maximum 2048 x 2048
+> > HDMI-1 connected primary 1368x768+0+0 (normal left inverted right x
+> > axis y axis) 0mm x 0mm
+> >    1368x768      59.88*
+> >    1360x768      59.80
+> >    1280x800      59.81
+> >    1152x864      60.00
+> >    1280x720      59.86
+> >    1024x768      60.00
+> >    1024x576      59.90
+> >    960x540       59.63
+> >    800x600       60.32
+> >    800x450       59.82
+> >    700x450       59.88
+> >    640x480       59.94
+> >    684x384       59.88    59.85
+> >    680x384       59.80    59.96
+> >    640x400       59.88    59.98
+> >    576x432       60.06
+> >    640x360       59.86    59.83
+> >    512x384       60.00
+> >    512x288       60.00    59.92
+> >    480x270       59.63    59.82
+> >    400x300       60.32
+> >    320x240       60.05
+> > HDMI-2 disconnected (normal left inverted right x axis y axis)
+>
+> Sorry for getting back at it so late. I just tested with modetest only
+> and my current branch and it seems to behave properly. Did you had to
+> run X to get that issue, or is it just how you noticed it?
+>
+> Also, was that with the branch based on 5.7 I pushed on my git tree on
+> kernel.org or some earlier revision of the series?
 
-> Add entry for maintaining power management IC drivers for ROHM
-> BD71837, BD71847, BD71850, BD71828, BD71878, BD70528 and BD99954.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Sebastian Reichel <sre@kernel.org>
-> ---
-> Morning Lee - could you take this in MFD? This is scattered all around
-> different subsystems anyways... I guess crafting bunch of patches to
-> each individual subsystems would just end up with lots of merge
-> conflicts.
-> 
-> Changes from v1:
-> - Dropped patch 2/2 (linear-ranges maintainer) which was already applied by Mark
-> - Added shiny new ROHM linux-power list so that I am no longer the lonely
->   poor sod watching these at ROHM side :)
-> - sort few files to alphabethical order as checkpatch now nagged about
->   that.
-> 
-> v1 was here:
-> https://lore.kernel.org/lkml/e11366fd280736844ae63791b6193bb84d6205bf.1589866138.git.matti.vaittinen@fi.rohmeurope.com/
-> 
-> 
->  MAINTAINERS | 32 ++++++++++++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
+Thanks for coming back :)
 
-Applied, thanks.
+I use GNOME 3.36 with Xorg 1.20.4.
 
--- 
-Lee Jones [李琼斯]
-Senior Technical Lead - Developer Services
-Linaro.org │ Open source software for Arm SoCs
-Follow Linaro: Facebook | Twitter | Blog
+To understand when it starts to hit the issues, I separate to step by step:
+1. System boots into command line mode first (systemd multi-user.target)
+2. Execute Xorg, then xterm.
+3. Execute mutter upon the screen of Xorg.
+
+I tried both branches rpi4-kms and rpi4-kms-5.7 of
+https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git
+Both of the branches hit issues:
+* The screen flashes suddenly sometimes.  This happens after mutter is laun=
+ched.
+* The higher resolutions, like 1920x1080 ... are lost after hot
+re-plug HDMI cable (HDMI0).  HDMI cable connects to HDMI0 -> HDMI1 ->
+HDMI0.  This happens not only with GNOME, but also pure Xorg.
+
+Jian-Hong Pan
