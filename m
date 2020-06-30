@@ -2,295 +2,280 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7394C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 08:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 297B4C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 95C32207F5
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 08:27:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="CbgtUtIu"
+	by mail.kernel.org (Postfix) with ESMTP id 050E920675
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:26:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbgF3I1c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 04:27:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54216 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731393AbgF3I1Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 04:27:25 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6466EC03E97B
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 01:27:25 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id 190so10712315vsr.9
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 01:27:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=6TyFilXliZJy2d+mBi1GXmZQ03QK7DtnI0MwvDeR4fk=;
-        b=CbgtUtIunRLER4yB3euokUNze9d9uxoJ5Et643+JAhV/AIM/JYGkYp6wRKA+vfY3iA
-         0uAQm/XS5fyEGuSP7fCODzq4WOnnMcbmJ3gK/o7JvnSLN1jQgwmxlvglyiLRjWQ9d1DK
-         G3oWjo9EGntTmCL7rmn/GPZCW7KRREtAD50RPfxk0lOEeSZjbAH7pHnFKQGbA6j+xBDZ
-         YCrEtI4B5ozVcVfRq8vw+uwZ1TvuHkFwgPk+KeC/7qDjTeidEp2fCBxslutoxYfOjZgv
-         jaOhjuq5zqInQz6/KQJkx4+ZKXAhWTrchC/3PioCwpcUw6VsdjcUFu4TAzROH7ulEu72
-         TY0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6TyFilXliZJy2d+mBi1GXmZQ03QK7DtnI0MwvDeR4fk=;
-        b=KCbhxhrYKt/UaHiGdRdlRtIzLnx8MqbaRDJEjEAmDRf+hEFeVPUYa4YZs8rcNzNxJf
-         36IgltLzJkICNCk1zSwILY3AjD23j/gwl2SXcltyIJFixZyq+tiU1lw1bZ6HNIC69pf3
-         OH9JhXy60jnetpf2fYchgf08u9UakwQsyRaHiZ67wHydZKiyKOeFxy62yDglNS0cLzwn
-         n44SMPZHj/kkCs4gdalQl8XKjik9/4X7ZEGubBaW9bZ9x89jgWAAjSo11b0nonqlZwkk
-         /aKYuQ55zm8JtG1DKO66w2bJXnC9D/w7nuARHmx8tHE77AZmNC2yxUanm8inRm7kySzS
-         qXfQ==
-X-Gm-Message-State: AOAM531PEQ7VOV5h8Pwavy2wFeYcDR+p/A1S8UMC9AI05Y3YHj1a/0rf
-        RFrieZdA8WmBKO5HlRHA6Bz3WV/mxztjWUgSYGGgGhCSH0+kBQ==
-X-Google-Smtp-Source: ABdhPJyu6oqHNp3qR9Yq9yQ9alWgxok3aKdKZ7hxGD+ds4LcjTYsN+j/e8KcUWZCfBJjn6S0Y/kxY+eIMGTPHFoTH10=
-X-Received: by 2002:a67:1e45:: with SMTP id e66mr13255904vse.95.1593505644125;
- Tue, 30 Jun 2020 01:27:24 -0700 (PDT)
+        id S1732711AbgF3M0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 08:26:48 -0400
+Received: from out28-171.mail.aliyun.com ([115.124.28.171]:57286 "EHLO
+        out28-171.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730689AbgF3M0r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 08:26:47 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.759732-0.00248346-0.237784;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HvD2QLd_1593520001;
+Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HvD2QLd_1593520001)
+          by smtp.aliyun-inc.com(10.147.40.7);
+          Tue, 30 Jun 2020 20:26:42 +0800
+Subject: Re: [PATCH 2/2] clk: X1000: Add support for calculat REFCLK of USB
+ PHY.
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+References: <20200626164844.25436-1-zhouyanjie@wanyeetech.com>
+ <20200626164844.25436-3-zhouyanjie@wanyeetech.com>
+ <AKNJCQ.6UUHR0DBDE8E2@crapouillou.net>
+ <b0a3a0b0-4ae8-3905-8d0c-50e44511fa95@wanyeetech.com>
+ <IEBNCQ.EWU8F7SNWRJK2@crapouillou.net>
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <3b5bb36a-964f-3d12-08cf-f094c593cd2b@wanyeetech.com>
+Date:   Tue, 30 Jun 2020 20:26:30 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <CAPpJ_efxenmSXt2OXkhkQ1jDJ59tyWBDUvmpyOB-bfPMDENQZg@mail.gmail.com>
- <CAPpJ_ed9TMJjN8xS1_3saf5obQhULJSLNgQSAFxgiWM2QX9A7Q@mail.gmail.com>
- <20200526102018.kznh6aglpkqlp6en@gilmour.lan> <CAD8Lp467DiYWLwH6T1Jeq-uyN4VEuef-gGWw0_bBTtmSPr00Ag@mail.gmail.com>
- <20200527091335.7wc3uy67lbz7j4di@gilmour.lan> <CAD8Lp45ucK-yZ5G_DrUVA7rnxo58UF1LPUy65w2PCOcSxKx_Sg@mail.gmail.com>
- <20200528073055.znutrhkryzu3grrl@gilmour.lan> <CAPpJ_ec1KRwUrHGVVZrReaDPz4iga-Nvj5H652-tTKmkXL=Xmg@mail.gmail.com>
- <20200602110442.2ceuymhwuomvjj6i@gilmour> <CAPpJ_eePgLxO5URB3V5aeNMvBHOp+vXrW=+6SnVt4mB9J8oR+Q@mail.gmail.com>
- <20200629142145.aa2vdfkgeugrze4c@gilmour.lan>
-In-Reply-To: <20200629142145.aa2vdfkgeugrze4c@gilmour.lan>
-From:   Jian-Hong Pan <jian-hong@endlessm.com>
-Date:   Tue, 30 Jun 2020 16:26:20 +0800
-Message-ID: <CAPpJ_efVO9HxrYzbrZgYpcniX30YtvthcYAc=AOabLsThkO02Q@mail.gmail.com>
-Subject: Re: [PATCH v2 00/91] drm/vc4: Support BCM2711 Display Pipelin
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Daniel Drake <drake@endlessm.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Linux Upstreaming Team <linux@endlessm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <IEBNCQ.EWU8F7SNWRJK2@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B46=E6=9C=8829=E6=97=
-=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8810:21=E5=AF=AB=E9=81=93=EF=BC=9A
+Hi Paul,
+
+在 2020/6/29 上午1:03, Paul Cercueil 写道:
+> Hi Zhou,
 >
-> Hi!
+> Le lun. 29 juin 2020 à 0:18, Zhou Yanjie <zhouyanjie@wanyeetech.com> a 
+> écrit :
+>> Hi Paul,
+>>
+>> 在 2020/6/27 上午1:36, Paul Cercueil 写道:
+>>> Hi Zhou,
+>>>
+>>> Le sam. 27 juin 2020 à 0:48, 周琰杰 (Zhou Yanjie) 
+>>> <zhouyanjie@wanyeetech.com> a écrit :
+>>>> Add new functions to "x1000_otg_phy_ops" to calculat the rate of 
+>>>> REFCLK,
+>>>> which is needed by USB PHY in the Ingenic X1000 SoC.
+>>>>
+>>>> Tested-by: 周正 (Zhou Zheng) <sernia.zhou@foxmail.com>
+>>>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>>>> ---
+>>>>  drivers/clk/ingenic/x1000-cgu.c | 113 
+>>>> ++++++++++++++++++++++++++++++++++++++++
+>>>>  1 file changed, 113 insertions(+)
+>>>>
+>>>> diff --git a/drivers/clk/ingenic/x1000-cgu.c 
+>>>> b/drivers/clk/ingenic/x1000-cgu.c
+>>>> index 453f3323cb99..a61c16f98a11 100644
+>>>> --- a/drivers/clk/ingenic/x1000-cgu.c
+>>>> +++ b/drivers/clk/ingenic/x1000-cgu.c
+>>>> @@ -48,8 +48,114 @@
+>>>>  #define USBPCR_SIDDQ        BIT(21)
+>>>>  #define USBPCR_OTG_DISABLE    BIT(20)
+>>>>
+>>>> +/* bits within the USBPCR1 register */
+>>>> +#define USBPCR1_REFCLKSEL_SHIFT    26
+>>>> +#define USBPCR1_REFCLKSEL_MASK    (0x3 << USBPCR1_REFCLKSEL_SHIFT)
+>>>> +#define USBPCR1_REFCLKSEL_CORE    (0x2 << USBPCR1_REFCLKSEL_SHIFT)
+>>>> +#define USBPCR1_REFCLKDIV_SHIFT    24
+>>>> +#define USBPCR1_REFCLKDIV_MASK    (0x3 << USBPCR1_REFCLKDIV_SHIFT)
+>>>> +#define USBPCR1_REFCLKDIV_48    (0x2 << USBPCR1_REFCLKDIV_SHIFT)
+>>>> +#define USBPCR1_REFCLKDIV_24    (0x1 << USBPCR1_REFCLKDIV_SHIFT)
+>>>> +#define USBPCR1_REFCLKDIV_12    (0x0 << USBPCR1_REFCLKDIV_SHIFT)
+>>>> +
+>>>>  static struct ingenic_cgu *cgu;
+>>>>
+>>>> +static u8 x1000_otg_phy_get_parent(struct clk_hw *hw)
+>>>> +{
+>>>> +    /* we only use CLKCORE, revisit if that ever changes */
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>> +static int x1000_otg_phy_set_parent(struct clk_hw *hw, u8 idx)
+>>>> +{
+>>>> +    unsigned long flags;
+>>>> +    u32 usbpcr1;
+>>>> +
+>>>> +    if (idx > 0)
+>>>> +        return -EINVAL;
+>>>> +
+>>>> +    spin_lock_irqsave(&cgu->lock, flags);
+>>>> +
+>>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
+>>>> +    usbpcr1 &= ~USBPCR1_REFCLKSEL_MASK;
+>>>> +    /* we only use CLKCORE */
+>>>> +    usbpcr1 |= USBPCR1_REFCLKSEL_CORE;
+>>>> +    writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
+>>>> +
+>>>> +    spin_unlock_irqrestore(&cgu->lock, flags);
+>>>> +    return 0;
+>>>> +}
+>>>
+>>> If you only support one parent, maybe set that bit in the 
+>>> x1000_cgu_init(), then you can drop the get_parent/set_parent.
+>>>
+>>
+>> Sure.
+>>
+>>
+>>>> +
+>>>> +static unsigned long x1000_otg_phy_recalc_rate(struct clk_hw *hw,
+>>>> +                        unsigned long parent_rate)
+>>>> +{
+>>>> +    u32 usbpcr1;
+>>>> +    unsigned refclk_div;
+>>>> +
+>>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
+>>>> +    refclk_div = usbpcr1 & USBPCR1_REFCLKDIV_MASK;
+>>>> +
+>>>> +    switch (refclk_div) {
+>>>> +    case USBPCR1_REFCLKDIV_12:
+>>>> +        return 12000000;
+>>>> +
+>>>> +    case USBPCR1_REFCLKDIV_24:
+>>>> +        return 24000000;
+>>>> +
+>>>> +    case USBPCR1_REFCLKDIV_48:
+>>>> +        return 48000000;
+>>>> +    }
+>>>
+>>> On your setup, what frequency is configured for the "otg" clock? Is 
+>>> it 48 MHz?
+>>>
+>>> I believe CLKCORE is the OTG core's clock (aka "otg"), and I'm 
+>>> pretty sure that these fields only represent CLKCORE/4, CLKCORE/2, 
+>>> CLKCORE/1, but the doc expects CLKCORE==48MHz.
+>>>
+>>
+>> This is the REFCLKDIV in USBPCR1 reg, it's for the usb phy, so it is 
+>> not the otg clock. In X1000 and X1500 it is 24MHz, in JZ4780 it is 
+>> 48MHz.
 >
-> On Fri, Jun 05, 2020 at 04:44:51PM +0800, Jian-Hong Pan wrote:
-> > Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B46=E6=9C=882=E6=
-=97=A5 =E9=80=B1=E4=BA=8C =E4=B8=8B=E5=8D=887:04=E5=AF=AB=E9=81=93=EF=BC=9A
-> > >
-> > > Hi,
-> > >
-> > > On Mon, Jun 01, 2020 at 03:58:26PM +0800, Jian-Hong Pan wrote:
-> > > > Maxime Ripard <maxime@cerno.tech> =E6=96=BC 2020=E5=B9=B45=E6=9C=88=
-28=E6=97=A5 =E9=80=B1=E5=9B=9B =E4=B8=8B=E5=8D=883:30=E5=AF=AB=E9=81=93=EF=
-=BC=9A
-> > > > >
-> > > > > Hi Daniel,
-> > > > >
-> > > > > On Wed, May 27, 2020 at 05:15:12PM +0800, Daniel Drake wrote:
-> > > > > > On Wed, May 27, 2020 at 5:13 PM Maxime Ripard <maxime@cerno.tec=
-h> wrote:
-> > > > > > > I'm about to send a v3 today or tomorrow, I can Cc you (and J=
-ian-Hong) if you
-> > > > > > > want.
-> > > > > >
-> > > > > > That would be great, although given the potentially inconsisten=
-t
-> > > > > > results we've been seeing so far it would be great if you could
-> > > > > > additionally push a git branch somewhere.
-> > > > > > That way we can have higher confidence that we are applying exa=
-ctly
-> > > > > > the same patches to the same base etc.
-> > > > >
-> > > > > So I sent a new iteration yesterday, and of course forgot to cc y=
-ou... Sorry for
-> > > > > that.
-> > > > >
-> > > > > I've pushed my current branch here:
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git=
-/log/?h=3Drpi4-kms
-> > > >
-> > > > Thanks to Maxime!
-> > > >
-> > > > I have tried your repository on branch rpi4-kms.  The DRM VC4 is us=
-ed!
-> > > > But got some issues:
-> > > > 1. Some weird error message in dmesg.  Not sure it is related, or n=
-ot
-> > > > [    5.219321] [drm:vc5_hdmi_init_resources] *ERROR* Failed to get
-> > > > HDMI state machine clock
-> > > > https://gist.github.com/starnight/3f317dca121065a361cf08e91225e389
-> > >
-> > > That's a deferred probing. The first time the HDMI driver is being
-> > > probed, the firmware clock driver has not been probed yet. It's makin=
-g
-> > > another attempt later on, which succeeds.
-> > >
-> > > > 2. The screen flashes suddenly sometimes.
-> >
-> > I append drm.debug=3D0x3 to boot command.  Whenever, the screen flashes=
-,
-> > I notice the logs like this:
-> >
-> > Jun 01 15:22:40 endless kernel: [drm:drm_calc_timestamping_constants]
-> > crtc 64: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
-> > Jun 01 15:22:40 endless kernel: [drm:drm_calc_timestamping_constants]
-> > crtc 64: clock 148500 kHz framedur 16666666 linedur 14814
-> > Jun 01 15:22:40 endless kernel: [drm:drm_vblank_enable] enabling
-> > vblank on crtc 3, ret: 0
-> > Jun 01 15:22:40 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
-: 159 (2)
-> > Jun 01 15:22:40 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
-: 154 (1)
-> > Jun 01 15:22:40 endless kernel: [drm:vblank_disable_fn] disabling
-> > vblank on crtc 3
-> > Jun 01 15:22:42 endless kernel: [drm:drm_ioctl] pid=3D584, dev=3D0xe200=
-,
-> > auth=3D1, DRM_IOCTL_MODE_CURSOR
-> > Jun 01 15:22:42 endless kernel: [drm:drm_ioctl] pid=3D584, dev=3D0xe200=
-,
-> > auth=3D1, DRM_IOCTL_MODE_CURSOR2
-> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_get] OBJ ID: 159 (=
-1)
-> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_get] OBJ ID: 154 (=
-1)
-> > Jun 01 15:22:42 endless kernel: [drm:drm_calc_timestamping_constants]
-> > crtc 64: hwmode: htotal 2200, vtotal 1125, vdisplay 1080
-> > Jun 01 15:22:42 endless kernel: [drm:drm_calc_timestamping_constants]
-> > crtc 64: clock 148500 kHz framedur 16666666 linedur 14814
-> > Jun 01 15:22:42 endless kernel: [drm:drm_vblank_enable] enabling
-> > vblank on crtc 3, ret: 0
-> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
-: 159 (2)
-> > Jun 01 15:22:42 endless kernel: [drm:drm_mode_object_put.part.0] OBJ ID=
-: 154 (2)
-> >
-> > Here is the full log
-> > https://gist.github.com/starnight/85d641819839eddc7a55ca7173990a56
-> >
-> > > > 3. The higher resolutions, like 1920x1080 ... are lost after hot
-> > > > re-plug HDMI cable (HDMI0)
-> >
-> > I should explain this in more detail.  Here are the steps to reproduce
-> > this issue:
-> > 1. Before unplug the HDMI cable from HDMI0 port.
-> > $ xrandr
-> > Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 2048 x 2048
-> > HDMI-1 connected primary 1920x1080+0+0 (normal left inverted right x
-> > axis y axis) 521mm x 293mm
-> >    1920x1080     60.00*+  50.00    59.94
-> >    1920x1080i    60.00    50.00    59.94
-> >    1680x1050     59.88
-> >    1280x1024     75.02    60.02
-> >    1440x900      59.90
-> >    1280x960      60.00
-> >    1152x864      75.00
-> >    1280x720      60.00    50.00    59.94
-> >    1440x576      50.00
-> >    1024x768      75.03    70.07    60.00
-> >    1440x480      60.00    59.94
-> >    832x624       74.55
-> >    800x600       72.19    75.00    60.32    56.25
-> >    720x576       50.00
-> >    720x480       60.00    59.94
-> >    640x480       75.00    72.81    66.67    60.00    59.94
-> >    720x400       70.08
-> > HDMI-2 disconnected (normal left inverted right x axis y axis)
-> >
-> > 2. Unplug the HDMI cable from HDMI0 port.
-> > 3. Plug the HDMI cable to **HDMI1** port.
-> > $ xrandr
-> > Screen 0: minimum 320 x 200, current 1920 x 1080, maximum 2048 x 2048
-> > HDMI-1 disconnected (normal left inverted right x axis y axis)
-> > HDMI-2 connected primary 1920x1080+0+0 (normal left inverted right x
-> > axis y axis) 521mm x 293mm
-> >    1920x1080     60.00*+  50.00    59.94
-> >    1920x1080i    60.00    50.00    59.94
-> >    1680x1050     59.88
-> >    1280x1024     75.02    60.02
-> >    1440x900      59.90
-> >    1280x960      60.00
-> >    1152x864      75.00
-> >    1280x720      60.00    50.00    59.94
-> >    1440x576      50.00
-> >    1024x768      75.03    70.07    60.00
-> >    1440x480      60.00    59.94
-> >    832x624       74.55
-> >    800x600       72.19    75.00    60.32    56.25
-> >    720x576       50.00
-> >    720x480       60.00    59.94
-> >    640x480       75.00    72.81    66.67    60.00    59.94
-> >    720x400       70.08
-> >
-> > 4. Unplug the HDMI cable from **HDMI1** port.
-> > 5. Plug the HDMI cable back to HDMI0 port.
-> > $ xrandr
-> > Screen 0: minimum 320 x 200, current 1368 x 768, maximum 2048 x 2048
-> > HDMI-1 connected primary 1368x768+0+0 (normal left inverted right x
-> > axis y axis) 0mm x 0mm
-> >    1368x768      59.88*
-> >    1360x768      59.80
-> >    1280x800      59.81
-> >    1152x864      60.00
-> >    1280x720      59.86
-> >    1024x768      60.00
-> >    1024x576      59.90
-> >    960x540       59.63
-> >    800x600       60.32
-> >    800x450       59.82
-> >    700x450       59.88
-> >    640x480       59.94
-> >    684x384       59.88    59.85
-> >    680x384       59.80    59.96
-> >    640x400       59.88    59.98
-> >    576x432       60.06
-> >    640x360       59.86    59.83
-> >    512x384       60.00
-> >    512x288       60.00    59.92
-> >    480x270       59.63    59.82
-> >    400x300       60.32
-> >    320x240       60.05
-> > HDMI-2 disconnected (normal left inverted right x axis y axis)
+> I know it is for the OTG PHY clock, what I'm saying is that the OTG 
+> PHY clock is derived from CLKCORE which I believe is the "otg" clock. 
+> Unless the clock represents a crystal, it is derived from another 
+> clock, and as a result the clock rate should be computed from the 
+> parent clock rate.
 >
-> Sorry for getting back at it so late. I just tested with modetest only
-> and my current branch and it seems to behave properly. Did you had to
-> run X to get that issue, or is it just how you noticed it?
+
+In the current Ingenic SoCs I have in hand, only JZ4780/X1000/X1500 has 
+this REFCLKDIV.
+
+At present, the relevant drivers in X1000 are written with reference to 
+the drivers in jz4780-cgu.c ( the author is Paul Burton ). I have 
+already tested on X1000 and JZ4780 today, the driver is effective and 
+can be configured by setting assigned-clock-rates in DT ( 48000000 for 
+JZ4780, 24000000 for X1000 and X1500 ).
+
+Thanks and best regards!
+
+
+> -Paul
 >
-> Also, was that with the branch based on 5.7 I pushed on my git tree on
-> kernel.org or some earlier revision of the series?
-
-Thanks for coming back :)
-
-I use GNOME 3.36 with Xorg 1.20.4.
-
-To understand when it starts to hit the issues, I separate to step by step:
-1. System boots into command line mode first (systemd multi-user.target)
-2. Execute Xorg, then xterm.
-3. Execute mutter upon the screen of Xorg.
-
-I tried both branches rpi4-kms and rpi4-kms-5.7 of
-https://git.kernel.org/pub/scm/linux/kernel/git/mripard/linux.git
-Both of the branches hit issues:
-* The screen flashes suddenly sometimes.  This happens after mutter is laun=
-ched.
-* The higher resolutions, like 1920x1080 ... are lost after hot
-re-plug HDMI cable (HDMI0).  HDMI cable connects to HDMI0 -> HDMI1 ->
-HDMI0.  This happens not only with GNOME, but also pure Xorg.
-
-Jian-Hong Pan
+>>
+>>> In that case the "otg_phy" should be parented to "otg", and the rate 
+>>> should be computed according to the parent rate and the divider 
+>>> configured.
+>>>
+>>>> +
+>>>> +    BUG();
+>>>
+>>> Don't use BUG() - it pisses off Linus :)
+>>> And it's reserved for bugs that will take the whole system down, I 
+>>> think. Better use WARN().
+>>>
+>>
+>> Sure, I will change it in the next version.
+>>
+>> Thanks and best regards!
+>>
+>>
+>>> Cheers,
+>>> -Paul
+>>>
+>>>> +    return parent_rate;
+>>>> +}
+>>>> +
+>>>> +static long x1000_otg_phy_round_rate(struct clk_hw *hw, unsigned 
+>>>> long req_rate,
+>>>> +                      unsigned long *parent_rate)
+>>>> +{
+>>>> +    if (req_rate < 18000000)
+>>>> +        return 12000000;
+>>>> +
+>>>> +    if (req_rate < 36000000)
+>>>> +        return 24000000;
+>>>> +
+>>>> +    return 48000000;
+>>>> +}
+>>>> +
+>>>> +static int x1000_otg_phy_set_rate(struct clk_hw *hw, unsigned long 
+>>>> req_rate,
+>>>> +                   unsigned long parent_rate)
+>>>> +{
+>>>> +    unsigned long flags;
+>>>> +    u32 usbpcr1, div_bits;
+>>>> +
+>>>> +    switch (req_rate) {
+>>>> +    case 12000000:
+>>>> +        div_bits = USBPCR1_REFCLKDIV_12;
+>>>> +        break;
+>>>> +
+>>>> +    case 24000000:
+>>>> +        div_bits = USBPCR1_REFCLKDIV_24;
+>>>> +        break;
+>>>> +
+>>>> +    case 48000000:
+>>>> +        div_bits = USBPCR1_REFCLKDIV_48;
+>>>> +        break;
+>>>> +
+>>>> +    default:
+>>>> +        return -EINVAL;
+>>>> +    }
+>>>> +
+>>>> +    spin_lock_irqsave(&cgu->lock, flags);
+>>>> +
+>>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
+>>>> +    usbpcr1 &= ~USBPCR1_REFCLKDIV_MASK;
+>>>> +    usbpcr1 |= div_bits;
+>>>> +    writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
+>>>> +
+>>>> +    spin_unlock_irqrestore(&cgu->lock, flags);
+>>>> +    return 0;
+>>>> +}
+>>>> +
+>>>>  static int x1000_usb_phy_enable(struct clk_hw *hw)
+>>>>  {
+>>>>      void __iomem *reg_opcr        = cgu->base + CGU_REG_OPCR;
+>>>> @@ -80,6 +186,13 @@ static int x1000_usb_phy_is_enabled(struct 
+>>>> clk_hw *hw)
+>>>>  }
+>>>>
+>>>>  static const struct clk_ops x1000_otg_phy_ops = {
+>>>> +    .get_parent = x1000_otg_phy_get_parent,
+>>>> +    .set_parent = x1000_otg_phy_set_parent,
+>>>> +
+>>>> +    .recalc_rate = x1000_otg_phy_recalc_rate,
+>>>> +    .round_rate = x1000_otg_phy_round_rate,
+>>>> +    .set_rate = x1000_otg_phy_set_rate,
+>>>> +
+>>>>      .enable        = x1000_usb_phy_enable,
+>>>>      .disable    = x1000_usb_phy_disable,
+>>>>      .is_enabled    = x1000_usb_phy_is_enabled,
+>>>> -- 
+>>>> 2.11.0
+>>>>
+>>>
+>
