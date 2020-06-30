@@ -2,143 +2,145 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC857C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 00:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22319C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 00:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 994EC206A5
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 00:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0FE3206A5
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 00:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="tWcv0R6A"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="St9D+ElZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbgF3AaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 20:30:24 -0400
-Received: from mail-bn7nam10on2040.outbound.protection.outlook.com ([40.107.92.40]:6188
-        "EHLO NAM10-BN7-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728258AbgF3AaW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Jun 2020 20:30:22 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=DbKJMvszh3fU5uy7ehEFOh5EM6+W4vZ96797aUnc3JlLkYHcW756EwuMspA0B5Cun3nW0jrlhPYCBodofcYN6CNTqacOioW1icYs0l7hoG3bdqnZqTawATP8JzxX0RL7x2jwgNNzyaCh3Uj2B5beSDBevof8rp1Tlq7VnIwIr48apYTGXHBlS80X8bkY9AKeRyAaS8gG3WhfAxHKj+L9jkDDaVi0fSmGJHun1ryU7O3kjJzUwDQCgaYy+tFd+7QxdY8SPctlMUen+ghXhbx6lrHy2q1NoFB0XrGfp29hm23FydxMsQEX2p4jXI5qZrs83viHOOiDFhtKu+2Xz/EXXg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K1DctMtyNABj1dyTAWmxhKD6HIXiLzU97ru2sSVURCw=;
- b=CQ2fIx3hyKTxq17EXmhwPnXpJIqjPFfoBxKy9cJewsv1sG5jeVYNvHWD//ckNPdSn0HJnDRM/or/0/BQmo+d8/oWkSpzVUJG8JhAJ2QxeiTkcvCafmOEp0BqB1gdDPehYHgh+vAo+ZfFv3PpOFdpMR5dFj+7Jrt9xrrUH+VYkikSioM4M4SEJWpRzYwa56aHQwq04WmijYw5G2eDXjkrr2+latuKl42YZSMK1lZlTKXI5Bum1Cpg++tN9oi3gtFIQNZ5Us8di1FiHuASkbPF9sQgsBaQnCxygW9fVLvRImuF3rGzuDf6Hdqaa6STRERdvgdgDlTWZlEtHT6HtYPnxA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 149.199.60.83) smtp.rcpttodomain=baylibre.com smtp.mailfrom=xilinx.com;
- dmarc=bestguesspass action=none header.from=xilinx.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=K1DctMtyNABj1dyTAWmxhKD6HIXiLzU97ru2sSVURCw=;
- b=tWcv0R6Aao+7G2EHYMhgUQgj0Cv8pMILwz2lsdO3G10jxz/4oh3uGXsM/nuvZLqE0KOCVjFjksHCq5BJ3XJhTPuK2uzFbcWT7NpB0IWIrBeiBU4D6/RqIWaZODVU0gteIS8AX6GWMypKRu5kE+PW63BQ6SY2PEfUT8/vhGVQjBE=
-Received: from CY4PR04CA0046.namprd04.prod.outlook.com (2603:10b6:903:c6::32)
- by DM6PR02MB4106.namprd02.prod.outlook.com (2603:10b6:5:9f::28) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.21; Tue, 30 Jun
- 2020 00:30:19 +0000
-Received: from CY1NAM02FT029.eop-nam02.prod.protection.outlook.com
- (2603:10b6:903:c6:cafe::65) by CY4PR04CA0046.outlook.office365.com
- (2603:10b6:903:c6::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.21 via Frontend
- Transport; Tue, 30 Jun 2020 00:30:19 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; baylibre.com; dkim=none (message not signed)
- header.d=none;baylibre.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT029.mail.protection.outlook.com (10.152.75.143) with Microsoft SMTP
- Server id 15.20.3131.20 via Frontend Transport; Tue, 30 Jun 2020 00:30:19
- +0000
-Received: from [149.199.38.66] (port=58515 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.90)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jq48v-00054d-Px; Mon, 29 Jun 2020 17:28:57 -0700
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jq4AF-0005bY-7l; Mon, 29 Jun 2020 17:30:19 -0700
-Received: from [10.18.5.8] (helo=xsjamitsuni51.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <amit.sunil.dhamne@xilinx.com>)
-        id 1jq4AC-0005YJ-44; Mon, 29 Jun 2020 17:30:16 -0700
-From:   Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-To:     mturquette@baylibre.com, sboyd@codeaurora.org, sboyd@kernel.org,
-        michal.simek@xilinx.com, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org
-Cc:     rajanv@xilinx.com, jollys@xilinx.com, tejasp@xilinx.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-Subject: [PATCH 0/3] clk: zynqmp: Add firmware specific clock flags
-Date:   Mon, 29 Jun 2020 17:30:11 -0700
-Message-Id: <1593477014-18443-1-git-send-email-amit.sunil.dhamne@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:xsj-pvapsmtpgw01;PTR:unknown-60-83.xilinx.com;CAT:NONE;SFTY:;SFS:(39860400002)(376002)(136003)(396003)(346002)(46966005)(2616005)(336012)(316002)(2906002)(426003)(478600001)(81166007)(5660300002)(82740400003)(70586007)(70206006)(36756003)(47076004)(356005)(83380400001)(6666004)(8676002)(107886003)(9786002)(186003)(82310400002)(4326008)(26005)(8936002)(7696005);DIR:OUT;SFP:1101;
-X-MS-PublicTrafficType: Email
+        id S1728420AbgF3Aaw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jun 2020 20:30:52 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:21557 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727842AbgF3Aaw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 20:30:52 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1593477051; h=Content-Transfer-Encoding: MIME-Version:
+ Message-Id: Date: Subject: Cc: To: From: Sender;
+ bh=YGZplpevsAJGqU+ves7XOl3Kq4U+OLQbZO9OWSW49L4=; b=St9D+ElZR6BCHu5jGd8WEPS4VpduJ8Dh6rTDJeOp8xlK7Kg8nH6SNSAPA+PBU0xcDIp7qGRV
+ RElwJBZE0QvyVRSU3NgcamUZeEA1mi1y3yxA+pv7Yi/bUy0CJoM7uFreJ/HSY49lAJlTNxy/
+ K0Dyyw60VnO4UjZ+6cjiLakrQsE=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 5efa87baa6e154319f357ad4 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 30 Jun 2020 00:30:50
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id A2745C433AD; Tue, 30 Jun 2020 00:30:49 +0000 (UTC)
+Received: from mdtipton-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mdtipton)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F111FC433C6;
+        Tue, 30 Jun 2020 00:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F111FC433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mdtipton@codeaurora.org
+From:   Mike Tipton <mdtipton@codeaurora.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tdas@codeaurora.org, Mike Tipton <mdtipton@codeaurora.org>
+Subject: [PATCH] clk: Add support for enabling/disabling clocks from debugfs
+Date:   Mon, 29 Jun 2020 17:30:24 -0700
+Message-Id: <20200630003024.6282-1-mdtipton@codeaurora.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: 4891efb8-55ab-4b21-3620-08d81c8cc4c6
-X-MS-TrafficTypeDiagnostic: DM6PR02MB4106:
-X-Microsoft-Antispam-PRVS: <DM6PR02MB4106685346086BCF2D1FE70BA76F0@DM6PR02MB4106.namprd02.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
-X-Forefront-PRVS: 0450A714CB
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: zFQEVBC2WaXjfxoFtbRAjDpb0Wtclat+Hii0fkToUvXt7+/tJqc3Bf0owtbMWj3ucw4L3VIIC+wh4ta4TGSFX9kOHrJuuEi2Hi5gkd5LFsQO45wX84LGZBV+0pCvyYolEUvZT9cBKCgpXR/Z+TkYERlsTICAilKTBk13uAmlvd0QnD5oQYEDCEsNzwZgkpvnGpD0rBKwOW3nd0FiIgHITuvJC/SMuu3AeLLjhn5tFLXbj95Go1Y5t+tkNSjxd+aeikPoa1aYKmbL27Z6dhawIyBsBs2r0eF9EJUr3nctDTe0y4Kj3s8B0kg2CqPOY5Ml4WzE/s98UWGCEc8Smc5aicchuB2Boe9vnB2qfTE6gvSzE2ghUbyY3uMR5tVajZk+MQgwryJ6YPFmjVWpf4d11w==
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2020 00:30:19.5138
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4891efb8-55ab-4b21-3620-08d81c8cc4c6
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-AuthSource: CY1NAM02FT029.eop-nam02.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4106
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds supports for firmware specific flags. These include
-- Common Flags
-- Divider Flags
-- Mux Flags
+For test and debug purposes, it's often necessary to enable or disable
+clocks from shell. Add a new debugfs file (clk_prepare_enable) that
+calls clk_prepare_enable() when writing "1" and clk_disable_unprepare()
+when writing "0".
 
-The intent is to remove firmware's dependency on CCF flag values by
-having firmware specific flags with independent values.
+This can have security implications, so only support it when the code
+has been modified to #define CLOCK_ALLOW_WRITE_DEBUGS.
 
-Rajan Vaja (3):
-  clk: zynqmp: Use firmware specific common clock flags
-  clk: zynqmp: Use firmware specific divider clock flags
-  clk: zynqmp: Use firmware specific mux clock flags
+Signed-off-by: Mike Tipton <mdtipton@codeaurora.org>
+---
+ drivers/clk/clk.c | 38 ++++++++++++++++++++++++++++++++++----
+ 1 file changed, 34 insertions(+), 4 deletions(-)
 
- drivers/clk/zynqmp/clk-mux-zynqmp.c | 14 ++++++++++++-
- drivers/clk/zynqmp/clk-zynqmp.h     | 39 +++++++++++++++++++++++++++++++++=
-++++
- drivers/clk/zynqmp/clkc.c           | 25 ++++++++++++++++++++++--
- drivers/clk/zynqmp/divider.c        | 16 ++++++++++++++-
- 4 files changed, 90 insertions(+), 4 deletions(-)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 236923b25543..3640bbc56870 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3034,13 +3034,14 @@ static int clk_dump_show(struct seq_file *s, void *data)
+ }
+ DEFINE_SHOW_ATTRIBUTE(clk_dump);
+ 
+-#undef CLOCK_ALLOW_WRITE_DEBUGFS
+-#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
+ /*
+- * This can be dangerous, therefore don't provide any real compile time
+- * configuration option for this feature.
++ * These features can be dangerous, therefore don't provide any real compile
++ * time configuration option for them.
+  * People who want to use this will need to modify the source code directly.
+  */
++#undef CLOCK_ALLOW_WRITE_DEBUGFS
++#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
++
+ static int clk_rate_set(void *data, u64 val)
+ {
+ 	struct clk_core *core = data;
+@@ -3054,6 +3055,31 @@ static int clk_rate_set(void *data, u64 val)
+ }
+ 
+ #define clk_rate_mode	0644
++
++static int clk_prepare_enable_set(void *data, u64 val)
++{
++	struct clk_core *core = data;
++	int ret = 0;
++
++	if (val)
++		ret = clk_prepare_enable(core->hw->clk);
++	else
++		clk_disable_unprepare(core->hw->clk);
++
++	return ret;
++}
++
++static int clk_prepare_enable_get(void *data, u64 *val)
++{
++	struct clk_core *core = data;
++
++	*val = core->enable_count && core->prepare_count;
++	return 0;
++}
++
++DEFINE_DEBUGFS_ATTRIBUTE(clk_prepare_enable_fops, clk_prepare_enable_get,
++			 clk_prepare_enable_set, "%llu\n");
++
+ #else
+ #define clk_rate_set	NULL
+ #define clk_rate_mode	0444
+@@ -3231,6 +3257,10 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
+ 	debugfs_create_u32("clk_notifier_count", 0444, root, &core->notifier_count);
+ 	debugfs_create_file("clk_duty_cycle", 0444, root, core,
+ 			    &clk_duty_cycle_fops);
++#ifdef CLOCK_ALLOW_WRITE_DEBUGFS
++	debugfs_create_file("clk_prepare_enable", 0644, root, core,
++			    &clk_prepare_enable_fops);
++#endif
+ 
+ 	if (core->num_parents > 0)
+ 		debugfs_create_file("clk_parent", 0444, root, core,
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
---
-2.7.4
-
-This email and any attachments are intended for the sole use of the named r=
-ecipient(s) and contain(s) confidential information that may be proprietary=
-, privileged or copyrighted under applicable law. If you are not the intend=
-ed recipient, do not read, copy, or forward this email message or any attac=
-hments. Delete this email message and any attachments immediately.
