@@ -2,125 +2,178 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EDBC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 859E5C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 13:27:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 99BA420672
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:31:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Ve9NjKCV"
+	by mail.kernel.org (Postfix) with ESMTP id 6C6FF206B6
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 13:27:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387695AbgF3Mbv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 08:31:51 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:64113 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732804AbgF3Mbt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 08:31:49 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1593520309; h=Message-ID: References: In-Reply-To: Subject:
- To: From: Date: Content-Transfer-Encoding: Content-Type: MIME-Version:
- Sender; bh=k0MdTyKtV4z22dAVkmjS3nxPgaMUlZ3id20kmVJEhWM=; b=Ve9NjKCV/1JiJEE7Md0yCBpAFxTGZDycuUXMQkrDKIbMUAq3N3bnwcYWB6+Xo3pen+xDlIRl
- 4Q5NoDzK/RJ1VJcBben5t7OAcRqSeBQ1irZobOvRJrc1xc0wzO/mfjjm7tp0paCtEFCrBb/3
- NxjtzXMRXL2ifpdidac6h3wgQ/I=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n13.prod.us-east-1.postgun.com with SMTP id
- 5efb30b1c4bb4f886db6ea4d (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 30 Jun 2020 12:31:45
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 4C166C4339C; Tue, 30 Jun 2020 12:31:44 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: gokulsri)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9A0D0C433C8;
-        Tue, 30 Jun 2020 12:31:43 +0000 (UTC)
+        id S1729759AbgF3N1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 09:27:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43868 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbgF3N1G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 09:27:06 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D974C061755
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 06:27:06 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1jqGHt-0000M5-TH; Tue, 30 Jun 2020 15:27:01 +0200
+Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1jqGHs-0004tI-Eq; Tue, 30 Jun 2020 15:27:00 +0200
+Date:   Tue, 30 Jun 2020 15:27:00 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
+Cc:     mturquette@baylibre.com, sboyd@codeaurora.org, sboyd@kernel.org,
+        michal.simek@xilinx.com, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
+        tejasp@xilinx.com, linux-kernel@vger.kernel.org, jollys@xilinx.com,
+        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH 1/3] clk: zynqmp: Use firmware specific common clock flags
+Message-ID: <20200630132700.GA15753@pengutronix.de>
+References: <1593477014-18443-1-git-send-email-amit.sunil.dhamne@xilinx.com>
+ <1593477014-18443-2-git-send-email-amit.sunil.dhamne@xilinx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 30 Jun 2020 18:01:43 +0530
-From:   gokulsri@codeaurora.org
-To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
-        robh+dt@kernel.org, sricharan@codeaurora.org,
-        nprakash@codeaurora.org
-Subject: Re: [PATCH V5 00/10] remoteproc: qcom: q6v5-wcss: Add support for
- secure pil
-In-Reply-To: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
-References: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
-Message-ID: <14579d9dbcc06bca392b41ace1b0ce49@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1593477014-18443-2-git-send-email-amit.sunil.dhamne@xilinx.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 15:13:03 up 131 days, 20:43, 122 users,  load average: 0.08, 0.15,
+ 0.16
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-  Hi Bjorn,
-  My below patch series (https://patchwork.kernel.org/cover/11545511/) 
-with all the review comments addressed and this is on top of
-  Govind's series (https://patchwork.kernel.org/cover/11060629/) "[v5] 
-"Add non PAS wcss Q6 support for QCS404".
-  Need your help to know how should I proceed further to merge these 
-patches.
+On Mon, 29 Jun 2020 17:30:12 -0700, Amit Sunil Dhamne wrote:
+> From: Rajan Vaja <rajan.vaja@xilinx.com>
+> 
+> Currently firmware passes CCF specific flags to ZynqMP clock driver.
+> So firmware needs to be updated if CCF flags are changed. The firmware
+> should have its own 'flag number space' that is distinct from the
+> common clk framework's 'flag number space'. So define and use ZynqMP
+> specific common clock flags instead of using CCF flags.
+> 
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
+> ---
+>  drivers/clk/zynqmp/clk-zynqmp.h | 22 ++++++++++++++++++++++
+>  drivers/clk/zynqmp/clkc.c       | 25 +++++++++++++++++++++++--
+>  2 files changed, 45 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/zynqmp/clk-zynqmp.h b/drivers/clk/zynqmp/clk-zynqmp.h
+> index 5beeb41..d8e580b 100644
+> --- a/drivers/clk/zynqmp/clk-zynqmp.h
+> +++ b/drivers/clk/zynqmp/clk-zynqmp.h
+> @@ -10,6 +10,28 @@
+> 
+>  #include <linux/firmware/xlnx-zynqmp.h>
+> 
+> +/* Common Flags */
+> +/* must be gated across rate change */
+> +#define ZYNQMP_CLK_SET_RATE_GATE       BIT(0)
+> +/* must be gated across re-parent */
+> +#define ZYNQMP_CLK_SET_PARENT_GATE     BIT(1)
+> +/* propagate rate change up one level */
+> +#define ZYNQMP_CLK_SET_RATE_PARENT     BIT(2)
+> +/* do not gate even if unused */
+> +#define ZYNQMP_CLK_IGNORE_UNUSED       BIT(3)
+> +/* do not use the cached clk rate */
+> +#define ZYNQMP_CLK_GET_RATE_NOCACHE    BIT(6)
+> +/* don't re-parent on rate change */
+> +#define ZYNQMP_CLK_SET_RATE_NO_REPARENT        BIT(7)
+> +/* do not use the cached clk accuracy */
+> +#define ZYNQMP_CLK_GET_ACCURACY_NOCACHE        BIT(8)
+> +/* recalc rates after notifications */
+> +#define ZYNQMP_CLK_RECALC_NEW_RATES    BIT(9)
+> +/* clock needs to run to set rate */
+> +#define ZYNQMP_CLK_SET_RATE_UNGATE     BIT(10)
+> +/* do not gate, ever */
+> +#define ZYNQMP_CLK_IS_CRITICAL         BIT(11)
+> +
+>  enum topology_type {
+>         TYPE_INVALID,
+>         TYPE_MUX,
+> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+> index db8d0d7..8663587 100644
+> --- a/drivers/clk/zynqmp/clkc.c
+> +++ b/drivers/clk/zynqmp/clkc.c
+> @@ -385,14 +385,35 @@ static int __zynqmp_clock_get_topology(struct clock_topology *topology,
+>  {
+>         int i;
+>         u32 type;
+> +       u32 flag;
+> 
+>         for (i = 0; i < ARRAY_SIZE(response->topology); i++) {
+>                 type = FIELD_GET(CLK_TOPOLOGY_TYPE, response->topology[i]);
+>                 if (type == TYPE_INVALID)
+>                         return END_OF_TOPOLOGY_NODE;
+>                 topology[*nnodes].type = type;
+> -               topology[*nnodes].flag = FIELD_GET(CLK_TOPOLOGY_FLAGS,
+> -                                                  response->topology[i]);
+> +               flag = FIELD_GET(CLK_TOPOLOGY_FLAGS, response->topology[i]);
+> +               topology[*nnodes].flag = 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_GATE) ?
+> +                                          CLK_SET_RATE_GATE : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_PARENT) ?
+> +                                          CLK_SET_RATE_PARENT : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_IGNORE_UNUSED) ?
+> +                                          CLK_IGNORE_UNUSED : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_GET_RATE_NOCACHE) ?
+> +                                          CLK_GET_RATE_NOCACHE : 0;
+> +               topology[*nnodes].flag |= (flag &
+> +                                          ZYNQMP_CLK_SET_RATE_NO_REPARENT) ?
+> +                                          CLK_SET_RATE_NO_REPARENT : 0;
+> +               topology[*nnodes].flag |= (flag &
+> +                                          ZYNQMP_CLK_GET_ACCURACY_NOCACHE) ?
+> +                                          CLK_GET_ACCURACY_NOCACHE : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_RECALC_NEW_RATES) ?
+> +                                          CLK_RECALC_NEW_RATES : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_UNGATE) ?
+> +                                          CLK_SET_RATE_UNGATE : 0;
+> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_IS_CRITICAL) ?
+> +                                          CLK_IS_CRITICAL : 0;
 
-  Regards,
-  Gokul
+I don't think that this is the right location for converting the ZYNQMP_CLK_*
+flags to CLK_* flags. Here we are writing the flags to the struct
+clock_topology, which is still ZynqMP specific. The conversion should rather
+happen in the zynqmp_clk_register_*() functions, because these functions write
+the flags to struct clk_init_data, which is part of the common clock
+framework.
 
-On 2020-05-13 15:00, Gokul Sriram Palanisamy wrote:
-> IPQ8074 needs support for secure pil as well.
-> Also, currently only unified firmware is supported.
-> IPQ8074 supports split firmware for q6 and m3, so
-> adding support for that.
+Maybe you could also add a helper function for converting the flags to make
+this more readable.
+
+Michael
+
+>                 topology[*nnodes].type_flag =
+>                                 FIELD_GET(CLK_TOPOLOGY_TYPE_FLAGS,
+>                                           response->topology[i]);
+> --
+> 2.7.4
 > 
-> This series is based on Govind's
-> "[v5] Add non PAS wcss Q6 support for QCS404"
+> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
 > 
-> changes since v4:
->  - Rebased patch 8
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 > 
-> changes since v3:
->  - In patch 10, Added release_firmware to free up
->    memory requested for m3 firmware.
-> 
-> changes since v2:
->  - In patch 5, Added a driver data 'bcr_reset_required'
->    to select if bcr reset is required
->  - In patch 10, Removed syscon implementation and moved
->    to mailbox framework to access APCS IPC
-> 
-> changes since v1:
->  - In patch 10, Addressed minor review comments.
-> 
-> Gokul Sriram Palanisamy (10):
->   remoteproc: qcom: Add PRNG proxy clock
->   remoteproc: qcom: Add secure PIL support
->   remoteproc: qcom: Add support for split q6 + m3 wlan firmware
->   remoteproc: qcom: Add ssr subdevice identifier
->   remoteproc: qcom: Update regmap offsets for halt register
->   dt-bindings: clock: qcom: Add reset for WCSSAON
->   clk: qcom: Add WCSSAON reset
->   dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
->   arm64: dts: Add support for scm on IPQ8074 SoCs
->   arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
-> 
->  .../devicetree/bindings/firmware/qcom,scm.txt      |   1 +
->  arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 127 
-> +++++++++++++++++
->  drivers/clk/qcom/gcc-ipq8074.c                     |   1 +
->  drivers/remoteproc/qcom_q6v5_wcss.c                | 157 
-> +++++++++++++++++----
->  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   1 +
->  5 files changed, 258 insertions(+), 29 deletions(-)
