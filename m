@@ -2,178 +2,157 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 859E5C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 13:27:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A8E4C433E2
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 15:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6FF206B6
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 13:27:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD3C2074F
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 15:32:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SLNEacNn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbgF3N1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 09:27:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43868 "EHLO
+        id S2389545AbgF3Pcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 11:32:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbgF3N1G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 09:27:06 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D974C061755
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 06:27:06 -0700 (PDT)
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1jqGHt-0000M5-TH; Tue, 30 Jun 2020 15:27:01 +0200
-Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <mtr@pengutronix.de>)
-        id 1jqGHs-0004tI-Eq; Tue, 30 Jun 2020 15:27:00 +0200
-Date:   Tue, 30 Jun 2020 15:27:00 +0200
-From:   Michael Tretter <m.tretter@pengutronix.de>
-To:     Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-Cc:     mturquette@baylibre.com, sboyd@codeaurora.org, sboyd@kernel.org,
-        michal.simek@xilinx.com, mark.rutland@arm.com,
-        linux-clk@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
-        tejasp@xilinx.com, linux-kernel@vger.kernel.org, jollys@xilinx.com,
-        rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        kernel@pengutronix.de
-Subject: Re: [PATCH 1/3] clk: zynqmp: Use firmware specific common clock flags
-Message-ID: <20200630132700.GA15753@pengutronix.de>
-References: <1593477014-18443-1-git-send-email-amit.sunil.dhamne@xilinx.com>
- <1593477014-18443-2-git-send-email-amit.sunil.dhamne@xilinx.com>
+        with ESMTP id S2389385AbgF3Pcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 11:32:52 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B066C061755;
+        Tue, 30 Jun 2020 08:32:52 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id c16so21441371ioi.9;
+        Tue, 30 Jun 2020 08:32:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=fTZIk7o4I3v9sDO1ioQg65WFbAcbrwuzrZp6bqG2TZs=;
+        b=SLNEacNnXUaOSknJvbz9ftmBYbhGROQqfmRN2jCu+oUjMlkNVC7L0DnsVQmrHBlaRI
+         5t9+YaZ3fxK4ku6fb+GPJKRfCG+Gps1qplj+0digh8uJn+GB+1JCG9Wzyl02o25PGelP
+         jjz8iA9Z0KkEkHWlrSiPsWZQGxioYTjb69FIRUrryO7BtD4wWSjN4SSDkRErIBuVuxNx
+         0Er+SiLvwIuVSKl+6GUCUZEwRsO/ajwCcaiu8dXRPPfPul65ngxfwh8CITu5HLwJg6k5
+         BnZwSlDfE/HqcS6lphCwBhiU+2Md/l2E9L4RXlcd7S2l5erQM1rZl/g1zIVhMlCkQRPN
+         8Fyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=fTZIk7o4I3v9sDO1ioQg65WFbAcbrwuzrZp6bqG2TZs=;
+        b=eDWu1cO+h9sgD3JUlOYZdyKrMGzcWBm30s7QG7b3ZWu8MsIuCZDpBud5Bsl7Py+NKT
+         T1YlVCYDsGB7feBUY+JFuB8RuV/UH/0OPuszkWtJl9cyFzp8x1zOVhxEVCRhnszPkJR6
+         q0+ZI0gD3R4kePaHoKcHfnyJfBWjjdeUtHX/kjBikUlmBDjw5MC+PgVWD+g2jfIYuPva
+         IymUwpp2ls8ZzQpNcou6SjbZ2uPN25p2CzemiJItyHh5MNbs8zZWCryFsbWaeNL3SpI8
+         ePAYTNTOdT+MmVXLWZZM67EcTBeKvYoayly/tUDtamqrOdx3MQBIgrJBXiVNY9DtGAAH
+         8jMg==
+X-Gm-Message-State: AOAM531S2Kh13P0CAYJgSqScd2iMvEEIj/cUMmhyl3ipqxxkWCS7buY2
+        5tV2Lb/WLTf9jcmjA3BAqn8qXdk8fo1DpjS/8GI=
+X-Google-Smtp-Source: ABdhPJwmeqxFiF/UYomtYzSa1zyensrGB2NlVyhR0lNiVAk/rpt8vIaIoeUrWdkkS5pkKyqbHpik7IWOHz0pvwB/6Z8=
+X-Received: by 2002:a02:6d27:: with SMTP id m39mr24703937jac.10.1593531171771;
+ Tue, 30 Jun 2020 08:32:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1593477014-18443-2-git-send-email-amit.sunil.dhamne@xilinx.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 15:13:03 up 131 days, 20:43, 122 users,  load average: 0.08, 0.15,
- 0.16
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: mtr@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <1590378348-8115-1-git-send-email-dillon.minfei@gmail.com>
+ <1590378348-8115-7-git-send-email-dillon.minfei@gmail.com>
+ <CAHp75VebSZa6mwAETnM0t42RQCp4iM6_SNjmy3TB48ixsGKV8g@mail.gmail.com>
+ <CAL9mu0+jmcivC6zAXxK0-oXy3n44pAU1QGD7BDq=CT2D7twROQ@mail.gmail.com> <c085e8f5-f626-28a9-1d3f-a1c277ec5052@tronnes.org>
+In-Reply-To: <c085e8f5-f626-28a9-1d3f-a1c277ec5052@tronnes.org>
+From:   dillon min <dillon.minfei@gmail.com>
+Date:   Tue, 30 Jun 2020 23:32:15 +0800
+Message-ID: <CAL9mu0LPuqRn-tKWWzyUWnOE2h-w7F3-6HTYv15QcUYWBroXZw@mail.gmail.com>
+Subject: Re: [PATCH v5 6/8] drm/panel: Add ilitek ili9341 panel driver
+To:     =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 29 Jun 2020 17:30:12 -0700, Amit Sunil Dhamne wrote:
-> From: Rajan Vaja <rajan.vaja@xilinx.com>
-> 
-> Currently firmware passes CCF specific flags to ZynqMP clock driver.
-> So firmware needs to be updated if CCF flags are changed. The firmware
-> should have its own 'flag number space' that is distinct from the
-> common clk framework's 'flag number space'. So define and use ZynqMP
-> specific common clock flags instead of using CCF flags.
-> 
-> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Signed-off-by: Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-> ---
->  drivers/clk/zynqmp/clk-zynqmp.h | 22 ++++++++++++++++++++++
->  drivers/clk/zynqmp/clkc.c       | 25 +++++++++++++++++++++++--
->  2 files changed, 45 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/zynqmp/clk-zynqmp.h b/drivers/clk/zynqmp/clk-zynqmp.h
-> index 5beeb41..d8e580b 100644
-> --- a/drivers/clk/zynqmp/clk-zynqmp.h
-> +++ b/drivers/clk/zynqmp/clk-zynqmp.h
-> @@ -10,6 +10,28 @@
-> 
->  #include <linux/firmware/xlnx-zynqmp.h>
-> 
-> +/* Common Flags */
-> +/* must be gated across rate change */
-> +#define ZYNQMP_CLK_SET_RATE_GATE       BIT(0)
-> +/* must be gated across re-parent */
-> +#define ZYNQMP_CLK_SET_PARENT_GATE     BIT(1)
-> +/* propagate rate change up one level */
-> +#define ZYNQMP_CLK_SET_RATE_PARENT     BIT(2)
-> +/* do not gate even if unused */
-> +#define ZYNQMP_CLK_IGNORE_UNUSED       BIT(3)
-> +/* do not use the cached clk rate */
-> +#define ZYNQMP_CLK_GET_RATE_NOCACHE    BIT(6)
-> +/* don't re-parent on rate change */
-> +#define ZYNQMP_CLK_SET_RATE_NO_REPARENT        BIT(7)
-> +/* do not use the cached clk accuracy */
-> +#define ZYNQMP_CLK_GET_ACCURACY_NOCACHE        BIT(8)
-> +/* recalc rates after notifications */
-> +#define ZYNQMP_CLK_RECALC_NEW_RATES    BIT(9)
-> +/* clock needs to run to set rate */
-> +#define ZYNQMP_CLK_SET_RATE_UNGATE     BIT(10)
-> +/* do not gate, ever */
-> +#define ZYNQMP_CLK_IS_CRITICAL         BIT(11)
-> +
->  enum topology_type {
->         TYPE_INVALID,
->         TYPE_MUX,
-> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-> index db8d0d7..8663587 100644
-> --- a/drivers/clk/zynqmp/clkc.c
-> +++ b/drivers/clk/zynqmp/clkc.c
-> @@ -385,14 +385,35 @@ static int __zynqmp_clock_get_topology(struct clock_topology *topology,
->  {
->         int i;
->         u32 type;
-> +       u32 flag;
-> 
->         for (i = 0; i < ARRAY_SIZE(response->topology); i++) {
->                 type = FIELD_GET(CLK_TOPOLOGY_TYPE, response->topology[i]);
->                 if (type == TYPE_INVALID)
->                         return END_OF_TOPOLOGY_NODE;
->                 topology[*nnodes].type = type;
-> -               topology[*nnodes].flag = FIELD_GET(CLK_TOPOLOGY_FLAGS,
-> -                                                  response->topology[i]);
-> +               flag = FIELD_GET(CLK_TOPOLOGY_FLAGS, response->topology[i]);
-> +               topology[*nnodes].flag = 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_GATE) ?
-> +                                          CLK_SET_RATE_GATE : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_PARENT) ?
-> +                                          CLK_SET_RATE_PARENT : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_IGNORE_UNUSED) ?
-> +                                          CLK_IGNORE_UNUSED : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_GET_RATE_NOCACHE) ?
-> +                                          CLK_GET_RATE_NOCACHE : 0;
-> +               topology[*nnodes].flag |= (flag &
-> +                                          ZYNQMP_CLK_SET_RATE_NO_REPARENT) ?
-> +                                          CLK_SET_RATE_NO_REPARENT : 0;
-> +               topology[*nnodes].flag |= (flag &
-> +                                          ZYNQMP_CLK_GET_ACCURACY_NOCACHE) ?
-> +                                          CLK_GET_ACCURACY_NOCACHE : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_RECALC_NEW_RATES) ?
-> +                                          CLK_RECALC_NEW_RATES : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_SET_RATE_UNGATE) ?
-> +                                          CLK_SET_RATE_UNGATE : 0;
-> +               topology[*nnodes].flag |= (flag & ZYNQMP_CLK_IS_CRITICAL) ?
-> +                                          CLK_IS_CRITICAL : 0;
+Hi Andy, Noralf,
 
-I don't think that this is the right location for converting the ZYNQMP_CLK_*
-flags to CLK_* flags. Here we are writing the flags to the struct
-clock_topology, which is still ZynqMP specific. The conversion should rather
-happen in the zynqmp_clk_register_*() functions, because these functions write
-the flags to struct clk_init_data, which is part of the common clock
-framework.
+gentle ping for this patch set,
+do we have any new structure, or idea to support both dpi and dbi
+interface by one drm panel driver?
+from this thread
+https://lists.freedesktop.org/archives/dri-devel/2020-May/267031.html
+, it's seems
+discussing was stopped at may 25.
 
-Maybe you could also add a helper function for converting the flags to make
-this more readable.
+if there are any new information about this topic, please feel free to
+let me know. hope i can make some
+progress on it.
 
-Michael
+thanks,
 
->                 topology[*nnodes].type_flag =
->                                 FIELD_GET(CLK_TOPOLOGY_TYPE_FLAGS,
->                                           response->topology[i]);
-> --
-> 2.7.4
-> 
-> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
+Dillon,
+
+best regards
+
+On Tue, May 26, 2020 at 6:38 PM Noralf Tr=C3=B8nnes <noralf@tronnes.org> wr=
+ote:
+>
+>
+>
+> Den 26.05.2020 11.08, skrev dillon min:
+> > Hi Andy,
+> >
+> > Thanks for input.
+> >
+> > On Tue, May 26, 2020 at 3:46 PM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> >>
+> >> On Mon, May 25, 2020 at 6:46 AM <dillon.minfei@gmail.com> wrote:
+> >>>
+> >>> From: dillon min <dillon.minfei@gmail.com>
+> >>>
+> >>>     This driver combine tiny/ili9341.c mipi_dbi_interface driver
+> >>>     with mipi_dpi_interface driver, can support ili9341 with serial
+> >>>     mode or parallel rgb interface mode by register configuration.
+> >>
+> >> Noralf told once that this driver should be unified with mi0283qt.c.
+> >>
+> >> So, what should we do here?
+> >>
+> >> --
+> >> With Best Regards,
+> >> Andy Shevchenko
+> >
+> > from sam's suggestion, we can't setup two drivers to support one panel
+> > in the tree. so, i copy the mipi dbi part from tiny/ili9341.c. to this =
+driver
+> > from register settings and dts binding is keep the same to tiny/ili9341=
+.c.
+> >
+> > so, in my opinion if tiny/ili9341.c is unified with mi0283qt.c, this
+> > driver should be
+> > too.
+> >
+>
+> There's a discussion about MIPI DBI panels here:
+>
+> MIPI DSI, DBI, and tinydrm drivers
+> https://lists.freedesktop.org/archives/dri-devel/2020-May/267031.html
+>
+> Noralf.
+>
+> > thanks.
+> >
+> > best regards,
+> >
+> > Dillon,
+> >
