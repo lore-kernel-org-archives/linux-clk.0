@@ -2,99 +2,122 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4C1C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 04:45:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A847C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 07:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 814342067D
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 04:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF462073E
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 07:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gyNi5aAT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QwrOy5cC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728826AbgF3Epa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 00:45:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48162 "EHLO
+        id S1730722AbgF3HLV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 03:11:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbgF3Ep3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 00:45:29 -0400
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12A3C03E979
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 21:45:29 -0700 (PDT)
-Received: by mail-yb1-xb4a.google.com with SMTP id z7so21343319ybz.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jun 2020 21:45:29 -0700 (PDT)
+        with ESMTP id S1730637AbgF3HLT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 03:11:19 -0400
+Received: from mail-wr1-x441.google.com (mail-wr1-x441.google.com [IPv6:2a00:1450:4864:20::441])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A12FC03E97B
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 00:11:19 -0700 (PDT)
+Received: by mail-wr1-x441.google.com with SMTP id h5so18964952wrc.7
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jun 2020 00:11:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=vSqeEeckvpRbZGibNjwUaMyXm8VkQnSd56e/epMHyVQ=;
-        b=gyNi5aATe8TqHE7u6B+wIEwHg193GUJBNOD+RzKybJOneonjln50tdgpwT43fJ/Ths
-         8dFI5YKs37yghC22E/N+87q5OGQUfcGqRPEuzA2jrf8AQ+hlNUnYSSxNLePtmV7PQemM
-         /YDnZE9BBFUxFo9T2OEttT/2WczcCMclSAM1gnLmg1VU2LbaUV0JN8t9ovWkuasnGbTe
-         6RglnmmOKNPkyucnT56IJXlkjCwDXBUvd7ypX5cTWV1EdocXxIbZFOz6T63wT+Lh6KOW
-         0JrJozUoxWuPBBQXzwzzBQai85mW3u1RNbD49V3jotfI9QHsoE0opMlsUwvXc72e0oY8
-         Xn+w==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=K64/PWzIdJHy6AMq0CI1QxWBigdrJv6e4jIUjK6qkD0=;
+        b=QwrOy5cCVRKI+Mspy8/CQFQQfjsIENqMArQcy6wu3W/FJtySPw8sfwnWO6wClLrdPR
+         0t7Oiq1odHqpiKZG0L2OYdCDBz/1WEJDhsvFhR//xeQ+2hO6Kr80/All8equ1NCLTOYN
+         2/Ydpyf3BWL3S6vyhCzZjGJZ4Qyn+y9NQfGiCgPf7TIoaIiHJQP4IiMFN8r/07C7ELzy
+         dLV8FWsyiBN80NWS+vmM6O+PaF6qF/lrtht7CavF0JYAIsmWriZykdA2mxyKPqUTEJDw
+         5WbXMJysulDXVFL02NFQ7frxgHN6CQpEVRjgjy+zybl6G0giruv4u8Qi6HcD/A3fcC2+
+         en8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=vSqeEeckvpRbZGibNjwUaMyXm8VkQnSd56e/epMHyVQ=;
-        b=qdRm9ENFC7n50wFQykS7dXuBDSCWYd6jWfLwug5QCjy3oPSO5xIjyOVp4sKGgVYypD
-         1fxRGKlpHdGypIK2h4UNYmmZHSuVDfdv3wDUscALekb4I0yM/eJI/ph8bnRR3CkE5X22
-         41ouqKRlzYETHqGMs/ca+DKz+4gGs6l6DEkYwMccy92Wq8tsqNEqI6L7RgvxeRwQvj9e
-         AvVMzjTYjJkYuimzCIKcOdr5rAByabF5Cjs9pMcMbg7XMVf6wFIAVoYxPkiiODdi3cKR
-         43d6xp1rOxqafxhdKBBW4p8w4aSqsYM2yVHHSgufl1M06kjclQPr8AIB7dJopK4g/Pub
-         PdaA==
-X-Gm-Message-State: AOAM530dNY+QWrpp+FkkjHQ5kQCDWhgiAu5/WCp3nURh0dI+moGbqE83
-        e3Y+kx2V3V+yMIM6Cg0d3X/GdwxcTm9Gbg==
-X-Google-Smtp-Source: ABdhPJyU53scu18O26IxLx2seqo1666FrNwEmW6JQE0uTUsyEEKPzVYVNeqyTCA7tMSuyMdT+nkhBbNQt05sKQ==
-X-Received: by 2002:a25:f509:: with SMTP id a9mr32741555ybe.227.1593492328741;
- Mon, 29 Jun 2020 21:45:28 -0700 (PDT)
-Date:   Mon, 29 Jun 2020 21:45:17 -0700
-Message-Id: <20200630044518.1084468-1-davidgow@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.27.0.212.ge8ba1cc988-goog
-Subject: [PATCH] clk: staging: Specify IOMEM dependency for Xilinx Clocking
- Wizard driver
-From:   David Gow <davidgow@google.com>
-To:     Soren Brinkmann <soren.brinkmann@xilinx.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=K64/PWzIdJHy6AMq0CI1QxWBigdrJv6e4jIUjK6qkD0=;
+        b=L9a6LDnWE7yHSCXHsULfy6Uw38TBGQ4cLXpOQK+avA2Dl1WBn72A5uc1zOrgcvr4TN
+         8DYqdUtkNll5rSzCirm+uYlnGHAHnrqN2MfvnnhlpQQ+zZiwXxeyKxqjdfFji2ZslB1D
+         9KpUlYZzNwdPmUgj3vq99Ilfo1C5jn5gzhbK4a/3GH2oviCndghsmN+MOOlW6+3O3Y02
+         cOta+fJg/5/lA8Nj+jjfR0oJGQUCuMrpUaV1mORZPLOfHYOnMvSlICc+lrwFUzIih9QS
+         6scG//tRD0kQacr2/FhrnVGdKri2WOBHVOKXVyrOpPfbHDxGMC70KL0bJ8qpmDMsaSze
+         gy4w==
+X-Gm-Message-State: AOAM531ULecSxH3msZp7dikoGI2+oAmSH77gvSKMS4Z7b79WJdU8f0nP
+        9EU2zVYK/GMWO0tz/Efk/IVdig==
+X-Google-Smtp-Source: ABdhPJwZssKxM2tBc6NCDnk4r2tWfyhz2turH5uFie+KVPTCYv0GHzeKD3NWkCZuHCFBkEVXD3Bc/Q==
+X-Received: by 2002:adf:f350:: with SMTP id e16mr19880821wrp.43.1593501077875;
+        Tue, 30 Jun 2020 00:11:17 -0700 (PDT)
+Received: from dell ([2.27.35.144])
+        by smtp.gmail.com with ESMTPSA id k20sm2459432wmi.27.2020.06.30.00.11.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jun 2020 00:11:17 -0700 (PDT)
+Date:   Tue, 30 Jun 2020 08:11:15 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Sebastian Reichel <sre@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, devel@driverdev.osuosl.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-power@fi.rohmeurope.com, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: Add entry for ROHM power management ICs
+Message-ID: <20200630071115.GG1179328@dell>
+References: <20200618073331.GA9403@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200618073331.GA9403@localhost.localdomain>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Xilinx Clocking Wizard driver uses the devm_ioremap_resource
-function, but does not specify a dependency on IOMEM in Kconfig. This
-causes a build failure on architectures without IOMEM, for example, UML
-(notably with make allyesconfig).
+On Thu, 18 Jun 2020, Matti Vaittinen wrote:
 
-Fix this by making CONFIG_COMMON_CLK_XLNX_CLKWZRD depend on CONFIG_IOMEM.
+> Add entry for maintaining power management IC drivers for ROHM
+> BD71837, BD71847, BD71850, BD71828, BD71878, BD70528 and BD99954.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Sebastian Reichel <sre@kernel.org>
+> ---
+> Morning Lee - could you take this in MFD? This is scattered all around
+> different subsystems anyways... I guess crafting bunch of patches to
+> each individual subsystems would just end up with lots of merge
+> conflicts.
+> 
+> Changes from v1:
+> - Dropped patch 2/2 (linear-ranges maintainer) which was already applied by Mark
+> - Added shiny new ROHM linux-power list so that I am no longer the lonely
+>   poor sod watching these at ROHM side :)
+> - sort few files to alphabethical order as checkpatch now nagged about
+>   that.
+> 
+> v1 was here:
+> https://lore.kernel.org/lkml/e11366fd280736844ae63791b6193bb84d6205bf.1589866138.git.matti.vaittinen@fi.rohmeurope.com/
+> 
+> 
+>  MAINTAINERS | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 
-Signed-off-by: David Gow <davidgow@google.com>
----
- drivers/staging/clocking-wizard/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks.
 
-diff --git a/drivers/staging/clocking-wizard/Kconfig b/drivers/staging/clocking-wizard/Kconfig
-index 04be22dca9b6..69cf51445f08 100644
---- a/drivers/staging/clocking-wizard/Kconfig
-+++ b/drivers/staging/clocking-wizard/Kconfig
-@@ -5,6 +5,6 @@
- 
- config COMMON_CLK_XLNX_CLKWZRD
- 	tristate "Xilinx Clocking Wizard"
--	depends on COMMON_CLK && OF
-+	depends on COMMON_CLK && OF && IOMEM
- 	help
- 	  Support for the Xilinx Clocking Wizard IP core clock generator.
 -- 
-2.27.0.212.ge8ba1cc988-goog
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
