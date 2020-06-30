@@ -2,280 +2,125 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297B4C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:26:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EDBC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 050E920675
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:26:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99BA420672
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 12:31:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Ve9NjKCV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732711AbgF3M0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 08:26:48 -0400
-Received: from out28-171.mail.aliyun.com ([115.124.28.171]:57286 "EHLO
-        out28-171.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730689AbgF3M0r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 08:26:47 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04436282|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.759732-0.00248346-0.237784;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03297;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HvD2QLd_1593520001;
-Received: from 192.168.10.205(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HvD2QLd_1593520001)
-          by smtp.aliyun-inc.com(10.147.40.7);
-          Tue, 30 Jun 2020 20:26:42 +0800
-Subject: Re: [PATCH 2/2] clk: X1000: Add support for calculat REFCLK of USB
- PHY.
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-References: <20200626164844.25436-1-zhouyanjie@wanyeetech.com>
- <20200626164844.25436-3-zhouyanjie@wanyeetech.com>
- <AKNJCQ.6UUHR0DBDE8E2@crapouillou.net>
- <b0a3a0b0-4ae8-3905-8d0c-50e44511fa95@wanyeetech.com>
- <IEBNCQ.EWU8F7SNWRJK2@crapouillou.net>
-From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
-Message-ID: <3b5bb36a-964f-3d12-08cf-f094c593cd2b@wanyeetech.com>
-Date:   Tue, 30 Jun 2020 20:26:30 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S2387695AbgF3Mbv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 08:31:51 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:64113 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732804AbgF3Mbt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 08:31:49 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1593520309; h=Message-ID: References: In-Reply-To: Subject:
+ To: From: Date: Content-Transfer-Encoding: Content-Type: MIME-Version:
+ Sender; bh=k0MdTyKtV4z22dAVkmjS3nxPgaMUlZ3id20kmVJEhWM=; b=Ve9NjKCV/1JiJEE7Md0yCBpAFxTGZDycuUXMQkrDKIbMUAq3N3bnwcYWB6+Xo3pen+xDlIRl
+ 4Q5NoDzK/RJ1VJcBben5t7OAcRqSeBQ1irZobOvRJrc1xc0wzO/mfjjm7tp0paCtEFCrBb/3
+ NxjtzXMRXL2ifpdidac6h3wgQ/I=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n13.prod.us-east-1.postgun.com with SMTP id
+ 5efb30b1c4bb4f886db6ea4d (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 30 Jun 2020 12:31:45
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 4C166C4339C; Tue, 30 Jun 2020 12:31:44 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: gokulsri)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9A0D0C433C8;
+        Tue, 30 Jun 2020 12:31:43 +0000 (UTC)
 MIME-Version: 1.0
-In-Reply-To: <IEBNCQ.EWU8F7SNWRJK2@crapouillou.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 30 Jun 2020 18:01:43 +0530
+From:   gokulsri@codeaurora.org
+To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+        robh+dt@kernel.org, sricharan@codeaurora.org,
+        nprakash@codeaurora.org
+Subject: Re: [PATCH V5 00/10] remoteproc: qcom: q6v5-wcss: Add support for
+ secure pil
+In-Reply-To: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
+References: <1589362265-22702-1-git-send-email-gokulsri@codeaurora.org>
+Message-ID: <14579d9dbcc06bca392b41ace1b0ce49@codeaurora.org>
+X-Sender: gokulsri@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Paul,
+  Hi Bjorn,
+  My below patch series (https://patchwork.kernel.org/cover/11545511/) 
+with all the review comments addressed and this is on top of
+  Govind's series (https://patchwork.kernel.org/cover/11060629/) "[v5] 
+"Add non PAS wcss Q6 support for QCS404".
+  Need your help to know how should I proceed further to merge these 
+patches.
 
-在 2020/6/29 上午1:03, Paul Cercueil 写道:
-> Hi Zhou,
->
-> Le lun. 29 juin 2020 à 0:18, Zhou Yanjie <zhouyanjie@wanyeetech.com> a 
-> écrit :
->> Hi Paul,
->>
->> 在 2020/6/27 上午1:36, Paul Cercueil 写道:
->>> Hi Zhou,
->>>
->>> Le sam. 27 juin 2020 à 0:48, 周琰杰 (Zhou Yanjie) 
->>> <zhouyanjie@wanyeetech.com> a écrit :
->>>> Add new functions to "x1000_otg_phy_ops" to calculat the rate of 
->>>> REFCLK,
->>>> which is needed by USB PHY in the Ingenic X1000 SoC.
->>>>
->>>> Tested-by: 周正 (Zhou Zheng) <sernia.zhou@foxmail.com>
->>>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
->>>> ---
->>>>  drivers/clk/ingenic/x1000-cgu.c | 113 
->>>> ++++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 113 insertions(+)
->>>>
->>>> diff --git a/drivers/clk/ingenic/x1000-cgu.c 
->>>> b/drivers/clk/ingenic/x1000-cgu.c
->>>> index 453f3323cb99..a61c16f98a11 100644
->>>> --- a/drivers/clk/ingenic/x1000-cgu.c
->>>> +++ b/drivers/clk/ingenic/x1000-cgu.c
->>>> @@ -48,8 +48,114 @@
->>>>  #define USBPCR_SIDDQ        BIT(21)
->>>>  #define USBPCR_OTG_DISABLE    BIT(20)
->>>>
->>>> +/* bits within the USBPCR1 register */
->>>> +#define USBPCR1_REFCLKSEL_SHIFT    26
->>>> +#define USBPCR1_REFCLKSEL_MASK    (0x3 << USBPCR1_REFCLKSEL_SHIFT)
->>>> +#define USBPCR1_REFCLKSEL_CORE    (0x2 << USBPCR1_REFCLKSEL_SHIFT)
->>>> +#define USBPCR1_REFCLKDIV_SHIFT    24
->>>> +#define USBPCR1_REFCLKDIV_MASK    (0x3 << USBPCR1_REFCLKDIV_SHIFT)
->>>> +#define USBPCR1_REFCLKDIV_48    (0x2 << USBPCR1_REFCLKDIV_SHIFT)
->>>> +#define USBPCR1_REFCLKDIV_24    (0x1 << USBPCR1_REFCLKDIV_SHIFT)
->>>> +#define USBPCR1_REFCLKDIV_12    (0x0 << USBPCR1_REFCLKDIV_SHIFT)
->>>> +
->>>>  static struct ingenic_cgu *cgu;
->>>>
->>>> +static u8 x1000_otg_phy_get_parent(struct clk_hw *hw)
->>>> +{
->>>> +    /* we only use CLKCORE, revisit if that ever changes */
->>>> +    return 0;
->>>> +}
->>>> +
->>>> +static int x1000_otg_phy_set_parent(struct clk_hw *hw, u8 idx)
->>>> +{
->>>> +    unsigned long flags;
->>>> +    u32 usbpcr1;
->>>> +
->>>> +    if (idx > 0)
->>>> +        return -EINVAL;
->>>> +
->>>> +    spin_lock_irqsave(&cgu->lock, flags);
->>>> +
->>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
->>>> +    usbpcr1 &= ~USBPCR1_REFCLKSEL_MASK;
->>>> +    /* we only use CLKCORE */
->>>> +    usbpcr1 |= USBPCR1_REFCLKSEL_CORE;
->>>> +    writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
->>>> +
->>>> +    spin_unlock_irqrestore(&cgu->lock, flags);
->>>> +    return 0;
->>>> +}
->>>
->>> If you only support one parent, maybe set that bit in the 
->>> x1000_cgu_init(), then you can drop the get_parent/set_parent.
->>>
->>
->> Sure.
->>
->>
->>>> +
->>>> +static unsigned long x1000_otg_phy_recalc_rate(struct clk_hw *hw,
->>>> +                        unsigned long parent_rate)
->>>> +{
->>>> +    u32 usbpcr1;
->>>> +    unsigned refclk_div;
->>>> +
->>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
->>>> +    refclk_div = usbpcr1 & USBPCR1_REFCLKDIV_MASK;
->>>> +
->>>> +    switch (refclk_div) {
->>>> +    case USBPCR1_REFCLKDIV_12:
->>>> +        return 12000000;
->>>> +
->>>> +    case USBPCR1_REFCLKDIV_24:
->>>> +        return 24000000;
->>>> +
->>>> +    case USBPCR1_REFCLKDIV_48:
->>>> +        return 48000000;
->>>> +    }
->>>
->>> On your setup, what frequency is configured for the "otg" clock? Is 
->>> it 48 MHz?
->>>
->>> I believe CLKCORE is the OTG core's clock (aka "otg"), and I'm 
->>> pretty sure that these fields only represent CLKCORE/4, CLKCORE/2, 
->>> CLKCORE/1, but the doc expects CLKCORE==48MHz.
->>>
->>
->> This is the REFCLKDIV in USBPCR1 reg, it's for the usb phy, so it is 
->> not the otg clock. In X1000 and X1500 it is 24MHz, in JZ4780 it is 
->> 48MHz.
->
-> I know it is for the OTG PHY clock, what I'm saying is that the OTG 
-> PHY clock is derived from CLKCORE which I believe is the "otg" clock. 
-> Unless the clock represents a crystal, it is derived from another 
-> clock, and as a result the clock rate should be computed from the 
-> parent clock rate.
->
+  Regards,
+  Gokul
 
-In the current Ingenic SoCs I have in hand, only JZ4780/X1000/X1500 has 
-this REFCLKDIV.
-
-At present, the relevant drivers in X1000 are written with reference to 
-the drivers in jz4780-cgu.c ( the author is Paul Burton ). I have 
-already tested on X1000 and JZ4780 today, the driver is effective and 
-can be configured by setting assigned-clock-rates in DT ( 48000000 for 
-JZ4780, 24000000 for X1000 and X1500 ).
-
-Thanks and best regards!
-
-
-> -Paul
->
->>
->>> In that case the "otg_phy" should be parented to "otg", and the rate 
->>> should be computed according to the parent rate and the divider 
->>> configured.
->>>
->>>> +
->>>> +    BUG();
->>>
->>> Don't use BUG() - it pisses off Linus :)
->>> And it's reserved for bugs that will take the whole system down, I 
->>> think. Better use WARN().
->>>
->>
->> Sure, I will change it in the next version.
->>
->> Thanks and best regards!
->>
->>
->>> Cheers,
->>> -Paul
->>>
->>>> +    return parent_rate;
->>>> +}
->>>> +
->>>> +static long x1000_otg_phy_round_rate(struct clk_hw *hw, unsigned 
->>>> long req_rate,
->>>> +                      unsigned long *parent_rate)
->>>> +{
->>>> +    if (req_rate < 18000000)
->>>> +        return 12000000;
->>>> +
->>>> +    if (req_rate < 36000000)
->>>> +        return 24000000;
->>>> +
->>>> +    return 48000000;
->>>> +}
->>>> +
->>>> +static int x1000_otg_phy_set_rate(struct clk_hw *hw, unsigned long 
->>>> req_rate,
->>>> +                   unsigned long parent_rate)
->>>> +{
->>>> +    unsigned long flags;
->>>> +    u32 usbpcr1, div_bits;
->>>> +
->>>> +    switch (req_rate) {
->>>> +    case 12000000:
->>>> +        div_bits = USBPCR1_REFCLKDIV_12;
->>>> +        break;
->>>> +
->>>> +    case 24000000:
->>>> +        div_bits = USBPCR1_REFCLKDIV_24;
->>>> +        break;
->>>> +
->>>> +    case 48000000:
->>>> +        div_bits = USBPCR1_REFCLKDIV_48;
->>>> +        break;
->>>> +
->>>> +    default:
->>>> +        return -EINVAL;
->>>> +    }
->>>> +
->>>> +    spin_lock_irqsave(&cgu->lock, flags);
->>>> +
->>>> +    usbpcr1 = readl(cgu->base + CGU_REG_USBPCR1);
->>>> +    usbpcr1 &= ~USBPCR1_REFCLKDIV_MASK;
->>>> +    usbpcr1 |= div_bits;
->>>> +    writel(usbpcr1, cgu->base + CGU_REG_USBPCR1);
->>>> +
->>>> +    spin_unlock_irqrestore(&cgu->lock, flags);
->>>> +    return 0;
->>>> +}
->>>> +
->>>>  static int x1000_usb_phy_enable(struct clk_hw *hw)
->>>>  {
->>>>      void __iomem *reg_opcr        = cgu->base + CGU_REG_OPCR;
->>>> @@ -80,6 +186,13 @@ static int x1000_usb_phy_is_enabled(struct 
->>>> clk_hw *hw)
->>>>  }
->>>>
->>>>  static const struct clk_ops x1000_otg_phy_ops = {
->>>> +    .get_parent = x1000_otg_phy_get_parent,
->>>> +    .set_parent = x1000_otg_phy_set_parent,
->>>> +
->>>> +    .recalc_rate = x1000_otg_phy_recalc_rate,
->>>> +    .round_rate = x1000_otg_phy_round_rate,
->>>> +    .set_rate = x1000_otg_phy_set_rate,
->>>> +
->>>>      .enable        = x1000_usb_phy_enable,
->>>>      .disable    = x1000_usb_phy_disable,
->>>>      .is_enabled    = x1000_usb_phy_is_enabled,
->>>> -- 
->>>> 2.11.0
->>>>
->>>
->
+On 2020-05-13 15:00, Gokul Sriram Palanisamy wrote:
+> IPQ8074 needs support for secure pil as well.
+> Also, currently only unified firmware is supported.
+> IPQ8074 supports split firmware for q6 and m3, so
+> adding support for that.
+> 
+> This series is based on Govind's
+> "[v5] Add non PAS wcss Q6 support for QCS404"
+> 
+> changes since v4:
+>  - Rebased patch 8
+> 
+> changes since v3:
+>  - In patch 10, Added release_firmware to free up
+>    memory requested for m3 firmware.
+> 
+> changes since v2:
+>  - In patch 5, Added a driver data 'bcr_reset_required'
+>    to select if bcr reset is required
+>  - In patch 10, Removed syscon implementation and moved
+>    to mailbox framework to access APCS IPC
+> 
+> changes since v1:
+>  - In patch 10, Addressed minor review comments.
+> 
+> Gokul Sriram Palanisamy (10):
+>   remoteproc: qcom: Add PRNG proxy clock
+>   remoteproc: qcom: Add secure PIL support
+>   remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+>   remoteproc: qcom: Add ssr subdevice identifier
+>   remoteproc: qcom: Update regmap offsets for halt register
+>   dt-bindings: clock: qcom: Add reset for WCSSAON
+>   clk: qcom: Add WCSSAON reset
+>   dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+>   arm64: dts: Add support for scm on IPQ8074 SoCs
+>   arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+> 
+>  .../devicetree/bindings/firmware/qcom,scm.txt      |   1 +
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 127 
+> +++++++++++++++++
+>  drivers/clk/qcom/gcc-ipq8074.c                     |   1 +
+>  drivers/remoteproc/qcom_q6v5_wcss.c                | 157 
+> +++++++++++++++++----
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   1 +
+>  5 files changed, 258 insertions(+), 29 deletions(-)
