@@ -2,107 +2,156 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21959C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 03:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84024C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 04:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 021D5206BE
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 03:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C930206A5
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 04:09:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PGUP9isY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vN7H2Ca8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbgF3D5C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jun 2020 23:57:02 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:27191 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726710AbgF3D5A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jun 2020 23:57:00 -0400
-X-UUID: b9632d1a4fa94819ad44fda2f8b56f45-20200630
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=4lUxsw7V57/rtfRfCgvAn7FcvMGUUtdcRvghF/iSYBM=;
-        b=PGUP9isYSLXgVE94dGfV09wr2suqppJLTq5ls9fhkpFM5nD8P4AgWooGath4CBESIm81MFRE+RKHwF1A/AXde7a2ISp1RBN6ljJwN4aAyWbAOQk0zdvVuk/+tsXZtboDihm/S3Mi2NBmjiwC4MZzvbVdbPJuUYTI4Ho6gsLk3Rc=;
-X-UUID: b9632d1a4fa94819ad44fda2f8b56f45-20200630
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1543449792; Tue, 30 Jun 2020 11:56:55 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Tue, 30 Jun 2020 11:56:46 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Tue, 30 Jun 2020 11:56:47 +0800
-Message-ID: <1593489406.20357.3.camel@mtkswgap22>
-Subject: Re: [PATCH v6 1/7] dt-bindings: pinctrl: add bindings for MediaTek
- MT6779 SoC
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     <wsd_upstream@mediatek.com>, <linux-gpio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        "Loda Chou" <loda.chou@mediatek.com>, <linux-clk@vger.kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sean Wang <sean.wang@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 30 Jun 2020 11:56:46 +0800
-In-Reply-To: <20200629215331.GA2991039@bogus>
-References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
-         <1592480018-3340-2-git-send-email-hanks.chen@mediatek.com>
-         <20200629215331.GA2991039@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726129AbgF3EJv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 00:09:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbgF3EJu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 00:09:50 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29F7EC061755;
+        Mon, 29 Jun 2020 21:09:50 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id rk21so19059849ejb.2;
+        Mon, 29 Jun 2020 21:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Hey9HbRw/dVBfXOWAz6aoDUkLgkP19V6zpTJ8WVJch0=;
+        b=vN7H2Ca8sOkOTtvwl3v6foRnaRBZiWn6uKrH2xydPPm7Zed43DfmUIi0f2YjMw6+/x
+         uJOGmUrutRMHbnddJOwujquc0X1kJ7fov7nKK7fiFCRDhJzvBJPhxdNj4KGDM+3fBwl0
+         qJfUzy8859dmVn9XcRNwo+N1/SJi6tVscANDiThp63DeRsB6xa4lR5KE7C+s2f7lhsIl
+         Jbc73GQIE2gYjLF0FMw+1d+apsSfFH16H0RPP2esr545hwkrDhLGoGoyQEuKhmNS1h5N
+         YTmZT+KRz0oqQkDD8Fk+AdBfj0OKY3oZ+u5etDDMrKWWMGZ82sh8DfAMGfpdUyvP0jHc
+         fClQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Hey9HbRw/dVBfXOWAz6aoDUkLgkP19V6zpTJ8WVJch0=;
+        b=pD08qfLTzgif2v5UZMH4FGerpHLbtr1LbOb0yoPsbIhd/Eip3K/JJ76T8gEbB/PDb9
+         kbEVMtj0coNdHnlOpSMSbEAHchdtLa+FuPQfRi1P/x0uZ6zcPkuQ8Y+N2TYI3Pu+DpHq
+         r04Fb4fQRCgT/YQ/2IrZJzJAMzCuV7If3Hzy8xn1746DDVbVUr+AN1Wr6Kr/uhpklNUF
+         ZVN/3RKg1KjFjjNfc2oBSMx2gDRik4yjqekSMK8bMuRU5Ks1wNVMi/KAxTbNPYPsLwtd
+         cUO916NRbnzsp1pJAyix/xXIXPxCGkkRYSPk4lJYNUOVBQZKATQJffKUixnIu3niElpy
+         zWRA==
+X-Gm-Message-State: AOAM531Yhm5k6PmfOEtVuTlahIr7llI1WZK/fh3KcsndeRX6v65hczoS
+        daRf5MWj6wMSNfRF1RSjaknZKsCgbhe3z1jfjss=
+X-Google-Smtp-Source: ABdhPJx0k3kHhhcmfRuwSQBAljpirUv4qs2fybiJfDd0o4Bl0x6GWFRJs4MEYUmcn6ESvQyn5fmZWG0OPMsgIoQQ0pM=
+X-Received: by 2002:a17:906:6d56:: with SMTP id a22mr17289015ejt.440.1593490188847;
+ Mon, 29 Jun 2020 21:09:48 -0700 (PDT)
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: ADC1B506D8928896ABE48FDF843DCAE64088D056FDD7FFEC2981FE32960985E62000:8
-X-MTK:  N
-Content-Transfer-Encoding: base64
+References: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
+ <1593410042-10598-5-git-send-email-Anson.Huang@nxp.com> <CAK8P3a2yXFbGxuSRoC5_dYBujnAtVoEMXe50V7QYjPYhqra7nA@mail.gmail.com>
+ <DB3PR0402MB39160335642AFBAC4B38C511F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAK8P3a0CcijnVxJws_kMiaOBbc4Uox40W4=-dX+BG6OeMYtFpw@mail.gmail.com>
+ <DB3PR0402MB39167D9A3897C3CE327EBDDBF56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAK8P3a1cYsgJu+JCrmQw-VQyAKpyOz7fpOf3jBZ7QKc=urUFtw@mail.gmail.com> <DB3PR0402MB39167F7746B4B3794600FC7FF56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB39167F7746B4B3794600FC7FF56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Tue, 30 Jun 2020 11:55:50 +0800
+Message-ID: <CAA+hA=TYuSk=P4D_D0_Rv1O2AAB3UvYrNXToptPJjEsjECquUw@mail.gmail.com>
+Subject: Re: [PATCH V3 04/10] clk: imx: Support building SCU clock driver as module
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "oleksandr.suvorov@toradex.com" <oleksandr.suvorov@toradex.com>,
+        Stefan Agner <stefan.agner@toradex.com>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Andy Duan <fugang.duan@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gTW9uLCAyMDIwLTA2LTI5IGF0IDE1OjUzIC0wNjAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4g
-T24gVGh1LCAxOCBKdW4gMjAyMCAxOTozMzozMiArMDgwMCwgSGFua3MgQ2hlbiB3cm90ZToNCj4g
-PiBGcm9tOiBBbmR5IFRlbmcgPGFuZHkudGVuZ0BtZWRpYXRlay5jb20+DQo+ID4gDQo+ID4gQWRk
-IGRldmljZXRyZWUgYmluZGluZ3MgZm9yIE1lZGlhVGVrIE1UNjc3OSBwaW5jdHJsIGRyaXZlci4N
-Cj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmR5IFRlbmcgPGFuZHkudGVuZ0BtZWRpYXRlay5j
-b20+DQo+ID4gLS0tDQo+ID4gIC4uLi9iaW5kaW5ncy9waW5jdHJsL21lZGlhdGVrLG10Njc3OS1w
-aW5jdHJsLnlhbWwgIHwgIDIxMCArKysrKysrKysrKysrKysrKysrKw0KPiA+ICAxIGZpbGUgY2hh
-bmdlZCwgMjEwIGluc2VydGlvbnMoKykNCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL21lZGlhdGVrLG10Njc3OS1waW5jdHJs
-LnlhbWwNCj4gPiANCj4gDQo+IA0KPiBNeSBib3QgZm91bmQgZXJyb3JzIHJ1bm5pbmcgJ21ha2Ug
-ZHRfYmluZGluZ19jaGVjaycgb24geW91ciBwYXRjaDoNCj4gDQo+IERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL21lZGlhdGVrLG10Njc3OS1waW5jdHJsLmV4YW1wbGUu
-ZHRzOjIxOjE4OiBmYXRhbCBlcnJvcjogZHQtYmluZGluZ3MvcGluY3RybC9tdDY3NzktcGluZnVu
-Yy5oOiBObyBzdWNoIGZpbGUgb3IgZGlyZWN0b3J5DQo+ICAgICAgICAgICNpbmNsdWRlIDxkdC1i
-aW5kaW5ncy9waW5jdHJsL210Njc3OS1waW5mdW5jLmg+DQo+ICAgICAgICAgICAgICAgICAgIF5+
-fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+fn5+DQo+IGNvbXBpbGF0aW9uIHRlcm1p
-bmF0ZWQuDQo+IHNjcmlwdHMvTWFrZWZpbGUubGliOjMxNTogcmVjaXBlIGZvciB0YXJnZXQgJ0Rv
-Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL21lZGlhdGVrLG10Njc3OS1w
-aW5jdHJsLmV4YW1wbGUuZHQueWFtbCcgZmFpbGVkDQo+IG1ha2VbMV06ICoqKiBbRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BpbmN0cmwvbWVkaWF0ZWssbXQ2Nzc5LXBpbmN0cmwu
-ZXhhbXBsZS5kdC55YW1sXSBFcnJvciAxDQo+IG1ha2VbMV06ICoqKiBXYWl0aW5nIGZvciB1bmZp
-bmlzaGVkIGpvYnMuLi4uDQo+IE1ha2VmaWxlOjEzNDc6IHJlY2lwZSBmb3IgdGFyZ2V0ICdkdF9i
-aW5kaW5nX2NoZWNrJyBmYWlsZWQNCj4gbWFrZTogKioqIFtkdF9iaW5kaW5nX2NoZWNrXSBFcnJv
-ciAyDQo+IA0KPiANCj4gU2VlIGh0dHBzOi8vcGF0Y2h3b3JrLm96bGFicy5vcmcvcGF0Y2gvMTMx
-MjAxOA0KPiANCj4gSWYgeW91IGFscmVhZHkgcmFuICdtYWtlIGR0X2JpbmRpbmdfY2hlY2snIGFu
-ZCBkaWRuJ3Qgc2VlIHRoZSBhYm92ZQ0KPiBlcnJvcihzKSwgdGhlbiBtYWtlIHN1cmUgZHQtc2No
-ZW1hIGlzIHVwIHRvIGRhdGU6DQo+IA0KPiBwaXAzIGluc3RhbGwgZ2l0K2h0dHBzOi8vZ2l0aHVi
-LmNvbS9kZXZpY2V0cmVlLW9yZy9kdC1zY2hlbWEuZ2l0QG1hc3RlciAtLXVwZ3JhZGUNCj4gDQo+
-IFBsZWFzZSBjaGVjayBhbmQgcmUtc3VibWl0Lg0KPiANCkkgYWxyZWFkeSByYW4gdGhlIGR0X2Jp
-bmRpbmdfY2hlY2sgYW5kIGl0IGxvb2tzIGdvb2QuDQoNCj4gDQo+IA0KPiBIZXJlLCB5b3UgbmVl
-ZCBwYXRjaCAyIHRvIGNvbWUgZmlyc3Qgb3IgbWVyZ2UgaXQgaW50byB0aGlzIHBhdGNoIGFzIGl0
-IA0KPiBpcyBwYXJ0IG9mIHRoZSBiaW5kaW5nLg0KPiANCkknbGwgbWVyZ2UgaXQgaW50byB0aGlz
-IHBhdGNoIGluIG5leHQgdmVyc2lvbi4NClRoYW5rIHlvdSBmb3IgeW91ciBjb21tZW50Lg0KDQpI
-YW5rcw0KDQo+IFJvYg0KPiANCg0K
+On Tue, Jun 30, 2020 at 5:16 AM Anson Huang <anson.huang@nxp.com> wrote:
+>
+> Hi, Arnd
+>
+>
+> > Subject: Re: [PATCH V3 04/10] clk: imx: Support building SCU clock driver as
+> > module
+> >
+> > On Mon, Jun 29, 2020 at 4:52 PM Anson Huang <anson.huang@nxp.com>
+> > wrote:
+> > > > Subject: Re: [PATCH V3 04/10] clk: imx: Support building SCU clock
+> > > > driver as module On Mon, Jun 29, 2020 at 2:53 PM Anson Huang
+> > <anson.huang@nxp.com> wrote:
+> > > >
+> > > > Sorry, I misread the patch in multiple ways. First of all, you
+> > > > already put clk-scu.o and clk-lpcg-scu.o files into a combined
+> > > > loadable module, and I had only looked at clk-scu.c.
+> > > >
+> > > > What I actually meant here was to link clk-scu.o together with
+> > > > clk-imx8qxp.o (and possibly future chip-specific files) into a
+> > > > loadable module and drop the export.
+> > >
+> > > Sorry, could you please advise more details about how to do it in Makefile?
+> > > I tried below but it looks like NOT working. multiple definition of
+> > module_init() error reported.
+> > >
+> > > obj-$(CONFIG_MXC_CLK_SCU) := clk-imx.o clk-imx-y += clk-scu.o
+> > > clk-lpcg-scu.o
+> > > clk-imx-$(CONFIG_CLK_IMX8QXP) += clk-imx8qxp.o clk-imx8qxp-lpcg.o
+> >
+> > Right, you can't have multiple module_init() in a module, so what I suggested
+> > earlier won't work any more as soon as you add a second chip that uses the
+> > clk-scu driver, and then you have to use separate modules, or some hack that
+> > calls the init functions one at a time, which is probably worse.
+> >
+> > If it's only imx8qxp, you can do it like this:
+> >
+> > obj-$(CONFIG_MXC_CLK_SCU) := clk-imx-scu.o clk-imx-lpcg.o
+> > clk-imx-scu-y         += clk-scu.o clk-imx8qxp.o
+> > clk-imx-lpcq-scu-y += clk-lpcg-scu.o clk-imx8qxp-lpcg.o
+> >
+> > If you already know that the scu driver is going to be used in future chips, then
+> > just stay with what you have now, using a separate module per file, exporting
+> > the symbols as needed.
+> >
+>
+> Thanks, and yes, I know that scu clk driver will be used for future i.MX8X chips with
+> SCU inside, the current i.MX8QXP clock driver can NOT cover all i.MX8X chips, so
+> I will stay with the exporting symbols.
+>
 
+SCU clock driver is a common driver for all SCU based platforms.
+Current i.MX8QXP SCU clock driver will be extended to support all
+future SCU based platforms.
+So theoretically clk-scu.o and clk-imx8qxp.o can be combined. LPCG  is similar.
+Maybe you can give a try as Arnd suggested.
+
+Regards
+Aisheng
+
+> Thanks,
+> Anson
