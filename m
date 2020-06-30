@@ -2,192 +2,120 @@ Return-Path: <SRS0=h94J=AL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5CCAC433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 16:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E946C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 21:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F27620774
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 16:39:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1823E20775
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jun 2020 21:02:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YafiIJGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732379AbgF3Qji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jun 2020 12:39:38 -0400
-Received: from out28-101.mail.aliyun.com ([115.124.28.101]:34529 "EHLO
-        out28-101.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732068AbgF3Qjh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 12:39:37 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.04479663|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0176947-0.000462366-0.981843;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=11;RT=11;SR=0;TI=SMTPD_---.HvJGFHX_1593535155;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.HvJGFHX_1593535155)
-          by smtp.aliyun-inc.com(10.147.43.230);
-          Wed, 01 Jul 2020 00:39:29 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
+        id S1727801AbgF3VCN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jun 2020 17:02:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57772 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726739AbgF3VCN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jun 2020 17:02:13 -0400
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59869C061755;
+        Tue, 30 Jun 2020 14:02:13 -0700 (PDT)
+Received: by mail-il1-x143.google.com with SMTP id w73so7238222ila.11;
+        Tue, 30 Jun 2020 14:02:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WRQJQwlXflGJ37/jOmBKwBicPdHtRMvLxub3PxAmuG4=;
+        b=YafiIJGFdTuNrNOw5wgMfTU5z5VCFcwrmrkj5aDpKRPveSUPGb87Nix4nVeKmqyfzd
+         mQ+CAaSnQkWl/svbr03I/+zkPd2YCsGg5sSVeXENjGmX9VeAm5jlxgK8qV44lDJdOPAs
+         hwFNNJIc2HJ/OnEDGt5H+as2z9wK6mScltRqJWPSCioNmXilHw0aFW/SPTjRNhUEdJnl
+         OmdZszUZAdEYJEHf9ync6UpH0dTsKwFesYfRthpL4F8ASAtuh9sULifQ925xgm9rzaeo
+         0UrgMbxZJeUcONIDmq9Fw3Pa3fP8I1yIy+CBU/InS2ZKrl86Uycy2kHsI6DVXnOlQnMw
+         5vcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WRQJQwlXflGJ37/jOmBKwBicPdHtRMvLxub3PxAmuG4=;
+        b=aTuN8VZPs4/cZ3a1Cg2BBcVq0z5oAbXqsYKYLrYTete9Hy4/rOsIi8ssJADp5tkxW1
+         vwm6xeMf0Lokjjx1eMDA7EpoXU9ZCdjEOWYYBoJryWX607hLtNAL1cr1yJXMc3HWLrjI
+         QIUw1AgFvjfQKDrHnz4XI8t+FNHVadr07dNR6oCY24vAI1bFdrvrmmSoQ5zebv+SpQ0l
+         VqQ58yE58wBLO9VpPsTrby0TYcD10/N3PKIdjnls48oYRiQ++MuoLWhySUBfc6P8OC0V
+         /ciB57p1zjPgEWgrjRS1sCKFuqwdEUNJyxYgynqS9X1qt0+85t6QEK0pG+mgDeOKYVlP
+         TYCQ==
+X-Gm-Message-State: AOAM532zeHo6Ex2lBxr0uPLF17Fjb0qVlWvzjl+zWRHp1o2XRAsiUsCR
+        Ij+8m8IgKQtszkFCVW67p7QTXAQ5
+X-Google-Smtp-Source: ABdhPJzxlgl9i3L/TOVMOKrSO/CQ+RM3Rvt9gET5kEH7jf3JrlknMOqxpP5M4qAAvyEk88ReahfcxA==
+X-Received: by 2002:a92:cb10:: with SMTP id s16mr4690250ilo.192.1593550932284;
+        Tue, 30 Jun 2020 14:02:12 -0700 (PDT)
+Received: from aford-IdeaCentre-A730.lan (c-73-37-219-234.hsd1.mn.comcast.net. [73.37.219.234])
+        by smtp.gmail.com with ESMTPSA id o16sm2105042ilt.59.2020.06.30.14.02.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jun 2020 14:02:11 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
 To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, sboyd@kernel.org,
-        paul@crapouillou.net, mturquette@baylibre.com,
-        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
-        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH v3 2/3] clk: JZ4780: Reformat the code to align it.
-Date:   Wed,  1 Jul 2020 00:38:51 +0800
-Message-Id: <20200630163852.47267-3-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200630163852.47267-1-zhouyanjie@wanyeetech.com>
-References: <20200630163852.47267-1-zhouyanjie@wanyeetech.com>
+Cc:     dan.carpenter@oracle.com, aford@beaconembedded.com,
+        Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: vc5: Add memory check to prevent oops
+Date:   Tue, 30 Jun 2020 16:01:54 -0500
+Message-Id: <20200630210155.459250-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Reformat the code (add one level of indentation before the values),
-to align the code in the macro definition section.
+When getting the names of the child nodes, kasprintf is used to
+allocate memory which is used to create the string for the node
+name.  Unfortunately, there is no memory check to determine
+if this allocation fails, it may cause an error when trying
+to get child node name.
 
-Tested-by: 周正 (Zhou Zheng) <sernia.zhou@foxmail.com>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
+This patch will check if the memory allocation fails, and returns
+and -NOMEM error instead of blindly moving on.
 
-Notes:
-    v2:
-    New patch.
-    
-    v2->v3:
-    No change.
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
 
- drivers/clk/ingenic/jz4780-cgu.c | 90 ++++++++++++++++++++--------------------
- 1 file changed, 45 insertions(+), 45 deletions(-)
-
-diff --git a/drivers/clk/ingenic/jz4780-cgu.c b/drivers/clk/ingenic/jz4780-cgu.c
-index cf3f7f87e7a6..abd8d6d78590 100644
---- a/drivers/clk/ingenic/jz4780-cgu.c
-+++ b/drivers/clk/ingenic/jz4780-cgu.c
-@@ -20,50 +20,50 @@
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 1d8ee4b8b1f5..29cdb38dc40b 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -789,10 +789,14 @@ static int vc5_get_output_config(struct i2c_client *client,
+ 	int ret = 0;
  
- /* CGU register offsets */
- #define CGU_REG_CLOCKCONTROL	0x00
--#define CGU_REG_LCR			0x04
--#define CGU_REG_APLL		0x10
--#define CGU_REG_MPLL		0x14
--#define CGU_REG_EPLL		0x18
--#define CGU_REG_VPLL		0x1c
--#define CGU_REG_CLKGR0		0x20
--#define CGU_REG_OPCR		0x24
--#define CGU_REG_CLKGR1		0x28
--#define CGU_REG_DDRCDR		0x2c
--#define CGU_REG_VPUCDR		0x30
--#define CGU_REG_USBPCR		0x3c
--#define CGU_REG_USBRDT		0x40
--#define CGU_REG_USBVBFIL	0x44
--#define CGU_REG_USBPCR1		0x48
--#define CGU_REG_LP0CDR		0x54
--#define CGU_REG_I2SCDR		0x60
--#define CGU_REG_LP1CDR		0x64
--#define CGU_REG_MSC0CDR		0x68
--#define CGU_REG_UHCCDR		0x6c
--#define CGU_REG_SSICDR		0x74
--#define CGU_REG_CIMCDR		0x7c
--#define CGU_REG_PCMCDR		0x84
--#define CGU_REG_GPUCDR		0x88
--#define CGU_REG_HDMICDR		0x8c
--#define CGU_REG_MSC1CDR		0xa4
--#define CGU_REG_MSC2CDR		0xa8
--#define CGU_REG_BCHCDR		0xac
--#define CGU_REG_CLOCKSTATUS	0xd4
-+#define CGU_REG_LCR				0x04
-+#define CGU_REG_APLL			0x10
-+#define CGU_REG_MPLL			0x14
-+#define CGU_REG_EPLL			0x18
-+#define CGU_REG_VPLL			0x1c
-+#define CGU_REG_CLKGR0			0x20
-+#define CGU_REG_OPCR			0x24
-+#define CGU_REG_CLKGR1			0x28
-+#define CGU_REG_DDRCDR			0x2c
-+#define CGU_REG_VPUCDR			0x30
-+#define CGU_REG_USBPCR			0x3c
-+#define CGU_REG_USBRDT			0x40
-+#define CGU_REG_USBVBFIL		0x44
-+#define CGU_REG_USBPCR1			0x48
-+#define CGU_REG_LP0CDR			0x54
-+#define CGU_REG_I2SCDR			0x60
-+#define CGU_REG_LP1CDR			0x64
-+#define CGU_REG_MSC0CDR			0x68
-+#define CGU_REG_UHCCDR			0x6c
-+#define CGU_REG_SSICDR			0x74
-+#define CGU_REG_CIMCDR			0x7c
-+#define CGU_REG_PCMCDR			0x84
-+#define CGU_REG_GPUCDR			0x88
-+#define CGU_REG_HDMICDR			0x8c
-+#define CGU_REG_MSC1CDR			0xa4
-+#define CGU_REG_MSC2CDR			0xa8
-+#define CGU_REG_BCHCDR			0xac
-+#define CGU_REG_CLOCKSTATUS		0xd4
+ 	child_name = kasprintf(GFP_KERNEL, "OUT%d", clk_out->num + 1);
++	if (!child_name) {
++		ret = -ENOMEM;
++		goto output_error;
++	}
+ 	np_output = of_get_child_by_name(client->dev.of_node, child_name);
+ 	kfree(child_name);
+ 	if (!np_output)
+-		goto output_done;
++		return 0;
  
- /* bits within the OPCR register */
--#define OPCR_SPENDN0		BIT(7)
--#define OPCR_SPENDN1		BIT(6)
-+#define OPCR_SPENDN0			BIT(7)
-+#define OPCR_SPENDN1			BIT(6)
+ 	ret = vc5_update_mode(np_output, clk_out);
+ 	if (ret)
+@@ -813,7 +817,6 @@ static int vc5_get_output_config(struct i2c_client *client,
  
- /* bits within the USBPCR register */
--#define USBPCR_USB_MODE		BIT(31)
-+#define USBPCR_USB_MODE			BIT(31)
- #define USBPCR_IDPULLUP_MASK	(0x3 << 28)
--#define USBPCR_COMMONONN	BIT(25)
--#define USBPCR_VBUSVLDEXT	BIT(24)
-+#define USBPCR_COMMONONN		BIT(25)
-+#define USBPCR_VBUSVLDEXT		BIT(24)
- #define USBPCR_VBUSVLDEXTSEL	BIT(23)
--#define USBPCR_POR		BIT(22)
--#define USBPCR_SIDDQ		BIT(21)
--#define USBPCR_OTG_DISABLE	BIT(20)
-+#define USBPCR_POR				BIT(22)
-+#define USBPCR_SIDDQ			BIT(21)
-+#define USBPCR_OTG_DISABLE		BIT(20)
- #define USBPCR_COMPDISTUNE_MASK	(0x7 << 17)
--#define USBPCR_OTGTUNE_MASK	(0x7 << 14)
-+#define USBPCR_OTGTUNE_MASK		(0x7 << 14)
- #define USBPCR_SQRXTUNE_MASK	(0x7 << 11)
- #define USBPCR_TXFSLSTUNE_MASK	(0xf << 7)
- #define USBPCR_TXPREEMPHTUNE	BIT(6)
-@@ -80,13 +80,13 @@
- #define USBPCR1_REFCLKDIV_48	(0x2 << USBPCR1_REFCLKDIV_SHIFT)
- #define USBPCR1_REFCLKDIV_24	(0x1 << USBPCR1_REFCLKDIV_SHIFT)
- #define USBPCR1_REFCLKDIV_12	(0x0 << USBPCR1_REFCLKDIV_SHIFT)
--#define USBPCR1_USB_SEL		BIT(28)
--#define USBPCR1_WORD_IF0	BIT(19)
--#define USBPCR1_WORD_IF1	BIT(18)
-+#define USBPCR1_USB_SEL			BIT(28)
-+#define USBPCR1_WORD_IF0		BIT(19)
-+#define USBPCR1_WORD_IF1		BIT(18)
+ 	of_node_put(np_output);
  
- /* bits within the USBRDT register */
--#define USBRDT_VBFIL_LD_EN	BIT(25)
--#define USBRDT_USBRDT_MASK	0x7fffff
-+#define USBRDT_VBFIL_LD_EN		BIT(25)
-+#define USBRDT_USBRDT_MASK		0x7fffff
- 
- /* bits within the USBVBFIL register */
- #define USBVBFIL_IDDIGFIL_SHIFT	16
-@@ -94,11 +94,11 @@
- #define USBVBFIL_USBVBFIL_MASK	(0xffff)
- 
- /* bits within the LCR register */
--#define LCR_PD_SCPU			BIT(31)
--#define LCR_SCPUS			BIT(27)
-+#define LCR_PD_SCPU				BIT(31)
-+#define LCR_SCPUS				BIT(27)
- 
- /* bits within the CLKGR1 register */
--#define CLKGR1_CORE1		BIT(15)
-+#define CLKGR1_CORE1			BIT(15)
- 
- static struct ingenic_cgu *cgu;
+-output_done:
+ 	return ret;
+ }
  
 -- 
-2.11.0
+2.25.1
 
