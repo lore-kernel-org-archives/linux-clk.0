@@ -6,43 +6,50 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4746C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 09:53:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D56C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 09:55:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 973002078A
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 09:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557F22073E
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 09:55:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbgGAJxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jul 2020 05:53:45 -0400
-Received: from mout.kundenserver.de ([217.72.192.75]:35417 "EHLO
+        id S1729362AbgGAJzP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jul 2020 05:55:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:56329 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729415AbgGAJxo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jul 2020 05:53:44 -0400
-Received: from mail-lj1-f177.google.com ([209.85.208.177]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1N7yz7-1inUHd0d9f-0151pi; Wed, 01 Jul 2020 11:53:42 +0200
-Received: by mail-lj1-f177.google.com with SMTP id f5so10290608ljj.10;
-        Wed, 01 Jul 2020 02:53:42 -0700 (PDT)
-X-Gm-Message-State: AOAM531QBmlciIkvRWE3CvxcvubCt2z7sACFt/+V8NTZgo8jeNomrBLI
-        QtccpMioVo+cah9J0Wi1WPQIEWpAiU3GYW2VrUw=
-X-Google-Smtp-Source: ABdhPJwcKJeNUzMpJ3AFWLgDww+593rA0lIZ+o9T1ESGJwcmvt8h8OKlKgOJmjFZ6E7g6CKPVURXF3FchoAkKNegvZI=
-X-Received: by 2002:a2e:9d87:: with SMTP id c7mr5814766ljj.168.1593597221597;
- Wed, 01 Jul 2020 02:53:41 -0700 (PDT)
+        with ESMTP id S1725440AbgGAJzN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jul 2020 05:55:13 -0400
+Received: from mail-lj1-f174.google.com ([209.85.208.174]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1N95Rn-1imNnT0w0F-016Ad5; Wed, 01 Jul 2020 11:55:12 +0200
+Received: by mail-lj1-f174.google.com with SMTP id f5so10294965ljj.10;
+        Wed, 01 Jul 2020 02:55:12 -0700 (PDT)
+X-Gm-Message-State: AOAM531Rcb3CJcgDBNwjFZYdohzI5r+zMlKyJ30HpTbXq1EaSh3u+m21
+        lyzuNbHLhGwnzmOoWbtoFG2JAce4p0ij+SB6YR4=
+X-Google-Smtp-Source: ABdhPJyS8gOiUO9in/jq2pHqnW+bGf1AIEllB7ZFKe+y9xZNEbqhCylIU8X1Yk27txEvSFcy3j2uZ4aJTujKQhLR8wA=
+X-Received: by 2002:a2e:894d:: with SMTP id b13mr11032483ljk.410.1593597311714;
+ Wed, 01 Jul 2020 02:55:11 -0700 (PDT)
 MIME-Version: 1.0
 References: <1593410042-10598-1-git-send-email-Anson.Huang@nxp.com>
- <1593410042-10598-3-git-send-email-Anson.Huang@nxp.com> <CAK8P3a2ZL6_rV=2brNz=UDdji3mddF+1Nb6Ew+=n4j0-fNrCug@mail.gmail.com>
- <DB3PR0402MB3916BA91E0F44EA5DAD6BF26F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <CAK8P3a3igMrRNa1oR=d=9A-YNAmb+LXNRbwBk9zuJZq5tfvr9Q@mail.gmail.com>
- <DB3PR0402MB39166254A6F287DC0A8216F1F56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <CAK8P3a3FueW3JSLO4RV4WV3C-UP_5y5UA1WGs+gaQGaPaafaUA@mail.gmail.com> <DB3PR0402MB3916F746C792CB2BC876715BF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-In-Reply-To: <DB3PR0402MB3916F746C792CB2BC876715BF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <1593410042-10598-5-git-send-email-Anson.Huang@nxp.com> <CAK8P3a2yXFbGxuSRoC5_dYBujnAtVoEMXe50V7QYjPYhqra7nA@mail.gmail.com>
+ <DB3PR0402MB39160335642AFBAC4B38C511F56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAK8P3a0CcijnVxJws_kMiaOBbc4Uox40W4=-dX+BG6OeMYtFpw@mail.gmail.com>
+ <DB3PR0402MB39167D9A3897C3CE327EBDDBF56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAK8P3a1cYsgJu+JCrmQw-VQyAKpyOz7fpOf3jBZ7QKc=urUFtw@mail.gmail.com>
+ <DB3PR0402MB39167F7746B4B3794600FC7FF56E0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAA+hA=TYuSk=P4D_D0_Rv1O2AAB3UvYrNXToptPJjEsjECquUw@mail.gmail.com>
+ <DB3PR0402MB3916E820EA1E9884DD0A08CFF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAK8P3a1nxtFqytyTZjte-9UJQEZWp0eKF64v=E1LpgsG8R0h9w@mail.gmail.com>
+ <DB3PR0402MB3916B16516474F8D17EF9DA3F56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <DB3PR0402MB3916461E26540B6ACFB54AFFF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916461E26540B6ACFB54AFFF56C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 1 Jul 2020 11:53:25 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1E_UecNq=7rvceQoXdFkmnBFOyUtxrpJ1bF6cLWOtNqQ@mail.gmail.com>
-Message-ID: <CAK8P3a1E_UecNq=7rvceQoXdFkmnBFOyUtxrpJ1bF6cLWOtNqQ@mail.gmail.com>
-Subject: Re: [PATCH V3 02/10] init.h: Fix the __setup_param() macro for module build
+Date:   Wed, 1 Jul 2020 11:54:55 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a3H87w-eJhOGuRQr03W-=ONdsj_=Z6ic4nB==GpxnYsZA@mail.gmail.com>
+Message-ID: <CAK8P3a3H87w-eJhOGuRQr03W-=ONdsj_=Z6ic4nB==GpxnYsZA@mail.gmail.com>
+Subject: Re: [PATCH V3 04/10] clk: imx: Support building SCU clock driver as module
 To:     Anson Huang <anson.huang@nxp.com>
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+Cc:     Dong Aisheng <dongas86@gmail.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Sascha Hauer <kernel@pengutronix.de>,
@@ -63,68 +70,40 @@ Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
         linux-clk <linux-clk@vger.kernel.org>,
         dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:s/nBx8LPIaFnpCo7zScRj0f1v40/+zvoPK+6/sgBGubInyRd66P
- U5nSMmiYJgml+S009e9bIg92fIthh9VBVVOj8Hx26GpPggyQdbUc26R3slQDHW9fT5soIEc
- zUUgNN29R2mxWTr+9X8e/4jyyikuUqOv28z/q+cRe7ZOwf/6wk5yYSzXutPSGwBD6uz2N/H
- /8OklkUTKhX1gM28Bqm8Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:58vuynDe5R0=:qkPbF9lEoyv6WIfnRemzqQ
- UJiAeSqilD6uqeMZi3TUb26jEPTL0UI+gyKx6raxPYM4Xvlml8bBJqNNBeNYqD5ZloJzOXmvB
- r6YRWFh0ABHo4K8AGQR/o6ZrJHZQ4Yqe4HJSXVomNUtap4V0BYiAQCP+MOUI/BLGjSXIRZTNX
- 7P7pp/qJIg9dw0aRyn/0vqnP7D26t4QGF9RnGBvLjVY/uN2jmXt2q6mXbMZ5rriUKEmzYoFyS
- 5q51sXr9uRGgjvZzw2UYsW18O1PENbYL4fu8CaF0u+e+CmAqQqm9FR1Msihu6/NkzbeYiS1qi
- WOJeIq41EJgzWP6ST5GqXxWwEVLO6npYMChdKdz70b6R4YA1c5QsWqCoiYLwpgmyanGlAIWFk
- IopBMq/KDM3PDoC5axBojSOv4sBMbJlhG/eiqQ49lGOH6xnV8NGaqW2F6GqgRRb+JYr78klcW
- uc2vH04UUpcUfWgjfFLadx2qboaTa+4qIqr+51YVm/Gw83IpKntPmFqu9APi5MdXNUXOSDa3L
- SwkO4tS2Wbr9OjEg9y2pd91Z4vT6hdbYvufoHQE7bN2+Pu0/hMHTctU3xlwtDfMKzrWtitw5T
- ie4VWxp4YVap7I5/iZl57IEdv56ppT3hO6MuRKMzcbXAhnPQ8Q3ZioJzQFyuQyDzdUtPKqwYf
- mTQENg04jAaJ2OogN3nvqtI0s40pcA0ZA0w3QVnvzmcuRTLXbsxGhwDg5eZzOWQRHz/gkmEyS
- PFqyRdEXJsaC3Im9TntmfXCwMVDbj8TeZetJAmbc6BM551chTBVff+jNYmdYLWIoGCfmNzmNm
- rJAV70SnfjmHWyqbAa2m9UQVOcAgl3zI4Uh7jzshmGvlfo9DzZr5KjxWSPpoUTGoEPBfmMiuK
- iNMkZ6xcBqNfSmV5v/Ak+VotJZDzZ1hIpbsf1+4yWrbrBctw/5a2GNRDysoY+w4SS8eWAmNLZ
- tt4AuD0ZYQkzqLE1NwpTMjl/JNN0q2uwdK49XDjG3Tfsx31Uu/Z0s
+X-Provags-ID: V03:K1:VLxLCkpT4Nb0DT5tw0KAjeBRj/PNiAvQuxxoResPU7lyxR+cWLg
+ To2667boqkD8R5vASEWelu2uiiMyLJtjtp3kbTjhvGAg663Jbp3DgHGj9ljGxzfD+o9gG7m
+ gMKCHh25WBEH+Mjay2DJkT/DK7V9nDUODzvgh/+NXWF5PKg4/jQv915jATW+26X6dRsveoT
+ JHX0RDfWN4AgG64iG1Sqw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:UZatkdsoxVI=:2DaiVK7LxZn8n2TX61lhtk
+ +kylqdHE2vbIVGAh53Fwku9vCrGSzTxbNuoomUvNPU0xrwtLInNnud8Jh3nEkH7WAJZnqedV/
+ Nhir+GicK7+qBemztW/IAEiD+gUVfk2OwJ3GBJPG6EvUk6fkwZfnsxFmhTmpmbHOXCEyqO/zB
+ A8OvQkAVaHmQwWafAAxqtIs3ehl4egsrIs2kKpkNkxvl6h6/YsRV2Ouvt4KcY4sfl8L4Ehtf4
+ XED+D5qlTa+XAJ7g0CfGE+x5TDmUJdaOfy/TJBoC5LpBa0Pj+slyeJBu4prb77U9685FgKIrJ
+ 1SYiPbgIH5LAc3x0FZUA7vuy25CblCSI58IhPG/tMSmnzArLYc9HOo8n4PN7juePWPt7oynS6
+ Qi7/mN7FFnDJV5SYwDl+L1gk7TZmwkvoH8lgnNdKAJy5kOSXZH3Ta3v+tUnDYq6Nx+K555ken
+ +JsZP3ziit3FEnwuJfBYziPmliRCMn55Z0EVj6LvbUvHsPffFKs3ZnNYgv9E0/q/mo2hEBMl4
+ IFzeorEgZP6r1O9gad89MjGHJQ8zXbWpIftM0bmdOvIrJXgeFYufz2vRigz8FiUZrzp409vBc
+ nqAF2tyNsWPlg43vsDbQxpwnweT1hxw2STitW+OpDeS97tN5GjAFjTtrYlYuaHYv0i8xuOYhc
+ uOkiuW38VdHTO1ub7bFv3vOK9BHA0iyt3KiUq8V+1uebK+7rUU90jCQP4hXXYtLnTiV7wGMCm
+ zWsrXZ22iY+ACZAEzhxGy2UVUN1JU2YB4jlKaddAVzS6LXAY4l1mzP/pkNaaNotfezVM5bhV0
+ H+PVdB4zzKSBQLmZsHUILLJEcGmmSEj+cZrPnNuICpJi0Zj+C4=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 1, 2020 at 11:27 AM Anson Huang <anson.huang@nxp.com> wrote:
-> > Subject: Re: [PATCH V3 02/10] init.h: Fix the __setup_param() macro for
-> > module build
+On Wed, Jul 1, 2020 at 11:40 AM Anson Huang <anson.huang@nxp.com> wrote:
+> > Subject: RE: [PATCH V3 04/10] clk: imx: Support building SCU clock driver as
+> > module
 > >
-> > On Wed, Jul 1, 2020 at 7:14 AM Anson Huang <anson.huang@nxp.com>
-> > wrote:
 > >
-> > I don't understand what your plan is here. Do you mean you will leave that
-> > part of the clk driver as built-in?
+> > Thanks, I will give another try, I will make the common clk part all linked into
+> > each platform's clock driver, then many exports can be saved.
 >
-> I meant I will leave the #else block of __setup_param() defined as nothing as below to
-> make module build passed.
->
-> #define __setup_param(str, unique_id, fn, early)        /* nothing */
+> Just tried, it works for i.MX8QXP, andcorrect one thing, other platforms
+> need more complicated change if want to support them in the same way, so I
+> plan to ONLY do this change for i.MX8QXP if it is acceptable.
 
-No, I think that is  mistake. It will mean that other drivers with the same
-bug as the imx-clk driver will appear to build fine, but not work correctly.
+Yes, that is what I expected anyway.
 
-A build error is better than silently dropping the command line parsing in
-my opinion.
-
-> > This error just means you can't have a __setup_param() call in a loadable
-> > module, which we already knew. If you need to do something with the clocks
-> > early on, that has to be in built-in code and cannot be in a module. If you don't
-> > need that code, then you should just remove it from both the modular version
-> > and the built-in version.
-> >
-> > What is the purpose of that __setup_param() argument parsing in the clock
-> > driver?
->
-> We need the code for proper uart clock management of earlycon, from the code, it
-> is trying to keep console uart clock enabled during kernel boot up.
-
-Why not move this all to a separate file then and only build it when
-CONFIG_CLK_IMX=y?
-It seems that you don't need the imx_keep_uart_clocks_param() if the
-clk driver is
-loaded as a module, but then you also don't need the imx_clk_disable_uart()
-and imx_register_uart_clocks() functions or the associated variables.
-
-     Arnd
+      Arnd
