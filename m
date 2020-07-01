@@ -2,151 +2,126 @@ Return-Path: <SRS0=c+92=AM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF575C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 19:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C8DC433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AF0FC20853
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 19:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0539A20870
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:12:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S69Z6hVz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwUM0eTj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726035AbgGATjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jul 2020 15:39:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42474 "EHLO
+        id S1726908AbgGAUMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jul 2020 16:12:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726009AbgGATjW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jul 2020 15:39:22 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 60835C08C5DC
-        for <linux-clk@vger.kernel.org>; Wed,  1 Jul 2020 12:39:21 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id f8so16378096ljc.2
-        for <linux-clk@vger.kernel.org>; Wed, 01 Jul 2020 12:39:21 -0700 (PDT)
+        with ESMTP id S1726287AbgGAUMw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jul 2020 16:12:52 -0400
+Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E7BC08C5C1;
+        Wed,  1 Jul 2020 13:12:52 -0700 (PDT)
+Received: by mail-pf1-x444.google.com with SMTP id x72so2033640pfc.6;
+        Wed, 01 Jul 2020 13:12:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uZLgRyeqLIrejgbskRWtUMI2dY4YQCIX+GY0py5r3AA=;
-        b=S69Z6hVz4wBbcWfEPDTLxOfydDlRKVUspZAmALfKiePq4efP4D6Zy/HnkTrZixiCmy
-         Ot40/jExbO/G56aM0fEZsfzeJIC3kCvsxrM7MHZqzW1HJEEA5UTAiUuuECa6C9aUljR+
-         zCe1fEdW+aHQAlQoaCXz6DY9c4jxfT6LcKyQivUp/xGtatGLTUNnwj6aAa/FWUWiG9K1
-         bWQfTOvQY0EpekmLmMomA0vYwaXO07Hu72AKOO1B90d4yUJX1W3dMZUDfX17J7iVY1pG
-         fllXRQrJrjqemB9c2daT5zN3LzqeuPJW/vRph40oc5de9fK+rU2K+xUO9rJc4nLbCpB6
-         ZJ1g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=W20vV3JALPph0VU9IgzKjMWKb8lzvjhb2qzVsECrclc=;
+        b=PwUM0eTjfKWO+jB8QSaTySZ+dZS/8QftYHEPdbAVqrVd0LEVff3jx4meWpTLeCl1hE
+         5gfuTC466r8MFk2xWA4FfJFIpM7LjM+j44fTqrhdbMn3gj4nIwRghF67wpiw6IAJWLlg
+         u3zW1kF0k7Pik9gBHN1jeFzaZGaR7g3SqqOuKYwu7hOyi9sNpM0jPKOTTuEM65We+h20
+         hlpRnyC1mAAoy235GOZNMzUoErceWpALCSwVJAXmlidlStfdVLpKNKWur+HG8XNqKPAe
+         24DK2nZQ9e82HU3PRfA2VcyJn7Xw3bf+HKHz2aU0p1JFrfG3e6OJBv8onRc8MgQddgyF
+         Tptw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=uZLgRyeqLIrejgbskRWtUMI2dY4YQCIX+GY0py5r3AA=;
-        b=HPfT1XOi2vRvwRjnFP1UKMXcsaWDU0OthZBdgwbhZTuWcqy8/KXou3Zm1Bucl6ki37
-         FMrHcYsaiQFeE+nt+4jlCUHF2Fy9H+DoWNxCezVLm2eMY2oAr8hy2J1zsuIv6S2X2BCm
-         zwU1DhwGni3vzXFOR08IPQHGZnwONLDdh4SiFP73FIzSvpXhmHo+32w/D+BHBiFDSLNW
-         AY8L+GnCFwKJM2H6CqpDy5mtIjWeqZ4F3zfMK2fKOctOoL+u5BS8norNCUR9od63FIYE
-         U6ccR0NeRgPmgI9PwKL04TklxfCP37lRF77HGq75dCCwt1hkl5pZABtpIKwhV31bCvnI
-         8S0A==
-X-Gm-Message-State: AOAM531pRVPgswn1Wxl1EzlvapDhqCBa+4BqS932lamQ+Cy0UkimTW2c
-        tCqck8by+30+IgkwA8k1SefeFA==
-X-Google-Smtp-Source: ABdhPJznwKrMubCqqzSMTK6VHjJjbQbSK8SWzIJNnS6XVefIEXAhs3wc0iBxGIMfRySbgrsw6uZjLQ==
-X-Received: by 2002:a2e:b4ce:: with SMTP id r14mr5133513ljm.88.1593632359481;
-        Wed, 01 Jul 2020 12:39:19 -0700 (PDT)
-Received: from [192.168.1.211] ([188.162.65.203])
-        by smtp.gmail.com with ESMTPSA id y24sm2126434ljy.91.2020.07.01.12.39.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 01 Jul 2020 12:39:18 -0700 (PDT)
-Subject: Re: [PATCH v2 07/13] dt-bindings: clock: Introduce SM8250 QCOM
- Graphics clock bindings
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        bh=W20vV3JALPph0VU9IgzKjMWKb8lzvjhb2qzVsECrclc=;
+        b=F+0vxQ12ie9nrxt1fc333Za6UtGee49X5GLW4ziHN2UWelQfpKt0TybGUWZYu0ka6f
+         XaQNpHusqOLxgtnG5F46j1NnOZl2MrjGAKd92dzYlIVs/oisWnHNsZfmQdYgcgzhKigE
+         eC7R5AunkA6up24u46QOPbznmKT6skxNfaSnmjrR33bjU7Ygcy/2qTECMKFxLHY7oO4B
+         jXrgwmdcwbq2p+CNwTyzV2dm1+iLNxuckvlM4Xujn+tnFKpxkcnS87qPcMhhnEVJ/Xml
+         rXCBvXubymGoxEbhj+9szHQWNebdrgPxQglNvN/qXLuyLICG8o80/Ebj6+7YSH4Pg7qp
+         n3iw==
+X-Gm-Message-State: AOAM532dZEGVTJ3MsUEmrNh6J9bKBA7pZDRTYJs2zOBCdsvx6zVHpO+C
+        DmQ/dGjWv0NVPm8/Va0xxjg=
+X-Google-Smtp-Source: ABdhPJxG1F06kx2wFpILNOql/nZRFFIvn7l1Is/5noNfiyyyoZFJEEWzYUymfaV0XOdlBKmiLMjgXw==
+X-Received: by 2002:a63:2104:: with SMTP id h4mr22094734pgh.427.1593634371657;
+        Wed, 01 Jul 2020 13:12:51 -0700 (PDT)
+Received: from localhost.localdomain ([2604:1380:1000:7a00::1])
+        by smtp.gmail.com with ESMTPSA id c30sm6654332pfj.213.2020.07.01.13.12.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 01 Jul 2020 13:12:51 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200629172049.30452-1-jonathan@marek.ca>
- <20200629172049.30452-8-jonathan@marek.ca>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <caa05cad-ff88-fbcb-ce13-9e43133afb7b@linaro.org>
-Date:   Wed, 1 Jul 2020 22:39:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] clk: mvebu: ARMADA_AP_CPU_CLK needs to select ARMADA_AP_CP_HELPER
+Date:   Wed,  1 Jul 2020 13:11:29 -0700
+Message-Id: <20200701201128.2448427-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <20200629172049.30452-8-jonathan@marek.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/06/2020 20:20, Jonathan Marek wrote:
-> Add device tree bindings for graphics clock controller for
-> Qualcomm Technology Inc's SM8250 SoCs.
-> 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->   .../bindings/clock/qcom,sm8250-gpucc.yaml     | 74 +++++++++++++++++++
->   include/dt-bindings/clock/qcom,gpucc-sm8250.h | 40 ++++++++++
->   2 files changed, 114 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
->   create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8250.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
-> new file mode 100644
-> index 000000000000..2b9c8f97b76d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/qcom,sm8250-gpucc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller Binding for SM8250
-> +
-> +maintainers:
-> +  -
-> +
-> +description: |
-> +  Qualcomm graphics clock control module which supports the clocks, resets and
-> +  power domains on SM8250.
-> +
-> +  See also dt-bindings/clock/qcom,gpucc-sm8250.h.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,sm8250-gpucc
-> +
-> +  clocks:
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 main branch source
-> +      - description: GPLL0 div branch source
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bi_tcxo
-> +      - const: gcc_gpu_gpll0_clk_src
-> +      - const: gcc_gpu_gpll0_div_clk_src
+When building arm32 allmodconfig:
 
-Missing qdss_qmp_clk here.
+ld.lld: error: undefined symbol: ap_cp_unique_name
+>>> referenced by ap-cpu-clk.c
+>>>               clk/mvebu/ap-cpu-clk.o:(ap_cpu_clock_probe) in archive drivers/built-in.a
 
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
+ap_cp_unique_name is only compiled into the kernel image when
+CONFIG_ARMADA_AP_CP_HELPER is selected (as it is not user selectable).
+However, CONFIG_ARMADA_AP_CPU_CLK does not select it.
 
+This has been a problem since the driver was added to the kernel but it
+was not built before commit c318ea261749 ("cpufreq: ap806: fix cpufreq
+driver needs ap cpu clk") so it was never noticed.
 
+Fixes: f756e362d938 ("clk: mvebu: add CPU clock driver for Armada 7K/8K")
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
 
+I do not know who should actually take this patch since the problematic
+patch is on Viresh's cpufreq/arm/linux-next but the problem originated
+from a patch in the clk tree in 5.4. I assume all that would be needed
+is a clk maintainer's ack? Please let me know if I did something wrong.
+
+Cheers,
+Nathan
+
+ drivers/clk/mvebu/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
+index ded07b0bd0d5..557d6213783c 100644
+--- a/drivers/clk/mvebu/Kconfig
++++ b/drivers/clk/mvebu/Kconfig
+@@ -42,6 +42,7 @@ config ARMADA_AP806_SYSCON
+ 
+ config ARMADA_AP_CPU_CLK
+ 	bool
++	select ARMADA_AP_CP_HELPER
+ 
+ config ARMADA_CP110_SYSCON
+ 	bool
+
+base-commit: 0363635faa1da1560d2a84e2229c3f3ab108304f
 -- 
-With best wishes
-Dmitry
+2.27.0
+
