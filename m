@@ -2,126 +2,103 @@ Return-Path: <SRS0=c+92=AM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C8DC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:12:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C254CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0539A20870
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:12:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PwUM0eTj"
+	by mail.kernel.org (Postfix) with ESMTP id 9A90C2085B
+	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1593635964;
+	bh=Mv90pdTDmmCVPBQ+ilKuLGK6rDI94hGPVOU6z7qxgNo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=H3YlFxPAuUVliQt9PJLufgGImqyKQazBVImPAbP0VciYzfGf7OJmd44hu4SByBQ6q
+	 AbGKJTUAaZ6MfdAHAtaRpUa49V5hg/eZqiDTN7E1KiGYs3tAmueqPL9lnkN2HNGbWo
+	 +4tLSD9V6HiZzoq9BfDz+c2JxcvpanvT7UTRilxs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbgGAUMw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jul 2020 16:12:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47650 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726287AbgGAUMw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 1 Jul 2020 16:12:52 -0400
-Received: from mail-pf1-x444.google.com (mail-pf1-x444.google.com [IPv6:2607:f8b0:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30E7BC08C5C1;
-        Wed,  1 Jul 2020 13:12:52 -0700 (PDT)
-Received: by mail-pf1-x444.google.com with SMTP id x72so2033640pfc.6;
-        Wed, 01 Jul 2020 13:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=W20vV3JALPph0VU9IgzKjMWKb8lzvjhb2qzVsECrclc=;
-        b=PwUM0eTjfKWO+jB8QSaTySZ+dZS/8QftYHEPdbAVqrVd0LEVff3jx4meWpTLeCl1hE
-         5gfuTC466r8MFk2xWA4FfJFIpM7LjM+j44fTqrhdbMn3gj4nIwRghF67wpiw6IAJWLlg
-         u3zW1kF0k7Pik9gBHN1jeFzaZGaR7g3SqqOuKYwu7hOyi9sNpM0jPKOTTuEM65We+h20
-         hlpRnyC1mAAoy235GOZNMzUoErceWpALCSwVJAXmlidlStfdVLpKNKWur+HG8XNqKPAe
-         24DK2nZQ9e82HU3PRfA2VcyJn7Xw3bf+HKHz2aU0p1JFrfG3e6OJBv8onRc8MgQddgyF
-         Tptw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=W20vV3JALPph0VU9IgzKjMWKb8lzvjhb2qzVsECrclc=;
-        b=F+0vxQ12ie9nrxt1fc333Za6UtGee49X5GLW4ziHN2UWelQfpKt0TybGUWZYu0ka6f
-         XaQNpHusqOLxgtnG5F46j1NnOZl2MrjGAKd92dzYlIVs/oisWnHNsZfmQdYgcgzhKigE
-         eC7R5AunkA6up24u46QOPbznmKT6skxNfaSnmjrR33bjU7Ygcy/2qTECMKFxLHY7oO4B
-         jXrgwmdcwbq2p+CNwTyzV2dm1+iLNxuckvlM4Xujn+tnFKpxkcnS87qPcMhhnEVJ/Xml
-         rXCBvXubymGoxEbhj+9szHQWNebdrgPxQglNvN/qXLuyLICG8o80/Ebj6+7YSH4Pg7qp
-         n3iw==
-X-Gm-Message-State: AOAM532dZEGVTJ3MsUEmrNh6J9bKBA7pZDRTYJs2zOBCdsvx6zVHpO+C
-        DmQ/dGjWv0NVPm8/Va0xxjg=
-X-Google-Smtp-Source: ABdhPJxG1F06kx2wFpILNOql/nZRFFIvn7l1Is/5noNfiyyyoZFJEEWzYUymfaV0XOdlBKmiLMjgXw==
-X-Received: by 2002:a63:2104:: with SMTP id h4mr22094734pgh.427.1593634371657;
-        Wed, 01 Jul 2020 13:12:51 -0700 (PDT)
-Received: from localhost.localdomain ([2604:1380:1000:7a00::1])
-        by smtp.gmail.com with ESMTPSA id c30sm6654332pfj.213.2020.07.01.13.12.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 01 Jul 2020 13:12:51 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] clk: mvebu: ARMADA_AP_CPU_CLK needs to select ARMADA_AP_CP_HELPER
-Date:   Wed,  1 Jul 2020 13:11:29 -0700
-Message-Id: <20200701201128.2448427-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        id S1726372AbgGAUjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jul 2020 16:39:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54896 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbgGAUjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Jul 2020 16:39:23 -0400
+Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 395DA20760;
+        Wed,  1 Jul 2020 20:39:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1593635962;
+        bh=Mv90pdTDmmCVPBQ+ilKuLGK6rDI94hGPVOU6z7qxgNo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vn7yonK6UORJ8OJ5CLMTZ2+x/gvdycGSabhl28wLOeWEfNZZtkdKMc0I9L12/I0dk
+         bB9jRJM9ZAsrHrmNUN0Xe9QCw5cG+b24CXLz5B4CAtKfE3rFp/wnozWmeRUhlpAwyP
+         D81gDHxv1SI3ntiRTx4ygWm8AtJKSXVEdFaatGao=
+Date:   Wed, 1 Jul 2020 21:39:20 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-mm@kvack.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2 08/16] spi: davinci: Remove uninitialized_var() usage
+Message-ID: <20200701203920.GC3776@sirena.org.uk>
+References: <20200620033007.1444705-1-keescook@chromium.org>
+ <20200620033007.1444705-9-keescook@chromium.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
+Content-Disposition: inline
+In-Reply-To: <20200620033007.1444705-9-keescook@chromium.org>
+X-Cookie: "Ahead warp factor 1"
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When building arm32 allmodconfig:
 
-ld.lld: error: undefined symbol: ap_cp_unique_name
->>> referenced by ap-cpu-clk.c
->>>               clk/mvebu/ap-cpu-clk.o:(ap_cpu_clock_probe) in archive drivers/built-in.a
+--/Uq4LBwYP4y1W6pO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-ap_cp_unique_name is only compiled into the kernel image when
-CONFIG_ARMADA_AP_CP_HELPER is selected (as it is not user selectable).
-However, CONFIG_ARMADA_AP_CPU_CLK does not select it.
+On Fri, Jun 19, 2020 at 08:29:59PM -0700, Kees Cook wrote:
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings (e.g.
+> "unused variable"). If the compiler thinks it is uninitialized, either
+> simply initialize the variable or make compiler changes. As a precursor
+> to removing[2] this[3] macro[4], just remove this variable since it was
+> actually unused:
 
-This has been a problem since the driver was added to the kernel but it
-was not built before commit c318ea261749 ("cpufreq: ap806: fix cpufreq
-driver needs ap cpu clk") so it was never noticed.
+Please copy maintainers on patches :(
 
-Fixes: f756e362d938 ("clk: mvebu: add CPU clock driver for Armada 7K/8K")
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+Acked-by: Mark Brown <broonie@kernel.org>
 
-I do not know who should actually take this patch since the problematic
-patch is on Viresh's cpufreq/arm/linux-next but the problem originated
-from a patch in the clk tree in 5.4. I assume all that would be needed
-is a clk maintainer's ack? Please let me know if I did something wrong.
+--/Uq4LBwYP4y1W6pO
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cheers,
-Nathan
+-----BEGIN PGP SIGNATURE-----
 
- drivers/clk/mvebu/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl789HcACgkQJNaLcl1U
+h9AfDgf/RKZyImjLhB9HvSTTPElSdnVo2uGyMkLMGX5E2rrBkIm+JRHNqfloV/46
+Mx7zbEttRmKiYixfSdmsDpbg56ljycPfGBLHIZxfW4p4HDkXI2rwNl6yNQwAFGfS
+xREw+xp//6eFOklwHHWspFdXjwvYVwxwCJbntC3mxtA44GrP1RcSNdlYSRlLMUqE
+b4V1aHQtulWHWcA6qc3e7e3VH7t/F4vy9AftF3S8ckIbrmZO6+HfcvGjITyILn0T
+0ReKIdfQ/UEHEeGXnai1E9efkWymKRW43Frx6JRO6Sd4KhBeHGohovlQ3mhKLfdg
+vH1jBuQdhXfJWc+yprXAcHmpsHpQZw==
+=XnWw
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/clk/mvebu/Kconfig b/drivers/clk/mvebu/Kconfig
-index ded07b0bd0d5..557d6213783c 100644
---- a/drivers/clk/mvebu/Kconfig
-+++ b/drivers/clk/mvebu/Kconfig
-@@ -42,6 +42,7 @@ config ARMADA_AP806_SYSCON
- 
- config ARMADA_AP_CPU_CLK
- 	bool
-+	select ARMADA_AP_CP_HELPER
- 
- config ARMADA_CP110_SYSCON
- 	bool
-
-base-commit: 0363635faa1da1560d2a84e2229c3f3ab108304f
--- 
-2.27.0
-
+--/Uq4LBwYP4y1W6pO--
