@@ -2,101 +2,124 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E017C433E2
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 16:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BAACC433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 18:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 64D4C20870
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 16:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0954B207E8
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 18:30:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jCOfj4zD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbgGBQXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 12:23:13 -0400
-Received: from smtprelay0229.hostedemail.com ([216.40.44.229]:53202 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726140AbgGBQXN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 12:23:13 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 53EF6180A813A;
-        Thu,  2 Jul 2020 16:23:11 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: eggs64_191235726e8a
-X-Filterd-Recvd-Size: 3163
-Received: from XPS-9350.home (unknown [47.151.133.149])
-        (Authenticated sender: joe@perches.com)
-        by omf06.hostedemail.com (Postfix) with ESMTPA;
-        Thu,  2 Jul 2020 16:23:08 +0000 (UTC)
-Message-ID: <f65392bbd1732eff72d5b24c5ba3ea230ab2a3ae.camel@perches.com>
-Subject: Re: [PATCH v2 08/16] spi: davinci: Remove uninitialized_var() usage
-From:   Joe Perches <joe@perches.com>
-To:     Kees Cook <keescook@chromium.org>, Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mm@kvack.org,
-        clang-built-linux@googlegroups.com
-Date:   Thu, 02 Jul 2020 09:23:07 -0700
-In-Reply-To: <202007020839.545A571CA4@keescook>
-References: <20200620033007.1444705-1-keescook@chromium.org>
-         <20200620033007.1444705-9-keescook@chromium.org>
-         <20200701203920.GC3776@sirena.org.uk> <202007020819.318824DA@keescook>
-         <20200702152335.GJ4483@sirena.org.uk> <202007020839.545A571CA4@keescook>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.36.3-0ubuntu1 
+        id S1728075AbgGBSaG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 14:30:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726997AbgGBSaG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 14:30:06 -0400
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [IPv6:2001:4b98:dc2:55:216:3eff:fef7:d647])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7A79C08C5C1;
+        Thu,  2 Jul 2020 11:30:05 -0700 (PDT)
+Received: from pendragon.ideasonboard.com (81-175-216-236.bb.dnainternet.fi [81.175.216.236])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7D7EB293;
+        Thu,  2 Jul 2020 20:30:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1593714601;
+        bh=hhendKEal8NhhQf3aUbKRjlfcErlw7igeXhBWipDuG4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jCOfj4zDiHBDwNN4YtuHiyOXemcvHQ6phNqKHA2+0ZvuvT8wCAlnADNrl8NBYjcAz
+         9KVYZ56IFnRZPQKK+myOFrlB7G/y1N0ondBlFK6qkXmaKsPbxva9a5l/+7qfrbErHi
+         tXvI8xLo7JtXi6KMg7BWMcDf01aHZ3fVJZbFU7tk=
+Date:   Thu, 2 Jul 2020 21:29:57 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, arnd@arndb.de, peng.fan@nxp.com,
+        abel.vesa@nxp.com, j.remmet@phytec.de, sfr@canb.auug.org.au,
+        georg.waibel@wiedemann-group.de, Georg.Waibel@wiedemann-group.com,
+        chen.fang@nxp.com, fugang.duan@nxp.com, daniel.baluta@nxp.com,
+        yuehaibing@huawei.com, horia.geanta@nxp.com,
+        andrew.smirnov@gmail.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V5 0/6] Support building i.MX ARMv7/ARMv8 platforms clock
+ driver as module
+Message-ID: <20200702182957.GO12562@pendragon.ideasonboard.com>
+References: <1593703441-16944-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1593703441-16944-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2020-07-02 at 08:42 -0700, Kees Cook wrote:
-> On Thu, Jul 02, 2020 at 04:23:35PM +0100, Mark Brown wrote:
-> > On Thu, Jul 02, 2020 at 08:21:40AM -0700, Kees Cook wrote:
-> > > On Wed, Jul 01, 2020 at 09:39:20PM +0100, Mark Brown wrote:
-> > > > Please copy maintainers on patches :(
-> > > Hi! Sorry about that; the CC list was giant, so I had opted for using
-> > > subsystem mailing lists where possible.
-> > 
-> > If you're going to err in a direction there I'd err in the direction of
-> > CCing the people not the list - I only saw this since I was looking for
-> > something else, I don't normally see stuff in the mailing list folder.
+Hi Anson,
+
+On Thu, Jul 02, 2020 at 11:23:55PM +0800, Anson Huang wrote:
+> Nowdays, there are more and more requirements of building SoC specific
+> drivers as modules, such as Android GKI (generic kernel image), this
+> patch set supports building i.MX ARMv6/ARMv7 SoCs clock drivers as modules,
+
+I'm curious, how does the system boot to userspace to be able to load
+modules without clock support in the kernel ? What if the driver for the
+device storing the rootfs cope with clocks not being available ? Does
+this require an initramfs with the clock module ? Even then, how does
+the serial port driver cope with not having clocks ?
+
+> The CLK_IMXxxx is introduced for i.MX ARMv7 platforms in order to support
+> various build options, and i.MX1/2/3 platforms now still ONLY support built-in
+> as they are rarely used now.
 > 
-> Yeah, I've gotten conflicting feedback on treewide changes:
-> - please CC me on only the one patch, I don't want to see everything else
-> - please CC me on the whole series, I want the full context for the change
+> Changes since V4:
+> 	- add empty function of imx_register_uart_clocks() for MODULE build, then
+> 	  all earlycon related clock handler can be built-out for MODULE;
+> 	- add module build support for ARMv7 platforms, also add COMPILE_TEST for them;
+> 	- add COMPILE_TEST for ARMv8 platforms;
+> 	- keep using builtin_platform_driver() for i.MX8QXP clock driver.
 > 
-> I opted toward "CC me on this series", but then I get stuck when the CC
-> is giant. I think I may switch back to individual CCs for specific
-> patches, and point people to lore if they want greater context. (lore
-> didn't exist before...)
+> Anson Huang (6):
+>   clk: composite: Export clk_hw_register_composite()
+>   clk: imx: Support module build for i.MX5/6/7 and vf610
+>   clk: imx: Support building i.MX common clock driver as module
+>   clk: imx: Add clock configuration for ARMv7 platforms
+>   clk: imx8m: Support module build
+>   clk: imx8qxp: Support building i.MX8QXP clock driver as module
+> 
+>  drivers/clk/clk-composite.c        |   1 +
+>  drivers/clk/imx/Kconfig            | 101 ++++++++++++++++++++++++++++++++-----
+>  drivers/clk/imx/Makefile           |  79 ++++++++++++++---------------
+>  drivers/clk/imx/clk-composite-8m.c |   2 +
+>  drivers/clk/imx/clk-cpu.c          |   2 +
+>  drivers/clk/imx/clk-frac-pll.c     |   2 +
+>  drivers/clk/imx/clk-gate2.c        |   2 +
+>  drivers/clk/imx/clk-imx5.c         |   5 ++
+>  drivers/clk/imx/clk-imx6q.c        |   5 ++
+>  drivers/clk/imx/clk-imx6sl.c       |   5 ++
+>  drivers/clk/imx/clk-imx6sll.c      |   5 ++
+>  drivers/clk/imx/clk-imx6sx.c       |   5 ++
+>  drivers/clk/imx/clk-imx6ul.c       |   5 ++
+>  drivers/clk/imx/clk-imx7d.c        |   5 ++
+>  drivers/clk/imx/clk-imx7ulp.c      |   5 ++
+>  drivers/clk/imx/clk-imx8mm.c       |   4 ++
+>  drivers/clk/imx/clk-imx8mn.c       |   4 ++
+>  drivers/clk/imx/clk-imx8mp.c       |   4 ++
+>  drivers/clk/imx/clk-imx8mq.c       |   4 ++
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c |   4 ++
+>  drivers/clk/imx/clk-imx8qxp.c      |   4 ++
+>  drivers/clk/imx/clk-pll14xx.c      |   5 ++
+>  drivers/clk/imx/clk-sscg-pll.c     |   2 +
+>  drivers/clk/imx/clk-vf610.c        |   5 ++
+>  drivers/clk/imx/clk.c              |  17 +++++--
+>  drivers/clk/imx/clk.h              |   6 +++
+>  26 files changed, 231 insertions(+), 57 deletions(-)
 
-IMO:
+-- 
+Regards,
 
-For a patch series that spans multiple subsystems,
-each patch should always CC any specific subsystem
-maintainers..
-
-A good trick would be to use the cover letter
-message-id: and have each individual patch in the
-series reference the cover letter id below the
---- line so any reviewer doesn't have to find the
-in-reply-to: message id and then reference the
-lore link.
-
-Something like:
-
----
-
-For complete series see: https://lore.kernel.org/r/<cover_letter_message_id>
-
-
+Laurent Pinchart
