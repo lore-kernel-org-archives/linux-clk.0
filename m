@@ -2,102 +2,123 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B17CC433E1
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 10:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE50C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 13:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0CB12073E
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 10:32:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7062520772
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 13:11:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="re8VOrqx"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gpsQbCTu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbgGBKcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 06:32:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38720 "EHLO
+        id S1726671AbgGBNLA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 09:11:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbgGBKcC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 06:32:02 -0400
-Received: from mail-vs1-xe41.google.com (mail-vs1-xe41.google.com [IPv6:2607:f8b0:4864:20::e41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AD16C08C5DC
-        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 03:32:02 -0700 (PDT)
-Received: by mail-vs1-xe41.google.com with SMTP id p25so7200204vsg.4
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 03:32:02 -0700 (PDT)
+        with ESMTP id S1726560AbgGBNK7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 09:10:59 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75658C08C5DC
+        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 06:10:59 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id o11so28285719wrv.9
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 06:10:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SxebolldoXIY07hiP/fBq2bV8EcWEeEf+lOF/qw89Cc=;
-        b=re8VOrqxLFYqfzLqLrwM603/8Yv8jQJVF8hwvWbp8Rn1vhMj7MBa2m4+tuxhVgb/qG
-         218MDG6HHuK6J3ayf3tXJuUs+zkv9ZsUx9D5XX6a0zBUAbAaorN7KExH4psa1oUvKhbK
-         +VopOgZucpODThIr4p6qZ51kLPErDuptb9c0p9Xafs3O9Bl741j/k94pWmlCIvH0S/iX
-         lDPvfo4CW+Np/cXaWwBCi/6lFdqXL+6ENU8h85MEMhoKvFzXhkr0D2nR+YIZc3rfnrgm
-         9MP6z4wCBu4Kr7XYRFOlGq8aERz5hy6LjT7aeJmR8cYw+DEqEqS36Kv0HS9oY0zhvbxM
-         W8gw==
+        h=from:to:cc:subject:date:message-id;
+        bh=Q5t3l+nsqnYvfPt63Fkeg1rs+NFzmeHts4X7hoKySws=;
+        b=gpsQbCTuawJSVs7F2nP4cXoGm8Z9iOO1MSqH/cldO+L4QI0tglxyxgtLCvjiXPBJDb
+         y4KP8k5+IXjR1xD3iAWuHzsawx4wjRa+Q8zJXE8lb8fE7Yk3Nf45xIm4hCX9ZW4An4di
+         /+agb/bkJStn9QX3Uuk6q6B55YZac0xlPqAe4ndsWCmaqeo5OE7SpDRQUGQ6y39PIvZ7
+         88NoguidCzUzpTeWhGMpADols9r6smRy0fHkuONje1tktksfYDrzPzixuuOHjBavUoO0
+         pX/3VlsYwXA95rt/pAHx0bNgKxuLkABcV8sJK/CAMZnQO6JY3+G+ozneaDSaPYGb6PZ0
+         XeXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SxebolldoXIY07hiP/fBq2bV8EcWEeEf+lOF/qw89Cc=;
-        b=etCfalUdKn8HxODqsTBJe0ZNccltY52SYFdk08b78pi6XJteB+FkJ27CE79JuqIbFf
-         4Zay709IccqcGDff33740q85kFE4VA2UOfTy0HPeXsSRmhi0y7w+plt8O+5kONJXU2Nm
-         Q22Jh8gwj2KDZ/Fn9Ad+zxN3/4g6Vgd1s++FKO+9UTMSRfpi8JUyxDOSBWlzUT/aII7P
-         43KziavQ3VvV4BBI/7EC05HEsZVhF1cw2i6IOuRhGq0gjimX1cI67DNXRgB5xYBDc8R6
-         gtwbbCoUrYE5yDj15l41UlwwEj52U1m0jircMPa4Jyka1J6w+Sor8GtUf390ei8z8jit
-         rDGA==
-X-Gm-Message-State: AOAM532ZoER8ct3rU+ejLZcVELqKSaCUoQWYukzGmpbQ9em50A5sdPq1
-        XBAW+4tS4gdAH6SE8KxUrDhkpROwIUGbC5OjIoWxyQ==
-X-Google-Smtp-Source: ABdhPJwdbwsyVyU+ccN+b0j3aRMcv1lilU0Aa1R9bCfApn2B9JkpZsMeLAjtXFfG7zuCCgOd6p5HOsSMNTUAsu5j9Tw=
-X-Received: by 2002:a67:c009:: with SMTP id v9mr11539095vsi.182.1593685921227;
- Thu, 02 Jul 2020 03:32:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <1593682763-31368-1-git-send-email-loic.poulain@linaro.org>
- <1593682763-31368-5-git-send-email-loic.poulain@linaro.org> <CAHLCerMra_a1CKRC=tZmC2OLEvp_AOdOqxSDf7QzDZC8fOjR9A@mail.gmail.com>
-In-Reply-To: <CAHLCerMra_a1CKRC=tZmC2OLEvp_AOdOqxSDf7QzDZC8fOjR9A@mail.gmail.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Thu, 2 Jul 2020 16:01:50 +0530
-Message-ID: <CAHLCerN+fHzmgyjms8mJX3ZTxT-v+BuQj+VyGfBVUDC4jiMrcw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] arch: arm64: dts: msm8996: Add opp and thermal
-To:     Loic Poulain <loic.poulain@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Q5t3l+nsqnYvfPt63Fkeg1rs+NFzmeHts4X7hoKySws=;
+        b=s/nxC16YWcJwdQDFxHWX8mUaXPZH9FZQr9rWSD/RRCBS84RuYk9KNRYlLYv+wwbxkF
+         XzV8T7/jk6lWxEQoX1TuO6GQIpy/2j3YHlB4aNrXYf2h5geAjEpV8D4S9bROwgs6/dMz
+         WY1FHC5H/tnXbA5oEgmc5sQaWLwBsPXXYsclYW1iupPb0RoHF86/TvURzXqcEn4/gP50
+         W36sjtO4DoknD82fHxHDw9voRty1EttVevlql6BuS/FTolxkksWrpUJt3T47LPfZMIwN
+         E3HhNziP4G7vHr7GZWmpKxYLopotxT0TRhnErBqeCi7c0KFH7V8aWqzcgYOPEkBWPuJK
+         hI1w==
+X-Gm-Message-State: AOAM5310ZQvnWF+lB/j6fkQQPJ+JihVQTWQEok64z5GgpWnI3F96TxcH
+        z1Ai84YFom17Eu4ESV5oa9dLWw==
+X-Google-Smtp-Source: ABdhPJwJ282Z5BK0YJ8Ba7D+0AXIUESIEAxtravsTJ/G2MwFYeTTOsSGWKd8KW3OI719H080wAP4sg==
+X-Received: by 2002:a5d:43d2:: with SMTP id v18mr30993494wrr.196.1593695458138;
+        Thu, 02 Jul 2020 06:10:58 -0700 (PDT)
+Received: from localhost.localdomain ([88.122.66.28])
+        by smtp.gmail.com with ESMTPSA id 140sm5977248wmb.15.2020.07.02.06.10.57
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 02 Jul 2020 06:10:57 -0700 (PDT)
+From:   Loic Poulain <loic.poulain@linaro.org>
+To:     sboyd@kernel.org, bjorn.andersson@linaro.org
+Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, amit.kucheria@linaro.org,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH v4 0/4] msm8996 CPU scaling support
+Date:   Thu,  2 Jul 2020 15:15:57 +0200
+Message-Id: <1593695762-19823-1-git-send-email-loic.poulain@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 2, 2020 at 3:31 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->
-> On Thu, Jul 2, 2020 at 3:04 PM Loic Poulain <loic.poulain@linaro.org> wrote:
-> >
+This series is a new tentative for adding MSM8996 CPU scaling support
+based on the previous Ilia's series, with some of the latest comments
+addressed.
 
-> > +
-> >         thermal-zones {
-> >                 cpu0-thermal {
-> >                         polling-delay-passive = <250>;
-> > @@ -2180,18 +2429,33 @@
-> >                         thermal-sensors = <&tsens0 3>;
-> >
-> >                         trips {
-> > -                               cpu0_alert0: trip-point@0 {
-> > +                               cpu_alert0: cpu_alert0 {
->
-> Please use the node name pattern we're using in some of the other dtsi
-> filenames for consistency. See sdm845.dtsi for an example.
->
-> This also fixes dtsi warnings about address units, I suspect. So the
-> name change may be a separate patch just to fix the warnings, if you
-> want.
+This series has been tested with dragonboard-820c and cpufreq-bench.
+The CPU opps are limited to maximum nominal frequencies (no turbo).
 
-Turns out I did fix these names and the change got merge in the 5.8
-merge window. What version of the kernel are these patches against?
+v2:
+    - Converted dt bindings to YAML
+    - Various fixes from Stephen inputs
+    - Removed useless wmb barrier, MODULE_ALIAS
+    - Use helpers like struct_size() and devm_platform_ioremap_resource()
+    - Coding style fixes + comments
+    - Kconfig: remove useless depends
+    - Added Co-developed-by tag
 
-> >                                         temperature = <75000>;
-> >                                         hysteresis = <2000>;
-> > +                                       type = "active";
+v3:
+    - Added Ilia and Rajendra s-o-b and contribution description
+
+v4:
+    - Rebasing on master
+    - Removing obsolete cooling-min-level and cooling-max-level props
+    - Align cpu trip nodes names with other boards
+    - Fix trip types to passive for cpufreq
+
+Ilia Lin (2):
+  soc: qcom: Separate kryo l2 accessors from PMU driver
+  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+
+Loic Poulain (2):
+  clk: qcom: Add CPU clock driver for msm8996
+  arch: arm64: dts: msm8996: Add opp and thermal
+
+ .../bindings/clock/qcom,msm8996-apcc.yaml          |  56 +++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 318 +++++++++++-
+ drivers/clk/qcom/Kconfig                           |   8 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c                    | 538 +++++++++++++++++++++
+ drivers/perf/Kconfig                               |   1 +
+ drivers/perf/qcom_l2_pmu.c                         |  90 +---
+ drivers/soc/qcom/Kconfig                           |   3 +
+ drivers/soc/qcom/Makefile                          |   1 +
+ drivers/soc/qcom/kryo-l2-accessors.c               |  57 +++
+ include/soc/qcom/kryo-l2-accessors.h               |  12 +
+ 12 files changed, 1014 insertions(+), 77 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+ create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+ create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
+-- 
+2.7.4
+
