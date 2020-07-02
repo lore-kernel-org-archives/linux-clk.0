@@ -7,22 +7,22 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92176C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 127E9C433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6A7E62075D
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFC902075D
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726376AbgGBWjZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 18:39:25 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:50667 "EHLO
+        id S1726418AbgGBWj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 18:39:27 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:41655 "EHLO
         hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726163AbgGBWjY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 18:39:24 -0400
+        by vger.kernel.org with ESMTP id S1726163AbgGBWj1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 18:39:27 -0400
 Received: from [88.147.89.201] (port=34632 helo=melee.dev.aim)
         by hostingweb31.netsons.net with esmtpa (Exim 4.93)
         (envelope-from <luca@lucaceresoli.net>)
-        id 1jr6lL-000AXd-46; Thu, 02 Jul 2020 23:28:55 +0200
+        id 1jr6lL-000AXd-B7; Thu, 02 Jul 2020 23:28:55 +0200
 From:   Luca Ceresoli <luca@lucaceresoli.net>
 To:     linux-clk@vger.kernel.org
 Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
@@ -30,9 +30,9 @@ Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
         Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH 4/5] dt-bindings: clk: versaclock5: add output drive mode property
-Date:   Thu,  2 Jul 2020 23:28:35 +0200
-Message-Id: <20200702212837.10657-4-luca@lucaceresoli.net>
+Subject: [PATCH 5/5] clk: vc5: optionally configure the output drive mode
+Date:   Thu,  2 Jul 2020 23:28:36 +0200
+Message-Id: <20200702212837.10657-5-luca@lucaceresoli.net>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200702212837.10657-1-luca@lucaceresoli.net>
 References: <20200702212837.10657-1-luca@lucaceresoli.net>
@@ -53,74 +53,134 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a node with properties for each output port, and a property inside it
-to describe the output drive mode.
+The Versaclock chips can drive the output pins in several modes: LVDS,
+CMOS, LVPECL etc. Allow configuring the output mode from device tree.
+
+The configuration is optional. If not specified, the mode will not be
+configured and the drive mode will be the chip default.
 
 Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- .../bindings/clock/idt,versaclock5.yaml       | 42 +++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/clk/clk-versaclock5.c | 71 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-index d8b8e35f16d2..f0ee612f573b 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-@@ -50,6 +50,35 @@ properties:
-   '#clock-cells':
-     const: 1
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 60c7cf9acde3..eec57286fae0 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -89,6 +89,8 @@
  
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^out@[1-4]$":
-+    type: object
-+    description:
-+      Description of one of the outputs (OUT1..OUT4).
-+    properties:
-+      idt,drive-mode:
-+        description:
-+          The output drive mode. See "Clock1 Output Configuration" in the
-+          Versaclock 5/6/6E Family Register Description and Programming
-+          Guide.
-+          Allowed values are:-
-+            * 0 = LVPECL
-+            * 1 = CMOS
-+            * 2 = HCSL33
-+            * 3 = LVDS
-+            * 4 = CMOS2
-+            * 5 = CMOSD
-+            * 6 = HCSL25
-+        $ref: /schemas/types.yaml#/definitions/uint32
-+        minimum: 0
-+        maximum: 6
-+
- required:
-   - compatible
-   - reg
-@@ -107,6 +136,19 @@ examples:
-             /* Connect XIN input to 25MHz reference */
-             clocks = <&ref25m>;
-             clock-names = "xin";
-+
-+            #address-cells = <1>;
-+            #size-cells = <0>;
-+
-+            out@1 {
-+                reg = <1>; /* OUT1 */
-+                idt,drive-mode = <5>; /* CMOSD */
-+            };
-+
-+            out@4 {
-+                reg = <4>; /* OUT4 */
-+                idt,drive-mode = <3>; /* LVDS */
-+            };
-         };
-     };
+ /* Clock control register for clock 1,2 */
+ #define VC5_CLK_OUTPUT_CFG(idx, n)	(0x60 + ((idx) * 0x2) + (n))
++#define VC5_CLK_OUTPUT_CFG0_MODE_SHIFT	5
++#define VC5_CLK_OUTPUT_CFG0_MODE_MASK	GENMASK(7, 5)
+ #define VC5_CLK_OUTPUT_CFG1_EN_CLKBUF	BIT(0)
  
+ #define VC5_CLK_OE_SHDN				0x68
+@@ -117,6 +119,23 @@
+ /* chip has PFD requency doubler */
+ #define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+ 
++/*
++ * Output modes. Values for VC5_CLK_OUTPUT_CFG(idx,0) bits [7:5].
++ * IDT_VC5_OUT_UNKNOWN = keep the hardware default.
++ */
++enum vc5_out_mode {
++	IDT_VC5_OUT_MODE_LVPECL   = 0,
++	IDT_VC5_OUT_MODE_CMOS     = 1,
++	IDT_VC5_OUT_MODE_HCSL33   = 2,
++	IDT_VC5_OUT_MODE_LVDS     = 3,
++	IDT_VC5_OUT_MODE_CMOS2    = 4,
++	IDT_VC5_OUT_MODE_CMOSD    = 5,
++	IDT_VC5_OUT_MODE_HCSL25   = 6,
++
++	IDT_VC5_OUT_NUM_MODES,
++	IDT_VC5_OUT_MODE_UNKNOWN  = 99,
++};
++
+ /* Supported IDT VC5 models. */
+ enum vc5_model {
+ 	IDT_VC5_5P49V5923,
+@@ -149,6 +168,7 @@ struct vc5_out_data {
+ 	struct clk_hw		hw;
+ 	struct vc5_driver_data	*vc5;
+ 	unsigned int		num;
++	enum vc5_out_mode	mode:8;
+ };
+ 
+ struct vc5_driver_data {
+@@ -593,6 +613,13 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ 			return ret;
+ 	}
+ 
++	/* Set output drive mode */
++	if (hwdata->mode != IDT_VC5_OUT_MODE_UNKNOWN)
++		regmap_update_bits(vc5->regmap,
++				   VC5_CLK_OUTPUT_CFG(hwdata->num, 0),
++				   VC5_CLK_OUTPUT_CFG0_MODE_MASK,
++				   (hwdata->mode << VC5_CLK_OUTPUT_CFG0_MODE_SHIFT));
++
+ 	/* Enable the clock buffer */
+ 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
+ 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF,
+@@ -696,6 +723,46 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ 	}
+ }
+ 
++static int vc5_parse_dt(struct vc5_driver_data *vc5)
++{
++	struct device *dev = &vc5->client->dev;
++	struct device_node *np = dev->of_node;
++	struct device_node *child;
++	u32 val;
++	int n;
++
++	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++)
++		vc5->clk_out[n].mode = IDT_VC5_OUT_MODE_UNKNOWN;
++
++	for_each_child_of_node(np, child) {
++		if (of_property_read_u32(child, "reg", &n)) {
++			dev_err(dev, "%pOF: missing reg property\n", child);
++			break;
++		}
++
++		if (n == 0 || n >= vc5->chip_info->clk_out_cnt) {
++			dev_err(dev, "%pOF: invalid reg %d\n", child, n);
++			break;
++		}
++
++		if (!of_property_read_u32(child, "idt,drive-mode", &val)) {
++			if (val >= IDT_VC5_OUT_NUM_MODES) {
++				dev_err(dev, "%pOF: invalid idt,drive-mode %u\n",
++					child, val);
++				break;
++			}
++			vc5->clk_out[n].mode = val;
++		}
++	}
++
++	if (child) {
++		of_node_put(child);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static const struct of_device_id clk_vc5_of_match[];
+ 
+ static int vc5_probe(struct i2c_client *client,
+@@ -723,6 +790,10 @@ static int vc5_probe(struct i2c_client *client,
+ 	if (PTR_ERR(vc5->pin_clkin) == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
++	ret = vc5_parse_dt(vc5);
++	if (ret)
++		return ret;
++
+ 	vc5->regmap = devm_regmap_init_i2c(client, &vc5_regmap_config);
+ 	if (IS_ERR(vc5->regmap)) {
+ 		dev_err(&client->dev, "failed to allocate register map\n");
 -- 
 2.27.0
 
