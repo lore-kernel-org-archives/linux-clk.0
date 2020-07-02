@@ -2,109 +2,418 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2412FC433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 09:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9577AC433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 09:34:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0003C20702
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 09:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6074A20702
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 09:34:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ROc9lpGY"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="war5pPk8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726183AbgGBJeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 05:34:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58016 "EHLO
+        id S1726442AbgGBJeV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 05:34:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726169AbgGBJeS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 05:34:18 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 053F1C08C5C1
-        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 02:34:18 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id g75so25961912wme.5
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 02:34:17 -0700 (PDT)
+        with ESMTP id S1726169AbgGBJeU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 05:34:20 -0400
+Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F3DCC08C5C1
+        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 02:34:20 -0700 (PDT)
+Received: by mail-wm1-x343.google.com with SMTP id 17so27066428wmo.1
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 02:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=wNBd8IKH2tiilVW9f95WBKZLvBm2AFUMvOOUIMAtbjU=;
-        b=ROc9lpGYJNr1jvW8KUTWHIl5/yg1514yfak4l0bsnJO+YKrdMUY+pr6c2GYcfDPhyH
-         hB6TxIbELlhaCqBq4McBt6aWhBtSRutKQFcfNVkkRaW9D4UQ0bg2Q/21IO2Q7k6Jir7f
-         m2GpKy7yNC9Y1RX0MbKtp1ijkmbdr0bo4DPrcb+iu9loAYXOE4sTIqwiHsCpMc3R3Dwx
-         ywW02KGTMEr1SRKmFyUpt74J4qUhY9r+sBPMBh5hrbexEGd+9uQl7FnDgJnOTQNGVPZX
-         QpMttaIqio83dvyEpVdX09/awsZ2VZGOn+p0rLTngkqWiVieE3zvmZoRdim4v/12ajSd
-         7szQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=gsgaigVJ8U3YXCaM1bx6x3mEPjHwFHAz88LFN0Ze9LA=;
+        b=war5pPk8AIaElP+eN6n2uNJuKJEtuz1tozssXO4QGI+nK6+1kirXVE2qG9c2q5BOc/
+         Ff+uEdSHJSiYdQI2BNoleaCiAHRK8IJW9e82STUjlUG0WpsluZ1BfBHAbnBemRteqcGH
+         2f+s/K6Msl7D1c+NLSlxgPfRueEZZLfh1nGSRETUNZsu/1PvrQnR5dyQ3u7fjpdPxlWD
+         PEWlzEi+350cYLfEZM2SqsUMXC5Tj6ekDWMY2HHqVsu0TNcgWGG5cnpfiiJrknvA9KOR
+         jXrYtDkUQ3v0ux26iyLR01n82M1xneb7nkchFykq4/tIOif/AzqJ8R1pkEy66RjNFVwy
+         cXJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=wNBd8IKH2tiilVW9f95WBKZLvBm2AFUMvOOUIMAtbjU=;
-        b=hhFEP4epEaKIDCb+vcCHrPo8NseyFSBObyFexoBppxPiAJd0FVw8c5UJ+jLvn8HL0q
-         Duk1VWKM/Tl/bB5oXBGj3xOxc9+EyJ+cJ7/cecySm1x36IxT4PqGYLlNwePsOjCmimEo
-         +QbWbdreBvSkHXjQOp8oRmwjHxWjjy/bEVlqDnh212yAeL71rpAK95CgnVFdvgDMej2k
-         TdBGOR7OsWRtGtE/cS4+wJn/D1/KvPKctmrn7DW0EHvMcp2fBaUmS+L0ZDaQpVzLaloB
-         4i+pJz0uT+Z8kFZEz54hkjvYo3A9sLOFvq9URish5EjTKXfj3wcHeCmgYaQ34MLBFrnF
-         FvUQ==
-X-Gm-Message-State: AOAM5305ryEgWn5iKmHwoPtQHa4XPdLjmK1Z9yVotdXYklDBPgfSi7n8
-        i0hLwwpBtxAbrI2uLJMfQangBA==
-X-Google-Smtp-Source: ABdhPJyI+3aY/huDvFyQGp8SbhwNpNuAtLvQnnARxI8sob2XVnNHABW77w/SdZSe5/6HKrTKYMNPwQ==
-X-Received: by 2002:a1c:2d83:: with SMTP id t125mr31554275wmt.187.1593682456705;
-        Thu, 02 Jul 2020 02:34:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=gsgaigVJ8U3YXCaM1bx6x3mEPjHwFHAz88LFN0Ze9LA=;
+        b=RnZxe7FNIcyE15mGemgVxAKzdoaPznZtATsajQrWIAdqtAhfrkROlT2OmNUTXIM5ML
+         xh50cI9qY3rQwJjyh8SuJLBYH8jv7TisvN75xwMWVLMHb4CzmhqixmoFbn5vyw8A6kdK
+         vC3vzHwVgAeoC8/Saru00c4wmGehA0aguDD4tCA3Wz2l5u3a7oLu05woX9Bga9R8OS5R
+         hOxI0PPyC6gud09p0Xo8iBKZrdhbKOsEOxipFDlhkbn+xi+gy04Vwc+W0hWs1iibzIGD
+         iY0DQDyOhot9n6OMrhSZeJoB1tHvMhdYHlfNWdI0Kjjnl4OVGEwEOatXo42Xarhgdtl5
+         v9tA==
+X-Gm-Message-State: AOAM530/WzloBMe6p3NFmJj9ku5SdyMy0gaorGRfzY8k/jIaYPXKk1fp
+        ZT1QkHKmlvtUrF6bTOi+xg2nbw==
+X-Google-Smtp-Source: ABdhPJxTEg2s9mNsdImyQpEjiuqujfqOPgT7WWcblQbS9ITSRvJrAs6VaJq3wACVKFhyGVwD1TLMlg==
+X-Received: by 2002:a1c:1d1:: with SMTP id 200mr30588776wmb.11.1593682458847;
+        Thu, 02 Jul 2020 02:34:18 -0700 (PDT)
 Received: from localhost.localdomain ([88.122.66.28])
-        by smtp.gmail.com with ESMTPSA id b184sm10326345wmc.20.2020.07.02.02.34.15
+        by smtp.gmail.com with ESMTPSA id b184sm10326345wmc.20.2020.07.02.02.34.17
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 02 Jul 2020 02:34:16 -0700 (PDT)
+        Thu, 02 Jul 2020 02:34:18 -0700 (PDT)
 From:   Loic Poulain <loic.poulain@linaro.org>
 To:     sboyd@kernel.org, bjorn.andersson@linaro.org
 Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, Loic Poulain <loic.poulain@linaro.org>
-Subject: [PATCH v3 0/4] msm8996 CPU scaling suppor
-Date:   Thu,  2 Jul 2020 11:39:19 +0200
-Message-Id: <1593682763-31368-1-git-send-email-loic.poulain@linaro.org>
+        linux-clk@vger.kernel.org, Ilia Lin <ilialin@codeaurora.org>,
+        Loic Poulain <loic.poulain@linaro.org>
+Subject: [PATCH v3 1/4] soc: qcom: Separate kryo l2 accessors from PMU driver
+Date:   Thu,  2 Jul 2020 11:39:20 +0200
+Message-Id: <1593682763-31368-2-git-send-email-loic.poulain@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1593682763-31368-1-git-send-email-loic.poulain@linaro.org>
+References: <1593682763-31368-1-git-send-email-loic.poulain@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-v2:
-    - Converted dt bindings to YAML
-    - Various fixes from Stephen inputs
-    - Removed useless wmb barrier, MODULE_ALIAS
-    - Use helpers like struct_size() and devm_platform_ioremap_resource()
-    - Coding style fixes + comments
-    - Kconfig: remove useless depends
-    - Added Co-developed-by tag
+From: Ilia Lin <ilialin@codeaurora.org>
 
-v3:
-    - Added Ilia and Rajendra s-o-b and contribution description
+The driver provides kernel level API for other drivers
+to access the MSM8996 L2 cache registers.
+Separating the L2 access code from the PMU driver and
+making it public to allow other drivers use it.
+The accesses must be separated with a single spinlock,
+maintained in this driver.
 
-Ilia Lin (2):
-  soc: qcom: Separate kryo l2 accessors from PMU driver
-  dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
-
-Loic Poulain (2):
-  clk: qcom: Add CPU clock driver for msm8996
-  arch: arm64: dts: msm8996: Add opp and thermal
-
- .../bindings/clock/qcom,msm8996-apcc.yaml          |  56 +++
- arch/arm64/boot/dts/qcom/msm8996.dtsi              | 338 ++++++++++++-
- drivers/clk/qcom/Kconfig                           |   8 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
- drivers/clk/qcom/clk-cpu-8996.c                    | 538 +++++++++++++++++++++
- drivers/perf/Kconfig                               |   1 +
- drivers/perf/qcom_l2_pmu.c                         |  90 +---
- drivers/soc/qcom/Kconfig                           |   3 +
- drivers/soc/qcom/Makefile                          |   1 +
- drivers/soc/qcom/kryo-l2-accessors.c               |  57 +++
- include/soc/qcom/kryo-l2-accessors.h               |  12 +
- 12 files changed, 1030 insertions(+), 81 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8996-apcc.yaml
- create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Signed-off-by: Loic Poulain <loic.poulain@linaro.org>
+---
+ drivers/perf/Kconfig                 |  1 +
+ drivers/perf/qcom_l2_pmu.c           | 90 ++++++++++--------------------------
+ drivers/soc/qcom/Kconfig             |  3 ++
+ drivers/soc/qcom/Makefile            |  1 +
+ drivers/soc/qcom/kryo-l2-accessors.c | 57 +++++++++++++++++++++++
+ include/soc/qcom/kryo-l2-accessors.h | 12 +++++
+ 6 files changed, 98 insertions(+), 66 deletions(-)
  create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
  create mode 100644 include/soc/qcom/kryo-l2-accessors.h
 
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index 09ae8a9..8e6510c1 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -89,6 +89,7 @@ config HISI_PMU
+ config QCOM_L2_PMU
+ 	bool "Qualcomm Technologies L2-cache PMU"
+ 	depends on ARCH_QCOM && ARM64 && ACPI
++	select QCOM_KRYO_L2_ACCESSORS
+ 	  help
+ 	  Provides support for the L2 cache performance monitor unit (PMU)
+ 	  in Qualcomm Technologies processors.
+diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
+index 21d6991..02ca1fa 100644
+--- a/drivers/perf/qcom_l2_pmu.c
++++ b/drivers/perf/qcom_l2_pmu.c
+@@ -23,6 +23,7 @@
+ #include <asm/barrier.h>
+ #include <asm/local64.h>
+ #include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
+ 
+ #define MAX_L2_CTRS             9
+ 
+@@ -79,8 +80,6 @@
+ #define L2_COUNTER_RELOAD       BIT_ULL(31)
+ #define L2_CYCLE_COUNTER_RELOAD BIT_ULL(63)
+ 
+-#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
+-#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
+ 
+ #define reg_idx(reg, i)         (((i) * IA_L2_REG_OFFSET) + reg##_BASE)
+ 
+@@ -99,48 +98,7 @@
+ #define L2_EVENT_STREX                     0x421
+ #define L2_EVENT_CLREX                     0x422
+ 
+-static DEFINE_RAW_SPINLOCK(l2_access_lock);
+ 
+-/**
+- * set_l2_indirect_reg: write value to an L2 register
+- * @reg: Address of L2 register.
+- * @value: Value to be written to register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static void set_l2_indirect_reg(u64 reg, u64 val)
+-{
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	write_sysreg_s(val, L2CPUSRDR_EL1);
+-	isb();
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-}
+-
+-/**
+- * get_l2_indirect_reg: read an L2 register value
+- * @reg: Address of L2 register.
+- *
+- * Use architecturally required barriers for ordering between system register
+- * accesses
+- */
+-static u64 get_l2_indirect_reg(u64 reg)
+-{
+-	u64 val;
+-	unsigned long flags;
+-
+-	raw_spin_lock_irqsave(&l2_access_lock, flags);
+-	write_sysreg_s(reg, L2CPUSRSELR_EL1);
+-	isb();
+-	val = read_sysreg_s(L2CPUSRDR_EL1);
+-	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
+-
+-	return val;
+-}
+ 
+ struct cluster_pmu;
+ 
+@@ -211,28 +169,28 @@ static inline struct cluster_pmu *get_cluster_pmu(
+ static void cluster_pmu_reset(void)
+ {
+ 	/* Reset all counters */
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
+-	set_l2_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
+-	set_l2_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_RESET_ALL);
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, l2_counter_present_mask);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, l2_counter_present_mask);
+ }
+ 
+ static inline void cluster_pmu_enable(void)
+ {
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_ENABLE);
+ }
+ 
+ static inline void cluster_pmu_disable(void)
+ {
+-	set_l2_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
++	kryo_l2_set_indirect_reg(L2PMCR, L2PMCR_COUNTERS_DISABLE);
+ }
+ 
+ static inline void cluster_pmu_counter_set_value(u32 idx, u64 value)
+ {
+ 	if (idx == l2_cycle_ctr_idx)
+-		set_l2_indirect_reg(L2PMCCNTR, value);
++		kryo_l2_set_indirect_reg(L2PMCCNTR, value);
+ 	else
+-		set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
++		kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx), value);
+ }
+ 
+ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+@@ -240,46 +198,46 @@ static inline u64 cluster_pmu_counter_get_value(u32 idx)
+ 	u64 value;
+ 
+ 	if (idx == l2_cycle_ctr_idx)
+-		value = get_l2_indirect_reg(L2PMCCNTR);
++		value = kryo_l2_get_indirect_reg(L2PMCCNTR);
+ 	else
+-		value = get_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
++		value = kryo_l2_get_indirect_reg(reg_idx(IA_L2PMXEVCNTR, idx));
+ 
+ 	return value;
+ }
+ 
+ static inline void cluster_pmu_counter_enable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENSET, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_disable(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMCNTENCLR, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_enable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENSET, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_counter_disable_interrupt(u32 idx)
+ {
+-	set_l2_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
++	kryo_l2_set_indirect_reg(L2PMINTENCLR, idx_to_reg_bit(idx));
+ }
+ 
+ static inline void cluster_pmu_set_evccntcr(u32 val)
+ {
+-	set_l2_indirect_reg(L2PMCCNTCR, val);
++	kryo_l2_set_indirect_reg(L2PMCCNTCR, val);
+ }
+ 
+ static inline void cluster_pmu_set_evcntcr(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVCNTCR, ctr), val);
+ }
+ 
+ static inline void cluster_pmu_set_evtyper(u32 ctr, u32 val)
+ {
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVTYPER, ctr), val);
+ }
+ 
+ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+@@ -295,11 +253,11 @@ static void cluster_pmu_set_resr(struct cluster_pmu *cluster,
+ 
+ 	spin_lock_irqsave(&cluster->pmu_lock, flags);
+ 
+-	resr_val = get_l2_indirect_reg(L2PMRESR);
++	resr_val = kryo_l2_get_indirect_reg(L2PMRESR);
+ 	resr_val &= ~(L2PMRESR_GROUP_MASK << shift);
+ 	resr_val |= field;
+ 	resr_val |= L2PMRESR_EN;
+-	set_l2_indirect_reg(L2PMRESR, resr_val);
++	kryo_l2_set_indirect_reg(L2PMRESR, resr_val);
+ 
+ 	spin_unlock_irqrestore(&cluster->pmu_lock, flags);
+ }
+@@ -315,14 +273,14 @@ static inline void cluster_pmu_set_evfilter_sys_mode(u32 ctr)
+ 		   L2PMXEVFILTER_ORGFILTER_IDINDEP |
+ 		   L2PMXEVFILTER_ORGFILTER_ALL;
+ 
+-	set_l2_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
++	kryo_l2_set_indirect_reg(reg_idx(IA_L2PMXEVFILTER, ctr), val);
+ }
+ 
+ static inline u32 cluster_pmu_getreset_ovsr(void)
+ {
+-	u32 result = get_l2_indirect_reg(L2PMOVSSET);
++	u32 result = kryo_l2_get_indirect_reg(L2PMOVSSET);
+ 
+-	set_l2_indirect_reg(L2PMOVSCLR, result);
++	kryo_l2_set_indirect_reg(L2PMOVSCLR, result);
+ 	return result;
+ }
+ 
+@@ -767,7 +725,7 @@ static int get_num_counters(void)
+ {
+ 	int val;
+ 
+-	val = get_l2_indirect_reg(L2PMCR);
++	val = kryo_l2_get_indirect_reg(L2PMCR);
+ 
+ 	/*
+ 	 * Read number of counters from L2PMCR and add 1
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index bf42a17..1782186 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -62,6 +62,9 @@ config QCOM_LLCC
+ 	  SDM845. This provides interfaces to clients that use the LLCC.
+ 	  Say yes here to enable LLCC slice driver.
+ 
++config QCOM_KRYO_L2_ACCESSORS
++       bool
++
+ config QCOM_MDT_LOADER
+ 	tristate
+ 	select QCOM_SCM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 5d6b83d..fcf6ef7 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -26,3 +26,4 @@ obj-$(CONFIG_QCOM_APR) += apr.o
+ obj-$(CONFIG_QCOM_LLCC) += llcc-qcom.o
+ obj-$(CONFIG_QCOM_RPMHPD) += rpmhpd.o
+ obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
++obj-$(CONFIG_QCOM_KRYO_L2_ACCESSORS) +=	kryo-l2-accessors.o
+diff --git a/drivers/soc/qcom/kryo-l2-accessors.c b/drivers/soc/qcom/kryo-l2-accessors.c
+new file mode 100644
+index 0000000..c20cb92
+--- /dev/null
++++ b/drivers/soc/qcom/kryo-l2-accessors.c
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/spinlock.h>
++#include <asm/barrier.h>
++#include <asm/sysreg.h>
++#include <soc/qcom/kryo-l2-accessors.h>
++
++#define L2CPUSRSELR_EL1         sys_reg(3, 3, 15, 0, 6)
++#define L2CPUSRDR_EL1           sys_reg(3, 3, 15, 0, 7)
++
++static DEFINE_RAW_SPINLOCK(l2_access_lock);
++
++/**
++ * kryo_l2_set_indirect_reg() - write value to an L2 register
++ * @reg: Address of L2 register.
++ * @value: Value to be written to register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++void kryo_l2_set_indirect_reg(u64 reg, u64 val)
++{
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	write_sysreg_s(val, L2CPUSRDR_EL1);
++	isb();
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++}
++EXPORT_SYMBOL(kryo_l2_set_indirect_reg);
++
++/**
++ * kryo_l2_get_indirect_reg() - read an L2 register value
++ * @reg: Address of L2 register.
++ *
++ * Use architecturally required barriers for ordering between system register
++ * accesses, and system registers with respect to device memory
++ */
++u64 kryo_l2_get_indirect_reg(u64 reg)
++{
++	u64 val;
++	unsigned long flags;
++
++	raw_spin_lock_irqsave(&l2_access_lock, flags);
++	write_sysreg_s(reg, L2CPUSRSELR_EL1);
++	isb();
++	val = read_sysreg_s(L2CPUSRDR_EL1);
++	raw_spin_unlock_irqrestore(&l2_access_lock, flags);
++
++	return val;
++}
++EXPORT_SYMBOL(kryo_l2_get_indirect_reg);
+diff --git a/include/soc/qcom/kryo-l2-accessors.h b/include/soc/qcom/kryo-l2-accessors.h
+new file mode 100644
+index 0000000..673c534
+--- /dev/null
++++ b/include/soc/qcom/kryo-l2-accessors.h
+@@ -0,0 +1,12 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++#define __SOC_ARCH_QCOM_KRYO_L2_ACCESSORS_H
++
++void kryo_l2_set_indirect_reg(u64 reg, u64 val);
++u64 kryo_l2_get_indirect_reg(u64 reg);
++
++#endif
 -- 
 2.7.4
 
