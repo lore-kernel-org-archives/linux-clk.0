@@ -2,58 +2,55 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7007C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 06:42:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBDABC433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 07:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC21207E8
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 06:42:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gbygk4yK"
+	by mail.kernel.org (Postfix) with ESMTP id C5B3020884
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 07:03:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgGBGmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 02:42:35 -0400
-Received: from mail-eopbgr130089.outbound.protection.outlook.com ([40.107.13.89]:34372
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726092AbgGBGme (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Jul 2020 02:42:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=V0BSkjPFHwOWwQgyoJBwnCEPjAu072MXKkJLdBOFq7vnN3t1ci3nKxSd353gwZcor7lmEijSXWfjyQtNtPnKX/8Ri1Uo0vvBZ+3vidernjmGyoNUvQtg/gsvXrdjsk8nPuGqyEB1/1eBzpqSwTVRR3drIxD3p6aqImCIZJLhUjJp1lHzcqpZfNhEqNz8A2BurXRwqyVq7e9YGCdO3opxQhJG/bLZ9YVSc7Pd6XR/BWWMoHdN4ywrRIJP4AGO8Q1QusLF9lS9svgdNjAs9t3oWcek84iMlJf+1d5HqDaJfMsmJR7PUtDzLtWkaw7s3pytlsxWPDThU6UCdeGkVCvV4A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3B3j+lPWgUqBqWSYhJ6EkuerVX6SSBtcX3C9hozVp6M=;
- b=k+4CB46YxSlSFXscnZmAiZKbtu2hZhhwIFT1izYbE563MQcNo3+et7l3smIfxW9r/1jIF07JiAKgsRHHcBrnHKTpAYZBABJR/u56828aHlmmb0w6gpVjfRGH62YklcxynVyjcBcqGEpiSnvldNH/oALHTFHDTfLaBoZj72+qWnDz3JI1ctH5LQkuROiiNXLwQpPXAik9lj5JsoHKYRkZx+sOFYdoMbLZlS/itlf4Vlv3LEnc1LI0lbU5BwT1Dey0F/iJVpvSXr1FapaT7eugW9atlxhtPnEcaJnT70+Idzeep33SrVkp4zGx0m9J9KCrooraQLB7Vb/+W5cilt6igQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3B3j+lPWgUqBqWSYhJ6EkuerVX6SSBtcX3C9hozVp6M=;
- b=gbygk4yKPo5lFxDpBWBDQCsG+9hvyAGuOSU8x3U/G5x9kvLuBBRcIuOGsnO8ZS+nGBT7y+7kNy0uGVX0QBONMoXDyP1ZuFE6Nowax0O0wY2JCS0SoyNp4DaKaiwfVFD9jqJ6UJ7Ru/81L9Z8uAMlfnuWu6N+SGdjoGisIisbAPM=
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (2603:10a6:8:10::18)
- by DB3PR0402MB3659.eurprd04.prod.outlook.com (2603:10a6:8:5::32) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3131.24; Thu, 2 Jul
- 2020 06:42:28 +0000
-Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1dab:b68c:e028:acb3]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
- ([fe80::1dab:b68c:e028:acb3%6]) with mapi id 15.20.3131.036; Thu, 2 Jul 2020
- 06:42:28 +0000
-From:   Anson Huang <anson.huang@nxp.com>
+        id S1726068AbgGBHDw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 03:03:52 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:53197 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbgGBHDw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 03:03:52 -0400
+Received: from mail-qk1-f172.google.com ([209.85.222.172]) by
+ mrelayeu.kundenserver.de (mreue108 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MLA2e-1jZuL90XNi-00IClm; Thu, 02 Jul 2020 09:03:49 +0200
+Received: by mail-qk1-f172.google.com with SMTP id k18so24695955qke.4;
+        Thu, 02 Jul 2020 00:03:48 -0700 (PDT)
+X-Gm-Message-State: AOAM533/8N3rpApox64MT2iAtrjVg7SBZz82+5U9I97yZ+M4W79k3cNO
+        G7oBZJXkS1gYRTc8qMRlPUL0A633PrqGkDVhBV4=
+X-Google-Smtp-Source: ABdhPJy1J9OKRiOFi7eXG30KY3L0LxGjT1O8dCnD25KnYneALqn8NIrOpou0Mi3/xlE6GFnLs09LBh9Q++KQPysW2EU=
+X-Received: by 2002:a37:a496:: with SMTP id n144mr28916015qke.286.1593673427914;
+ Thu, 02 Jul 2020 00:03:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <1593656074-10092-1-git-send-email-Anson.Huang@nxp.com>
+ <1593656074-10092-4-git-send-email-Anson.Huang@nxp.com> <CAA+hA=S0G7Na0ieEpPq3aN6GN1BEHtYp9vbF9x2tjmknDSVjZw@mail.gmail.com>
+ <DB3PR0402MB391610595D40C11CF26CD990F56D0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAA+hA=Rtkm_FpkoBvHNnB0TSeTrqXaRVwOzkywsL7QO6ec_K7Q@mail.gmail.com>
+ <AM6PR0402MB3911049CC1B136327345F11CF56D0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+ <CAA+hA=S9ENXtD7q362=y84qKAtR090pZOd6MF6uN8W223UK-+Q@mail.gmail.com>
+In-Reply-To: <CAA+hA=S9ENXtD7q362=y84qKAtR090pZOd6MF6uN8W223UK-+Q@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 2 Jul 2020 09:03:32 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a31bZ1XDjjv1LRvpgifxqYUuBRFbPEc+eFD8Dby+mRE8Q@mail.gmail.com>
+Message-ID: <CAK8P3a31bZ1XDjjv1LRvpgifxqYUuBRFbPEc+eFD8Dby+mRE8Q@mail.gmail.com>
+Subject: Re: [PATCH V4 3/5] clk: imx: Support building i.MX common clock
+ driver as module
 To:     Dong Aisheng <dongas86@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>, Arnd Bergmann <arnd@arndb.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
         Aisheng Dong <aisheng.dong@nxp.com>,
         Andy Duan <fugang.duan@nxp.com>,
         Daniel Baluta <daniel.baluta@nxp.com>,
@@ -64,109 +61,52 @@ CC:     Michael Turquette <mturquette@baylibre.com>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH V4 3/5] clk: imx: Support building i.MX common clock
- driver as module
-Thread-Topic: [PATCH V4 3/5] clk: imx: Support building i.MX common clock
- driver as module
-Thread-Index: AQHWUBb/eaArIN5lW0eg3m9Qeje+NajzluoAgAAJBACAACXUAIAABbYggAAHpQCAAAQnIA==
-Date:   Thu, 2 Jul 2020 06:42:28 +0000
-Message-ID: <DB3PR0402MB391633332EFC1A9B9B62FA76F56D0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-References: <1593656074-10092-1-git-send-email-Anson.Huang@nxp.com>
- <1593656074-10092-4-git-send-email-Anson.Huang@nxp.com>
- <CAA+hA=S0G7Na0ieEpPq3aN6GN1BEHtYp9vbF9x2tjmknDSVjZw@mail.gmail.com>
- <DB3PR0402MB391610595D40C11CF26CD990F56D0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <CAA+hA=Rtkm_FpkoBvHNnB0TSeTrqXaRVwOzkywsL7QO6ec_K7Q@mail.gmail.com>
- <AM6PR0402MB3911049CC1B136327345F11CF56D0@AM6PR0402MB3911.eurprd04.prod.outlook.com>
- <CAA+hA=S9ENXtD7q362=y84qKAtR090pZOd6MF6uN8W223UK-+Q@mail.gmail.com>
-In-Reply-To: <CAA+hA=S9ENXtD7q362=y84qKAtR090pZOd6MF6uN8W223UK-+Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 58d15653-2cfc-418a-342b-08d81e5316e1
-x-ms-traffictypediagnostic: DB3PR0402MB3659:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB3PR0402MB36590920F8C5CA84F9D51524F56D0@DB3PR0402MB3659.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 0452022BE1
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kAktfD4AllG0IJ9G8Zqr06HlYTSap4UTyYe+3XNAf+439OaPI34gccOAHvbLUbNTRVhbfHbbcdme29Ply5fMgsITKlFOJG3DTYk0gh5ms67I+pmjOBBX+UdUuGAibNNl4bFYm5uA0NDlo2DaU2mYmsr7IYGEG1HbWze/0OizYuAujyfvoAU6PPgIadZDCdQeT1zDT9fKVi7ihLH963a1wCKnT9RnxuGyBE1p0EdpJTMFq5cMrJK+3q3ul7wU8GYIk9ju0Zk5TCZwC+uQvIHiImJ9yvuq09v0L5Dj48hdNVNy9RSi8VSTQFlCNe0uY0ey1sVIEopvJ67fwYqnCiT52Q==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(39860400002)(366004)(396003)(346002)(376002)(76116006)(26005)(9686003)(83380400001)(54906003)(316002)(86362001)(478600001)(6916009)(7696005)(7416002)(8936002)(4326008)(71200400001)(8676002)(33656002)(52536014)(66946007)(64756008)(66556008)(66446008)(66476007)(186003)(53546011)(6506007)(2906002)(55016002)(44832011)(5660300002);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: ctfR4s3GQkShl7m7hvTWXFO04AGnkPXssTBI2m09n8/WCFLlwgkvyyL66I/OoXcxj/RXZ5D9aMoyvL7wW3XZGxhsCT+oeD3DCh7gY+aWFn1oFKstoGU4vcyiMn8Cp09vpFnB7ViqU5vxcGI0i/MzdJz8zb0eanuN8OhsFxjfYB+ThLgPZ3LtdhRgH2q1B3KeRtLCY9qE2stecyTYEQfyp/7C5ckcbzzZ62EjtzvBJCE53amGcN86GynJ3QB+uzz4QUuWgNuLG/qnDxHhCwFZpIx8oUznWCW8u4uW+0TkDM8twL+jlcfxaogfFRQ/wSugtie6b4wtAtNv43g6NXxxD+hRLIq8Sd5Y0lMzK3h3+8oFzT+MxC6s+gweM0pOlYX/iTxaSh6OL7FLD2RU7wGr0y/UVqnBCe5CDlf2Tymo86xI3MfnwOublYAXWCblKmlgEKeL6fdBDDpPTZ4pzau8yx4duZKMrx4q5YKJkFdFt8MZONWu7XtjSH4I8UR7g3dq
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB3PR0402MB3916.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 58d15653-2cfc-418a-342b-08d81e5316e1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2020 06:42:28.6582
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pdMTF1byIq3boBfLY05d9YKNdwSSqXpKDQYO/XtKh/8KSzG/GaM+9JDVniY6gXvpsAOToOf6jPiRxdZme8pwSg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
+Content-Type: text/plain; charset="UTF-8"
+X-Provags-ID: V03:K1:7bOCzNp5Raruey2KRYtDaaMrPtdeP5ZFJqLXmLWlnz6ojji+ouN
+ VqBf/jEvWts7m85Y0Ryj4vLlxbg031p3GPIGz2eVjkcnQQdBcdL1x1WpBZSOvrgyChg5fZ8
+ F6j3lzaOO4y3w3Ccj1mtnsNQspIEF7XUBnaGsjgfaaZS5I46u/JIxakYxSAmlRvUNtD8HLQ
+ 1aZlMq3b/pPMQC+sbfDTw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Tda3zbNPZV8=:D1Ic8xSUfHkfJ6v1TABpbJ
+ hMHsTXk6CcBZXCT8JM7xq5zo+2aws/zyt3Kz6YSG/t1apmv++UqWJKzrgUiI8JtOgohxRyruF
+ hNCdkQIKi1JXV82ovMs9uAMxGGmc/VrPdMKFDRFRzg6NYd2N3q2yICK9o5JvzTFs8/DuPdUfh
+ bEJZ3XdgDtwcheIQ9OMKvezd/ZUAlrgxGJ4hNpOxVknnBFt9gI0y5HTJYgO6TamLzaQHaK5tv
+ seZ2z8dwEuJUrN1efkV5yDWUyJBwhOXONUQcR1x/LK5H0QMJp+J47BGBJs9VM1g/JJ10Z8/YQ
+ G6Dp9diFeJAEa+JVq5FIePo47bBBzRLY5wEyKuo2al+JOGclM5ubIIO754fdvG6ZLRT9pneOm
+ 2o5tZVMVU+88tyAvAWHk9MKsJTknyqGFh6fwg9JqJClbSj6UHDXf1zpWQCfti+RkCE3tqqMjx
+ btgbA7W+CvWA8UR3TFPz7vmGjOBLDvY5ycPiMf6Je9auSCpaQkCzzk70geJsi8/WW9A2Rd/V6
+ 4eeC8W7k7zeiZj9uxBQxIu/KkM/V0n1o0/xbKGH4/hngMw1ngIvC6DCUZfKpx2hJcKrv+g+jo
+ vesL1U0WNuXuJGedGj7S33aMRy9vq20RhsrWPoEN0WCANRQaCg5R2++1DpiDrGPtnDmnfWZuy
+ nCX3PDsgC0UdBwASU/ER5bQ18XKkM/VNxYUFNJ6BAa4JSTVl16gUWK8FFg8wXg2krWo4vRGWV
+ MNTuawCz/V95qAYPvdB0Q+x8CSdX29Oz1w4PK4+pFj/BuH1vGizi3n/Jar+jYlmN4jDu0hv7x
+ 7NbekmRGhLn5wnD7eMJmw8cnOqbu9+H7M7UmzBaRIilrlvAhnU=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCj4gU3ViamVjdDogUmU6IFtQQVRDSCBWNCAzLzVdIGNsazogaW14OiBTdXBwb3J0IGJ1aWxk
-aW5nIGkuTVggY29tbW9uIGNsb2NrDQo+IGRyaXZlciBhcyBtb2R1bGUNCj4gDQo+IE9uIFRodSwg
-SnVsIDIsIDIwMjAgYXQgMjoxMSBQTSBBbnNvbiBIdWFuZyA8YW5zb24uaHVhbmdAbnhwLmNvbT4g
-d3JvdGU6DQo+ID4NCj4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggVjQgMy81XSBjbGs6IGlteDog
-U3VwcG9ydCBidWlsZGluZyBpLk1YIGNvbW1vbg0KPiA+ID4gY2xvY2sgZHJpdmVyIGFzIG1vZHVs
-ZQ0KPiA+ID4NCj4gPiA+IE9uIFRodSwgSnVsIDIsIDIwMjAgYXQgMTE6MjYgQU0gQW5zb24gSHVh
-bmcgPGFuc29uLmh1YW5nQG54cC5jb20+DQo+ID4gPiB3cm90ZToNCj4gPiA+IFsuLi5dDQo+ID4g
-PiA+ID4gPiBAQCAtMTQzLDE2ICsxNDgsMTggQEAgdm9pZCBpbXhfY3NjbXIxX2ZpeHVwKHUzMiAq
-dmFsKSAgc3RhdGljDQo+ID4gPiA+ID4gPiBpbnQgaW14X2tlZXBfdWFydF9jbG9ja3M7ICBzdGF0
-aWMgc3RydWN0IGNsayAqKiBjb25zdA0KPiA+ID4gPiA+ID4gKmlteF91YXJ0X2Nsb2NrczsNCj4g
-PiA+ID4gPiA+DQo+ID4gPiA+ID4gPiAtc3RhdGljIGludCBfX2luaXQgaW14X2tlZXBfdWFydF9j
-bG9ja3NfcGFyYW0oY2hhciAqc3RyKQ0KPiA+ID4gPiA+ID4gK3N0YXRpYyBpbnQgX19tYXliZV91
-bnVzZWQgaW14X2tlZXBfdWFydF9jbG9ja3NfcGFyYW0oY2hhcg0KPiA+ID4gPiA+ID4gKypzdHIp
-DQo+ID4gPiA+ID4gPiAgew0KPiA+ID4gPiA+ID4gICAgICAgICBpbXhfa2VlcF91YXJ0X2Nsb2Nr
-cyA9IDE7DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gICAgICAgICByZXR1cm4gMDsNCj4gPiA+
-ID4gPiA+ICB9DQo+ID4gPiA+ID4gPiArI2lmbmRlZiBNT0RVTEUNCj4gPiA+ID4gPiA+ICBfX3Nl
-dHVwX3BhcmFtKCJlYXJseWNvbiIsIGlteF9rZWVwX3VhcnRfZWFybHljb24sDQo+ID4gPiA+ID4g
-PiAgICAgICAgICAgICAgIGlteF9rZWVwX3VhcnRfY2xvY2tzX3BhcmFtLCAwKTsNCj4gPiA+ID4g
-PiA+IF9fc2V0dXBfcGFyYW0oImVhcmx5cHJpbnRrIiwgaW14X2tlZXBfdWFydF9lYXJseXByaW50
-aywNCj4gPiA+ID4gPiA+ICAgICAgICAgICAgICAgaW14X2tlZXBfdWFydF9jbG9ja3NfcGFyYW0s
-IDApOw0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gSSBmZWVsIG5vdCBvbmx5IHRoZSBfX3NldHVwX3Bh
-cmFtLCB0aGUgd2hvbGUgbG9naWMgb2YNCj4gPiA+ID4gPiBrZWVwX3VhcnRfY2xvY2tzIGFyZSBu
-b3QgbmVlZGVkIGZvciBNb2R1bGUgY2FzZS4gSXMgaXQgdHJ1ZT8NCj4gPiA+ID4NCj4gPiA+ID4g
-WWVzLCBidXQgdGhlICdrZWVwX3VhcnRfY2xvY2tzJyBpcyBmYWxzZSBieSBkZWZhdWx0IGFuZCB0
-aGUNCj4gPiA+ID4gZnVuY3Rpb24NCj4gPiA+ID4gaW14X2tlZXBfdWFydF9jbG9ja3NfcGFyYW0o
-KSBhbHJlYWR5IGhhcyAnX19tYXliZV91bnVzZWQnLCBpdCBkb2VzDQo+ID4gPiA+IE5PVCBpbXBh
-Y3QgYW55dGhpbmcgaWYgaXQgaXMgZm9yIG1vZHVsZSBidWlsZCwgc28gSSBkaWQgTk9UIGFkZA0K
-PiA+ID4gPiB0aGUgI2lmbmRlZiBjaGVjaw0KPiA+ID4gZm9yIHRoZW0sIGp1c3QgdG8ga2VlcCBj
-b2RlIGVhc3kgYW5kIGNsZWFuLg0KPiA+ID4gPg0KPiA+ID4NCj4gPiA+IElNSE8gZG8gbm90IGNv
-bXBpbGUgdGhlbSBpcyBhIG1vcmUgZWFzeSBhbmQgY2xlYW4gd2F5LiBUaGVuIHVzZXJzDQo+ID4g
-PiBkb24ndCBoYXZlIHRvIGxvb2sgaW50byB0aGUgY29kZSBsb2dpYyB3aGljaCBpcyBtZWFpbmds
-ZXNzIGZvciBNb2R1bGUgY2FzZS4NCj4gPiA+DQo+ID4gPiBCVFcsIGl0IHJlYWxseSBkb2VzIG5v
-dCBtYWtlIGFueSBzZW5zZSB0byBvbmx5IGNvbmRpb25hbGx5IGNvbXBpbGUNCj4gPiA+IF9fc2V0
-dXBfcGFybSgpIGJ1dCBsZWZ0DQo+ID4gPiB0aGUgcGFyYW0gZnVuY3Rpb25zIGRlZmluaXRpb24g
-dG8gYmUgaGFuZGxlZCBieSBfX21heWJlX3VubnVzZWQuDQo+ID4gPiBUaGV5J3JlIHRvZ2V0aGVy
-IHBhcnQgb2YgY29kZSwgYXJlbid0IHRoZXk/DQo+ID4NCj4gPiBJIGFtIGZpbmUgb2YgYWRkaW5n
-IHRoZSAnI2lmbmRlZiBNT0RVTEUnIHRvIGlteF9jbGtfZGlzYWJsZV91YXJ0KCkgYW5kDQo+ID4g
-aW14X2tlZXBfdWFydF9jbG9ja3NfcGFyYW0oKSBhcyB3ZWxsIGluIG5leHQgcGF0Y2ggc2VyaWVz
-LiBPdGhlcnMgbGlrZQ0KPiA+ICcgaW14X2tlZXBfdWFydF9jbG9ja3MgJyBhbmQgaW14X3JlZ2lz
-dGVyX3VhcnRfY2xvY2tzKCkgbmVlZCB0byBiZSBrZXB0DQo+IGFsd2F5cyBidWlsdCwgc2luY2Ug
-dGhleSBhcmUgdXNlZCBieSBlYWNoIGNsb2NrIGRyaXZlciBubyBtYXR0ZXIgYnVpbHQtaW4gb3IN
-Cj4gbW9kdWxlIGJ1aWxkLg0KPiA+DQo+ID4gU28gdGhhdCBtZWFucyBJIGhhdmUgdG8gYWRkIGFu
-b3RoZXIgJ2lmbmRlZiBNT0RVTEUnIG9yIEkgbmVlZCB0bw0KPiA+IGFkanVzdCBzb21lIGNvZGUg
-c2VxdWVuY2UgdG8gbWFrZSB0aG9zZSBjb2RlIGNhbiBiZSBidWlsdC1vdXQgaW4gc2FtZQ0KPiA+
-IGJsb2NrIGFuZCBqdXN0IHVzZSBzaW5nbGUgJ2lmbmRlZiBNT0RVTEUnLCBJIHRoaW5rIGFkanVz
-dCB0aGUgY29kZSBzZXF1ZW5jZQ0KPiBzaG91bGQgYmUgYmV0dGVyLCB3aWxsIGdvIHdpdGggdGhp
-cyB3YXkuDQo+IA0KPiBXaGF0IGlmIHdlICBjb25kaW9uYWxseSBjb21waWxlIGl0IGluIGNsay5o
-PyBXaWxsIHRoYXQgYmUgZWFzaXNlcj8NCg0KQWRqdXN0IHRoZSBmdW5jdGlvbiBzZXF1ZW5jZSBs
-b29rcyBsaWtlIE5PVCBjb21wbGljYXRlZCwganVzdCBuZWVkIHRvIGV4Y2hhbmdlIHRoZQ0KaW14
-X3JlZ2lzdGVyX3VhcnRfY2xvY2tzKCkgYW5kIGlteF9jbGtfZGlzYWJsZV91YXJ0KCksIHRoZW4g
-SSBjYW4gdXNlIHNpbmdsZSAnI2lmbmRlZiBNT0RVTEUnLA0Kd2lsbCBnbyB3aXRoIHRoaXMgd2F5
-IGluIFY1Lg0KDQpBbnNvbg0K
+On Thu, Jul 2, 2020 at 8:40 AM Dong Aisheng <dongas86@gmail.com> wrote:
+> On Thu, Jul 2, 2020 at 2:11 PM Anson Huang <anson.huang@nxp.com> wrote:
+> > > Subject: Re: [PATCH V4 3/5] clk: imx: Support building i.MX common clock
+> >
+> > I am fine of adding the '#ifndef MODULE' to imx_clk_disable_uart() and imx_keep_uart_clocks_param()
+> > as well in next patch series. Others like ' imx_keep_uart_clocks ' and imx_register_uart_clocks() need to
+> > be kept always built, since they are used by each clock driver no matter built-in or module build.
+> >
+> > So that means I have to add another 'ifndef MODULE' or I need to adjust some code sequence to make
+> > those code can be built-out in same block and just use single 'ifndef MODULE', I think adjust the code
+> > sequence should be better, will go with this way.
+>
+> What if we  condionally compile it in clk.h? Will that be easiser?
+
+Yes, that's what I expected to see in v4 after the previous discussion. If
+imx_register_uart_clocks() is an empty inline function, then the arrays
+passed to it are unused and also get dropped by the compiler.
+
+The question is whether the #ifdef check in the header to test for MODULE
+(only calling it if this particular soc has a built-in clk driver,
+which is sufficient)
+or for IS_MODULE(CONFIG_MXC_CLK) (call it if _any_ clk driver is built-in
+and the function exists, which leaves extra code in the driver but is a more
+conventional check).
+
+     Arnd
