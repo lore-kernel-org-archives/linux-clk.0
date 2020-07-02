@@ -2,237 +2,307 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11724C433E1
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 20:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B9BC433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB3DF20899
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 20:51:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="MV54ND7H"
+	by mail.kernel.org (Postfix) with ESMTP id 62E3120884
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726112AbgGBUvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 16:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50004 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726003AbgGBUvA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 16:51:00 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3D9BC08C5C1
-        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 13:50:59 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id k18so26984555qke.4
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 13:50:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/Xy1whvuko1GTsGsLTQjwBeZFEtLbfclioQ2pv5Xu6I=;
-        b=MV54ND7H7Bc/oHzR94MnTdFW9fv2FGROmlNBcDZrWXgvoT/VmKwgxlTWT3hktSplFw
-         iP3MfIk5Y2XICm7EUWaYBtACPCQWB5EUNXe1AGRfVDg5ad6VV4QG7NEEMFRoar9rFPJW
-         wHwTHWrFEUJOW0t0OLUyzQL4EmDv6JjiMkIEN5cFC9veqIGf2C8OpeeajSNDRXfXXVL1
-         Bo7A7STqI3qD6RpE9tdBuxBc8lCi/jDEOE/ZNN65LV3VROIWPH8HjPq79QteqXSkdNZC
-         bN41FVA5tRvdrrBIKU4V4TJX9T9cBXkAk9zz8Vwf8TkaCUqXq95l6i+zxtziUmc8UVfy
-         HccA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/Xy1whvuko1GTsGsLTQjwBeZFEtLbfclioQ2pv5Xu6I=;
-        b=WH7dDHiFiGhJB3c7rhE9VniNXaudgqI/4wu0Vy+fdtxOMXqKu0GuXfZKsqhYdVpIlM
-         I7e4g6nQu4EFRteXcSQoS1okRwNhtGPwyGa7FxNBgf0MyN41hqJHaAgPlhzZwsIVtJAk
-         waXwHVjpJyj5xFw4NAVXMN/ZWGc8k7m/FHn2L4QxdraV2nwAzp9J1w/59Ov3UgChqOlk
-         4cMSG+H9JtM4qX2nIzsvFm/hdXeKo1bG3FZKZIBSx8n3jGVzVyI1m5g3wdjgOfIbBI1i
-         nGAYlSfW1+b89AkxpOmZ7oEvSxLXEckSuAF6McCsstO08qLjHwhSvJDWZA0n8bmjKPtB
-         0osQ==
-X-Gm-Message-State: AOAM531G1TnVQo3AaThbZ34NtpeXGfx0lDY1zdQKTXW3jBdfey9P41S8
-        yvnRrkZQI3/AvRWfwXK2kD5H7w==
-X-Google-Smtp-Source: ABdhPJyEOUFyVKlZLOsHKYeSe6ToCPD5eqg11IHVIqUFrAjlkKiBPSPt3z0mdIyyfRpDRR6bNbmyuw==
-X-Received: by 2002:a05:620a:1369:: with SMTP id d9mr31646444qkl.419.1593723059117;
-        Thu, 02 Jul 2020 13:50:59 -0700 (PDT)
-Received: from [192.168.0.189] ([147.253.86.153])
-        by smtp.gmail.com with ESMTPSA id u58sm9918787qth.77.2020.07.02.13.50.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jul 2020 13:50:58 -0700 (PDT)
-Subject: Re: [RESEND PATCH v2 07/13] dt-bindings: clock: Introduce SM8250 QCOM
- Graphics clock bindings
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        id S1726194AbgGBWjS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 18:39:18 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:59013 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726163AbgGBWjR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 18:39:17 -0400
+X-Greylist: delayed 4219 seconds by postgrey-1.27 at vger.kernel.org; Thu, 02 Jul 2020 18:39:15 EDT
+Received: from [88.147.89.201] (port=34632 helo=melee.dev.aim)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1jr6lK-000AXd-TL; Thu, 02 Jul 2020 23:28:54 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-clk@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20200629211725.2592-1-jonathan@marek.ca>
- <20200629211725.2592-8-jonathan@marek.ca> <20200702204624.GA1661017@bogus>
-From:   Jonathan Marek <jonathan@marek.ca>
-Message-ID: <50620a20-0721-b5b7-8bc9-217536d51c29@marek.ca>
-Date:   Thu, 2 Jul 2020 16:49:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>
+Subject: [PATCH 3/5] dt-bindings: clk: versaclock5: convert to yaml
+Date:   Thu,  2 Jul 2020 23:28:34 +0200
+Message-Id: <20200702212837.10657-3-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200702212837.10657-1-luca@lucaceresoli.net>
+References: <20200702212837.10657-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
-In-Reply-To: <20200702204624.GA1661017@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/2/20 4:46 PM, Rob Herring wrote:
-> On Mon, Jun 29, 2020 at 05:17:13PM -0400, Jonathan Marek wrote:
->> Add device tree bindings for graphics clock controller for
->> Qualcomm Technology Inc's SM8250 SoCs.
->>
-> 
-> Looks like these 2 schemas could be a single one.
-> 
+Convert to yaml the VersaClock bindings document. The mapping between
+clock specifier and physical pins cannot be described formally in yaml
+schema, then keep it verbatim in the description field.
 
-I agree, but there are already separate schemas for sdm845 and sc7180 
-gpucc (which these are a copy paste of), so should those be removed and 
-use the single one too?
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+---
+ .../bindings/clock/idt,versaclock5.txt        |  92 --------------
+ .../bindings/clock/idt,versaclock5.yaml       | 120 ++++++++++++++++++
+ MAINTAINERS                                   |   1 +
+ 3 files changed, 121 insertions(+), 92 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
 
->> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
->> ---
->>   .../bindings/clock/qcom,sm8250-gpucc.yaml     | 74 +++++++++++++++++++
->>   include/dt-bindings/clock/qcom,gpucc-sm8250.h | 40 ++++++++++
->>   2 files changed, 114 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
->>   create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8250.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
->> new file mode 100644
->> index 000000000000..2b9c8f97b76d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8250-gpucc.yaml
->> @@ -0,0 +1,74 @@
->> +# SPDX-License-Identifier: GPL-2.0-only
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/clock/qcom,sm8250-gpucc.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm Graphics Clock & Reset Controller Binding for SM8250
->> +
->> +maintainers:
->> +  -
->> +
->> +description: |
->> +  Qualcomm graphics clock control module which supports the clocks, resets and
->> +  power domains on SM8250.
->> +
->> +  See also dt-bindings/clock/qcom,gpucc-sm8250.h.
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,sm8250-gpucc
->> +
->> +  clocks:
->> +    items:
->> +      - description: Board XO source
->> +      - description: GPLL0 main branch source
->> +      - description: GPLL0 div branch source
->> +
->> +  clock-names:
->> +    items:
->> +      - const: bi_tcxo
->> +      - const: gcc_gpu_gpll0_clk_src
->> +      - const: gcc_gpu_gpll0_div_clk_src
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +
->> +  '#power-domain-cells':
->> +    const: 1
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +  - '#clock-cells'
->> +  - '#reset-cells'
->> +  - '#power-domain-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,gcc-sm8250.h>
->> +    #include <dt-bindings/clock/qcom,rpmh.h>
->> +    clock-controller@3d90000 {
->> +      compatible = "qcom,sm8250-gpucc";
->> +      reg = <0x3d90000 0x9000>;
->> +      clocks = <&rpmhcc RPMH_CXO_CLK>,
->> +               <&gcc GCC_GPU_GPLL0_CLK_SRC>,
->> +               <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
->> +      clock-names = "bi_tcxo",
->> +                    "gcc_gpu_gpll0_clk_src",
->> +                    "gcc_gpu_gpll0_div_clk_src";
->> +      #clock-cells = <1>;
->> +      #reset-cells = <1>;
->> +      #power-domain-cells = <1>;
->> +    };
->> +...
->> diff --git a/include/dt-bindings/clock/qcom,gpucc-sm8250.h b/include/dt-bindings/clock/qcom,gpucc-sm8250.h
->> new file mode 100644
->> index 000000000000..c8fe64e399fd
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/qcom,gpucc-sm8250.h
->> @@ -0,0 +1,40 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Copyright (c) 2017-2020, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8250_H
->> +#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SM8250_H
->> +
->> +/* GPU_CC clock registers */
->> +#define GPU_CC_AHB_CLK				0
->> +#define GPU_CC_CRC_AHB_CLK			1
->> +#define GPU_CC_CX_APB_CLK			2
->> +#define GPU_CC_CX_GMU_CLK			3
->> +#define GPU_CC_CX_QDSS_AT_CLK			4
->> +#define GPU_CC_CX_QDSS_TRIG_CLK			5
->> +#define GPU_CC_CX_QDSS_TSCTR_CLK		6
->> +#define GPU_CC_CX_SNOC_DVM_CLK			7
->> +#define GPU_CC_CXO_AON_CLK			8
->> +#define GPU_CC_CXO_CLK				9
->> +#define GPU_CC_GMU_CLK_SRC			10
->> +#define GPU_CC_GX_GMU_CLK			11
->> +#define GPU_CC_GX_QDSS_TSCTR_CLK		12
->> +#define GPU_CC_GX_VSENSE_CLK			13
->> +#define GPU_CC_PLL1				14
->> +#define GPU_CC_SLEEP_CLK			15
->> +#define GPU_CC_HLOS1_VOTE_GPU_SMMU_CLK		16
->> +
->> +/* GPU_CC Resets */
->> +#define GPUCC_GPU_CC_ACD_BCR			0
->> +#define GPUCC_GPU_CC_CX_BCR			1
->> +#define GPUCC_GPU_CC_GFX3D_AON_BCR		2
->> +#define GPUCC_GPU_CC_GMU_BCR			3
->> +#define GPUCC_GPU_CC_GX_BCR			4
->> +#define GPUCC_GPU_CC_XO_BCR			5
->> +
->> +/* GPU_CC GDSCRs */
->> +#define GPU_CX_GDSC				0
->> +#define GPU_GX_GDSC				1
->> +
->> +#endif
->> -- 
->> 2.26.1
->>
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+deleted file mode 100644
+index bcff681a4bd0..000000000000
+--- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
++++ /dev/null
+@@ -1,92 +0,0 @@
+-Binding for IDT VersaClock 5,6 programmable i2c clock generators.
+-
+-The IDT VersaClock 5 and VersaClock 6 are programmable i2c clock
+-generators providing from 3 to 12 output clocks.
+-
+-==I2C device node==
+-
+-Required properties:
+-- compatible:	shall be one of
+-		"idt,5p49v5923"
+-		"idt,5p49v5925"
+-		"idt,5p49v5933"
+-		"idt,5p49v5935"
+-		"idt,5p49v6901"
+-		"idt,5p49v6965"
+-- reg:		i2c device address, shall be 0x68 or 0x6a.
+-- #clock-cells:	from common clock binding; shall be set to 1.
+-- clocks:	from common clock binding; list of parent clock handles,
+-		- 5p49v5923 and
+-		  5p49v5925 and
+-		  5p49v6901: (required) either or both of XTAL or CLKIN
+-					reference clock.
+-		- 5p49v5933 and
+-		- 5p49v5935: (optional) property not present (internal
+-					Xtal used) or CLKIN reference
+-					clock.
+-- clock-names:	from common clock binding; clock input names, can be
+-		- 5p49v5923 and
+-		  5p49v5925 and
+-		  5p49v6901: (required) either or both of "xin", "clkin".
+-		- 5p49v5933 and
+-		- 5p49v5935: (optional) property not present or "clkin".
+-
+-==Mapping between clock specifier and physical pins==
+-
+-When referencing the provided clock in the DT using phandle and
+-clock specifier, the following mapping applies:
+-
+-5P49V5923:
+-	0 -- OUT0_SEL_I2CB
+-	1 -- OUT1
+-	2 -- OUT2
+-
+-5P49V5933:
+-	0 -- OUT0_SEL_I2CB
+-	1 -- OUT1
+-	2 -- OUT4
+-
+-5P49V5925 and
+-5P49V5935:
+-	0 -- OUT0_SEL_I2CB
+-	1 -- OUT1
+-	2 -- OUT2
+-	3 -- OUT3
+-	4 -- OUT4
+-
+-5P49V6901:
+-	0 -- OUT0_SEL_I2CB
+-	1 -- OUT1
+-	2 -- OUT2
+-	3 -- OUT3
+-	4 -- OUT4
+-
+-==Example==
+-
+-/* 25MHz reference crystal */
+-ref25: ref25m {
+-	compatible = "fixed-clock";
+-	#clock-cells = <0>;
+-	clock-frequency = <25000000>;
+-};
+-
+-i2c-master-node {
+-
+-	/* IDT 5P49V5923 i2c clock generator */
+-	vc5: clock-generator@6a {
+-		compatible = "idt,5p49v5923";
+-		reg = <0x6a>;
+-		#clock-cells = <1>;
+-
+-		/* Connect XIN input to 25MHz reference */
+-		clocks = <&ref25m>;
+-		clock-names = "xin";
+-	};
+-};
+-
+-/* Consumer referencing the 5P49V5923 pin OUT1 */
+-consumer {
+-	...
+-	clocks = <&vc5 1>;
+-	...
+-}
+diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+new file mode 100644
+index 000000000000..d8b8e35f16d2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+@@ -0,0 +1,120 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/idt,versaclock5.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Binding for IDT VersaClock 5 and 6 programmable I2C clock generators
++
++description: |
++  The IDT VersaClock 5 and VersaClock 6 are programmable I2C
++  clock generators providing from 3 to 12 output clocks.
++
++  When referencing the provided clock in the DT using phandle and clock
++  specifier, the following mapping applies:
++
++  - 5P49V5923:
++    0 -- OUT0_SEL_I2CB
++    1 -- OUT1
++    2 -- OUT2
++
++  - 5P49V5933:
++    0 -- OUT0_SEL_I2CB
++    1 -- OUT1
++    2 -- OUT4
++
++  - other parts:
++    0 -- OUT0_SEL_I2CB
++    1 -- OUT1
++    2 -- OUT2
++    3 -- OUT3
++    4 -- OUT4
++
++maintainers:
++  - Luca Ceresoli <luca@lucaceresoli.net>
++
++properties:
++  compatible:
++    enum:
++      - idt,5p49v5923
++      - idt,5p49v5925
++      - idt,5p49v5933
++      - idt,5p49v5935
++      - idt,5p49v6901
++      - idt,5p49v6965
++
++  reg:
++    maxItems: 1
++    description: I2C device address, shall be 0x68 or 0x6a.
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            enum:
++              - idt,5p49v5933
++              - idt,5p49v5935
++    then:
++      # Devices with builtin crystal, optional external input
++      properties:
++        clock-names:
++          const: clkin
++        clocks:
++          maxItems: 1
++    else:
++      # Devices without builtin crystal
++      properties:
++        clock-names:
++          anyOf:
++            - required: [ xin ]
++            - required: [ clkin ]
++        clocks:
++          minItems: 1
++          maxItems: 2
++      required:
++        - clock-names
++        - clocks
++
++examples:
++  - |
++    /* 25MHz reference crystal */
++    ref25: ref25m {
++        compatible = "fixed-clock";
++        #clock-cells = <0>;
++        clock-frequency = <25000000>;
++    };
++
++    i2c@0 {
++        reg = <0x0 0x100>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        /* IDT 5P49V5923 I2C clock generator */
++        vc5: clock-generator@6a {
++            compatible = "idt,5p49v5923";
++            reg = <0x6a>;
++            #clock-cells = <1>;
++
++            /* Connect XIN input to 25MHz reference */
++            clocks = <&ref25m>;
++            clock-names = "xin";
++        };
++    };
++
++    /* Consumer referencing the 5P49V5923 pin OUT1 */
++    consumer {
++        /* ... */
++        clocks = <&vc5 1>;
++        /* ... */
++    };
++
++...
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 079e19ed2ec9..e979f5026353 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8326,6 +8326,7 @@ F:	drivers/input/misc/ideapad_slidebar.c
+ IDT VersaClock 5 CLOCK DRIVER
+ M:	Luca Ceresoli <luca@lucaceresoli.net>
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+ F:	drivers/clk/clk-versaclock5.c
+ 
+ IEEE 802.15.4 SUBSYSTEM
+-- 
+2.27.0
+
