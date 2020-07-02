@@ -2,398 +2,112 @@ Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2104AC433DF
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 15:27:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5FEC433E1
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 15:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0248E208D5
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 15:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2713A20CC7
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 15:42:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MwGxMiEp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730070AbgGBP1e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 11:27:34 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55326 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729993AbgGBP1b (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Jul 2020 11:27:31 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 757D61A1722;
-        Thu,  2 Jul 2020 17:27:28 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 877731A0BEE;
-        Thu,  2 Jul 2020 17:27:18 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 93959402E7;
-        Thu,  2 Jul 2020 23:27:06 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, arnd@arndb.de, peng.fan@nxp.com,
-        abel.vesa@nxp.com, j.remmet@phytec.de, sfr@canb.auug.org.au,
-        georg.waibel@wiedemann-group.de, Georg.Waibel@wiedemann-group.com,
-        laurent.pinchart@ideasonboard.com, chen.fang@nxp.com,
-        fugang.duan@nxp.com, daniel.baluta@nxp.com, yuehaibing@huawei.com,
-        horia.geanta@nxp.com, andrew.smirnov@gmail.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V5 3/6] clk: imx: Support building i.MX common clock driver as module
-Date:   Thu,  2 Jul 2020 23:23:58 +0800
-Message-Id: <1593703441-16944-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593703441-16944-1-git-send-email-Anson.Huang@nxp.com>
-References: <1593703441-16944-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730258AbgGBPmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jul 2020 11:42:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58914 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730224AbgGBPmU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 11:42:20 -0400
+Received: from mail-pl1-x643.google.com (mail-pl1-x643.google.com [IPv6:2607:f8b0:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D64BC08C5DF
+        for <linux-clk@vger.kernel.org>; Thu,  2 Jul 2020 08:42:20 -0700 (PDT)
+Received: by mail-pl1-x643.google.com with SMTP id s14so11455152plq.6
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jul 2020 08:42:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Kybd0zpVtDTcpe4L/HEboaUKNNgAnXPFcQy8ZwcEJuI=;
+        b=MwGxMiEp5/dtTA3ogef34O3PctcdhAV3Nj892QYS7iq/+bdlneIKDksIISF88MZTJs
+         551vB7jwtgzZZvtq6shJNSIVEPChNMunEoUB8LbEsFmwqHkuUWtxgcXHKQhYMgExY7+k
+         RjFrm4VGnLlBn/66+5Gz+fn0C9B0GHrDhf0l0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Kybd0zpVtDTcpe4L/HEboaUKNNgAnXPFcQy8ZwcEJuI=;
+        b=SyXtOdGV2dRDvXkbHZkgCrPCBYSK6NeortiqvW5gflVOf+Bjh8kKVGzc9WylaDBtTn
+         edrFkUqjnDoH23lXv15eFZOUiHXrmUeNg9S4pnveHhhT5f8eaPeTnfFDFMWPJpN4WMVL
+         8ryXvu9IrYkaA91S8Fek0A3dH9CZM1ppgT632censUhSi+U3zTm4YtFLJc0woMotoqrB
+         zcyLk1wysQXwhozH4aOLBb9eF1+gtLq+P3vxEDlqHo1saPZu0vmCadKm29Rx56BMpB+r
+         kvzv6Yk+SitxAoFAbT9pIbTeoYAOg9pfZSGGNrQlJgzOIFANOpEKpyDBG5YxiDSIqkym
+         4KvQ==
+X-Gm-Message-State: AOAM531UBaP8e7YuW0OrYWDr/zucWE1Qa0hQnb4ynecY0uDsL4UX3diC
+        Ib+hTq7UPJahfTCHV8sqCV9qag==
+X-Google-Smtp-Source: ABdhPJx/V021h2YOrPd2qoUZY3+ajz3Yf7zbLlvvx3ojyPgvvotTbq49bzs576UQiATe81OrpVMgog==
+X-Received: by 2002:a17:90a:7785:: with SMTP id v5mr35048412pjk.31.1593704539711;
+        Thu, 02 Jul 2020 08:42:19 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id l191sm9749876pfd.149.2020.07.02.08.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jul 2020 08:42:18 -0700 (PDT)
+Date:   Thu, 2 Jul 2020 08:42:17 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-mm@kvack.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2 08/16] spi: davinci: Remove uninitialized_var() usage
+Message-ID: <202007020839.545A571CA4@keescook>
+References: <20200620033007.1444705-1-keescook@chromium.org>
+ <20200620033007.1444705-9-keescook@chromium.org>
+ <20200701203920.GC3776@sirena.org.uk>
+ <202007020819.318824DA@keescook>
+ <20200702152335.GJ4483@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200702152335.GJ4483@sirena.org.uk>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are more and more requirements of building SoC specific drivers
-as modules, add support for building i.MX common clock driver as module
-to meet the requirement.
+On Thu, Jul 02, 2020 at 04:23:35PM +0100, Mark Brown wrote:
+> On Thu, Jul 02, 2020 at 08:21:40AM -0700, Kees Cook wrote:
+> > On Wed, Jul 01, 2020 at 09:39:20PM +0100, Mark Brown wrote:
+> 
+> > > Please copy maintainers on patches :(
+> 
+> > Hi! Sorry about that; the CC list was giant, so I had opted for using
+> > subsystem mailing lists where possible.
+> 
+> If you're going to err in a direction there I'd err in the direction of
+> CCing the people not the list - I only saw this since I was looking for
+> something else, I don't normally see stuff in the mailing list folder.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-Changes since V4:
-	- add empty function of imx_register_uart_clocks() for MODULE build, and
-	  exclude all uart clock related handler when building MODULE.
----
- drivers/clk/imx/Kconfig            |  8 ++++++--
- drivers/clk/imx/Makefile           | 40 +++++++++++++++++++-------------------
- drivers/clk/imx/clk-composite-8m.c |  2 ++
- drivers/clk/imx/clk-cpu.c          |  2 ++
- drivers/clk/imx/clk-frac-pll.c     |  2 ++
- drivers/clk/imx/clk-gate2.c        |  2 ++
- drivers/clk/imx/clk-pll14xx.c      |  5 +++++
- drivers/clk/imx/clk-sscg-pll.c     |  2 ++
- drivers/clk/imx/clk.c              | 17 ++++++++++++----
- drivers/clk/imx/clk.h              |  6 ++++++
- 10 files changed, 60 insertions(+), 26 deletions(-)
+Yeah, I've gotten conflicting feedback on treewide changes:
+- please CC me on only the one patch, I don't want to see everything else
+- please CC me on the whole series, I want the full context for the change
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index db0253f..ee854ac 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- # common clock support for NXP i.MX SoC family.
- config MXC_CLK
--	bool
--	def_bool ARCH_MXC
-+	tristate "IMX clock"
-+	depends on ARCH_MXC
- 
- config MXC_CLK_SCU
- 	bool
-@@ -11,24 +11,28 @@ config MXC_CLK_SCU
- config CLK_IMX8MM
- 	bool "IMX8MM CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MM CCM Clock Driver
- 
- config CLK_IMX8MN
- 	bool "IMX8MN CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MN CCM Clock Driver
- 
- config CLK_IMX8MP
- 	bool "IMX8MP CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MP CCM Clock Driver
- 
- config CLK_IMX8MQ
- 	bool "IMX8MQ CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MQ CCM Clock Driver
- 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 928f874..687207d 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -1,25 +1,25 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_MXC_CLK) += \
--	clk.o \
--	clk-busy.o \
--	clk-composite-8m.o \
--	clk-cpu.o \
--	clk-composite-7ulp.o \
--	clk-divider-gate.o \
--	clk-fixup-div.o \
--	clk-fixup-mux.o \
--	clk-frac-pll.o \
--	clk-gate-exclusive.o \
--	clk-gate2.o \
--	clk-pfd.o \
--	clk-pfdv2.o \
--	clk-pllv1.o \
--	clk-pllv2.o \
--	clk-pllv3.o \
--	clk-pllv4.o \
--	clk-sscg-pll.o \
--	clk-pll14xx.o
-+mxc-clk-objs += clk.o
-+mxc-clk-objs += clk-busy.o
-+mxc-clk-objs += clk-composite-7ulp.o
-+mxc-clk-objs += clk-composite-8m.o
-+mxc-clk-objs += clk-cpu.o
-+mxc-clk-objs += clk-divider-gate.o
-+mxc-clk-objs += clk-fixup-div.o
-+mxc-clk-objs += clk-fixup-mux.o
-+mxc-clk-objs += clk-frac-pll.o
-+mxc-clk-objs += clk-gate2.o
-+mxc-clk-objs += clk-gate-exclusive.o
-+mxc-clk-objs += clk-pfd.o
-+mxc-clk-objs += clk-pfdv2.o
-+mxc-clk-objs += clk-pllv1.o
-+mxc-clk-objs += clk-pllv2.o
-+mxc-clk-objs += clk-pllv3.o
-+mxc-clk-objs += clk-pllv4.o
-+mxc-clk-objs += clk-pll14xx.o
-+mxc-clk-objs += clk-sscg-pll.o
-+obj-$(CONFIG_MXC_CLK) += mxc-clk.o
- 
- obj-$(CONFIG_MXC_CLK_SCU) += \
- 	clk-scu.o \
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index d2b5af8..78fb7e5 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/errno.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/slab.h>
- 
-@@ -243,3 +244,4 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
- 	kfree(mux);
- 	return ERR_CAST(hw);
- }
-+EXPORT_SYMBOL_GPL(imx8m_clk_hw_composite_flags);
-diff --git a/drivers/clk/imx/clk-cpu.c b/drivers/clk/imx/clk-cpu.c
-index cb182be..cb6ca4c 100644
---- a/drivers/clk/imx/clk-cpu.c
-+++ b/drivers/clk/imx/clk-cpu.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/export.h>
- #include <linux/slab.h>
- #include "clk.h"
- 
-@@ -104,3 +105,4 @@ struct clk_hw *imx_clk_hw_cpu(const char *name, const char *parent_name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_cpu);
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-index 101e0a3..c703056 100644
---- a/drivers/clk/imx/clk-frac-pll.c
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -233,3 +234,4 @@ struct clk_hw *imx_clk_hw_frac_pll(const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_frac_pll);
-diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-index b87ab3c..512f675 100644
---- a/drivers/clk/imx/clk-gate2.c
-+++ b/drivers/clk/imx/clk-gate2.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-@@ -177,3 +178,4 @@ struct clk_hw *clk_hw_register_gate2(struct device *dev, const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gate2);
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index f9eb189..f5c3e7e 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -6,6 +6,7 @@
- #include <linux/bitops.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -68,6 +69,7 @@ struct imx_pll14xx_clk imx_1443x_pll = {
- 	.rate_table = imx_pll1443x_tbl,
- 	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
- };
-+EXPORT_SYMBOL_GPL(imx_1443x_pll);
- 
- struct imx_pll14xx_clk imx_1443x_dram_pll = {
- 	.type = PLL_1443X,
-@@ -75,12 +77,14 @@ struct imx_pll14xx_clk imx_1443x_dram_pll = {
- 	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
- 	.flags = CLK_GET_RATE_NOCACHE,
- };
-+EXPORT_SYMBOL_GPL(imx_1443x_dram_pll);
- 
- struct imx_pll14xx_clk imx_1416x_pll = {
- 	.type = PLL_1416X,
- 	.rate_table = imx_pll1416x_tbl,
- 	.rate_count = ARRAY_SIZE(imx_pll1416x_tbl),
- };
-+EXPORT_SYMBOL_GPL(imx_1416x_pll);
- 
- static const struct imx_pll14xx_rate_table *imx_get_pll_settings(
- 		struct clk_pll14xx *pll, unsigned long rate)
-@@ -436,3 +440,4 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
-diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
-index 773d8a5..9d6cdff 100644
---- a/drivers/clk/imx/clk-sscg-pll.c
-+++ b/drivers/clk/imx/clk-sscg-pll.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -537,3 +538,4 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_sscg_pll);
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 87ab8db..547cade 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -3,6 +3,7 @@
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -13,6 +14,7 @@
- #define CCDR_MMDC_CH1_MASK		BIT(16)
- 
- DEFINE_SPINLOCK(imx_ccm_lock);
-+EXPORT_SYMBOL_GPL(imx_ccm_lock);
- 
- void imx_unregister_clocks(struct clk *clks[], unsigned int count)
- {
-@@ -29,8 +31,9 @@ void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count)
- 	for (i = 0; i < count; i++)
- 		clk_hw_unregister(hws[i]);
- }
-+EXPORT_SYMBOL_GPL(imx_unregister_hw_clocks);
- 
--void __init imx_mmdc_mask_handshake(void __iomem *ccm_base,
-+void imx_mmdc_mask_handshake(void __iomem *ccm_base,
- 				    unsigned int chn)
- {
- 	unsigned int reg;
-@@ -59,8 +62,9 @@ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
- 			pr_err("i.MX clk %u: register failed with %ld\n",
- 			       i, PTR_ERR(clks[i]));
- }
-+EXPORT_SYMBOL_GPL(imx_check_clk_hws);
- 
--static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
-+static struct clk *imx_obtain_fixed_clock_from_dt(const char *name)
- {
- 	struct of_phandle_args phandle;
- 	struct clk *clk = ERR_PTR(-ENODEV);
-@@ -80,7 +84,7 @@ static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
- 	return clk;
- }
- 
--struct clk * __init imx_obtain_fixed_clock(
-+struct clk *imx_obtain_fixed_clock(
- 			const char *name, unsigned long rate)
- {
- 	struct clk *clk;
-@@ -91,7 +95,7 @@ struct clk * __init imx_obtain_fixed_clock(
- 	return clk;
- }
- 
--struct clk_hw * __init imx_obtain_fixed_clock_hw(
-+struct clk_hw *imx_obtain_fixed_clock_hw(
- 			const char *name, unsigned long rate)
- {
- 	struct clk *clk;
-@@ -113,6 +117,7 @@ struct clk_hw * imx_obtain_fixed_clk_hw(struct device_node *np,
- 
- 	return __clk_get_hw(clk);
- }
-+EXPORT_SYMBOL_GPL(imx_obtain_fixed_clk_hw);
- 
- /*
-  * This fixups the register CCM_CSCMR1 write value.
-@@ -140,6 +145,7 @@ void imx_cscmr1_fixup(u32 *val)
- 	return;
- }
- 
-+#ifndef MODULE
- static int imx_keep_uart_clocks;
- static struct clk ** const *imx_uart_clocks;
- 
-@@ -177,3 +183,6 @@ static int __init imx_clk_disable_uart(void)
- 	return 0;
- }
- late_initcall_sync(imx_clk_disable_uart);
-+#endif
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 16adbc3..dd47c19 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -11,7 +11,13 @@ extern spinlock_t imx_ccm_lock;
- 
- void imx_check_clocks(struct clk *clks[], unsigned int count);
- void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
-+#ifndef MODULE
- void imx_register_uart_clocks(struct clk ** const clks[]);
-+#else
-+static inline void imx_register_uart_clocks(struct clk ** const clks[])
-+{
-+}
-+#endif
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_clocks(struct clk *clks[], unsigned int count);
- void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
+I opted toward "CC me on this series", but then I get stuck when the CC
+is giant. I think I may switch back to individual CCs for specific
+patches, and point people to lore if they want greater context. (lore
+didn't exist before...)
+
+Thanks for the poke to make me reconsider this workflow. :)
+
 -- 
-2.7.4
-
+Kees Cook
