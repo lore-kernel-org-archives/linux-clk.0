@@ -1,104 +1,95 @@
-Return-Path: <SRS0=c+92=AM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C254CC433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70ABEC433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 02:17:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9A90C2085B
-	for <linux-clk@archiver.kernel.org>; Wed,  1 Jul 2020 20:39:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1593635964;
-	bh=Mv90pdTDmmCVPBQ+ilKuLGK6rDI94hGPVOU6z7qxgNo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=H3YlFxPAuUVliQt9PJLufgGImqyKQazBVImPAbP0VciYzfGf7OJmd44hu4SByBQ6q
-	 AbGKJTUAaZ6MfdAHAtaRpUa49V5hg/eZqiDTN7E1KiGYs3tAmueqPL9lnkN2HNGbWo
-	 +4tLSD9V6HiZzoq9BfDz+c2JxcvpanvT7UTRilxs=
+	by mail.kernel.org (Postfix) with ESMTP id 49AA12070C
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 02:17:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbgGAUjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 1 Jul 2020 16:39:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54896 "EHLO mail.kernel.org"
+        id S1726150AbgGBCRv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 1 Jul 2020 22:17:51 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:45898 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbgGAUjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 1 Jul 2020 16:39:23 -0400
-Received: from localhost (fw-tnat.cambridge.arm.com [217.140.96.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 395DA20760;
-        Wed,  1 Jul 2020 20:39:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1593635962;
-        bh=Mv90pdTDmmCVPBQ+ilKuLGK6rDI94hGPVOU6z7qxgNo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vn7yonK6UORJ8OJ5CLMTZ2+x/gvdycGSabhl28wLOeWEfNZZtkdKMc0I9L12/I0dk
-         bB9jRJM9ZAsrHrmNUN0Xe9QCw5cG+b24CXLz5B4CAtKfE3rFp/wnozWmeRUhlpAwyP
-         D81gDHxv1SI3ntiRTx4ygWm8AtJKSXVEdFaatGao=
-Date:   Wed, 1 Jul 2020 21:39:20 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mm@kvack.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH v2 08/16] spi: davinci: Remove uninitialized_var() usage
-Message-ID: <20200701203920.GC3776@sirena.org.uk>
-References: <20200620033007.1444705-1-keescook@chromium.org>
- <20200620033007.1444705-9-keescook@chromium.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="/Uq4LBwYP4y1W6pO"
-Content-Disposition: inline
-In-Reply-To: <20200620033007.1444705-9-keescook@chromium.org>
-X-Cookie: "Ahead warp factor 1"
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725845AbgGBCRu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 1 Jul 2020 22:17:50 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1615C1A0928;
+        Thu,  2 Jul 2020 04:17:49 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E62EF1A0914;
+        Thu,  2 Jul 2020 04:17:41 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 07EB4402DD;
+        Thu,  2 Jul 2020 10:17:32 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        peng.fan@nxp.com, arnd@arndb.de, abel.vesa@nxp.com,
+        aisheng.dong@nxp.com, fugang.duan@nxp.com, daniel.baluta@nxp.com,
+        yuehaibing@huawei.com, sfr@canb.auug.org.au,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V4 0/5] Support building i.MX8 SoCs clock driver as module
+Date:   Thu,  2 Jul 2020 10:14:29 +0800
+Message-Id: <1593656074-10092-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Nowdays, there are more and more requirements of building SoC specific
+drivers as modules, such as Android GKI (generic kernel image), this patch
+set supports building i.MX8 SoCs clock drivers as modules, including
+i.MX8MQ/MM/MN/MP/QXP, the common clock modules are: mxc-clk.ko for
+i.MX8MQ/MM/MN/MP, i.MX8QXP has linked the common scu/lpcg clock driver into
+its clock drivers.
 
---/Uq4LBwYP4y1W6pO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Since i.MX common clk driver will support module build and no longer selected
+by default, so for i.MX ARMv7 platforms, add clock configuration for each SoC
+and they are selected by default if the corresponding SoC config is selected.
 
-On Fri, Jun 19, 2020 at 08:29:59PM -0700, Kees Cook wrote:
-> Using uninitialized_var() is dangerous as it papers over real bugs[1]
-> (or can in the future), and suppresses unrelated compiler warnings (e.g.
-> "unused variable"). If the compiler thinks it is uninitialized, either
-> simply initialize the variable or make compiler changes. As a precursor
-> to removing[2] this[3] macro[4], just remove this variable since it was
-> actually unused:
+Changes since V3:
+	- merge all i.MX8M SoCs patches together;
+	- add module author/description;
+	- drop __setup_param() change, it is ONLY needed for built-in version,
+	  so just add #if check for module build;
+	- link common scu and lpcg clock into i.MX8QXP clock driver, then export
+	  is no needed for common scu/lpcg clock driver.
 
-Please copy maintainers on patches :(
+Anson Huang (5):
+  clk: composite: Export clk_hw_register_composite()
+  clk: imx: Add clock configuration for ARMv7 platforms
+  clk: imx: Support building i.MX common clock driver as module
+  clk: imx8m: Support module build
+  clk: imx8qxp: Support building i.MX8QXP clock driver as module
 
-Acked-by: Mark Brown <broonie@kernel.org>
+ drivers/clk/clk-composite.c        |   1 +
+ drivers/clk/imx/Kconfig            | 112 ++++++++++++++++++++++++++++++++++---
+ drivers/clk/imx/Makefile           |  79 +++++++++++++-------------
+ drivers/clk/imx/clk-composite-8m.c |   2 +
+ drivers/clk/imx/clk-cpu.c          |   2 +
+ drivers/clk/imx/clk-frac-pll.c     |   2 +
+ drivers/clk/imx/clk-gate2.c        |   2 +
+ drivers/clk/imx/clk-imx8mm.c       |   4 ++
+ drivers/clk/imx/clk-imx8mn.c       |   4 ++
+ drivers/clk/imx/clk-imx8mp.c       |   4 ++
+ drivers/clk/imx/clk-imx8mq.c       |   4 ++
+ drivers/clk/imx/clk-imx8qxp-lpcg.c |  10 +++-
+ drivers/clk/imx/clk-imx8qxp.c      |  11 +++-
+ drivers/clk/imx/clk-pll14xx.c      |   5 ++
+ drivers/clk/imx/clk-sscg-pll.c     |   2 +
+ drivers/clk/imx/clk.c              |  22 ++++++--
+ 16 files changed, 209 insertions(+), 57 deletions(-)
 
---/Uq4LBwYP4y1W6pO
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+2.7.4
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl789HcACgkQJNaLcl1U
-h9AfDgf/RKZyImjLhB9HvSTTPElSdnVo2uGyMkLMGX5E2rrBkIm+JRHNqfloV/46
-Mx7zbEttRmKiYixfSdmsDpbg56ljycPfGBLHIZxfW4p4HDkXI2rwNl6yNQwAFGfS
-xREw+xp//6eFOklwHHWspFdXjwvYVwxwCJbntC3mxtA44GrP1RcSNdlYSRlLMUqE
-b4V1aHQtulWHWcA6qc3e7e3VH7t/F4vy9AftF3S8ckIbrmZO6+HfcvGjITyILn0T
-0ReKIdfQ/UEHEeGXnai1E9efkWymKRW43Frx6JRO6Sd4KhBeHGohovlQ3mhKLfdg
-vH1jBuQdhXfJWc+yprXAcHmpsHpQZw==
-=XnWw
------END PGP SIGNATURE-----
-
---/Uq4LBwYP4y1W6pO--
