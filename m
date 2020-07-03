@@ -2,129 +2,152 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAA9C433E2
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:05:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142E4C433DF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:29:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1B8E20760
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:05:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECE6B206A1
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:29:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r0rihSI5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odtV6rIs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726721AbgGCRFR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 13:05:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38712 "EHLO
+        id S1726406AbgGCR3x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 13:29:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726707AbgGCRFQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 13:05:16 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EBD0C061794;
-        Fri,  3 Jul 2020 10:05:16 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id dp18so34975207ejc.8;
-        Fri, 03 Jul 2020 10:05:16 -0700 (PDT)
+        with ESMTP id S1726148AbgGCR3v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 13:29:51 -0400
+Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352D6C08C5DF
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 10:29:50 -0700 (PDT)
+Received: by mail-lj1-x242.google.com with SMTP id h19so37858107ljg.13
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jul 2020 10:29:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=MuBPpVunJ0tNS4CUGWOLlzJqZ3YUKldK5LCG9zmjIAQ=;
-        b=r0rihSI5KUuKo7yEjRhmqvPlQUxh81S9BeaLhBJj7He0m+PBmADWA/YQ85s7llLbJV
-         Xj50nanM+KV5xK6IX7ANPTuWgKeNZ2t5PLanH/Nktk9uOQ2in9uK2a/r52lBwaDElaK6
-         Joyq9DktciJ7KiK4mxckUolOHEhPiTNyinqaWTMYZudn/40UHK3WErPHuz5AAnpJQ4vf
-         RIP5A+uJJS3uYrj4Rv0T4uxQQ/bTm647OnXNA23LZEDgym/EoZY890F40tjK9HCDLGPw
-         Rt/pRGZzqKflmYcIPKuhzCgs+qS8GKHMA1wyaFjF+6YdeU9BkdwIKRC7oIALtcRPwdz/
-         GERA==
+        d=linaro.org; s=google;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vIJGp/tIIh/3pZbY4z+teITpUzCocjwTtTmhDigz2Xo=;
+        b=odtV6rIsOicdI5jmmLu7JR3zxYqknWsxCRx1jPNBaAb061U6Z1SLfwSC5lT3O9ybde
+         E1BqiOucagC9v1LIXtGBk85M22l1Y3OkVWepS8teCb1BnUkS4miXKRETK1RC4BmVfWyE
+         /IE1/S7f19wZOy2OKjjb4p86k9HTNDxjApP99K7WZItebKJKs/ZFj03bhyyng5auj94h
+         HVGWJmQwW0QkVdoz0okbcDsB+tFvzv4rIy8Ew2RqpY8A4KdProzBm8CUz0Qutrh5ryGd
+         m0HsCXhYJkCcuvlMWbjS0xGvULJbKtM/IuVWYkk2i72HlkUWDQs5LuMG76Wy5JiRjgCk
+         g9NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=MuBPpVunJ0tNS4CUGWOLlzJqZ3YUKldK5LCG9zmjIAQ=;
-        b=OCkb3Wa39jMOAp9VR7pwJ03A7iu6y4MbEoSBTBICx7K698XPBOapSWyr7nqK5qvEU+
-         yGdqv3qqasw7pWEoA3toBISMFVS78+l/nimNxTip/OsnFpjvxMKtxSPbMxFWXK1INO32
-         mhovDug2Uot3/1o4iIajDRPBovS1YxH7yZNl08SjH5f4dusHyDyroBdiBGKydiyf3T6E
-         JYOPbrl1536igY+c6kGT6ee5FpMudmN2k4727m9+QDZb/dG+efQ0n9YWzScywThAyl0D
-         mAfkfinn2Tj69mfQTRQBkV4dPxSnX4PpVsCG1ET3D8YkHceldklibAjzqWA+d7VtfW2p
-         AXUQ==
-X-Gm-Message-State: AOAM531tsOUed+69XB9QcVtsiPgdfSHvncVuTqGL9I6q5TPmBC0JdsNC
-        Zdoh27b0544vnGyH/ArVW9E=
-X-Google-Smtp-Source: ABdhPJwp5W/Yeq1alxZu1RLmUQIVu27SvndMVqvf+PFt6UV4W51xfcVujxtkrCIVEaUU+wrjOdfoAQ==
-X-Received: by 2002:a17:906:314c:: with SMTP id e12mr30506048eje.500.1593795915167;
-        Fri, 03 Jul 2020 10:05:15 -0700 (PDT)
-Received: from localhost.localdomain ([188.24.137.55])
-        by smtp.gmail.com with ESMTPSA id dg8sm14342272edb.56.2020.07.03.10.05.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 03 Jul 2020 10:05:14 -0700 (PDT)
-From:   Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        bh=vIJGp/tIIh/3pZbY4z+teITpUzCocjwTtTmhDigz2Xo=;
+        b=OS9WJr3gqZVzyh3WU41Rcf+bj5vMuKyEqYabmxwhA8r2hi8GaQ4zYEkT2qGFSCIF88
+         Md/orqvc4p1yLFR+U2MddxaUsFTokWxeqsbpAsonkgFLyuBkqBfe1PepkQFn+KLQx/7Y
+         5CmD8LXuFT7X8j4wLP/ajGnhFyL78ReFJODmB1YuNVTZedHny8UlFgO0x85iWlUuVLnu
+         rS0FcxusFwsbvqmh7niPxDGPIO5fZlx/Da6oEwkclles4hbk0w/eau6lSxidLWhLvLaH
+         MqqOQkz+1mOyDGWTPsTvvJcXH7XdgXVM7DrlwOrgW1lIIIAh53cG9nQK5f7+9/8TdQeD
+         1bPA==
+X-Gm-Message-State: AOAM533Yl17lcN/gDZLGZU5+R+AV2L0J/wcxMZW57m+dhPk4qQh28Cpl
+        ppqDO7VtiMmJYNP9FRywQEgGIQ==
+X-Google-Smtp-Source: ABdhPJyMcApj6j4n87dYIaHMrIb8EjopS5CoMdoSTXvqMJzKRN4SlnEh//uvf3OdoXR99pvaH6JheA==
+X-Received: by 2002:a2e:9744:: with SMTP id f4mr18485634ljj.367.1593797388454;
+        Fri, 03 Jul 2020 10:29:48 -0700 (PDT)
+Received: from [192.168.1.211] ([94.25.229.165])
+        by smtp.gmail.com with ESMTPSA id a5sm4889105lfh.15.2020.07.03.10.29.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jul 2020 10:29:47 -0700 (PDT)
+Subject: Re: [RESEND PATCH v2 00/13] Enable GPU for SM8150 and SM8250
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-actions@lists.infradead.org
-Subject: [PATCH v3 0/6] Add RMU and DMAC/GPIO clock support for Actions Semi S500 SoCs
-Date:   Fri,  3 Jul 2020 20:05:06 +0300
-Message-Id: <cover.1593788312.git.cristian.ciocaltea@gmail.com>
-X-Mailer: git-send-email 2.27.0
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+References: <20200629211725.2592-1-jonathan@marek.ca>
+ <011a1f99-46bb-12f2-ee07-8cd14d891947@linaro.org>
+ <1887f23d-57ef-c83a-4eaf-a8f8d5024ebf@marek.ca>
+ <a82bd8ed-fc8f-ea94-7687-cdc17190900a@linaro.org>
+Message-ID: <04900059-6af8-1b48-33f9-7b8426a55fd0@linaro.org>
+Date:   Fri, 3 Jul 2020 20:29:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
+In-Reply-To: <a82bd8ed-fc8f-ea94-7687-cdc17190900a@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series is a stripped-down revision of the initial series
-"[PATCH 00/11] Add CMU/RMU/DMA support for Actions Semi S500 SoCs":
-https://lore.kernel.org/lkml/cover.1592407030.git.cristian.ciocaltea@gmail.com/
+On 03/07/2020 18:14, Dmitry Baryshkov wrote:
+> On 03/07/2020 18:08, Jonathan Marek wrote:
+>> On 7/3/20 11:03 AM, Dmitry Baryshkov wrote:
+>>> On 30/06/2020 00:17, Jonathan Marek wrote:
+>>>> This series adds the missing clock drivers and dts nodes to enable
+>>>> the GPU on both SM8150 and SM8250.
+>>>>
+>>>> Note an extra patch [1] is still required for GPU to work on SM8250.
+>>>>
+>>>> Changes in V2:
+>>>> * Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the 
+>>>> newly added
+>>>>    SM8150 GPU gcc clocks
+>>>> * Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove 
+>>>> unused/incorrect PLL_CAL_VAL"
+>>>> * Added yaml schemas to gpucc dt-bindings patches
+>>>> * Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc 
+>>>> drivers" and changed
+>>>>    gpucc patches to use it.
+>>>> * Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
+>>>> * Added missing rpmh regulator level for sm8250 GPU clock levels
+>>>> * Use sm8150/sm8250 iommu compatibles in dts
+>>>> * Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc 
+>>>> clocks in dts
+>>>>
+>>>> [1] https://gist.github.com/flto/784f1aca761ebf2fe6c105719a4a04ca
+>>>
+>>> With your patches applied:
+>>>
+>>> [   56.751977] msm msm: [drm:adreno_request_fw] loaded 
+>>> qcom/a650_sqe.fw from new location
+>>> [   56.760166] msm msm: [drm:adreno_request_fw] loaded 
+>>> qcom/a650_gmu.bin from new location
+>>> [   56.768485] arm-smmu 3da0000.iommu: genpd_runtime_resume()
+>>> [   56.774196] PM: gpu_cx_gdsc: Power-on latency exceeded, new value 
+>>> 49531 ns
+>>> [   56.781730] arm-smmu 3da0000.iommu: resume latency exceeded, 
+>>> 462604 ns
+>>> [   56.799559] platform 3d6a000.gmu: [drm:a6xx_gmu_resume] *ERROR* 
+>>> GMU firmware initialization timed out
+>>> [   56.809260] arm-smmu 3da0000.iommu: genpd_runtime_suspend()
+>>> [   56.813062] msm msm: [drm:adreno_load_gpu] *ERROR* Couldn't power 
+>>> up the GPU: -110
+>>>
+>>>
+>>
+>> Do you have your branch published somewhere so I can see what could've 
+>> went wrong?
+> 
+> I've applied your patches (this series + the extra one for gpu/drm/msm) 
+> on top of 
+> https://git.linaro.org/landing-teams/working/qualcomm/kernel.git branch 
+> integration-linux-qcomlt .
 
-At Stephen's request, I detached all DTS related work to keep the focus
-exclusively on the Actions S500 SoC clock driver changes:
+A trimmed down version: 
+git.linaro.org/people/dmitry.baryshkov/kernel.git branch sm8250-gpu-test
 
- - Add support for some missing clocks: APB, DMAC, GPIO
- - Add support for Reset Management Unit
-
-The removed patches are subject to resubmission via a separate series:
-
- - arm: dts: owl-s500: Add Clock Management Unit
- - arm: dts: owl-s500: Set UART clock refs from CMU
- - arm: dts: owl-s500-roseapplepi: Use UART clock from CMU
- - arm: dts: owl-s500: Add DMA controller
- - arm: dts: owl-s500: Add Reset Controller support
-
-Regards,
-Cristi
-
-Changes in v3:
- - Incorporated feedback from Stephen and Mani
- - Rebased on v5.8-rc3
-
-Changes in v2:
- - Incorporated Stephen's review comments
- - Removed DTS related patches
- - Rebased remaining patches on v5.8-rc2
- - Updated cover letter, both subject and content, to reflect the new
-   scope
-
-Cristian Ciocaltea (6):
-  clk: actions: Fix h_clk for Actions S500 SoC
-  dt-bindings: clock: Add APB, DMAC, GPIO bindings for Actions S500 SoC
-  clk: actions: Add APB, DMAC, GPIO clock support for Actions S500 SoC
-  dt-bindings: reset: Add binding constants for Actions S500 RMU
-  clk: actions: Add Actions S500 SoC Reset Management Unit support
-  MAINTAINERS: Add reset binding entry for Actions Semi Owl SoCs
-
- MAINTAINERS                                   |  1 +
- drivers/clk/actions/owl-s500.c                | 89 ++++++++++++++++++-
- include/dt-bindings/clock/actions,s500-cmu.h  |  7 +-
- .../dt-bindings/reset/actions,s500-reset.h    | 67 ++++++++++++++
- 4 files changed, 162 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/reset/actions,s500-reset.h
 
 -- 
-2.27.0
-
+With best wishes
+Dmitry
