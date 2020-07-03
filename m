@@ -2,152 +2,285 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142E4C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:29:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D929C433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ECE6B206A1
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:29:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="odtV6rIs"
+	by mail.kernel.org (Postfix) with ESMTP id 21D8B2084C
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 17:51:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726406AbgGCR3x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 13:29:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42522 "EHLO
+        id S1726484AbgGCRvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 13:51:32 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726148AbgGCR3v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 13:29:51 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352D6C08C5DF
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 10:29:50 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id h19so37858107ljg.13
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jul 2020 10:29:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=vIJGp/tIIh/3pZbY4z+teITpUzCocjwTtTmhDigz2Xo=;
-        b=odtV6rIsOicdI5jmmLu7JR3zxYqknWsxCRx1jPNBaAb061U6Z1SLfwSC5lT3O9ybde
-         E1BqiOucagC9v1LIXtGBk85M22l1Y3OkVWepS8teCb1BnUkS4miXKRETK1RC4BmVfWyE
-         /IE1/S7f19wZOy2OKjjb4p86k9HTNDxjApP99K7WZItebKJKs/ZFj03bhyyng5auj94h
-         HVGWJmQwW0QkVdoz0okbcDsB+tFvzv4rIy8Ew2RqpY8A4KdProzBm8CUz0Qutrh5ryGd
-         m0HsCXhYJkCcuvlMWbjS0xGvULJbKtM/IuVWYkk2i72HlkUWDQs5LuMG76Wy5JiRjgCk
-         g9NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=vIJGp/tIIh/3pZbY4z+teITpUzCocjwTtTmhDigz2Xo=;
-        b=OS9WJr3gqZVzyh3WU41Rcf+bj5vMuKyEqYabmxwhA8r2hi8GaQ4zYEkT2qGFSCIF88
-         Md/orqvc4p1yLFR+U2MddxaUsFTokWxeqsbpAsonkgFLyuBkqBfe1PepkQFn+KLQx/7Y
-         5CmD8LXuFT7X8j4wLP/ajGnhFyL78ReFJODmB1YuNVTZedHny8UlFgO0x85iWlUuVLnu
-         rS0FcxusFwsbvqmh7niPxDGPIO5fZlx/Da6oEwkclles4hbk0w/eau6lSxidLWhLvLaH
-         MqqOQkz+1mOyDGWTPsTvvJcXH7XdgXVM7DrlwOrgW1lIIIAh53cG9nQK5f7+9/8TdQeD
-         1bPA==
-X-Gm-Message-State: AOAM533Yl17lcN/gDZLGZU5+R+AV2L0J/wcxMZW57m+dhPk4qQh28Cpl
-        ppqDO7VtiMmJYNP9FRywQEgGIQ==
-X-Google-Smtp-Source: ABdhPJyMcApj6j4n87dYIaHMrIb8EjopS5CoMdoSTXvqMJzKRN4SlnEh//uvf3OdoXR99pvaH6JheA==
-X-Received: by 2002:a2e:9744:: with SMTP id f4mr18485634ljj.367.1593797388454;
-        Fri, 03 Jul 2020 10:29:48 -0700 (PDT)
-Received: from [192.168.1.211] ([94.25.229.165])
-        by smtp.gmail.com with ESMTPSA id a5sm4889105lfh.15.2020.07.03.10.29.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jul 2020 10:29:47 -0700 (PDT)
-Subject: Re: [RESEND PATCH v2 00/13] Enable GPU for SM8150 and SM8250
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
-References: <20200629211725.2592-1-jonathan@marek.ca>
- <011a1f99-46bb-12f2-ee07-8cd14d891947@linaro.org>
- <1887f23d-57ef-c83a-4eaf-a8f8d5024ebf@marek.ca>
- <a82bd8ed-fc8f-ea94-7687-cdc17190900a@linaro.org>
-Message-ID: <04900059-6af8-1b48-33f9-7b8426a55fd0@linaro.org>
-Date:   Fri, 3 Jul 2020 20:29:35 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        with ESMTP id S1726340AbgGCRvc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 13:51:32 -0400
+Received: from smtp.al2klimov.de (smtp.al2klimov.de [IPv6:2a01:4f8:c0c:1465::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE060C061794;
+        Fri,  3 Jul 2020 10:51:31 -0700 (PDT)
+Received: from authenticated-user (PRIMARY_HOSTNAME [PUBLIC_IP])
+        by smtp.al2klimov.de (Postfix) with ESMTPA id 917C5BC142;
+        Fri,  3 Jul 2020 17:51:25 +0000 (UTC)
+From:   "Alexander A. Klimov" <grandmaster@al2klimov.de>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        jcmvbkbc@gmail.com, nm@ti.com, t-kristo@ti.com,
+        ssantosh@kernel.org, narmstrong@baylibre.com, jbrunet@baylibre.com,
+        khilman@baylibre.com, linus.walleij@linaro.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Cc:     "Alexander A. Klimov" <grandmaster@al2klimov.de>
+Subject: [PATCH] Replace HTTP links with HTTPS ones: Common CLK framework
+Date:   Fri,  3 Jul 2020 19:51:14 +0200
+Message-Id: <20200703175114.15027-1-grandmaster@al2klimov.de>
 MIME-Version: 1.0
-In-Reply-To: <a82bd8ed-fc8f-ea94-7687-cdc17190900a@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Spamd-Bar: ++++++
+Authentication-Results: smtp.al2klimov.de;
+        auth=pass smtp.auth=aklimov@al2klimov.de smtp.mailfrom=grandmaster@al2klimov.de
+X-Spam: Yes
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/07/2020 18:14, Dmitry Baryshkov wrote:
-> On 03/07/2020 18:08, Jonathan Marek wrote:
->> On 7/3/20 11:03 AM, Dmitry Baryshkov wrote:
->>> On 30/06/2020 00:17, Jonathan Marek wrote:
->>>> This series adds the missing clock drivers and dts nodes to enable
->>>> the GPU on both SM8150 and SM8250.
->>>>
->>>> Note an extra patch [1] is still required for GPU to work on SM8250.
->>>>
->>>> Changes in V2:
->>>> * Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the 
->>>> newly added
->>>>    SM8150 GPU gcc clocks
->>>> * Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove 
->>>> unused/incorrect PLL_CAL_VAL"
->>>> * Added yaml schemas to gpucc dt-bindings patches
->>>> * Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc 
->>>> drivers" and changed
->>>>    gpucc patches to use it.
->>>> * Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
->>>> * Added missing rpmh regulator level for sm8250 GPU clock levels
->>>> * Use sm8150/sm8250 iommu compatibles in dts
->>>> * Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc 
->>>> clocks in dts
->>>>
->>>> [1] https://gist.github.com/flto/784f1aca761ebf2fe6c105719a4a04ca
->>>
->>> With your patches applied:
->>>
->>> [   56.751977] msm msm: [drm:adreno_request_fw] loaded 
->>> qcom/a650_sqe.fw from new location
->>> [   56.760166] msm msm: [drm:adreno_request_fw] loaded 
->>> qcom/a650_gmu.bin from new location
->>> [   56.768485] arm-smmu 3da0000.iommu: genpd_runtime_resume()
->>> [   56.774196] PM: gpu_cx_gdsc: Power-on latency exceeded, new value 
->>> 49531 ns
->>> [   56.781730] arm-smmu 3da0000.iommu: resume latency exceeded, 
->>> 462604 ns
->>> [   56.799559] platform 3d6a000.gmu: [drm:a6xx_gmu_resume] *ERROR* 
->>> GMU firmware initialization timed out
->>> [   56.809260] arm-smmu 3da0000.iommu: genpd_runtime_suspend()
->>> [   56.813062] msm msm: [drm:adreno_load_gpu] *ERROR* Couldn't power 
->>> up the GPU: -110
->>>
->>>
->>
->> Do you have your branch published somewhere so I can see what could've 
->> went wrong?
-> 
-> I've applied your patches (this series + the extra one for gpu/drm/msm) 
-> on top of 
-> https://git.linaro.org/landing-teams/working/qualcomm/kernel.git branch 
-> integration-linux-qcomlt .
+Rationale:
+Reduces attack surface on kernel devs opening the links for MITM
+as HTTPS traffic is much harder to manipulate.
 
-A trimmed down version: 
-git.linaro.org/people/dmitry.baryshkov/kernel.git branch sm8250-gpu-test
+Deterministic algorithm:
+For each file:
+  If not .svg:
+    For each line:
+      If doesn't contain `\bxmlns\b`:
+        For each link, `\bhttp://[^# \t\r\n]*(?:\w|/)`:
+          If both the HTTP and HTTPS versions
+          return 200 OK and serve the same content:
+            Replace HTTP with HTTPS.
 
+Signed-off-by: Alexander A. Klimov <grandmaster@al2klimov.de>
+---
+ Continuing my work started at 93431e0607e5.
 
+ If there are any URLs to be removed completely or at least not HTTPSified:
+ Just clearly say so and I'll *undo my change*.
+ See also https://lkml.org/lkml/2020/6/27/64
+
+ If there are any valid, but yet not changed URLs:
+ See https://lkml.org/lkml/2020/6/26/837
+
+ .../devicetree/bindings/clock/clock-bindings.txt          | 2 +-
+ Documentation/devicetree/bindings/clock/silabs,si514.txt  | 2 +-
+ Documentation/devicetree/bindings/clock/silabs,si5351.txt | 2 +-
+ Documentation/devicetree/bindings/clock/silabs,si570.txt  | 4 ++--
+ Documentation/devicetree/bindings/clock/ti,cdce706.txt    | 2 +-
+ Documentation/devicetree/bindings/clock/ti,cdce925.txt    | 8 ++++----
+ drivers/clk/clk-cdce706.c                                 | 2 +-
+ drivers/clk/clk-gpio.c                                    | 2 +-
+ drivers/clk/clk-si5351.c                                  | 4 ++--
+ drivers/clk/keystone/sci-clk.c                            | 2 +-
+ drivers/clk/keystone/syscon-clk.c                         | 2 +-
+ drivers/clk/meson/meson8b.h                               | 2 +-
+ drivers/clk/versatile/icst.c                              | 2 +-
+ drivers/clk/versatile/icst.h                              | 2 +-
+ 14 files changed, 19 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+index 8a55fdcf96ee..f2ea53832ac6 100644
+--- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
++++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -9,7 +9,7 @@ specifier is an array of zero, one or more cells identifying the clock
+ output on a device.  The length of a clock specifier is defined by the
+ value of a #clock-cells property in the clock provider node.
+ 
+-[1] http://patchwork.ozlabs.org/patch/31551/
++[1] https://patchwork.ozlabs.org/patch/31551/
+ 
+ ==Clock providers==
+ 
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si514.txt b/Documentation/devicetree/bindings/clock/silabs,si514.txt
+index ea1a9dbc63b6..a4f28ec86f35 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si514.txt
++++ b/Documentation/devicetree/bindings/clock/silabs,si514.txt
+@@ -6,7 +6,7 @@ found in the datasheet[2].
+ 
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+ [2] Si514 datasheet
+-    http://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
++    https://www.silabs.com/Support%20Documents/TechnicalDocs/si514.pdf
+ 
+ Required properties:
+  - compatible: Shall be "silabs,si514"
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si5351.txt b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+index f00191cad8cd..8fe6f80afade 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si5351.txt
++++ b/Documentation/devicetree/bindings/clock/silabs,si5351.txt
+@@ -2,7 +2,7 @@ Binding for Silicon Labs Si5351a/b/c programmable i2c clock generator.
+ 
+ Reference
+ [1] Si5351A/B/C Data Sheet
+-    http://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
++    https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
+ 
+ The Si5351a/b/c are programmable i2c clock generators with up to 8 output
+ clocks. Si5351a also has a reduced pin-count package (MSOP10) where only
+diff --git a/Documentation/devicetree/bindings/clock/silabs,si570.txt b/Documentation/devicetree/bindings/clock/silabs,si570.txt
+index c09f21e1d98f..901935e929d2 100644
+--- a/Documentation/devicetree/bindings/clock/silabs,si570.txt
++++ b/Documentation/devicetree/bindings/clock/silabs,si570.txt
+@@ -7,9 +7,9 @@ found in the data sheets[2][3].
+ 
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+ [2] Si570/571 Data Sheet
+-    http://www.silabs.com/Support%20Documents/TechnicalDocs/si570.pdf
++    https://www.silabs.com/Support%20Documents/TechnicalDocs/si570.pdf
+ [3] Si598/599 Data Sheet
+-    http://www.silabs.com/Support%20Documents/TechnicalDocs/si598-99.pdf
++    https://www.silabs.com/Support%20Documents/TechnicalDocs/si598-99.pdf
+ 
+ Required properties:
+  - compatible: Shall be one of "silabs,si570", "silabs,si571",
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce706.txt b/Documentation/devicetree/bindings/clock/ti,cdce706.txt
+index 959d96632f5d..21c3ff764788 100644
+--- a/Documentation/devicetree/bindings/clock/ti,cdce706.txt
++++ b/Documentation/devicetree/bindings/clock/ti,cdce706.txt
+@@ -1,7 +1,7 @@
+ Bindings for Texas Instruments CDCE706 programmable 3-PLL clock
+ synthesizer/multiplier/divider.
+ 
+-Reference: http://www.ti.com/lit/ds/symlink/cdce706.pdf
++Reference: https://www.ti.com/lit/ds/symlink/cdce706.pdf
+ 
+ I2C device node required properties:
+ - compatible: shall be "ti,cdce706".
+diff --git a/Documentation/devicetree/bindings/clock/ti,cdce925.txt b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
+index 26544c85202a..df42ab72718f 100644
+--- a/Documentation/devicetree/bindings/clock/ti,cdce925.txt
++++ b/Documentation/devicetree/bindings/clock/ti,cdce925.txt
+@@ -4,10 +4,10 @@ Reference
+ This binding uses the common clock binding[1].
+ 
+ [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+-[2] http://www.ti.com/product/cdce913
+-[3] http://www.ti.com/product/cdce925
+-[4] http://www.ti.com/product/cdce937
+-[5] http://www.ti.com/product/cdce949
++[2] https://www.ti.com/product/cdce913
++[3] https://www.ti.com/product/cdce925
++[4] https://www.ti.com/product/cdce937
++[5] https://www.ti.com/product/cdce949
+ 
+ The driver provides clock sources for each output Y1 through Y5.
+ 
+diff --git a/drivers/clk/clk-cdce706.c b/drivers/clk/clk-cdce706.c
+index 239102e37e2f..c91e9096b070 100644
+--- a/drivers/clk/clk-cdce706.c
++++ b/drivers/clk/clk-cdce706.c
+@@ -4,7 +4,7 @@
+  *
+  * Copyright (c) 2014 Cadence Design Systems Inc.
+  *
+- * Reference: http://www.ti.com/lit/ds/symlink/cdce706.pdf
++ * Reference: https://www.ti.com/lit/ds/symlink/cdce706.pdf
+  */
+ 
+ #include <linux/clk.h>
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 70397b4b5ffe..38755a241ab7 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (C) 2013 - 2014 Texas Instruments Incorporated - http://www.ti.com
++ * Copyright (C) 2013 - 2014 Texas Instruments Incorporated - https://www.ti.com
+  *
+  * Authors:
+  *    Jyri Sarha <jsarha@ti.com>
+diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
+index 71de3618e508..1e1702e609cb 100644
+--- a/drivers/clk/clk-si5351.c
++++ b/drivers/clk/clk-si5351.c
+@@ -7,9 +7,9 @@
+  *
+  * References:
+  * [1] "Si5351A/B/C Data Sheet"
+- *     http://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
++ *     https://www.silabs.com/Support%20Documents/TechnicalDocs/Si5351.pdf
+  * [2] "Manually Generating an Si5351 Register Map"
+- *     http://www.silabs.com/Support%20Documents/TechnicalDocs/AN619.pdf
++ *     https://www.silabs.com/Support%20Documents/TechnicalDocs/AN619.pdf
+  */
+ 
+ #include <linux/module.h>
+diff --git a/drivers/clk/keystone/sci-clk.c b/drivers/clk/keystone/sci-clk.c
+index 7edf8c8432b6..2ad26cb927fd 100644
+--- a/drivers/clk/keystone/sci-clk.c
++++ b/drivers/clk/keystone/sci-clk.c
+@@ -1,7 +1,7 @@
+ /*
+  * SCI Clock driver for keystone based devices
+  *
+- * Copyright (C) 2015-2016 Texas Instruments Incorporated - http://www.ti.com/
++ * Copyright (C) 2015-2016 Texas Instruments Incorporated - https://www.ti.com/
+  *	Tero Kristo <t-kristo@ti.com>
+  *
+  * This program is free software; you can redistribute it and/or modify
+diff --git a/drivers/clk/keystone/syscon-clk.c b/drivers/clk/keystone/syscon-clk.c
+index 8d7dbea3bd30..5b3d36462174 100644
+--- a/drivers/clk/keystone/syscon-clk.c
++++ b/drivers/clk/keystone/syscon-clk.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (C) 2020 Texas Instruments Incorporated - http://www.ti.com/
++ * Copyright (C) 2020 Texas Instruments Incorporated - https://www.ti.com/
+  */
+ 
+ #include <linux/clk-provider.h>
+diff --git a/drivers/clk/meson/meson8b.h b/drivers/clk/meson/meson8b.h
+index cd38ae2a9cb5..3958b580d942 100644
+--- a/drivers/clk/meson/meson8b.h
++++ b/drivers/clk/meson/meson8b.h
+@@ -17,7 +17,7 @@
+  * blocks below. Those offsets must be multiplied by 4 before adding them to
+  * the base address to get the right value
+  *
+- * [0] http://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
++ * [0] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
+  */
+ #define HHI_GP_PLL_CNTL			0x40  /* 0x10 offset in data sheet */
+ #define HHI_GP_PLL_CNTL2		0x44  /* 0x11 offset in data sheet */
+diff --git a/drivers/clk/versatile/icst.c b/drivers/clk/versatile/icst.c
+index ba4b2d22ec97..307cb3774f87 100644
+--- a/drivers/clk/versatile/icst.c
++++ b/drivers/clk/versatile/icst.c
+@@ -5,7 +5,7 @@
+  *  Copyright (C) 2003 Deep Blue Solutions, Ltd, All Rights Reserved.
+  *
+  *  Support functions for calculating clocks/divisors for the ICST307
+- *  clock generators.  See http://www.idt.com/ for more information
++ *  clock generators.  See https://www.idt.com/ for more information
+  *  on these devices.
+  *
+  *  This is an almost identical implementation to the ICST525 clock generator.
+diff --git a/drivers/clk/versatile/icst.h b/drivers/clk/versatile/icst.h
+index 73a3062b4535..29622768b02a 100644
+--- a/drivers/clk/versatile/icst.h
++++ b/drivers/clk/versatile/icst.h
+@@ -3,7 +3,7 @@
+  *  Copyright (C) 2003 Deep Blue Solutions, Ltd, All Rights Reserved.
+  *
+  *  Support functions for calculating clocks/divisors for the ICST
+- *  clock generators.  See http://www.idt.com/ for more information
++ *  clock generators.  See https://www.idt.com/ for more information
+  *  on these devices.
+  */
+ #ifndef ICST_H
 -- 
-With best wishes
-Dmitry
+2.27.0
+
