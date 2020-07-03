@@ -2,82 +2,89 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E0BC433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87FBFC433E3
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 08:18:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71ED4208C7
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6916F206A1
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 08:18:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725779AbgGCHeq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 03:34:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725764AbgGCHeq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 03:34:46 -0400
-Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFBB1C08C5C1
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 00:34:45 -0700 (PDT)
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1jrGDc-0003cT-Da; Fri, 03 Jul 2020 09:34:44 +0200
-Subject: Re: [PATCH v2] clk: at91: add sama5d3 pmc driver
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?Q?Karl_Rudb=c3=a6k_Olsen?= <karl@micro-technic.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20200110223033.1261791-1-alexandre.belloni@bootlin.com>
- <37d11358-d3b5-10a1-72a3-93a03a6c1ea6@pengutronix.de>
- <20200622214759.GK131826@piout.net>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <043970b9-6cc6-e5c6-b5b1-e0f1a9799ae1@pengutronix.de>
-Date:   Fri, 3 Jul 2020 09:34:43 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
-MIME-Version: 1.0
-In-Reply-To: <20200622214759.GK131826@piout.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+        id S1726035AbgGCISt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 04:18:49 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:63416 "EHLO
+        alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbgGCISt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 04:18:49 -0400
+X-Greylist: delayed 363 seconds by postgrey-1.27 at vger.kernel.org; Fri, 03 Jul 2020 04:18:48 EDT
+Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
+  by alexa-out.qualcomm.com with ESMTP; 03 Jul 2020 01:12:45 -0700
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 03 Jul 2020 01:12:43 -0700
+Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 03 Jul 2020 13:42:21 +0530
+Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
+        id 77F2821696; Fri,  3 Jul 2020 13:42:20 +0530 (IST)
+From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+To:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     andy.gross@linaro.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, govinds@codeaurora.org,
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: [v6 4/4] remoteproc: qcom: wcss: explicitly request exclusive reset control
+Date:   Fri,  3 Jul 2020 13:42:19 +0530
+Message-Id: <1593763939-19096-5-git-send-email-gokulsri@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1593763939-19096-1-git-send-email-gokulsri@codeaurora.org>
+References: <20190726092332.25202-1-govinds@codeaurora.org>
+ <1593763939-19096-1-git-send-email-gokulsri@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Alexandre,
+From: Govind Singh <govinds@codeaurora.org>
 
-On 6/22/20 11:47 PM, Alexandre Belloni wrote:
-> Hi,
-> 
-> On 22/06/2020 23:24:45+0200, Ahmad Fatoum wrote:
->>> +	regmap = syscon_node_to_regmap(np);
->>
->> Shouldn't this be device_node_to_regmap for the same reasons outlined in your
->> 6956eb33 ("clk: at91: fix possible deadlock") commit?
->>
->> Same question for at91sam9g45.c, sam9x60.c and at91sam9n12.c.
->>
-> 
-> Agreed, I guess you can send a patch fixing all the instances.
+Use request exclusive reset control for wcss reset controls.
 
-I just sent out a patch for those 4 files. I don't know if this issue is equally
-applicable to the dt-compat.c code, so I left that one as is.
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Cheers,
-Ahmad
-
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index f49fe19..ed35407 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -784,21 +784,21 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
+ 	struct device *dev = wcss->dev;
+ 
+ 	if (desc->aon_reset_required) {
+-		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");
++		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");
+ 		if (IS_ERR(wcss->wcss_aon_reset)) {
+ 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
+ 			return PTR_ERR(wcss->wcss_aon_reset);
+ 		}
+ 	}
+ 
+-	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
++	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
+ 	if (IS_ERR(wcss->wcss_reset)) {
+ 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
+ 		return PTR_ERR(wcss->wcss_reset);
+ 	}
+ 
+ 	if (desc->wcss_q6_reset_required) {
+-		wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
++		wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
+ 		if (IS_ERR(wcss->wcss_q6_reset)) {
+ 			dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
+ 			return PTR_ERR(wcss->wcss_q6_reset);
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.7.4
+
