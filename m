@@ -1,186 +1,135 @@
-Return-Path: <SRS0=CvJ6=AN=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127E9C433DF
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4FAC433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFC902075D
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jul 2020 22:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60A9920890
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbgGBWj1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jul 2020 18:39:27 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:41655 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726163AbgGBWj1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jul 2020 18:39:27 -0400
-Received: from [88.147.89.201] (port=34632 helo=melee.dev.aim)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1jr6lL-000AXd-B7; Thu, 02 Jul 2020 23:28:55 +0200
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-clk@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        id S1725786AbgGCHcu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 03:32:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35548 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725648AbgGCHct (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 03:32:49 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3C8C08C5C1
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 00:32:49 -0700 (PDT)
+Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1jrGBc-0003No-07; Fri, 03 Jul 2020 09:32:40 +0200
+Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <afa@pengutronix.de>)
+        id 1jrGBa-0006F1-V9; Fri, 03 Jul 2020 09:32:38 +0200
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH 5/5] clk: vc5: optionally configure the output drive mode
-Date:   Thu,  2 Jul 2020 23:28:36 +0200
-Message-Id: <20200702212837.10657-5-luca@lucaceresoli.net>
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: at91: fix possible dead lock in new drivers
+Date:   Fri,  3 Jul 2020 09:32:35 +0200
+Message-Id: <20200703073236.23923-1-a.fatoum@pengutronix.de>
 X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200702212837.10657-1-luca@lucaceresoli.net>
-References: <20200702212837.10657-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
+X-SA-Exim-Mail-From: afa@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Versaclock chips can drive the output pins in several modes: LVDS,
-CMOS, LVPECL etc. Allow configuring the output mode from device tree.
+syscon_node_to_regmap() will make the created regmap get and enable the
+first clock it can parse from the device tree. This clock is not needed to
+access the registers and should not be enabled at that time.
 
-The configuration is optional. If not specified, the mode will not be
-configured and the drive mode will be the chip default.
+Use device_node_to_regmap to resolve this as it looks up the regmap in
+the same list but doesn't care about the clocks. This issue is detected
+by lockdep when booting the sama5d3 with a device tree containing the
+new clk bindings.
 
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+This fix already happened in 6956eb33abb5 ("clk: at91: fix possible
+deadlock") for the drivers that had been migrated to the new clk binding
+back then. This does the same for the new drivers as well.
+
+Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- drivers/clk/clk-versaclock5.c | 71 +++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+Only boot tested on the sama5d3.
+---
+ drivers/clk/at91/at91sam9g45.c | 2 +-
+ drivers/clk/at91/at91sam9n12.c | 2 +-
+ drivers/clk/at91/sam9x60.c     | 2 +-
+ drivers/clk/at91/sama5d3.c     | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 60c7cf9acde3..eec57286fae0 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -89,6 +89,8 @@
+diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
+index 9873b583c260..fe9d391adeba 100644
+--- a/drivers/clk/at91/at91sam9g45.c
++++ b/drivers/clk/at91/at91sam9g45.c
+@@ -111,7 +111,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
  
- /* Clock control register for clock 1,2 */
- #define VC5_CLK_OUTPUT_CFG(idx, n)	(0x60 + ((idx) * 0x2) + (n))
-+#define VC5_CLK_OUTPUT_CFG0_MODE_SHIFT	5
-+#define VC5_CLK_OUTPUT_CFG0_MODE_MASK	GENMASK(7, 5)
- #define VC5_CLK_OUTPUT_CFG1_EN_CLKBUF	BIT(0)
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
  
- #define VC5_CLK_OE_SHDN				0x68
-@@ -117,6 +119,23 @@
- /* chip has PFD requency doubler */
- #define VC5_HAS_PFD_FREQ_DBL	BIT(1)
+diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
+index 630dc5d87171..4aa97e672bd6 100644
+--- a/drivers/clk/at91/at91sam9n12.c
++++ b/drivers/clk/at91/at91sam9n12.c
+@@ -124,7 +124,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
  
-+/*
-+ * Output modes. Values for VC5_CLK_OUTPUT_CFG(idx,0) bits [7:5].
-+ * IDT_VC5_OUT_UNKNOWN = keep the hardware default.
-+ */
-+enum vc5_out_mode {
-+	IDT_VC5_OUT_MODE_LVPECL   = 0,
-+	IDT_VC5_OUT_MODE_CMOS     = 1,
-+	IDT_VC5_OUT_MODE_HCSL33   = 2,
-+	IDT_VC5_OUT_MODE_LVDS     = 3,
-+	IDT_VC5_OUT_MODE_CMOS2    = 4,
-+	IDT_VC5_OUT_MODE_CMOSD    = 5,
-+	IDT_VC5_OUT_MODE_HCSL25   = 6,
-+
-+	IDT_VC5_OUT_NUM_MODES,
-+	IDT_VC5_OUT_MODE_UNKNOWN  = 99,
-+};
-+
- /* Supported IDT VC5 models. */
- enum vc5_model {
- 	IDT_VC5_5P49V5923,
-@@ -149,6 +168,7 @@ struct vc5_out_data {
- 	struct clk_hw		hw;
- 	struct vc5_driver_data	*vc5;
- 	unsigned int		num;
-+	enum vc5_out_mode	mode:8;
- };
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
  
- struct vc5_driver_data {
-@@ -593,6 +613,13 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
- 			return ret;
- 	}
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 3e20aa68259f..2b4c67485eee 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -178,7 +178,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
  
-+	/* Set output drive mode */
-+	if (hwdata->mode != IDT_VC5_OUT_MODE_UNKNOWN)
-+		regmap_update_bits(vc5->regmap,
-+				   VC5_CLK_OUTPUT_CFG(hwdata->num, 0),
-+				   VC5_CLK_OUTPUT_CFG0_MODE_MASK,
-+				   (hwdata->mode << VC5_CLK_OUTPUT_CFG0_MODE_SHIFT));
-+
- 	/* Enable the clock buffer */
- 	regmap_update_bits(vc5->regmap, VC5_CLK_OUTPUT_CFG(hwdata->num, 1),
- 			   VC5_CLK_OUTPUT_CFG1_EN_CLKBUF,
-@@ -696,6 +723,46 @@ static int vc5_map_index_to_output(const enum vc5_model model,
- 	}
- }
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
  
-+static int vc5_parse_dt(struct vc5_driver_data *vc5)
-+{
-+	struct device *dev = &vc5->client->dev;
-+	struct device_node *np = dev->of_node;
-+	struct device_node *child;
-+	u32 val;
-+	int n;
-+
-+	for (n = 1; n < vc5->chip_info->clk_out_cnt; n++)
-+		vc5->clk_out[n].mode = IDT_VC5_OUT_MODE_UNKNOWN;
-+
-+	for_each_child_of_node(np, child) {
-+		if (of_property_read_u32(child, "reg", &n)) {
-+			dev_err(dev, "%pOF: missing reg property\n", child);
-+			break;
-+		}
-+
-+		if (n == 0 || n >= vc5->chip_info->clk_out_cnt) {
-+			dev_err(dev, "%pOF: invalid reg %d\n", child, n);
-+			break;
-+		}
-+
-+		if (!of_property_read_u32(child, "idt,drive-mode", &val)) {
-+			if (val >= IDT_VC5_OUT_NUM_MODES) {
-+				dev_err(dev, "%pOF: invalid idt,drive-mode %u\n",
-+					child, val);
-+				break;
-+			}
-+			vc5->clk_out[n].mode = val;
-+		}
-+	}
-+
-+	if (child) {
-+		of_node_put(child);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static const struct of_device_id clk_vc5_of_match[];
+diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+index 5e4e44dd4c37..5609b04e6565 100644
+--- a/drivers/clk/at91/sama5d3.c
++++ b/drivers/clk/at91/sama5d3.c
+@@ -121,7 +121,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
  
- static int vc5_probe(struct i2c_client *client,
-@@ -723,6 +790,10 @@ static int vc5_probe(struct i2c_client *client,
- 	if (PTR_ERR(vc5->pin_clkin) == -EPROBE_DEFER)
- 		return -EPROBE_DEFER;
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
  
-+	ret = vc5_parse_dt(vc5);
-+	if (ret)
-+		return ret;
-+
- 	vc5->regmap = devm_regmap_init_i2c(client, &vc5_regmap_config);
- 	if (IS_ERR(vc5->regmap)) {
- 		dev_err(&client->dev, "failed to allocate register map\n");
 -- 
 2.27.0
 
