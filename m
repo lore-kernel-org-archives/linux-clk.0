@@ -2,149 +2,128 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06076C433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C09C433DF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DBB252088E
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE30B2088E
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:03:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qqQzhKHn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbgGCPDF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 11:03:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48242 "EHLO
+        id S1726787AbgGCPD5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 11:03:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgGCPDF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 11:03:05 -0400
-Received: from bhuna.collabora.co.uk (bhuna.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e3e3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 265CAC08C5C1;
-        Fri,  3 Jul 2020 08:03:05 -0700 (PDT)
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: ezequiel)
-        with ESMTPSA id 210AC2A188D
-Message-ID: <8d667ae2554ebf3d9867f6f449973825c969b062.camel@collabora.com>
-Subject: Re: [PATCH v4 1/2] clk: rockchip: rk3288: Handle clock tree for
- rk3288w
-From:   Ezequiel Garcia <ezequiel@collabora.com>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Cc:     =?ISO-8859-1?Q?Myl=E8ne?= Josserand 
-        <mylene.josserand@collabora.com>,
+        with ESMTP id S1726152AbgGCPD4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 11:03:56 -0400
+Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 874E5C08C5C1
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 08:03:56 -0700 (PDT)
+Received: by mail-lj1-x241.google.com with SMTP id e8so3087215ljb.0
+        for <linux-clk@vger.kernel.org>; Fri, 03 Jul 2020 08:03:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=XiN8AHTEZpKcIkUcY5Ag518B1TWxGfBcPRGyhGmTdOg=;
+        b=qqQzhKHn5URSX6FPZQiis7MXQSa6PtMenlonovuzdGI4l8WTvYJT95+Y4JGJmYiwzC
+         J+o4aO/whzQlX5kHFr3KcroexvVeWzBwE8cRCj1r/U8r/DMGWjNxGkZafQPCqV90wPek
+         hnqch4vSSK7bdY9p9euYr0/YUPNV99Pdcg6Xw37mE22B+FWslmYjTXoIqmBuUeO4WY30
+         c8d11hyEmRpSictv6U0MoJbN8Vs4VwK8D9gk0jKEoG4J6hY2ts2EjqrOBgYjFMxLaq6O
+         QIMb3aGSlGkNp9LAbB2zLUfE2zocA1YxI2sR2eLh24/+Fv7bac2MaR4W3bPWyqrE3bzX
+         y/2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XiN8AHTEZpKcIkUcY5Ag518B1TWxGfBcPRGyhGmTdOg=;
+        b=TAi+KPGcctZgxguN+PstV9OvgBb/MksZEeTELzTpXNoeW+GIxPHWaeJMFrdDRM/MXo
+         zF2EoPI97DOV3fxgBEKf1TBjl7rIPXcAgcF8TITv0QNg+zlEjfSdsVkmv4Mabrkoc7IU
+         KUwa/IEAvs84zsowcu2qq7bhrVemM6BAOYeis8SOwxq6nxKjGUMneJsRgx4tdt6OinhY
+         VplrbJFz31jUUQL7eHp+YEQKiNiLFRWYdAm+wj0PklueBj9fLGVGHthAte3WwVjjlmWA
+         LLTGLWgOokma1G5JKGgbOMVBLoCBHa0ExZ+byayPsRGnmkUZTwl3nFG/XsfADFTGkXwd
+         GHxA==
+X-Gm-Message-State: AOAM531cPkTOY20hk7vshYRq47hRiw2XtcTWskV5q0cRNK1YBkEAQdF2
+        UQwT7bek9Vjs3oxzeISb9b+p1CPrnU4=
+X-Google-Smtp-Source: ABdhPJzCk+UBWfJxrbrsI+ayi1PqnpX1K3N3fB85MVaEeUGq/660GDdjHB3Kv/HObDJ8c7k5t4fI+g==
+X-Received: by 2002:a2e:9f13:: with SMTP id u19mr17473543ljk.427.1593788635055;
+        Fri, 03 Jul 2020 08:03:55 -0700 (PDT)
+Received: from [192.168.1.211] ([94.25.229.165])
+        by smtp.gmail.com with ESMTPSA id y13sm4182807ljd.20.2020.07.03.08.03.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 03 Jul 2020 08:03:54 -0700 (PDT)
+Subject: Re: [RESEND PATCH v2 00/13] Enable GPU for SM8150 and SM8250
+To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        kernel@collabora.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Date:   Fri, 03 Jul 2020 12:02:52 -0300
-In-Reply-To: <1793210.9Kb5SQUFvz@phil>
-References: <20200602080644.11333-1-mylene.josserand@collabora.com>
-         <20200602080644.11333-2-mylene.josserand@collabora.com>
-         <CAMty3ZDx-_-VHEwjbV05GBb-hQbPpo21aZbCrQ+GTaoT_gxAMg@mail.gmail.com>
-         <1793210.9Kb5SQUFvz@phil>
-Organization: Collabora
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.0-1 
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+References: <20200629211725.2592-1-jonathan@marek.ca>
+From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Message-ID: <011a1f99-46bb-12f2-ee07-8cd14d891947@linaro.org>
+Date:   Fri, 3 Jul 2020 18:03:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200629211725.2592-1-jonathan@marek.ca>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2020-07-03 at 16:11 +0200, Heiko Stuebner wrote:
-> Hi Jagan,
+On 30/06/2020 00:17, Jonathan Marek wrote:
+> This series adds the missing clock drivers and dts nodes to enable
+> the GPU on both SM8150 and SM8250.
 > 
-> Am Montag, 29. Juni 2020, 21:11:03 CEST schrieb Jagan Teki:
-> > On Tue, Jun 2, 2020 at 1:37 PM Mylène Josserand
-> > <mylene.josserand@collabora.com> wrote:
-> > > The revision rk3288w has a different clock tree about "hclk_vio"
-> > > clock, according to the BSP kernel code.
-> > > 
-> > > This patch handles this difference by detecting which device-tree
-> > > we are using. If it is a "rockchip,rk3288-cru", let's register
-> > > the clock tree as it was before. If the device-tree node is
-> > > "rockchip,rk3288w-cru", we will apply the difference with this
-> > > version of this SoC.
-> > > 
-> > > Noticed that this new device-tree compatible must be handled in
-> > > bootloader such as u-boot.
-> > > 
-> > > Signed-off-by: Mylène Josserand <mylene.josserand@collabora.com>
-> > > ---
-> > >  drivers/clk/rockchip/clk-rk3288.c | 20 ++++++++++++++++++--
-> > >  1 file changed, 18 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
-> > > index cc2a177bbdbf..204976e2d0cb 100644
-> > > --- a/drivers/clk/rockchip/clk-rk3288.c
-> > > +++ b/drivers/clk/rockchip/clk-rk3288.c
-> > > @@ -425,8 +425,6 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
-> > >         COMPOSITE(0, "aclk_vio0", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
-> > >                         RK3288_CLKSEL_CON(31), 6, 2, MFLAGS, 0, 5, DFLAGS,
-> > >                         RK3288_CLKGATE_CON(3), 0, GFLAGS),
-> > > -       DIV(0, "hclk_vio", "aclk_vio0", 0,
-> > > -                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
-> > >         COMPOSITE(0, "aclk_vio1", mux_pll_src_cpll_gpll_usb480m_p, CLK_IGNORE_UNUSED,
-> > >                         RK3288_CLKSEL_CON(31), 14, 2, MFLAGS, 8, 5, DFLAGS,
-> > >                         RK3288_CLKGATE_CON(3), 2, GFLAGS),
-> > > @@ -819,6 +817,16 @@ static struct rockchip_clk_branch rk3288_clk_branches[] __initdata = {
-> > >         INVERTER(0, "pclk_isp", "pclk_isp_in", RK3288_CLKSEL_CON(29), 3, IFLAGS),
-> > >  };
-> > > 
-> > > +static struct rockchip_clk_branch rk3288w_hclkvio_branch[] __initdata = {
-> > > +       DIV(0, "hclk_vio", "aclk_vio1", 0,
-> > > +                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
-> > > +};
-> > > +
-> > > +static struct rockchip_clk_branch rk3288_hclkvio_branch[] __initdata = {
-> > > +       DIV(0, "hclk_vio", "aclk_vio0", 0,
-> > > +                       RK3288_CLKSEL_CON(28), 8, 5, DFLAGS),
-> > > +};
-> > > +
-> > >  static const char *const rk3288_critical_clocks[] __initconst = {
-> > >         "aclk_cpu",
-> > >         "aclk_peri",
-> > > @@ -936,6 +944,14 @@ static void __init rk3288_clk_init(struct device_node *np)
-> > >                                    RK3288_GRF_SOC_STATUS1);
-> > >         rockchip_clk_register_branches(ctx, rk3288_clk_branches,
-> > >                                   ARRAY_SIZE(rk3288_clk_branches));
-> > > +
-> > > +       if (of_device_is_compatible(np, "rockchip,rk3288w-cru"))
-> > > +               rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
-> > > +                                              ARRAY_SIZE(rk3288w_hclkvio_branch));
-> > > +       else
-> > > +               rockchip_clk_register_branches(ctx, rk3288_hclkvio_branch,
-> > > +                                              ARRAY_SIZE(rk3288_hclkvio_branch));
-> > > +
-> > 
-> > Sorry for the late query on this. I am a bit unclear about this
-> > compatible change, does Linux expect to replace rockchip,rk3288-cru
-> > with rockchip,rk3288w-cru in bootloader if the chip is RK3288w? or
-> > append the existing cru compatible node with rockchip,rk3288w-cru?
-> > because replace new cru node make clock never probe since the
-> > CLK_OF_DECLARE checking rockchip,rk3288-cru
+> Note an extra patch [1] is still required for GPU to work on SM8250.
 > 
-> I guess right now we'd expect "rockchip,rk3288w-cru", "rockchip,rk3288-cru",
+> Changes in V2:
+> * Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the newly added
+>    SM8150 GPU gcc clocks
+> * Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL"
+> * Added yaml schemas to gpucc dt-bindings patches
+> * Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers" and changed
+>    gpucc patches to use it.
+> * Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
+> * Added missing rpmh regulator level for sm8250 GPU clock levels
+> * Use sm8150/sm8250 iommu compatibles in dts
+> * Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc clocks in dts
 > 
-> Thinking again about this, I'm wondering if we should switch to having
-> only one per variant ... like on the two rk3188 variants,
-> so declaring separate rk3288-cru and rk3288w-cru of-clks with shared
-> common code.
-> 
+> [1] https://gist.github.com/flto/784f1aca761ebf2fe6c105719a4a04ca
 
-If we want to take this route (which I think makes sense), we should
-do that sooner than later, so we don't release two different implementations
-with two different requirements.
+With your patches applied:
 
-This change should be quite simple, no?
+[   56.751977] msm msm: [drm:adreno_request_fw] loaded qcom/a650_sqe.fw 
+from new location
+[   56.760166] msm msm: [drm:adreno_request_fw] loaded qcom/a650_gmu.bin 
+from new location
+[   56.768485] arm-smmu 3da0000.iommu: genpd_runtime_resume()
+[   56.774196] PM: gpu_cx_gdsc: Power-on latency exceeded, new value 
+49531 ns
+[   56.781730] arm-smmu 3da0000.iommu: resume latency exceeded, 462604 ns
+[   56.799559] platform 3d6a000.gmu: [drm:a6xx_gmu_resume] *ERROR* GMU 
+firmware initialization timed out
+[   56.809260] arm-smmu 3da0000.iommu: genpd_runtime_suspend()
+[   56.813062] msm msm: [drm:adreno_load_gpu] *ERROR* Couldn't power up 
+the GPU: -110
 
-Thanks,
-Ezequiel
 
-
-
+-- 
+With best wishes
+Dmitry
