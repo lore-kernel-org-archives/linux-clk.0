@@ -2,146 +2,100 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-10.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C87C433DF
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 316EAC433DF
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D3708208E4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:14:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Spxc942G"
+	by mail.kernel.org (Postfix) with ESMTP id 0D27F208C7
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 15:29:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbgGCPOX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 11:14:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49984 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgGCPOX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 11:14:23 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9005C061794
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 08:14:22 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id h19so37403044ljg.13
-        for <linux-clk@vger.kernel.org>; Fri, 03 Jul 2020 08:14:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JY/HxR/lzMyO9Wjlc8f/yOCn5j+ZOolLev0KN/zmiSw=;
-        b=Spxc942GydXokLEKbdsV45nNrRpyII0YD3U6yuW20ePwhBt9xJH86Q7DrZ+NINojiy
-         CY5H0W4kpekk6qTXLXWYgt5CR2fcGycdo4OE6MW0f5DL5BhZKj4wYZQi4Gkd1RsAa6CH
-         pZYLzEnTp65PWJJFtTI8RSKmVlywpeJN/b5ZG+GlRQtcMDTGTh1yjvpCmNkaWRHgHKmB
-         AH30tdrLa8PYaJ9hnQKNIF789/xrwnGp3ZIWVa3cTW4skrVF2pdiGeO2MoXejPge4Pat
-         nxS3/EmrC8YuSGlAH5asyQJg4aQEooFoc7XsZqQyd58QM1hF8Kxo3Rvl1DcrBPiASZJS
-         KkIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JY/HxR/lzMyO9Wjlc8f/yOCn5j+ZOolLev0KN/zmiSw=;
-        b=k2pwLB2SE5aa+gLm2C1Y415m9H0I1ucr2h6/bAVnMPN1HYpVUAhAwWqMnaGmf+qDO5
-         nhEW0sqVC0whcep5lI5q+2PlrdPbVNpN+RiSdG/mA3GJoZ8845mQJNqk0gE2v6cI03Yl
-         RU4tRc6/jf9lj9YrAYN/iJ1u9N7igd9ol17nf2ZrSW/wZpxfATQt+89egeEyYLZJaSZh
-         zdj2OCeZtdHCx7/XPHMNqphPD+dy1JhSfa19I1T7AZQkkTixbPRE0SKN+m1HXu4gUfq+
-         MomozvarjYRtIrsXh5pjW9THlom6NEalU48OqJy43NbXRGMBjfhk+PZIyNK17t1CZbtL
-         KpJA==
-X-Gm-Message-State: AOAM530kdEQ4XBTTNjHgRxxhgIRt4HI412hanZzu6MrE2BQDPAARBpZ1
-        8Uh4edTgKlSS8YF1eta0Ugnp8g==
-X-Google-Smtp-Source: ABdhPJyaVnogxmsT+T7//bOE1AeRzHfMq9P4/Z/lXVvreWW1uRmrFoOMQjfiI4kp6DHWX5BznXIpgQ==
-X-Received: by 2002:a2e:b607:: with SMTP id r7mr13854086ljn.5.1593789261361;
-        Fri, 03 Jul 2020 08:14:21 -0700 (PDT)
-Received: from [192.168.1.211] ([94.25.229.165])
-        by smtp.gmail.com with ESMTPSA id x30sm4727523lfn.3.2020.07.03.08.14.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 03 Jul 2020 08:14:20 -0700 (PDT)
-Subject: Re: [RESEND PATCH v2 00/13] Enable GPU for SM8150 and SM8250
-To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
-References: <20200629211725.2592-1-jonathan@marek.ca>
- <011a1f99-46bb-12f2-ee07-8cd14d891947@linaro.org>
- <1887f23d-57ef-c83a-4eaf-a8f8d5024ebf@marek.ca>
-From:   Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Message-ID: <a82bd8ed-fc8f-ea94-7687-cdc17190900a@linaro.org>
-Date:   Fri, 3 Jul 2020 18:14:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.9.0
+        id S1726157AbgGCP3G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 11:29:06 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:40780 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726152AbgGCP3G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Jul 2020 11:29:06 -0400
+Received: from p5b127e6f.dip0.t-ipconnect.de ([91.18.126.111] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1jrNcX-0002U2-W0; Fri, 03 Jul 2020 17:28:58 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-rockchip@lists.infradead.org
+Cc:     mylene.josserand@collabora.com, mturquette@baylibre.com,
+        sboyd@kernel.org, jagan@amarulasolutions.com,
+        linux-kernel@vger.kernel.org, heiko@sntech.de,
+        ezequiel@collabora.com, linux-clk@vger.kernel.org,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH] clk: rockchip: use separate compatibles for rk3288w-cru
+Date:   Fri,  3 Jul 2020 17:28:25 +0200
+Message-Id: <20200703152825.245920-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <1887f23d-57ef-c83a-4eaf-a8f8d5024ebf@marek.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/07/2020 18:08, Jonathan Marek wrote:
-> On 7/3/20 11:03 AM, Dmitry Baryshkov wrote:
->> On 30/06/2020 00:17, Jonathan Marek wrote:
->>> This series adds the missing clock drivers and dts nodes to enable
->>> the GPU on both SM8150 and SM8250.
->>>
->>> Note an extra patch [1] is still required for GPU to work on SM8250.
->>>
->>> Changes in V2:
->>> * Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the 
->>> newly added
->>>    SM8150 GPU gcc clocks
->>> * Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove 
->>> unused/incorrect PLL_CAL_VAL"
->>> * Added yaml schemas to gpucc dt-bindings patches
->>> * Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc 
->>> drivers" and changed
->>>    gpucc patches to use it.
->>> * Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
->>> * Added missing rpmh regulator level for sm8250 GPU clock levels
->>> * Use sm8150/sm8250 iommu compatibles in dts
->>> * Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc clocks 
->>> in dts
->>>
->>> [1] https://gist.github.com/flto/784f1aca761ebf2fe6c105719a4a04ca
->>
->> With your patches applied:
->>
->> [   56.751977] msm msm: [drm:adreno_request_fw] loaded 
->> qcom/a650_sqe.fw from new location
->> [   56.760166] msm msm: [drm:adreno_request_fw] loaded 
->> qcom/a650_gmu.bin from new location
->> [   56.768485] arm-smmu 3da0000.iommu: genpd_runtime_resume()
->> [   56.774196] PM: gpu_cx_gdsc: Power-on latency exceeded, new value 
->> 49531 ns
->> [   56.781730] arm-smmu 3da0000.iommu: resume latency exceeded, 462604 ns
->> [   56.799559] platform 3d6a000.gmu: [drm:a6xx_gmu_resume] *ERROR* GMU 
->> firmware initialization timed out
->> [   56.809260] arm-smmu 3da0000.iommu: genpd_runtime_suspend()
->> [   56.813062] msm msm: [drm:adreno_load_gpu] *ERROR* Couldn't power 
->> up the GPU: -110
->>
->>
-> 
-> Do you have your branch published somewhere so I can see what could've 
-> went wrong?
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-I've applied your patches (this series + the extra one for gpu/drm/msm) 
-on top of 
-https://git.linaro.org/landing-teams/working/qualcomm/kernel.git branch 
-integration-linux-qcomlt .
+Commit 1627f683636d ("clk: rockchip: Handle clock tree for rk3288w variant")
+added the check for rk3288w-specific clock-tree changes but in turn would
+require a double-compatible due to re-using the main rockchip,rk3288-cru
+compatible as entry point.
 
+The binding change actually describes the compatibles as one or the other
+so adapt the code accordingly and add a real second entry-point for the
+clock controller.
 
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ drivers/clk/rockchip/clk-rk3288.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip/clk-rk3288.c
+index 204976e2d0cb..a39ca9809cc3 100644
+--- a/drivers/clk/rockchip/clk-rk3288.c
++++ b/drivers/clk/rockchip/clk-rk3288.c
+@@ -922,7 +922,7 @@ static struct syscore_ops rk3288_clk_syscore_ops = {
+ 	.resume = rk3288_clk_resume,
+ };
+ 
+-static void __init rk3288_clk_init(struct device_node *np)
++static void __init rk3288_common_init(struct device_node *np, bool is_w)
+ {
+ 	struct rockchip_clk_provider *ctx;
+ 
+@@ -945,7 +945,7 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 	rockchip_clk_register_branches(ctx, rk3288_clk_branches,
+ 				  ARRAY_SIZE(rk3288_clk_branches));
+ 
+-	if (of_device_is_compatible(np, "rockchip,rk3288w-cru"))
++	if (is_w)
+ 		rockchip_clk_register_branches(ctx, rk3288w_hclkvio_branch,
+ 					       ARRAY_SIZE(rk3288w_hclkvio_branch));
+ 	else
+@@ -970,4 +970,15 @@ static void __init rk3288_clk_init(struct device_node *np)
+ 
+ 	rockchip_clk_of_add_provider(np, ctx);
+ }
++
++static void __init rk3288_clk_init(struct device_node *np)
++{
++	rk3288_common_init(np, false);
++}
+ CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
++
++static void __init rk3288w_clk_init(struct device_node *np)
++{
++	rk3288_common_init(np, true);
++}
++CLK_OF_DECLARE(rk3288w_cru, "rockchip,rk3288w-cru", rk3288w_clk_init);
 -- 
-With best wishes
-Dmitry
+2.26.2
+
