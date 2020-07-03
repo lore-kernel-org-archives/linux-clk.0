@@ -2,51 +2,51 @@ Return-Path: <SRS0=ceW6=AO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D4FAC433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E0BC433E0
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 60A9920890
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:32:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71ED4208C7
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jul 2020 07:34:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725786AbgGCHcu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jul 2020 03:32:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35548 "EHLO
+        id S1725779AbgGCHeq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jul 2020 03:34:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725648AbgGCHct (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 03:32:49 -0400
+        with ESMTP id S1725764AbgGCHeq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jul 2020 03:34:46 -0400
 Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD3C8C08C5C1
-        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 00:32:49 -0700 (PDT)
-Received: from dude.hi.pengutronix.de ([2001:67c:670:100:1d::7])
-        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1jrGBc-0003No-07; Fri, 03 Jul 2020 09:32:40 +0200
-Received: from afa by dude.hi.pengutronix.de with local (Exim 4.92)
-        (envelope-from <afa@pengutronix.de>)
-        id 1jrGBa-0006F1-V9; Fri, 03 Jul 2020 09:32:38 +0200
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFBB1C08C5C1
+        for <linux-clk@vger.kernel.org>; Fri,  3 Jul 2020 00:34:45 -0700 (PDT)
+Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
+        (envelope-from <a.fatoum@pengutronix.de>)
+        id 1jrGDc-0003cT-Da; Fri, 03 Jul 2020 09:34:44 +0200
+Subject: Re: [PATCH v2] clk: at91: add sama5d3 pmc driver
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: at91: fix possible dead lock in new drivers
-Date:   Fri,  3 Jul 2020 09:32:35 +0200
-Message-Id: <20200703073236.23923-1-a.fatoum@pengutronix.de>
-X-Mailer: git-send-email 2.27.0
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?Q?Karl_Rudb=c3=a6k_Olsen?= <karl@micro-technic.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20200110223033.1261791-1-alexandre.belloni@bootlin.com>
+ <37d11358-d3b5-10a1-72a3-93a03a6c1ea6@pengutronix.de>
+ <20200622214759.GK131826@piout.net>
+From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
+Message-ID: <043970b9-6cc6-e5c6-b5b1-e0f1a9799ae1@pengutronix.de>
+Date:   Fri, 3 Jul 2020 09:34:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::7
-X-SA-Exim-Mail-From: afa@pengutronix.de
+In-Reply-To: <20200622214759.GK131826@piout.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
@@ -54,82 +54,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-syscon_node_to_regmap() will make the created regmap get and enable the
-first clock it can parse from the device tree. This clock is not needed to
-access the registers and should not be enabled at that time.
+Hello Alexandre,
 
-Use device_node_to_regmap to resolve this as it looks up the regmap in
-the same list but doesn't care about the clocks. This issue is detected
-by lockdep when booting the sama5d3 with a device tree containing the
-new clk bindings.
+On 6/22/20 11:47 PM, Alexandre Belloni wrote:
+> Hi,
+> 
+> On 22/06/2020 23:24:45+0200, Ahmad Fatoum wrote:
+>>> +	regmap = syscon_node_to_regmap(np);
+>>
+>> Shouldn't this be device_node_to_regmap for the same reasons outlined in your
+>> 6956eb33 ("clk: at91: fix possible deadlock") commit?
+>>
+>> Same question for at91sam9g45.c, sam9x60.c and at91sam9n12.c.
+>>
+> 
+> Agreed, I guess you can send a patch fixing all the instances.
 
-This fix already happened in 6956eb33abb5 ("clk: at91: fix possible
-deadlock") for the drivers that had been migrated to the new clk binding
-back then. This does the same for the new drivers as well.
+I just sent out a patch for those 4 files. I don't know if this issue is equally
+applicable to the dt-compat.c code, so I left that one as is.
 
-Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-Only boot tested on the sama5d3.
----
- drivers/clk/at91/at91sam9g45.c | 2 +-
- drivers/clk/at91/at91sam9n12.c | 2 +-
- drivers/clk/at91/sam9x60.c     | 2 +-
- drivers/clk/at91/sama5d3.c     | 2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Cheers,
+Ahmad
 
-diff --git a/drivers/clk/at91/at91sam9g45.c b/drivers/clk/at91/at91sam9g45.c
-index 9873b583c260..fe9d391adeba 100644
---- a/drivers/clk/at91/at91sam9g45.c
-+++ b/drivers/clk/at91/at91sam9g45.c
-@@ -111,7 +111,7 @@ static void __init at91sam9g45_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-diff --git a/drivers/clk/at91/at91sam9n12.c b/drivers/clk/at91/at91sam9n12.c
-index 630dc5d87171..4aa97e672bd6 100644
---- a/drivers/clk/at91/at91sam9n12.c
-+++ b/drivers/clk/at91/at91sam9n12.c
-@@ -124,7 +124,7 @@ static void __init at91sam9n12_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-index 3e20aa68259f..2b4c67485eee 100644
---- a/drivers/clk/at91/sam9x60.c
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -178,7 +178,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-index 5e4e44dd4c37..5609b04e6565 100644
---- a/drivers/clk/at91/sama5d3.c
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -121,7 +121,7 @@ static void __init sama5d3_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
 -- 
-2.27.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
