@@ -2,73 +2,63 @@ Return-Path: <SRS0=JxQE=AQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3676C433E1
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jul 2020 09:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F552C433DF
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jul 2020 10:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A23D32088E
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jul 2020 09:19:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1422207CD
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jul 2020 10:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbgGEJTD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jul 2020 05:19:03 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:22188 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726491AbgGEJSR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 5 Jul 2020 05:18:17 -0400
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 05 Jul 2020 02:18:17 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 05 Jul 2020 02:18:11 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 90DE9213B6; Sun,  5 Jul 2020 14:48:09 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, bhelgaas@google.com,
-        robh+dt@kernel.org, kishon@ti.com, vkoul@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, svarbanov@mm-sol.com,
-        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
-        sivaprak@codeaurora.org, mgautam@codeaurora.org,
-        smuthayy@codeaurora.org, varada@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Subject: [PATCH 3/9] clk: qcom: ipq8074: Add missing bindings for pcie
-Date:   Sun,  5 Jul 2020 14:47:54 +0530
-Message-Id: <1593940680-2363-4-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
-References: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
+        id S1726565AbgGEKTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jul 2020 06:19:07 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:50514 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726558AbgGEKTG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Jul 2020 06:19:06 -0400
+Received: from p57b773cb.dip0.t-ipconnect.de ([87.183.115.203] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1js1jb-0001qi-Ap; Sun, 05 Jul 2020 12:18:55 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org
+Cc:     ezequiel@collabora.com, mturquette@baylibre.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>,
+        linux-clk@vger.kernel.org, jagan@amarulasolutions.com,
+        mylene.josserand@collabora.com, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org
+Subject: Re: [PATCH v2] clk: rockchip: use separate compatibles for rk3288w-cru
+Date:   Sun,  5 Jul 2020 12:18:54 +0200
+Message-Id: <159394432444.305208.6716969954746405813.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <20200703154948.260369-1-heiko@sntech.de>
+References: <20200703154948.260369-1-heiko@sntech.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add missing clock bindings for pcie port0 of ipq8074.
+On Fri, 3 Jul 2020 17:49:48 +0200, Heiko Stuebner wrote:
+> Commit 1627f683636d ("clk: rockchip: Handle clock tree for rk3288w variant")
+> added the check for rk3288w-specific clock-tree changes but in turn would
+> require a double-compatible due to re-using the main rockchip,rk3288-cru
+> compatible as entry point.
+> 
+> The binding change actually describes the compatibles as one or the other
+> so adapt the code accordingly and add a real second entry-point for the
+> clock controller.
 
-Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
----
- include/dt-bindings/clock/qcom,gcc-ipq8074.h | 4 ++++
- 1 file changed, 4 insertions(+)
+Applied, thanks!
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-index 4de4811a3540..e3e018565add 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -362,5 +362,9 @@
- #define GCC_PCIE1_AXI_SLAVE_ARES		128
- #define GCC_PCIE1_AHB_ARES			129
- #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
-+#define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
-+#define GCC_PCIE0_AXI_S_BRIDGE_CLK		132
-+#define GCC_PCIE0_RCHNG_CLK_SRC			133
-+#define GCC_PCIE0_RCHNG_CLK			134
- 
- #endif
+[1/1] clk: rockchip: use separate compatibles for rk3288w-cru
+      commit: 0a7f99aad259d223ce69c03e792c7e2bfcf8c2c6
+
+Best regards,
 -- 
-2.7.4
-
+Heiko Stuebner <heiko@sntech.de>
