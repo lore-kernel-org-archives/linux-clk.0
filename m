@@ -2,117 +2,125 @@ Return-Path: <SRS0=L9sT=AR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11749C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 20:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE16C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 23:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E0E2620715
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 20:37:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q6HZnhYl"
+	by mail.kernel.org (Postfix) with ESMTP id C058320720
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 23:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594079391;
+	bh=rcSfzqKMqTAG4cZgVNbjNYrKd7WW6S5TsXMAfz2WtHw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=xuFq1TCNzJzC3U65PEuj91LplwelEAYFYLwaEeQBMk8NyStbUYF8ye5+NpxiNUEmd
+	 r3yD7ChscP5UWsB4nz0KY+wmmvOkc5b79BdjnLmnRMqJOs8Hhbb91mnQUTbGY4Tekr
+	 RrJaIlcYWH9VssHgB03qlk+HOObP46j1sLIMArUM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbgGFUhm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jul 2020 16:37:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56480 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726898AbgGFUhm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jul 2020 16:37:42 -0400
-Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46039C061755;
-        Mon,  6 Jul 2020 13:37:42 -0700 (PDT)
-Received: by mail-il1-x143.google.com with SMTP id t4so20940301iln.1;
-        Mon, 06 Jul 2020 13:37:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2x42L3ZjIc07umJeW7MZC6jIGWIpEhQ6LTYn0is3+aI=;
-        b=q6HZnhYl2qQbqdWygKEk3xv1SiBRyGUd6foPIxRcLKip/tL1fKh2mfPgyvEySzlipQ
-         mHNiS9/kNEXJxaWZ+yBnV/aV/+g5/uuJ14UzLJ36NHTEhYWSniogJAX24APRQhcopRV8
-         N99JSdpiq6uHz/gX1Vdk5lILukoK/csy09xjFJCeFdGFjUApZbEwWALqQ7MxnvunO+e/
-         N51M4SUkCgIkvF0p+j+JmHG2PGi2eAoVoVtxs1v8W3pMlAdk+OT9XxjTNKYQCg7t03N+
-         HfhXwFPgnI60c0UDPvhh7YamVwuiMMCzkoCIunrGrEy9EYZAWGsO798YKG8CQZVtpFD7
-         YG3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2x42L3ZjIc07umJeW7MZC6jIGWIpEhQ6LTYn0is3+aI=;
-        b=D5FO5XQBUVSES2EpQp7JUwlhJdgM84ZCgRRhxqF06lSFad0K7OXLEPHR5pTt/5xJML
-         QG73VfAMtxSNuXp1NtWbI6V6YNL5l/Oun2D+FCZ2TjxU8U5sBdPFIE4CtHs10BH0d2tk
-         d2DpBVHNfZMZamNtn06nP/LGqV1cyZKSaYGoREfQkQqZYug/FS756gceYiiyqTRyoDEr
-         ggJD64+aRfElEmoUnk3yknC4cpllCtPI5ExRbC37FHf6eLZSIPR68WyQi1dge+RfSIoX
-         lAUj8O9nBC3iZQhB/aHO76NPrEHOVOK4I3kR3SKmmdSST/xD/naDWHsse7mgX1oL3Z9H
-         RkSw==
-X-Gm-Message-State: AOAM533GMFbPHv/zop6I2OG65P2Wd0IlesO1mM0jEX2BoGNklZHtYfSW
-        FcvOdh8IAfjIZahoV+rRweg+iPON
-X-Google-Smtp-Source: ABdhPJwAMvn7e6gl5GO2W+I1wGddhwqLOPQqDM8w3GaIVyd3+g9yR0PC0ULx2Ydb00/0C8uhWjbFtg==
-X-Received: by 2002:a92:d64d:: with SMTP id x13mr31995829ilp.287.1594067861055;
-        Mon, 06 Jul 2020 13:37:41 -0700 (PDT)
-Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
-        by smtp.gmail.com with ESMTPSA id t83sm11937595ilb.47.2020.07.06.13.37.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 Jul 2020 13:37:40 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, aford@beaconembedded.com,
-        charles.stevens@logicpd.com, Adam Ford <aford173@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH V2] clk: vc5: Add memory check to prevent oops
-Date:   Mon,  6 Jul 2020 15:37:27 -0500
-Message-Id: <20200706203727.18380-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        id S1726900AbgGFXts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jul 2020 19:49:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39412 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726280AbgGFXts (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Jul 2020 19:49:48 -0400
+Received: from localhost (mobile-166-175-191-139.mycingular.net [166.175.191.139])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E448206E9;
+        Mon,  6 Jul 2020 23:49:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594079387;
+        bh=rcSfzqKMqTAG4cZgVNbjNYrKd7WW6S5TsXMAfz2WtHw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=OAk1XCEw69JFMDD5mSVljMjA3rJmzjhckHDUt8Howp5kh3Q2cnjFGujMp0Mzf+1BC
+         wGBhKk5ONavqe465bLIanMAJmPWgNLe8cfQR/cLQJXK0mZG7n/176obN0Rt+FBMoQq
+         AsxoAbxA0sLkGyDy6r70vGsM2xTUBmBmaVo1aXh8=
+Date:   Mon, 6 Jul 2020 18:49:45 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, bhelgaas@google.com,
+        robh+dt@kernel.org, kishon@ti.com, vkoul@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, svarbanov@mm-sol.com,
+        lorenzo.pieralisi@arm.com, p.zabel@pengutronix.de,
+        mgautam@codeaurora.org, smuthayy@codeaurora.org,
+        varada@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/9] Add PCIe support for IPQ8074
+Message-ID: <20200706234945.GA171874@bjorn-Precision-5520>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When getting the names of the child nodes, kasprintf is used to
-allocate memory which is used to create the string for the node
-name.  Unfortunately, there is no memory check to determine
-if this allocation fails, it may cause an error when trying
-to get child node name.
+On Sun, Jul 05, 2020 at 02:47:51PM +0530, Sivaprakash Murugesan wrote:
+> IPQ8074 has two PCIe ports both are based on synopsis designware PCIe
+> controller. while it was assumed that PCIe support for IPQ8074 was already
+> available. PCIe was not functional until now.
+> 
+> This patch series adds support for PCIe ports on IPQ8074.
+> 
+> First PCIe port is of gen2 synposis version is 2_3_2 which has already been
+> enabled. But it had some problems on phy init and needed dt updates.
+> 
+> Second PCIe port is gen3 synopsis version is 2_9_0. This series adds
+> support for this PCIe port while fixing dt nodes.
+> 
+> Patch 1 on this series depends on qcom pcie bindings patch
+> https://lkml.org/lkml/2020/6/24/162
+> 
+> Sivaprakash Murugesan (9):
+>   dt-bindings: pci: Add ipq8074 gen3 pci compatible
+>   dt-bindings: phy: qcom,qmp: Add dt-binding for ipq8074 gen3 pcie phy
+>   clk: qcom: ipq8074: Add missing bindings for pcie
+>   clk: qcom: ipq8074: Add missing clocks for pcie
+>   phy: qcom-qmp: use correct values for ipq8074 gen2 pcie phy init
+>   phy: qcom-qmp: Add compatible for ipq8074 pcie gen3 qmp phy
+>   pci: dwc: qcom: do phy power on before pcie init
+>   pci: qcom: Add support for ipq8074 pci controller
+>   arm64: dts: ipq8074: Fixup pcie dts nodes
 
-This patch will check if the memory allocation fails, and returns
-and -NOMEM error instead of blindly moving on.
+No comment on the patches themselves, but please update the subject
+lines so they follow the conventions:
 
-Fixes: 260249f929e8 ("clk: vc5: Enable addition output configurations of the Versaclock")
+  dt-bindings: PCI: qcom: Add ipq8074 PCIe Gen3 support
+  dt-bindings: phy: qcom,qmp: Add ipq8074 PCIe Gen3 phy
+  clk: qcom: ipq8074: Add missing bindings for PCIe
+  clk: qcom: ipq8074: Add missing clocks for PCIe
+  phy: qcom-qmp: Use correct values for ipq8074 PCIe Gen2 PHY init
+  PCI: qcom: Do PHY power on before PCIe init
+  PCI: qcom: Add ipq8074 PCIe controller support
+  arm64: dts: ipq8074: Fixup PCIe DTS nodes
 
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Adam Ford <aford173@gmail.com>
+Also fix the same things in the commit logs, e.g., consistently use
+"PCIe" instead of "pcie", "Gen2" instead of "gen2", etc.  For example:
 
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 9a5fb3834b9a..926a370a0eda 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -789,10 +789,13 @@ static int vc5_get_output_config(struct i2c_client *client,
- 	int ret = 0;
- 
- 	child_name = kasprintf(GFP_KERNEL, "OUT%d", clk_out->num + 1);
-+	if (child_name == NULL)
-+		return -ENOMEM;
-+
- 	np_output = of_get_child_by_name(client->dev.of_node, child_name);
- 	kfree(child_name);
- 	if (!np_output)
--		goto output_done;
-+		return 0;
- 
- 	ret = vc5_update_mode(np_output, clk_out);
- 	if (ret)
-@@ -813,7 +816,6 @@ static int vc5_get_output_config(struct i2c_client *client,
- 
- 	of_node_put(np_output);
- 
--output_done:
- 	return ret;
- }
- 
--- 
-2.17.1
+  ipq8074 has two PCIe ports while the support for gen2 pcie port ...
 
+What's the point of using "PCIe" for the first and "pcie" for the
+second?
+
+You can learn all this by using "git log" and "git log --online".
+
+>  .../devicetree/bindings/pci/qcom,pcie.yaml         |  47 ++++++
+>  .../devicetree/bindings/phy/qcom,qmp-phy.yaml      |   1 +
+>  arch/arm64/boot/dts/qcom/ipq8074-hk01.dts          |   8 +-
+>  arch/arm64/boot/dts/qcom/ipq8074.dtsi              | 109 ++++++++----
+>  drivers/clk/qcom/gcc-ipq8074.c                     |  60 +++++++
+>  drivers/pci/controller/dwc/pcie-qcom.c             | 187 +++++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h          | 132 +++++++++++++++
+>  drivers/phy/qualcomm/phy-qcom-qmp.c                | 188 ++++++++++++++++++++-
+>  drivers/phy/qualcomm/phy-qcom-qmp.h                |   2 +
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h       |   4 +
+>  10 files changed, 683 insertions(+), 55 deletions(-)
+>  create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h
+> 
+> -- 
+> 2.7.4
+> 
