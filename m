@@ -2,107 +2,86 @@ Return-Path: <SRS0=L9sT=AR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27681C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 15:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62CA2C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 16:53:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A78120715
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 15:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A1F220702
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jul 2020 16:53:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729494AbgGFP4G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jul 2020 11:56:06 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:47032 "EHLO ns.iliad.fr"
+        id S1729413AbgGFQxI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jul 2020 12:53:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53408 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729348AbgGFP4G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Jul 2020 11:56:06 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 50DFE219E4;
-        Mon,  6 Jul 2020 17:56:04 +0200 (CEST)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 242F620097;
-        Mon,  6 Jul 2020 17:56:04 +0200 (CEST)
-Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
- <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
-Message-ID: <3fea884b-05d3-ff67-b9fe-41c9b46cf478@free.fr>
-Date:   Mon, 6 Jul 2020 17:56:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1729384AbgGFQxH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 6 Jul 2020 12:53:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.221.27])
+        by mx2.suse.de (Postfix) with ESMTP id 0C9EBABF4;
+        Mon,  6 Jul 2020 16:53:06 +0000 (UTC)
+Message-ID: <6da99a10debca368985e69d61f917785da8061a3.camel@suse.de>
+Subject: Re: [PATCH v4 3/3] ARM: dts: bcm2711: Add HDMI DVP
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Maxime Ripard <maxime@cerno.tech>
+Cc:     Tim Gover <tim.gover@raspberrypi.com>,
+        Dave Stevenson <dave.stevenson@raspberrypi.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Phil Elwell <phil@raspberrypi.com>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Mon, 06 Jul 2020 18:53:04 +0200
+In-Reply-To: <e22222ca7f41b960e9bb1a31e0dd2de95b8c0cd1.1591867332.git-series.maxime@cerno.tech>
+References: <cover.4c4625a8e076f3163b800b3d8986b282ee98d908.1591867332.git-series.maxime@cerno.tech>
+         <e22222ca7f41b960e9bb1a31e0dd2de95b8c0cd1.1591867332.git-series.maxime@cerno.tech>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-3gU7U7fv64+BGKtfJm+D"
+User-Agent: Evolution 3.36.3 
 MIME-Version: 1.0
-In-Reply-To: <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Jul  6 17:56:04 2020 +0200 (CEST)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Greg,
 
-Would you agree to take this series?
+--=-3gU7U7fv64+BGKtfJm+D
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Regards.
+On Thu, 2020-06-11 at 11:23 +0200, Maxime Ripard wrote:
+> Now that we have a driver for the DVP, let's add its DT node.
+>=20
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> ---
 
-On 18/06/2020 13:38, Marc Gonzalez wrote:
+Applied for-next,
 
-> Hello everyone,
-> 
-> In my opinion, the small and simple devm_add() helper
-> (and its cousin, devm_vadd) can help make devm code
-> slightly easier to write and maintain.
-> 
-> Would anyone care to agree or disagree? :-)
-> 
-> Regards.
-> 
-> On 10/03/2020 11:11, Marc Gonzalez wrote:
-> 
->> Differences from v4 to v5
->> x Fix the grammar in devm_add comments [Geert]
->> x Undo an unrelated change in devm_clk_put [Geert]
->>
->> Differences from v3 to v4
->> x Add a bunch of kerneldoc above devm_add() [Greg KH]
->> x Split patch in two [Greg KH]
->>
->> Differences from v2 to v3
->> x Make devm_add() return an error-code rather than the raw data pointer
->>   (in case devres_alloc ever returns an ERR_PTR) as suggested by Geert
->> x Provide a variadic version devm_vadd() to work with structs as suggested
->>   by Geert
->> x Don't use nested ifs in clk_devm* implementations (hopefully simpler
->>   code logic to follow) as suggested by Geert
->>
->> Marc Gonzalez (2):
->>   devres: Provide new helper for devm functions
->>   clk: Use devm_add in managed functions
->>
->>  drivers/base/devres.c    | 28 ++++++++++++
->>  drivers/clk/clk-devres.c | 97 +++++++++++++++-------------------------
->>  include/linux/device.h   |  3 ++
->>  3 files changed, 67 insertions(+), 61 deletions(-)
+Thanks,
+Nicolas
+
+
+--=-3gU7U7fv64+BGKtfJm+D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAl8DVvAACgkQlfZmHno8
+x/4Bdgf+K6eembVjOyppSnpyDFUnzdc2w7IjmENlzuXT0eUzG70ZpbImjgDfbAWF
+dzCmVd31hdwMh+dFQSAeeBNWeE54zH1YAkSLPFfc89mbyTOD5+Iyf1BeKRUGecNR
+spygrX8+nKB6ajaYYpql9PGpATjQ12yv+2j5vuUQAshjBI1uJ5bhFNfH8HBeTlg5
+oJcZ+0WIvFVhHmB/z3rdDTBsgW0I4Kj/F0s40zcV6kgnsFDohWNaCvyAlAn9r7dI
+2HLWX8inPtdyg/H3ZIN/5SyneLKqAqIN4eLDfKQhBhmn5/rBmn/Gr7lkbQD3IlIh
+/j+0Iu//rQg4uRAtAPYLokgAOnZ+Qg==
+=tz83
+-----END PGP SIGNATURE-----
+
+--=-3gU7U7fv64+BGKtfJm+D--
+
