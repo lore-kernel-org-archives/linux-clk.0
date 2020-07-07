@@ -7,94 +7,90 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4F2C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 11:39:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6800EC433DF
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 11:59:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8D89B20739
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 11:39:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 409122074F
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 11:59:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NYzj/o6y"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HKDcobdw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728169AbgGGLj0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jul 2020 07:39:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54148 "EHLO
+        id S1725944AbgGGL7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jul 2020 07:59:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57252 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbgGGLj0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 07:39:26 -0400
-Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B820C08C5DF
-        for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2020 04:39:25 -0700 (PDT)
-Received: by mail-lj1-x243.google.com with SMTP id t25so44898495lji.12
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2020 04:39:25 -0700 (PDT)
+        with ESMTP id S1726540AbgGGL7F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 07:59:05 -0400
+Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40B5BC08C5E0
+        for <linux-clk@vger.kernel.org>; Tue,  7 Jul 2020 04:59:05 -0700 (PDT)
+Received: by mail-lf1-x143.google.com with SMTP id k15so24520233lfc.4
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jul 2020 04:59:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=AB79oSGoei4/jVAVNUIel30W4YNtDlT0qF8qJNgQrv8=;
-        b=NYzj/o6y2s9Z+eCQgmRYfSgsgU7i2HsuCMcPIod16JgB0/R/Bp8K5TCpEG+jy+bcgs
-         ZeWixYF2ok3de8HvQOPk2q8rgIBZzWFC0mNPOVLWT6rbSD+GQswrYk/COzA1BzWJTS0y
-         drlNb9cBsjk6f3wweib0e8CQxPQBi+sIlqBDP8H9T9s4aZi38GCvzy1ivpwPO1RFCqDw
-         TjSHlhqypVPuC7Pb0P50dC7mEjFGIXvCXjSG/GQxWvFPcZ++jU5mQN6Ide3Q+e/v2VlF
-         reom+VCXprUs4I5+pCDFnZNjMgq7tRgBCHRMqtD75VEibK88tGJtAMoDnCZipsfMypao
-         zqzA==
+        bh=HTPmD5Tv5dUMriTVMEYPSE4aq44oEkYldNJx6iUd92U=;
+        b=HKDcobdwR59Fn4UPxGHRQ0tpAtbpLCJNsZlPMJ/sOiZyRbiNswsgF9jOe/BAk8id8l
+         /5EDjFn+j7IrqQI7DBI2n7Uq2bBWEf1LX5BO0SlioDHGovjRN/+aYEtpFSj1onhKowwd
+         Jyzt+IOCjBFb2xLwG5Ql2hJk4eWSyQElpoG1w08NxiRQ4BjeE4juggLuIqQZrxnUm4AW
+         wxJ5rCZerV2AejOoEFy2/ofH5gJdnEUHklmMBmyEWjepQYIJFNJR4M9pxxd22+ChBxqi
+         z7Y0JHiZJBtFRhUTWf6BA4ruLd/6iHkPnoKgZc0WXt+PJk9Ns+TyOPs2bDd4yFIVnyF9
+         qKqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=AB79oSGoei4/jVAVNUIel30W4YNtDlT0qF8qJNgQrv8=;
-        b=B7+1YUF9U44D+TZgeCeL9JBJ7UkvcqFhV6J1XNydXv5p0u8EZyP0jQnXcNdIoF7kZY
-         tiDi7ootA1CPsq0DiWDcjbmf/P3g4qUoIbOaBZ0k+5U4wbCOmSycHGBT4s1bDY72ZSJk
-         COAI+feIGF5HRdL4SvjmEeEN5ioQe5SAzw47neezOxIf3AD1YCnUGeIgTMlb8Di7ufSo
-         jXaypEzQdnDi4EK11ctcYadLwkr6u7o17EyE1fQg94ZMU3QE+N0u2JJ4tkpaWIC/XI6R
-         pRVgYsE+aYYXwbEyxz4l2P50kZw16Fu6Am0Qgag1mGOHp+FIjfJXJ5/1D13JJVfQTk7A
-         KQAA==
-X-Gm-Message-State: AOAM533IuN0Zyj04wi380WgPZAfkqgypKOO+0Vii6wIHQlDoDpYVYaAR
-        c4gPCDNlVc8Mz1mKno7eKa7a5tWi1XkmhIrKpnXJVA==
-X-Google-Smtp-Source: ABdhPJzaNV7qDX5ofVny2CYGichkvvyZwwCuYiY/DXFU9tcXKWyULk7QdWCDcj7Zwb2TtLbaWFduqFOHtHKtVZ06ol4=
-X-Received: by 2002:a2e:8046:: with SMTP id p6mr15946172ljg.100.1594121963989;
- Tue, 07 Jul 2020 04:39:23 -0700 (PDT)
+        bh=HTPmD5Tv5dUMriTVMEYPSE4aq44oEkYldNJx6iUd92U=;
+        b=d9SB/VMPlV+bnWTgM/wEBeOIzQF2jazqM/k6i/MijBnHcprAC1jY8dYu7oM4saNZOn
+         tGBIORacVFpPcZ6Ul990/lAMSbP1j0MOGpoaLcmQDdFF8Ml/IltTHY6rnQ3dtMVCYz/j
+         isJMK3wFxikGdi697gnZrGTBhjbijpqp83SW5qXmsWZ273trDZTxve/YWK8P3gVGCCY/
+         lo2wXho2FqqsKTchWAgIYT/6Upi1/7/sanM7oJWxAJZIokXt1t531NvRa3QXyuTpmNuT
+         VxLXWEbBC+9CHzoXLXicbwebHb/ZoQrQfh+bnAliZLICwJkcnrZbnBaC1KVBITGSQ3JA
+         3kKw==
+X-Gm-Message-State: AOAM531BFgJjQbMIlOa6M7/oEp7Y73LJQC9/M5t4vV8eXBdx3IURNoXX
+        3nw0MrbdEBUDIyhtf53cC/U4PI0/IOy4qnpZyKQcPA==
+X-Google-Smtp-Source: ABdhPJy0TxaIe1Wz0GdlFd5FdxpVp2FOvGGrBFkEn0oi3CjP4qg2V304qTt6rBtZAznq91V/ed9yiUW+UN8gJyowQaY=
+X-Received: by 2002:a19:e05d:: with SMTP id g29mr32404950lfj.217.1594123143709;
+ Tue, 07 Jul 2020 04:59:03 -0700 (PDT)
 MIME-Version: 1.0
-References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com> <1592480018-3340-3-git-send-email-hanks.chen@mediatek.com>
-In-Reply-To: <1592480018-3340-3-git-send-email-hanks.chen@mediatek.com>
+References: <20200615133242.24911-1-lars.povlsen@microchip.com> <20200615133242.24911-6-lars.povlsen@microchip.com>
+In-Reply-To: <20200615133242.24911-6-lars.povlsen@microchip.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 7 Jul 2020 13:39:13 +0200
-Message-ID: <CACRpkdZAjwcHURd6wCQPrjHjEgiEiUApqVUff+70nwjRPyAwBw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/7] pinctrl: mediatek: update pinmux definitions for mt6779
-To:     Hanks Chen <hanks.chen@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+Date:   Tue, 7 Jul 2020 13:58:52 +0200
+Message-ID: <CACRpkdaSVRg3F5FLKi=sGCFQDXXkiz2e1pT3H9dcoaPDSYKrXQ@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] pinctrl: ocelot: Add Sparx5 SoC support
+To:     Lars Povlsen <lars.povlsen@microchip.com>
+List-Id: <soc.lore.kernel.org>
+Cc:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Olof Johansson <olof@lixom.net>,
+        Michael Turquette <mturquette@baylibre.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, wsd_upstream@mediatek.com,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jun 18, 2020 at 1:34 PM Hanks Chen <hanks.chen@mediatek.com> wrote:
+On Mon, Jun 15, 2020 at 3:33 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
 
-> Add devicetree bindings for Mediatek mt6779 SoC Pin Controller.
+> This add support for Sparx5 pinctrl, using the ocelot drives as
+> basis. It adds pinconfig support as well, as supported by the
+> platform.
 >
-> Acked-by: Sean Wang <sean.wang@kernel.org>
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 
-Patch applied.
+This one patch applied to the pinctrl tree.
 
 Yours,
 Linus Walleij
