@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679B6C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DD6C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:18:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE0C2075B
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E095E20738
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:18:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728189AbgGGQSf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jul 2020 12:18:35 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:43654 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728816AbgGGQSe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 12:18:34 -0400
+        id S1728150AbgGGQSs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jul 2020 12:18:48 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:44391 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728959AbgGGQSr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 12:18:47 -0400
 X-IronPort-AV: E=Sophos;i="5.75,324,1589209200"; 
-   d="scan'208";a="51540105"
+   d="scan'208";a="51328925"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 08 Jul 2020 01:18:33 +0900
+  by relmlie6.idc.renesas.com with ESMTP; 08 Jul 2020 01:18:46 +0900
 Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 3FD234015EE5;
-        Wed,  8 Jul 2020 01:18:30 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id B0EB740164B9;
+        Wed,  8 Jul 2020 01:18:43 +0900 (JST)
 From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Magnus Damm <magnus.damm@gmail.com>,
@@ -39,9 +39,9 @@ Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Prabhakar <prabhakar.csengg@gmail.com>,
         Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 07/14] soc: renesas: rcar-sysc: Add r8a774e1 support
-Date:   Tue,  7 Jul 2020 17:18:05 +0100
-Message-Id: <1594138692-16816-6-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 11/14] clk: renesas: Add r8a774e1 CPG Core Clock Definitions
+Date:   Tue,  7 Jul 2020 17:18:09 +0100
+Message-Id: <1594138692-16816-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
 References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
@@ -52,106 +52,82 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 
-Add support for RZ/G2H (R8A774E1) SoC power areas to the R-Car SYSC
-driver.
+Add all RZ/G2H Clock Pulse Generator Core Clock Outputs, as listed in
+Table 11.2 ("List of Clocks [RZ/G2H]") of the RZ/G2H Hardware User's
+Manual.
 
 Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
 Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/soc/renesas/Makefile        |  1 +
- drivers/soc/renesas/r8a774e1-sysc.c | 43 +++++++++++++++++++++++++++++
- drivers/soc/renesas/rcar-sysc.c     |  3 ++
- drivers/soc/renesas/rcar-sysc.h     |  1 +
- 4 files changed, 48 insertions(+)
- create mode 100644 drivers/soc/renesas/r8a774e1-sysc.c
+ include/dt-bindings/clock/r8a774e1-cpg-mssr.h | 59 +++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+ create mode 100644 include/dt-bindings/clock/r8a774e1-cpg-mssr.h
 
-diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-index 08296d78e2ad..10a399fc486a 100644
---- a/drivers/soc/renesas/Makefile
-+++ b/drivers/soc/renesas/Makefile
-@@ -10,6 +10,7 @@ obj-$(CONFIG_SYSC_R8A77470)	+= r8a77470-sysc.o
- obj-$(CONFIG_SYSC_R8A774A1)	+= r8a774a1-sysc.o
- obj-$(CONFIG_SYSC_R8A774B1)	+= r8a774b1-sysc.o
- obj-$(CONFIG_SYSC_R8A774C0)	+= r8a774c0-sysc.o
-+obj-$(CONFIG_SYSC_R8A774E1)	+= r8a774e1-sysc.o
- obj-$(CONFIG_SYSC_R8A7779)	+= r8a7779-sysc.o
- obj-$(CONFIG_SYSC_R8A7790)	+= r8a7790-sysc.o
- obj-$(CONFIG_SYSC_R8A7791)	+= r8a7791-sysc.o
-diff --git a/drivers/soc/renesas/r8a774e1-sysc.c b/drivers/soc/renesas/r8a774e1-sysc.c
+diff --git a/include/dt-bindings/clock/r8a774e1-cpg-mssr.h b/include/dt-bindings/clock/r8a774e1-cpg-mssr.h
 new file mode 100644
-index 000000000000..18449f746455
+index 000000000000..b2fc1d1c3c47
 --- /dev/null
-+++ b/drivers/soc/renesas/r8a774e1-sysc.c
-@@ -0,0 +1,43 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/G2H System Controller
-+ * Copyright (C) 2020 Renesas Electronics Corp.
++++ b/include/dt-bindings/clock/r8a774e1-cpg-mssr.h
+@@ -0,0 +1,59 @@
++/* SPDX-License-Identifier: GPL-2.0
 + *
-+ * Based on Renesas R-Car H3 System Controller
-+ * Copyright (C) 2016-2017 Glider bvba
++ * Copyright (C) 2020 Renesas Electronics Corp.
 + */
++#ifndef __DT_BINDINGS_CLOCK_R8A774E1_CPG_MSSR_H__
++#define __DT_BINDINGS_CLOCK_R8A774E1_CPG_MSSR_H__
 +
-+#include <linux/kernel.h>
++#include <dt-bindings/clock/renesas-cpg-mssr.h>
 +
-+#include <dt-bindings/power/r8a774e1-sysc.h>
++/* R8A774E1 CPG Core Clocks */
++#define R8A774E1_CLK_Z			0
++#define R8A774E1_CLK_Z2			1
++#define R8A774E1_CLK_ZG			2
++#define R8A774E1_CLK_ZTR		3
++#define R8A774E1_CLK_ZTRD2		4
++#define R8A774E1_CLK_ZT			5
++#define R8A774E1_CLK_ZX			6
++#define R8A774E1_CLK_S0D1		7
++#define R8A774E1_CLK_S0D2		8
++#define R8A774E1_CLK_S0D3		9
++#define R8A774E1_CLK_S0D4		10
++#define R8A774E1_CLK_S0D6		11
++#define R8A774E1_CLK_S0D8		12
++#define R8A774E1_CLK_S0D12		13
++#define R8A774E1_CLK_S1D2		14
++#define R8A774E1_CLK_S1D4		15
++#define R8A774E1_CLK_S2D1		16
++#define R8A774E1_CLK_S2D2		17
++#define R8A774E1_CLK_S2D4		18
++#define R8A774E1_CLK_S3D1		19
++#define R8A774E1_CLK_S3D2		20
++#define R8A774E1_CLK_S3D4		21
++#define R8A774E1_CLK_LB			22
++#define R8A774E1_CLK_CL			23
++#define R8A774E1_CLK_ZB3		24
++#define R8A774E1_CLK_ZB3D2		25
++#define R8A774E1_CLK_ZB3D4		26
++#define R8A774E1_CLK_CR			27
++#define R8A774E1_CLK_CRD2		28
++#define R8A774E1_CLK_SD0H		29
++#define R8A774E1_CLK_SD0		30
++#define R8A774E1_CLK_SD1H		31
++#define R8A774E1_CLK_SD1		32
++#define R8A774E1_CLK_SD2H		33
++#define R8A774E1_CLK_SD2		34
++#define R8A774E1_CLK_SD3H		35
++#define R8A774E1_CLK_SD3		36
++#define R8A774E1_CLK_RPC		37
++#define R8A774E1_CLK_RPCD2		38
++#define R8A774E1_CLK_MSO		39
++#define R8A774E1_CLK_HDMI		40
++#define R8A774E1_CLK_CSI0		41
++#define R8A774E1_CLK_CP			42
++#define R8A774E1_CLK_CPEX		43
++#define R8A774E1_CLK_R			44
++#define R8A774E1_CLK_OSC		45
++#define R8A774E1_CLK_CANFD		46
 +
-+#include "rcar-sysc.h"
-+
-+static const struct rcar_sysc_area r8a774e1_areas[] __initconst = {
-+	{ "always-on",	    0, 0, R8A774E1_PD_ALWAYS_ON, -1, PD_ALWAYS_ON },
-+	{ "ca57-scu",	0x1c0, 0, R8A774E1_PD_CA57_SCU, R8A774E1_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca57-cpu0",	 0x80, 0, R8A774E1_PD_CA57_CPU0, R8A774E1_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu1",	 0x80, 1, R8A774E1_PD_CA57_CPU1, R8A774E1_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu2",	 0x80, 2, R8A774E1_PD_CA57_CPU2, R8A774E1_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca57-cpu3",	 0x80, 3, R8A774E1_PD_CA57_CPU3, R8A774E1_PD_CA57_SCU, PD_CPU_NOCR },
-+	{ "ca53-scu",	0x140, 0, R8A774E1_PD_CA53_SCU, R8A774E1_PD_ALWAYS_ON, PD_SCU },
-+	{ "ca53-cpu0",	0x200, 0, R8A774E1_PD_CA53_CPU0, R8A774E1_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu1",	0x200, 1, R8A774E1_PD_CA53_CPU1, R8A774E1_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu2",	0x200, 2, R8A774E1_PD_CA53_CPU2, R8A774E1_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "ca53-cpu3",	0x200, 3, R8A774E1_PD_CA53_CPU3, R8A774E1_PD_CA53_SCU, PD_CPU_NOCR },
-+	{ "a3vp",	0x340, 0, R8A774E1_PD_A3VP, R8A774E1_PD_ALWAYS_ON },
-+	{ "a3vc",	0x380, 0, R8A774E1_PD_A3VC, R8A774E1_PD_ALWAYS_ON },
-+	{ "a2vc1",	0x3c0, 1, R8A774E1_PD_A2VC1, R8A774E1_PD_A3VC },
-+	{ "3dg-a",	0x100, 0, R8A774E1_PD_3DG_A, R8A774E1_PD_ALWAYS_ON },
-+	{ "3dg-b",	0x100, 1, R8A774E1_PD_3DG_B, R8A774E1_PD_3DG_A },
-+	{ "3dg-c",	0x100, 2, R8A774E1_PD_3DG_C, R8A774E1_PD_3DG_B },
-+	{ "3dg-d",	0x100, 3, R8A774E1_PD_3DG_D, R8A774E1_PD_3DG_C },
-+	{ "3dg-e",	0x100, 4, R8A774E1_PD_3DG_E, R8A774E1_PD_3DG_D },
-+};
-+
-+const struct rcar_sysc_info r8a774e1_sysc_info __initconst = {
-+	.areas = r8a774e1_areas,
-+	.num_areas = ARRAY_SIZE(r8a774e1_areas),
-+	.extmask_offs = 0x2f8,
-+	.extmask_val = BIT(0),
-+};
-diff --git a/drivers/soc/renesas/rcar-sysc.c b/drivers/soc/renesas/rcar-sysc.c
-index 04ea87a188f1..9b235fc90027 100644
---- a/drivers/soc/renesas/rcar-sysc.c
-+++ b/drivers/soc/renesas/rcar-sysc.c
-@@ -296,6 +296,9 @@ static const struct of_device_id rcar_sysc_matches[] __initconst = {
- #ifdef CONFIG_SYSC_R8A774C0
- 	{ .compatible = "renesas,r8a774c0-sysc", .data = &r8a774c0_sysc_info },
- #endif
-+#ifdef CONFIG_SYSC_R8A774E1
-+	{ .compatible = "renesas,r8a774e1-sysc", .data = &r8a774e1_sysc_info },
-+#endif
- #ifdef CONFIG_SYSC_R8A7779
- 	{ .compatible = "renesas,r8a7779-sysc", .data = &r8a7779_sysc_info },
- #endif
-diff --git a/drivers/soc/renesas/rcar-sysc.h b/drivers/soc/renesas/rcar-sysc.h
-index e417f26fe155..8d861c1cfdf7 100644
---- a/drivers/soc/renesas/rcar-sysc.h
-+++ b/drivers/soc/renesas/rcar-sysc.h
-@@ -56,6 +56,7 @@ extern const struct rcar_sysc_info r8a77470_sysc_info;
- extern const struct rcar_sysc_info r8a774a1_sysc_info;
- extern const struct rcar_sysc_info r8a774b1_sysc_info;
- extern const struct rcar_sysc_info r8a774c0_sysc_info;
-+extern const struct rcar_sysc_info r8a774e1_sysc_info;
- extern const struct rcar_sysc_info r8a7779_sysc_info;
- extern const struct rcar_sysc_info r8a7790_sysc_info;
- extern const struct rcar_sysc_info r8a7791_sysc_info;
++#endif /* __DT_BINDINGS_CLOCK_R8A774E1_CPG_MSSR_H__ */
 -- 
 2.17.1
 
