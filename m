@@ -2,76 +2,75 @@ Return-Path: <SRS0=f0oj=AS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31308C433F2
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729C5C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 21:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADC220674
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 16:19:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5447820720
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 21:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728696AbgGGQS3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jul 2020 12:18:29 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:33789 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728609AbgGGQS2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 12:18:28 -0400
-X-IronPort-AV: E=Sophos;i="5.75,324,1589209200"; 
-   d="scan'208";a="51328903"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 08 Jul 2020 01:18:26 +0900
-Received: from localhost.localdomain (unknown [10.226.36.204])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 8B8074015EC4;
-        Wed,  8 Jul 2020 01:18:23 +0900 (JST)
-From:   Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1728764AbgGGVer (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jul 2020 17:34:47 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:44493 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728357AbgGGVer (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jul 2020 17:34:47 -0400
+Received: from [78.134.117.153] (port=57056 helo=[192.168.77.62])
+        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1jsvEh-000Gqt-Ju; Tue, 07 Jul 2020 23:34:43 +0200
+Subject: Re: [PATCH V2] clk: vc5: Add memory check to prevent oops
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, aford@beaconembedded.com,
+        charles.stevens@logicpd.com, Marek Vasut <marek.vasut@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prabhakar <prabhakar.csengg@gmail.com>,
-        Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 05/14] dt-bindings: power: renesas,rcar-sysc: Document r8a774e1 SYSC binding
-Date:   Tue,  7 Jul 2020 17:18:03 +0100
-Message-Id: <1594138692-16816-4-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+References: <20200706203727.18380-1-aford173@gmail.com>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <128e24e8-ae83-0b0f-8771-28a67f6d8586@lucaceresoli.net>
+Date:   Tue, 7 Jul 2020 23:34:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200706203727.18380-1-aford173@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+Hi Adam,
 
-Document bindings for the RZ/G2H (aka R8A774E1) SYSC block.
+On 06/07/20 22:37, Adam Ford wrote:
+> When getting the names of the child nodes, kasprintf is used to
+> allocate memory which is used to create the string for the node
+> name.  Unfortunately, there is no memory check to determine
+> if this allocation fails, it may cause an error when trying
+> to get child node name.
+> 
+> This patch will check if the memory allocation fails, and returns
+> and -NOMEM error instead of blindly moving on.
 
-Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml | 1 +
- 1 file changed, 1 insertion(+)
+s/-NOMEM/-ENOMEM/
 
-diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-index 55b6ab2d8784..ec2aaeee78dc 100644
---- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-+++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.yaml
-@@ -25,6 +25,7 @@ properties:
-       - renesas,r8a774a1-sysc # RZ/G2M
-       - renesas,r8a774b1-sysc # RZ/G2N
-       - renesas,r8a774c0-sysc # RZ/G2E
-+      - renesas,r8a774e1-sysc # RZ/G2H
-       - renesas,r8a7779-sysc  # R-Car H1
-       - renesas,r8a7790-sysc  # R-Car H2
-       - renesas,r8a7791-sysc  # R-Car M2-W
+With this possibly fixed:
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
+
 -- 
-2.17.1
-
+Luca
