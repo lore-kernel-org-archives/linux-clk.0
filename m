@@ -2,396 +2,202 @@ Return-Path: <SRS0=f0oj=AS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A2C6C433E3
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 05:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D233FC433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 10:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5EA8B20738
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 05:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A793920708
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jul 2020 10:07:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="KGA2Ejvp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbgGGFNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jul 2020 01:13:10 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53276 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbgGGFNK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Jul 2020 01:13:10 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8777C2005D0;
-        Tue,  7 Jul 2020 07:13:06 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 77E1B200840;
-        Tue,  7 Jul 2020 07:12:56 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B5C49402F7;
-        Tue,  7 Jul 2020 13:12:44 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, abel.vesa@nxp.com, peng.fan@nxp.com,
-        sfr@canb.auug.org.au, j.remmet@phytec.de,
-        georg.waibel@wiedemann-group.de, Georg.Waibel@wiedemann-group.com,
-        laurent.pinchart@ideasonboard.com, chen.fang@nxp.com,
-        fugang.duan@nxp.com, daniel.baluta@nxp.com, yuehaibing@huawei.com,
-        andrew.smirnov@gmail.com, horia.geanta@nxp.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V6 2/6] clk: imx: Support building i.MX common clock driver as module
-Date:   Tue,  7 Jul 2020 13:09:35 +0800
-Message-Id: <1594098579-25050-3-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com>
-References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726540AbgGGKHp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jul 2020 06:07:45 -0400
+Received: from mail-bn8nam11on2068.outbound.protection.outlook.com ([40.107.236.68]:40992
+        "EHLO NAM11-BN8-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727791AbgGGKHo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Jul 2020 06:07:44 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bublNzoHBCfLgqVlpGsvwCT188bXvujPnsCM88YzgVbUMhm2ot3hySjrA9lX/tKo5J5Caz3jlm1qADukxBRoiwPXUAdPDwZtI5HcgqNcXthG3vlhMFNgxROroL+es+ZqhpqPy8LHktlaidQXZslx0zHFpqQerEkjf8noawq/GE5rW/Nk85Gj764M3l0qej8GHuGvCZbbJYlmrNjKcD5MAxxhUQ51GydMREa7blH/EEqdYYHWlEKihL5FDcDxqqo9qpVeqU6I8UlgA9vuq2/aQu8fUVw7rJT4ZaQ4MA139iKPRGG5i/RjY3uw0lG3EcQ19dFK+koBW1rr5ZhNmHcyMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uZdsuHwKgICPN4wmQjs0x1IdRACwZTOzGPey7x4jBSQ=;
+ b=VDqT2AVIZZBYl+kzXojrEGhskvkl3R8+adjaGxcmfMx2vKNbGRg1iimdAUnwb3PLvtRx+1uwGrTqE+D1StjD6MBijE9p0zq1a+H8NQxSR9fOzgNxmH8r6i/hUZAfi72wrGY16JKWKupI3iPyW+8AvV5ioJrhpvxr+YH2FsbR/LVQDrVGpBYZVuWMC/WUjWUTctY0iBy680dL2YmWUQFJuHwCf3xIc12g4dWgzKjlt6rTqdDmwxs8a3SiWnvOPAYRJIlt/uFNuwX0tGIyr1+OvMjpTxfpDjTI/iqJ4OFKhTd5OGK3I/5opJAZV4fawJkH4DW0+SG1lXeumzGGc5Ji9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uZdsuHwKgICPN4wmQjs0x1IdRACwZTOzGPey7x4jBSQ=;
+ b=KGA2Ejvpgo5JQ7z47gpG9Y0j3GxtJlQYeeNNKmKpVnaWcFy3D93o2xxjcvIC0VeJx0oSmYww2C7+kh0LULXjxXK67MkUnNRhWVKsGLjdEObOEYeXt3VX5VSP2vFXphkwPzMtGgKFAWAut4P8+kYxComPqe0N0sQyRo1xDDOR7aM=
+Authentication-Results: amd.com; dkim=none (message not signed)
+ header.d=none;amd.com; dmarc=none action=none header.from=amd.com;
+Received: from MWHPR12MB1599.namprd12.prod.outlook.com (2603:10b6:301:10::12)
+ by MWHPR12MB1440.namprd12.prod.outlook.com (2603:10b6:300:13::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3153.27; Tue, 7 Jul
+ 2020 10:07:41 +0000
+Received: from MWHPR12MB1599.namprd12.prod.outlook.com
+ ([fe80::25b9:83b0:4b17:2c63]) by MWHPR12MB1599.namprd12.prod.outlook.com
+ ([fe80::25b9:83b0:4b17:2c63%12]) with mapi id 15.20.3153.029; Tue, 7 Jul 2020
+ 10:07:41 +0000
+From:   Akshu Agrawal <akshu.agrawal@amd.com>
+Cc:     akshu.agrawal@amd.com, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/2] clk: x86: Change name from ST to FCH
+Date:   Tue,  7 Jul 2020 15:36:59 +0530
+Message-Id: <20200707100714.24720-1-akshu.agrawal@amd.com>
+X-Mailer: git-send-email 2.20.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MAXPR0101CA0041.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:d::27) To MWHPR12MB1599.namprd12.prod.outlook.com
+ (2603:10b6:301:10::12)
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from akshu-HP-EliteBook-745-G2.mshome.net (122.167.38.75) by MAXPR0101CA0041.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a00:d::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3153.21 via Frontend Transport; Tue, 7 Jul 2020 10:07:38 +0000
+X-Mailer: git-send-email 2.20.1
+X-Originating-IP: [122.167.38.75]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 217eac5d-b4d0-4130-4f59-08d8225d9550
+X-MS-TrafficTypeDiagnostic: MWHPR12MB1440:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <MWHPR12MB1440F3E01C7F5A40BF623035F8660@MWHPR12MB1440.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:4303;
+X-Forefront-PRVS: 0457F11EAF
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 9r5G5prN9jaSAac1YQ6wBNp6ZUE9iiH33S0h90DgRtXL2Djb1Llo0JVqURyNZCWcaBNgMxI/ihup3zjVNaFweEi4JRNZmCrqJE2FUf+/3Ambi9hqgBIVeuVU/9yjL0MIdz99zFLxRj7jc+VDiYJYfNWvJNiAGaqO6H1G/zi/+0RrvsObaV742DdriyO3R+L9ATMoQ7cMC6RmoBviYHV137JPz9rqBuBJ38airwxzvgEMfqZKE/x6gsP2YlJKwQS1Dw6OllbbQMxD0/Dr/44t05NLUenT/LXQLmORhkqSGUZhFa8sUgbxQqc1dOzkGR3Xz01qEJSfbxm9rbrrJvfpL0kRHqn1Xba50dhszj+t0vijRNwPpYmClIkhf8dIC6i4z7iFfT7rAyMWfiwa2UKjzNcn9Ykt5cgGY4BP+L5VLaDV98UTl9DaJluZ24LlfC03
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR12MB1599.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(396003)(366004)(39860400002)(346002)(376002)(6666004)(5660300002)(8676002)(186003)(16526019)(44832011)(52116002)(36756003)(4326008)(316002)(66476007)(66556008)(6486002)(86362001)(26005)(54906003)(6506007)(956004)(2616005)(8936002)(83380400001)(66946007)(2906002)(6512007)(1076003)(478600001)(109986005)(966005)(266003);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: kKbng9DjrQWLw6VHQbJMseMVrJU+f8SXoQV03uVG15OmQ1Rloe6oTG2ngIwQtJoNBuyMqFGtGAMdN3GqtIOzn1xVQfjy8K3JpIalaKzr+IsnJUVJhh57QLvVeVnLaKTwtkW9QjKaiJnPOsnsniqGDEXZHJI7q1ToIXfUdpiNft5QDtWRsWKkCXw7v4Je8sEyJhxtaG0TcbjVylnLX0vq4HQOArKQt8RwL8VCVkzI1IueUzx9c99402FRA9RMKh7ZU7rwRRbZp3+OdZIZxG3EwfExfenNPwzRJ9S8vnnT/6R1TuR3t7+Zn0AyJQuEG1Ejn8n6ixtcjaCpUjPVCGXIoU5VhSthwJiRSfCnQ8MsQiMdBhznPCGeZm+kZbufD6AQ5mEntmlFoZn7mhmP+M3ggotQ1rPQu/QaxWB/23TbTBHczpqI2pV4i0FlKoiYt/aBdJnRlv8YX6e+BN7okpGz+Mvpy5K2WLD+7xoCYvc4zJc=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 217eac5d-b4d0-4130-4f59-08d8225d9550
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR12MB1599.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Jul 2020 10:07:40.8565
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uQhGvo7b1AIUqOxzCr1q1+KEiWAOEPvrRnLNlI2d4ePRHxRJRWrd22kDf3oRWXeywR23gk8WIFHbUOYQTfc3Bw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR12MB1440
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There are more and more requirements of building SoC specific drivers
-as modules, add support for building i.MX common clock driver as module
-to meet the requirement.
+AMD SoC general pupose clk is present in new platforms with
+minor differences. We can reuse the same clk driver for other
+platforms. Hence, changing name from ST(SoC) to FCH(IP)
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 ---
-No change.
----
- drivers/clk/imx/Kconfig            |  8 ++++++--
- drivers/clk/imx/Makefile           | 40 +++++++++++++++++++-------------------
- drivers/clk/imx/clk-composite-8m.c |  2 ++
- drivers/clk/imx/clk-cpu.c          |  2 ++
- drivers/clk/imx/clk-frac-pll.c     |  2 ++
- drivers/clk/imx/clk-gate2.c        |  2 ++
- drivers/clk/imx/clk-pll14xx.c      |  5 +++++
- drivers/clk/imx/clk-sscg-pll.c     |  2 ++
- drivers/clk/imx/clk.c              | 17 ++++++++++++----
- drivers/clk/imx/clk.h              |  6 ++++++
- 10 files changed, 60 insertions(+), 26 deletions(-)
+This patch is dependant on https://patchwork.kernel.org/patch/11648129/
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index db0253f..ee854ac 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -1,8 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0
- # common clock support for NXP i.MX SoC family.
- config MXC_CLK
--	bool
--	def_bool ARCH_MXC
-+	tristate "IMX clock"
-+	depends on ARCH_MXC
- 
- config MXC_CLK_SCU
- 	bool
-@@ -11,24 +11,28 @@ config MXC_CLK_SCU
- config CLK_IMX8MM
- 	bool "IMX8MM CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MM CCM Clock Driver
- 
- config CLK_IMX8MN
- 	bool "IMX8MN CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MN CCM Clock Driver
- 
- config CLK_IMX8MP
- 	bool "IMX8MP CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MP CCM Clock Driver
- 
- config CLK_IMX8MQ
- 	bool "IMX8MQ CCM Clock Driver"
- 	depends on ARCH_MXC
-+	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MQ CCM Clock Driver
- 
-diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
-index 928f874..687207d 100644
---- a/drivers/clk/imx/Makefile
-+++ b/drivers/clk/imx/Makefile
-@@ -1,25 +1,25 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-$(CONFIG_MXC_CLK) += \
--	clk.o \
--	clk-busy.o \
--	clk-composite-8m.o \
--	clk-cpu.o \
--	clk-composite-7ulp.o \
--	clk-divider-gate.o \
--	clk-fixup-div.o \
--	clk-fixup-mux.o \
--	clk-frac-pll.o \
--	clk-gate-exclusive.o \
--	clk-gate2.o \
--	clk-pfd.o \
--	clk-pfdv2.o \
--	clk-pllv1.o \
--	clk-pllv2.o \
--	clk-pllv3.o \
--	clk-pllv4.o \
--	clk-sscg-pll.o \
--	clk-pll14xx.o
-+mxc-clk-objs += clk.o
-+mxc-clk-objs += clk-busy.o
-+mxc-clk-objs += clk-composite-7ulp.o
-+mxc-clk-objs += clk-composite-8m.o
-+mxc-clk-objs += clk-cpu.o
-+mxc-clk-objs += clk-divider-gate.o
-+mxc-clk-objs += clk-fixup-div.o
-+mxc-clk-objs += clk-fixup-mux.o
-+mxc-clk-objs += clk-frac-pll.o
-+mxc-clk-objs += clk-gate2.o
-+mxc-clk-objs += clk-gate-exclusive.o
-+mxc-clk-objs += clk-pfd.o
-+mxc-clk-objs += clk-pfdv2.o
-+mxc-clk-objs += clk-pllv1.o
-+mxc-clk-objs += clk-pllv2.o
-+mxc-clk-objs += clk-pllv3.o
-+mxc-clk-objs += clk-pllv4.o
-+mxc-clk-objs += clk-pll14xx.o
-+mxc-clk-objs += clk-sscg-pll.o
-+obj-$(CONFIG_MXC_CLK) += mxc-clk.o
- 
- obj-$(CONFIG_MXC_CLK_SCU) += \
- 	clk-scu.o \
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
-index d2b5af8..78fb7e5 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -5,6 +5,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/errno.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/slab.h>
- 
-@@ -243,3 +244,4 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char *name,
- 	kfree(mux);
- 	return ERR_CAST(hw);
- }
-+EXPORT_SYMBOL_GPL(imx8m_clk_hw_composite_flags);
-diff --git a/drivers/clk/imx/clk-cpu.c b/drivers/clk/imx/clk-cpu.c
-index cb182be..cb6ca4c 100644
---- a/drivers/clk/imx/clk-cpu.c
-+++ b/drivers/clk/imx/clk-cpu.c
-@@ -5,6 +5,7 @@
- 
+ drivers/clk/x86/Makefile                |  2 +-
+ drivers/clk/x86/{clk-st.c => clk-fch.c} | 26 ++++++++++++-------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+ rename drivers/clk/x86/{clk-st.c => clk-fch.c} (73%)
+
+diff --git a/drivers/clk/x86/Makefile b/drivers/clk/x86/Makefile
+index 7c774ea7ddeb..18564efdc651 100644
+--- a/drivers/clk/x86/Makefile
++++ b/drivers/clk/x86/Makefile
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ obj-$(CONFIG_PMC_ATOM)		+= clk-pmc-atom.o
+-obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-st.o
++obj-$(CONFIG_X86_AMD_PLATFORM_DEVICE)	+= clk-fch.o
+ clk-x86-lpss-objs		:= clk-lpt.o
+ obj-$(CONFIG_X86_INTEL_LPSS)	+= clk-x86-lpss.o
+ obj-$(CONFIG_CLK_LGM_CGU)	+= clk-cgu.o clk-cgu-pll.o clk-lgm.o
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-fch.c
+similarity index 73%
+rename from drivers/clk/x86/clk-st.c
+rename to drivers/clk/x86/clk-fch.c
+index 25d4b97aff9b..b252f0cf0628 100644
+--- a/drivers/clk/x86/clk-st.c
++++ b/drivers/clk/x86/clk-fch.c
+@@ -8,7 +8,7 @@
  #include <linux/clk.h>
+ #include <linux/clkdev.h>
  #include <linux/clk-provider.h>
-+#include <linux/export.h>
- #include <linux/slab.h>
- #include "clk.h"
+-#include <linux/platform_data/clk-st.h>
++#include <linux/platform_data/clk-fch.h>
+ #include <linux/platform_device.h>
  
-@@ -104,3 +105,4 @@ struct clk_hw *imx_clk_hw_cpu(const char *name, const char *parent_name,
+ /* Clock Driving Strength 2 register */
+@@ -29,12 +29,12 @@
+ static const char * const clk_oscout1_parents[] = { "clk48MHz", "clk25MHz" };
+ static struct clk_hw *hws[ST_MAX_CLKS];
  
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_cpu);
-diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pll.c
-index 101e0a3..c703056 100644
---- a/drivers/clk/imx/clk-frac-pll.c
-+++ b/drivers/clk/imx/clk-frac-pll.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -233,3 +234,4 @@ struct clk_hw *imx_clk_hw_frac_pll(const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_frac_pll);
-diff --git a/drivers/clk/imx/clk-gate2.c b/drivers/clk/imx/clk-gate2.c
-index b87ab3c..512f675 100644
---- a/drivers/clk/imx/clk-gate2.c
-+++ b/drivers/clk/imx/clk-gate2.c
-@@ -7,6 +7,7 @@
-  */
- 
- #include <linux/clk-provider.h>
-+#include <linux/export.h>
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/io.h>
-@@ -177,3 +178,4 @@ struct clk_hw *clk_hw_register_gate2(struct device *dev, const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(clk_hw_register_gate2);
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index f9eb189..f5c3e7e 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -6,6 +6,7 @@
- #include <linux/bitops.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -68,6 +69,7 @@ struct imx_pll14xx_clk imx_1443x_pll = {
- 	.rate_table = imx_pll1443x_tbl,
- 	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
- };
-+EXPORT_SYMBOL_GPL(imx_1443x_pll);
- 
- struct imx_pll14xx_clk imx_1443x_dram_pll = {
- 	.type = PLL_1443X,
-@@ -75,12 +77,14 @@ struct imx_pll14xx_clk imx_1443x_dram_pll = {
- 	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
- 	.flags = CLK_GET_RATE_NOCACHE,
- };
-+EXPORT_SYMBOL_GPL(imx_1443x_dram_pll);
- 
- struct imx_pll14xx_clk imx_1416x_pll = {
- 	.type = PLL_1416X,
- 	.rate_table = imx_pll1416x_tbl,
- 	.rate_count = ARRAY_SIZE(imx_pll1416x_tbl),
- };
-+EXPORT_SYMBOL_GPL(imx_1416x_pll);
- 
- static const struct imx_pll14xx_rate_table *imx_get_pll_settings(
- 		struct clk_pll14xx *pll, unsigned long rate)
-@@ -436,3 +440,4 @@ struct clk_hw *imx_dev_clk_hw_pll14xx(struct device *dev, const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_dev_clk_hw_pll14xx);
-diff --git a/drivers/clk/imx/clk-sscg-pll.c b/drivers/clk/imx/clk-sscg-pll.c
-index 773d8a5..9d6cdff 100644
---- a/drivers/clk/imx/clk-sscg-pll.c
-+++ b/drivers/clk/imx/clk-sscg-pll.c
-@@ -10,6 +10,7 @@
- 
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-+#include <linux/export.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
- #include <linux/slab.h>
-@@ -537,3 +538,4 @@ struct clk_hw *imx_clk_hw_sscg_pll(const char *name,
- 
- 	return hw;
- }
-+EXPORT_SYMBOL_GPL(imx_clk_hw_sscg_pll);
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 87ab8db..547cade 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -3,6 +3,7 @@
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -13,6 +14,7 @@
- #define CCDR_MMDC_CH1_MASK		BIT(16)
- 
- DEFINE_SPINLOCK(imx_ccm_lock);
-+EXPORT_SYMBOL_GPL(imx_ccm_lock);
- 
- void imx_unregister_clocks(struct clk *clks[], unsigned int count)
+-static int st_clk_probe(struct platform_device *pdev)
++static int fch_clk_probe(struct platform_device *pdev)
  {
-@@ -29,8 +31,9 @@ void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count)
- 	for (i = 0; i < count; i++)
- 		clk_hw_unregister(hws[i]);
- }
-+EXPORT_SYMBOL_GPL(imx_unregister_hw_clocks);
+-	struct st_clk_data *st_data;
++	struct fch_clk_data *fch_data;
  
--void __init imx_mmdc_mask_handshake(void __iomem *ccm_base,
-+void imx_mmdc_mask_handshake(void __iomem *ccm_base,
- 				    unsigned int chn)
- {
- 	unsigned int reg;
-@@ -59,8 +62,9 @@ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count)
- 			pr_err("i.MX clk %u: register failed with %ld\n",
- 			       i, PTR_ERR(clks[i]));
- }
-+EXPORT_SYMBOL_GPL(imx_check_clk_hws);
+-	st_data = dev_get_platdata(&pdev->dev);
+-	if (!st_data || !st_data->base)
++	fch_data = dev_get_platdata(&pdev->dev);
++	if (!fch_data || !fch_data->base)
+ 		return -EINVAL;
  
--static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
-+static struct clk *imx_obtain_fixed_clock_from_dt(const char *name)
- {
- 	struct of_phandle_args phandle;
- 	struct clk *clk = ERR_PTR(-ENODEV);
-@@ -80,7 +84,7 @@ static struct clk * __init imx_obtain_fixed_clock_from_dt(const char *name)
- 	return clk;
- }
+ 	hws[ST_CLK_48M] = clk_hw_register_fixed_rate(NULL, "clk48MHz", NULL, 0,
+@@ -44,12 +44,12 @@ static int st_clk_probe(struct platform_device *pdev)
  
--struct clk * __init imx_obtain_fixed_clock(
-+struct clk *imx_obtain_fixed_clock(
- 			const char *name, unsigned long rate)
- {
- 	struct clk *clk;
-@@ -91,7 +95,7 @@ struct clk * __init imx_obtain_fixed_clock(
- 	return clk;
- }
+ 	hws[ST_CLK_MUX] = clk_hw_register_mux(NULL, "oscout1_mux",
+ 		clk_oscout1_parents, ARRAY_SIZE(clk_oscout1_parents),
+-		0, st_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
++		0, fch_data->base + CLKDRVSTR2, OSCOUT1CLK25MHZ, 3, 0, NULL);
  
--struct clk_hw * __init imx_obtain_fixed_clock_hw(
-+struct clk_hw *imx_obtain_fixed_clock_hw(
- 			const char *name, unsigned long rate)
- {
- 	struct clk *clk;
-@@ -113,6 +117,7 @@ struct clk_hw * imx_obtain_fixed_clk_hw(struct device_node *np,
+ 	clk_set_parent(hws[ST_CLK_MUX]->clk, hws[ST_CLK_48M]->clk);
  
- 	return __clk_get_hw(clk);
- }
-+EXPORT_SYMBOL_GPL(imx_obtain_fixed_clk_hw);
+ 	hws[ST_CLK_GATE] = clk_hw_register_gate(NULL, "oscout1", "oscout1_mux",
+-		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
++		0, fch_data->base + MISCCLKCNTL1, OSCCLKENB,
+ 		CLK_GATE_SET_TO_DISABLE, NULL);
  
- /*
-  * This fixups the register CCM_CSCMR1 write value.
-@@ -140,6 +145,7 @@ void imx_cscmr1_fixup(u32 *val)
- 	return;
- }
- 
-+#ifndef MODULE
- static int imx_keep_uart_clocks;
- static struct clk ** const *imx_uart_clocks;
- 
-@@ -177,3 +183,6 @@ static int __init imx_clk_disable_uart(void)
+ 	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
+@@ -58,7 +58,7 @@ static int st_clk_probe(struct platform_device *pdev)
  	return 0;
  }
- late_initcall_sync(imx_clk_disable_uart);
-+#endif
-+
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 16adbc3..dd47c19 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -11,7 +11,13 @@ extern spinlock_t imx_ccm_lock;
  
- void imx_check_clocks(struct clk *clks[], unsigned int count);
- void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
-+#ifndef MODULE
- void imx_register_uart_clocks(struct clk ** const clks[]);
-+#else
-+static inline void imx_register_uart_clocks(struct clk ** const clks[])
-+{
-+}
-+#endif
- void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
- void imx_unregister_clocks(struct clk *clks[], unsigned int count);
- void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
+-static int st_clk_remove(struct platform_device *pdev)
++static int fch_clk_remove(struct platform_device *pdev)
+ {
+ 	int i;
+ 
+@@ -67,12 +67,12 @@ static int st_clk_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
+-static struct platform_driver st_clk_driver = {
++static struct platform_driver fch_clk_driver = {
+ 	.driver = {
+-		.name = "clk-st",
++		.name = "clk-fch",
+ 		.suppress_bind_attrs = true,
+ 	},
+-	.probe = st_clk_probe,
+-	.remove = st_clk_remove,
++	.probe = fch_clk_probe,
++	.remove = fch_clk_remove,
+ };
+-builtin_platform_driver(st_clk_driver);
++builtin_platform_driver(fch_clk_driver);
 -- 
-2.7.4
+2.20.1
 
