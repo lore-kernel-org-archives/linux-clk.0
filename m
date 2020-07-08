@@ -3,86 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC592C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CB2C433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 14:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AE0C220772
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:56:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B601207C4
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 14:23:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbgGHL4t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 07:56:49 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39005 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728592AbgGHL4t (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 07:56:49 -0400
-Received: by mail-ot1-f67.google.com with SMTP id 18so36679194otv.6;
-        Wed, 08 Jul 2020 04:56:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dpcugomj6AYMYKtNzodEy+2KAlXlgaT4b5NSGKQ3XT4=;
-        b=OGKGdtP//Y/fEblGxW1o42HsofHy98C72R6nQJLou9DPq/C6wbGDW6i668jN+AsF6z
-         1IVoulc14TGuvaNWRH+b5EEpEgvq0CdoKM2bmqnyyedju/Cr5wIAcRp+j8D3i5YeTkkl
-         gBXbnsUJcMbFWmN/hmtj/i9o77tz0ANjw716Z2nVAjlIDXppWMkJfElF/iDhmPmYghfo
-         nE8tUtEdm0UmGfo4JstF7BGFyZbZE2GsEImj0XC8unnyfIKuMYJOq1cR4Qwfv/ccOrZB
-         p34uka2ob2P9jDcUNL5PbyRbHzJwrwdS0nGRkbqxCYityq4cFnkCQPe1fnkvn6aJDsYc
-         3sgg==
-X-Gm-Message-State: AOAM532zUcbdAPW+7zVyb6b6v3EP+EDmh01gw4KHeUZB8/zR+L8G8d33
-        DtWVT9po+XQHGE7GbDdcKhZDVn712pogagxpCxE=
-X-Google-Smtp-Source: ABdhPJwdQ4P79u5T3r90DuVhOcAJF327hbBgjsPu58W0mp2gbxlTAv3GZJlx898xJQ9TgmXpvt4cbd/rRi6aPnqabaw=
-X-Received: by 2002:a05:6830:1451:: with SMTP id w17mr37145375otp.250.1594209408609;
- Wed, 08 Jul 2020 04:56:48 -0700 (PDT)
+        id S1729699AbgGHOXT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 10:23:19 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:44888 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729467AbgGHOXT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Jul 2020 10:23:19 -0400
+Received: from ip5f5aa64a.dynamic.kabel-deutschland.de ([95.90.166.74] helo=phil.sntech)
+        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <heiko@sntech.de>)
+        id 1jtAyg-00059g-Jd; Wed, 08 Jul 2020 16:23:14 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     mturquette@baylibre.com, Robin Murphy <robin.murphy@arm.com>,
+        sboyd@kernel.org
+Cc:     Heiko Stuebner <heiko@sntech.de>,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RESEND PATCH] Revert "clk: rockchip: fix wrong mmc sample phase shift for rk3328"
+Date:   Wed,  8 Jul 2020 16:23:12 +0200
+Message-Id: <159421818548.390170.4458225200930874828.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.26.2
+In-Reply-To: <c80eb52e34c03f817586b6b7912fbd4e31be9079.1589475794.git.robin.murphy@arm.com>
+References: <c80eb52e34c03f817586b6b7912fbd4e31be9079.1589475794.git.robin.murphy@arm.com>
 MIME-Version: 1.0
-References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1594138692-16816-13-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <1594138692-16816-13-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 8 Jul 2020 13:56:37 +0200
-Message-ID: <CAMuHMdVZLMh=YnFaheSC=rhLn4_LMoZUVy4KPaHj-=jHqyt0MQ@mail.gmail.com>
-Subject: Re: [PATCH 14/14] pinctrl: sh-pfc: pfc-r8a77951: Add R8A774E1 PFC support
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 7, 2020 at 6:18 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
-> Renesas RZ/G2H (r8a774e1) is pin compatible with R-Car H3 (R8A77951),
-> however it doesn't have several automotive specific peripherals. Add
-> automotive-specific pin groups/functions along with common pin
-> groups/functions for supporting both r8a77951 and r8a774e1 SoC.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, 18 Jun 2020 18:56:29 +0100, Robin Murphy wrote:
+> This reverts commit 82f4b67f018c88a7cc9337f0067ed3d6ec352648.
+> 
+> According to a subsequent revert in the vendor kernel, the original
+> change was based on unclear documentation and was in fact incorrect.
+> 
+> Emprically, my board's HS200 eMMC at 200MHZ apparently gets lucky with a
+> phase where this had no impact, but limiting max-frequency to 150MHz to
+> match the nominal capability of the I/O pins made it virtually unusable,
+> constantly throwing errors and retuning. With this revert, it starts
+> behaving perfectly at 150MHz too.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in sh-pfc-for-v5.9.
+Applied, thanks!
 
-Gr{oetje,eeting}s,
+[1/1] clk: rockchip: Revert "fix wrong mmc sample phase shift for rk3328"
+      commit: 465931e70881476a210d44705102ef8b6ee6cdb0
 
-                        Geert
-
+Best regards,
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Heiko Stuebner <heiko@sntech.de>
