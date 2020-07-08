@@ -2,99 +2,86 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3734C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 14:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 618AFC433E1
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 15:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 90FB72078B
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 14:45:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJizyAfV"
+	by mail.kernel.org (Postfix) with ESMTP id 3A688206DF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 15:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729945AbgGHOpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 10:45:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52804 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729941AbgGHOpi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 10:45:38 -0400
-Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6739C061A0B;
-        Wed,  8 Jul 2020 07:45:37 -0700 (PDT)
-Received: by mail-ej1-x642.google.com with SMTP id p20so50792680ejd.13;
-        Wed, 08 Jul 2020 07:45:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=RdfWn03vRZooKuWSX0Y9p+HO6KzHdtLgw16so87+iZE=;
-        b=CJizyAfVuX2RfMehSevr1t4fopl7nciJWOw82DAWph6fURt2MSJlRryCIgFKrxgofB
-         TP+8Ig45ia2G+Qs6xzxtGkaPr3oJjiJ+DoTytD306TbFHX59zXtHGJwsXH6gkMm0HEfu
-         0y63873T1NCTzNjshTA3JXKgdijPdEIRUSMmGLBglOjioC50pXKOD9FHqZCVTOvGJNVo
-         Odva0/dO225Iwhit4dqTqi3rGe1SMRZvY7ylOBSygSEwY0WHqwJWpXjbE0HNdWjo6/s+
-         LjVJnMxYV6vuBlAewZeD+FXJvGGoJeEWdIxDydasNZpdyprVEEWxWSMoOC56B+iNJRdI
-         Cd6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=RdfWn03vRZooKuWSX0Y9p+HO6KzHdtLgw16so87+iZE=;
-        b=fu0WKn+ue3DdJhxC0cBaaddCb3dAv3g8DTrHi5oq5+oRIDnKDJ5cTd6nnCe2leFBGF
-         USS9uYef1/ql0vyfbA26P1fh3bwwEb0xYyRNHtKgwSVprYjON48d8hxie5Bi4Oohez//
-         vw7j095Wf0hFxD/6xUMrNVc/YvFNVemiq2oFuidMaA/feZZdmAJiINmy8G2SvrZXI9vt
-         2LJfERaagfn6FthULgzz5PZqGyE6zY9/eh9upd/9X/Wg6veH07dVhSa39j6TRWY5h1zF
-         EsZDamhqKCDVcpqIOUunCJcSQtBN60V61BemP3Lizyz6iTD6PT66AY+wGE+5Fn2GwFgr
-         OrOw==
-X-Gm-Message-State: AOAM530p76uj3F+AF62bmneO+IuV2CiGQbqeTydHJSoLCyslWkeKsJId
-        CWv6zpHMovhl2nnlRCJpUh6aFC77CSQ=
-X-Google-Smtp-Source: ABdhPJzR2jRjEGYSUyaOrdtfGtwk7CFmfjsZiD2qcbvBmzFKFC6WC0lRLu5+lMT/azD/9cFsvxS7zw==
-X-Received: by 2002:a17:907:9c6:: with SMTP id bx6mr52133016ejc.43.1594219536533;
-        Wed, 08 Jul 2020 07:45:36 -0700 (PDT)
-Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id z22sm28545654edx.72.2020.07.08.07.45.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 08 Jul 2020 07:45:35 -0700 (PDT)
-From:   Johan Jonker <jbx6244@gmail.com>
-To:     heiko@sntech.de
-Cc:     zhangqing@rock-chips.com, mturquette@baylibre.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
-Date:   Wed,  8 Jul 2020 16:45:28 +0200
-Message-Id: <20200708144528.20465-1-jbx6244@gmail.com>
-X-Mailer: git-send-email 2.11.0
+        id S1730179AbgGHPee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 11:34:34 -0400
+Received: from foss.arm.com ([217.140.110.172]:47126 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730124AbgGHPee (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Jul 2020 11:34:34 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB04B1FB;
+        Wed,  8 Jul 2020 08:34:33 -0700 (PDT)
+Received: from [10.57.21.32] (unknown [10.57.21.32])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 75EEA3F237;
+        Wed,  8 Jul 2020 08:34:32 -0700 (PDT)
+Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+Cc:     sboyd@kernel.org, mturquette@baylibre.com,
+        zhangqing@rock-chips.com, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200708144528.20465-1-jbx6244@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <074d8691-2d88-4520-1e43-8c7eb5b82680@arm.com>
+Date:   Wed, 8 Jul 2020 16:34:31 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <20200708144528.20465-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The rk3328 uart2 port is used as boot console and to debug.
-During the boot pclk_uart2 is disabled by a clk_disable_unused
-initcall. Fix the uart2 function by marking pclk_uart2
-as critical on rk3328. Also add sclk_uart2 as that is needed
-for the same DT node.
+On 2020-07-08 15:45, Johan Jonker wrote:
+> The rk3328 uart2 port is used as boot console and to debug.
+> During the boot pclk_uart2 is disabled by a clk_disable_unused
+> initcall. Fix the uart2 function by marking pclk_uart2
+> as critical on rk3328. Also add sclk_uart2 as that is needed
+> for the same DT node.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- drivers/clk/rockchip/clk-rk3328.c | 2 ++
- 1 file changed, 2 insertions(+)
+Hmm, given that those are named in the DT as the "baudclk" and
+"apb_pclk" that dw8250_probe() explicitly claims, they really
+shouldn't be unused :/
 
-diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-index c186a1985..cb7749cb7 100644
---- a/drivers/clk/rockchip/clk-rk3328.c
-+++ b/drivers/clk/rockchip/clk-rk3328.c
-@@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[] __initconst = {
- 	"aclk_gmac_niu",
- 	"pclk_gmac_niu",
- 	"pclk_phy_niu",
-+	"pclk_uart2",
-+	"sclk_uart2",
- };
- 
- static void __init rk3328_clk_init(struct device_node *np)
--- 
-2.11.0
+On my RK3328 box they appear to be prepared and enabled OK:
 
+[robin@nemulon-9 ~]$ sudo grep uart2 /sys/kernel/debug/clk/clk_summary
+    sclk_uart2                        1        1        0    24000000          0     0  50000
+                   pclk_uart2         1        1        0    75000000          0     0  50000
+...
+
+Robin.
+
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+> ---
+>   drivers/clk/rockchip/clk-rk3328.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+> index c186a1985..cb7749cb7 100644
+> --- a/drivers/clk/rockchip/clk-rk3328.c
+> +++ b/drivers/clk/rockchip/clk-rk3328.c
+> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[] __initconst = {
+>   	"aclk_gmac_niu",
+>   	"pclk_gmac_niu",
+>   	"pclk_phy_niu",
+> +	"pclk_uart2",
+> +	"sclk_uart2",
+>   };
+>   
+>   static void __init rk3328_clk_init(struct device_node *np)
+> 
