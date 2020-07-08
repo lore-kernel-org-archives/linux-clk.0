@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DFAFC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CACD8C433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6DA1B20708
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A742E20760
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730272AbgGHHUB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:20:01 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:41468 "EHLO
+        id S1730330AbgGHHUO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:20:14 -0400
+Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:55331 "EHLO
         smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730246AbgGHHUA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:20:00 -0400
-X-Alimail-AntiSpam: AC=SUSPECT;BC=0.5995029|-1;BR=01201311R181b1;CH=blue;DM=|SUSPECT|false|;DS=CONTINUE|ham_system_inform|0.199862-0.00729462-0.792843;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=frank@allwinnertech.com;NM=1;PH=DS;RN=33;RT=33;SR=0;TI=SMTPD_---.I-8lwqE_1594192774;
+        by vger.kernel.org with ESMTP id S1730316AbgGHHUN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:20:13 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1470665|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_system_inform|0.0450046-0.000476486-0.954519;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=frank@allwinnertech.com;NM=1;PH=DS;RN=33;RT=33;SR=0;TI=SMTPD_---.I-8lwqE_1594192774;
 Received: from allwinnertech.com(mailfrom:frank@allwinnertech.com fp:SMTPD_---.I-8lwqE_1594192774)
           by smtp.aliyun-inc.com(10.147.40.26);
-          Wed, 08 Jul 2020 15:19:53 +0800
+          Wed, 08 Jul 2020 15:20:04 +0800
 From:   Frank Lee <frank@allwinnertech.com>
 To:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
         mturquette@baylibre.com, sboyd@kernel.org,
@@ -39,9 +39,9 @@ Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-pm@vger.kernel.org, huangshuosheng@allwinnertech.com,
         liyong@allwinnertech.com, Frank Lee <frank@allwinnertech.com>
-Subject: [PATCH v3 04/16] dt-bindings: pinctrl: sunxi: make gpio banks supplies required
-Date:   Wed,  8 Jul 2020 15:19:30 +0800
-Message-Id: <20200708071942.22595-5-frank@allwinnertech.com>
+Subject: [PATCH v3 08/16] thermal: sun8i: add TEMP_CALIB_MASK for calibration data in sun50i_h6_ths_calibrate
+Date:   Wed,  8 Jul 2020 15:19:34 +0800
+Message-Id: <20200708071942.22595-9-frank@allwinnertech.com>
 X-Mailer: git-send-email 2.24.0
 In-Reply-To: <20200708071942.22595-1-frank@allwinnertech.com>
 References: <20200708071942.22595-1-frank@allwinnertech.com>
@@ -52,26 +52,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since we don't really have to care about the existing DT for boards,
-it would be great to make the gpio banks supplies required.
+For sun50i_h6_ths_calibrate(), the data read from nvmem needs a round of
+calculation. On the other hand, the newer SOC may store other data in
+the space other than 12bit sensor data. Add mask operation to read data
+to avoid conversion error.
 
 Signed-off-by: Frank Lee <frank@allwinnertech.com>
+Reviewed-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- .../devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml         | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/thermal/sun8i_thermal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-index 226aba0..c30a7b7 100644
---- a/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/allwinner,sun4i-a10-pinctrl.yaml
-@@ -134,6 +134,7 @@ patternProperties:
- required:
-   - "#gpio-cells"
-   - "#interrupt-cells"
-+  - "^vcc-p[a-hlm]-supply$"
-   - compatible
-   - reg
-   - interrupts
+diff --git a/drivers/thermal/sun8i_thermal.c b/drivers/thermal/sun8i_thermal.c
+index 74d73be..f423d44 100644
+--- a/drivers/thermal/sun8i_thermal.c
++++ b/drivers/thermal/sun8i_thermal.c
+@@ -244,7 +244,7 @@ static int sun50i_h6_ths_calibrate(struct ths_device *tmdev,
+ 	ft_temp = (caldata[0] & FT_TEMP_MASK) * 100;
+ 
+ 	for (i = 0; i < tmdev->chip->sensor_num; i++) {
+-		int sensor_reg = caldata[i + 1];
++		int sensor_reg = caldata[i + 1] & TEMP_CALIB_MASK;
+ 		int cdata, offset;
+ 		int sensor_temp = tmdev->chip->calc_temp(tmdev, i, sensor_reg);
+ 
 -- 
 1.9.1
 
