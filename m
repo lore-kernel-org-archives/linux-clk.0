@@ -2,77 +2,80 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1DB1C433E1
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 310A5C433E1
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B2D3E20771
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3712078C
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:40:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730301AbgGHHUJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:20:09 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:48299 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730298AbgGHHUG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:20:06 -0400
-X-Alimail-AntiSpam: AC=SUSPECT;BC=0.6642233|-1;BR=01201311R961b1;CH=blue;DM=|SUSPECT|false|;DS=CONTINUE|ham_system_inform|0.0308424-0.00184965-0.967308;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=frank@allwinnertech.com;NM=1;PH=DS;RN=33;RT=33;SR=0;TI=SMTPD_---.I-8lwqE_1594192774;
-Received: from allwinnertech.com(mailfrom:frank@allwinnertech.com fp:SMTPD_---.I-8lwqE_1594192774)
-          by smtp.aliyun-inc.com(10.147.40.26);
-          Wed, 08 Jul 2020 15:19:59 +0800
-From:   Frank Lee <frank@allwinnertech.com>
-To:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
-        icenowy@aosc.io, megous@megous.com, stefan@olimex.com,
-        bage@linutronix.de
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, huangshuosheng@allwinnertech.com,
-        liyong@allwinnertech.com, Frank Lee <frank@allwinnertech.com>
-Subject: [PATCH v3 06/16] dt-bindings: nvmem: SID: add binding for A100's SID controller
-Date:   Wed,  8 Jul 2020 15:19:32 +0800
-Message-Id: <20200708071942.22595-7-frank@allwinnertech.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200708071942.22595-1-frank@allwinnertech.com>
-References: <20200708071942.22595-1-frank@allwinnertech.com>
+        id S1726514AbgGHHkv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:40:51 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:54134 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726482AbgGHHkv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:40:51 -0400
+Received: from [78.134.117.153] (port=41602 helo=melee.fritz.box)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1jt4hE-0009Wd-DB; Wed, 08 Jul 2020 09:40:48 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-clk@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Adam Ford <aford173@gmail.com>
+Subject: [PATCH v2 2/4] MAINTAINERS: take over IDT VersaClock 5 clock driver
+Date:   Wed,  8 Jul 2020 09:40:33 +0200
+Message-Id: <20200708074035.31595-2-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200708074035.31595-1-luca@lucaceresoli.net>
+References: <20200708074035.31595-1-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a binding for A100's SID controller.
+Marek has been the primary developer of this driver (thanks!). Now as
+he is not working on it anymore he suggested I take over maintainership.
 
-Signed-off-by: Frank Lee <frank@allwinnertech.com>
+Cc: Marek Vasut <marek.vasut@gmail.com>
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- Documentation/devicetree/bindings/nvmem/allwinner,sun4i-a10-sid.yaml | 3 +++
- 1 file changed, 3 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/allwinner,sun4i-a10-sid.yaml b/Documentation/devicetree/bindings/nvmem/allwinner,sun4i-a10-sid.yaml
-index daf1321..f9d575b 100644
---- a/Documentation/devicetree/bindings/nvmem/allwinner,sun4i-a10-sid.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/allwinner,sun4i-a10-sid.yaml
-@@ -21,6 +21,9 @@ properties:
-       - allwinner,sun8i-a83t-sid
-       - allwinner,sun8i-h3-sid
-       - allwinner,sun50i-a64-sid
-+      - items:
-+        - const: allwinner,sun50i-a100-sid
-+        - const: allwinner,sun50i-a64-sid
-       - allwinner,sun50i-h5-sid
-       - allwinner,sun50i-h6-sid
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 68f21d46614c..5aa16c245c63 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8324,7 +8324,7 @@ W:	https://github.com/o2genum/ideapad-slidebar
+ F:	drivers/input/misc/ideapad_slidebar.c
+ 
+ IDT VersaClock 5 CLOCK DRIVER
+-M:	Marek Vasut <marek.vasut@gmail.com>
++M:	Luca Ceresoli <luca@lucaceresoli.net>
+ S:	Maintained
+ F:	drivers/clk/clk-versaclock5.c
  
 -- 
-1.9.1
+2.27.0
 
