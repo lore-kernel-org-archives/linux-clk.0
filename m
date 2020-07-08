@@ -2,101 +2,102 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69135C433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 10:18:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53F80C433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:07:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4ECFD20760
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 10:18:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D301206F6
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:07:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbgGHKSJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 06:18:09 -0400
-Received: from mail-oo1-f67.google.com ([209.85.161.67]:46653 "EHLO
-        mail-oo1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbgGHKSH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 06:18:07 -0400
-Received: by mail-oo1-f67.google.com with SMTP id s190so5185012ooa.13;
-        Wed, 08 Jul 2020 03:18:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DW+k++6QmShOYTPp1GCiBSfmYcnWVZRPXo5Q7LF3tA0=;
-        b=jzEDVVqf+vpnTzAO8O7YEur1YefzHERctZFB8JV202/ZNQN21GincXfj+74EJH/UJx
-         IikpsTgOreG0FP8qWm/Rr2vls5g+xya3IHCtdzkyKJTXPV/O+0YdEZcAqUNW7flgjpzE
-         DKmJzJuFX2830mZStMkXyo9vcVXCuUZmMRhCQnBy40mKQ4lzIpdBnV4tBO3M/yYpVqGO
-         Qlj3vMYCngCg3rPh3uuRc4joR/KtsjPn0sWcs8potwHSiDYsVtTI5xJsvW2iX/+p36fc
-         pQt1f0C56AWlC+T+XE55FkTAKAT1+qNqGpCRHGZ+DG6CsFRNZ9+MMvxFHfjzwIHKdP7z
-         pRpQ==
-X-Gm-Message-State: AOAM530vR0kxczD2utPrjGcCQIGOVMOckWyF3vk17hOQLA6RNzOnG5nd
-        yUfENjuhT6duuE3QMAsL0+6hbigUaiTMUGVb2I7cF/vQSxo=
-X-Google-Smtp-Source: ABdhPJx+L6lRbWyeMJB6JvYEpS+n2WhASo6vd9a544uDAG1Ay2/5APPOJa/auzmeTbGCqjBXDSgeavriOmv1d4Ly1Ic=
-X-Received: by 2002:a4a:5209:: with SMTP id d9mr33382180oob.40.1594203486265;
- Wed, 08 Jul 2020 03:18:06 -0700 (PDT)
-MIME-Version: 1.0
-References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <1594138692-16816-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <1594138692-16816-10-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 8 Jul 2020 12:17:55 +0200
-Message-ID: <CAMuHMdWPLi4OVyfSgcc50BZHsTuWQ=dbKyJsEfzN5bEeDe9tAQ@mail.gmail.com>
-Subject: Re: [PATCH 11/14] clk: renesas: Add r8a774e1 CPG Core Clock Definitions
-To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc:     Magnus Damm <magnus.damm@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1728507AbgGHLHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 07:07:33 -0400
+Received: from foss.arm.com ([217.140.110.172]:60930 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728466AbgGHLHc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Jul 2020 07:07:32 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1909431B;
+        Wed,  8 Jul 2020 04:07:32 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 173033F68F;
+        Wed,  8 Jul 2020 04:07:30 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Prabhakar <prabhakar.csengg@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Dien Pham <dien.pham.ry@renesas.com>
+Subject: [PATCH 1/2] firmware: arm_scmi: Keep the discrete clock rates sorted
+Date:   Wed,  8 Jul 2020 12:07:24 +0100
+Message-Id: <20200708110725.18017-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 7, 2020 at 6:18 PM Lad Prabhakar
-<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
->
-> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
->
-> Add all RZ/G2H Clock Pulse Generator Core Clock Outputs, as listed in
-> Table 11.2 ("List of Clocks [RZ/G2H]") of the RZ/G2H Hardware User's
-> Manual.
->
-> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Instead of relying on the firmware to keep the clock rates sorted, let
+us sort the list. This is not essential for clock layer but it helps
+to find the min and max rates easily from the list.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas for v5.9, in a branch shared by driver
-and DT (renesas-r8a774e1-dt-binding-defs).
+Fixes: 5f6c6430e904 ("firmware: arm_scmi: add initial support for clock protocol")
+Reported-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/firmware/arm_scmi/clock.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r8a774e1-cpg-mssr.h
+Hi Dien-san,
 
-> +#define R8A774E1_CLK_CANFD             46
+If you could review/test these patches, I can queue them ASAP.
+I am planning to send the PR for ARM SoC later this week, so I need
+your tested-by.
 
-I guess it's fine we keep CANFD last, for consistency with other RZ/G2
-SoCs (CANFD was not present in early revisions of the Hardware User's
-Manual).
+Regards,
+Sudeep
 
-Gr{oetje,eeting}s,
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 4c2227662b26..2dd119cdebf6 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2018 ARM Ltd.
+  */
 
-                        Geert
++#include <linux/sort.h>
++
+ #include "common.h"
 
+ enum scmi_clock_protocol_cmd {
+@@ -121,6 +123,13 @@ static int scmi_clock_attributes_get(const struct scmi_handle *handle,
+ 	return ret;
+ }
+
++static int rate_cmp_func(const void *_r1, const void *_r2)
++{
++	u64 *r1 = _r1, *r2 = _r2;
++
++	return r1 - r2;
++}
++
+ static int
+ scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
+ 			      struct scmi_clock_info *clk)
+@@ -184,8 +193,10 @@ scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
+ 		 */
+ 	} while (num_returned && num_remaining);
+
+-	if (rate_discrete)
++	if (rate_discrete) {
+ 		clk->list.num_rates = tot_rate_cnt;
++		sort(rate, tot_rate_cnt, sizeof(*rate), rate_cmp_func, NULL);
++	}
+
+ 	clk->rate_discrete = rate_discrete;
 
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.17.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
