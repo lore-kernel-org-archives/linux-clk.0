@@ -2,286 +2,309 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 667FDC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CDCC433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 18:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3948C206E9
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 17:48:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="T+ZdJ8RQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JzhSB6Gp"
+	by mail.kernel.org (Postfix) with ESMTP id 1A3442064B
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 18:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726220AbgGHRmg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 13:42:36 -0400
-Received: from wnew4-smtp.messagingengine.com ([64.147.123.18]:53395 "EHLO
-        wnew4-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725879AbgGHRmf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 13:42:35 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 801B0102C;
-        Wed,  8 Jul 2020 13:42:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 08 Jul 2020 13:42:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm3; bh=aco/xjpXcfoPImRdxU9Pd23iJz
-        lhhHe3iGOSi8JwdVY=; b=T+ZdJ8RQ0B+V0qc1rD9XuGDk6HRJap8rKh1lya8jVt
-        4rX+zHNzI9R/VpY27ZdA/WQMao3qai27IN6EuwsKXSS/ZyysTrGzUupcgKL7fGZY
-        VvKlj4J8H55rGE/MEHkJwSd9jdrlI+cBxtmTadmOpw6Tm4T0PrcNb9VgB8SRmdgQ
-        SxYsl+Lbo5v2pM2Fid0I7QZX+T8+/BYtuE6F2xdRiWRXnFnCjzg/oNWQSiZmgiJ9
-        Ptn6ujLbbKSsuYJWu0Yql7cF8Ie0aMbBZG95lk78TLCkBT9Xwtz5fP9T6sJdpG34
-        daDHGLBRBd2UJAwTcg043H4dYTy8WlvGtYH/IEa/IIxw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=aco/xjpXcfoPImRdx
-        U9Pd23iJzlhhHe3iGOSi8JwdVY=; b=JzhSB6Gp48JU/uPkHlSk0gj+jn3unKVUF
-        NxxadWMiSbxVqJUzia3X9BfhnmMuyDzsEm9Foq+ba/tFKM0hf5BOsRX99ZyVcc3o
-        eNDQjYPd1UwGjcWML1jDr41maWWgUutSFPR1SxbX5u9TRUbIZPxliuRlvYCpp+v9
-        TGe0bg/2RDbbLL03GCkJEc7vyOc7+7H9SJUbrha7kHVSWkVsdfBeVOL5symOpC7i
-        wQbdQKdGdVwi5gCTR2AjE9jmp7uC3FrBTL0uhaw7Bs95iK1T/v+I2atTfEzPUuB9
-        MhCSey0I6Bim/Dl8Deb4xNRNzA+YWwGWTJxEHMG4478JYO8LMIp8Q==
-X-ME-Sender: <xms:hwUGX3Tf6dHyiUm0NzFHx2v95wUCvu8wjSf0gs1NY_Jf0UvHDs1kbw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrudejgdduudejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcu
-    tfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrthhtvg
-    hrnhepteevhfdtjeeludffieffgeefgeeugefhgfegkeeuteeigfejfeejkedujeehlefg
-    necuffhomhgrihhnpehrrghsphgsvghrrhihphhirdgtohhmnecukfhppeeltddrkeelrd
-    eikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhho
-    mhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:hwUGX4x4PF5JFpZusCarV86Em7XelB_AeS34C27DjKJlHtu27q7sJA>
-    <xmx:hwUGX81zffS8t7AvML3lFRL0SNMljpEtWb1_BGfd2lh_mny3BZGe0g>
-    <xmx:hwUGX3DoU5vP9dlhTKElN0JxDw-JDOy5S3J4QSmEDrnTNjW4NNmW5w>
-    <xmx:iQUGXw6TArjj2AxCajkpRaH4ncYv-Q3Va7f0lGLUqK6TZdZXZYGu5Gc0Pic>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 311CB328005E;
-        Wed,  8 Jul 2020 13:42:31 -0400 (EDT)
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Eric Anholt <eric@anholt.net>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        Tim Gover <tim.gover@raspberrypi.com>,
-        Phil Elwell <phil@raspberrypi.com>,
-        Maxime Ripard <maxime@cerno.tech>, devicetree@vger.kernel.org,
-        Kamal Dasu <kdasu.kdev@gmail.com>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline
-Date:   Wed,  8 Jul 2020 19:41:08 +0200
-Message-Id: <cover.7a1aa1784976093af26cb31fd283cf5b3ed568bb.1594230107.git-series.maxime@cerno.tech>
-X-Mailer: git-send-email 2.26.2
+        id S1725953AbgGHSo3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 14:44:29 -0400
+Received: from foss.arm.com ([217.140.110.172]:58652 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725937AbgGHSo3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 8 Jul 2020 14:44:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1AC6731B;
+        Wed,  8 Jul 2020 11:44:28 -0700 (PDT)
+Received: from [10.57.21.32] (unknown [10.57.21.32])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 85E6F3F68F;
+        Wed,  8 Jul 2020 11:44:26 -0700 (PDT)
+Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+Cc:     sboyd@kernel.org, mturquette@baylibre.com,
+        zhangqing@rock-chips.com, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20200708144528.20465-1-jbx6244@gmail.com>
+ <074d8691-2d88-4520-1e43-8c7eb5b82680@arm.com>
+ <0fccae1f-a62a-13fe-0aba-7bbae597d5c7@gmail.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a45a756a-1a47-df39-315a-91c547e2a293@arm.com>
+Date:   Wed, 8 Jul 2020 19:44:24 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0fccae1f-a62a-13fe-0aba-7bbae597d5c7@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi everyone,
+On 2020-07-08 17:28, Johan Jonker wrote:
+> Hi Robin and others,
+> 
+> Just a clarification.
+> Test is done on rk3318 A95X Z2 that uses rk3328.dtsi.
+> Almost everything works fine now except for uart2.
+> Front display also works now with ported custom vfd driver for the
+> SM1628 clone used.
+> 
+> When I include a printk function for debugging in
+> clk_disable_unused_subtree I get this list of disabled clocks below.
+> Could you list the rk3328 clocks that are turned off? Is there a difference?
 
-Here's a (pretty long) series to introduce support in the VC4 DRM driver
-for the display pipeline found in the BCM2711 (and thus the RaspberryPi 4).
+I couldn't be bothered to rebuild a modified kernel package, so I just
+rebooted with "trace_event=clk_disable,clk_enable":
 
-The main differences are that there's two HDMI controllers and that there's
-more pixelvalve now. Those pixelvalve come with a mux in the HVS that still
-have only 3 FIFOs. Both of those differences are breaking a bunch of
-expectations in the driver, so we first need a good bunch of cleanup and
-reworks to introduce support for the new controllers.
+[robin@nemulon-9 ~]$ sudo grep uart /sys/kernel/debug/tracing/trace
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart2_div
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart2_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart2_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart2_div
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart1_div
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart1_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart1_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart1_div
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart0_div
+          <idle>-0     [000] d...     0.000000: clk_enable: clk_uart0_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart0_frac
+          <idle>-0     [000] d...     0.000000: clk_disable: clk_uart0_div
+       swapper/0-1     [002] d...     5.397599: clk_enable: sclk_uart2
+       swapper/0-1     [002] d...     5.397619: clk_enable: pclk_uart2
+       swapper/0-1     [002] d...     5.398056: clk_disable: sclk_uart2
+       swapper/0-1     [002] d...     5.398081: clk_enable: sclk_uart2
+       swapper/0-1     [003] d...     5.716848: clk_disable: pclk_uart1
+       swapper/0-1     [003] d...     5.716850: clk_disable: pclk_uart0
+       swapper/0-1     [003] d...     5.718596: clk_disable: sclk_uart2
+       swapper/0-1     [003] d...     5.718612: clk_enable: sclk_uart2
+        (agetty)-554   [003] d...    12.662968: clk_disable: sclk_uart2
+        (agetty)-554   [003] d...    12.662995: clk_enable: sclk_uart2
 
-Similarly, the HDMI controller has all its registers shuffled and split in
-multiple controllers now, so we need a bunch of changes to support this as
-well.
+This looks as I would expect - UART2 is the only one enabled in DT, so
+pclk_uart2 gets enabled when the driver loads and stays that way, while
+the events for pclk_uart{0,1} correlate with clk_disable_unused()
+running at the final round of initcalls:
 
-Only the HDMI support is enabled for now (even though the DPI and DSI
-outputs have been tested too).
+[    5.398003] ff130000.serial: ttyS2 at MMIO 0xff130000 (irq = 14, base_baud = 1500000) is a 16550A
+[    5.470655] printk: console [ttyS2] enabled
+...
+[    5.756099] Run /init as init process
 
-Let me know if you have any comments
-Maxime
+FWIW I have "earlycon=uart8250,mmio32,0xff130000" on my command line,
+but no explicit console argument - that's going to ttyS2 by virtue of
+the DT "stdout-path".
 
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: devicetree@vger.kernel.org
-Cc: Kamal Dasu <kdasu.kdev@gmail.com>
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
+Robin.
 
-Changes from v3:
-  - Rebased on top of next-20200708
-  - Added a name to the HDMI audio codec component
-  - Only disable the BCM2711 HDMI pixelvalves at boot
-  - Fixed an error in the HVS binding
-  - Fix a framebuffer size condition that was inverted
-  - Changed the channel allocation algorithm using Eric's suggestion
-  - Always write the muxing values instead of updating if needed
-  - Improved a bit the hvs_available_channels comment in the structure
-  - Change atomic_complete_commit code to use for_each_new_crtc_in_state
-  - Change the muxing code to take into account disparities between the
-    BCM2711 and previous SoCs.
-  - Only change the clock rate on BCM2711 during a modeset
-  - Fix a crash at atomic_disable
-  - Use clk_set_min_rate for the core clock too
-  - Add a few defines, and simplify the FIFO level stuff
-  - Reordered the patches according to Eric's reviews
-  - Fixed a regression with VID_CTL setting on RPI3
-
-Changes from v2:
-  - Rebased on top of next-20200526
-  - Split the firmware clock series away
-  - Removed the stuck pixel (with all the subsequent pixels being shifted
-    by one
-  - Fixed the writeback issue too.
-  - Fix the dual output
-  - Fixed the return value of phy_get_cp_current
-  - Enhanced the comment on the reset delay
-  - Increase the max width and height
-  - Made a proper Kconfig option for the DVP clock driver
-  - Fixed the alsa card name collision
-
-Changes from v1:
-  - Rebased on top of 5.7-rc1
-  - Run checkpatch
-  - Added audio support
-  - Fixed some HDMI timeouts
-  - Swiched to clk_hw_register_gate_parent_data
-  - Reorder Kconfig symbols in drivers/i2c/busses
-  - Make the firmware clocks a child of the firmware node
-  - Switch DVP clock driver to clk_hw interface
-  - constify raspberrypi_clk_data in raspberrypi_clock_property
-  - Don't mark firmware clocks as IGNORE_UNUSED
-  - Change from reset_ms to reset_us in reset-simple, and add a bit more
-    comments
-  - Remove generic clk patch to test if a NULL pointer is returned
-  - Removed misleading message in the is_prepared renaming patch commit
-    message
-  - Constify HDMI controller variants
-  - Fix a bug in the allocation size of the clk data array
-  - Added a mention in the DT binding conversion patches about the breakage
-  - Merged a few fixes from kbuild
-  - Fixed a few bisection and CEC build issues
-  - Collected Acked-by and Reviewed-by
-  - Change Dave email address to raspberrypi.com
-
-Dave Stevenson (7):
-  drm/vc4: Add support for the BCM2711 HVS5
-  drm/vc4: plane: Change LBM alignment constraint on LBM
-  drm/vc4: plane: Optimize the LBM allocation size
-  drm/vc4: hdmi: Use reg-names to retrieve the HDMI audio registers
-  drm/vc4: hdmi: Reset audio infoframe on encoder_enable if previously streaming
-  drm/vc4: hdmi: Set the b-frame marker to the match ALSA's default.
-  drm/vc4: hdmi: Add audio-related callbacks
-
-Maxime Ripard (71):
-  dt-bindings: display: Add support for the BCM2711 HVS
-  drm/vc4: hvs: Boost the core clock during modeset
-  drm/vc4: plane: Create more planes
-  drm/vc4: crtc: Deal with different number of pixel per clock
-  drm/vc4: crtc: Use a shared interrupt
-  drm/vc4: crtc: Move the cob allocation outside of bind
-  drm/vc4: crtc: Rename HVS channel to output
-  drm/vc4: crtc: Use local chan variable
-  drm/vc4: crtc: Enable and disable the PV in atomic_enable / disable
-  drm/vc4: kms: Convert to for_each_new_crtc_state
-  drm/vc4: crtc: Assign output to channel automatically
-  drm/vc4: crtc: Add FIFO depth to vc4_crtc_data
-  drm/vc4: crtc: Add function to compute FIFO level bits
-  drm/vc4: crtc: Rename HDMI encoder type to HDMI0
-  drm/vc4: crtc: Add HDMI1 encoder type
-  drm/vc4: crtc: Disable color management for HVS5
-  drm/vc4: crtc: Turn pixelvalve reset into a function
-  drm/vc4: crtc: Move PV dump to config_pv
-  drm/vc4: crtc: Move HVS init and close to a function
-  drm/vc4: crtc: Move the HVS gamma LUT setup to our init function
-  drm/vc4: hvs: Make sure our channel is reset
-  drm/vc4: crtc: Remove mode_set_nofb
-  drm/vc4: crtc: Remove redundant pixelvalve reset
-  drm/vc4: crtc: Move HVS channel init before the PV initialisation
-  drm/vc4: encoder: Add finer-grained encoder callbacks
-  drm/vc4: crtc: Add a delay after disabling the PixelValve output
-  drm/vc4: crtc: Clear the PixelValve FIFO on disable
-  drm/vc4: crtc: Clear the PixelValve FIFO during configuration
-  drm/vc4: hvs: Make the stop_channel function public
-  drm/vc4: hvs: Introduce a function to get the assigned FIFO
-  drm/vc4: crtc: Move the CRTC disable out
-  drm/vc4: drv: Disable the CRTC at boot time
-  dt-bindings: display: vc4: pv: Add BCM2711 pixel valves
-  drm/vc4: crtc: Add BCM2711 pixelvalves
-  drm/vc4: hdmi: Use debugfs private field
-  drm/vc4: hdmi: Move structure to header
-  drm/vc4: hdmi: rework connectors and encoders
-  drm/vc4: hdmi: Remove DDC argument to connector_init
-  drm/vc4: hdmi: Rename hdmi to vc4_hdmi
-  drm/vc4: hdmi: Move accessors to vc4_hdmi
-  drm/vc4: hdmi: Use local vc4_hdmi directly
-  drm/vc4: hdmi: Add container_of macros for encoders and connectors
-  drm/vc4: hdmi: Pass vc4_hdmi to CEC code
-  drm/vc4: hdmi: Retrieve the vc4_hdmi at unbind using our device
-  drm/vc4: hdmi: Remove vc4_dev hdmi pointer
-  drm/vc4: hdmi: Remove vc4_hdmi_connector
-  drm/vc4: hdmi: Introduce resource init and variant
-  drm/vc4: hdmi: Implement a register layout abstraction
-  drm/vc4: hdmi: Add reset callback
-  drm/vc4: hdmi: Add PHY init and disable function
-  drm/vc4: hdmi: Add PHY RNG enable / disable function
-  drm/vc4: hdmi: Add a CSC setup callback
-  drm/vc4: hdmi: Store the encoder type in the variant structure
-  drm/vc4: hdmi: Deal with multiple debugfs files
-  drm/vc4: hdmi: Move CEC init to its own function
-  drm/vc4: hdmi: Add CEC support flag
-  drm/vc4: hdmi: Remove unused CEC_CLOCK_DIV define
-  drm/vc4: hdmi: Rename drm_encoder pointer in mode_valid
-  drm/vc4: hdmi: Adjust HSM clock rate depending on pixel rate
-  drm/vc4: hdmi: Use clk_set_min_rate instead
-  drm/vc4: hdmi: Deal with multiple ALSA cards
-  drm/vc4: hdmi: Remove register dumps in enable
-  drm/vc4: hdmi: Always recenter the HDMI FIFO
-  drm/vc4: hdmi: Implement finer-grained hooks
-  drm/vc4: hdmi: Do the VID_CTL configuration at once
-  drm/vc4: hdmi: Switch to blank pixels when disabled
-  drm/vc4: hdmi: Support the BCM2711 HDMI controllers
-  dt-bindings: display: vc4: hdmi: Add BCM2711 HDMI controllers bindings
-  dt-bindings: display: vc4: Document BCM2711 VC5
-  drm/vc4: drv: Support BCM2711
-  ARM: dts: bcm2711: Enable the display pipeline
-
- Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml        |  109 +++++-
- Documentation/devicetree/bindings/display/brcm,bcm2835-hvs.yaml         |   18 +-
- Documentation/devicetree/bindings/display/brcm,bcm2835-pixelvalve0.yaml |    5 +-
- Documentation/devicetree/bindings/display/brcm,bcm2835-vc4.yaml         |    1 +-
- arch/arm/boot/dts/bcm2711-rpi-4-b.dts                                   |   46 ++-
- arch/arm/boot/dts/bcm2711.dtsi                                          |  115 ++++-
- drivers/gpu/drm/vc4/Makefile                                            |    1 +-
- drivers/gpu/drm/vc4/vc4_crtc.c                                          |  338 +++++++++++----
- drivers/gpu/drm/vc4/vc4_drv.c                                           |    5 +-
- drivers/gpu/drm/vc4/vc4_drv.h                                           |   43 +-
- drivers/gpu/drm/vc4/vc4_hdmi.c                                          | 1625 +++++++++++++++++++++++++++++++++++++++++++-----------------------------
- drivers/gpu/drm/vc4/vc4_hdmi.h                                          |  183 ++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_phy.c                                      |  520 +++++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hdmi_regs.h                                     |  442 ++++++++++++++++++++-
- drivers/gpu/drm/vc4/vc4_hvs.c                                           |  260 +++++++-----
- drivers/gpu/drm/vc4/vc4_kms.c                                           |  225 +++++++++-
- drivers/gpu/drm/vc4/vc4_plane.c                                         |  222 +++++++---
- drivers/gpu/drm/vc4/vc4_regs.h                                          |  177 +++-----
- drivers/gpu/drm/vc4/vc4_txp.c                                           |    4 +-
- 19 files changed, 3331 insertions(+), 1008 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/brcm,bcm2711-hdmi.yaml
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi.h
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_phy.c
- create mode 100644 drivers/gpu/drm/vc4/vc4_hdmi_regs.h
-
-base-commit: 5bdd2824d705fb8d339d6f96e464b907c9a1553d
--- 
-git-series 0.9.1
+> boot options including:
+> earlycon=uart8250,mmio32,0xff130000,keep
+> console=ttyS2,1500000n8
+> 
+> But the real console in which one can type ends up on ttyUSB0.
+> Without console defined in the command line it's only usb keyboard and
+> hdmi monitor. Output on ttyS2 stops right after:
+> 
+> [    1.309231] C:pclk_uart2 -> pclk_bus
+> 
+> To see more I have to include clk_ignore_unused to the command line.
+> In clk-px30.c they also included pclk_uart2 to the critical list.
+> Could Elaine Zhang give more info on that?
+> 
+> Kind regards,
+> 
+> Johan Jonker
+> 
+> static void __init clk_disable_unused_subtree(struct clk_core *core)
+> {
+> 	struct clk_core *child;
+> 	unsigned long flags;
+> 
+> 	lockdep_assert_held(&prepare_lock);
+> 
+> 	hlist_for_each_entry(child, &core->children, child_node)
+> 		clk_disable_unused_subtree(child);
+> 
+> 	if (core->flags & CLK_OPS_PARENT_ENABLE)
+> 		clk_core_prepare_enable(core->parent);
+> 
+> 	if (clk_pm_runtime_get(core))
+> 		goto unprepare_out;
+> 
+> 	flags = clk_enable_lock();
+> 
+> 	if (core->enable_count)
+> 		goto unlock_out;
+> 
+> 	if (core->flags & CLK_IGNORE_UNUSED)
+> 		goto unlock_out;
+> 
+> 	/*
+> 	 * some gate clocks have special needs during the disable-unused
+> 	 * sequence.  call .disable_unused if available, otherwise fall
+> 	 * back to .disable
+> 	 */
+> 	if (clk_core_is_enabled(core)) {
+> 		trace_clk_disable(core);
+> 
+> ////////////
+> // >>> Include debug here <<<
+> 
+> 		printk("C:%s -> %s\n", core->name, core->parent ? core->parent->name :
+> "*");
+> 
+> ////////////
+> 		if (core->ops->disable_unused)
+> 			core->ops->disable_unused(core->hw);
+> 		else if (core->ops->disable)
+> 			core->ops->disable(core->hw);
+> 		trace_clk_disable_complete(core);
+> 	}
+> 
+> unlock_out:
+> 	clk_enable_unlock(flags);
+> 	clk_pm_runtime_put(core);
+> unprepare_out:
+> 	if (core->flags & CLK_OPS_PARENT_ENABLE)
+> 		clk_core_disable_unprepare(core->parent);
+> }
+> 
+> 
+> label kernel
+>      kernel /Image-CLK
+>      fdt /rk3318-a95x-z2-CYX-led.dtb
+>      append root=/dev/mmcblk0p5 console=tty0 console=ttyUSB0,115200n8
+> console=ttyS2,1500000n8 initcall_debug=1 debug drm.debug=0xe
+> earlycon=uart8250,mmio32,0xff130000,keep swiotlb=1 kpti=0
+> no_console_suspend=1 consoleblank=0 rootwait
+> 
+> 
+> [    1.282096] calling  clk_disable_unused+0x0/0x110 @ 1
+> [    1.282705] C:sclk_timer5 -> xin24m
+> [    1.283115] C:sclk_timer4 -> xin24m
+> [    1.283524] C:sclk_timer3 -> xin24m
+> [    1.283932] C:sclk_timer2 -> xin24m
+> [    1.284340] C:sclk_timer1 -> xin24m
+> [    1.284748] C:sclk_timer0 -> xin24m
+> [    1.285158] C:clk_otp -> xin24m
+> [    1.285536] C:aclk_mac2io -> aclk_gmac
+> [    1.286035] C:pclk_mac2io -> pclk_gmac
+> [    1.286483] C:clk_rga -> gpll
+> [    1.286834] C:aclk_gpu -> aclk_gpu_pre
+> [    1.287284] C:aclk_tsp -> aclk_bus_pre
+> [    1.287723] C:aclk_dcf -> aclk_bus_pre
+> [    1.288162] C:pclk_acodecphy -> pclk_phy_pre
+> [    1.295372] C:pclk_dcf -> pclk_bus
+> [    1.309231] C:pclk_uart2 -> pclk_bus
+> [    1.322902] C:pclk_uart1 -> pclk_bus
+> [    1.329133] C:pclk_uart0 -> pclk_bus
+> [    1.335230] C:pclk_spi -> pclk_bus
+> [    1.341538] C:pclk_stimer -> pclk_bus
+> [    1.341543] C:pclk_i2c3 -> pclk_bus
+> [    1.341547] C:pclk_i2c2 -> pclk_bus
+> [    1.341551] C:pclk_i2c1 -> pclk_bus
+> [    1.341554] C:pclk_i2c0 -> pclk_bus
+> [    1.341562] C:hclk_pdm -> hclk_bus_pre
+> [    1.341566] C:hclk_crypto_slv -> hclk_bus_pre
+> [    1.341574] C:hclk_crypto_mst -> hclk_bus_pre
+> [    1.395518] C:hclk_tsp -> hclk_bus_pre
+> [    1.401131] C:hclk_spdif_8ch -> hclk_bus_pre
+> [    1.406791] C:hclk_i2s2_2ch -> hclk_bus_pre
+> [    1.421229] C:hclk_i2s1_8ch -> hclk_bus_pre
+> [    1.426642] C:hclk_i2s0_8ch -> hclk_bus_pre
+> [    1.431878] C:clk_wifi -> cpll
+> [    1.436987] C:sclk_vdec_core -> cpll
+> [    1.442045] C:sclk_vdec_cabac -> cpll
+> [    1.446982] C:aclk_rga -> aclk_rga_pre
+> [    1.451825] C:aclk_hdcp -> aclk_vio_pre
+> [    1.456574] C:aclk_cif -> aclk_vio_pre
+> [    1.461226] C:aclk_iep -> aclk_vio_pre
+> [    1.465794] C:pclk_hdcp -> hclk_vio_pre
+> [    1.470401] C:hclk_hdcp -> hclk_vio_pre
+> [    1.470406] C:hclk_rga -> hclk_vio_pre
+> [    1.470411] C:hclk_cif -> hclk_vio_pre
+> [    1.470415] C:hclk_iep -> hclk_vio_pre
+> [    1.470424] C:clk_mac2io_out -> cpll
+> [    1.470432] C:clk_mac2io_ref -> clk_mac2io
+> [    1.470440] C:clk_mac2io_rx -> clk_mac2io
+> [    1.507448] C:clk_mac2io_tx -> clk_mac2io
+> [    1.511778] C:clk_mac2io_refout -> clk_mac2io
+> [    1.516094] C:clk_mac2io_src -> cpll
+> [    1.520315] C:clk_ref_usb3otg_src -> cpll
+> [    1.524560] C:clk_sdmmc_ext -> cpll
+> [    1.528701] C:hclk_sdmmc_ext -> hclk_peri
+> [    1.532850] C:clk_cif_src -> cpll
+> [    1.536945] C:sclk_venc_dsp -> cpll
+> [    1.541006] C:sclk_venc_core -> cpll
+> [    1.544972] C:aclk_h264 -> aclk_rkvenc
+> [    1.548936] C:aclk_h265 -> aclk_rkvenc
+> [    1.552794] C:hclk_h264 -> hclk_rkvenc
+> [    1.556580] C:pclk_h265 -> hclk_rkvenc
+> [    1.560373] C:aclk_rkvdec -> aclk_rkvdec_pre
+> [    1.564227] C:hclk_rkvdec -> hclk_rkvdec_pre
+> [    1.568096] C:clk_spi -> cpll
+> [    1.571981] C:clk_crypto -> cpll
+> [    1.575897] C:clk_i2c3 -> cpll
+> [    1.579795] C:clk_i2c2 -> cpll
+> [    1.583657] C:clk_i2c1 -> cpll
+> [    1.587521] C:clk_i2c0 -> cpll
+> [    1.591357] C:i2s2_out -> clk_i2s2
+> [    1.595170] C:clk_i2s2 -> i2s2_pre
+> [    1.599020] C:i2s1_out -> clk_i2s1
+> [    1.602893] C:clk_i2s1 -> i2s1_pre
+> [    1.606749] C:clk_i2s0 -> i2s0_pre
+> [    1.610519] C:clk_tsp -> cpll
+> [    1.614239] C:clk_pdm -> apll
+> [    1.617877] C:clk_hsadc_tsp -> *
+> [    1.621718] initcall clk_disable_unused+0x0/0x110 returned 0 after
+> 331056 usecs
+> 
+> 
+> On 7/8/20 5:34 PM, Robin Murphy wrote:
+>> On 2020-07-08 15:45, Johan Jonker wrote:
+>>> The rk3328 uart2 port is used as boot console and to debug.
+>>> During the boot pclk_uart2 is disabled by a clk_disable_unused
+>>> initcall. Fix the uart2 function by marking pclk_uart2
+>>> as critical on rk3328. Also add sclk_uart2 as that is needed
+>>> for the same DT node.
+>>
+>> Hmm, given that those are named in the DT as the "baudclk" and
+>> "apb_pclk" that dw8250_probe() explicitly claims, they really
+>> shouldn't be unused :/
+>>
+>> On my RK3328 box they appear to be prepared and enabled OK:
+>>
+>> [robin@nemulon-9 ~]$ sudo grep uart2 /sys/kernel/debug/clk/clk_summary
+>>      sclk_uart2                        1        1        0    24000000          0     0  50000
+>>                     pclk_uart2         1        1        0    75000000          0     0  50000
+>> ...
+>>
+>> Robin.
+>>
+>>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>>> ---
+>>>    drivers/clk/rockchip/clk-rk3328.c | 2 ++
+>>>    1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+>>> index c186a1985..cb7749cb7 100644
+>>> --- a/drivers/clk/rockchip/clk-rk3328.c
+>>> +++ b/drivers/clk/rockchip/clk-rk3328.c
+>>> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[] __initconst = {
+>>>    	"aclk_gmac_niu",
+>>>    	"pclk_gmac_niu",
+>>>    	"pclk_phy_niu",
+>>> +	"pclk_uart2",
+>>> +	"sclk_uart2",
+>>>    };
+>>>    
+>>>    static void __init rk3328_clk_init(struct device_node *np)
+>>>
+> 
