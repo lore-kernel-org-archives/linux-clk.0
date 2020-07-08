@@ -2,109 +2,105 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AAEC433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916BCC433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7098920739
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:07:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD0020772
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 11:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbgGHLHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 07:07:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:60944 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728466AbgGHLHe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 8 Jul 2020 07:07:34 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C9791045;
-        Wed,  8 Jul 2020 04:07:33 -0700 (PDT)
-Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4C1383F68F;
-        Wed,  8 Jul 2020 04:07:32 -0700 (PDT)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        id S1728797AbgGHL3l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 07:29:41 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:44795 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728385AbgGHL3k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 07:29:40 -0400
+Received: by mail-ot1-f65.google.com with SMTP id 5so34645064oty.11;
+        Wed, 08 Jul 2020 04:29:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aZWkJZPjmEGu6QkrDQRtpdm9RrmV8YXuY6RJVeoloW8=;
+        b=STCWbR+jcfM8TA721ZniP1oimrI1qnot3QVzWayL41ym8IT+OC6lIHBdRimye2hPi4
+         ILcAIQbucHw4karzYQOuulnXg9WkSqtILho3WayDmSpiGbsSqN8G3kCZnsjtpWxuUWyp
+         9Aeq1+VqLtBaTDb++4PVYJQcL2L1QOdKfAr/jZBC2hYm97mDlzR9sjEEj7aMuHRcU9yP
+         y6mH8hRg+Z7c73Ua80uflv35lQx1VKXtcakxhMH23LFiRhIzlcI4XdceKVIOToLK7kQo
+         vO2228oP9zEi9ePvr3rC1ntiLGceGksg7yZX5nW6rI/aWnF/89kWF0HsBbSa4N6LM/fc
+         p8Ig==
+X-Gm-Message-State: AOAM530Kg9nVeRjQSg2VM/JhSgcj/hzv7NLhDvbjvB5xEq9CDAgImC8I
+        Nm3WY42KLpo89bM0XVALLzdH7SwQPsID1koQTsA=
+X-Google-Smtp-Source: ABdhPJzfw4e0G7JAOL/fQ/heiizmgAtMS6QL3JhbQJM5wIiE1u6EnJgspqcckTPH5Og3nDusyLxev6j7HbyXZXG6Ykg=
+X-Received: by 2002:a9d:2646:: with SMTP id a64mr46434915otb.107.1594207779612;
+ Wed, 08 Jul 2020 04:29:39 -0700 (PDT)
+MIME-Version: 1.0
+References: <1594138692-16816-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594138692-16816-11-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594138692-16816-11-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 8 Jul 2020 13:29:28 +0200
+Message-ID: <CAMuHMdWQHnGJCu6zYQwG16xqQmAaQdBTfyw6T1q2OHF3uR-JQQ@mail.gmail.com>
+Subject: Re: [PATCH 12/14] clk: renesas: cpg-mssr: Add r8a774e1 support
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dien Pham <dien.pham.ry@renesas.com>
-Subject: [PATCH 2/2] clk: scmi: Fix min and max rate when registering clocks with discrete rates
-Date:   Wed,  8 Jul 2020 12:07:25 +0100
-Message-Id: <20200708110725.18017-2-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20200708110725.18017-1-sudeep.holla@arm.com>
-References: <20200708110725.18017-1-sudeep.holla@arm.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Currently we are not initializing the scmi clock with discrete rates
-correctly. We fetch the min_rate and max_rate value only for clocks with
-ranges and ignore the ones with discrete rates. This will lead to wrong
-initialization of rate range when clock supports discrete rate.
+Hi Prabhakar,
 
-Fix this by using the first and the last rate in the sorted list of the
-discrete clock rates while registering the clock.
+On Tue, Jul 7, 2020 at 6:18 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+>
+> Add support for the RZ/G2H (R8A774E1) SoC to the Renesas Clock
+> Pulse Generator / Module Standby and Software Reset driver.
+>
+> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Fixes: 6d6a1d82eaef7 ("clk: add support for clocks provided by SCMI")
-Reported-by: Dien Pham <dien.pham.ry@renesas.com>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/clk-scmi.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.9.
 
-Hi Stephen,
+> --- /dev/null
+> +++ b/drivers/clk/renesas/r8a774e1-cpg-mssr.c
 
-If you fine, I can take this via ARM SoC along with the change in firmware
-driver. But it is fine if you want to merge this independently as it should
-be fine. Let me know either way.
+> +static const unsigned int r8a774e1_crit_mod_clks[] __initconst = {
 
-Regards,
-Sudeep
+As per commit f23f1101ad0ef1ac ("clk: renesas: rcar-gen3: Mark RWDT
+clocks as critical"), I'll add a line
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index c491f5de0f3f..ea65b7bf1408 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -103,6 +103,8 @@ static const struct clk_ops scmi_clk_ops = {
- static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
- {
- 	int ret;
-+	unsigned long min_rate, max_rate;
-+
- 	struct clk_init_data init = {
- 		.flags = CLK_GET_RATE_NOCACHE,
- 		.num_parents = 0,
-@@ -112,9 +114,23 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
+    MOD_CLK_ID(402),        /* RWDT */
 
- 	sclk->hw.init = &init;
- 	ret = devm_clk_hw_register(dev, &sclk->hw);
--	if (!ret)
--		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
--				      sclk->info->range.max_rate);
-+	if (ret)
-+		return ret;
-+
-+	if (sclk->info->rate_discrete) {
-+		int num_rates = sclk->info->list.num_rates;
-+
-+		if (num_rates <= 0)
-+			return -EINVAL;
-+
-+		min_rate = sclk->info->list.rates[0]
-+		max_rate = sclk->info->list.rates[num_rates - 1];
-+	} else {
-+		min_rate = sclk->info->range.min_rate;
-+		max_rate = sclk->info->range.max_rate;
-+	}
-+
-+	clk_hw_set_rate_range(&sclk->hw, min_rate, max_rate);
- 	return ret;
- }
+while applying.
 
---
-2.17.1
+> +       MOD_CLK_ID(408),        /* INTC-AP (GIC) */
+> +};
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
