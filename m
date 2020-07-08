@@ -2,98 +2,144 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B838C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:45:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61854C433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2B88F20773
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:45:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C24220739
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:47:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c8zH5rhP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXXNW2Hw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgGHHpw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:45:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43660 "EHLO
+        id S1726634AbgGHHrQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:47:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726936AbgGHHpv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:45:51 -0400
-Received: from mail-wm1-x343.google.com (mail-wm1-x343.google.com [IPv6:2a00:1450:4864:20::343])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3203FC08C5DC;
-        Wed,  8 Jul 2020 00:45:51 -0700 (PDT)
-Received: by mail-wm1-x343.google.com with SMTP id q15so1857423wmj.2;
-        Wed, 08 Jul 2020 00:45:51 -0700 (PDT)
+        with ESMTP id S1726342AbgGHHrP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:47:15 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4AE73C08C5DC;
+        Wed,  8 Jul 2020 00:47:15 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id b25so49419564ljp.6;
+        Wed, 08 Jul 2020 00:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=yvlYiPks6mhJ8cxYaoK6/i2US4+IgEbdzDKr7+cJ8uU=;
-        b=c8zH5rhPF+phZfOSXO2gDlN1DVl+v/Cx3tp71GVcxczbkc9prklYE502HeCl0glvy6
-         Z09D+iEq9UGcfSb1a+Mf5hdFW2kSYRq5dFk3pMDdgASp3i31c8uUpF2gg1s3hlAvH+JR
-         UeHsGHrHrBE9C3c8ngoZ2Sc51llOQhaNDHXJkEM/60yS52jr1OJuqKH4ujGoY5Fnxl7u
-         zJE1L7f98lSbSh0wJSbFRdGexe0fXqxTc3uScLviud8SaxkjPBP6jfRrR0P3n6lfLIYo
-         bMXKLmGeXt/PYevPZZYiYsE61OdxNMFgYvN0X9WtE1addVd/85HbCIuEl7p82T+E/g0e
-         4vBw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mxS+F39BoFx3/+K2xuOp4+K9JxcDhgJQv7Yws3W7LL4=;
+        b=iXXNW2HwCxD3aES0pvd67VRcY29JZnbbf9Q2xCdrxjaHkYaCwp3XRVhVSnUbIU77Eg
+         sWDPWWaJWXpsxF4QTmM03uMXOi2cGWIB8UQKML7Tg9HiKwfNIHaXPTFYN/FrWVNXIg+m
+         Eph2eS5eGhM+65vGH8bW7R6RqrBj/y+EjuAQOrlIMRe27J+H+vh5d3zteAGYXsFPXIei
+         lzgbtx0yRBjGKk3UV9CxGyHQks+QQeW69UQwev0f9UiQWs7ru7hHatnSBiSQkiz1wcHI
+         Zbex3y0RGb9DTsdt1h+jWIvVtJihxU3utSqLrEkW2H6DXOPYgFofUEsMTzNQHqP9HYBn
+         J+9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=yvlYiPks6mhJ8cxYaoK6/i2US4+IgEbdzDKr7+cJ8uU=;
-        b=kNqbzBNMrbd148eY2ayj8oOvhv6iUoanWYk8hsFBSdPqWDJjiey7QiKfrCyJRFfL29
-         X4sFRNyisGz6LyNmKQ9VwJ732ESuZk81roe3SYT5pyLBKlXcSKZKVsQUMAiqoLis3fiH
-         xDmC699gVZozV2GU/u840fe4YV/hS1wSBAH/ocmraS3aB2lSvueR8opqGUjN5nfV0sip
-         FLmN7Larqtw9UHDJrndIOTcoksXNYDYzQvspgJZ/e7I7nZscRkkEsaIs450ffimy4emm
-         U35iBSvCu72lkQiyPvIyKzKNlyftp2OQxQdveZB8bab85C095GUuMDJX3gjs5XUn2/bZ
-         lJSg==
-X-Gm-Message-State: AOAM530fm/F5Md6ZfH1CybysJWkXIdfXDjjAke66EFw1AmbZ3DT8Q7xh
-        CREu5KS4doGftS0CQgYNQBs=
-X-Google-Smtp-Source: ABdhPJyfCRKV9aKG3yjwH2QZVnVF+A1H/3zVPGdu0ei4zSGkOGEIMvWFCSdjaZrYu71+eOEVdiEAug==
-X-Received: by 2002:a05:600c:2249:: with SMTP id a9mr7625316wmm.163.1594194349997;
-        Wed, 08 Jul 2020 00:45:49 -0700 (PDT)
-Received: from Red ([2a01:cb1d:3d5:a100:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id 65sm5495212wre.6.2020.07.08.00.45.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mxS+F39BoFx3/+K2xuOp4+K9JxcDhgJQv7Yws3W7LL4=;
+        b=ViCGL+CseEqbQU64xFlvEH6Ly/kCSkVboMyuhC1JHKxh0/QO9jUQVUJ0a5kYG6wtMn
+         TZUgy8O4O59egsChQITqjL6iRi11DDzzP3O0DYEP1cjMGaDT0MqGgVmxPZZHTvbvx4WC
+         Wf7e1E3jsGAQf4It9Xfn476Gm6hgxhm6YL65TZiOwMKAvO6Ue0qsRYYLJ3gf07rhgpvy
+         lKbnw1ft4YPxMipmkzPBY2ECP2eGBYIlJWcUodTVSaSyEDcR1c8uNXjRPOQTbXAQ04Hs
+         +hGKMTXuAiCzOo3PYFvixhv71+OyOiRShtQz7EJ2a+JONH5/3+pPbYt4lKZLVI0npxrH
+         8PGQ==
+X-Gm-Message-State: AOAM532XLqg/wP/YUxWvvlSrjsT0SU7s1y5rILJ0qxzkswSnvOmLcWxz
+        GOgVjtPSQyeGej7owC477WE=
+X-Google-Smtp-Source: ABdhPJw1BOO1Ub9pCHAAIIWaqq9Y+Jk3ciQ9Z5kFnro7GyrHUg+wvMPvJ67mQmD4lu1s6M7VlCIytQ==
+X-Received: by 2002:a2e:8047:: with SMTP id p7mr34213212ljg.414.1594194433815;
+        Wed, 08 Jul 2020 00:47:13 -0700 (PDT)
+Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
+        by smtp.gmail.com with ESMTPSA id f24sm808339ljc.99.2020.07.08.00.47.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 00:45:49 -0700 (PDT)
-Date:   Wed, 8 Jul 2020 09:45:47 +0200
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        gregory.clement@bootlin.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
-        icenowy@aosc.io, megous@megous.com, stefan@olimex.com,
-        bage@linutronix.de, devicetree@vger.kernel.org,
-        linux-pm@vger.kernel.org, liyong@allwinnertech.com,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        huangshuosheng@allwinnertech.com, linux-i2c@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 00/16] Allwinner A100 Initial support
-Message-ID: <20200708074547.GA19609@Red>
-References: <20200708071942.22595-1-frank@allwinnertech.com>
+        Wed, 08 Jul 2020 00:47:13 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: tegra: pll: Improve PLLM enable-state detection
+Date:   Wed,  8 Jul 2020 10:46:28 +0300
+Message-Id: <20200708074628.18173-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.26.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200708071942.22595-1-frank@allwinnertech.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 03:19:26PM +0800, Frank Lee wrote:
-> This patch set adds initial support for allwinner a100 soc,
-> which is a 64-bit tablet chip.
-> 
+Power Management Controller (PMC) can override the PLLM clock settings,
+including the enable-state. Although PMC could only act as a second level
+gate, meaning that PLLM needs to be enabled by the Clock and Reset
+Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
+overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
+order to be functional. Please note that this patch doesn't fix any known
+problem, and thus, it's merely a minor improvement.
 
-Hello
+Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-Does a product already exists with it ? I couldnt found any.
-Does a datasheet is availlable ?
+Changelog:
 
-Regards
+v2: - Added clarifying comment to the code.
+
+    - Prettified the code.
+
+ drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+index b2d39a66f0fa..f700356efe3e 100644
+--- a/drivers/clk/tegra/clk-pll.c
++++ b/drivers/clk/tegra/clk-pll.c
+@@ -327,20 +327,30 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
+ 	return clk_pll_wait_for_lock(pll);
+ }
+ 
++static bool pllm_pmc_clk_enabled(struct tegra_clk_pll *pll)
++{
++	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
++
++	return !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) ||
++		(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
++}
++
+ static int clk_pll_is_enabled(struct clk_hw *hw)
+ {
+ 	struct tegra_clk_pll *pll = to_clk_pll(hw);
+ 	u32 val;
+ 
+-	if (pll->params->flags & TEGRA_PLLM) {
+-		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+-		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
+-			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
+-	}
++	/*
++	 * Power Management Controller (PMC) can override the PLLM clock
++	 * settings, including the enable-state. The PLLM is enabled when
++	 * PLLM's CaR state is ON and when PLLM isn't disabled by PMC.
++	 */
++	if ((pll->params->flags & TEGRA_PLLM) && !pllm_pmc_clk_enabled(pll))
++		return 0;
+ 
+ 	val = pll_readl_base(pll);
+ 
+-	return val & PLL_BASE_ENABLE ? 1 : 0;
++	return val & PLL_BASE_ENABLE;
+ }
+ 
+ static void _clk_pll_enable(struct clk_hw *hw)
+-- 
+2.26.0
+
