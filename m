@@ -2,85 +2,109 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDBDC433E1
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494E0C433E2
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E117C20760
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 268512078A
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:45:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sM01lxxY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726542AbgGHHkv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:40:51 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:54293 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726325AbgGHHkv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:40:51 -0400
-Received: from [78.134.117.153] (port=41602 helo=melee.fritz.box)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1jt4hD-0009Wd-QF; Wed, 08 Jul 2020 09:40:47 +0200
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-clk@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH v2 1/4] dt-bindings: clk: versaclock5: fix 'idt' prefix typos
-Date:   Wed,  8 Jul 2020 09:40:32 +0200
-Message-Id: <20200708074035.31595-1-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.27.0
+        id S1726081AbgGHHpZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 03:45:25 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43578 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726129AbgGHHpY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:45:24 -0400
+Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59694C08E6DC
+        for <linux-clk@vger.kernel.org>; Wed,  8 Jul 2020 00:45:24 -0700 (PDT)
+Received: by mail-wm1-x342.google.com with SMTP id 17so1888495wmo.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 Jul 2020 00:45:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=dvqxIY5/h+Hi08QqzkQR4GxWo2uSuz4DSd8Ijo5xAAw=;
+        b=sM01lxxYQ4EfApgBtPAY1tlREhF6Q5nbZBYrqNsF5UEIT5lxaBcV65i8uLFHPMXHw2
+         qBBbTvwQm/uLh+pR1RyhDDIbT9acEqGVIPgjWmTHAHYY27RNK0klDk5+1hd49k60iwoo
+         OQTKcgBMQMTYP6o/jNt5edF10/yPCEb83Wc+S0178PPiSq5CQCuRHwxt63Da4T4v0vZ0
+         OiIqGvRWkt8S1hXD/Lm3uOj+7rNdaiQereDtYK+NxGCm2H8CRtd8tDETWtu76IR67xUq
+         X3FanwL88C0lIQOC9u2uU4XvpNtT0H2S23GeuQe+VQVqFkv/IqYFLsGmuGcBI8/GxgUY
+         UhFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=dvqxIY5/h+Hi08QqzkQR4GxWo2uSuz4DSd8Ijo5xAAw=;
+        b=r/IqHrEXmJV4zZAFri1XWFh1mPw04c3Mz2ID8KrHEgKrKTK8MVn5Gm4iPrjCiIWNVG
+         GXxVnj1EkN6Uw+sb0Dkjq/Coy//TYcdufkXOkUQCQHN0dz0cqdJ21Mxx2jBUZoiylbKk
+         VhqGK5QPv7CSfbx4IvEgU2Vadqz9fVPRJyMg5KlFzmjX83unQDJqI0ch+NfzmD3SSgl1
+         2GFN9WggV2/9fK+a+BYW9tnKlrYNPkqN9Kk/tgbtmwWZ8lNRQZ58gY1xup8IBHzdyAFM
+         FKXKijIDc7Db+0+8EUtszJu4LgDNXQxmaagqlMkxnYnNR2eL4bpl9AOiek6VtpcuG47Q
+         my9A==
+X-Gm-Message-State: AOAM531WG4Q9ncRByVegUnNSrrQZYSJifDag1Ykxdb+jMFyK30xEoOEo
+        OXbJk8jVSsqA2eLXzUSYOmiMEA==
+X-Google-Smtp-Source: ABdhPJyrs9JjcAa1EVpT3YYg0xeBhj7Vs2aNSuxcfo+IdXW371pwsk+hDd+L5UUI6ck9FLQzlHDvzA==
+X-Received: by 2002:a1c:e18a:: with SMTP id y132mr7831817wmg.27.1594194323097;
+        Wed, 08 Jul 2020 00:45:23 -0700 (PDT)
+Received: from dell ([2.27.35.206])
+        by smtp.gmail.com with ESMTPSA id k18sm4434969wrx.34.2020.07.08.00.45.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jul 2020 00:45:22 -0700 (PDT)
+Date:   Wed, 8 Jul 2020 08:45:20 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        gregory.clement@bootlin.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
+        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
+        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
+        megous@megous.com, stefan@olimex.com, bage@linutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, huangshuosheng@allwinnertech.com,
+        liyong@allwinnertech.com
+Subject: Re: [PATCH v3 12/16] dt-bindings: irq: sun7i-nmi: Add binding for
+ A100's NMI controller
+Message-ID: <20200708074520.GQ3500@dell>
+References: <20200708072331.19700-1-frank@allwinnertech.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+In-Reply-To: <20200708072331.19700-1-frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-'idt' is misspelled 'itd' in a few places, fix it.
+On Wed, 08 Jul 2020, Frank Lee wrote:
 
-Fixes: 34662f6e3084 ("dt: Add additional option bindings for IDT VersaClock")
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
----
- Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> Add a binding for A100's nmi controller.
+> 
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
+> ---
+>  .../bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml      | 3 +++
+>  1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-index 6165b6ddb1a9..9656d4cf221c 100644
---- a/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-+++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.txt
-@@ -35,7 +35,7 @@ For all output ports, a corresponding, optional child node named OUT1,
- OUT2, etc. can represent a each output, and the node can be used to
- specify the following:
- 
--- itd,mode: can be one of the following:
-+- idt,mode: can be one of the following:
-                  - VC5_LVPECL
-                  - VC5_CMOS
-                  - VC5_HCSL33
-@@ -106,7 +106,7 @@ i2c-master-node {
- 		clock-names = "xin";
- 
- 		OUT1 {
--			itd,mode = <VC5_CMOS>;
-+			idt,mode = <VC5_CMOS>;
- 			idt,voltage-microvolts = <1800000>;
- 			idt,slew-percent = <80>;
- 		};
+I'm sure 3/4 of the people in your recipients list have little
+interest in this change.  May of us already have overflowing inboxes.
+
+Please be more restrictive/considerate when posting patches in the
+future.
+
 -- 
-2.27.0
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
