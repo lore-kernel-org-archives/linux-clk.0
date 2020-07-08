@@ -2,141 +2,90 @@ Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08277C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AA79C433DF
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 09:08:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D96362067D
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 07:54:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lAMHRJDg"
+	by mail.kernel.org (Postfix) with ESMTP id 5AA192063A
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 09:08:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgGHHyb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 03:54:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45002 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbgGHHyb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 03:54:31 -0400
-Received: from mail-lf1-x143.google.com (mail-lf1-x143.google.com [IPv6:2a00:1450:4864:20::143])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9646C08C5DC;
-        Wed,  8 Jul 2020 00:54:30 -0700 (PDT)
-Received: by mail-lf1-x143.google.com with SMTP id o4so26326195lfi.7;
-        Wed, 08 Jul 2020 00:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/jl62OZFRaBXK2/dmdRMLJsJwf4NRpbhjRcdOXNNqbY=;
-        b=lAMHRJDgum/Jh1ws2Iw+TCOnv09JCdkrPBc45igIzOU90d9aFNdqFVX9mtwGxoB6kW
-         KfgmUT+o/aUy6iXqMT8wLHqT8HydyIrYzYzwNDpJB67hlbd0XAa5T+bbLoRjgM4vr5MJ
-         nB1vqwSvlFozXY1KgaResRzPLDBQCPyBBGawmu8H43X/MZ/9V9BMUojVPdAmKY2IR4qH
-         e9FTgxFEP2czLPYtKtYByonOFopbDyU4QCQP1JDPO4wIeU5R8RyehpZs2/g/SO9HDEtT
-         OJ2lHUbVsDlgsNVFPk/lamhiO8rn8SnHB/F4k0Dpj+54SJwMoc/n1C/m72g6tITQeypN
-         Jm6g==
+        id S1726356AbgGHJIH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 05:08:07 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:37975 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbgGHJIF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 05:08:05 -0400
+Received: by mail-oi1-f195.google.com with SMTP id r8so37219670oij.5;
+        Wed, 08 Jul 2020 02:08:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/jl62OZFRaBXK2/dmdRMLJsJwf4NRpbhjRcdOXNNqbY=;
-        b=BNJfnlv2JnRgfuhTFRDpegTjheNqAQJynz0Le7Arw0S0OzCxvzlGaCRjkfUSCVgVV8
-         rfHDNr4r3MHpm5xtNphgZeVTlkeanw+T/TnHJ5TxTXqAB2xeHHAvatGKPz6mBpNSjipg
-         c4nLjAZaAyamBmcucxA+6aj5m3bAIpu8T4Gx8lp4wXaCpPyGiWewZ4nVF5R9TSMPNHm6
-         x9TxZUwM6kIYMkz7ZdtLLwwYSXuqPSI8hfbT45ZL7Xrd1JvgjgZAidkQXkhqhefTmGZB
-         RRijLJODrr6KiZeMuAGWbePhwRWFZV+5HhF4XgkgjXwBphNS4vbtI4Wv+sE0hmVXvQfc
-         2DjQ==
-X-Gm-Message-State: AOAM532faIymdjdi5u+jPW0NarW7fAPkLcRHe4fIT3ZS2t5GFIk0Et6R
-        Rh71ChpgpD99cIJ9LP4yvqg=
-X-Google-Smtp-Source: ABdhPJzB3H8obzShnXD7Tkeqax0A0F17bqkMRwCpDKHUYza87vEYIw86K349BqyG8/M2K90wWnTsEg==
-X-Received: by 2002:a05:6512:303:: with SMTP id t3mr35282302lfp.159.1594194869447;
-        Wed, 08 Jul 2020 00:54:29 -0700 (PDT)
-Received: from localhost.localdomain (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
-        by smtp.gmail.com with ESMTPSA id j4sm10175604lfb.94.2020.07.08.00.54.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jul 2020 00:54:28 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] clk: tegra: pll: Improve PLLM enable-state detection
-Date:   Wed,  8 Jul 2020 10:54:18 +0300
-Message-Id: <20200708075418.25295-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.26.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+ifhTbenHl4MBKv4jBLn2jEdTHksRw2S6+cnmDHE1U4=;
+        b=UV02i6C6Qp3XK7gdGefrk3V/02ouj1GbecjPdyNZ+DFwsdiRkkkhhy+CD+se70RbHl
+         pOvnQ7DGJqfJGtwxJrqmSL0bgzNgJs9FDvya/+WZ9GJ6xW+Lyks3rLBgupj3E37+H0hr
+         oc8vHEQl5MEBPTwqDtavZjUCS+hrPFecwCyEln6SmlC2CvnNqDxQVOr0QyAxRhTVzwUk
+         TJFWv0QyM6E1sDrrz3l+3IjCrxoF0T41e+9O6m13QPOdZpq535ip8+PTaeviL71b3G/J
+         MZFTX27QUq1r4J8MQYjH2ebE7J5RMGxOREChf6ym0A5yPMeyBbL7KDqSJWAKkXb06aju
+         a1FQ==
+X-Gm-Message-State: AOAM531WF7+8bamp2IXkugKtmFJtkx/Bgy9VWjgUO1EZjoHswXySR3So
+        iq2Zm4LZVey1ha66qsrhMq4hfxt4WKpYO+xX4Lg=
+X-Google-Smtp-Source: ABdhPJwwWyEJLxoYPh5RcN1bL2Wsn47wKpNZSb2k3Td2MU09jjQfJ9847L9jUzg5coiVRc1bcKgI9oGBm2HZFLW42vs=
+X-Received: by 2002:aca:5c41:: with SMTP id q62mr6127594oib.148.1594199284723;
+ Wed, 08 Jul 2020 02:08:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1594138368-16449-1-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <1594138368-16449-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <1594138368-16449-2-git-send-email-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 8 Jul 2020 11:07:53 +0200
+Message-ID: <CAMuHMdWLp+KHD=kco=AoM94a_D+qAiscyJkv57WoyDGGZM6WXA@mail.gmail.com>
+Subject: Re: [PATCH 01/14] dt-bindings: arm: renesas: Document RZ/G2H SoC DT bindings
+To:     Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Cc:     Magnus Damm <magnus.damm@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Prabhakar <prabhakar.csengg@gmail.com>,
+        Marian-Cristian Rotariu 
+        <marian-cristian.rotariu.rb@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Power Management Controller (PMC) can override the PLLM clock settings,
-including the enable-state. Although PMC could only act as a second level
-gate, meaning that PLLM needs to be enabled by the Clock and Reset
-Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
-overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
-order to be functional. Please note that this patch doesn't fix any known
-problem, and thus, it's merely a minor improvement.
+On Tue, Jul 7, 2020 at 6:14 PM Lad Prabhakar
+<prabhakar.mahadev-lad.rj@bp.renesas.com> wrote:
+> From: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+>
+> Add device tree binding documentation for the Renesas RZ/G2H (r8a774e1)
+> SoC.
+>
+> Signed-off-by: Marian-Cristian Rotariu <marian-cristian.rotariu.rb@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.9.
 
-Changelog:
+Gr{oetje,eeting}s,
 
-v3: - Dropped unintended code change that was accidentally added to v2.
+                        Geert
 
-v2: - Added clarifying comment to the code.
-
-    - Prettified the code.
-
- drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index b2d39a66f0fa..37cfcd6836c9 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
- 	return clk_pll_wait_for_lock(pll);
- }
- 
-+static bool pllm_pmc_clk_enabled(struct tegra_clk_pll *pll)
-+{
-+	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
-+
-+	return !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) ||
-+		(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
-+}
-+
- static int clk_pll_is_enabled(struct clk_hw *hw)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	u32 val;
- 
--	if (pll->params->flags & TEGRA_PLLM) {
--		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
--		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
--			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
--	}
-+	/*
-+	 * Power Management Controller (PMC) can override the PLLM clock
-+	 * settings, including the enable-state. The PLLM is enabled when
-+	 * PLLM's CaR state is ON and when PLLM isn't disabled by PMC.
-+	 */
-+	if ((pll->params->flags & TEGRA_PLLM) && !pllm_pmc_clk_enabled(pll))
-+		return 0;
- 
- 	val = pll_readl_base(pll);
- 
 -- 
-2.26.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
