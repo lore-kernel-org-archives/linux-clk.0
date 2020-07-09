@@ -1,4 +1,4 @@
-Return-Path: <SRS0=0nR9=AT=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -6,107 +6,95 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE12C433E0
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 20:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 391C1C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 01:40:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E39D206DF
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jul 2020 20:24:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0971E206F6
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 01:40:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725915AbgGHUYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 16:24:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:35762 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbgGHUYP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 8 Jul 2020 16:24:15 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C6E21FB;
-        Wed,  8 Jul 2020 13:24:14 -0700 (PDT)
-Received: from bogus (unknown [10.37.8.63])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32C033F66E;
-        Wed,  8 Jul 2020 13:24:12 -0700 (PDT)
-Date:   Wed, 8 Jul 2020 21:24:00 +0100
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dien Pham <dien.pham.ry@renesas.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 2/2] clk: scmi: Fix min and max rate when registering
- clocks with discrete rates
-Message-ID: <20200708202349.GA31671@bogus>
-References: <20200708110725.18017-1-sudeep.holla@arm.com>
- <20200708110725.18017-2-sudeep.holla@arm.com>
+        id S1726106AbgGIBkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jul 2020 21:40:03 -0400
+Received: from regular1.263xmail.com ([211.150.70.199]:58194 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726081AbgGIBkD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 21:40:03 -0400
+X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jul 2020 21:40:02 EDT
+Received: from localhost (unknown [192.168.167.32])
+        by regular1.263xmail.com (Postfix) with ESMTP id A14ADF1B;
+        Thu,  9 Jul 2020 09:32:06 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.236] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P14852T139810280818432S1594258325506381_;
+        Thu, 09 Jul 2020 09:32:06 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <c13d51af5d7d2fabafb533b54b30220b>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
+To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20200708144528.20465-1-jbx6244@gmail.com>
+From:   "elaine.zhang" <zhangqing@rock-chips.com>
+Organization: rockchip
+Message-ID: <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
+Date:   Thu, 9 Jul 2020 09:32:05 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20200708144528.20465-1-jbx6244@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200708110725.18017-2-sudeep.holla@arm.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 12:07:25PM +0100, Sudeep Holla wrote:
-> Currently we are not initializing the scmi clock with discrete rates
-> correctly. We fetch the min_rate and max_rate value only for clocks with
-> ranges and ignore the ones with discrete rates. This will lead to wrong
-> initialization of rate range when clock supports discrete rate.
-> 
-> Fix this by using the first and the last rate in the sorted list of the
-> discrete clock rates while registering the clock.
-> 
-> Fixes: 6d6a1d82eaef7 ("clk: add support for clocks provided by SCMI")
-> Reported-by: Dien Pham <dien.pham.ry@renesas.com>
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+在 2020/7/8 下午10:45, Johan Jonker 写道:
+> The rk3328 uart2 port is used as boot console and to debug.
+> During the boot pclk_uart2 is disabled by a clk_disable_unused
+> initcall. Fix the uart2 function by marking pclk_uart2
+> as critical on rk3328. Also add sclk_uart2 as that is needed
+> for the same DT node.
+>
+> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 > ---
->  drivers/clk/clk-scmi.c | 22 +++++++++++++++++++---
->  1 file changed, 19 insertions(+), 3 deletions(-)
-> 
-> Hi Stephen,
-> 
-> If you fine, I can take this via ARM SoC along with the change in firmware
-> driver. But it is fine if you want to merge this independently as it should
-> be fine. Let me know either way.
-> 
-> Regards,
-> Sudeep
-> 
-> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-> index c491f5de0f3f..ea65b7bf1408 100644
-> --- a/drivers/clk/clk-scmi.c
-> +++ b/drivers/clk/clk-scmi.c
-> @@ -103,6 +103,8 @@ static const struct clk_ops scmi_clk_ops = {
->  static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
->  {
->  	int ret;
-> +	unsigned long min_rate, max_rate;
-> +
->  	struct clk_init_data init = {
->  		.flags = CLK_GET_RATE_NOCACHE,
->  		.num_parents = 0,
-> @@ -112,9 +114,23 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk)
-> 
->  	sclk->hw.init = &init;
->  	ret = devm_clk_hw_register(dev, &sclk->hw);
-> -	if (!ret)
-> -		clk_hw_set_rate_range(&sclk->hw, sclk->info->range.min_rate,
-> -				      sclk->info->range.max_rate);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (sclk->info->rate_discrete) {
-> +		int num_rates = sclk->info->list.num_rates;
-> +
-> +		if (num_rates <= 0)
-> +			return -EINVAL;
-> +
-> +		min_rate = sclk->info->list.rates[0]
+>   drivers/clk/rockchip/clk-rk3328.c | 2 ++
+>   1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
+> index c186a1985..cb7749cb7 100644
+> --- a/drivers/clk/rockchip/clk-rk3328.c
+> +++ b/drivers/clk/rockchip/clk-rk3328.c
+> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[] __initconst = {
+>   	"aclk_gmac_niu",
+>   	"pclk_gmac_niu",
+>   	"pclk_phy_niu",
+> +	"pclk_uart2",
+> +	"sclk_uart2",
+>   };
+>   
 
-I seem to have sent a version with ; missing above though I fixed but
-sent the old stale version as I had written a note to you 🙁 
+Not need to mark the uart2 as critical clocks, the uart clk will enabled 
+by uart driver probe(dw8250_probe()).
 
--- 
-Regards,
-Sudeep
+For your question,  Please check the uart2 dts node "status = okay".
+
+Or You can send me the complete log, I check the status of uart2.
+
+>   static void __init rk3328_clk_init(struct device_node *np)
+
+
