@@ -2,214 +2,154 @@ Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 172D9C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 12:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53372C433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 13:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E31FC2077D
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 12:04:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277B820708
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 13:54:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oz9/FrdY"
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="Z6NRe/KH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgGIME4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jul 2020 08:04:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52466 "EHLO
+        id S1727901AbgGINy0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 09:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbgGIME4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 08:04:56 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF14C061A0B;
-        Thu,  9 Jul 2020 05:04:55 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id lx13so2002271ejb.4;
-        Thu, 09 Jul 2020 05:04:55 -0700 (PDT)
+        with ESMTP id S1726729AbgGINy0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 09:54:26 -0400
+Received: from mail-qt1-x843.google.com (mail-qt1-x843.google.com [IPv6:2607:f8b0:4864:20::843])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BAA8C08C5CE
+        for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2020 06:54:26 -0700 (PDT)
+Received: by mail-qt1-x843.google.com with SMTP id a32so1692477qtb.5
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2020 06:54:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0zImYmeVH2cb5ZKZAWLVklettku0gl+82cmF9xIzIxc=;
-        b=Oz9/FrdYqRRn8i0zwob8qJNoewkLGHF/55gRHywFIp6s8QpbqYCLHc657OVkO8xlqe
-         +GPUnF4hQSerKpxB2QgaeOIxQUN1L8oty3gXG1qc1wcbAPVo3vOICqd3wakjp/Nk348z
-         7NRwy2m1h8z/V/Umxpi9my+ViWqlu7bBXM2KZkkDXsuYciM/+2FT+mhEDPpcZWdlRt1n
-         klrrK9fF/Gim6Ao9WT7UpHaIV/JIdSGVpRRx3dWWg9HyplMjuDgziRGIBLX0W0GLWz1P
-         li2WTT+0wTl+B85xHlIEee08IKSzXcWJdRz2sreqC8XSj8n62Ecas2ExC2ecBbCaSIc0
-         /MNg==
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=FoYroevO5aBBa1iVjvsDAiRUR6Hq4gmMuR8nLzos3mw=;
+        b=Z6NRe/KH8bncXG4w++4ecKr3wqovwnlWL54aD5Nzi9+BB7vjICb9LcPIGeiPYFNJVo
+         Y/AQ6/wFhrzsBGDSIqFehClvUY0W6XyunhSG+cdNJhm6FQ6Q0D1+GGGDV5SAGpGvs35X
+         zAq7AyAI7DqKTEHXRzXPVTE56RnZj59V6uUK5lOM+IGn5tAhi9U6Cfyk5g2zpt3KZzaP
+         gq+urnDQkd/kAar89rPeSp5ndT15f7TJwZSdPRcp74qc7i+aIjJ4YF9EFC+us5EiP/NV
+         VX8vfcNp6enxaHd4lSfsIM+qpUnUMnXtYmEoWWC0nTXNwCHAjoB1sA5zEKiLDy2THgFB
+         YG8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=0zImYmeVH2cb5ZKZAWLVklettku0gl+82cmF9xIzIxc=;
-        b=L01N78OStyivScWmMbJXG+GnM9CK3uSv0SIo164poELK/AFkB0vTb5CKRlD+MPUpqA
-         2oKAI9Lpu+4hRVMub2eliU/r997mUSsDha5+TyMarT69UMaP8V5knqpg7mFbML8+1Ibl
-         c6YRxOR9lIGLzSU8H8qXp8EEVowg9MPxlY/T1W0JshVvVO2zaiaHH2/IUgPUn72RE7EA
-         rS3/SScuV9NZ3ZyqvSKjubOW85ZpSMkTWW2k1vTSQ1eGm+jviB2XgRUNfjKrK5tnlaaM
-         U5IGR86CeFjIO8yOeJSLSP6eB/rRHir/DjO/UfHw6aJmXocmB+7Yko7Q9xspxsaeY5db
-         5B5g==
-X-Gm-Message-State: AOAM532F76doOmVM5vREdFjZ/wIabBw+b1E4vponRuEh5RODEi8sK26W
-        fYEHCXBQIpqor0KugX6inOr5jj0ue1M=
-X-Google-Smtp-Source: ABdhPJwMt1uac/fO7xYUSf/Fv6CBZwDYVGcxGtSHD48eVkRoL6aGBpsYAkRI/YRFUxMwbmOvMLzocQ==
-X-Received: by 2002:a17:906:2b52:: with SMTP id b18mr57784048ejg.158.1594296294559;
-        Thu, 09 Jul 2020 05:04:54 -0700 (PDT)
-Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
-        by smtp.gmail.com with ESMTPSA id v3sm1888683edj.89.2020.07.09.05.04.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2020 05:04:54 -0700 (PDT)
-Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
-To:     "elaine.zhang" <zhangqing@rock-chips.com>, heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20200708144528.20465-1-jbx6244@gmail.com>
- <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
-From:   Johan Jonker <jbx6244@gmail.com>
-Message-ID: <68073138-1f94-9d5b-ad48-e82bc538c915@gmail.com>
-Date:   Thu, 9 Jul 2020 14:04:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        bh=FoYroevO5aBBa1iVjvsDAiRUR6Hq4gmMuR8nLzos3mw=;
+        b=WLbwAiCk+PRk9GEUIyTO/cxD/QnWnUHfw78pULA9rMCNCSPwdzLjJ64d62d5qDE+vv
+         PN59tJwwr6S1Y7iSmYGdZ7aG1bcVVFXRMnUHUnLAOgcEpPBamIkPDKl2IqhnSNFwpC7I
+         L+XsmCzAR3Gl91A60qaUfxz9QpJQWMn6BQS7vTFrgotyhVQeXc49eYN7sq6Qs6GE8kXw
+         D7SLtkmUJmOY6qKuC9mrqNG3lf6sMeR5QWUps+Mz1vjfdG1NiYe2VTXIJoQS7Ms6DYHA
+         tM6TmHUPtAJodr8v2jbFcpc0jNe6U97hHP8v8RPI/nlFq/XCdc+HfkEKc90ojAeeiOy8
+         jGsg==
+X-Gm-Message-State: AOAM5302yCMgnXgsq4VgpKLjC4sF0u5cY4GVGryELlTn/pARSn2R5dKY
+        V6SJR1suJAWVkdJMh/T6nLsTVw==
+X-Google-Smtp-Source: ABdhPJxhiX3tijNbdyq0oIUQJC6u0JCpsZSHVAijeTfA7RTEUJdj+vBHVcFpY3YlG+naGt9YwyptvA==
+X-Received: by 2002:ac8:7208:: with SMTP id a8mr68813599qtp.355.1594302865515;
+        Thu, 09 Jul 2020 06:54:25 -0700 (PDT)
+Received: from localhost.localdomain ([147.253.86.153])
+        by smtp.gmail.com with ESMTPSA id 130sm3632735qkn.82.2020.07.09.06.54.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jul 2020 06:54:25 -0700 (PDT)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     linux-arm-msm@vger.kernel.org
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Deepak Katragadda <dkatraga@codeaurora.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+        linux-kernel@vger.kernel.org (open list),
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH v3 00/14] Enable GPU for SM8150 and SM8250
+Date:   Thu,  9 Jul 2020 09:52:31 -0400
+Message-Id: <20200709135251.643-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.26.1
 MIME-Version: 1.0
-In-Reply-To: <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Elaine, Robin,
+This series adds the missing clock drivers and dts nodes to enable
+the GPU on both SM8150 and SM8250.
 
-Thank you for your help!
-This patch can go in the garbage bin.
-It turns out that with SERIAL_8250 also SERIAL_8250_DW must be
-selected... ;)
+Note an extra drm/msm patch [1] is required for SM8250.
 
-It's not in the Kconfig help description.
-Shouldn't that be automatically be included for Rockchip?
-Example:
+As noted by Dmitry, GMU init fails with newer firmware, needs this patch [2].
 
-config SERIAL_8250
-	tristate "8250/16550 and compatible serial support"
-	depends on !S390
-	select SERIAL_CORE
-	select SERIAL_MCTRL_GPIO if GPIOLIB
-	select SERIAL_8250_DW if ARCH_ROCKCHIP
+[1] https://patchwork.freedesktop.org/series/78968/
+[2] https://git.linaro.org/landing-teams/working/qualcomm/kernel.git/commit/?h=tracking-qcomlt-sm8250&id=01331f2ccbe7e6c4719dbe038a5fb496db32646d
 
-Thank Robin for the introduction to FTRACE!
+Changes in V2:
+* Added "clk: qcom: gcc: fix sm8150 GPU and NPU clocks" to fix the newly added
+  SM8150 GPU gcc clocks
+* Added "Fixes:" tag to "clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL"
+* Added yaml schemas to gpucc dt-bindings patches
+* Added "clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers" and changed
+  gpucc patches to use it.
+* Removed CLK_IS_CRITICAL from gpu_cc_ahb_clk
+* Added missing rpmh regulator level for sm8250 GPU clock levels
+* Use sm8150/sm8250 iommu compatibles in dts
+* Add gcc_gpu_gpll0_clk_src/gcc_gpu_gpll0_div_clk_src to gpucc clocks in dts
 
-mount -t tracefs tracefs /sys/kernel/tracing
+Changes in V3:
+* Combined gpucc yaml bindings into one
+* Removed some unused clocks from gpucc drivers to move closely match other gpucc
+* Use parent_data instead of parent_names
 
-cd /sys/kernel/tracing
+Jonathan Marek (14):
+  clk: qcom: gcc: fix sm8150 GPU and NPU clocks
+  clk: qcom: clk-alpha-pll: remove unused/incorrect PLL_CAL_VAL
+  clk: qcom: clk-alpha-pll: same regs and ops for trion and lucid
+  clk: qcom: clk-alpha-pll: use the right PCAL_DONE value for lucid pll
+  clk: qcom: gcc: remove unnecessary vco_table from SM8150
+  dt-bindings: clock: combine qcom,sdm845-gpucc and qcom,sc7180-gpucc
+  dt-bindings: clock: add SM8150 QCOM Graphics clock bindings
+  dt-bindings: clock: add SM8250 QCOM Graphics clock bindings
+  clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers
+  clk: qcom: Add graphics clock controller driver for SM8150
+  clk: qcom: Add graphics clock controller driver for SM8250
+  dt-bindings: power: Add missing rpmpd rpmh regulator level
+  arm64: dts: qcom: add sm8150 GPU nodes
+  arm64: dts: qcom: add sm8250 GPU nodes
 
-# Without SERIAL_8250_DW
+ ...qcom,sdm845-gpucc.yaml => qcom,gpucc.yaml} |  18 +-
+ .../bindings/clock/qcom,sc7180-gpucc.yaml     |  74 ----
+ arch/arm64/boot/dts/qcom/sm8150.dtsi          | 136 +++++++
+ arch/arm64/boot/dts/qcom/sm8250.dtsi          | 143 +++++++
+ drivers/clk/qcom/Kconfig                      |  16 +
+ drivers/clk/qcom/Makefile                     |   2 +
+ drivers/clk/qcom/clk-alpha-pll.c              |  70 ++--
+ drivers/clk/qcom/clk-alpha-pll.h              |  15 +-
+ drivers/clk/qcom/gcc-sm8150.c                 |  26 +-
+ drivers/clk/qcom/gdsc.c                       |  25 ++
+ drivers/clk/qcom/gdsc.h                       |   1 +
+ drivers/clk/qcom/gpucc-sc7180.c               |  27 +-
+ drivers/clk/qcom/gpucc-sdm845.c               |  27 +-
+ drivers/clk/qcom/gpucc-sm8150.c               | 320 ++++++++++++++++
+ drivers/clk/qcom/gpucc-sm8250.c               | 348 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sm8150.h |  33 ++
+ include/dt-bindings/clock/qcom,gpucc-sm8250.h |  34 ++
+ include/dt-bindings/power/qcom-rpmpd.h        |   1 +
+ 18 files changed, 1128 insertions(+), 188 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{qcom,sdm845-gpucc.yaml => qcom,gpucc.yaml} (75%)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
+ create mode 100644 drivers/clk/qcom/gpucc-sm8150.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm8250.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8150.h
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8250.h
 
-/sys/kernel/tracing # cat trace | grep uart2
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
-       swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
-
-
-/sys/kernel/tracing # cat trace | grep uart
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
-       swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
-       swapper/0-1     [002] d..1     1.923959: clk_disable: pclk_uart1
-       swapper/0-1     [002] d..1     1.930741: clk_disable: pclk_uart0
-
-# With SERIAL_8250_DW
-
-/sys/kernel/tracing # cat trace | grep uart2
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
-       swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
-       swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
-       swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
-       swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
-       swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
-       swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
-
-/sys/kernel/tracing # cat trace | grep uart
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
-          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
-          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
-       swapper/0-1     [002] d..1     0.920034: clk_enable: sclk_uart0
-       swapper/0-1     [002] d..1     0.920085: clk_enable: pclk_uart0
-     kworker/2:1-32    [002] d..1     0.922596: clk_disable: sclk_uart0
-     kworker/2:1-32    [002] d..1     0.922613: clk_disable: pclk_uart0
-       swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
-       swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
-       swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
-       swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
-       swapper/0-1     [003] d..1     1.914158: clk_disable: pclk_uart1
-       swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
-       swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
-
-
-
-On 7/9/20 3:32 AM, elaine.zhang wrote:
-> 在 2020/7/8 下午10:45, Johan Jonker 写道:
->> The rk3328 uart2 port is used as boot console and to debug.
->> During the boot pclk_uart2 is disabled by a clk_disable_unused
->> initcall. Fix the uart2 function by marking pclk_uart2
->> as critical on rk3328. Also add sclk_uart2 as that is needed
->> for the same DT node.
->>
->> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
->> ---
->>   drivers/clk/rockchip/clk-rk3328.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/clk/rockchip/clk-rk3328.c
->> b/drivers/clk/rockchip/clk-rk3328.c
->> index c186a1985..cb7749cb7 100644
->> --- a/drivers/clk/rockchip/clk-rk3328.c
->> +++ b/drivers/clk/rockchip/clk-rk3328.c
->> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[]
->> __initconst = {
->>       "aclk_gmac_niu",
->>       "pclk_gmac_niu",
->>       "pclk_phy_niu",
->> +    "pclk_uart2",
->> +    "sclk_uart2",
->>   };
->>   
-> 
-> Not need to mark the uart2 as critical clocks, the uart clk will enabled
-> by uart driver probe(dw8250_probe()).
-> 
-> For your question,  Please check the uart2 dts node "status = okay".
-> 
-> Or You can send me the complete log, I check the status of uart2.
-> 
->>   static void __init rk3328_clk_init(struct device_node *np)
-> 
-> 
+-- 
+2.26.1
 
