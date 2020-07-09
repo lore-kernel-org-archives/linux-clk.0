@@ -2,141 +2,158 @@ Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88EF6C433E3
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 10:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92905C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 11:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 676642074B
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 10:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B7E207C4
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 11:33:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IRUSsM7Z"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fuWDO70E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726446AbgGIKO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jul 2020 06:14:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35446 "EHLO
+        id S1726315AbgGILdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 07:33:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbgGIKO6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 06:14:58 -0400
-Received: from mail-lj1-x244.google.com (mail-lj1-x244.google.com [IPv6:2a00:1450:4864:20::244])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B12DAC061A0B;
-        Thu,  9 Jul 2020 03:14:57 -0700 (PDT)
-Received: by mail-lj1-x244.google.com with SMTP id j11so1742691ljo.7;
-        Thu, 09 Jul 2020 03:14:57 -0700 (PDT)
+        with ESMTP id S1726387AbgGILdW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 07:33:22 -0400
+Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B738C08C5CE
+        for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2020 04:33:22 -0700 (PDT)
+Received: by mail-wm1-x341.google.com with SMTP id o8so1418525wmh.4
+        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2020 04:33:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=SPpf7Nl871F0m0nI/v8TgKrxk8tn0S9xL1Qn7nycdkw=;
-        b=IRUSsM7ZvHc4O94SB+wb5boOA1uuqUADtNYnhs9c45oiiN/zDzdJrC/Hg5ccplEmYy
-         f5ZmLmndmmo7uqD4I9FbT66ZrWyI7j2fRLO8o5k3n1XuLXGz0Yx6wOU98bxDMUYtBD3I
-         SF5zJ/NEY0TYVpeIof5a0SCQxpYnEL7KXdFFw5LlLW+q+E+dyML5mT+ijd8SWVyPiOfj
-         RVH4NFb8+rP/QnJ1SAPdoESBHhvMip4Ib9oOYOtD8wy1A7SUmcXK/xkmopybjGKlrbmX
-         0kFp6G8KOCFvZixCbBpNMDYINagTjxwKiMkLliaTLghpvzE7e5bMrrjxoxO8MSoEmqs8
-         sbmg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=ZIb74klp0h6UWr6/TS/11mmFGV/72HoMTQo4qJf3ORo=;
+        b=fuWDO70EKTbi49qR9wTXqgGu0SPbyIT24LkwnflguPA9AnZZP8ZS+I3J+I3gAt9DPd
+         p47yE80SfJY2aZHrT7TqCbIUHHrjgvcZf93KM7tKJYSnS39Y/gXqsz4Tf6FOSf6EEuCG
+         pH0eHFJRc8HiEZg4O6qPPbZV1iFNrYHHEa6BzGztKF4y+h3cE9mBbmAl5MBr+AyiHpBM
+         GdSF4/yXJNmhUBkJrtsXd6j03YQb540XNfhUSGgT9koPaTfQWdqwERI3DxOwrqa5y6Ec
+         B7dLDboAHNGk6e/R02K5D93b/OZCy69NhDzihGqfTuCh/PXaW1ZAa3XrAQICB9qQ6Zyf
+         cYkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=SPpf7Nl871F0m0nI/v8TgKrxk8tn0S9xL1Qn7nycdkw=;
-        b=B9N1w7fW8uKD7uEJuepwN1954jrK2Rd15AjY6Xo2i0TJiUa7GB/bbYQMB8YMBcsduS
-         WJmd+Na3c1cHz1xAesAAWgNPf16efyTuARSQEQxYtzF9Vf+09I8oYtJ6OWyP+cuZb6un
-         kCgnKkxrhjtVV+KiF2PVOmL/NMaPVWKRGVD9/GqW4pnHWDtzHfYHJ3Zka5T1JLRoWsCL
-         tZRq+H5/AJlv0A1cE7X+DSY3fRQ8S92AMKQwCj3jlH2+I7GHOeu1hYcWZ32qlbsS5gA8
-         k2E2MKl+qKPkyR2ivI+6CTbeo3NJyi0VwEdaCvdB9fEcxWyQadEjHYXf3Q/Bv4FzwiKw
-         4Mew==
-X-Gm-Message-State: AOAM530MyFN5zLOYFrhdqKWQOQ/g0TMPOfuKXUnYweHxG7k0bSjfe/Gj
-        rX23Vvea6Os//y6mVmvmhXKfML3y
-X-Google-Smtp-Source: ABdhPJy/WvRxPMkzrfdCPDFTOQsQz3XCTPMcqFtTLP+ITBQTfoItQ5akUWYnodmxyggGYzQGQMX10g==
-X-Received: by 2002:a2e:3618:: with SMTP id d24mr26980487lja.408.1594289695907;
-        Thu, 09 Jul 2020 03:14:55 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
-        by smtp.googlemail.com with ESMTPSA id o1sm641218ljj.82.2020.07.09.03.14.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 09 Jul 2020 03:14:55 -0700 (PDT)
-Subject: Re: [PATCH v3] clk: tegra: pll: Improve PLLM enable-state detection
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200708075418.25295-1-digetx@gmail.com>
- <3755bfe4-c7db-f9ac-0a02-b59b5dee401d@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <54a4cc53-9afe-60a3-d353-2d019a6c08a0@gmail.com>
-Date:   Thu, 9 Jul 2020 13:14:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=ZIb74klp0h6UWr6/TS/11mmFGV/72HoMTQo4qJf3ORo=;
+        b=toXJBr3QtyHgieLvVQQfjEPm9Odm2zyN7r6it16VESMxs08QJDt7hfekh+I1QB+nkV
+         ITzAxVqu+/dhog1leoHn3WXRfzm8jGabD6gu/FqQkS4QfXun2nOOYyjSW4v2oBZYti7m
+         YnttoM3ZjmmdcZsrrINfDvkXLh5Gvgw4H1llUBN2if6SC0dswiJRV3nwARSlTk4cCPfh
+         lVB8UrTswyQu3/12DCZUPyGQK0iZeLszMlYdxOwcMJZgHLngk2wk8TkrJJEinLRI2g5e
+         a+oJhE6Xxk/oej/huutY6Pk/SG7hZMNmvAatSXa872i8z6xfJoaltNnMa0o6v4s+HuTw
+         sPCw==
+X-Gm-Message-State: AOAM533h1ijou+IvdZuUVVqbWVldyB8vOKRPrFOeENkkeE7Cl1pYmJo6
+        mpkzgewYsIn58NANhdK9mJpoqA==
+X-Google-Smtp-Source: ABdhPJxoHQM+D4+hSCTnqJVzGv7ThVF6Lyz/19dZbPBvXwJCLjDYojSfxytI6Qb/R+mCvL+LAMy62w==
+X-Received: by 2002:a05:600c:2182:: with SMTP id e2mr13495604wme.186.1594294400952;
+        Thu, 09 Jul 2020 04:33:20 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id w12sm5453165wrm.79.2020.07.09.04.33.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 Jul 2020 04:33:20 -0700 (PDT)
+Date:   Thu, 9 Jul 2020 12:33:18 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Liviu Dudau <liviu.dudau@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kevin Brodsky <Kevin.Brodsky@arm.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Will Deacon <will@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 00/17] Modularizing Versatile Express
+Message-ID: <20200709113318.w5jcj3kjy4xc3v7p@holly.lan>
+References: <20200429205825.10604-1-robh@kernel.org>
+ <20200617150850.t23gwj3p2qnduq2a@holly.lan>
+ <CAL_Jsq+uTW_-cNOQFWPcYEVRvqf3DEqiaGTfV5uWag0zvAzjgA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3755bfe4-c7db-f9ac-0a02-b59b5dee401d@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+uTW_-cNOQFWPcYEVRvqf3DEqiaGTfV5uWag0zvAzjgA@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-09.07.2020 12:49, Jon Hunter пишет:
+On Wed, Jul 08, 2020 at 10:39:43AM -0600, Rob Herring wrote:
+> On Wed, Jun 17, 2020 at 9:08 AM Daniel Thompson
+> <daniel.thompson@linaro.org> wrote:
+> >
+> > On Wed, Apr 29, 2020 at 03:58:09PM -0500, Rob Herring wrote:
+> > > This series enables building various Versatile Express platform drivers
+> > > as modules. The primary target is the Fast Model FVP which is supported
+> > > in Android. As Android is moving towards their GKI, or generic kernel,
+> > > the hardware support has to be in modules. Currently ARCH_VEXPRESS
+> > > enables several built-in only drivers. Some of these are needed, but
+> > > some are only needed for older 32-bit VExpress platforms and can just
+> > > be disabled. For FVP, the pl111 display driver is needed. The pl111
+> > > driver depends on vexpress-osc clocks which had a dependency chain of
+> > > vexpress-config --> vexpress-syscfg --> vexpress-sysreg. These
+> > > components relied on fixed initcall ordering and didn't support deferred
+> > > probe which would have complicated making them modules. All these levels
+> > > of abstraction are needlessly complicated, so this series simplifies
+> > > things a bit by merging the vexpress-config and vexpress-syscfg
+> > > functionality.
+> > >
+> > > There's a couple of other pieces to this which I've sent out separately
+> > > as they don't have dependencies with this series. The cross subsystem
+> > > dependencies in this series are mainly the ordering of enabling drivers
+> > > as modules.
+> >
+> > This series results in the vexpress-a15 console not coming up until very
+> > late in the boot process because the console arch_initcall() ends up
+> > being deferred because it's dependencies are no longer use
+> > core_initcall() to ensure they get in first.
 > 
-> On 08/07/2020 08:54, Dmitry Osipenko wrote:
->> Power Management Controller (PMC) can override the PLLM clock settings,
->> including the enable-state. Although PMC could only act as a second level
->> gate, meaning that PLLM needs to be enabled by the Clock and Reset
->> Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
->> overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
->> order to be functional. Please note that this patch doesn't fix any known
->> problem, and thus, it's merely a minor improvement.
->>
->> Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>
->> Changelog:
->>
->> v3: - Dropped unintended code change that was accidentally added to v2.
->>
->> v2: - Added clarifying comment to the code.
->>
->>     - Prettified the code.
->>
->>  drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
->>  1 file changed, 15 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->> index b2d39a66f0fa..37cfcd6836c9 100644
->> --- a/drivers/clk/tegra/clk-pll.c
->> +++ b/drivers/clk/tegra/clk-pll.c
->> @@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
->>  	return clk_pll_wait_for_lock(pll);
->>  }
->>  
->> +static bool pllm_pmc_clk_enabled(struct tegra_clk_pll *pll)
->> +{
->> +	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
->> +
->> +	return !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) ||
->> +		(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
->> +}
->> +
+> Which was a hack...
 > 
+> > Is there a problem registering vexpress-osc, vexpress-sysreg and
+> > vexpress-config as core_initcall's so the console behaves nicely
+> > when they are all compiled as built-ins?
 > 
-> I am not sure that the name of the above function really reflects what
-> it is doing. If it was enabled, isn't it the AND of these bits?
-> 
-> Futhermore, what we really want to know is if the override is enabled,
-> but the PMC PLLM enable is not set. In other words, the PMC is gating
-> the clock. So maybe we should have a function that is called something
-> like pllm_clk_is_gated_by_pmc().
+> I think the correct way to solve this is with devlinks which reduces
+> the deferred probes. Can you see if that's better? That's still off by
+> default and needs a kernel command line option. That may just get the
 
-Yeah, the name indeed could be improved + the logic could be inverted in
-order to make it all more clear. Thank you for the suggestion! I'll
-prepare the v4.
+"fw_devlink=on", right?
+
+I didn't see any difference on time to console activation with this
+enabled.
+
+
+> console up at an earlier initcall level, but not before other h/w
+> drivers. I think having some way to prioritize probe order without
+> initcall hacks would be good. Then you could prioritize a console or
+> splash screen or ???.
+
+I don't disagree on "the right thing to do" although I am a little
+surprised to see the old hack removed a replacement is ready. IIUC
+the modularization for GKI doesn't require them to be changed.
+
+
+> Also, if you really need an early console, then use earlycon.
+
+To be honest I have relaxed a few expectations in my test harness and
+have already moved on ;-).
+
+Right now the console will not come up until after we have decompressed
+the ramdisk even when we have configure the kernel to have a rich set of
+console drivers built in. That does feel pretty uncomfortable as a user,
+especially if you have a large initrd but the test suite doesn't mind!
+
+
+Daniel.
