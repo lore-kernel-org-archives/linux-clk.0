@@ -2,99 +2,109 @@ Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 391C1C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 01:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE4AC433DF
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 08:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0971E206F6
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 01:40:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15EC12070E
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 08:17:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726106AbgGIBkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jul 2020 21:40:03 -0400
-Received: from regular1.263xmail.com ([211.150.70.199]:58194 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbgGIBkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jul 2020 21:40:03 -0400
-X-Greylist: delayed 468 seconds by postgrey-1.27 at vger.kernel.org; Wed, 08 Jul 2020 21:40:02 EDT
-Received: from localhost (unknown [192.168.167.32])
-        by regular1.263xmail.com (Postfix) with ESMTP id A14ADF1B;
-        Thu,  9 Jul 2020 09:32:06 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P14852T139810280818432S1594258325506381_;
-        Thu, 09 Jul 2020 09:32:06 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <c13d51af5d7d2fabafb533b54b30220b>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: linux-kernel@vger.kernel.org
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200708144528.20465-1-jbx6244@gmail.com>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
-Date:   Thu, 9 Jul 2020 09:32:05 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
-MIME-Version: 1.0
-In-Reply-To: <20200708144528.20465-1-jbx6244@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1726374AbgGIIRN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 04:17:13 -0400
+Received: from foss.arm.com ([217.140.110.172]:41840 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726124AbgGIIRN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Jul 2020 04:17:13 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE78F31B;
+        Thu,  9 Jul 2020 01:17:12 -0700 (PDT)
+Received: from usa.arm.com (e103737-lin.cambridge.arm.com [10.1.197.49])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CD7EA3F887;
+        Thu,  9 Jul 2020 01:17:11 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dien Pham <dien.pham.ry@renesas.com>
+Subject: [PATCH v2 1/2] firmware: arm_scmi: Keep the discrete clock rates sorted
+Date:   Thu,  9 Jul 2020 09:17:04 +0100
+Message-Id: <20200709081705.46084-1-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-在 2020/7/8 下午10:45, Johan Jonker 写道:
-> The rk3328 uart2 port is used as boot console and to debug.
-> During the boot pclk_uart2 is disabled by a clk_disable_unused
-> initcall. Fix the uart2 function by marking pclk_uart2
-> as critical on rk3328. Also add sclk_uart2 as that is needed
-> for the same DT node.
->
-> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
-> ---
->   drivers/clk/rockchip/clk-rk3328.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/clk/rockchip/clk-rk3328.c b/drivers/clk/rockchip/clk-rk3328.c
-> index c186a1985..cb7749cb7 100644
-> --- a/drivers/clk/rockchip/clk-rk3328.c
-> +++ b/drivers/clk/rockchip/clk-rk3328.c
-> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[] __initconst = {
->   	"aclk_gmac_niu",
->   	"pclk_gmac_niu",
->   	"pclk_phy_niu",
-> +	"pclk_uart2",
-> +	"sclk_uart2",
->   };
->   
+Instead of relying on the firmware to keep the clock rates sorted, let
+us sort the list. This is not essential for clock layer but it helps
+to find the min and max rates easily from the list.
 
-Not need to mark the uart2 as critical clocks, the uart clk will enabled 
-by uart driver probe(dw8250_probe()).
+Link: https://lore.kernel.org/r/20200708110725.18017-1-sudeep.holla@arm.com
+Fixes: 5f6c6430e904 ("firmware: arm_scmi: add initial support for clock protocol")
+Reported-by: Dien Pham <dien.pham.ry@renesas.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/firmware/arm_scmi/clock.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-For your question,  Please check the uart2 dts node "status = okay".
 
-Or You can send me the complete log, I check the status of uart2.
+Hi Dien-san,
 
->   static void __init rk3328_clk_init(struct device_node *np)
+If you could review/test these patches, I can queue them ASAP.
+I am planning to send the PR for ARM SoC later this week, so I need
+your tested-by.
 
+v1[1]->v2:
+	- Fixed the warning, sent the wrong version earlier
+
+Regards,
+Sudeep
+
+[1] https://lore.kernel.org/r/20200708110725.18017-1-sudeep.holla@arm.com
+
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index 4c2227662b26..c90f23a812f5 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2018 ARM Ltd.
+  */
+
++#include <linux/sort.h>
++
+ #include "common.h"
+
+ enum scmi_clock_protocol_cmd {
+@@ -121,6 +123,13 @@ static int scmi_clock_attributes_get(const struct scmi_handle *handle,
+ 	return ret;
+ }
+
++static int rate_cmp_func(const void *_r1, const void *_r2)
++{
++	const u64 *r1 = _r1, *r2 = _r2;
++
++	return r1 - r2;
++}
++
+ static int
+ scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
+ 			      struct scmi_clock_info *clk)
+@@ -184,8 +193,10 @@ scmi_clock_describe_rates_get(const struct scmi_handle *handle, u32 clk_id,
+ 		 */
+ 	} while (num_returned && num_remaining);
+
+-	if (rate_discrete)
++	if (rate_discrete) {
+ 		clk->list.num_rates = tot_rate_cnt;
++		sort(rate, tot_rate_cnt, sizeof(*rate), rate_cmp_func, NULL);
++	}
+
+ 	clk->rate_discrete = rate_discrete;
+
+--
+2.17.1
 
