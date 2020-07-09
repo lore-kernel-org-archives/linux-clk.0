@@ -2,158 +2,214 @@ Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92905C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 11:33:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172D9C433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 12:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 71B7E207C4
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 11:33:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E31FC2077D
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 12:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fuWDO70E"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oz9/FrdY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbgGILdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jul 2020 07:33:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47604 "EHLO
+        id S1726446AbgGIME4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 08:04:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52466 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbgGILdW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 07:33:22 -0400
-Received: from mail-wm1-x341.google.com (mail-wm1-x341.google.com [IPv6:2a00:1450:4864:20::341])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B738C08C5CE
-        for <linux-clk@vger.kernel.org>; Thu,  9 Jul 2020 04:33:22 -0700 (PDT)
-Received: by mail-wm1-x341.google.com with SMTP id o8so1418525wmh.4
-        for <linux-clk@vger.kernel.org>; Thu, 09 Jul 2020 04:33:22 -0700 (PDT)
+        with ESMTP id S1726327AbgGIME4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 08:04:56 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEF14C061A0B;
+        Thu,  9 Jul 2020 05:04:55 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id lx13so2002271ejb.4;
+        Thu, 09 Jul 2020 05:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=ZIb74klp0h6UWr6/TS/11mmFGV/72HoMTQo4qJf3ORo=;
-        b=fuWDO70EKTbi49qR9wTXqgGu0SPbyIT24LkwnflguPA9AnZZP8ZS+I3J+I3gAt9DPd
-         p47yE80SfJY2aZHrT7TqCbIUHHrjgvcZf93KM7tKJYSnS39Y/gXqsz4Tf6FOSf6EEuCG
-         pH0eHFJRc8HiEZg4O6qPPbZV1iFNrYHHEa6BzGztKF4y+h3cE9mBbmAl5MBr+AyiHpBM
-         GdSF4/yXJNmhUBkJrtsXd6j03YQb540XNfhUSGgT9koPaTfQWdqwERI3DxOwrqa5y6Ec
-         B7dLDboAHNGk6e/R02K5D93b/OZCy69NhDzihGqfTuCh/PXaW1ZAa3XrAQICB9qQ6Zyf
-         cYkw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0zImYmeVH2cb5ZKZAWLVklettku0gl+82cmF9xIzIxc=;
+        b=Oz9/FrdYqRRn8i0zwob8qJNoewkLGHF/55gRHywFIp6s8QpbqYCLHc657OVkO8xlqe
+         +GPUnF4hQSerKpxB2QgaeOIxQUN1L8oty3gXG1qc1wcbAPVo3vOICqd3wakjp/Nk348z
+         7NRwy2m1h8z/V/Umxpi9my+ViWqlu7bBXM2KZkkDXsuYciM/+2FT+mhEDPpcZWdlRt1n
+         klrrK9fF/Gim6Ao9WT7UpHaIV/JIdSGVpRRx3dWWg9HyplMjuDgziRGIBLX0W0GLWz1P
+         li2WTT+0wTl+B85xHlIEee08IKSzXcWJdRz2sreqC8XSj8n62Ecas2ExC2ecBbCaSIc0
+         /MNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ZIb74klp0h6UWr6/TS/11mmFGV/72HoMTQo4qJf3ORo=;
-        b=toXJBr3QtyHgieLvVQQfjEPm9Odm2zyN7r6it16VESMxs08QJDt7hfekh+I1QB+nkV
-         ITzAxVqu+/dhog1leoHn3WXRfzm8jGabD6gu/FqQkS4QfXun2nOOYyjSW4v2oBZYti7m
-         YnttoM3ZjmmdcZsrrINfDvkXLh5Gvgw4H1llUBN2if6SC0dswiJRV3nwARSlTk4cCPfh
-         lVB8UrTswyQu3/12DCZUPyGQK0iZeLszMlYdxOwcMJZgHLngk2wk8TkrJJEinLRI2g5e
-         a+oJhE6Xxk/oej/huutY6Pk/SG7hZMNmvAatSXa872i8z6xfJoaltNnMa0o6v4s+HuTw
-         sPCw==
-X-Gm-Message-State: AOAM533h1ijou+IvdZuUVVqbWVldyB8vOKRPrFOeENkkeE7Cl1pYmJo6
-        mpkzgewYsIn58NANhdK9mJpoqA==
-X-Google-Smtp-Source: ABdhPJxoHQM+D4+hSCTnqJVzGv7ThVF6Lyz/19dZbPBvXwJCLjDYojSfxytI6Qb/R+mCvL+LAMy62w==
-X-Received: by 2002:a05:600c:2182:: with SMTP id e2mr13495604wme.186.1594294400952;
-        Thu, 09 Jul 2020 04:33:20 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id w12sm5453165wrm.79.2020.07.09.04.33.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jul 2020 04:33:20 -0700 (PDT)
-Date:   Thu, 9 Jul 2020 12:33:18 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kevin Brodsky <Kevin.Brodsky@arm.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Will Deacon <will@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 00/17] Modularizing Versatile Express
-Message-ID: <20200709113318.w5jcj3kjy4xc3v7p@holly.lan>
-References: <20200429205825.10604-1-robh@kernel.org>
- <20200617150850.t23gwj3p2qnduq2a@holly.lan>
- <CAL_Jsq+uTW_-cNOQFWPcYEVRvqf3DEqiaGTfV5uWag0zvAzjgA@mail.gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0zImYmeVH2cb5ZKZAWLVklettku0gl+82cmF9xIzIxc=;
+        b=L01N78OStyivScWmMbJXG+GnM9CK3uSv0SIo164poELK/AFkB0vTb5CKRlD+MPUpqA
+         2oKAI9Lpu+4hRVMub2eliU/r997mUSsDha5+TyMarT69UMaP8V5knqpg7mFbML8+1Ibl
+         c6YRxOR9lIGLzSU8H8qXp8EEVowg9MPxlY/T1W0JshVvVO2zaiaHH2/IUgPUn72RE7EA
+         rS3/SScuV9NZ3ZyqvSKjubOW85ZpSMkTWW2k1vTSQ1eGm+jviB2XgRUNfjKrK5tnlaaM
+         U5IGR86CeFjIO8yOeJSLSP6eB/rRHir/DjO/UfHw6aJmXocmB+7Yko7Q9xspxsaeY5db
+         5B5g==
+X-Gm-Message-State: AOAM532F76doOmVM5vREdFjZ/wIabBw+b1E4vponRuEh5RODEi8sK26W
+        fYEHCXBQIpqor0KugX6inOr5jj0ue1M=
+X-Google-Smtp-Source: ABdhPJwMt1uac/fO7xYUSf/Fv6CBZwDYVGcxGtSHD48eVkRoL6aGBpsYAkRI/YRFUxMwbmOvMLzocQ==
+X-Received: by 2002:a17:906:2b52:: with SMTP id b18mr57784048ejg.158.1594296294559;
+        Thu, 09 Jul 2020 05:04:54 -0700 (PDT)
+Received: from [192.168.2.1] (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id v3sm1888683edj.89.2020.07.09.05.04.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 09 Jul 2020 05:04:54 -0700 (PDT)
+Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
+To:     "elaine.zhang" <zhangqing@rock-chips.com>, heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20200708144528.20465-1-jbx6244@gmail.com>
+ <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
+From:   Johan Jonker <jbx6244@gmail.com>
+Message-ID: <68073138-1f94-9d5b-ad48-e82bc538c915@gmail.com>
+Date:   Thu, 9 Jul 2020 14:04:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+uTW_-cNOQFWPcYEVRvqf3DEqiaGTfV5uWag0zvAzjgA@mail.gmail.com>
+In-Reply-To: <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 08, 2020 at 10:39:43AM -0600, Rob Herring wrote:
-> On Wed, Jun 17, 2020 at 9:08 AM Daniel Thompson
-> <daniel.thompson@linaro.org> wrote:
-> >
-> > On Wed, Apr 29, 2020 at 03:58:09PM -0500, Rob Herring wrote:
-> > > This series enables building various Versatile Express platform drivers
-> > > as modules. The primary target is the Fast Model FVP which is supported
-> > > in Android. As Android is moving towards their GKI, or generic kernel,
-> > > the hardware support has to be in modules. Currently ARCH_VEXPRESS
-> > > enables several built-in only drivers. Some of these are needed, but
-> > > some are only needed for older 32-bit VExpress platforms and can just
-> > > be disabled. For FVP, the pl111 display driver is needed. The pl111
-> > > driver depends on vexpress-osc clocks which had a dependency chain of
-> > > vexpress-config --> vexpress-syscfg --> vexpress-sysreg. These
-> > > components relied on fixed initcall ordering and didn't support deferred
-> > > probe which would have complicated making them modules. All these levels
-> > > of abstraction are needlessly complicated, so this series simplifies
-> > > things a bit by merging the vexpress-config and vexpress-syscfg
-> > > functionality.
-> > >
-> > > There's a couple of other pieces to this which I've sent out separately
-> > > as they don't have dependencies with this series. The cross subsystem
-> > > dependencies in this series are mainly the ordering of enabling drivers
-> > > as modules.
-> >
-> > This series results in the vexpress-a15 console not coming up until very
-> > late in the boot process because the console arch_initcall() ends up
-> > being deferred because it's dependencies are no longer use
-> > core_initcall() to ensure they get in first.
+Hi Elaine, Robin,
+
+Thank you for your help!
+This patch can go in the garbage bin.
+It turns out that with SERIAL_8250 also SERIAL_8250_DW must be
+selected... ;)
+
+It's not in the Kconfig help description.
+Shouldn't that be automatically be included for Rockchip?
+Example:
+
+config SERIAL_8250
+	tristate "8250/16550 and compatible serial support"
+	depends on !S390
+	select SERIAL_CORE
+	select SERIAL_MCTRL_GPIO if GPIOLIB
+	select SERIAL_8250_DW if ARCH_ROCKCHIP
+
+Thank Robin for the introduction to FTRACE!
+
+mount -t tracefs tracefs /sys/kernel/tracing
+
+cd /sys/kernel/tracing
+
+# Without SERIAL_8250_DW
+
+/sys/kernel/tracing # cat trace | grep uart2
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
+       swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
+
+
+/sys/kernel/tracing # cat trace | grep uart
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
+       swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
+       swapper/0-1     [002] d..1     1.923959: clk_disable: pclk_uart1
+       swapper/0-1     [002] d..1     1.930741: clk_disable: pclk_uart0
+
+# With SERIAL_8250_DW
+
+/sys/kernel/tracing # cat trace | grep uart2
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
+       swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
+       swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
+       swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
+       swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
+       swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
+       swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
+
+/sys/kernel/tracing # cat trace | grep uart
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
+          <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
+          <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
+       swapper/0-1     [002] d..1     0.920034: clk_enable: sclk_uart0
+       swapper/0-1     [002] d..1     0.920085: clk_enable: pclk_uart0
+     kworker/2:1-32    [002] d..1     0.922596: clk_disable: sclk_uart0
+     kworker/2:1-32    [002] d..1     0.922613: clk_disable: pclk_uart0
+       swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
+       swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
+       swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
+       swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
+       swapper/0-1     [003] d..1     1.914158: clk_disable: pclk_uart1
+       swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
+       swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
+
+
+
+On 7/9/20 3:32 AM, elaine.zhang wrote:
+> 在 2020/7/8 下午10:45, Johan Jonker 写道:
+>> The rk3328 uart2 port is used as boot console and to debug.
+>> During the boot pclk_uart2 is disabled by a clk_disable_unused
+>> initcall. Fix the uart2 function by marking pclk_uart2
+>> as critical on rk3328. Also add sclk_uart2 as that is needed
+>> for the same DT node.
+>>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+>> ---
+>>   drivers/clk/rockchip/clk-rk3328.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/clk/rockchip/clk-rk3328.c
+>> b/drivers/clk/rockchip/clk-rk3328.c
+>> index c186a1985..cb7749cb7 100644
+>> --- a/drivers/clk/rockchip/clk-rk3328.c
+>> +++ b/drivers/clk/rockchip/clk-rk3328.c
+>> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[]
+>> __initconst = {
+>>       "aclk_gmac_niu",
+>>       "pclk_gmac_niu",
+>>       "pclk_phy_niu",
+>> +    "pclk_uart2",
+>> +    "sclk_uart2",
+>>   };
+>>   
 > 
-> Which was a hack...
+> Not need to mark the uart2 as critical clocks, the uart clk will enabled
+> by uart driver probe(dw8250_probe()).
 > 
-> > Is there a problem registering vexpress-osc, vexpress-sysreg and
-> > vexpress-config as core_initcall's so the console behaves nicely
-> > when they are all compiled as built-ins?
+> For your question,  Please check the uart2 dts node "status = okay".
 > 
-> I think the correct way to solve this is with devlinks which reduces
-> the deferred probes. Can you see if that's better? That's still off by
-> default and needs a kernel command line option. That may just get the
+> Or You can send me the complete log, I check the status of uart2.
+> 
+>>   static void __init rk3328_clk_init(struct device_node *np)
+> 
+> 
 
-"fw_devlink=on", right?
-
-I didn't see any difference on time to console activation with this
-enabled.
-
-
-> console up at an earlier initcall level, but not before other h/w
-> drivers. I think having some way to prioritize probe order without
-> initcall hacks would be good. Then you could prioritize a console or
-> splash screen or ???.
-
-I don't disagree on "the right thing to do" although I am a little
-surprised to see the old hack removed a replacement is ready. IIUC
-the modularization for GKI doesn't require them to be changed.
-
-
-> Also, if you really need an early console, then use earlycon.
-
-To be honest I have relaxed a few expectations in my test harness and
-have already moved on ;-).
-
-Right now the console will not come up until after we have decompressed
-the ramdisk even when we have configure the kernel to have a rich set of
-console drivers built in. That does feel pretty uncomfortable as a user,
-especially if you have a large initrd but the test suite doesn't mind!
-
-
-Daniel.
