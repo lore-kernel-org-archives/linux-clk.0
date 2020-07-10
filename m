@@ -1,99 +1,98 @@
-Return-Path: <SRS0=8I5m=AU=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4xLm=AV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23662C433E0
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 20:41:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EC3C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 01:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 042C120774
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jul 2020 20:41:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4551420708
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 01:14:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="nbX6FxWq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yitk5wyJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726260AbgGIUln (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jul 2020 16:41:43 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33752 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726183AbgGIUln (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 16:41:43 -0400
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 069JVwRT053736;
-        Thu, 9 Jul 2020 15:57:11 -0400
-Received: from ppma03wdc.us.ibm.com (ba.79.3fa9.ip4.static.sl-reverse.com [169.63.121.186])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 325p3j6uv8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jul 2020 15:57:10 -0400
-Received: from pps.filterd (ppma03wdc.us.ibm.com [127.0.0.1])
-        by ppma03wdc.us.ibm.com (8.16.0.42/8.16.0.42) with SMTP id 069Jnhkt030215;
-        Thu, 9 Jul 2020 19:57:09 GMT
-Received: from b03cxnp07028.gho.boulder.ibm.com (b03cxnp07028.gho.boulder.ibm.com [9.17.130.15])
-        by ppma03wdc.us.ibm.com with ESMTP id 325k1r0pge-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 09 Jul 2020 19:57:09 +0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 069Jv82L46334234
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 9 Jul 2020 19:57:08 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 596B87805F;
-        Thu,  9 Jul 2020 19:57:08 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C906A7805C;
-        Thu,  9 Jul 2020 19:57:07 +0000 (GMT)
-Received: from ghost4.ibm.com (unknown [9.163.54.227])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Thu,  9 Jul 2020 19:57:07 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, andrew@aj.id.au, joel@jms.id.au,
-        ulf.hansson@linaro.org, adrian.hunter@intel.com, sboyd@kernel.org,
-        mturquette@baylibre.com, eajames@linux.ibm.com
-Subject: [PATCH 2/2] mmc: sdhci-of-aspeed: Fix clock divider calculation
-Date:   Thu,  9 Jul 2020 14:57:06 -0500
-Message-Id: <20200709195706.12741-3-eajames@linux.ibm.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20200709195706.12741-1-eajames@linux.ibm.com>
+        id S1726872AbgGJBOY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 21:14:24 -0400
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:53103 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726311AbgGJBOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 21:14:23 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 4DCFA2E3;
+        Thu,  9 Jul 2020 21:14:22 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute3.internal (MEProxy); Thu, 09 Jul 2020 21:14:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=yw9HbxmYVrUStuFGG15xWYmuHOEp4mb
+        rjs7zPres9Ds=; b=nbX6FxWqm7xH1s8bcJ6VKQgvibPNZwzXHk8GeKQam5IJfH3
+        ES5IjDIFHNeB39MXXAKRPDPz3xXczt133heBRVoonQ/A4Due0kGY3Kqj7nejT/1T
+        DmzSz8LOSNuN0LKxdpUoMzLfH8pfXL+3TFTM/YJ+wcQnMtWWsYPtLkbvh9g16Qz6
+        579Zce5dihAC1CZDT2QuEHrdRUSLHp+QI4G8fxfrZvBkuI29vLbDHmrFtL2GFZlX
+        q4QscgnDOSJUifKAGnxNyUTKD/4r4UctcEc+/A9ul+lI6Zwv9WBJfTUL9zIwDxSW
+        rr81A6x1Y4MQhge32sC+Y4vwaXBVkCUxsZIAENQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=yw9Hbx
+        mYVrUStuFGG15xWYmuHOEp4mbrjs7zPres9Ds=; b=Yitk5wyJCWnlKpxOnjf389
+        XMJK0dnGDNDYEBOF7FQ7ScdS7N5jhUxjE0FNoB9V7iTsUbIPlCgBfrkO5duA/s0O
+        /WMeCuYTKM2nYBoQQfxRxjv7y7nEUc2ED/vVbbzT/I0iYNsIiNGSij5DcmIa1kJz
+        6frLO+jGYiSUvpHZi/Omqv1OuabKj1raUQNk6txvr/OMZsngpRHQrskjMK8HYgGg
+        G1evBDieb24xQo1Fs7HaiLIuElFEoQx2hAEcw4MdUUYb8Q7sdcUr74LPy/3mkJKq
+        xxB7oPOR6A5TNV2fFRJR574O4aIW8seyhqRUAG9Anflu3VpFux+AkX345gvxXbTg
+        ==
+X-ME-Sender: <xms:7MAHX3p7Xk6KCv6dP_qJlFhK4jUdkn9BhUN_nSgBL7ccOVNkPRsnFw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrvddtgdegfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucggtffrrg
+    htthgvrhhnpeehhfefkefgkeduveehffehieehudejfeejveejfedugfefuedtuedvhefh
+    veeuffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grnhgurhgvfiesrghjrdhiugdrrghu
+X-ME-Proxy: <xmx:7MAHXxpLmClJpfh_ZhbV5ne9AjsSlX2WZQDxmmsookPsNe_j6S1Zaw>
+    <xmx:7MAHX0OuqUgry6xIxGDFQp_Xpm-jHqy1Bb4aUbpM9b-NnkjXaCHgmA>
+    <xmx:7MAHX67Qdmft9mSv_RLQ9YBr_ADv2Ys1pK-UP8ZONFDTcK2akC9Rog>
+    <xmx:7cAHXzuzqQHp5TtKVCGo7e6MnlF71RaqakwCZqFV7Jo0ATosZlopyw>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 77FD0E00AA; Thu,  9 Jul 2020 21:14:20 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.3.0-dev0-613-g8a73ad6-fm-20200709.001-g8a73ad6e
+Mime-Version: 1.0
+Message-Id: <4acad452-33c7-4fb2-ba90-19a824558b94@www.fastmail.com>
+In-Reply-To: <20200709195706.12741-3-eajames@linux.ibm.com>
 References: <20200709195706.12741-1-eajames@linux.ibm.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
- definitions=2020-07-09_10:2020-07-09,2020-07-09 signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- spamscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 mlxlogscore=999
- bulkscore=0 phishscore=0 priorityscore=1501 suspectscore=1 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2006250000
- definitions=main-2007090131
+ <20200709195706.12741-3-eajames@linux.ibm.com>
+Date:   Fri, 10 Jul 2020 10:43:59 +0930
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Eddie James" <eajames@linux.ibm.com>, linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "Joel Stanley" <joel@jms.id.au>,
+        "Ulf Hansson" <ulf.hansson@linaro.org>,
+        "Adrian Hunter" <adrian.hunter@intel.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Michael Turquette" <mturquette@baylibre.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci-of-aspeed: Fix clock divider calculation
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When calculating the clock divider, start dividing at 2 instead of 1.
-The divider is divided by two at the end of the calculation, so starting
-at 1 may result in a divider of 0, which shouldn't happen.
 
-Signed-off-by: Eddie James <eajames@linux.ibm.com>
----
- drivers/mmc/host/sdhci-of-aspeed.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
-index 56912e30c47e..a1bcc0f4ba9e 100644
---- a/drivers/mmc/host/sdhci-of-aspeed.c
-+++ b/drivers/mmc/host/sdhci-of-aspeed.c
-@@ -68,7 +68,7 @@ static void aspeed_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
- 	if (WARN_ON(clock > host->max_clk))
- 		clock = host->max_clk;
- 
--	for (div = 1; div < 256; div *= 2) {
-+	for (div = 2; div < 256; div *= 2) {
- 		if ((parent / div) <= clock)
- 			break;
- 	}
--- 
-2.24.0
+On Fri, 10 Jul 2020, at 05:27, Eddie James wrote:
+> When calculating the clock divider, start dividing at 2 instead of 1.
+> The divider is divided by two at the end of the calculation, so starting
+> at 1 may result in a divider of 0, which shouldn't happen.
+> 
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
 
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
