@@ -2,140 +2,68 @@ Return-Path: <SRS0=4xLm=AV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4B9C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 14:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE29AC433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 89F202078B
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 14:28:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="jV50f32Z";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tWKhw0vl"
+	by mail.kernel.org (Postfix) with ESMTP id 8802D207BB
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:40:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594424407;
+	bh=DAcCdB1EgYPLqV9ciRpz31iFOWwYtcG3yvWjyBynQAs=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=o7v9lwskZ9Piw6dsxRvCwTz+SxoZpAVYMacPEyJGSzZc2fys8E1cONZOdFQQD4swa
+	 fTPJzIUSuP88NzCKHo7/JSbyhYXycpv49isjb25i+8ZB2zidKVzH/xcgSBQr4r9X7c
+	 IDHFrOnUc3vizbIA9Vb5XY0POMG1/UM16GmXgoOU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727110AbgGJO2v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jul 2020 10:28:51 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:42259 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726896AbgGJO2u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2020 10:28:50 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 7221E845;
-        Fri, 10 Jul 2020 10:28:47 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Fri, 10 Jul 2020 10:28:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=H
-        dz4DLRipzbxKr7xR0rS1IxGPTkOR/aymG5+qu4SFKM=; b=jV50f32ZMRdGcju76
-        xcs/nSGrdpE4sQCUUYddJx+6vd3QI+FpCNHseVhWJenXZoTOWJMiYs/YUNAQTNNW
-        PU55R+LwHyRxfw256L7LIIq3Q2BnW2YQcYNnsH1GwO4F7/rdyMUXVk3NDUe4Y3t1
-        eO71ZXvnNzThn1D+LrGlcd8YvW+5E4lHSj17KJItj7TgcM36ebwE5EbfZrGaBL2l
-        dXej30v/9U+QZ4kEs1TA7Fi6tvsVZBqg+I3m6QDVxcZTZkaVmgEkvIQ4aBsex8iK
-        Jnhg9TqzP5U9No3sggCzsC93f0iFX//nBalF5zXJeUac+qQKehnw5ojyiQ1i4Mum
-        HElYQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=Hdz4DLRipzbxKr7xR0rS1IxGPTkOR/aymG5+qu4SF
-        KM=; b=tWKhw0vlIYAWv/vnpEOC1/V1izkAJhSsxvOd8t1hnSOetf7YrD91FY92t
-        7EtKZxvzWKhvPD+iHya/YIDJHLZq6EQKmOMIFvYwRpinOLecRV11LaNaLCvn/9z2
-        5NBpIH+BfTslNdKaK/ZHPLMPLS5XF2RfMUhs4b/L1npO6XHVXgBVgNAeyz8Hb8i4
-        QrmZnOSiPPzU6YsheC/2ue54Cg3pJR013mEyiKr8Js49lUd/B7+Thn4khI/O/bVc
-        SUvXmz1c3FEoDg50MA1UpPTh0VzmhB7MfBPqUM365vBHLwkQhiTJVUyWbThhQV0j
-        j7XjmzDlmAT0v1vpy4GpQ351uQBWg==
-X-ME-Sender: <xms:G3sIX1j919aLyVbZGlsNUWj6vR7vsR79oT4U1QOaDVJWSVllp1Ncgg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrvddugdektdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepgfejtedtjefggfffvdetuedthedtheegheeuteekfeeghfdtteejkeeludeg
-    vddunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:G3sIX6AKqqw4oIjXblUZJxow5lSiJ1xp5zMy_WasLxuR-CrJp3t6Xw>
-    <xmx:G3sIX1Ge0sxNOXKYSnkdK3ZqxYgdQW9-cvkHcb7WAh3NaCxvXlIj-A>
-    <xmx:G3sIX6SaeeXypihV_rnGMCvvoehNkBb8beRw62slq9K7H4gONHnS3w>
-    <xmx:H3sIX6cBl607v9CFjrFgJw6pOcZr-BlnLHwaY9VCXOP8HYBseBZp9HGd4R0>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8389E3280064;
-        Fri, 10 Jul 2020 10:28:43 -0400 (EDT)
-Date:   Fri, 10 Jul 2020 16:28:41 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     robh+dt@kernel.org, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, gregory.clement@bootlin.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
-        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
-        lee.jones@linaro.org, p.zabel@pengutronix.de, clabbe@baylibre.com,
-        icenowy@aosc.io, megous@megous.com, stefan@olimex.com,
-        bage@linutronix.de, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        huangshuosheng@allwinnertech.com, liyong@allwinnertech.com
-Subject: Re: [PATCH v3 00/16] Allwinner A100 Initial support
-Message-ID: <20200710142841.7ue3xtracowexjct@gilmour.lan>
-References: <20200708071942.22595-1-frank@allwinnertech.com>
+        id S1726519AbgGJXkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jul 2020 19:40:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43604 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbgGJXkG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Jul 2020 19:40:06 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E3C920657;
+        Fri, 10 Jul 2020 23:40:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594424406;
+        bh=DAcCdB1EgYPLqV9ciRpz31iFOWwYtcG3yvWjyBynQAs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=mdqdIeyGsaecb+NfLxP/mF/ITnHBi+DpsR364mHWcd6/BqiuIOz5++NPvXjLiCFqR
+         vBXfX1Uj3gNkljYBijL4C+IGnEPt57XOXbQfadxg36RIzp8Iqeud2EPWv+mM9Negv+
+         rSjNJAijysO2V0mItKCh7XBxfI5fRovi4+rcVy7I=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200708071942.22595-1-frank@allwinnertech.com>
+In-Reply-To: <1593766722-28838-1-git-send-email-gokulsri@codeaurora.org>
+References: <20190726092332.25202-1-govinds@codeaurora.org> <1593766722-28838-1-git-send-email-gokulsri@codeaurora.org>
+Subject: Re: [v7 0/4] Add non PAS wcss Q6 support for QCS404
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     agross@kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, govinds@codeaurora.org,
+        sricharan@codeaurora.org, gokulsri@codeaurora.org
+To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Date:   Fri, 10 Jul 2020 16:40:05 -0700
+Message-ID: <159442440535.1987609.2710208765230021853@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Quoting Gokul Sriram Palanisamy (2020-07-03 01:58:38)
+> Changes since v6:
+>  Removed duplicate structure entry added during rebase in v5
 
-On Wed, Jul 08, 2020 at 03:19:26PM +0800, Frank Lee wrote:
-> This patch set adds initial support for allwinner a100 soc,
-> which is a 64-bit tablet chip.
->=20
-> v3:
-> -Add pmu and nmi support
-> -Add read data mask for calibration
-> -Code style
-> -Some trivial things in yaml files
->=20
-> v2:
-> -Some naming consistency
-> -Repair email address
-> -Fix mmc clock
-> -Don't export system clock
-> -Fix checkpatch warning
-> -Drop unneeded pin function, convert to jtag_gpu and i2s_x
->=20
-> Frank Lee (16):
->   dt-bindings: clk: sunxi-ccu: add compatible string for A100 CCU and
->     R-CCU
->   clk: sunxi-ng: add support for the Allwinner A100 CCU
->   dt-bindings: pinctrl: sunxi: Add A100 pinctrl bindings
->   dt-bindings: pinctrl: sunxi: make gpio banks supplies required
->   pinctrl: sunxi: add support for the Allwinner A100 pin controller
->   dt-bindings: nvmem: SID: add binding for A100's SID controller
->   dt-bindings: thermal: sun8i: Add binding for A100's THS controller
->   thermal: sun8i: add TEMP_CALIB_MASK for calibration data in
->     sun50i_h6_ths_calibrate
->   thermal: sun8i: Add A100's THS controller support
->   mfd: axp20x: Allow the AXP803 to be probed by I2C
->   dt-bindings: irq: sun7i-nmi: fix dt-binding for a80 nmi
->   dt-bindings: irq: sun7i-nmi: Add binding for A100's NMI controller
+Please stop sending this as a reply to the previous series. Please see
+point 15 in Documentation/process/submitting-patches.rst
 
-it doesn't look like those patches went through?
-
->   dt-bindings: i2c: mv64xxx: Add compatible for the A100 i2c node.
->   arm64: allwinner: A100: add the basical Allwinner A100 DTSI file
->   dt-bindings: arm: sunxi: Add Allwinner A100 Perf1 Board bindings
->   arm64: allwinner: A100: add support for Allwinner Perf1 board
-
-On a more general topic, which bootloader have you used to test this?
-The one from Allwinner's BSP I assume?
-
-Maxime
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#expl=
+icit-in-reply-to-headers
