@@ -2,68 +2,65 @@ Return-Path: <SRS0=4xLm=AV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE29AC433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668ABC433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8802D207BB
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4117F2077D
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 23:45:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594424407;
-	bh=DAcCdB1EgYPLqV9ciRpz31iFOWwYtcG3yvWjyBynQAs=;
+	s=default; t=1594424718;
+	bh=IeQ0jyzRyFVsFVC5+B1UPmsShd8pc123/IAnSaCDInk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=o7v9lwskZ9Piw6dsxRvCwTz+SxoZpAVYMacPEyJGSzZc2fys8E1cONZOdFQQD4swa
-	 fTPJzIUSuP88NzCKHo7/JSbyhYXycpv49isjb25i+8ZB2zidKVzH/xcgSBQr4r9X7c
-	 IDHFrOnUc3vizbIA9Vb5XY0POMG1/UM16GmXgoOU=
+	b=iq4oCJ9cEjZi+VeuN8WXUQKW+H5i0mQriroc1z1REwyJZ6LfBMgZrf+qhuxB/ZeKa
+	 uquXB2kdper61UbxDIIo+/TIb7gmaKMnk9V0C53lIotSB/p8AvJGWHu1P8l9XFVIxV
+	 /FU9GD3hZ+AbNsMsCPcC9vssa9gWHbBqExatH8Lo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbgGJXkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jul 2020 19:40:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43604 "EHLO mail.kernel.org"
+        id S1726684AbgGJXpS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jul 2020 19:45:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbgGJXkG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Jul 2020 19:40:06 -0400
+        id S1726671AbgGJXpR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Jul 2020 19:45:17 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E3C920657;
-        Fri, 10 Jul 2020 23:40:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8400F206A1;
+        Fri, 10 Jul 2020 23:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594424406;
-        bh=DAcCdB1EgYPLqV9ciRpz31iFOWwYtcG3yvWjyBynQAs=;
+        s=default; t=1594424717;
+        bh=IeQ0jyzRyFVsFVC5+B1UPmsShd8pc123/IAnSaCDInk=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=mdqdIeyGsaecb+NfLxP/mF/ITnHBi+DpsR364mHWcd6/BqiuIOz5++NPvXjLiCFqR
-         vBXfX1Uj3gNkljYBijL4C+IGnEPt57XOXbQfadxg36RIzp8Iqeud2EPWv+mM9Negv+
-         rSjNJAijysO2V0mItKCh7XBxfI5fRovi4+rcVy7I=
+        b=0M/92yTIJRX2QnhYZwLchQ+8TlcosRUVYon4L7iaA4YS5fVCr4mMzJqvuZrlHjABX
+         jM9sgmTtT9HvmfmygpFIjed2hWXMAMKLcldu2kQU/bY6tSYCORr00OY2f4EawsdTAo
+         HmXNo/wNnhgEuQ2a8Gy1HQDOy62SYDFvc86XEUjE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1593766722-28838-1-git-send-email-gokulsri@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org> <1593766722-28838-1-git-send-email-gokulsri@codeaurora.org>
-Subject: Re: [v7 0/4] Add non PAS wcss Q6 support for QCS404
+In-Reply-To: <1594311873-8683-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+References: <1594311873-8683-1-git-send-email-shubhrajyoti.datta@xilinx.com>
+Subject: Re: [PATCH 1/2] clk: zynqmp: Check the return type
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, govinds@codeaurora.org,
-        sricharan@codeaurora.org, gokulsri@codeaurora.org
-To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>,
-        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org
-Date:   Fri, 10 Jul 2020 16:40:05 -0700
-Message-ID: <159442440535.1987609.2710208765230021853@swboyd.mtv.corp.google.com>
+Cc:     mturquette@baylibre.com, michal.simek@xilinx.com,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        git-dev@xilinx.com, linux-clk@vger.kernel.org
+Date:   Fri, 10 Jul 2020 16:45:16 -0700
+Message-ID: <159442471685.1987609.7656324191414409296@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Gokul Sriram Palanisamy (2020-07-03 01:58:38)
-> Changes since v6:
->  Removed duplicate structure entry added during rebase in v5
+Quoting Shubhrajyoti Datta (2020-07-09 09:24:32)
+> Currently the return value of of_clk_add_hw_provider is ignored.
 
-Please stop sending this as a reply to the previous series. Please see
-point 15 in Documentation/process/submitting-patches.rst
+Write of_clk_add_hw_provider() to indicate it's a function.
 
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#expl=
-icit-in-reply-to-headers
+> lets check and return value.
+>=20
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
