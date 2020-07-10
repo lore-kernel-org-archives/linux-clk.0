@@ -2,218 +2,174 @@ Return-Path: <SRS0=4xLm=AV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631CEC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 01:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE9D2C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 03:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 391A92070E
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 01:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4ACF20774
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 03:03:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="OXG6ZPCA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726323AbgGJB3C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jul 2020 21:29:02 -0400
-Received: from regular1.263xmail.com ([211.150.70.196]:35488 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbgGJB3B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 21:29:01 -0400
-Received: from localhost (unknown [192.168.167.13])
-        by regular1.263xmail.com (Postfix) with ESMTP id 9B5221581;
-        Fri, 10 Jul 2020 09:28:50 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P3129T139655160764160S1594344529928776_;
-        Fri, 10 Jul 2020 09:28:50 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <47b3627cf396951821d8efe055bec5fc>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: robin.murphy@arm.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-Subject: Re: [PATCH] clk: rockchip: mark pclk_uart2 as critical on rk3328
-To:     Johan Jonker <jbx6244@gmail.com>, heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20200708144528.20465-1-jbx6244@gmail.com>
- <2f58b9df-9bcd-5639-65cc-306a6d36b310@rock-chips.com>
- <68073138-1f94-9d5b-ad48-e82bc538c915@gmail.com>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <02cf9650-eef2-f3d1-4630-38e2d8381847@rock-chips.com>
-Date:   Fri, 10 Jul 2020 09:28:49 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1726757AbgGJDDW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jul 2020 23:03:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50984 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726560AbgGJDDW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jul 2020 23:03:22 -0400
+Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7C12C08C5CE;
+        Thu,  9 Jul 2020 20:03:21 -0700 (PDT)
+Received: by mail-ej1-x643.google.com with SMTP id rk21so4434560ejb.2;
+        Thu, 09 Jul 2020 20:03:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6KRtR9SdpYUMidTMu6Xmuj8Q02i63whibThkqFtREHc=;
+        b=OXG6ZPCAxCCAFxKGeTL6Oy1pdHDCjLE7HmgixA5c+sRgOyvyagscU036gw792Jyvro
+         3ApdT4aFjcKGMIsGHK9bR2eNPTljVrUkQMhnn2ty4A2hcBYb5GlR7nQdsVN71AcTsm84
+         dz/ySub8Vy57uB369VOkcXgz9JwwkjVndGkx8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6KRtR9SdpYUMidTMu6Xmuj8Q02i63whibThkqFtREHc=;
+        b=lmJRZCnh6/1OXEBhTSrFIy7+SO56pn1QTzFpgtoxkACDvcm2oCftER1giJxAHxnO7l
+         1JNUfVTwM6qYyYO9JYixptWpnsrAsXemJ0KRDLLDfsin917GSS5igmjQWDNeW3YyTyiw
+         ONVQb4Qs9rqwZ2SjAIBq3esKvHozR9zZJWEhJHPp4OJOo7ofBV3/mG/S41roQX3rAEV3
+         hUin9dl/N/FNmA2Ygm3lll8RFW/rwie6SK0whACnEZyzaj0I6zxcLBNm2opHlgt1ghLk
+         Q0RTOOkDRFVIBSeEndbXxE5HnezwaqzgKdtvgo7kF9qP4GV2s0kL2sKg0mkjxykML0Wx
+         wO8A==
+X-Gm-Message-State: AOAM530NLhn9x6aljevtYq2AhpPJ8XwtQBWRvyb70apZVSnt3MKPtMXa
+        iKLPeqVzV3PVnHPNiRBSbjEdztpBkVzHRx5VQwk=
+X-Google-Smtp-Source: ABdhPJybxKH1f3z78Ubuw7bl1ZVf6foagkpmQuQSht982jLtNvxBTTVwTwgziMcBKS0m9Ulr5MgSCknrai84CeLlCCk=
+X-Received: by 2002:a17:906:841:: with SMTP id f1mr25340332ejd.229.1594350200465;
+ Thu, 09 Jul 2020 20:03:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <68073138-1f94-9d5b-ad48-e82bc538c915@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <20200709195706.12741-1-eajames@linux.ibm.com> <20200709195706.12741-2-eajames@linux.ibm.com>
+In-Reply-To: <20200709195706.12741-2-eajames@linux.ibm.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Fri, 10 Jul 2020 03:03:08 +0000
+Message-ID: <CACPK8Xd1RMXooVR99xZLxWdgb+Suw8KZrSX6nN1Ua0eUM=mH3w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: AST2600: Add mux for EMMC clock
+To:     Eddie James <eajames@linux.ibm.com>
+Cc:     linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        linux-mmc@vger.kernel.org, Andrew Jeffery <andrew@aj.id.au>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 9 Jul 2020 at 19:57, Eddie James <eajames@linux.ibm.com> wrote:
+>
+> The EMMC clock can be derived from either the HPLL or the MPLL. Register
+> a clock mux so that the rate is calculated correctly based upon the
+> parent.
+>
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 
-在 2020/7/9 下午8:04, Johan Jonker 写道:
-> Hi Elaine, Robin,
->
-> Thank you for your help!
-> This patch can go in the garbage bin.
-> It turns out that with SERIAL_8250 also SERIAL_8250_DW must be
-> selected... ;)
->
-> It's not in the Kconfig help description.
-> Shouldn't that be automatically be included for Rockchip?
-> Example:
->
-> config SERIAL_8250
-> 	tristate "8250/16550 and compatible serial support"
-> 	depends on !S390
-> 	select SERIAL_CORE
-> 	select SERIAL_MCTRL_GPIO if GPIOLIB
-> 	select SERIAL_8250_DW if ARCH_ROCKCHIP
+Acked-by: Joel Stanley <joel@jms.id.au>
+Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
 
-Our  Konfig:
+Stephen, I think this should go to stable too.
 
-config SERIAL_8250
-	tristate "8250/16550 and compatible serial support"
-	depends on !S390
-	select SERIAL_CORE
+Cheers,
 
-config SERIAL_8250_DW
-         tristate "Support for Synopsys DesignWare 8250 quirks"
-         depends on SERIAL_8250
+Joel
 
-So SERIAL_8250 and SERIAL_8250_DW must be selected.
-
-If you use select SERIAL_8250_DW if ARCH_ROCKCHIP, check the CONIF_ARCH_ROCKCHIP=y.
-In our rockchip_defconfig the CONIF_ARCH_ROCKCHIP=y by default.
-
-> Thank Robin for the introduction to FTRACE!
+> ---
+>  drivers/clk/clk-ast2600.c | 49 ++++++++++++++++++++++++++++++++-------
+>  1 file changed, 41 insertions(+), 8 deletions(-)
 >
-> mount -t tracefs tracefs /sys/kernel/tracing
+> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+> index 99afc949925f..177368cac6dd 100644
+> --- a/drivers/clk/clk-ast2600.c
+> +++ b/drivers/clk/clk-ast2600.c
+> @@ -131,6 +131,18 @@ static const struct clk_div_table ast2600_eclk_div_table[] = {
+>         { 0 }
+>  };
 >
-> cd /sys/kernel/tracing
+> +static const struct clk_div_table ast2600_emmc_extclk_div_table[] = {
+> +       { 0x0, 2 },
+> +       { 0x1, 4 },
+> +       { 0x2, 6 },
+> +       { 0x3, 8 },
+> +       { 0x4, 10 },
+> +       { 0x5, 12 },
+> +       { 0x6, 14 },
+> +       { 0x7, 16 },
+> +       { 0 }
+> +};
+> +
+>  static const struct clk_div_table ast2600_mac_div_table[] = {
+>         { 0x0, 4 },
+>         { 0x1, 4 },
+> @@ -390,6 +402,11 @@ static struct clk_hw *aspeed_g6_clk_hw_register_gate(struct device *dev,
+>         return hw;
+>  }
 >
-> # Without SERIAL_8250_DW
+> +static const char *const emmc_extclk_parent_names[] = {
+> +       "emmc_extclk_hpll_in",
+> +       "mpll",
+> +};
+> +
+>  static const char * const vclk_parent_names[] = {
+>         "dpll",
+>         "d1pll",
+> @@ -459,16 +476,32 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
+>                 return PTR_ERR(hw);
+>         aspeed_g6_clk_data->hws[ASPEED_CLK_UARTX] = hw;
 >
-> /sys/kernel/tracing # cat trace | grep uart2
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
->         swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
+> -       /* EMMC ext clock divider */
+> -       hw = clk_hw_register_gate(dev, "emmc_extclk_gate", "hpll", 0,
+> -                       scu_g6_base + ASPEED_G6_CLK_SELECTION1, 15, 0,
+> -                       &aspeed_g6_clk_lock);
+> +       /* EMMC ext clock */
+> +       hw = clk_hw_register_fixed_factor(dev, "emmc_extclk_hpll_in", "hpll",
+> +                                         0, 1, 2);
+>         if (IS_ERR(hw))
+>                 return PTR_ERR(hw);
+> -       hw = clk_hw_register_divider_table(dev, "emmc_extclk", "emmc_extclk_gate", 0,
+> -                       scu_g6_base + ASPEED_G6_CLK_SELECTION1, 12, 3, 0,
+> -                       ast2600_div_table,
+> -                       &aspeed_g6_clk_lock);
+> +
+> +       hw = clk_hw_register_mux(dev, "emmc_extclk_mux",
+> +                                emmc_extclk_parent_names,
+> +                                ARRAY_SIZE(emmc_extclk_parent_names), 0,
+> +                                scu_g6_base + ASPEED_G6_CLK_SELECTION1, 11, 1,
+> +                                0, &aspeed_g6_clk_lock);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       hw = clk_hw_register_gate(dev, "emmc_extclk_gate", "emmc_extclk_mux",
+> +                                 0, scu_g6_base + ASPEED_G6_CLK_SELECTION1,
+> +                                 15, 0, &aspeed_g6_clk_lock);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       hw = clk_hw_register_divider_table(dev, "emmc_extclk",
+> +                                          "emmc_extclk_gate", 0,
+> +                                          scu_g6_base +
+> +                                               ASPEED_G6_CLK_SELECTION1, 12,
+> +                                          3, 0, ast2600_emmc_extclk_div_table,
+> +                                          &aspeed_g6_clk_lock);
+>         if (IS_ERR(hw))
+>                 return PTR_ERR(hw);
+>         aspeed_g6_clk_data->hws[ASPEED_CLK_EMMC] = hw;
+> --
+> 2.24.0
 >
->
-> /sys/kernel/tracing # cat trace | grep uart
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
->         swapper/0-1     [002] d..1     1.916746: clk_disable: pclk_uart2
->         swapper/0-1     [002] d..1     1.923959: clk_disable: pclk_uart1
->         swapper/0-1     [002] d..1     1.930741: clk_disable: pclk_uart0
->
-> # With SERIAL_8250_DW
->
-> /sys/kernel/tracing # cat trace | grep uart2
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
->         swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
->         swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
->         swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
->         swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
->         swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
->         swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
->
-> /sys/kernel/tracing # cat trace | grep uart
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart2_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart1_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart1_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_div
->            <idle>-0     [000] d..2     0.000000: clk_enable: clk_uart0_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_frac
->            <idle>-0     [000] d..2     0.000000: clk_disable: clk_uart0_div
->         swapper/0-1     [002] d..1     0.920034: clk_enable: sclk_uart0
->         swapper/0-1     [002] d..1     0.920085: clk_enable: pclk_uart0
->       kworker/2:1-32    [002] d..1     0.922596: clk_disable: sclk_uart0
->       kworker/2:1-32    [002] d..1     0.922613: clk_disable: pclk_uart0
->         swapper/0-1     [002] d..1     0.923180: clk_enable: sclk_uart2
->         swapper/0-1     [002] d..1     0.923224: clk_enable: pclk_uart2
->         swapper/0-1     [002] d..1     0.925259: clk_disable: sclk_uart2
->         swapper/0-1     [002] d..1     0.925295: clk_enable: sclk_uart2
->         swapper/0-1     [003] d..1     1.914158: clk_disable: pclk_uart1
->         swapper/0-1     [003] d..1     2.208605: clk_disable: sclk_uart2
->         swapper/0-1     [003] d..1     2.208646: clk_enable: sclk_uart2
->
->
->
-> On 7/9/20 3:32 AM, elaine.zhang wrote:
->> 在 2020/7/8 下午10:45, Johan Jonker 写道:
->>> The rk3328 uart2 port is used as boot console and to debug.
->>> During the boot pclk_uart2 is disabled by a clk_disable_unused
->>> initcall. Fix the uart2 function by marking pclk_uart2
->>> as critical on rk3328. Also add sclk_uart2 as that is needed
->>> for the same DT node.
->>>
->>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
->>> ---
->>>    drivers/clk/rockchip/clk-rk3328.c | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-rk3328.c
->>> b/drivers/clk/rockchip/clk-rk3328.c
->>> index c186a1985..cb7749cb7 100644
->>> --- a/drivers/clk/rockchip/clk-rk3328.c
->>> +++ b/drivers/clk/rockchip/clk-rk3328.c
->>> @@ -875,6 +875,8 @@ static const char *const rk3328_critical_clocks[]
->>> __initconst = {
->>>        "aclk_gmac_niu",
->>>        "pclk_gmac_niu",
->>>        "pclk_phy_niu",
->>> +    "pclk_uart2",
->>> +    "sclk_uart2",
->>>    };
->>>    
->> Not need to mark the uart2 as critical clocks, the uart clk will enabled
->> by uart driver probe(dw8250_probe()).
->>
->> For your question,  Please check the uart2 dts node "status = okay".
->>
->> Or You can send me the complete log, I check the status of uart2.
->>
->>>    static void __init rk3328_clk_init(struct device_node *np)
->>
->
->
->
-
-
