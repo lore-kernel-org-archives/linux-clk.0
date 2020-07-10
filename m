@@ -2,88 +2,152 @@ Return-Path: <SRS0=4xLm=AV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF790C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 06:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45024C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 07:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B97BD207DD
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 06:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FB62206A5
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jul 2020 07:38:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="Psl2Lo/7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726958AbgGJGmV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jul 2020 02:42:21 -0400
-Received: from mga12.intel.com ([192.55.52.136]:11563 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726908AbgGJGmU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Jul 2020 02:42:20 -0400
-IronPort-SDR: goCKN8fJFrRqUYMG8LSHBGlNkDBlj6eVldNjYymrP4hBzEVLqaT7Fi0UAsG+Qb5UuEVD4O23Mb
- qiUSDMNVU8FQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9677"; a="127751004"
-X-IronPort-AV: E=Sophos;i="5.75,334,1589266800"; 
-   d="scan'208";a="127751004"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jul 2020 23:42:20 -0700
-IronPort-SDR: OdJt/DPOJXTDMtl6BzBoR7MaAS7AcbsrG9FJ0PXw5fygo6H4LpeFs/7DaaQQ4xt/62Ii+Vx3wz
- VKyUNZcouXUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,334,1589266800"; 
-   d="scan'208";a="389396441"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.73]) ([10.237.72.73])
-  by fmsmga001.fm.intel.com with ESMTP; 09 Jul 2020 23:42:13 -0700
-Subject: Re: [PATCH 2/2] mmc: sdhci-of-aspeed: Fix clock divider calculation
-To:     Eddie James <eajames@linux.ibm.com>, linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, andrew@aj.id.au, joel@jms.id.au,
-        ulf.hansson@linaro.org, sboyd@kernel.org, mturquette@baylibre.com
-References: <20200709195706.12741-1-eajames@linux.ibm.com>
- <20200709195706.12741-3-eajames@linux.ibm.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <fe0c6b0f-0fa1-a4e4-1f60-5258b30c14f9@intel.com>
-Date:   Fri, 10 Jul 2020 09:41:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.1
+        id S1726341AbgGJHil (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jul 2020 03:38:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36746 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbgGJHil (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jul 2020 03:38:41 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3997C08C5DD
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2020 00:38:40 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id f16so2249271pjt.0
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jul 2020 00:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=8ZjrFAw+j0ptFQYf6vjS3GyECZiwHud7B+29TqXkRYs=;
+        b=Psl2Lo/7z/XmiV3clRJoB9dUmnRObvmiQueEkHMWf8CGDLu2jCWH5TdtWDZ4uU9tFf
+         CS51zjH3cI6A6p3C7m18a3cM8PWF2m3nOlwntUbe3haHTJOhg0Zx41c8ihgOI+/QcLh7
+         OsrH5WepfANDEbo91D00EQTK29UpzKlJbPQqdQoKsBkUOUyQoL4swP+ntNEHoMzhve3o
+         3j+JmCMvWg2n5YlGba0+hwSrEYwaXh/CtH7cNz4lvSSVldVyoTM5KTJI6qbGSY/V61Xc
+         8FwewkX8pY/mDHHSyzxwapUzKZ2hVW8RJ4+HlfMExj5Boj8H2qj7RT3SvNMHX4Djt5Mq
+         xQ7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=8ZjrFAw+j0ptFQYf6vjS3GyECZiwHud7B+29TqXkRYs=;
+        b=FNgQMQ2j59xAIY11ywbmClJ6FRdn8AfpIAEQaDiewt3sm2aeyhiCoZy5PoNFXEnfEP
+         EnD4ng/eakDkVVFOJ/glSZg+7J7Y+3+SVuSE5N2X8XHmeseR068Fvc0cVdM9H+hvFbd8
+         EltTdMJuvbApocPJ73myFlxJ/94+hfTofCuP91yvZy5kqIkcDnmzHw0z8dJaHtBizr/E
+         UKiH7GZawJzsGhm/ZsMPmbrtRr+WLrLl9VTXXb02fFIslfFD88BY8m2kZFI+XE2/myxs
+         /zRnaYHrOBpEFby8G9iWkFZ4XsaArIv3W33qPrmeB1VB/qBCx4h3fI/K4AkZHoZ63Psz
+         62RA==
+X-Gm-Message-State: AOAM532jhl4t1/7hnSOSVVD9oGjlTClbYUiqVLyj5bfbz7r1bCPI4fGU
+        hLAp/tg1U3IPovtbg3PF9hv3/w==
+X-Google-Smtp-Source: ABdhPJwlQjxPimcLQyqZkwsetm/TUyF3vIvWAZnR02TYlVm2S9C4hZm4s/4qXkuD2qBQJzR6lJWAKA==
+X-Received: by 2002:a17:902:a416:: with SMTP id p22mr1452916plq.341.1594366720068;
+        Fri, 10 Jul 2020 00:38:40 -0700 (PDT)
+Received: from starnight.localdomain (123-204-46-122.static.seed.net.tw. [123.204.46.122])
+        by smtp.googlemail.com with ESMTPSA id t126sm5245550pfd.214.2020.07.10.00.38.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jul 2020 00:38:39 -0700 (PDT)
+From:   Jian-Hong Pan <jian-hong@endlessm.com>
+To:     maxime@cerno.tech
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        dave.stevenson@raspberrypi.com, devicetree@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, eric@anholt.net,
+        kdasu.kdev@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org, mturquette@baylibre.com,
+        nsaenzjulienne@suse.de, phil@raspberrypi.com, robh+dt@kernel.org,
+        sboyd@kernel.org, tim.gover@raspberrypi.com, linux@endlessm.com
+Subject: Re: [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline
+Date:   Fri, 10 Jul 2020 15:37:58 +0800
+Message-Id: <20200710073758.75181-1-jian-hong@endlessm.com>
+X-Mailer: git-send-email 2.27.0
+In-Reply-To: <cover.7a1aa1784976093af26cb31fd283cf5b3ed568bb.1594230107.git-series.maxime@cerno.tech>
+References: <cover.7a1aa1784976093af26cb31fd283cf5b3ed568bb.1594230107.git-series.maxime@cerno.tech>
 MIME-Version: 1.0
-In-Reply-To: <20200709195706.12741-3-eajames@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 9/07/20 10:57 pm, Eddie James wrote:
-> When calculating the clock divider, start dividing at 2 instead of 1.
-> The divider is divided by two at the end of the calculation, so starting
-> at 1 may result in a divider of 0, which shouldn't happen.
-> 
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+Hi Maxime,
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Thanks for your version 4 patch again.
+I took the patches and applied them upon next-20200708.
 
-> ---
->  drivers/mmc/host/sdhci-of-aspeed.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-of-aspeed.c b/drivers/mmc/host/sdhci-of-aspeed.c
-> index 56912e30c47e..a1bcc0f4ba9e 100644
-> --- a/drivers/mmc/host/sdhci-of-aspeed.c
-> +++ b/drivers/mmc/host/sdhci-of-aspeed.c
-> @@ -68,7 +68,7 @@ static void aspeed_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	if (WARN_ON(clock > host->max_clk))
->  		clock = host->max_clk;
->  
-> -	for (div = 1; div < 256; div *= 2) {
-> +	for (div = 2; div < 256; div *= 2) {
->  		if ((parent / div) <= clock)
->  			break;
->  	}
-> 
+I make system cold reboot to multi-user target and the text console shows on the
+screen. Then, I simply hot re-plug the HDMI cable on HDMI0 port, I not only lose
+the text console on the screen (the display shows blank, backlight is off), but
+also kernel does not probe modes for the HDMI connector again.
 
+But HDMI1 does probe modes again for hot re-plugging. So, HDMI1 does not hit the
+issue like HDMI0.
+
+* System probes modes only once for HDMI0 port (HDMI-A-1), even hot re-plug HDMI
+  cable to the same port:
+
+[   15.611072] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:32:HDMI-A-1] probed modes :
+[   15.611079] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x48 0x5
+[   15.611085] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x40 0x5
+...
+[   15.611298] [drm:drm_mode_debug_printmodeline] Modeline "720x400": 70 28320 720 738 846 900 400 412 414 449 0x40 0x6
+[   15.611303] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2]
+[   15.612184] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2] disconnected
+[   15.612191] [drm:drm_client_modeset_probe] connector 32 enabled? yes
+[   15.612194] [drm:drm_client_modeset_probe] connector 38 enabled? no
+[   15.612206] [drm:drm_client_modeset_probe] Not using firmware configuration
+[   15.612213] [drm:drm_client_modeset_probe] looking for cmdline mode on connector 32
+[   15.612218] [drm:drm_client_modeset_probe] looking for preferred mode on connector 32 0
+[   15.612221] [drm:drm_client_modeset_probe] found mode 1920x1080
+...
+[  108.263384] [drm:output_poll_execute] [CONNECTOR:32:HDMI-A-1] status updated from disconnected to connected
+[  108.264307] vc4-drm gpu: [drm:drm_fb_helper_hotplug_event.part.0] 
+[  108.264312] [drm:drm_client_modeset_probe] 
+[  108.264321] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:32:HDMI-A-1]
+[  109.303379] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2]
+[  109.304258] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2] disconnected
+[  109.304266] [drm:drm_client_modeset_probe] No connectors reported connected with modes
+
+* System probes modes again for HDMI1 port (HDMI-A-2), whenever hot re-plug the
+  HDMI cable:
+
+[  797.974649] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2] probed modes :
+[  797.974656] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x48 0x5
+[  797.974662] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x40 0x5
+...
+[  797.974874] [drm:drm_mode_debug_printmodeline] Modeline "720x400": 70 28320 720 738 846 900 400 412 414 449 0x40 0x6
+[  797.974880] [drm:drm_client_modeset_probe] connector 32 enabled? no
+[  797.974883] [drm:drm_client_modeset_probe] connector 38 enabled? yes
+[  797.974895] [drm:drm_client_modeset_probe] Not using firmware configuration
+[  797.974901] [drm:drm_client_modeset_probe] looking for cmdline mode on connector 38
+[  797.974905] [drm:drm_client_modeset_probe] looking for preferred mode on connector 38 0
+[  797.974908] [drm:drm_client_modeset_probe] found mode 1920x1080
+...
+[  852.242615] vc4-drm gpu: [drm:drm_client_dev_hotplug] fbdev: ret=0
+[  873.718277] [drm:output_poll_execute] [CONNECTOR:38:HDMI-A-2] status updated from disconnected to connected
+[  873.718332] vc4-drm gpu: [drm:drm_fb_helper_hotplug_event.part.0] 
+[  873.718338] [drm:drm_client_modeset_probe]
+...
+[  874.264013] [drm:drm_helper_probe_single_connector_modes] [CONNECTOR:38:HDMI-A-2] probed modes :
+[  874.264020] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x48 0x5
+[  874.264026] [drm:drm_mode_debug_printmodeline] Modeline "1920x1080": 60 148500 1920 2008 2052 2200 1080 1084 1089 1125 0x40 0x5
+...
+[  874.264239] [drm:drm_mode_debug_printmodeline] Modeline "720x400": 70 28320 720 738 846 900 400 412 414 449 0x40 0x6
+[  874.264244] [drm:drm_client_modeset_probe] connector 32 enabled? no
+[  874.264247] [drm:drm_client_modeset_probe] connector 38 enabled? yes
+[  874.264259] [drm:drm_client_modeset_probe] Not using firmware configuration
+[  874.264264] [drm:drm_client_modeset_probe] looking for cmdline mode on connector 38
+[  874.264268] [drm:drm_client_modeset_probe] looking for preferred mode on connector 38 0
+[  874.264272] [drm:drm_client_modeset_probe] found mode 1920x1080
+
+Here is the full dmesg: https://gist.github.com/starnight/5ffb86af552fedb9b6e5741d0540a878#file-dmesg-v4-log
