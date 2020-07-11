@@ -4,71 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4700EC433EA
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:13:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDBAC433E1
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 220AF207DD
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:13:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E89207DD
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594483986;
-	bh=n2ktXL7Lm8tI8qYhwAOWKKE+CTtfAlysoQtFNBza8OQ=;
+	s=default; t=1594484172;
+	bh=+BSGlLJBW8PWM3+BVUVf02ZgKAnl9LalQ3SOruYoT0c=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=z7T69nVQYybbjtCxrx7G4+LsQflGmyb35reqJt9asnUyRoq1UfNElTeXNF4/Ne/7k
-	 HR8egYpHU2KSsjh3hNP1RFcC9L2F7jpGIKhm1w/eRyqTJXh5n/D58Afk8la5O8sH7w
-	 SfReZpBjD0VnJTYIkQPJUtg6SOjcXY/TiCuzBomo=
+	b=dPkYbGw5mqPgoq3SM09X3BY/NVCiJ9ZHjGkaIxfoRak/yjdv8vIZzCGDb2QVC1mOl
+	 9x9Yg9nOWdVuhm4FHLfjj7aegF4Wh7D8Fji73SInV924r43NqjMhplWP15x0OQBTse
+	 96dEbEPYrZZaMt7SxKvSugRCmJkdrADxA9gu3v+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728633AbgGKQNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Jul 2020 12:13:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52942 "EHLO mail.kernel.org"
+        id S1728449AbgGKQQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Jul 2020 12:16:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728556AbgGKQM7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 11 Jul 2020 12:12:59 -0400
+        id S1728390AbgGKQQM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 11 Jul 2020 12:16:12 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC7782075F;
-        Sat, 11 Jul 2020 16:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17F5F2075F;
+        Sat, 11 Jul 2020 16:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594483978;
-        bh=n2ktXL7Lm8tI8qYhwAOWKKE+CTtfAlysoQtFNBza8OQ=;
+        s=default; t=1594484172;
+        bh=+BSGlLJBW8PWM3+BVUVf02ZgKAnl9LalQ3SOruYoT0c=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DICmeqXiU/xBy4RlrulZstDUbRxoW20fO2E8ZtP+r16L7btPxDHrkHlCP3HYReAV2
-         tMGbeUSXW3wSPy4OnpUbb3UWpr9WNPvWPkuVmvW0g1xuAF31dGANEVFc0POZBRBiHS
-         q8fVmNNvkyI5r0661FxoytvPCo4U3hEj4vK8yNck=
+        b=KYzV8/ZHzQUxOw0I+CMVF1wiT7uZvnhyd5eD8mS4uTYghTKVvoI1GyIKVUC5Xsr9w
+         hxDLexH9X30DWfBvlRbOmueols7wGfzk83ckeBTFqoqPdjxkSV7VkCQc5YavKKQX6I
+         pbm6ixyLjgSmjs1abybkS1DG68Ot/UF/1b2oLr8Q=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1593940680-2363-5-git-send-email-sivaprak@codeaurora.org>
-References: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org> <1593940680-2363-5-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH 4/9] clk: qcom: ipq8074: Add missing clocks for pcie
+In-Reply-To: <20200709195706.12741-2-eajames@linux.ibm.com>
+References: <20200709195706.12741-1-eajames@linux.ibm.com> <20200709195706.12741-2-eajames@linux.ibm.com>
+Subject: Re: [PATCH 1/2] clk: AST2600: Add mux for EMMC clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-To:     agross@kernel.org, bhelgaas@google.com, bjorn.andersson@linaro.org,
-        devicetree@vger.kernel.org, kishon@ti.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        lorenzo.pieralisi@arm.com, mgautam@codeaurora.org,
-        mturquette@baylibre.com, p.zabel@pengutronix.de,
-        robh+dt@kernel.org, sivaprak@codeaurora.org,
-        smuthayy@codeaurora.org, svarbanov@mm-sol.com,
-        varada@codeaurora.org, vkoul@kernel.org
-Date:   Sat, 11 Jul 2020 09:12:57 -0700
-Message-ID: <159448397791.1987609.10974763524448652875@swboyd.mtv.corp.google.com>
+Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
+        linux-mmc@vger.kernel.org, andrew@aj.id.au, joel@jms.id.au,
+        ulf.hansson@linaro.org, adrian.hunter@intel.com,
+        mturquette@baylibre.com, eajames@linux.ibm.com
+To:     Eddie James <eajames@linux.ibm.com>, linux-clk@vger.kernel.org
+Date:   Sat, 11 Jul 2020 09:16:11 -0700
+Message-ID: <159448417133.1987609.8669229169177662950@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-07-05 02:17:55)
-> Add missing clocks and resets for pcie port0 of ipq8074 devices.
+Quoting Eddie James (2020-07-09 12:57:05)
+> The EMMC clock can be derived from either the HPLL or the MPLL. Register
+> a clock mux so that the rate is calculated correctly based upon the
+> parent.
 >=20
-> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> Signed-off-by: Eddie James <eajames@linux.ibm.com>
+> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
 > ---
 
-Applied to clk-next
+Applied to clk-fixes
