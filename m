@@ -2,79 +2,82 @@ Return-Path: <SRS0=QFiD=AW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18229C433E2
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 00:17:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E18C433E3
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 00:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EA7642075D
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 00:17:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF1E7207BB
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 00:26:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594426653;
-	bh=7vSxiKS5OYdz9XoO3u9H7c/r36NftYgfeZwnWvjaybk=;
+	s=default; t=1594427208;
+	bh=k3yKm/q13vgtDwU+/6cU4tH+X0uAEuUwaNvogC6Hk2U=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=jKiXudP7vYOUO5Asm8qGY3q8tbQzKXMNDRucEPszVOUZYa+wScPrCv24BZSNspB4n
-	 V6f95krqPnEaXy9wj/yCkkgQu1mq0KfOAsr/jJCPTgHRRCnEisOFldmF7L4ObFg31g
-	 ZfW9gQGODAbT/pcdH7ODk0GYfKtessnY+nLjZcm4=
+	b=g8er+cddmWmUbRG2RK/cbeEbQPqaiDdncPdSYTO7B0tYa5T+L2uB4IYlQaU/FVIfC
+	 AJIgsagHg5unaMR+GBX3IC37dUmcJifW4RFra3Sg6Dtz8kSzqA1wCXGDf7c0AkXQAF
+	 b4pBpN91q3fiKqVxKq1cik1EwztACOFvnSL4bsU8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgGKARc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jul 2020 20:17:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52356 "EHLO mail.kernel.org"
+        id S1726709AbgGKA0s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jul 2020 20:26:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726588AbgGKAR3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Jul 2020 20:17:29 -0400
+        id S1726581AbgGKA0s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Jul 2020 20:26:48 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60178206E2;
-        Sat, 11 Jul 2020 00:17:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB6982078B;
+        Sat, 11 Jul 2020 00:26:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594426649;
-        bh=7vSxiKS5OYdz9XoO3u9H7c/r36NftYgfeZwnWvjaybk=;
+        s=default; t=1594427208;
+        bh=k3yKm/q13vgtDwU+/6cU4tH+X0uAEuUwaNvogC6Hk2U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=F7Zyjg/FI9VNUSAerBX1fi1Pk0nef9AcYF7T13c3ch2C5ogVfQ0Z8nDyoBYlVDjsp
-         In5BHe9zEig2yZwSEI4jlB2tZoau3WsXn1TJJJS0lev1jLE9oAoGc6+MG4oWu8mOEo
-         LM6GeStyq1/5sPeEJh8glLSK6irYCfe2JUJErZjE=
+        b=b+hmiuKlAjhjYftyRiSU3RmWBHmGzCge2OMOgicfVTaTz8EcV5dOBhOwx6Xmr7mTC
+         UdQFLeqWoH3C2ZeLt9U80qqogFKDNGPTuXgeU9OydPK62AhHzLsR5P84qzOaavTzm8
+         bWXwRTi06qFLRBfLiiPLT42pYd6azJjfNPBZFlFU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200703121729.6678-1-geert+renesas@glider.be>
-References: <20200703121729.6678-1-geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v5.9
+In-Reply-To: <1593588382-19049-2-git-send-email-wendell.lin@mediatek.com>
+References: <1593588382-19049-1-git-send-email-wendell.lin@mediatek.com> <1593588382-19049-2-git-send-email-wendell.lin@mediatek.com>
+Subject: Re: [PATCH 1/2] clk: Export clk_register_composite
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Fri, 10 Jul 2020 17:17:28 -0700
-Message-ID: <159442664871.1987609.14062615853813880007@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        mtk01761 <wendell.lin@mediatek.com>
+Date:   Fri, 10 Jul 2020 17:26:47 -0700
+Message-ID: <159442720733.1987609.12625915294903304595@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2020-07-03 05:17:29)
->         Hi Mike, Stephen,
+Quoting Wendell Lin (2020-07-01 00:26:21)
+> clk_register_composite() will be used in mediatek's
+> clock kernel module, so export it to GPL modules.
 >=20
-> The following changes since commit b3a9e3b9622ae10064826dccb4f7a52bd88c74=
-07:
+> Signed-off-by: Wendell Lin <wendell.lin@mediatek.com>
+> ---
+>  drivers/clk/clk-composite.c |    1 +
+>  1 file changed, 1 insertion(+)
 >=20
->   Linux 5.8-rc1 (2020-06-14 12:45:04 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/clk-renesas-for-v5.9-tag1
->=20
-> for you to fetch changes up to 52bc5ea6edde35bc65ed6ecd7639534e78002c74:
->=20
->   clk: renesas: rzg2: Mark RWDT clocks as critical (2020-06-22 16:54:32 +=
-0200)
->=20
-> ----------------------------------------------------------------
+> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+> index 7376f57..fb5cb4a 100644
+> --- a/drivers/clk/clk-composite.c
+> +++ b/drivers/clk/clk-composite.c
+> @@ -360,6 +360,7 @@ struct clk *clk_register_composite(struct device *dev=
+, const char *name,
+>                 return ERR_CAST(hw);
+>         return hw->clk;
+>  }
+> +EXPORT_SYMBOL(clk_register_composite);
 
-Thanks. Pulled into clk-next
+Should be EXPORT_SYMBOL_GPL()
