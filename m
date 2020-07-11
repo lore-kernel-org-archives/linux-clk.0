@@ -6,64 +6,65 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDBAC433E1
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8134C433E1
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1E89207DD
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB2F207F9
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594484172;
-	bh=+BSGlLJBW8PWM3+BVUVf02ZgKAnl9LalQ3SOruYoT0c=;
+	s=default; t=1594484389;
+	bh=3GnM585dkYqv+9gopRkdXKflaepJBavmU784KD08fjU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=dPkYbGw5mqPgoq3SM09X3BY/NVCiJ9ZHjGkaIxfoRak/yjdv8vIZzCGDb2QVC1mOl
-	 9x9Yg9nOWdVuhm4FHLfjj7aegF4Wh7D8Fji73SInV924r43NqjMhplWP15x0OQBTse
-	 96dEbEPYrZZaMt7SxKvSugRCmJkdrADxA9gu3v+M=
+	b=x8D0AUuLsAAejDwj+avEFUhdUHJpYXhWuSRcLfK66/uKvLg2fbA+A2jprvIAKiS5O
+	 k94mQDRewomxyeQYvNun6iL5As9QzmFWygu2hL1sk3dOmPdWtHpMX+axWga8ymmCW1
+	 lrxhip+kS0aPnqtNzNOfylAhhk0uvRRxxE1mZumo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728449AbgGKQQM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Jul 2020 12:16:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53934 "EHLO mail.kernel.org"
+        id S1728471AbgGKQTt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Jul 2020 12:19:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728390AbgGKQQM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 11 Jul 2020 12:16:12 -0400
+        id S1728441AbgGKQTt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 11 Jul 2020 12:19:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17F5F2075F;
-        Sat, 11 Jul 2020 16:16:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C75772075F;
+        Sat, 11 Jul 2020 16:19:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594484172;
-        bh=+BSGlLJBW8PWM3+BVUVf02ZgKAnl9LalQ3SOruYoT0c=;
+        s=default; t=1594484388;
+        bh=3GnM585dkYqv+9gopRkdXKflaepJBavmU784KD08fjU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KYzV8/ZHzQUxOw0I+CMVF1wiT7uZvnhyd5eD8mS4uTYghTKVvoI1GyIKVUC5Xsr9w
-         hxDLexH9X30DWfBvlRbOmueols7wGfzk83ckeBTFqoqPdjxkSV7VkCQc5YavKKQX6I
-         pbm6ixyLjgSmjs1abybkS1DG68Ot/UF/1b2oLr8Q=
+        b=i3M4tMeRWXpSJGE7kLQVXGWIvxGAe3Oly+xInMrbInjhdQfPQwlI7mljaDX2gTg4F
+         PhecnD8lCrCKjaoQKV017KZbQxsgiRe90UHm1cC+Jzh9m6IQJ6Nms5e+pYSCx9b946
+         ji044mXxfiN9bpe0DqoYVjkhqtkW2JDI15CQ11oA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200709195706.12741-2-eajames@linux.ibm.com>
-References: <20200709195706.12741-1-eajames@linux.ibm.com> <20200709195706.12741-2-eajames@linux.ibm.com>
-Subject: Re: [PATCH 1/2] clk: AST2600: Add mux for EMMC clock
+In-Reply-To: <20200623230018.303776-1-konradybcio@gmail.com>
+References: <20200623230018.303776-1-konradybcio@gmail.com>
+Subject: Re: [PATCH 1/1] clk: qcom: smd: Add support for MSM8992/4 rpm clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, andrew@aj.id.au, joel@jms.id.au,
-        ulf.hansson@linaro.org, adrian.hunter@intel.com,
-        mturquette@baylibre.com, eajames@linux.ibm.com
-To:     Eddie James <eajames@linux.ibm.com>, linux-clk@vger.kernel.org
-Date:   Sat, 11 Jul 2020 09:16:11 -0700
-Message-ID: <159448417133.1987609.8669229169177662950@swboyd.mtv.corp.google.com>
+Cc:     Konrad Dybcio <konradybcio@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Konrad Dybcio <konradybcio@gmail.com>, skrzynka@konradybcio.pl
+Date:   Sat, 11 Jul 2020 09:19:48 -0700
+Message-ID: <159448438810.1987609.6567829298927086029@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Eddie James (2020-07-09 12:57:05)
-> The EMMC clock can be derived from either the HPLL or the MPLL. Register
-> a clock mux so that the rate is calculated correctly based upon the
-> parent.
+Quoting Konrad Dybcio (2020-06-23 16:00:18)
+> Add rpm smd clocks, PMIC and bus clocks which are required on MSM8992,
+> MSM8994 (and APQ variants) for clients to vote on.
 >=20
-> Signed-off-by: Eddie James <eajames@linux.ibm.com>
-> Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 > ---
 
-Applied to clk-fixes
+Applied to clk-next but I had to fix the binding numbers again.
