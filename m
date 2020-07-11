@@ -6,61 +6,67 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37B3C433E1
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47952C433E0
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6E5207DD
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2431A207FB
+	for <linux-clk@archiver.kernel.org>; Sat, 11 Jul 2020 16:28:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594484693;
-	bh=4HCzef5BV6/HU9r6IluFe/pcOzRvUVtC2RJv4yS7uAA=;
+	s=default; t=1594484894;
+	bh=0BMLFhcBsY3+UePEHe/YYHatzZGvCd3WYrfLrpclr0U=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=BBWxF6NIlC6BysEXXFKeUcs/bmFMAibWtbkFfjkYOPEwkzT4leq9QddlekTrrxthN
-	 ov2a2Bu6LjRkKDUNMHAMipSvCTqo4mRWl0pqnebiCbqi/QcqPQevDdonFbPQqhGJoY
-	 5uZlB43v6DI688FGMwz91cQjMJeIc5ZdI/zYqBDc=
+	b=imAe+p6DkpOkg/gLigAGEgIooGKMD8/DvnAfychilJBvdohpKSrazLV2yxSRzPTBK
+	 PT9HVhHKNmG16iWd4xkSVvDsm7L+sKorBDhau69iIF8kqW5RuJsQH1llT7CGPNo4j9
+	 v7uxcGiR7mm3QylziRCNek8S2u33gbsxS/1EwG/c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbgGKQYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Jul 2020 12:24:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
+        id S1728441AbgGKQ2O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Jul 2020 12:28:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34932 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728441AbgGKQYx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 11 Jul 2020 12:24:53 -0400
+        id S1728412AbgGKQ2N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 11 Jul 2020 12:28:13 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7FA1207D4;
-        Sat, 11 Jul 2020 16:24:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5876D207D4;
+        Sat, 11 Jul 2020 16:28:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594484692;
-        bh=4HCzef5BV6/HU9r6IluFe/pcOzRvUVtC2RJv4yS7uAA=;
+        s=default; t=1594484893;
+        bh=0BMLFhcBsY3+UePEHe/YYHatzZGvCd3WYrfLrpclr0U=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ilJW3iEDwSw5sxl7XQfwcGerFV02J/lGG/5Lw4uSNfmIhVU2r6NIFVUtuNuidf0lq
-         OgOXT3oue7eVwST1HXMngdon2eWTKgzUxiWFsvai5LGexrWXNPASn8eXjucHlaQ8Z4
-         9W+0miuy16PNpGAJE3vtfIDWnuiAYqZMkXovJs7s=
+        b=exg2a4/a6171Ly8UcmnRQ8kBqGgrFUWdnWxhXwU00VI3eBF3r0+3OW55lr/7VFFdp
+         j59vSELLu97OOwjaoJVFeKnlP7juKziAH9INJnESVGl1qmpf7N2nzmlrvKo/eKs1T2
+         UHONcAVXr4FI9kMSisew60CFQCSb/s9koK2kNsS0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200614115140.41262-1-andriy.shevchenko@linux.intel.com>
-References: <20200614115140.41262-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1] clk: Drop duplicate selection in Kconfig
+In-Reply-To: <20200630043214.1080961-1-davidgow@google.com>
+References: <20200630043214.1080961-1-davidgow@google.com>
+Subject: Re: [PATCH] clk: Specify IOMEM dependency for HSDK pll driver
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Sat, 11 Jul 2020 09:24:52 -0700
-Message-ID: <159448469202.1987609.17192927198595987825@swboyd.mtv.corp.google.com>
+Cc:     Brendan Higgins <brendanhiggins@google.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        David Gow <davidgow@google.com>
+To:     David Gow <davidgow@google.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Sat, 11 Jul 2020 09:28:12 -0700
+Message-ID: <159448489265.1987609.11760867517036236041@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Andy Shevchenko (2020-06-14 04:51:40)
-> There is no need to select RATIONAL in individual drivers,
-> since common clock symbol does it already.
+Quoting David Gow (2020-06-29 21:32:14)
+> The HSDK pll driver uses the devm_ioremap_resource function, but does
+> not specify a dependency on IOMEM in Kconfig. This causes a build
+> failure on architectures without IOMEM, for example, UML (notably with
+> make allyesconfig).
 >=20
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Fix this by making CONFIG_CLK_HSDK depend on CONFIG_IOMEM.
+>=20
+> Signed-off-by: David Gow <davidgow@google.com>
 > ---
 
-Ok... Applied to clk-next
+Applied to clk-fixes
