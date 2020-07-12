@@ -2,83 +2,127 @@ Return-Path: <SRS0=mu5K=AX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7B7C433E0
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jul 2020 06:49:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E922C433E4
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jul 2020 16:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6BEDA20722
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jul 2020 06:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594536548;
-	bh=5hFYggtmbXm1gzSEr54Yj77nGkufnmMGvt4v1b7+Ipw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=rzmpvuscDdqnc/3OCIPdiClOFC/SMJOrHrRZ0nst6o/O0MqpwkJZwYo0MMpn/NYCc
-	 JfWEcWmON4G1V7ia8yt9tnSTiv8fDj0Z5Gv4cVK/4j63MMsb0jR5vJT/LPDNQogMGj
-	 JgvdUDfNTLEG82C5OKxvwwvGJrT5ljmO9PO3GCQU=
+	by mail.kernel.org (Postfix) with ESMTP id F394A2068F
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jul 2020 16:56:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kAilNj0p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728010AbgGLGtI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jul 2020 02:49:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727777AbgGLGtH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 12 Jul 2020 02:49:07 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0F902070B;
-        Sun, 12 Jul 2020 06:49:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594536547;
-        bh=5hFYggtmbXm1gzSEr54Yj77nGkufnmMGvt4v1b7+Ipw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=aIGs5Cp0OxptNj1SWHeexH94IqDvPPv9ejS7Vw2/TuxPR8u3vdnSFsDxkn+sSUqad
-         Y4WzgEHqz2npBxJu549T6szFh9R6YQbpqr0GqVwtln1B6Ic0MoD72cWHXFmQbFMSzg
-         oDEJ+gwoJbh5qA4RiiKSsg7o/fdOoFxRf/Z7Mr9I=
-Date:   Sun, 12 Jul 2020 08:49:09 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     David Gow <davidgow@google.com>,
+        id S1729101AbgGLQ4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jul 2020 12:56:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55518 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728882AbgGLQ4d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jul 2020 12:56:33 -0400
+Received: from mail-pf1-x443.google.com (mail-pf1-x443.google.com [IPv6:2607:f8b0:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D073C08C5DD
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2020 09:56:32 -0700 (PDT)
+Received: by mail-pf1-x443.google.com with SMTP id 1so4906975pfn.9
+        for <linux-clk@vger.kernel.org>; Sun, 12 Jul 2020 09:56:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RoZLVftkUKnaYcMruWWsZbHBr7e1w4vlSaetUKLXTFc=;
+        b=kAilNj0pa5MHzUf5mqnUrQ7Io4OPdEm3+GWctUqGgbEAqrKEONdzOgLEtnLUtC55G+
+         TJtYT+cGSILGH69JxTvlt3yKTcXz6qHtcsydg5XT4UvB5YOx/f/sRub3Ay25mlOjAF/3
+         Q7SsWrN/t2t/YSI2c956Kn0tOeQESIl/aBX/WxWsX5JBA8dwEW/V+tBePyy9k5DcPfvL
+         iOxFXXiqwHcff6QE2/z7w3vFkUXjNvBfC7seQGaFda29Cd9pd0C+OBv/tEpAlByl9WYw
+         TpJC2ksfwfQt93SyRngRVRgQXvhNBnLMoBNkmhoNSK8GbAez6vmaq7TDtGGx61hd60q4
+         EvzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RoZLVftkUKnaYcMruWWsZbHBr7e1w4vlSaetUKLXTFc=;
+        b=Nq36xCTr+6LpkAQZOARCIvhd6pKm77eHW+6eIlYBZTUr2MCICYxKU2CpwEEhAcE8NB
+         u33goSI8md4aeovuGDyXQIEFJFYmh1Z469BMQKoWbIDvUvFqnViF6EQXlG8RGWSXGC60
+         9tHgRbAT4ReNu1cliEFKHpGR0Gsoc49V54EjUuoyrGgxQdyEDY/uXIH4z5WWXgHqFAn6
+         fM48RdOODOC6qaNI+zllY3oKQDn7JwdCZVGbOd6oeJyZ/gmhPmUIu2+HDlAkWR/HXQ8p
+         SSfAxEj1MyLiVIaajlz0rX507oEpFaoyxGE9NMq9siyR54FbEIVJzKVygJm4aXOXBnP3
+         5rlg==
+X-Gm-Message-State: AOAM531uwbaw/yZR15CfS/c3rqt/wEENjvfz+I6SUuVRzwuMTDTW0QKj
+        3FKslsclyJsTZAvmKez682G0fD1z4Q==
+X-Google-Smtp-Source: ABdhPJzJFvcF/99ggPqX5iRKTo/N7UTdplTTfJ9WJ7cg6cZfaX40TZSERHNl3+HJgCvx/2u+fP6row==
+X-Received: by 2002:a62:3583:: with SMTP id c125mr23840742pfa.158.1594572992302;
+        Sun, 12 Jul 2020 09:56:32 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:6c81:c187:70f5:3123:b5de:e77f])
+        by smtp.gmail.com with ESMTPSA id p30sm12971935pfq.153.2020.07.12.09.56.27
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 12 Jul 2020 09:56:31 -0700 (PDT)
+Date:   Sun, 12 Jul 2020 22:26:25 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Soren Brinkmann <soren.brinkmann@xilinx.com>,
-        devel@driverdev.osuosl.org,
-        Brendan Higgins <brendanhiggins@google.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: staging: Specify IOMEM dependency for Xilinx
- Clocking Wizard driver
-Message-ID: <20200712064909.GC2920853@kroah.com>
-References: <20200630044518.1084468-1-davidgow@google.com>
- <159448501081.1987609.2376410636031633673@swboyd.mtv.corp.google.com>
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-actions@lists.infradead.org
+Subject: Re: [PATCH v3 2/6] dt-bindings: clock: Add APB, DMAC, GPIO bindings
+ for Actions S500 SoC
+Message-ID: <20200712165625.GA6110@Mani-XPS-13-9360>
+References: <cover.1593788312.git.cristian.ciocaltea@gmail.com>
+ <67112af4f5bc0cc5e70ce8410feb369cc72972b8.1593788312.git.cristian.ciocaltea@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <159448501081.1987609.2376410636031633673@swboyd.mtv.corp.google.com>
+In-Reply-To: <67112af4f5bc0cc5e70ce8410feb369cc72972b8.1593788312.git.cristian.ciocaltea@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Jul 11, 2020 at 09:30:10AM -0700, Stephen Boyd wrote:
-> Quoting David Gow (2020-06-29 21:45:17)
-> > The Xilinx Clocking Wizard driver uses the devm_ioremap_resource
-> > function, but does not specify a dependency on IOMEM in Kconfig. This
-> > causes a build failure on architectures without IOMEM, for example, UML
-> > (notably with make allyesconfig).
-> > 
-> > Fix this by making CONFIG_COMMON_CLK_XLNX_CLKWZRD depend on CONFIG_IOMEM.
-> > 
-> > Signed-off-by: David Gow <davidgow@google.com>
-> > ---
+On Fri, Jul 03, 2020 at 08:05:08PM +0300, Cristian Ciocaltea wrote:
+> Add the missing APB, DMAC and GPIO clock bindings constants for
+> Actions Semi S500 SoC.
 > 
-> This driver is in the process of being destaged to drivers/clk/
+> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks,
+Mani
+
+> ---
+> Changes in v3:
+>  - Preserved the original values of the existing bindings and moved
+>    the newly added constants bellow, as indicated by Stephen
 > 
-> Greg, should I pick this one up?
-
-Sure, if I haven't already.
-
-thanks,
-
-greg k-h
+> Changes in v2:
+>  - None
+> 
+>  include/dt-bindings/clock/actions,s500-cmu.h | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/dt-bindings/clock/actions,s500-cmu.h b/include/dt-bindings/clock/actions,s500-cmu.h
+> index 030981cd2d56..a250a52a6192 100644
+> --- a/include/dt-bindings/clock/actions,s500-cmu.h
+> +++ b/include/dt-bindings/clock/actions,s500-cmu.h
+> @@ -72,7 +72,12 @@
+>  #define CLK_NAND		52
+>  #define CLK_ECC			53
+>  #define CLK_RMII_REF		54
+> +#define CLK_GPIO		55
+>  
+> -#define CLK_NR_CLKS	       (CLK_RMII_REF + 1)
+> +/* system clock (part 2) */
+> +#define CLK_APB			56
+> +#define CLK_DMAC		57
+> +
+> +#define CLK_NR_CLKS		(CLK_DMAC + 1)
+>  
+>  #endif /* __DT_BINDINGS_CLOCK_S500_CMU_H */
+> -- 
+> 2.27.0
+> 
