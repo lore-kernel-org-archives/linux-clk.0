@@ -4,94 +4,89 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F470C433E5
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 21:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58463C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 22:54:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 45847208FE
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 21:39:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C5DE20C56
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 22:54:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594676389;
-	bh=agAsipOozBPukSLhCM4m4vjLI/D7R1E+uScF3vXv/tc=;
+	s=default; t=1594680899;
+	bh=FMnuW3gwBpdtYA8wx79LJuuMU1bOlbQ2lktPIstEzKU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wC71LfnRCay4QD93ZpeZQ97F2N/1a3uiIesItgGuG4F7Bze3Es4xaX7boTSvPWG0H
-	 Mm7oH3KvWYFuKYw0iAfdSK61IfV4EuZq/73XIab5vPVh/dvcpewqE4L+UZUOddE5kt
-	 Og2nV+3Rrb9fw3qDs7j06lkGMF146NLo0MaVWQ1A=
+	b=WrQH45lTTCZgDbbOgetHhMrj9myQ0rM//VYTfxf4PfYYrRPPhJedDGrDvh/ZteF3f
+	 PciVh6QGMpvekVsqDfIEFh8nTUXdrbzSYswd2Q8eFbqvZnP6Gw68G96mqZdhvyJ/Cs
+	 hO+UdsHhtDObPtN2eceYfq0rJ8FLdNT6JXqHoVUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726440AbgGMVjt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jul 2020 17:39:49 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:33412 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726437AbgGMVjs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jul 2020 17:39:48 -0400
-Received: by mail-io1-f66.google.com with SMTP id d18so15176303ion.0;
-        Mon, 13 Jul 2020 14:39:48 -0700 (PDT)
+        id S1726364AbgGMWy6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jul 2020 18:54:58 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:39590 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726347AbgGMWy5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jul 2020 18:54:57 -0400
+Received: by mail-il1-f195.google.com with SMTP id k6so12673972ili.6;
+        Mon, 13 Jul 2020 15:54:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=aEcm7UlnpLxi1nja2AkUVi4pjG1g2ySwAI8pwvIKG8c=;
-        b=ft4cXyPXoYMS9G7q0WHWN0cm4tq8tIHkZdgsYhoZ8+qqMh9x+1CwXztsQNE0oL8dPc
-         XlUZjkfMKKFr9drnrPNmmlh9w/1eTmarfBt+jTzDHAGYv4cypuGDHmfucWxvHyU7qjuK
-         8QMVy8iw+goGm7z+aXyHQj8+t8pN6XshhiC5TmLwaELe/lPcvkjuGrK/14SL3/QcmJjq
-         4bbW1hd2JR7SvVCqnVjy//ern+ftYUdN2OFPjlBQdTXd5D1XEvnNddR2mNe9oUPEYFYl
-         g9tR+yBEKZm8gMvgAauM1y1ImvfljCSkQvp+jpFW1ZYS/oTFStB+lBjqFBM5jpiaZT+L
-         vWZg==
-X-Gm-Message-State: AOAM533q2oDB05litIAOScI1zqtol9Ke7qnpqEe7jy4jALao27nNVNp5
-        bywKqDMQgZIdQJIlhcn2+w==
-X-Google-Smtp-Source: ABdhPJxyncAsqE/oRaGZKws0ZzryaZj/+lu/e8IRy1d+IxsmK90AXDKTJkJUTjqo8Y/Px0bpUP70Vg==
-X-Received: by 2002:a6b:ee15:: with SMTP id i21mr1820321ioh.25.1594676387812;
-        Mon, 13 Jul 2020 14:39:47 -0700 (PDT)
+        bh=Lx27nXKsEHDAQ3zBwCOzlK62p9t1j+kSDxv2fkLBnl0=;
+        b=omMEP7ix62sxfXYmZON9ompwOwJNPJ54PXm7iQ/l02jxQVcl/DBzLjFg3ULfadJeqn
+         RAvoVohi4oCVIWPfRG0BJxLmm7GTWUE+bKyJ+CqvDtk+G6XnNyiksO2NbTXJMtiPDYKy
+         ncivOCPxMNbhCfoBjRsjmbUDmbOEag6BAQpvnP71ti0FudDRVkHVIwln2swv/Q5YMF1G
+         1hlpd7WEWZW5E1lwjeasJg/c7UsQHxTaXQF+tFunHVCN/K9SxY7pcLVQnoWLS6drc1xH
+         YMnO7fYFMLYkuGCtExs3plDnqPZs6iYmOWyTivnccKl68dtqxAVhipvdL2uJZg9SuXjE
+         05gw==
+X-Gm-Message-State: AOAM533rw92vFKakVDVO0Oxj4DKBtI3vlLUVbN5CsnbWzhvT0yGpz9wm
+        Ejj0GN5xuT6lwEdQsti3YQ==
+X-Google-Smtp-Source: ABdhPJxKGIcBl7P0g7fSqwC5X3R2fzaMf2mpBeKTxIr+o8fUnEkwxEhRcUXiVhulNMpWIs3AEYRpIg==
+X-Received: by 2002:a92:58d6:: with SMTP id z83mr2086323ilf.186.1594680896394;
+        Mon, 13 Jul 2020 15:54:56 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id s190sm9365357ilc.28.2020.07.13.14.39.46
+        by smtp.gmail.com with ESMTPSA id t5sm8807373iov.53.2020.07.13.15.54.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 14:39:47 -0700 (PDT)
-Received: (nullmailer pid 774524 invoked by uid 1000);
-        Mon, 13 Jul 2020 21:39:46 -0000
-Date:   Mon, 13 Jul 2020 15:39:46 -0600
+        Mon, 13 Jul 2020 15:54:55 -0700 (PDT)
+Received: (nullmailer pid 874330 invoked by uid 1000);
+        Mon, 13 Jul 2020 22:54:53 -0000
+Date:   Mon, 13 Jul 2020 16:54:53 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-actions@lists.infradead.org,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH v3 4/6] dt-bindings: reset: Add binding constants for
- Actions S500 RMU
-Message-ID: <20200713213946.GA774478@bogus>
-References: <cover.1593788312.git.cristian.ciocaltea@gmail.com>
- <daf615160b3be9f38dcf7926cc82128c9c2d73e3.1593788312.git.cristian.ciocaltea@gmail.com>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     mturquette@baylibre.com, linus.walleij@linaro.org,
+        clabbe@baylibre.com, liyong@allwinnertech.com,
+        srinivas.kandagatla@linaro.org, icenowy@aosc.io,
+        p.zabel@pengutronix.de, linux-i2c@vger.kernel.org,
+        gregory.clement@bootlin.com, sboyd@kernel.org,
+        amit.kucheria@verdurent.com, bage@linutronix.de,
+        tglx@linutronix.de, linux-pm@vger.kernel.org,
+        daniel.lezcano@linaro.org, anarsoul@gmail.com, megous@megous.com,
+        tiny.windzz@gmail.com, lee.jones@linaro.org, rui.zhang@intel.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        wens@csie.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        maz@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, mripard@kernel.org, stefan@olimex.com,
+        huangshuosheng@allwinnertech.com, jason@lakedaemon.net
+Subject: Re: [PATCH v3 01/16] dt-bindings: clk: sunxi-ccu: add compatible
+ string for A100 CCU and R-CCU
+Message-ID: <20200713225453.GA874275@bogus>
+References: <20200708071942.22595-1-frank@allwinnertech.com>
+ <20200708071942.22595-2-frank@allwinnertech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <daf615160b3be9f38dcf7926cc82128c9c2d73e3.1593788312.git.cristian.ciocaltea@gmail.com>
+In-Reply-To: <20200708071942.22595-2-frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 03 Jul 2020 20:05:10 +0300, Cristian Ciocaltea wrote:
-> Add device tree binding constants for Actions Semi S500 SoC Reset
-> Management Unit (RMU).
+On Wed, 08 Jul 2020 15:19:27 +0800, Frank Lee wrote:
+> This patch adds binding to a100's ccu clock and r-ccu clock.
 > 
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-> Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
 > ---
-> Changes in v3:
->  - Added Philipp's Acked-by tag
-> 
-> Changes in v2:
->  - None
-> 
->  .../dt-bindings/reset/actions,s500-reset.h    | 67 +++++++++++++++++++
->  1 file changed, 67 insertions(+)
->  create mode 100644 include/dt-bindings/reset/actions,s500-reset.h
+>  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml         | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
