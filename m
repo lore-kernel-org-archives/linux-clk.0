@@ -2,80 +2,99 @@ Return-Path: <SRS0=Hq2+=AY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B79C0C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 03:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C5C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:47:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 91B13206E2
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 03:21:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F24720674
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:47:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="wJ/lsVIf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgGMDV4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jul 2020 23:21:56 -0400
-Received: from smtp21.cstnet.cn ([159.226.251.21]:43320 "EHLO cstnet.cn"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726261AbgGMDV4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 12 Jul 2020 23:21:56 -0400
-Received: from localhost (unknown [159.226.5.99])
-        by APP-01 (Coremail) with SMTP id qwCowAAHT5tI0wtft15aAA--.63616S2;
-        Mon, 13 Jul 2020 11:21:45 +0800 (CST)
-From:   Xu Wang <vulab@iscas.ac.cn>
-To:     mturquette@baylibre.com, sboyd@kernel.org, baohua@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, Xu Wang <vulab@iscas.ac.cn>
-Subject: [PATCH] clk: clk-atlas6: fix return value check in atlas6_clk_init()
-Date:   Mon, 13 Jul 2020 03:21:43 +0000
-Message-Id: <20200713032143.21362-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID: qwCowAAHT5tI0wtft15aAA--.63616S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JrW7WFykXF48ZFWrurWrGrg_yoWfWwcEgF
-        4rKFnxXw1rCw1SyrW5Aa4xZryFvFn5ur4xZa4xKFsxJa48WrykWFZIv34DAr9rKrWkJryD
-        tw1kGryfCw1akjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-        Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
-        W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-        I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
-        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
-        GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
-        1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
-        64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
-        0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4U
-        MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUf-B_UUU
-        UU=
-X-Originating-IP: [159.226.5.99]
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiAw0QA13qZNmYiQAAsG
+        id S1728341AbgGMFra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jul 2020 01:47:30 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:38893 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727036AbgGMFr3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Jul 2020 01:47:29 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594619249; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=giZv+9y7LNQMJTKXeaUBWSz3WRz84eCYj/TBVuNbEGY=; b=wJ/lsVIfHMa4viURXiuzWlyvVSJc4bCrcW8O3Bks8rSScUP+2H/ExJ425cup6+AwDfhl0inM
+ qOgv3RW/SVPEqlf4hiSFA/LP3CczINdIOb4vb9hkfs8TgGEVcjky6he6wpWjHlFtMcaqKGIS
+ iryTDnWJsT3Mzb2Ic7AaMxMdn1Y=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
+ 5f0bf570e3bee125106b2603 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 13 Jul 2020 05:47:28
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 6954AC43391; Mon, 13 Jul 2020 05:47:27 +0000 (UTC)
+Received: from [192.168.0.101] (unknown [49.207.129.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sivaprak)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BCE14C433C6;
+        Mon, 13 Jul 2020 05:47:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCE14C433C6
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
+Subject: Re: [clk:clk-qcom 13/14] drivers/clk/qcom/gcc-ipq8074.c:4610:30:
+ warning: initializer overrides prior initialization of this subobject
+To:     kernel test robot <lkp@intel.com>
+Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Stephen Boyd <sboyd@kernel.org>,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+References: <202007121820.EgK6NAy4%lkp@intel.com>
+From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Message-ID: <f304b312-8034-5838-4ffc-e0fcbe8136b1@codeaurora.org>
+Date:   Mon, 13 Jul 2020 11:17:22 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+MIME-Version: 1.0
+In-Reply-To: <202007121820.EgK6NAy4%lkp@intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In case of error, the function clk_register() returns ERR_PTR()
-and never returns NULL. The NULL test in the return value check
-should be replaced with IS_ERR().
+Hi Stephen,
 
-Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
----
- drivers/clk/sirf/clk-atlas6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I see that you already applied this patch on clk-next,
 
-diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
-index c84d5bab7ac2..b95483bb6a5e 100644
---- a/drivers/clk/sirf/clk-atlas6.c
-+++ b/drivers/clk/sirf/clk-atlas6.c
-@@ -135,7 +135,7 @@ static void __init atlas6_clk_init(struct device_node *np)
- 
- 	for (i = pll1; i < maxclk; i++) {
- 		atlas6_clks[i] = clk_register(NULL, atlas6_clk_hw_array[i]);
--		BUG_ON(!atlas6_clks[i]);
-+		BUG_ON(IS_ERR(atlas6_clks[i]));
- 	}
- 	clk_register_clkdev(atlas6_clks[cpu], NULL, "cpu");
- 	clk_register_clkdev(atlas6_clks[io],  NULL, "io");
--- 
-2.17.1
+shall I provide the fix as incremental patch?
 
+On 7/12/2020 4:04 PM, kernel test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-qcom
+> head:   b4297844995f380588e6f935a2f98c399129a9b2
+> commit: f0cfcf1ade201dcfd3365f231efc90e846fa46df [13/14] clk: qcom: ipq8074: Add missing clocks for pcie
+> config: x86_64-allyesconfig (attached as .config)
+> compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project 02946de3802d3bc65bc9f2eb9b8d4969b5a7add8)
+> reproduce (this is a W=1 build):
+>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>          chmod +x ~/bin/make.cross
+>          # install x86_64 cross compiling tool for clang build
+>          # apt-get install binutils-x86-64-linux-gnu
+>          git checkout f0cfcf1ade201dcfd3365f231efc90e846fa46df
+>          # save the attached .config to linux build tree
+>          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=x86_64
+>
+> If you fix the issue, kindly add following tag as appropriate
+> Reported-by: kernel test robot <lkp@intel.com>
+>
+> All warnings (new ones prefixed by >>):
+>
+> ---
+> 0-DAY CI Kernel Test Service, Intel Corporation
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
