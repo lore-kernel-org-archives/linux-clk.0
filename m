@@ -2,59 +2,61 @@ Return-Path: <SRS0=Hq2+=AY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF34C433EB
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 00:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2524AC433F1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 00:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 97F3E20758
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 00:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E0120758
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 00:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLRApDcz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjwVvKkn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728878AbgGMAZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jul 2020 20:25:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39268 "EHLO
+        id S1728479AbgGMAZ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jul 2020 20:25:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728560AbgGMAZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jul 2020 20:25:18 -0400
-Received: from mail-qk1-x741.google.com (mail-qk1-x741.google.com [IPv6:2607:f8b0:4864:20::741])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00BEBC061794;
-        Sun, 12 Jul 2020 17:25:17 -0700 (PDT)
-Received: by mail-qk1-x741.google.com with SMTP id r22so10674432qke.13;
-        Sun, 12 Jul 2020 17:25:17 -0700 (PDT)
+        with ESMTP id S1728916AbgGMAZX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jul 2020 20:25:23 -0400
+Received: from mail-qt1-x841.google.com (mail-qt1-x841.google.com [IPv6:2607:f8b0:4864:20::841])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7B7DC061794;
+        Sun, 12 Jul 2020 17:25:22 -0700 (PDT)
+Received: by mail-qt1-x841.google.com with SMTP id x62so8800365qtd.3;
+        Sun, 12 Jul 2020 17:25:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=MNQQ+hyQNqz/JuGSalQ8ldWzSx4fTga3Roz/EAlmuLc=;
-        b=aLRApDcz2S4eAcRZu0S4mUjBqA7Pxccts1w4+QmFqlzD5M4yra7I48rG7WkCN/QBtP
-         BNI1mmCBRuQq2S0YdjvnQVX7v2Lz2aJSDccpq+YO5nrL3EmWhas1FcREdqvCR7FkUIJ1
-         pA3qCmSobQvmyNt6HzxR2DrIpkYtL7gxDwKctxFCdB4uoapQzEJekNrbiWElpCCTFDBv
-         SBS76YFxbPOdB35SAiny4jeuozqgUtdaCuJSPx8qkyJLEp1eqV0HKRG8e6m0PRKae+gd
-         YbKc9OmcaQWIEFLJ9LD8YQb1abEhOjYQ7TkI0/T7Ydw5SKk8iTeZSx7J/DFPNYQw/2Us
-         CecQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=okBx7c23F7f5k4i72k982zu3s0srBhuRGGNWTz+lcgU=;
+        b=kjwVvKkn8vMu0rcKHnD7nAhnOJ/IC2+HXBKgQmVAk/GUbw2JvY82qR9o6bkywcsB5e
+         goKgi+zdC/oi0BRYDaNJqfNkCvewYgcd/3hdmLPxLWeMuSyd6D1PZAM5sfk8MSg7jH7D
+         YDZb2fQlObK5vqkdViegI3UTNGYLl18SCNVGiTK6kOkDxU3DroVXslJteLkb61h+QK3m
+         qGB86o8swJG6Vdxid92hFBB6geXiYgZIMyLRfFo4wT/lG24k9uotXGjvdqhDIetrqGAO
+         pHmpwvQf2OnXf16ElVaqsbxAPO9b+UlVcjYsqy/yCf92ny5s86r9gg2VUaTnzhDWpDv1
+         +GVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MNQQ+hyQNqz/JuGSalQ8ldWzSx4fTga3Roz/EAlmuLc=;
-        b=CX1v67wgOb9Gr42ysdIEHyRnaV05Pa1kDb2k/5uyybEXOyZVLi9Wi2qayM5+VG8r5o
-         Ue/ZDwpWdb68I1VmS9iJtlqEr+f/RWfPZ8zFs9AdmGA1s7ZAC/wT6v+VzVO/HP8pyso5
-         F/z+FtjX1uMn69NLH8QXyfWV8623vjxTH7UgKZrW9xcVQJP8CbOBbonHKGiS79/tuc6b
-         Hl6JeF/w9tRbC9OdOH8mUVSzK3U6thJXq1trprU3fL6Eac3LmwYvdl65jVyP8fH5PgnZ
-         +/o/cyvvE8mETb73tjFsqQjrJHumHr1tcSkO+/knM5jHlYmXPBtWVhuW0g90FsEKRAuO
-         vnvA==
-X-Gm-Message-State: AOAM532viKc7/0K+Lg/a7bQo8Oaw7RUsQUb4C4tn/BV7vXzsSLRBPUS6
-        0pxsIbRLRnANeVnVeyqYJZU=
-X-Google-Smtp-Source: ABdhPJygFZaTQ/4r8Q45IxyGdkrJNhgiE8e+dUZVrGs+qeDGkHO7T5mG5bd5rWtJbTVtpBYMM3hhFQ==
-X-Received: by 2002:a37:6488:: with SMTP id y130mr76336140qkb.194.1594599916663;
-        Sun, 12 Jul 2020 17:25:16 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=okBx7c23F7f5k4i72k982zu3s0srBhuRGGNWTz+lcgU=;
+        b=k+dtVJX28mVOXjIWgsM2RO4S94+GpywRLPS5uxdNZKBSyZE/t4fd+HT9EkWLZG9LC8
+         RrHBS7GGBcNXsUeZeZPgavdukqGwCTUJr7/tq90g69z13NF2B5jGARRW7YSpHX1rUtkK
+         pNwCnrDhz99iiyfqj4Y5Oj1V2qLRL6U0SCTifxfOWHvxpHy20NhninxbmZWP054EpoSK
+         KxezJACP7fhDAm9R6lY6EeNSjJaky1iA7nWJPrXqwqlxqxpfpwuiWy43SWAasOK9U9bC
+         D9WbPZ3a27sCvuOYWxTTokJjGQaPDDNZmuA82AtO7KayL8Q0yHC6h/7ePsBJdHyP+Wx2
+         20/g==
+X-Gm-Message-State: AOAM5306zx23m9vykDibkv6NVEk14Dw3W1Hngo477x6J/6JbaLn18U+s
+        VtAKibUyuqQMhrz0KN2PGvY=
+X-Google-Smtp-Source: ABdhPJwoixAe+QV/qqPel2PVdPE3MD9StGNsTAnpK4/qV7nab60fb7jYsACC3Yop/zfPb59z3l5KNA==
+X-Received: by 2002:ac8:4ccb:: with SMTP id l11mr79978575qtv.18.1594599921681;
+        Sun, 12 Jul 2020 17:25:21 -0700 (PDT)
 Received: from localhost.localdomain ([72.53.229.195])
-        by smtp.gmail.com with ESMTPSA id u5sm17044309qke.32.2020.07.12.17.25.15
+        by smtp.gmail.com with ESMTPSA id u5sm17044309qke.32.2020.07.12.17.25.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 12 Jul 2020 17:25:16 -0700 (PDT)
+        Sun, 12 Jul 2020 17:25:21 -0700 (PDT)
 From:   Sven Van Asbroeck <thesven73@gmail.com>
 X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
 To:     shawnguo@kernel.org, s.hauer@pengutronix.de
@@ -63,32 +65,56 @@ Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v1 0/5] imx6qp QuadPlus: support improved enet clocking
-Date:   Sun, 12 Jul 2020 20:25:07 -0400
-Message-Id: <20200713002512.28742-1-TheSven73@gmail.com>
+Subject: [PATCH v1 5/5] ARM: dts: imx6qp: support improved enet clocking on QuadPlus
+Date:   Sun, 12 Jul 2020 20:25:12 -0400
+Message-Id: <20200713002512.28742-6-TheSven73@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200713002512.28742-1-TheSven73@gmail.com>
+References: <20200713002512.28742-1-TheSven73@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the imx6qp QuadPlus, the h/w designers have improved enet clocking.
+Board designers are now able to choose between all three supported
+enet clocking methods, by changing the clocktree via the devicetree:
 
-This patchset extends the clock tree to reflect the situation on QuadPlus.
+a) route enet_ref externally from pad to pad (the default):
 
-This allows board designers to choose the enet clocking method by making
-simple clocktree changes in the devicetree.
+no clock tree changes required
 
-Default setting: external routing of enet_ref from pad to pad.
-
-Example, change the default to enet_ref @ 125MHz clock routed internally:
+b) route internally on SoC from enet_ref
 
 &fec {
-	assigned-clocks = <&clks IMX6QDL_CLK_ENET_PTP>,
-			  <&clks IMX6QDL_CLK_ENET_REF>;
-	assigned-clock-parents = <&clks IMX6QDL_CLK_ENET_REF>;
-	assigned-clock-rates = <0>, <125000000>;
+    assigned-clocks = <&clks IMX6QDL_CLK_ENET_PTP>,
+                      <&clks IMX6QDL_CLK_ENET_REF>;
+    assigned-clock-parents = <&clks IMX6QDL_CLK_ENET_REF>;
+    assigned-clock-rates = <0>, <125000000>;
 };
+
+c) route external clock (from PHY or oscillator) via pad
+
+/ {
+    clocks {
+        phy_osc: anaclk3 {
+            compatible = "fixed-clock";
+            #clock-cells = <0>;
+            clock-frequency = <125000000>;
+       };
+   };
+};
+
+&fec {
+    assigned-clocks = <&clks IMX6QDL_CLK_ENET_PTP>,
+                      <&clks IMX6QDL_CLK_ENET_PAD>;
+    assigned-clock-parents = <&clks IMX6QDL_CLK_ENET_PAD>,
+                             <&clks IMX6QDL_CLK_ANACLK3>;
+};
+
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+
+Tree: v5.8-rc4
 
 To: Shawn Guo <shawnguo@kernel.org>
 To: Sascha Hauer <s.hauer@pengutronix.de>
@@ -99,25 +125,23 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: linux-clk@vger.kernel.org
 
-Sven Van Asbroeck (5):
-  ARM: mach-imx6q: do not select enet PTP clock source on QuadPlus
-  clk: imx: add simple regmap-backed clock mux
-  dt-bindings: imx6qdl-clock: add QuadPlus enet clocks
-  clk: imx6q: support improved enet clocking on QuadPlus
-  ARM: dts: imx6qp: support improved enet clocking on QuadPlus
+ arch/arm/boot/dts/imx6qp.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
- .../bindings/clock/imx6q-clock.yaml           |   2 +
- arch/arm/boot/dts/imx6qp.dtsi                 |   3 +
- arch/arm/mach-imx/mach-imx6q.c                |   4 +
- drivers/clk/imx/Makefile                      |   1 +
- drivers/clk/imx/clk-imx6q.c                   |  46 ++++++++
- drivers/clk/imx/clk-mux-regmap.c              | 110 ++++++++++++++++++
- drivers/clk/imx/clk.h                         |   7 ++
- include/dt-bindings/clock/imx6qdl-clock.h     |   5 +-
- include/linux/mfd/syscon/imx6q-iomuxc-gpr.h   |   1 +
- 9 files changed, 178 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/imx/clk-mux-regmap.c
-
+diff --git a/arch/arm/boot/dts/imx6qp.dtsi b/arch/arm/boot/dts/imx6qp.dtsi
+index b310f13a53f2..7f81d35f56c9 100644
+--- a/arch/arm/boot/dts/imx6qp.dtsi
++++ b/arch/arm/boot/dts/imx6qp.dtsi
+@@ -79,6 +79,9 @@
+ &fec {
+ 	interrupts = <0 118 IRQ_TYPE_LEVEL_HIGH>,
+ 		     <0 119 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&clks IMX6QDL_CLK_ENET>,
++		 <&clks IMX6QDL_CLK_ENET>,
++		 <&clks IMX6QDL_CLK_ENET_PTP>;
+ };
+ 
+ &gpc {
 -- 
 2.17.1
 
