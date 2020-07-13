@@ -7,82 +7,102 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D028C433E6
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6DFC433E2
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 11EFE2145D
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2844620DD4
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594681611;
-	bh=w2cSFJ2Qh7G14Gp3zMk/c5kKGEI3PkgLtFnF80CGi8k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Iel6rvV0+dtz4oWxGt2J7fwZy/tyGRb4KcYWA4AYxc+WP5nBarcGT6xAgfQglbWgd
-	 upLjGGZ6HF3iroiQc24q/cStkNRPhWl2+Ml/zFeYr2MNtUCxq5f3DVa6HqGx3yDFDM
-	 I/0Y+GDNDGBswZuT0omP69MPc0Pe2Hk5JlUZdVsw=
+	s=default; t=1594683214;
+	bh=ASyGfa3Wk9yhEqjezqaJilEkvipfynLyaSZXaASIVX4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=hNJ5fn2kJcuFqPVPii2HliW6rA/b57P6mN8EnQwOnswyj4Lm7B+FFylZZAqdHW7dq
+	 UOEPg6uqrjk3RBrlKLmzYdXlrVUEetDwnPpvNuTehfdNTHRPohQxV03M4cRJbJzwA3
+	 3Pkh0kr1CLTTvod1fXWwOPa678RNNZTCD8RGoKp0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgGMXGu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jul 2020 19:06:50 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36014 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726396AbgGMXGu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jul 2020 19:06:50 -0400
-Received: by mail-io1-f65.google.com with SMTP id y2so15355341ioy.3;
-        Mon, 13 Jul 2020 16:06:49 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Va+ZlTBy4NaES7hnZbyB0oId1/dEyB05Y7FSIQHACeA=;
-        b=UBaAgcTjpngBbr6NuE80nlzznsoOye3wi6JMbHBUoe2M9/v8bWL4Amin3Xg8+8UK3C
-         t0M3I9Us5PN3Idl78YraScvG0Xtt5uT26aBPb0tLgSnGK2V0RW1eHTrFdEY4we+MukNq
-         h95FP/G34qpVP+KxQjc1fPhjDkdoKqqPN/o4uhAyhFdE5mlXyO7QMYu07x40Mm4i/1xS
-         ctuLxNiWNvnYF5qN1jHuQxW5A84Fh4T3Lr83lXkTIfbmQhLmk92C5CGPw9zLorOOnmiG
-         x3qxY66+uSLCf4VbShvPHBZo7GFavwM0h0xFAWFsJHXhfnz4U7NLqdKoYGZDUu/AXR0+
-         +eow==
-X-Gm-Message-State: AOAM531n4s74hneD9Jzxgb+s4kvR3A3v1Q6T4LUSnbESxidrCFoUAvEw
-        t89f/UZ806nvHEQ7UNZSxWXSuF/Cjw==
-X-Google-Smtp-Source: ABdhPJx65Nt7T7vwms3NZzxevOnmEr4AJl4CJB2QXdK6RatnZGsHBnnqfDAmqLi/7Gx6KXwzxW2Nkg==
-X-Received: by 2002:a5d:8f04:: with SMTP id f4mr2129218iof.33.1594681609475;
-        Mon, 13 Jul 2020 16:06:49 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id w82sm9346931ili.42.2020.07.13.16.06.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jul 2020 16:06:49 -0700 (PDT)
-Received: (nullmailer pid 890897 invoked by uid 1000);
-        Mon, 13 Jul 2020 23:06:47 -0000
-Date:   Mon, 13 Jul 2020 17:06:47 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jonathan Marek <jonathan@marek.ca>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 08/14] dt-bindings: clock: add SM8250 QCOM Graphics
- clock bindings
-Message-ID: <20200713230647.GA890821@bogus>
-References: <20200709135251.643-1-jonathan@marek.ca>
- <20200709135251.643-9-jonathan@marek.ca>
+        id S1726374AbgGMXd2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jul 2020 19:33:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49722 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726339AbgGMXd2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Jul 2020 19:33:28 -0400
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48EA220DD4;
+        Mon, 13 Jul 2020 23:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594683207;
+        bh=ASyGfa3Wk9yhEqjezqaJilEkvipfynLyaSZXaASIVX4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=QLtsmejCfy9e4auxKVg0O/r8JmxeFkxZ//UOmpI7peIMM4tvfxR1jybbdDS1mSI43
+         Zeasdc+UOeNrqSkNz04BXtyNK0FY4ZKm+Ek3QlVTTteo9w+eSQVNTzYMjNkhqHPB6I
+         DPwPBO4eK2buv4Qyx+Meqz7KEYfwVP6Iv0Hik/6o=
+Received: by mail-oo1-f44.google.com with SMTP id t6so2808048ooh.4;
+        Mon, 13 Jul 2020 16:33:27 -0700 (PDT)
+X-Gm-Message-State: AOAM531f63R5S6zUy9PUcwWDD2KHRN4M1R0okKSauALtfngnL+Wk4OLD
+        hy1KdgW3TZSqd+0Vqi7W7wNP41AVRrYGT5LDYA==
+X-Google-Smtp-Source: ABdhPJxJn4Yq2V9XaFU8Qu7rKSKIoq5hATYp03MMXMnT6eRrlBajd27f8pUxj/NKMNWyOQuf9hIsTFEpJUwU6oj3ods=
+X-Received: by 2002:a4a:7459:: with SMTP id t25mr2138469ooe.25.1594683206670;
+ Mon, 13 Jul 2020 16:33:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200709135251.643-9-jonathan@marek.ca>
+References: <20200708071942.22595-1-frank@allwinnertech.com>
+ <20200708071942.22595-2-frank@allwinnertech.com> <20200713225453.GA874275@bogus>
+In-Reply-To: <20200713225453.GA874275@bogus>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 13 Jul 2020 17:33:15 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK4azgT=+vXu1VJ1tn--QnGaoied+FPSKZ68vtZs+=_sw@mail.gmail.com>
+Message-ID: <CAL_JsqK4azgT=+vXu1VJ1tn--QnGaoied+FPSKZ68vtZs+=_sw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/16] dt-bindings: clk: sunxi-ccu: add compatible
+ string for A100 CCU and R-CCU
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Corentin Labbe <clabbe@baylibre.com>, liyong@allwinnertech.com,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        bage@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Ondrej Jirman <megous@megous.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Marc Zyngier <maz@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        huangshuosheng@allwinnertech.com,
+        Jason Cooper <jason@lakedaemon.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 09 Jul 2020 09:52:39 -0400, Jonathan Marek wrote:
-> Add device tree bindings for graphics clock controller for
-> Qualcomm Technology Inc's SM8250 SoCs.
-> 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  .../devicetree/bindings/clock/qcom,gpucc.yaml |  4 ++-
->  include/dt-bindings/clock/qcom,gpucc-sm8250.h | 34 +++++++++++++++++++
->  2 files changed, 37 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sm8250.h
-> 
+On Mon, Jul 13, 2020 at 4:54 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Wed, 08 Jul 2020 15:19:27 +0800, Frank Lee wrote:
+> > This patch adds binding to a100's ccu clock and r-ccu clock.
+> >
+> > Signed-off-by: Frank Lee <frank@allwinnertech.com>
+> > ---
+> >  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml         | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Note that your series isn't threaded properly. Please send series
+threaded (in reply to cover letter or 1st patch).
