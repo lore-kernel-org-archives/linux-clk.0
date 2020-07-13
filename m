@@ -2,99 +2,176 @@ Return-Path: <SRS0=Hq2+=AY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 436C5C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:47:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1FAC433E3
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F24720674
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:47:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="wJ/lsVIf"
+	by mail.kernel.org (Postfix) with ESMTP id C48702073A
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 05:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594619768;
+	bh=gXFwq43ohUgKZA8gAkhAymCG+JyohqjJf0fM3HTHIZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=qLIo4BFO2wBigyY7Xb/IW1If1RQVzH1Xty83kvOfwmOBtMT9Eq/9tJUrP4AQeMk3U
+	 BIWGcGULqejvdenjeaObgOxk6HjVd5fFgyVCNs42qfab+++2iHHFATOGI3b2xIHpJf
+	 T3pHmALmYqbdQf6eKLY04dbY+jwSfU0PAfAEJMx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbgGMFra (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jul 2020 01:47:30 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:38893 "EHLO m43-7.mailgun.net"
+        id S1728878AbgGMF4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jul 2020 01:56:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727036AbgGMFr3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 13 Jul 2020 01:47:29 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594619249; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=giZv+9y7LNQMJTKXeaUBWSz3WRz84eCYj/TBVuNbEGY=; b=wJ/lsVIfHMa4viURXiuzWlyvVSJc4bCrcW8O3Bks8rSScUP+2H/ExJ425cup6+AwDfhl0inM
- qOgv3RW/SVPEqlf4hiSFA/LP3CczINdIOb4vb9hkfs8TgGEVcjky6he6wpWjHlFtMcaqKGIS
- iryTDnWJsT3Mzb2Ic7AaMxMdn1Y=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-east-1.postgun.com with SMTP id
- 5f0bf570e3bee125106b2603 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Mon, 13 Jul 2020 05:47:28
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 6954AC43391; Mon, 13 Jul 2020 05:47:27 +0000 (UTC)
-Received: from [192.168.0.101] (unknown [49.207.129.47])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727107AbgGMF4D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Jul 2020 01:56:03 -0400
+Received: from localhost (unknown [122.182.251.219])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BCE14C433C6;
-        Mon, 13 Jul 2020 05:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BCE14C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [clk:clk-qcom 13/14] drivers/clk/qcom/gcc-ipq8074.c:4610:30:
- warning: initializer overrides prior initialization of this subobject
-To:     kernel test robot <lkp@intel.com>
-Cc:     kbuild-all@lists.01.org, clang-built-linux@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Stephen Boyd <sboyd@kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 217812073A;
+        Mon, 13 Jul 2020 05:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594619762;
+        bh=gXFwq43ohUgKZA8gAkhAymCG+JyohqjJf0fM3HTHIZs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=paFGk7uJF66m93nyveVPcYNj/dGkVDvY1u8K9A/2rvKSlO0MBabNq/m+/4CmMR6Ff
+         L3J6QduoGk6i58NoIF1rhO3v2QX4kAL49CKLIzXdfBbn9rvtWgf4FJh/EgiUXlZ+sg
+         Df7mie1gP/c+V3+RqnTFL0MqOir01L2jDMVQjrns=
+Date:   Mon, 13 Jul 2020 11:25:58 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org, bhelgaas@google.com,
+        robh+dt@kernel.org, kishon@ti.com, mturquette@baylibre.com,
+        sboyd@kernel.org, svarbanov@mm-sol.com, lorenzo.pieralisi@arm.com,
+        p.zabel@pengutronix.de, mgautam@codeaurora.org,
+        smuthayy@codeaurora.org, varada@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, stable@vger.kernel.org,
         Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-References: <202007121820.EgK6NAy4%lkp@intel.com>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <f304b312-8034-5838-4ffc-e0fcbe8136b1@codeaurora.org>
-Date:   Mon, 13 Jul 2020 11:17:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+Subject: Re: [PATCH 5/9] phy: qcom-qmp: use correct values for ipq8074 gen2
+ pcie phy init
+Message-ID: <20200713055558.GB34333@vkoul-mobl>
+References: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
+ <1593940680-2363-6-git-send-email-sivaprak@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <202007121820.EgK6NAy4%lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1593940680-2363-6-git-send-email-sivaprak@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 05-07-20, 14:47, Sivaprakash Murugesan wrote:
+> There were some problem in ipq8074 gen2 pcie phy init sequence, fix
 
-I see that you already applied this patch on clk-next,
+Can you please describe these problems, it would help review to
+understand the issues and also for future reference to you
 
-shall I provide the fix as incremental patch?
-
-On 7/12/2020 4:04 PM, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-qcom
-> head:   b4297844995f380588e6f935a2f98c399129a9b2
-> commit: f0cfcf1ade201dcfd3365f231efc90e846fa46df [13/14] clk: qcom: ipq8074: Add missing clocks for pcie
-> config: x86_64-allyesconfig (attached as .config)
-> compiler: clang version 11.0.0 (https://github.com/llvm/llvm-project 02946de3802d3bc65bc9f2eb9b8d4969b5a7add8)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # install x86_64 cross compiling tool for clang build
->          # apt-get install binutils-x86-64-linux-gnu
->          git checkout f0cfcf1ade201dcfd3365f231efc90e846fa46df
->          # save the attached .config to linux build tree
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross ARCH=x86_64
->
-> If you fix the issue, kindly add following tag as appropriate
-> Reported-by: kernel test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
+> these to make gen2 pcie port on ipq8074 to work.
+> 
+> Fixes: eef243d04b2b6 ("phy: qcom-qmp: Add support for IPQ8074")
+> 
+> Cc: stable@vger.kernel.org
+> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 > ---
-> 0-DAY CI Kernel Test Service, Intel Corporation
-> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 16 +++++++++-------
+>  drivers/phy/qualcomm/phy-qcom-qmp.h |  2 ++
+>  2 files changed, 11 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> index e91040af3394..ba277136f52b 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+> @@ -504,8 +504,8 @@ static const struct qmp_phy_init_tbl ipq8074_pcie_serdes_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_BG_TRIM, 0xf),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_LOCK_CMP_EN, 0x1),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_MAP, 0x0),
+> -	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER1, 0x1f),
+> -	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER2, 0x3f),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER1, 0xff),
+> +	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_TIMER2, 0x1f),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_CMN_CONFIG, 0x6),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_PLL_IVCO, 0xf),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_HSCLK_SEL, 0x0),
+> @@ -531,7 +531,6 @@ static const struct qmp_phy_init_tbl ipq8074_pcie_serdes_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN1_MODE0, 0x0),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_INTEGLOOP_GAIN0_MODE0, 0x80),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_BIAS_EN_CTRL_BY_PSM, 0x1),
+> -	QMP_PHY_INIT_CFG(QSERDES_COM_VCO_TUNE_CTRL, 0xa),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_EN_CENTER, 0x1),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER1, 0x31),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_PER2, 0x1),
+> @@ -540,7 +539,6 @@ static const struct qmp_phy_init_tbl ipq8074_pcie_serdes_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE1, 0x2f),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_SSC_STEP_SIZE2, 0x19),
+>  	QMP_PHY_INIT_CFG(QSERDES_COM_CLK_EP_DIV, 0x19),
+> -	QMP_PHY_INIT_CFG(QSERDES_RX_SIGDET_CNTRL, 0x7),
+>  };
+>  
+>  static const struct qmp_phy_init_tbl ipq8074_pcie_tx_tbl[] = {
+> @@ -548,6 +546,8 @@ static const struct qmp_phy_init_tbl ipq8074_pcie_tx_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_TX_LANE_MODE, 0x6),
+>  	QMP_PHY_INIT_CFG(QSERDES_TX_RES_CODE_LANE_OFFSET, 0x2),
+>  	QMP_PHY_INIT_CFG(QSERDES_TX_RCV_DETECT_LVL_2, 0x12),
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_EMP_POST1_LVL, 0x36),
+> +	QMP_PHY_INIT_CFG(QSERDES_TX_SLEW_CNTL, 0x0a),
+>  };
+>  
+>  static const struct qmp_phy_init_tbl ipq8074_pcie_rx_tbl[] = {
+> @@ -558,7 +558,6 @@ static const struct qmp_phy_init_tbl ipq8074_pcie_rx_tbl[] = {
+>  	QMP_PHY_INIT_CFG(QSERDES_RX_RX_EQU_ADAPTOR_CNTRL4, 0xdb),
+>  	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_SATURATION_AND_ENABLE, 0x4b),
+>  	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN, 0x4),
+> -	QMP_PHY_INIT_CFG(QSERDES_RX_UCDR_SO_GAIN_HALF, 0x4),
+>  };
+>  
+>  static const struct qmp_phy_init_tbl ipq8074_pcie_pcs_tbl[] = {
+> @@ -1673,6 +1672,9 @@ static const struct qmp_phy_cfg msm8996_usb3phy_cfg = {
+>  	.pwrdn_ctrl		= SW_PWRDN,
+>  };
+>  
+> +static const char * const ipq8074_pciephy_clk_l[] = {
+> +	"aux", "cfg_ahb",
+> +};
+>  /* list of resets */
+>  static const char * const ipq8074_pciephy_reset_l[] = {
+>  	"phy", "common",
+> @@ -1690,8 +1692,8 @@ static const struct qmp_phy_cfg ipq8074_pciephy_cfg = {
+>  	.rx_tbl_num		= ARRAY_SIZE(ipq8074_pcie_rx_tbl),
+>  	.pcs_tbl		= ipq8074_pcie_pcs_tbl,
+>  	.pcs_tbl_num		= ARRAY_SIZE(ipq8074_pcie_pcs_tbl),
+> -	.clk_list		= NULL,
+> -	.num_clks		= 0,
+> +	.clk_list		= ipq8074_pciephy_clk_l,
+> +	.num_clks		= ARRAY_SIZE(ipq8074_pciephy_clk_l),
+
+I see patch is modifying some register values and then adding clks, in
+the absence of proper patch description it is extremely hard to
+understand what is going on..
+
+>  	.reset_list		= ipq8074_pciephy_reset_l,
+>  	.num_resets		= ARRAY_SIZE(ipq8074_pciephy_reset_l),
+>  	.vreg_list		= NULL,
+> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.h b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> index 6d017a0c0c8d..832b3d098403 100644
+> --- a/drivers/phy/qualcomm/phy-qcom-qmp.h
+> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.h
+> @@ -77,6 +77,8 @@
+>  #define QSERDES_COM_CORECLK_DIV_MODE1			0x1bc
+>  
+>  /* Only for QMP V2 PHY - TX registers */
+> +#define QSERDES_TX_EMP_POST1_LVL			0x018
+> +#define QSERDES_TX_SLEW_CNTL				0x040
+>  #define QSERDES_TX_RES_CODE_LANE_OFFSET			0x054
+>  #define QSERDES_TX_DEBUG_BUS_SEL			0x064
+>  #define QSERDES_TX_HIGHZ_TRANSCEIVEREN_BIAS_DRVR_EN	0x068
+> -- 
+> 2.7.4
+
+-- 
+~Vinod
