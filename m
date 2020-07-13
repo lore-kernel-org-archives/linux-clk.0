@@ -2,72 +2,80 @@ Return-Path: <SRS0=Hq2+=AY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3C8C433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 02:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79C0C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 03:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 354122083B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 02:41:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B13206E2
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 03:21:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726523AbgGMClb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 12 Jul 2020 22:41:31 -0400
-Received: from smtp2207-205.mail.aliyun.com ([121.197.207.205]:41409 "EHLO
-        smtp2207-205.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725892AbgGMClb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 12 Jul 2020 22:41:31 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.2188719|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_social|0.0755836-0.0169961-0.90742;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03306;MF=frank@allwinnertech.com;NM=1;PH=DW;RN=33;RT=33;SR=0;TI=W4_5899425_DEFAULT_0A932640_1594608045491_o7001c853p;
-Received: from WS-web (frank@allwinnertech.com[W4_5899425_DEFAULT_0A932640_1594608045491_o7001c853p]) by e01l07382.eu6 at Mon, 13 Jul 2020 10:41:23 +0800
-Date:   Mon, 13 Jul 2020 10:41:23 +0800
-From:   "Frank Lee" <frank@allwinnertech.com>
-To:     "Corentin Labbe" <clabbe.montjoie@gmail.com>
-Cc:     "robh+dt" <robh+dt@kernel.org>, "mripard" <mripard@kernel.org>,
-        "wens" <wens@csie.org>, "mturquette" <mturquette@baylibre.com>,
-        "sboyd" <sboyd@kernel.org>,
-        "gregory.clement" <gregory.clement@bootlin.com>,
-        "tglx" <tglx@linutronix.de>, "jason" <jason@lakedaemon.net>,
-        "maz" <maz@kernel.org>,
-        "srinivas.kandagatla" <srinivas.kandagatla@linaro.org>,
-        "linus.walleij" <linus.walleij@linaro.org>,
-        "anarsoul" <anarsoul@gmail.com>,
-        "tiny.windzz" <tiny.windzz@gmail.com>,
-        "rui.zhang" <rui.zhang@intel.com>,
-        "daniel.lezcano" <daniel.lezcano@linaro.org>,
-        "amit.kucheria" <amit.kucheria@verdurent.com>,
-        "lee.jones" <lee.jones@linaro.org>,
-        "p.zabel" <p.zabel@pengutronix.de>, "clabbe" <clabbe@baylibre.com>,
-        "icenowy" <icenowy@aosc.io>, "megous" <megous@megous.com>,
-        "stefan" <stefan@olimex.com>, "bage" <bage@linutronix.de>,
-        "devicetree" <devicetree@vger.kernel.org>,
-        "linux-pm" <linux-pm@vger.kernel.org>,
-        "=?UTF-8?B?5p2O5YuH?=" <liyong@allwinnertech.com>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>,
-        "linux-gpio" <linux-gpio@vger.kernel.org>,
-        "=?UTF-8?B?6buE54OB55Sf?=" <huangshuosheng@allwinnertech.com>,
-        "linux-i2c" <linux-i2c@vger.kernel.org>,
-        "linux-clk" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel" <linux-arm-kernel@lists.infradead.org>
-Reply-To: "Frank Lee" <frank@allwinnertech.com>
-Message-ID: <1ada776b-f313-4444-bcdc-61f16973ea2e.frank@allwinnertech.com>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MyAwMC8xNl0gQWxsd2lubmVyIEExMDAgSW5pdGlhbCBzdXBwb3J0?=
-X-Mailer: [Alimail-Mailagent][W4_5899425][DEFAULT][Chrome]
-MIME-Version: 1.0
-References: <20200708071942.22595-1-frank@allwinnertech.com>,<20200708074547.GA19609@Red>
-In-Reply-To: <20200708074547.GA19609@Red>
-x-aliyun-mail-creator: W4_5899425_DEFAULT_LjMTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzU2LjAuMjkyNC44NyBTYWZhcmkvNTM3LjM2TM
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
+        id S1728057AbgGMDV4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jul 2020 23:21:56 -0400
+Received: from smtp21.cstnet.cn ([159.226.251.21]:43320 "EHLO cstnet.cn"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726261AbgGMDV4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 12 Jul 2020 23:21:56 -0400
+Received: from localhost (unknown [159.226.5.99])
+        by APP-01 (Coremail) with SMTP id qwCowAAHT5tI0wtft15aAA--.63616S2;
+        Mon, 13 Jul 2020 11:21:45 +0800 (CST)
+From:   Xu Wang <vulab@iscas.ac.cn>
+To:     mturquette@baylibre.com, sboyd@kernel.org, baohua@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org, Xu Wang <vulab@iscas.ac.cn>
+Subject: [PATCH] clk: clk-atlas6: fix return value check in atlas6_clk_init()
+Date:   Mon, 13 Jul 2020 03:21:43 +0000
+Message-Id: <20200713032143.21362-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.17.1
+X-CM-TRANSID: qwCowAAHT5tI0wtft15aAA--.63616S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrW7WFykXF48ZFWrurWrGrg_yoWfWwcEgF
+        4rKFnxXw1rCw1SyrW5Aa4xZryFvFn5ur4xZa4xKFsxJa48WrykWFZIv34DAr9rKrWkJryD
+        tw1kGryfCw1akjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+        6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+        A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+        Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
+        W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+        I7IYx2IY67AKxVWUtVWrXwAv7VC2z280aVAFwI0_Gr1j6F4UJwAm72CE4IkC6x0Yz7v_Jr
+        0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkIecxEwVAFwVW8
+        GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r
+        1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij
+        64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr
+        0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4U
+        MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUf-B_UUU
+        UU=
+X-Originating-IP: [159.226.5.99]
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiAw0QA13qZNmYiQAAsG
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PiBPbiBXZWQsIEp1bCAwOCwgMjAyMCBhdCAwMzoxOToyNlBNICswODAwLCBGcmFuayBMZWUgd3Jv
-dGU6Cj4+ICBUaGlzIHBhdGNoIHNldCBhZGRzIGluaXRpYWwgc3VwcG9ydCBmb3IgYWxsd2lubmVy
-IGExMDAgc29jLAo+PiAgd2hpY2ggaXMgYSA2NC1iaXQgdGFibGV0IGNoaXAuCj4gPiAKPiAKPiBI
-ZWxsbwo+IAo+IERvZXMgYSBwcm9kdWN0IGFscmVhZHkgZXhpc3RzIHdpdGggaXQgPyBJIGNvdWxk
-bnQgZm91bmQgYW55Lgo+IERvZXMgYSBkYXRhc2hlZXQgaXMgYXZhaWxsYWJsZSA/Cj4gCgpUaGUg
-cHJvZHVjdCBpcyBzdGlsbCBpbiBkZXZlbG9wbWVudCwgQTEzMyBpcyBhY3R1YWxseSBhIGhpZ2gg
-cGVyZm9ybWFuY2UgdmVyc2lvbiBvZiBBMTAwLgoKWWFuZ3Rhbw==
+In case of error, the function clk_register() returns ERR_PTR()
+and never returns NULL. The NULL test in the return value check
+should be replaced with IS_ERR().
+
+Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+---
+ drivers/clk/sirf/clk-atlas6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
+index c84d5bab7ac2..b95483bb6a5e 100644
+--- a/drivers/clk/sirf/clk-atlas6.c
++++ b/drivers/clk/sirf/clk-atlas6.c
+@@ -135,7 +135,7 @@ static void __init atlas6_clk_init(struct device_node *np)
+ 
+ 	for (i = pll1; i < maxclk; i++) {
+ 		atlas6_clks[i] = clk_register(NULL, atlas6_clk_hw_array[i]);
+-		BUG_ON(!atlas6_clks[i]);
++		BUG_ON(IS_ERR(atlas6_clks[i]));
+ 	}
+ 	clk_register_clkdev(atlas6_clks[cpu], NULL, "cpu");
+ 	clk_register_clkdev(atlas6_clks[io],  NULL, "io");
+-- 
+2.17.1
+
