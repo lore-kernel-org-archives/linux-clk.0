@@ -1,4 +1,4 @@
-Return-Path: <SRS0=Hq2+=AY=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=OSZ+=AZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
@@ -7,102 +7,79 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6DFC433E2
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BE87C433E2
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 03:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2844620DD4
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jul 2020 23:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7FF217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 03:06:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594683214;
-	bh=ASyGfa3Wk9yhEqjezqaJilEkvipfynLyaSZXaASIVX4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=hNJ5fn2kJcuFqPVPii2HliW6rA/b57P6mN8EnQwOnswyj4Lm7B+FFylZZAqdHW7dq
-	 UOEPg6uqrjk3RBrlKLmzYdXlrVUEetDwnPpvNuTehfdNTHRPohQxV03M4cRJbJzwA3
-	 3Pkh0kr1CLTTvod1fXWwOPa678RNNZTCD8RGoKp0=
+	s=default; t=1594695973;
+	bh=CjVMgprJy1MYMH2IvEygGhUvurrlHVCdxMHDqvLJ6Ms=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=E+X2WmikdvNlkE0Yo09yCnKCGewC/SOkIfElf6nmCKej+JtcMriSZUH3RrlxkyqOj
+	 ZIHamkTRUmCawVy73YC6gzImgZQJmYVlknb8bCtGuus3hR3XgkazVC0LTldk+Fg3Vf
+	 4X9HxtcVZzTHZOsJfro7mW+I27VlK6KyAyVE3hQ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726374AbgGMXd2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jul 2020 19:33:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49722 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726339AbgGMXd2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 13 Jul 2020 19:33:28 -0400
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48EA220DD4;
-        Mon, 13 Jul 2020 23:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594683207;
-        bh=ASyGfa3Wk9yhEqjezqaJilEkvipfynLyaSZXaASIVX4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QLtsmejCfy9e4auxKVg0O/r8JmxeFkxZ//UOmpI7peIMM4tvfxR1jybbdDS1mSI43
-         Zeasdc+UOeNrqSkNz04BXtyNK0FY4ZKm+Ek3QlVTTteo9w+eSQVNTzYMjNkhqHPB6I
-         DPwPBO4eK2buv4Qyx+Meqz7KEYfwVP6Iv0Hik/6o=
-Received: by mail-oo1-f44.google.com with SMTP id t6so2808048ooh.4;
-        Mon, 13 Jul 2020 16:33:27 -0700 (PDT)
-X-Gm-Message-State: AOAM531f63R5S6zUy9PUcwWDD2KHRN4M1R0okKSauALtfngnL+Wk4OLD
-        hy1KdgW3TZSqd+0Vqi7W7wNP41AVRrYGT5LDYA==
-X-Google-Smtp-Source: ABdhPJxJn4Yq2V9XaFU8Qu7rKSKIoq5hATYp03MMXMnT6eRrlBajd27f8pUxj/NKMNWyOQuf9hIsTFEpJUwU6oj3ods=
-X-Received: by 2002:a4a:7459:: with SMTP id t25mr2138469ooe.25.1594683206670;
- Mon, 13 Jul 2020 16:33:26 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200708071942.22595-1-frank@allwinnertech.com>
- <20200708071942.22595-2-frank@allwinnertech.com> <20200713225453.GA874275@bogus>
-In-Reply-To: <20200713225453.GA874275@bogus>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 13 Jul 2020 17:33:15 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK4azgT=+vXu1VJ1tn--QnGaoied+FPSKZ68vtZs+=_sw@mail.gmail.com>
-Message-ID: <CAL_JsqK4azgT=+vXu1VJ1tn--QnGaoied+FPSKZ68vtZs+=_sw@mail.gmail.com>
-Subject: Re: [PATCH v3 01/16] dt-bindings: clk: sunxi-ccu: add compatible
- string for A100 CCU and R-CCU
-To:     Frank Lee <frank@allwinnertech.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Corentin Labbe <clabbe@baylibre.com>, liyong@allwinnertech.com,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        id S1726437AbgGNDGJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jul 2020 23:06:09 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41273 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726435AbgGNDGJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jul 2020 23:06:09 -0400
+Received: by mail-io1-f67.google.com with SMTP id p205so7254498iod.8;
+        Mon, 13 Jul 2020 20:06:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=TVoVdyncLEeiffYNM9TJAyY6BL3tEPqyz6fqMegoifo=;
+        b=TcwbaF5Yi32cnnnzwHV0pLe00rXR3MmV83iRBioJ13p78gkck131reN9Dhb8Vf9y43
+         Pijc+kJeMrwu0HvUk+YYWJK07gsP4r51WWw7f71POMBeh/ktRkagtsJR5fMhuS1sDvCR
+         U2d/qVuAEKqY2qul4yM0bQ0NxBd0UMlH8tb79XG/8vDJcIK3+k/G8nbTN9/exExduqgY
+         +kVrOpDcHDZuSQ/nqRca4hCtgpiI8UunZy4AxdRjVzpSt1Zrkv4L9gBH41DUJ+zHZV93
+         SFh7QdKxuRg7ESGv1fxO96wXPc/cXrr2bjD3Rtpg1sR6Lt6T7lwLYWDr8imtRxxCJHYa
+         2xog==
+X-Gm-Message-State: AOAM532PPHZVSUi7qePHe0MAQwNYK1kHC5v22ioTRLzfDbk+By8i4RYy
+        1+CG087f5T7tJaL71zAGrQ==
+X-Google-Smtp-Source: ABdhPJw5s5oyrn7t/NDh4TK+LlVmRSz7JZYGPC1ApbO6tdIF81Jx+PtJMuD1sw6xOfrFSCf/V7Lx/w==
+X-Received: by 2002:a05:6602:2fd5:: with SMTP id v21mr2867118iow.41.1594695968898;
+        Mon, 13 Jul 2020 20:06:08 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id l17sm8877215ilm.70.2020.07.13.20.06.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jul 2020 20:06:08 -0700 (PDT)
+Received: (nullmailer pid 1210304 invoked by uid 1000);
+        Tue, 14 Jul 2020 03:06:07 -0000
+Date:   Mon, 13 Jul 2020 21:06:07 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         Stephen Boyd <sboyd@kernel.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        bage@linutronix.de, Thomas Gleixner <tglx@linutronix.de>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Ondrej Jirman <megous@megous.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <maz@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        huangshuosheng@allwinnertech.com,
-        Jason Cooper <jason@lakedaemon.net>
-Content-Type: text/plain; charset="UTF-8"
+        Adam Ford <aford173@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clk: versaclock5: fix 'idt' prefix
+ typos
+Message-ID: <20200714030607.GA1210251@bogus>
+References: <20200708074035.31595-1-luca@lucaceresoli.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200708074035.31595-1-luca@lucaceresoli.net>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 13, 2020 at 4:54 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Wed, 08 Jul 2020 15:19:27 +0800, Frank Lee wrote:
-> > This patch adds binding to a100's ccu clock and r-ccu clock.
-> >
-> > Signed-off-by: Frank Lee <frank@allwinnertech.com>
-> > ---
-> >  .../devicetree/bindings/clock/allwinner,sun4i-a10-ccu.yaml         | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
->
-> Reviewed-by: Rob Herring <robh@kernel.org>
+On Wed, 08 Jul 2020 09:40:32 +0200, Luca Ceresoli wrote:
+> 'idt' is misspelled 'itd' in a few places, fix it.
+> 
+> Fixes: 34662f6e3084 ("dt: Add additional option bindings for IDT VersaClock")
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> ---
+>  Documentation/devicetree/bindings/clock/idt,versaclock5.txt | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
 
-Note that your series isn't threaded properly. Please send series
-threaded (in reply to cover letter or 1st patch).
+Reviewed-by: Rob Herring <robh@kernel.org>
