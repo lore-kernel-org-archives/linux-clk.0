@@ -2,180 +2,156 @@ Return-Path: <SRS0=OSZ+=AZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AB6C433E3
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 09:16:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB65AC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 09:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8A09821D7D
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 09:16:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9762521841
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 09:36:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDjG8he2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbgGNJP7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jul 2020 05:15:59 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:53085 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725833AbgGNJP7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jul 2020 05:15:59 -0400
-Received: from [78.134.114.177] (port=53704 helo=[192.168.77.62])
-        by hostingweb31.netsons.net with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1jvH2Z-000H1H-17; Tue, 14 Jul 2020 11:15:55 +0200
-Subject: Re: [PATCH v2 4/4] dt-bindings: clk: versaclock5: convert to yaml
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
+        id S1725816AbgGNJg4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jul 2020 05:36:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36790 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726762AbgGNJgz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jul 2020 05:36:55 -0400
+Received: from mail-lj1-x243.google.com (mail-lj1-x243.google.com [IPv6:2a00:1450:4864:20::243])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27D3BC061755;
+        Tue, 14 Jul 2020 02:36:55 -0700 (PDT)
+Received: by mail-lj1-x243.google.com with SMTP id h22so21623762lji.9;
+        Tue, 14 Jul 2020 02:36:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kY4YX2hIy3ivPBGeD+CPwXcdkRIs2VM7rDcdPR/WlRE=;
+        b=HDjG8he2L90VPS290BuQKswRMt1dfJOQp/N5SM3tNqWBG3I3sMfibTlke3Hvw8Rm4a
+         H8agt4VOrJz+JZ3rmiZn938rB7AUGJCrj8J+oIh8Tei/nhgYPFqKz4NWRzGEu1W7vbNw
+         Ijk47dHwcWcCdhxa+vU1FlIuLI1ufBZuJBt3WRixesxaWleUGsX9YNBLIs0bN6LROT8j
+         Lq8ki9S2a9EA953R1gu3iajngedMwunBKkA0paWsngzDRF4ukd5FlUwQAmBYQdgY5KJF
+         pgh8D+OEp3SqEvMb4sE/teBX/PA+I7f6jBRJXg3p+GCAVvhBRME7GhF3iWt7JlDFSd2b
+         +K6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kY4YX2hIy3ivPBGeD+CPwXcdkRIs2VM7rDcdPR/WlRE=;
+        b=VTcEvHmBiIK8RabKb9y+yniVVlGWQL0Mp+3rZU4f7fswaW4hUZ2RNtoy7hvsuAUmzH
+         PyEYZpHF8/PdVLmaQxb1Oj+wpc3X3gvpn2vq7RsA9UC9tEg+Z5bxNifhohwounbtjG8m
+         7TakksNgEDPuzV2vzu5BtNLZGS20d66vikV1ws9U5fX0qHx6gCsxO+lWxNMYGcurBcQS
+         ELZsGYg295vUS4F2/8S9PxqUGtHCSnUsvoTbPTkMyyqY8ZcZuFpgPoQOixMhIJHWS1WN
+         XbNsTt2ckUlkPHgI+ukJAgnSBe6cWdPSI1NIUNYsSYy9lZwt11FL/9uv3F2PVlPs4Isk
+         mRwA==
+X-Gm-Message-State: AOAM532YkQ3b27oDKO+BbKf/gDYdX28zpR+2Ff54VcQK8cpy2eDYuC9c
+        5f4hkvckUHxJG/aaj7ulnfJ3SPnS
+X-Google-Smtp-Source: ABdhPJw88vs/UiQIgGDfGKYqqUL+LavOJZcUM4xAQ0ay4LLCSkEbYdUM12f9PGmO6mPzXa831sGdaQ==
+X-Received: by 2002:a2e:91c4:: with SMTP id u4mr2003431ljg.20.1594719413117;
+        Tue, 14 Jul 2020 02:36:53 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-79-162-105.pppoe.mtu-net.ru. [91.79.162.105])
+        by smtp.googlemail.com with ESMTPSA id d6sm4553300ljc.23.2020.07.14.02.36.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 14 Jul 2020 02:36:52 -0700 (PDT)
+Subject: Re: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Adam Ford <aford173@gmail.com>
-References: <20200708074035.31595-1-luca@lucaceresoli.net>
- <20200708074035.31595-4-luca@lucaceresoli.net>
- <20200714031109.GA1210492@bogus>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <6177ebd1-b39a-3b53-3f5b-92f8d1f9881b@lucaceresoli.net>
-Date:   Tue, 14 Jul 2020 11:15:52 +0200
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20200709172057.13951-1-digetx@gmail.com>
+ <93106a4c-b0fb-3bbf-49cb-bfe348b1ffc7@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4abe7959-3c69-7b05-e9af-565957bafbcd@gmail.com>
+Date:   Tue, 14 Jul 2020 12:36:51 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.10.0
 MIME-Version: 1.0
-In-Reply-To: <20200714031109.GA1210492@bogus>
+In-Reply-To: <93106a4c-b0fb-3bbf-49cb-bfe348b1ffc7@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
-
-thanks for you review!
-
-On 14/07/20 05:11, Rob Herring wrote:
-> On Wed, Jul 08, 2020 at 09:40:35AM +0200, Luca Ceresoli wrote:
->> Convert to yaml the VersaClock bindings document. The mapping between
->> clock specifier and physical pins cannot be described formally in yaml
->> schema, then keep it verbatim in the description field.
+14.07.2020 11:20, Jon Hunter пишет:
+> 
+> On 09/07/2020 18:20, Dmitry Osipenko wrote:
+>> Power Management Controller (PMC) can override the PLLM clock settings,
+>> including the enable-state. Although PMC could only act as a second level
+>> gate, meaning that PLLM needs to be enabled by the Clock and Reset
+>> Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
+>> overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
+>> order to be functional. Please note that this patch doesn't fix any known
+>> problem, and thus, it's merely a minor improvement.
 >>
->> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-
-[...]
-
->> +  reg:
->> +    maxItems: 1
->> +    description: I2C device address, shall be 0x68 or 0x6a.
-> 
-> Can be a schema:
-> 
-> enum: [ 0x68, 0x6a ]
-
-Nice, will fix.
-
+>> Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@ulmo/T/
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
+>>
+>> Changelog:
+>>
+>> v4: - Renamed pllm_pmc_clk_enabled() to pllm_clk_is_gated_by_pmc() as
+>>       it was suggested by Jon Hunter in the review comment to v3.
+>>
+>> v3: - Dropped unintended code change that was accidentally added to v2.
+>>
+>> v2: - Added clarifying comment to the code.
+>>
+>>     - Prettified the code.
+>>
+>>  drivers/clk/tegra/clk-pll.c | 20 +++++++++++++++-----
+>>  1 file changed, 15 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>> index b2d39a66f0fa..ff13b371e176 100644
+>> --- a/drivers/clk/tegra/clk-pll.c
+>> +++ b/drivers/clk/tegra/clk-pll.c
+>> @@ -327,16 +327,26 @@ int tegra_pll_wait_for_lock(struct tegra_clk_pll *pll)
+>>  	return clk_pll_wait_for_lock(pll);
+>>  }
+>>  
+>> +static bool pllm_clk_is_gated_by_pmc(struct tegra_clk_pll *pll)
+>> +{
+>> +	u32 val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
 >> +
->> +  '#clock-cells':
->> +    const: 1
+>> +	return (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE) &&
+>> +	      !(val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE);
+>> +}
 >> +
->> +patternProperties:
->> +  "^OUT[1-4]$":
->> +    type: object
->> +    description:
->> +      Description of one of the outputs (OUT1..OUT4). See "Clock1 Output
->> +      Configuration" in the Versaclock 5/6/6E Family Register Description
->> +      and Programming Guide.
->> +    properties:
->> +      idt,mode:
->> +        description:
->> +          The output drive mode. Values defined in dt-bindings/clk/versaclock.h
->> +        enum:
->> +          - VC5_LVPECL
+>>  static int clk_pll_is_enabled(struct clk_hw *hw)
+>>  {
+>>  	struct tegra_clk_pll *pll = to_clk_pll(hw);
+>>  	u32 val;
+>>  
+>> -	if (pll->params->flags & TEGRA_PLLM) {
+>> -		val = readl_relaxed(pll->pmc + PMC_PLLP_WB0_OVERRIDE);
+>> -		if (val & PMC_PLLP_WB0_OVERRIDE_PLLM_OVERRIDE)
+>> -			return val & PMC_PLLP_WB0_OVERRIDE_PLLM_ENABLE ? 1 : 0;
+>> -	}
+>> +	/*
+>> +	 * Power Management Controller (PMC) can override the PLLM clock
+>> +	 * settings, including the enable-state. The PLLM is enabled when
+>> +	 * PLLM's CaR state is ON and when PLLM isn't gated by PMC.
+>> +	 */
+>> +	if ((pll->params->flags & TEGRA_PLLM) && pllm_clk_is_gated_by_pmc(pll))
+>> +		return 0;
+>>  
+>>  	val = pll_readl_base(pll);
 > 
-> This is defining a string. Can't use defines here.
-
-How do I use the defines from include/dt-bindings then? Or should I just
-use the numeric values then, like:
-
-  idt,mode:
-    description:
-      The output drive mode. Values defined in
-      dt-bindings/clk/versaclock.h
-    minimum: 0
-    maximum: 6
-
-?
-
->> +      idt,voltage-microvolts:
->> +        description: The output drive voltage.
->> +        $ref: /schemas/types.yaml#/definitions/uint32
 > 
-> Standard unit suffixes have a type already, so drop.
+> Thanks! This looks good to me. However, I just want to do a bit of
+> testing on Tegra124 (hopefully this week).
 
-Ok.
-
->> +allOf:
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - idt,5p49v5933
->> +              - idt,5p49v5935
->> +    then:
->> +      # Devices with builtin crystal, optional external input
->> +      properties:
->> +        clock-names:
->> +          const: clkin
->> +        clocks:
->> +          maxItems: 1
->> +    else:
->> +      # Devices without builtin crystal
->> +      properties:
->> +        clock-names:
->> +          anyOf:
->> +            - required: [ xin ]
->> +            - required: [ clkin ]
-> 
-> This isn't valid. I think you want:
-> 
-> clock-names:
->   minItems: 1
->   items:
->     - const: xin
->     - const: clkin
-> 
-> This would mean 'xin' is always required, clkin is optional.
-
-No, what I wanted to mean is that allowed cases are:
- * for idt,5p49v5933 and idt,5p49v5935:
-   - only 'xin' (required)
- * for the other parts one of these:
-   - only 'xin'
-   - only 'clkin'
-   - both 'xin' and 'clkin'
-
-How do I express that?
-
-
-A general note: as a newcomer to yaml bindings I found a steep learning
-curve. Finding a correct construct (not to mention the best one) for
-each situation is time consuming and frustrating. I've been looking at
-existing files for suitable examples but it doesn't work very well.
-
-Is there any guide to yaml bindings for beginners with examples of
-typical cases? It would greatly help in producing better patches and
-saving time for everybody.
-
-Thanks,
--- 
-Luca
+Okay, thank you :)
