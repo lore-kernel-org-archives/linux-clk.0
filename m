@@ -2,202 +2,94 @@ Return-Path: <SRS0=OSZ+=AZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 551A5C433FB
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 15:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F770C433E5
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 20:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB44214DB
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 15:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DE0F2064B
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 20:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594759177;
+	bh=vsJoqLN3SowqXMSj14UqCf7GoNEyfVmFAh/NYPKXAZ8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=xRdbwCDF7mW7LkCb8W4+4gK/O97yb8Dte8WN+o98jXtzGywrWNNSEdO0pZXztftFR
+	 iHdecl02EQ7NhUdLI0peRl83mlpnRtO8ZXLZkqd6Nn4K86K+ygpqbLWYFOVpeHpgRX
+	 vHsYvmRw/kk52W46Duq6X6HZsaH+F5A7Od1WQbr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728699AbgGNPFa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jul 2020 11:05:30 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:15362 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725925AbgGNPFa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jul 2020 11:05:30 -0400
-Received: from unknown (HELO ironmsg05-sd.qualcomm.com) ([10.53.140.145])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 14 Jul 2020 08:05:29 -0700
-Received: from sivaprak-linux.qualcomm.com ([10.201.3.202])
-  by ironmsg05-sd.qualcomm.com with ESMTP; 14 Jul 2020 08:05:25 -0700
-Received: by sivaprak-linux.qualcomm.com (Postfix, from userid 459349)
-        id 2B2832196F; Tue, 14 Jul 2020 20:35:23 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH 2/4] reset: qcom: ipq8074: Add ipq8074 gcc resets
-Date:   Tue, 14 Jul 2020 20:35:20 +0530
-Message-Id: <1594739122-29327-3-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594739122-29327-1-git-send-email-sivaprak@codeaurora.org>
-References: <1594739122-29327-1-git-send-email-sivaprak@codeaurora.org>
+        id S1727068AbgGNUjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jul 2020 16:39:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725955AbgGNUjg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 14 Jul 2020 16:39:36 -0400
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB76720758;
+        Tue, 14 Jul 2020 20:39:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594759176;
+        bh=vsJoqLN3SowqXMSj14UqCf7GoNEyfVmFAh/NYPKXAZ8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=fVoCKRwIV4K7Wqykziy83jgg8ZZqIGWNoAzVJrsWSJ9J3MATXaP/ZlMMq44nyCN0V
+         UTy8QkOea86rNZsPfFMKiUS6W31rrvcGmhMLmcm77Dp7t+FR9G8tfjnvYxygM0XC19
+         jCdziyY3J/aWpsbddB1xYA6aG5Iugkc+lfKnAgTo=
+Received: by mail-io1-f49.google.com with SMTP id k23so18726053iom.10;
+        Tue, 14 Jul 2020 13:39:35 -0700 (PDT)
+X-Gm-Message-State: AOAM532258y8iMumvyfrbEvteIG/YuDklVd0mxVM+8b5iOqjORpyoUNR
+        vRe/El4DmMgZZqpaDgwfJoLhcz4ucM9ykzRaJJg=
+X-Google-Smtp-Source: ABdhPJzCMOZaBUcXd8oqTwkKwaQnQ2GH27rKGys1KnzCXRDOUXcH2ttDkAm5+RLVmZLkn0KwR0sY4hSHIuHuW0tQ1mk=
+X-Received: by 2002:a5e:da06:: with SMTP id x6mr6817841ioj.196.1594759175401;
+ Tue, 14 Jul 2020 13:39:35 -0700 (PDT)
+MIME-Version: 1.0
+References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
+ <1592480018-3340-4-git-send-email-hanks.chen@mediatek.com>
+ <CACRpkdavqjcma8A1y9Sh=WWLu-n0+mQOhyNw2dHenA8ZnQkvgg@mail.gmail.com> <CACRpkdb5TyictD3j_PE5JtBJmxX87Bk04YkxF1ErsbHwO4TSOg@mail.gmail.com>
+In-Reply-To: <CACRpkdb5TyictD3j_PE5JtBJmxX87Bk04YkxF1ErsbHwO4TSOg@mail.gmail.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Tue, 14 Jul 2020 13:39:24 -0700
+X-Gmail-Original-Message-ID: <CAGp9LzpbSjJ2f=rKMhfsrgXcVgiWzmyMvcXfrMmxBchezARNag@mail.gmail.com>
+Message-ID: <CAGp9LzpbSjJ2f=rKMhfsrgXcVgiWzmyMvcXfrMmxBchezARNag@mail.gmail.com>
+Subject: Re: [PATCH v6 3/7] pinctrl: mediatek: avoid virtual gpio trying to
+ set reg
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Hanks Chen <hanks.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        mtk01761 <wendell.lin@mediatek.com>,
+        Andy Teng <andy.teng@mediatek.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, wsd_upstream@mediatek.com,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add gcc resets found in ipq8074 devices. These were previously added
-along with clock bindings.
+> > Sean if you're OK with this patch I can just apply it separately.
+>
+> Ah nevermind since the next patch has your ACK I just applied this
+> too since it's a dependency. Yell if this is wrong.
 
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
----
- include/dt-bindings/reset/qcom,gcc-ipq8074.h | 141 +++++++++++++++++++++++++++
- 1 file changed, 141 insertions(+)
- create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq8074.h
+The patch looks good to me too.
+By the way, I didn't see those applied patches in for-next branch yet
+I just think Hanks should send those patch based on the top if he has
+the next version
 
-diff --git a/include/dt-bindings/reset/qcom,gcc-ipq8074.h b/include/dt-bindings/reset/qcom,gcc-ipq8074.h
-new file mode 100644
-index 000000000000..35ee28e00e70
---- /dev/null
-+++ b/include/dt-bindings/reset/qcom,gcc-ipq8074.h
-@@ -0,0 +1,141 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2020, The Linux Foundation. All rights reserved.
-+ */
-+#ifndef _DT_BINDINGS_RESET_IPQ_GCC_8074_H
-+#define _DT_BINDINGS_RESET_IPQ_GCC_8074_H
-+
-+#define GCC_BLSP1_BCR				0
-+#define GCC_BLSP1_QUP1_BCR			1
-+#define GCC_BLSP1_UART1_BCR			2
-+#define GCC_BLSP1_QUP2_BCR			3
-+#define GCC_BLSP1_UART2_BCR			4
-+#define GCC_BLSP1_QUP3_BCR			5
-+#define GCC_BLSP1_UART3_BCR			6
-+#define GCC_BLSP1_QUP4_BCR			7
-+#define GCC_BLSP1_UART4_BCR			8
-+#define GCC_BLSP1_QUP5_BCR			9
-+#define GCC_BLSP1_UART5_BCR			10
-+#define GCC_BLSP1_QUP6_BCR			11
-+#define GCC_BLSP1_UART6_BCR			12
-+#define GCC_IMEM_BCR				13
-+#define GCC_SMMU_BCR				14
-+#define GCC_APSS_TCU_BCR			15
-+#define GCC_SMMU_XPU_BCR			16
-+#define GCC_PCNOC_TBU_BCR			17
-+#define GCC_SMMU_CFG_BCR			18
-+#define GCC_PRNG_BCR				19
-+#define GCC_BOOT_ROM_BCR			20
-+#define GCC_CRYPTO_BCR				21
-+#define GCC_WCSS_BCR				22
-+#define GCC_WCSS_Q6_BCR				23
-+#define GCC_NSS_BCR				24
-+#define GCC_SEC_CTRL_BCR			25
-+#define GCC_ADSS_BCR				26
-+#define GCC_DDRSS_BCR				27
-+#define GCC_SYSTEM_NOC_BCR			28
-+#define GCC_PCNOC_BCR				29
-+#define GCC_TCSR_BCR				30
-+#define GCC_QDSS_BCR				31
-+#define GCC_DCD_BCR				32
-+#define GCC_MSG_RAM_BCR				33
-+#define GCC_MPM_BCR				34
-+#define GCC_SPMI_BCR				35
-+#define GCC_SPDM_BCR				36
-+#define GCC_RBCPR_BCR				37
-+#define GCC_RBCPR_MX_BCR			38
-+#define GCC_TLMM_BCR				39
-+#define GCC_RBCPR_WCSS_BCR			40
-+#define GCC_USB0_PHY_BCR			41
-+#define GCC_USB3PHY_0_PHY_BCR			42
-+#define GCC_USB0_BCR				43
-+#define GCC_USB1_PHY_BCR			44
-+#define GCC_USB3PHY_1_PHY_BCR			45
-+#define GCC_USB1_BCR				46
-+#define GCC_QUSB2_0_PHY_BCR			47
-+#define GCC_QUSB2_1_PHY_BCR			48
-+#define GCC_SDCC1_BCR				49
-+#define GCC_SDCC2_BCR				50
-+#define GCC_SNOC_BUS_TIMEOUT0_BCR		51
-+#define GCC_SNOC_BUS_TIMEOUT2_BCR		52
-+#define GCC_SNOC_BUS_TIMEOUT3_BCR		53
-+#define GCC_PCNOC_BUS_TIMEOUT0_BCR		54
-+#define GCC_PCNOC_BUS_TIMEOUT1_BCR		55
-+#define GCC_PCNOC_BUS_TIMEOUT2_BCR		56
-+#define GCC_PCNOC_BUS_TIMEOUT3_BCR		57
-+#define GCC_PCNOC_BUS_TIMEOUT4_BCR		58
-+#define GCC_PCNOC_BUS_TIMEOUT5_BCR		59
-+#define GCC_PCNOC_BUS_TIMEOUT6_BCR		60
-+#define GCC_PCNOC_BUS_TIMEOUT7_BCR		61
-+#define GCC_PCNOC_BUS_TIMEOUT8_BCR		62
-+#define GCC_PCNOC_BUS_TIMEOUT9_BCR		63
-+#define GCC_UNIPHY0_BCR				64
-+#define GCC_UNIPHY1_BCR				65
-+#define GCC_UNIPHY2_BCR				66
-+#define GCC_CMN_12GPLL_BCR			67
-+#define GCC_QPIC_BCR				68
-+#define GCC_MDIO_BCR				69
-+#define GCC_PCIE1_TBU_BCR			70
-+#define GCC_WCSS_CORE_TBU_BCR			71
-+#define GCC_WCSS_Q6_TBU_BCR			72
-+#define GCC_USB0_TBU_BCR			73
-+#define GCC_USB1_TBU_BCR			74
-+#define GCC_PCIE0_TBU_BCR			75
-+#define GCC_NSS_NOC_TBU_BCR			76
-+#define GCC_PCIE0_BCR				77
-+#define GCC_PCIE0_PHY_BCR			78
-+#define GCC_PCIE0PHY_PHY_BCR			79
-+#define GCC_PCIE0_LINK_DOWN_BCR			80
-+#define GCC_PCIE1_BCR				81
-+#define GCC_PCIE1_PHY_BCR			82
-+#define GCC_PCIE1PHY_PHY_BCR			83
-+#define GCC_PCIE1_LINK_DOWN_BCR			84
-+#define GCC_DCC_BCR				85
-+#define GCC_APC0_VOLTAGE_DROOP_DETECTOR_BCR	86
-+#define GCC_APC1_VOLTAGE_DROOP_DETECTOR_BCR	87
-+#define GCC_SMMU_CATS_BCR			88
-+#define GCC_UBI0_AXI_ARES			89
-+#define GCC_UBI0_AHB_ARES			90
-+#define GCC_UBI0_NC_AXI_ARES			91
-+#define GCC_UBI0_DBG_ARES			92
-+#define GCC_UBI0_CORE_CLAMP_ENABLE		93
-+#define GCC_UBI0_CLKRST_CLAMP_ENABLE		94
-+#define GCC_UBI1_AXI_ARES			95
-+#define GCC_UBI1_AHB_ARES			96
-+#define GCC_UBI1_NC_AXI_ARES			97
-+#define GCC_UBI1_DBG_ARES			98
-+#define GCC_UBI1_CORE_CLAMP_ENABLE		99
-+#define GCC_UBI1_CLKRST_CLAMP_ENABLE		100
-+#define GCC_NSS_CFG_ARES			101
-+#define GCC_NSS_IMEM_ARES			102
-+#define GCC_NSS_NOC_ARES			103
-+#define GCC_NSS_CRYPTO_ARES			104
-+#define GCC_NSS_CSR_ARES			105
-+#define GCC_NSS_CE_APB_ARES			106
-+#define GCC_NSS_CE_AXI_ARES			107
-+#define GCC_NSSNOC_CE_APB_ARES			108
-+#define GCC_NSSNOC_CE_AXI_ARES			109
-+#define GCC_NSSNOC_UBI0_AHB_ARES		110
-+#define GCC_NSSNOC_UBI1_AHB_ARES		111
-+#define GCC_NSSNOC_SNOC_ARES			112
-+#define GCC_NSSNOC_CRYPTO_ARES			113
-+#define GCC_NSSNOC_ATB_ARES			114
-+#define GCC_NSSNOC_QOSGEN_REF_ARES		115
-+#define GCC_NSSNOC_TIMEOUT_REF_ARES		116
-+#define GCC_PCIE0_PIPE_ARES			117
-+#define GCC_PCIE0_SLEEP_ARES			118
-+#define GCC_PCIE0_CORE_STICKY_ARES		119
-+#define GCC_PCIE0_AXI_MASTER_ARES		120
-+#define GCC_PCIE0_AXI_SLAVE_ARES		121
-+#define GCC_PCIE0_AHB_ARES			122
-+#define GCC_PCIE0_AXI_MASTER_STICKY_ARES	123
-+#define GCC_PCIE1_PIPE_ARES			124
-+#define GCC_PCIE1_SLEEP_ARES			125
-+#define GCC_PCIE1_CORE_STICKY_ARES		126
-+#define GCC_PCIE1_AXI_MASTER_ARES		127
-+#define GCC_PCIE1_AXI_SLAVE_ARES		128
-+#define GCC_PCIE1_AHB_ARES			129
-+#define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
-+#define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
-+
-+#endif
--- 
-2.7.4
-
+>
+> Yours,
+> Linus Walleij
