@@ -1,95 +1,105 @@
-Return-Path: <SRS0=OSZ+=AZ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=kI7a=A2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F770C433E5
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 20:39:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B418DC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 06:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE0F2064B
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jul 2020 20:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594759177;
-	bh=vsJoqLN3SowqXMSj14UqCf7GoNEyfVmFAh/NYPKXAZ8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=xRdbwCDF7mW7LkCb8W4+4gK/O97yb8Dte8WN+o98jXtzGywrWNNSEdO0pZXztftFR
-	 iHdecl02EQ7NhUdLI0peRl83mlpnRtO8ZXLZkqd6Nn4K86K+ygpqbLWYFOVpeHpgRX
-	 vHsYvmRw/kk52W46Duq6X6HZsaH+F5A7Od1WQbr4=
+	by mail.kernel.org (Postfix) with ESMTP id 92C5420663
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 06:37:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sqJT5iiA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbgGNUjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jul 2020 16:39:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55660 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725955AbgGNUjg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Jul 2020 16:39:36 -0400
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728809AbgGOGhF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 02:37:05 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:16992 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728150AbgGOGhE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 02:37:04 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594795024; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=6RyZp2uDxt+bunGyRPNwhNMqP6XcfqU0GLUbRZiL/+M=; b=sqJT5iiAOGp+Q66wS0vv8b3fTRF7MOU2PpKHS8trYi+9gRct7e/RXXJl7trdsOsiFLSVVLtI
+ Mgfw6G86ksR3JjdxVQXgqRwg51KhF1tA2IA4iGutiosUX2pAnYQoi7tOXCGfjzHrM+qUHpzj
+ TpZ9qpolzNmmaOOhz8/bYVwTEgQ=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n16.prod.us-east-1.postgun.com with SMTP id
+ 5f0ea40f8423214e138cb253 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 15 Jul 2020 06:37:03
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 17917C433A1; Wed, 15 Jul 2020 06:37:03 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB76720758;
-        Tue, 14 Jul 2020 20:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594759176;
-        bh=vsJoqLN3SowqXMSj14UqCf7GoNEyfVmFAh/NYPKXAZ8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fVoCKRwIV4K7Wqykziy83jgg8ZZqIGWNoAzVJrsWSJ9J3MATXaP/ZlMMq44nyCN0V
-         UTy8QkOea86rNZsPfFMKiUS6W31rrvcGmhMLmcm77Dp7t+FR9G8tfjnvYxygM0XC19
-         jCdziyY3J/aWpsbddB1xYA6aG5Iugkc+lfKnAgTo=
-Received: by mail-io1-f49.google.com with SMTP id k23so18726053iom.10;
-        Tue, 14 Jul 2020 13:39:35 -0700 (PDT)
-X-Gm-Message-State: AOAM532258y8iMumvyfrbEvteIG/YuDklVd0mxVM+8b5iOqjORpyoUNR
-        vRe/El4DmMgZZqpaDgwfJoLhcz4ucM9ykzRaJJg=
-X-Google-Smtp-Source: ABdhPJzCMOZaBUcXd8oqTwkKwaQnQ2GH27rKGys1KnzCXRDOUXcH2ttDkAm5+RLVmZLkn0KwR0sY4hSHIuHuW0tQ1mk=
-X-Received: by 2002:a5e:da06:: with SMTP id x6mr6817841ioj.196.1594759175401;
- Tue, 14 Jul 2020 13:39:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <1592480018-3340-1-git-send-email-hanks.chen@mediatek.com>
- <1592480018-3340-4-git-send-email-hanks.chen@mediatek.com>
- <CACRpkdavqjcma8A1y9Sh=WWLu-n0+mQOhyNw2dHenA8ZnQkvgg@mail.gmail.com> <CACRpkdb5TyictD3j_PE5JtBJmxX87Bk04YkxF1ErsbHwO4TSOg@mail.gmail.com>
-In-Reply-To: <CACRpkdb5TyictD3j_PE5JtBJmxX87Bk04YkxF1ErsbHwO4TSOg@mail.gmail.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Tue, 14 Jul 2020 13:39:24 -0700
-X-Gmail-Original-Message-ID: <CAGp9LzpbSjJ2f=rKMhfsrgXcVgiWzmyMvcXfrMmxBchezARNag@mail.gmail.com>
-Message-ID: <CAGp9LzpbSjJ2f=rKMhfsrgXcVgiWzmyMvcXfrMmxBchezARNag@mail.gmail.com>
-Subject: Re: [PATCH v6 3/7] pinctrl: mediatek: avoid virtual gpio trying to
- set reg
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hanks Chen <hanks.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, wsd_upstream@mediatek.com,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Mars Cheng <mars.cheng@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B35A8C433C8;
+        Wed, 15 Jul 2020 06:36:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B35A8C433C8
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v4 0/4] clk: qcom: Support for Low Power Audio Clocks on SC7180
+Date:   Wed, 15 Jul 2020 12:06:46 +0530
+Message-Id: <1594795010-9074-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> > Sean if you're OK with this patch I can just apply it separately.
->
-> Ah nevermind since the next patch has your ACK I just applied this
-> too since it's a dependency. Yell if this is wrong.
+[v4]
+ * Fix minor comments in the documentation binding.
 
-The patch looks good to me too.
-By the way, I didn't see those applied patches in for-next branch yet
-I just think Hanks should send those patch based on the top if he has
-the next version
+[v3]
+ * Update the clock-name to iface instead of gcc_lpass_sway.
+ * Update the documentation with the reg descriptions and use maxItems.
 
->
-> Yours,
-> Linus Walleij
+[v2]
+ * Update retention macro name.
+ * Update the register description in the documentation.
+
+[v1]
+ * Add support for Retention of GDSCR.
+ * Add YAML schema for LPASS clocks and clock IDs for LPASS.
+ * Add clock driver for LPASS core clocks and GCC LPASS clock.
+
+Taniya Das (4):
+  clk: qcom: gdsc: Add support to enable retention of GSDCR
+  dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
+  clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
+  clk: qcom: lpass: Add support for LPASS clock controller for SC7180
+
+ .../bindings/clock/qcom,sc7180-lpasscorecc.yaml    | 103 +++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sc7180.c                      |  14 +
+ drivers/clk/qcom/gdsc.c                            |  12 +
+ drivers/clk/qcom/gdsc.h                            |   1 +
+ drivers/clk/qcom/lpasscorecc-sc7180.c              | 478 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc7180.h        |   1 +
+ .../dt-bindings/clock/qcom,lpasscorecc-sc7180.h    |  29 ++
+ 9 files changed, 648 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
+ create mode 100644 drivers/clk/qcom/lpasscorecc-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
