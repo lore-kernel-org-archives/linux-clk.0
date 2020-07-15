@@ -3,103 +3,150 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB87C433E8
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 10:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B3BC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:24:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4707720656
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 10:37:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFA822070E
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:24:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="P5w04vOc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="mQht0u40"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731199AbgGOKhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 06:37:09 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:20746 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731204AbgGOKhJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jul 2020 06:37:09 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1594809428; h=Date: Message-Id: Cc: To: References:
- In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
- Content-Type: Sender; bh=pYgx74LtrBLVD12x3ELyZuAqEdnOVxhRlDanXsj1kC8=;
- b=P5w04vOc+Pfl6b39NL7pycBqfT4dKZdmpJtKVLay69u6fG9ugGyAhi1DDYfKyJ6EXKzGMqQg
- L915gqSTXg3chWf/WpuQ60gJZt1tfv6K8ba9WadrPAwEhfpbfUqZ+c4bH1Gdr3aZf0mVmyGO
- Xi87rEmYJQr8a1ik3woi40l+KtY=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
- 5f0edc4db35196d59d5e52fb (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 15 Jul 2020 10:37:01
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 5B429C43449; Wed, 15 Jul 2020 10:37:01 +0000 (UTC)
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 639D1C433CA;
-        Wed, 15 Jul 2020 10:36:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 639D1C433CA
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        id S1728263AbgGOLYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 07:24:36 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62426 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728010AbgGOLYf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 07:24:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1594812274; x=1626348274;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=N6DV/31sOvQExw0bvi++MBVy/1MVzuDsKT0HgUq9HoE=;
+  b=mQht0u40tiOPxCoO/H0zQPXfmvLM6kKGmqS9h8zAh7iiVqfsRJgdPLwB
+   gI3MBWu2tJ3GtjPZbBSqfMxB5j4OW2SHMH8TmxURVROTy2QTk24sUwDnE
+   Tk1Lwy7NDrhfXVwwZDkD6HqsT5WFPYwRRbkQFODVfAQvh6CLXzFeYoXt2
+   BRSiDsB1NVRCKbPRxrsRRPeDjj4moOu7KR41NiosoxPi3xmT2lf6zw/42
+   4dpFk/cPkn1TADCVpz5VLMusvNa4/be7N4HK0Y/inOTlr9/bbvR0neqDH
+   9LB/ghgxXl79G1NC58R90ScDeLVVmQiH8GoJSen0Njjd06vI4XZagDc3t
+   g==;
+IronPort-SDR: ZKHXd4/fyx4RCYvlqHOKqh2HnOppqoJljtcZg0EbsfeF2z5ThN5f/JdhTh9kAoAaXrnh5YiuSI
+ pMYCxeqmBSFLZyESAZlCRrQ+DSAR9DMAQU8lI7nZPqtCRzHd8BJ99JVslqs9c6KnIvNOdtkkfO
+ mUEUSMWgeewAOYgC59D6tlbnfSNUsuuSS3e3Zs+nwmwfXClEHCSsZjcjMti8f2Ntgmr8+l2Tbc
+ jvZ2qpgSDkwYidyrtxWA7TwwNIm3eywe9G7MEGIO4DsJlaW8bHTcYTpF7Rnc8lKekDHIYh3hYN
+ pj0=
+X-IronPort-AV: E=Sophos;i="5.75,355,1589266800"; 
+   d="scan'208";a="83962759"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jul 2020 04:24:34 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Wed, 15 Jul 2020 04:24:02 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Wed, 15 Jul 2020 04:23:58 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <bbrezillon@kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        "Claudiu Beznea" <claudiu.beznea@microchip.com>
+Subject: [PATCH 00/19] clk: at91: add sama7g5 clock support
+Date:   Wed, 15 Jul 2020 14:24:08 +0300
+Message-ID: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v2 04/16] b43: Remove uninitialized_var() usage
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20200620033007.1444705-5-keescook@chromium.org>
-References: <20200620033007.1444705-5-keescook@chromium.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Alexander Potapenko <glider@google.com>,
-        Joe Perches <joe@perches.com>,
-        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
-        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
-        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-mm@kvack.org,
-        clang-built-linux@googlegroups.com
-User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
-Message-Id: <20200715103701.5B429C43449@smtp.codeaurora.org>
-Date:   Wed, 15 Jul 2020 10:37:01 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Kees Cook <keescook@chromium.org> wrote:
+Hi,
 
-> Using uninitialized_var() is dangerous as it papers over real bugs[1]
-> (or can in the future), and suppresses unrelated compiler warnings (e.g.
-> "unused variable"). If the compiler thinks it is uninitialized, either
-> simply initialize the variable or make compiler changes. As a precursor
-> to removing[2] this[3] macro[4], just initialize this variable to NULL.
-> No later NULL deref is possible due to the early returns outside of the
-> (phy->rev >= 7 && phy->rev < 19) case, which explicitly tests for NULL.
-> 
-> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
-> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
-> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
-> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
-> 
-> Fixes: 58619b14d106 ("b43: move under broadcom vendor directory")
-> Signed-off-by: Kees Cook <keescook@chromium.org>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+This series adds clock support for SAMA7G5. The first patches in
+series, patches 1/19-9/19, contains some fixes (let me know if
+you want to send them as a separate series).
 
-2 patches applied to wireless-drivers-next.git, thanks.
+For SAMA7G5 clock support some AT91 clock drivers needed changes
+because:
+1/ some of generated, master and peripheral clocks could have
+   changeable parents (being able to request frequency changes
+   from parent)
+2/ generated and programmable clocks parents needed a mux table
+   as the hardware parent index doesn't correspond with software
+   parent index
+3/ there are 4 new master clocks, MCK1..4 (compared with previous
+   AT91 architectures) which are controlled separately from MCK0
+4/ some of the PLLs have 2 outputs the internal block schema being
+   as follows:
 
-800e7a205a0f b43: Remove uninitialized_var() usage
-f8279dad4e36 rtlwifi: rtl8192cu: Remove uninitialized_var() usage
+   +------+            +--------+
+   | FRAC |-----+----->| DIVPMC |--->
+   +------+     |      +--------+
+                |
+                |      +--------+
+                +----->|  DIVIO |--->
+                       +--------+
+
+   For this, the clk-sam9x60-pll driver has been re-factored.
+
+Claudiu Beznea (19):
+  clk: at91: clk-generated: continue if __clk_determine_rate() returns
+    error
+  clk: at91: clk-generated: check best_rate against ranges
+  clk: at91: clk-sam9x60-pll: fix mul mask
+  clk: at91: sam9x60-pll: use frac when computing pll frequency
+  clk: at91: sam9x60-pll: use logical or for range check
+  clk: at91: sam9x60-pll: check fcore against ranges
+  clk: at91: sam9x60-pll: use frac when setting frequency
+  clk: at91: sam9x60: fix main rc oscillator frequency
+  clk: at91: sckc: register slow_rc with accuracy option
+  clk: at91: replace conditional operator with double logical not
+  clk: at91: clk-generated: pass the id of changeable parent at
+    registration
+  clk: at91: clk-generated: add mux_table option
+  clk: at91: clk-master: add master clock support for SAMA7G5
+  clk: at91: clk-peripheral: add support for changeable parent rate
+  clk: at91: clk-programmable: add mux_table option
+  clk: at91: add macro for pll ids mask
+  clk: at91: clk-sam9x60-pll: re-factor to support plls with multiple
+    outputs
+  clk: at91: clk-utmi: add utmi support for sama7g5
+  clk: at91: sama7g5: add clock support for sama7g5
+
+ drivers/clk/at91/Makefile           |    1 +
+ drivers/clk/at91/at91rm9200.c       |    3 +-
+ drivers/clk/at91/at91sam9260.c      |    3 +-
+ drivers/clk/at91/at91sam9g45.c      |    3 +-
+ drivers/clk/at91/at91sam9n12.c      |    5 +-
+ drivers/clk/at91/at91sam9rl.c       |    3 +-
+ drivers/clk/at91/at91sam9x5.c       |    7 +-
+ drivers/clk/at91/clk-generated.c    |   44 +-
+ drivers/clk/at91/clk-main.c         |    6 +-
+ drivers/clk/at91/clk-master.c       |  310 +++++++++-
+ drivers/clk/at91/clk-peripheral.c   |  111 +++-
+ drivers/clk/at91/clk-programmable.c |   11 +-
+ drivers/clk/at91/clk-sam9x60-pll.c  |  547 ++++++++++++------
+ drivers/clk/at91/clk-system.c       |    4 +-
+ drivers/clk/at91/clk-utmi.c         |  103 +++-
+ drivers/clk/at91/dt-compat.c        |   25 +-
+ drivers/clk/at91/pmc.h              |   43 +-
+ drivers/clk/at91/sam9x60.c          |   64 ++-
+ drivers/clk/at91/sama5d2.c          |   41 +-
+ drivers/clk/at91/sama5d3.c          |    6 +-
+ drivers/clk/at91/sama5d4.c          |    7 +-
+ drivers/clk/at91/sama7g5.c          | 1059 +++++++++++++++++++++++++++++++++++
+ drivers/clk/at91/sckc.c             |    5 +-
+ include/linux/clk/at91_pmc.h        |    4 +
+ 24 files changed, 2140 insertions(+), 275 deletions(-)
+ create mode 100644 drivers/clk/at91/sama7g5.c
 
 -- 
-https://patchwork.kernel.org/patch/11615573/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.7.4
 
