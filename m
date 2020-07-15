@@ -2,129 +2,91 @@ Return-Path: <SRS0=kI7a=A2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589C5C433E2
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275FAC433E3
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 21:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 37A6A20672
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 20:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E337620657
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 21:51:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594843605;
-	bh=9W6vSYp92NRVcJCh9FKa27oMzyrh00zpAVYb4mIPK+A=;
+	s=default; t=1594849862;
+	bh=gWCugQWSF+WnwXkuCkAt6hbXxDEVNgSVOh9u+4zfy3I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=VLms9EVF0cSEXVM6jWCE1/FRudaF8MQ/qbDaS5GlROlnvjnG8gmAZHFJNkM3rpcm4
-	 GCNeC4U3GCMr8BfJHz/0cB3YRnzeGF0KXSXyeHR6F9P7pfdqA5tjWaQKWMxaAOa3hY
-	 IHfqrfPQek0PbhfhIXiReHERN4kgNXIQx3+4Ja3o=
+	b=0lX3chKKflx04iXJhG8FnHd2JezQvSmeqj/4tlLrA8cGbV/zD3ZBJXPPNd8oYm7bw
+	 orQprfi1iOMo9UkFWa0wYRSYb6ZI/wv+ETRFNCHbBD3HmaAfD4pJE3oCLHPZMhCetP
+	 aBmQ0NxzUTZirm5OKVOqf38rh2N9B85MIgP0hMqE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbgGOUGo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 16:06:44 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:40123 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbgGOUGo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 16:06:44 -0400
-Received: by mail-io1-f68.google.com with SMTP id l17so3596878iok.7;
-        Wed, 15 Jul 2020 13:06:43 -0700 (PDT)
+        id S1726945AbgGOVvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 17:51:01 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:38658 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726356AbgGOVvB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 17:51:01 -0400
+Received: by mail-il1-f193.google.com with SMTP id s21so3336497ilk.5;
+        Wed, 15 Jul 2020 14:51:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=cpHgt95lxQHT5Zpu11pSPfByIAbS3Y8PM2+zGuMvPf4=;
-        b=Of9OvNvuJxei8uTA5JXZ9uAn3NPce9/B/kDyJS1v3/yWtcIa1CzomBOWeC9xBojUdE
-         diJsaqFz+Rudum5zGOMAvJu9IH3mbNwEGubsBxgLT/xf7vZZwAsAiTuqFvM5f3kkne/4
-         GxMO+8Gob/cJ6Axf2y2pQELcFzYJX7KcxlOo2gGeQ0dV3iZu+JuEjLqPPIq0vhkZ4fiG
-         /mQBAXB5jZOHVl8xLboT1VnPZmhujjrPmESpQVZfjZYLTdgMQW7Vu4vdh2JpLpUAfmYp
-         BJrBY2guVACh0LBKcPmfR9q5BdXzqczQdDOutqiFNwcOnbStp8K77/W5pY95EOEHWByT
-         s05Q==
-X-Gm-Message-State: AOAM531weLA4YQUhRdJ5A4TKDyA/R1fNcWsf20MI3vX8W6mGE/brprBl
-        ttYJme4kYyzik4e8QA//tA==
-X-Google-Smtp-Source: ABdhPJzTqc0usjbSP/XwBpuP5jwxFaTQOXK6S9rjAZx6oYxlBd6iuUMXJPDTaUqiQq5nLvvMyIBD2g==
-X-Received: by 2002:a02:1c02:: with SMTP id c2mr1168973jac.102.1594843603060;
-        Wed, 15 Jul 2020 13:06:43 -0700 (PDT)
+        bh=KBhS464+xTe8zxChlHKza9Sk8r7xT2QRaf6Ev4NHLb8=;
+        b=O+NBb3qdDmUvsaW3D34W59A3Zq2Lx247Zn8SGtlOfpbql9MqM1HxXVC5wsf5iB0gX9
+         OYMCZuF2mRo2xHGHl3+e7AtNvVpiP1KbyyIZds2GL4e6AV43zKgtSrnJNFcRBx88xGZE
+         rSYafq6czDFkXUATAS6IYsS1ETwBwbdie5o3bGNlGUh67YlMs9+4BZxiLKso6yPYketu
+         3qq6F4L3bAnYwcFcA2DqlU+Yd+OabHJCVVAfLpBY1BTXC+WuuDtokYE5UhTBZFpKXxxm
+         0r68JzzILTi6et9lWDIdFB8Tij2A2R56nA5zaVYNrYMT00/vzNbUT+rVjFCOJ7GB/BaD
+         cG0g==
+X-Gm-Message-State: AOAM5304c/bTu/24vMH27UMG44X8YC4xS+zyW/YZxt5hNGKwsIF7BjhE
+        8h9c/fgjLT/lyUwtWiE8sw==
+X-Google-Smtp-Source: ABdhPJwBGi+uuOaHqFueng9LtD6gz4CIY5Va7eyOPqpgOg3ZpGgOwXsgclNDCXLpVMhYg6g8qG0cVg==
+X-Received: by 2002:a92:5ecf:: with SMTP id f76mr1672287ilg.6.1594849860224;
+        Wed, 15 Jul 2020 14:51:00 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id l17sm1507537ilm.70.2020.07.15.13.06.41
+        by smtp.gmail.com with ESMTPSA id w4sm1751016ioc.23.2020.07.15.14.50.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 13:06:42 -0700 (PDT)
-Received: (nullmailer pid 735110 invoked by uid 1000);
-        Wed, 15 Jul 2020 20:06:41 -0000
-Date:   Wed, 15 Jul 2020 14:06:41 -0600
+        Wed, 15 Jul 2020 14:50:59 -0700 (PDT)
+Received: (nullmailer pid 879112 invoked by uid 1000);
+        Wed, 15 Jul 2020 21:50:57 -0000
+Date:   Wed, 15 Jul 2020 15:50:57 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware
- binding
-Message-ID: <20200715200641.GA732316@bogus>
-References: <20200626115433.125735-1-maxime@cerno.tech>
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Cc:     kishon@ti.com, linux-clk@vger.kernel.org, smuthayy@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        robh+dt@kernel.org,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        vkoul@kernel.org, varada@codeaurora.org, mturquette@baylibre.com,
+        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
+        p.zabel@pengutronix.de, svarbanov@mm-sol.com, bhelgaas@google.com,
+        agross@kernel.org, lorenzo.pieralisi@arm.com,
+        bjorn.andersson@linaro.org, mgautam@codeaurora.org,
+        sboyd@kernel.org
+Subject: Re: [PATCH 2/9] dt-bindings: phy: qcom,qmp: Add dt-binding for
+ ipq8074 gen3 pcie phy
+Message-ID: <20200715215057.GA879061@bogus>
+References: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
+ <1593940680-2363-3-git-send-email-sivaprak@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
+In-Reply-To: <1593940680-2363-3-git-send-email-sivaprak@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
-> The RaspberryPi firmware binding uses two compatible, include simple-bus.
-> The select statement generated by default will thus select any node that
-> has simple-bus, not all of them being the raspberrypi firmware node.
+On Sun, 05 Jul 2020 14:47:53 +0530, Sivaprakash Murugesan wrote:
+> ipq8074 has two different phy blocks for two pcie ports, with pcie gen2
+> compatible already available, specify the pcie phy compatible
+> for gen3 pcie port.
 > 
-> This results in warnings being wrongfully reported. Let's add a custom
-> select statement to fix that.
-> 
-> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> 
+> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
+> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
 > ---
+>  Documentation/devicetree/bindings/phy/qcom,qmp-phy.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> The original binding has been merged through the clock tree, so it should
-> be merged there.
-> 
-> Even though the original binding (and the DT) are using the simple-bus
-> compatible, this creates some DTC warnings since the firmware really isn't
-> a bus, so the node name doesn't match what a bus should have, none of the
-> children have a reg property, #address-cells and #size-cells are missing,
-> etc.
-> 
-> I can only guess that simple-bus was used to make the sub-devices probe,
-> but maybe simple-mfd would be more appropriate here?
 
-As these are not mmio devices, I think simple-mfd is better.
-
-> ---
->  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml   | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> index b48ed875eb8e..17e4f20c8d39 100644
-> --- a/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> +++ b/Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml
-> @@ -10,6 +10,15 @@ maintainers:
->    - Eric Anholt <eric@anholt.net>
->    - Stefan Wahren <wahrenst@gmx.net>
->  
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        const: raspberrypi,bcm2835-firmware
-> +
-> +  required:
-> +    - compatible
-> +
->  properties:
->    compatible:
->      items:
-> -- 
-> 2.26.2
-> 
+Acked-by: Rob Herring <robh@kernel.org>
