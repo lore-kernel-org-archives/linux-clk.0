@@ -2,94 +2,104 @@ Return-Path: <SRS0=kI7a=A2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41A2BC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 09:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DB87C433E8
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 10:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 155662065D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 09:23:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594805013;
-	bh=q1rgHWKlRBQFkASwEyICvnEBsq9hSRDAOvxf9Y+UIUA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=aoxHX0vBMwkPAEv22drIVhuFaQl/JPYbM1KZsU+9kcLq0jTGG0lwP1MEVAZHfPxdR
-	 Yg1mvKKOZQf3BQhTiw1qRbUWduWZpKBjMNic6kGA+jMhblJPikV+7NeMVov9wukLjM
-	 Ln5j6OTc7vO7XJt7CARFKHVcngVUQqqV4UpquG/w=
+	by mail.kernel.org (Postfix) with ESMTP id 4707720656
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 10:37:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="P5w04vOc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729912AbgGOJXc convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 05:23:32 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:44318 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729672AbgGOJXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 05:23:32 -0400
-Received: by mail-ej1-f66.google.com with SMTP id ga4so1412653ejb.11;
-        Wed, 15 Jul 2020 02:23:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZjUBYbCAhkMSlEf1D1VjAPqeltcV9sJtDSHasy83UmE=;
-        b=ifhmI0N3dDcqPL5TV9oj7Fn/Ncit4UO5XhbPfngAIS6+iqRO24OiAwnNgtn/zE8NUY
-         j8Hg+gHHY/bM7JW9RE3ZQt26K5/NHS0ad98VOlezrPEonNKSahoWvgBem+FvzGALj3YT
-         WhZ3Ox9yP5hUmOq7igQdnhM4PPzamlQHkWtI1uHL0jW7gq+RbSizcOg0Ry7Rt++AbfE/
-         bEqxn/VLjFkZVq5tKttVh2JWSU5lfzMgu6rDR2Rqm3u8VuCTFl+y9az/6EE+tK2K3Bas
-         AWSPNvosU0iPKG5vxkm4SXVwGhksgFxOmbgHeWUgtMnf5zxrXOAGE3fhmKJCVFgVVS5Y
-         IjBw==
-X-Gm-Message-State: AOAM532ZH17tBj/pejpWkjEfw4259RZujdIitkEv1U5vtu/TjTPZ8cXW
-        2uBlhyaAhnMZrqWdodbZ3au9IHYw7LQxq6intFY=
-X-Google-Smtp-Source: ABdhPJwHOldqQmuodyxBvCRakrk0jEwP5N4dmKqXxJKGDLmt+HF2VeypeRx/68egPxFW5FOpqzMnanzIOz45zNrQOwk=
-X-Received: by 2002:a17:906:a44:: with SMTP id x4mr8965528ejf.193.1594805010582;
- Wed, 15 Jul 2020 02:23:30 -0700 (PDT)
+        id S1731199AbgGOKhJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 06:37:09 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:20746 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731204AbgGOKhJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jul 2020 06:37:09 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1594809428; h=Date: Message-Id: Cc: To: References:
+ In-Reply-To: From: Subject: Content-Transfer-Encoding: MIME-Version:
+ Content-Type: Sender; bh=pYgx74LtrBLVD12x3ELyZuAqEdnOVxhRlDanXsj1kC8=;
+ b=P5w04vOc+Pfl6b39NL7pycBqfT4dKZdmpJtKVLay69u6fG9ugGyAhi1DDYfKyJ6EXKzGMqQg
+ L915gqSTXg3chWf/WpuQ60gJZt1tfv6K8ba9WadrPAwEhfpbfUqZ+c4bH1Gdr3aZf0mVmyGO
+ Xi87rEmYJQr8a1ik3woi40l+KtY=
+X-Mailgun-Sending-Ip: 69.72.43.7
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 5f0edc4db35196d59d5e52fb (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 15 Jul 2020 10:37:01
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 5B429C43449; Wed, 15 Jul 2020 10:37:01 +0000 (UTC)
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 639D1C433CA;
+        Wed, 15 Jul 2020 10:36:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 639D1C433CA
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200713032143.21362-1-vulab@iscas.ac.cn>
-In-Reply-To: <20200713032143.21362-1-vulab@iscas.ac.cn>
-From:   Barry Song <baohua@kernel.org>
-Date:   Wed, 15 Jul 2020 21:23:20 +1200
-Message-ID: <CAGsJ_4z4QfmFxu=+8QgKz4qSSob+2K+EO5hukPjhgPYkvEuJmw@mail.gmail.com>
-Subject: Re: [PATCH] clk: clk-atlas6: fix return value check in atlas6_clk_init()
-To:     Xu Wang <vulab@iscas.ac.cn>
-Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v2 04/16] b43: Remove uninitialized_var() usage
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20200620033007.1444705-5-keescook@chromium.org>
+References: <20200620033007.1444705-5-keescook@chromium.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Alexander Potapenko <glider@google.com>,
+        Joe Perches <joe@perches.com>,
+        Andy Whitcroft <apw@canonical.com>, x86@kernel.org,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        b43-dev@lists.infradead.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-mm@kvack.org,
+        clang-built-linux@googlegroups.com
+User-Agent: pwcli/0.1.0-git (https://github.com/kvalo/pwcli/) Python/3.5.2
+Message-Id: <20200715103701.5B429C43449@smtp.codeaurora.org>
+Date:   Wed, 15 Jul 2020 10:37:01 +0000 (UTC)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Xu Wang <vulab@iscas.ac.cn> 于2020年7月13日周一 下午3:27写道：
->
-> In case of error, the function clk_register() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check
-> should be replaced with IS_ERR().
->
-> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+Kees Cook <keescook@chromium.org> wrote:
 
-Acked-by: Barry Song <baohua@kernel.org>
+> Using uninitialized_var() is dangerous as it papers over real bugs[1]
+> (or can in the future), and suppresses unrelated compiler warnings (e.g.
+> "unused variable"). If the compiler thinks it is uninitialized, either
+> simply initialize the variable or make compiler changes. As a precursor
+> to removing[2] this[3] macro[4], just initialize this variable to NULL.
+> No later NULL deref is possible due to the early returns outside of the
+> (phy->rev >= 7 && phy->rev < 19) case, which explicitly tests for NULL.
+> 
+> [1] https://lore.kernel.org/lkml/20200603174714.192027-1-glider@google.com/
+> [2] https://lore.kernel.org/lkml/CA+55aFw+Vbj0i=1TGqCR5vQkCzWJ0QxK6CernOU6eedsudAixw@mail.gmail.com/
+> [3] https://lore.kernel.org/lkml/CA+55aFwgbgqhbp1fkxvRKEpzyR5J8n1vKT1VZdz9knmPuXhOeg@mail.gmail.com/
+> [4] https://lore.kernel.org/lkml/CA+55aFz2500WfbKXAx8s67wrm9=yVJu65TpLgN_ybYNv0VEOKA@mail.gmail.com/
+> 
+> Fixes: 58619b14d106 ("b43: move under broadcom vendor directory")
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-> ---
->  drivers/clk/sirf/clk-atlas6.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sirf/clk-atlas6.c b/drivers/clk/sirf/clk-atlas6.c
-> index c84d5bab7ac2..b95483bb6a5e 100644
-> --- a/drivers/clk/sirf/clk-atlas6.c
-> +++ b/drivers/clk/sirf/clk-atlas6.c
-> @@ -135,7 +135,7 @@ static void __init atlas6_clk_init(struct device_node *np)
->
->         for (i = pll1; i < maxclk; i++) {
->                 atlas6_clks[i] = clk_register(NULL, atlas6_clk_hw_array[i]);
-> -               BUG_ON(!atlas6_clks[i]);
-> +               BUG_ON(IS_ERR(atlas6_clks[i]));
->         }
->         clk_register_clkdev(atlas6_clks[cpu], NULL, "cpu");
->         clk_register_clkdev(atlas6_clks[io],  NULL, "io");
-> --
-> 2.17.1
->
+2 patches applied to wireless-drivers-next.git, thanks.
+
+800e7a205a0f b43: Remove uninitialized_var() usage
+f8279dad4e36 rtlwifi: rtl8192cu: Remove uninitialized_var() usage
+
+-- 
+https://patchwork.kernel.org/patch/11615573/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
