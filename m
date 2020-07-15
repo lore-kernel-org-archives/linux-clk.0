@@ -2,1158 +2,159 @@ Return-Path: <SRS0=kI7a=A2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4F4C433EC
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:25:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC87CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 15:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2563D2070E
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:25:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2FAD20672
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 15:39:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qFhjhqBB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="UklZI0FU";
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="I3fIch1p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728801AbgGOLZy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 07:25:54 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62586 "EHLO
+        id S1726440AbgGOPjh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 11:39:37 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:26093 "EHLO
         esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730386AbgGOLZx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 07:25:53 -0400
+        with ESMTP id S1726034AbgGOPjg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 11:39:36 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1594812352; x=1626348352;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=luEJ62qwGC+u0168DCqTJYhp0sf0DveJutS1k13ivKA=;
-  b=qFhjhqBB4IxDCHk8D6naFx6MGD4WwxFhynZ+rUm7s0Gtwee/uXieDAAv
-   dqd9z6O7YPnYZx/SEek5EfWip4a7+DERhCFjRR97VzApKUeLnyx2Yl/1S
-   Xz9RABL9CIdUaTWQoqiF5BlJ1VaXpYhW4FhpK8EeLzoyuOByZeyeJGIjB
-   kvsa3lWVSFEfVyVFO7NO+DfhU5OiJjb8WR4dSxBwHSTq4mGgPaGwCjhHY
-   SvY/KuGIRaEwSg7MSAL2K69LnfpA/huBFu2DrUanrKF4Y3VZz9TBWLen4
-   GlED/r1S8GOeCTr/QR8dgGzD7wyj/2i2m2gpw3kMQPJOWTq1BeV7j/IqK
-   g==;
-IronPort-SDR: MSPhF5mR1l8dJsBbv+YJcVp3h6KJVXM1joAdVzVVuD5TENwbaXejQy/ExcIj1ekFtk0gQ4r6Sm
- cF1Gpkf7kWufPil8RrWuNPbYS60OMDIvoP3iE4ubkLFJX8zMOcYCLnzX1eiFzi2q1r4Z5Zh1d2
- 8pHhnuVsZwH6DsAC8gzw4iqxxuo/HkFdsmbkBv1OhlrdgIk8tZFYfXE4s1tyERWGvd+mPvajkL
- FYlrRj2ZN8C7on7i8SfJ0afhbDpCn1RFnME3WqRuMuNFOx2QcqUZqaCK9nKeTuA2YDJHt8uVEW
- IFY=
+  t=1594827575; x=1626363575;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=bs1GCJRROT3L+eFiWB7ldF/NSw4SssN96pcj5Hl7GMM=;
+  b=UklZI0FURMT4+G9xrYBYrRGOQ4GTREVxDc69Kyc2H4mVaNSOL49EaSWh
+   5duOkgXIYvCZAFuDGBNJK+ydxyJbh/CiYypmYlyB3iUgeQpj4M8pFLcvD
+   SghiJ8vC60c2nxazRnUeVuA85xBBRK9R23ZXzLXtozL1Sn9sDgG8vMYt+
+   50JjRArcV31BKP4B+w6hOcqM2k++jduQLyECugPRGkmUMp//LSsHQDS/Z
+   z/5tiXBm7qQc5pZs0Z2gsMwSeDsWhCRHoRfVqSDviOe4Ib5LVqtpfrC4j
+   qGrjJ8/jDdptB/EKRT3UwDh/hNV3JZ1OAFhT9A3nMCroW+MZwFcMDFE7E
+   Q==;
+IronPort-SDR: JNBV6em2FEFPlLBVkAmL/gs2VqZSyUliUQagTuE99021UnOurCPUR4LOg60SiTENxOPMn6OkGO
+ cLW4Ifd2xyNNgDIW/FuS6ldxeaDIz1AaxigioKeQtup+4zvxdQXQzEAgJZhez0lo+DhIRNAiDi
+ x8lisfVLJV+DbAuA7MT8+GBhDlGWagIwRsxyr6iAxAeaOfZaCilJa9Pcm5YbLXnP+wDwhfGvfL
+ 2aTJ50mdRF/l22uJw5EcvDFfrYdkVDAHt89D4mHd/4appSZcaMuEhWNwbXhMGYI+52rZKmtdSL
+ BlY=
 X-IronPort-AV: E=Sophos;i="5.75,355,1589266800"; 
-   d="scan'208";a="83963008"
+   d="scan'208";a="84010188"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jul 2020 04:25:51 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jul 2020 08:39:34 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 15 Jul 2020 04:25:51 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 15 Jul 2020 04:25:15 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+ 15.1.1979.3; Wed, 15 Jul 2020 08:39:01 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
+ via Frontend Transport; Wed, 15 Jul 2020 08:39:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=a+Bo3pm2VhgwKkHZmmU2VCstsHFvFey/EeDfaHE7nkGS0a99+gLRwxGQ8nhOZTdm84c9BDvApjPpHxwH8Y1bzNsDv8VVakUPjqvFnVAZw5Gh0RG6gyMNEXjTDD+Kvs6sopRj+CSsmA9Ixxm3MPJgfxM4KoC1iFLRiE13Lr8AUG8+S6PG76kpEmNmhL+gZcf0TjdA/CWCuOEFfnv/zFLTlwJGWp2/u8PzTDFTP716Id7RBcL0k3IYY1fohZYTHJ7deYgF0aH8QKEZjZvYVtK6MFIBoLWATAWppA7uzl0BQ3+t/RonnTWszVZ1SgjBLztPy1vyCus4UInwfiCLFC94Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bs1GCJRROT3L+eFiWB7ldF/NSw4SssN96pcj5Hl7GMM=;
+ b=Zx6TMlwV1TFFXgdJ61On6KQcQSimUn42/wdWZkilpG1dRQgHj69d7hZweWuZCJy9/1MypJQWvhXeQ+nxK+q2vZNYMHFfk2UyE/ayHDwS5vKAUWlSQ8rWxJn8iLHC1N+b0AocsZ9OZwaNk8Irkm5nTxzu0LYm/pyPDK+yOpkfTBZtoXt6ShXpUDrs0k654g6cOCcn03JDgcqMTjyD1f/vYSfrBErsuSEuxRSWVLEUqBZMu2FaPEmtpx7cNNs1BIAxnwLF7xUF6AeMLmNEjD2kgc+HgMwNRpY1rLFEag+TItncGuuVUWsZlm9Bsj0vKbJpSWM/hmVCFHxvD2AIALj4Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bs1GCJRROT3L+eFiWB7ldF/NSw4SssN96pcj5Hl7GMM=;
+ b=I3fIch1p3vnxBoJyTRVpzYzvxV4CPXxZ/PyGhHsDEH/ycOnQPi33IZXbw/EfvuGotN4xD0xLdikDmXizvIylx9pMJSr9xddyQ4FrTlurUz0UT2rP+Yceejjv6rFcvBY2UgvrYXWtMSEDvvDW8BbvBn9V12j3fH3DMo6+LOrzMlA=
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com (2603:10b6:5:69::31) by
+ DM6PR11MB3290.namprd11.prod.outlook.com (2603:10b6:5:59::25) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.3174.21; Wed, 15 Jul 2020 15:39:33 +0000
+Received: from DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::e8b2:1d82:49d9:f4b]) by DM6PR11MB3420.namprd11.prod.outlook.com
+ ([fe80::e8b2:1d82:49d9:f4b%6]) with mapi id 15.20.3174.026; Wed, 15 Jul 2020
+ 15:39:33 +0000
+From:   <Claudiu.Beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <Ludovic.Desroches@microchip.com>
 CC:     <bbrezillon@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        "Claudiu Beznea" <claudiu.beznea@microchip.com>
-Subject: [PATCH 19/19] clk: at91: sama7g5: add clock support for sama7g5
-Date:   Wed, 15 Jul 2020 14:24:27 +0300
-Message-ID: <1594812267-6697-20-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 09/19] clk: at91: sckc: register slow_rc with accuracy
+ option
+Thread-Topic: [PATCH 09/19] clk: at91: sckc: register slow_rc with accuracy
+ option
+Thread-Index: AQHWWr4hHbdIy9PUz0W5KlN9iMKsng==
+Date:   Wed, 15 Jul 2020 15:39:33 +0000
+Message-ID: <a0728969-dcb7-7702-a4fb-58ca1b2260c1@microchip.com>
 References: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
+ <1594812267-6697-10-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1594812267-6697-10-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+authentication-results: baylibre.com; dkim=none (message not signed)
+ header.d=none;baylibre.com; dmarc=none action=none header.from=microchip.com;
+x-originating-ip: [82.76.227.81]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3e40926b-2ba9-4a38-90db-08d828d545c5
+x-ms-traffictypediagnostic: DM6PR11MB3290:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB329046A8CF87DB02505354C5877E0@DM6PR11MB3290.namprd11.prod.outlook.com>
+x-bypassexternaltag: True
+x-ms-oob-tlc-oobclassifiers: OLM:1107;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: GQPVvk+x/zYu9cb0X5KinmcWEuCHYnqShAoDJW/Ad9PKDxjuDb/MCGkt5fVTltsZsSKfRkmUPdZHLKjJ8BzFmpHMr8ES+C1io13N4g4DNXEugZTRa5/Auo9dw3FvOcXVH42crJDxR1G0dg+YMiH+sQgzSe6erpuliYggOIH6JipoNDiUTmVNqX4HwV/vHVFm4IQSg/XbX8YUGAJvx9rgDmDa2daSCyHqopwXKUbg751/AayzYITdblYoW3LSH3ratx9BeT4p+9U/l2SYNHzFQlRzmjMN9bD4v3/qY+R6KZVGQEoF6rL6RFgRNDi4/lF69E5vsoE1IQO9d/NuFCZEb6E+2OhPtyIBRwxyXn+u1LjWZaY6MWeFj0lw3wdXcovJwe0vPxMqJZ4dMbqOYgeG6tkSMLxoOV4EPtCe74E+zmp6+5HxXyTvEa66pucCdD19hQHtLx6oZ+trMhkn6tgLjA==
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3420.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(39860400002)(346002)(376002)(366004)(136003)(396003)(6486002)(8936002)(4326008)(8676002)(83080400001)(54906003)(110136005)(478600001)(71200400001)(6512007)(31696002)(66946007)(316002)(6636002)(86362001)(66446008)(2616005)(83380400001)(53546011)(16799955002)(186003)(31686004)(6506007)(64756008)(91956017)(966005)(36756003)(26005)(2906002)(76116006)(5660300002)(66476007)(66556008)(43740500002);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: zuQdiXmeoKb5ZjcRAT+W6Kql+8w0loxV3L/6uDWgbFXfGIdZFowryaBnRRzfrS8O1obrXopkLYhWizV1RoIHNcEu3QQDieXoY6IWoPSQ2Vdsdx90xpwbWQ1YyPzqtDSKvozaiRrdymmxJBpE1kU5Mup8+UukZ1AoyQ+9nM7E9/eUDc1wViWDtEQ5FG2VKjQVAT2UvrW6F+l0zgXoafZinZmboufQbWQ1/7aK0PjC1HyylP8NxJFLJoBhi/V98uY36a+O92YeWtJl9raWSBiJYUS/R5pW9eu0KWPSM+9uNXLNnkcvABnpuiFRnLYXAP2BHKn0JN9E/tKQgqaMpTsATRL9+zx9OJxKwvhUARlrJsxobd/aGSHSg4EQB6nLj6i/dFoaNe7lW7VJvcxbJurWu1NgYK5HYO3Igp8YXLuJgToIwlaQz4SsDAgdISMDQRnui6MVfDhl4taON0zOchlHZ7bsdGV08LuyPZAIlasz4i4=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AEBF733E7A1CFE439EB0AFB0B0B5ED56@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3420.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3e40926b-2ba9-4a38-90db-08d828d545c5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jul 2020 15:39:33.5456
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 30DbM7F7EGYU+0zVeiKQhJTxXZZBuEyf9lYFqRdjCH1yydUDJA/jOEM2eWxHHadTmioDblhd6xnhLEOyDcljQT97aad82pRIpnW96Xhp0+g=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3290
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock support for SAMA7G5.
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/Makefile  |    1 +
- drivers/clk/at91/sama7g5.c | 1059 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 1060 insertions(+)
- create mode 100644 drivers/clk/at91/sama7g5.c
-
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 8b90357f2a93..79301e1c1c36 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -23,3 +23,4 @@ obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
- obj-$(CONFIG_SOC_SAMA5D3) += sama5d3.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
- obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
-+obj-$(CONFIG_SOC_SAMA7G5) += sama7g5.o
-diff --git a/drivers/clk/at91/sama7g5.c b/drivers/clk/at91/sama7g5.c
-new file mode 100644
-index 000000000000..0db2ab3eca14
---- /dev/null
-+++ b/drivers/clk/at91/sama7g5.c
-@@ -0,0 +1,1059 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * SAMA7G5 PMC code.
-+ *
-+ * Copyright (C) 2020 Microchip Technology Inc. and its subsidiaries
-+ *
-+ * Author: Claudiu Beznea <claudiu.beznea@microchip.com>
-+ *
-+ */
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/at91.h>
-+
-+#include "pmc.h"
-+
-+#define SAMA7G5_INIT_TABLE(_table, _count)		\
-+	do {						\
-+		u8 _i;					\
-+		for (_i = 0; _i < (_count); _i++)	\
-+			(_table)[_i] = _i;		\
-+	} while (0)
-+
-+#define SAMA7G5_FILL_TABLE(_to, _from, _count)		\
-+	do {						\
-+		u8 _i;					\
-+		for (_i = 0; _i < (_count); _i++) {	\
-+			(_to)[_i] = (_from)[_i];	\
-+		}					\
-+	} while (0)
-+
-+static DEFINE_SPINLOCK(pmc_pll_lock);
-+static DEFINE_SPINLOCK(pmc_mckX_lock);
-+
-+/**
-+ * PLL clocks identifiers
-+ * @PLL_ID_CPU:		CPU PLL identifier
-+ * @PLL_ID_SYS:		System PLL identifier
-+ * @PLL_ID_DDR:		DDR PLL identifier
-+ * @PLL_ID_IMG:		Image subsystem PLL identifier
-+ * @PLL_ID_BAUD:	Baud PLL identifier
-+ * @PLL_ID_AUDIO:	Audio PLL identifier
-+ * @PLL_ID_ETH:		Ethernet PLL identifier
-+ */
-+enum pll_ids {
-+	PLL_ID_CPU,
-+	PLL_ID_SYS,
-+	PLL_ID_DDR,
-+	PLL_ID_IMG,
-+	PLL_ID_BAUD,
-+	PLL_ID_AUDIO,
-+	PLL_ID_ETH,
-+	PLL_ID_MAX,
-+};
-+
-+/**
-+ * PLL type identifiers
-+ * @PLL_TYPE_FRAC:	fractional PLL identifier
-+ * @PLL_TYPE_DIV:	divider PLL identifier
-+ */
-+enum pll_type {
-+	PLL_TYPE_FRAC,
-+	PLL_TYPE_DIV,
-+};
-+
-+/* Layout for fractional PLLs. */
-+static const struct clk_pll_layout pll_layout_frac = {
-+	.mul_mask	= GENMASK(31, 24),
-+	.frac_mask	= GENMASK(21, 0),
-+	.mul_shift	= 24,
-+	.frac_shift	= 0,
-+};
-+
-+/* Layout for DIVPMC dividers. */
-+static const struct clk_pll_layout pll_layout_divpmc = {
-+	.div_mask	= GENMASK(7, 0),
-+	.endiv_mask	= BIT(29),
-+	.div_shift	= 0,
-+	.endiv_shift	= 29,
-+};
-+
-+/* Layout for DIVIO dividers. */
-+static const struct clk_pll_layout pll_layout_divio = {
-+	.div_mask	= GENMASK(19, 12),
-+	.endiv_mask	= BIT(30),
-+	.div_shift	= 12,
-+	.endiv_shift	= 30,
-+};
-+
-+/**
-+ * PLL clocks description
-+ * @n:		clock name
-+ * @p:		clock parent
-+ * @l:		clock layout
-+ * @t:		clock type
-+ * @f:		true if clock is critical and cannot be disabled
-+ * @eid:	export index in sama7g5->chws[] array
-+ */
-+static const struct {
-+	const char *n;
-+	const char *p;
-+	const struct clk_pll_layout *l;
-+	u8 t;
-+	u8 c;
-+	u8 eid;
-+} sama7g5_plls[][PLL_ID_MAX] = {
-+	[PLL_ID_CPU] = {
-+		{ .n = "cpupll_fracck",
-+		  .p = "mainck",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC,
-+		  .c = 1, },
-+
-+		{ .n = "cpupll_divpmcck",
-+		  .p = "cpupll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV,
-+		  .c = 1, },
-+	},
-+
-+	[PLL_ID_SYS] = {
-+		{ .n = "syspll_fracck",
-+		  .p = "mainck",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC,
-+		  .c = 1, },
-+
-+		{ .n = "syspll_divpmcck",
-+		  .p = "syspll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV,
-+		  .c = 1, },
-+	},
-+
-+	[PLL_ID_DDR] = {
-+		{ .n = "ddrpll_fracck",
-+		  .p = "mainck",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC,
-+		  .c = 1, },
-+
-+		{ .n = "ddrpll_divpmcck",
-+		  .p = "ddrpll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV,
-+		  .c = 1, },
-+	},
-+
-+	[PLL_ID_IMG] = {
-+		{ .n = "imgpll_fracck",
-+		  .p = "mainck",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC, },
-+
-+		{ .n = "imgpll_divpmcck",
-+		  .p = "imgpll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV, },
-+	},
-+
-+	[PLL_ID_BAUD] = {
-+		{ .n = "baudpll_fracck",
-+		  .p = "mainck",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC, },
-+
-+		{ .n = "baudpll_divpmcck",
-+		  .p = "baudpll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV, },
-+	},
-+
-+	[PLL_ID_AUDIO] = {
-+		{ .n = "audiopll_fracck",
-+		  .p = "main_xtal",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC, },
-+
-+		{ .n = "audiopll_divpmcck",
-+		  .p = "audiopll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV,
-+		  .eid = PMC_I2S0_MUX, },
-+
-+		{ .n = "audiopll_diviock",
-+		  .p = "audiopll_fracck",
-+		  .l = &pll_layout_divio,
-+		  .t = PLL_TYPE_DIV,
-+		  .eid = PMC_I2S1_MUX, },
-+	},
-+
-+	[PLL_ID_ETH] = {
-+		{ .n = "ethpll_fracck",
-+		  .p = "main_xtal",
-+		  .l = &pll_layout_frac,
-+		  .t = PLL_TYPE_FRAC, },
-+
-+		{ .n = "ethpll_divpmcck",
-+		  .p = "ethpll_fracck",
-+		  .l = &pll_layout_divpmc,
-+		  .t = PLL_TYPE_DIV, },
-+	},
-+};
-+
-+/**
-+ * Master clock (MCK[1..4]) description
-+ * @n:			clock name
-+ * @ep:			extra parents names array
-+ * @ep_chg_chg_id:	index in parents array that specifies the changeable
-+ *			parent
-+ * @ep_count:		extra parents count
-+ * @ep_mux_table:	mux table for extra parents
-+ * @id:			clock id
-+ * @c:			true if clock is critical and cannot be disabled
-+ */
-+static const struct {
-+	const char *n;
-+	const char *ep[4];
-+	int ep_chg_id;
-+	u8 ep_count;
-+	u8 ep_mux_table[4];
-+	u8 id;
-+	u8 c;
-+} sama7g5_mckx[] = {
-+	{ .n = "mck1",
-+	  .id = 1,
-+	  .ep = { "syspll_divpmcck", },
-+	  .ep_mux_table = { 5, },
-+	  .ep_count = 1,
-+	  .ep_chg_id = INT_MIN,
-+	  .c = 1, },
-+
-+	{ .n = "mck2",
-+	  .id = 2,
-+	  .ep = { "ddrpll_divpmcck", },
-+	  .ep_mux_table = { 6, },
-+	  .ep_count = 1,
-+	  .ep_chg_id = INT_MIN,
-+	  .c = 1, },
-+
-+	{ .n = "mck3",
-+	  .id = 3,
-+	  .ep = { "syspll_divpmcck", "ddrpll_divpmcck", "imgpll_divpmcck", },
-+	  .ep_mux_table = { 5, 6, 7, },
-+	  .ep_count = 3,
-+	  .ep_chg_id = 6, },
-+
-+	{ .n = "mck4",
-+	  .id = 4,
-+	  .ep = { "syspll_divpmcck", },
-+	  .ep_mux_table = { 5, },
-+	  .ep_count = 1,
-+	  .ep_chg_id = INT_MIN,
-+	  .c = 1, },
-+};
-+
-+/**
-+ * System clock description
-+ * @n:	clock name
-+ * @p:	clock parent name
-+ * @id: clock id
-+ */
-+static const struct {
-+	const char *n;
-+	const char *p;
-+	u8 id;
-+} sama7g5_systemck[] = {
-+	{ .n = "pck0",		.p = "prog0", .id = 8, },
-+	{ .n = "pck1",		.p = "prog1", .id = 9, },
-+	{ .n = "pck2",		.p = "prog2", .id = 10, },
-+	{ .n = "pck3",		.p = "prog3", .id = 11, },
-+	{ .n = "pck4",		.p = "prog4", .id = 12, },
-+	{ .n = "pck5",		.p = "prog5", .id = 13, },
-+	{ .n = "pck6",		.p = "prog6", .id = 14, },
-+	{ .n = "pck7",		.p = "prog7", .id = 15, },
-+};
-+
-+/* Mux table for programmable clocks. */
-+static u32 sama7g5_prog_mux_table[] = { 0, 1, 2, 3, 5, 6, 7, 8, 9, 10, };
-+
-+/**
-+ * Peripheral clock description
-+ * @n:		clock name
-+ * @p:		clock parent name
-+ * @r:		clock range values
-+ * @id:		clock id
-+ * @chgp:	index in parent array of the changeable parent
-+ */
-+static const struct {
-+	const char *n;
-+	const char *p;
-+	struct clk_range r;
-+	u8 chgp;
-+	u8 id;
-+} sama7g5_periphck[] = {
-+	{ .n = "pioA_clk",	.p = "mck0", .id = 11, },
-+	{ .n = "sfr_clk",	.p = "mck1", .id = 19, },
-+	{ .n = "hsmc_clk",	.p = "mck1", .id = 21, },
-+	{ .n = "xdmac0_clk",	.p = "mck1", .id = 22, },
-+	{ .n = "xdmac1_clk",	.p = "mck1", .id = 23, },
-+	{ .n = "xdmac2_clk",	.p = "mck1", .id = 24, },
-+	{ .n = "acc_clk",	.p = "mck1", .id = 25, },
-+	{ .n = "aes_clk",	.p = "mck1", .id = 27, },
-+	{ .n = "tzaesbasc_clk",	.p = "mck1", .id = 28, },
-+	{ .n = "asrc_clk",	.p = "mck1", .id = 30, .r = { .max = 200000000, }, },
-+	{ .n = "cpkcc_clk",	.p = "mck0", .id = 32, },
-+	{ .n = "csi_clk",	.p = "mck3", .id = 33, .r = { .max = 266000000, }, .chgp = 1, },
-+	{ .n = "csi2dc_clk",	.p = "mck3", .id = 34, .r = { .max = 266000000, }, .chgp = 1, },
-+	{ .n = "eic_clk",	.p = "mck1", .id = 37, },
-+	{ .n = "flex0_clk",	.p = "mck1", .id = 38, },
-+	{ .n = "flex1_clk",	.p = "mck1", .id = 39, },
-+	{ .n = "flex2_clk",	.p = "mck1", .id = 40, },
-+	{ .n = "flex3_clk",	.p = "mck1", .id = 41, },
-+	{ .n = "flex4_clk",	.p = "mck1", .id = 42, },
-+	{ .n = "flex5_clk",	.p = "mck1", .id = 43, },
-+	{ .n = "flex6_clk",	.p = "mck1", .id = 44, },
-+	{ .n = "flex7_clk",	.p = "mck1", .id = 45, },
-+	{ .n = "flex8_clk",	.p = "mck1", .id = 46, },
-+	{ .n = "flex9_clk",	.p = "mck1", .id = 47, },
-+	{ .n = "flex10_clk",	.p = "mck1", .id = 48, },
-+	{ .n = "flex11_clk",	.p = "mck1", .id = 49, },
-+	{ .n = "gmac0_clk",	.p = "mck1", .id = 51, },
-+	{ .n = "gmac1_clk",	.p = "mck1", .id = 52, },
-+	{ .n = "icm_clk",	.p = "mck1", .id = 55, },
-+	{ .n = "isc_clk",	.p = "mck3", .id = 56, .r = { .max = 266000000, }, .chgp = 1, },
-+	{ .n = "i2smcc0_clk",	.p = "mck1", .id = 57, .r = { .max = 200000000, }, },
-+	{ .n = "i2smcc1_clk",	.p = "mck1", .id = 58, .r = { .max = 200000000, }, },
-+	{ .n = "matrix_clk",	.p = "mck1", .id = 60, },
-+	{ .n = "mcan0_clk",	.p = "mck1", .id = 61, .r = { .max = 200000000, }, },
-+	{ .n = "mcan1_clk",	.p = "mck1", .id = 62, .r = { .max = 200000000, }, },
-+	{ .n = "mcan2_clk",	.p = "mck1", .id = 63, .r = { .max = 200000000, }, },
-+	{ .n = "mcan3_clk",	.p = "mck1", .id = 64, .r = { .max = 200000000, }, },
-+	{ .n = "mcan4_clk",	.p = "mck1", .id = 65, .r = { .max = 200000000, }, },
-+	{ .n = "mcan5_clk",	.p = "mck1", .id = 66, .r = { .max = 200000000, }, },
-+	{ .n = "pdmc0_clk",	.p = "mck1", .id = 68, .r = { .max = 200000000, }, },
-+	{ .n = "pdmc1_clk",	.p = "mck1", .id = 69, .r = { .max = 200000000, }, },
-+	{ .n = "pit64b0_clk",	.p = "mck1", .id = 70, },
-+	{ .n = "pit64b1_clk",	.p = "mck1", .id = 71, },
-+	{ .n = "pit64b2_clk",	.p = "mck1", .id = 72, },
-+	{ .n = "pit64b3_clk",	.p = "mck1", .id = 73, },
-+	{ .n = "pit64b4_clk",	.p = "mck1", .id = 74, },
-+	{ .n = "pit64b5_clk",	.p = "mck1", .id = 75, },
-+	{ .n = "pwm_clk",	.p = "mck1", .id = 77, },
-+	{ .n = "qspi0_clk",	.p = "mck1", .id = 78, },
-+	{ .n = "qspi1_clk",	.p = "mck1", .id = 79, },
-+	{ .n = "sdmmc0_clk",	.p = "mck1", .id = 80, },
-+	{ .n = "sdmmc1_clk",	.p = "mck1", .id = 81, },
-+	{ .n = "sdmmc2_clk",	.p = "mck1", .id = 82, },
-+	{ .n = "sha_clk",	.p = "mck1", .id = 83, },
-+	{ .n = "spdifrx_clk",	.p = "mck1", .id = 84, .r = { .max = 200000000, }, },
-+	{ .n = "spdiftx_clk",	.p = "mck1", .id = 85, .r = { .max = 200000000, }, },
-+	{ .n = "ssc0_clk",	.p = "mck1", .id = 86, .r = { .max = 200000000, }, },
-+	{ .n = "ssc1_clk",	.p = "mck1", .id = 87, .r = { .max = 200000000, }, },
-+	{ .n = "tcb0_ch0_clk",	.p = "mck1", .id = 88, .r = { .max = 200000000, }, },
-+	{ .n = "tcb0_ch1_clk",	.p = "mck1", .id = 89, .r = { .max = 200000000, }, },
-+	{ .n = "tcb0_ch2_clk",	.p = "mck1", .id = 90, .r = { .max = 200000000, }, },
-+	{ .n = "tcb1_ch0_clk",	.p = "mck1", .id = 91, .r = { .max = 200000000, }, },
-+	{ .n = "tcb1_ch1_clk",	.p = "mck1", .id = 92, .r = { .max = 200000000, }, },
-+	{ .n = "tcb1_ch2_clk",	.p = "mck1", .id = 93, .r = { .max = 200000000, }, },
-+	{ .n = "tcpca_clk",	.p = "mck1", .id = 94, },
-+	{ .n = "tcpcb_clk",	.p = "mck1", .id = 95, },
-+	{ .n = "tdes_clk",	.p = "mck1", .id = 96, },
-+	{ .n = "trng_clk",	.p = "mck1", .id = 97, },
-+	{ .n = "udphsa_clk",	.p = "mck1", .id = 104, },
-+	{ .n = "udphsb_clk",	.p = "mck1", .id = 105, },
-+	{ .n = "uhphs_clk",	.p = "mck1", .id = 106, },
-+};
-+
-+/**
-+ * Generic clock description
-+ * @n:			clock name
-+ * @pp:			PLL parents
-+ * @pp_mux_table:	PLL parents mux table
-+ * @r:			clock output range
-+ * @pp_chg_id:		id in parrent array of changeable PLL parent
-+ * @pp_count:		PLL parents count
-+ * @id:			clock id
-+ */
-+static const struct {
-+	const char *n;
-+	const char *pp[8];
-+	const char pp_mux_table[8];
-+	struct clk_range r;
-+	int pp_chg_id;
-+	u8 pp_count;
-+	u8 id;
-+} sama7g5_gck[] = {
-+	{ .n  = "adc_gclk",
-+	  .id = 26,
-+	  .r = { .max = 100000000, },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "audiopll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 9, },
-+	  .pp_count = 3,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "asrc_gclk",
-+	  .id = 30,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "audiopll_divpmcck", },
-+	  .pp_mux_table = { 9, },
-+	  .pp_count = 1,
-+	  .pp_chg_id = 4, },
-+
-+	{ .n  = "csi_gclk",
-+	  .id = 33,
-+	  .r = { .max = 27000000  },
-+	  .pp = { "ddrpll_divpmcck", "imgpll_divpmcck", },
-+	  .pp_mux_table = { 6, 7, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex0_gclk",
-+	  .id = 38,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex1_gclk",
-+	  .id = 39,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex2_gclk",
-+	  .id = 40,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex3_gclk",
-+	  .id = 41,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex4_gclk",
-+	  .id = 42,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex5_gclk",
-+	  .id = 43,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex6_gclk",
-+	  .id = 44,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex7_gclk",
-+	  .id = 45,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex8_gclk",
-+	  .id = 46,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex9_gclk",
-+	  .id = 47,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex10_gclk",
-+	  .id = 48,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "flex11_gclk",
-+	  .id = 49,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "gmac0_gclk",
-+	  .id = 51,
-+	  .r = { .max = 125000000 },
-+	  .pp = { "ethpll_divpmcck", },
-+	  .pp_mux_table = { 10, },
-+	  .pp_count = 1,
-+	  .pp_chg_id = 4, },
-+
-+	{ .n  = "gmac1_gclk",
-+	  .id = 52,
-+	  .r = { .max = 50000000  },
-+	  .pp = { "ethpll_divpmcck", },
-+	  .pp_mux_table = { 10, },
-+	  .pp_count = 1,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "gmac0_tsu_gclk",
-+	  .id = 53,
-+	  .r = { .max = 300000000 },
-+	  .pp = { "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 9, 10, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "gmac1_tsu_gclk",
-+	  .id = 54,
-+	  .r = { .max = 300000000 },
-+	  .pp = { "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 9, 10, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "i2smcc0_gclk",
-+	  .id = 57,
-+	  .r = { .max = 100000000 },
-+	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
-+	  .pp_mux_table = { 5, 9, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "i2smcc1_gclk",
-+	  .id = 58,
-+	  .r = { .max = 100000000 },
-+	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
-+	  .pp_mux_table = { 5, 9, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "mcan0_gclk",
-+	  .id = 61,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "mcan1_gclk",
-+	  .id = 62,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "mcan2_gclk",
-+	  .id = 63,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "mcan3_gclk",
-+	  .id = 64,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "mcan4_gclk",
-+	  .id = 65,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "mcan5_gclk",
-+	  .id = 66,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pdmc0_gclk",
-+	  .id = 68,
-+	  .r = { .max = 50000000  },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pdmc1_gclk",
-+	  .id = 69,
-+	  .r = { .max = 50000000, },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b0_gclk",
-+	  .id = 70,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b1_gclk",
-+	  .id = 71,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b2_gclk",
-+	  .id = 72,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b3_gclk",
-+	  .id = 73,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b4_gclk",
-+	  .id = 74,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "pit64b5_gclk",
-+	  .id = 75,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "qspi0_gclk",
-+	  .id = 78,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "qspi1_gclk",
-+	  .id = 79,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "sdmmc0_gclk",
-+	  .id = 80,
-+	  .r = { .max = 208000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "sdmmc1_gclk",
-+	  .id = 81,
-+	  .r = { .max = 208000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "sdmmc2_gclk",
-+	  .id = 82,
-+	  .r = { .max = 208000000 },
-+	  .pp = { "syspll_divpmcck", "baudpll_divpmcck", },
-+	  .pp_mux_table = { 5, 8, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "spdifrx_gclk",
-+	  .id = 84,
-+	  .r = { .max = 150000000 },
-+	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
-+	  .pp_mux_table = { 5, 9, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n = "spdiftx_gclk",
-+	  .id = 85,
-+	  .r = { .max = 25000000  },
-+	  .pp = { "syspll_divpmcck", "audiopll_divpmcck", },
-+	  .pp_mux_table = { 5, 9, },
-+	  .pp_count = 2,
-+	  .pp_chg_id = 5, },
-+
-+	{ .n  = "tcb0_ch0_gclk",
-+	  .id = 88,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "tcb1_ch0_gclk",
-+	  .id = 91,
-+	  .r = { .max = 200000000 },
-+	  .pp = { "syspll_divpmcck", "imgpll_divpmcck", "baudpll_divpmcck",
-+		  "audiopll_divpmcck", "ethpll_divpmcck", },
-+	  .pp_mux_table = { 5, 7, 8, 9, 10, },
-+	  .pp_count = 5,
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "tcpca_gclk",
-+	  .id = 94,
-+	  .r = { .max = 32768, },
-+	  .pp_chg_id = INT_MIN, },
-+
-+	{ .n  = "tcpcb_gclk",
-+	  .id = 95,
-+	  .r = { .max = 32768, },
-+	  .pp_chg_id = INT_MIN, },
-+};
-+
-+/* PLL output range. */
-+static const struct clk_range pll_outputs[] = {
-+	{ .min = 2343750, .max = 1200000000 },
-+};
-+
-+/* PLL characteristics. */
-+static const struct clk_pll_characteristics pll_characteristics = {
-+	.input = { .min = 12000000, .max = 50000000 },
-+	.num_output = ARRAY_SIZE(pll_outputs),
-+	.output = pll_outputs,
-+};
-+
-+/* MCK0 characteristics. */
-+static const struct clk_master_characteristics mck0_characteristics = {
-+	.output = { .min = 140000000, .max = 200000000 },
-+	.divisors = { 1, 2, 4, 3 },
-+	.have_div3_pres = 1,
-+};
-+
-+/* MCK0 layout. */
-+static const struct clk_master_layout mck0_layout = {
-+	.mask = 0x373,
-+	.pres_shift = 4,
-+	.offset = 0x28,
-+};
-+
-+/* Programmable clock layout. */
-+static const struct clk_programmable_layout programmable_layout = {
-+	.pres_mask = 0xff,
-+	.pres_shift = 8,
-+	.css_mask = 0x1f,
-+	.have_slck_mck = 0,
-+	.is_pres_direct = 1,
-+};
-+
-+/* Peripheral clock layout. */
-+static const struct clk_pcr_layout sama7g5_pcr_layout = {
-+	.offset = 0x88,
-+	.cmd = BIT(31),
-+	.gckcss_mask = GENMASK(12, 8),
-+	.pid_mask = GENMASK(6, 0),
-+};
-+
-+static void __init sama7g5_pmc_setup(struct device_node *np)
-+{
-+	const char *td_slck_name, *md_slck_name, *mainxtal_name;
-+	struct pmc_data *sama7g5_pmc;
-+	const char *parent_names[10];
-+	void **alloc_mem = NULL;
-+	int alloc_mem_size = 0;
-+	struct regmap *regmap;
-+	struct clk_hw *hw;
-+	bool bypass;
-+	int i, j;
-+
-+	i = of_property_match_string(np, "clock-names", "td_slck");
-+	if (i < 0)
-+		return;
-+
-+	td_slck_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "md_slck");
-+	if (i < 0)
-+		return;
-+
-+	md_slck_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "main_xtal");
-+	if (i < 0)
-+		return;
-+
-+	mainxtal_name = of_clk_get_parent_name(np, i);
-+
-+	regmap = device_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	sama7g5_pmc = pmc_data_allocate(PMC_I2S1_MUX + 1,
-+					nck(sama7g5_systemck),
-+					nck(sama7g5_periphck),
-+					nck(sama7g5_gck));
-+	if (!sama7g5_pmc)
-+		return;
-+
-+	alloc_mem = kmalloc(sizeof(void *) *
-+			    (ARRAY_SIZE(sama7g5_mckx) + ARRAY_SIZE(sama7g5_gck)),
-+			    GFP_KERNEL);
-+	if (!alloc_mem)
-+		goto err_free;
-+
-+	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-+					   50000000);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
-+					bypass);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = "main_rc_osc";
-+	parent_names[1] = "main_osc";
-+	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama7g5_pmc->chws[PMC_MAIN] = hw;
-+
-+	for (i = 0; i < PLL_ID_MAX; i++) {
-+		for (j = 0; j < 3; j++) {
-+			struct clk_hw *parent_hw;
-+
-+			if (!sama7g5_plls[i][j].n)
-+				continue;
-+
-+			switch (sama7g5_plls[i][j].t) {
-+			case PLL_TYPE_FRAC:
-+				if (!strcmp(sama7g5_plls[i][j].p, "mainck"))
-+					parent_hw = sama7g5_pmc->chws[PMC_MAIN];
-+				else
-+					parent_hw = __clk_get_hw(of_clk_get_by_name(np,
-+						sama7g5_plls[i][j].p));
-+
-+				hw = sam9x60_clk_register_frac_pll(regmap,
-+					&pmc_pll_lock, sama7g5_plls[i][j].n,
-+					sama7g5_plls[i][j].p, parent_hw, i,
-+					&pll_characteristics,
-+					sama7g5_plls[i][j].l,
-+					sama7g5_plls[i][j].c);
-+				break;
-+
-+			case PLL_TYPE_DIV:
-+				hw = sam9x60_clk_register_div_pll(regmap,
-+					&pmc_pll_lock, sama7g5_plls[i][j].n,
-+					sama7g5_plls[i][j].p, i,
-+					&pll_characteristics,
-+					sama7g5_plls[i][j].l,
-+					sama7g5_plls[i][j].c);
-+				break;
-+
-+			default:
-+				continue;
-+			}
-+
-+			if (IS_ERR(hw))
-+				goto err_free;
-+
-+			if (sama7g5_plls[i][j].eid)
-+				sama7g5_pmc->chws[sama7g5_plls[i][j].eid] = hw;
-+		}
-+	}
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "cpupll_divpmcck";
-+	parent_names[3] = "syspll_divpmcck";
-+	hw = at91_clk_register_master(regmap, "mck0", 4, parent_names,
-+				      &mck0_layout, &mck0_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama7g5_pmc->chws[PMC_MCK] = hw;
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = td_slck_name;
-+	parent_names[2] = "mainck";
-+	parent_names[3] = "mck0";
-+	for (i = 0; i < ARRAY_SIZE(sama7g5_mckx); i++) {
-+		u8 num_parents = 4 + sama7g5_mckx[i].ep_count;
-+		u32 *mux_table;
-+
-+		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-+					  GFP_KERNEL);
-+		if (!mux_table)
-+			goto err_free;
-+
-+		SAMA7G5_INIT_TABLE(mux_table, 4);
-+		SAMA7G5_FILL_TABLE(&mux_table[4], sama7g5_mckx[i].ep_mux_table,
-+				   sama7g5_mckx[i].ep_count);
-+		SAMA7G5_FILL_TABLE(&parent_names[4], sama7g5_mckx[i].ep,
-+				   sama7g5_mckx[i].ep_count);
-+
-+		hw = at91_clk_sama7g5_register_master(regmap, sama7g5_mckx[i].n,
-+				   num_parents, parent_names, mux_table,
-+				   &pmc_mckX_lock, sama7g5_mckx[i].id,
-+				   sama7g5_mckx[i].c,
-+				   sama7g5_mckx[i].ep_chg_id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		alloc_mem[alloc_mem_size++] = mux_table;
-+	}
-+
-+	hw = at91_clk_sama7g5_register_utmi(regmap, "utmick", "main_xtal");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama7g5_pmc->chws[PMC_UTMI] = hw;
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = td_slck_name;
-+	parent_names[2] = "mainck";
-+	parent_names[3] = "mck0";
-+	parent_names[4] = "syspll_divpmcck";
-+	parent_names[5] = "ddrpll_divpmcck";
-+	parent_names[6] = "imgpll_divpmcck";
-+	parent_names[7] = "baudpll_divpmcck";
-+	parent_names[8] = "audiopll_divpmcck";
-+	parent_names[9] = "ethpll_divpmcck";
-+	for (i = 0; i < 8; i++) {
-+		char name[6];
-+
-+		snprintf(name, sizeof(name), "prog%d", i);
-+
-+		hw = at91_clk_register_programmable(regmap, name, parent_names,
-+						    10, i,
-+						    &programmable_layout,
-+						    sama7g5_prog_mux_table);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sama7g5_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, sama7g5_systemck[i].n,
-+					      sama7g5_systemck[i].p,
-+					      sama7g5_systemck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama7g5_pmc->shws[sama7g5_systemck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sama7g5_periphck); i++) {
-+		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-+						&sama7g5_pcr_layout,
-+						sama7g5_periphck[i].n,
-+						sama7g5_periphck[i].p,
-+						sama7g5_periphck[i].id,
-+						&sama7g5_periphck[i].r,
-+						sama7g5_periphck[i].chgp ? 0 :
-+						INT_MIN);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama7g5_pmc->phws[sama7g5_periphck[i].id] = hw;
-+	}
-+
-+	parent_names[0] = md_slck_name;
-+	parent_names[1] = td_slck_name;
-+	parent_names[2] = "mainck";
-+	parent_names[3] = "mck0";
-+	for (i = 0; i < ARRAY_SIZE(sama7g5_gck); i++) {
-+		u8 num_parents = 4 + sama7g5_gck[i].pp_count;
-+		u32 *mux_table;
-+
-+		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-+					  GFP_KERNEL);
-+		if (!mux_table)
-+			goto err_free;
-+
-+		SAMA7G5_INIT_TABLE(mux_table, 4);
-+		SAMA7G5_FILL_TABLE(&mux_table[4], sama7g5_gck[i].pp_mux_table,
-+				   sama7g5_gck[i].pp_count);
-+		SAMA7G5_FILL_TABLE(&parent_names[4], sama7g5_gck[i].pp,
-+				   sama7g5_gck[i].pp_count);
-+
-+		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-+						 &sama7g5_pcr_layout,
-+						 sama7g5_gck[i].n,
-+						 parent_names, mux_table,
-+						 num_parents,
-+						 sama7g5_gck[i].id,
-+						 &sama7g5_gck[i].r,
-+						 sama7g5_gck[i].pp_chg_id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama7g5_pmc->ghws[sama7g5_gck[i].id] = hw;
-+		alloc_mem[alloc_mem_size++] = mux_table;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama7g5_pmc);
-+
-+	return;
-+
-+err_free:
-+	if (alloc_mem) {
-+		for (i = 0; i < alloc_mem_size; i++)
-+			kfree(alloc_mem[i]);
-+		kfree(alloc_mem);
-+	}
-+
-+	pmc_data_free(sama7g5_pmc);
-+}
-+
-+/* Some clks are used for a clocksource */
-+CLK_OF_DECLARE(sama7g5_pmc, "microchip,sama7g5-pmc", sama7g5_pmc_setup);
--- 
-2.7.4
-
+DQoNCk9uIDE1LjA3LjIwMjAgMTQ6MjQsIENsYXVkaXUgQmV6bmVhIHdyb3RlOg0KPiBSZWdpc3Rl
+ciBzbG93IHJjIHdpdGggYWNjdXJhY3kgb3B0aW9uLg0KPiANCj4gRml4ZXM6IDA0YmNjNDI3NWU2
+MDEgKCJjbGs6IGF0OTE6IHNja2M6IGFkZCBzdXBwb3J0IGZvciBTQU05WDYwIikNCj4gU2lnbmVk
+LW9mZi1ieTogQ2xhdWRpdSBCZXpuZWEgPGNsYXVkaXUuYmV6bmVhQG1pY3JvY2hpcC5jb20+DQo+
+IC0tLQ0KPiAgZHJpdmVycy9jbGsvYXQ5MS9zY2tjLmMgfCA1ICsrKy0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvY2xrL2F0OTEvc2NrYy5jIGIvZHJpdmVycy9jbGsvYXQ5MS9zY2tjLmMNCj4gaW5k
+ZXggMTVkYzRjZDg2ZDc2Li4yZDY1NzcwZDg2NjUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xr
+L2F0OTEvc2NrYy5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvc2NrYy5jDQo+IEBAIC00NzEs
+OCArNDcxLDkgQEAgc3RhdGljIHZvaWQgX19pbml0IG9mX3NhbTl4NjBfc2NrY19zZXR1cChzdHJ1
+Y3QgZGV2aWNlX25vZGUgKm5wKQ0KPiAgCWlmICghcmVnYmFzZSkNCj4gIAkJcmV0dXJuOw0KPiAg
+DQo+IC0Jc2xvd19yYyA9IGNsa19od19yZWdpc3Rlcl9maXhlZF9yYXRlKE5VTEwsIHBhcmVudF9u
+YW1lc1swXSwgTlVMTCwgMCwNCj4gLQkJCQkJICAgICAzMjc2OCk7DQo+ICsJc2xvd19yYyA9IGNs
+a19od19yZWdpc3Rlcl9maXhlZF9yYXRlX3dpdGhfYWNjdXJhY3koTlVMTCwgcGFyZW50X25hbWVz
+WzBdLA0KPiArCQkJCQkJCSAgIE5VTEwsIDAsIDMyNzY4LA0KPiArCQkJCQkJCSAgIDkzNzUwMDAw
+KTsNCg0KSSBmb3Jnb3QgdG8gbWVudGlvbiBpbiBjb21taXQgbWVzc2FnZSAoSSdsbCBkbyBpdCBp
+biB2MiBvbmNlIEknbGwNCmdhdGhlciBtb3JlIGNvbW1lbnRzIG9uIHRoaXMgc2VyaWVzKToNCg0K
+Q2hhcHRlciA1Ny43LjUgb2YgU0FNOVg2MCBkYXRhc2hlZXQgc3BlY2lmaWVzIHRoYXQgdGhlIG1h
+eGltdW0gZHJpZnQgb2YNCnRoaXMgb3NjaWxsYXRvciBpcyArLSAzS0h6LiBJIHVzZWQgdGhhdCB2
+YWx1ZSBhbmQgdGhlIGZvcm11bGEgYXQgWzFdDQpvciB0aGUgY2FsY3VsYXRvciBhdCBbMl0gdG8g
+Y29tcHV0ZSB0aGUgUFBCIHZhbHVlLg0KDQpbMV0gaHR0cHM6Ly93d3cuZXZlcnl0aGluZ3JmLmNv
+bS9yZi1jYWxjdWxhdG9ycy9wcG0tdG8taHotY2FsY3VsYXRvcg0KWzJdIGh0dHBzOi8vd3d3LmNo
+YW5ncHVhay5jaC9lbGVjdHJvbmljcy9wcG1fdG9fSHpfY29udmVydGVyLnBocA0KDQoNClRoYW5r
+IHlvdSwNCkNsYXVkaXUgQmV6bmVhDQoNCj4gIAlpZiAoSVNfRVJSKHNsb3dfcmMpKQ0KPiAgCQly
+ZXR1cm47DQo+ICANCj4g
