@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDFBC433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE868C433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCB120658
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC99E2071B
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 11:25:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RgIowakl"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="uxP8Ndge"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729795AbgGOLYj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 07:24:39 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62426 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728010AbgGOLYi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 07:24:38 -0400
+        id S1730001AbgGOLZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 07:25:03 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:9354 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729938AbgGOLZD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 07:25:03 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1594812278; x=1626348278;
+  t=1594812302; x=1626348302;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version;
-  bh=7R0pQ7si/LBGC7HCv98obeajPRN2G3AQ5wVM3UPEBzA=;
-  b=RgIowaklaQlGrMWW5JfP2Ge/YeVSJB48TMJTFWd5cui2PuaZu8tlRP0m
-   ntWpFP2sj+f+nL76BjmOLcL6QjZFMAzCt1iTdsTGrkauh1godUv01amEI
-   /kTbsNVH4br8ZNutmzG9+74jDf68uUHyFgM+C+MafkZKpSAns5Xwo5h36
-   YXuOKu/3aQGYrjKNDdaLw1wLT2anVT8qw1x1ojEp4tab/rnKOf6h0Mb63
-   NkZ3mTrzZiEG5agTewM4gjsJJWa8+rziNwfkUGlEZt55pjjaEmN6xGOJa
-   e9SuPjr9l0e4uCF1sNDdw5v1Hbq0tCwwj+m44f3Fy4yYHw0WQPK7aLcBb
-   w==;
-IronPort-SDR: pYPktPbPEbpUybSKK3miu3zNbBIbkRbVnld4SME1+MyatmIMhD8/1FcfYZk10XsHKVs+gVhYHO
- w8+1Kh5pkU2AclRkKExHuaQbY81tsOgunZdQFAUHm2vSZ5VFn5K4/WEsB3awbsCDqML1BKLA/m
- WQoPrrpsAgMenIurMa0RZWP8LkxyNQrVwDMk9ReVZmp8+XlqOWVSxY8VSNZ9g17SQ2UfGlyCsm
- Gj2XPxgnscdJaAhOGFU6LjKChuUcCnLByUw8Z6FIy+u3im9iwBbFOAmZCqnl6sdkZFiCfNVqZ6
- eRc=
+  bh=OiorU3mloH4us6zLoZjtYC+dFT05f/X+NWvYwynXGXI=;
+  b=uxP8NdgeBp7ZLgsIQIsnMmjj0Ttry06Jw5UZDY0d+Yv8Ssemia9kCeTh
+   /tezAXw1lIVi0bfpnrODfSBv44/ofVprpRtk6zEkT5s2RdbqbrIJ+qM0P
+   E3KBrKhuwo+wCHdObzB2YkCR8oaVwIWrvB1xg4NqT2ZVzlml0UUPZc3n9
+   sxbBKk3PNkGtbcVN1o4OYCuJscJ7a69U2Y/rQlsrNpj9NXlk4YWSrE8lh
+   yhd9w2uzLsTJBtzGQs/2SQxBxDwP6X3ziDobgoOGLZixUpaeMqMkTYcHj
+   UVba/fNTcHClPztsOVM04Z9+N2aCA3S8abzJiH72X4TWlf5sXpvlD1BET
+   g==;
+IronPort-SDR: t0ZuGGPZmRCG5NfXRVN+SA6Lhi25YdMegTP15Tb45+6eus82/1aeWzV3YxIqCdCs6Tz74HXtu8
+ hjzjw9No1F89m7fmrFmDtJ/n0ehl2wmgZcCla1H2I+iXK1xghvC90vDg2kHXyg2LsejHK1mOSw
+ hXjIK4Hf6XP6E09xqcy+d24+Iv8rZOb4pPsvj9FlKFse3Windys6FAw6Uvr9TO7Y3glFVNuz49
+ NnhUIku0wuZRCGBSPAIVM3sz8n+my+ieey+1C0G5RYGbK7DRcYcI0kVdTs0AcsOlOGeRCqzpIi
+ Va0=
 X-IronPort-AV: E=Sophos;i="5.75,355,1589266800"; 
-   d="scan'208";a="83962763"
+   d="scan'208";a="79986118"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jul 2020 04:24:37 -0700
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Jul 2020 04:24:57 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Wed, 15 Jul 2020 04:24:37 -0700
+ 15.1.1979.3; Wed, 15 Jul 2020 04:24:25 -0700
 Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Wed, 15 Jul 2020 04:24:02 -0700
+ 15.1.1979.3 via Frontend Transport; Wed, 15 Jul 2020 04:24:22 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
         <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -58,9 +58,9 @@ CC:     <bbrezillon@kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-clk@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "Claudiu Beznea" <claudiu.beznea@microchip.com>
-Subject: [PATCH 01/19] clk: at91: clk-generated: continue if __clk_determine_rate() returns error
-Date:   Wed, 15 Jul 2020 14:24:09 +0300
-Message-ID: <1594812267-6697-2-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH 06/19] clk: at91: sam9x60-pll: check fcore against ranges
+Date:   Wed, 15 Jul 2020 14:24:14 +0300
+Message-ID: <1594812267-6697-7-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
@@ -71,29 +71,76 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-__clk_determine_rate() may return error. Skip the current step
-in case of error.
+According to datasheet the range of 600-1200MHz is for the the
+frequency generated by the fractional part of the PLL (namely
+Fcorepllck according to datasheet). With this in mind the output
+range of the PLL itself (fractional + div), taking into account
+that the diverder is 8 bits wide, is 600/256-1200Hz=2.3-1200MHz.
 
-Fixes: 1a1a36d72e3d3 ("clk: at91: clk-generated: make gclk determine audio_pll rate")
+Fixes: a436c2a447e59 ("clk: at91: add sam9x60 PLL driver")
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- drivers/clk/at91/clk-generated.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/at91/clk-sam9x60-pll.c | 12 +++++++++++-
+ drivers/clk/at91/sam9x60.c         |  2 +-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 44a46dcc0518..995a13133cfb 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -170,7 +170,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+index dfb91c190bd1..00f2afd6e9b6 100644
+--- a/drivers/clk/at91/clk-sam9x60-pll.c
++++ b/drivers/clk/at91/clk-sam9x60-pll.c
+@@ -21,6 +21,9 @@
+ #define UPLL_DIV		2
+ #define PLL_MUL_MAX		(FIELD_GET(PMC_PLL_CTRL1_MUL_MSK, UINT_MAX) + 1)
  
- 	for (div = 1; div < GENERATED_MAX_DIV + 2; div++) {
- 		req_parent.rate = req->rate * div;
--		__clk_determine_rate(parent, &req_parent);
-+		if (__clk_determine_rate(parent, &req_parent))
++#define FCORE_MIN		(600000000)
++#define FCORE_MAX		(1200000000)
++
+ #define PLL_MAX_ID		1
+ 
+ struct sam9x60_pll {
+@@ -169,6 +172,7 @@ static long sam9x60_pll_get_best_div_mul(struct sam9x60_pll *pll,
+ 	unsigned long bestdiv = 0;
+ 	unsigned long bestmul = 0;
+ 	unsigned long bestfrac = 0;
++	unsigned long long fcore = 0;
+ 
+ 	if (rate < characteristics->output[0].min ||
+ 	    rate > characteristics->output[0].max)
+@@ -213,6 +217,11 @@ static long sam9x60_pll_get_best_div_mul(struct sam9x60_pll *pll,
+ 				remainder = rate - tmprate;
+ 		}
+ 
++		fcore = parent_rate * (tmpmul + 1) +
++			((u64)parent_rate * tmpfrac >> 22);
++		if (fcore < FCORE_MIN || fcore > FCORE_MAX)
 +			continue;
- 		clk_generated_best_diff(req, parent, req_parent.rate, div,
- 					&best_diff, &best_rate);
++
+ 		/*
+ 		 * Compare the remainder with the best remainder found until
+ 		 * now and elect a new best multiplier/divider pair if the
+@@ -232,7 +241,8 @@ static long sam9x60_pll_get_best_div_mul(struct sam9x60_pll *pll,
+ 	}
  
+ 	/* Check if bestrate is a valid output rate  */
+-	if (bestrate < characteristics->output[0].min ||
++	if (fcore < FCORE_MIN || fcore > FCORE_MAX ||
++	    bestrate < characteristics->output[0].min ||
+ 	    bestrate > characteristics->output[0].max)
+ 		return -ERANGE;
+ 
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 3e20aa68259f..633891b98d43 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -22,7 +22,7 @@ static const struct clk_master_layout sam9x60_master_layout = {
+ };
+ 
+ static const struct clk_range plla_outputs[] = {
+-	{ .min = 300000000, .max = 600000000 },
++	{ .min = 2343750, .max = 1200000000 },
+ };
+ 
+ static const struct clk_pll_characteristics plla_characteristics = {
 -- 
 2.7.4
 
