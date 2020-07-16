@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E750C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 01:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C248C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EFE4D2078C
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 01:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1AD520775
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594861219;
-	bh=EfHJnarvNG/86632LUS98Ny1D7rHG3S4L10bIx8jeIM=;
+	s=default; t=1594861097;
+	bh=fN+S2Gc6/8TG8x5I2ww/JDGn/O6BB81s/hlqQZypqk0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=1edwFnhgvdVIR9GCtQk6hsqqfxreZ1JbrObtN9g7TOvZG13JiGFeGcb+vMY+sz+Yn
-	 JUINXxtRya1go1ugnOMLN4u66fyQEeRq6nOX6Y8YTPLG0TdBol7ZW/eMif3fFz9Sk4
-	 /KJVMwIlGDqiheq1eHpsAdkN56hg2cXTRsPdF6Vg=
+	b=j7FUttfFgktsMPAd9GlpHuuq/E0qu9wmy/EE6XYORMoON+jsZAaiozgkycMv38ptN
+	 6FJQUD6bofhNIe12x0F7drJbJ4NOTkm66kayzMwYhpD5xRDc4Aa3ciyJSUBboMqMWx
+	 nobLjBb8ftYfcFaxH93w87LcUps3hGMYwIMhYxC0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726785AbgGPBAS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 21:00:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36832 "EHLO mail.kernel.org"
+        id S1726776AbgGPA6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 20:58:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726776AbgGPBAS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jul 2020 21:00:18 -0400
+        id S1726479AbgGPA6Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jul 2020 20:58:16 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 270CF2077D;
-        Thu, 16 Jul 2020 01:00:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2F2420714;
+        Thu, 16 Jul 2020 00:58:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594861218;
-        bh=EfHJnarvNG/86632LUS98Ny1D7rHG3S4L10bIx8jeIM=;
+        s=default; t=1594861096;
+        bh=fN+S2Gc6/8TG8x5I2ww/JDGn/O6BB81s/hlqQZypqk0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=lB+dv5rAC/0qNlXHk7jlCeiwIc338r+YiPuKHNWs171PqWRZugcXjOEan6lXIi5Ld
-         iXZtgbGvrHWylJLyGvUJGXZ6MyjEZf5TOd82AWemam12Q3i2Dv0nyk8LHCdSRFS7ZK
-         h8rP8jMoTSH8036vDdZO9eGuZ6izaEdZsJghxXlk=
+        b=KKK+fy4l8n0stQsuGCcUCcGebL1cYd4C9N7ZF0fSEucbIBO9ukEG/fwOZWt34yMTO
+         t56cdxSARMT6/t23Whzy7u/8pKh/JOb4FCYDRuA1LZ6/HDBtnO2E9zW2URgwTmQU7Z
+         hIiAwpWg5Asky97YrWBYOy5HQtqghrYQU46bN/kw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1594098579-25050-7-git-send-email-Anson.Huang@nxp.com>
-References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com> <1594098579-25050-7-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH V6 6/6] clk: imx6sl: Fix build warning reported by kernel test robot
+In-Reply-To: <1594098579-25050-4-git-send-email-Anson.Huang@nxp.com>
+References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com> <1594098579-25050-4-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH V6 3/6] clk: imx: Add clock configuration for ARMv7 platforms
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Linux-imx@nxp.com
 To:     Anson Huang <Anson.Huang@nxp.com>,
@@ -57,35 +57,21 @@ To:     Anson Huang <Anson.Huang@nxp.com>,
         linux-kernel@vger.kernel.org, mturquette@baylibre.com,
         peng.fan@nxp.com, s.hauer@pengutronix.de, sfr@canb.auug.org.au,
         shawnguo@kernel.org, yuehaibing@huawei.com
-Date:   Wed, 15 Jul 2020 18:00:17 -0700
-Message-ID: <159486121748.1987609.16422613903444902156@swboyd.mtv.corp.google.com>
+Date:   Wed, 15 Jul 2020 17:58:15 -0700
+Message-ID: <159486109533.1987609.1468645632345218617@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-07-06 22:09:39)
-> Use readl_relaxed() instead of __raw_readl(), and use BIT(x)
-> instead of (1 << X) to fix below build warning reported by kernel
-> test robot:
->=20
-> drivers/clk/imx/clk-imx6sl.c:149:49: warning: Shifting signed 32-bit
-> value by 31 bits is undefined behaviour [shiftTooManyBitsSigned]
->      while (!(__raw_readl(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
+Quoting Anson Huang (2020-07-06 22:09:36)
+> Add CONFIG_CLK_xxx for i.MX ARMv7 platforms, and use it as build option
+> instead of CONFIG_SOC_xxx, the CONFIG_CLK_xxx will be selected by default
+> according to CONFIG_SOC_xxx.
 >=20
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reported-by: kernel test robot <lkp@intel.com>
+> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 > ---
 
-The subject is poor. Please improve it so that it summarizes the change
-instead of the reaction to a warning from a robot.
-
-> New patch.
-> ---
->  drivers/clk/imx/clk-imx6sl.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
->=20
-
-This should come earlier in the series too so that the build warning
-doesn't come out before this patch is applied.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
