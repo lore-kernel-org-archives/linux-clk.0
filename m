@@ -1,109 +1,68 @@
-Return-Path: <SRS0=kI7a=A2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=dNPY=A3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2607BC4345F
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 22:46:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2514C433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:21:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E84302067D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jul 2020 22:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZL24XKz"
+	by mail.kernel.org (Postfix) with ESMTP id AB0142072E
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:21:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1594858894;
+	bh=Vt4ogd1MXqn4WliMWsvNhwy7fFbOEakTp/toAzORy7A=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=dHtQGq4RnE9rK+qCC7rVr4MK3HKMv0czA21zYWkQRyi+vk8LuePQfLHbyqfx7keTY
+	 neImFiFwIt0cFPAQDno6YaWzbXQM7chPpdBQR860VfAgiXGqxqDCpLQn4VeHDFLqwC
+	 wLzz/hZYGbmkH9hQ5uzBpdMDX84eBmkaGnf7zJy8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727810AbgGOWpm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 18:45:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43368 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727858AbgGOWpk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jul 2020 18:45:40 -0400
-Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B0CFC061755;
-        Wed, 15 Jul 2020 15:45:40 -0700 (PDT)
-Received: by mail-wr1-x443.google.com with SMTP id f7so4734237wrw.1;
-        Wed, 15 Jul 2020 15:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Z7hfnd49qzQu+v3pW4+QTWy4zDs6kHByKCCdtVpj2B8=;
-        b=KZL24XKzrPPkNZ0tREld/Dbmj74vqwi5XukLRQ5rcwQNCfFXJfCSQ58+hQjGwrdXbo
-         iuE8GSCK0zU2MiIA5xGh/akZIEtip9ryXt3LBPTBlNogZ7TOR3oVoC0v3bKdmll2AppC
-         Nngf/VXC8C4N4fmliCl2s+8xr6p47SbUUhLO/2oCIjY2qfrc5wXueNB17zDsYbHjfQZq
-         O6HvxHXBxrQ4l6Ri/5EH3TD/3xr61QypVbTOV2zTjNteWfSc76vlfystMcLBfeWfM1zx
-         0RcwZKvYVxBoGwmvsKXqy9348B1s8Q8hlXe8hWsXv+Li5c1Penhw6aVea0MBYHuGs1IV
-         MA8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Z7hfnd49qzQu+v3pW4+QTWy4zDs6kHByKCCdtVpj2B8=;
-        b=qfi5TW4PtI09fI/pgmDYt9fqTcUiq6LLTz+qvE//EipOZkp/2vR+YPeo4gRakAtZp/
-         QfGOgmPoTGADY/yNPfpNrOIDotdVvFcXBHll4BAY2yykOyLKFfh6RSFLwGzYrzWnsgzd
-         eKHT3pRULPytwf/YsdCRbZ06gReWDI76ohbraqQaFg7nG4LYXx2vNEioXAdi4N5pQAV6
-         6pf1xtEpqC1bVH1pLTg+AhonTiyN8rQmAaPb9zycUm1N0/w+OQNxjHTdY9Tw/c87Qfyu
-         WIRYaKh4IxXNoHN6MteipEveiOqzyoX2mMGBiAoWE9dYkSGLXXIzWB6hQT8aQafKeU7f
-         X2Uw==
-X-Gm-Message-State: AOAM5315Lg10k6XBI0b4grpna+Mt+RhmfiAmu8hoXJUKZKWNjmlntwtH
-        gUhPdWo/xwL8ujP/sGGBegA=
-X-Google-Smtp-Source: ABdhPJw+sRw023UQ9OoaCzEgBNyuSx+iXUOQt5tFvnnXqskiKzHH09rtVQzDd0XDIphacs5qhkvlMw==
-X-Received: by 2002:a5d:43d0:: with SMTP id v16mr1934547wrr.296.1594853139122;
-        Wed, 15 Jul 2020 15:45:39 -0700 (PDT)
-Received: from Ansuel-XPS.localdomain (host-87-7-31-173.retail.telecomitalia.it. [87.7.31.173])
-        by smtp.googlemail.com with ESMTPSA id b186sm5759898wme.1.2020.07.15.15.45.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jul 2020 15:45:38 -0700 (PDT)
-From:   Ansuel Smith <ansuelsmth@gmail.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH v3 3/7] drivers: thermal: tsens: add ipq8064 support
-Date:   Thu, 16 Jul 2020 00:44:58 +0200
-Message-Id: <20200715224503.30462-4-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200715224503.30462-1-ansuelsmth@gmail.com>
-References: <20200715224503.30462-1-ansuelsmth@gmail.com>
+        id S1727062AbgGPAVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 20:21:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726479AbgGPAVe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jul 2020 20:21:34 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCFC2206F5;
+        Thu, 16 Jul 2020 00:21:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1594858893;
+        bh=Vt4ogd1MXqn4WliMWsvNhwy7fFbOEakTp/toAzORy7A=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NMnBE9eX8Ww5TVXl7UEiF/UAYemLqd6lx3iCzEREU39iw/z9HJ0W8KfFcj13rRb7a
+         wVOA4fXbkogGwhpBv9LKIUm3ytg2ltq18YDjAWxNOO/SMbISAANhyeoakt27G4e2Zc
+         hZFoSu2pHKKZrMFECa/IigZbQwDnV54dAcRiUjO8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f304b312-8034-5838-4ffc-e0fcbe8136b1@codeaurora.org>
+References: <202007121820.EgK6NAy4%lkp@intel.com> <f304b312-8034-5838-4ffc-e0fcbe8136b1@codeaurora.org>
+Subject: Re: [clk:clk-qcom 13/14] drivers/clk/qcom/gcc-ipq8074.c:4610:30: warning: initializer overrides prior initialization of this subobject
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kbuild-all@lists.01.org,
+        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>,
+        clang-built-linux@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>,
+        kernel test robot <lkp@intel.com>
+Date:   Wed, 15 Jul 2020 17:21:32 -0700
+Message-ID: <159485889297.1987609.17837106237884387966@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Ipq8064 SoCs based use the same 8960 driver.
+Quoting Sivaprakash Murugesan (2020-07-12 22:47:22)
+> Hi Stephen,
+>=20
+> I see that you already applied this patch on clk-next,
+>=20
+> shall I provide the fix as incremental patch?
 
-Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
----
- drivers/thermal/qcom/tsens.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-index 39c4462e38f6..2985a064a0d1 100644
---- a/drivers/thermal/qcom/tsens.c
-+++ b/drivers/thermal/qcom/tsens.c
-@@ -907,6 +907,9 @@ static const struct of_device_id tsens_table[] = {
- 		.compatible = "qcom,msm8996-tsens",
- 		.data = &data_8996,
- 	}, {
-+		.compatible = "qcom,ipq8064-tsens",
-+		.data = &data_8060,
-+	} {
- 		.compatible = "qcom,tsens-v1",
- 		.data = &data_tsens_v1,
- 	}, {
--- 
-2.27.0
-
+Yes.
