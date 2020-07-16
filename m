@@ -2,95 +2,132 @@ Return-Path: <SRS0=dNPY=A3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86718C433E5
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 06:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FF8C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 12:26:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6B7F72067D
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 06:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52A782074B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 12:26:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCe2KSeU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726547AbgGPGat (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jul 2020 02:30:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:24842 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728146AbgGPGat (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jul 2020 02:30:49 -0400
-IronPort-SDR: 5hBZWjTGUzeR9qnNkEqaHGZZVHTOTrXwdf5gQ3jHGJ1Giqp8TYlYFjN1Io+8nHmSInxKL8Jumw
- qjTBI09CyMAQ==
-X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="148477556"
-X-IronPort-AV: E=Sophos;i="5.75,358,1589266800"; 
-   d="scan'208";a="148477556"
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2020 23:30:48 -0700
-IronPort-SDR: IXfBYcJ4VYSqSdGo8dunD4PiIUt7RfnjhdDq6U4jmS7cf+LPEc6GdkJY81Zl6enggmgV3qBMIR
- 3Gl+OG+FS8hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.75,358,1589266800"; 
-   d="scan'208";a="269162527"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Jul 2020 23:30:46 -0700
-From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
-To:     sboyd@kernel.org, mturquette@baylibre.com,
-        linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
-        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar.linux@gmail.com,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Subject: [PATCH v2 3/3] clk: intel: Avoid unnecessary memset by improving code
-Date:   Thu, 16 Jul 2020 14:30:32 +0800
-Message-Id: <26624b65d0e6b958c4765a406b9929d1a9ce1c2c.1594880946.git.rahul.tanwar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <7ef7009b4e9f986fd6dfbf487c0e85de68a4ba9b.1594880946.git.rahul.tanwar@linux.intel.com>
-References: <7ef7009b4e9f986fd6dfbf487c0e85de68a4ba9b.1594880946.git.rahul.tanwar@linux.intel.com>
-In-Reply-To: <7ef7009b4e9f986fd6dfbf487c0e85de68a4ba9b.1594880946.git.rahul.tanwar@linux.intel.com>
-References: <7ef7009b4e9f986fd6dfbf487c0e85de68a4ba9b.1594880946.git.rahul.tanwar@linux.intel.com>
+        id S1727990AbgGPM0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jul 2020 08:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56792 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728126AbgGPM0d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jul 2020 08:26:33 -0400
+Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59073C061755;
+        Thu, 16 Jul 2020 05:26:33 -0700 (PDT)
+Received: by mail-io1-xd44.google.com with SMTP id c16so5747556ioi.9;
+        Thu, 16 Jul 2020 05:26:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=doFUSPu+F9XWVoD0er+QTsCiGOPKHkPF6UHj7R181iw=;
+        b=mCe2KSeUnzmk3A8gQQiBEhYjSIGSvpLq2JzMLdPPyPKgIJSHIhvnuOc9gfCKTOX4vg
+         8yrjJnNByYOAtKATSSwAgY+8Q5gq+xAy4sdJx9RujTXUREBm76w30qbFW1tdz9vnsN+Y
+         tDJoGU3A6uJWPOl2dXB2G1UOxfcvv9W1W0LAYInw7GW8T6j5gVd2LQNshWa7oSWyWmeS
+         wjCGqa7j0DbICJBi5uKkTjTS8qsW6PHSv6CWhHrBnkue4HupvWLsO+qGcEqw/Xzc7RfH
+         pJ+hlojFQ9+WL/lH80WVuAnGtoPN3hd9uc4QeveINvwewCgKBXG8bY+v52f2AFkIZw7p
+         sqqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=doFUSPu+F9XWVoD0er+QTsCiGOPKHkPF6UHj7R181iw=;
+        b=Sr9VKWltC+znnIrBdH/khIq0n8Q6tr/5sCAlHphe5V12dH0gtq1gzbHFTXQEnI8fze
+         X7/h5/vrGklokwCAAY4lkaIGHMNsHQHN7Ba8CJ3seoP1uCdcKLZly456c2dIX7RAsweG
+         H3Dy56oXX72bIa8yW02ZvAnLkwzCEj70Wb74hYpUXI82NeqBTbYYFygRPw8PViXS8IKT
+         U9LQSzBlZvtqRAsib4CieKHNjGJcFPT5z1ZVyN0k2SD0uNy5QvuT1QXDFqADJDYywt1C
+         u+8lx+W1KgAnHym6Yj5iveBRRENFfJqyExVnLoB92ZqtCR64WMMWr6n3si/ZU642cqbR
+         M06w==
+X-Gm-Message-State: AOAM530YouTi7SaY5ElJ99VTV2uisVNunB8Uf4VONAqZGkW3lv+P9BHS
+        AYNcMVxQPMjzF8AEXnc78Cuq4PR6
+X-Google-Smtp-Source: ABdhPJxiuNMoaGJIohrtAZ/TChqlgCmzOk5riegFW+xC5Gq8hkCNMIkfjUhjgF9PW9V0O776vPLbDQ==
+X-Received: by 2002:a6b:c9c4:: with SMTP id z187mr4285455iof.27.1594902392215;
+        Thu, 16 Jul 2020 05:26:32 -0700 (PDT)
+Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
+        by smtp.gmail.com with ESMTPSA id o67sm2568708ila.25.2020.07.16.05.26.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jul 2020 05:26:31 -0700 (PDT)
+From:   Adam Ford <aford173@gmail.com>
+To:     linux-clk@vger.kernel.org
+Cc:     dan.carpenter@oracle.com, luca@lucaceresoli.net,
+        aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH V3] clk: vc5: Add memory check to prevent oops
+Date:   Thu, 16 Jul 2020 07:26:20 -0500
+Message-Id: <20200716122620.4538-1-aford173@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-memset can be avoided in a loop if the variables used are declared
-inside the loop. Move such variables declaration inside the loop
-to avoid memset.
+When getting the names of the child nodes, kasprintf is used to
+allocate memory which is used to create the string for the node
+name.  Unfortunately, there is no memory check to determine
+if this allocation fails, it may cause an error when trying
+to get child node name.
 
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+This patch will check if the memory allocation fails, and returns
+and -ENOMEM error instead of blindly moving on.
+
+Fixes: 260249f929e8 ("clk: vc5: Enable addition output configurations of the Versaclock")
+
+Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
 ---
- drivers/clk/x86/clk-cgu.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+V3:   Fix spelling error, and use the style of checking (!variable) instead of
+      (variable == NULL)
 
-diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
-index c379fedfb9f2..9a1be7035fd0 100644
---- a/drivers/clk/x86/clk-cgu.c
-+++ b/drivers/clk/x86/clk-cgu.c
-@@ -581,19 +581,18 @@ int lgm_clk_register_ddiv(struct lgm_clk_provider *ctx,
- 			  unsigned int nr_clk)
- {
- 	struct device *dev = ctx->dev;
--	struct clk_init_data init = {};
--	struct lgm_clk_ddiv *ddiv;
- 	struct clk_hw *hw;
- 	unsigned int idx;
+V2:   Fix an issue where a goto was going to use an unitialized variable.
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 9a5fb3834b9a..9a37168c4afc 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -789,10 +789,13 @@ static int vc5_get_output_config(struct i2c_client *client,
+ 	int ret = 0;
+ 
+ 	child_name = kasprintf(GFP_KERNEL, "OUT%d", clk_out->num + 1);
++	if (!child_name)
++		return -ENOMEM;
++
+ 	np_output = of_get_child_by_name(client->dev.of_node, child_name);
+ 	kfree(child_name);
+ 	if (!np_output)
+-		goto output_done;
++		return 0;
+ 
+ 	ret = vc5_update_mode(np_output, clk_out);
+ 	if (ret)
+@@ -813,7 +816,6 @@ static int vc5_get_output_config(struct i2c_client *client,
+ 
+ 	of_node_put(np_output);
+ 
+-output_done:
+ 	return ret;
+ }
+ 
+@@ -828,7 +830,7 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
  	int ret;
  
- 	for (idx = 0; idx < nr_clk; idx++, list++) {
--		ddiv = NULL;
-+		struct clk_init_data init = {};
-+		struct lgm_clk_ddiv *ddiv = NULL;
-+
- 		ddiv = devm_kzalloc(dev, sizeof(*ddiv), GFP_KERNEL);
- 		if (!ddiv)
- 			return -ENOMEM;
+ 	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
+-	if (vc5 == NULL)
++	if (!vc5)
+ 		return -ENOMEM;
  
--		memset(&init, 0, sizeof(init));
- 		init.name = list->name;
- 		init.ops = &lgm_clk_ddiv_ops;
- 		init.flags = list->flags;
+ 	i2c_set_clientdata(client, vc5);
 -- 
-2.11.0
+2.17.1
 
