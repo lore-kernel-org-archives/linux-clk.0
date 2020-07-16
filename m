@@ -2,132 +2,110 @@ Return-Path: <SRS0=dNPY=A3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FF8C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 12:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B60F7C433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 15:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 52A782074B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 12:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 920B0207E8
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 15:10:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCe2KSeU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LOendPNI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727990AbgGPM0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jul 2020 08:26:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56792 "EHLO
+        id S1728415AbgGPPKf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jul 2020 11:10:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728126AbgGPM0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jul 2020 08:26:33 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59073C061755;
-        Thu, 16 Jul 2020 05:26:33 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id c16so5747556ioi.9;
-        Thu, 16 Jul 2020 05:26:33 -0700 (PDT)
+        with ESMTP id S1726963AbgGPPKe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jul 2020 11:10:34 -0400
+Received: from mail-wr1-x443.google.com (mail-wr1-x443.google.com [IPv6:2a00:1450:4864:20::443])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DC9DC08C5C0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 08:10:34 -0700 (PDT)
+Received: by mail-wr1-x443.google.com with SMTP id k6so7460720wrn.3
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 08:10:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=doFUSPu+F9XWVoD0er+QTsCiGOPKHkPF6UHj7R181iw=;
-        b=mCe2KSeUnzmk3A8gQQiBEhYjSIGSvpLq2JzMLdPPyPKgIJSHIhvnuOc9gfCKTOX4vg
-         8yrjJnNByYOAtKATSSwAgY+8Q5gq+xAy4sdJx9RujTXUREBm76w30qbFW1tdz9vnsN+Y
-         tDJoGU3A6uJWPOl2dXB2G1UOxfcvv9W1W0LAYInw7GW8T6j5gVd2LQNshWa7oSWyWmeS
-         wjCGqa7j0DbICJBi5uKkTjTS8qsW6PHSv6CWhHrBnkue4HupvWLsO+qGcEqw/Xzc7RfH
-         pJ+hlojFQ9+WL/lH80WVuAnGtoPN3hd9uc4QeveINvwewCgKBXG8bY+v52f2AFkIZw7p
-         sqqw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=2m1M98EH1nfWkFNzV2VhpZKvvoVfQRllbm5fo3WQqlY=;
+        b=LOendPNIH4Ofg8EGJ+B7ht+ifCEDSJEs0Y7UgjXJxJQUVInRrJUX57gDkVZxGHYjsZ
+         huOkeoMfVADRZfQ+hxvRIZr+u5Kw73rUxW0y/W4OQO3t7mbSNpedFbhfSUi/CdqiP++F
+         dZ8fMAHU7FhFKiF7paIyQ2XQR8qZlSeLOZeQLJCrzL6hVGpAq3BVRID66H3ssWcMrsNP
+         ozgidJwcVDai/+ESiQysfhiLSY1ow3zSgzAp8e/bia4rwkV0FH8pPGVHwWFAYZrzFOak
+         KfQ1/2F5dOZyvvoSt2ZCqsvWoyRER02JfoX87tgwcHKwMRAHLtZkyFcIzGaHF3A0DdNz
+         VxJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=doFUSPu+F9XWVoD0er+QTsCiGOPKHkPF6UHj7R181iw=;
-        b=Sr9VKWltC+znnIrBdH/khIq0n8Q6tr/5sCAlHphe5V12dH0gtq1gzbHFTXQEnI8fze
-         X7/h5/vrGklokwCAAY4lkaIGHMNsHQHN7Ba8CJ3seoP1uCdcKLZly456c2dIX7RAsweG
-         H3Dy56oXX72bIa8yW02ZvAnLkwzCEj70Wb74hYpUXI82NeqBTbYYFygRPw8PViXS8IKT
-         U9LQSzBlZvtqRAsib4CieKHNjGJcFPT5z1ZVyN0k2SD0uNy5QvuT1QXDFqADJDYywt1C
-         u+8lx+W1KgAnHym6Yj5iveBRRENFfJqyExVnLoB92ZqtCR64WMMWr6n3si/ZU642cqbR
-         M06w==
-X-Gm-Message-State: AOAM530YouTi7SaY5ElJ99VTV2uisVNunB8Uf4VONAqZGkW3lv+P9BHS
-        AYNcMVxQPMjzF8AEXnc78Cuq4PR6
-X-Google-Smtp-Source: ABdhPJxiuNMoaGJIohrtAZ/TChqlgCmzOk5riegFW+xC5Gq8hkCNMIkfjUhjgF9PW9V0O776vPLbDQ==
-X-Received: by 2002:a6b:c9c4:: with SMTP id z187mr4285455iof.27.1594902392215;
-        Thu, 16 Jul 2020 05:26:32 -0700 (PDT)
-Received: from aford-OptiPlex-7050.logicpd.com ([174.46.170.158])
-        by smtp.gmail.com with ESMTPSA id o67sm2568708ila.25.2020.07.16.05.26.31
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=2m1M98EH1nfWkFNzV2VhpZKvvoVfQRllbm5fo3WQqlY=;
+        b=A5NQWoX6jl2Z5p+10xY/mEY2hJzmeXE8qY1whCG+VvJcgsGSnCv4wPZbz2SM3fPThW
+         Ayqp0CVZZlIVCsSG+ou3rlSr4VstkrgNEFslAsDo1EUu1ML8ZRuJIzHVOxgAoCe8+9cR
+         6y9O+3Qky8t8AJHVvsLhZ+syu8JltoQRudqCzUWz0K3qdvy1vuF8Xo40sGjsrjvIixgv
+         MOrz/eqhu0bht/T9woWn1qov3H60a7RKa6Yq9fixkHQloukUVPCw3JJAYqCo6+K6Rb9h
+         0TErFnGB7stPS1IIt+QqSBkXuxKpB3KUgbFnutjhre09CzYKgUjilgBoEx+RkNVWDqg8
+         upuQ==
+X-Gm-Message-State: AOAM530fJv8zeHSzRpm3WzKVjHZG8nB/RNSDIe8I74eDOjlwytY0ndvX
+        y+PjDBFrA1U00KLRGfy/T6DbTA==
+X-Google-Smtp-Source: ABdhPJwBTtAOhrqKUUqfWPZvxA5XjDD38qzwHlXSFn/QJ+SGDyX9onIUUbkdHZL69xzg75el0nUvDw==
+X-Received: by 2002:a5d:55ca:: with SMTP id i10mr5507967wrw.225.1594912233054;
+        Thu, 16 Jul 2020 08:10:33 -0700 (PDT)
+Received: from dell ([2.31.163.61])
+        by smtp.gmail.com with ESMTPSA id w7sm8654363wmc.32.2020.07.16.08.10.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 05:26:31 -0700 (PDT)
-From:   Adam Ford <aford173@gmail.com>
-To:     linux-clk@vger.kernel.org
-Cc:     dan.carpenter@oracle.com, luca@lucaceresoli.net,
-        aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH V3] clk: vc5: Add memory check to prevent oops
-Date:   Thu, 16 Jul 2020 07:26:20 -0500
-Message-Id: <20200716122620.4538-1-aford173@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 16 Jul 2020 08:10:32 -0700 (PDT)
+Date:   Thu, 16 Jul 2020 16:10:29 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     robh+dt@kernel.org, mripard@kernel.org, wens@csie.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        gregory.clement@bootlin.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
+        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
+        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
+        daniel.lezcano@linaro.org, amit.kucheria@verdurent.com,
+        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
+        megous@megous.com, stefan@olimex.com, bage@linutronix.de,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, huangshuosheng@allwinnertech.com,
+        liyong@allwinnertech.com
+Subject: Re: [PATCH v3 10/16] mfd: axp20x: Allow the AXP803 to be probed by
+ I2C
+Message-ID: <20200716151029.GA3165313@dell>
+References: <20200708071942.22595-1-frank@allwinnertech.com>
+ <20200708071942.22595-11-frank@allwinnertech.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200708071942.22595-11-frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-When getting the names of the child nodes, kasprintf is used to
-allocate memory which is used to create the string for the node
-name.  Unfortunately, there is no memory check to determine
-if this allocation fails, it may cause an error when trying
-to get child node name.
+On Wed, 08 Jul 2020, Frank Lee wrote:
 
-This patch will check if the memory allocation fails, and returns
-and -ENOMEM error instead of blindly moving on.
+> The AXP803 can be used both using the RSB proprietary bus, or a more
+> traditional I2C bus.
+> 
+> Let's add that possibility.
+> 
+> Signed-off-by: Frank Lee <frank@allwinnertech.com>
+> ---
+>  drivers/mfd/axp20x-i2c.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Fixes: 260249f929e8 ("clk: vc5: Enable addition output configurations of the Versaclock")
+Applied, thanks.
 
-Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Adam Ford <aford173@gmail.com>
-Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
----
-V3:   Fix spelling error, and use the style of checking (!variable) instead of
-      (variable == NULL)
-
-V2:   Fix an issue where a goto was going to use an unitialized variable.
-
-diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
-index 9a5fb3834b9a..9a37168c4afc 100644
---- a/drivers/clk/clk-versaclock5.c
-+++ b/drivers/clk/clk-versaclock5.c
-@@ -789,10 +789,13 @@ static int vc5_get_output_config(struct i2c_client *client,
- 	int ret = 0;
- 
- 	child_name = kasprintf(GFP_KERNEL, "OUT%d", clk_out->num + 1);
-+	if (!child_name)
-+		return -ENOMEM;
-+
- 	np_output = of_get_child_by_name(client->dev.of_node, child_name);
- 	kfree(child_name);
- 	if (!np_output)
--		goto output_done;
-+		return 0;
- 
- 	ret = vc5_update_mode(np_output, clk_out);
- 	if (ret)
-@@ -813,7 +816,6 @@ static int vc5_get_output_config(struct i2c_client *client,
- 
- 	of_node_put(np_output);
- 
--output_done:
- 	return ret;
- }
- 
-@@ -828,7 +830,7 @@ static int vc5_probe(struct i2c_client *client, const struct i2c_device_id *id)
- 	int ret;
- 
- 	vc5 = devm_kzalloc(&client->dev, sizeof(*vc5), GFP_KERNEL);
--	if (vc5 == NULL)
-+	if (!vc5)
- 		return -ENOMEM;
- 
- 	i2c_set_clientdata(client, vc5);
 -- 
-2.17.1
-
+Lee Jones [李琼斯]
+Senior Technical Lead - Developer Services
+Linaro.org │ Open source software for Arm SoCs
+Follow Linaro: Facebook | Twitter | Blog
