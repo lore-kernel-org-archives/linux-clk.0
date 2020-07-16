@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F7C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0340DC433E2
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 977B22071B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D26D52077D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594861071;
-	bh=3Q9P7UQS49i5KShXWhmDgVyNUCeDNAwi1WcfoQD4ewI=;
+	s=default; t=1594861114;
+	bh=QPAU9cSsPiOln4ZyYl9Bz+nZM9azo2HlMovfqhj7nxw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=XNle3B84Nc9bJ0JCG5bAbYaF1I1GMxyPVBTmWma8P+/Z7f3c6Uden29wG5SlupPo7
-	 kLszdPO4ulj6xJt+nIPyzhFK4cYT38Ju3a86b8bGsDakcNRyRC6+E7I4wnUcBrMUVz
-	 kjWWqtwsKVPBw2khYcTq9povtYZh+aIKNWPV8Gh8=
+	b=lAY1fawbkGfMkzZQPmqyTmiQ2Gl9C9KyTlk9NZPRm2noF0g/53U9xdO+5CZqqdO1u
+	 9H1+qWcWWF+gAObDKUg3DgUvKbkriQsnip4MbERbUoj98+sE62tD7UPIWwcAG3zNQ0
+	 pfa2MTvhOBYBSjEkPfV4MgUd8B/2+5emD4F6P7uU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgGPA5v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 20:57:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35902 "EHLO mail.kernel.org"
+        id S1727787AbgGPA6e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 20:58:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbgGPA5v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jul 2020 20:57:51 -0400
+        id S1727081AbgGPA6e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jul 2020 20:58:34 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C38FF20658;
-        Thu, 16 Jul 2020 00:57:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FE0A2075B;
+        Thu, 16 Jul 2020 00:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594861070;
-        bh=3Q9P7UQS49i5KShXWhmDgVyNUCeDNAwi1WcfoQD4ewI=;
+        s=default; t=1594861114;
+        bh=QPAU9cSsPiOln4ZyYl9Bz+nZM9azo2HlMovfqhj7nxw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=bZtm36rK+mUku7jiYwl47k7VQr/5YTzZe+8mH/k99Oit3LAVs0yzFAL4S4dZ/pl1Z
-         05KWgLHxn61KG7EEGtz4HA748nGp2fhQ0SRhbW0JfHJm13H3pbfFvrD+bRujVn1jRj
-         DGe5WsTxhS8ifU/rN+xQey3RVGCngWkcMPuVlxpE=
+        b=BjDPe5R3MvmJuNlL55gsy5Dv4324vwcMU42lCGLaGSiPv8XM65YO60zR2v0iX25Yy
+         2DQhFk9DaOfxxi1ZDmcNjfiJNxGZmNhvuO65WId0s3H0MzCb9nhc8jNkIKIa0tLqnD
+         TWL8prGzq0xBp+6k4/q3MTpEHOdqrgvoxZomZVpU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1594098579-25050-3-git-send-email-Anson.Huang@nxp.com>
-References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com> <1594098579-25050-3-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH V6 2/6] clk: imx: Support building i.MX common clock driver as module
+In-Reply-To: <1594098579-25050-6-git-send-email-Anson.Huang@nxp.com>
+References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com> <1594098579-25050-6-git-send-email-Anson.Huang@nxp.com>
+Subject: Re: [PATCH V6 5/6] clk: imx8qxp: Support building i.MX8QXP clock driver as module
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Linux-imx@nxp.com
 To:     Anson Huang <Anson.Huang@nxp.com>,
@@ -57,18 +57,17 @@ To:     Anson Huang <Anson.Huang@nxp.com>,
         linux-kernel@vger.kernel.org, mturquette@baylibre.com,
         peng.fan@nxp.com, s.hauer@pengutronix.de, sfr@canb.auug.org.au,
         shawnguo@kernel.org, yuehaibing@huawei.com
-Date:   Wed, 15 Jul 2020 17:57:50 -0700
-Message-ID: <159486107011.1987609.3725728274148570354@swboyd.mtv.corp.google.com>
+Date:   Wed, 15 Jul 2020 17:58:33 -0700
+Message-ID: <159486111346.1987609.15603970881342169219@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-07-06 22:09:35)
-> There are more and more requirements of building SoC specific drivers
-> as modules, add support for building i.MX common clock driver as module
-> to meet the requirement.
+Quoting Anson Huang (2020-07-06 22:09:38)
+> Change configuration to "tristate", add module author, description and
+> license to support building i.MX8QXP clock drivers as module.
 >=20
 > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
