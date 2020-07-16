@@ -7,73 +7,112 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8FEC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 05:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85831C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 06:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 628832070E
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 05:33:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A1D206F5
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 06:30:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726069AbgGPFdQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jul 2020 01:33:16 -0400
-Received: from alexa-out-sd-02.qualcomm.com ([199.106.114.39]:30429 "EHLO
-        alexa-out-sd-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725844AbgGPFdQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jul 2020 01:33:16 -0400
-Received: from unknown (HELO ironmsg01-sd.qualcomm.com) ([10.53.140.141])
-  by alexa-out-sd-02.qualcomm.com with ESMTP; 15 Jul 2020 22:33:15 -0700
-Received: from kathirav-linux.qualcomm.com ([10.201.2.228])
-  by ironmsg01-sd.qualcomm.com with ESMTP; 15 Jul 2020 22:33:09 -0700
-Received: by kathirav-linux.qualcomm.com (Postfix, from userid 459349)
-        id 81F512181E; Thu, 16 Jul 2020 11:03:07 +0530 (IST)
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org, robh+dt@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Subject: [PATCH] clk: qcom: ipq8074: Add correct index for PCIe clocks
-Date:   Thu, 16 Jul 2020 11:02:50 +0530
-Message-Id: <1594877570-9280-1-git-send-email-sivaprak@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1727833AbgGPGaj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jul 2020 02:30:39 -0400
+Received: from mga04.intel.com ([192.55.52.120]:43366 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727768AbgGPGai (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jul 2020 02:30:38 -0400
+IronPort-SDR: jVHbbEHJkM3Xt816+fmHunR4OXEih/z3JD3Jf985At9edlccRbZpaOii5+on2bR8RMusOufHno
+ nVLRNGoX97wA==
+X-IronPort-AV: E=McAfee;i="6000,8403,9683"; a="146839348"
+X-IronPort-AV: E=Sophos;i="5.75,358,1589266800"; 
+   d="scan'208";a="146839348"
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2020 23:30:38 -0700
+IronPort-SDR: D8J6wRg5tZG+0hXVNjp5mwySZxVxNo9S/DBrHfYM/jVX/S6Bof9gv0UX7a8uz1z3Jaezgum1DB
+ kM7OsNhvYtrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.75,358,1589266800"; 
+   d="scan'208";a="308520128"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jul 2020 23:30:35 -0700
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     sboyd@kernel.org, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com, rahul.tanwar.linux@gmail.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v2 1/3] clk: intel: Use devm_clk_hw_register() instead of clk_hw_register()
+Date:   Thu, 16 Jul 2020 14:30:30 +0800
+Message-Id: <7ef7009b4e9f986fd6dfbf487c0e85de68a4ba9b.1594880946.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PCIe clocks GCC_PCIE0_AXI_S_BRIDGE_CLK, GCC_PCIE0_RCHNG_CLK_SRC,
-GCC_PCIE0_RCHNG_CLK are wrongly added to the gcc reset group.
+To ensure that clks are unregistered in case of any failure, use
+devm_clk_hw_register() instead of clk_hw_register().
 
-Move them to the gcc clock group.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 ---
- include/dt-bindings/clock/qcom,gcc-ipq8074.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/x86/clk-cgu-pll.c | 2 +-
+ drivers/clk/x86/clk-cgu.c     | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-index e3e018565add..8e2bec1c91bf 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -230,6 +230,9 @@
- #define GCC_GP1_CLK				221
- #define GCC_GP2_CLK				222
- #define GCC_GP3_CLK				223
-+#define GCC_PCIE0_AXI_S_BRIDGE_CLK		224
-+#define GCC_PCIE0_RCHNG_CLK_SRC			225
-+#define GCC_PCIE0_RCHNG_CLK			226
+diff --git a/drivers/clk/x86/clk-cgu-pll.c b/drivers/clk/x86/clk-cgu-pll.c
+index c03cc6b85b9f..3179557b5f78 100644
+--- a/drivers/clk/x86/clk-cgu-pll.c
++++ b/drivers/clk/x86/clk-cgu-pll.c
+@@ -128,7 +128,7 @@ lgm_clk_register_pll(struct lgm_clk_provider *ctx,
+ 	pll->hw.init = &init;
  
- #define GCC_BLSP1_BCR				0
- #define GCC_BLSP1_QUP1_BCR			1
-@@ -363,8 +366,5 @@
- #define GCC_PCIE1_AHB_ARES			129
- #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
- #define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
--#define GCC_PCIE0_AXI_S_BRIDGE_CLK		132
--#define GCC_PCIE0_RCHNG_CLK_SRC			133
--#define GCC_PCIE0_RCHNG_CLK			134
+ 	hw = &pll->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret)
+ 		return ERR_PTR(ret);
  
- #endif
+diff --git a/drivers/clk/x86/clk-cgu.c b/drivers/clk/x86/clk-cgu.c
+index 56af0e04ec1e..88ebeb53b109 100644
+--- a/drivers/clk/x86/clk-cgu.c
++++ b/drivers/clk/x86/clk-cgu.c
+@@ -119,7 +119,7 @@ lgm_clk_register_mux(struct lgm_clk_provider *ctx,
+ 	mux->hw.init = &init;
+ 
+ 	hw = &mux->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+@@ -247,7 +247,7 @@ lgm_clk_register_divider(struct lgm_clk_provider *ctx,
+ 	div->hw.init = &init;
+ 
+ 	hw = &div->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+@@ -361,7 +361,7 @@ lgm_clk_register_gate(struct lgm_clk_provider *ctx,
+ 	gate->hw.init = &init;
+ 
+ 	hw = &gate->hw;
+-	ret = clk_hw_register(dev, hw);
++	ret = devm_clk_hw_register(dev, hw);
+ 	if (ret)
+ 		return ERR_PTR(ret);
+ 
+@@ -624,7 +624,7 @@ int lgm_clk_register_ddiv(struct lgm_clk_provider *ctx,
+ 		ddiv->hw.init = &init;
+ 
+ 		hw = &ddiv->hw;
+-		ret = clk_hw_register(dev, hw);
++		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+ 			dev_err(dev, "register clk: %s failed!\n", list->name);
+ 			return ret;
 -- 
-2.7.4
+2.11.0
 
