@@ -2,76 +2,95 @@ Return-Path: <SRS0=dNPY=A3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C248C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF87C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 01:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1AD520775
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 00:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D6E220791
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 01:03:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594861097;
-	bh=fN+S2Gc6/8TG8x5I2ww/JDGn/O6BB81s/hlqQZypqk0=;
+	s=default; t=1594861398;
+	bh=6oZhkB9EWxV3GBYwjhNGD/mi4wQQrv5Y+A8n809Z7PU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=j7FUttfFgktsMPAd9GlpHuuq/E0qu9wmy/EE6XYORMoON+jsZAaiozgkycMv38ptN
-	 6FJQUD6bofhNIe12x0F7drJbJ4NOTkm66kayzMwYhpD5xRDc4Aa3ciyJSUBboMqMWx
-	 nobLjBb8ftYfcFaxH93w87LcUps3hGMYwIMhYxC0=
+	b=N46Jh35Pj4my9dv+lfgPe/JiCH3RTtFrOeUGJq/3zBWqVmt586idclN2GpqCWDvMs
+	 2Nm67L3Eq3eJhTUD8lajI3gfKfUeNTJmp0/rxKSnhu4tKlhhPjD7Ij4F38MQC23Ugi
+	 zbHz+u6PdVEtXygIyfw1cqpcBuQuvEOM8N2Brzkk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726776AbgGPA6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jul 2020 20:58:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36038 "EHLO mail.kernel.org"
+        id S1726960AbgGPBDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jul 2020 21:03:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbgGPA6Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jul 2020 20:58:16 -0400
+        id S1726479AbgGPBDR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jul 2020 21:03:17 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2F2420714;
-        Thu, 16 Jul 2020 00:58:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F2EF2078C;
+        Thu, 16 Jul 2020 01:03:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1594861096;
-        bh=fN+S2Gc6/8TG8x5I2ww/JDGn/O6BB81s/hlqQZypqk0=;
+        s=default; t=1594861397;
+        bh=6oZhkB9EWxV3GBYwjhNGD/mi4wQQrv5Y+A8n809Z7PU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=KKK+fy4l8n0stQsuGCcUCcGebL1cYd4C9N7ZF0fSEucbIBO9ukEG/fwOZWt34yMTO
-         t56cdxSARMT6/t23Whzy7u/8pKh/JOb4FCYDRuA1LZ6/HDBtnO2E9zW2URgwTmQU7Z
-         hIiAwpWg5Asky97YrWBYOy5HQtqghrYQU46bN/kw=
+        b=ha9iSYJxgqg5SF24utqMLGdWN6TNR9WG7Bwyear+4qjGZk8W8TVdt/HY6OC0u/cjK
+         SF8vyHqa5x9AR6BWHFW5aan3mNP4Ijs0k88TKBlAwBXeQWNzzVRBaRqHn7QWiXlDsi
+         +wZyDWTyIBGQCDIoitwQgW/rsoPu13TYYKObhNjU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1594098579-25050-4-git-send-email-Anson.Huang@nxp.com>
-References: <1594098579-25050-1-git-send-email-Anson.Huang@nxp.com> <1594098579-25050-4-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH V6 3/6] clk: imx: Add clock configuration for ARMv7 platforms
+In-Reply-To: <20200713010001.18976-4-akshu.agrawal@amd.com>
+References: <20200713010001.18976-1-akshu.agrawal@amd.com> <20200713010001.18976-4-akshu.agrawal@amd.com>
+Subject: Re: [PATCH 4/5] clk: x86: Support RV architecture
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>,
-        Georg.Waibel@wiedemann-group.com, abel.vesa@nxp.com,
-        aisheng.dong@nxp.com, andrew.smirnov@gmail.com, chen.fang@nxp.com,
-        daniel.baluta@nxp.com, festevam@gmail.com, fugang.duan@nxp.com,
-        georg.waibel@wiedemann-group.de, horia.geanta@nxp.com,
-        j.remmet@phytec.de, kernel@pengutronix.de,
-        laurent.pinchart@ideasonboard.com,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        peng.fan@nxp.com, s.hauer@pengutronix.de, sfr@canb.auug.org.au,
-        shawnguo@kernel.org, yuehaibing@huawei.com
-Date:   Wed, 15 Jul 2020 17:58:15 -0700
-Message-ID: <159486109533.1987609.1468645632345218617@swboyd.mtv.corp.google.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     akshu.agrawal@amd.com
+Date:   Wed, 15 Jul 2020 18:03:16 -0700
+Message-ID: <159486139638.1987609.10837351469119432355@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-07-06 22:09:36)
-> Add CONFIG_CLK_xxx for i.MX ARMv7 platforms, and use it as build option
-> instead of CONFIG_SOC_xxx, the CONFIG_CLK_xxx will be selected by default
-> according to CONFIG_SOC_xxx.
+Quoting Akshu Agrawal (2020-07-12 17:59:52)
+> There is minor difference between previous family of SoC and
+> the current one. Which is the there is only 48Mh fixed clk.
+> There is no mux and no option to select another freq as there in previous.
 >=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+I only see four out of five patches and there isn't a cover letter. I
+have no idea if I can apply this change or if you're expecting me to ack
+it. Please help make my life a little easier!
+
+>  drivers/clk/x86/clk-fch.c | 55 ++++++++++++++++++++++++++++-----------
+>  1 file changed, 40 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/clk/x86/clk-fch.c b/drivers/clk/x86/clk-fch.c
+> index b252f0cf0628..a8aac71a3b65 100644
+> --- a/drivers/clk/x86/clk-fch.c
+> +++ b/drivers/clk/x86/clk-fch.c
+> @@ -61,9 +78,17 @@ static int fch_clk_probe(struct platform_device *pdev)
+>  static int fch_clk_remove(struct platform_device *pdev)
+>  {
+>         int i;
+> +       struct fch_clk_data *fch_data;
+> +
+> +       fch_data =3D dev_get_platdata(&pdev->dev);
+> =20
+> -       for (i =3D 0; i < ST_MAX_CLKS; i++)
+> -               clk_hw_unregister(hws[i]);
+> +       if (!fch_data->is_rv) {
+> +               for (i =3D 0; i < ST_MAX_CLKS; i++)
+> +                       clk_hw_unregister(hws[i]);
+> +       } else {
+> +               for (i =3D 0; i < RV_MAX_CLKS; i++)
+> +                       clk_hw_unregister(hws[i]);
+
+Can ST_MAX_CLKS or RV_MAX_CLKS be a local variable and then the loop
+consolidated.
