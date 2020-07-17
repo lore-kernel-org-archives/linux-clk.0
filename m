@@ -1,88 +1,183 @@
-Return-Path: <SRS0=dNPY=A3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=WyPy=A4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8FEC433E2
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 19:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B798C433E2
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 04:28:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2C97F2076A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jul 2020 19:07:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1594926446;
-	bh=eSOL6J4ncyMZAvTOhaq+6TK9qpG1nzRmPHo4rVlNVLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Aex/OOoba8JXgZRe9WW3ewdeVmPoL3/iJ1Qto81CO3HxSGKe5RPaIaxf9MSFGJc7r
-	 6Qq85vzmpEF3U/NitwgednwA1wzqvpm03cWf/45MA9ec31y7yd0nyXcQld9nbNeJXX
-	 u4NRadyEr0zNl9JDKSjPwfLeyf6aivIeoxYYTiXQ=
+	by mail.kernel.org (Postfix) with ESMTP id 139532071A
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 04:28:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cqQG+5HH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbgGPTHW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jul 2020 15:07:22 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:38911 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728163AbgGPTHV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 16 Jul 2020 15:07:21 -0400
-Received: by mail-io1-f67.google.com with SMTP id l1so7182410ioh.5;
-        Thu, 16 Jul 2020 12:07:21 -0700 (PDT)
+        id S1726550AbgGQE2F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jul 2020 00:28:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36082 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725300AbgGQE2E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 00:28:04 -0400
+Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEEFC08C5C0
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 21:28:04 -0700 (PDT)
+Received: by mail-wr1-x444.google.com with SMTP id z2so9637761wrp.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 21:28:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xKiHKtXUo7NkO+4s96RBO3/zYsHU2Z/ckyeyMOpjSSk=;
+        b=cqQG+5HHP8FdB3WQLW9wGhsG7SeC7f21rTf6GbiqGayG4UG+Eb/ZxDPESsqFDBOneb
+         lEHteZt/4j7lwXdMwlfN7AdtgbvYmDW+2kPVuSVJSBxwsTSsgv41w+4VCt/Ceg/Qf3gL
+         goYjFGpMHwtDxONpZtwPovrBtog3pC5e3idIBg5Jp2GzhGV4UpPUHG0HFJ5YNbBobQc0
+         GLdY8dcZdbBInXqVuhNQPCBXdS3js1eFHfC/jjTDmX0aCvGeIxVSGpbiF9R4LQkkHkpM
+         sU/J9G4w5VTmV1l9GuHqO1IwyQNmDi9jCG/Llh8/+vJjwhcTSbA5fECuc1o+BYKL0d5A
+         44bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=G6dTG9UH4b6ykHKCTmdcq2PPGZi935hwfuAzCkCoreE=;
-        b=mEigJewzQP0wkYRsbshQ4rsG3H/5EV8PmGdaqlgtfyLBDPfoxjRgeZfgHcGRLibmWU
-         rjpalXWgH8dOlB6B00O7K0x8ubt01c/+lwN+dexXFjAy4mJpzCTChYTv7mHUxaOkLyTl
-         EmqGhOFTRgt4Fstwa60CWm3MltGODhx7QexODNg//ji9N6AEu1O78LYW3LGth196sX24
-         i2TeuknrW9b/dp1lPD8YbukgvT8WUoPZ/EibHhLKqlX1abfLDAmxeMM3W39qnMTnr/8i
-         CXD0fBp5KFsHcb5lvcRRDdXJJEPZZK5FXlaov7nMMdhf0zvXHAH1Sn/NCukuVA8x20By
-         /YUg==
-X-Gm-Message-State: AOAM531rMx7dNzjvKHu9FgUJEAqZGDTz+zcO1Hs4cDIhJ+XPInKREqr/
-        sIISBimxdEVTcpVVh2n3jA==
-X-Google-Smtp-Source: ABdhPJx9XPx9ju2mKOiII++3K2uqyxj3tmJirr4/6/QpB07uSd1tmgvamnP/6OpIjJ5+MD07MJLR6w==
-X-Received: by 2002:a02:30ca:: with SMTP id q193mr6845522jaq.125.1594926440640;
-        Thu, 16 Jul 2020 12:07:20 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id w7sm812084iov.1.2020.07.16.12.07.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 Jul 2020 12:07:19 -0700 (PDT)
-Received: (nullmailer pid 2676844 invoked by uid 1000);
-        Thu, 16 Jul 2020 19:07:18 -0000
-Date:   Thu, 16 Jul 2020 13:07:18 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Ansuel Smith <ansuelsmth@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-kernel@vger.kernel.org,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: Re: [PATCH v4 4/7] dt-bindings: thermal: tsens: document ipq8064
- bindings
-Message-ID: <20200716190718.GA2676798@bogus>
-References: <20200716022817.30439-1-ansuelsmth@gmail.com>
- <20200716022817.30439-5-ansuelsmth@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xKiHKtXUo7NkO+4s96RBO3/zYsHU2Z/ckyeyMOpjSSk=;
+        b=BwrOYMJVbzk+rgVemIdP0ie2T0pcqI44C1H4OkjJ2IHLb0iO4x2oV5F7MaAUxlLv43
+         NAdFMaRCwLlicjJnxglTsCWAW6ICTJLdQtkBB3jZSL19KrRsnalrFNb4FpeHI34HNU+L
+         uV0vBybaigkTwqL5dSIIvDI3kY3I0d5SbHVpOZb3BYuAXBQTC29R02wrrva6Mkff5xmi
+         wSjWDM7DxHWeggbYCugLcA0ecVAby09S6nQ0msRpZHXW/gJNeR4rj14L4aTO4rY9mkOb
+         kUismxQpjnS741jVXiVJIcXW3Lo/6a0Vmkz+XO0YBfsXPJkh4FYkLB3ox1dwE7J/vVPD
+         enxQ==
+X-Gm-Message-State: AOAM533iK2J/qdY2Dty4kvM7qZ7CVmsQIwWy13n/OX2JXGleLtDjewrR
+        CEUbHpB0zqC29MZBnYnlGvOgJBCP32Q=
+X-Google-Smtp-Source: ABdhPJz608hYHsiwyB/EN+L+jwqQLZomE0K0feZYaj9wTWfFYhecxH/LFSN0LliZKeegIqo1mKBqpQ==
+X-Received: by 2002:adf:9283:: with SMTP id 3mr8013554wrn.231.1594960083192;
+        Thu, 16 Jul 2020 21:28:03 -0700 (PDT)
+Received: from ?IPv6:2a01:e34:ed2f:f020:9880:a643:3e69:6393? ([2a01:e34:ed2f:f020:9880:a643:3e69:6393])
+        by smtp.googlemail.com with ESMTPSA id u186sm11862848wmu.10.2020.07.16.21.28.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 16 Jul 2020 21:28:02 -0700 (PDT)
+Subject: Re: [PATCH v4 00/16] Allwinner A100 Initial support
+To:     Frank Lee <frank@allwinnertech.com>, robh+dt@kernel.org,
+        mripard@kernel.org, wens@csie.org, mturquette@baylibre.com,
+        sboyd@kernel.org, gregory.clement@bootlin.com, tglx@linutronix.de,
+        jason@lakedaemon.net, maz@kernel.org,
+        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
+        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
+        amit.kucheria@verdurent.com, lee.jones@linaro.org,
+        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
+        megous@megous.com, stefan@olimex.com, bage@linutronix.de,
+        devicetree@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
+References: <cover.1594708863.git.frank@allwinnertech.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
+Date:   Fri, 17 Jul 2020 06:28:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200716022817.30439-5-ansuelsmth@gmail.com>
+In-Reply-To: <cover.1594708863.git.frank@allwinnertech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Jul 2020 04:28:13 +0200, Ansuel Smith wrote:
-> Document the use of bindings used for ipq8064 SoCs tsens.
-> ipq8064 use the same gcc regs and is set as a child of the qcom gcc.
+On 14/07/2020 08:55, Frank Lee wrote:
+> From: Yangtao Li <frank@allwinnertech.com>
+
+Do you expect me to pick patches 7,8,9 or ack them ?
+
+> v4:
+> -drop "dt-bindings: pinctrl: sunxi: make gpio banks supplies required"
+> -fix dcdc1 regulator name
+> -get rid of underscore in dts node name
+> -Some trivial things in yaml files
 > 
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
->  .../bindings/thermal/qcom-tsens.yaml          | 50 ++++++++++++++++---
->  1 file changed, 43 insertions(+), 7 deletions(-)
+> v3:
+> -Add pmu and nmi support
+> -Add read data mask for calibration
+> -Code style
+> -Some trivial things in yaml files
+> 
+> v2:
+> -Some naming consistency
+> -Repair email address
+> -Fix mmc clock
+> -Don't export system clock
+> -Fix checkpatch warning
+> -Drop unneeded pin function, convert to jtag_gpu and i2s_x
+> 
+> Yangtao Li (16):
+>   dt-bindings: clk: sunxi-ccu: add compatible string for A100 CCU and
+>     R-CCU
+>   clk: sunxi-ng: add support for the Allwinner A100 CCU
+>   dt-bindings: pinctrl: sunxi: Get rid of continual nesting
+>   dt-bindings: pinctrl: sunxi: Add A100 pinctrl bindings
+>   pinctrl: sunxi: add support for the Allwinner A100 pin controller
+>   dt-bindings: nvmem: SID: add binding for A100's SID controller
+>   dt-bindings: thermal: sun8i: Add binding for A100's THS controller
+>   thermal: sun8i: add TEMP_CALIB_MASK for calibration data in
+>     sun50i_h6_ths_calibrate
+>   thermal: sun8i: Add A100's THS controller support
+>   mfd: axp20x: Allow the AXP803 to be probed by I2C
+>   dt-bindings: irq: sun7i-nmi: fix dt-binding for a80 nmi
+>   dt-bindings: irq: sun7i-nmi: Add binding for A100's NMI controller
+>   dt-bindings: i2c: mv64xxx: Add compatible for the A100 i2c node.
+>   arm64: allwinner: A100: add the basical Allwinner A100 DTSI file
+>   dt-bindings: arm: sunxi: Add Allwinner A100 Perf1 Board bindings
+>   arm64: allwinner: A100: add support for Allwinner Perf1 board
+> 
+>  .../devicetree/bindings/arm/sunxi.yaml        |    5 +
+>  .../clock/allwinner,sun4i-a10-ccu.yaml        |    7 +-
+>  .../bindings/i2c/marvell,mv64xxx-i2c.yaml     |    3 +
+>  .../allwinner,sun7i-a20-sc-nmi.yaml           |    5 +-
+>  .../nvmem/allwinner,sun4i-a10-sid.yaml        |   19 +-
+>  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml  |  139 +-
+>  .../thermal/allwinner,sun8i-a83t-ths.yaml     |    6 +-
+>  arch/arm64/boot/dts/allwinner/Makefile        |    1 +
+>  .../allwinner/sun50i-a100-allwinner-perf1.dts |  180 +++
+>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi |  364 +++++
+>  drivers/clk/sunxi-ng/Kconfig                  |   10 +
+>  drivers/clk/sunxi-ng/Makefile                 |    2 +
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c      |  214 +++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h      |   21 +
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c        | 1276 +++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100.h        |   56 +
+>  drivers/mfd/axp20x-i2c.c                      |    2 +
+>  drivers/pinctrl/sunxi/Kconfig                 |   10 +
+>  drivers/pinctrl/sunxi/Makefile                |    2 +
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c |  105 ++
+>  drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c   |  708 +++++++++
+>  drivers/thermal/sun8i_thermal.c               |   16 +-
+>  include/dt-bindings/clock/sun50i-a100-ccu.h   |  116 ++
+>  include/dt-bindings/clock/sun50i-a100-r-ccu.h |   23 +
+>  include/dt-bindings/reset/sun50i-a100-ccu.h   |   68 +
+>  include/dt-bindings/reset/sun50i-a100-r-ccu.h |   18 +
+>  26 files changed, 3308 insertions(+), 68 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+>  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.h
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c
+>  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
+>  create mode 100644 include/dt-bindings/clock/sun50i-a100-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun50i-a100-r-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun50i-a100-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun50i-a100-r-ccu.h
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
