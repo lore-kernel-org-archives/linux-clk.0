@@ -2,105 +2,78 @@ Return-Path: <SRS0=WyPy=A4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E655C433E6
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F7C433E1
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:10:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0548D2071A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyE6mm8h"
+	by mail.kernel.org (Postfix) with ESMTP id 4A8112070E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:10:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbgGQHio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jul 2020 03:38:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37098 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbgGQHio (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 03:38:44 -0400
-Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098A9C061755;
-        Fri, 17 Jul 2020 00:38:44 -0700 (PDT)
-Received: by mail-ed1-x542.google.com with SMTP id a8so6959505edy.1;
-        Fri, 17 Jul 2020 00:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HYlYHaXrSBXNi0NVDqqqHS+e0SeY67sAsg23gifnEls=;
-        b=EyE6mm8hEbMtxJ+oyKyxzn3TqzKqFG6VN8VirfUtyDZKe8t0Qw+Va9Dg1tJSaoMjeb
-         40wVa4SukSIw80AHHt+iSsSGftd8HWeVwXEhYxbIRrrqKG7v0227ZsuiNYk5FcGFq3jv
-         OELSbp7utYhT5EDGe1O9GEOylhsBK39Nf8vJUIHtrsdCf9V9CUFU2iREu9qJXseas9QZ
-         MzneKq61QmKfC0EKHS76qAQFDp5PnXyp3zCsufMAP+bbx1rKtAYvddpqTU03sMHM+1im
-         Kbhs6aS5NLMsULVy72wkf+ORqSycTQBmnK4nt5WKrw0Jku8FdT/f6RFJJg7xu47yqZPk
-         ga3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HYlYHaXrSBXNi0NVDqqqHS+e0SeY67sAsg23gifnEls=;
-        b=oPUx1h2CGIdMi4Fv+HafVD/q3oE785LrHxJIY47MFMeChtni+SXwtcRrFvVCAmzrwg
-         wyK5urfNR9OhqEoDUehyjNEK9IcDjlrRhBDPdiv0P1QfgwAAwNWJ4rfk96mHS1tmE4z/
-         TA6GHuLWwEH5fs0xo8UYvftTycWvBABWa3IhHJPw572UyJYraUXEOSW20mMHoL75ZWzi
-         H8pQkScn+9lHsASh7aejfk5n6uEpqDQFCMGB/srb2AFzASw2yZqkWoobD6fDq2BRRt5X
-         qZDUIvmtqUj8mrCgJ35M8m0EGEoeHvySjHLz29AbuL8cTohYdzoYq3Z7XDlOy8d5C8s6
-         oUaw==
-X-Gm-Message-State: AOAM532G2cMq6JD6mVuAHmILChebia8ZO/M57s2/Z8uLucPI8wL+6wsC
-        AfthNVSgJw7vs7epb8oaY5GJ54LPkTrm2r1gKqk=
-X-Google-Smtp-Source: ABdhPJxQYjnXkfM8fJrQdkfzoCNdIh8vAoQXVxzKyrXC0Fj3imagKRKKoeb6nvJLoOdtJ7W+TxVYoP2s03ArnQ62KTU=
-X-Received: by 2002:aa7:dd10:: with SMTP id i16mr8203210edv.227.1594971522683;
- Fri, 17 Jul 2020 00:38:42 -0700 (PDT)
+        id S1726411AbgGQJKn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jul 2020 05:10:43 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:40853 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbgGQJKm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 05:10:42 -0400
+Received: from localhost (lfbn-lyo-1-1676-121.w90-65.abo.wanadoo.fr [90.65.108.121])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id EAC4F100007;
+        Fri, 17 Jul 2020 09:10:36 +0000 (UTC)
+Date:   Fri, 17 Jul 2020 11:10:36 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Claudiu Beznea <claudiu.beznea@microchip.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
+        bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 02/19] clk: at91: clk-generated: check best_rate against
+ ranges
+Message-ID: <20200717091036.GJ3428@piout.net>
+References: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
+ <1594812267-6697-3-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
-References: <cover.1594708863.git.frank@allwinnertech.com> <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
-In-Reply-To: <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Fri, 17 Jul 2020 15:38:14 +0800
-Message-ID: <CAEExFWss+KWSDu4VNa8JCkT7QOrgeYCausO0KxkXCbnXE3+-0g@mail.gmail.com>
-Subject: Re: [PATCH v4 00/16] Allwinner A100 Initial support
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Frank Lee <frank@allwinnertech.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, gregory.clement@bootlin.com,
-        Thomas Gleixner <tglx@linutronix.de>, jason@lakedaemon.net,
-        Marc Zyngier <maz@kernel.org>,
-        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "p.zabel" <p.zabel@pengutronix.de>, clabbe@baylibre.com,
-        Icenowy Zheng <icenowy@aosc.io>,
-        =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>,
-        stefan@olimex.com, bage@linutronix.de,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-i2c@vger.kernel.org,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1594812267-6697-3-git-send-email-claudiu.beznea@microchip.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jul 17, 2020 at 12:28 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 14/07/2020 08:55, Frank Lee wrote:
-> > From: Yangtao Li <frank@allwinnertech.com>
->
-> Do you expect me to pick patches 7,8,9 or ack them ?
->
+On 15/07/2020 14:24:10+0300, Claudiu Beznea wrote:
+> Check best_rate against available clock ranges.
+> 
+> Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Please pick it.
+> ---
+>  drivers/clk/at91/clk-generated.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
+> index 995a13133cfb..f8e557e0e1b8 100644
+> --- a/drivers/clk/at91/clk-generated.c
+> +++ b/drivers/clk/at91/clk-generated.c
+> @@ -185,8 +185,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+>  		 __clk_get_name((req->best_parent_hw)->clk),
+>  		 req->best_parent_rate);
+>  
+> -	if (best_rate < 0)
+> -		return best_rate;
+> +	if (best_rate < 0 || (gck->range.max && best_rate > gck->range.max))
+> +		return -EINVAL;
+>  
+>  	req->rate = best_rate;
+>  	return 0;
+> -- 
+> 2.7.4
+> 
 
-Thx,
-Yangtao
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
