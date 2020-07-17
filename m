@@ -2,182 +2,105 @@ Return-Path: <SRS0=WyPy=A4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B798C433E2
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 04:28:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E655C433E6
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 139532071A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 04:28:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0548D2071A
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 07:38:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cqQG+5HH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyE6mm8h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbgGQE2F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jul 2020 00:28:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36082 "EHLO
+        id S1726793AbgGQHio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jul 2020 03:38:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbgGQE2E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 00:28:04 -0400
-Received: from mail-wr1-x444.google.com (mail-wr1-x444.google.com [IPv6:2a00:1450:4864:20::444])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEEFC08C5C0
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 21:28:04 -0700 (PDT)
-Received: by mail-wr1-x444.google.com with SMTP id z2so9637761wrp.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 Jul 2020 21:28:04 -0700 (PDT)
+        with ESMTP id S1726060AbgGQHio (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 03:38:44 -0400
+Received: from mail-ed1-x542.google.com (mail-ed1-x542.google.com [IPv6:2a00:1450:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 098A9C061755;
+        Fri, 17 Jul 2020 00:38:44 -0700 (PDT)
+Received: by mail-ed1-x542.google.com with SMTP id a8so6959505edy.1;
+        Fri, 17 Jul 2020 00:38:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xKiHKtXUo7NkO+4s96RBO3/zYsHU2Z/ckyeyMOpjSSk=;
-        b=cqQG+5HHP8FdB3WQLW9wGhsG7SeC7f21rTf6GbiqGayG4UG+Eb/ZxDPESsqFDBOneb
-         lEHteZt/4j7lwXdMwlfN7AdtgbvYmDW+2kPVuSVJSBxwsTSsgv41w+4VCt/Ceg/Qf3gL
-         goYjFGpMHwtDxONpZtwPovrBtog3pC5e3idIBg5Jp2GzhGV4UpPUHG0HFJ5YNbBobQc0
-         GLdY8dcZdbBInXqVuhNQPCBXdS3js1eFHfC/jjTDmX0aCvGeIxVSGpbiF9R4LQkkHkpM
-         sU/J9G4w5VTmV1l9GuHqO1IwyQNmDi9jCG/Llh8/+vJjwhcTSbA5fECuc1o+BYKL0d5A
-         44bA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HYlYHaXrSBXNi0NVDqqqHS+e0SeY67sAsg23gifnEls=;
+        b=EyE6mm8hEbMtxJ+oyKyxzn3TqzKqFG6VN8VirfUtyDZKe8t0Qw+Va9Dg1tJSaoMjeb
+         40wVa4SukSIw80AHHt+iSsSGftd8HWeVwXEhYxbIRrrqKG7v0227ZsuiNYk5FcGFq3jv
+         OELSbp7utYhT5EDGe1O9GEOylhsBK39Nf8vJUIHtrsdCf9V9CUFU2iREu9qJXseas9QZ
+         MzneKq61QmKfC0EKHS76qAQFDp5PnXyp3zCsufMAP+bbx1rKtAYvddpqTU03sMHM+1im
+         Kbhs6aS5NLMsULVy72wkf+ORqSycTQBmnK4nt5WKrw0Jku8FdT/f6RFJJg7xu47yqZPk
+         ga3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xKiHKtXUo7NkO+4s96RBO3/zYsHU2Z/ckyeyMOpjSSk=;
-        b=BwrOYMJVbzk+rgVemIdP0ie2T0pcqI44C1H4OkjJ2IHLb0iO4x2oV5F7MaAUxlLv43
-         NAdFMaRCwLlicjJnxglTsCWAW6ICTJLdQtkBB3jZSL19KrRsnalrFNb4FpeHI34HNU+L
-         uV0vBybaigkTwqL5dSIIvDI3kY3I0d5SbHVpOZb3BYuAXBQTC29R02wrrva6Mkff5xmi
-         wSjWDM7DxHWeggbYCugLcA0ecVAby09S6nQ0msRpZHXW/gJNeR4rj14L4aTO4rY9mkOb
-         kUismxQpjnS741jVXiVJIcXW3Lo/6a0Vmkz+XO0YBfsXPJkh4FYkLB3ox1dwE7J/vVPD
-         enxQ==
-X-Gm-Message-State: AOAM533iK2J/qdY2Dty4kvM7qZ7CVmsQIwWy13n/OX2JXGleLtDjewrR
-        CEUbHpB0zqC29MZBnYnlGvOgJBCP32Q=
-X-Google-Smtp-Source: ABdhPJz608hYHsiwyB/EN+L+jwqQLZomE0K0feZYaj9wTWfFYhecxH/LFSN0LliZKeegIqo1mKBqpQ==
-X-Received: by 2002:adf:9283:: with SMTP id 3mr8013554wrn.231.1594960083192;
-        Thu, 16 Jul 2020 21:28:03 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:9880:a643:3e69:6393? ([2a01:e34:ed2f:f020:9880:a643:3e69:6393])
-        by smtp.googlemail.com with ESMTPSA id u186sm11862848wmu.10.2020.07.16.21.28.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 16 Jul 2020 21:28:02 -0700 (PDT)
-Subject: Re: [PATCH v4 00/16] Allwinner A100 Initial support
-To:     Frank Lee <frank@allwinnertech.com>, robh+dt@kernel.org,
-        mripard@kernel.org, wens@csie.org, mturquette@baylibre.com,
-        sboyd@kernel.org, gregory.clement@bootlin.com, tglx@linutronix.de,
-        jason@lakedaemon.net, maz@kernel.org,
-        srinivas.kandagatla@linaro.org, linus.walleij@linaro.org,
-        anarsoul@gmail.com, tiny.windzz@gmail.com, rui.zhang@intel.com,
-        amit.kucheria@verdurent.com, lee.jones@linaro.org,
-        p.zabel@pengutronix.de, clabbe@baylibre.com, icenowy@aosc.io,
-        megous@megous.com, stefan@olimex.com, bage@linutronix.de,
-        devicetree@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org
-References: <cover.1594708863.git.frank@allwinnertech.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
-Date:   Fri, 17 Jul 2020 06:28:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HYlYHaXrSBXNi0NVDqqqHS+e0SeY67sAsg23gifnEls=;
+        b=oPUx1h2CGIdMi4Fv+HafVD/q3oE785LrHxJIY47MFMeChtni+SXwtcRrFvVCAmzrwg
+         wyK5urfNR9OhqEoDUehyjNEK9IcDjlrRhBDPdiv0P1QfgwAAwNWJ4rfk96mHS1tmE4z/
+         TA6GHuLWwEH5fs0xo8UYvftTycWvBABWa3IhHJPw572UyJYraUXEOSW20mMHoL75ZWzi
+         H8pQkScn+9lHsASh7aejfk5n6uEpqDQFCMGB/srb2AFzASw2yZqkWoobD6fDq2BRRt5X
+         qZDUIvmtqUj8mrCgJ35M8m0EGEoeHvySjHLz29AbuL8cTohYdzoYq3Z7XDlOy8d5C8s6
+         oUaw==
+X-Gm-Message-State: AOAM532G2cMq6JD6mVuAHmILChebia8ZO/M57s2/Z8uLucPI8wL+6wsC
+        AfthNVSgJw7vs7epb8oaY5GJ54LPkTrm2r1gKqk=
+X-Google-Smtp-Source: ABdhPJxQYjnXkfM8fJrQdkfzoCNdIh8vAoQXVxzKyrXC0Fj3imagKRKKoeb6nvJLoOdtJ7W+TxVYoP2s03ArnQ62KTU=
+X-Received: by 2002:aa7:dd10:: with SMTP id i16mr8203210edv.227.1594971522683;
+ Fri, 17 Jul 2020 00:38:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cover.1594708863.git.frank@allwinnertech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <cover.1594708863.git.frank@allwinnertech.com> <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
+In-Reply-To: <ffd5eead-571c-6548-0527-1e685ec869ef@linaro.org>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Fri, 17 Jul 2020 15:38:14 +0800
+Message-ID: <CAEExFWss+KWSDu4VNa8JCkT7QOrgeYCausO0KxkXCbnXE3+-0g@mail.gmail.com>
+Subject: Re: [PATCH v4 00/16] Allwinner A100 Initial support
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Frank Lee <frank@allwinnertech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, gregory.clement@bootlin.com,
+        Thomas Gleixner <tglx@linutronix.de>, jason@lakedaemon.net,
+        Marc Zyngier <maz@kernel.org>,
+        Srini Kandagatla <srinivas.kandagatla@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        "p.zabel" <p.zabel@pengutronix.de>, clabbe@baylibre.com,
+        Icenowy Zheng <icenowy@aosc.io>,
+        =?UTF-8?Q?Ond=C5=99ej_Jirman?= <megous@megous.com>,
+        stefan@olimex.com, bage@linutronix.de,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-i2c@vger.kernel.org,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14/07/2020 08:55, Frank Lee wrote:
-> From: Yangtao Li <frank@allwinnertech.com>
+On Fri, Jul 17, 2020 at 12:28 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 14/07/2020 08:55, Frank Lee wrote:
+> > From: Yangtao Li <frank@allwinnertech.com>
+>
+> Do you expect me to pick patches 7,8,9 or ack them ?
+>
 
-Do you expect me to pick patches 7,8,9 or ack them ?
+Please pick it.
 
-> v4:
-> -drop "dt-bindings: pinctrl: sunxi: make gpio banks supplies required"
-> -fix dcdc1 regulator name
-> -get rid of underscore in dts node name
-> -Some trivial things in yaml files
-> 
-> v3:
-> -Add pmu and nmi support
-> -Add read data mask for calibration
-> -Code style
-> -Some trivial things in yaml files
-> 
-> v2:
-> -Some naming consistency
-> -Repair email address
-> -Fix mmc clock
-> -Don't export system clock
-> -Fix checkpatch warning
-> -Drop unneeded pin function, convert to jtag_gpu and i2s_x
-> 
-> Yangtao Li (16):
->   dt-bindings: clk: sunxi-ccu: add compatible string for A100 CCU and
->     R-CCU
->   clk: sunxi-ng: add support for the Allwinner A100 CCU
->   dt-bindings: pinctrl: sunxi: Get rid of continual nesting
->   dt-bindings: pinctrl: sunxi: Add A100 pinctrl bindings
->   pinctrl: sunxi: add support for the Allwinner A100 pin controller
->   dt-bindings: nvmem: SID: add binding for A100's SID controller
->   dt-bindings: thermal: sun8i: Add binding for A100's THS controller
->   thermal: sun8i: add TEMP_CALIB_MASK for calibration data in
->     sun50i_h6_ths_calibrate
->   thermal: sun8i: Add A100's THS controller support
->   mfd: axp20x: Allow the AXP803 to be probed by I2C
->   dt-bindings: irq: sun7i-nmi: fix dt-binding for a80 nmi
->   dt-bindings: irq: sun7i-nmi: Add binding for A100's NMI controller
->   dt-bindings: i2c: mv64xxx: Add compatible for the A100 i2c node.
->   arm64: allwinner: A100: add the basical Allwinner A100 DTSI file
->   dt-bindings: arm: sunxi: Add Allwinner A100 Perf1 Board bindings
->   arm64: allwinner: A100: add support for Allwinner Perf1 board
-> 
->  .../devicetree/bindings/arm/sunxi.yaml        |    5 +
->  .../clock/allwinner,sun4i-a10-ccu.yaml        |    7 +-
->  .../bindings/i2c/marvell,mv64xxx-i2c.yaml     |    3 +
->  .../allwinner,sun7i-a20-sc-nmi.yaml           |    5 +-
->  .../nvmem/allwinner,sun4i-a10-sid.yaml        |   19 +-
->  .../pinctrl/allwinner,sun4i-a10-pinctrl.yaml  |  139 +-
->  .../thermal/allwinner,sun8i-a83t-ths.yaml     |    6 +-
->  arch/arm64/boot/dts/allwinner/Makefile        |    1 +
->  .../allwinner/sun50i-a100-allwinner-perf1.dts |  180 +++
->  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi |  364 +++++
->  drivers/clk/sunxi-ng/Kconfig                  |   10 +
->  drivers/clk/sunxi-ng/Makefile                 |    2 +
->  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c      |  214 +++
->  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h      |   21 +
->  drivers/clk/sunxi-ng/ccu-sun50i-a100.c        | 1276 +++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-a100.h        |   56 +
->  drivers/mfd/axp20x-i2c.c                      |    2 +
->  drivers/pinctrl/sunxi/Kconfig                 |   10 +
->  drivers/pinctrl/sunxi/Makefile                |    2 +
->  drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c |  105 ++
->  drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c   |  708 +++++++++
->  drivers/thermal/sun8i_thermal.c               |   16 +-
->  include/dt-bindings/clock/sun50i-a100-ccu.h   |  116 ++
->  include/dt-bindings/clock/sun50i-a100-r-ccu.h |   23 +
->  include/dt-bindings/reset/sun50i-a100-ccu.h   |   68 +
->  include/dt-bindings/reset/sun50i-a100-r-ccu.h |   18 +
->  26 files changed, 3308 insertions(+), 68 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
->  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.c
->  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.h
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100-r.c
->  create mode 100644 drivers/pinctrl/sunxi/pinctrl-sun50i-a100.c
->  create mode 100644 include/dt-bindings/clock/sun50i-a100-ccu.h
->  create mode 100644 include/dt-bindings/clock/sun50i-a100-r-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-a100-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun50i-a100-r-ccu.h
-> 
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Thx,
+Yangtao
