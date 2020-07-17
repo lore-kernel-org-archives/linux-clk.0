@@ -6,69 +6,66 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 668F7C433E1
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED4EC433E8
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4A8112070E
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B25602070E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 09:11:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726411AbgGQJKn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jul 2020 05:10:43 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:40853 "EHLO
+        id S1726411AbgGQJLN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jul 2020 05:11:13 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:32769 "EHLO
         relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725912AbgGQJKm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 05:10:42 -0400
+        with ESMTP id S1725912AbgGQJLM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 05:11:12 -0400
 Received: from localhost (lfbn-lyo-1-1676-121.w90-65.abo.wanadoo.fr [90.65.108.121])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id EAC4F100007;
-        Fri, 17 Jul 2020 09:10:36 +0000 (UTC)
-Date:   Fri, 17 Jul 2020 11:10:36 +0200
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 545E4100016;
+        Fri, 17 Jul 2020 09:11:05 +0000 (UTC)
+Date:   Fri, 17 Jul 2020 11:11:05 +0200
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
 To:     Claudiu Beznea <claudiu.beznea@microchip.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         nicolas.ferre@microchip.com, ludovic.desroches@microchip.com,
         bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 02/19] clk: at91: clk-generated: check best_rate against
- ranges
-Message-ID: <20200717091036.GJ3428@piout.net>
+Subject: Re: [PATCH 03/19] clk: at91: clk-sam9x60-pll: fix mul mask
+Message-ID: <20200717091105.GK3428@piout.net>
 References: <1594812267-6697-1-git-send-email-claudiu.beznea@microchip.com>
- <1594812267-6697-3-git-send-email-claudiu.beznea@microchip.com>
+ <1594812267-6697-4-git-send-email-claudiu.beznea@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1594812267-6697-3-git-send-email-claudiu.beznea@microchip.com>
+In-Reply-To: <1594812267-6697-4-git-send-email-claudiu.beznea@microchip.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 15/07/2020 14:24:10+0300, Claudiu Beznea wrote:
-> Check best_rate against available clock ranges.
+On 15/07/2020 14:24:11+0300, Claudiu Beznea wrote:
+> According to datasheet mul mask is on bits 31..24.
 > 
-> Fixes: df70aeef6083 ("clk: at91: add generated clock driver")
+> Fixes: a436c2a447e59 ("clk: at91: add sam9x60 PLL driver")
 > Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 > ---
->  drivers/clk/at91/clk-generated.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/clk/at91/clk-sam9x60-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-> index 995a13133cfb..f8e557e0e1b8 100644
-> --- a/drivers/clk/at91/clk-generated.c
-> +++ b/drivers/clk/at91/clk-generated.c
-> @@ -185,8 +185,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
->  		 __clk_get_name((req->best_parent_hw)->clk),
->  		 req->best_parent_rate);
+> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+> index e699803986e5..3522eae2edd6 100644
+> --- a/drivers/clk/at91/clk-sam9x60-pll.c
+> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
+> @@ -15,7 +15,7 @@
+>  #include "pmc.h"
 >  
-> -	if (best_rate < 0)
-> -		return best_rate;
-> +	if (best_rate < 0 || (gck->range.max && best_rate > gck->range.max))
-> +		return -EINVAL;
+>  #define	PMC_PLL_CTRL0_DIV_MSK	GENMASK(7, 0)
+> -#define	PMC_PLL_CTRL1_MUL_MSK	GENMASK(30, 24)
+> +#define	PMC_PLL_CTRL1_MUL_MSK	GENMASK(31, 24)
 >  
->  	req->rate = best_rate;
->  	return 0;
+>  #define PLL_DIV_MAX		(FIELD_GET(PMC_PLL_CTRL0_DIV_MSK, UINT_MAX) + 1)
+>  #define UPLL_DIV		2
 > -- 
 > 2.7.4
 > 
