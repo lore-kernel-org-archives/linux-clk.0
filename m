@@ -1,101 +1,76 @@
-Return-Path: <SRS0=WyPy=A4=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=+mP3=A6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB87C433E4
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 20:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC516C433E2
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jul 2020 00:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9AF2076D
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jul 2020 20:15:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A84208B3
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jul 2020 00:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BELLA6N9"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rrXDFd0Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbgGQUPx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jul 2020 16:15:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41428 "EHLO
+        id S1726620AbgGSA2h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 18 Jul 2020 20:28:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726771AbgGQUPw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jul 2020 16:15:52 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DC1C0619D2;
-        Fri, 17 Jul 2020 13:15:52 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id f5so14034830ljj.10;
-        Fri, 17 Jul 2020 13:15:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pGSWJ5XYOtcYSjTY3+CBpiz/oD76kPsZM5XqQ8FWvSY=;
-        b=BELLA6N91lnpbdhxonBdgZmBUyrDCvC+AJuWnPbHUjorHWWAiYkP/evijphwa/OX1x
-         YeFlbj6YB5jlGA/fsG/t+r03EL6zRuUjHLPrBtgqliVc7Hd9kL4rYdr0C3PditKj8WBy
-         qAIuJOUr1KOxGJ734crwoBgzpRjKccfHFkAk5Dynfw+Bqi8Ae+vDAP1u5zpLn8PloLNy
-         bfobdnrO2RCG5JyFcQeu0iE5lMepTDkksou970p948VIyFmMq8eEzGQFjw933huhS91P
-         g0jg8ne/+S8kSRtZEaAt57hxW3iSdfrAPuIpMlNqmLEo4rd1yJdBj//WhGUt8tp1T2FY
-         GHpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pGSWJ5XYOtcYSjTY3+CBpiz/oD76kPsZM5XqQ8FWvSY=;
-        b=oiaznSb1W9hlYpkz2GFghp8kFqh/7kaqJcN4VDgWX0/Dw9WXOz/JT8Oj0JIX+5expL
-         yK+g2Onz1U+57FF7NukA6wArorPKmxnG2d+z3KLc0Po0G89hq3DjzLPHUK+ayHa4ZlRR
-         t7x6WTu+IuCFYOR1EP5Jo5cfs5gpz3W0AV8GcffGegwY9tW5nYuKJXas3FnlaLDHEqE2
-         zocQiriOL8jmAg2euF6hUn5cEr7pCrzStljBF0w48GFk0yCSqd/KdX9O0o8MDcFGCNeL
-         s3FTltcuuEnMQMPd8L854cGTaGzGgmnrm5e3Zx2F9HX6ia9rjRPGD8XjnR3q8rn9gyDW
-         oXgQ==
-X-Gm-Message-State: AOAM530jMLrFovQA1wp+QDRVcXQkbsP27W9deSuw/n8D8+8nFdKGGDZJ
-        Y5RFixXTn9njYkLQBYkFfswbKHOj
-X-Google-Smtp-Source: ABdhPJzGg/3QGq9nWf3y7/hzCu0T7c59zBG7m6H4CCp7NGUQevFAgTUsL9a8rwWlbc2nt1kxemJEcA==
-X-Received: by 2002:a2e:978d:: with SMTP id y13mr4982584lji.227.1595016950819;
-        Fri, 17 Jul 2020 13:15:50 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-76-4-184.pppoe.mtu-net.ru. [91.76.4.184])
-        by smtp.googlemail.com with ESMTPSA id g142sm2056988lfd.41.2020.07.17.13.15.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 17 Jul 2020 13:15:50 -0700 (PDT)
-Subject: Re: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        with ESMTP id S1726242AbgGSA2h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jul 2020 20:28:37 -0400
+Received: from merlin.infradead.org (merlin.infradead.org [IPv6:2001:8b0:10b:1231::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AB654C0619D2;
+        Sat, 18 Jul 2020 17:28:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:MIME-Version:
+        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+        Content-Description:In-Reply-To:References;
+        bh=tZPxIcoas50l8hkBX0GX89mPgIztsXYb64qSQgpJmwQ=; b=rrXDFd0Z0cb/pfHFWRBtZ1Pcg9
+        O+j48oso7dP+6yqS2q3srZmbJCA3g824nJ+uz4w2NyQMxwa+sP7j4F73DxPpKmIlh29myxTPQe9Yz
+        DW1SjuCWSsLJLRw03AICQ6hns459tDqDFb8uu2X7A2xF+iHmOb8iakNf200lYPPPL5goolA08C1Ru
+        C38nG7KIgV+PI1EP6BJVXcj3EarDpdGpTWrcoJO2YZqjnQo/rG4V5qCu1wSGGaZc/mMgBaPcrzGLN
+        UQGBRoQzTaEtkki4q12MaVPJh70kGmZRnddLpMbpKDrPD6aEYV7EX6EsGUvXl6hwgSGJQSNErfHcV
+        XqX5ADmw==;
+Received: from [2601:1c0:6280:3f0::19c2] (helo=smtpauth.infradead.org)
+        by merlin.infradead.org with esmtpsa (Exim 4.92.3 #3 (Red Hat Linux))
+        id 1jwxBy-0002h4-7A; Sun, 19 Jul 2020 00:28:34 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20200709172057.13951-1-digetx@gmail.com>
- <997361b8-4466-cdf0-beeb-eedcbeb48597@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <e713d98b-deab-f0e5-6224-6c1f13a37b46@gmail.com>
-Date:   Fri, 17 Jul 2020 23:15:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: <linux/clk-provider.h>: drop a duplicated word
+Date:   Sat, 18 Jul 2020 17:28:30 -0700
+Message-Id: <20200719002830.20319-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.26.2
 MIME-Version: 1.0
-In-Reply-To: <997361b8-4466-cdf0-beeb-eedcbeb48597@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-17.07.2020 19:55, Jon Hunter пишет:
-...
-> I have tested this on Jetson TK1 using u-boot to verify the behaviour
-> and it does indeed work as described here. I have also ran it through
-> the automated testing we have for Tegra and see no immediate issue.
-> Therefore ...
-> 
-> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-> 
-> Thanks!
-> Jon
+Drop the repeated word "not" in a comment.
 
-Awesome, thank you!
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+---
+ include/linux/clk-provider.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- linux-next-20200717.orig/include/linux/clk-provider.h
++++ linux-next-20200717/include/linux/clk-provider.h
+@@ -189,7 +189,7 @@ struct clk_duty {
+  *              and >= numerator) Return 0 on success, otherwise -EERROR.
+  *
+  * @init:	Perform platform-specific initialization magic.
+- *		This is not not used by any of the basic clock types.
++ *		This is not used by any of the basic clock types.
+  *		This callback exist for HW which needs to perform some
+  *		initialisation magic for CCF to get an accurate view of the
+  *		clock. It may also be used dynamic resource allocation is
