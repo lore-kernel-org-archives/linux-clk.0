@@ -7,59 +7,60 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3EFC433E5
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jul 2020 09:41:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90283C433E3
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jul 2020 09:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 689E62176B
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jul 2020 09:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FD8E20729
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jul 2020 09:50:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vUBM16Je"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WVZ4tQJ5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728300AbgGTJl6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jul 2020 05:41:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40018 "EHLO
+        id S1728273AbgGTJu2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jul 2020 05:50:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41328 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbgGTJl5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jul 2020 05:41:57 -0400
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E771C0619D6
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2020 02:41:57 -0700 (PDT)
-Received: by mail-lj1-x241.google.com with SMTP id b25so19495521ljp.6
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2020 02:41:57 -0700 (PDT)
+        with ESMTP id S1728151AbgGTJuZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jul 2020 05:50:25 -0400
+Received: from mail-lf1-x142.google.com (mail-lf1-x142.google.com [IPv6:2a00:1450:4864:20::142])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CACEC0619D5
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2020 02:50:23 -0700 (PDT)
+Received: by mail-lf1-x142.google.com with SMTP id b30so7059518lfj.12
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jul 2020 02:50:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=twhRHN8GmGnSaOWdhFH407w2bJQWN/XspQavxD2E7NU=;
-        b=vUBM16JedblSszCmKcUOtNNCpBXv3CIhGha5f39iVCq+GLQjc1+5sjVAf3MGajt6eb
-         js3i3eEdyXIM2MQPvSQWiAbe6gPeB4YjU2Sab0OH0PF9+7BZ1Hfg3dMIm6fiTGmnLQGE
-         WN52jmOtjrzVTwhA5TpOoRi5fzEqLaC3gBn8SKr5iixPXGEf8j0ueAKU4MbazsVA6aRf
-         FyvYHaaSBU57IPmfcX0ILw4NWbPu9l8TUYzGeGQoqnmJtc7HHBIKatEXj/thpaDFX2WV
-         Aokyu21j7CqO9w7d6xuJ7PUwJIG1UxxaIPnap6CCEB8zRyeuqnRZ3bACsucfj0UgkFkX
-         fSxQ==
+        bh=MRBYG5PaXpmuVbg9IqCWz5FWycJjiWEMOWVv1HmDXEY=;
+        b=WVZ4tQJ5ADD0VQ+bDg36V5Rw5hBx8Ta3ZtG34BvPB1wkriVnL14/C55+iYqW88gidT
+         yuS7kkbQazNWn5AerD3c7VrfVlK9FU6unNzQgm2llxznaIOxln49U9z21eyP590nkPEz
+         asiMTAgG740UxTGJ4JPgq36RnUgEqTOK/qZakOMMReumgojXy8gx80LdAih01rRfJZSX
+         FYkf5sTJFMr9Cu7F2yoTaYRfHdJPGCYm/uLLDLabE5cxErMriyclGImvf6930StLNvtm
+         JHqCwWMLN/iH+1KtdzE6VC90QaUwxOzTvMrUBPKzBOvH3C3Aap6+kZDGrLmHEyedgXhv
+         D1VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=twhRHN8GmGnSaOWdhFH407w2bJQWN/XspQavxD2E7NU=;
-        b=TGAnJBq95lKMzyvbdQFH2w4WfiA77Btxm9j+YjuMD+Rl5I+rFZ7vNNLIPCMdP/bsrp
-         Q1D3gwpIKCx83/DsZjtQkI5L6bzpnLE38+D71x1I2oFxC0XzFwm7xuSEFnSxK12rFE58
-         B9iCcsMeWTWhh8vy6CWTR0aFif2zCfffGjTA/rRmuedMQ0FZ5R5dCF/iofZiL1EI21va
-         kE90q77g4Fajs1xS5VAz9Uh/nzD/dNQlzROb8+CRFVPE/0rv/HnAeDAt64KVx74NoY+r
-         8Vm+RZEukhnHmZSI6gFcnz+JfLgpYvpAZsSwDJ8L7sEK5zikZj6QvnlUJdwD/tJEljMr
-         4y+g==
-X-Gm-Message-State: AOAM531oyN3exp+BBh1SPIcv6Dl8nCB/qB2yqXuMvWB8VZCTsRiLwzVC
-        ReOXt4Z3ml8k8haEsrvIZlkwPoPTBGrrk6TdgL4oOw==
-X-Google-Smtp-Source: ABdhPJzp2xsR54WZ1Ot/7m0WsiusF7Y4zChVz+CNR+5Bym/Dcaq3ISLURbaFVL1WyVZW8pynmK9Y5DvEDxM1d6oFID4=
-X-Received: by 2002:a2e:9b8c:: with SMTP id z12mr10226971lji.35.1595238115661;
- Mon, 20 Jul 2020 02:41:55 -0700 (PDT)
+        bh=MRBYG5PaXpmuVbg9IqCWz5FWycJjiWEMOWVv1HmDXEY=;
+        b=WwyaDnhSHOH+IelV94FxrZxnR/qMGQ8D8WBq44lQsjVLNvTIfiV5u1aIQWEgeQv6d1
+         VAnxy7zrxkx3Xs+Vm9KVJmBwgrbqvDotAC7qsxgJezPXLFxfQQmkW4PzAFdk8NSnZJHE
+         TFzayt/bBq7BVza62ZHENORz0KCWTf2pKn9V9uA9GcOy9F1oQG935RePbPOKuAdN1Pe1
+         wCV3RM7i6JvrOUR+gX6wOH4BAG6HF53bKd4pItnVYF0psjBGcqn141OQeQ9RG3a3A4G3
+         hEWt9KwOjmFCSjJgo/PpTys2IBPH4nbEII/G2GPkHAPYF6Ioxs8KGJvVrH7dN58heAOl
+         Ko4Q==
+X-Gm-Message-State: AOAM533CECIaRNelvGjtdgjQi/JnrIehaumJV8MyUmS7kt48keswOm/U
+        rTbf1qpgi92KOoQAInBhQpSvWpoh6nUOzF+g9adY+g==
+X-Google-Smtp-Source: ABdhPJzD8k7+rJYR6jlVIluELoADRO+Lwj3Vg2NSdUF2/ZwjTWMJBoIuK3PV3zisuEsa8VNsjNqpKgIlpqfu9Tasxp4=
+X-Received: by 2002:ac2:5325:: with SMTP id f5mr10437151lfh.6.1595238621552;
+ Mon, 20 Jul 2020 02:50:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200716022817.30439-1-ansuelsmth@gmail.com> <20200716022817.30439-2-ansuelsmth@gmail.com>
-In-Reply-To: <20200716022817.30439-2-ansuelsmth@gmail.com>
+References: <20200716022817.30439-1-ansuelsmth@gmail.com> <20200716022817.30439-3-ansuelsmth@gmail.com>
+In-Reply-To: <20200716022817.30439-3-ansuelsmth@gmail.com>
 From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Mon, 20 Jul 2020 15:11:44 +0530
-Message-ID: <CAP245DUqvTYENmaxG3rjUn1XrzrmvdFmKG_vaef2BxKL6jY+Rg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/7] ipq806x: gcc: add support for child probe
+Date:   Mon, 20 Jul 2020 15:20:10 +0530
+Message-ID: <CAP245DVBra9hr8-domt9FAoSTqy42DdkMRLeK1fC3WPrRH=HXg@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] drivers: thermal: tsens: try load regmap from
+ parent for 8960
 To:     Ansuel Smith <ansuelsmth@gmail.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -80,31 +81,49 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Thu, Jul 16, 2020 at 7:58 AM Ansuel Smith <ansuelsmth@gmail.com> wrote:
 >
-> Add support for child probing needed for tsens driver that share the
-> seme regs of gcc for this platform.
+> Devices based on 8060 tsens driver (ipq8064) use the reg of the gcc
 
-Typo: same
+typo: 8960
 
-
+> driver. Try to load the regmap of the parent as they share the same
+> regs.
 >
 > Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
 > ---
->  drivers/clk/qcom/gcc-ipq806x.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/thermal/qcom/tsens-8960.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/clk/qcom/gcc-ipq806x.c b/drivers/clk/qcom/gcc-ipq806x.c
-> index a8456e09c44d..d6b7adb4be38 100644
-> --- a/drivers/clk/qcom/gcc-ipq806x.c
-> +++ b/drivers/clk/qcom/gcc-ipq806x.c
-> @@ -3089,7 +3089,7 @@ static int gcc_ipq806x_probe(struct platform_device *pdev)
->         regmap_write(regmap, 0x3cf8, 8);
->         regmap_write(regmap, 0x3d18, 8);
+> diff --git a/drivers/thermal/qcom/tsens-8960.c b/drivers/thermal/qcom/tsens-8960.c
+> index 2a28a5af209e..45788eb3c666 100644
+> --- a/drivers/thermal/qcom/tsens-8960.c
+> +++ b/drivers/thermal/qcom/tsens-8960.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/bitops.h>
+>  #include <linux/regmap.h>
+> +#include <linux/mfd/syscon.h>
+>  #include <linux/thermal.h>
+>  #include "tsens.h"
 >
-> -       return 0;
-> +       return of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
->  }
+> @@ -168,8 +169,17 @@ static int init_8960(struct tsens_priv *priv)
+>         u32 reg_cntl;
 >
->  static struct platform_driver gcc_ipq806x_driver = {
+>         priv->tm_map = dev_get_regmap(priv->dev, NULL);
+> -       if (!priv->tm_map)
+> +       if (!priv->tm_map) {
+> +               struct device *parent = priv->dev->parent;
+> +
+> +               if (parent)
+> +                       priv->tm_map = syscon_node_to_regmap(parent->of_node);
+> +       }
+> +
+> +       if (!priv->tm_map || IS_ERR(priv->tm_map)) {
+> +               dev_err(priv->dev, "failed to get tsens regmap\n");
+>                 return -ENODEV;
+> +       }
+>
+>         /*
+>          * The status registers for each sensor are discontiguous
 > --
 > 2.27.0
 >
