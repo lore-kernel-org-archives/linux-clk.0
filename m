@@ -4,67 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BB7C433E4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 257CDC433E4
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7566C20717
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E95142080D
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595321562;
-	bh=Q1ZLSKyLa/Et2o3NFMWlxp+Ps1RDQcricVDReZ9QMx0=;
+	s=default; t=1595323074;
+	bh=EpFAb27sGLwFNOk1HxhQm+upKgiBrlrxa2Y4c8oI5VA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=yZlMsiz1XKVkgD3boWn7HEdXZ25Hpm4DzAfdsEfpPNSZN8FL1okpDE7+dWoBPtMES
-	 Xqu0PgKVObgH3UoiZtkrEp5vLlbPpmWIJVXOvj/Ibx/7OGNtd7FbT5f/Dt5r1/ykZH
-	 U6HfgNgMS8tqWpwO1huNvtKC9lsKe5psBEw0b+xE=
+	b=qFK7xJkMXJKQMmBnARiTGmbTTXwcnq3uCcisdHe5D52YjO+ILdxF1e91lYmwGBYJ3
+	 Kerpz2XnC8aHxZI46VOPJ/LWxBAU3CmjTHU5t5xq9kGZcASuYq+28ixDwKAjQb6e7m
+	 ZdtdekNYNjUhfb5Nb/xDioGQvc15wxkyJMUlcMEQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728920AbgGUIwm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 04:52:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59794 "EHLO mail.kernel.org"
+        id S1726990AbgGUJRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jul 2020 05:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728872AbgGUIwl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jul 2020 04:52:41 -0400
+        id S1726521AbgGUJRx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jul 2020 05:17:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63A9520720;
-        Tue, 21 Jul 2020 08:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 233DA20792;
+        Tue, 21 Jul 2020 09:17:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595321561;
-        bh=Q1ZLSKyLa/Et2o3NFMWlxp+Ps1RDQcricVDReZ9QMx0=;
+        s=default; t=1595323073;
+        bh=EpFAb27sGLwFNOk1HxhQm+upKgiBrlrxa2Y4c8oI5VA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LduTKLY8lHhVfWHMPNR8LPSe6Bnf2NMjyXB6PwWo22pd2XqH+ztyeuwE1ZF77P51n
-         64312mRz6bjk7dH4jqRoKNIF6h9rasbZ0PC014YF5KBlOH3B2ITbzrMDbI3eMQQxvf
-         fOc4hhfKZP7j3NKcro/BmESw4DCmCfonjozgRof4=
+        b=Ovn/SmP2YnVoi61dJntmTWhISW4wOV7R4MtmL0yhzWkmJvFlGu/OHrkbiLrk1Alf6
+         xlUqVDPk//fntjo5lhOhBspebW8HarT5RUNRwxUh4+V1cSJfdwiz6deSwE7LyGULUM
+         IX0j0Tbew8MoB+I/QJx/qx2DihxwEqxqLb1V30sE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <78d63d97e3a8a8f7a9048b6eec74a9d158578833.1593788312.git.cristian.ciocaltea@gmail.com>
-References: <cover.1593788312.git.cristian.ciocaltea@gmail.com> <78d63d97e3a8a8f7a9048b6eec74a9d158578833.1593788312.git.cristian.ciocaltea@gmail.com>
-Subject: Re: [PATCH v3 6/6] MAINTAINERS: Add reset binding entry for Actions Semi Owl SoCs
+In-Reply-To: <20200719143324.25695-1-trix@redhat.com>
+References: <20200719143324.25695-1-trix@redhat.com>
+Subject: Re: [PATCH] clk: vc5: Fix use after free in vc5_probe
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-actions@lists.infradead.org
-To:     Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>,
-        Cristian Ciocaltea <cristian.ciocaltea@gmail.com>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Jul 2020 01:52:40 -0700
-Message-ID: <159532156078.3847286.3737060041313698787@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tom Rix <trix@redhat.com>
+To:     aford173@gmail.com, marek.vasut@gmail.com, mturquette@baylibre.com,
+        trix@redhat.com
+Date:   Tue, 21 Jul 2020 02:17:52 -0700
+Message-ID: <159532307235.3847286.13486568388676452154@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cristian Ciocaltea (2020-07-03 10:05:12)
-> Add a reset binding entry to match all members of Actions Semi Owl SoCs.
+Quoting trix@redhat.com (2020-07-19 07:33:24)
+> From: Tom Rix <trix@redhat.com>
 >=20
-> Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
+> clang static analysis reports this error
+>=20
+> clk-versaclock5.c:887:3: warning: Use of memory after it is freed
+>   [unix.Malloc]
+>       dev_err(&client->dev, "unable to register %s\n", init.name);
+>       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> A representative problem block of code is
+>=20
+> ret =3D devm_clk_hw_register(&client->dev, &vc5->clk_mux);
+> kfree(init.name);       /* clock framework made a copy of the name */
+> if (ret) {
+>         dev_err(&client->dev, "unable to register %s\n", init.name);
+>         goto err_clk;
+> }
+>=20
+> init.name is freed and then used.
+>=20
+> So reorder the free.
+>=20
+> Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multip=
+le instances")
+>=20
+> Signed-off-by: Tom Rix <trix@redhat.com>
 > ---
 
-Applied to clk-next
+There's another patch on the mailing list for this.
