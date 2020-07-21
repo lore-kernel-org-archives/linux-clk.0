@@ -2,83 +2,116 @@ Return-Path: <SRS0=lm+m=BA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392FAC433E4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:10:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A804C433EC
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2F121702
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04B3D20B1F
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:45:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595317540;
+	bh=97y2zuXcVstRXdOrZNWE3KBD6w2VxtGXrPDl5D3CkIM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=tg/W7cdioFAVj8OsjooxH3Hav+WOsP8NJSF3cITnjFSiLASf84HoaKddFnmB/B6Et
+	 Cmr1dxbh+iDJiXDazmgVIdkVeA4P03m8kKbn6GIUc9zz7NGnE5sgIRc2rwkvoTfbcw
+	 6lesQNypWVQO5x1asvlI2CT6/eEGuW7l8xbDQDOA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728531AbgGUHK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 03:10:26 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:43282 "EHLO ns.iliad.fr"
+        id S1728169AbgGUHpg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jul 2020 03:45:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726995AbgGUHK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jul 2020 03:10:26 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 45954206C3;
-        Tue, 21 Jul 2020 09:10:24 +0200 (CEST)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 0E8F520043;
-        Tue, 21 Jul 2020 09:10:24 +0200 (CEST)
-Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
- <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
- <3fea884b-05d3-ff67-b9fe-41c9b46cf478@free.fr>
- <20200706195758.GA100842@kroah.com>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <23a476f9-8ea3-566e-be5e-5237fb14bb91@free.fr>
-Date:   Tue, 21 Jul 2020 09:10:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.8.0
+        id S1728144AbgGUHpf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jul 2020 03:45:35 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAEFE20792;
+        Tue, 21 Jul 2020 07:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595317534;
+        bh=97y2zuXcVstRXdOrZNWE3KBD6w2VxtGXrPDl5D3CkIM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=WyksoiMLJAFq6dfdIMzZdi/o+mKSI6/xAJigf8NLmNQFNa40UCngkV7mj5gZP8OlV
+         5EhefaL/wrY6DxxzUBcQoifbQ40+G2RTcGzjdcdRlGYssjdiXpUpLq5aG3X6Qdu1Gc
+         B5ktvVZkl+7EMYj/PpL9bRyU8DzvvjOeRZFYy/go=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200706195758.GA100842@kroah.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Jul 21 09:10:24 2020 +0200 (CEST)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1594796050-14511-1-git-send-email-tdas@codeaurora.org>
+References: <1594796050-14511-1-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v0] clk: qcom: gcc: Update disp gpll0 branch for 7180/845
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        evgreen@google.com, Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Tue, 21 Jul 2020 00:45:33 -0700
+Message-ID: <159531753391.3847286.4226820520237148758@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/07/2020 21:57, Greg Kroah-Hartman wrote:
+Quoting Taniya Das (2020-07-14 23:54:10)
+> The display gpll0 branch clock needs to be always left enabled, thus
+> move the clock ops to _aon branch ops.
+>=20
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-> Given the lack of testing of the patch, it doesn't seem wise to add
-> this, right?
+I wanted to apply this but it needs more commit text. Here's the commit
+text I wrote.
 
-You're probably not wrong :)
+clk: qcom: gcc: Make disp gpll0 branch aon for sc7180/sdm845
 
-> Please get some testing, and some more users, and I'll be glad to
-> consider it.
+The display gpll0 branch clock inside GCC needs to always be enabled.
+Otherwise the AHB clk (disp_cc_mdss_ahb_clk_src) for the display clk
+controller (dispcc) will stop clocking while sourcing from gpll0 when
+this branch inside GCC is turned off during unused clk disabling. We can
+never turn this branch off because the AHB clk for the display subsystem
+is needed to read/write any registers inside the display subsystem
+including clk related ones. This makes this branch a really easy way to
+turn off AHB access to the display subsystem and cause all sorts of
+mayhem. Let's just make the clk ops keep the clk enabled forever and
+ignore any attempts to disable this clk so that dispcc access keep
+working.
 
-"Users" == files modified to use the new helper?
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reported-by: Evan Green <evgreen@chromium.org>
+Link: https://lore.kernel.org/r/1594796050-14511-1-git-send-email-tdas@code=
+aurora.org
+Fixes: 17269568f726 ("clk: qcom: Add Global Clock controller (GCC) driver f=
+or SC7180")
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver f=
+or SDM845")
 
-How many files would you suggest? 3? 5? 10?
+> ---
+>  drivers/clk/qcom/gcc-sc7180.c | 2 +-
+>  drivers/clk/qcom/gcc-sdm845.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+> index ca4383e..538677b 100644
+> --- a/drivers/clk/qcom/gcc-sc7180.c
+> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> @@ -1061,7 +1061,7 @@ static struct clk_branch gcc_disp_gpll0_clk_src =3D=
+ {
+>                                 .hw =3D &gpll0.clkr.hw,
+>                         },
+>                         .num_parents =3D 1,
+> -                       .ops =3D &clk_branch2_ops,
+> +                       .ops =3D &clk_branch2_aon_ops,
 
-The idea being to have the helper gain some kind of "critical mass"?
-
-Regards.
+I'm worried that dispcc may probe before GCC and then this branch is
+disabled out of boot. Then we'll try to read dispcc registers to
+determine clk rates and blow up. I hope that doesn't happen and fixing
+it would need this patch plus the usage of PM clks in the dispcc driver.
+I suppose if we run into that problem we can use PM clks to make this
+branch turn on before accessing any dispcc clks.
