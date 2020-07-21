@@ -7,66 +7,72 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07174C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:39:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CC0C433E2
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB142208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:39:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2230F21702
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:40:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595291948;
-	bh=mwZKvG+01y2ShgeBeoa9RMB1Bx/jUGES7yJ7dxJ92wQ=;
+	s=default; t=1595292027;
+	bh=caIJ9UHWFO3j4suipi8fghZYM8epWg2H0L7RuEqQcIU=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=SP0qfiUvDILKAWNcsf9c5Dh0IH1FdUk3zT0rNwgRh3Kmsb3YHFYhl0QwfQIcRx18d
-	 khaWrN5HGCSRNCBCa897E/uk+mSHKB5sCAWaVZVrKk/4GINhFVl8AilljcH4j+JatB
-	 ObRkvYCq0XsF6gYEVe96B2FX/o2G8xSBfqaSPedo=
+	b=y0k0qR8K9bI2Cq+2km47nmL83n0rUqPzSkMvejP6105NA/XPfWoFendqDV9NnRXpc
+	 5ei2joTPrMjl5iyoZJC8mwMrjdfPHad3d1Yz0wpSCOZI4zAgqjq0zPRjBv+I8+mbSH
+	 i4o+yiUx+NQnbpZd87qg9K9qv0MvD+StZ2yqX3KI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728180AbgGUAjC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jul 2020 20:39:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42860 "EHLO mail.kernel.org"
+        id S1728389AbgGUAk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jul 2020 20:40:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728127AbgGUAjB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Jul 2020 20:39:01 -0400
+        id S1728075AbgGUAk0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Jul 2020 20:40:26 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67535208E4;
-        Tue, 21 Jul 2020 00:39:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31205208E4;
+        Tue, 21 Jul 2020 00:40:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595291941;
-        bh=mwZKvG+01y2ShgeBeoa9RMB1Bx/jUGES7yJ7dxJ92wQ=;
+        s=default; t=1595292026;
+        bh=caIJ9UHWFO3j4suipi8fghZYM8epWg2H0L7RuEqQcIU=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=VzsUSpUNum/ISB0NVT4N0zXSNrFlbwDylNiu0lA2s93tr3uqcQ9reMibtCaKNkOqg
-         0S4C+yydEFCUSUtef4oUTdneQZrA/vyxY04FZT2R50Qq5kfE52EWKVCFNCBv4dQwWQ
-         milHt6vZ9gz/gS07LquBtvkKgxIRtTbUzio3VqdA=
+        b=cmDGIiUhgBThryyYmX8DqmDPWalMnfafEwBfZvYql3z0T7HrXhrQBeMUZab3HQ3Hv
+         jzj52a8kzLYivQ4xENV5nZX509Ah28UnHoQkDXs8O18a/YlJvbRl8Hhy1j3Hmt+hCC
+         xVWMcBo1646GQs2+q1rTpdLiBbFwVEcBBZ/rIpKE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1594877570-9280-1-git-send-email-sivaprak@codeaurora.org>
-References: <1594877570-9280-1-git-send-email-sivaprak@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: ipq8074: Add correct index for PCIe clocks
+In-Reply-To: <20200714142155.35085-1-weiyongjun1@huawei.com>
+References: <20200714142155.35085-1-weiyongjun1@huawei.com>
+Subject: Re: [PATCH -next] clk: qcom: msm8996: Make symbol 'cpu_msm8996_clks' static
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Sivaprakash Murugesan <sivaprak@codeaurora.org>
-To:     Sivaprakash Murugesan <sivaprak@codeaurora.org>, agross@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        p.zabel@pengutronix.de, robh+dt@kernel.org
-Date:   Mon, 20 Jul 2020 17:39:00 -0700
-Message-ID: <159529194068.3847286.12937961081804827485@swboyd.mtv.corp.google.com>
+Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Hulk Robot <hulkci@huawei.com>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Date:   Mon, 20 Jul 2020 17:40:25 -0700
+Message-ID: <159529202554.3847286.12960066226968973482@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sivaprakash Murugesan (2020-07-15 22:32:50)
-> The PCIe clocks GCC_PCIE0_AXI_S_BRIDGE_CLK, GCC_PCIE0_RCHNG_CLK_SRC,
-> GCC_PCIE0_RCHNG_CLK are wrongly added to the gcc reset group.
+Quoting Wei Yongjun (2020-07-14 07:21:55)
+> The sparse tool complains as follows:
 >=20
-> Move them to the gcc clock group.
+> drivers/clk/qcom/clk-cpu-8996.c:341:19: warning:
+>  symbol 'cpu_msm8996_clks' was not declared. Should it be static?
 >=20
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
+> This variable is not used outside of clk-cpu-8996.c, so this commit
+> marks it static.
+>=20
+> Fixes: 03e342dc45c9 ("clk: qcom: Add CPU clock driver for msm8996")
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 > ---
 
 Applied to clk-next
