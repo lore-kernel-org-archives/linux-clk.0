@@ -2,77 +2,69 @@ Return-Path: <SRS0=lm+m=BA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41CC0C433E2
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64C4C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2230F21702
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD0421702
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 00:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595292027;
-	bh=caIJ9UHWFO3j4suipi8fghZYM8epWg2H0L7RuEqQcIU=;
+	s=default; t=1595292131;
+	bh=0Vzzc2WL8yErIT2TSICeVJFxNGXmGc+yQnHWxMLFDEo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=y0k0qR8K9bI2Cq+2km47nmL83n0rUqPzSkMvejP6105NA/XPfWoFendqDV9NnRXpc
-	 5ei2joTPrMjl5iyoZJC8mwMrjdfPHad3d1Yz0wpSCOZI4zAgqjq0zPRjBv+I8+mbSH
-	 i4o+yiUx+NQnbpZd87qg9K9qv0MvD+StZ2yqX3KI=
+	b=dVWDicjOeQmsx51f58L3f42dasOU6gLfiVF9qPRcVindx6Dt9mRakFPUSs3GxXSsa
+	 O+cjbA6Rg31Yk4u8PfWOb3ST02uslV68GarZycbnkSEjsuQxDVY+BGEaxCqowh0oW2
+	 k7KJuGTVmLTflodeFT4haUjojhcnnXwfbFIU51c0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728389AbgGUAk0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jul 2020 20:40:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46694 "EHLO mail.kernel.org"
+        id S1726483AbgGUAmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jul 2020 20:42:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728075AbgGUAk0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 20 Jul 2020 20:40:26 -0400
+        id S1726021AbgGUAmL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Jul 2020 20:42:11 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 31205208E4;
-        Tue, 21 Jul 2020 00:40:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D492B208E4;
+        Tue, 21 Jul 2020 00:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595292026;
-        bh=caIJ9UHWFO3j4suipi8fghZYM8epWg2H0L7RuEqQcIU=;
+        s=default; t=1595292130;
+        bh=0Vzzc2WL8yErIT2TSICeVJFxNGXmGc+yQnHWxMLFDEo=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cmDGIiUhgBThryyYmX8DqmDPWalMnfafEwBfZvYql3z0T7HrXhrQBeMUZab3HQ3Hv
-         jzj52a8kzLYivQ4xENV5nZX509Ah28UnHoQkDXs8O18a/YlJvbRl8Hhy1j3Hmt+hCC
-         xVWMcBo1646GQs2+q1rTpdLiBbFwVEcBBZ/rIpKE=
+        b=OYe9rhroqRtt9lPtGJc86RXtJqbqu87hNLFWTPYdbRqk9f5ag1E4LPKgHg7O3V/W5
+         6IxQ+R5Hc+M7Ntfhzqe6CQnfWBr6oRAmAY1pz3oZ4ry5F9QJwI+WJ9bO9FmkNN5LMw
+         IdKdhpBx0dqekhTCmQTpvfxKS3MKadYw0E9riILI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200714142155.35085-1-weiyongjun1@huawei.com>
-References: <20200714142155.35085-1-weiyongjun1@huawei.com>
-Subject: Re: [PATCH -next] clk: qcom: msm8996: Make symbol 'cpu_msm8996_clks' static
+In-Reply-To: <1595253740-29466-1-git-send-email-loic.poulain@linaro.org>
+References: <1595253740-29466-1-git-send-email-loic.poulain@linaro.org>
+Subject: Re: [PATCH v6 0/5] msm8996 CPU scaling support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Wei Yongjun <weiyongjun1@huawei.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Hulk Robot <hulkci@huawei.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Wei Yongjun <weiyongjun1@huawei.com>
-Date:   Mon, 20 Jul 2020 17:40:25 -0700
-Message-ID: <159529202554.3847286.12960066226968973482@swboyd.mtv.corp.google.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        amit.kucheria@linaro.org, bjorn.andersson@linaro.org,
+        robh@kernel.org, Loic Poulain <loic.poulain@linaro.org>
+To:     Loic Poulain <loic.poulain@linaro.org>
+Date:   Mon, 20 Jul 2020 17:42:10 -0700
+Message-ID: <159529213012.3847286.8807565794510072249@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wei Yongjun (2020-07-14 07:21:55)
-> The sparse tool complains as follows:
+Quoting Loic Poulain (2020-07-20 07:02:15)
 >=20
-> drivers/clk/qcom/clk-cpu-8996.c:341:19: warning:
->  symbol 'cpu_msm8996_clks' was not declared. Should it be static?
->=20
-> This variable is not used outside of clk-cpu-8996.c, so this commit
-> marks it static.
->=20
-> Fixes: 03e342dc45c9 ("clk: qcom: Add CPU clock driver for msm8996")
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
-> ---
+> v6:
+>     - Add Acked-by Will tag to l2 kryo accessors patch
 
-Applied to clk-next
+I got this one.
+
+>     - Fix msm8996,apcc dt binding file (errors reported by dt_binding_che=
+ck)
+
+I've already applied v5. Please send incremental patches to fix the
+dt_binding_check problem.
