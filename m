@@ -4,46 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2110FC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E8BC433E3
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F1EEC20720
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC2A20717
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 08:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595321526;
-	bh=bJ2uW6D6yhLSgCBhz8qOnHNLFH8PMXA0mGPxUD6Ro8k=;
+	s=default; t=1595321532;
+	bh=0awrLeVY1QmIe/8JNAHk/JFSY9cKCJZuoJKUMnbhn84=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=bxjPs/RwCGj6u7PsNo6zNjgnEN7ytebNOoNSnJiYpAzFvU1Oo6ZFrpL7uaH62fZkW
-	 AqCBT9dQaiVOmDsKYnBQnUxWUwktuyTsKWjbTNnyX4mACWZsC1zlt3Sgii5M/WshOv
-	 hOgSHDEuXGH9bJkXEt85JT7qiDoOX7rZE+SSXSdg=
+	b=XUyEEK3IJ0ETctpjCQTSQikGIiSSJ1pUiljo8TEPShlAtP6N4sgbJtPcgOPH8qAgn
+	 zdiRRT+MZDEuJMAcAJkaiMe9BZcMH5weTzQpApq15DCGAU+esV9yeMJwyJ/FA1AyqK
+	 iR2hDJPLFw2L/qh23fKVVfRLJdBVRsXvvnzkov5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgGUIwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 04:52:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58956 "EHLO mail.kernel.org"
+        id S1728479AbgGUIwK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jul 2020 04:52:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725984AbgGUIwF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jul 2020 04:52:05 -0400
+        id S1725984AbgGUIwK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jul 2020 04:52:10 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A33020717;
-        Tue, 21 Jul 2020 08:52:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB44120717;
+        Tue, 21 Jul 2020 08:52:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595321525;
-        bh=bJ2uW6D6yhLSgCBhz8qOnHNLFH8PMXA0mGPxUD6Ro8k=;
+        s=default; t=1595321530;
+        bh=0awrLeVY1QmIe/8JNAHk/JFSY9cKCJZuoJKUMnbhn84=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UJiJMQ5qpVOBYBPf+uW8Nt8yAByaphliOCOJqA199uEKd8nlZFNJb+yS16DKJd7xS
-         YEvpevnJ8BcM2hzgprFMJFODbZVtG2ycsc2HtSqRgy5URM/5dD+AOoABagal29+PY3
-         /fM91wZ5kkFCD3G1uAupMV63ULycVbusWbqqDh0g=
+        b=yIv0Qohj30i1ms4SCuGxNflh5C0dIML89BnyKiYJ9Lbi1GdOQbhFfjp5QPRFJ5bLu
+         X0Cd50EPKcht/X16d6CRmfRAqqI27HToF4DiytWFqQiGcOK+3EYdJu51xP74U7S4wU
+         epdFtelzd/5D+XrRgdCqLhVjJ5SbdyFUKVP0Yikw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c57e7ebabfa970014f073b92fe95b47d3e5a70b1.1593788312.git.cristian.ciocaltea@gmail.com>
-References: <cover.1593788312.git.cristian.ciocaltea@gmail.com> <c57e7ebabfa970014f073b92fe95b47d3e5a70b1.1593788312.git.cristian.ciocaltea@gmail.com>
-Subject: Re: [PATCH v3 1/6] clk: actions: Fix h_clk for Actions S500 SoC
+In-Reply-To: <67112af4f5bc0cc5e70ce8410feb369cc72972b8.1593788312.git.cristian.ciocaltea@gmail.com>
+References: <cover.1593788312.git.cristian.ciocaltea@gmail.com> <67112af4f5bc0cc5e70ce8410feb369cc72972b8.1593788312.git.cristian.ciocaltea@gmail.com>
+Subject: Re: [PATCH v3 2/6] dt-bindings: clock: Add APB, DMAC, GPIO bindings for Actions S500 SoC
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
@@ -54,21 +53,19 @@ To:     Andreas =?utf-8?q?F=C3=A4rber?= <afaerber@suse.de>,
         Michael Turquette <mturquette@baylibre.com>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Jul 2020 01:52:04 -0700
-Message-ID: <159532152438.3847286.9241157708889575975@swboyd.mtv.corp.google.com>
+Date:   Tue, 21 Jul 2020 01:52:09 -0700
+Message-ID: <159532152924.3847286.3765680910026512438@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Cristian Ciocaltea (2020-07-03 10:05:07)
-> The h_clk clock in the Actions Semi S500 SoC clock driver has an
-> invalid parent. Replace with the correct one.
+Quoting Cristian Ciocaltea (2020-07-03 10:05:08)
+> Add the missing APB, DMAC and GPIO clock bindings constants for
+> Actions Semi S500 SoC.
 >=20
-> Fixes: ed6b4795ece4 ("clk: actions: Add clock driver for S500 SoC")
 > Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@gmail.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
 
 Applied to clk-next
