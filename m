@@ -7,83 +7,80 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 257CDC433E4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF140C433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E95142080D
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB63B208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 09:19:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595323074;
-	bh=EpFAb27sGLwFNOk1HxhQm+upKgiBrlrxa2Y4c8oI5VA=;
+	s=default; t=1595323187;
+	bh=iWSM5sXQBJiu2/PDHyjMEVSdorbsAd0mMLH0MoE6yL0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=qFK7xJkMXJKQMmBnARiTGmbTTXwcnq3uCcisdHe5D52YjO+ILdxF1e91lYmwGBYJ3
-	 Kerpz2XnC8aHxZI46VOPJ/LWxBAU3CmjTHU5t5xq9kGZcASuYq+28ixDwKAjQb6e7m
-	 ZdtdekNYNjUhfb5Nb/xDioGQvc15wxkyJMUlcMEQ=
+	b=AatbKBBOu1fv7euZZ8tzTHUA/rOTKrV27aae4fCWNNUU0KCo3cVYz/rt6bOXjMynv
+	 8e8ZqslCqpFatMbIS+m+ebh4BZZamfW1JR8+DkZkhhtSC4IbzEXVJGIjjryiRoLgSz
+	 5w16ikS//IMT4TIbLIwIu63+4N2rTQ25qLNlVMUM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbgGUJRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 05:17:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44986 "EHLO mail.kernel.org"
+        id S1726521AbgGUJTm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jul 2020 05:19:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726521AbgGUJRx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jul 2020 05:17:53 -0400
+        id S1728517AbgGUJTm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jul 2020 05:19:42 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 233DA20792;
-        Tue, 21 Jul 2020 09:17:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D32A420792;
+        Tue, 21 Jul 2020 09:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595323073;
-        bh=EpFAb27sGLwFNOk1HxhQm+upKgiBrlrxa2Y4c8oI5VA=;
+        s=default; t=1595323181;
+        bh=iWSM5sXQBJiu2/PDHyjMEVSdorbsAd0mMLH0MoE6yL0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ovn/SmP2YnVoi61dJntmTWhISW4wOV7R4MtmL0yhzWkmJvFlGu/OHrkbiLrk1Alf6
-         xlUqVDPk//fntjo5lhOhBspebW8HarT5RUNRwxUh4+V1cSJfdwiz6deSwE7LyGULUM
-         IX0j0Tbew8MoB+I/QJx/qx2DihxwEqxqLb1V30sE=
+        b=k0PcAnU2G2Dcb1gik0r5DAyFmzIwE1Dgn5Sqp7oV26zQBsqQDyEZtfuN93RIxphym
+         qmoed8RV8WypvdDLOAfmvic2mHeu3sozsWHYBW+Qy7sXJZeIH8BYReZJGQBeKmYcfn
+         PAhJ6YaVqCa1WcZ2uri/3v67UZDVnQQQmnBKSL4g=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200719143324.25695-1-trix@redhat.com>
-References: <20200719143324.25695-1-trix@redhat.com>
-Subject: Re: [PATCH] clk: vc5: Fix use after free in vc5_probe
+In-Reply-To: <20200716122620.4538-1-aford173@gmail.com>
+References: <20200716122620.4538-1-aford173@gmail.com>
+Subject: Re: [PATCH V3] clk: vc5: Add memory check to prevent oops
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tom Rix <trix@redhat.com>
-To:     aford173@gmail.com, marek.vasut@gmail.com, mturquette@baylibre.com,
-        trix@redhat.com
-Date:   Tue, 21 Jul 2020 02:17:52 -0700
-Message-ID: <159532307235.3847286.13486568388676452154@swboyd.mtv.corp.google.com>
+Cc:     dan.carpenter@oracle.com, luca@lucaceresoli.net,
+        aford@beaconembedded.com, Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org
+To:     Adam Ford <aford173@gmail.com>, linux-clk@vger.kernel.org
+Date:   Tue, 21 Jul 2020 02:19:41 -0700
+Message-ID: <159532318111.3847286.6874293188283317151@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting trix@redhat.com (2020-07-19 07:33:24)
-> From: Tom Rix <trix@redhat.com>
+Quoting Adam Ford (2020-07-16 05:26:20)
+> When getting the names of the child nodes, kasprintf is used to
+> allocate memory which is used to create the string for the node
+> name.  Unfortunately, there is no memory check to determine
+> if this allocation fails, it may cause an error when trying
+> to get child node name.
 >=20
-> clang static analysis reports this error
+> This patch will check if the memory allocation fails, and returns
+> and -ENOMEM error instead of blindly moving on.
 >=20
-> clk-versaclock5.c:887:3: warning: Use of memory after it is freed
->   [unix.Malloc]
->       dev_err(&client->dev, "unable to register %s\n", init.name);
->       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> Fixes: 260249f929e8 ("clk: vc5: Enable addition output configurations of =
+the Versaclock")
 >=20
-> A representative problem block of code is
->=20
-> ret =3D devm_clk_hw_register(&client->dev, &vc5->clk_mux);
-> kfree(init.name);       /* clock framework made a copy of the name */
-> if (ret) {
->         dev_err(&client->dev, "unable to register %s\n", init.name);
->         goto err_clk;
-> }
->=20
-> init.name is freed and then used.
->=20
-> So reorder the free.
->=20
-> Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multip=
-le instances")
->=20
-> Signed-off-by: Tom Rix <trix@redhat.com>
+> Suggested-by: Dan Carpenter <dan.carpenter@oracle.com>
+> Signed-off-by: Adam Ford <aford173@gmail.com>
+> Reviewed-by: Luca Ceresoli <luca@lucaceresoli.net>
 > ---
+> V3:   Fix spelling error, and use the style of checking (!variable) inste=
+ad of
+>       (variable =3D=3D NULL)
+>=20
+> V2:   Fix an issue where a goto was going to use an unitialized variable.
 
-There's another patch on the mailing list for this.
+Is the patch from Colin also needed?
+https://lore.kernel.org/r/20200625132736.88832-1-colin.king@canonical.com
