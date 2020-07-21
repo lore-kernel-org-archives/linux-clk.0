@@ -2,73 +2,83 @@ Return-Path: <SRS0=lm+m=BA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D152C433E4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 392FAC433E4
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:10:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8B522C9C
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595315369;
-	bh=tFu8F8n6vWk0A1esQrhBCBky/rSzYMHkaMGFxPk4/LM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=hSe0AhwVLXVTbpcw9DGBwrEpMbT2GLu4lWIoaLWYpacoedvk7XGkcCdnfOjuDe0K+
-	 ZBD3jJ+XxHcDdr6Xl6Q0943wvRdGYhRATH/OJO12YdFIzPFsWUxsIiGofarZgIWDq2
-	 bjcwQsEC7/Nb+mlSCPuomwlw166wiVGz1vbKyshU=
+	by mail.kernel.org (Postfix) with ESMTP id 1F2F121702
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jul 2020 07:10:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbgGUHJ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 03:09:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60782 "EHLO mail.kernel.org"
+        id S1728531AbgGUHK0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jul 2020 03:10:26 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:43282 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726039AbgGUHJZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jul 2020 03:09:25 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65C0721702;
-        Tue, 21 Jul 2020 07:09:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595315365;
-        bh=tFu8F8n6vWk0A1esQrhBCBky/rSzYMHkaMGFxPk4/LM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NkFLC7saeyDppAG2mVH2kQKg5/VJ3L6kCIkPv5uLo/Ne7REzJ8RuVhwPIkIdzt3JH
-         LieWRBAgVyQjJapin35tM7Zf1FEIuvDzYbgnW8RMXcAkDKjB0sAPmmr49kQ9WIq2fT
-         wdRO7WnXyMWCje5jKfFw1j4gpqqYPpyF7cDyNwN4=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200716022817.30439-2-ansuelsmth@gmail.com>
-References: <20200716022817.30439-1-ansuelsmth@gmail.com> <20200716022817.30439-2-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v4 1/7] ipq806x: gcc: add support for child probe
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        id S1726995AbgGUHK0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jul 2020 03:10:26 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 45954206C3;
+        Tue, 21 Jul 2020 09:10:24 +0200 (CEST)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 0E8F520043;
+        Tue, 21 Jul 2020 09:10:24 +0200 (CEST)
+Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-To:     Ansuel Smith <ansuelsmth@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 21 Jul 2020 00:09:24 -0700
-Message-ID: <159531536464.3847286.9536176354576279117@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
+ <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
+ <3fea884b-05d3-ff67-b9fe-41c9b46cf478@free.fr>
+ <20200706195758.GA100842@kroah.com>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <23a476f9-8ea3-566e-be5e-5237fb14bb91@free.fr>
+Date:   Tue, 21 Jul 2020 09:10:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.8.0
+MIME-Version: 1.0
+In-Reply-To: <20200706195758.GA100842@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Jul 21 09:10:24 2020 +0200 (CEST)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Ansuel Smith (2020-07-15 19:28:10)
-> Add support for child probing needed for tsens driver that share the
-> seme regs of gcc for this platform.
->=20
-> Signed-off-by: Ansuel Smith <ansuelsmth@gmail.com>
-> ---
+On 06/07/2020 21:57, Greg Kroah-Hartman wrote:
 
-Applied to clk-next with the typo fix and tag.
+> Given the lack of testing of the patch, it doesn't seem wise to add
+> this, right?
+
+You're probably not wrong :)
+
+> Please get some testing, and some more users, and I'll be glad to
+> consider it.
+
+"Users" == files modified to use the new helper?
+
+How many files would you suggest? 3? 5? 10?
+
+The idea being to have the helper gain some kind of "critical mass"?
+
+Regards.
