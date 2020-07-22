@@ -2,192 +2,199 @@ Return-Path: <SRS0=IXCz=BB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066FCC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 08:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB85C433E0
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 13:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2CA1207BB
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 08:52:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QoY0E53K"
+	by mail.kernel.org (Postfix) with ESMTP id 6C46F20674
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 13:22:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbgGVIwM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jul 2020 04:52:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55874 "EHLO
+        id S1726146AbgGVNWi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jul 2020 09:22:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbgGVIwM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2020 04:52:12 -0400
-Received: from mail-vs1-xe44.google.com (mail-vs1-xe44.google.com [IPv6:2607:f8b0:4864:20::e44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D16C5C0619DC
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2020 01:52:11 -0700 (PDT)
-Received: by mail-vs1-xe44.google.com with SMTP id b77so725245vsd.8
-        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2020 01:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NEeWajGKm67++OZHvKQWCDftAm3bcAVKxtPrqi7rffw=;
-        b=QoY0E53KQa71Upiek8hls/OUvj0kY736e/ocwqNkm2YOTtdVNzipKoaZLp97GBkuXo
-         Doqx2dWTwA1k9lBGn/7NLerRytfAgT+mjd97SgYacmaoVsYhNezaIIUfQQy3+g+Idt8n
-         Bd3KVyo6HEsOuwP1t2w2N/rcxebaONBHw6EFk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NEeWajGKm67++OZHvKQWCDftAm3bcAVKxtPrqi7rffw=;
-        b=qps6wkFDvHxmKltoA/nsT6j/lcDBbv5UOlUd/9PZiD3mcxdKCHCSfrF0y7pC+3es5O
-         jDh1Si+X0diI8wO/6PAUxYk4dEHH6Q2/DyXfRbOU4WHz8oVPYbR3nySrNaD2+4rNzJIX
-         KYOVYPvVGGkIAEaEhoZPL/xCyOfY4hRyOkJCENN0hrn7CmHt6urZGFGv/bljiSk7qziu
-         Po4f0WDZekPyk6wIAv/zODrU8JSk3NXWmlE1vxJsmZlR84HQi5+c54x/fiu0Ift9FhBn
-         Yg9hzcSp12xUAq+5UMLt1QCb8yru9oz/dn1Ct+k8ns34gb2X1HsBtO8z5Ux+oWcXHNYM
-         sNPQ==
-X-Gm-Message-State: AOAM532LmUzRSgb7uCL90bMYCPnZwrZaqn4sIwetPmtzLN3n6ZotgK8S
-        7/aNF/o/KPrvsG2aErLMn6IY/AlNmfYwFKWGKgh7UA==
-X-Google-Smtp-Source: ABdhPJwu+0fS9ZykBs/N5sJKhnQyXgH73i6yXfke4Yx2a9+dxmIhOlX9pBc2nAbsMsa/h4RUUc2ZE+/z8zNUIiSYdSo=
-X-Received: by 2002:a67:e0c3:: with SMTP id m3mr24201706vsl.1.1595407930888;
- Wed, 22 Jul 2020 01:52:10 -0700 (PDT)
+        with ESMTP id S1725878AbgGVNWi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2020 09:22:38 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D9A5C0619DC
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jul 2020 06:22:37 -0700 (PDT)
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1jyEhd-0001tq-EI; Wed, 22 Jul 2020 15:22:33 +0200
+Received: from mtr by ptx.hi.pengutronix.de with local (Exim 4.92)
+        (envelope-from <mtr@pengutronix.de>)
+        id 1jyEhc-00057o-72; Wed, 22 Jul 2020 15:22:32 +0200
+Date:   Wed, 22 Jul 2020 15:22:32 +0200
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
+Cc:     mturquette@baylibre.com, sboyd@codeaurora.org, sboyd@kernel.org,
+        michal.simek@xilinx.com, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, rajanv@xilinx.com, jollys@xilinx.com,
+        tejasp@xilinx.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
+        Tejas Patel <tejas.patel@xilinx.com>
+Subject: Re: [PATCH v2 1/3] clk: zynqmp: Use firmware specific common clock
+ flags
+Message-ID: <20200722132232.GC21264@pengutronix.de>
+References: <1595400932-303612-1-git-send-email-amit.sunil.dhamne@xilinx.com>
+ <1595400932-303612-2-git-send-email-amit.sunil.dhamne@xilinx.com>
 MIME-Version: 1.0
-References: <1595400601-26220-1-git-send-email-weiyi.lu@mediatek.com> <1595400601-26220-4-git-send-email-weiyi.lu@mediatek.com>
-In-Reply-To: <1595400601-26220-4-git-send-email-weiyi.lu@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Wed, 22 Jul 2020 16:51:59 +0800
-Message-ID: <CANMq1KC5i8GU2zMxk+NvY5hF7Qvd-Jx-+pvY2cXfqzb=X-BWRQ@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: mediatek: Add configurable enable control to mtk_pll_data
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        Ikjoon Jang <ikjn@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1595400932-303612-2-git-send-email-amit.sunil.dhamne@xilinx.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL:  http://www.pengutronix.de/
+X-IRC:  #ptxdist @freenode
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-Uptime: 15:06:47 up 153 days, 20:37, 130 users,  load average: 0.14, 0.29,
+ 0.20
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: mtr@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 22, 2020 at 2:50 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
->
-> In all MediaTek PLL design, bit 0 of CON0 register is always
-> the enable bit.
-> However, there's a special case of usbpll on MT8192.
-> The enable bit of usbpll is moved to bit 2 of other register.
-> Add configurable en_reg and base_en_bit for enable control or
-> using the default if without setting in pll data.
->
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+On Tue, 21 Jul 2020 23:55:30 -0700, Amit Sunil Dhamne wrote:
+> From: Rajan Vaja <rajan.vaja@xilinx.com>
+> 
+> Currently firmware passes CCF specific flags to ZynqMP clock driver.
+> So firmware needs to be updated if CCF flags are changed. The firmware
+> should have its own 'flag number space' that is distinct from the
+> common clk framework's 'flag number space'. So define and use ZynqMP
+> specific common clock flags instead of using CCF flags.
+> 
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
+> Signed-off-by: Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
 > ---
->  drivers/clk/mediatek/clk-mtk.h |  2 ++
->  drivers/clk/mediatek/clk-pll.c | 26 ++++++++++++++++++++++----
->  2 files changed, 24 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-> index c3d6756..8bb0b3d 100644
-> --- a/drivers/clk/mediatek/clk-mtk.h
-> +++ b/drivers/clk/mediatek/clk-mtk.h
-> @@ -233,6 +233,8 @@ struct mtk_pll_data {
->         uint32_t pcw_chg_reg;
->         const struct mtk_pll_div_table *div_table;
->         const char *parent_name;
-> +       uint32_t en_reg;
-> +       uint8_t base_en_bit;
->  };
->
->  void mtk_clk_register_plls(struct device_node *node,
-> diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
-> index f440f2cd..b8ccd42 100644
-> --- a/drivers/clk/mediatek/clk-pll.c
-> +++ b/drivers/clk/mediatek/clk-pll.c
-> @@ -44,6 +44,7 @@ struct mtk_clk_pll {
->         void __iomem    *tuner_en_addr;
->         void __iomem    *pcw_addr;
->         void __iomem    *pcw_chg_addr;
-> +       void __iomem    *en_addr;
->         const struct mtk_pll_data *data;
->  };
->
-> @@ -56,7 +57,10 @@ static int mtk_pll_is_prepared(struct clk_hw *hw)
->  {
->         struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
->
-> -       return (readl(pll->base_addr + REG_CON0) & CON0_BASE_EN) != 0;
-> +       if (pll->en_addr)
-> +               return (readl(pll->en_addr) & BIT(pll->data->base_en_bit)) != 0;
-> +       else
-> +               return (readl(pll->base_addr + REG_CON0) & CON0_BASE_EN) != 0;
+>  drivers/clk/zynqmp/clk-gate-zynqmp.c |  4 +++-
+>  drivers/clk/zynqmp/clk-mux-zynqmp.c  |  4 +++-
+>  drivers/clk/zynqmp/clk-zynqmp.h      | 25 +++++++++++++++++++++++++
+>  drivers/clk/zynqmp/clkc.c            | 31 ++++++++++++++++++++++++++++++-
+>  drivers/clk/zynqmp/divider.c         |  5 +++--
+>  drivers/clk/zynqmp/pll.c             |  4 +++-
+>  6 files changed, 67 insertions(+), 6 deletions(-)
+> 
+[snip]
+> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+> index db8d0d7..11351f6 100644
+> --- a/drivers/clk/zynqmp/clkc.c
+> +++ b/drivers/clk/zynqmp/clkc.c
+> @@ -271,6 +271,32 @@ static int zynqmp_pm_clock_get_topology(u32 clock_id, u32 index,
+>         return ret;
 >  }
->
->  static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
-> @@ -251,6 +255,12 @@ static int mtk_pll_prepare(struct clk_hw *hw)
->         r |= pll->data->en_mask;
->         writel(r, pll->base_addr + REG_CON0);
->
+> 
+> +void zynqmp_clk_map_common_ccf_flags(const u32 zynqmp_flag,
+> +                                    unsigned long *ccf_flag)
+> +{
+> +       *ccf_flag = 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_SET_RATE_GATE) ?
+> +                     CLK_SET_RATE_GATE : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_SET_PARENT_GATE) ?
+> +                     CLK_SET_PARENT_GATE : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_SET_RATE_PARENT) ?
+> +                     CLK_SET_RATE_PARENT : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_IGNORE_UNUSED) ?
+> +                     CLK_IGNORE_UNUSED : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_GET_RATE_NOCACHE) ?
+> +                     CLK_GET_RATE_NOCACHE : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_SET_RATE_NO_REPARENT) ?
+> +                     CLK_SET_RATE_NO_REPARENT : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_GET_ACCURACY_NOCACHE) ?
+> +                     CLK_GET_ACCURACY_NOCACHE : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_RECALC_NEW_RATES) ?
+> +                     CLK_RECALC_NEW_RATES : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_SET_RATE_UNGATE) ?
+> +                     CLK_SET_RATE_UNGATE : 0;
+> +       *ccf_flag |= (zynqmp_flag & ZYNQMP_CLK_IS_CRITICAL) ?
+> +                     CLK_IS_CRITICAL : 0;
+> +}
 
-This is not a new change, but I'm wondering if the asymmetry is
-intentional here, that is, prepare sets bit pll->data->en_mask of
-REG_CON0; unprepare clears CON0_BASE_EN of REG_CON0.
+What is the reason for returning the resulting flags via pointer? I would have
+expected something like the following function:
 
-With this patch, if pll->en_addr is set, you set both
-pll->data->en_mask _and_ pll->data->base_en_bit, and clear only
-pll->data->base_en_bit.
+unsigned long zynqmp_clk_flags_to_clk_flags(const u32 zyqnmp_flags)
+{
+	unsigned long flags = 0;
 
-> +       if (pll->en_addr) {
-> +               r = readl(pll->en_addr);
-> +               r |= BIT(pll->data->base_en_bit);
-> +               writel(r, pll->en_addr);
-> +       }
-> +
->         __mtk_pll_tuner_enable(pll);
->
->         udelay(20);
-> @@ -277,9 +287,15 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
->
->         __mtk_pll_tuner_disable(pll);
->
-> -       r = readl(pll->base_addr + REG_CON0);
-> -       r &= ~CON0_BASE_EN;
-> -       writel(r, pll->base_addr + REG_CON0);
-> +       if (pll->en_addr) {
-> +               r = readl(pll->en_addr);
-> +               r &= ~BIT(pll->data->base_en_bit);
-> +               writel(r, pll->en_addr);
-> +       } else {
-> +               r = readl(pll->base_addr + REG_CON0);
-> +               r &= ~CON0_BASE_EN;
-> +               writel(r, pll->base_addr + REG_CON0);
-> +       }
->
->         r = readl(pll->pwr_addr) | CON0_ISO_EN;
->         writel(r, pll->pwr_addr);
-> @@ -321,6 +337,8 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
->                 pll->tuner_addr = base + data->tuner_reg;
->         if (data->tuner_en_reg)
->                 pll->tuner_en_addr = base + data->tuner_en_reg;
-> +       if (data->en_reg)
-> +               pll->en_addr = base + data->en_reg;
+	if (zynqmp_flag & ZYNQMP_CLK_SET_RATE_GATE)
+		flags |= CLK_SET_RATE_GATE;
+	/* ... */
 
-If the answer to my question above holds (asymmetry is not
-intentional), this patch/the code could be simplified a lot if you
-also added a pll->en_bit member, and, here, did this:
-
-if (pll->en_reg) {
-   pll->en_addr = base + data->en_reg;
-   pll->end_bit = data->en_bit;
-} else {
-   pll->en_addr = pll->base_addr + REG_CON0;
-   pll->en_bit = CON0_BASE_EN;
+	return flags;
 }
 
->         pll->hw.init = &init;
->         pll->data = data;
->
+Michael
+
+> +
+>  /**
+>   * zynqmp_clk_register_fixed_factor() - Register fixed factor with the
+>   *                                     clock framework
+> @@ -292,6 +318,7 @@ struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
+>         struct zynqmp_pm_query_data qdata = {0};
+>         u32 ret_payload[PAYLOAD_ARG_CNT];
+>         int ret;
+> +       unsigned long flag;
+> 
+>         qdata.qid = PM_QID_CLOCK_GET_FIXEDFACTOR_PARAMS;
+>         qdata.arg1 = clk_id;
+> @@ -303,9 +330,11 @@ struct clk_hw *zynqmp_clk_register_fixed_factor(const char *name, u32 clk_id,
+>         mult = ret_payload[1];
+>         div = ret_payload[2];
+> 
+> +       zynqmp_clk_map_common_ccf_flags(nodes->flag, &flag);
+> +
+>         hw = clk_hw_register_fixed_factor(NULL, name,
+>                                           parents[0],
+> -                                         nodes->flag, mult,
+> +                                         flag, mult,
+>                                           div);
+> 
+>         return hw;
+> diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> index 66da02b..3ab57d9 100644
+> --- a/drivers/clk/zynqmp/divider.c
+> +++ b/drivers/clk/zynqmp/divider.c
+> @@ -311,8 +311,9 @@ struct clk_hw *zynqmp_clk_register_divider(const char *name,
+> 
+>         init.name = name;
+>         init.ops = &zynqmp_clk_divider_ops;
+> -       /* CLK_FRAC is not defined in the common clk framework */
+> -       init.flags = nodes->flag & ~CLK_FRAC;
+> +
+> +       zynqmp_clk_map_common_ccf_flags(nodes->flag, &init.flags);
+> +
+>         init.parent_names = parents;
+>         init.num_parents = 1;
+> 
+> diff --git a/drivers/clk/zynqmp/pll.c b/drivers/clk/zynqmp/pll.c
+> index 92f449e..1b7e231 100644
+> --- a/drivers/clk/zynqmp/pll.c
+> +++ b/drivers/clk/zynqmp/pll.c
+> @@ -302,7 +302,9 @@ struct clk_hw *zynqmp_clk_register_pll(const char *name, u32 clk_id,
+> 
+>         init.name = name;
+>         init.ops = &zynqmp_pll_ops;
+> -       init.flags = nodes->flag;
+> +
+> +       zynqmp_clk_map_common_ccf_flags(nodes->flag, &init.flags);
+> +
+>         init.parent_names = parents;
+>         init.num_parents = 1;
+> 
 > --
-> 1.8.1.1.dirty
+> 2.7.4
+> 
+> This email and any attachments are intended for the sole use of the named recipient(s) and contain(s) confidential information that may be proprietary, privileged or copyrighted under applicable law. If you are not the intended recipient, do not read, copy, or forward this email message or any attachments. Delete this email message and any attachments immediately.
+> 
