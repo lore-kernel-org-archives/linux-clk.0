@@ -2,88 +2,153 @@ Return-Path: <SRS0=IXCz=BB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MIME_BASE64_TEXT,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4600AC433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 02:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45D6CC433E2
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 06:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 29D3F2073A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 02:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16AA020658
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jul 2020 06:50:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PV0tCjcu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731621AbgGVCkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jul 2020 22:40:03 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:42974 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731614AbgGVCkD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jul 2020 22:40:03 -0400
-X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Tue, 21 Jul 2020 22:40:02 EDT
-Received: from localhost (unknown [192.168.167.13])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 184F0B01D2;
-        Wed, 22 Jul 2020 10:32:35 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-ABS-CHECKED: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P17843T139821074855680S1595385153515891_;
-        Wed, 22 Jul 2020 10:32:35 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <0e840a0189b44ddac21ac488ab1df301>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-From:   Elaine Zhang <zhangqing@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v1] clk: Export __clk_lookup()
-Date:   Wed, 22 Jul 2020 10:32:30 +0800
-Message-Id: <20200722023230.10826-1-zhangqing@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729627AbgGVGuL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jul 2020 02:50:11 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:43035 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728063AbgGVGuK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2020 02:50:10 -0400
+X-UUID: 1bffc80f5520479f90316bc62bff59b2-20200722
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=fG7DIePecIW+cwodnHQEQ2JNbYq/qFq9wVah4koGVsE=;
+        b=PV0tCjcuiZBMSU8oD6glfPMW8Dm98eTrsN3d/FJAAIagjqoUQkkCK1rfXsFlSdApVm1QkfoxSuvMPbvGLXHu8mnGZUtHJEVw1YVn/+o9/T/IZ88q1S/VXH8EObkMgNy/flb4c0jHYFNuE9XYTft2p0IeIJFgSkSSaLhycOA9JA8=;
+X-UUID: 1bffc80f5520479f90316bc62bff59b2-20200722
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1222609477; Wed, 22 Jul 2020 14:50:04 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Wed, 22 Jul 2020 14:50:02 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Wed, 22 Jul 2020 14:50:02 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, Weiyi Lu <weiyi.lu@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>
+Subject: [PATCH 0/4] Mediatek MT8192 clock and scpsys support 
+Date:   Wed, 22 Jul 2020 14:49:57 +0800
+Message-ID: <1595400601-26220-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
+MIME-Version: 1.0
+Content-Type: text/plain
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Export __clk_lookup() to support user built as module.
-
-ERROR:
-drivers/clk/rockchip/clk.ko: In function
-`rockchip_clk_protect_critical':
-drivers/clk/rockchip/clk.c:741:
-undefined reference to `__clk_lookup'
-
-Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
----
- drivers/clk/clk.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 3f588ed06ce3..600284fbb257 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -618,6 +618,7 @@ struct clk *__clk_lookup(const char *name)
- 
- 	return !core ? NULL : core->hw->clk;
- }
-+EXPORT_SYMBOL_GPL(__clk_lookup);
- 
- static void clk_core_get_boundaries(struct clk_core *core,
- 				    unsigned long *min_rate,
--- 
-2.17.1
-
-
+VGhpcyBzZXJpZXMgaXMgYmFzZWQgb24gdjUuOC1yYzENCg0KV2VpeWkgTHUgKDQpOg0KICBkdC1i
+aW5kaW5nczogQVJNOiBNZWRpYXRlazogRG9jdW1lbnQgYmluZGluZ3MgZm9yIE1UODE5Mg0KICBj
+bGs6IG1lZGlhdGVrOiBBZGQgZHQtYmluZGluZ3MgZm9yIE1UODE5MiBjbG9ja3MNCiAgY2xrOiBt
+ZWRpYXRlazogQWRkIGNvbmZpZ3VyYWJsZSBlbmFibGUgY29udHJvbCB0byBtdGtfcGxsX2RhdGEN
+CiAgY2xrOiBtZWRpYXRlazogQWRkIE1UODE5MiBjbG9jayBzdXBwb3J0DQoNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLGFwbWl4ZWRzeXMudHh0ICAgICAgfCAgICAxICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGF1ZHN5cy50eHQgfCAgICAxICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLGNhbXN5cy1yYXcueWFtbCAgICAgfCAgIDQwICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGNhbXN5cy50eHQgfCAgICAxICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGltZ3N5cy50eHQgfCAgICAyICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLGltcF9paWNfd3JhcC55YW1sICAgfCAgIDQzICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLGluZnJhY2ZnLnR4dCAgICAgICAgfCAgICAxICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLGlwZXN5cy50eHQgfCAgICAxICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLG1kcHN5cy55YW1sICAgICAgICAgfCAgIDM4ICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLG1mZ2NmZy50eHQgfCAgICAxICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLG1tc3lzLnR4dCAgfCAgICAxICsNCiAuLi4vYmluZGlu
+Z3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLG1zZGMueWFtbCAgfCAgIDM5ICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHBlcmljZmcueWFtbCAgICAgICAgfCAgICAxICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHNjcC1hZHNwLnlhbWwgICAgICAgfCAgIDM4ICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHRvcGNrZ2VuLnR4dCAgICAgICAgfCAgICAxICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHZkZWNzeXMtc29jLnlhbWwgICAgfCAgIDM4ICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHZkZWNzeXMudHh0ICAgICAgICAgfCAgICAxICsNCiAuLi4vYXJtL21l
+ZGlhdGVrL21lZGlhdGVrLHZlbmNzeXMudHh0ICAgICAgICAgfCAgICAxICsNCiBkcml2ZXJzL2Ns
+ay9tZWRpYXRlay9LY29uZmlnICAgICAgICAgICAgICAgICAgfCAgMTQ2ICsrDQogZHJpdmVycy9j
+bGsvbWVkaWF0ZWsvTWFrZWZpbGUgICAgICAgICAgICAgICAgIHwgICAyNCArDQogZHJpdmVycy9j
+bGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi1hdWQuYyAgICAgICAgIHwgIDE1MCArKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItY2FtLmMgICAgICAgICB8ICAgNjkgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItY2FtX3Jhd2EuYyAgICB8ICAgNTYgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItY2FtX3Jhd2IuYyAgICB8ICAgNTYgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItY2FtX3Jhd2MuYyAgICB8ICAgNTYgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItaW1nLmMgICAgICAgICB8ICAgNTcgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItaW1nMi5jICAgICAgICB8ICAgNTkgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfYy5jICB8ICAgNjEgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfZS5jICB8ICAgNTUgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfbi5jICB8ICAgNTcgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfcy5jICB8ICAgNTkgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfdy5jICB8ICAgNTUgKw0KIC4uLi9jbGsv
+bWVkaWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfd3MuYyB8ICAgNTkgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItaXBlLmMgICAgICAgICB8ICAgNjEgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItbWRwLmMgICAgICAgICB8ICAgODkgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItbWZnLmMgICAgICAgICB8ICAgNTQgKw0KIGRyaXZlcnMv
+Y2xrL21lZGlhdGVrL2Nsay1tdDgxOTItbW0uYyAgICAgICAgICB8ICAxMDggKysNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLW1zZGMuYyAgICAgICAgfCAgIDU0ICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLW1zZGNfdG9wLmMgICAgfCAgIDgzICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLXNjcF9hZHNwLmMgICAgfCAgIDU1ICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLXZkZWMuYyAgICAgICAgfCAgIDgxICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLXZkZWNfc29jLmMgICAgfCAgIDg2ICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLXZlbmMuYyAgICAgICAgfCAgIDU3ICsNCiBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLmMgICAgICAgICAgICAgfCAxNTQ5ICsrKysrKysrKysr
+KysrKysrDQogZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ay5oICAgICAgICAgICAgICAgIHwg
+ICAgMiArDQogZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW11eC5oICAgICAgICAgICAgICAgIHwg
+ICAxNSArDQogZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLXBsbC5jICAgICAgICAgICAgICAgIHwg
+ICAyNiArLQ0KIGluY2x1ZGUvZHQtYmluZGluZ3MvY2xvY2svbXQ4MTkyLWNsay5oICAgICAgICB8
+ICA1OTMgKysrKysrKw0KIDQ4IGZpbGVzIGNoYW5nZWQsIDQxNzcgaW5zZXJ0aW9ucygrKSwgNCBk
+ZWxldGlvbnMoLSkNCiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL2FybS9tZWRpYXRlay9tZWRpYXRlayxjYW1zeXMtcmF3LnlhbWwNCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2FybS9tZWRpYXRl
+ay9tZWRpYXRlayxpbXBfaWljX3dyYXAueWFtbA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLG1kcHN5cy55
+YW1sDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssbXNkYy55YW1sDQogY3JlYXRlIG1vZGUgMTAwNjQ0IERv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9hcm0vbWVkaWF0ZWsvbWVkaWF0ZWssc2Nw
+LWFkc3AueWFtbA0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvYXJtL21lZGlhdGVrL21lZGlhdGVrLHZkZWNzeXMtc29jLnlhbWwNCiBjcmVhdGUg
+bW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi1hdWQuYw0KIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWNhbS5jDQogY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxOTItY2FtX3Jhd2Eu
+Yw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWNh
+bV9yYXdiLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10
+ODE5Mi1jYW1fcmF3Yy5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVr
+L2Nsay1tdDgxOTItaW1nLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0
+ZWsvY2xrLW10ODE5Mi1pbWcyLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVk
+aWF0ZWsvY2xrLW10ODE5Mi1pbXBfaWljX3dyYXBfYy5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRy
+aXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxOTItaW1wX2lpY193cmFwX2UuYw0KIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWltcF9paWNfd3JhcF9u
+LmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi1p
+bXBfaWljX3dyYXBfcy5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVr
+L2Nsay1tdDgxOTItaW1wX2lpY193cmFwX3cuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJz
+L2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLWltcF9paWNfd3JhcF93cy5jDQogY3JlYXRlIG1vZGUg
+MTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxOTItaXBlLmMNCiBjcmVhdGUgbW9k
+ZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi1tZHAuYw0KIGNyZWF0ZSBt
+b2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLW1mZy5jDQogY3JlYXRl
+IG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdDgxOTItbW0uYw0KIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLW1zZGMuYw0KIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstbXQ4MTkyLW1zZGNfdG9w
+LmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ODE5Mi1z
+Y3BfYWRzcC5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1t
+dDgxOTItdmRlYy5jDQogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvY2xrL21lZGlhdGVrL2Ns
+ay1tdDgxOTItdmRlY19zb2MuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9tZWRp
+YXRlay9jbGstbXQ4MTkyLXZlbmMuYw0KIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Nsay9t
+ZWRpYXRlay9jbGstbXQ4MTkyLmMNCiBjcmVhdGUgbW9kZSAxMDA2NDQgaW5jbHVkZS9kdC1iaW5k
+aW5ncy9jbG9jay9tdDgxOTItY2xrLmgNCg==
 
