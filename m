@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA2BC433E4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:02:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C313C433DF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3B97720825
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:02:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F221120825
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595541760;
-	bh=WeMikeg6ofixp6NBFhoy5bfS7HNgTm+RGxzfvUECVfY=;
+	s=default; t=1595543611;
+	bh=WF8mlF9JUGL2cs4cpi3ZKKPA3OgwnP2OybBvA3TvbJg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=oPmAtqIZQCj/Ct5fOEmcc1Gsmqtr0cbBtEC5abQ9r/EZRvUL22X1NBxxr+eDcb3eU
-	 Hp1iC1foRAD05QUnwjmx0HsMFR+B7dGR3dQRG2mRiSVJS/+Np2Ay6IPr29VI4Zqa19
-	 XMf0BlZMa+Op6T3Ty/t65joE+Jj9gk9QAE9QdJDw=
+	b=SocO+2vkpUWJrAjy94reLspT670AZg3k3YBaGz6kHfurF4me62yVVsYyl1ZPq1CBy
+	 LQR53mahbAdKTxgqhXqwPT4J9aMbqHCZyQApoVPkFEjogPg6vSKr2W0x0c3HjJ4pKZ
+	 4I2VJ1UTeKSUY0j/MNGknArLRQ56Zk/rM5n3HltY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726814AbgGWWCk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 18:02:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
+        id S1726603AbgGWWda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 18:33:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726626AbgGWWCj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jul 2020 18:02:39 -0400
+        id S1726535AbgGWWda (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jul 2020 18:33:30 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 694EC206E3;
-        Thu, 23 Jul 2020 22:02:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16E9D20792;
+        Thu, 23 Jul 2020 22:33:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595541759;
-        bh=WeMikeg6ofixp6NBFhoy5bfS7HNgTm+RGxzfvUECVfY=;
+        s=default; t=1595543610;
+        bh=WF8mlF9JUGL2cs4cpi3ZKKPA3OgwnP2OybBvA3TvbJg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=2rSSwZIQICf7uvagVtAAzHxSdYUlX3lD/9+u31ahKUhK8QBtRdx3klTaJshvLPm41
-         1MF0lRq0heIeWb/7A09uthR4Kkdd22pI1mDiCQ0LjjXgl3l5XBMBBLj5O94qQKZaGR
-         Tz6QQECMBKLCIgbWkiTTuFqjoHfojqdkAC4UgfQY=
+        b=mJr1+HRWLfkrqqZcBv8z30Je6pG4jNh5uzBMOy4RhGdliXHNhgFtEtP1SR8/Kt31q
+         XmFqNonGAJnq7OE7TDsXe9aXRfz24F8JdXpZH5xPP6ABL0CdwsMG/yuzN7SpkVKTVc
+         jtwNxowBR3cpm26u9p+xxwcKLFQBTbPn+TiDFIdg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
-References: <20200626115433.125735-1-maxime@cerno.tech> <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
+In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
+References: <20200626115433.125735-1-maxime@cerno.tech>
 Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-rpi-kernel@lists.infradead.org,
@@ -49,41 +49,32 @@ Cc:     linux-rpi-kernel@lists.infradead.org,
         Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+        devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>
 To:     Maxime Ripard <maxime@cerno.tech>,
         Mike Turquette <mturquette@baylibre.com>,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Date:   Thu, 23 Jul 2020 15:02:38 -0700
-Message-ID: <159554175871.3847286.8845916048990320661@swboyd.mtv.corp.google.com>
+Date:   Thu, 23 Jul 2020 15:33:29 -0700
+Message-ID: <159554360936.3847286.15475733339258269501@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-07-23 08:44:21)
-> Hi Stephen, Mike,
+Quoting Maxime Ripard (2020-06-26 04:54:33)
+> The RaspberryPi firmware binding uses two compatible, include simple-bus.
+> The select statement generated by default will thus select any node that
+> has simple-bus, not all of them being the raspberrypi firmware node.
 >=20
-> On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
-> > The RaspberryPi firmware binding uses two compatible, include simple-bu=
-s.
-> > The select statement generated by default will thus select any node that
-> > has simple-bus, not all of them being the raspberrypi firmware node.
-> >=20
-> > This results in warnings being wrongfully reported. Let's add a custom
-> > select statement to fix that.
-> >=20
-> > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware b=
-inding to YAML")
-> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> >
-> > ---
-> >
-> > The original binding has been merged through the clock tree, so it shou=
-ld
-> > be merged there.
+> This results in warnings being wrongfully reported. Let's add a custom
+> select statement to fix that.
 >=20
-> Could you apply that patch to clk-next?
+> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware bin=
+ding to YAML")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 >=20
+> ---
 
-Rob has an unresolved comment on this patch.
+Applied to clk-next but I had to fix the fixes tag.
