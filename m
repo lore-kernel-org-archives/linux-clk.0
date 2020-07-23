@@ -4,97 +4,86 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6A0C433E3
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 20:05:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA2BC433E4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:02:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 85614206F4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 20:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B97720825
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595534701;
-	bh=Sn6HoDY8PicNwWAOK0JVC4PUBrZWa9HKEhiZGKOtMwY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=g66xePXWedzmpItwfFNTKHHiPddd6iVUoA8EGZ5+KLQX3Hzb6GLwFLspzYgtqrGr3
-	 F3Bp7tt/ZcQLQPxIOV6yh1HaZqudDxlRwnGWaNJd8PDF9nRuww7oJBakRNgwFlhtth
-	 JsDTIMXXaOgHgx8f59KtLskVyrN4ARYxqEgfd0RA=
+	s=default; t=1595541760;
+	bh=WeMikeg6ofixp6NBFhoy5bfS7HNgTm+RGxzfvUECVfY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=oPmAtqIZQCj/Ct5fOEmcc1Gsmqtr0cbBtEC5abQ9r/EZRvUL22X1NBxxr+eDcb3eU
+	 Hp1iC1foRAD05QUnwjmx0HsMFR+B7dGR3dQRG2mRiSVJS/+Np2Ay6IPr29VI4Zqa19
+	 XMf0BlZMa+Op6T3Ty/t65joE+Jj9gk9QAE9QdJDw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbgGWUFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 16:05:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59204 "EHLO mail.kernel.org"
+        id S1726814AbgGWWCk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 18:02:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725894AbgGWUFA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jul 2020 16:05:00 -0400
-Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726626AbgGWWCj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jul 2020 18:02:39 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 381B520714;
-        Thu, 23 Jul 2020 20:05:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 694EC206E3;
+        Thu, 23 Jul 2020 22:02:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595534700;
-        bh=Sn6HoDY8PicNwWAOK0JVC4PUBrZWa9HKEhiZGKOtMwY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=tdpfEy9/TuIlS1miYHevyg9cFfjUVIr0SMqJq3V1o5s1ty72i5pH3W7BATMwjL2qR
-         Ib52wGUhvGVSBQFyd2dBJOzs2aeT6bplY7LIfFOL7tiTfABk9SHywBqtfi0BlxwOPj
-         XySoNw2DeQ1PxhTshuc5XVW3TUx/R8VxVQXiWNyE=
-Received: by mail-oi1-f174.google.com with SMTP id k6so6088928oij.11;
-        Thu, 23 Jul 2020 13:05:00 -0700 (PDT)
-X-Gm-Message-State: AOAM5334jPcNVV4k0CzZEuB1YYAuP2lqAN9VQCKbJc80njn4b2CV+l/n
-        65TyONzxVip/ujEurzsC5Y3XWidyjaRdCEF18g==
-X-Google-Smtp-Source: ABdhPJwWExdLUboZbuKY45/47MrATnklTefnT1gGZt8ZndUCAi2L0lI0a9kQ51jX4lZbOJsqfWsizPieoSOvViwRY8M=
-X-Received: by 2002:aca:bb82:: with SMTP id l124mr5467888oif.106.1595534699564;
- Thu, 23 Jul 2020 13:04:59 -0700 (PDT)
+        s=default; t=1595541759;
+        bh=WeMikeg6ofixp6NBFhoy5bfS7HNgTm+RGxzfvUECVfY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=2rSSwZIQICf7uvagVtAAzHxSdYUlX3lD/9+u31ahKUhK8QBtRdx3klTaJshvLPm41
+         1MF0lRq0heIeWb/7A09uthR4Kkdd22pI1mDiCQ0LjjXgl3l5XBMBBLj5O94qQKZaGR
+         Tz6QQECMBKLCIgbWkiTTuFqjoHfojqdkAC4UgfQY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20200626115433.125735-1-maxime@cerno.tech> <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
+Content-Transfer-Encoding: quoted-printable
 In-Reply-To: <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 23 Jul 2020 14:04:48 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLJGdxh4Taf5bSdh2+QvjhHsBvygeAS8nUp+hGf2uqTOg@mail.gmail.com>
-Message-ID: <CAL_JsqLJGdxh4Taf5bSdh2+QvjhHsBvygeAS8nUp+hGf2uqTOg@mail.gmail.com>
+References: <20200626115433.125735-1-maxime@cerno.tech> <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
 Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
-To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Frank Rowand <frowand.list@gmail.com>,
         devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Thu, 23 Jul 2020 15:02:38 -0700
+Message-ID: <159554175871.3847286.8845916048990320661@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 23, 2020 at 9:44 AM Maxime Ripard <maxime@cerno.tech> wrote:
->
+Quoting Maxime Ripard (2020-07-23 08:44:21)
 > Hi Stephen, Mike,
->
+>=20
 > On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
-> > The RaspberryPi firmware binding uses two compatible, include simple-bus.
+> > The RaspberryPi firmware binding uses two compatible, include simple-bu=
+s.
 > > The select statement generated by default will thus select any node that
 > > has simple-bus, not all of them being the raspberrypi firmware node.
-> >
+> >=20
 > > This results in warnings being wrongfully reported. Let's add a custom
 > > select statement to fix that.
-> >
-> > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML")
+> >=20
+> > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware b=
+inding to YAML")
 > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 > >
 > > ---
 > >
-> > The original binding has been merged through the clock tree, so it should
+> > The original binding has been merged through the clock tree, so it shou=
+ld
 > > be merged there.
->
+>=20
 > Could you apply that patch to clk-next?
+>=20
 
-While I said 'simple-mfd' would be more appropriate, that's a separate
-issue I guess, so:
-
-Acked-by: Rob Herring <robh@kernel.org>
-
-BTW, qcom,msm8996-apcc.yaml is also breaking linux-next.
+Rob has an unresolved comment on this patch.
