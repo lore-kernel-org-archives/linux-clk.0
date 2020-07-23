@@ -2,81 +2,101 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C76C433E3
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 00:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 810BFC433EB
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:05:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id EBEFF20888
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 00:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6173022B47
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595465495;
-	bh=UOqOpWdE600erSJp21wbDCbCsu79Ba86K1D9303jh5Y=;
+	s=default; t=1595466332;
+	bh=W2CYa/0UitifMAE40ODWZqF2evqHAMepGzJ4pFCBC0k=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=YY6nDRo9d0T89Gx1uDTImXM+4b3H+UtGV5bZ3NtFoLIMvY6bcnPWxGnZempAyAzhB
-	 Csd/TOEA8V5orG5LIE5BVbWffuLBKvfrsyu1pUjmCI4juNcGRlP1dOO2gxWWH8kP6Q
-	 /wgs5CiFBLBJiCp4DSIdJU7YsoCvKrpOPjngn38U=
+	b=VxkVg8Fbq5JcAZBrFWz4MBv9bI3L6cTBwVbYhwXS2begTPa0itK48VJDwdaVRh2CC
+	 Inzn+ZHiKRUBJ4kPcyLDgbFSFIi+FYPUsRgz2lBnMN01yuK0sktngDl6YZX8lghvGD
+	 fVjJVOtwUK7Rn/gQlod4KDREP0N+VwUBoIXcnv+U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733079AbgGWAve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jul 2020 20:51:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44530 "EHLO mail.kernel.org"
+        id S2387452AbgGWBF2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jul 2020 21:05:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728607AbgGWAve (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Jul 2020 20:51:34 -0400
+        id S1733270AbgGWBF2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Jul 2020 21:05:28 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEC0620825;
-        Thu, 23 Jul 2020 00:51:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0DEF2080D;
+        Thu, 23 Jul 2020 01:05:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595465494;
-        bh=UOqOpWdE600erSJp21wbDCbCsu79Ba86K1D9303jh5Y=;
+        s=default; t=1595466327;
+        bh=W2CYa/0UitifMAE40ODWZqF2evqHAMepGzJ4pFCBC0k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gb7uwAcJGBIgBNBWFGIpPmwHbV9KKIIbRDJTO54mML9mQXeSM/YtBDuB2p/EYsX53
-         XE4DHkX4dErTcPMCJsjSvqUy+M/C/ijxQamDTKo64uAkep/FKTQ77cncoyc/vgC8S+
-         dLYr9IHgMwFvoKvJcmHe0CMHHDeqS7HxARDuNVkY=
+        b=0J1pLNs4srdlY758oP/2THuIFMZVT9hxJQSMive90bFdHGH6+nbirfrxeGSVL3LTd
+         FEDb7DfBOban1eIwGmg3oQ6s5N4HWHsvnHWpGitOtdFTll3xUArvAF+eU3pMkjpJ7h
+         NU+Nrqr8VQxmfC9GaSPK3UK+i9+JAROIxT8UX4Y8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <14639646.VOZsFJ8Tpa@phil>
-References: <20200722023230.10826-1-zhangqing@rock-chips.com> <14639646.VOZsFJ8Tpa@phil>
-Subject: Re: [PATCH v1] clk: Export __clk_lookup()
+In-Reply-To: <01daee94-756d-3970-9057-849de2b76430@codeaurora.org>
+References: <1594795010-9074-1-git-send-email-tdas@codeaurora.org> <1594795010-9074-3-git-send-email-tdas@codeaurora.org> <159531791606.3847286.11896325263133276429@swboyd.mtv.corp.google.com> <01daee94-756d-3970-9057-849de2b76430@codeaurora.org>
+Subject: Re: [PATCH v4 2/4] dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com
-To:     Elaine Zhang <zhangqing@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>
-Date:   Wed, 22 Jul 2020 17:51:33 -0700
-Message-ID: <159546549321.3847286.4678382117195983280@swboyd.mtv.corp.google.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+Date:   Wed, 22 Jul 2020 18:05:27 -0700
+Message-ID: <159546632701.3847286.14646561815611231678@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2020-07-22 11:26:50)
-> Hi Elaine,
+Quoting Taniya Das (2020-07-21 10:26:53)
+> Hi Stephen,
 >=20
-> Am Mittwoch, 22. Juli 2020, 04:32:30 CEST schrieb Elaine Zhang:
-> > Export __clk_lookup() to support user built as module.
+> Thanks for the review.
+>=20
+> On 7/21/2020 1:21 PM, Stephen Boyd wrote:
+>=20
+> >> +...
+> >> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-=
+bindings/clock/qcom,gcc-sc7180.h
+> >> index 992b67b..bdf43adc 100644
+> >> --- a/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> >> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> >> @@ -138,6 +138,7 @@
+> >>   #define GCC_MSS_Q6_MEMNOC_AXI_CLK                              128
+> >>   #define GCC_MSS_SNOC_AXI_CLK                                   129
+> >>   #define GCC_SEC_CTRL_CLK_SRC                                   130
+> >> +#define GCC_LPASS_CFG_NOC_SWAY_CLK                             131
+> >>  =20
+> >>   /* GCC resets */
+> >>   #define GCC_QUSB2PHY_PRIM_BCR                                  0
 > >=20
-> > ERROR:
-> > drivers/clk/rockchip/clk.ko: In function
-> > `rockchip_clk_protect_critical':
-> > drivers/clk/rockchip/clk.c:741:
-> > undefined reference to `__clk_lookup'
+> > This hunk should be in the next patch. Oh but then that patch should co=
+me
+> > before this one so the binding can use it. Either way, shouldn't be part
+> > of this patch.
+> >=20
 >=20
-> can you elaborate a bit more on why this would be needed?
 >=20
-> Because right now the Rockchip clocks are of course built into
-> the main kernel image (especially due to them being needed during early
-> boot) and __clk_lookup actually is a pretty deep part of the clock-
-> framework itself, as probably also denoted by the "__" in the function
-> name.
+> We had a problem with the bot complaining about the clock handles being=20
+> used in the example.
+>=20
+> https://patchwork.ozlabs.org/project/devicetree-bindings/patch/1582540703=
+-6328-4-git-send-email-tdas@codeaurora.org/
+>=20
+> Thus I have kept the GCC bindings in the same patch.
 >=20
 
-Can you stop using __clk_lookup()? The plan is to remove it.
+Ah ok. Well I'll fix it when you resend to fix the comment on patch 4.
