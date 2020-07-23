@@ -2,97 +2,113 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF91BC433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B987C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9812620737
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:00:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595516427;
-	bh=4R4rFlQ9S7IYpPvd2WbOvsP7WGTiScpv5SiKG/TqEqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UsCvUIflFNpPe4++36hrFocapVfnAIm0EFhnT96kOXZIss97VPm1rJKoQx91Jk80i
-	 NBNOtmksLFJF92gwHK/Ammj2GIWPA8RyTsCWxeZFJrDOsOW20H7ZFBlgZXznIVcQZh
-	 wpDLE73BVBbv9OzLoQ3gBxy+UNATQjqci58v7pC0=
+	by mail.kernel.org (Postfix) with ESMTP id 064C420771
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:44:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="XGkM4f9x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CHw7B4RB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729323AbgGWPA1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 11:00:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45448 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728723AbgGWPA1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jul 2020 11:00:27 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2324920709;
-        Thu, 23 Jul 2020 15:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595516426;
-        bh=4R4rFlQ9S7IYpPvd2WbOvsP7WGTiScpv5SiKG/TqEqM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IWKFSwsuuHedWFV8296RhqiXfCSflXGX0Mn4uTu2UdfcsBjoobW2Wk5OKHlxHFCoX
-         G4UjFgSV5B5Auc5KuE7Z/zq/r0ncUwVV1RvMi4lqvQpSKDOJWVu+oiM6SW2T7WPA0+
-         ulmfBIJpknRApArlcjRuXrW5kwO3d2jWmbHNAZpg=
-Date:   Thu, 23 Jul 2020 17:00:30 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Rafael Wysocki <rjw@rjwysocki.net>,
-        Suzuki Poulose <suzuki.poulose@arm.com>,
+        id S1728306AbgGWPoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 11:44:25 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:56629 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727108AbgGWPoZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 11:44:25 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 3EBD358046D;
+        Thu, 23 Jul 2020 11:44:24 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 23 Jul 2020 11:44:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=3
+        WU5tiH6MW2suDFTBvDbYfQ8TP5tgnJIuAQD/XuTOGQ=; b=XGkM4f9xk4vSaNPSq
+        B8sEnunFjr0biFvfDNBlH1OmV8qiODcIyJI2fiWqwYukyfRM/LNgHoxS6AmTRtQG
+        0uZnJ3qpRADkJ4k+IIxbb2ioBC3enac7CddhNM7FxiUMenw2wtPocXkOwJtXiUWS
+        BON6TSvLeORYJQCfs16pm+aptmoWMIiVydkqmf6XLkSxqko/bFDeu14Vki4vLqob
+        Ixr17YPu2/S6Uaq72SYjqFLN+VDyzgBwFT9qQn9hkQjwLKX3znbBhrDoKX/SuljN
+        TH+NTqK6yItgaWxprpgnkKCKjPockDZps2rvGAtmFB3qI3SXqJzYRJqOz7Ugj4Ol
+        LNITw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=3WU5tiH6MW2suDFTBvDbYfQ8TP5tgnJIuAQD/XuTO
+        GQ=; b=CHw7B4RBoH4oJkqH1vY1e8D6B2/mKF3Tvl2x1ZMZe9CiKS7mQYzTM4TkS
+        5KfEZsr35HNA/l27qM1NuxMFIl2t+1H76rEfi/Daznztqf4UzEbKu5IdC4YmwLDm
+        x5D0Crq+de9qk9+68qoMFeG+CJkTcXDZKBbY6v1qcK2YhumSH5P44jqDKAONjsXa
+        D2ug/8b/h/nnC6+l2vGu+4qrAe6EEmtYugYQ/dS67f4fda6m10e2hAzj14+hF1el
+        +QuYFKQB/0htUvsKI+0QKGjce0R8X0dmFfBhloDT9SvrGdli5b9C0kHYGcKyjTuC
+        2KutWzLd36xJzP5nr2FqBhLp4j4eQ==
+X-ME-Sender: <xms:V7AZX9HH9jlNg0YUYena9d9jFpx3LvaNbDrEjNINsS1EszVrKOY4qA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrhedugdelhecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgigihhm
+    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
+    htvghrnhepgfejtedtjefggfffvdetuedthedtheegheeuteekfeeghfdtteejkeeludeg
+    vddunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
+X-ME-Proxy: <xmx:V7AZXyX2OiCjwtm10I8FcF5SBqSyl4WcZk3PNgbsUFaOLxzba3W9Mg>
+    <xmx:V7AZX_JjvKn0xmkTmRPqJ2FyGSo4fEfd3rAccJVgo0ch3c_n20-BIg>
+    <xmx:V7AZXzFm_crW2JeHYcbppaC04F7uClLJL8EKFSA2tY-MxeyT2Xjz7w>
+    <xmx:WLAZX6FTEgDJm6Ir3Tqvf2pmdYCyV3A4-IErTeGQRsQuyLCOPm-nvw>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 52341328005A;
+        Thu, 23 Jul 2020 11:44:23 -0400 (EDT)
+Date:   Thu, 23 Jul 2020 17:44:21 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/2] Small devm helper for devm implementations
-Message-ID: <20200723150030.GA2515799@kroah.com>
-References: <e8221bff-3e2a-7607-c5c8-abcf9cebb1b5@free.fr>
- <69f6f7fc-4fb6-248a-684a-b853ee0836bc@free.fr>
- <3fea884b-05d3-ff67-b9fe-41c9b46cf478@free.fr>
- <20200706195758.GA100842@kroah.com>
- <23a476f9-8ea3-566e-be5e-5237fb14bb91@free.fr>
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware
+ binding
+Message-ID: <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
+References: <20200626115433.125735-1-maxime@cerno.tech>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <23a476f9-8ea3-566e-be5e-5237fb14bb91@free.fr>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 21, 2020 at 09:10:23AM +0200, Marc Gonzalez wrote:
-> On 06/07/2020 21:57, Greg Kroah-Hartman wrote:
-> 
-> > Given the lack of testing of the patch, it doesn't seem wise to add
-> > this, right?
-> 
-> You're probably not wrong :)
-> 
-> > Please get some testing, and some more users, and I'll be glad to
-> > consider it.
-> 
-> "Users" == files modified to use the new helper?
+Hi Stephen, Mike,
 
-Yes.
+On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
+> The RaspberryPi firmware binding uses two compatible, include simple-bus.
+> The select statement generated by default will thus select any node that
+> has simple-bus, not all of them being the raspberrypi firmware node.
+>=20
+> This results in warnings being wrongfully reported. Let's add a custom
+> select statement to fix that.
+>=20
+> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware bin=
+ding to YAML")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+>
+> ---
+>
+> The original binding has been merged through the clock tree, so it should
+> be merged there.
 
-> How many files would you suggest? 3? 5? 10?
+Could you apply that patch to clk-next?
 
-How many do you see that can use it?  I would suggest "all" :)
-
-thanks,
-
-greg k-h
+Thanks!
+Maxime
