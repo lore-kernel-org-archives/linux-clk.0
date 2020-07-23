@@ -2,78 +2,108 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A62C433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC316C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C205320792
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:35:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC9E20792
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595543753;
-	bh=FXS3WNs034HEwKFaTlLZA6ilyGyWGmu5EJNCgAeeSZo=;
+	s=default; t=1595544350;
+	bh=ysaoh10oMPlqijllUrvR5st6IAHAnCP1ok7GBN063iM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=oHikJbbvkbD2tFoGa9tQuAHMGJIysn0xAeZNf9ZnWopslB8U+48X+AoZnmKHtX9uw
-	 rsS29wuayj2fL8enobDulHet8cNbfEkIfTtID1hDi1ZHH6qS4eJJqAb9c0fq6CskwR
-	 iksbka8AXyDh2FTb+M2glaTlhm5QwowPwOsEQEKk=
+	b=t0wM20y4ZhYHxiJkPQhMgt5k/sE3VaNL6ltAW0S0DFE+hwEk1eyKRa2zqgJsEna7X
+	 Ay3Df5zGVNsRfVa1bmUXT7WWNfjX4g02tJlJiLtWFDfD/eg9PMMIFOXtARf/r4fI07
+	 DneWpPjBqM5YP7Ent1QdmuxCaNeZ5h56U4YoePAg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726535AbgGWWfx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 18:35:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
+        id S1726390AbgGWWpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 18:45:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726368AbgGWWfx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jul 2020 18:35:53 -0400
+        id S1726368AbgGWWpu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jul 2020 18:45:50 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED924206E3;
-        Thu, 23 Jul 2020 22:35:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A25CB206E3;
+        Thu, 23 Jul 2020 22:45:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595543753;
-        bh=FXS3WNs034HEwKFaTlLZA6ilyGyWGmu5EJNCgAeeSZo=;
+        s=default; t=1595544349;
+        bh=ysaoh10oMPlqijllUrvR5st6IAHAnCP1ok7GBN063iM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hEaizzbp/KyCXnnaUhUvCrZ/qqgyLLVZvKfB236oW3Qis2tfho6m2H4U0mOP4QnBz
-         zvDxTHcOnuTl8wPwqDDjZbMCp+bRzKcSpJvAEKJOusQMDS8TRNOeXSa/mlLiQ+88Mj
-         BpxQ3Subjx70yTrPgFqwsD5cvHag9QlQZca6Lx+0=
+        b=WCcYMlYtQhuqzwqtbEjUfMNa/JR+hxs2nJB8An5VFT0X8E7T8ciY8dhMir1xkTuMd
+         t6+t/5h7NxsPXkAsghPFDJd+rMupZVID8fo//8niGbw/Xpo1pb2SzXl1HX7TPs+2dB
+         3fA8r1sv+vJ4djtqkSOKLmED2gZiv6gx/WKwg7+c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1595400932-303612-1-git-send-email-amit.sunil.dhamne@xilinx.com>
-References: <1595400932-303612-1-git-send-email-amit.sunil.dhamne@xilinx.com>
-Subject: Re: [PATCH v2 0/3] clk: zynqmp: Add firmware specific clock flags
+In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
+References: <20200626115433.125735-1-maxime@cerno.tech>
+Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     rajanv@xilinx.com, jollys@xilinx.com, tejasp@xilinx.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>
-To:     Amit Sunil Dhamne <amit.sunil.dhamne@xilinx.com>,
-        linux-clk@vger.kernel.org, m.tretter@pengutronix.de,
-        mark.rutland@arm.com, michal.simek@xilinx.com,
-        mturquette@baylibre.com, sboyd@codeaurora.org
-Date:   Thu, 23 Jul 2020 15:35:52 -0700
-Message-ID: <159554375224.3847286.3288318925600777669@swboyd.mtv.corp.google.com>
+Cc:     linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Maxime Ripard <maxime@cerno.tech>
+To:     Maxime Ripard <maxime@cerno.tech>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Date:   Thu, 23 Jul 2020 15:45:48 -0700
+Message-ID: <159554434893.3847286.8491922177659230646@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Amit Sunil Dhamne (2020-07-21 23:55:29)
-> This series adds supports for firmware specific flags. These include
-> - Common Flags
-> - Divider Flags
-> - Mux Flags
+Quoting Maxime Ripard (2020-06-26 04:54:33)
+> The RaspberryPi firmware binding uses two compatible, include simple-bus.
+> The select statement generated by default will thus select any node that
+> has simple-bus, not all of them being the raspberrypi firmware node.
 >=20
-> The intent is to remove firmware's dependency on CCF flag values by having
-> firmware specific flags with independent values.
+> This results in warnings being wrongfully reported. Let's add a custom
+> select statement to fix that.
 >=20
-> Currently firmware is maintaining CCF specific flags and provides to
-> CCF as it is. But CCF flag numbers may change and that shouldn't mean
-> that the firmware needs to change. The firmware should have its own
-> 'flag number space' that is distinct from the common clk framework's
-> 'flag number space'. So use firmware specific clock flags in ZynqMP
-> clock driver instead of CCF flags.
+> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware bin=
+ding to YAML")
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 >=20
+> ---
+>=20
+> The original binding has been merged through the clock tree, so it should
+> be merged there.
+>=20
+> Even though the original binding (and the DT) are using the simple-bus
+> compatible, this creates some DTC warnings since the firmware really isn't
+> a bus, so the node name doesn't match what a bus should have, none of the
+> children have a reg property, #address-cells and #size-cells are missing,
+> etc.
+>=20
+> I can only guess that simple-bus was used to make the sub-devices probe,
+> but maybe simple-mfd would be more appropriate here?
+> ---
+>  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml   | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-Thanks for doing this work. Please resend with fixes.
+Hmm. I'm still seeing warnings.
+
+Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.exam=
+ple.dts:23.37-26.15: Warning (simple_bus_reg): /example-0/firmware/clocks: =
+missing or emp
+ty reg/ranges property
+Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.exam=
+ple.dt.yaml: firmware: $nodename:0: 'firmware' does not match '^(bus|soc|ax=
+i|ahb|apb)(@[0-9a-f]+)?$'
+Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.exam=
+ple.dt.yaml: firmware: '#address-cells' is a required property
+Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.exam=
+ple.dt.yaml: firmware: '#size-cells' is a required property
+Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.exam=
+ple.dt.yaml: firmware: 'ranges' is a required property
