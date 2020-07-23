@@ -2,70 +2,130 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C78D3C433E4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90501C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id A13E020888
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595466372;
-	bh=O7z5DCoAi4Xu7UzI3rgGHjrWcS50NvtztAbu552gvjk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=gonmgLgIqVZzZqCZcFsUQut5iPEdNegnl2y7FQ23MuS8k4gMgS+d9mbnr3bSL5LXS
-	 vdWgu55OWg2yqxhWRDsn4her6ELEgyj8xO6pGvB/95Rty+1/L/J2fPWgdJ3p5DrLQ9
-	 jtB4OAgFRQ2RAkneIhwMS+Hm5d6ExUnEJ6rpk7iA=
+	by mail.kernel.org (Postfix) with ESMTP id 760E82086A
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733157AbgGWBGM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jul 2020 21:06:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729423AbgGWBGM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Jul 2020 21:06:12 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A25802080D;
-        Thu, 23 Jul 2020 01:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595466371;
-        bh=O7z5DCoAi4Xu7UzI3rgGHjrWcS50NvtztAbu552gvjk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=M0GUegne2U06Hs5J8//RxDtE7n99J5kRQ1A7/ZziPPFb4sXyI2SgCpmCgJvZYkEuZ
-         wrbiPx4m8j8YiyjvJ3iIrcYCkz7134mZ9n5Lox8w87Q3AJde4gWebUaOq5zgqGA0ZF
-         5AMZYli9N1V0if4vBlCXz7aNp2FyBMtuzmLj5+UI=
-Content-Type: text/plain; charset="utf-8"
+        id S1733147AbgGWBmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jul 2020 21:42:35 -0400
+Received: from regular1.263xmail.com ([211.150.70.198]:35384 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729198AbgGWBme (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2020 21:42:34 -0400
+Received: from localhost (unknown [192.168.167.70])
+        by regular1.263xmail.com (Postfix) with ESMTP id 339BE635;
+        Thu, 23 Jul 2020 09:42:26 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-SKE-CHECKED: 1
+X-ABS-CHECKED: 1
+Received: from [172.16.12.236] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P22087T140330575841024S1595468544587490_;
+        Thu, 23 Jul 2020 09:42:25 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <29b66cfdfecd2f7eee694f93ea2330f7>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: kever.yang@rock-chips.com
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+X-System-Flag: 0
+Subject: Re: [PATCH v1] clk: Export __clk_lookup()
+To:     Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
+        kever.yang@rock-chips.com
+References: <20200722023230.10826-1-zhangqing@rock-chips.com>
+ <14639646.VOZsFJ8Tpa@phil>
+ <159546549321.3847286.4678382117195983280@swboyd.mtv.corp.google.com>
+From:   "elaine.zhang" <zhangqing@rock-chips.com>
+Organization: rockchip
+Message-ID: <f3e7b8f3-e4d4-9965-703d-aa4b96f50f6d@rock-chips.com>
+Date:   Thu, 23 Jul 2020 09:42:24 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <69dccde9-f577-6266-07cb-820930bace68@linaro.org>
-References: <1594796050-14511-1-git-send-email-tdas@codeaurora.org> <69dccde9-f577-6266-07cb-820930bace68@linaro.org>
-Subject: Re: [PATCH v0] clk: qcom: gcc: Update disp gpll0 branch for 7180/845
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        evgreen@google.com
-To:     Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 22 Jul 2020 18:06:11 -0700
-Message-ID: <159546637100.3847286.13662517451264201995@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <159546549321.3847286.4678382117195983280@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dmitry Baryshkov (2020-07-21 07:31:56)
-> On 15/07/2020 09:54, Taniya Das wrote:
-> > The display gpll0 branch clock needs to be always left enabled, thus
-> > move the clock ops to _aon branch ops.
->=20
-> Does this also apply to sm8250/sm8150?
->=20
 
-Probably.
+在 2020/7/23 上午8:51, Stephen Boyd 写道:
+> Quoting Heiko Stuebner (2020-07-22 11:26:50)
+>> Hi Elaine,
+>>
+>> Am Mittwoch, 22. Juli 2020, 04:32:30 CEST schrieb Elaine Zhang:
+>>> Export __clk_lookup() to support user built as module.
+>>>
+>>> ERROR:
+>>> drivers/clk/rockchip/clk.ko: In function
+>>> `rockchip_clk_protect_critical':
+>>> drivers/clk/rockchip/clk.c:741:
+>>> undefined reference to `__clk_lookup'
+>> can you elaborate a bit more on why this would be needed?
+>>
+>> Because right now the Rockchip clocks are of course built into
+>> the main kernel image (especially due to them being needed during early
+>> boot) and __clk_lookup actually is a pretty deep part of the clock-
+>> framework itself, as probably also denoted by the "__" in the function
+>> name.
+>>
+> Can you stop using __clk_lookup()? The plan is to remove it.
+
+Rk use  __clk_lookup() as:
+
+drivers/clk/rockchip/clk.c
+
+void __init rockchip_clk_protect_critical(const char *const clocks[],
+                                           int nclocks)
+{
+         int i;
+
+         /* Protect the clocks that needs to stay on */
+         for (i = 0; i < nclocks; i++) {
+                 struct clk *clk = __clk_lookup(clocks[i]);
+
+                 if (clk)
+                         clk_prepare_enable(clk);
+         }
+}
+e.g:
+
+drivers/clk/rockchip/clk-rk3328.c
+
+static const char *const rk3328_critical_clocks[] __initconst = {
+         "aclk_bus",
+         "aclk_bus_niu",
+         "pclk_bus",
+         "pclk_bus_niu",
+         "hclk_bus",
+         "hclk_bus_niu",
+         "aclk_peri",
+............
+
+};
+
+If have plan to remove the __clk_lookup, I need to replace the 
+rockchip_clk_protect_critical, and use the flag CLK_IS_CRITICAL.(but use 
+flag CLK_IS_CRITICAL, the enable count is always "0")
+
+>
+>
+
+
