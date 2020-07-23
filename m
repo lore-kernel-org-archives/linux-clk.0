@@ -7,92 +7,94 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C96C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 17:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA6A0C433E3
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 20:05:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ED8A120714
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 17:29:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85614206F4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 20:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595525379;
-	bh=JTaR6osrOGy51LwUpYc5aNzaKnUPUAyBtcEaHG5n60k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lsE/GdSMOJaLU8jMlfe1Zv86OvyZxGOBXma8gbLhjI6nhl1wTraxfRtPX+Wc4xEst
-	 kXfWcGJAm2KPdmDKtOxbnDsC92pUtH4E8nvIvRKco5MkyBph2ELS8hrhWzKzcql7AJ
-	 j0CHmDeRPmgrkPxtKeYvTdjVqM6JtanlmYoC41/I=
+	s=default; t=1595534701;
+	bh=Sn6HoDY8PicNwWAOK0JVC4PUBrZWa9HKEhiZGKOtMwY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=g66xePXWedzmpItwfFNTKHHiPddd6iVUoA8EGZ5+KLQX3Hzb6GLwFLspzYgtqrGr3
+	 F3Bp7tt/ZcQLQPxIOV6yh1HaZqudDxlRwnGWaNJd8PDF9nRuww7oJBakRNgwFlhtth
+	 JsDTIMXXaOgHgx8f59KtLskVyrN4ARYxqEgfd0RA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730046AbgGWR3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 13:29:33 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37369 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730025AbgGWR3d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 13:29:33 -0400
-Received: by mail-io1-f65.google.com with SMTP id v6so7108915iob.4;
-        Thu, 23 Jul 2020 10:29:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=H8SSOSWK9ZQn/87T9a7cJ2FJvmQuT0AXY8yIP6WSR7A=;
-        b=TivqGAVE+6jXfb3+irgstqkvGPeDHnpKxUV5qq2fKt371FrB0JpzltwJEHHJ15dXPC
-         C8c5t3te+km6KK+tAODeb6XXPT9WzRjIk6yKDQgr9LFLE1TJZH7i0Q601uwBK5JLWVTS
-         MXeRUtA/HeWyCuU1qFWr+9beYAgdDjEKjntbK9fp2qEwUvI/tV3/BPFNKrVx898hALgk
-         Ivfpsk6DhRLl6lDfPZM3L19ls+JVXt/jiDTsanEU/yk6Yl8jsVcW7AuufJRIT/IslmBO
-         8SqEHrYfa79DLuCZV5LUeZeHuxs9TeQme/iQ3TyP0wX3hA+oWRySAeB0xD7Ie8SonKFz
-         XgGA==
-X-Gm-Message-State: AOAM53119Ukz6D8wi1JBz027rzi4sKA5oOgg8yT2VLfiBOwA9AQ5lggX
-        Lh6Ztw11OwFGcAoM/NWej+u5PM/pOw==
-X-Google-Smtp-Source: ABdhPJyPr4WMPdjwerziMWECWbOdCrzVcN5jJ7eSieuD6AEc74+VXTYIYYRCuWOF4RprQSk/2AlpkA==
-X-Received: by 2002:a05:6602:1225:: with SMTP id z5mr6127039iot.64.1595525372555;
-        Thu, 23 Jul 2020 10:29:32 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id r23sm1795922iob.42.2020.07.23.10.29.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jul 2020 10:29:31 -0700 (PDT)
-Received: (nullmailer pid 571644 invoked by uid 1000);
-        Thu, 23 Jul 2020 17:29:29 -0000
-Date:   Thu, 23 Jul 2020 11:29:29 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: Re: [PATCH v4 3/3] dt-bindings: clk: versaclock5: convert to yaml
-Message-ID: <20200723172929.GA571596@bogus>
-References: <20200723074112.3159-1-luca@lucaceresoli.net>
- <20200723074112.3159-4-luca@lucaceresoli.net>
+        id S1726689AbgGWUFB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 16:05:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725894AbgGWUFA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jul 2020 16:05:00 -0400
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 381B520714;
+        Thu, 23 Jul 2020 20:05:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595534700;
+        bh=Sn6HoDY8PicNwWAOK0JVC4PUBrZWa9HKEhiZGKOtMwY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=tdpfEy9/TuIlS1miYHevyg9cFfjUVIr0SMqJq3V1o5s1ty72i5pH3W7BATMwjL2qR
+         Ib52wGUhvGVSBQFyd2dBJOzs2aeT6bplY7LIfFOL7tiTfABk9SHywBqtfi0BlxwOPj
+         XySoNw2DeQ1PxhTshuc5XVW3TUx/R8VxVQXiWNyE=
+Received: by mail-oi1-f174.google.com with SMTP id k6so6088928oij.11;
+        Thu, 23 Jul 2020 13:05:00 -0700 (PDT)
+X-Gm-Message-State: AOAM5334jPcNVV4k0CzZEuB1YYAuP2lqAN9VQCKbJc80njn4b2CV+l/n
+        65TyONzxVip/ujEurzsC5Y3XWidyjaRdCEF18g==
+X-Google-Smtp-Source: ABdhPJwWExdLUboZbuKY45/47MrATnklTefnT1gGZt8ZndUCAi2L0lI0a9kQ51jX4lZbOJsqfWsizPieoSOvViwRY8M=
+X-Received: by 2002:aca:bb82:: with SMTP id l124mr5467888oif.106.1595534699564;
+ Thu, 23 Jul 2020 13:04:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200723074112.3159-4-luca@lucaceresoli.net>
+References: <20200626115433.125735-1-maxime@cerno.tech> <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
+In-Reply-To: <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 23 Jul 2020 14:04:48 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLJGdxh4Taf5bSdh2+QvjhHsBvygeAS8nUp+hGf2uqTOg@mail.gmail.com>
+Message-ID: <CAL_JsqLJGdxh4Taf5bSdh2+QvjhHsBvygeAS8nUp+hGf2uqTOg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
+To:     Maxime Ripard <maxime@cerno.tech>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Mike Turquette <mturquette@baylibre.com>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 23 Jul 2020 09:41:12 +0200, Luca Ceresoli wrote:
-> Convert to yaml the VersaClock bindings document. The mapping between
-> clock specifier and physical pins cannot be described formally in yaml
-> schema, then keep it verbatim in the description field.
-> 
-> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
-> 
-> ---
-> 
-> Changes in v4: none.
-> 
-> Changes in v3:
->  - schema syntax fixes: use enum to constrain reg, don't use defines as
->    enums, drop type for standard unit suffix, fix syntax for clock-names
->    property (all suggested by Rob Herring)
-> ---
->  .../bindings/clock/idt,versaclock5.txt        | 125 --------------
->  .../bindings/clock/idt,versaclock5.yaml       | 154 ++++++++++++++++++
->  MAINTAINERS                                   |   1 +
->  3 files changed, 155 insertions(+), 125 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> 
+On Thu, Jul 23, 2020 at 9:44 AM Maxime Ripard <maxime@cerno.tech> wrote:
+>
+> Hi Stephen, Mike,
+>
+> On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
+> > The RaspberryPi firmware binding uses two compatible, include simple-bus.
+> > The select statement generated by default will thus select any node that
+> > has simple-bus, not all of them being the raspberrypi firmware node.
+> >
+> > This results in warnings being wrongfully reported. Let's add a custom
+> > select statement to fix that.
+> >
+> > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware binding to YAML")
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> >
+> > ---
+> >
+> > The original binding has been merged through the clock tree, so it should
+> > be merged there.
+>
+> Could you apply that patch to clk-next?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+While I said 'simple-mfd' would be more appropriate, that's a separate
+issue I guess, so:
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+BTW, qcom,msm8996-apcc.yaml is also breaking linux-next.
