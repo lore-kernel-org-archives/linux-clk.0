@@ -7,62 +7,67 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39C7CC433F4
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E582DC433F7
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0964C20737
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA94E207C4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 22:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595543658;
-	bh=8qskPwoWptnD+c7pF1+5A+lmPUNMsPIW8eSn114Sf6U=;
+	s=default; t=1595543677;
+	bh=9iRLgISyLPKnSMl0PxHInqiFaxooa28HbJGzrm6kkws=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=NPhMuX0FBXFBe2K7vmy6FgpSjVpifYga/Vxp/ozX9vaSEqC4lNs5+NHUKO1OuyCzW
-	 3QRUcvndSQyxoZFzLNsxOWlPFULLXptyLXHBXaKvnkgg3fwEWZCxzK4EvvKk82IQFA
-	 mFk73LLjwdrEx+LCgQpSSN+jwX7EMfbU+/7mGUEg=
+	b=IwnDVAxKVO2fQ6TKL5wivK+l8CP2WeWkaWWaptH+raoFUhnUSeVh7j561Zn6UB+2I
+	 LAbUvqyciCEO479DGMRoKK0EFzHiTwkgyzyE5H2MtHT2bpOaXo44fj3xgkiZdfYBNe
+	 PkXtt030HWIEvUaN5LMe/ubLqCfzcK2plrKRJWnY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbgGWWeJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 18:34:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45432 "EHLO mail.kernel.org"
+        id S1727060AbgGWWeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 18:34:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbgGWWeI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jul 2020 18:34:08 -0400
+        id S1726855AbgGWWeh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jul 2020 18:34:37 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B33F20737;
-        Thu, 23 Jul 2020 22:34:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA38220792;
+        Thu, 23 Jul 2020 22:34:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595543648;
-        bh=8qskPwoWptnD+c7pF1+5A+lmPUNMsPIW8eSn114Sf6U=;
+        s=default; t=1595543677;
+        bh=9iRLgISyLPKnSMl0PxHInqiFaxooa28HbJGzrm6kkws=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=yY8QshlfJUEK1Tt11XEEknVWYZ9IaMPmHmqSefGcS14KqU7ntDgoVv2GP16e/5wI1
-         jErqDGFUgZxCIHIuXpuiTls18ZBHTZ5vgBEsHwoQU+es9i/SgfrixHNo5LRSH2UCQJ
-         ti/BJnj504TQMKbnDAeBuht6MAaxulGKK8aZjQtw=
+        b=Ini3F5jRXRwoKuax4jhQQgxs7cNR50VPw0sZoeoqqTdJN9NCt26Phj5RnhwPgX19O
+         rol5Wm+rDZqydVnn5ggnNdx+Mp+Mq0b8secjw9RYqPzJy4RdAwTWlF/IfSbBpuY32N
+         /FWA5x+41iPxEVrSRwiSJ3c+0CWR7iRQRzo6H8bE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200723074112.3159-4-luca@lucaceresoli.net>
-References: <20200723074112.3159-1-luca@lucaceresoli.net> <20200723074112.3159-4-luca@lucaceresoli.net>
-Subject: Re: [PATCH v4 3/3] dt-bindings: clk: versaclock5: convert to yaml
+In-Reply-To: <20200723072603.1795-1-luca@lucaceresoli.net>
+References: <20200723072603.1795-1-luca@lucaceresoli.net>
+Subject: Re: [PATCH v4] clk: vc5: use a dedicated struct to describe the output drivers
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Adam Ford <aford173@gmail.com>
+        Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
 To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-clk@vger.kernel.org
-Date:   Thu, 23 Jul 2020 15:34:07 -0700
-Message-ID: <159554364791.3847286.6369989159213197503@swboyd.mtv.corp.google.com>
+Date:   Thu, 23 Jul 2020 15:34:36 -0700
+Message-ID: <159554367631.3847286.15394463918985779147@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Luca Ceresoli (2020-07-23 00:41:12)
-> Convert to yaml the VersaClock bindings document. The mapping between
-> clock specifier and physical pins cannot be described formally in yaml
-> schema, then keep it verbatim in the description field.
+Quoting Luca Ceresoli (2020-07-23 00:26:03)
+> Reusing the generic struct vc5_hw_data for all blocks is handy. However it
+> implies we allocate space the div_int and div_frc fields even for the
+> output drivers where they are unused, and the clk_output_cfg0 and
+> clk_output_cfg0_mask fields for all components even though they are used
+> only for the output drivers.
+>=20
+> Use a dedicated struct for the output drivers so that each block uses
+> exactly the fields it needs, not more.
 >=20
 > Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 >=20
