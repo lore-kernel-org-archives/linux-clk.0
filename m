@@ -2,75 +2,128 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MIME_BASE64_TEXT,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ED88C433E5
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 08:32:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6967EC433E3
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 10:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 30C7822B47
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 08:32:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4436D20B1F
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 10:09:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="WaaUETI7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="V7NOUmd9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbgGWIcn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 04:32:43 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:2499 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725846AbgGWIcn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 04:32:43 -0400
-X-UUID: 731fe79281064ae58e68f0ffbd6a330b-20200723
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=FvbPiqMUKPIekt5igyb/5p25Qo6j9u44sXtE5an3ghM=;
-        b=WaaUETI7QDYF4sk8AOHMwoOhqN6ZCckoe+O4KCftjkVJOlobOVTkQzrEKphTGrnNuXYnert/Cldqne6lwjPRROi2/KPFmFKqmD1THtiO+bieU8kXUALWpiruz8cUgh72n0CCviwlmOXgY2SJ03mrUgO/xHEJsVMSm47uKjjPbg8=;
-X-UUID: 731fe79281064ae58e68f0ffbd6a330b-20200723
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
-        (envelope-from <wendell.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1225544950; Thu, 23 Jul 2020 16:32:39 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Thu, 23 Jul 2020 16:32:37 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Thu, 23 Jul 2020 16:32:37 +0800
-From:   Wendell Lin <wendell.lin@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>,
-        Wendell Lin <wendell.lin@mediatek.com>
-Subject: [PATCH 1/1] clk: Export clk_register_composite
-Date:   Thu, 23 Jul 2020 16:32:06 +0800
-Message-ID: <1595493126-21611-1-git-send-email-wendell.lin@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        id S1728255AbgGWKJG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 06:09:06 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:19593 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727859AbgGWKJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 06:09:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1595498945; x=1627034945;
+  h=references:from:to:cc:subject:in-reply-to:date:
+   message-id:mime-version;
+  bh=Ke9E7JJ3zQ2XCPvF/ZiJvhJqLTFeRFCsv/7IuKKbagQ=;
+  b=V7NOUmd9VpHnjDvoasUeywKtXuDf4kzyNVEsZxoXFFjbkJcF94vmgjhX
+   db/Nn0tMurhj679SmlyPoi8BSluHZP3azKLfUHeTkGFVY055h/d/xD/j4
+   3N5FRvpIokdUycmzZnJFHiszWdEBQN6777cM6sUEYDM5jO/fG6bCgDs93
+   JG06E76+SOyPLuEEagEvkzRcPafnnqpBDOZqFL2FsEvnvfhAN1bafI2XU
+   5z3/v2BH45QD2WqpWzsIIOIKVQi6tv9oj8wNvPCupqGMkOiTGUx464dxa
+   jbylbgF8taTBhIdGPxV53DIItXj7Pj5N1bb4cD3mUe4/5O+iwZA/IpoLz
+   Q==;
+IronPort-SDR: ILYu3poOG836t6YdFhhy7gRwahSmw/PjhZTTy1y+ww68TrIdV3l/q3YZ1OYi6dpKEY6kFS3qYS
+ HR+d2nKC7+zdK4+OpGOh/rBjwf947+pHLSxvKcD87AN7UTz3Yt8tO4irhrCCMLZAUFEnzq/oIE
+ Ng+bTkCoXaB2d6sxUGWepoGjGiK56pCDVK81Vo8D341+ZwHLyfPpHeBpgDeizgHgxiMnvk3Aan
+ Ql41m9S/EAtBNNAL7wrD8JXbdjMMH6SwpHZsKo2xJetKCYf6q+3eY/VD1mhGWobY/Pvm2uS5mj
+ Vf8=
+X-IronPort-AV: E=Sophos;i="5.75,386,1589266800"; 
+   d="scan'208";a="85093580"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 23 Jul 2020 03:09:04 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Thu, 23 Jul 2020 03:08:22 -0700
+Received: from soft-dev15.microsemi.net.microchip.com (10.10.115.15) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1979.3
+ via Frontend Transport; Thu, 23 Jul 2020 03:09:01 -0700
+References: <20200615133242.24911-1-lars.povlsen@microchip.com> <CAK8P3a1VGsMFfqaMXA2n49F84MYR5eYWvPT-sMHK1XYGGnNB0A@mail.gmail.com>
+From:   Lars Povlsen <lars.povlsen@microchip.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+List-Id: <soc.lore.kernel.org>
+CC:     Lars Povlsen <lars.povlsen@microchip.com>,
+        SoC Team <soc@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Steen Hegelund <Steen.Hegelund@microchip.com>,
+        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
+        Olof Johansson <olof@lixom.net>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        DTML <devicetree@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v3 00/10] Adding support for Microchip Sparx5 SoC
+In-Reply-To: <CAK8P3a1VGsMFfqaMXA2n49F84MYR5eYWvPT-sMHK1XYGGnNB0A@mail.gmail.com>
+Date:   Thu, 23 Jul 2020 12:09:00 +0200
+Message-ID: <87v9iek0g3.fsf@soft-dev15.microsemi.net>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
-Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Y2xrX3JlZ2lzdGVyX2NvbXBvc2l0ZSgpIHdpbGwgYmUgdXNlZCBpbiBtZWRpYXRlaydzDQpjbG9j
-ayBrZXJuZWwgbW9kdWxlLCBzbyBleHBvcnQgaXQgdG8gR1BMIG1vZHVsZXMuDQoNClNpZ25lZC1v
-ZmYtYnk6IFdlbmRlbGwgTGluIDx3ZW5kZWxsLmxpbkBtZWRpYXRlay5jb20+DQotLS0NCiBkcml2
-ZXJzL2Nsay9jbGstY29tcG9zaXRlLmMgfCAgICAxICsNCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
-cnRpb24oKykNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay1jb21wb3NpdGUuYyBiL2Ry
-aXZlcnMvY2xrL2Nsay1jb21wb3NpdGUuYw0KaW5kZXggNzM3NmY1Ny4uN2M2MDljMiAxMDA2NDQN
-Ci0tLSBhL2RyaXZlcnMvY2xrL2Nsay1jb21wb3NpdGUuYw0KKysrIGIvZHJpdmVycy9jbGsvY2xr
-LWNvbXBvc2l0ZS5jDQpAQCAtMzYwLDYgKzM2MCw3IEBAIHN0cnVjdCBjbGsgKmNsa19yZWdpc3Rl
-cl9jb21wb3NpdGUoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1lLA0KIAkJcmV0
-dXJuIEVSUl9DQVNUKGh3KTsNCiAJcmV0dXJuIGh3LT5jbGs7DQogfQ0KK0VYUE9SVF9TWU1CT0xf
-R1BMKGNsa19yZWdpc3Rlcl9jb21wb3NpdGUpOw0KIA0KIHN0cnVjdCBjbGsgKmNsa19yZWdpc3Rl
-cl9jb21wb3NpdGVfcGRhdGEoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1lLA0K
-IAkJCWNvbnN0IHN0cnVjdCBjbGtfcGFyZW50X2RhdGEgKnBhcmVudF9kYXRhLA0KLS0gDQoxLjcu
-OS41DQo=
 
+Arnd Bergmann writes:
+
+> On Mon, Jun 15, 2020 at 3:33 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
+>>
+>> This patch series adds support for Microchip Sparx5 SoC, the CPU
+>> system of a advanced, TSN capable gigabit switch. The CPU is an armv8
+>> x 2 CPU core (A53).
+>>
+>> Although this is an ARM core, it shares some peripherals with the
+>> Microsemi Ocelot MIPS SoC.
+>
+> I've picked up this version of the series into an arm/newsoc branch in
+> the soc tree,
+> except for the pinctrl patch that Linus Walleij already merged.
+>
+
+Great! Thanks a lot for following up!
+
+> I see you still have a few pending patches for other subsystems (spi, mmc)
+> and I'm not sure what the status is for those and am dropping them for the
+> moment.
+>
+
+Yes, I had a question out for the SPI maintainer but did not get any
+feedback, so I was thinking just doing my own assumptions and refreshing
+the series - probably tomorrow.
+
+I also just bumped the MMC maintainer (Adrian) yesterday, as he did send
+a me an 'Acked-by', but it hasn't been merged it seems.
+
+> Once the bindings are accepted by the respective subsystem maintainers,
+> please send any remaining DT patches as a follow-up to what I've already
+> merged.
+>
+
+I'll try to work out the puzzle, might need to reach out directly to to
+determine whats missing.
+
+Later,
+
+---Lars
+
+>       Arnd
+
+-- 
+Lars Povlsen,
+Microchip
