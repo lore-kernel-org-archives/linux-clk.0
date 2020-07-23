@@ -2,86 +2,308 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D25AAC43458
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DEF1C433EA
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B3ED92086A
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 588E5207BB
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:52:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JOBHXil0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbgGWHl1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 03:41:27 -0400
-Received: from hostingweb31-40.netsons.net ([89.40.174.40]:47713 "EHLO
-        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726719AbgGWHlZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 03:41:25 -0400
-Received: from [78.134.114.177] (port=33386 helo=melee.dev.aim)
-        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1jyVr1-0007WW-F4; Thu, 23 Jul 2020 09:41:23 +0200
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-To:     linux-clk@vger.kernel.org
-Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Adam Ford <aford173@gmail.com>
-Subject: [PATCH v4 2/3] MAINTAINERS: take over IDT VersaClock 5 clock driver
-Date:   Thu, 23 Jul 2020 09:41:11 +0200
-Message-Id: <20200723074112.3159-3-luca@lucaceresoli.net>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200723074112.3159-1-luca@lucaceresoli.net>
-References: <20200723074112.3159-1-luca@lucaceresoli.net>
+        id S1727073AbgGWHwD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 03:52:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44104 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726982AbgGWHwC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 03:52:02 -0400
+Received: from mail-ua1-x941.google.com (mail-ua1-x941.google.com [IPv6:2607:f8b0:4864:20::941])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89EA2C0619E2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2020 00:52:02 -0700 (PDT)
+Received: by mail-ua1-x941.google.com with SMTP id c7so1523855uap.0
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jul 2020 00:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=z9xX1l7Vei7TNjVZF3Wex9lJJLRz3b9T5V+7MzClC/Y=;
+        b=JOBHXil0Q8t2jmxCibCxIZZZYyuw3DVM0slT+REWTKAp/9AOQ28anOa7F6thdWR/py
+         j02RkMHNrIZ/nyuvSkrqhp6c9u3cR5DPfkzSDtjExGX7LXeXMzNohAGsnn8FoxLcWTme
+         hJF78GsoZ2pTvdTq15H07Cdr3Pnz3vIuCiuhY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=z9xX1l7Vei7TNjVZF3Wex9lJJLRz3b9T5V+7MzClC/Y=;
+        b=hFCeybl4hlhsimhh5oy3VV3ujvvEVUHd3QpxbbtOp/KEfWtMp/KzveUzGs1tAf+qrr
+         BtAxN4/DYI9bGr31bRLtUE31DZh+CzDMrnqlaEy54QbBhI/HxsO/dNVoYZP4zgxtHtOR
+         CtwzOsWv8TJNbDLHXO4iyTLq5FWAtLWA3jqz3qeGQsRkZ9OBKwaZ0fN8llX/tafmhgpo
+         NDz3HQfF6nXjZAdw8eboiTPzKkO2wXFEhxO9CtS+Nb6uwYyLoQcYn2hMGWbk9R4Rf5hJ
+         Swn9xDve0s9W+P7U4/ZEkTvxzoJsBEAnSjBeDPL2GYOpkyJXghdt5qO6ZwNHBGjHBMAX
+         uJQQ==
+X-Gm-Message-State: AOAM531g0Ui+ha2GqGMgzRwtRinm3PSAwBvmRJoPSTfvY90ue9CI3fos
+        zJ6LVyVYS2y+7V4hJJK3nxz/43XHaMK05fhgeGhx4Q==
+X-Google-Smtp-Source: ABdhPJyru1ZxhrdLhgiWdGjkN1uAYJkvsnqlPq22GsPf6iLqWQi/M/gwclh+4l2zaYJKdqz7KszdfCqLPWWLYu+GxC8=
+X-Received: by 2002:a9f:3113:: with SMTP id m19mr2930373uab.77.1595490721549;
+ Thu, 23 Jul 2020 00:52:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <1595400601-26220-1-git-send-email-weiyi.lu@mediatek.com>
+ <1595400601-26220-4-git-send-email-weiyi.lu@mediatek.com> <CANMq1KC5i8GU2zMxk+NvY5hF7Qvd-Jx-+pvY2cXfqzb=X-BWRQ@mail.gmail.com>
+ <1595473043.5077.8.camel@mtksdaap41>
+In-Reply-To: <1595473043.5077.8.camel@mtksdaap41>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 23 Jul 2020 15:51:50 +0800
+Message-ID: <CANMq1KDzmeMcVQU=i89sa-B4EQbz6OxZP3tDasV-Q__qB_7_9g@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: mediatek: Add configurable enable control to mtk_pll_data
+To:     Weiyi Lu <weiyi.lu@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, linux-clk@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Marek has been the primary developer of this driver (thanks!). Now as
-he is not working on it anymore he suggested I take over maintainership.
+On Thu, Jul 23, 2020 at 10:57 AM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+>
+> On Wed, 2020-07-22 at 16:51 +0800, Nicolas Boichat wrote:
+> > On Wed, Jul 22, 2020 at 2:50 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
+> > >
+> > > In all MediaTek PLL design, bit 0 of CON0 register is always
+> > > the enable bit.
+> > > However, there's a special case of usbpll on MT8192.
+> > > The enable bit of usbpll is moved to bit 2 of other register.
+> > > Add configurable en_reg and base_en_bit for enable control or
+> > > using the default if without setting in pll data.
+> > >
+> > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > > ---
+> > >  drivers/clk/mediatek/clk-mtk.h |  2 ++
+> > >  drivers/clk/mediatek/clk-pll.c | 26 ++++++++++++++++++++++----
+> > >  2 files changed, 24 insertions(+), 4 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+> > > index c3d6756..8bb0b3d 100644
+> > > --- a/drivers/clk/mediatek/clk-mtk.h
+> > > +++ b/drivers/clk/mediatek/clk-mtk.h
+> > > @@ -233,6 +233,8 @@ struct mtk_pll_data {
+> > >         uint32_t pcw_chg_reg;
+> > >         const struct mtk_pll_div_table *div_table;
+> > >         const char *parent_name;
+> > > +       uint32_t en_reg;
+> > > +       uint8_t base_en_bit;
+> > >  };
+> > >
+> > >  void mtk_clk_register_plls(struct device_node *node,
+> > > diff --git a/drivers/clk/mediatek/clk-pll.c b/drivers/clk/mediatek/clk-pll.c
+> > > index f440f2cd..b8ccd42 100644
+> > > --- a/drivers/clk/mediatek/clk-pll.c
+> > > +++ b/drivers/clk/mediatek/clk-pll.c
+> > > @@ -44,6 +44,7 @@ struct mtk_clk_pll {
+> > >         void __iomem    *tuner_en_addr;
+> > >         void __iomem    *pcw_addr;
+> > >         void __iomem    *pcw_chg_addr;
+> > > +       void __iomem    *en_addr;
+> > >         const struct mtk_pll_data *data;
+> > >  };
+> > >
+> > > @@ -56,7 +57,10 @@ static int mtk_pll_is_prepared(struct clk_hw *hw)
+> > >  {
+> > >         struct mtk_clk_pll *pll = to_mtk_clk_pll(hw);
+> > >
+> > > -       return (readl(pll->base_addr + REG_CON0) & CON0_BASE_EN) != 0;
+> > > +       if (pll->en_addr)
+> > > +               return (readl(pll->en_addr) & BIT(pll->data->base_en_bit)) != 0;
+> > > +       else
+> > > +               return (readl(pll->base_addr + REG_CON0) & CON0_BASE_EN) != 0;
+> > >  }
+> > >
+> > >  static unsigned long __mtk_pll_recalc_rate(struct mtk_clk_pll *pll, u32 fin,
+> > > @@ -251,6 +255,12 @@ static int mtk_pll_prepare(struct clk_hw *hw)
+> > >         r |= pll->data->en_mask;
+> > >         writel(r, pll->base_addr + REG_CON0);
+> > >
+> >
+> > This is not a new change, but I'm wondering if the asymmetry is
+> > intentional here, that is, prepare sets bit pll->data->en_mask of
+> > REG_CON0; unprepare clears CON0_BASE_EN of REG_CON0.
+> >
+> > With this patch, if pll->en_addr is set, you set both
+> > pll->data->en_mask _and_ pll->data->base_en_bit, and clear only
+> > pll->data->base_en_bit.
+> >
+>
+> Hi Nicolas,
+>
+> AFAIK, the asymmetry was intentional.
+> en_mask is actually a combination of divider enable mask and the pll
+> enable bit(CON0_BASE_EN).
+> Even without my patch, it still sets divider enable mask and en_bit, and
+> only clears en_bit.
+> You could see the pll_data in clk-mt8192.c of patch [4/4]
+> Take mainpll as an example,
+> the enable mask of mainpll is 0xff000001, where 0xff000000 is the
+> divider enable mask and 0x1 is the en_bit
+>
+> For usbpll in special case, usbpll doesn't have divider enable mask on
+> MT8192 so I give nothing(0x00000000) in the en_mask field.
+> However, the main reason why I don't skip setting the en_mask of MT8192
+> usbpll is that I'd just like to reserve the divider enable mask for any
+> special plls with divider enable mask in near future.
 
-Cc: Marek Vasut <marek.vasut@gmail.com>
-Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+Argh, I see, it's a bit of a can of worms, with many special cases...
 
----
+So I played a bit with 3 examples.
 
-Changes in v4: none.
+Current situation looks like this:
 
-Changes in v3: none
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+8183 CLK_APMIXED_ARMPLL_LL
+  en_mask = 0x00000001
+  en_reg = 0
+  base_en_bit = 0
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 931c78a5e035..8e323ffddea0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8325,7 +8325,7 @@ W:	https://github.com/o2genum/ideapad-slidebar
- F:	drivers/input/misc/ideapad_slidebar.c
- 
- IDT VersaClock 5 CLOCK DRIVER
--M:	Marek Vasut <marek.vasut@gmail.com>
-+M:	Luca Ceresoli <luca@lucaceresoli.net>
- S:	Maintained
- F:	drivers/clk/clk-versaclock5.c
- 
--- 
-2.27.0
+prepare: REG_CON0 |= en_mask
+unprepare: REG_CON0 &= ~CON0_BASE_EN (BIT(1))
 
+8192 CLK_APMIXED_UNIVPLL
+  en_mask = 0xff000001
+  en_reg = 0x039c
+  base_en_bit = 0
+
+prepare:
+  REG_CON0 |= en_mask
+  en_reg |= base_en_bit
+unprepare:
+  en_reg &= ~base_en_bit
+
+8192 CLK_APMIXED_USBPLL
+  en_mask = 0x00000000
+  en_reg = 0x03cc
+  base_en_bit = 2
+
+prepare:
+  REG_CON0 |= en_mask (0)
+  en_reg |= base_en_bit
+unprepare:
+  en_reg &= ~base_en_bit
+
+And I think the logic could still be simplified by _not_ putting
+CON0_BASE_EN in en_mask, and updating the CON0 in 2 steps: first all
+the bits that are not CON0_BASE_EN, then CON0_BASE_EN. Of course I
+assume that's it's fine to do so, but I have no idea.
+
+register_pll() {
+   if (!en_addr) {
+     en_reg = REG_CON0
+     base_en_bit = CON0_BASE_EN
+   }
+}
+
+prepare() {
+    REG_CON0 |= en_mask
+    en_reg |= base_en_bit
+}
+
+unprepare() {
+    en_reg &= ~base_en_bit
+}
+
+Then the new clock data:
+
+8183 CLK_APMIXED_ARMPLL_LL
+  en_mask = 0x00000000 (CON0_BASE_EN is implicit, but other bits could be set)
+  en_reg = 0
+  base_en_bit = 0
+
+prepare: {
+    REG_CON0 |= en_mask (0x00000000, here, we can skip, but other bits
+could be set)
+    en_reg |= base_en_bit (REG_CON0 |= CON0_BASE_EN)
+}
+unprepare: en_reg &= ~base_en_bit (REG_CON0 &= ~CON0_BASE_EN)
+
+8192 CLK_APMIXED_UNIVPLL
+  en_mask = 0xff000001 (Note the bit 1 is _not_ dropped here, as it
+needs to be set too)
+  en_reg = 0x039c
+  base_en_bit = 0
+(same as above)
+
+8192 CLK_APMIXED_USBPLL
+  en_mask = 0x00000000
+  en_reg = 0x03cc
+  base_en_bit = 2
+(same as above)
+
+Now, maybe this is also a bit overcomplicated. Maybe a simpler
+solution is just to add a comment in prepare that "r |=
+pll->data->en_mask;" is meant to include CON0_BASE_EN in most cases,
+and then the code could be ok as-is (just to make sure that the next
+person who looks at this code does not think there is a bug...).
+
+>
+> > > +       if (pll->en_addr) {
+> > > +               r = readl(pll->en_addr);
+> > > +               r |= BIT(pll->data->base_en_bit);
+> > > +               writel(r, pll->en_addr);
+> > > +       }
+> > > +
+> > >         __mtk_pll_tuner_enable(pll);
+> > >
+> > >         udelay(20);
+> > > @@ -277,9 +287,15 @@ static void mtk_pll_unprepare(struct clk_hw *hw)
+> > >
+> > >         __mtk_pll_tuner_disable(pll);
+> > >
+> > > -       r = readl(pll->base_addr + REG_CON0);
+> > > -       r &= ~CON0_BASE_EN;
+> > > -       writel(r, pll->base_addr + REG_CON0);
+> > > +       if (pll->en_addr) {
+> > > +               r = readl(pll->en_addr);
+> > > +               r &= ~BIT(pll->data->base_en_bit);
+> > > +               writel(r, pll->en_addr);
+> > > +       } else {
+> > > +               r = readl(pll->base_addr + REG_CON0);
+> > > +               r &= ~CON0_BASE_EN;
+> > > +               writel(r, pll->base_addr + REG_CON0);
+> > > +       }
+> > >
+> > >         r = readl(pll->pwr_addr) | CON0_ISO_EN;
+> > >         writel(r, pll->pwr_addr);
+> > > @@ -321,6 +337,8 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
+> > >                 pll->tuner_addr = base + data->tuner_reg;
+> > >         if (data->tuner_en_reg)
+> > >                 pll->tuner_en_addr = base + data->tuner_en_reg;
+> > > +       if (data->en_reg)
+> > > +               pll->en_addr = base + data->en_reg;
+> >
+> > If the answer to my question above holds (asymmetry is not
+> > intentional), this patch/the code could be simplified a lot if you
+> > also added a pll->en_bit member, and, here, did this:
+> >
+> > if (pll->en_reg) {
+> >    pll->en_addr = base + data->en_reg;
+> >    pll->end_bit = data->en_bit;
+> > } else {
+> >    pll->en_addr = pll->base_addr + REG_CON0;
+> >    pll->en_bit = CON0_BASE_EN;
+> > }
+> >
+> > >         pll->hw.init = &init;
+> > >         pll->data = data;
+> > >
+> > > --
+> > > 1.8.1.1.dirty
+>
