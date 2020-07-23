@@ -2,119 +2,178 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F72CC433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 03:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC67C433E4
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F12D420825
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 03:36:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3BA722CB1
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 07:26:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387725AbgGWDg3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jul 2020 23:36:29 -0400
-Received: from regular1.263xmail.com ([211.150.70.205]:41462 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733169AbgGWDg3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jul 2020 23:36:29 -0400
-Received: from localhost (unknown [192.168.167.235])
-        by regular1.263xmail.com (Postfix) with ESMTP id D0411626;
-        Thu, 23 Jul 2020 11:36:18 +0800 (CST)
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-ADDR-CHECKED4: 1
-X-ANTISPAM-LEVEL: 2
-X-SKE-CHECKED: 1
-X-ABS-CHECKED: 1
-Received: from [172.16.12.236] (unknown [58.22.7.114])
-        by smtp.263.net (postfix) whith ESMTP id P26708T140361068414720S1595475377813196_;
-        Thu, 23 Jul 2020 11:36:18 +0800 (CST)
-X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <456395a23dbaab454e0c8d02710fb0dc>
-X-RL-SENDER: zhangqing@rock-chips.com
-X-SENDER: zhangqing@rock-chips.com
-X-LOGIN-NAME: zhangqing@rock-chips.com
-X-FST-TO: kever.yang@rock-chips.com
-X-SENDER-IP: 58.22.7.114
-X-ATTACHMENT-NUM: 0
-X-DNS-TYPE: 0
-X-System-Flag: 0
-Subject: Re: [PATCH v1] clk: Export __clk_lookup()
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-kernel@vger.kernel.org, xxx@rock-chips.com,
-        xf@rock-chips.com, huangtao@rock-chips.com,
-        kever.yang@rock-chips.com
-References: <20200722023230.10826-1-zhangqing@rock-chips.com>
- <14639646.VOZsFJ8Tpa@phil>
-From:   "elaine.zhang" <zhangqing@rock-chips.com>
-Organization: rockchip
-Message-ID: <ecff8b61-f16e-c1ca-3b92-9c90867e73a7@rock-chips.com>
-Date:   Thu, 23 Jul 2020 11:36:17 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1727013AbgGWH0V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 03:26:21 -0400
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:36989 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725857AbgGWH0V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 03:26:21 -0400
+Received: from [78.134.114.177] (port=33342 helo=melee.dev.aim)
+        by hostingweb31.netsons.net with esmtpa (Exim 4.93)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1jyVcQ-0001EU-Pn; Thu, 23 Jul 2020 09:26:18 +0200
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+To:     linux-clk@vger.kernel.org
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: [PATCH v4] clk: vc5: use a dedicated struct to describe the output drivers
+Date:   Thu, 23 Jul 2020 09:26:03 +0200
+Message-Id: <20200723072603.1795-1-luca@lucaceresoli.net>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-In-Reply-To: <14639646.VOZsFJ8Tpa@phil>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Reusing the generic struct vc5_hw_data for all blocks is handy. However it
+implies we allocate space the div_int and div_frc fields even for the
+output drivers where they are unused, and the clk_output_cfg0 and
+clk_output_cfg0_mask fields for all components even though they are used
+only for the output drivers.
 
-ÔÚ 2020/7/23 ÉÏÎç2:26, Heiko Stuebner Ð´µÀ:
-> Hi Elaine,
->
-> Am Mittwoch, 22. Juli 2020, 04:32:30 CEST schrieb Elaine Zhang:
->> Export __clk_lookup() to support user built as module.
->>
->> ERROR:
->> drivers/clk/rockchip/clk.ko: In function
->> `rockchip_clk_protect_critical':
->> drivers/clk/rockchip/clk.c:741:
->> undefined reference to `__clk_lookup'
-> can you elaborate a bit more on why this would be needed?
->
-> Because right now the Rockchip clocks are of course built into
-> the main kernel image (especially due to them being needed during early
-> boot) and __clk_lookup actually is a pretty deep part of the clock-
-> framework itself, as probably also denoted by the "__" in the function
-> name.
+Use a dedicated struct for the output drivers so that each block uses
+exactly the fields it needs, not more.
 
-Rockchip clocks are of course support to built as module(to support GKI),These changes will be pushed soon.
-In drivers/clk/rockchip/clk.c and drivers/clk/rockchip/clk-cpu.c use the __clk_lookup.
+Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
 
->
->
-> Heiko
->
->> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
->> ---
->>   drivers/clk/clk.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 3f588ed06ce3..600284fbb257 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -618,6 +618,7 @@ struct clk *__clk_lookup(const char *name)
->>   
->>   	return !core ? NULL : core->hw->clk;
->>   }
->> +EXPORT_SYMBOL_GPL(__clk_lookup);
->>   
->>   static void clk_core_get_boundaries(struct clk_core *core,
->>   				    unsigned long *min_rate,
->>
->
->
->
->
->
+---
 
+Changes in v4:
+ - slightly rephrase commit message
+ - but split this patch from the original series
+   (https://lkml.org/lkml/2020/7/21/939) as it is orthogonal to the other
+   patches.
+
+Changes in v3: none.
+---
+ drivers/clk/clk-versaclock5.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index 9a5fb3834b9a..944c7c7c843f 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -167,6 +167,12 @@ struct vc5_hw_data {
+ 	u32			div_int;
+ 	u32			div_frc;
+ 	unsigned int		num;
++};
++
++struct vc5_out_data {
++	struct clk_hw		hw;
++	struct vc5_driver_data	*vc5;
++	unsigned int		num;
+ 	unsigned int		clk_output_cfg0;
+ 	unsigned int		clk_output_cfg0_mask;
+ };
+@@ -184,7 +190,7 @@ struct vc5_driver_data {
+ 	struct clk_hw		clk_pfd;
+ 	struct vc5_hw_data	clk_pll;
+ 	struct vc5_hw_data	clk_fod[VC5_MAX_FOD_NUM];
+-	struct vc5_hw_data	clk_out[VC5_MAX_CLK_OUT_NUM];
++	struct vc5_out_data	clk_out[VC5_MAX_CLK_OUT_NUM];
+ };
+ 
+ /*
+@@ -567,7 +573,7 @@ static const struct clk_ops vc5_fod_ops = {
+ 
+ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ {
+-	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
++	struct vc5_out_data *hwdata = container_of(hw, struct vc5_out_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
+ 			VC5_OUT_DIV_CONTROL_SEL_EXT |
+@@ -609,7 +615,7 @@ static int vc5_clk_out_prepare(struct clk_hw *hw)
+ 
+ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+ {
+-	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
++	struct vc5_out_data *hwdata = container_of(hw, struct vc5_out_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 
+ 	/* Disable the clock buffer */
+@@ -619,7 +625,7 @@ static void vc5_clk_out_unprepare(struct clk_hw *hw)
+ 
+ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ {
+-	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
++	struct vc5_out_data *hwdata = container_of(hw, struct vc5_out_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 	const u8 mask = VC5_OUT_DIV_CONTROL_SELB_NORM |
+ 			VC5_OUT_DIV_CONTROL_SEL_EXT |
+@@ -649,7 +655,7 @@ static unsigned char vc5_clk_out_get_parent(struct clk_hw *hw)
+ 
+ static int vc5_clk_out_set_parent(struct clk_hw *hw, u8 index)
+ {
+-	struct vc5_hw_data *hwdata = container_of(hw, struct vc5_hw_data, hw);
++	struct vc5_out_data *hwdata = container_of(hw, struct vc5_out_data, hw);
+ 	struct vc5_driver_data *vc5 = hwdata->vc5;
+ 	const u8 mask = VC5_OUT_DIV_CONTROL_RESET |
+ 			VC5_OUT_DIV_CONTROL_SELB_NORM |
+@@ -704,7 +710,7 @@ static int vc5_map_index_to_output(const enum vc5_model model,
+ }
+ 
+ static int vc5_update_mode(struct device_node *np_output,
+-			   struct vc5_hw_data *clk_out)
++			   struct vc5_out_data *clk_out)
+ {
+ 	u32 value;
+ 
+@@ -729,7 +735,7 @@ static int vc5_update_mode(struct device_node *np_output,
+ }
+ 
+ static int vc5_update_power(struct device_node *np_output,
+-			    struct vc5_hw_data *clk_out)
++			    struct vc5_out_data *clk_out)
+ {
+ 	u32 value;
+ 
+@@ -754,7 +760,7 @@ static int vc5_update_power(struct device_node *np_output,
+ }
+ 
+ static int vc5_update_slew(struct device_node *np_output,
+-			   struct vc5_hw_data *clk_out)
++			   struct vc5_out_data *clk_out)
+ {
+ 	u32 value;
+ 
+@@ -782,7 +788,7 @@ static int vc5_update_slew(struct device_node *np_output,
+ }
+ 
+ static int vc5_get_output_config(struct i2c_client *client,
+-				 struct vc5_hw_data *clk_out)
++				 struct vc5_out_data *clk_out)
+ {
+ 	struct device_node *np_output;
+ 	char *child_name;
+-- 
+2.27.0
 
