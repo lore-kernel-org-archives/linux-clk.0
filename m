@@ -2,113 +2,97 @@ Return-Path: <SRS0=nM/p=BC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B987C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C96C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 17:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 064C420771
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 15:44:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="XGkM4f9x";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CHw7B4RB"
+	by mail.kernel.org (Postfix) with ESMTP id ED8A120714
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 17:29:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595525379;
+	bh=JTaR6osrOGy51LwUpYc5aNzaKnUPUAyBtcEaHG5n60k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lsE/GdSMOJaLU8jMlfe1Zv86OvyZxGOBXma8gbLhjI6nhl1wTraxfRtPX+Wc4xEst
+	 kXfWcGJAm2KPdmDKtOxbnDsC92pUtH4E8nvIvRKco5MkyBph2ELS8hrhWzKzcql7AJ
+	 j0CHmDeRPmgrkPxtKeYvTdjVqM6JtanlmYoC41/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbgGWPoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jul 2020 11:44:25 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:56629 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727108AbgGWPoZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 11:44:25 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 3EBD358046D;
-        Thu, 23 Jul 2020 11:44:24 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 23 Jul 2020 11:44:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
-        date:from:to:cc:subject:message-id:references:mime-version
-        :content-type:content-transfer-encoding:in-reply-to; s=fm3; bh=3
-        WU5tiH6MW2suDFTBvDbYfQ8TP5tgnJIuAQD/XuTOGQ=; b=XGkM4f9xk4vSaNPSq
-        B8sEnunFjr0biFvfDNBlH1OmV8qiODcIyJI2fiWqwYukyfRM/LNgHoxS6AmTRtQG
-        0uZnJ3qpRADkJ4k+IIxbb2ioBC3enac7CddhNM7FxiUMenw2wtPocXkOwJtXiUWS
-        BON6TSvLeORYJQCfs16pm+aptmoWMIiVydkqmf6XLkSxqko/bFDeu14Vki4vLqob
-        Ixr17YPu2/S6Uaq72SYjqFLN+VDyzgBwFT9qQn9hkQjwLKX3znbBhrDoKX/SuljN
-        TH+NTqK6yItgaWxprpgnkKCKjPockDZps2rvGAtmFB3qI3SXqJzYRJqOz7Ugj4Ol
-        LNITw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=3WU5tiH6MW2suDFTBvDbYfQ8TP5tgnJIuAQD/XuTO
-        GQ=; b=CHw7B4RBoH4oJkqH1vY1e8D6B2/mKF3Tvl2x1ZMZe9CiKS7mQYzTM4TkS
-        5KfEZsr35HNA/l27qM1NuxMFIl2t+1H76rEfi/Daznztqf4UzEbKu5IdC4YmwLDm
-        x5D0Crq+de9qk9+68qoMFeG+CJkTcXDZKBbY6v1qcK2YhumSH5P44jqDKAONjsXa
-        D2ug/8b/h/nnC6+l2vGu+4qrAe6EEmtYugYQ/dS67f4fda6m10e2hAzj14+hF1el
-        +QuYFKQB/0htUvsKI+0QKGjce0R8X0dmFfBhloDT9SvrGdli5b9C0kHYGcKyjTuC
-        2KutWzLd36xJzP5nr2FqBhLp4j4eQ==
-X-ME-Sender: <xms:V7AZX9HH9jlNg0YUYena9d9jFpx3LvaNbDrEjNINsS1EszVrKOY4qA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedrhedugdelhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvuffkfhggtggugfgjsehtqhertddttddvnecuhfhrohhmpeforgigihhm
-    vgcutfhiphgrrhguuceomhgrgihimhgvsegtvghrnhhordhtvggthheqnecuggftrfgrth
-    htvghrnhepgfejtedtjefggfffvdetuedthedtheegheeuteekfeeghfdtteejkeeludeg
-    vddunecukfhppeeltddrkeelrdeikedrjeeinecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepmhgrgihimhgvsegtvghrnhhordhtvggthh
-X-ME-Proxy: <xmx:V7AZXyX2OiCjwtm10I8FcF5SBqSyl4WcZk3PNgbsUFaOLxzba3W9Mg>
-    <xmx:V7AZX_JjvKn0xmkTmRPqJ2FyGSo4fEfd3rAccJVgo0ch3c_n20-BIg>
-    <xmx:V7AZXzFm_crW2JeHYcbppaC04F7uClLJL8EKFSA2tY-MxeyT2Xjz7w>
-    <xmx:WLAZX6FTEgDJm6Ir3Tqvf2pmdYCyV3A4-IErTeGQRsQuyLCOPm-nvw>
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 52341328005A;
-        Thu, 23 Jul 2020 11:44:23 -0400 (EDT)
-Date:   Thu, 23 Jul 2020 17:44:21 +0200
-From:   Maxime Ripard <maxime@cerno.tech>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware
- binding
-Message-ID: <20200723154421.yzecsy5qctqbgbxc@gilmour.lan>
-References: <20200626115433.125735-1-maxime@cerno.tech>
+        id S1730046AbgGWR3d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jul 2020 13:29:33 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37369 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730025AbgGWR3d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jul 2020 13:29:33 -0400
+Received: by mail-io1-f65.google.com with SMTP id v6so7108915iob.4;
+        Thu, 23 Jul 2020 10:29:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=H8SSOSWK9ZQn/87T9a7cJ2FJvmQuT0AXY8yIP6WSR7A=;
+        b=TivqGAVE+6jXfb3+irgstqkvGPeDHnpKxUV5qq2fKt371FrB0JpzltwJEHHJ15dXPC
+         C8c5t3te+km6KK+tAODeb6XXPT9WzRjIk6yKDQgr9LFLE1TJZH7i0Q601uwBK5JLWVTS
+         MXeRUtA/HeWyCuU1qFWr+9beYAgdDjEKjntbK9fp2qEwUvI/tV3/BPFNKrVx898hALgk
+         Ivfpsk6DhRLl6lDfPZM3L19ls+JVXt/jiDTsanEU/yk6Yl8jsVcW7AuufJRIT/IslmBO
+         8SqEHrYfa79DLuCZV5LUeZeHuxs9TeQme/iQ3TyP0wX3hA+oWRySAeB0xD7Ie8SonKFz
+         XgGA==
+X-Gm-Message-State: AOAM53119Ukz6D8wi1JBz027rzi4sKA5oOgg8yT2VLfiBOwA9AQ5lggX
+        Lh6Ztw11OwFGcAoM/NWej+u5PM/pOw==
+X-Google-Smtp-Source: ABdhPJyPr4WMPdjwerziMWECWbOdCrzVcN5jJ7eSieuD6AEc74+VXTYIYYRCuWOF4RprQSk/2AlpkA==
+X-Received: by 2002:a05:6602:1225:: with SMTP id z5mr6127039iot.64.1595525372555;
+        Thu, 23 Jul 2020 10:29:32 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id r23sm1795922iob.42.2020.07.23.10.29.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jul 2020 10:29:31 -0700 (PDT)
+Received: (nullmailer pid 571644 invoked by uid 1000);
+        Thu, 23 Jul 2020 17:29:29 -0000
+Date:   Thu, 23 Jul 2020 11:29:29 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [PATCH v4 3/3] dt-bindings: clk: versaclock5: convert to yaml
+Message-ID: <20200723172929.GA571596@bogus>
+References: <20200723074112.3159-1-luca@lucaceresoli.net>
+ <20200723074112.3159-4-luca@lucaceresoli.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200626115433.125735-1-maxime@cerno.tech>
+In-Reply-To: <20200723074112.3159-4-luca@lucaceresoli.net>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Mike,
-
-On Fri, Jun 26, 2020 at 01:54:33PM +0200, Maxime Ripard wrote:
-> The RaspberryPi firmware binding uses two compatible, include simple-bus.
-> The select statement generated by default will thus select any node that
-> has simple-bus, not all of them being the raspberrypi firmware node.
->=20
-> This results in warnings being wrongfully reported. Let's add a custom
-> select statement to fix that.
->=20
-> Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware bin=
-ding to YAML")
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
->
+On Thu, 23 Jul 2020 09:41:12 +0200, Luca Ceresoli wrote:
+> Convert to yaml the VersaClock bindings document. The mapping between
+> clock specifier and physical pins cannot be described formally in yaml
+> schema, then keep it verbatim in the description field.
+> 
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> 
 > ---
->
-> The original binding has been merged through the clock tree, so it should
-> be merged there.
+> 
+> Changes in v4: none.
+> 
+> Changes in v3:
+>  - schema syntax fixes: use enum to constrain reg, don't use defines as
+>    enums, drop type for standard unit suffix, fix syntax for clock-names
+>    property (all suggested by Rob Herring)
+> ---
+>  .../bindings/clock/idt,versaclock5.txt        | 125 --------------
+>  .../bindings/clock/idt,versaclock5.yaml       | 154 ++++++++++++++++++
+>  MAINTAINERS                                   |   1 +
+>  3 files changed, 155 insertions(+), 125 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
+> 
 
-Could you apply that patch to clk-next?
-
-Thanks!
-Maxime
+Reviewed-by: Rob Herring <robh@kernel.org>
