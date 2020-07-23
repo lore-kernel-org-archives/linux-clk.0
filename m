@@ -7,83 +7,66 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3142EC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7BE6C433EC
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:49:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 10EB62084D
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:46:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C823220771
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jul 2020 01:49:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595468799;
-	bh=mdnxAsGZvqkIfXw6NhCN9KchVj393DErIHhly/Gxth8=;
+	s=default; t=1595468965;
+	bh=Nmqte8bweK+QD9+SwQumY88j2R8RrE+EWxABzrIMfT4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=thsu4/5Lh0JMr2r5f9Rvjz+KJ+xQtp5juvGd26vZXKO7iP9WKA7h7lEiMaYXPwu69
-	 2j8MZfs80ZFcBJElXQG4nD3FrpqSYWGNBHgqQXopmlAF1UW8zI8IVxDAbStaElWT3+
-	 Dv4owQtJQedyhit/vHxrpItT4Edjua5F6vOkaDVg=
+	b=2vjOv4YG3fNdkj02sArjcx+hyXl7oUBgYGeQxgwj6o0TcKXKO188LaPehbZ0Oo/al
+	 GGZRMvUIwN+y6OdJOHkuG4hbmAYXfKSILVKuZaLIXwWdxwP8c402Z+e05c6I2UYi5o
+	 5n0ETPjR/s85H4zJWrnxjwd2Y3qIXlzmi1hW/4OQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733191AbgGWBqi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jul 2020 21:46:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34192 "EHLO mail.kernel.org"
+        id S2387601AbgGWBtZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jul 2020 21:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729198AbgGWBqi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 22 Jul 2020 21:46:38 -0400
+        id S1729198AbgGWBtZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 22 Jul 2020 21:49:25 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D27FF2071A;
-        Thu, 23 Jul 2020 01:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A85E22071A;
+        Thu, 23 Jul 2020 01:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595468797;
-        bh=mdnxAsGZvqkIfXw6NhCN9KchVj393DErIHhly/Gxth8=;
+        s=default; t=1595468964;
+        bh=Nmqte8bweK+QD9+SwQumY88j2R8RrE+EWxABzrIMfT4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Fcl+dyju318doGy/Nx4rHj4WqhqlpH6L6OyvyxiSvU4fs6W+uL2PCde8o8S7gWvAl
-         6pzzNu26tA/GW+AGdEPN4K5PLE1ymDLaAG+V4rPRz6UKixCcuyzM5Mi2MO67930BtY
-         2LYsOLV/9r6jiIs9FRvk3JXV9yam6EmZCyNra+OY=
+        b=cAbgm0XyX3ZFNdD75o/5JmOlsjYFGJKKE3YuR9/7MaqajEH6igfAOGsNaBeotsbMS
+         Qd/Q6I8QoRrNmQKE43WCk3JEsl8lFfNfcM3xVfDLEeEZGhsPAcbDD+GfilLJVAG/qv
+         vqEhWc6UpUaVVH4shxERWFyWU+sReO54YYFArSC4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200625132736.88832-1-colin.king@canonical.com>
-References: <20200625132736.88832-1-colin.king@canonical.com>
-Subject: Re: [PATCH][next] clk: vc5: fix use of memory after it has been kfree'd
+In-Reply-To: <20200721164655.422-1-luca@lucaceresoli.net>
+References: <20200721164655.422-1-luca@lucaceresoli.net>
+Subject: Re: [PATCH v3 1/4] dt-bindings: clk: versaclock5: fix 'idt' prefix typos
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Adam Ford <aford173@gmail.com>,
-        Colin King <colin.king@canonical.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
+Cc:     Luca Ceresoli <luca@lucaceresoli.net>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
-Date:   Wed, 22 Jul 2020 18:46:37 -0700
-Message-ID: <159546879710.3847286.14955586064206205548@swboyd.mtv.corp.google.com>
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Adam Ford <aford173@gmail.com>, Rob Herring <robh@kernel.org>
+To:     Luca Ceresoli <luca@lucaceresoli.net>, linux-clk@vger.kernel.org
+Date:   Wed, 22 Jul 2020 18:49:24 -0700
+Message-ID: <159546896402.3847286.10939445139729414539@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Colin King (2020-06-25 06:27:36)
-> From: Colin Ian King <colin.king@canonical.com>
+Quoting Luca Ceresoli (2020-07-21 09:46:52)
+> 'idt' is misspelled 'itd' in a few places, fix it.
 >=20
-> There are a several places where printing an error message of
-> init.name occurs after init.name has been kfree'd. Also the failure
-> message is duplicated each time in the code. Fix this by adding
-> a registration error failure path for these cases, moving the
-> duplicated error messages to one common point and kfree'ing init.name
-> only after it has been used.
+> Fixes: 34662f6e3084 ("dt: Add additional option bindings for IDT VersaClo=
+ck")
+> Signed-off-by: Luca Ceresoli <luca@lucaceresoli.net>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 >=20
-> Changes also shrink the object code size by 171 bytes (x86-64, gcc 9.3):
->=20
-> Before:
->    text    data     bss     dec     hex filename
->   21057    3960      64   25081    61f9 drivers/clk/clk-versaclock5.o
->=20
-> After:
->    text    data     bss     dec     hex filename
->   20886    3960      64   24910    614e drivers/clk/clk-versaclock5.o
->=20
-> Addresses-Coverity: ("Use after free")
-> Fixes: f491276a5168 ("clk: vc5: Allow Versaclock driver to support multip=
-le instances")
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
 
-Applied to clk-next
+Please use a cover-letter for multi-patch series.
