@@ -2,113 +2,131 @@ Return-Path: <SRS0=WVnq=BD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E970CC433F7
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:07:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE8FC43446
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CA203206C1
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:07:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09C5920737
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:08:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Xt4feNcR"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="peQ4eEyW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbgGXQH1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jul 2020 12:07:27 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:54745 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728008AbgGXQHX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jul 2020 12:07:23 -0400
+        id S1728255AbgGXQIm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jul 2020 12:08:42 -0400
+Received: from m43-7.mailgun.net ([69.72.43.7]:30488 "EHLO m43-7.mailgun.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728558AbgGXQIl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jul 2020 12:08:41 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1595606843; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=BDjCdzox03R+E0WebnMzaH3e+8GkUl2oaYOMtWhsAZY=; b=Xt4feNcRRpmyV5xvbKldN+Ox5SH75P2exk4yppWjOY1/Mc1gk19uqc7Gw3/i4/FisxIUr9tk
- m0TUH7DkaEW0tq5hdvY/Atu/rXzDmrRCy1XON3P+opciGsMS7qUA/j0SyDlFfZZbeaW+UFC+
- 7qShy+7Z9d7uvNkvVxY1yFTqtE4=
-X-Mailgun-Sending-Ip: 104.130.122.29
+ s=smtp; t=1595606920; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=Z7VcFhGfQeC2uFAHORg1EVlpA7tEAa/KJ7mZGO2/rp0=; b=peQ4eEyW0vQff6b9i90Kehb77xs/yUSsHDk8guosl96dHyyX8QFU10ITQEH8hWgf8wUiKm8s
+ KYCfEgGfxFSOTgkEndrbmIJ6Ab+IoF3qmyB51YQJxAQgfDBvxZd2ZTV2feFWFOmLSW7/phBz
+ wLV0gC9zJqhgVaMOIq7geWWN4ns=
+X-Mailgun-Sending-Ip: 69.72.43.7
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n15.prod.us-east-1.postgun.com with SMTP id
- 5f1b07268db7256a955ba00f (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 24 Jul 2020 16:07:02
+ smtp-out-n04.prod.us-west-2.postgun.com with SMTP id
+ 5f1b078449176bd38251886b (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 24 Jul 2020 16:08:36
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 03AB9C433C9; Fri, 24 Jul 2020 16:07:01 +0000 (UTC)
-Received: from [192.168.0.105] (unknown [183.82.136.194])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id 77416C433CB; Fri, 24 Jul 2020 16:08:36 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4CD91C43391;
-        Fri, 24 Jul 2020 16:06:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4CD91C43391
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 17BC3C433A1;
+        Fri, 24 Jul 2020 16:08:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 17BC3C433A1
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v4 4/4] clk: qcom: lpass: Add support for LPASS clock
- controller for SC7180
+From:   Taniya Das <tdas@codeaurora.org>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-References: <1594795010-9074-1-git-send-email-tdas@codeaurora.org>
- <1594795010-9074-5-git-send-email-tdas@codeaurora.org>
- <159531768310.3847286.13203525525881212775@swboyd.mtv.corp.google.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <893b1221-6e35-a903-77d4-a60a3ce0cbdc@codeaurora.org>
-Date:   Fri, 24 Jul 2020 21:36:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <159531768310.3847286.13203525525881212775@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v5 1/4] clk: qcom: gdsc: Add support to enable retention of GSDCR
+Date:   Fri, 24 Jul 2020 21:37:55 +0530
+Message-Id: <1595606878-2664-2-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1595606878-2664-1-git-send-email-tdas@codeaurora.org>
+References: <1595606878-2664-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Add support for the RETAIN_FF_ENABLE feature which enables the
+usage of retention registers. These registers maintain their
+state after disabling and re-enabling a GDSC.
 
-Thanks for the review.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gdsc.c | 12 ++++++++++++
+ drivers/clk/qcom/gdsc.h |  1 +
+ 2 files changed, 13 insertions(+)
 
-On 7/21/2020 1:18 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2020-07-14 23:36:50)
->> diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+index 04944f1..2502430 100644
+--- a/drivers/clk/qcom/gdsc.c
++++ b/drivers/clk/qcom/gdsc.c
+@@ -29,6 +29,7 @@
+ /* CFG_GDSCR */
+ #define GDSC_POWER_UP_COMPLETE		BIT(16)
+ #define GDSC_POWER_DOWN_COMPLETE	BIT(15)
++#define GDSC_RETAIN_FF_ENABLE		BIT(11)
+ #define CFG_GDSCR_OFFSET		0x4
 
->> +static struct clk_alpha_pll lpass_lpaaudio_dig_pll = {
->> +       .offset = 0x1000,
->> +       .vco_table = fabia_vco,
->> +       .num_vco = ARRAY_SIZE(fabia_vco),
->> +       .regs = clk_alpha_pll_regs_offset[CLK_ALPHA_PLL_TYPE_FABIA],
->> +       .clkr = {
->> +               .hw.init = &(struct clk_init_data){
->> +                       .name = "lpass_lpaaudio_dig_pll",
->> +                       .parent_data = &(const struct clk_parent_data){
->> +                               .fw_name = "bi_tcxo",
->> +                               .name = "bi_tcxo",
-> 
-> We don't need .name if we have .fw_name and this is a new binding/device.
-> 
+ /* Wait 2^n CXO cycles between all states. Here, n=2 (4 cycles). */
+@@ -216,6 +217,14 @@ static inline void gdsc_assert_reset_aon(struct gdsc *sc)
+ 	regmap_update_bits(sc->regmap, sc->clamp_io_ctrl,
+ 			   GMEM_RESET_MASK, 0);
+ }
++
++static void gdsc_retain_ff_on(struct gdsc *sc)
++{
++	u32 mask = GDSC_RETAIN_FF_ENABLE;
++
++	regmap_update_bits(sc->regmap, sc->gdscr, mask, mask);
++}
++
+ static int gdsc_enable(struct generic_pm_domain *domain)
+ {
+ 	struct gdsc *sc = domain_to_gdsc(domain);
+@@ -268,6 +277,9 @@ static int gdsc_enable(struct generic_pm_domain *domain)
+ 		udelay(1);
+ 	}
 
-My bad, will cleanup in the next patch.
++	if (sc->flags & RETAIN_FF_ENABLE)
++		gdsc_retain_ff_on(sc);
++
+ 	return 0;
+ }
 
->> +                       },
->> +                       .num_parents = 1,
->> +                       .ops = &clk_alpha_pll_fabia_ops,
->> +               },
->> +       },
->> +};
->> +
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
+diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+index c36fc26..a5076fe 100644
+--- a/drivers/clk/qcom/gdsc.h
++++ b/drivers/clk/qcom/gdsc.h
+@@ -50,6 +50,7 @@ struct gdsc {
+ #define AON_RESET	BIT(4)
+ #define POLL_CFG_GDSCR	BIT(5)
+ #define ALWAYS_ON	BIT(6)
++#define RETAIN_FF_ENABLE	BIT(7)
+ 	struct reset_controller_dev	*rcdev;
+ 	unsigned int			*resets;
+ 	unsigned int			reset_count;
 --
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
