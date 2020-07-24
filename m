@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 514DEC433E8
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 20:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6359C433F2
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 20:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3073E206D7
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 20:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0044206D7
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 20:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595621626;
-	bh=QdW716oqd4ZZMAuzDOfgUPJ3O7hhaN+UsitTZAlDNbA=;
+	s=default; t=1595621633;
+	bh=eMU/Q3eUJH4nXYLLXeV1AcI1wR0HxSadDiZaQuWJq9M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=hAfrqRTaIFkGpt5N3hdQuA+NeZR61m7fFJ4PsAaK49pOH63jKGuWJGczOGPGbLubA
-	 zy7bz+Fj0hax9x8eZ3Uq/rJDbYCzyxXAy/Le0+Dwo3LVgThtjAa1pmImKoPoxMWv6y
-	 UkU1SkgLyu31D246uEj18IdVS46LQHRrknBpQcjs=
+	b=qELpbQEOZyTGv8bKCb0jvkzE1+/O+kDUHQdFIjqly63pNTe96al7Det9+2AUOjJ8y
+	 OemxDIQJ6vOM/VbdQQLzQ5tQG6ikh7rAZqpy6F/h0OthXxLhN/zItQixCzaGdhW8n1
+	 IWNbjZ6+bsR7FiWzTrp2w4Zyn1yJ9NhzM71zGTXc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbgGXUNm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jul 2020 16:13:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42162 "EHLO mail.kernel.org"
+        id S1727803AbgGXUNu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jul 2020 16:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42320 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726573AbgGXUNm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jul 2020 16:13:42 -0400
+        id S1727774AbgGXUNt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jul 2020 16:13:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70C24206D7;
-        Fri, 24 Jul 2020 20:13:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D87E7206F6;
+        Fri, 24 Jul 2020 20:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595621621;
-        bh=QdW716oqd4ZZMAuzDOfgUPJ3O7hhaN+UsitTZAlDNbA=;
+        s=default; t=1595621628;
+        bh=eMU/Q3eUJH4nXYLLXeV1AcI1wR0HxSadDiZaQuWJq9M=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=niDmBN2Svthaa6mrmDqFyuu9MQCsCsL6rPOzmpAX7amOO57cCmCha7HCMcmsPzD5D
-         sSeyw/gq0Q4qx9yPM062qp/MLCHhGckIVt+wW9qpqfxp6UcnJ5aMhkWhOCTxtG6L8L
-         4udaLR69xuYVGYB8uxaMYRyu9+S+ZD5xgQCAn+zA=
+        b=ctxH0kQ0y6EyGmVDx7rMf/h+nXGFlLva1UOYK2l66bfKqfN/ztbP32oaFnxmpw8kC
+         q8zQaO+op7HpEtHi9cj8h/BZnaL8Js9n9llYZ5uO1btQPWk742zM+e5tn362vA8dUY
+         MZSm8zaqrxB0P/TnwQW088I+cMZPQqI7g5KRDb6E=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1595606878-2664-2-git-send-email-tdas@codeaurora.org>
-References: <1595606878-2664-1-git-send-email-tdas@codeaurora.org> <1595606878-2664-2-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v5 1/4] clk: qcom: gdsc: Add support to enable retention of GSDCR
+In-Reply-To: <1595606878-2664-4-git-send-email-tdas@codeaurora.org>
+References: <1595606878-2664-1-git-send-email-tdas@codeaurora.org> <1595606878-2664-4-git-send-email-tdas@codeaurora.org>
+Subject: Re: [PATCH v5 3/4] clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -53,18 +53,17 @@ Cc:     David Brown <david.brown@linaro.org>,
         Taniya Das <tdas@codeaurora.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
-Date:   Fri, 24 Jul 2020 13:13:40 -0700
-Message-ID: <159562162063.3847286.2084727376544285288@swboyd.mtv.corp.google.com>
+Date:   Fri, 24 Jul 2020 13:13:48 -0700
+Message-ID: <159562162828.3847286.2721043832733026390@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-07-24 09:07:55)
-> Add support for the RETAIN_FF_ENABLE feature which enables the
-> usage of retention registers. These registers maintain their
-> state after disabling and re-enabling a GDSC.
+Quoting Taniya Das (2020-07-24 09:07:57)
+> Add the GCC lpass clock which is required to access the LPASS core
+> clocks.
 >=20
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
