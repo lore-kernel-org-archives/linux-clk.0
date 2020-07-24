@@ -7,60 +7,63 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD9BCC4345D
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 08:52:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC309C433E8
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 08:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E569206EB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 08:52:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C02206EB
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 08:52:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595580768;
-	bh=a3/DWCpH16BgRgmfSbq0YYuwUHCL7wFOBB29bWbEJIM=;
+	s=default; t=1595580772;
+	bh=3XAOLRXH+A5spT3PUCVqth7VHfe4CGFX/QSU9CZHx44=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ud016xCiquI3egskk3j4tS9xyUlWAOZaRdWyjCDX1Ib/U53GiDM1AQEGpfJcn2MwK
-	 lKHvYSF2hJY3K2ZpnstMYrhtJj2Rn9DdEETdjaaPExXp4djv8EvZYlXm2ZmRHrR0rH
-	 ssBUumecq2ibA96nXRjmH3Apna3+A/MciMbxLkvw=
+	b=W3/aag5ypcTvaJINi6NgpUYoQqlzS+Rp7T4pDD6KTKSOUVUKZyXfyFinuNuoRuj5Q
+	 FP44pu7rQoiocMQM+A7aKuw+815PP2R1ZYc8QaffHeLUTMt0jfGnl7GPlJ+kFn9rpZ
+	 CfkfuJTxacR0xcCG7GevcIB3fVbYbvLgf6E3DTys=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727923AbgGXIwp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jul 2020 04:52:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37572 "EHLO mail.kernel.org"
+        id S1726882AbgGXIww (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jul 2020 04:52:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726554AbgGXIwm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jul 2020 04:52:42 -0400
+        id S1726554AbgGXIww (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jul 2020 04:52:52 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77111206EB;
-        Fri, 24 Jul 2020 08:52:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ADBC5206EB;
+        Fri, 24 Jul 2020 08:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595580762;
-        bh=a3/DWCpH16BgRgmfSbq0YYuwUHCL7wFOBB29bWbEJIM=;
+        s=default; t=1595580771;
+        bh=3XAOLRXH+A5spT3PUCVqth7VHfe4CGFX/QSU9CZHx44=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=2n9zayygvXgznRjo4PkR4n+tmvM4A2DMD8GSlFos0NDiPFhkQqXrShSxOkVrOv+SR
-         NMAe22MdgDPRZts912yUDlO8Yg9JTV6uKeExNy92vIjO2ApIYDAtSkaEYoEBvHbO9E
-         D3rhcJOCrrwkNFAuN1EbN2uOuGvqIW2fpWQURA+E=
+        b=Rw7XkhQcY5FW6xbsyMZBXEUG/Ik1Wu+zCSg9CYpbtSNmDwm0krzyLmvfm5i2yl5jo
+         5YOFfvV5otirQ5ak3P6eveW2XcV8W/r9sTXHVcfdi2sLi9rVxLCVZZ5wSVb63iwkmr
+         1hJH1LLi0gKKVS/OR7VkFCnr/YzvNkMsQapjd1Q8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200709135251.643-10-jonathan@marek.ca>
-References: <20200709135251.643-1-jonathan@marek.ca> <20200709135251.643-10-jonathan@marek.ca>
-Subject: Re: [PATCH v3 09/14] clk: qcom: add common gdsc_gx_do_nothing_enable for gpucc drivers
+In-Reply-To: <20200709135251.643-12-jonathan@marek.ca>
+References: <20200709135251.643-1-jonathan@marek.ca> <20200709135251.643-12-jonathan@marek.ca>
+Subject: Re: [PATCH v3 11/14] clk: qcom: Add graphics clock controller driver for SM8250
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 To:     Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org
-Date:   Fri, 24 Jul 2020 01:52:41 -0700
-Message-ID: <159558076183.3847286.7546727654493572761@swboyd.mtv.corp.google.com>
+Date:   Fri, 24 Jul 2020 01:52:51 -0700
+Message-ID: <159558077103.3847286.2846749165672548492@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jonathan Marek (2020-07-09 06:52:40)
-> All gpucc drivers need this, so move it to common code instead of
-> duplicating it in every gpucc driver.
+Quoting Jonathan Marek (2020-07-09 06:52:42)
+> Add support for the graphics clock controller found on SM8250
+> based devices.
+>=20
+> This is initially copied from the downstream kernel, but has
+> been modified to more closely match the upstream sc7180 driver.
 >=20
 > Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 > ---
