@@ -2,46 +2,48 @@ Return-Path: <SRS0=WVnq=BD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71396C433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE6DC433EA
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 501B620737
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79B6620674
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 16:09:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="aag9/rEw"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="aFHSH/Eq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbgGXQIi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jul 2020 12:08:38 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:22462 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728552AbgGXQIX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jul 2020 12:08:23 -0400
+        id S1728558AbgGXQJc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jul 2020 12:09:32 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:34280 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726667AbgGXQJc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jul 2020 12:09:32 -0400
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1595606903; h=Message-Id: Date: Subject: Cc: To: From:
- Sender; bh=OuK+fHmOdnHq6Gy5CQQ7gf9CS4eAtdGE5l/i2Hmgl8A=; b=aag9/rEwTUtzpVkKtYICGImrHbbPPaovhI+EGrq08J8V6eQhVk0ql131PxnxQM8gEr0yONFS
- Q/3T89iUpHeg513UcxVS8VhlsLvh7V28CkKr439/feV1DBw65zGTVFV2GeTxDH9FHO7nETny
- G1IRMHUrC8iVusLrFa3IlVqdNAo=
-X-Mailgun-Sending-Ip: 69.72.43.7
+ s=smtp; t=1595606971; h=References: In-Reply-To: Message-Id: Date:
+ Subject: Cc: To: From: Sender;
+ bh=IQxPem+5VW7r05RFRPLuHDIBclW0bJ77HNTxrUxaSFI=; b=aFHSH/EqR+byWBX0PEwtwayCtqPTO44Mxa1X6eFXV1vPba5uuGn2J3KYb8HHTBFnRXNE2Hn5
+ wF/YLN61JZBfDqth3iYiNC0jUMkgkyfw8pP0cirPFtklW0dsCTED45wlMc8ZObu8zKrmoqzw
+ ljN7eWhZqE+EYFpNiuI0oQHP068=
+X-Mailgun-Sending-Ip: 104.130.122.29
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org
  (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n07.prod.us-west-2.postgun.com with SMTP id
- 5f1b076d35f3e3d3160dd608 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 24 Jul 2020 16:08:13
+ smtp-out-n06.prod.us-west-2.postgun.com with SMTP id
+ 5f1b079b634c4259e3c0e784 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Fri, 24 Jul 2020 16:08:59
  GMT
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 8DC5AC433A0; Fri, 24 Jul 2020 16:08:13 +0000 (UTC)
+        id B86B2C433B1; Fri, 24 Jul 2020 16:08:58 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A8D0C433CA;
-        Fri, 24 Jul 2020 16:08:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A8D0C433CA
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 076CAC433AF;
+        Fri, 24 Jul 2020 16:08:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 076CAC433AF
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -54,61 +56,57 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v5 0/4] clk: qcom: Support for Low Power Audio Clocks on SC7180
-Date:   Fri, 24 Jul 2020 21:37:54 +0530
-Message-Id: <1595606878-2664-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v5 3/4] clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
+Date:   Fri, 24 Jul 2020 21:37:57 +0530
+Message-Id: <1595606878-2664-4-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1595606878-2664-1-git-send-email-tdas@codeaurora.org>
+References: <1595606878-2664-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[v5]
-  * Replace tabs with space in the documentation binding.
-  * Remove .name from parent_data.
+Add the GCC lpass clock which is required to access the LPASS core
+clocks.
 
-[v4]
- * Fix minor comments in the documentation binding.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/gcc-sc7180.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-[v3]
- * Update the clock-name to iface instead of gcc_lpass_sway.
- * Update the documentation with the reg descriptions and use maxItems.
+diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+index ca4383e..8d3b161 100644
+--- a/drivers/clk/qcom/gcc-sc7180.c
++++ b/drivers/clk/qcom/gcc-sc7180.c
+@@ -2251,6 +2251,19 @@ static struct clk_branch gcc_mss_q6_memnoc_axi_clk = {
+ 	},
+ };
 
-[v2]
- * Update retention macro name.
- * Update the register description in the documentation.
++static struct clk_branch gcc_lpass_cfg_noc_sway_clk = {
++	.halt_reg = 0x47018,
++	.halt_check = BRANCH_HALT_DELAY,
++	.clkr = {
++		.enable_reg = 0x47018,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "gcc_lpass_cfg_noc_sway_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
+ static struct gdsc ufs_phy_gdsc = {
+ 	.gdscr = 0x77004,
+ 	.pd = {
+@@ -2428,6 +2441,7 @@ static struct clk_regmap *gcc_sc7180_clocks[] = {
+ 	[GCC_MSS_Q6_MEMNOC_AXI_CLK] = &gcc_mss_q6_memnoc_axi_clk.clkr,
+ 	[GCC_MSS_SNOC_AXI_CLK] = &gcc_mss_snoc_axi_clk.clkr,
+ 	[GCC_SEC_CTRL_CLK_SRC] = &gcc_sec_ctrl_clk_src.clkr,
++	[GCC_LPASS_CFG_NOC_SWAY_CLK] = &gcc_lpass_cfg_noc_sway_clk.clkr,
+ };
 
-[v1]
- * Add support for Retention of GDSCR.
- * Add YAML schema for LPASS clocks and clock IDs for LPASS.
- * Add clock driver for LPASS core clocks and GCC LPASS clock.
-
-Taniya Das (4):
-  clk: qcom: gdsc: Add support to enable retention of GSDCR
-  dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
-  clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
-  clk: qcom: lpass: Add support for LPASS clock controller for SC7180
-
-Taniya Das (4):
-  clk: qcom: gdsc: Add support to enable retention of GSDCR
-  dt-bindings: clock: Add YAML schemas for LPASS clocks on SC7180
-  clk: qcom: gcc: Add support for GCC LPASS clock for SC7180
-  clk: qcom: lpass: Add support for LPASS clock controller for SC7180
-
- .../bindings/clock/qcom,sc7180-lpasscorecc.yaml    | 102 +++++
- drivers/clk/qcom/Kconfig                           |   9 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/gcc-sc7180.c                      |  14 +
- drivers/clk/qcom/gdsc.c                            |  12 +
- drivers/clk/qcom/gdsc.h                            |   1 +
- drivers/clk/qcom/lpasscorecc-sc7180.c              | 477 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,gcc-sc7180.h        |   1 +
- .../dt-bindings/clock/qcom,lpasscorecc-sc7180.h    |  29 ++
- 9 files changed, 646 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-lpasscorecc.yaml
- create mode 100644 drivers/clk/qcom/lpasscorecc-sc7180.c
- create mode 100644 include/dt-bindings/clock/qcom,lpasscorecc-sc7180.h
-
+ static const struct qcom_reset_map gcc_sc7180_resets[] = {
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
