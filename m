@@ -4,65 +4,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97019C433ED
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 09:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ADEC433E3
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 09:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 75B922074F
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 09:22:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F02C920674
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jul 2020 09:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595582559;
-	bh=unvncGrqFVS7ZXx4Z88wqiMxuA+vFo/71kXPNlyrpRM=;
+	s=default; t=1595582708;
+	bh=hr1lzVQwvZa/ffCgXI+siSvs8/fHom8ursNzlP7K2lg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=WJ7akC5z728UcjhZR4Qlx7mH265Xiun397m1Idk6QYooeRN0Pnlz565rKXFW+AHD6
-	 xakeL+k8mYfidb2hFDAeF9TzEgvsH6J0edG0/dYhDkMJwKv5wrpV/2pz2Mdb4705A/
-	 0YgI9XbFvtSfh7VUVh+Oo4BbH6aMo90EehqcyqmQ=
+	b=cd9rBphb8o9d/eRDRCsVHC2gK5EC7CqIX1WXIXMHcnC07faxxQCsvPxX7fdmMKplt
+	 iInX3mqb3OCiUsfQeP4K2aWwNAmH2lnYkNANE56gaEefZNW6amjbChhEtXMeTtL2x1
+	 WCY5xm+x8BwdrQCCYAfsNcAeJm9LjsKVSqYo6mig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgGXJWj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jul 2020 05:22:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53072 "EHLO mail.kernel.org"
+        id S1727779AbgGXJZE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jul 2020 05:25:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728340AbgGXJWi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jul 2020 05:22:38 -0400
+        id S1726572AbgGXJZE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jul 2020 05:25:04 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 396FC2076A;
-        Fri, 24 Jul 2020 09:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C78742063A;
+        Fri, 24 Jul 2020 09:25:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595582558;
-        bh=unvncGrqFVS7ZXx4Z88wqiMxuA+vFo/71kXPNlyrpRM=;
+        s=default; t=1595582703;
+        bh=hr1lzVQwvZa/ffCgXI+siSvs8/fHom8ursNzlP7K2lg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tv/zqqI/P35FYhe6x9at2Cs7aOTEF1CkiA3y1oIn6Lng6NR6so8A0Jgrb3UMSvNhY
-         8xX5JyOdzA6J9aqmyEdyrU03VLJqulvDV95xytBpabvf66Le2LLbIhazhNw/ihi1UJ
-         I8MrcVJA6+JmrZIHyPldXxRwyKRjrC+tGWvDxICA=
+        b=0gr1eSOGYBp1Vikurdn0O0SaVca1qIfWyOTWiyAM6lD4iyzL4JEfMmmosY1h19zsZ
+         dyyTFfFB5bbzybd1aoUgrsdAa1Xv4JNnT8FlO0/IjlN5az8ecNlHiP3hqw1WCH/uEJ
+         hWd7H2RRJ+YQnxIBvCXatTiJmcPDutfIb6Q2Yd7M=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1595403506-8209-19-git-send-email-claudiu.beznea@microchip.com>
-References: <1595403506-8209-1-git-send-email-claudiu.beznea@microchip.com> <1595403506-8209-19-git-send-email-claudiu.beznea@microchip.com>
-Subject: Re: [PATCH v2 18/18] clk: at91: sama7g5: add clock support for sama7g5
+In-Reply-To: <20200703073236.23923-1-a.fatoum@pengutronix.de>
+References: <20200703073236.23923-1-a.fatoum@pengutronix.de>
+Subject: Re: [PATCH] clk: at91: fix possible dead lock in new drivers
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
+Cc:     kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     Claudiu Beznea <claudiu.beznea@microchip.com>,
-        alexandre.belloni@bootlin.com, ludovic.desroches@microchip.com,
-        mturquette@baylibre.com, nicolas.ferre@microchip.com
-Date:   Fri, 24 Jul 2020 02:22:37 -0700
-Message-ID: <159558255758.3847286.4193906885185534353@swboyd.mtv.corp.google.com>
+        linux-kernel@vger.kernel.org
+To:     Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>
+Date:   Fri, 24 Jul 2020 02:25:03 -0700
+Message-ID: <159558270306.3847286.15644620940013309349@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Claudiu Beznea (2020-07-22 00:38:26)
-> Add clock support for SAMA7G5.
+Quoting Ahmad Fatoum (2020-07-03 00:32:35)
+> syscon_node_to_regmap() will make the created regmap get and enable the
+> first clock it can parse from the device tree. This clock is not needed to
+> access the registers and should not be enabled at that time.
 >=20
-> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Use device_node_to_regmap to resolve this as it looks up the regmap in
+> the same list but doesn't care about the clocks. This issue is detected
+> by lockdep when booting the sama5d3 with a device tree containing the
+> new clk bindings.
+>=20
+> This fix already happened in 6956eb33abb5 ("clk: at91: fix possible
+> deadlock") for the drivers that had been migrated to the new clk binding
+> back then. This does the same for the new drivers as well.
+>=20
+> Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
+> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 > ---
 
 Applied to clk-next
