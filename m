@@ -1,98 +1,159 @@
-Return-Path: <SRS0=6BEN=BE=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=EMp/=BF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BF0C433F1
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jul 2020 05:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB20C433EA
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Jul 2020 11:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7755D206F6
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jul 2020 05:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F03202065C
+	for <linux-clk@archiver.kernel.org>; Sun, 26 Jul 2020 11:13:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kVUnJWDP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbgGYFMO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Jul 2020 01:12:14 -0400
-Received: from out28-51.mail.aliyun.com ([115.124.28.51]:49239 "EHLO
-        out28-51.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726901AbgGYFMN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jul 2020 01:12:13 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1552631|-1;CH=green;DM=|CONTINUE|false|;DS=CONTINUE|ham_regular_dialog|0.0239945-0.00119476-0.974811;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=14;RT=14;SR=0;TI=SMTPD_---.I7G.t3W_1595653922;
-Received: from localhost.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.I7G.t3W_1595653922)
-          by smtp.aliyun-inc.com(10.147.40.26);
-          Sat, 25 Jul 2020 13:12:09 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
-        <zhouyanjie@wanyeetech.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, paul@crapouillou.net,
-        prasannatsmkumar@gmail.com, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com
-Subject: [PATCH 1/3] dt-bindings: clock: Add RTC related clocks for Ingenic SoCs.
-Date:   Sat, 25 Jul 2020 13:11:34 +0800
-Message-Id: <20200725051136.58220-2-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
-References: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
+        id S1727983AbgGZLNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 26 Jul 2020 07:13:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40066 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbgGZLNN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 26 Jul 2020 07:13:13 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 632CFC0619D2;
+        Sun, 26 Jul 2020 04:13:12 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id lx13so14224661ejb.4;
+        Sun, 26 Jul 2020 04:13:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tNAVT9gld8ytdUafqDbp0LRRq+hyh+iiBGbYdB7ZOxM=;
+        b=kVUnJWDPN6bBNQf+whJB42R11Hv00qYaftuHcTPkOHBGBB9Ot9QHSEiXRV21lvGbC1
+         Bsgbfz29Cq6a6xj7BsLQ43L3r5oSkDCIdrZSGKfviP6mnXibs5sWjDEZXIBh/gZNu9Df
+         4uvtqbWmHJT78ufd8xB7+mSBYIZaeorOj2pUBstnXtB+7QlKSG3H2UM9gvWZ/EWdPPji
+         K6B80g391V1xXyAuUo1xwi3HcBkMfxTQzb66zx38JqDqy7TKjGc1p2EpNOoA+PICCHsJ
+         vgCXEN7+OKlYxgmflGbK95V6aWfwWYLmjQsHseh4OnkYcV/vk+Zb8Hva/u+6Oi7qysQC
+         /BEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=tNAVT9gld8ytdUafqDbp0LRRq+hyh+iiBGbYdB7ZOxM=;
+        b=trFtIVKGjeMnL1tlyvy2xyk7XpBlSxq4ZlJjjVjLikWsmI7FEZJogpKzA66+GjK3pm
+         lZ4hjCPukCIV4BtvRfLYMPilO5giiN/8Yab6wxZMoXufaa0LRUKEy8y3J8DKINE1tO26
+         8d1Hcz/aMTzTx2rNgRPi2eqGWbmQHtE4f+nhHUW9Qh7t1qFpcII/u02esDPxkkFDZCTJ
+         eLBhkd3wOo/EKbjfGlqwhqXzSTfL77T3S89rmq2T4JgLa9/ZT/LGpdRkYvR+Yua7Fqgr
+         WJf9+Agvbzr0HSzKwzznWVc5uhjU64n1evUMF2KVhM+IHcFnrovqjdcXPTRhvSY7+OMJ
+         SyVw==
+X-Gm-Message-State: AOAM5303JtkIaQOtvtuvAXxd18FF64XHw7qCgfIdX9fSR62qKogmWHsW
+        6Uj5LK9sOy+MePf5eKix1Qg=
+X-Google-Smtp-Source: ABdhPJxhh+2o7B1rrZWbt/vIi6TWE/wpm02xaRpF0P5sfdJfxl2Fsk/0i0N8uGD+jScbEkBbPA9T9g==
+X-Received: by 2002:a17:906:4558:: with SMTP id s24mr12647062ejq.144.1595761991022;
+        Sun, 26 Jul 2020 04:13:11 -0700 (PDT)
+Received: from localhost.localdomain (abad207.neoplus.adsl.tpnet.pl. [83.6.167.207])
+        by smtp.googlemail.com with ESMTPSA id d23sm4696253ejj.74.2020.07.26.04.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 26 Jul 2020 04:13:10 -0700 (PDT)
+From:   Konrad Dybcio <konradybcio@gmail.com>
+To:     konradybcio@gmail.com
+Cc:     martin.botka1@gmail.com, Rob Clark <robdclark@gmail.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Felipe Balbi <balbi@kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        zhengbin <zhengbin13@huawei.com>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Krzysztof Wilczynski <kw@linux.com>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Xiaozhe Shi <xiaozhes@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 0/9] SDM630/36/60 driver enablement
+Date:   Sun, 26 Jul 2020 13:11:57 +0200
+Message-Id: <20200726111215.22361-1-konradybcio@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add RTC related clocks bindings for the JZ4780 SoC, the X1000 SoC,
-and the X1830 SoC from Ingenic.
+Hi!
 
-Tested-by: 周正 (Zhou Zheng) <sernia.zhou@foxmail.com>
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
- include/dt-bindings/clock/jz4780-cgu.h | 2 ++
- include/dt-bindings/clock/x1000-cgu.h  | 2 ++
- include/dt-bindings/clock/x1830-cgu.h  | 2 ++
- 3 files changed, 6 insertions(+)
+This series brings most of the changes that have been
+brought to sdm630/636/660 SoCs apart from device tree
+part (I cannot add anything unless some [1] smmu quirks
+are merged.. blame qcom!)
 
-diff --git a/include/dt-bindings/clock/jz4780-cgu.h b/include/dt-bindings/clock/jz4780-cgu.h
-index 1859ce53ee38..cb07a0978301 100644
---- a/include/dt-bindings/clock/jz4780-cgu.h
-+++ b/include/dt-bindings/clock/jz4780-cgu.h
-@@ -85,5 +85,7 @@
- #define JZ4780_CLK_DES		70
- #define JZ4780_CLK_X2D		71
- #define JZ4780_CLK_CORE1	72
-+#define JZ4780_CLK_EXCLK_DIV512	73
-+#define JZ4780_CLK_RTC		74
- 
- #endif /* __DT_BINDINGS_CLOCK_JZ4780_CGU_H__ */
-diff --git a/include/dt-bindings/clock/x1000-cgu.h b/include/dt-bindings/clock/x1000-cgu.h
-index 0367c8c02e16..f187e0719fd3 100644
---- a/include/dt-bindings/clock/x1000-cgu.h
-+++ b/include/dt-bindings/clock/x1000-cgu.h
-@@ -48,5 +48,7 @@
- #define X1000_CLK_SSI			33
- #define X1000_CLK_OST			34
- #define X1000_CLK_PDMA			35
-+#define X1000_CLK_EXCLK_DIV512	36
-+#define X1000_CLK_RTC			37
- 
- #endif /* __DT_BINDINGS_CLOCK_X1000_CGU_H__ */
-diff --git a/include/dt-bindings/clock/x1830-cgu.h b/include/dt-bindings/clock/x1830-cgu.h
-index 801e1d09c881..88455376a950 100644
---- a/include/dt-bindings/clock/x1830-cgu.h
-+++ b/include/dt-bindings/clock/x1830-cgu.h
-@@ -51,5 +51,7 @@
- #define X1830_CLK_TCU			36
- #define X1830_CLK_DTRNG			37
- #define X1830_CLK_OST			38
-+#define X1830_CLK_EXCLK_DIV512	39
-+#define X1830_CLK_RTC			40
- 
- #endif /* __DT_BINDINGS_CLOCK_X1830_CGU_H__ */
+So far, the platform is shaping up nicely, though some
+peripherals seem to be living their own lives (I'm looking
+at you, modem!)
+
+The QPNP-REVID driver is taken from downstream but seems to
+work fine upstream. I understand it may need some cleaning-up
+before it's merged.
+
+Current out-of-tree progress can be seen at [2].
+
+[1] https://patchwork.kernel.org/patch/11643603/
+[2] https://github.com/konradybcio/linux/commits/ninges_labs
+
+Konrad Dybcio (8):
+  clk: qcom: gcc-sdm660: Add missing modem reset
+  phy: qcom-qusb2: Add support for SDM630/660
+  drivers: usb: dwc3-qcom: Add sdm660 compatible
+  drm/msm/dsi: Add phy configuration for SDM630/636/660
+  drm/msm/mdp5: Add MDP5 configuration for SDM630
+  drm/msm/dsi: Add DSI configuration for SDM660
+  drm/msm/mdp5: Add MDP5 configuration for SDM636/660
+  clk: qcom: gcc-sdm660: Fix up gcc_mss_mnoc_bimc_axi_clk
+
+Xiaozhe Shi (1):
+  soc/qcom: Add REVID driver
+
+ .../devicetree/bindings/display/msm/dsi.txt   |   1 +
+ .../bindings/phy/qcom,qusb2-phy.yaml          |   1 +
+ .../bindings/soc/qcom/qcom,qpnp-revid.yaml    |  38 ++
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |   1 +
+ drivers/clk/qcom/gcc-sdm660.c                 |   4 +
+ drivers/gpu/drm/msm/disp/mdp5/mdp5_cfg.c      | 198 ++++++++++
+ drivers/gpu/drm/msm/dsi/dsi_cfg.c             |  21 +
+ drivers/gpu/drm/msm/dsi/dsi_cfg.h             |   1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.c         |   2 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy.h         |   1 +
+ drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c    |  18 +
+ drivers/phy/qualcomm/phy-qcom-qusb2.c         |   7 +-
+ drivers/soc/qcom/Kconfig                      |   9 +
+ drivers/soc/qcom/Makefile                     |   1 +
+ drivers/soc/qcom/qpnp-revid.c                 | 288 ++++++++++++++
+ drivers/usb/dwc3/dwc3-qcom.c                  |   1 +
+ include/dt-bindings/clock/qcom,gcc-sdm660.h   |   1 +
+ include/linux/qpnp/qpnp-revid.h               | 369 ++++++++++++++++++
+ 18 files changed, 961 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml
+ create mode 100644 drivers/soc/qcom/qpnp-revid.c
+ create mode 100644 include/linux/qpnp/qpnp-revid.h
+
 -- 
-2.11.0
+2.27.0
 
