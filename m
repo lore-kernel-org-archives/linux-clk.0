@@ -2,405 +2,225 @@ Return-Path: <SRS0=c6El=BG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B78C43465
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDB4AC433E5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 09:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 43AB520786
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:43:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFEF12075D
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 09:04:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="N8+VXSlD"
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="IHV7QDPA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbgG0InG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 04:43:06 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:13862 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726873AbgG0Imw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 04:42:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1595839370; x=1627375370;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7thvExZSalBZUH4+8/Ip/j0mToLKwhEPjKW89XaoI1M=;
-  b=N8+VXSlDitPNrao9YdQtIzYWibz7qBWm28cVqBW06N+MTbTEL8woxqg2
-   sLtbZTxVIQCQ6QKQawSOrICaKvwcHbiDVvqeSPDP+EDg/hXhtMvuayHzq
-   VfW8hHSWWCBJ7mC7Sogj9c+/ml53ExUtClrI4n6RNoHbliOMxpcAW0deB
-   26OmGoVPoZpDid4N8FE7ClhaE4a25QIpr1AynLaY9yo6a3yi05IXdOZh3
-   H32z1s0LMnab4IRXkuR/Ve9OARRt5pate0BNGxiQ/1geJsUCKmwWkYZf9
-   G81sSEy26873f9dQpD3euQBxPHDfQez68HihN1R7fpMVtV/BbZ/yMSRp7
-   g==;
-IronPort-SDR: PfeTjsj7r7Z6Hdd6VN7YfJVIhO0KmAIHff55XlRf+2ypfq6pDauPBokTbXdzEDqt+w2pckUy+o
- vHoZUBQ/w5ivlaXvC246vC77GMLPuRZzPKZ+DAqmTebtuX6WOL+WDoLbKmGQOtBbGbv2RL2GZQ
- SJQpONYmqplAWz4sqQXlyx/nzMraUtiiIAEDVe19Nwl/dWcV+Br/CV4WiX2LDz0VEhgZLisRHv
- kP1Cr/vS2p0uGAeLnNq1wKJCij4ejZYsH5loNMvCEq3bD3ndZMwdOkyKwoIc/xPOi4Sn36We9Q
- 0es=
-X-IronPort-AV: E=Sophos;i="5.75,402,1589266800"; 
-   d="scan'208";a="20643783"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jul 2020 01:42:49 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 27 Jul 2020 01:42:48 -0700
-Received: from soft-dev15.microsemi.net (10.10.115.15) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 27 Jul 2020 01:42:45 -0700
-From:   Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-To:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     Lars Povlsen <lars.povlsen@microchip.com>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Olof Johansson <olof@lixom.net>,
-        "Michael Turquette" <mturquette@baylibre.com>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v4 08/10] clk: sparx5: Add Sparx5 SoC DPLL clock driver
-Date:   Mon, 27 Jul 2020 10:42:09 +0200
-Message-ID: <20200727084211.6632-9-lars.povlsen@microchip.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200727084211.6632-1-lars.povlsen@microchip.com>
-References: <20200727084211.6632-1-lars.povlsen@microchip.com>
+        id S1727124AbgG0JE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 05:04:26 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:55703 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726222AbgG0JE0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 05:04:26 -0400
+X-UUID: 3686618d230a4e6e8a547b389d08f30c-20200727
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=IBn5xpH5cJeGPjS4mVMMUKqVoCrBnUo1UxRgWUpySx0=;
+        b=IHV7QDPAESgfEXtpFX7hkI9C9GnVNCHgbhgyZRzzfmhiiNpC4HWjf8IAeG7nuJmMdwv/BnghWRcylgVpAq3bdhezzer4Dwewo7rtaiQw4Ve9AbafoDxz+iGIiYnYYsQfWE/mb20qjLeKBARkhOLFxY29vUan8ZQ3FO11mk9hpSA=;
+X-UUID: 3686618d230a4e6e8a547b389d08f30c-20200727
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 411020366; Mon, 27 Jul 2020 17:04:15 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Mon, 27 Jul 2020 17:04:00 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Mon, 27 Jul 2020 17:04:01 +0800
+Message-ID: <1595840642.12203.4.camel@mtksdaap41>
+Subject: Re: [PATCH 3/4] clk: mediatek: Add configurable enable control to
+ mtk_pll_data
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        Ikjoon Jang <ikjn@chromium.org>
+Date:   Mon, 27 Jul 2020 17:04:02 +0800
+In-Reply-To: <CANMq1KDzmeMcVQU=i89sa-B4EQbz6OxZP3tDasV-Q__qB_7_9g@mail.gmail.com>
+References: <1595400601-26220-1-git-send-email-weiyi.lu@mediatek.com>
+         <1595400601-26220-4-git-send-email-weiyi.lu@mediatek.com>
+         <CANMq1KC5i8GU2zMxk+NvY5hF7Qvd-Jx-+pvY2cXfqzb=X-BWRQ@mail.gmail.com>
+         <1595473043.5077.8.camel@mtksdaap41>
+         <CANMq1KDzmeMcVQU=i89sa-B4EQbz6OxZP3tDasV-Q__qB_7_9g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-TM-SNTS-SMTP: 9FD50798F87956F1E7AA59E7EB164F337BD8E584AF608234D7272EE39CC2E56D2000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds a device driver for the Sparx5 SoC DPLL clock
-
-Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
----
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-sparx5.c | 295 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 296 insertions(+)
- create mode 100644 drivers/clk/clk-sparx5.c
-
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index ca9af11d33913..da8fcf147eb13 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
- obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
- obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
-+obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
- obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
- obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
- obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
-diff --git a/drivers/clk/clk-sparx5.c b/drivers/clk/clk-sparx5.c
-new file mode 100644
-index 0000000000000..0fad0c1a01862
---- /dev/null
-+++ b/drivers/clk/clk-sparx5.c
-@@ -0,0 +1,295 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Microchip Sparx5 SoC Clock driver.
-+ *
-+ * Copyright (c) 2019 Microchip Inc.
-+ *
-+ * Author: Lars Povlsen <lars.povlsen@microchip.com>
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/clk-provider.h>
-+#include <linux/bitfield.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
-+#include <linux/platform_device.h>
-+#include <dt-bindings/clock/microchip,sparx5.h>
-+
-+#define PLL_DIV		GENMASK(7, 0)
-+#define PLL_PRE_DIV	GENMASK(10, 8)
-+#define PLL_ROT_DIR	BIT(11)
-+#define PLL_ROT_SEL	GENMASK(13, 12)
-+#define PLL_ROT_ENA	BIT(14)
-+#define PLL_CLK_ENA	BIT(15)
-+
-+#define MAX_SEL 4
-+#define MAX_PRE BIT(3)
-+
-+static const u8 sel_rates[MAX_SEL] = { 0, 2*8, 2*4, 2*2 };
-+
-+static const char *clk_names[N_CLOCKS] = {
-+	"core", "ddr", "cpu2", "arm2",
-+	"aux1", "aux2", "aux3", "aux4",
-+	"synce",
-+};
-+
-+struct s5_hw_clk {
-+	struct clk_hw hw;
-+	void __iomem *reg;
-+};
-+
-+struct s5_clk_data {
-+	void __iomem *base;
-+	struct s5_hw_clk s5_hw[N_CLOCKS];
-+};
-+
-+struct s5_pll_conf {
-+	unsigned long freq;
-+	u8 div;
-+	bool rot_ena;
-+	u8 rot_sel;
-+	u8 rot_dir;
-+	u8 pre_div;
-+};
-+
-+#define to_s5_pll(hw) container_of(hw, struct s5_hw_clk, hw)
-+
-+static unsigned long s5_calc_freq(unsigned long parent_rate,
-+				  const struct s5_pll_conf *conf)
-+{
-+	unsigned long rate = parent_rate / conf->div;
-+
-+	if (conf->rot_ena) {
-+		int sign = conf->rot_dir ? -1 : 1;
-+		int divt = sel_rates[conf->rot_sel] * (1 + conf->pre_div);
-+		int divb = divt + sign;
-+
-+		rate = mult_frac(rate, divt, divb);
-+		rate = roundup(rate, 1000);
-+	}
-+
-+	return rate;
-+}
-+
-+static void s5_search_fractional(unsigned long rate,
-+				 unsigned long parent_rate,
-+				 int div,
-+				 struct s5_pll_conf *conf)
-+{
-+	struct s5_pll_conf best;
-+	ulong cur_offset, best_offset = rate;
-+	int d, i, j;
-+
-+	memset(conf, 0, sizeof(*conf));
-+	conf->div = div;
-+	conf->rot_ena = 1;	/* Fractional rate */
-+
-+	for (d = 0; best_offset > 0 && d <= 1 ; d++) {
-+		conf->rot_dir = !!d;
-+		for (i = 0; best_offset > 0 && i < MAX_PRE; i++) {
-+			conf->pre_div = i;
-+			for (j = 1; best_offset > 0 && j < MAX_SEL; j++) {
-+				conf->rot_sel = j;
-+				conf->freq = s5_calc_freq(parent_rate, conf);
-+				cur_offset = abs(rate - conf->freq);
-+				if (cur_offset < best_offset) {
-+					best_offset = cur_offset;
-+					best = *conf;
-+				}
-+			}
-+		}
-+	}
-+
-+	/* Best match */
-+	*conf = best;
-+}
-+
-+static unsigned long s5_calc_params(unsigned long rate,
-+				    unsigned long parent_rate,
-+				    struct s5_pll_conf *conf)
-+{
-+	if (parent_rate % rate) {
-+		struct s5_pll_conf alt1, alt2;
-+		int div;
-+
-+		div = DIV_ROUND_CLOSEST_ULL(parent_rate, rate);
-+		s5_search_fractional(rate, parent_rate, div, &alt1);
-+
-+		/* Straight match? */
-+		if (alt1.freq == rate) {
-+			*conf = alt1;
-+		} else {
-+			/* Try without rounding divider */
-+			div = parent_rate / rate;
-+			if (div != alt1.div) {
-+				s5_search_fractional(rate, parent_rate, div,
-+						     &alt2);
-+				/* Select the better match */
-+				if (abs(rate - alt1.freq) <
-+				    abs(rate - alt2.freq))
-+					*conf = alt1;
-+				else
-+					*conf = alt2;
-+			}
-+		}
-+	} else {
-+		/* Straight fit */
-+		memset(conf, 0, sizeof(*conf));
-+		conf->div = parent_rate / rate;
-+	}
-+
-+	return conf->freq;
-+}
-+
-+static int s5_pll_enable(struct clk_hw *hw)
-+{
-+	struct s5_hw_clk *pll = to_s5_pll(hw);
-+	u32 val = readl(pll->reg);
-+
-+	val |= PLL_CLK_ENA;
-+	writel(val, pll->reg);
-+
-+	return 0;
-+}
-+
-+static void s5_pll_disable(struct clk_hw *hw)
-+{
-+	struct s5_hw_clk *pll = to_s5_pll(hw);
-+	u32 val = readl(pll->reg);
-+
-+	val &= ~PLL_CLK_ENA;
-+	writel(val, pll->reg);
-+}
-+
-+static int s5_pll_set_rate(struct clk_hw *hw,
-+			   unsigned long rate,
-+			   unsigned long parent_rate)
-+{
-+	struct s5_hw_clk *pll = to_s5_pll(hw);
-+	struct s5_pll_conf conf;
-+	unsigned long eff_rate;
-+	u32 val;
-+
-+	eff_rate = s5_calc_params(rate, parent_rate, &conf);
-+	if (eff_rate != rate)
-+		return -EOPNOTSUPP;
-+
-+	val = readl(pll->reg) & PLL_CLK_ENA;
-+	val |= FIELD_PREP(PLL_DIV, conf.div);
-+	if (conf.rot_ena) {
-+		val |= PLL_ROT_ENA;
-+		val |= FIELD_PREP(PLL_ROT_SEL, conf.rot_sel);
-+		val |= FIELD_PREP(PLL_PRE_DIV, conf.pre_div);
-+		if (conf.rot_dir)
-+			val |= PLL_ROT_DIR;
-+	}
-+	writel(val, pll->reg);
-+
-+	return 0;
-+}
-+
-+static unsigned long s5_pll_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct s5_hw_clk *pll = to_s5_pll(hw);
-+	struct s5_pll_conf conf;
-+	u32 val;
-+
-+	val = readl(pll->reg);
-+
-+	if (val & PLL_CLK_ENA) {
-+		conf.div     = FIELD_GET(PLL_DIV, val);
-+		conf.pre_div = FIELD_GET(PLL_PRE_DIV, val);
-+		conf.rot_ena = FIELD_GET(PLL_ROT_ENA, val);
-+		conf.rot_dir = FIELD_GET(PLL_ROT_DIR, val);
-+		conf.rot_sel = FIELD_GET(PLL_ROT_SEL, val);
-+
-+		conf.freq = s5_calc_freq(parent_rate, &conf);
-+	} else {
-+		conf.freq = 0;
-+	}
-+
-+	return conf.freq;
-+}
-+
-+static long s5_pll_round_rate(struct clk_hw *hw, unsigned long rate,
-+			      unsigned long *parent_rate)
-+{
-+	struct s5_pll_conf conf;
-+
-+	return s5_calc_params(rate, *parent_rate, &conf);
-+}
-+
-+static const struct clk_ops s5_pll_ops = {
-+	.enable		= s5_pll_enable,
-+	.disable	= s5_pll_disable,
-+	.set_rate	= s5_pll_set_rate,
-+	.round_rate	= s5_pll_round_rate,
-+	.recalc_rate	= s5_pll_recalc_rate,
-+};
-+
-+static struct clk_hw *s5_clk_hw_get(struct of_phandle_args *clkspec, void *data)
-+{
-+	struct s5_clk_data *s5_clk = data;
-+	unsigned int idx = clkspec->args[0];
-+
-+	if (idx >= N_CLOCKS) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return &s5_clk->s5_hw[idx].hw;
-+}
-+
-+static int s5_clk_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	int i, ret;
-+	struct s5_clk_data *s5_clk;
-+	struct clk_parent_data pdata = { .index = 0 };
-+	struct clk_init_data init = {
-+		.ops = &s5_pll_ops,
-+		.num_parents = 1,
-+		.parent_data = &pdata,
-+	};
-+
-+	s5_clk = devm_kzalloc(dev, sizeof(*s5_clk), GFP_KERNEL);
-+	if (!s5_clk)
-+		return -ENOMEM;
-+
-+	s5_clk->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(s5_clk->base))
-+		return PTR_ERR(s5_clk->base);
-+
-+	for (i = 0; i < N_CLOCKS; i++) {
-+		struct s5_hw_clk *s5_hw = &s5_clk->s5_hw[i];
-+
-+		init.name = clk_names[i];
-+		s5_hw->reg = s5_clk->base + (i * 4);
-+		s5_hw->hw.init = &init;
-+		ret = devm_clk_hw_register(dev, &s5_hw->hw);
-+		if (ret) {
-+			dev_err(dev, "failed to register %s clock\n",
-+				init.name);
-+			return ret;
-+		}
-+	}
-+
-+	return devm_of_clk_add_hw_provider(dev, s5_clk_hw_get, s5_clk);
-+}
-+
-+static const struct of_device_id s5_clk_dt_ids[] = {
-+	{ .compatible = "microchip,sparx5-dpll", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, s5_clk_dt_ids);
-+
-+static struct platform_driver s5_clk_driver = {
-+	.probe  = s5_clk_probe,
-+	.driver = {
-+		.name = "sparx5-clk",
-+		.of_match_table = s5_clk_dt_ids,
-+	},
-+};
-+builtin_platform_driver(s5_clk_driver);
--- 
-2.27.0
+T24gVGh1LCAyMDIwLTA3LTIzIGF0IDE1OjUxICswODAwLCBOaWNvbGFzIEJvaWNoYXQgd3JvdGU6
+DQo+IE9uIFRodSwgSnVsIDIzLCAyMDIwIGF0IDEwOjU3IEFNIFdlaXlpIEx1IDx3ZWl5aS5sdUBt
+ZWRpYXRlay5jb20+IHdyb3RlOg0KPiA+DQo+ID4gT24gV2VkLCAyMDIwLTA3LTIyIGF0IDE2OjUx
+ICswODAwLCBOaWNvbGFzIEJvaWNoYXQgd3JvdGU6DQo+ID4gPiBPbiBXZWQsIEp1bCAyMiwgMjAy
+MCBhdCAyOjUwIFBNIFdlaXlpIEx1IDx3ZWl5aS5sdUBtZWRpYXRlay5jb20+IHdyb3RlOg0KPiA+
+ID4gPg0KPiA+ID4gPiBJbiBhbGwgTWVkaWFUZWsgUExMIGRlc2lnbiwgYml0IDAgb2YgQ09OMCBy
+ZWdpc3RlciBpcyBhbHdheXMNCj4gPiA+ID4gdGhlIGVuYWJsZSBiaXQuDQo+ID4gPiA+IEhvd2V2
+ZXIsIHRoZXJlJ3MgYSBzcGVjaWFsIGNhc2Ugb2YgdXNicGxsIG9uIE1UODE5Mi4NCj4gPiA+ID4g
+VGhlIGVuYWJsZSBiaXQgb2YgdXNicGxsIGlzIG1vdmVkIHRvIGJpdCAyIG9mIG90aGVyIHJlZ2lz
+dGVyLg0KPiA+ID4gPiBBZGQgY29uZmlndXJhYmxlIGVuX3JlZyBhbmQgYmFzZV9lbl9iaXQgZm9y
+IGVuYWJsZSBjb250cm9sIG9yDQo+ID4gPiA+IHVzaW5nIHRoZSBkZWZhdWx0IGlmIHdpdGhvdXQg
+c2V0dGluZyBpbiBwbGwgZGF0YS4NCj4gPiA+ID4NCj4gPiA+ID4gU2lnbmVkLW9mZi1ieTogV2Vp
+eWkgTHUgPHdlaXlpLmx1QG1lZGlhdGVrLmNvbT4NCj4gPiA+ID4gLS0tDQo+ID4gPiA+ICBkcml2
+ZXJzL2Nsay9tZWRpYXRlay9jbGstbXRrLmggfCAgMiArKw0KPiA+ID4gPiAgZHJpdmVycy9jbGsv
+bWVkaWF0ZWsvY2xrLXBsbC5jIHwgMjYgKysrKysrKysrKysrKysrKysrKysrKy0tLS0NCj4gPiA+
+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4g
+PiA+ID4NCj4gPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdGsu
+aCBiL2RyaXZlcnMvY2xrL21lZGlhdGVrL2Nsay1tdGsuaA0KPiA+ID4gPiBpbmRleCBjM2Q2NzU2
+Li44YmIwYjNkIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGst
+bXRrLmgNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLW10ay5oDQo+ID4g
+PiA+IEBAIC0yMzMsNiArMjMzLDggQEAgc3RydWN0IG10a19wbGxfZGF0YSB7DQo+ID4gPiA+ICAg
+ICAgICAgdWludDMyX3QgcGN3X2NoZ19yZWc7DQo+ID4gPiA+ICAgICAgICAgY29uc3Qgc3RydWN0
+IG10a19wbGxfZGl2X3RhYmxlICpkaXZfdGFibGU7DQo+ID4gPiA+ICAgICAgICAgY29uc3QgY2hh
+ciAqcGFyZW50X25hbWU7DQo+ID4gPiA+ICsgICAgICAgdWludDMyX3QgZW5fcmVnOw0KPiA+ID4g
+PiArICAgICAgIHVpbnQ4X3QgYmFzZV9lbl9iaXQ7DQo+ID4gPiA+ICB9Ow0KPiA+ID4gPg0KPiA+
+ID4gPiAgdm9pZCBtdGtfY2xrX3JlZ2lzdGVyX3BsbHMoc3RydWN0IGRldmljZV9ub2RlICpub2Rl
+LA0KPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLXBsbC5jIGIv
+ZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLXBsbC5jDQo+ID4gPiA+IGluZGV4IGY0NDBmMmNkLi5i
+OGNjZDQyIDEwMDY0NA0KPiA+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9tZWRpYXRlay9jbGstcGxs
+LmMNCj4gPiA+ID4gKysrIGIvZHJpdmVycy9jbGsvbWVkaWF0ZWsvY2xrLXBsbC5jDQo+ID4gPiA+
+IEBAIC00NCw2ICs0NCw3IEBAIHN0cnVjdCBtdGtfY2xrX3BsbCB7DQo+ID4gPiA+ICAgICAgICAg
+dm9pZCBfX2lvbWVtICAgICp0dW5lcl9lbl9hZGRyOw0KPiA+ID4gPiAgICAgICAgIHZvaWQgX19p
+b21lbSAgICAqcGN3X2FkZHI7DQo+ID4gPiA+ICAgICAgICAgdm9pZCBfX2lvbWVtICAgICpwY3df
+Y2hnX2FkZHI7DQo+ID4gPiA+ICsgICAgICAgdm9pZCBfX2lvbWVtICAgICplbl9hZGRyOw0KPiA+
+ID4gPiAgICAgICAgIGNvbnN0IHN0cnVjdCBtdGtfcGxsX2RhdGEgKmRhdGE7DQo+ID4gPiA+ICB9
+Ow0KPiA+ID4gPg0KPiA+ID4gPiBAQCAtNTYsNyArNTcsMTAgQEAgc3RhdGljIGludCBtdGtfcGxs
+X2lzX3ByZXBhcmVkKHN0cnVjdCBjbGtfaHcgKmh3KQ0KPiA+ID4gPiAgew0KPiA+ID4gPiAgICAg
+ICAgIHN0cnVjdCBtdGtfY2xrX3BsbCAqcGxsID0gdG9fbXRrX2Nsa19wbGwoaHcpOw0KPiA+ID4g
+Pg0KPiA+ID4gPiAtICAgICAgIHJldHVybiAocmVhZGwocGxsLT5iYXNlX2FkZHIgKyBSRUdfQ09O
+MCkgJiBDT04wX0JBU0VfRU4pICE9IDA7DQo+ID4gPiA+ICsgICAgICAgaWYgKHBsbC0+ZW5fYWRk
+cikNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIHJldHVybiAocmVhZGwocGxsLT5lbl9hZGRyKSAm
+IEJJVChwbGwtPmRhdGEtPmJhc2VfZW5fYml0KSkgIT0gMDsNCj4gPiA+ID4gKyAgICAgICBlbHNl
+DQo+ID4gPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gKHJlYWRsKHBsbC0+YmFzZV9hZGRyICsg
+UkVHX0NPTjApICYgQ09OMF9CQVNFX0VOKSAhPSAwOw0KPiA+ID4gPiAgfQ0KPiA+ID4gPg0KPiA+
+ID4gPiAgc3RhdGljIHVuc2lnbmVkIGxvbmcgX19tdGtfcGxsX3JlY2FsY19yYXRlKHN0cnVjdCBt
+dGtfY2xrX3BsbCAqcGxsLCB1MzIgZmluLA0KPiA+ID4gPiBAQCAtMjUxLDYgKzI1NSwxMiBAQCBz
+dGF0aWMgaW50IG10a19wbGxfcHJlcGFyZShzdHJ1Y3QgY2xrX2h3ICpodykNCj4gPiA+ID4gICAg
+ICAgICByIHw9IHBsbC0+ZGF0YS0+ZW5fbWFzazsNCj4gPiA+ID4gICAgICAgICB3cml0ZWwociwg
+cGxsLT5iYXNlX2FkZHIgKyBSRUdfQ09OMCk7DQo+ID4gPiA+DQo+ID4gPg0KPiA+ID4gVGhpcyBp
+cyBub3QgYSBuZXcgY2hhbmdlLCBidXQgSSdtIHdvbmRlcmluZyBpZiB0aGUgYXN5bW1ldHJ5IGlz
+DQo+ID4gPiBpbnRlbnRpb25hbCBoZXJlLCB0aGF0IGlzLCBwcmVwYXJlIHNldHMgYml0IHBsbC0+
+ZGF0YS0+ZW5fbWFzayBvZg0KPiA+ID4gUkVHX0NPTjA7IHVucHJlcGFyZSBjbGVhcnMgQ09OMF9C
+QVNFX0VOIG9mIFJFR19DT04wLg0KPiA+ID4NCj4gPiA+IFdpdGggdGhpcyBwYXRjaCwgaWYgcGxs
+LT5lbl9hZGRyIGlzIHNldCwgeW91IHNldCBib3RoDQo+ID4gPiBwbGwtPmRhdGEtPmVuX21hc2sg
+X2FuZF8gcGxsLT5kYXRhLT5iYXNlX2VuX2JpdCwgYW5kIGNsZWFyIG9ubHkNCj4gPiA+IHBsbC0+
+ZGF0YS0+YmFzZV9lbl9iaXQuDQo+ID4gPg0KPiA+DQo+ID4gSGkgTmljb2xhcywNCj4gPg0KPiA+
+IEFGQUlLLCB0aGUgYXN5bW1ldHJ5IHdhcyBpbnRlbnRpb25hbC4NCj4gPiBlbl9tYXNrIGlzIGFj
+dHVhbGx5IGEgY29tYmluYXRpb24gb2YgZGl2aWRlciBlbmFibGUgbWFzayBhbmQgdGhlIHBsbA0K
+PiA+IGVuYWJsZSBiaXQoQ09OMF9CQVNFX0VOKS4NCj4gPiBFdmVuIHdpdGhvdXQgbXkgcGF0Y2gs
+IGl0IHN0aWxsIHNldHMgZGl2aWRlciBlbmFibGUgbWFzayBhbmQgZW5fYml0LCBhbmQNCj4gPiBv
+bmx5IGNsZWFycyBlbl9iaXQuDQo+ID4gWW91IGNvdWxkIHNlZSB0aGUgcGxsX2RhdGEgaW4gY2xr
+LW10ODE5Mi5jIG9mIHBhdGNoIFs0LzRdDQo+ID4gVGFrZSBtYWlucGxsIGFzIGFuIGV4YW1wbGUs
+DQo+ID4gdGhlIGVuYWJsZSBtYXNrIG9mIG1haW5wbGwgaXMgMHhmZjAwMDAwMSwgd2hlcmUgMHhm
+ZjAwMDAwMCBpcyB0aGUNCj4gPiBkaXZpZGVyIGVuYWJsZSBtYXNrIGFuZCAweDEgaXMgdGhlIGVu
+X2JpdA0KPiA+DQo+ID4gRm9yIHVzYnBsbCBpbiBzcGVjaWFsIGNhc2UsIHVzYnBsbCBkb2Vzbid0
+IGhhdmUgZGl2aWRlciBlbmFibGUgbWFzayBvbg0KPiA+IE1UODE5MiBzbyBJIGdpdmUgbm90aGlu
+ZygweDAwMDAwMDAwKSBpbiB0aGUgZW5fbWFzayBmaWVsZC4NCj4gPiBIb3dldmVyLCB0aGUgbWFp
+biByZWFzb24gd2h5IEkgZG9uJ3Qgc2tpcCBzZXR0aW5nIHRoZSBlbl9tYXNrIG9mIE1UODE5Mg0K
+PiA+IHVzYnBsbCBpcyB0aGF0IEknZCBqdXN0IGxpa2UgdG8gcmVzZXJ2ZSB0aGUgZGl2aWRlciBl
+bmFibGUgbWFzayBmb3IgYW55DQo+ID4gc3BlY2lhbCBwbGxzIHdpdGggZGl2aWRlciBlbmFibGUg
+bWFzayBpbiBuZWFyIGZ1dHVyZS4NCj4gDQo+IEFyZ2gsIEkgc2VlLCBpdCdzIGEgYml0IG9mIGEg
+Y2FuIG9mIHdvcm1zLCB3aXRoIG1hbnkgc3BlY2lhbCBjYXNlcy4uLg0KPiANCj4gU28gSSBwbGF5
+ZWQgYSBiaXQgd2l0aCAzIGV4YW1wbGVzLg0KPiANCj4gQ3VycmVudCBzaXR1YXRpb24gbG9va3Mg
+bGlrZSB0aGlzOg0KPiANCj4gODE4MyBDTEtfQVBNSVhFRF9BUk1QTExfTEwNCj4gICBlbl9tYXNr
+ID0gMHgwMDAwMDAwMQ0KPiAgIGVuX3JlZyA9IDANCj4gICBiYXNlX2VuX2JpdCA9IDANCj4gDQo+
+IHByZXBhcmU6IFJFR19DT04wIHw9IGVuX21hc2sNCj4gdW5wcmVwYXJlOiBSRUdfQ09OMCAmPSB+
+Q09OMF9CQVNFX0VOIChCSVQoMSkpDQo+IA0KPiA4MTkyIENMS19BUE1JWEVEX1VOSVZQTEwNCj4g
+ICBlbl9tYXNrID0gMHhmZjAwMDAwMQ0KPiAgIGVuX3JlZyA9IDB4MDM5Yw0KPiAgIGJhc2VfZW5f
+Yml0ID0gMA0KPiANCj4gcHJlcGFyZToNCj4gICBSRUdfQ09OMCB8PSBlbl9tYXNrDQo+ICAgZW5f
+cmVnIHw9IGJhc2VfZW5fYml0DQo+IHVucHJlcGFyZToNCj4gICBlbl9yZWcgJj0gfmJhc2VfZW5f
+Yml0DQo+IA0KPiA4MTkyIENMS19BUE1JWEVEX1VTQlBMTA0KPiAgIGVuX21hc2sgPSAweDAwMDAw
+MDAwDQo+ICAgZW5fcmVnID0gMHgwM2NjDQo+ICAgYmFzZV9lbl9iaXQgPSAyDQo+IA0KPiBwcmVw
+YXJlOg0KPiAgIFJFR19DT04wIHw9IGVuX21hc2sgKDApDQo+ICAgZW5fcmVnIHw9IGJhc2VfZW5f
+Yml0DQo+IHVucHJlcGFyZToNCj4gICBlbl9yZWcgJj0gfmJhc2VfZW5fYml0DQo+IA0KPiBBbmQg
+SSB0aGluayB0aGUgbG9naWMgY291bGQgc3RpbGwgYmUgc2ltcGxpZmllZCBieSBfbm90XyBwdXR0
+aW5nDQo+IENPTjBfQkFTRV9FTiBpbiBlbl9tYXNrLCBhbmQgdXBkYXRpbmcgdGhlIENPTjAgaW4g
+MiBzdGVwczogZmlyc3QgYWxsDQo+IHRoZSBiaXRzIHRoYXQgYXJlIG5vdCBDT04wX0JBU0VfRU4s
+IHRoZW4gQ09OMF9CQVNFX0VOLiBPZiBjb3Vyc2UgSQ0KPiBhc3N1bWUgdGhhdCdzIGl0J3MgZmlu
+ZSB0byBkbyBzbywgYnV0IEkgaGF2ZSBubyBpZGVhLg0KPiANCj4gcmVnaXN0ZXJfcGxsKCkgew0K
+PiAgICBpZiAoIWVuX2FkZHIpIHsNCj4gICAgICBlbl9yZWcgPSBSRUdfQ09OMA0KPiAgICAgIGJh
+c2VfZW5fYml0ID0gQ09OMF9CQVNFX0VODQo+ICAgIH0NCj4gfQ0KPiANCj4gcHJlcGFyZSgpIHsN
+Cj4gICAgIFJFR19DT04wIHw9IGVuX21hc2sNCj4gICAgIGVuX3JlZyB8PSBiYXNlX2VuX2JpdA0K
+PiB9DQo+IA0KPiB1bnByZXBhcmUoKSB7DQo+ICAgICBlbl9yZWcgJj0gfmJhc2VfZW5fYml0DQo+
+IH0NCj4gDQo+IFRoZW4gdGhlIG5ldyBjbG9jayBkYXRhOg0KPiANCj4gODE4MyBDTEtfQVBNSVhF
+RF9BUk1QTExfTEwNCj4gICBlbl9tYXNrID0gMHgwMDAwMDAwMCAoQ09OMF9CQVNFX0VOIGlzIGlt
+cGxpY2l0LCBidXQgb3RoZXIgYml0cyBjb3VsZCBiZSBzZXQpDQo+ICAgZW5fcmVnID0gMA0KPiAg
+IGJhc2VfZW5fYml0ID0gMA0KPiANCj4gcHJlcGFyZTogew0KPiAgICAgUkVHX0NPTjAgfD0gZW5f
+bWFzayAoMHgwMDAwMDAwMCwgaGVyZSwgd2UgY2FuIHNraXAsIGJ1dCBvdGhlciBiaXRzDQo+IGNv
+dWxkIGJlIHNldCkNCj4gICAgIGVuX3JlZyB8PSBiYXNlX2VuX2JpdCAoUkVHX0NPTjAgfD0gQ09O
+MF9CQVNFX0VOKQ0KPiB9DQo+IHVucHJlcGFyZTogZW5fcmVnICY9IH5iYXNlX2VuX2JpdCAoUkVH
+X0NPTjAgJj0gfkNPTjBfQkFTRV9FTikNCj4gDQo+IDgxOTIgQ0xLX0FQTUlYRURfVU5JVlBMTA0K
+PiAgIGVuX21hc2sgPSAweGZmMDAwMDAxIChOb3RlIHRoZSBiaXQgMSBpcyBfbm90XyBkcm9wcGVk
+IGhlcmUsIGFzIGl0DQo+IG5lZWRzIHRvIGJlIHNldCB0b28pDQo+ICAgZW5fcmVnID0gMHgwMzlj
+DQo+ICAgYmFzZV9lbl9iaXQgPSAwDQo+IChzYW1lIGFzIGFib3ZlKQ0KPiANCj4gODE5MiBDTEtf
+QVBNSVhFRF9VU0JQTEwNCj4gICBlbl9tYXNrID0gMHgwMDAwMDAwMA0KPiAgIGVuX3JlZyA9IDB4
+MDNjYw0KPiAgIGJhc2VfZW5fYml0ID0gMg0KPiAoc2FtZSBhcyBhYm92ZSkNCj4gDQo+IE5vdywg
+bWF5YmUgdGhpcyBpcyBhbHNvIGEgYml0IG92ZXJjb21wbGljYXRlZC4gTWF5YmUgYSBzaW1wbGVy
+DQo+IHNvbHV0aW9uIGlzIGp1c3QgdG8gYWRkIGEgY29tbWVudCBpbiBwcmVwYXJlIHRoYXQgInIg
+fD0NCj4gcGxsLT5kYXRhLT5lbl9tYXNrOyIgaXMgbWVhbnQgdG8gaW5jbHVkZSBDT04wX0JBU0Vf
+RU4gaW4gbW9zdCBjYXNlcywNCj4gYW5kIHRoZW4gdGhlIGNvZGUgY291bGQgYmUgb2sgYXMtaXMg
+KGp1c3QgdG8gbWFrZSBzdXJlIHRoYXQgdGhlIG5leHQNCj4gcGVyc29uIHdobyBsb29rcyBhdCB0
+aGlzIGNvZGUgZG9lcyBub3QgdGhpbmsgdGhlcmUgaXMgYSBidWcuLi4pLg0KPiANCg0KSGkgTmlj
+b2xhcywNCg0KSSB0aG91Z2h0IHRoZXNlIHN0aWxsIHRvbyBjb21wbGljYXRlZCBhbmQgSSBndWVz
+cyB0aGUgYXN5bW1ldHJpY2FsDQpwcm9ibGVtIGNvdWxkIGJlIGZpeGVkLg0KQW5kIHRoYXQgd2ls
+bCBtYWtlIHRoaXMgcGFydCBzaW1wbGVyIGp1c3QgbGlrZSB3aGF0IHlvdSBtZW50aW9uZWQgaW4N
+CnByZXZpb3VzIGNvbW1lbnQuDQpJJ2xsIGNvbmZpcm0gQVNBUCBhbmQgc2VuZCBhIG5ldyB2ZXJz
+aW9uIGlmIGl0IGlzIHBvc3NpYmxlIHRvIGJlIGZpeGVkLg0KDQo+ID4NCj4gPiA+ID4gKyAgICAg
+ICBpZiAocGxsLT5lbl9hZGRyKSB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgICByID0gcmVhZGwo
+cGxsLT5lbl9hZGRyKTsNCj4gPiA+ID4gKyAgICAgICAgICAgICAgIHIgfD0gQklUKHBsbC0+ZGF0
+YS0+YmFzZV9lbl9iaXQpOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgd3JpdGVsKHIsIHBsbC0+
+ZW5fYWRkcik7DQo+ID4gPiA+ICsgICAgICAgfQ0KPiA+ID4gPiArDQo+ID4gPiA+ICAgICAgICAg
+X19tdGtfcGxsX3R1bmVyX2VuYWJsZShwbGwpOw0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICAgIHVk
+ZWxheSgyMCk7DQo+ID4gPiA+IEBAIC0yNzcsOSArMjg3LDE1IEBAIHN0YXRpYyB2b2lkIG10a19w
+bGxfdW5wcmVwYXJlKHN0cnVjdCBjbGtfaHcgKmh3KQ0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICAg
+IF9fbXRrX3BsbF90dW5lcl9kaXNhYmxlKHBsbCk7DQo+ID4gPiA+DQo+ID4gPiA+IC0gICAgICAg
+ciA9IHJlYWRsKHBsbC0+YmFzZV9hZGRyICsgUkVHX0NPTjApOw0KPiA+ID4gPiAtICAgICAgIHIg
+Jj0gfkNPTjBfQkFTRV9FTjsNCj4gPiA+ID4gLSAgICAgICB3cml0ZWwociwgcGxsLT5iYXNlX2Fk
+ZHIgKyBSRUdfQ09OMCk7DQo+ID4gPiA+ICsgICAgICAgaWYgKHBsbC0+ZW5fYWRkcikgew0KPiA+
+ID4gPiArICAgICAgICAgICAgICAgciA9IHJlYWRsKHBsbC0+ZW5fYWRkcik7DQo+ID4gPiA+ICsg
+ICAgICAgICAgICAgICByICY9IH5CSVQocGxsLT5kYXRhLT5iYXNlX2VuX2JpdCk7DQo+ID4gPiA+
+ICsgICAgICAgICAgICAgICB3cml0ZWwociwgcGxsLT5lbl9hZGRyKTsNCj4gPiA+ID4gKyAgICAg
+ICB9IGVsc2Ugew0KPiA+ID4gPiArICAgICAgICAgICAgICAgciA9IHJlYWRsKHBsbC0+YmFzZV9h
+ZGRyICsgUkVHX0NPTjApOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgciAmPSB+Q09OMF9CQVNF
+X0VOOw0KPiA+ID4gPiArICAgICAgICAgICAgICAgd3JpdGVsKHIsIHBsbC0+YmFzZV9hZGRyICsg
+UkVHX0NPTjApOw0KPiA+ID4gPiArICAgICAgIH0NCj4gPiA+ID4NCj4gPiA+ID4gICAgICAgICBy
+ID0gcmVhZGwocGxsLT5wd3JfYWRkcikgfCBDT04wX0lTT19FTjsNCj4gPiA+ID4gICAgICAgICB3
+cml0ZWwociwgcGxsLT5wd3JfYWRkcik7DQo+ID4gPiA+IEBAIC0zMjEsNiArMzM3LDggQEAgc3Rh
+dGljIHN0cnVjdCBjbGsgKm10a19jbGtfcmVnaXN0ZXJfcGxsKGNvbnN0IHN0cnVjdCBtdGtfcGxs
+X2RhdGEgKmRhdGEsDQo+ID4gPiA+ICAgICAgICAgICAgICAgICBwbGwtPnR1bmVyX2FkZHIgPSBi
+YXNlICsgZGF0YS0+dHVuZXJfcmVnOw0KPiA+ID4gPiAgICAgICAgIGlmIChkYXRhLT50dW5lcl9l
+bl9yZWcpDQo+ID4gPiA+ICAgICAgICAgICAgICAgICBwbGwtPnR1bmVyX2VuX2FkZHIgPSBiYXNl
+ICsgZGF0YS0+dHVuZXJfZW5fcmVnOw0KPiA+ID4gPiArICAgICAgIGlmIChkYXRhLT5lbl9yZWcp
+DQo+ID4gPiA+ICsgICAgICAgICAgICAgICBwbGwtPmVuX2FkZHIgPSBiYXNlICsgZGF0YS0+ZW5f
+cmVnOw0KPiA+ID4NCj4gPiA+IElmIHRoZSBhbnN3ZXIgdG8gbXkgcXVlc3Rpb24gYWJvdmUgaG9s
+ZHMgKGFzeW1tZXRyeSBpcyBub3QNCj4gPiA+IGludGVudGlvbmFsKSwgdGhpcyBwYXRjaC90aGUg
+Y29kZSBjb3VsZCBiZSBzaW1wbGlmaWVkIGEgbG90IGlmIHlvdQ0KPiA+ID4gYWxzbyBhZGRlZCBh
+IHBsbC0+ZW5fYml0IG1lbWJlciwgYW5kLCBoZXJlLCBkaWQgdGhpczoNCj4gPiA+DQo+ID4gPiBp
+ZiAocGxsLT5lbl9yZWcpIHsNCj4gPiA+ICAgIHBsbC0+ZW5fYWRkciA9IGJhc2UgKyBkYXRhLT5l
+bl9yZWc7DQo+ID4gPiAgICBwbGwtPmVuZF9iaXQgPSBkYXRhLT5lbl9iaXQ7DQo+ID4gPiB9IGVs
+c2Ugew0KPiA+ID4gICAgcGxsLT5lbl9hZGRyID0gcGxsLT5iYXNlX2FkZHIgKyBSRUdfQ09OMDsN
+Cj4gPiA+ICAgIHBsbC0+ZW5fYml0ID0gQ09OMF9CQVNFX0VOOw0KPiA+ID4gfQ0KPiA+ID4NCj4g
+PiA+ID4gICAgICAgICBwbGwtPmh3LmluaXQgPSAmaW5pdDsNCj4gPiA+ID4gICAgICAgICBwbGwt
+PmRhdGEgPSBkYXRhOw0KPiA+ID4gPg0KPiA+ID4gPiAtLQ0KPiA+ID4gPiAxLjguMS4xLmRpcnR5
+DQo+ID4NCg0K
 
