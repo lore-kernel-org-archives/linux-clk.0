@@ -2,119 +2,81 @@ Return-Path: <SRS0=c6El=BG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF756C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36365C433E5
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9263320759
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6D72250E
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:58:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="QBVHnZTK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgG0UMI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 16:12:08 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:56261 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbgG0UMI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 16:12:08 -0400
-Received: from mail-qk1-f177.google.com ([209.85.222.177]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MRnTQ-1kNqVY1dFq-00TDuV; Mon, 27 Jul 2020 22:12:06 +0200
-Received: by mail-qk1-f177.google.com with SMTP id 11so16561764qkn.2;
-        Mon, 27 Jul 2020 13:12:06 -0700 (PDT)
-X-Gm-Message-State: AOAM532eTDT/WyF5SgwCHoSWxf5bRERH0BS9WOpmp2JnnL7oESawzEro
-        DNU+y2Jo3WkfDDbibqr7rtWubvojaRfAWkrC91Y=
-X-Google-Smtp-Source: ABdhPJwl8pJMM4Hd65/Ot3xFOpQaYa5B7rSGHYgIGEgDAywOJdEUK0itmnQY8BcVNrSOqpiK6dkmg90FsvQP5ZU4PpU=
-X-Received: by 2002:a37:b942:: with SMTP id j63mr10888732qkf.138.1595880725136;
- Mon, 27 Jul 2020 13:12:05 -0700 (PDT)
+        id S1726222AbgG0U6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 16:58:13 -0400
+Received: from vern.gendns.com ([98.142.107.122]:52344 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726171AbgG0U6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 16:58:13 -0400
+X-Greylist: delayed 1516 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jul 2020 16:58:13 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=2Qbdrl9zDyYUDiuprAY1yYquh3ltubEZYSXcWV7O1Lc=; b=QBVHnZTKCHFlJW8ennnb2tB/bb
+        m0yH45Z+uSv96AyPFVGsbZFJZnRrd44+wNtbHN6q/hV30+42IEsFoTO0092Q6OOqIkfuVg2Mvtjf+
+        Ye3+H1liJuQwL3Bci2oHiex06QodIsf46Pac9uQzpJvv9I3JCM0lPy9X0gAt0sb1l1c05kvnpMUD8
+        wKa5FCc433oxck/+7RMkwYSsxBDsxbYtWzCi9mGBnEwwSA2pFt8P6/pqB10q90WNJESegHcuyLsz3
+        2D0tdqwUl1mWXWXl5UTSoNroloQINmpSecYfOPep7laYF18QaIuwYHkNXLlzTfUSbIIS9MRJO3461
+        W109mHhw==;
+Received: from [2600:1700:4830:165f::19e] (port=59352)
+        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+        (Exim 4.93)
+        (envelope-from <david@lechnology.com>)
+        id 1k09nr-0004In-Rw; Mon, 27 Jul 2020 16:32:55 -0400
+Subject: Re: [PATCH][next] clk: davinci: Use fallthrough pseudo-keyword
+To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20200727201122.GA2593@embeddedor>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <4cc1d793-4722-42c2-9712-2ebccbd6abeb@lechnology.com>
+Date:   Mon, 27 Jul 2020 15:32:53 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <20200727112236.8199-1-lars.povlsen@microchip.com>
- <CAK8P3a3WJTKH7-KGgp7CuhZv_wtrtY1k+1LEL-62_Rj+wqbrGQ@mail.gmail.com> <159587873833.1360974.11729154337431621644@swboyd.mtv.corp.google.com>
-In-Reply-To: <159587873833.1360974.11729154337431621644@swboyd.mtv.corp.google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 27 Jul 2020 22:11:49 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a27u7UkjGJ32KsRp02FoF34mKW0gRUsms0+YBkxy+L4Gg@mail.gmail.com>
-Message-ID: <CAK8P3a27u7UkjGJ32KsRp02FoF34mKW0gRUsms0+YBkxy+L4Gg@mail.gmail.com>
-Subject: Re: [PATCH linux-next] clk: sparx5: Review changes
-To:     Stephen Boyd <sboyd@kernel.org>
-List-Id: <soc.lore.kernel.org>
-Cc:     Lars Povlsen <lars.povlsen@microchip.com>,
-        SoC Team <soc@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:JsoTw7nq0jS9T6T0VF5vsItTYUjCtq8Aiu+4lB2D8Olr7HlGHwL
- YdpR3t+vcPB0MpFzVcZFZhljq+3VEAUSsSvImplIOIH/t6ehmTiUzqJ6vEl8dRMhUua45dT
- ZMfNfCIEbi1qmmodL9UbIDBtq2DJKSmaCG/i1ehhEoFV0Xb/LRqmWDDBPpYbG5kVpyYIr3L
- xcUnhc3WaeWr8ebFIvM5w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:scJ9a76fXE4=:UAUCSqfQqD4d8w5uElORay
- oDzsDhRIuA+/qKrJ2l+ePaFbRlaFFGCgt/EyospWkLhQrJkVqTcT0BXHUvzfh5/Unq1bExuKe
- Gs63zPjxdYGvbDchfYOcXDbS1Y2L+bWL3f4GWookRwSRWYLqDVykRThlKdcCP7w2+HEGKldcz
- b2RMGhD/Qvsind/XUz8NxU99iA7HhwYPaSgzY+65vK+AN3Y52jc31nXXLvB78s0LSipeL9lDk
- hj4SM8j3urnSFkCmArDRA6KAaggyu2HbfCnA+138ySGosHJ9TAoDxfQzpWydZy2TgMvhaJX8H
- ygC3o/PwxFKRpJZnuUWUp3tvoT5x7Kz6zG+I1rM75iMljuJmBvOlYOwBKjo+g1Vmlwsnv8Nph
- RRsck4DH3EimSyLckrp02GxUeowAwvhmQsud/+kfNqU/xZbG8CU7sTrZ9p+WaYmBHhXCSP1Va
- gksyJ9gWaYyW6p7dcCDugYamqpMvTgzacUh1r6Od/KM2OAkjdxrNVgyEQXkLhtcHXsmQxDpXG
- /tlBsdDvCSreuEXaf/vJHI9BDwbMaFdtvCmnS/ZZVAXwkrAiKYJW0Q6JIS6y/p8qcDKAwIBmb
- q9+waXLqK/OAqWTDUExXyNd/P3lOet4xLb93OR/yCzXb2aSSwbgTPNXmKiuAfyL7hwCaHB7oS
- OEiWiorhh/RZpnwSeQqdH89KA/uun8hUlg4M4wYqJqfG/FS44ozR4LRLyV6x4QZupP6jH6FHN
- TqMCKKxffx+ebv8UbPexcKKnJywoPN//WwNe1lKgydqVLB5kOSgIh5HnUxB3CojyPhA/8NRpA
- XtOMB5a2MUo14/rGPV4qrpikrIziOp2WlFTGHAy4OZJAYBa+OOtX7bqb9CzCFoNmHUy/koZII
- dQVHnVA34Ojeo7ohBVG780Fed6hCJRkBmJ+nIb5a6EnadHPQa4e0/2FwlHrcCAnEIJS60dpWY
- p9GZPZsmNL1XZcoMnT1bNbIHHupXhZdv78+GUpghjbRqVVKVXdIdx
+In-Reply-To: <20200727201122.GA2593@embeddedor>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 9:39 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Arnd Bergmann (2020-07-27 05:02:56)
-> > On Mon, Jul 27, 2020 at 1:22 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
-> > >
-> > > This address the review comments for the sparx5 clk driver from Stephen
-> > > Boyd <sboyd@kernel.org>:
-> > >
-> > >  - Remove unused include of of_address.h
-> > >  - Remove unused member in s5_hw_clk struct
-> > >  - Changed type (to unsigned long) for freq in s5_pll_conf struct
-> > >  - Use .parent_data instead of looking up parent name
-> > >  - Use devm_of_clk_add_hw_provider
-> > >  - Some minor comsmetics
-> > >
-> > > The patch is intended for linux-next (incremental), as the original
-> > > driver was already merged.
-> > >
-> > > Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
-> >
-> > Hi Lars, thank you for addressing these!
-> >
-> > Generally speaking, you should avoid having patches that list a
-> > number of unrelated things that are done by a single commit.
-> >
-> > Splitting this up into six patches is probably a little too much,
-> > but maybe you can find a better balance. What I'd like to see
-> > is to split the purely cosmetic changes from those that might
-> > actually change the behavior, and then for each patch that
-> > changes something non-obvious, explain why this was done.
-> >
->
-> Why was the clk driver merged to linux-next outside of the clk tree? Was
-> there some sort of dependency?
+On 7/27/20 3:11 PM, Gustavo A. R. Silva wrote:
+> Replace the existing /* fall through */ comments and its variants with
+> the new pseudo-keyword macro fallthrough[1].
+> 
+> [1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 
-I merged the entire series of the base platform support along with
-a few core drivers. I had asked for the series to be submitted to
-soc@kernel.org after all parts had been reviewed, but I missed that
-the clk driver was still missing maintainer review (I saw you had
-reviewed some patches, but apparently that was just the binding,
-not the driver).
-
-I rebased the 'arm/newsoc' branch the other day to fix another mistake,
-so if you prefer, I can rebase it again and drop the clk driver or
-all the sparx5 patches.
-
-       Arnd
+Reviewed-by: David Lechner <david@lechnology.com>
