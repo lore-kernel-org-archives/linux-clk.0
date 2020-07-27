@@ -6,119 +6,98 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A16C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B9FC433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8E0DE2074F
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:39:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DD222072E
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:57:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595878778;
-	bh=Q0LB+Ls+o2Je5hENp6pGFgWXveWVdAfFNup4jeshilk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=iBdO7HQmYVY/2IHNfV1goj2HS8Whqu88+W1FcapSNYdOvMLpfCsbMkaBUdZlL8gai
-	 kJMnI8rnfOvy6ChrBdL049WOecG+MbO/qtKNd7bGvZkbNt4Rqb3YczVU7NbL6prgsx
-	 mSscsKI4UF9Au5IxWriRxBl5ZeKWPaqE1I7g4VUs=
+	s=default; t=1595879866;
+	bh=AiBAqpFxeHeNSbRY4yUHFgFczRLguUfLgWkOYhJBDA8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q4mNU3tak80WZlWcrlM6we61y0dto1PwCpNwyJ5W6oj/mzqCr2iEm9pJREW/2AsRO
+	 lwAA1pfQivfS1YJNrdJMMkscVHN3U/kKtJjTLa4BfC+GtgHhrUtsdwlrgPpGkgoXLB
+	 h10G0bY4yorphDyQcFOOtML7P7LAlz0afS/SWLCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbgG0Tji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 15:39:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726278AbgG0Tji (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 15:39:38 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E5A120738;
-        Mon, 27 Jul 2020 19:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595878777;
-        bh=Q0LB+Ls+o2Je5hENp6pGFgWXveWVdAfFNup4jeshilk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=zu27qhQPAwnzyYyO3X5dKT4UTERtJU0cKI15HxsRh8Iwzb4Qfx02rQoCwKxvF9UUR
-         s3k2L06AgXPEUM+AFiQZhxDK3JLS6heeHa55y0rbj63S9ePUbMQv+2Cozx9iR6vU7G
-         b4f6y48sUg5gDFK5O/difyTQb3le7ZY7CB6hjM+Y=
-Content-Type: text/plain; charset="utf-8"
+        id S1728324AbgG0T5q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 15:57:46 -0400
+Received: from mail-il1-f195.google.com ([209.85.166.195]:38859 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728990AbgG0T5p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 15:57:45 -0400
+Received: by mail-il1-f195.google.com with SMTP id s21so14172048ilk.5;
+        Mon, 27 Jul 2020 12:57:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=QdSK9CKXiKnYsb9McMD2F1lNWXWXRWad4Tt2Gt7Chdw=;
+        b=uEeQ6GlG937sc6RUDr3HL3gHPI2VaiFZ3FKTxefj11fmemHVMKdBxiDt626mnJu7DP
+         EzHUaE3FjpDNpfreC9S/lCjG7OD+Se4OAiFsoui1UF1vPRlPG+4y4Muu3T7b7f3/ZMKG
+         ForLPBBhV0wHhxwkkLJ/7qFu2d9fNoYJrWiUyatSYRThxGpuxZG+lKUQdU4CAh/I1h/t
+         VTXNEbuQLmfWthqDfrDjaxblQJWbB/o9QGJxGWemUyWCs7F8U+5nSlCyU2+Jsfmq59gV
+         Gt5lUPrn9PL23lDcUzxtaK2fOnsHFj4IT4KeC28Zb475wxtC5lsaG5uE4i+91CNkznva
+         GSzQ==
+X-Gm-Message-State: AOAM5318fufTbE4KcZGwUIT2F+zZX1USkCDR+Cs8Mlv+BbSQwLjRnBr0
+        a/JxQ4WVUhZ0c7CyH6TkCg==
+X-Google-Smtp-Source: ABdhPJxMcbGDddXTkDmm/J97zqehf9CyotRBkcoipmAMTTHYr9DZNZktmNji7EACPPz7EowekWZvHA==
+X-Received: by 2002:a05:6e02:128d:: with SMTP id y13mr24745157ilq.305.1595879864663;
+        Mon, 27 Jul 2020 12:57:44 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id x185sm3036863iof.41.2020.07.27.12.57.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 Jul 2020 12:57:43 -0700 (PDT)
+Received: (nullmailer pid 780250 invoked by uid 1000);
+        Mon, 27 Jul 2020 19:57:42 -0000
+Date:   Mon, 27 Jul 2020 13:57:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Frank Lee <frank@allwinnertech.com>
+Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+        mturquette@baylibre.com, robh+dt@kernel.org, wens@csie.org,
+        liyong@allwinnertech.com, mripard@kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        p.zabel@pengutronix.de, linux-clk@vger.kernel.org,
+        huangshuosheng@allwinnertech.com, tiny.windzz@gmail.com
+Subject: Re: [PATCH v5 02/16] clk: sunxi-ng: add support for the Allwinner
+ A100 CCU
+Message-ID: <20200727195742.GA780202@bogus>
+References: <cover.1595572867.git.frank@allwinnertech.com>
+ <1eb41bf6c966a0e54820200650d27a5d4f2ac160.1595572867.git.frank@allwinnertech.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200727155232.a4ccxdjooa5vjbfy@gilmour.lan>
-References: <20200626115433.125735-1-maxime@cerno.tech> <159554434893.3847286.8491922177659230646@swboyd.mtv.corp.google.com> <20200727155232.a4ccxdjooa5vjbfy@gilmour.lan>
-Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-rpi-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
-To:     Maxime Ripard <maxime@cerno.tech>
-Date:   Mon, 27 Jul 2020 12:39:36 -0700
-Message-ID: <159587877620.1360974.7617474978458949626@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1eb41bf6c966a0e54820200650d27a5d4f2ac160.1595572867.git.frank@allwinnertech.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-07-27 08:52:32)
-> On Thu, Jul 23, 2020 at 03:45:48PM -0700, Stephen Boyd wrote:
-> > Quoting Maxime Ripard (2020-06-26 04:54:33)
-> > > The RaspberryPi firmware binding uses two compatible, include simple-=
-bus.
-> > > The select statement generated by default will thus select any node t=
-hat
-> > > has simple-bus, not all of them being the raspberrypi firmware node.
-> > >=20
-> > > This results in warnings being wrongfully reported. Let's add a custom
-> > > select statement to fix that.
-> > >=20
-> > > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware=
- binding to YAML")
-> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> > >=20
-> > > ---
-> > >=20
-> > > The original binding has been merged through the clock tree, so it sh=
-ould
-> > > be merged there.
-> > >=20
-> > > Even though the original binding (and the DT) are using the simple-bus
-> > > compatible, this creates some DTC warnings since the firmware really =
-isn't
-> > > a bus, so the node name doesn't match what a bus should have, none of=
- the
-> > > children have a reg property, #address-cells and #size-cells are miss=
-ing,
-> > > etc.
-> > >=20
-> > > I can only guess that simple-bus was used to make the sub-devices pro=
-be,
-> > > but maybe simple-mfd would be more appropriate here?
-> > > ---
-> > >  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml   | 9 +++++++=
-++
-> > >  1 file changed, 9 insertions(+)
-> >=20
-> > Hmm. I'm still seeing warnings.
-> >=20
-> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
-example.dts:23.37-26.15: Warning (simple_bus_reg): /example-0/firmware/cloc=
-ks: missing or emp
-> > ty reg/ranges property
-> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
-example.dt.yaml: firmware: $nodename:0: 'firmware' does not match '^(bus|so=
-c|axi|ahb|apb)(@[0-9a-f]+)?$'
-> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
-example.dt.yaml: firmware: '#address-cells' is a required property
-> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
-example.dt.yaml: firmware: '#size-cells' is a required property
-> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
-example.dt.yaml: firmware: 'ranges' is a required property
->=20
-> Yeah, those are the warnings related to the issue we were discussing
-> with Rob. The patch should fix an hard error.
->=20
-> I'll send a followup patch for the warnings.
+On Fri, 24 Jul 2020 14:58:43 +0800, Frank Lee wrote:
+> From: Yangtao Li <frank@allwinnertech.com>
+> 
+> Add support for a100 in the sunxi-ng CCU framework.
+> 
+> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+> ---
+>  drivers/clk/sunxi-ng/Kconfig                  |   10 +
+>  drivers/clk/sunxi-ng/Makefile                 |    2 +
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c      |  214 +++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h      |   21 +
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100.c        | 1276 +++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-a100.h        |   56 +
+>  include/dt-bindings/clock/sun50i-a100-ccu.h   |  116 ++
+>  include/dt-bindings/clock/sun50i-a100-r-ccu.h |   23 +
+>  include/dt-bindings/reset/sun50i-a100-ccu.h   |   68 +
+>  include/dt-bindings/reset/sun50i-a100-r-ccu.h |   18 +
+>  10 files changed, 1804 insertions(+)
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100-r.h
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.c
+>  create mode 100644 drivers/clk/sunxi-ng/ccu-sun50i-a100.h
+>  create mode 100644 include/dt-bindings/clock/sun50i-a100-ccu.h
+>  create mode 100644 include/dt-bindings/clock/sun50i-a100-r-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun50i-a100-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun50i-a100-r-ccu.h
+> 
 
-Ah ok. Let me merge it up now.
+Acked-by: Rob Herring <robh@kernel.org>
