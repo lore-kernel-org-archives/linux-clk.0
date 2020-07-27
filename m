@@ -7,51 +7,46 @@ X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09680C433E4
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:03:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45B6BC433E3
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DB0B320786
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F42A207BB
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:05:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595880211;
-	bh=mXVi6dNmeTTHEGhLpBn9kwB25pFNfvrXx1UPzS1ISEs=;
+	s=default; t=1595880330;
+	bh=WyhugnpU9g4nQhQO5azNbcxmB+fGzCazlet9mhbPuQ0=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=ewpnPm7b4qBQaiPx8nHBMsEpd0wwxdlmfI80wna7M7HHLNlSRVTmPOzPTvr5Gms42
-	 fHEkOQTKbpn8Mk07N94pcoXLMygNicT9EErO5F6eswrHH0h1+SUqns22YqXz4VbMfd
-	 ja5Y30BAn9DOQh4GjpyC7QzudVF+hmxCkd44IRaM=
+	b=gJJBUgesRcX69WOetq5Cc24HdaO6/jUp25ihst/zgocLlhxknvFPBdzX6lIRIc+c+
+	 rPQSYl2ZhmD93K74rR2kVokV3VAWr5814RlbmArGQhh+jNO5R+hh97mB3XRWa3Wv9L
+	 UgLgB4IhdXoMfrQyfFXrnoBillA02xgYmKMaaxy4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbgG0UDb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 16:03:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
+        id S1728340AbgG0UF3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 16:05:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726451AbgG0UDa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 16:03:30 -0400
+        id S1728039AbgG0UF3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 16:05:29 -0400
 Received: from embeddedor (187-162-31-110.static.axtel.net [187.162.31.110])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64C162072E;
-        Mon, 27 Jul 2020 20:03:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7844620759;
+        Mon, 27 Jul 2020 20:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595880210;
-        bh=mXVi6dNmeTTHEGhLpBn9kwB25pFNfvrXx1UPzS1ISEs=;
+        s=default; t=1595880329;
+        bh=WyhugnpU9g4nQhQO5azNbcxmB+fGzCazlet9mhbPuQ0=;
         h=Date:From:To:Cc:Subject:From;
-        b=u5zsRUdq8hH6l+EscwKa4buoH5QG+mDT1k8i/sGMnD7kku/kLDrEXtG6bY8kaKuK0
-         5qtsMZ/zdjsmrPvu5ldzw5E4+62aa50oPpaun70v/58lftuGVWBgDuZRto8+1DCivB
-         j+0xpCAIvPKLDfeWaCgdy+P+heTw9N9yYNtGc2L0=
-Date:   Mon, 27 Jul 2020 15:09:22 -0500
+        b=CTIagBMHfZOzuF0kT9g34XYuLttGszaF2eIKVR0wGOC3q9pkd0kwUrEEGfWJNXaNd
+         +ecGwBvCwh5K9zGeUUQv9bV4vYMacwQsJPLjePkU1LqgqjWv3NjAfMg41x2sA5dHtN
+         Qzh1Bhw2Q4uA4viGeydkOUrmO939tbWQETYPQpzM=
+Date:   Mon, 27 Jul 2020 15:11:22 -0500
 From:   "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
+To:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Subject: [PATCH][next] clk: imx: Use fallthrough pseudo-keyword
-Message-ID: <20200727200922.GA2326@embeddedor>
+Subject: [PATCH][next] clk: davinci: Use fallthrough pseudo-keyword
+Message-ID: <20200727201122.GA2593@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,31 +63,22 @@ the new pseudo-keyword macro fallthrough[1].
 
 Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
 ---
- drivers/clk/imx/clk-pllv3.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/davinci/pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-pllv3.c b/drivers/clk/imx/clk-pllv3.c
-index a7db93030e02..b20cdea3e9cc 100644
---- a/drivers/clk/imx/clk-pllv3.c
-+++ b/drivers/clk/imx/clk-pllv3.c
-@@ -433,7 +433,7 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
- 		break;
- 	case IMX_PLLV3_USB_VF610:
- 		pll->div_shift = 1;
--		/* fall through */
+diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
+index 8a23d5dfd1f8..6c35e4bb7940 100644
+--- a/drivers/clk/davinci/pll.c
++++ b/drivers/clk/davinci/pll.c
+@@ -651,7 +651,7 @@ static int davinci_pll_sysclk_rate_change(struct notifier_block *nb,
+ 		pllcmd = readl(pll->base + PLLCMD);
+ 		pllcmd |= PLLCMD_GOSET;
+ 		writel(pllcmd, pll->base + PLLCMD);
+-		/* fallthrough */
 +		fallthrough;
- 	case IMX_PLLV3_USB:
- 		ops = &clk_pllv3_ops;
- 		pll->powerup_set = true;
-@@ -441,7 +441,7 @@ struct clk_hw *imx_clk_hw_pllv3(enum imx_pllv3_type type, const char *name,
- 	case IMX_PLLV3_AV_IMX7:
- 		pll->num_offset = PLL_IMX7_NUM_OFFSET;
- 		pll->denom_offset = PLL_IMX7_DENOM_OFFSET;
--		/* fall through */
-+		fallthrough;
- 	case IMX_PLLV3_AV:
- 		ops = &clk_pllv3_av_ops;
- 		break;
+ 	case PRE_RATE_CHANGE:
+ 		/* Wait until for outstanding changes to take effect */
+ 		do {
 -- 
 2.27.0
 
