@@ -2,141 +2,123 @@ Return-Path: <SRS0=c6El=BG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D61E3C433ED
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 18:14:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A16C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:39:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BB07120714
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 18:14:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E0DE2074F
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 19:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595873640;
-	bh=LWg6lS2bAWBAc68FRiPBOyPEeHgvgjIV2QRuQyG1usg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mn9ItEJRnpS8eKUxeiKof/UzVQaBKPiMgFYocd7Bl8JObqTfye5i3EqZTJaEdC8hW
-	 sCY41jK0weP3ysI7aPr8Tl6ZcaHwk6thqFXKwTVm4tj5wIYPxIbL7n+Th2G28UbKdu
-	 pVwiSFpNei3w4MfJkncW86iN492eHcJmOyU32XaY=
+	s=default; t=1595878778;
+	bh=Q0LB+Ls+o2Je5hENp6pGFgWXveWVdAfFNup4jeshilk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=iBdO7HQmYVY/2IHNfV1goj2HS8Whqu88+W1FcapSNYdOvMLpfCsbMkaBUdZlL8gai
+	 kJMnI8rnfOvy6ChrBdL049WOecG+MbO/qtKNd7bGvZkbNt4Rqb3YczVU7NbL6prgsx
+	 mSscsKI4UF9Au5IxWriRxBl5ZeKWPaqE1I7g4VUs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731268AbgG0SOA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 14:14:00 -0400
-Received: from mail-il1-f196.google.com ([209.85.166.196]:42153 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731250AbgG0SN7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 14:13:59 -0400
-Received: by mail-il1-f196.google.com with SMTP id i138so8006560ild.9;
-        Mon, 27 Jul 2020 11:13:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=qphSXwUDbDL/STSwZyNfj+0kNYsQNz0+uZs8OU4m+yA=;
-        b=qvBpVHSwS/omHvl2saFmqdD9UELRonQdpK3bPLQIxOezLda6RPWbCdDBLqpSQCXuUS
-         vJ/aE6yYLdYyBKidQ2RxfyKNhhE9rso0VwY4lvd8S6jh5mn8CovBiDX++hA68ZgcKFuq
-         0jxkKVaHUPwfN8uFzEiAMVaAAz9mXJhx3QPOfrQyRnORhllbokFDYh30mnCgGU3kGF0O
-         6Gg05a59kw99PVuVM9fFP1WCj7PoEnnY/N/K8/5ziHE3Pn7StQ9a2YKGhVUaDNQz+BuF
-         U3/R1KZ0/52Mj6BrNsOsKKB0uyXsv1YsmN7rEFw4BdPCYk0rYMztNiIOsAJfAoxV3dOE
-         XpwQ==
-X-Gm-Message-State: AOAM531ylHtovtu6XLArMXS3l7VlMASx5cuJO7/WeoXaTgW0/14AYbF3
-        ePUXRa1+KWsvmhsBSQ51mQ==
-X-Google-Smtp-Source: ABdhPJxgiypIQYIODHYWAN1gC3+lDaAHwErFKahF6Ut43xD7/abYM0/1Z1iU78NrtHLEqfkyGnVtBQ==
-X-Received: by 2002:a05:6e02:1213:: with SMTP id a19mr3107446ilq.129.1595873638096;
-        Mon, 27 Jul 2020 11:13:58 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id z68sm1237830ilf.25.2020.07.27.11.13.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jul 2020 11:13:57 -0700 (PDT)
-Received: (nullmailer pid 638572 invoked by uid 1000);
-        Mon, 27 Jul 2020 18:13:52 -0000
-Date:   Mon, 27 Jul 2020 12:13:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     freedreno@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Krzysztof Wilczynski <kw@linux.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Xiaozhe Shi <xiaozhes@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Brian Masney <masneyb@onstation.org>,
-        Sean Paul <sean@poorly.run>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>, martin.botka1@gmail.com,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        devicetree@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Harigovindan P <harigovi@codeaurora.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 9/9] soc/qcom: Add REVID driver
-Message-ID: <20200727181352.GB634850@bogus>
-References: <20200726111215.22361-1-konradybcio@gmail.com>
- <20200726111215.22361-10-konradybcio@gmail.com>
+        id S1726800AbgG0Tji (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 15:39:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38306 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726278AbgG0Tji (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 15:39:38 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E5A120738;
+        Mon, 27 Jul 2020 19:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595878777;
+        bh=Q0LB+Ls+o2Je5hENp6pGFgWXveWVdAfFNup4jeshilk=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=zu27qhQPAwnzyYyO3X5dKT4UTERtJU0cKI15HxsRh8Iwzb4Qfx02rQoCwKxvF9UUR
+         s3k2L06AgXPEUM+AFiQZhxDK3JLS6heeHa55y0rbj63S9ePUbMQv+2Cozx9iR6vU7G
+         b4f6y48sUg5gDFK5O/difyTQb3le7ZY7CB6hjM+Y=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200726111215.22361-10-konradybcio@gmail.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200727155232.a4ccxdjooa5vjbfy@gilmour.lan>
+References: <20200626115433.125735-1-maxime@cerno.tech> <159554434893.3847286.8491922177659230646@swboyd.mtv.corp.google.com> <20200727155232.a4ccxdjooa5vjbfy@gilmour.lan>
+Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware binding
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+To:     Maxime Ripard <maxime@cerno.tech>
+Date:   Mon, 27 Jul 2020 12:39:36 -0700
+Message-ID: <159587877620.1360974.7617474978458949626@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 26 Jul 2020 13:12:06 +0200, Konrad Dybcio wrote:
-> From: Xiaozhe Shi <xiaozhes@codeaurora.org>
-> 
-> Add the REVID device driver. The REVID driver will print out the PMIC
-> revision at probe time.
-> 
-> Signed-off-by: Xiaozhe Shi <xiaozhes@codeaurora.org>
-> [konradybcio@gmail.com: Fast-forward the driver from kernel 4.14 to 5.8,
-> convert binding to yaml]
-> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
-> ---
->  .../bindings/soc/qcom/qcom,qpnp-revid.yaml    |  38 ++
->  drivers/soc/qcom/Kconfig                      |   9 +
->  drivers/soc/qcom/Makefile                     |   1 +
->  drivers/soc/qcom/qpnp-revid.c                 | 288 ++++++++++++++
->  include/linux/qpnp/qpnp-revid.h               | 369 ++++++++++++++++++
->  5 files changed, 705 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml
->  create mode 100644 drivers/soc/qcom/qpnp-revid.c
->  create mode 100644 include/linux/qpnp/qpnp-revid.h
-> 
+Quoting Maxime Ripard (2020-07-27 08:52:32)
+> On Thu, Jul 23, 2020 at 03:45:48PM -0700, Stephen Boyd wrote:
+> > Quoting Maxime Ripard (2020-06-26 04:54:33)
+> > > The RaspberryPi firmware binding uses two compatible, include simple-=
+bus.
+> > > The select statement generated by default will thus select any node t=
+hat
+> > > has simple-bus, not all of them being the raspberrypi firmware node.
+> > >=20
+> > > This results in warnings being wrongfully reported. Let's add a custom
+> > > select statement to fix that.
+> > >=20
+> > > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware=
+ binding to YAML")
+> > > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> > >=20
+> > > ---
+> > >=20
+> > > The original binding has been merged through the clock tree, so it sh=
+ould
+> > > be merged there.
+> > >=20
+> > > Even though the original binding (and the DT) are using the simple-bus
+> > > compatible, this creates some DTC warnings since the firmware really =
+isn't
+> > > a bus, so the node name doesn't match what a bus should have, none of=
+ the
+> > > children have a reg property, #address-cells and #size-cells are miss=
+ing,
+> > > etc.
+> > >=20
+> > > I can only guess that simple-bus was used to make the sub-devices pro=
+be,
+> > > but maybe simple-mfd would be more appropriate here?
+> > > ---
+> > >  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml   | 9 +++++++=
+++
+> > >  1 file changed, 9 insertions(+)
+> >=20
+> > Hmm. I'm still seeing warnings.
+> >=20
+> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
+example.dts:23.37-26.15: Warning (simple_bus_reg): /example-0/firmware/cloc=
+ks: missing or emp
+> > ty reg/ranges property
+> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
+example.dt.yaml: firmware: $nodename:0: 'firmware' does not match '^(bus|so=
+c|axi|ahb|apb)(@[0-9a-f]+)?$'
+> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
+example.dt.yaml: firmware: '#address-cells' is a required property
+> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
+example.dt.yaml: firmware: '#size-cells' is a required property
+> > Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.=
+example.dt.yaml: firmware: 'ranges' is a required property
+>=20
+> Yeah, those are the warnings related to the issue we were discussing
+> with Rob. The patch should fix an hard error.
+>=20
+> I'll send a followup patch for the warnings.
 
-
-My bot found errors running 'make dt_binding_check' on your patch:
-
-Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml:  while scanning a block scalar
-  in "<unicode string>", line 22, column 18
-found a tab character where an indentation space is expected
-  in "<unicode string>", line 24, column 1
-Documentation/devicetree/bindings/Makefile:20: recipe for target 'Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.example.dts' failed
-make[1]: *** [Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.example.dts] Error 1
-make[1]: *** Waiting for unfinished jobs....
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml: ignoring, error parsing file
-warning: no schema found in file: ./Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml
-/builds/robherring/linux-dt-review/Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml: ignoring, error parsing file
-warning: no schema found in file: ./Documentation/devicetree/bindings/soc/qcom/qcom,qpnp-revid.yaml
-Makefile:1347: recipe for target 'dt_binding_check' failed
-make: *** [dt_binding_check] Error 2
-
-
-See https://patchwork.ozlabs.org/patch/1336467
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure dt-schema is up to date:
-
-pip3 install git+https://github.com/devicetree-org/dt-schema.git@master --upgrade
-
-Please check and re-submit.
-
+Ah ok. Let me merge it up now.
