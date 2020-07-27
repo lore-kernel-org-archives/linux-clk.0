@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE49C433EB
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:42:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC11C433FE
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7A120719
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4079F20759
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 08:42:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="zJmf4w1m"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="kZQOAfu0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbgG0Imd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 04:42:33 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:48534 "EHLO
+        id S1726980AbgG0Imo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 04:42:44 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:48553 "EHLO
         esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726139AbgG0Imb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 04:42:31 -0400
+        with ESMTP id S1726408AbgG0Imh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 04:42:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1595839351; x=1627375351;
+  t=1595839357; x=1627375357;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=5wjLdEVL0+5wkcGZWXGlwE+jpjsqmabT9Jw33q+g7no=;
-  b=zJmf4w1mXUuYhzRFsyDwqzAhtLj8tIAmnf5tX/v/2YkflrUHncp2Mxgi
-   5MivU++Z3EGH3OMozrTPPJ7qJn7RrK7RoEHij5CWSpfOptDtyKvcDepep
-   Ww6AUqJ8GSScNas231yVCE+UX1rzX8D7qoGAfOdMMwypcXkglo+vFIVtO
-   lfjMLcFznVdu3FgGiEWKq456d5aYRwobMR71Y5H3t0j/x8yZ+2mEp8RWB
-   CH3SlZfUBXuGVzL12sNFEUnluLfXQ8TMha4fv3Vy72R3cN0P5zF5LTCXs
-   5F6ZFkL6Bp+TtQm4q2H7zHJ2NmYvsEu4oZQxCt4Uu/CYVsz9Qc+ZRy3XE
+  bh=3uw3KYGVcOCYb2y09i3eYMZ3PWc3Td6IdI8eVYh5wfE=;
+  b=kZQOAfu0yWk/wdDmaRb2oR0XswukFEavJagAtFJa/dryO+hTrfrDG4s5
+   SzNRXxj4RNgRJkFHQGht9nOaQ/Kk1GE7075EHaSfnj+1T9kabeTD0Bc9M
+   7so5RgIs+85x4FZSv2+wRn+jpoRZynz5GuCx+QVkuISbnhOF5RmyFivGG
+   wMsNSrWkHnLlvA3Y/wh+uFmhcBQi4DAMrsc55Y3NEbVq89HEkuI1lCcH9
+   gar27yQGdGveAuBhm1p/mw8GPPoTdPOjk+7hDZiHbhNVOUuri1H0mGz5o
+   3aCvRueNBqWcgsCVA/Koh6iY3Tqof2F9uChOMcNYA/fFOWJgAYTnLm4uG
    Q==;
-IronPort-SDR: Q7Tk98p1VpkhnBLBFv5chqOFQVGahl7JqC095p8CeUs+hARbSOozs5d8/PkfksO2D5Yxaq4Ky0
- U8/tXXH9e1pGwvxb+u8dB7r2nJVtiaZo6N8lqGL3El18dZeyGe5orsc6FN4XLMQFeC221r6Qjy
- 2ZkmkNkRuujoBmoDiavwx3P/6Gl/Dj21HcXUJNZqurgFKbITFfePrNI+iBwh2MrekxpO8xBCl9
- /ZAiCWkzoPTtKVrI+HHG6SH5UnjR9k8g/O07aI1R6j1D+66U1kpNWnbgG6qclZYyzNEx3T/TSd
- Z0c=
+IronPort-SDR: YZh9mJqVARAm9H6/Vx1FUO050ldgt3+ieHM+AhdtJRfU7www9B30+QAYnZDHgWAUdCEbqInXB7
+ BxuaSJOGkdN410D0qVLHH8phzNYpifaJeDhR7jCBXMwkUO0UER73vSefjV1/v2WbSEj2GOJ+64
+ IuZjFWKQMzTxaKGbKCFRLDLeF0Ka34pkF5jaO8nYGs8NeRDS2I15h9uxV9BtvX8oe9woDBlG9j
+ MyGzZ3pNiCdDPRhMzaISFC7V7uFU7n91rZIS5olTTd/S+5ywaSMQ59YaTWs6bvKZw8KRlV5GDl
+ Bew=
 X-IronPort-AV: E=Sophos;i="5.75,402,1589266800"; 
-   d="scan'208";a="85470325"
+   d="scan'208";a="85470384"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jul 2020 01:42:30 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 27 Jul 2020 01:42:36 -0700
 Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 27 Jul 2020 01:42:29 -0700
+ 15.1.1979.3; Mon, 27 Jul 2020 01:42:35 -0700
 Received: from soft-dev15.microsemi.net (10.10.115.15) by
  chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 27 Jul 2020 01:42:26 -0700
+ 15.1.1979.3 via Frontend Transport; Mon, 27 Jul 2020 01:42:33 -0700
 From:   Lars Povlsen <lars.povlsen@microchip.com>
 List-Id: <soc.lore.kernel.org>
 To:     SoC Team <soc@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
@@ -65,9 +65,9 @@ CC:     Lars Povlsen <lars.povlsen@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>,
         Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v4 02/10] arm64: sparx5: Add support for Microchip 2xA53 SoC
-Date:   Mon, 27 Jul 2020 10:42:03 +0200
-Message-ID: <20200727084211.6632-3-lars.povlsen@microchip.com>
+Subject: [PATCH v4 04/10] arm64: dts: sparx5: Add pinctrl support
+Date:   Mon, 27 Jul 2020 10:42:05 +0200
+Message-ID: <20200727084211.6632-5-lars.povlsen@microchip.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200727084211.6632-1-lars.povlsen@microchip.com>
 References: <20200727084211.6632-1-lars.povlsen@microchip.com>
@@ -79,59 +79,93 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This adds support for the Microchip Sparx5 ARMv8-based SoC family of
-TSN-capable gigabit switches.
+This add pinctrl support to the Microchip Sparx5 SoC.
 
 Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 ---
- MAINTAINERS                  |  8 ++++++++
- arch/arm64/Kconfig.platforms | 14 ++++++++++++++
- 2 files changed, 22 insertions(+)
+ arch/arm64/boot/dts/microchip/sparx5.dtsi     | 26 +++++++++++++++++++
+ .../dts/microchip/sparx5_pcb134_board.dtsi    |  5 ++++
+ .../dts/microchip/sparx5_pcb135_board.dtsi    |  5 ++++
+ 3 files changed, 36 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 68f21d46614c4..13553b77ed4f7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2111,6 +2111,14 @@ X:	drivers/net/wireless/atmel/
- N:	at91
- N:	atmel
+diff --git a/arch/arm64/boot/dts/microchip/sparx5.dtsi b/arch/arm64/boot/dts/microchip/sparx5.dtsi
+index 4a54b7d039167..baf4176ce1dfe 100644
+--- a/arch/arm64/boot/dts/microchip/sparx5.dtsi
++++ b/arch/arm64/boot/dts/microchip/sparx5.dtsi
+@@ -109,6 +109,8 @@ gic: interrupt-controller@600300000 {
+ 		};
  
-+ARM/Microchip Sparx5 SoC support
-+M:	Lars Povlsen <lars.povlsen@microchip.com>
-+M:	Steen Hegelund <Steen.Hegelund@microchip.com>
-+M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Supported
-+N:	sparx5
-+
- ARM/MIOA701 MACHINE SUPPORT
- M:	Robert Jarzmik <robert.jarzmik@free.fr>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 8dd05b2a925c5..8939e4e6e34c2 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -89,6 +89,20 @@ config ARCH_EXYNOS
- 	help
- 	  This enables support for ARMv8 based Samsung Exynos SoC family.
+ 		uart0: serial@600100000 {
++			pinctrl-0 = <&uart_pins>;
++			pinctrl-names = "default";
+ 			compatible = "ns16550a";
+ 			reg = <0x6 0x00100000 0x20>;
+ 			clocks = <&ahb_clk>;
+@@ -120,6 +122,8 @@ uart0: serial@600100000 {
+ 		};
  
-+config ARCH_SPARX5
-+	bool "ARMv8 based Microchip Sparx5 SoC family"
-+	select PINCTRL
-+	select DW_APB_TIMER_OF
-+	help
-+	  This enables support for the Microchip Sparx5 ARMv8-based
-+	  SoC family of TSN-capable gigabit switches.
+ 		uart1: serial@600102000 {
++			pinctrl-0 = <&uart2_pins>;
++			pinctrl-names = "default";
+ 			compatible = "ns16550a";
+ 			reg = <0x6 0x00102000 0x20>;
+ 			clocks = <&ahb_clk>;
+@@ -138,5 +142,27 @@ timer1: timer@600105000 {
+ 			interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		gpio: pinctrl@6110101e0 {
++			compatible = "microchip,sparx5-pinctrl";
++			reg = <0x6 0x110101e0 0x90>, <0x6 0x10508010 0x100>;
++			gpio-controller;
++			#gpio-cells = <2>;
++			gpio-ranges = <&gpio 0 0 64>;
++			interrupt-controller;
++			interrupts = <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
++			#interrupt-cells = <2>;
 +
-+	  The SparX-5 Ethernet switch family provides a rich set of
-+	  switching features such as advanced TCAM-based VLAN and QoS
-+	  processing enabling delivery of differentiated services, and
-+	  security through TCAM-based frame processing using versatile
-+	  content aware processor (VCAP).
++			uart_pins: uart-pins {
++				pins = "GPIO_10", "GPIO_11";
++				function = "uart";
++			};
 +
- config ARCH_K3
- 	bool "Texas Instruments Inc. K3 multicore SoC architecture"
- 	select PM_GENERIC_DOMAINS if PM
++			uart2_pins: uart2-pins {
++				pins = "GPIO_26", "GPIO_27";
++				function = "uart2";
++			};
++
++		};
++
+ 	};
+ };
+diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
+index 005cf6babb9b3..9b2aec400101b 100644
+--- a/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
++++ b/arch/arm64/boot/dts/microchip/sparx5_pcb134_board.dtsi
+@@ -7,4 +7,9 @@
+ #include "sparx5_pcb_common.dtsi"
+ 
+ /{
++	gpio-restart {
++		compatible = "gpio-restart";
++		gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
++		priority = <200>;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
+index 005cf6babb9b3..9b2aec400101b 100644
+--- a/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
++++ b/arch/arm64/boot/dts/microchip/sparx5_pcb135_board.dtsi
+@@ -7,4 +7,9 @@
+ #include "sparx5_pcb_common.dtsi"
+ 
+ /{
++	gpio-restart {
++		compatible = "gpio-restart";
++		gpios = <&gpio 37 GPIO_ACTIVE_LOW>;
++		priority = <200>;
++	};
+ };
 -- 
 2.27.0
 
