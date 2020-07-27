@@ -2,207 +2,167 @@ Return-Path: <SRS0=c6El=BG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF91CC433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 12:03:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7816BC433E4
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 15:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAA920714
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 12:03:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 575D820775
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 15:52:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cerno.tech header.i=@cerno.tech header.b="ixGxfPuv";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XsUkdQHd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbgG0MDR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 08:03:17 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:47543 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728078AbgG0MDQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 08:03:16 -0400
-Received: from mail-qk1-f180.google.com ([209.85.222.180]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MIMXC-1k3NuY190O-00EKUr; Mon, 27 Jul 2020 14:03:14 +0200
-Received: by mail-qk1-f180.google.com with SMTP id j187so14875609qke.11;
-        Mon, 27 Jul 2020 05:03:13 -0700 (PDT)
-X-Gm-Message-State: AOAM533vcq9HHCeOtxxuXp9nKyaIPoPsv2/0lVI3fLwKdvbKNhYEJHqj
-        UBa+oBPQorQSlW4XJ0OJq0bNdVF4zQUMcPoyg5o=
-X-Google-Smtp-Source: ABdhPJydGNaPbQYPQdZATnOhyJECt4gM7ebVNHN/s58MfHpiqyeZg0LpWkWDpFJ/kGqnCHjmw5AV+vpIysJTLWAzkXQ=
-X-Received: by 2002:a05:620a:2444:: with SMTP id h4mr23543261qkn.352.1595851392985;
- Mon, 27 Jul 2020 05:03:12 -0700 (PDT)
+        id S1729316AbgG0Pwg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 11:52:36 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:50933 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728466AbgG0Pwg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 27 Jul 2020 11:52:36 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 4346A5804FA;
+        Mon, 27 Jul 2020 11:52:35 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Mon, 27 Jul 2020 11:52:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cerno.tech; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm3; bh=yRQPP6g5muRZYYQON1y3sN6Yh6q
+        NLVGPrU54d2fUDTw=; b=ixGxfPuv6+H3FsDDsBUrQKkkLg7bn+klIXKUM/k3qXh
+        x3BYJ3ecxLhUAlnIVtu/dPPe6pQPNuD2LMUvqmwO9TCTHaI68VewatS3IhGxB6iw
+        0yVNi3US3zXNthXvNa95XvoMJSvsR9w1swCvTPMvQ5T4bYQ/jRuzTophWJC5mxqQ
+        JtjshY+g1Nr3mAxK3oOzGMLMjMwz6dOB5TkuvKXrQqGj0SkUfwMtto5eqRSNcsV1
+        jRT0EwNuX1WMBPH3fb3FjTCL8ErKQe/holE2QXKZbAbcCbgz9Qo3BfNipYuZcHQk
+        FSaneB4+QGm+UDBXIWu5V4XXJpsoDSUSgT5GFbuTeTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=yRQPP6
+        g5muRZYYQON1y3sN6Yh6qNLVGPrU54d2fUDTw=; b=XsUkdQHdgXLAF32JLoBjo4
+        ZqCHmL80XDMnRGwLJeOs/NNXexxtXjgESS5QMjXUJeeXOJjS1jlJc8ZioY9Xo0FE
+        ERjuXLTZV1vz72VV3tslABL3Os9HHfPBOImCwFJ+H0bRZJHdBYXaD0zBX3YkIqHw
+        0cwoiNXVnR4k+Iw3xDB/1nGSefhX33Y3NG28plbMi9IVU1b4xwY+w/LXig7REbsn
+        uC4Pya1LO0il4TQN0pSyrW/EFGkPr/cGN6oFy9Ro5vDtgtOpHq0n7HMsNPrfkqmI
+        pOej3ewqX4iaKjeXF0Ws2hnJc4JnxniMhNYmVJQeJlKBDi8Df/GvUgv43Iyl8fPw
+        ==
+X-ME-Sender: <xms:QvgeXzAnFYcQT1H0jtBT-QudsPbTbB3wFvt8svzkTE69ZTan9LzQyQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduiedriedtgdeliecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvuffkfhggtggujgesghdtreertddtvdenucfhrhhomhepofgrgihimhgv
+    ucftihhprghrugcuoehmrgigihhmvgestggvrhhnohdrthgvtghhqeenucggtffrrghtth
+    gvrhhnpeelkeeghefhuddtleejgfeljeffheffgfeijefhgfeufefhtdevteegheeiheeg
+    udenucfkphepledtrdekledrieekrdejieenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgigihhmvgestggvrhhnohdrthgvtghh
+X-ME-Proxy: <xmx:QvgeX5jrbI1bjsZM8CZZQh_Ox2eB8fuOoNifs5nILHt9pLJ6v4jISg>
+    <xmx:QvgeX-k3iwoh53U2Hn32tcOUWCBWd3XdTVvIGLiwRUScAdWp9zzxhg>
+    <xmx:QvgeX1yQMW8OLDwc6FhI6bWlzJTQXKYr5TaQBZzOPVBWXig1vPah5w>
+    <xmx:Q_geX9SLyHUWzuS2ezCtEubdXJrLVagxIszg9Y-_kga_A4YVK7WNQQ>
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2BB96328005A;
+        Mon, 27 Jul 2020 11:52:34 -0400 (EDT)
+Date:   Mon, 27 Jul 2020 17:52:32 +0200
+From:   Maxime Ripard <maxime@cerno.tech>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        linux-rpi-kernel@lists.infradead.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-clk@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH] dt-bindings: arm: bcm: Add a select to the RPI Firmware
+ binding
+Message-ID: <20200727155232.a4ccxdjooa5vjbfy@gilmour.lan>
+References: <20200626115433.125735-1-maxime@cerno.tech>
+ <159554434893.3847286.8491922177659230646@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
-References: <20200727112236.8199-1-lars.povlsen@microchip.com>
-In-Reply-To: <20200727112236.8199-1-lars.povlsen@microchip.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 27 Jul 2020 14:02:56 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a3WJTKH7-KGgp7CuhZv_wtrtY1k+1LEL-62_Rj+wqbrGQ@mail.gmail.com>
-Message-ID: <CAK8P3a3WJTKH7-KGgp7CuhZv_wtrtY1k+1LEL-62_Rj+wqbrGQ@mail.gmail.com>
-Subject: Re: [PATCH linux-next] clk: sparx5: Review changes
-To:     Lars Povlsen <lars.povlsen@microchip.com>
-List-Id: <soc.lore.kernel.org>
-Cc:     SoC Team <soc@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:465JAMwYQa9HIm4CivSQ/S/sK6bLJowniVJSY13POUZJPhe/UdJ
- 7dbmVCEz9a643FvD0FBn095gmv8iRBeKqX2skW6BWkF2qaWn2UH4qGDXQUtPQt6NSZLRiP/
- p2Zt/xPeUaZ4t3WHYpx5OLTk6ahjSCWb1xxOtUD/FT3pA/V/J/g5Qz9Y4jF/MJfyghWXv5r
- QZUT2T6Rz4LQ/pBXm7wJA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:5B+5thkMcBg=:a6wSIwMOIhetIaf11yCBjD
- ztoxN+ptE5pFQlWDZYRIb2YEVO/pJBNqglXgtmyBuHhBH2l0v9JLfbdfP3W4mwJxtD9oGxGSz
- U/JRTc34LKOuhMyUpQESV30eimaSomHFH9Hrsf3J3oMM7hNEELizfv8nlBKN3XynbHQGPaCEe
- uP6qeXYvAT/gs9ZDMwhkNezAidigsxyL/6WXU7QNCXRliNR55D20Naf3XVtzI95lhe6FD/QWm
- TJ2hNdbyKfG0zZd2/k1fhBKxNMn2wLxYsvLBVTHiKG+zxKCpZMz4wxTDukyEPBX7B3dqfjHsv
- 1RnEnEUy2nLqnGkhikvvaZuJ+0IhJORo5uyyym4SgVzNkTrnVuZOMGGMkUTgTqeuFtgNmlGbu
- 9Ik+gH2LMFZfikUwlqicoQtVjNy7QIi9Wzxohp1iobqQJeoxgHsEqpr0Xbe8p8sdPPh/qjCqK
- zspddDoNpRG6A7Z9WkLKXdFIFn8t75Nf7z1u3bMNmkJiyEQzklEyoQQ1TQX7aAoykq9xt542z
- nakU4nHzv7gnPjD2EHDlwARpsCb29vI4slVHgLni2xWpsUzgXLdZdbVh+qlP7KuamiJ/9x7rN
- 6u7hFoB1qbmwI7PCJ4XkbU+fih8scAqg4xOdCEQ4vO663MgArsmH18HXL+/959pMqqjX2+N/3
- +B/Jrb8zFMEo+bi8FSWgwYEd+PqoEp6JFUAIeNUwCtnSQzQnoaYuyYfPRberMAM7iyTHdaMag
- mqTwhmyFZ3pAMXYnDGSbNPviBaHQtPK3Wq1g8VMAeWaoS+rRDE8dXjYXaYyzo+LDb1YrsYYXw
- 704KacatUzHSrpvtK2POnoOF55jUmL908MV1909O+blxdX7z/c71XCQiq4EtCB0wDjVock1A5
- VI0o8BADF+K1t2lomyPdRJFx5+DEV4gu6xpOQ5jw9yF21GWKw7htvbTuzVSez+emyTUxNZAPb
- 6kSKqNdhF9YKI9WWntxzrxYoy1Pnd56wpu7Dg4WOJqHuDqRSR0N+N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cnvfzqh5i3kjod3a"
+Content-Disposition: inline
+In-Reply-To: <159554434893.3847286.8491922177659230646@swboyd.mtv.corp.google.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jul 27, 2020 at 1:22 PM Lars Povlsen <lars.povlsen@microchip.com> wrote:
->
-> This address the review comments for the sparx5 clk driver from Stephen
-> Boyd <sboyd@kernel.org>:
->
->  - Remove unused include of of_address.h
->  - Remove unused member in s5_hw_clk struct
->  - Changed type (to unsigned long) for freq in s5_pll_conf struct
->  - Use .parent_data instead of looking up parent name
->  - Use devm_of_clk_add_hw_provider
->  - Some minor comsmetics
->
-> The patch is intended for linux-next (incremental), as the original
-> driver was already merged.
->
-> Signed-off-by: Lars Povlsen <lars.povlsen@microchip.com>
 
-Hi Lars, thank you for addressing these!
+--cnvfzqh5i3kjod3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Generally speaking, you should avoid having patches that list a
-number of unrelated things that are done by a single commit.
+On Thu, Jul 23, 2020 at 03:45:48PM -0700, Stephen Boyd wrote:
+> Quoting Maxime Ripard (2020-06-26 04:54:33)
+> > The RaspberryPi firmware binding uses two compatible, include simple-bu=
+s.
+> > The select statement generated by default will thus select any node that
+> > has simple-bus, not all of them being the raspberrypi firmware node.
+> >=20
+> > This results in warnings being wrongfully reported. Let's add a custom
+> > select statement to fix that.
+> >=20
+> > Fixes: 5bc0b9be8544 ("dt-bindings: arm: bcm: Convert BCM2835 firmware b=
+inding to YAML")
+> > Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> >=20
+> > ---
+> >=20
+> > The original binding has been merged through the clock tree, so it shou=
+ld
+> > be merged there.
+> >=20
+> > Even though the original binding (and the DT) are using the simple-bus
+> > compatible, this creates some DTC warnings since the firmware really is=
+n't
+> > a bus, so the node name doesn't match what a bus should have, none of t=
+he
+> > children have a reg property, #address-cells and #size-cells are missin=
+g,
+> > etc.
+> >=20
+> > I can only guess that simple-bus was used to make the sub-devices probe,
+> > but maybe simple-mfd would be more appropriate here?
+> > ---
+> >  .../bindings/arm/bcm/raspberrypi,bcm2835-firmware.yaml   | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+>=20
+> Hmm. I'm still seeing warnings.
+>=20
+> Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.ex=
+ample.dts:23.37-26.15: Warning (simple_bus_reg): /example-0/firmware/clocks=
+: missing or emp
+> ty reg/ranges property
+> Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.ex=
+ample.dt.yaml: firmware: $nodename:0: 'firmware' does not match '^(bus|soc|=
+axi|ahb|apb)(@[0-9a-f]+)?$'
+> Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.ex=
+ample.dt.yaml: firmware: '#address-cells' is a required property
+> Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.ex=
+ample.dt.yaml: firmware: '#size-cells' is a required property
+> Documentation/devicetree/bindings/arm/bcm/raspberrypi,bcm2835-firmware.ex=
+ample.dt.yaml: firmware: 'ranges' is a required property
 
-Splitting this up into six patches is probably a little too much,
-but maybe you can find a better balance. What I'd like to see
-is to split the purely cosmetic changes from those that might
-actually change the behavior, and then for each patch that
-changes something non-obvious, explain why this was done.
+Yeah, those are the warnings related to the issue we were discussing
+with Rob. The patch should fix an hard error.
 
-     Arnd
+I'll send a followup patch for the warnings.
 
->  drivers/clk/clk-sparx5.c | 31 +++++++------------------------
->  1 file changed, 7 insertions(+), 24 deletions(-)
->
-> diff --git a/drivers/clk/clk-sparx5.c b/drivers/clk/clk-sparx5.c
-> index c2e7aa0214ebd..0fad0c1a01862 100644
-> --- a/drivers/clk/clk-sparx5.c
-> +++ b/drivers/clk/clk-sparx5.c
-> @@ -12,7 +12,6 @@
->  #include <linux/clk-provider.h>
->  #include <linux/bitfield.h>
->  #include <linux/of.h>
-> -#include <linux/of_address.h>
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <dt-bindings/clock/microchip,sparx5.h>
-> @@ -38,7 +37,6 @@ static const char *clk_names[N_CLOCKS] = {
->  struct s5_hw_clk {
->         struct clk_hw hw;
->         void __iomem *reg;
-> -       int index;
->  };
->
->  struct s5_clk_data {
-> @@ -47,7 +45,7 @@ struct s5_clk_data {
->  };
->
->  struct s5_pll_conf {
-> -       int freq;
-> +       unsigned long freq;
->         u8 div;
->         bool rot_ena;
->         u8 rot_sel;
-> @@ -208,8 +206,9 @@ static unsigned long s5_pll_recalc_rate(struct clk_hw *hw,
->                 conf.rot_sel = FIELD_GET(PLL_ROT_SEL, val);
->
->                 conf.freq = s5_calc_freq(parent_rate, &conf);
-> -       } else
-> +       } else {
->                 conf.freq = 0;
-> +       }
->
->         return conf.freq;
->  }
-> @@ -246,14 +245,13 @@ static struct clk_hw *s5_clk_hw_get(struct of_phandle_args *clkspec, void *data)
->  static int s5_clk_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
-> -       struct device_node *np = dev->of_node;
->         int i, ret;
->         struct s5_clk_data *s5_clk;
-> -       const char *parent_name;
-> +       struct clk_parent_data pdata = { .index = 0 };
->         struct clk_init_data init = {
->                 .ops = &s5_pll_ops,
-> -               .parent_names = &parent_name,
->                 .num_parents = 1,
-> +               .parent_data = &pdata,
->         };
->
->         s5_clk = devm_kzalloc(dev, sizeof(*s5_clk), GFP_KERNEL);
-> @@ -264,18 +262,11 @@ static int s5_clk_probe(struct platform_device *pdev)
->         if (IS_ERR(s5_clk->base))
->                 return PTR_ERR(s5_clk->base);
->
-> -       parent_name = of_clk_get_parent_name(np, 0);
-> -       if (!parent_name) {
-> -               dev_err(dev, "%pOFn: missing parent clock\n", np);
-> -               return -EINVAL;
-> -       }
-> -
->         for (i = 0; i < N_CLOCKS; i++) {
->                 struct s5_hw_clk *s5_hw = &s5_clk->s5_hw[i];
->
->                 init.name = clk_names[i];
-> -               s5_hw->index = i;
-> -               s5_hw->reg = s5_clk->base + (i * sizeof(u32));
-> +               s5_hw->reg = s5_clk->base + (i * 4);
->                 s5_hw->hw.init = &init;
->                 ret = devm_clk_hw_register(dev, &s5_hw->hw);
->                 if (ret) {
-> @@ -285,14 +276,7 @@ static int s5_clk_probe(struct platform_device *pdev)
->                 }
->         }
->
-> -       return of_clk_add_hw_provider(np, s5_clk_hw_get, s5_clk);
-> -}
-> -
-> -static int s5_clk_remove(struct platform_device *pdev)
-> -{
-> -       of_clk_del_provider(pdev->dev.of_node);
-> -
-> -       return 0;
-> +       return devm_of_clk_add_hw_provider(dev, s5_clk_hw_get, s5_clk);
->  }
->
->  static const struct of_device_id s5_clk_dt_ids[] = {
-> @@ -303,7 +287,6 @@ MODULE_DEVICE_TABLE(of, s5_clk_dt_ids);
->
->  static struct platform_driver s5_clk_driver = {
->         .probe  = s5_clk_probe,
-> -       .remove = s5_clk_remove,
->         .driver = {
->                 .name = "sparx5-clk",
->                 .of_match_table = s5_clk_dt_ids,
-> --
-> 2.27.0
+Thanks!
+Maxime
+
+--cnvfzqh5i3kjod3a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXx74QAAKCRDj7w1vZxhR
+xYGrAP9Ni9TAwcktS86DHN6KA5JIf3rWa7BMB3kQEyzRqn8iEAD9EovEJz61mLgr
+BWHTC1A9D+AO+4xo2pelFpdXuBiyTQc=
+=CvaM
+-----END PGP SIGNATURE-----
+
+--cnvfzqh5i3kjod3a--
