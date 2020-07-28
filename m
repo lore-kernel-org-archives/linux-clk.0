@@ -2,89 +2,111 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12B3C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 09:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F9AEC433E8
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 09:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C456B206F5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 09:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE081208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 09:38:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rjRTu8n/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728097AbgG1JYA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 05:24:00 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:52007 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728072AbgG1JYA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 05:24:00 -0400
-Received: from mail-qv1-f45.google.com ([209.85.219.45]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Myb8N-1kiyLD2Otx-00z2AA; Tue, 28 Jul 2020 11:23:58 +0200
-Received: by mail-qv1-f45.google.com with SMTP id dd12so3777896qvb.0;
-        Tue, 28 Jul 2020 02:23:58 -0700 (PDT)
-X-Gm-Message-State: AOAM532ancdsF8O+eUZUolKPI+4PsKQlGMLclN970tmTI322SMuRulJC
-        qTtBK6EGi4SVIAD1hQUafF+3eKXUYbzcYKNM9TU=
-X-Google-Smtp-Source: ABdhPJyY5Q9YF6qsl1doujpdYwMBK7La+ynGinP4gHSEUg3Rs82Sos0oP8DFnoxwbNLsN8yHoIHyeunOsCZlbtfrFYE=
-X-Received: by 2002:ad4:4c09:: with SMTP id bz9mr25230932qvb.210.1595928237439;
- Tue, 28 Jul 2020 02:23:57 -0700 (PDT)
+        id S1728363AbgG1Jiv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 05:38:51 -0400
+Received: from mail-eopbgr20067.outbound.protection.outlook.com ([40.107.2.67]:39910
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728197AbgG1Jiu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jul 2020 05:38:50 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=btZXzeGu7hs4cD1wyY0p5v9suHqjsJhiUi0LrXF+Vm58Qc8pLuHhfDiM7UflZxRZ+NW9NfzdUDeJgObUB9tylSkkPbLoOA7hfNAmx/APmM8Wu+aBEW5A8eQKwO0u24g1dCjMhUPop7jr00vbeAfPzspyKrwSYmqNoKomrxi9Q3wwKhLEgwIhUOOpaO8Iput/3ymI0yTwT0jzbaLl6BwMDoAKXrfEjg7juk4/ZDNVS5KUp8awHYTy4USMYWiR0rIN9hb+dt24K4X7ej28o0M6OGGqkIJzVtdEYoTXMZIqpqhVvwqJy4YRnyrTHKzCGMmcWJOx2zWIkziGXEG8giTm+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uDTWwRnOKNC7pE3YLwUlic9piSVNUIkVzQaeA2WCV0U=;
+ b=cY6/Ugx/S7h0EYRAP8n3l30+IQmPlyX18qWwQlkQWirZMUGSDS4jQ96rNYOY4ppOVCRzwvh+Z1fV4WD5sOh4QxdQHzmIY8gnW/wXlK4xg1RjtbH7BbgBb9PJvyPCTb05OibjoseyslCeaN+bl4mJZbjf8ew9VteDkamlN0i4rg2PDG5Ozv2LBCvMXEzw6QlVMXdONLeGgRYW4Ov8zdXXmFWUo3KuT4ivgLy0u/wWt6jTEgwW7sjLSc2FYQ1rdHSBpWl3UGnNZTnvB/IGIPcO7zDGOnEz6y1bMBz3t/+YSEjkq6TeanUIpWT8VlOD2lrie3SIuDOmFTnvIZmMZcpjlQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uDTWwRnOKNC7pE3YLwUlic9piSVNUIkVzQaeA2WCV0U=;
+ b=rjRTu8n/uWIJ2edyqFdXdEDA+EZV9wPLwhvWUxkAsv7jXc85ZWuxLEr76D2JroOwgxy1cRGq50+sBKbD4tlztN/69lPEGhpc+e6XA147iWC02resQkvte7MnKtzmFqkaRHbqtRxr5V1mYGWmOxwbjTZGkw1hsF8TEautAxFHefw=
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com (2603:10a6:4:a1::14)
+ by DB6PR0401MB2375.eurprd04.prod.outlook.com (2603:10a6:4:4a::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3216.22; Tue, 28 Jul
+ 2020 09:38:47 +0000
+Received: from DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701]) by DB6PR0402MB2760.eurprd04.prod.outlook.com
+ ([fe80::2d36:b569:17c:7701%4]) with mapi id 15.20.3216.033; Tue, 28 Jul 2020
+ 09:38:47 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/2] clk: imx: imx8m: avoid memory leak
+Thread-Topic: [PATCH 1/2] clk: imx: imx8m: avoid memory leak
+Thread-Index: AQHWZIsWjqNjGtx9OEGBS5Z3R+RZIKkcqZOAgAATAjA=
+Date:   Tue, 28 Jul 2020 09:38:47 +0000
+Message-ID: <DB6PR0402MB2760219561CFE80301DDD66588730@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+References: <1595904889-30811-1-git-send-email-peng.fan@nxp.com>
+ <159592502171.1360974.3210900566276289684@swboyd.mtv.corp.google.com>
+In-Reply-To: <159592502171.1360974.3210900566276289684@swboyd.mtv.corp.google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 20e3f817-b8b2-4ad9-7596-08d832da06df
+x-ms-traffictypediagnostic: DB6PR0401MB2375:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB6PR0401MB2375F5989C8A35CE0B4D51D488730@DB6PR0401MB2375.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: ZrYk92unENfmfYkIO5eKbueXn9cALDzqrmcoa4pBVmH3qHyyfRicEtWCqfJnjdevBFec8yk8WE+DEylrX0PN2W5iZz3zRuKquFOpC3StL2YYOCbZ/+EGyNyDrXtd5ZHQVtHj8hHKwRVirOg9ClWbjF92U0cUYV2ZyBrcrmw+1dpF4mbJZFhLbkuoY1jwLY11l4DusMMy8SyFEsDTu8uIi7W21AfUzIQyBaCUfp/kVAtDmExXHdX8xafDfFBmvgcDjPTwFa3iKnLuAEXsdhHKOfgrIld4TmUDfVek4Z6xiEKXCY/lJMCFE+cb3HYd6Q4Ud5QyYaCSJwDTp38CRRJTWKhDqdVEqKx9rmdZwzk3E1P7NKyGNtAGBTQtT/mY6kTF
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB6PR0402MB2760.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(136003)(396003)(376002)(346002)(39860400002)(366004)(2906002)(8936002)(186003)(54906003)(44832011)(6506007)(71200400001)(76116006)(66446008)(110136005)(64756008)(9686003)(66946007)(55016002)(66476007)(66556008)(316002)(33656002)(26005)(478600001)(52536014)(4744005)(8676002)(4326008)(5660300002)(86362001)(7696005)(32563001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata: KvTVEeiq7j7o2EGWcrezQH5K73Pb4TJnML/diOi6WHaVsISxuzNdnAiLy8aS8YViyspFr9psXGBYKbIjNwMEJ3EEiuR2FS48HXpn4+u2bpImoJl7YvJgUU0/Tr3P+BPyNN83Xp6sIV/lJnZ70z77jygF2wrG+xAHBSxo4tNBVNvDyNaPWx4QAEm/Jji44OAS4uo6vlraf62Kaw9pceUBAedi1+J1snLkNO/g/X0rGiADpt/h3fzTcyGGeceVrvStlNYpUg9ZITKABuOvH0R8rnmAKQR1sBbAxMC4Jmn+Rr3DZlfk0w3s4vngzZ8NaavvOTyyjLKn4R6HYIY4NI4fpyZicft7QHv0/1Zt7iDsFVXjBB0Q+AtrFe7wHm2VlrwnKid+ZH7OjLphQmwEHgTfjAFq+1+NfBIoGq4UjLeAWyledBa2M8JZ69Hfz8diK2LnuDg6tZ6EsWjz7MPNaFC68HnENK6TI6/+GRkMUUy/KsKKRfRtx4rh9/Nhu1uKJKD0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20200727112236.8199-1-lars.povlsen@microchip.com>
- <CAK8P3a3WJTKH7-KGgp7CuhZv_wtrtY1k+1LEL-62_Rj+wqbrGQ@mail.gmail.com>
- <159587873833.1360974.11729154337431621644@swboyd.mtv.corp.google.com>
- <CAK8P3a27u7UkjGJ32KsRp02FoF34mKW0gRUsms0+YBkxy+L4Gg@mail.gmail.com> <159588781925.1360974.3928941757935200801@swboyd.mtv.corp.google.com>
-In-Reply-To: <159588781925.1360974.3928941757935200801@swboyd.mtv.corp.google.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Tue, 28 Jul 2020 11:23:41 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a2io+cn0phoGDfpNvp-2gOXDaKyi8Me3Pz0k+VjbmwGFw@mail.gmail.com>
-Message-ID: <CAK8P3a2io+cn0phoGDfpNvp-2gOXDaKyi8Me3Pz0k+VjbmwGFw@mail.gmail.com>
-Subject: Re: [PATCH linux-next] clk: sparx5: Review changes
-To:     Stephen Boyd <sboyd@kernel.org>
-List-Id: <soc.lore.kernel.org>
-Cc:     Lars Povlsen <lars.povlsen@microchip.com>,
-        SoC Team <soc@kernel.org>,
-        Steen Hegelund <Steen.Hegelund@microchip.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:Tb5GqJwpfhoqCjuha1/jrkVvJhy4nuhwxSAyyqaq7F6ZHdYxjzv
- Z7V7BI0re5wVGZ4hKSTirUAsmjuRdh3jbk3RrvD6WKBCZRc1/2MFdkvdlWzr3NaPMblUqHN
- QOVUaExKsDsp0mBMc9U5ZecHUjAhluKBqn3S1nIaeEe9GFSxTo3buyQRlqLM//ZQTxSCUCZ
- 9XyjpQ6iAq1hbUCVTYaNw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:ftN3itrlhQU=:KZprfiOIusr84C7rdb+veA
- HZfPqTYpaf7042b3oPgDLR7ix88GX8pBhvAxT7D0c/C8Ft2yEmkDTnemrnQqe+bgOIDlkDLLk
- PAx6iLpDuBc9Ru6AuESO0ytLV4k9NCuQ0dcy7lx6euvoUvel+0lo5zhcL9X3Gnd5Qhn6rmPMj
- KzYmbwsKsE3WsMjSwyBg2afBghLUe+MW14clnphmYSI6QUDhDAKXmyFL36bgoKwL0BKq30+Za
- 96QQNoLCcyPaWlH17JWpGHBFNSno4EC2xnxoxRYHzzxnKBXx+A5u0aPRjGIDabWX1w7ucTmFe
- HxDNprSPkU5FbnsCnqXcB3TuJS5t8Spgbs3r9q1jTKlueNAy7ze8Jzx5m0imHLa3lfngDIRHz
- i3sSx8K9gnCVUuICSMFiauAhFRDRVNdZf+vS30UqYJ6iHZuDQMtQrzOHqsVSuZz/Dd800JA0y
- AKAGwnp+LXk3YHyfOboEs1GnnZNB2eCEv3wb2u5p1+S1MQOyXlqB2nhGwpajj9AVCm7S3BRCf
- JS9XyI6UUqZGdstF2vjsicqbPWwyZPhs3GCsTp0CYo3vhkGzlEH5JnFZy3htm1OpQ8rU8z5Bt
- yR2V+E0N4xF6U08J79VdbOc2PcOcG+0su6+okJ3JcaLmGFIrtspNsh0mMBrhgLS+VZ5/j5OkN
- BlumpI7cW0yVH46sFOZK+ux5XRWCOK/58h6iYL1U1RgdR92K0bPuyfMD4TtEuGacRry31Q+Xk
- IthdhNB+dTPZNC+661vKV2XFVr9cw0ahW/irCNJvpY4EqoyYJlVF0Cv4X7AKHvOI2E/fQoIAL
- 8x+mHi/yOmAYvJvlmBuJwSX/9++bDxR/TznJ1pklpJMCs6w8p1VcFsYsbG/c6Xx35uuOIbplO
- 3obt9ddTfEz7k07l6GRIztQDELNfsIeVg8NIpLgpKxfvkauPgJ8E9xjdDLaK8qO998axUMg/O
- 4qyXk2V7egFV9k8PM6v3IBkRuI6lguxpKdDb+5nM3YU0tey0ndQsc
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DB6PR0402MB2760.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 20e3f817-b8b2-4ad9-7596-08d832da06df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jul 2020 09:38:47.1143
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hEOITqE2WR6koBMjh3g4TWJsBzTPQqUf4OCm724pUO889Omw/wr36J8N7Xh6K0pjt8g+gHiDwqUqcgx5wy35Gg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0401MB2375
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 12:10 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Arnd Bergmann (2020-07-27 13:11:49)
-> > I rebased the 'arm/newsoc' branch the other day to fix another mistake,
-> > so if you prefer, I can rebase it again and drop the clk driver or
-> > all the sparx5 patches.
-> >
->
-> Yes, please just drop the clk driver and I can pick it up for the next
-> merge window from the list and all the fixes can be rolled into one
-> patch.
-
-Done.
-
-     Arnd
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gY2xrOiBpbXg6IGlteDhtOiBhdm9pZCBtZW1vcnkg
+bGVhaw0KPiANCj4gUXVvdGluZyBwZW5nLmZhbkBueHAuY29tICgyMDIwLTA3LTI3IDE5OjU0OjQ4
+KQ0KPiA+IEZyb206IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0KPiA+DQo+ID4gVXNlIGRl
+dm1fa3phbGxvYyB0byBhdm9pZCBtZW1vcnkgbGVhayB3aGVuIHByb2JlIGZhaWwuDQo+IA0KPiBQ
+bGVhc2UgYWRkICgpIHRvIGZ1bmN0aW9ucyBpbiBjb21taXQgdGV4dC4NCg0KVjIgaXMganVzdCBv
+dXQsIHBsZWFzZSBoZWxwIHJldmlldyB0aGVyZS4NCg0KVGhhbmtzLA0KUGVuZy4NCg0KPiANCj4g
+Pg0KPiA+IFNpZ25lZC1vZmYtYnk6IFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPg0K
