@@ -2,61 +2,62 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C2EC433E5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD54C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E1E92206D7
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C73C02070B
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:01:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cb8xHECi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhIg1fTQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbgG1MAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 08:00:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40908 "EHLO
+        id S1728368AbgG1MBO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 08:01:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728433AbgG1MAz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 08:00:55 -0400
-Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D923BC061794;
-        Tue, 28 Jul 2020 05:00:54 -0700 (PDT)
-Received: by mail-ej1-x641.google.com with SMTP id y10so20395495eje.1;
-        Tue, 28 Jul 2020 05:00:54 -0700 (PDT)
+        with ESMTP id S1729360AbgG1MA7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 08:00:59 -0400
+Received: from mail-ej1-x642.google.com (mail-ej1-x642.google.com [IPv6:2a00:1450:4864:20::642])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31E6EC0619D2;
+        Tue, 28 Jul 2020 05:00:59 -0700 (PDT)
+Received: by mail-ej1-x642.google.com with SMTP id g11so8594901ejr.0;
+        Tue, 28 Jul 2020 05:00:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U1+l6khR5WEgvOR/QZzKuHUQUvz26GVnRqvOBKPa+Ig=;
-        b=Cb8xHECisgxMI9BTnvqRvZP+7vKvwzS4JS6Rhk2Ik8HhAQQMxqaKo0TJ0nl1uWgIpW
-         VbXK8r2vM3FY9oqWWJ98hhYUg40cszGAuL4D8R1ApJIG+xHEwmhLwEJ+oxjqWDdwQlrp
-         XoBy7SweEFWlzlQtQbsGkMmHYVBRNIVCuSFV7LnlvzaTuanqGZsye1oIWtOB8qT7qDf2
-         RiupBmERD5+dyGR0BiftJ0D1r9F1lTx0YisvWk19oZmUc6XtYNQp79kIx0kvZhsbL7lV
-         ZzKb+VT0vvZSplXrIc1G6yzZ67bolIK4Vm1L7+ct3DeXe+aX9sLHZvPPWeDPQBvU/M/q
-         ruwA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=TF7XW+i8cbP3gIkhlhIAvvLS4ohbcx6+poBRM18scqo=;
+        b=OhIg1fTQdLmmOgTdUB8tQOREg495rzSHC3h+iJ0gdW3qkQHC7lwxz0ya8UmppcA4bJ
+         nEbeRRpAdpH9R8I3N7XCaCt0O8jDr+2UyguL3yh2Q+wqIZnJj0ocNQ81CMhll91eQ7jn
+         QjX/C8CWu7Eznlhpj5Kg+DLzrfzyaAXyYIyL2a/9a2nUtXeSFPcjicQCU7BakvxVdgmp
+         rgoelzIQ3OsDRjHoGQrYCBH3tpBP1o37B5XJ5V5G5oxJpuk9ohYtqdhQqynCVrPw61QV
+         pWClnZsfhTlR7AKBr1wZ16nQ450ZDmw7A9CvI01aKTveRkq+jdrQvhKV2DmuN5CNKFEt
+         /yMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=U1+l6khR5WEgvOR/QZzKuHUQUvz26GVnRqvOBKPa+Ig=;
-        b=gbb0ao97Y3cZ1JdFdOCklWdQZjDdj1pE4Q9ObdU9RWPLa6HhgWynRB9VIhohpZKVrd
-         liJemtRA3qnUFKPErXl4YXR5VLZ+z239CKtvKQANztA9TdDMz8JIQb9zHxB6yghntpmN
-         dnBHWP/324JAiqi8RB8ubqRR0Iykw4HKCR/MPHOrm6zq8HA0xSemnuFin/bxV1bKa/+a
-         AgCNQwE443baxdJIVUgDVl3yYT99ig+61w9/50DgWto19zC7VIY5OKJNvszhf3FEuhLu
-         aueJffTIP5KcnvT6E3kE3Jp5pSiIW26rumW5IpSPEITVC40gi94U2I6F/ollnGZ43c3C
-         Yh0Q==
-X-Gm-Message-State: AOAM530ZZcUqrsDy9x0KUbycJaXLl+bOFSUU0dT+yQOoH4P8LnMrKYZX
-        EeixStkQypIsbrObHQvzAqs=
-X-Google-Smtp-Source: ABdhPJxlN/0QPTsiHNWeYZHn5E08xNHKQc5xzCIEGu0HQEKO2OhckRJZqPbvvALD8H3dobgZtRTPcQ==
-X-Received: by 2002:a17:906:12cd:: with SMTP id l13mr18815289ejb.385.1595937653613;
-        Tue, 28 Jul 2020 05:00:53 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=TF7XW+i8cbP3gIkhlhIAvvLS4ohbcx6+poBRM18scqo=;
+        b=i29uFnfLvpC4HkbIF9e5sDyTLzPNmyPucE3yqypUtjzgFeS8pRazq0rlHL+3X7lv4v
+         C7QQIknIm4K/bxdb73naJaD5Lva/OMQxWVvVl3/ZaXJ6g33RaG5jHTOjUcVRmP4iSvk4
+         RxLg54qwO2Fxed1/pu5C6CRLkvb55uFYf1QNDtWjgNE0vAMcZNlIE8NFsGIQejN4+YCB
+         YDrkEcV+ux8sNFOUEDUkSkSCl8KlPi4z3dQ5pfKVXjhjOlor1Fmf/z8jA5rYIMYzEvoc
+         glo61kPOHDtEecAuOEZVY/LkU4Xq/F+VaZz4ad/DyiY5Gr9E6wOSyNdLTaNk5ioCP9XY
+         Akmw==
+X-Gm-Message-State: AOAM532NsUtx/h0nLN1X82Tp3KFtb3rctCWJwYN32nRQ94pv7Qw9E+o0
+        vvSYf3YvTf47vwvzAm+F6BI=
+X-Google-Smtp-Source: ABdhPJzY8o0HSAQtgr/Of9SIxDF4WdBHD1mCWT4iXipAakxc2uo+Z9r7/vYhS8koW+loSkOs1vXSDQ==
+X-Received: by 2002:a17:906:cc51:: with SMTP id mm17mr5356124ejb.137.1595937657873;
+        Tue, 28 Jul 2020 05:00:57 -0700 (PDT)
 Received: from localhost.localdomain (abad207.neoplus.adsl.tpnet.pl. [83.6.167.207])
-        by smtp.googlemail.com with ESMTPSA id m20sm9066959ejk.90.2020.07.28.05.00.51
+        by smtp.googlemail.com with ESMTPSA id m20sm9066959ejk.90.2020.07.28.05.00.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2020 05:00:53 -0700 (PDT)
+        Tue, 28 Jul 2020 05:00:57 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 To:     konradybcio@gmail.com
 Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
@@ -66,10 +67,12 @@ Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 0/9] msm8992/4 updates
-Date:   Tue, 28 Jul 2020 14:00:39 +0200
-Message-Id: <20200728120049.90632-1-konradybcio@gmail.com>
+Subject: [PATCH 2/9] arm64: dts: qcom: msm8992: Add BLSP_I2C1 support
+Date:   Tue, 28 Jul 2020 14:00:41 +0200
+Message-Id: <20200728120049.90632-3-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.27.0
+In-Reply-To: <20200728120049.90632-1-konradybcio@gmail.com>
+References: <20200728120049.90632-1-konradybcio@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -77,34 +80,67 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series brings support for:
+This will be required to support touchscreen on Lumia
+devices.
 
-* sdhci2 on 8992/4
-* BLSP_I2C1 (a seemingly WP-exclusive i2c bus) for 8992
-* Synaptics RMI4 touchscreen for Sony Kitakami and MSFT L950
-* DWC3 USB for msm8992/4 (doesn't work on Lumias, they use custom
-circuitry)
-* Missing clocks for 8994 GCC needed for USB
+Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+---
+ arch/arm64/boot/dts/qcom/msm8992.dtsi | 35 +++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-Konrad Dybcio (9):
-  arm64: dts: qcom: msm8992: Add support for SDHCI2
-  arm64: dts: qcom: msm8992: Add BLSP_I2C1 support
-  arm64: dts: qcom: talkman: Add Synaptics RMI4 touchscreen
-  arm64: dts: qcom: msm8994: Add USB support
-  arm64: dts: qcom: msm8992: Add USB support
-  clk: qcom: gcc-msm8994: Add missing clocks, resets and GDSCs
-  arm64: dts: qcom: kitakami: Add Synaptics touchscreen
-  arm64: dts: qcom: msm8994: Add SDHCI2 node
-  arm64: dts: qcom: kitakami: Enable SDHCI2
-
- .../dts/qcom/msm8992-msft-lumia-talkman.dts   |  28 ++
- arch/arm64/boot/dts/qcom/msm8992.dtsi         | 124 ++++++
- .../qcom/msm8994-sony-xperia-kitakami.dtsi    |  49 ++-
- arch/arm64/boot/dts/qcom/msm8994.dtsi         |  89 ++++
- drivers/clk/qcom/gcc-msm8994.c                | 388 +++++++++++++++++-
- include/dt-bindings/clock/qcom,gcc-msm8994.h  |  36 ++
- 6 files changed, 712 insertions(+), 2 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+index 9b42ac42b171..c7dc81311f6a 100644
+--- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
+@@ -304,6 +304,27 @@ blsp1_uart2: serial@f991e000 {
+ 			status = "disabled";
+ 		};
+ 
++		/*
++		 * This I2C seems to only be present on WP platforms
++		 * and is likely disabled in firmware
++		 * (hangs at least one device) on android platforms.
++		 */
++		blsp_i2c1: i2c@f9923000 {
++			compatible = "qcom,i2c-qup-v2.2.1";
++			reg = <0xf9923000 0x500>;
++			interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>;
++			clocks = <&gcc GCC_BLSP1_AHB_CLK>,
++						<&gcc GCC_BLSP1_QUP1_I2C_APPS_CLK>;
++			clock-names = "iface", "core";
++			clock-frequency = <400000>;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&i2c1_default>;
++			pinctrl-1 = <&i2c1_sleep>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		blsp_i2c2: i2c@f9924000 {
+ 			compatible = "qcom,i2c-qup-v2.2.1";
+ 			reg = <0xf9924000 0x500>;
+@@ -524,6 +545,20 @@ sdc1_rclk_off: rclk-off {
+ 				bias-pull-down;
+ 			};
+ 
++			i2c1_default: i2c1-default {
++				function = "blsp_i2c1";
++				pins = "gpio2", "gpio3";
++				drive-strength = <2>;
++				bias-disable;
++			};
++
++			i2c1_sleep: i2c1-sleep {
++				function = "gpio";
++				pins = "gpio2", "gpio3";
++				drive-strength = <2>;
++				bias-disable;
++			};
++
+ 			i2c2_default: i2c2-default {
+ 				function = "blsp_i2c2";
+ 				pins = "gpio6", "gpio7";
 -- 
 2.27.0
 
