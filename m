@@ -6,61 +6,76 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FCAC433E5
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAC0C433ED
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 3A94320829
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0D3208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899166;
-	bh=gK7UmM5vfmzppaHiSyye27V0GjCHwq+eJUokyna06nY=;
+	s=default; t=1595899197;
+	bh=idQyZYrj17x1YCQSrUFvka4rxp717SD+lk/boc2tq/0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=pUyEov9+C4CIkbsJnYKDlfwAeLd5uggY5OHpGrV+xN1ldS2UiDjP67x+PwAfX93/E
-	 0xe6gh7W39m5phXLx5B96Lftr5AoQyZ+FCXhbk5+iNn99MNUMF22WlzKCei/Gpv6N/
-	 K2wh/JHAJZZ7qwDvXeYojqw6WzcBFDpw1MnUpQl4=
+	b=Egew8QmNVODaaeqEHp9ZhQZij7IWTVdHT3A0b89Ou05OnHiAgBQokrTU2gAVc+DnV
+	 uTq5wtAXjQINxvB4PFd7p7wLty5d4OLYoIOrtSHYDz5/yVCmlCI7rZRGC6AlQSK+0+
+	 R+0+M8iO4yCLLT/W9cmzLnzEEgm8zCm4mY8gTBdo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbgG1BT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:19:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33262 "EHLO mail.kernel.org"
+        id S1726760AbgG1BTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:19:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG1BTZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:19:25 -0400
+        id S1726139AbgG1BTy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:19:54 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A6EC20714;
-        Tue, 28 Jul 2020 01:19:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D358C20714;
+        Tue, 28 Jul 2020 01:19:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899165;
-        bh=gK7UmM5vfmzppaHiSyye27V0GjCHwq+eJUokyna06nY=;
+        s=default; t=1595899193;
+        bh=idQyZYrj17x1YCQSrUFvka4rxp717SD+lk/boc2tq/0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=SbEa8qQBBXKO1LrACrTPoleUgKNfKCd0a/SxMzJc6vD9xOTkpHUDylWCUEe1hQyo6
-         uKFl3jF+TINnuD1gWb3z7qrFaksbEYQRnVjCBeDnEVeLhmpMuK+j20xD6l5VRAzfQ4
-         x8FydSOhNtTikSORMWAVeFgASd0aRNhQTwdu66QY=
+        b=nX9R2lWy+xbhUKE1BQaUQ608KhDxzYh7rEQeQ6pskyfQ5yhZZScl1UdLwecUq6P5U
+         e+oOrUyskTkWBuOCNRse7ERx3NdePLFOuoZtMBTYcmNFJAMYhEJEBwYvEXNrrknqVz
+         4aXLISMSkbBwKLDLeSzUHfZByU+h5554045Y4PQo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <d4899cde-ac7c-e7a4-5819-59fcacbd3745@wanyeetech.com>
-References: <20200630163852.47267-1-zhouyanjie@wanyeetech.com> <d4899cde-ac7c-e7a4-5819-59fcacbd3745@wanyeetech.com>
-Subject: Re: [PATCH v3 0/3] Add functions to operate USB PHY related clock.
+In-Reply-To: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
+References: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
+Subject: Re: [PATCH 0/3] Add RTC related clocks for Ingenic SoCs.
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, paul@crapouillou.net,
-        mturquette@baylibre.com, dongsheng.qiu@ingenic.com,
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, paul@crapouillou.net,
+        prasannatsmkumar@gmail.com, dongsheng.qiu@ingenic.com,
         aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
         yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
         zhenwenjin@gmail.com
-To:     Zhou Yanjie <zhouyanjie@wanyeetech.com>, linux-clk@vger.kernel.org
-Date:   Mon, 27 Jul 2020 18:19:24 -0700
-Message-ID: <159589916426.1360974.7420398609893038@swboyd.mtv.corp.google.com>
+To:     mturquette@baylibre.com, robh+dt@kernel.org,
+        =?utf-8?b?5ZGo55Cw5p2w?= (Zhou Yanjie) 
+        <zhouyanjie@wanyeetech.com>
+Date:   Mon, 27 Jul 2020 18:19:52 -0700
+Message-ID: <159589919283.1360974.18345961645229247747@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhou Yanjie (2020-07-24 21:01:38)
-> Gentle ping.
+Quoting =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) (2020-07-24 22:11:33)
+> 1.Add RTC related clocks bindings for the JZ4780 SoC,
+>   the X1000 SoC, and the X1830 SoC.
+> 2.Add "XXXX_CLK_EXCLK_DIV512" and "XXXX_CLK_RTC" for
+>   the JZ4780 SoC, the X1000 SoC, and the X1830 SoC.
 >=20
+> =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) (3):
+>   dt-bindings: clock: Add RTC related clocks for Ingenic SoCs.
+>   dt-bindings: clock: Add tabs to align code.
+>   clk: Ingenic: Add RTC related clocks for Ingenic SoCs.
+>=20
+>  drivers/clk/ingenic/jz4780-cgu.c       |  12 +++
+>  drivers/clk/ingenic/x1000-cgu.c        |  13 +++
+>  drivers/clk/ingenic/x1830-cgu.c        |  13 +++
+>  include/dt-bindings/clock/jz4780-cgu.h | 144 +++++++++++++++++----------=
+------
 
-I was hoping Paul would review but I guess not. I applied the patches to
-clk-next.
+Thanks. Applied to clk-next.
