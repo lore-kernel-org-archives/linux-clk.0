@@ -2,92 +2,72 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9391CC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 976CDC433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 62D9120829
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:24:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899460;
-	bh=ys14D/WWbTgAMo9tUTXuTr8A1pgEYRarJTsZ+VOuolM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=iTPvUOGsk/qPNR7O15yEz9NE6kCTrnfZrexhNrWOCYjIi698EBCK21WlKAUaqYwKz
-	 Cvs5d8ie+ZHkOnyySbkmNkbDyd12TqHafktg0OItsHiCreT6G8Ri417L+F15OMbWKv
-	 5npIsjevHWNXtxKTT4SqfaUSNep+GF9gyAFumnoc=
+	by mail.kernel.org (Postfix) with ESMTP id 7101F20672
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:46:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="jcfrnPdo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726387AbgG1BYU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:24:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34074 "EHLO mail.kernel.org"
+        id S1726272AbgG1Bqt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:46:49 -0400
+Received: from crapouillou.net ([89.234.176.41]:51062 "EHLO crapouillou.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbgG1BYU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:24:20 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83E6A20809;
-        Tue, 28 Jul 2020 01:24:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899459;
-        bh=ys14D/WWbTgAMo9tUTXuTr8A1pgEYRarJTsZ+VOuolM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=AbkXQEtFmkuwJD7v357nl2piay6c727fizXm2rsKN1n7BUqoNIOPPpncYBpCmZLSp
-         4KLKOMO3AR6xo1DFMF3Q5QZ4LJE806WPR8eKdOcWgNcxP49ei20OwPaO6rzRLpnc+i
-         MtVrHLWyC7MnapG+sYdZn7ihwr/ECboL1VxHTN4g=
-Content-Type: text/plain; charset="utf-8"
+        id S1726265AbgG1Bqt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:46:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1595900807; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=fId9MTw7EAQqIZV//F4HzgjDYjr3WRdR9GS7djBJRO4=;
+        b=jcfrnPdoGGkpEg4jX7ZzCFUqc6lR1BoV+kmA74KiqcVEYgUhWvW21torNmjmuhIzEvs/0G
+        TITpNHmbgrEklyOUoHFaPcGpnSsJ8cFDrySzIi3E7PvVTHGNKLTcZ0Q0J6eXBzL1YTsT9n
+        MAh0gJkLQieKt62eh54qEJkqL6chAW8=
+Date:   Tue, 28 Jul 2020 03:46:33 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 0/3] Add functions to operate USB PHY related clock.
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Zhou Yanjie <zhouyanjie@wanyeetech.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
+        dongsheng.qiu@ingenic.com, aric.pzqi@ingenic.com,
+        rick.tyliu@ingenic.com, yanfei.li@ingenic.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Message-Id: <LXO5EQ.MCOXM56RYF7P3@crapouillou.net>
+In-Reply-To: <159589916426.1360974.7420398609893038@swboyd.mtv.corp.google.com>
+References: <20200630163852.47267-1-zhouyanjie@wanyeetech.com>
+        <d4899cde-ac7c-e7a4-5819-59fcacbd3745@wanyeetech.com>
+        <159589916426.1360974.7420398609893038@swboyd.mtv.corp.google.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200720122343.178203-1-jingxiangfeng@huawei.com>
-References: <20200720122343.178203-1-jingxiangfeng@huawei.com>
-Subject: Re: [PATCH] clk: ti: clkctrl: add the missed kfree() for _ti_omap4_clkctrl_setup()
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jingxiangfeng@huawei.com
-To:     Jing Xiangfeng <jingxiangfeng@huawei.com>, mturquette@baylibre.com,
-        robh@kernel.org, t-kristo@ti.com, tony@atomide.com
-Date:   Mon, 27 Jul 2020 18:24:18 -0700
-Message-ID: <159589945839.1360974.1977401781355555451@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jing Xiangfeng (2020-07-20 05:23:43)
-> _ti_omap4_clkctrl_setup() misses to call kfree() in an error path. Add
-> the missed function call to fix it.
->=20
-> Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node nam=
-e")
-> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
-> ---
->  drivers/clk/ti/clkctrl.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> index 864c484bde1b..868e50132c21 100644
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -655,8 +655,10 @@ static void __init _ti_omap4_clkctrl_setup(struct de=
-vice_node *node)
->                 }
-> =20
->                 hw =3D kzalloc(sizeof(*hw), GFP_KERNEL);
-> -               if (!hw)
-> +               if (!hw) {
-> +                       kfree(clkctrl_name);
->                         return;
-> +               }
 
-Why not goto cleanup?
 
-> =20
->                 hw->enable_reg.ptr =3D provider->base + reg_data->offset;
-> =20
-> --=20
-> 2.17.1
->
+Le lun. 27 juil. 2020 =E0 18:19, Stephen Boyd <sboyd@kernel.org> a=20
+=E9crit :
+> Quoting Zhou Yanjie (2020-07-24 21:01:38)
+>>  Gentle ping.
+>>=20
+>=20
+> I was hoping Paul would review but I guess not. I applied the patches=20
+> to
+> clk-next.
+
+I did receive the "gentle ping" and was going to review it soonish :(
+
+I said for v1 that I don't like how it comes out with magic Hz values...
+
+-Paul
+
+
