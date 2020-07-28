@@ -2,190 +2,109 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CF2C433E8
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 10:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C2EC433E5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72CC420775
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 10:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1E92206D7
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:00:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="PlL1X7O9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cb8xHECi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbgG1Kpv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 06:45:51 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:25830 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728825AbgG1Kpu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 06:45:50 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1595933150; h=Message-ID: References: In-Reply-To: Subject:
- Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
- MIME-Version: Sender; bh=UwYBC8FIK6Ao+d1NkDjZjS8SDHzIo5U4cf8VMIHtRHo=;
- b=PlL1X7O9voEiaizpzE9VtcXq0SICPf5PKYWeHY6//E1ypWN38dt6iPSvHsxa64XvOxwQV9/W
- AuuFjAY0Qn87YfDQhMJB59v7VZEXzqf23VMWvTcaj8c/1yTnE0ZUfnXxCAvr/A9tMn1M69TT
- 6o281mRpb6yy3L7pyUpM9z1c+Zo=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n16.prod.us-east-1.postgun.com with SMTP id
- 5f2001d8fcbecb3df18e8da5 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 28 Jul 2020 10:45:44
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E55F4C4339C; Tue, 28 Jul 2020 10:45:43 +0000 (UTC)
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: gokulsri)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 05D62C433CA;
-        Tue, 28 Jul 2020 10:45:43 +0000 (UTC)
+        id S1729346AbgG1MAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 08:00:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40908 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbgG1MAz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 08:00:55 -0400
+Received: from mail-ej1-x641.google.com (mail-ej1-x641.google.com [IPv6:2a00:1450:4864:20::641])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D923BC061794;
+        Tue, 28 Jul 2020 05:00:54 -0700 (PDT)
+Received: by mail-ej1-x641.google.com with SMTP id y10so20395495eje.1;
+        Tue, 28 Jul 2020 05:00:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U1+l6khR5WEgvOR/QZzKuHUQUvz26GVnRqvOBKPa+Ig=;
+        b=Cb8xHECisgxMI9BTnvqRvZP+7vKvwzS4JS6Rhk2Ik8HhAQQMxqaKo0TJ0nl1uWgIpW
+         VbXK8r2vM3FY9oqWWJ98hhYUg40cszGAuL4D8R1ApJIG+xHEwmhLwEJ+oxjqWDdwQlrp
+         XoBy7SweEFWlzlQtQbsGkMmHYVBRNIVCuSFV7LnlvzaTuanqGZsye1oIWtOB8qT7qDf2
+         RiupBmERD5+dyGR0BiftJ0D1r9F1lTx0YisvWk19oZmUc6XtYNQp79kIx0kvZhsbL7lV
+         ZzKb+VT0vvZSplXrIc1G6yzZ67bolIK4Vm1L7+ct3DeXe+aX9sLHZvPPWeDPQBvU/M/q
+         ruwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=U1+l6khR5WEgvOR/QZzKuHUQUvz26GVnRqvOBKPa+Ig=;
+        b=gbb0ao97Y3cZ1JdFdOCklWdQZjDdj1pE4Q9ObdU9RWPLa6HhgWynRB9VIhohpZKVrd
+         liJemtRA3qnUFKPErXl4YXR5VLZ+z239CKtvKQANztA9TdDMz8JIQb9zHxB6yghntpmN
+         dnBHWP/324JAiqi8RB8ubqRR0Iykw4HKCR/MPHOrm6zq8HA0xSemnuFin/bxV1bKa/+a
+         AgCNQwE443baxdJIVUgDVl3yYT99ig+61w9/50DgWto19zC7VIY5OKJNvszhf3FEuhLu
+         aueJffTIP5KcnvT6E3kE3Jp5pSiIW26rumW5IpSPEITVC40gi94U2I6F/ollnGZ43c3C
+         Yh0Q==
+X-Gm-Message-State: AOAM530ZZcUqrsDy9x0KUbycJaXLl+bOFSUU0dT+yQOoH4P8LnMrKYZX
+        EeixStkQypIsbrObHQvzAqs=
+X-Google-Smtp-Source: ABdhPJxlN/0QPTsiHNWeYZHn5E08xNHKQc5xzCIEGu0HQEKO2OhckRJZqPbvvALD8H3dobgZtRTPcQ==
+X-Received: by 2002:a17:906:12cd:: with SMTP id l13mr18815289ejb.385.1595937653613;
+        Tue, 28 Jul 2020 05:00:53 -0700 (PDT)
+Received: from localhost.localdomain (abad207.neoplus.adsl.tpnet.pl. [83.6.167.207])
+        by smtp.googlemail.com with ESMTPSA id m20sm9066959ejk.90.2020.07.28.05.00.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 Jul 2020 05:00:53 -0700 (PDT)
+From:   Konrad Dybcio <konradybcio@gmail.com>
+To:     konradybcio@gmail.com
+Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 0/9] msm8992/4 updates
+Date:   Tue, 28 Jul 2020 14:00:39 +0200
+Message-Id: <20200728120049.90632-1-konradybcio@gmail.com>
+X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 28 Jul 2020 16:15:42 +0530
-From:   gokulsri@codeaurora.org
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        agross@kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, govinds@codeaurora.org,
-        sricharan@codeaurora.org
-Subject: Re: [v7 1/4] remoteproc: qcom: wcss: populate hardcoded param using
- driver data
-In-Reply-To: <159442464252.1987609.9113647358389820731@swboyd.mtv.corp.google.com>
-References: <20190726092332.25202-1-govinds@codeaurora.org>
- <1593766722-28838-1-git-send-email-gokulsri@codeaurora.org>
- <1593766722-28838-2-git-send-email-gokulsri@codeaurora.org>
- <159442464252.1987609.9113647358389820731@swboyd.mtv.corp.google.com>
-Message-ID: <2cf8aa0af13a104a8e4171ebcb0a6e62@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.3.9
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-   Thanks for your comments Stephen.
-   Will address your comments below and re-submit.
-On 2020-07-11 05:14, Stephen Boyd wrote:
-> Quoting Gokul Sriram Palanisamy (2020-07-03 01:58:39)
->> From: Govind Singh <govinds@codeaurora.org>
->> 
->> Q6 based WiFi fw loading is supported across
->> different targets, ex: IPQ8074/QCS404. In order to
->> support different fw names/pas id etc, populate
->> hardcoded param using driver data.
->> 
->> Signed-off-by: Govind Singh <govinds@codeaurora.org>
->> [rebased on top of 5.8-rc3]
-> 
-> This tag is not really useful and doesn't follow the style of having
-> your email prefix the text. I'd expect to see
-> 
-> [gokulsri@codeaurora.org: made some sort of change]
-> 
->> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
->> ---
->>  drivers/remoteproc/qcom_q6v5_wcss.c | 31 
->> ++++++++++++++++++++++++++-----
->>  1 file changed, 26 insertions(+), 5 deletions(-)
->> 
->> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c 
->> b/drivers/remoteproc/qcom_q6v5_wcss.c
->> index 88c76b9..abc5f9d 100644
->> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
->> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
->> @@ -70,6 +71,11 @@
->>  #define TCSR_WCSS_CLK_MASK     0x1F
->>  #define TCSR_WCSS_CLK_ENABLE   0x14
->> 
->> +struct wcss_data {
->> +       const char *firmware_name;
->> +       int crash_reason_smem;
-> 
-> Is it signed for some reason?
-   Can be unsigned. Will update.
-> 
->> +};
->> +
->>  struct q6v5_wcss {
->>         struct device *dev;
->> 
->> @@ -92,6 +98,8 @@ struct q6v5_wcss {
->>         void *mem_region;
->>         size_t mem_size;
->> 
->> +       int crash_reason_smem;
->> +
-> 
-> Same question, why not unsigned?
-   Can be unsigned. Will update.
-> 
->>         struct qcom_rproc_glink glink_subdev;
->>         struct qcom_rproc_ssr ssr_subdev;
->>  };
->> @@ -430,7 +438,7 @@ static int q6v5_wcss_load(struct rproc *rproc, 
->> const struct firmware *fw)
->>                                      wcss->mem_size, 
->> &wcss->mem_reloc);
->>  }
->> 
->> -static const struct rproc_ops q6v5_wcss_ops = {
->> +static const struct rproc_ops q6v5_wcss_ipq8074_ops = {
->>         .start = q6v5_wcss_start,
->>         .stop = q6v5_wcss_stop,
->>         .da_to_va = q6v5_wcss_da_to_va,
->> @@ -530,12 +538,17 @@ static int q6v5_alloc_memory_region(struct 
->> q6v5_wcss *wcss)
->> 
->>  static int q6v5_wcss_probe(struct platform_device *pdev)
->>  {
->> +       const struct wcss_data *desc;
->>         struct q6v5_wcss *wcss;
->>         struct rproc *rproc;
->>         int ret;
->> 
->> -       rproc = rproc_alloc(&pdev->dev, pdev->name, &q6v5_wcss_ops,
->> -                           "IPQ8074/q6_fw.mdt", sizeof(*wcss));
->> +       desc = of_device_get_match_data(&pdev->dev);
-> 
-> Use device_get_match_data() and drop the of_device.h include.
-   ok, will do.
-> 
->> +       if (!desc)
->> +               return -EINVAL;
->> +
->> +       rproc = rproc_alloc(&pdev->dev, pdev->name, 
->> &q6v5_wcss_ipq8074_ops,
->> +                           desc->firmware_name, sizeof(*wcss));
->>         if (!rproc) {
->>                 dev_err(&pdev->dev, "failed to allocate rproc\n");
->>                 return -ENOMEM;
->> @@ -587,8 +602,14 @@ static int q6v5_wcss_remove(struct 
->> platform_device *pdev)
->>         return 0;
->>  }
->> 
->> +static const struct wcss_data wcss_ipq8074_res_init = {
->> +       .firmware_name = "IPQ8074/q6_fw.mdt",
->> +       .crash_reason_smem = WCSS_CRASH_REASON,
->> +};
->> +
->>  static const struct of_device_id q6v5_wcss_of_match[] = {
->> -       { .compatible = "qcom,ipq8074-wcss-pil" },
->> +       { .compatible = "qcom,ipq8074-wcss-pil", .data = 
->> &wcss_ipq8074_res_init },
->> +
-> 
-> Please remove this extra newline.
-   ok. Will do.
-> 
->>         { },
->>  };
->>  MODULE_DEVICE_TABLE(of, q6v5_wcss_of_match);
+This series brings support for:
+
+* sdhci2 on 8992/4
+* BLSP_I2C1 (a seemingly WP-exclusive i2c bus) for 8992
+* Synaptics RMI4 touchscreen for Sony Kitakami and MSFT L950
+* DWC3 USB for msm8992/4 (doesn't work on Lumias, they use custom
+circuitry)
+* Missing clocks for 8994 GCC needed for USB
+
+Konrad Dybcio (9):
+  arm64: dts: qcom: msm8992: Add support for SDHCI2
+  arm64: dts: qcom: msm8992: Add BLSP_I2C1 support
+  arm64: dts: qcom: talkman: Add Synaptics RMI4 touchscreen
+  arm64: dts: qcom: msm8994: Add USB support
+  arm64: dts: qcom: msm8992: Add USB support
+  clk: qcom: gcc-msm8994: Add missing clocks, resets and GDSCs
+  arm64: dts: qcom: kitakami: Add Synaptics touchscreen
+  arm64: dts: qcom: msm8994: Add SDHCI2 node
+  arm64: dts: qcom: kitakami: Enable SDHCI2
+
+ .../dts/qcom/msm8992-msft-lumia-talkman.dts   |  28 ++
+ arch/arm64/boot/dts/qcom/msm8992.dtsi         | 124 ++++++
+ .../qcom/msm8994-sony-xperia-kitakami.dtsi    |  49 ++-
+ arch/arm64/boot/dts/qcom/msm8994.dtsi         |  89 ++++
+ drivers/clk/qcom/gcc-msm8994.c                | 388 +++++++++++++++++-
+ include/dt-bindings/clock/qcom,gcc-msm8994.h  |  36 ++
+ 6 files changed, 712 insertions(+), 2 deletions(-)
+
+-- 
+2.27.0
+
