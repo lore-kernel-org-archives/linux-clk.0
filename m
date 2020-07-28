@@ -2,69 +2,92 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99835C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:25:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9391CC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 74A0820829
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:25:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62D9120829
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899527;
-	bh=9uiYFObWP6iP+8WICpx1Fzt1ZrJo4Ih9DA64NR0QOug=;
+	s=default; t=1595899460;
+	bh=ys14D/WWbTgAMo9tUTXuTr8A1pgEYRarJTsZ+VOuolM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=ycCFQfjb4gnvQij808Cz/eikgeAEh8lgJhtAkuqFcVOOuJy1epV7mkXeABSNzWap4
-	 toBsGxCwJkn4i8WCH+s6wyUxWO5A1V9JkZxmvf0/AoJim4wFCPQGB28e+EIdfIysJP
-	 Raw+g6YZTR0B/GpcnwC0XXcds0JnCbIQTm2VTXg4=
+	b=iTPvUOGsk/qPNR7O15yEz9NE6kCTrnfZrexhNrWOCYjIi698EBCK21WlKAUaqYwKz
+	 Cvs5d8ie+ZHkOnyySbkmNkbDyd12TqHafktg0OItsHiCreT6G8Ri417L+F15OMbWKv
+	 5npIsjevHWNXtxKTT4SqfaUSNep+GF9gyAFumnoc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbgG1BZ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:25:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34224 "EHLO mail.kernel.org"
+        id S1726387AbgG1BYU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:24:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726247AbgG1BZ1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:25:27 -0400
+        id S1726247AbgG1BYU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:24:20 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B01A220809;
-        Tue, 28 Jul 2020 01:25:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83E6A20809;
+        Tue, 28 Jul 2020 01:24:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899526;
-        bh=9uiYFObWP6iP+8WICpx1Fzt1ZrJo4Ih9DA64NR0QOug=;
+        s=default; t=1595899459;
+        bh=ys14D/WWbTgAMo9tUTXuTr8A1pgEYRarJTsZ+VOuolM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=xyVUKixG9Ga831lfABQCANz6vvcNRvfzZrlXAL/ADh0LdbkMQgqmZpGbbWxnQcxQa
-         753UMYDzP0IUsKvGrh1KP6vMw07TpDdEGrX8nkHNs5+4nZUQ/YGYouWjs9o7IP6E3L
-         7rp+Ui2BPtH3/av2aTKdNJJ8a9kSAJ4pHpyqgCII=
+        b=AbkXQEtFmkuwJD7v357nl2piay6c727fizXm2rsKN1n7BUqoNIOPPpncYBpCmZLSp
+         4KLKOMO3AR6xo1DFMF3Q5QZ4LJE806WPR8eKdOcWgNcxP49ei20OwPaO6rzRLpnc+i
+         MtVrHLWyC7MnapG+sYdZn7ihwr/ECboL1VxHTN4g=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200610113837.27117-1-matthias.schiffer@ew.tq-group.com>
-References: <20200610113837.27117-1-matthias.schiffer@ew.tq-group.com>
-Subject: Re: [PATCH] clk: qoriq: add LS1021A core pll mux options
+In-Reply-To: <20200720122343.178203-1-jingxiangfeng@huawei.com>
+References: <20200720122343.178203-1-jingxiangfeng@huawei.com>
+Subject: Re: [PATCH] clk: ti: clkctrl: add the missed kfree() for _ti_omap4_clkctrl_setup()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Michael Krummsdorf <michael.krummsdorf@tq-group.com>,
-        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 27 Jul 2020 18:25:25 -0700
-Message-ID: <159589952570.1360974.12026401235468882356@swboyd.mtv.corp.google.com>
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jingxiangfeng@huawei.com
+To:     Jing Xiangfeng <jingxiangfeng@huawei.com>, mturquette@baylibre.com,
+        robh@kernel.org, t-kristo@ti.com, tony@atomide.com
+Date:   Mon, 27 Jul 2020 18:24:18 -0700
+Message-ID: <159589945839.1360974.1977401781355555451@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matthias Schiffer (2020-06-10 04:38:37)
-> From: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
+Quoting Jing Xiangfeng (2020-07-20 05:23:43)
+> _ti_omap4_clkctrl_setup() misses to call kfree() in an error path. Add
+> the missed function call to fix it.
 >=20
-> This allows to clock the cores with 1 GHz, 500 MHz and 250 MHz.
->=20
-> Signed-off-by: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
-> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+> Fixes: 6c3090520554 ("clk: ti: clkctrl: Fix hidden dependency to node nam=
+e")
+> Signed-off-by: Jing Xiangfeng <jingxiangfeng@huawei.com>
 > ---
+>  drivers/clk/ti/clkctrl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index 864c484bde1b..868e50132c21 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -655,8 +655,10 @@ static void __init _ti_omap4_clkctrl_setup(struct de=
+vice_node *node)
+>                 }
+> =20
+>                 hw =3D kzalloc(sizeof(*hw), GFP_KERNEL);
+> -               if (!hw)
+> +               if (!hw) {
+> +                       kfree(clkctrl_name);
+>                         return;
+> +               }
 
-Applied to clk-next
+Why not goto cleanup?
+
+> =20
+>                 hw->enable_reg.ptr =3D provider->base + reg_data->offset;
+> =20
+> --=20
+> 2.17.1
+>
