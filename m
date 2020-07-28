@@ -2,80 +2,76 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAC0C433ED
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C707EC433E3
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4E0D3208E4
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C29C2083E
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:21:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899197;
-	bh=idQyZYrj17x1YCQSrUFvka4rxp717SD+lk/boc2tq/0=;
+	s=default; t=1595899291;
+	bh=TP0DIGZeyxZ5cg4Nue/9kKwQH8LAa0PI7lvigJ7p4tw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Egew8QmNVODaaeqEHp9ZhQZij7IWTVdHT3A0b89Ou05OnHiAgBQokrTU2gAVc+DnV
-	 uTq5wtAXjQINxvB4PFd7p7wLty5d4OLYoIOrtSHYDz5/yVCmlCI7rZRGC6AlQSK+0+
-	 R+0+M8iO4yCLLT/W9cmzLnzEEgm8zCm4mY8gTBdo=
+	b=WK+7tavdJ5cPb7q/jRzJ3ppionpUX9XZmEbKplNwmvr4vfOF2d0ZgoUXzfhigMP2f
+	 rCbMPLIuTYb1LFceqZXqX3ZrBmjcDRd56K9jFfSiVbgmKbSTCvQhxitDTf+mzmDJPq
+	 f8A9YFblCaFQNo/fB7cMEhxVQ7O0l8r/SNj15daY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbgG1BTy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:19:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33384 "EHLO mail.kernel.org"
+        id S1726357AbgG1BVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:21:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG1BTy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:19:54 -0400
+        id S1726139AbgG1BVa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:21:30 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D358C20714;
-        Tue, 28 Jul 2020 01:19:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B66220809;
+        Tue, 28 Jul 2020 01:21:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899193;
-        bh=idQyZYrj17x1YCQSrUFvka4rxp717SD+lk/boc2tq/0=;
+        s=default; t=1595899290;
+        bh=TP0DIGZeyxZ5cg4Nue/9kKwQH8LAa0PI7lvigJ7p4tw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=nX9R2lWy+xbhUKE1BQaUQ608KhDxzYh7rEQeQ6pskyfQ5yhZZScl1UdLwecUq6P5U
-         e+oOrUyskTkWBuOCNRse7ERx3NdePLFOuoZtMBTYcmNFJAMYhEJEBwYvEXNrrknqVz
-         4aXLISMSkbBwKLDLeSzUHfZByU+h5554045Y4PQo=
+        b=TDCp6gcHm+cOLcSzNOABMln2PKCYX5v11eDZKS2SNDpUPRghKbQKsOJNU9A03T/u0
+         C860WCHScGSbqx7iDQs91/yLFHtsdLJwecfhGSkbpC+H/gL3lXtYFlI28w18i/B5QE
+         fsYIgagBQBydU1W5N9yL9nCgWKALcVw4yRGgzRa4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
-References: <20200725051136.58220-1-zhouyanjie@wanyeetech.com>
-Subject: Re: [PATCH 0/3] Add RTC related clocks for Ingenic SoCs.
+In-Reply-To: <20200709172057.13951-1-digetx@gmail.com>
+References: <20200709172057.13951-1-digetx@gmail.com>
+Subject: Re: [PATCH v4] clk: tegra: pll: Improve PLLM enable-state detection
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, paul@crapouillou.net,
-        prasannatsmkumar@gmail.com, dongsheng.qiu@ingenic.com,
-        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
-        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com
-To:     mturquette@baylibre.com, robh+dt@kernel.org,
-        =?utf-8?b?5ZGo55Cw5p2w?= (Zhou Yanjie) 
-        <zhouyanjie@wanyeetech.com>
-Date:   Mon, 27 Jul 2020 18:19:52 -0700
-Message-ID: <159589919283.1360974.18345961645229247747@swboyd.mtv.corp.google.com>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Mon, 27 Jul 2020 18:21:29 -0700
+Message-ID: <159589928947.1360974.2291551893182994686@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) (2020-07-24 22:11:33)
-> 1.Add RTC related clocks bindings for the JZ4780 SoC,
->   the X1000 SoC, and the X1830 SoC.
-> 2.Add "XXXX_CLK_EXCLK_DIV512" and "XXXX_CLK_RTC" for
->   the JZ4780 SoC, the X1000 SoC, and the X1830 SoC.
+Quoting Dmitry Osipenko (2020-07-09 10:20:57)
+> Power Management Controller (PMC) can override the PLLM clock settings,
+> including the enable-state. Although PMC could only act as a second level
+> gate, meaning that PLLM needs to be enabled by the Clock and Reset
+> Controller (CaR) anyways if we want it to be enabled. Hence, when PLLM is
+> overridden by PMC, it needs to be enabled by CaR and ungated by PMC in
+> order to be functional. Please note that this patch doesn't fix any known
+> problem, and thus, it's merely a minor improvement.
 >=20
-> =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) (3):
->   dt-bindings: clock: Add RTC related clocks for Ingenic SoCs.
->   dt-bindings: clock: Add tabs to align code.
->   clk: Ingenic: Add RTC related clocks for Ingenic SoCs.
->=20
->  drivers/clk/ingenic/jz4780-cgu.c       |  12 +++
->  drivers/clk/ingenic/x1000-cgu.c        |  13 +++
->  drivers/clk/ingenic/x1830-cgu.c        |  13 +++
->  include/dt-bindings/clock/jz4780-cgu.h | 144 +++++++++++++++++----------=
-------
+> Link: https://lore.kernel.org/linux-arm-kernel/20191210120909.GA2703785@u=
+lmo/T/
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-Thanks. Applied to clk-next.
+Applied to clk-next
