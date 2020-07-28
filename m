@@ -1,82 +1,66 @@
-Return-Path: <SRS0=c6El=BG=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36365C433E5
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FCAC433E5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0F6D72250E
-	for <linux-clk@archiver.kernel.org>; Mon, 27 Jul 2020 20:58:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="QBVHnZTK"
+	by mail.kernel.org (Postfix) with ESMTP id 3A94320829
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595899166;
+	bh=gK7UmM5vfmzppaHiSyye27V0GjCHwq+eJUokyna06nY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=pUyEov9+C4CIkbsJnYKDlfwAeLd5uggY5OHpGrV+xN1ldS2UiDjP67x+PwAfX93/E
+	 0xe6gh7W39m5phXLx5B96Lftr5AoQyZ+FCXhbk5+iNn99MNUMF22WlzKCei/Gpv6N/
+	 K2wh/JHAJZZ7qwDvXeYojqw6WzcBFDpw1MnUpQl4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbgG0U6N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 16:58:13 -0400
-Received: from vern.gendns.com ([98.142.107.122]:52344 "EHLO vern.gendns.com"
+        id S1726538AbgG1BT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:19:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726171AbgG0U6N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 16:58:13 -0400
-X-Greylist: delayed 1516 seconds by postgrey-1.27 at vger.kernel.org; Mon, 27 Jul 2020 16:58:13 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=2Qbdrl9zDyYUDiuprAY1yYquh3ltubEZYSXcWV7O1Lc=; b=QBVHnZTKCHFlJW8ennnb2tB/bb
-        m0yH45Z+uSv96AyPFVGsbZFJZnRrd44+wNtbHN6q/hV30+42IEsFoTO0092Q6OOqIkfuVg2Mvtjf+
-        Ye3+H1liJuQwL3Bci2oHiex06QodIsf46Pac9uQzpJvv9I3JCM0lPy9X0gAt0sb1l1c05kvnpMUD8
-        wKa5FCc433oxck/+7RMkwYSsxBDsxbYtWzCi9mGBnEwwSA2pFt8P6/pqB10q90WNJESegHcuyLsz3
-        2D0tdqwUl1mWXWXl5UTSoNroloQINmpSecYfOPep7laYF18QaIuwYHkNXLlzTfUSbIIS9MRJO3461
-        W109mHhw==;
-Received: from [2600:1700:4830:165f::19e] (port=59352)
-        by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-        (Exim 4.93)
-        (envelope-from <david@lechnology.com>)
-        id 1k09nr-0004In-Rw; Mon, 27 Jul 2020 16:32:55 -0400
-Subject: Re: [PATCH][next] clk: davinci: Use fallthrough pseudo-keyword
-To:     "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20200727201122.GA2593@embeddedor>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <4cc1d793-4722-42c2-9712-2ebccbd6abeb@lechnology.com>
-Date:   Mon, 27 Jul 2020 15:32:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
+        id S1726139AbgG1BTZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:19:25 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A6EC20714;
+        Tue, 28 Jul 2020 01:19:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595899165;
+        bh=gK7UmM5vfmzppaHiSyye27V0GjCHwq+eJUokyna06nY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=SbEa8qQBBXKO1LrACrTPoleUgKNfKCd0a/SxMzJc6vD9xOTkpHUDylWCUEe1hQyo6
+         uKFl3jF+TINnuD1gWb3z7qrFaksbEYQRnVjCBeDnEVeLhmpMuK+j20xD6l5VRAzfQ4
+         x8FydSOhNtTikSORMWAVeFgASd0aRNhQTwdu66QY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20200727201122.GA2593@embeddedor>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d4899cde-ac7c-e7a4-5819-59fcacbd3745@wanyeetech.com>
+References: <20200630163852.47267-1-zhouyanjie@wanyeetech.com> <d4899cde-ac7c-e7a4-5819-59fcacbd3745@wanyeetech.com>
+Subject: Re: [PATCH v3 0/3] Add functions to operate USB PHY related clock.
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, paul@crapouillou.net,
+        mturquette@baylibre.com, dongsheng.qiu@ingenic.com,
+        aric.pzqi@ingenic.com, rick.tyliu@ingenic.com,
+        yanfei.li@ingenic.com, sernia.zhou@foxmail.com,
+        zhenwenjin@gmail.com
+To:     Zhou Yanjie <zhouyanjie@wanyeetech.com>, linux-clk@vger.kernel.org
+Date:   Mon, 27 Jul 2020 18:19:24 -0700
+Message-ID: <159589916426.1360974.7420398609893038@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/27/20 3:11 PM, Gustavo A. R. Silva wrote:
-> Replace the existing /* fall through */ comments and its variants with
-> the new pseudo-keyword macro fallthrough[1].
-> 
-> [1] https://www.kernel.org/doc/html/v5.7/process/deprecated.html?highlight=fallthrough#implicit-switch-case-fall-through
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Quoting Zhou Yanjie (2020-07-24 21:01:38)
+> Gentle ping.
+>=20
 
-Reviewed-by: David Lechner <david@lechnology.com>
+I was hoping Paul would review but I guess not. I applied the patches to
+clk-next.
