@@ -4,64 +4,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F368EC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99835C433E0
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:25:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CDCF82083E
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A0820829
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 01:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595899327;
-	bh=VjPgbBotx2j2mpmZm5DhzzZAaPi7egObI23Ux2zgilU=;
+	s=default; t=1595899527;
+	bh=9uiYFObWP6iP+8WICpx1Fzt1ZrJo4Ih9DA64NR0QOug=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=E+3sQPOtwJzis2lgoaXy/6hRrilP7dFexJRub/fahgf2iziTGyWPeE6qgjp0GcWlJ
-	 prrr3jAwJz+j2iQfPfgHLVXwh+s2UJ10Ae2az82Xn5WRx2NCa/h1OmVMLXCCqoV5n4
-	 G9g1vrWd9PB6sTXNL1jG4bnj6IB4+edHZgGYxAnQ=
+	b=ycCFQfjb4gnvQij808Cz/eikgeAEh8lgJhtAkuqFcVOOuJy1epV7mkXeABSNzWap4
+	 toBsGxCwJkn4i8WCH+s6wyUxWO5A1V9JkZxmvf0/AoJim4wFCPQGB28e+EIdfIysJP
+	 Raw+g6YZTR0B/GpcnwC0XXcds0JnCbIQTm2VTXg4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726272AbgG1BWH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 27 Jul 2020 21:22:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33760 "EHLO mail.kernel.org"
+        id S1726313AbgG1BZ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jul 2020 21:25:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726139AbgG1BWH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 27 Jul 2020 21:22:07 -0400
+        id S1726247AbgG1BZ1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jul 2020 21:25:27 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8514720829;
-        Tue, 28 Jul 2020 01:22:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B01A220809;
+        Tue, 28 Jul 2020 01:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595899326;
-        bh=VjPgbBotx2j2mpmZm5DhzzZAaPi7egObI23Ux2zgilU=;
+        s=default; t=1595899526;
+        bh=9uiYFObWP6iP+8WICpx1Fzt1ZrJo4Ih9DA64NR0QOug=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=NEvUTzyiBNiWr+fWR/YT23YZciibr7s6ygXP081pqi4Jl9H4BN9P/xjJzE9dzy+gD
-         iA7kVxRkvXA63QQP4iwDSCOIYLAkotZP5mza+P4ijXczOV7qTdX2/JYTHv+vqEt1De
-         FyhA9/kNgm62R5JFBBEafghvAExO2UzuYRdYyos0=
+        b=xyVUKixG9Ga831lfABQCANz6vvcNRvfzZrlXAL/ADh0LdbkMQgqmZpGbbWxnQcxQa
+         753UMYDzP0IUsKvGrh1KP6vMw07TpDdEGrX8nkHNs5+4nZUQ/YGYouWjs9o7IP6E3L
+         7rp+Ui2BPtH3/av2aTKdNJJ8a9kSAJ4pHpyqgCII=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200713032143.21362-1-vulab@iscas.ac.cn>
-References: <20200713032143.21362-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] clk: clk-atlas6: fix return value check in atlas6_clk_init()
+In-Reply-To: <20200610113837.27117-1-matthias.schiffer@ew.tq-group.com>
+References: <20200610113837.27117-1-matthias.schiffer@ew.tq-group.com>
+Subject: Re: [PATCH] clk: qoriq: add LS1021A core pll mux options
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Xu Wang <vulab@iscas.ac.cn>
-To:     Xu Wang <vulab@iscas.ac.cn>, baohua@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
-Date:   Mon, 27 Jul 2020 18:22:05 -0700
-Message-ID: <159589932546.1360974.12932267268128581186@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Krummsdorf <michael.krummsdorf@tq-group.com>,
+        Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To:     Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 27 Jul 2020 18:25:25 -0700
+Message-ID: <159589952570.1360974.12026401235468882356@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Xu Wang (2020-07-12 20:21:43)
-> In case of error, the function clk_register() returns ERR_PTR()
-> and never returns NULL. The NULL test in the return value check
-> should be replaced with IS_ERR().
+Quoting Matthias Schiffer (2020-06-10 04:38:37)
+> From: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
 >=20
-> Signed-off-by: Xu Wang <vulab@iscas.ac.cn>
+> This allows to clock the cores with 1 GHz, 500 MHz and 250 MHz.
+>=20
+> Signed-off-by: Michael Krummsdorf <michael.krummsdorf@tq-group.com>
+> Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
 > ---
 
 Applied to clk-next
