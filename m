@@ -2,134 +2,68 @@ Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E46CEC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA412C433E4
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 19:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1CDD206D7
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 12:02:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRnrQL2j"
+	by mail.kernel.org (Postfix) with ESMTP id 92821207F5
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 19:15:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1595963722;
+	bh=5bVk+PWqEcKnq9b9cFeWyNeWh3aCCKRe9dswXmFLev0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=E8NjIboOWqUzmPSwReNTdFFWWbfEChFkn7QZxn79vRc8Eukp3RBCKC5vcHH1lLveB
+	 67Z01EthXOOFi+heLE57hlJ0rPENigASsw9jf3I1hMWfvnxq+XfuEYgfnXhYnSCDsw
+	 7bpwfyEXjLugKLpLT5OMCusaVppXlj18l1ZgzXco=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbgG1MBt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 08:01:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40952 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729369AbgG1MBH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jul 2020 08:01:07 -0400
-Received: from mail-ej1-x643.google.com (mail-ej1-x643.google.com [IPv6:2a00:1450:4864:20::643])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E6DC0619D4;
-        Tue, 28 Jul 2020 05:01:06 -0700 (PDT)
-Received: by mail-ej1-x643.google.com with SMTP id d6so6532033ejr.5;
-        Tue, 28 Jul 2020 05:01:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=I2q93FVdT16iSOi/3vPrG4ZH4MZNlbJkhzRjHUU4qvI=;
-        b=DRnrQL2jiANg1LCEiHbcsMAemscesJxlF/BScJWltuEPtWJgaKFG+PVuGW9l0rqJsy
-         E8CxWg5HAmLffJCYMTwu3R53mcEt7eAThyslDukHxhqQJaQCg9l2e77xM++LCPfI/PRa
-         a+9EifrOoaLfBUPW9n176A0RbCbC2Esmr0yQ28XLlN8lureqJostUIVXq2i8iq9r+o4A
-         s8IqRl0nIncUTgC3Wr+P96B85iqWJxtWJIE0ErLTwwCE5zTd2LLrl8f1z8PMquFy5Ger
-         2QC4oF7hDe9kUiwO/I6AGWx9xt3ugCbPI+X3zakiZobmrle8YiJiINKCaxDAbU9CrlqB
-         a6XA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=I2q93FVdT16iSOi/3vPrG4ZH4MZNlbJkhzRjHUU4qvI=;
-        b=gAYlgul+qoGGwEP7VWwSaKFQz7Q/jfSWkJ0kmobcPHHbMefRCM8nYv/MttCo5TIvGp
-         VpklOqnnmtih6GdkZioRlLD8hNNSB9YqO/7ABX7XTlo7s/Xh65RlAFpOUhG/NJYkB7Y5
-         Q2ovNh77Z5e9V31biYwSxCVhJo4trEa+fJ9GKH6TifwYaCZeaw9SM9fl+mN13eg2k1cP
-         UhtYEdt07vATsNxIhRx+HmevUdjfl47mc/kmRD90bN9l7XujIfagGycfCG2WeXTM2VEZ
-         j98ge58002i7+mnAWVuxy2T/euVoJuB58b2iv3g2cNgGm3dZ0vnmn+HtHyLNxgAFvSyU
-         nesA==
-X-Gm-Message-State: AOAM533FuR8bJ8Hc3Wv6F3CwFT9UbqylFfDrxfxmoj2ufsqXMWvL8rik
-        qaggfHiVcWABEjh1Wov1AJ8=
-X-Google-Smtp-Source: ABdhPJwzGWglviFaa19/EAZZVusEB9PVJX6tezEMVsH20V9O0umhp+H6N0A8L8X4h48ZE69Gi09zBQ==
-X-Received: by 2002:a17:906:b2d0:: with SMTP id cf16mr15708293ejb.514.1595937665567;
-        Tue, 28 Jul 2020 05:01:05 -0700 (PDT)
-Received: from localhost.localdomain (abad207.neoplus.adsl.tpnet.pl. [83.6.167.207])
-        by smtp.googlemail.com with ESMTPSA id m20sm9066959ejk.90.2020.07.28.05.01.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jul 2020 05:01:05 -0700 (PDT)
-From:   Konrad Dybcio <konradybcio@gmail.com>
-To:     konradybcio@gmail.com
-Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 5/9] arm64: dts: qcom: msm8992: Add USB support
-Date:   Tue, 28 Jul 2020 14:00:44 +0200
-Message-Id: <20200728120049.90632-6-konradybcio@gmail.com>
-X-Mailer: git-send-email 2.27.0
-In-Reply-To: <20200728120049.90632-1-konradybcio@gmail.com>
-References: <20200728120049.90632-1-konradybcio@gmail.com>
+        id S1732621AbgG1TPW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 15:15:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41294 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728561AbgG1TPW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jul 2020 15:15:22 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B98432065C;
+        Tue, 28 Jul 2020 19:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1595963721;
+        bh=5bVk+PWqEcKnq9b9cFeWyNeWh3aCCKRe9dswXmFLev0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=neOa1iXWr9CSEYWqYKLGgWtqN0EfV17VVGmzmyZnbWq/Fp7pCnzUqQ5h7IjA9x5UT
+         zIXkQpMScEHKM20Y8065BHpW3Mmmmu4A9maiZkTY11EQXCniHJ3riekiPn4YCAGvMk
+         kHpbX11wLLYYYJ0ycqNarpYerX1721J06GhovEa4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1595926999-14934-1-git-send-email-peng.fan@nxp.com>
+References: <1595926999-14934-1-git-send-email-peng.fan@nxp.com>
+Subject: Re: [PATCH v2 1/2] clk: imx: imx8m: avoid memory leak
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     kernel@pengutronix.de, linux-imx@nxp.com, Anson.Huang@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+To:     abel.vesa@nxp.com, festevam@gmail.com, peng.fan@nxp.com,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Date:   Tue, 28 Jul 2020 12:15:20 -0700
+Message-ID: <159596372057.1360974.5467052516430145178@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a very basic dwc3 configuration (no PHYs yet),
-but it works.
+Quoting peng.fan@nxp.com (2020-07-28 02:03:18)
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Use devm_kzalloc() to avoid memory leak when probe fail.
+>=20
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8992.dtsi | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-index c7dc81311f6a..c9502fcf5d70 100644
---- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-@@ -242,6 +242,37 @@ frame@f9028000 {
- 			};
- 		};
- 
-+		usb3: usb@f92f8800 {
-+			compatible = "qcom,msm8996-dwc3", "qcom,dwc3";
-+			reg = <0xf92f8800 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			clocks = <&gcc GCC_USB30_MASTER_CLK>,
-+				 <&gcc GCC_SYS_NOC_USB3_AXI_CLK>,
-+				 <&gcc GCC_USB30_SLEEP_CLK>,
-+				 <&gcc GCC_USB30_MOCK_UTMI_CLK>;
-+			clock-names = "core", "iface", "sleep", "mock_utmi", "ref", "xo";
-+
-+			assigned-clocks = <&gcc GCC_USB30_MOCK_UTMI_CLK>,
-+					  <&gcc GCC_USB30_MASTER_CLK>;
-+			assigned-clock-rates = <19200000>, <120000000>;
-+
-+			power-domains = <&gcc USB30_GDSC>;
-+			qcom,select-utmi-as-pipe-clk;
-+
-+			dwc3@f9200000 {
-+				compatible = "snps,dwc3";
-+				reg = <0xf9200000 0xcc00>;
-+				interrupts = <0 131 IRQ_TYPE_LEVEL_HIGH>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
-+				maximum-speed = "high-speed";
-+				dr_mode = "peripheral";
-+			};
-+		};
-+
- 		sdhc_1: sdhci@f9824900 {
- 			compatible = "qcom,sdhci-msm-v4";
- 			reg = <0xf9824900 0x1a0>, <0xf9824000 0x800>;
--- 
-2.27.0
-
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
