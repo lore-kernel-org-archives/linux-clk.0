@@ -4,72 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C35C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 184A8C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 9C7FE2078E
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44292078E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595985823;
-	bh=ZEQ8acauTeo/vlplG6VpP6uu8XrzCrepryaFriXIl0k=;
+	s=default; t=1595985937;
+	bh=atZ9AkzW3Qv3jxfEDY51j0RiPv1nKHAC31IX+cq2vWI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=jyObJhe76KjAE9jaJgGK6AC6ep5s9PbY2GJxD2caHzBRxTFxomLKCjqzFrWU4sE83
-	 hWkkNvYIw9x180FNuGdEQLZs0jOGKvN2uziW1N0i3myt40PnUoy+ve5XP6RF/V49+H
-	 Mgteex5FGiLp956sQ90UlRZ5GdSjmO3LSJqjxLbc=
+	b=V6e4OCXh8eHR5VOywa0B6O6I1vLNcc3lOYdEMiomjygAhD5D9gvZAhpPrBXCVnpsH
+	 sq9u6hoaIIVV5UnmvOftKIOar6DHzK92r37m4vzCkrvTNu4YNSSA35m5V/teGDhaTo
+	 cnX3uhn1KMcp2Lc9i/jnowhhCsh4sGE4lC4BtDIg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbgG2BXn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 21:23:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45300 "EHLO mail.kernel.org"
+        id S1730149AbgG2BZh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 21:25:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728364AbgG2BXn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Jul 2020 21:23:43 -0400
+        id S1728364AbgG2BZh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jul 2020 21:25:37 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B4B632076E;
-        Wed, 29 Jul 2020 01:23:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D38A2076E;
+        Wed, 29 Jul 2020 01:25:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595985822;
-        bh=ZEQ8acauTeo/vlplG6VpP6uu8XrzCrepryaFriXIl0k=;
+        s=default; t=1595985937;
+        bh=atZ9AkzW3Qv3jxfEDY51j0RiPv1nKHAC31IX+cq2vWI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=aTca3T4g86Fi3svMdHBkdbhLG31p0iZ2AFbMr4vpOCWD+bkgMPXF+bLxj7mk6jFTx
-         RMYlBPiQihob+CN4wF3jlLfcmHdD8Oy5gnv7zelMHgZJf7Jp+X/o+ep8UYWDuXyhLe
-         Zn2+daSsB8GNtc3pgCkZEvk88IE4ELvibBIxptnI=
+        b=ndTn7GILon9rsTm77a8cOy64DLBd0YU5FtGXMoqNzxdHulhh8sXXJeroo6GsuiSzV
+         1T7BTWInoyG7d+R/wjPRWb0Jp2NMruWbIz6O6acT0f8W518vE1/Leo/enM7pdN6svS
+         MaDktGTdVG+ALixpd6V0qqolW5ZFHFKp6xUfX5v4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200728120049.90632-7-konradybcio@gmail.com>
-References: <20200728120049.90632-1-konradybcio@gmail.com> <20200728120049.90632-7-konradybcio@gmail.com>
-Subject: Re: [PATCH 6/9] clk: qcom: gcc-msm8994: Add missing clocks, resets and GDSCs
+In-Reply-To: <20200728082857.10829-3-akshu.agrawal@amd.com>
+References: <20200728082857.10829-1-akshu.agrawal@amd.com> <20200728082857.10829-3-akshu.agrawal@amd.com>
+Subject: Re: [v2 2/4] clk: x86: Change name from ST to FCH
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To:     konradybcio@gmail.com
-Date:   Tue, 28 Jul 2020 18:23:41 -0700
-Message-ID: <159598582154.1360974.14382448860412146673@swboyd.mtv.corp.google.com>
+Cc:     rafael@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     akshu.agrawal@amd.com
+Date:   Tue, 28 Jul 2020 18:25:35 -0700
+Message-ID: <159598593596.1360974.1741408050799159465@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Konrad Dybcio (2020-07-28 05:00:45)
-> This change adds GDSCs, resets and most of the missing
-> clocks to the msm8994 GCC driver. The remaining ones
-> are of local_vote_clk and gate_clk type, which are not
-> yet supported upstream. Also reorder them to match the
-> original downstream driver.
+Quoting Akshu Agrawal (2020-07-28 01:28:54)
+> AMD SoC general pupose clk is present in new platforms with
+> minor differences. We can reuse the same clk driver for other
+> platforms. Hence, changing name from ST(SoC) to FCH(IP)
 >=20
-> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 > ---
-> I plan on converting this to use parent_data later on,
-> but I think we could merge it as-is for now..?
 
-Why not convert to parent_data now? Otherwise we can wait given that the
-merge window is near anyway.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
