@@ -2,83 +2,80 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A30C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B707C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id D2F802083E
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:05:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFNVnEBG"
+	by mail.kernel.org (Postfix) with ESMTP id 1C1FF208A9
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbgG2MFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 08:05:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37510 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726341AbgG2MFe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jul 2020 08:05:34 -0400
-Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B33C2C061794;
-        Wed, 29 Jul 2020 05:05:33 -0700 (PDT)
-Received: by mail-ej1-x62c.google.com with SMTP id o18so24045203eje.7;
-        Wed, 29 Jul 2020 05:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aXIt4Mo1PgFXWOsZfX3ouR5GPUAW+dMmhSUWqpQyOGI=;
-        b=nFNVnEBGH0cRd+8OujTalxexYKT9IDGLV+35DrquF2+E8/gVwiSbKOKAR+imJ5F34c
-         oZZ3X2mkmLZ/p9IASC7p1CcRac5xbPA47OVhZK0wtF4eE5Obpfj53A/FLXa11qn9Qqxh
-         AJdwh9yTM4A8S8TW4cPsf3CyazmLrpQYwZlqSEoLRSI+I/NI44FcKhrMC8YuZodL38dY
-         7LJWMavJQr3ofklvIKOUN69UIShyfBScLTotWlPPiti2hMjGffphQECuuo+cqZn7k+XX
-         cTsoZXezbU8yQXHfx8ZI/7z85mvHFDeFtdTZ9V1pb1wveFq6QJlkR8KvibwvAH5bLPQV
-         McbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aXIt4Mo1PgFXWOsZfX3ouR5GPUAW+dMmhSUWqpQyOGI=;
-        b=MQW8DsKn72m4SxVh+tF1Smazq1G7YU8feXfUvRyY/8O0H27iXDEmxIY4KWraTTVLjI
-         O7HT4U3q/z0CsfCokgC6zrL94TlChn23FkZuQcDviP91mEo3QW83GYdK8/8whfPRMnLw
-         RG9QwrPS8B8l94f1QuqskJ70KI29wsouYNH7puUxTJTF2Z3jsTu8HeSlHDqdpslSi+XK
-         jNSR0fKOLo1psfUXy13ZEAKB2TiFoI5BRgeGHwWkMjI0f4rXfnOSIGoUYFAOOo04S6R5
-         svs3kCZGVmBr+F8ZhI4OsphBPOUbO/eJ64vjQHgdcRcdJV1Raz7aKIXj90SdOspX2lFO
-         /1XQ==
-X-Gm-Message-State: AOAM532Pv6ob8m6Hz4CwVpRPdF1Y7g2FtmV7VQTLChcmWax3wZMScJug
-        DjD3x+OdsMqb6jmCzBL4pxiShStR1QtvMZkcaQY=
-X-Google-Smtp-Source: ABdhPJxDUZiAt21H/R28NZeZw1fPj51R6TGTfqIkYxZ8uBaYjAdiI0ZkUIeUMU9zi983V9myZE0BxnakEWXi2ot5YmA=
-X-Received: by 2002:a17:906:c143:: with SMTP id dp3mr454824ejc.504.1596024331419;
- Wed, 29 Jul 2020 05:05:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200729120057.35079-1-konradybcio@gmail.com> <20200729120057.35079-10-konradybcio@gmail.com>
-In-Reply-To: <20200729120057.35079-10-konradybcio@gmail.com>
-From:   Konrad Dybcio <konradybcio@gmail.com>
-Date:   Wed, 29 Jul 2020 14:04:55 +0200
-Message-ID: <CAMS8qEWr3ote5QmXxYDPvDNc_uhhNfPj4ehB4FQxs1HNsgtCYg@mail.gmail.com>
-Subject: Re: [PATCH v2 09/10] clk: qcom: gcc-msm8994: Fix up the driver and
- modernize it
-To:     Konrad Dybcio <konradybcio@gmail.com>
-Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
+        id S1726718AbgG2MIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 08:08:23 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:47910 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726353AbgG2MIV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 08:08:21 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F14101A1120;
+        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E454F1A1111;
+        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3FD262032B;
+        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>
+Cc:     NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH 02/17] dt-bindings: reset: imx8mp: Add audio blk_ctrl reset IDs
+Date:   Wed, 29 Jul 2020 15:07:48 +0300
+Message-Id: <1596024483-21482-3-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
+References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Wouldn't be myself if I didn't forget that
+These will be used by the imx8mp for blk-ctrl driver.
 
-Fixes: aec89f78cf01 (clk: qcom: Add support for msm8994 global clock controller)
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+---
+ include/dt-bindings/reset/imx8mp-reset.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Konrad
+diff --git a/include/dt-bindings/reset/imx8mp-reset.h b/include/dt-bindings/reset/imx8mp-reset.h
+index 2e8c910..fca0c9bff 100644
+--- a/include/dt-bindings/reset/imx8mp-reset.h
++++ b/include/dt-bindings/reset/imx8mp-reset.h
+@@ -47,4 +47,9 @@
+ 
+ #define IMX8MP_RESET_NUM			38
+ 
++#define IMX8MP_AUDIO_BLK_CTRL_EARC_RESET	0
++#define IMX8MP_AUDIO_BLK_CTRL_EARC_PHY_RESET	1
++
++#define IMX8MP_AUDIO_BLK_CTRL_RESET_NUM		2
++
+ #endif
+-- 
+2.7.4
+
