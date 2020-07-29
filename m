@@ -1,70 +1,75 @@
-Return-Path: <SRS0=wiJ0=BH=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DABAC433EB
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 19:15:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C35C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2F0ED20809
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jul 2020 19:15:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7FE2078E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 01:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1595963732;
-	bh=Qd59wd3izmmkxlJvLgZuIyOO6hBZW915rmrytim7/ms=;
+	s=default; t=1595985823;
+	bh=ZEQ8acauTeo/vlplG6VpP6uu8XrzCrepryaFriXIl0k=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=hzAlBbeTZTEI8fAf9vXecX69dWOOycFtU0oW4y8KPIN01bw1tmsfqpop4ja/N94NS
-	 Li9aobIFVilQY+yYVt1uIuL9FMa6Pyoq5lF0P3r1i51Cwr7XdyialZLD2CnGSyaLxW
-	 clXut06KrOO3LEGZ5ZnY5RlEp9dV/UCCq4x0nAgA=
+	b=jyObJhe76KjAE9jaJgGK6AC6ep5s9PbY2GJxD2caHzBRxTFxomLKCjqzFrWU4sE83
+	 hWkkNvYIw9x180FNuGdEQLZs0jOGKvN2uziW1N0i3myt40PnUoy+ve5XP6RF/V49+H
+	 Mgteex5FGiLp956sQ90UlRZ5GdSjmO3LSJqjxLbc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbgG1TPb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jul 2020 15:15:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41804 "EHLO mail.kernel.org"
+        id S1729867AbgG2BXn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jul 2020 21:23:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732631AbgG1TP2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Jul 2020 15:15:28 -0400
+        id S1728364AbgG2BXn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jul 2020 21:23:43 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC99C2065C;
-        Tue, 28 Jul 2020 19:15:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4B632076E;
+        Wed, 29 Jul 2020 01:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1595963728;
-        bh=Qd59wd3izmmkxlJvLgZuIyOO6hBZW915rmrytim7/ms=;
+        s=default; t=1595985822;
+        bh=ZEQ8acauTeo/vlplG6VpP6uu8XrzCrepryaFriXIl0k=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=dRlhxuGafyckGjq+tLKrbmQN4gTbtBZJygDY4sJJNi8TllUwi1qfodRS5NQ91S1ff
-         8+RF3F9bF8lRvEe7cg5yzijPV9vnW4v73MXEXVKYn+yNivLocm1iFN7F0nObrffWJX
-         kqp+UvTlKoTkHW2+msPAGlLTEVBKUVH91yenF/LY=
+        b=aTca3T4g86Fi3svMdHBkdbhLG31p0iZ2AFbMr4vpOCWD+bkgMPXF+bLxj7mk6jFTx
+         RMYlBPiQihob+CN4wF3jlLfcmHdD8Oy5gnv7zelMHgZJf7Jp+X/o+ep8UYWDuXyhLe
+         Zn2+daSsB8GNtc3pgCkZEvk88IE4ELvibBIxptnI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1595926999-14934-2-git-send-email-peng.fan@nxp.com>
-References: <1595926999-14934-1-git-send-email-peng.fan@nxp.com> <1595926999-14934-2-git-send-email-peng.fan@nxp.com>
-Subject: Re: [PATCH v2 2/2] clk: imx: imx8m: use devm_of_clk_add_hw_provider()
+In-Reply-To: <20200728120049.90632-7-konradybcio@gmail.com>
+References: <20200728120049.90632-1-konradybcio@gmail.com> <20200728120049.90632-7-konradybcio@gmail.com>
+Subject: Re: [PATCH 6/9] clk: qcom: gcc-msm8994: Add missing clocks, resets and GDSCs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel@pengutronix.de, linux-imx@nxp.com, Anson.Huang@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-To:     abel.vesa@nxp.com, festevam@gmail.com, peng.fan@nxp.com,
-        s.hauer@pengutronix.de, shawnguo@kernel.org
-Date:   Tue, 28 Jul 2020 12:15:26 -0700
-Message-ID: <159596372694.1360974.17715148016737584628@swboyd.mtv.corp.google.com>
+Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To:     konradybcio@gmail.com
+Date:   Tue, 28 Jul 2020 18:23:41 -0700
+Message-ID: <159598582154.1360974.14382448860412146673@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting peng.fan@nxp.com (2020-07-28 02:03:19)
-> From: Peng Fan <peng.fan@nxp.com>
+Quoting Konrad Dybcio (2020-07-28 05:00:45)
+> This change adds GDSCs, resets and most of the missing
+> clocks to the msm8994 GCC driver. The remaining ones
+> are of local_vote_clk and gate_clk type, which are not
+> yet supported upstream. Also reorder them to match the
+> original downstream driver.
 >=20
-> Use devm_of_clk_add_hw_provider() to simplify code.
-> To i.MX8MP, also add err handling.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 > ---
+> I plan on converting this to use parent_data later on,
+> but I think we could merge it as-is for now..?
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Why not convert to parent_data now? Otherwise we can wait given that the
+merge window is near anyway.
