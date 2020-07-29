@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B707C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D4DC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1FF208A9
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABA05208A9
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:08:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726718AbgG2MIX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 08:08:23 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:47910 "EHLO inva020.nxp.com"
+        id S1726909AbgG2MI0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 08:08:26 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:47952 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbgG2MIV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 08:08:21 -0400
+        id S1726846AbgG2MI0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 08:08:26 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F14101A1120;
-        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F3DCF1A1111;
+        Wed, 29 Jul 2020 14:08:24 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E454F1A1111;
-        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E713B1A1128;
+        Wed, 29 Jul 2020 14:08:24 +0200 (CEST)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3FD262032B;
-        Wed, 29 Jul 2020 14:08:19 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 413182032B;
+        Wed, 29 Jul 2020 14:08:24 +0200 (CEST)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -43,9 +43,9 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 02/17] dt-bindings: reset: imx8mp: Add audio blk_ctrl reset IDs
-Date:   Wed, 29 Jul 2020 15:07:48 +0300
-Message-Id: <1596024483-21482-3-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH 09/17] arm64: dts: Remove imx-hdmimix-reset header file
+Date:   Wed, 29 Jul 2020 15:07:55 +0300
+Message-Id: <1596024483-21482-10-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
 References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
@@ -55,27 +55,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These will be used by the imx8mp for blk-ctrl driver.
+The hdmi BLK_CTRL ids have been moved to imx8mp-reset.h
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- include/dt-bindings/reset/imx8mp-reset.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mp.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/reset/imx8mp-reset.h b/include/dt-bindings/reset/imx8mp-reset.h
-index 2e8c910..fca0c9bff 100644
---- a/include/dt-bindings/reset/imx8mp-reset.h
-+++ b/include/dt-bindings/reset/imx8mp-reset.h
-@@ -47,4 +47,9 @@
+diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+index 9de2aa1..daa1769 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+@@ -4,6 +4,7 @@
+  */
  
- #define IMX8MP_RESET_NUM			38
- 
-+#define IMX8MP_AUDIO_BLK_CTRL_EARC_RESET	0
-+#define IMX8MP_AUDIO_BLK_CTRL_EARC_PHY_RESET	1
-+
-+#define IMX8MP_AUDIO_BLK_CTRL_RESET_NUM		2
-+
- #endif
+ #include <dt-bindings/clock/imx8mp-clock.h>
++#include <dt-bindings/reset/imx8mp-reset.h>
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
 -- 
 2.7.4
 
