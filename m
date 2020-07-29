@@ -8,56 +8,56 @@ X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67655C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:01:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EC9C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 485E0208A9
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:01:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22A1D2083E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:01:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b9TFoTsy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ii8Ctz3D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbgG2MBQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 08:01:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36846 "EHLO
+        id S1726958AbgG2MBV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 08:01:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbgG2MBP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jul 2020 08:01:15 -0400
-Received: from mail-wm1-x342.google.com (mail-wm1-x342.google.com [IPv6:2a00:1450:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51DBFC061794;
-        Wed, 29 Jul 2020 05:01:15 -0700 (PDT)
-Received: by mail-wm1-x342.google.com with SMTP id g8so2484297wmk.3;
-        Wed, 29 Jul 2020 05:01:15 -0700 (PDT)
+        with ESMTP id S1726951AbgG2MBU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jul 2020 08:01:20 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D177C061794;
+        Wed, 29 Jul 2020 05:01:20 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id f1so20825878wro.2;
+        Wed, 29 Jul 2020 05:01:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=I2q93FVdT16iSOi/3vPrG4ZH4MZNlbJkhzRjHUU4qvI=;
-        b=b9TFoTsy5WXyrr/4GhmwT96zN48h+XJG6F8OrMNjFWNeMe/HOvVWCFkHeSkj/kIQl2
-         Pr/dWwnILpoINmDTSdN02ewi3UNuDF1s0VZqe4zNVb3WjXw4Hw+sl2ewSn26HpYmVRmB
-         M0tZJDdsud0237DTVTelevbP7UWcqpJ2vTi2GjJ+ggFQVdp3WZwuJXxPj9FS70VnLl4G
-         2ajr1a4tyIe85/K93HSyC1jhw95rL/8Y7WAbW23ZEN3+/fCBXGkUYV4SXa7GYJz35ze3
-         tafHHWNdQTHGwsR9iG8EkEbY8xXugd40+0AgcLeUIxj3FYwo5ixyRkfIn0GF4J9HSc8b
-         itvQ==
+        bh=/lXxR/NY5u0DlFOjxBacWTF69g+Zu3unhXyQAhYQnSE=;
+        b=Ii8Ctz3D1uiaERNJl48OkBtwTsKK2ZgNHo2JVCi0umqh5bVDAWfQnOGPkwcZ2P973I
+         0yKCKXDQMyUc74/kyskmDD/DDtzue58n914mjexDJIivrZyiJlimdxt/OJIHqrIv6mwA
+         rHA3uhRVeX/X358AkqMxCVTm6ZfbVcGn4loRE53biVZ2iY6dazW1LKfbtCtrAIPrXT0v
+         AHkOarc6wpIX0p2UlWoaweASjy6au/fKTH6rn58VO6KFfgtKfjmATOX86d0arEkw6u+h
+         XAWL41doIVAg8QETx34xKQvYPrQCot28RRfIY2J7BKrnfyjsC1Sh8TbodjKcgdYZOZPq
+         Ltqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=I2q93FVdT16iSOi/3vPrG4ZH4MZNlbJkhzRjHUU4qvI=;
-        b=XzaSoENyLUm1hhUlTBkcN1/O/dLL+2+x3IWSM/e9ygDxwHo5XbxgW0vMKmvdSpy8Hs
-         5kAcKf040o5LP4iIpwNDEIgQpOUF1zE4fDg/b/H5RKAwCn00yjjLEhK21WIUhdv1/tI0
-         zAmKWK6QLO9fwj81Bcdiz4LWc+c5GYU4nvGTtsZVhFCWbX1wJuR4LChl4Z0TAXhPTo11
-         +Xkih+3lB1kENqORWfU46WR9bvhbGisqg+x2TsKEsxN7TexR0nZEw/cR1nkO7w7vI1aI
-         Y+1IyvZFodflWzJGIDTY6IgM+8ExFgydixP1q33DBS7UbcqG+rq1nyGVzvglfba1nL/M
-         uOSg==
-X-Gm-Message-State: AOAM530uieB5q9S2oTSNTpoQr7peZmKkI+1JmAbt821TIuW53Ew3cJsB
-        F2iy1nh1SyCHIONXOQH17xM=
-X-Google-Smtp-Source: ABdhPJyfxcR9YmQV9N7S17bl7YsXVxAlaWJ/ZgsO97ePfr+8SUvMXE69Or24N6Y3lWOHMERiaRv8hg==
-X-Received: by 2002:a05:600c:202:: with SMTP id 2mr8311399wmi.139.1596024073983;
-        Wed, 29 Jul 2020 05:01:13 -0700 (PDT)
+        bh=/lXxR/NY5u0DlFOjxBacWTF69g+Zu3unhXyQAhYQnSE=;
+        b=sN76ac2729+S4L9Bo7EoMLjcXnjU7JP+SbjGEdJq/Pk8DpBpxaNkxNePmcRgwT+hFU
+         C+IaCFtGp2vIXaBFXvT1zO2STqsPw5PBNF3l0daEmBC4DcDAGFpklUYSRQMl/ljVyAE1
+         +nPl2+RiDpEwmxo9Iar66txrMJIK4XLxD85Pr98g6s8jK03Q+fOAnMao1C1A7UgyqpTe
+         iSW/lLtbBa7aaPa9USDUmFGB9A5hYntAL9as4IN0QOC+4J8nE77zrq0wccMvC8SW16Eh
+         RQMBpg94wLHqv6MlQldnzWcJwicjXgGPW/o7b6A+z5pqJzdLQ2dktgaTni88hmEr6u04
+         K2EA==
+X-Gm-Message-State: AOAM532kmMIA8u0iZ8OewLtpDMDi7TsSlnROyeQMqjPUc63pgLWqo4Ld
+        IggbNzXNTEwQ5+yf3KzPwCM=
+X-Google-Smtp-Source: ABdhPJxaKldZOn68WQ/doouvGxrGEYEWjbgALmqtHMS66sqTK2JQ8XMWs+RYhCzLTZ0pkwMmX0ptvw==
+X-Received: by 2002:a5d:54ca:: with SMTP id x10mr21919524wrv.36.1596024079094;
+        Wed, 29 Jul 2020 05:01:19 -0700 (PDT)
 Received: from localhost.localdomain (abad207.neoplus.adsl.tpnet.pl. [83.6.167.207])
-        by smtp.googlemail.com with ESMTPSA id l67sm5426000wml.13.2020.07.29.05.01.12
+        by smtp.googlemail.com with ESMTPSA id l67sm5426000wml.13.2020.07.29.05.01.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jul 2020 05:01:13 -0700 (PDT)
+        Wed, 29 Jul 2020 05:01:18 -0700 (PDT)
 From:   Konrad Dybcio <konradybcio@gmail.com>
 To:     konradybcio@gmail.com
 Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
@@ -67,9 +67,9 @@ Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH v2 05/10] arm64: dts: qcom: msm8992: Add USB support
-Date:   Wed, 29 Jul 2020 14:00:51 +0200
-Message-Id: <20200729120057.35079-6-konradybcio@gmail.com>
+Subject: [PATCH v2 07/10] arm64: dts: qcom: msm8994: Add SDHCI2 node
+Date:   Wed, 29 Jul 2020 14:00:53 +0200
+Message-Id: <20200729120057.35079-8-konradybcio@gmail.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20200729120057.35079-1-konradybcio@gmail.com>
 References: <20200729120057.35079-1-konradybcio@gmail.com>
@@ -80,56 +80,89 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a very basic dwc3 configuration (no PHYs yet),
-but it works.
+Add SDHCI2 to enable use of uSD cards on msm8994.
 
 Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/msm8992.dtsi | 31 +++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm64/boot/dts/qcom/msm8994.dtsi | 58 +++++++++++++++++++++++++++
+ 1 file changed, 58 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8992.dtsi b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-index c7dc81311f6a..c9502fcf5d70 100644
---- a/arch/arm64/boot/dts/qcom/msm8992.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8992.dtsi
-@@ -242,6 +242,37 @@ frame@f9028000 {
- 			};
+diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+index 69c99a4cd817..58fc8b0321c3 100644
+--- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
+@@ -336,6 +336,28 @@ sdhc1: sdhci@f9824900 {
+ 			status = "disabled";
  		};
  
-+		usb3: usb@f92f8800 {
-+			compatible = "qcom,msm8996-dwc3", "qcom,dwc3";
-+			reg = <0xf92f8800 0x400>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
++		sdhc2: sdhci@f98a4900 {
++			compatible = "qcom,sdhci-msm-v4";
++			reg = <0xf98a4900 0x11c>, <0xf98a4000 0x800>;
++			reg-names = "hc_mem", "core_mem";
 +
-+			clocks = <&gcc GCC_USB30_MASTER_CLK>,
-+				 <&gcc GCC_SYS_NOC_USB3_AXI_CLK>,
-+				 <&gcc GCC_USB30_SLEEP_CLK>,
-+				 <&gcc GCC_USB30_MOCK_UTMI_CLK>;
-+			clock-names = "core", "iface", "sleep", "mock_utmi", "ref", "xo";
++			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
++				<GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "hc_irq", "pwr_irq";
 +
-+			assigned-clocks = <&gcc GCC_USB30_MOCK_UTMI_CLK>,
-+					  <&gcc GCC_USB30_MASTER_CLK>;
-+			assigned-clock-rates = <19200000>, <120000000>;
++			clocks = <&gcc GCC_SDCC2_APPS_CLK>,
++				<&gcc GCC_SDCC2_AHB_CLK>,
++				<&xo_board>;
++			clock-names = "core", "iface", "xo";
 +
-+			power-domains = <&gcc USB30_GDSC>;
-+			qcom,select-utmi-as-pipe-clk;
++			pinctrl-names = "default", "sleep";
++			pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on>;
++			pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off>;
 +
-+			dwc3@f9200000 {
-+				compatible = "snps,dwc3";
-+				reg = <0xf9200000 0xcc00>;
-+				interrupts = <0 131 IRQ_TYPE_LEVEL_HIGH>;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_enblslpm_quirk;
-+				maximum-speed = "high-speed";
-+				dr_mode = "peripheral";
-+			};
++			bus-width = <4>;
++			status = "disabled";
 +		};
 +
- 		sdhc_1: sdhci@f9824900 {
- 			compatible = "qcom,sdhci-msm-v4";
- 			reg = <0xf9824900 0x1a0>, <0xf9824000 0x800>;
+ 		blsp1_dma: dma@f9904000 {
+ 			compatible = "qcom,bam-v1.7.0";
+ 			reg = <0xf9904000 0x19000>;
+@@ -714,6 +736,42 @@ sdc1_rclk_off: rclk-off {
+ 				pins = "sdc1_rclk";
+ 				bias-pull-down;
+ 			};
++
++			sdc2_clk_on: sdc2-clk-on {
++				pins = "sdc2_clk";
++				bias-disable;
++				drive-strength = <10>;
++			};
++
++			sdc2_clk_off: sdc2-clk-off {
++				pins = "sdc2_clk";
++				bias-disable;
++				drive-strength = <2>;
++			};
++
++			sdc2_cmd_on: sdc2-cmd-on {
++				pins = "sdc2_cmd";
++				bias-pull-up;
++				drive-strength = <10>;
++			};
++
++			sdc2_cmd_off: sdc2-cmd-off {
++				pins = "sdc2_cmd";
++				bias-pull-up;
++				drive-strength = <2>;
++			};
++
++			sdc2_data_on: sdc2-data-on {
++				pins = "sdc2_data";
++				bias-pull-up;
++				drive-strength = <10>;
++			};
++
++			sdc2_data_off: sdc2-data-off {
++				pins = "sdc2_data";
++				bias-pull-up;
++				drive-strength = <2>;
++			};
+ 		};
+ 	};
+ 
 -- 
 2.27.0
 
