@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 157D3C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F61C433E3
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F394C20FC3
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E762522B42
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbgG2OxR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 10:53:17 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59140 "EHLO inva020.nxp.com"
+        id S1726832AbgG2OxG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 10:53:06 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:58618 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbgG2OxR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 10:53:17 -0400
+        id S1726353AbgG2OxG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 10:53:06 -0400
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 636D31A0E09;
-        Wed, 29 Jul 2020 16:53:15 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D0D6D1A0005;
+        Wed, 29 Jul 2020 16:53:04 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A00951A0195;
-        Wed, 29 Jul 2020 16:53:08 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2DD011A0ECA;
+        Wed, 29 Jul 2020 16:52:58 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6036B4031E;
-        Wed, 29 Jul 2020 16:52:54 +0200 (CEST)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CD44C40302;
+        Wed, 29 Jul 2020 16:52:49 +0200 (CEST)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
@@ -36,9 +36,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         yuehaibing@huawei.com, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH V7 5/6] clk: imx8m: Support module build
-Date:   Wed, 29 Jul 2020 22:48:36 +0800
-Message-Id: <1596034117-24246-6-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V7 2/6] clk: composite: Export clk_hw_register_composite()
+Date:   Wed, 29 Jul 2020 22:48:33 +0800
+Message-Id: <1596034117-24246-3-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
 References: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
@@ -48,112 +48,31 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Change configuration to "tristate", add module author, description
-and license to support building i.MX8M SoCs clock driver as module.
+Export clk_hw_register_composite() to support user built as module.
+
+ERROR: modpost: "clk_hw_register_composite" [drivers/clk/imx/mxc-clk.ko]
+undefined!
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
 Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 ---
 no change.
 ---
- drivers/clk/imx/Kconfig      | 16 ++++++++--------
- drivers/clk/imx/clk-imx8mm.c |  4 ++++
- drivers/clk/imx/clk-imx8mn.c |  4 ++++
- drivers/clk/imx/clk-imx8mp.c |  4 ++++
- drivers/clk/imx/clk-imx8mq.c |  4 ++++
- 5 files changed, 24 insertions(+), 8 deletions(-)
+ drivers/clk/clk-composite.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-index e96bd38..3897712 100644
---- a/drivers/clk/imx/Kconfig
-+++ b/drivers/clk/imx/Kconfig
-@@ -69,29 +69,29 @@ config CLK_VF610
- 	select MXC_CLK
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index 7376f57..2ddb54f 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -328,6 +328,7 @@ struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
+ 					   rate_hw, rate_ops, gate_hw,
+ 					   gate_ops, flags);
+ }
++EXPORT_SYMBOL_GPL(clk_hw_register_composite);
  
- config CLK_IMX8MM
--	bool "IMX8MM CCM Clock Driver"
--	depends on ARCH_MXC
-+	tristate "IMX8MM CCM Clock Driver"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MM CCM Clock Driver
- 
- config CLK_IMX8MN
--	bool "IMX8MN CCM Clock Driver"
--	depends on ARCH_MXC
-+	tristate "IMX8MN CCM Clock Driver"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MN CCM Clock Driver
- 
- config CLK_IMX8MP
--	bool "IMX8MP CCM Clock Driver"
--	depends on ARCH_MXC
-+	tristate "IMX8MP CCM Clock Driver"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MP CCM Clock Driver
- 
- config CLK_IMX8MQ
--	bool "IMX8MQ CCM Clock Driver"
--	depends on ARCH_MXC
-+	tristate "IMX8MQ CCM Clock Driver"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select MXC_CLK
- 	help
- 	    Build the driver for i.MX8MQ CCM Clock Driver
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index b793264..0de0be0 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -657,3 +657,7 @@ static struct platform_driver imx8mm_clk_driver = {
- 	},
- };
- module_platform_driver(imx8mm_clk_driver);
-+
-+MODULE_AUTHOR("Bai Ping <ping.bai@nxp.com>");
-+MODULE_DESCRIPTION("NXP i.MX8MM clock driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 213cc37..e984de5 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -608,3 +608,7 @@ static struct platform_driver imx8mn_clk_driver = {
- 	},
- };
- module_platform_driver(imx8mn_clk_driver);
-+
-+MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-+MODULE_DESCRIPTION("NXP i.MX8MN clock driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-index ca74771..f3cedf2 100644
---- a/drivers/clk/imx/clk-imx8mp.c
-+++ b/drivers/clk/imx/clk-imx8mp.c
-@@ -773,3 +773,7 @@ static struct platform_driver imx8mp_clk_driver = {
- 	},
- };
- module_platform_driver(imx8mp_clk_driver);
-+
-+MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-+MODULE_DESCRIPTION("NXP i.MX8MP clock driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index a64aace..a06cc21 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -643,3 +643,7 @@ static struct platform_driver imx8mq_clk_driver = {
- 	},
- };
- module_platform_driver(imx8mq_clk_driver);
-+
-+MODULE_AUTHOR("Abel Vesa <abel.vesa@nxp.com>");
-+MODULE_DESCRIPTION("NXP i.MX8MQ clock driver");
-+MODULE_LICENSE("GPL v2");
+ struct clk_hw *clk_hw_register_composite_pdata(struct device *dev,
+ 			const char *name,
 -- 
 2.7.4
 
