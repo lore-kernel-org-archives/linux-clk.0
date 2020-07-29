@@ -2,31 +2,33 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD8FFC433E3
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A73C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 976B422B49
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 334BA2065E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:16:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726480AbgG2MIV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 08:08:21 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:37722 "EHLO inva021.nxp.com"
+        id S1726816AbgG2MQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 08:16:50 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45278 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726341AbgG2MIU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 08:08:20 -0400
+        id S1726054AbgG2MQu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 08:16:50 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A9FF200FEA;
-        Wed, 29 Jul 2020 14:08:18 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4FC2D200FAF;
+        Wed, 29 Jul 2020 14:16:48 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A99A200FAB;
-        Wed, 29 Jul 2020 14:08:18 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D268D2032B;
-        Wed, 29 Jul 2020 14:08:17 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 428E6200FAB;
+        Wed, 29 Jul 2020 14:16:48 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 299A42032B;
+        Wed, 29 Jul 2020 14:16:48 +0200 (CEST)
+Date:   Wed, 29 Jul 2020 15:16:47 +0300
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -40,60 +42,66 @@ To:     Mike Turquette <mturquette@baylibre.com>,
 Cc:     NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH 00/17] Add BLK_CTRL support for i.MX8MP
-Date:   Wed, 29 Jul 2020 15:07:46 +0300
-Message-Id: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 15/17] arm64: dts: imx8mp: Add audio_blk_ctrl node
+Message-ID: <20200729121647.jpnjlwovq5yeh5ld@fsr-ub1664-175>
+References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
+ <1596024483-21482-16-git-send-email-abel.vesa@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1596024483-21482-16-git-send-email-abel.vesa@nxp.com>
+User-Agent: NeoMutt/20180622
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The BLK_CTRL according to HW design is basically the wrapper of the entire
-function specific group of IPs and holds GPRs that usually cannot be placed
-into one specific IP from that group. Some of these GPRs are used to control
-some clocks, other some resets, others some very specific function that does
-not fit into clocks or resets. Since the clocks are registered using the i.MX
-clock subsystem API, the driver is placed into the clock subsystem, but it
-also registers the resets. For the other functionalities that other GPRs might
-have, the syscon is used.
+On 20-07-29 15:08:01, Abel Vesa wrote:
+> Some of the features of the audio_ctrl will be used by some
+> different drivers in a way those drivers will know best, so adding the
+> syscon compatible we allow those to do just that. Only the resets
+> and the clocks are registered bit the clk-blk-ctrl driver.
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> index daa1769..b985875 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> @@ -736,6 +736,23 @@
+>  			};
+>  		};
+>  
+> +		aips5: bus@30c00000 {
+> +			compatible = "fsl,aips-bus", "simple-bus";
+> +			reg = <0x30c00000 0x400000>;
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges;
+> +
+> +			audio_blk_ctrl: audio-blk-ctrl@30e20000 {
+> +				compatible = "fsl,imx8mp-audio-blk-ctrl", "syscon";
+> +				reg = <0x30e20000 0x50C>;
+> +				power-domains = <&audiomix_pd>;
 
-Abel Vesa (17):
-  dt-bindings: clocks: imx8mp: Rename audiomix ids clocks to
-    audio_blk_ctrl
-  dt-bindings: reset: imx8mp: Add audio blk_ctrl reset IDs
-  dt-bindings: clock: imx8mp: Add ids for the audio shared gate
-  dt-bindings: clock: imx8mp: Add media blk_ctrl clock IDs
-  dt-bindings: reset: imx8mp: Add media blk_ctrl reset IDs
-  dt-bindings: clock: imx8mp: Add hdmi blk_ctrl clock IDs
-  dt-bindings: reset: imx8mp: Add hdmi blk_ctrl reset IDs
-  clk: imx8mp: Add audio shared gate
-  arm64: dts: Remove imx-hdmimix-reset header file
-  Documentation: bindings: clk: Add bindings for i.MX BLK_CTRL
-  clk: imx: Add blk_ctrl combo driver
-  clk: imx8mp: Add audio blk_ctrl clocks and resets
-  clk: imx8mp: Add hdmi blk_ctrl clocks and resets
-  clk: imx8mp: Add media blk_ctrl clocks and resets
-  arm64: dts: imx8mp: Add audio_blk_ctrl node
-  arm64: dts: imx8mp: Add media_blk_ctrl node
-  arm64: dts: imx8mp: Add hdmi_blk_ctrl node
+I forget to remote the power-domains property.
 
- .../bindings/clock/fsl,imx-blk-ctrl.yaml           |  55 ++++
- arch/arm64/boot/dts/freescale/imx8mp.dtsi          |  44 +++
- drivers/clk/imx/Makefile                           |   2 +-
- drivers/clk/imx/clk-blk-ctrl.c                     | 330 +++++++++++++++++++++
- drivers/clk/imx/clk-blk-ctrl.h                     |  81 +++++
- drivers/clk/imx/clk-imx8mp.c                       | 281 +++++++++++++++++-
- include/dt-bindings/clock/imx8mp-clock.h           | 200 +++++++++----
- include/dt-bindings/reset/imx8mp-reset.h           |  45 +++
- 8 files changed, 975 insertions(+), 63 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
- create mode 100644 drivers/clk/imx/clk-blk-ctrl.c
- create mode 100644 drivers/clk/imx/clk-blk-ctrl.h
+Will remove in the next version.
 
--- 
-2.7.4
-
+> +
+> +				#clock-cells = <1>;
+> +				#reset-cells = <1>;
+> +			};
+> +		};
+> +
+>  		gic: interrupt-controller@38800000 {
+>  			compatible = "arm,gic-v3";
+>  			reg = <0x38800000 0x10000>,
+> -- 
+> 2.7.4
+> 
