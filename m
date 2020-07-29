@@ -2,131 +2,117 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC1CC433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 07:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC3FC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 08:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 367B82084D
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 07:47:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="UhjjNjOt"
+	by mail.kernel.org (Postfix) with ESMTP id 5514221744
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 08:04:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbgG2HrX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 03:47:23 -0400
-Received: from mail29.static.mailgun.info ([104.130.122.29]:41287 "EHLO
-        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726548AbgG2HrW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jul 2020 03:47:22 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1596008842; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=N0ndv5KN6Xw5hthZa7yh5iBB7EO9NGXqeet5mdr0U8Q=; b=UhjjNjOt/zBt1k8ZS2qY8OvHQZIHbA/28sRG5p/x05qQpAqCEZJEmyYW/KNoL0cLIjkQ/r3C
- qS+80KC1dTbHCj3s4Ms/usFAMk0Z/qzReDhEDiljYqGANE7aapTCl1so8AcK1kySoRapE0FI
- VNSrFHL4JyK31DRiv8Z9WO9UcOo=
-X-Mailgun-Sending-Ip: 104.130.122.29
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n01.prod.us-west-2.postgun.com with SMTP id
- 5f212979aa44a6db05e2a561 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Wed, 29 Jul 2020 07:47:05
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 0D356C43395; Wed, 29 Jul 2020 07:47:05 +0000 (UTC)
-Received: from [192.168.0.101] (unknown [49.204.127.128])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sivaprak)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5B348C433C6;
-        Wed, 29 Jul 2020 07:46:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5B348C433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sivaprak@codeaurora.org
-Subject: Re: [PATCH 6/9] phy: qcom-qmp: Add compatible for ipq8074 pcie gen3
- qmp phy
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org, bhelgaas@google.com,
-        robh+dt@kernel.org, kishon@ti.com, mturquette@baylibre.com,
-        sboyd@kernel.org, svarbanov@mm-sol.com, lorenzo.pieralisi@arm.com,
-        p.zabel@pengutronix.de, mgautam@codeaurora.org,
-        smuthayy@codeaurora.org, varada@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org,
-        Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-References: <1593940680-2363-1-git-send-email-sivaprak@codeaurora.org>
- <1593940680-2363-7-git-send-email-sivaprak@codeaurora.org>
- <20200713060425.GC34333@vkoul-mobl>
-From:   Sivaprakash Murugesan <sivaprak@codeaurora.org>
-Message-ID: <226ed531-f644-f09a-35ae-25abcf502990@codeaurora.org>
-Date:   Wed, 29 Jul 2020 13:16:53 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.10.0
-MIME-Version: 1.0
-In-Reply-To: <20200713060425.GC34333@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        id S1726797AbgG2IEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 04:04:42 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:34338 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726548AbgG2IEl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 04:04:41 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 885191A0F39;
+        Wed, 29 Jul 2020 10:04:39 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C8FD31A0F3E;
+        Wed, 29 Jul 2020 10:04:35 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DB2BF402DF;
+        Wed, 29 Jul 2020 10:04:30 +0200 (CEST)
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+        mturquette@baylibre.com, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
+Date:   Wed, 29 Jul 2020 16:00:07 +0800
+Message-Id: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Vinod,
+This patch series is a preparation for the MX8 Architecture improvement.
+As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+of a couple of SS(Subsystems) while most of them within the same SS
+can be shared. e.g. Clocks, Devices and etc.
 
-On 7/13/2020 11:34 AM, Vinod Koul wrote:
-> On 05-07-20, 14:47, Sivaprakash Murugesan wrote:
->> ipq8074 has two pcie ports, one gen2 and one gen3 ports. with phy
->> support already available for gen2 pcie ports add support for pcie gen3
->> port phy.
->>
->> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
->> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h | 137 ++++++++++++++++++++++++
->>   drivers/phy/qualcomm/phy-qcom-qmp.c       | 172 +++++++++++++++++++++++++++++-
->>   2 files changed, 307 insertions(+), 2 deletions(-)
->>   create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h
->>
->> diff --git a/drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h b/drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h
->> new file mode 100644
->> index 000000000000..bb567673d9b5
->> --- /dev/null
->> +++ b/drivers/phy/qualcomm/phy-qcom-pcie3-qmp.h
->> @@ -0,0 +1,137 @@
->> +/* SPDX-License-Identifier: GPL-2.0*
-> Trailing * at the end, it would make sense to split the spdx and
-> copyright parts to two single lines
-ok
->
->> @@ -2550,8 +2707,16 @@ static int phy_pipe_clk_register(struct qcom_qmp *qmp, struct device_node *np)
->>   
->>   	init.ops = &clk_fixed_rate_ops;
->>   
->> -	/* controllers using QMP phys use 125MHz pipe clock interface */
->> -	fixed->fixed_rate = 125000000;
->> +	/*
->> +	 * controllers using QMP phys use 125MHz pipe clock interface unless
->> +	 * other frequency is specified in dts
->> +	 */
->> +	ret = of_property_read_u32(np, "clock-output-rate",
->> +				   (u32 *)&fixed->fixed_rate);
-> is this cast required?
+However, current clock binding is using SW IDs for device tree to use
+which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+different SoCs.
 
-without this getting the following error.
+This patch series aims to introduce a new binding which is more close to
+hardware and platform independent and can makes us write a more general
+drivers for different SCU based SoCs.
 
-./include/linux/of.h:1209:19: note: expected 'u32 * {aka unsigned int 
-*}' but argument is of type 'long unsigned int *'
+Another important thing is that on MX8, each Clock resource is associated
+with a power domain. So we have to attach that clock device to the power
+domain in order to make it work properly. Further more, the clock state
+will be lost when its power domain is completely off during suspend/resume,
+so we also introduce the clock state save&restore mechanism.
 
->
->> +	if (ret)
->> +		fixed->fixed_rate = 125000000;
->> +
->> +	dev_info(qmp->dev, "fixed freq %lu\n", fixed->fixed_rate);
-> debug?
-will remove in next patch.
+It's based on latest shanw/for-next branch.
+
+The top commit is:
+3c1a41dab7b8 Merge branch 'imx/defconfig' into for-next
+
+ChangeLog:
+v6->v7:
+ * addressed all comments from Stephen
+ * rebased to latest shawn/for-next
+v5->v6:
+ * add scu clk unregister if add provider failed
+v4->v5:
+ * Address all comments from Stephen
+v3->v4:
+ * use clk-indices for LPCG to fetch each clks offset from dt
+v2->v3:
+ * change scu clk into two cells binding
+ * add clk pm patches to ease the understand of the changes
+v1->v2:
+ * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
+   Documentation/devicetree/bindings/arm/arm,scpi.txt
+ * Add required power domain property
+ * Dropped PATCH 3&4 first, will send the updated version accordingly
+   after the binding is finally determined,
+
+Dong Aisheng (11):
+  dt-bindings: firmware: imx-scu: new binding to parse clocks from
+    device tree
+  dt-bindings: clock: imx-lpcg: add support to parse clocks from device
+    tree
+  clk: imx: scu: add two cells binding support
+  clk: imx: scu: bypass cpu power domains
+  clk: imx: scu: allow scu clk to take device pointer
+  clk: imx: scu: add runtime pm support
+  clk: imx: scu: add suspend/resume support
+  clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
+  clk: imx: lpcg: allow lpcg clk to take device pointer
+  clk: imx: clk-imx8qxp-lpcg: add runtime pm support
+  clk: imx: lpcg: add suspend/resume support
+
+ .../bindings/arm/freescale/fsl,scu.txt        |  12 +-
+ .../bindings/clock/imx8qxp-lpcg.yaml          |  79 ++++--
+ drivers/clk/imx/clk-imx8qxp-lpcg.c            | 139 +++++++++++
+ drivers/clk/imx/clk-imx8qxp.c                 | 136 +++++-----
+ drivers/clk/imx/clk-lpcg-scu.c                |  53 +++-
+ drivers/clk/imx/clk-scu.c                     | 234 +++++++++++++++++-
+ drivers/clk/imx/clk-scu.h                     |  56 ++++-
+ include/dt-bindings/clock/imx8-lpcg.h         |  14 ++
+ 8 files changed, 620 insertions(+), 103 deletions(-)
+ create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
+
+-- 
+2.23.0
+
