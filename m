@@ -2,47 +2,48 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE67C433E0
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 19:47:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C04C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 19:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCE0D2082E
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 19:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 663AB2082E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 19:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596052048;
-	bh=/shdwx/9lgN18/zovI7T6WrW2TM4iev+RPl6FvNe4z4=;
+	s=default; t=1596052186;
+	bh=kgm0JlvFgRf7tVCIEqwijHYXXH+scApjMY/q/UXbwHg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=gHixzyJu5qMwWor7yTL7qs+Si2xpIloZY8YnFF9CKab9JBYnICk7sR739E9aHytX1
-	 KwfKGqZlx03sPFmS7bejyZFq23R/v3K0l8tV40DmKkJ0kfrWmUSjgF+LuL0l2ZoVlR
-	 F1dYdWxLp8PS5yJm2B63F5pEOdCoC+HIqX9zi120=
+	b=hSzDMc0f5Py54h5ORpthtUZHknauQ9LzsXBvv5k8+nMy0bOKZnGDnRFxy0sRRcmTk
+	 XaiSIbXeN50Bhq4zv3l13FhAJZTFI4Q8oiMTiio7XI7CezEFFmOCDrl3MNPyFo5KJL
+	 iuNey4EkSuhV1BwPbDmWDWVMEWmCrg/nk7BmjyRQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbgG2Tr2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 15:47:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37190 "EHLO mail.kernel.org"
+        id S1726509AbgG2Ttm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 15:49:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbgG2Tr2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 15:47:28 -0400
+        id S1726476AbgG2Ttm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 15:49:42 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E20A920809;
-        Wed, 29 Jul 2020 19:47:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B00820809;
+        Wed, 29 Jul 2020 19:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596052048;
-        bh=/shdwx/9lgN18/zovI7T6WrW2TM4iev+RPl6FvNe4z4=;
+        s=default; t=1596052182;
+        bh=kgm0JlvFgRf7tVCIEqwijHYXXH+scApjMY/q/UXbwHg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=juCXyfcA6CRr2zc33lfDcBkJGMXCtBUDey0peljdsXCTHLDUABbwsfotvw0frOAJT
-         lMKXbWSpJVRvc12f3gDoWxvoys5R1n4EKT8kxiMwfjqkN+hTgMAQi3H6kiKaxnCt/H
-         My7hhJvp0mxXvZazJzVmpq+Wj/y+VUxpQ6KL2Azc=
+        b=bAgD7mH9IAP9wh6bHX2puCDRtHu4SZ+vLCgLGn6boejt+GUQv8jpXa6OAFexOn2wQ
+         O+MCFzQu4uBXjnJECpnyjo1MsbpC+LA4W5Q9GHiSlZHma32GLGXD9q2CUP71KWWzJD
+         7d0h4UrcyHNb8/yqJUIAEDvNHbhGRS0Scv3mv4CY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1596024483-21482-2-git-send-email-abel.vesa@nxp.com>
-References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com> <1596024483-21482-2-git-send-email-abel.vesa@nxp.com>
-Subject: Re: [PATCH 01/17] dt-bindings: clocks: imx8mp: Rename audiomix ids clocks to audio_blk_ctrl
+In-Reply-To: <1596024483-21482-11-git-send-email-abel.vesa@nxp.com>
+References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com> <1596024483-21482-11-git-send-email-abel.vesa@nxp.com>
+Subject: Re: [PATCH 10/17] Documentation: bindings: clk: Add bindings for i.MX BLK_CTRL
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org,
@@ -59,17 +60,39 @@ To:     Abel Vesa <abel.vesa@nxp.com>, Anson Huang <anson.huang@nxp.com>,
         Rob Herring <robh@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
         Shawn Guo <shawnguo@kernel.org>
-Date:   Wed, 29 Jul 2020 12:47:26 -0700
-Message-ID: <159605204677.1360974.9090468980266949950@swboyd.mtv.corp.google.com>
+Date:   Wed, 29 Jul 2020 12:49:41 -0700
+Message-ID: <159605218106.1360974.17212937588367161697@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2020-07-29 05:07:47)
-> In the reference manual the actual name is Audio BLK_CTRL.
-> Lets make it more obvious here by renaming from audiomix to audio_blk_ctr=
-l.
+Quoting Abel Vesa (2020-07-29 05:07:56)
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yam=
+l b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
+> new file mode 100644
+> index 00000000..036d3d3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/fsl,imx-blk-ctrl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+[...]
+> +
+> +examples:
+> +  - |
+> +    audio-blk-ctrl: blk-ctrl@30e20000 {
 
-And this is safe because there aren't any users of the defines?
+clock-controller@30e20000 {
+
+> +       compatible =3D "fsl,imx8mp-blk-ctrl", "syscon";
+> +       reg =3D <0x30e20000 0x10000>;
+> +       power-domains =3D <&audiomix_pd>;
+> +
+> +       #clock-cells =3D <1>;
+> +       #reset-cells =3D <1>;
+> +    };
