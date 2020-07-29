@@ -2,40 +2,44 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.5 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-10.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 258E9C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD828C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F332E2083E
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2FDB20829
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 12:46:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbgG2MRl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 08:17:41 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:56038 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726054AbgG2MRl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 08:17:41 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EBC0D1A112B;
-        Wed, 29 Jul 2020 14:17:38 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DF5681A112A;
-        Wed, 29 Jul 2020 14:17:38 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CA5732032B;
-        Wed, 29 Jul 2020 14:17:38 +0200 (CEST)
-Date:   Wed, 29 Jul 2020 15:17:38 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
+        id S1726353AbgG2Mqm convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 08:46:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43780 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbgG2Mqm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jul 2020 08:46:42 -0400
+Received: from metis.ext.pengutronix.de (metis.ext.pengutronix.de [IPv6:2001:67c:670:201:290:27ff:fe1d:cc33])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5190C061794
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jul 2020 05:46:41 -0700 (PDT)
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1k0lTa-0006UE-CT; Wed, 29 Jul 2020 14:46:30 +0200
+Received: from pza by lupine with local (Exim 4.92)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1k0lTY-0007Ak-58; Wed, 29 Jul 2020 14:46:28 +0200
+Message-ID: <d44e88a1408add6491897a8793b57ee0090fa4c6.camel@pengutronix.de>
+Subject: Re: [PATCH 11/17] clk: imx: Add blk_ctrl combo driver
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
         Anson Huang <anson.huang@nxp.com>,
         Dong Aisheng <aisheng.dong@nxp.com>,
         Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>
@@ -43,57 +47,221 @@ Cc:     NXP Linux Team <linux-imx@nxp.com>,
         linux-arm-kernel@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 17/17] arm64: dts: imx8mp: Add hdmi_blk_ctrl node
-Message-ID: <20200729121738.rzhtjjyej3nfu3vh@fsr-ub1664-175>
+Date:   Wed, 29 Jul 2020 14:46:28 +0200
+In-Reply-To: <1596024483-21482-12-git-send-email-abel.vesa@nxp.com>
 References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
- <1596024483-21482-18-git-send-email-abel.vesa@nxp.com>
+         <1596024483-21482-12-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1596024483-21482-18-git-send-email-abel.vesa@nxp.com>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-07-29 15:08:03, Abel Vesa wrote:
-> Some of the features of the hdmi_ctrl will be used by some
-> different drivers in a way those drivers will know best, so adding the
-> syscon compatible we allow those to do just that. Only the resets
-> and the clocks are registered bit the clk-blk-ctrl driver.
+Hi Abel,
+
+On Wed, 2020-07-29 at 15:07 +0300, Abel Vesa wrote:
+> On i.MX8MP, there is a new type of IP which is called BLK_CTRL in
+> RM and usually is comprised of some GPRs that are considered too
+> generic to be part of any dedicated IP from that specific subsystem.
+> 
+> In general, some of the GPRs have some clock bits, some have reset bits,
+> so in order to be able to use the imx clock API, this needs to be
+> in a clock driver. From there it can use the reset controller API and
+> leave the rest to the syscon.
+> 
+> This driver is intended to work with the following BLK_CTRL IPs found in
+> i.MX8MP (but it might be reused by the future i.MX platforms that
+> have this kind of IP in their design):
+>  - Audio
+>  - Media
+>  - HDMI
 > 
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  drivers/clk/imx/Makefile       |   2 +-
+>  drivers/clk/imx/clk-blk-ctrl.c | 318 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/imx/clk-blk-ctrl.h |  81 +++++++++++
+>  3 files changed, 400 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/clk/imx/clk-blk-ctrl.c
+>  create mode 100644 drivers/clk/imx/clk-blk-ctrl.h
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index 172c548..5a76c4d 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -751,6 +751,15 @@
->  				#clock-cells = <1>;
->  				#reset-cells = <1>;
->  			};
-> +
-> +			hdmi_blk_ctrl: hdmi-blk-ctrl@32fc0000 {
-> +				compatible = "fsl,imx8mp-hdmi-blk-ctrl", "syscon";
-> +				reg = <0x32fc0000 0x1000>;
-> +				power-domains = <&hdmimix_pd>;
-
-I forget to remove the power-domains property.
-
-Will remove in the next version.
-
-> +
-> +				#clock-cells = <1>;
-> +				#reset-cells = <1>;
-> +			};
->  		};
+> diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+> index 928f874c..7afe1df 100644
+> --- a/drivers/clk/imx/Makefile
+> +++ b/drivers/clk/imx/Makefile
+> @@ -27,7 +27,7 @@ obj-$(CONFIG_MXC_CLK_SCU) += \
 >  
->  		aips5: bus@30c00000 {
-> -- 
-> 2.7.4
-> 
+>  obj-$(CONFIG_CLK_IMX8MM) += clk-imx8mm.o
+>  obj-$(CONFIG_CLK_IMX8MN) += clk-imx8mn.o
+> -obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o
+> +obj-$(CONFIG_CLK_IMX8MP) += clk-imx8mp.o clk-blk-ctrl.o
+>  obj-$(CONFIG_CLK_IMX8MQ) += clk-imx8mq.o
+>  obj-$(CONFIG_CLK_IMX8QXP) += clk-imx8qxp.o clk-imx8qxp-lpcg.o
+>  
+> diff --git a/drivers/clk/imx/clk-blk-ctrl.c b/drivers/clk/imx/clk-blk-ctrl.c
+> new file mode 100644
+> index 00000000..a46e674
+> --- /dev/null
+> +++ b/drivers/clk/imx/clk-blk-ctrl.c
+> @@ -0,0 +1,318 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright 2020 NXP.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+> +#include <linux/string.h>
+> +#include <linux/types.h>
+> +
+> +#include "clk.h"
+> +#include "clk-blk-ctrl.h"
+> +
+> +struct reset_hw {
+> +	u32 offset;
+> +	u32 shift;
+> +	u32 mask;
+> +};
+> +
+> +struct pm_safekeep_info {
+> +	uint32_t *regs_values;
+> +	uint32_t *regs_offsets;
+> +	uint32_t regs_num;
+> +};
+> +
+> +struct imx_blk_ctrl_drvdata {
+> +	void __iomem *base;
+> +	struct reset_controller_dev rcdev;
+> +	struct reset_hw *rst_hws;
+> +	struct pm_safekeep_info pm_info;
+> +
+> +	spinlock_t lock;
+> +};
+> +
+> +static int imx_blk_ctrl_reset_set(struct reset_controller_dev *rcdev,
+> +				  unsigned long id, bool assert)
+> +{
+> +	struct imx_blk_ctrl_drvdata *drvdata = container_of(rcdev,
+> +			struct imx_blk_ctrl_drvdata, rcdev);
+> +	unsigned int offset = drvdata->rst_hws[id].offset;
+> +	unsigned int shift = drvdata->rst_hws[id].shift;
+> +	unsigned int mask = drvdata->rst_hws[id].mask;
+> +	void __iomem *reg_addr = drvdata->base + offset;
+> +	unsigned long flags;
+> +	u32 reg;
+> +
+> +	if (assert) {
+> +		pm_runtime_get_sync(rcdev->dev);
+> +		spin_lock_irqsave(&drvdata->lock, flags);
+> +		reg = readl(reg_addr);
+> +		writel(reg & ~(mask << shift), reg_addr);
+> +		spin_unlock_irqrestore(&drvdata->lock, flags);
+> +	} else {
+> +		spin_lock_irqsave(&drvdata->lock, flags);
+> +		reg = readl(reg_addr);
+> +		writel(reg | (mask << shift), reg_addr);
+> +		spin_unlock_irqrestore(&drvdata->lock, flags);
+> +		pm_runtime_put(rcdev->dev);
+
+This still has the issue of potentially letting exclusive reset control
+users break the device usage counter.
+
+Also shared reset control users start with deassert(), and you end probe
+with pm_runtime_put(), so the first shared reset control user that
+deasserts its reset will decrement the dev->power.usage_count to -1 ?
+For multiple resets being initially deasserted this would decrement
+multiple times.
+
+I think you'll have to track the (number of) asserted reset bits in this
+reset controller and limit when to call pm_runtime_get/put_sync().
+
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int imx_blk_ctrl_reset_reset(struct reset_controller_dev *rcdev,
+> +					   unsigned long id)
+> +{
+> +	imx_blk_ctrl_reset_set(rcdev, id, true);
+> +	return imx_blk_ctrl_reset_set(rcdev, id, false);
+
+Does this work for all peripherals? Are there none that require the
+reset line to be asserted for a certain number of bus clocks or similar?
+
+> +}
+> +
+> +static int imx_blk_ctrl_reset_assert(struct reset_controller_dev *rcdev,
+> +					   unsigned long id)
+> +{
+> +	return imx_blk_ctrl_reset_set(rcdev, id, true);
+> +}
+> +
+> +static int imx_blk_ctrl_reset_deassert(struct reset_controller_dev *rcdev,
+> +					     unsigned long id)
+> +{
+> +	return imx_blk_ctrl_reset_set(rcdev, id, false);
+> +}
+> +
+> +static const struct reset_control_ops imx_blk_ctrl_reset_ops = {
+> +	.reset		= imx_blk_ctrl_reset_reset,
+> +	.assert		= imx_blk_ctrl_reset_assert,
+> +	.deassert	= imx_blk_ctrl_reset_deassert,
+> +};
+> +
+> +static int imx_blk_ctrl_register_reset_controller(struct device *dev)
+> +{
+> +	struct imx_blk_ctrl_drvdata *drvdata = dev_get_drvdata(dev);
+> +	const struct imx_blk_ctrl_dev_data *dev_data = of_device_get_match_data(dev);
+> +	struct reset_hw *hws;
+> +	int max = dev_data->resets_max;
+> +	int i;
+> +
+> +	spin_lock_init(&drvdata->lock);
+> +
+> +	drvdata->rcdev.owner     = THIS_MODULE;
+> +	drvdata->rcdev.nr_resets = max;
+> +	drvdata->rcdev.ops       = &imx_blk_ctrl_reset_ops;
+> +	drvdata->rcdev.of_node   = dev->of_node;
+> +	drvdata->rcdev.dev	 = dev;
+> +
+> +	drvdata->rst_hws = devm_kzalloc(dev, sizeof(struct reset_hw) * max,
+> +					GFP_KERNEL);
+
+I'd use devm_kcalloc() here.
+
+> +	hws = drvdata->rst_hws;
+> +
+> +	for (i = 0; i < dev_data->hws_num; i++) {
+> +		struct imx_blk_ctrl_hw *hw = &dev_data->hws[i];
+> +
+> +		if (hw->type != BLK_CTRL_RESET)
+> +			continue;
+> +
+> +		hws[hw->id].offset = hw->offset;
+> +		hws[hw->id].shift = hw->shift;
+> +		hws[hw->id].mask = hw->mask;
+> +	}
+> +
+> +	return devm_reset_controller_register(dev, &drvdata->rcdev);
+> +}
+[...]
+
+regards
+Philipp
