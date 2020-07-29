@@ -2,116 +2,95 @@ Return-Path: <SRS0=BIUh=BI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88CC1C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D51FC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 15:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 68BEC20FC3
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 14:53:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19CDA2083E
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jul 2020 15:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596036412;
+	bh=FWwtNBSwhGrxS3G1Pkb3UzjmEygkFwEGVorAw8uBw2k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=lOQ+s3W/hWaImdBG/0rFPP/8X9dQcX+p1Td0bZOPTk2BwA+z+E8/r4CBvjHFAz7wm
+	 byJzMcFJWyfTkWpIs0iro0APAwd4XcKcmHWv86DFNFFTnMQsEDbbQtmYzbL+yg/tkj
+	 pePvD/CELQiVqi40UtChmSAPVF3DV26+K5VErlGk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbgG2OxF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jul 2020 10:53:05 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:47844 "EHLO inva021.nxp.com"
+        id S1726476AbgG2P0v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jul 2020 11:26:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726711AbgG2OxF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 29 Jul 2020 10:53:05 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3D3E620100A;
-        Wed, 29 Jul 2020 16:53:03 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B64D201007;
-        Wed, 29 Jul 2020 16:52:56 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 51D03402F3;
-        Wed, 29 Jul 2020 16:52:48 +0200 (CEST)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, arnd@arndb.de, peng.fan@nxp.com,
-        abel.vesa@nxp.com, fugang.duan@nxp.com, daniel.baluta@nxp.com,
-        yuehaibing@huawei.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V7 1/6] clk: imx6sl: Use BIT(x) to avoid shifting signed 32-bit value by 31 bits
-Date:   Wed, 29 Jul 2020 22:48:32 +0800
-Message-Id: <1596034117-24246-2-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
+        id S1726449AbgG2P0v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 29 Jul 2020 11:26:51 -0400
+Received: from dragon (unknown [80.251.214.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F6CF20809;
+        Wed, 29 Jul 2020 15:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596036411;
+        bh=FWwtNBSwhGrxS3G1Pkb3UzjmEygkFwEGVorAw8uBw2k=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=2YuX7Bt5KnWUEjuvOCOdbseEnj/NTHy0HPxwGBzOnFV5+nta+ZFbB085rzSfDSTOL
+         z9NNOuG27/Qyhnz0SFuX3Q7KKCOjLsd9RZiNYiTHfh3o4s3t+v+SngfsWznKs3X2TX
+         m1Lv8t52bnuS9Z+d1cTUkBzzMAorcoHKNDQ34kL8=
+Date:   Wed, 29 Jul 2020 23:26:35 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        arnd@arndb.de, peng.fan@nxp.com, abel.vesa@nxp.com,
+        fugang.duan@nxp.com, daniel.baluta@nxp.com, yuehaibing@huawei.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V7 0/6] Support building i.MX ARMv8 platforms clock
+ driver as module
+Message-ID: <20200729152634.GA26850@dragon>
 References: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use readl_relaxed() instead of __raw_readl(), and use BIT(x)
-instead of (1 << X) to fix below build warning reported by kernel
-test robot:
+On Wed, Jul 29, 2020 at 10:48:31PM +0800, Anson Huang wrote:
+> Nowdays, there are more and more requirements of building SoC specific drivers as
+> modules, such as Android GKI (generic kernel image), this patch set supports building
+> i.MX ARMv8 SoCs clock drivers as modules,
+> 
+> The CLK_IMXxxx is introduced for i.MX ARMv7 platforms in order to make the build
+> options aligned, the reason why i.MX ARMv7 platforms clock driver do NOT support
+> module build and COMPILE_TEST is because, some drivers like i.MX GPT timer driver
+> depends on clock driver to be ready before it, GPT driver uses TIMER_OF_DECLARE(),
+> while i.MX6/7 clock drivers use CLK_OF_DECLARE(), and GPT driver is critical for
+> i.MX6/7 platforms kernel boot up, so GPT driver needs to be changed to support
+> loadable clock driver first, then the i.MX6/7 clock drivers can support loadable
+> module, this will be done later.
+> 
+> Changes since V6:
+> 	- improve patch #6's subject and move it to be first patch of this series.
+> 
+> Anson Huang (6):
+>   clk: imx6sl: Use BIT(x) to avoid shifting signed 32-bit value by 31
+>     bits
+>   clk: composite: Export clk_hw_register_composite()
+>   clk: imx: Support building i.MX common clock driver as module
+>   clk: imx: Add clock configuration for ARMv7 platforms
+>   clk: imx8m: Support module build
+>   clk: imx8qxp: Support building i.MX8QXP clock driver as module
 
-drivers/clk/imx/clk-imx6sl.c:149:49: warning: Shifting signed 32-bit
-value by 31 bits is undefined behaviour [shiftTooManyBitsSigned]
-     while (!(__raw_readl(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
+Acked-by: Shawn Guo <shawnguo@kernel.org>
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reported-by: kernel test robot <lkp@intel.com>
----
-Changes since V6:
-	- improve the subject.
----
- drivers/clk/imx/clk-imx6sl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+Stephen,
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 0f647d1..e69dba1 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -3,6 +3,7 @@
-  * Copyright 2013-2014 Freescale Semiconductor, Inc.
-  */
- 
-+#include <linux/bitfield.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/err.h>
-@@ -14,19 +15,19 @@
- #include "clk.h"
- 
- #define CCSR			0xc
--#define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
-+#define BM_CCSR_PLL1_SW_CLK_SEL	BIT(2)
- #define CACRR			0x10
- #define CDHIPR			0x48
--#define BM_CDHIPR_ARM_PODF_BUSY	(1 << 16)
-+#define BM_CDHIPR_ARM_PODF_BUSY	BIT(16)
- #define ARM_WAIT_DIV_396M	2
- #define ARM_WAIT_DIV_792M	4
- #define ARM_WAIT_DIV_996M	6
- 
- #define PLL_ARM			0x0
--#define BM_PLL_ARM_DIV_SELECT	(0x7f << 0)
--#define BM_PLL_ARM_POWERDOWN	(1 << 12)
--#define BM_PLL_ARM_ENABLE	(1 << 13)
--#define BM_PLL_ARM_LOCK		(1 << 31)
-+#define BM_PLL_ARM_DIV_SELECT	0x7f
-+#define BM_PLL_ARM_POWERDOWN	BIT(12)
-+#define BM_PLL_ARM_ENABLE	BIT(13)
-+#define BM_PLL_ARM_LOCK		BIT(31)
- #define PLL_ARM_DIV_792M	66
- 
- static const char *step_sels[]		= { "osc", "pll2_pfd2", };
-@@ -145,7 +146,7 @@ static void imx6sl_enable_pll_arm(bool enable)
- 		val |= BM_PLL_ARM_ENABLE;
- 		val &= ~BM_PLL_ARM_POWERDOWN;
- 		writel_relaxed(val, anatop_base + PLL_ARM);
--		while (!(__raw_readl(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
-+		while (!(readl_relaxed(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
- 			;
- 	} else {
- 		 writel_relaxed(saved_pll_arm, anatop_base + PLL_ARM);
--- 
-2.7.4
+I had sent v5.9 material off my hand to you, so please pick this up
+directly if it looks good to you.  Thanks!
 
+Shawn
