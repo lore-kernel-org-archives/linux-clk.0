@@ -7,26 +7,26 @@ X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E3F5C433EB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 12:29:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49D53C433ED
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 12:29:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 046CE20842
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 12:29:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22B2F20842
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 12:29:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbgG3M2s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jul 2020 08:28:48 -0400
-Received: from alexa-out.qualcomm.com ([129.46.98.28]:23711 "EHLO
+        id S1728282AbgG3M2p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jul 2020 08:28:45 -0400
+Received: from alexa-out.qualcomm.com ([129.46.98.28]:43483 "EHLO
         alexa-out.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728322AbgG3M2q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jul 2020 08:28:46 -0400
-Received: from ironmsg08-lv.qualcomm.com ([10.47.202.152])
-  by alexa-out.qualcomm.com with ESMTP; 30 Jul 2020 05:28:46 -0700
+        with ESMTP id S1728248AbgG3M2o (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jul 2020 08:28:44 -0400
+Received: from ironmsg09-lv.qualcomm.com ([10.47.202.153])
+  by alexa-out.qualcomm.com with ESMTP; 30 Jul 2020 05:28:44 -0700
 Received: from ironmsg02-blr.qualcomm.com ([10.86.208.131])
-  by ironmsg08-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 30 Jul 2020 05:28:44 -0700
+  by ironmsg09-lv.qualcomm.com with ESMTP/TLS/AES256-SHA; 30 Jul 2020 05:28:42 -0700
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
   by ironmsg02-blr.qualcomm.com with ESMTP; 30 Jul 2020 17:58:14 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id 7293D218A4; Thu, 30 Jul 2020 17:58:12 +0530 (IST)
+        id 2E02C218A2; Thu, 30 Jul 2020 17:58:12 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     gokulsri@codeaurora.org, agross@kernel.org,
         bjorn.andersson@linaro.org, david.brown@linaro.org,
@@ -36,9 +36,9 @@ To:     gokulsri@codeaurora.org, agross@kernel.org,
         mark.rutland@arm.com, mturquette@baylibre.com,
         nprakash@codeaurora.org, ohad@wizery.com, robh+dt@kernel.org,
         sboyd@kernel.org, sricharan@codeaurora.org
-Subject: [PATCH v7 6/9] dt-bindings: clock: qcom: Add reset for WCSSAON
-Date:   Thu, 30 Jul 2020 17:56:40 +0530
-Message-Id: <1596112003-31663-7-git-send-email-gokulsri@codeaurora.org>
+Subject: [PATCH v7 4/9] remoteproc: qcom: Add ssr subdevice identifier
+Date:   Thu, 30 Jul 2020 17:56:38 +0530
+Message-Id: <1596112003-31663-5-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1596112003-31663-1-git-send-email-gokulsri@codeaurora.org>
 References: <1596112003-31663-1-git-send-email-gokulsri@codeaurora.org>
@@ -47,28 +47,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
+Add name for ssr subdevice on IPQ8074 SoC.
 
 Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-index 8e2bec1..9b1c42b 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -366,5 +366,6 @@
- #define GCC_PCIE1_AHB_ARES			129
- #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
- #define GCC_PCIE0_AXI_SLAVE_STICKY_ARES		131
-+#define GCC_WCSSAON_RESET			132
- 
- #endif
+diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+index 4975a4c..44372e4 100644
+--- a/drivers/remoteproc/qcom_q6v5_wcss.c
++++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+@@ -1172,6 +1172,7 @@ static const struct wcss_data wcss_ipq8074_res_init = {
+ 	.crash_reason_smem = WCSS_CRASH_REASON,
+ 	.aon_reset_required = true,
+ 	.wcss_q6_reset_required = true,
++	.ssr_name = "q6wcss",
+ 	.ops = &q6v5_wcss_ipq8074_ops,
+ 	.requires_force_stop = true,
+ 	.need_mem_protection = true,
 -- 
 2.7.4
 
