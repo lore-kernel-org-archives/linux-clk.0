@@ -2,28 +2,27 @@ Return-Path: <SRS0=ddvZ=BJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=BAYES_00,
+X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB9BC433DF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 14:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AD6C433E1
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 18:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 72A7620842
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 14:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCFA120829
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 18:26:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbgG3ONq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jul 2020 10:13:46 -0400
-Received: from mx2.suse.de ([195.135.220.15]:43130 "EHLO mx2.suse.de"
+        id S1730023AbgG3S0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jul 2020 14:26:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50562 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728447AbgG3ONp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Jul 2020 10:13:45 -0400
+        id S1726343AbgG3S0e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Jul 2020 14:26:34 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id 7647FAB3E;
-        Thu, 30 Jul 2020 14:13:55 +0000 (UTC)
+        by mx2.suse.de (Postfix) with ESMTP id DF4CDABCE;
+        Thu, 30 Jul 2020 18:26:44 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -31,17 +30,17 @@ To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
         Scott Branden <sbranden@broadcom.com>,
         bcm-kernel-feedback-list@broadcom.com,
         Eric Anholt <eric@anholt.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Stefan Wahren <wahrenst@gmx.net>
+        Stefan Wahren <wahrenst@gmx.net>,
+        Matthias Brugger <mbrugger@suse.com>
 Cc:     pbrobinson@gmail.com, kernel-list@raspberrypi.com,
         Nathan Chancellor <natechancellor@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-rpi-kernel@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: bcm2835: Do not use prediv with bcm2711's PLLs
-Date:   Thu, 30 Jul 2020 16:13:37 +0200
-Message-Id: <20200730141337.12753-1-nsaenzjulienne@suse.de>
+Subject: [PATCH v2] clk: bcm2835: Do not use prediv with bcm2711's PLLs
+Date:   Thu, 30 Jul 2020 20:26:19 +0200
+Message-Id: <20200730182619.23246-1-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.27.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,10 +50,11 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 Contrary to previous SoCs, bcm2711 doesn't have a prescaler in the PLL
-feedback loop. Bypass it by zeroing fb_prediv_mask.
+feedback loop. Bypass it by zeroing fb_prediv_mask when running on
+bcm2711.
 
 Note that, since the prediv configuration bits were re-purposed, this
-was triggering a miscalculation on all clock hanging from the VPU clock,
+was triggering miscalculations on all clocks hanging from the VPU clock,
 notably the aux UART, making its output unintelligible.
 
 Fixes: 42de9ad400af ("clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support")
@@ -62,158 +62,96 @@ Reported-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
 
+Changes since v1:
+ - Previous approach broken. Check if running on bcm2711 upon using
+   fb_prediv_mask.
+
 FYI relevant discussion with RPi engineers:
 https://github.com/raspberrypi/firmware/issues/1435#issuecomment-666242077
 
- drivers/clk/bcm/clk-bcm2835.c | 79 +++++++++++++++++++++++++++++++++--
- 1 file changed, 75 insertions(+), 4 deletions(-)
+ drivers/clk/bcm/clk-bcm2835.c | 25 +++++++++++++++++++++----
+ 1 file changed, 21 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 027eba31f793..acf499d26263 100644
+index 027eba31f793..3439bc65bb4e 100644
 --- a/drivers/clk/bcm/clk-bcm2835.c
 +++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -454,6 +454,16 @@ static const struct bcm2835_pll_ana_bits bcm2835_ana_default = {
- 	.fb_prediv_mask = BIT(14),
- };
+@@ -314,6 +314,7 @@ struct bcm2835_cprman {
+ 	struct device *dev;
+ 	void __iomem *regs;
+ 	spinlock_t regs_lock; /* spinlock for all clocks */
++	unsigned int soc;
  
-+static const struct bcm2835_pll_ana_bits bcm2711_ana_default = {
-+	.mask0 = 0,
-+	.set0 = 0,
-+	.mask1 = A2W_PLL_KI_MASK | A2W_PLL_KP_MASK,
-+	.set1 = (2 << A2W_PLL_KI_SHIFT) | (8 << A2W_PLL_KP_SHIFT),
-+	.mask3 = A2W_PLL_KA_MASK,
-+	.set3 = (2 << A2W_PLL_KA_SHIFT),
-+	.fb_prediv_mask = 0, /* No prediv in bcm2711 */
-+};
+ 	/*
+ 	 * Real names of cprman clock parents looked up through
+@@ -526,6 +527,20 @@ static int bcm2835_pll_is_on(struct clk_hw *hw)
+ 		A2W_PLL_CTRL_PRST_DISABLE;
+ }
+ 
++static u32 bcm2835_pll_get_prediv_mask(struct bcm2835_cprman *cprman,
++				       const struct bcm2835_pll_data *data)
++{
++	/*
++	 * On BCM2711 there isn't a pre-divisor available in the PLL feedback
++	 * loop. Bits 13:14 of ANA1 (PLLA,PLLB,PLLC,PLLD) have been re-purposed
++	 * for to for VCO RANGE bits.
++	 */
++	if (cprman->soc & SOC_BCM2711)
++		return 0;
 +
- static const struct bcm2835_pll_ana_bits bcm2835_ana_pllh = {
- 	.mask0 = A2W_PLLH_KA_MASK | A2W_PLLH_KI_LOW_MASK,
- 	.set0 = (2 << A2W_PLLH_KA_SHIFT) | (2 << A2W_PLLH_KI_LOW_SHIFT),
-@@ -1631,7 +1641,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	 * AUDIO domain is on.
- 	 */
- 	[BCM2835_PLLA]		= REGISTER_PLL(
--		SOC_ALL,
-+		SOC_BCM2835,
- 		.name = "plla",
- 		.cm_ctrl_reg = CM_PLLA,
- 		.a2w_ctrl_reg = A2W_PLLA_CTRL,
-@@ -1642,6 +1652,21 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 
- 		.ana = &bcm2835_ana_default,
- 
-+		.min_rate = 600000000u,
-+		.max_rate = 2400000000u,
-+		.max_fb_rate = BCM2835_MAX_FB_RATE),
-+	[BCM2835_PLLA]		= REGISTER_PLL(
-+		SOC_BCM2711,
-+		.name = "plla",
-+		.cm_ctrl_reg = CM_PLLA,
-+		.a2w_ctrl_reg = A2W_PLLA_CTRL,
-+		.frac_reg = A2W_PLLA_FRAC,
-+		.ana_reg_base = A2W_PLLA_ANA0,
-+		.reference_enable_mask = A2W_XOSC_CTRL_PLLA_ENABLE,
-+		.lock_mask = CM_LOCK_FLOCKA,
++	return data->ana->fb_prediv_mask;
++}
 +
-+		.ana = &bcm2711_ana_default,
-+
- 		.min_rate = 600000000u,
- 		.max_rate = 2400000000u,
- 		.max_fb_rate = BCM2835_MAX_FB_RATE),
-@@ -1687,7 +1712,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
+ 					     unsigned long parent_rate,
+ 					     u32 *ndiv, u32 *fdiv)
+@@ -583,7 +598,7 @@ static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
+ 	ndiv = (a2wctrl & A2W_PLL_CTRL_NDIV_MASK) >> A2W_PLL_CTRL_NDIV_SHIFT;
+ 	pdiv = (a2wctrl & A2W_PLL_CTRL_PDIV_MASK) >> A2W_PLL_CTRL_PDIV_SHIFT;
+ 	using_prediv = cprman_read(cprman, data->ana_reg_base + 4) &
+-		data->ana->fb_prediv_mask;
++		       bcm2835_pll_get_prediv_mask(cprman, data);
  
- 	/* PLLB is used for the ARM's clock. */
- 	[BCM2835_PLLB]		= REGISTER_PLL(
--		SOC_ALL,
-+		SOC_BCM2835,
- 		.name = "pllb",
- 		.cm_ctrl_reg = CM_PLLB,
- 		.a2w_ctrl_reg = A2W_PLLB_CTRL,
-@@ -1698,6 +1723,22 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	if (using_prediv) {
+ 		ndiv *= 2;
+@@ -666,6 +681,7 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
+ 	struct bcm2835_cprman *cprman = pll->cprman;
+ 	const struct bcm2835_pll_data *data = pll->data;
++	u32 prediv_mask = bcm2835_pll_get_prediv_mask(cprman, data);
+ 	bool was_using_prediv, use_fb_prediv, do_ana_setup_first;
+ 	u32 ndiv, fdiv, a2w_ctl;
+ 	u32 ana[4];
+@@ -683,7 +699,7 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 	for (i = 3; i >= 0; i--)
+ 		ana[i] = cprman_read(cprman, data->ana_reg_base + i * 4);
  
- 		.ana = &bcm2835_ana_default,
+-	was_using_prediv = ana[1] & data->ana->fb_prediv_mask;
++	was_using_prediv = ana[1] & prediv_mask;
  
-+		.min_rate = 600000000u,
-+		.max_rate = 3000000000u,
-+		.max_fb_rate = BCM2835_MAX_FB_RATE,
-+		.flags = CLK_GET_RATE_NOCACHE),
-+	[BCM2835_PLLB]		= REGISTER_PLL(
-+		SOC_BCM2711,
-+		.name = "pllb",
-+		.cm_ctrl_reg = CM_PLLB,
-+		.a2w_ctrl_reg = A2W_PLLB_CTRL,
-+		.frac_reg = A2W_PLLB_FRAC,
-+		.ana_reg_base = A2W_PLLB_ANA0,
-+		.reference_enable_mask = A2W_XOSC_CTRL_PLLB_ENABLE,
-+		.lock_mask = CM_LOCK_FLOCKB,
-+
-+		.ana = &bcm2711_ana_default,
-+
- 		.min_rate = 600000000u,
- 		.max_rate = 3000000000u,
- 		.max_fb_rate = BCM2835_MAX_FB_RATE,
-@@ -1720,7 +1761,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	 * AUDIO domain is on.
- 	 */
- 	[BCM2835_PLLC]		= REGISTER_PLL(
--		SOC_ALL,
-+		SOC_BCM2835,
- 		.name = "pllc",
- 		.cm_ctrl_reg = CM_PLLC,
- 		.a2w_ctrl_reg = A2W_PLLC_CTRL,
-@@ -1731,6 +1772,21 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	ana[0] &= ~data->ana->mask0;
+ 	ana[0] |= data->ana->set0;
+@@ -693,10 +709,10 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
+ 	ana[3] |= data->ana->set3;
  
- 		.ana = &bcm2835_ana_default,
+ 	if (was_using_prediv && !use_fb_prediv) {
+-		ana[1] &= ~data->ana->fb_prediv_mask;
++		ana[1] &= ~prediv_mask;
+ 		do_ana_setup_first = true;
+ 	} else if (!was_using_prediv && use_fb_prediv) {
+-		ana[1] |= data->ana->fb_prediv_mask;
++		ana[1] |= prediv_mask;
+ 		do_ana_setup_first = false;
+ 	} else {
+ 		do_ana_setup_first = true;
+@@ -2262,6 +2278,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, cprman);
  
-+		.min_rate = 600000000u,
-+		.max_rate = 3000000000u,
-+		.max_fb_rate = BCM2835_MAX_FB_RATE),
-+	[BCM2835_PLLC]		= REGISTER_PLL(
-+		SOC_BCM2711,
-+		.name = "pllc",
-+		.cm_ctrl_reg = CM_PLLC,
-+		.a2w_ctrl_reg = A2W_PLLC_CTRL,
-+		.frac_reg = A2W_PLLC_FRAC,
-+		.ana_reg_base = A2W_PLLC_ANA0,
-+		.reference_enable_mask = A2W_XOSC_CTRL_PLLC_ENABLE,
-+		.lock_mask = CM_LOCK_FLOCKC,
-+
-+		.ana = &bcm2711_ana_default,
-+
- 		.min_rate = 600000000u,
- 		.max_rate = 3000000000u,
- 		.max_fb_rate = BCM2835_MAX_FB_RATE),
-@@ -1782,7 +1838,7 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
- 	 * AUDIO domain is on.
- 	 */
- 	[BCM2835_PLLD]		= REGISTER_PLL(
--		SOC_ALL,
-+		SOC_BCM2835,
- 		.name = "plld",
- 		.cm_ctrl_reg = CM_PLLD,
- 		.a2w_ctrl_reg = A2W_PLLD_CTRL,
-@@ -1793,6 +1849,21 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
+ 	cprman->onecell.num = asize;
++	cprman->soc = pdata->soc;
+ 	hws = cprman->onecell.hws;
  
- 		.ana = &bcm2835_ana_default,
- 
-+		.min_rate = 600000000u,
-+		.max_rate = 2400000000u,
-+		.max_fb_rate = BCM2835_MAX_FB_RATE),
-+	[BCM2835_PLLD]		= REGISTER_PLL(
-+		SOC_BCM2711,
-+		.name = "plld",
-+		.cm_ctrl_reg = CM_PLLD,
-+		.a2w_ctrl_reg = A2W_PLLD_CTRL,
-+		.frac_reg = A2W_PLLD_FRAC,
-+		.ana_reg_base = A2W_PLLD_ANA0,
-+		.reference_enable_mask = A2W_XOSC_CTRL_DDR_ENABLE,
-+		.lock_mask = CM_LOCK_FLOCKD,
-+
-+		.ana = &bcm2711_ana_default,
-+
- 		.min_rate = 600000000u,
- 		.max_rate = 2400000000u,
- 		.max_fb_rate = BCM2835_MAX_FB_RATE),
+ 	for (i = 0; i < asize; i++) {
 -- 
 2.27.0
 
