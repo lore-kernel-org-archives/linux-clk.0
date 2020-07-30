@@ -2,91 +2,109 @@ Return-Path: <SRS0=ddvZ=BJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0E0C433E0
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 07:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1A5C433E0
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 07:25:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5A96B2082E
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 07:22:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF4BD20809
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 07:25:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgG3HW6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jul 2020 03:22:58 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:34301 "EHLO
+        id S1728933AbgG3HZw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jul 2020 03:25:52 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:37009 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbgG3HW5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jul 2020 03:22:57 -0400
-Received: from mail-qt1-f174.google.com ([209.85.160.174]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1MQMi7-1kNERt0L45-00MNCV; Thu, 30 Jul 2020 09:22:56 +0200
-Received: by mail-qt1-f174.google.com with SMTP id s23so19615039qtq.12;
-        Thu, 30 Jul 2020 00:22:53 -0700 (PDT)
-X-Gm-Message-State: AOAM530fhtgVFVvlfB1uelJE+JEgih2QNvxapO06tLFngmOEKUT/zDUC
-        QObTt4DApdgH4AyADhwZPkDqh6f3cvWac6seKuk=
-X-Google-Smtp-Source: ABdhPJzgEsAgdG9F1fxmndEJfU8TT+hsYPEgSAf0hp36PCR11SO9kvadSankG7qIurN5AdirVi451kJyBWRCSzEu5aI=
-X-Received: by 2002:aed:2946:: with SMTP id s64mr1685167qtd.204.1596093772891;
- Thu, 30 Jul 2020 00:22:52 -0700 (PDT)
+        with ESMTP id S1728891AbgG3HZw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jul 2020 03:25:52 -0400
+Received: from mail-qv1-f53.google.com ([209.85.219.53]) by
+ mrelayeu.kundenserver.de (mreue109 [212.227.15.145]) with ESMTPSA (Nemesis)
+ id 1MD9Kp-1jsUE31pDt-00959j; Thu, 30 Jul 2020 09:25:50 +0200
+Received: by mail-qv1-f53.google.com with SMTP id a19so6086533qvy.3;
+        Thu, 30 Jul 2020 00:25:50 -0700 (PDT)
+X-Gm-Message-State: AOAM533aIqEn2mpnxT+wj8g9dJqz/zbFTaNhs+MKrKoOFGaRPIAYkQk3
+        Xg6PLah6aeoYg5L0pCIF2JiKMRGs8E8KFXeLOz0=
+X-Google-Smtp-Source: ABdhPJxo0B56G4g8c9U5UEFN/6NIHD+B8GlCDLd3ue8LWoLl/ZDumtskrygHT6FtHJpCZOT2NM8BwvtBIs7ABsj/erQ=
+X-Received: by 2002:a0c:b5c2:: with SMTP id o2mr1540145qvf.210.1596093949221;
+ Thu, 30 Jul 2020 00:25:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <1596067120-1193-1-git-send-email-Anson.Huang@nxp.com> <1596067120-1193-2-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1596067120-1193-2-git-send-email-Anson.Huang@nxp.com>
+References: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com>
+ <1596034117-24246-2-git-send-email-Anson.Huang@nxp.com> <86ae1d4e-27c9-07e4-73be-37d490cb0063@infradead.org>
+ <DB3PR0402MB3916559F7E1908D76B47FE66F5700@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <34161e5c-0e83-97de-3cb6-1040d8abdc71@infradead.org> <DB3PR0402MB3916E18C8B36010D60086EA2F5710@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB3916E18C8B36010D60086EA2F5710@DB3PR0402MB3916.eurprd04.prod.outlook.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 30 Jul 2020 09:22:37 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a000jKRMM9pm72mw5a1xV=NtOT6Z-H2EDS6=5165HMt5w@mail.gmail.com>
-Message-ID: <CAK8P3a000jKRMM9pm72mw5a1xV=NtOT6Z-H2EDS6=5165HMt5w@mail.gmail.com>
-Subject: Re: [PATCH V8 1/6] clk: imx6sl: Use BIT(x) to avoid shifting signed
+Date:   Thu, 30 Jul 2020 09:25:32 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a0nOWHFr42K0maoXVxsLnasuYXGy0z68JoCbEzADOC6kA@mail.gmail.com>
+Message-ID: <CAK8P3a0nOWHFr42K0maoXVxsLnasuYXGy0z68JoCbEzADOC6kA@mail.gmail.com>
+Subject: Re: [PATCH V7 1/6] clk: imx6sl: Use BIT(x) to avoid shifting signed
  32-bit value by 31 bits
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
+To:     Anson Huang <anson.huang@nxp.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
         Peng Fan <peng.fan@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
         Andy Duan <fugang.duan@nxp.com>,
         Daniel Baluta <daniel.baluta@nxp.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        "yuehaibing@huawei.com" <yuehaibing@huawei.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        dl-linux-imx <linux-imx@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:lTCNq6hS062jBYwG/0GIfHXkumSjMFIvurIOIr1sjAjklefzOjg
- /S9ZbtnvL1By5DV1PGooPwKuLutxGv1sdLPlSRA5T8qToxRu+RsGKj2glzxTq/2g31Akmkt
- aVCZAU1r7Gh9aQNgxZIJ8LkWNqTS5NcOPBDMNdUHDVNey4sH4Kel/etwOclYf2oV19R+fRG
- c6vk4IYKF1va9Gt04IItQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:dbWKEXZ+pNs=:v9SopY0XoxPhD/hztbdTmI
- U+3Ca5dH70Dxkw8EgjIa893dTsdwVW4D4u2N1E2WeAMy1WPwUN8hSywgSg9UHp3DE0Uvv06b5
- v2wrPFl5Sv8MEVbVFxl9Y0CvnrhrVO/iELiqae1vq6kpGEfJ7k+GmfYsoLxmABDAdNYyntL8w
- XO4UUX7AyyDHSgcP0qk95lyeO2JdfVo1FWVqz/LwHoWE8uF6ocRhDb3I8Hl/4T6bFYNkQRIlY
- vQ5nzLkMN+827t0DI8tccP3/3Lc/OHpG6YWr+gva/WQj3y9Cqu6FwxcUSeMTWAcxiJvE6IrEM
- INoA/0JexkpxUUBi36Qfy75UJYM1sDbH/qyVr93/0Kf8q7FNfrZ/GR0pl372JQam5CSFuOzsL
- OUtG8+9GG3ZSU3YsEV3ntnIG/n8Au7RI9CvQm2BJHFaR6GaGBFyCLpQeUBJUKiFEDW94NVx0I
- uFUNFEpyPEHCZfGxpzMqMgBZGuiXtvjKIg25fPJtfQqLGT86M/VIhxWMpJKo4UgPrhzpwA8xT
- Nv3hw0MfQgn9149B3OJi9c0E+q5Vrxhm7fQT5lJGtdiQ+brZVsJ4Yn5ZiBKaRuTlCIK5Hvewg
- irkrurjHCFcIeHN3ItM8I36twIxtc8Uzg/nvdjEBX2UJ3N2zm3rpn2pOYpk9GMqzrcpjPFl+n
- s84uIEB75SuGRecYZ7JJB1X4pyYh63vlhj9u6hGQdAkVZzs1g7NWkYqJPcrb2ZFkOEfn5zxFU
- QkwJ32TNYkxhb8gc6IjGLyGsNV34F1OJPqrSUMeINFT8lBFF08cF1vKOIVqXVrwaW1q13N0X5
- 7ckmdDCUpl4y9PXNDOW5Sj8f43LSfSAbVpr2hlz/l9XvOFTmp1BRVCQ8ITl20SaZFhURKfW
+X-Provags-ID: V03:K1:TAaq4YmSI4FU3F8/B28S4g5SJrjn2jR1x/gJRJCjQinhufa2MP4
+ cWSxat9Td7fm9KccJrxej8NrNXWcStCmgtJx7GyS0ubbJEVIH8CtEjjm/Cj2zpYbxsaHHL5
+ PaFpwlXgX0U2udf8VBzIOet+4ffsRrm/59BuT6dBasFF1CqJwsgMsYskEshkKvQifWddoCs
+ inYM16nfVTQsBZgXz5Lag==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2HoLvJI1isM=:WRrah1Zx0obHqCk092nmim
+ mNmU1GU4Vimj0N2pXtF/jl5lYr45PwQjF/MRsOmB1ZW9OsnF3Ty59uNHJFRaaYyYoQwb8PieQ
+ JQzaDhJNFZqOrdLIHQ3T7eu8ndcuWiSbfsk8NIOJAbwmPwC/CLczDdXu6h3zfqAcrTmvQ1ddX
+ T63bo6gN/O01Wa3rRib594DDmNVdtN4TQFeSTVvpYamtcXFTm4DzD5/x/jlTnFx8ckrW0rIRN
+ 5uVqF5TrCMGsimBnjUTMaUK9PN7wFeN+fHof0eCCDluzegxmNm6duTbpyfegIBP0lblV3Llx2
+ QfstSMemJoJ2oK41lE9lBrVE6cnxK8Lz20lwxl4P633ghC9Wc9WVEZaBduLaQ5mAnL1W7x5r4
+ n0aUhTHPBUej8N5on/Q06OrwUDoodhhoyUN5KMouJ+Sw4pYY0kAG1w+lKAwexNxlAoBoRrXzx
+ AUUKHVyiia+TiEJTzV7HxqfYrddkEvHM/JNNQi0JPk/S5X1khFlNto7FdbiGuQF8Ubt0UitXU
+ 8jEhxyrIgEkG1iuHpn2wRJsbE061soFMPvkxfZkkEI1ehYxlYcKZ8CuaKUeEK1WBXkfQibFEy
+ 9dj3S9zWelr9icMANdfsGTYGnnOGjmdLi9chsWH78SmLoAJ9s+wqaeQIRXQKFtWRiABeVHg0L
+ tiqGfxsiavrWrdS4tQ8CZEDzTezyE/jkB5pMpUUBE10R97FW3gcgsmGbYIetG6fvUilUerUGN
+ l+Jfx/ruyDgrTCrXoztW4vfGkbWfL8/sqMFl4DB5j5N+5EoUve1smlu1XYHNdbE/Ih9GfPhFU
+ aeUHwE0QxpBGbLkXMN+nTVvYIsQFPLOt7FPLLcHsVY4wPTGOBPNGWX4TRI220ufPZuBL7m/4O
+ Yq1iywJ/qJ2jwY9BMdw/miruyiA71HUrxAsJNeLL6qDe858i7sChf4RrdSL2wS03hDiTkBIM/
+ R22JQEG1G6GFRJ5nKrWL8RUTAVRXOgY94M7X4KXGSQTLglVsAxlv3
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 30, 2020 at 2:03 AM Anson Huang <Anson.Huang@nxp.com> wrote:
->
-> Use readl_relaxed() instead of __raw_readl(), and use BIT(x)
-> instead of (1 << X) to fix below build warning reported by kernel
-> test robot:
->
-> drivers/clk/imx/clk-imx6sl.c:149:49: warning: Shifting signed 32-bit
-> value by 31 bits is undefined behaviour [shiftTooManyBitsSigned]
->      while (!(__raw_readl(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reported-by: kernel test robot <lkp@intel.com>
+On Thu, Jul 30, 2020 at 3:14 AM Anson Huang <anson.huang@nxp.com> wrote:
+> > Subject: Re: [PATCH V7 1/6] clk: imx6sl: Use BIT(x) to avoid shifting signed
+> > 32-bit value by 31 bits
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > or you could read Documentation/process/submit-checklist.rst,
+> > where rule #1 says:
+> >
+> > 1) If you use a facility then #include the file that defines/declares
+> >    that facility.  Don't depend on other header files pulling in ones
+> >    that you use.
+>
+> Understood, while I search "BIT()" in clk driver, most of the drivers does NOT include
+> linux/bits.h even they use it.
+>
+> But OK, I will send V9 to include it.
+
+Ok, good.
+
+I have a patch series that adds it to a lot of files. Note that linux/bitops.h
+itself is a fairly big header with everything else that it includes, and it
+is included almost everywhere indirectly.  When we change the other
+headers to not require linux/bitops.h any more, everything that uses BIT()
+needs to include linux/bits.h.
+
+     Arnd
