@@ -6,90 +6,97 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1711C433E0
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 18:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530D7C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 20:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C1FE922B42
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 18:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FEC62087C
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 20:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596220013;
-	bh=aF/K7GiblNRv2qyADnt0bFTFutu2SpB2MhNNgPXSX2s=;
+	s=default; t=1596227167;
+	bh=woY9YAVeZk94w/3tGUKkwzh3PdYEn/nEWYV+gRo4ylQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xia2LgBbNCYuBjBgQfydiQESzHWRadjrNBjkU0017olNIvRBxbHI+umdnLxeq+VhK
-	 kVCm3nkMPnwvJa3y5JUWhhqkNVhPSqSIamJSIUFTMWm+ffEK9MF8yE0n3b7KjEKrzR
-	 Gy19+TcACBbbWwwQX+kN5Y7Qvtfllaj+mu47R4cI=
+	b=AkIc7RpoXMiAoyxI8M3Z2bYKEbw1UbM0Ba59OImRLd2bP7AcdoL96Vo1kSvQEerO0
+	 XzaMHwFaKhGCa0ZMiRaOSLvMr9YXmb/Pe+ZnsaQxwXwKy7tWeXDUa4V1txTt7IvrQS
+	 2YetCfyoSlS6DmPRthYiwdcN1zq/VcjmQXEQzEeI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387722AbgGaS0x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jul 2020 14:26:53 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44487 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387652AbgGaS0x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 14:26:53 -0400
-Received: by mail-io1-f66.google.com with SMTP id v6so17324394iow.11;
-        Fri, 31 Jul 2020 11:26:52 -0700 (PDT)
+        id S1725818AbgGaU0H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jul 2020 16:26:07 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39964 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725767AbgGaU0G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 16:26:06 -0400
+Received: by mail-io1-f67.google.com with SMTP id l17so32888619iok.7;
+        Fri, 31 Jul 2020 13:26:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to;
-        bh=KuRbjLAdk2qF/sclDpIueUjPnM2F0YR1YcWElNzgbpU=;
-        b=t6cwFtKE6N8y6jrpzbOq+VAzwZht9JT2wKANhmal7xL7kl8InN3Nhe6EXTvVPCKdLW
-         /LYXLUWu1rAKhhCeNiU2Vm+4019ELQP8BcAF+ogu3wHqzuMyUzxqIfzksT/+Gl4NWGNg
-         6XGR6k/AxeZMhup8AnT07P9zHxcS1d6+9Oxd2Rss+dxK68eqxmUwTzHCFreqI+SqygqV
-         BniSVwtdXhiHq1SzUKqvwlJL0FfjTXnaCRkenLqjfJLRjb33Gz+mtU1iqXta771EaRDA
-         oI30RWQv0X/VSkXqVSiGM/FSumX/1wkMKnZ6NRvyVumBkh1fO8dx9Yq8us/3HhbZhV0p
-         7LHQ==
-X-Gm-Message-State: AOAM531C8iV0SZiIrs0nqHOO0f0ydCnDhw7m7v/OAQo2fsGVGXetDts7
-        L53CTEcaPgteB7ayzYUO3A==
-X-Google-Smtp-Source: ABdhPJyQ+8uvOFgjmwMbjdzK/nhCeKXR4ECMzLtnQXdzQAe67dqY7s5ndxY9dXDf+RshQZN4g44q9A==
-X-Received: by 2002:a05:6602:150:: with SMTP id v16mr4742498iot.80.1596220012124;
-        Fri, 31 Jul 2020 11:26:52 -0700 (PDT)
+        bh=BGJ0cV6tlcyXT1xqGGOkGIW3JZcU+nzmQwF+b4XNxkk=;
+        b=Bx14m6H/LPyFSWX2VzgS4o4q1xTt0gNUTAEVBO4k1t60Bm+MT7osUy+TVAaneP7u31
+         QhXugoz5j+VWNQu3OzzePCRiGb3Fay3rW1GkgDo2zSzZL/QOOUEu46A3HhcKvIGiNlNn
+         lj8Fe5zv32lph9VPg+wsY5zGPE++x9fITIDs92WVbuckucVEqVt6yGTN45bwDpbn1DUt
+         ENyoM3JZ60/EmI/VHMaTn/2jguhx4JLPs1ndmadKn05OokM+QmkKNBIv3XfxIjfnltsQ
+         QNnM60CJgpamWMMD6cBY/ddYCyIJ3BaeF5IlcA6xIB8Za61wog6lQOyYfw5CilAFmItj
+         3KJA==
+X-Gm-Message-State: AOAM5324akj5nMQDo+LDKy9ywDnigm6jdWgVAy/mYWE3ERKa3z22oXHN
+        dVbF1mzWFCYVK1di3ekRCQ==
+X-Google-Smtp-Source: ABdhPJwE1oeviUbVjkAV9WCXrw2poWOORAGd9woxfUZAaudtQVnqWHqszu63PdcS8I49J5RJfronOg==
+X-Received: by 2002:a02:6009:: with SMTP id i9mr6756397jac.78.1596227165611;
+        Fri, 31 Jul 2020 13:26:05 -0700 (PDT)
 Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id t17sm2378512ilq.69.2020.07.31.11.26.50
+        by smtp.gmail.com with ESMTPSA id n1sm5322084ilo.68.2020.07.31.13.26.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2020 11:26:51 -0700 (PDT)
-Received: (nullmailer pid 531147 invoked by uid 1000);
-        Fri, 31 Jul 2020 18:26:50 -0000
-Date:   Fri, 31 Jul 2020 12:26:50 -0600
+        Fri, 31 Jul 2020 13:26:04 -0700 (PDT)
+Received: (nullmailer pid 722926 invoked by uid 1000);
+        Fri, 31 Jul 2020 20:26:00 -0000
+Date:   Fri, 31 Jul 2020 14:26:00 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Hanks Chen <hanks.chen@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+To:     Konrad Dybcio <konradybcio@gmail.com>
+Cc:     freedreno@lists.freedesktop.org,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org,
-        CC Hwang <cc.hwang@mediatek.com>, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        Andy Teng <andy.teng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH v10 1/3] dt-bindings: pinctrl: add bindings for MediaTek
- MT6779 SoC
-Message-ID: <20200731182650.GA531094@bogus>
-References: <1596115816-11758-1-git-send-email-hanks.chen@mediatek.com>
- <1596115816-11758-2-git-send-email-hanks.chen@mediatek.com>
+        Harigovindan P <harigovi@codeaurora.org>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+        dri-devel@lists.freedesktop.org, zhengbin <zhengbin13@huawei.com>,
+        Sean Paul <sean@poorly.run>, Felipe Balbi <balbi@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        David Airlie <airlied@linux.ie>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-usb@vger.kernel.org, Krzysztof Wilczynski <kw@linux.com>,
+        martin.botka1@gmail.com, Brian Masney <masneyb@onstation.org>,
+        Xiaozhe Shi <xiaozhes@codeaurora.org>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>
+Subject: Re: [PATCH 2/9] phy: qcom-qusb2: Add support for SDM630/660
+Message-ID: <20200731202600.GA722818@bogus>
+References: <20200726111215.22361-1-konradybcio@gmail.com>
+ <20200726111215.22361-3-konradybcio@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1596115816-11758-2-git-send-email-hanks.chen@mediatek.com>
+In-Reply-To: <20200726111215.22361-3-konradybcio@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 30 Jul 2020 21:30:14 +0800, Hanks Chen wrote:
-> From: Andy Teng <andy.teng@mediatek.com>
+On Sun, 26 Jul 2020 13:11:59 +0200, Konrad Dybcio wrote:
+> QUSB on these SoCs actually uses *almost* the same
+> configuration that msm8996 does, so we can reuse
+> the phy_cfg from there with just a single change
+> (se clock scheme).
 > 
-> Add devicetree bindings for MediaTek MT6779 pinctrl driver.
-> 
-> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
-> Signed-off-by: Hanks Chen <hanks.chen@mediatek.com>
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
 > ---
->  .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 202 ++++++++++++++++++
->  1 file changed, 202 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+>  Documentation/devicetree/bindings/phy/qcom,qusb2-phy.yaml | 1 +
+>  drivers/phy/qualcomm/phy-qcom-qusb2.c                     | 7 ++++++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
