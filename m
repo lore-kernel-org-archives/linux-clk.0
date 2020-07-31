@@ -1,157 +1,121 @@
-Return-Path: <SRS0=ddvZ=BJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=1Dwv=BK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MSGID_FROM_MTA_HEADER,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1AD6C433E1
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 18:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532FBC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 00:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id BCFA120829
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jul 2020 18:26:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E95B2074B
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 00:44:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="PTrzTK8J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730023AbgG3S0f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jul 2020 14:26:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50562 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726343AbgG3S0e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Jul 2020 14:26:34 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.221.27])
-        by mx2.suse.de (Postfix) with ESMTP id DF4CDABCE;
-        Thu, 30 Jul 2020 18:26:44 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     pbrobinson@gmail.com, kernel-list@raspberrypi.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
+        id S1730951AbgGaAo0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jul 2020 20:44:26 -0400
+Received: from mail-mw2nam10on2082.outbound.protection.outlook.com ([40.107.94.82]:2574
+        "EHLO NAM10-MW2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730888AbgGaAoZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 30 Jul 2020 20:44:25 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hLOr7ZvMxggSQ4Z4M7L+6QLse3UGkG+/uBhEq6gE5EUeekkO9RBM7Zz5ilkRd54X2tqMidfHShRWOvlnhozEr5VDFTp+OAk4IT5ssRyRDiMkOv5LdIeQbRSbbN+23X4d+DSwP1c0oTJbmoxocJmZ3lTySVQF0hNLuObV6GyO/Oi30n4kqukdPbytmGFNt7jl5oMXKKuccqudDHUZcGMaA+AYVjatinqJaOar4NACBHaeykMrg+SlnbK4R/jGY3WwXGZ6/XdPajvG4SBwWj1oSZHqLO8OXrDph0IkmT6HuCA6dypleyDtV7kp9VwcxeuzinOu+ydAFqvIzuA77OohZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eMYI7hZNihsx/TIWc1/uTa8jXnRDgUPNphi/lDnCOa4=;
+ b=QVhVCc2+B4VQsMPEVvQ70OanqlSRAhOzULbUQOnrOWLXFyV93qtB/rr0SAH74iWBq3MWhXAoNl+grFOW8EzxIGwmogzUYuUvTuLga1OzumIOsIIy2TLx1aJ0x1ZdZFbSt3o8RtjzajRS3VKrLfCp896iFYDk/0kGRMRSZ/pXGZwiRB4V7hZHBR+MdZjjBZIPNAS9wDtLbTtVDS/6HtnlKrD3OuwIeRiQ+Ua2eWF03JANXFDpd65SObhKJGxagzMmnXRm6vwqShqYoTPKJ/RxA2uAOPPbNbEdNSsDxJegn/U39auPKG8CkY5POCu/C6XkvhJPk8f//F3PnL+49uhQxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eMYI7hZNihsx/TIWc1/uTa8jXnRDgUPNphi/lDnCOa4=;
+ b=PTrzTK8JdLKk+V+njLwfvvTpQxpUng7tF8dL/X1PUDZa7hwR6SFp3F5WSYBdy3eaTc1Ba7Phjrc+OfG0GCybo4o6QraJHQdf8jeIxXqXEzalOxSsFiO75RlHS0cfqwnbJxqq5gehEJms1dF14o69ZVXOw5NdpF8oOAGH5Pcvdi4=
+Authentication-Results: vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=none action=none header.from=amd.com;
+Received: from DM5PR1201MB0188.namprd12.prod.outlook.com (2603:10b6:4:56::12)
+ by DM6PR12MB2748.namprd12.prod.outlook.com (2603:10b6:5:43::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.17; Fri, 31 Jul
+ 2020 00:44:23 +0000
+Received: from DM5PR1201MB0188.namprd12.prod.outlook.com
+ ([fe80::41b7:b11a:c6d8:1e0e]) by DM5PR1201MB0188.namprd12.prod.outlook.com
+ ([fe80::41b7:b11a:c6d8:1e0e%10]) with mapi id 15.20.3216.034; Fri, 31 Jul
+ 2020 00:44:23 +0000
+Subject: Re: [v2 1/4] ACPI: APD: Change name from ST to FCH
+To:     Stephen Boyd <sboyd@kernel.org>, akshu.agrawal@amd.com
+Cc:     rafael@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] clk: bcm2835: Do not use prediv with bcm2711's PLLs
-Date:   Thu, 30 Jul 2020 20:26:19 +0200
-Message-Id: <20200730182619.23246-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.27.0
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20200728082857.10829-1-akshu.agrawal@amd.com>
+ <20200728082857.10829-2-akshu.agrawal@amd.com>
+ <159598596077.1360974.483730969007254506@swboyd.mtv.corp.google.com>
+From:   "Agrawal, Akshu" <aagrawal2@amd.com>
+Message-ID: <c5041407-1bbb-82b3-e5a5-c6de0ab16861@amd.com>
+Date:   Fri, 31 Jul 2020 06:14:10 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
+In-Reply-To: <159598596077.1360974.483730969007254506@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-ClientProxiedBy: BM1PR0101CA0001.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:b00:18::11) To DM5PR1201MB0188.namprd12.prod.outlook.com
+ (2603:10b6:4:56::12)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+Received: from [172.31.32.35] (165.204.159.242) by BM1PR0101CA0001.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:18::11) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3239.16 via Frontend Transport; Fri, 31 Jul 2020 00:44:19 +0000
+X-Originating-IP: [165.204.159.242]
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 1e1c9b8f-1705-4625-592a-08d834eade22
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2748:
+X-MS-Exchange-Transport-Forked: True
+X-Microsoft-Antispam-PRVS: <DM6PR12MB2748BCB7C0C112B61558EF9CF84E0@DM6PR12MB2748.namprd12.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: ROt5w1vm98voYaXnilEwHfDCGh+24k5b8/ty1WLvoDq9WNCcYCDDhdcV5OQqBHjURQ4OmW226S5+olBcmXbOeGuNt/5jrSun2gBxC4Kofp1zCUdsbEm3kPm1X67+Y2hnCPd+lpYfRmdjP8DANQqGnIXHau/r1UAnmawTeRLX+VtXCl8trQAKOuHxv7J4HHRnJ3hdgK5PSoD6ziK39/ctUqXauPpQpNDEf3EgU4aVrXTZgdTyfUBX99vQ7XIjedF94R61oblaHpcKGdLShQKuQViitRnL0V7UV2NYQYbBm9EV3JrWA5yAXTO7PDZVviQVTU1Q9wwr/xNIOaBOQnPgWZT8TjR4d+w+lHiskfhuqhNZL1AyJi+4wApolgf9BYdc
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM5PR1201MB0188.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFTY:;SFS:(4636009)(366004)(396003)(376002)(346002)(39860400002)(136003)(16526019)(16576012)(4326008)(6486002)(8676002)(186003)(2906002)(31696002)(31686004)(36756003)(2616005)(53546011)(5660300002)(6666004)(4744005)(316002)(66946007)(66476007)(66556008)(26005)(956004)(478600001)(54906003)(8936002)(6636002)(52116002)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData: fJoWrvAqXRZIAMxLnCzdPRi8kWl31IuV2M6+RbQCOKJcxaHNsxZixum3pm+O5DTD2FX1fuEv4RWkj1HmwC3z4iX7HHw8+fGJ+JKcckxLllMPZkN5ZRLFJMWwyvaFDFccEtMhOW3N+8fWefIlNFum3jbagb0BWbJTwEV+DLEiUYnYxWIF+TPi9MesWray2H07aoBH++WJIYtyGt7q9vefa/argF5BUWf4VEG1mkJ0thRoituSyg2jI7rqydhF7oiceaS7GbYfwmpDqDfRVk/oKujCh3uAA2TKe11nXtP9bHkt2szKAGfHjg9Qb+78kCksBnzmgHqe92AXXZJdWeJ3zw7tg1NADETDD9sjBeBsHotcKkmsgsFVvgdCJE44ym3rnYRCXg5Pn6US+QvWA7hLyqlMWQqYMiz8gXo39o2zXwq3F2UCT34G3nXXMTeE2LrsD2Ib7cyho5pPBJLqwHYHV1CNfs/YSNjeb59uSMf6zuhA35zzwbNjPYIJJfez+Ry69rprtEYpyaFlFnzG7HeNpjnxLV1QXl4ZFPmQqFgRbEQZTwwbHRXo+ZJ73ZhW20XGeeKmiSZwOSGFDNZ63B31mB0gfXMcSfpMJIPAdecePuxxuaD6ghC14plTPbYFcGZHK23TSQqI75INBe+ykip3Jw==
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e1c9b8f-1705-4625-592a-08d834eade22
+X-MS-Exchange-CrossTenant-AuthSource: DM5PR1201MB0188.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2020 00:44:23.0128
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zP4M8cAdl/GJKwhhUiZw0pMsgDf0CBdp2tC//AY8d5rSvaVjQrIFq8u/95enO2CEBar4BbhllPoaQlBPyDvv+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2748
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Contrary to previous SoCs, bcm2711 doesn't have a prescaler in the PLL
-feedback loop. Bypass it by zeroing fb_prediv_mask when running on
-bcm2711.
 
-Note that, since the prediv configuration bits were re-purposed, this
-was triggering miscalculations on all clocks hanging from the VPU clock,
-notably the aux UART, making its output unintelligible.
+On 7/29/2020 6:56 AM, Stephen Boyd wrote:
+> Quoting Akshu Agrawal (2020-07-28 01:28:53)
+>> AMD SoC general pupose clk is present in new platforms with
+>> same MMIO mappings. We can reuse the same clk handler support
+>> for other platforms. Hence, changing name from ST(SoC) to FCH(IP)
+>>
+>> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+>> ---
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-Fixes: 42de9ad400af ("clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support")
-Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
-
-Changes since v1:
- - Previous approach broken. Check if running on bcm2711 upon using
-   fb_prediv_mask.
-
-FYI relevant discussion with RPi engineers:
-https://github.com/raspberrypi/firmware/issues/1435#issuecomment-666242077
-
- drivers/clk/bcm/clk-bcm2835.c | 25 +++++++++++++++++++++----
- 1 file changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 027eba31f793..3439bc65bb4e 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -314,6 +314,7 @@ struct bcm2835_cprman {
- 	struct device *dev;
- 	void __iomem *regs;
- 	spinlock_t regs_lock; /* spinlock for all clocks */
-+	unsigned int soc;
- 
- 	/*
- 	 * Real names of cprman clock parents looked up through
-@@ -526,6 +527,20 @@ static int bcm2835_pll_is_on(struct clk_hw *hw)
- 		A2W_PLL_CTRL_PRST_DISABLE;
- }
- 
-+static u32 bcm2835_pll_get_prediv_mask(struct bcm2835_cprman *cprman,
-+				       const struct bcm2835_pll_data *data)
-+{
-+	/*
-+	 * On BCM2711 there isn't a pre-divisor available in the PLL feedback
-+	 * loop. Bits 13:14 of ANA1 (PLLA,PLLB,PLLC,PLLD) have been re-purposed
-+	 * for to for VCO RANGE bits.
-+	 */
-+	if (cprman->soc & SOC_BCM2711)
-+		return 0;
-+
-+	return data->ana->fb_prediv_mask;
-+}
-+
- static void bcm2835_pll_choose_ndiv_and_fdiv(unsigned long rate,
- 					     unsigned long parent_rate,
- 					     u32 *ndiv, u32 *fdiv)
-@@ -583,7 +598,7 @@ static unsigned long bcm2835_pll_get_rate(struct clk_hw *hw,
- 	ndiv = (a2wctrl & A2W_PLL_CTRL_NDIV_MASK) >> A2W_PLL_CTRL_NDIV_SHIFT;
- 	pdiv = (a2wctrl & A2W_PLL_CTRL_PDIV_MASK) >> A2W_PLL_CTRL_PDIV_SHIFT;
- 	using_prediv = cprman_read(cprman, data->ana_reg_base + 4) &
--		data->ana->fb_prediv_mask;
-+		       bcm2835_pll_get_prediv_mask(cprman, data);
- 
- 	if (using_prediv) {
- 		ndiv *= 2;
-@@ -666,6 +681,7 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	struct bcm2835_pll *pll = container_of(hw, struct bcm2835_pll, hw);
- 	struct bcm2835_cprman *cprman = pll->cprman;
- 	const struct bcm2835_pll_data *data = pll->data;
-+	u32 prediv_mask = bcm2835_pll_get_prediv_mask(cprman, data);
- 	bool was_using_prediv, use_fb_prediv, do_ana_setup_first;
- 	u32 ndiv, fdiv, a2w_ctl;
- 	u32 ana[4];
-@@ -683,7 +699,7 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	for (i = 3; i >= 0; i--)
- 		ana[i] = cprman_read(cprman, data->ana_reg_base + i * 4);
- 
--	was_using_prediv = ana[1] & data->ana->fb_prediv_mask;
-+	was_using_prediv = ana[1] & prediv_mask;
- 
- 	ana[0] &= ~data->ana->mask0;
- 	ana[0] |= data->ana->set0;
-@@ -693,10 +709,10 @@ static int bcm2835_pll_set_rate(struct clk_hw *hw,
- 	ana[3] |= data->ana->set3;
- 
- 	if (was_using_prediv && !use_fb_prediv) {
--		ana[1] &= ~data->ana->fb_prediv_mask;
-+		ana[1] &= ~prediv_mask;
- 		do_ana_setup_first = true;
- 	} else if (!was_using_prediv && use_fb_prediv) {
--		ana[1] |= data->ana->fb_prediv_mask;
-+		ana[1] |= prediv_mask;
- 		do_ana_setup_first = false;
- 	} else {
- 		do_ana_setup_first = true;
-@@ -2262,6 +2278,7 @@ static int bcm2835_clk_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, cprman);
- 
- 	cprman->onecell.num = asize;
-+	cprman->soc = pdata->soc;
- 	hws = cprman->onecell.hws;
- 
- 	for (i = 0; i < asize; i++) {
--- 
-2.27.0
+Hi Rafael,
+I see the status of these patches as Not Applicable in patchwork, is 
+there any pending action for me?
+Thanks,
+Akshu
 
