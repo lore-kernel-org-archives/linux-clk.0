@@ -2,183 +2,118 @@ Return-Path: <SRS0=1Dwv=BK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97680C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 20:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA724C433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 21:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 7826D22B3F
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 20:38:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oMSBX8wb"
+	by mail.kernel.org (Postfix) with ESMTP id 93F9F22B3F
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 21:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596230901;
+	bh=t2TnxjwX3qoq8jarFCBg8PPXBcrNIpb0WFslp6nHU3w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Wvvoydhz6ck72dsF4PjXzInldR6FlQ3s19vLgE0tMDmf9XuQnV8kg+jyiRYDU2CT6
+	 UuVJ+ZifED1MjfqMVjMIMDP9p35aoMEdswu6fyHY/w6mN36jGl84Iw+U756RHVVEDj
+	 l6Qw0T6vC/oggVR6I83W2LO1B9WMFQZGvZ0K5BX4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbgGaUiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jul 2020 16:38:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50888 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbgGaUiY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 16:38:24 -0400
-Received: from mail-ua1-x942.google.com (mail-ua1-x942.google.com [IPv6:2607:f8b0:4864:20::942])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6B93C06179E
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2020 13:38:24 -0700 (PDT)
-Received: by mail-ua1-x942.google.com with SMTP id g4so10084374uaq.10
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2020 13:38:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4d/8M1GaZlaQ7i6vBuXiApjomUk8MCCMGihxn8SEhGI=;
-        b=oMSBX8wbpDzhemKtin6iMIKcj9YHdfUP9X96BhXqiZwdkCb6iflhh4d7i3EnV4OThK
-         S0pcBJh0PmNPWnK36W4jg1mctQtYXyJEK2gQA8OF3/7zytcotFTZRXy/pTH3aBfnQ6sv
-         1j904VGcwfZKsOW6F8z7hQHUOEav8AFBiIlwA=
+        id S1726342AbgGaV2V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jul 2020 17:28:21 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38269 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbgGaV2U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 17:28:20 -0400
+Received: by mail-io1-f67.google.com with SMTP id l1so33021027ioh.5;
+        Fri, 31 Jul 2020 14:28:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4d/8M1GaZlaQ7i6vBuXiApjomUk8MCCMGihxn8SEhGI=;
-        b=IjCw8BwZlMlhjOk/p8Ot7Q1BVE3ztODaX5UdBrZJlGmCSmQT4FJuAo07U9LjIn1ni5
-         ve8JS2d83zwLQMPt4pfZF5s5jZrCtiaOpHtVPPzmLkYBTpinjW9GANmE/VhAtnMIaVms
-         2c/c8dniS8cEtkv6I8N3WK8stcSOJdkAWR4elrs9TCsuwaBTP3CAKtrTSKQNUPDrEYVk
-         bCY8pg/QwMhGC0CLOYms9m1S5OafErh4QHQTTxba/JuhmQ364AM8lYJGV2+/p1PKr9bQ
-         m+rIVfEruxyEfL9Xc9MllInCnKfFe2jGa8GfYYrqeDCdXBO8nEwIP1M5LFA9zi8pudqk
-         co2A==
-X-Gm-Message-State: AOAM532379anZ9wpNj7kKhFP/Fnzc2WOxM55sp0nKnsX+RBMv/ItmxCT
-        w/CmIeDOXPczKX+1n+Wd6rZ6RRnDQgY=
-X-Google-Smtp-Source: ABdhPJzzgQCwQ9dpFoqFz9ndRFruQOzIfNEir5Kbk5O3tKu0s7QKr7lQ+tBO1NKWgkPEuLFVRSRXyw==
-X-Received: by 2002:ab0:10f:: with SMTP id 15mr4470088uak.46.1596227903536;
-        Fri, 31 Jul 2020 13:38:23 -0700 (PDT)
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com. [209.85.217.42])
-        by smtp.gmail.com with ESMTPSA id s126sm1377928vka.32.2020.07.31.13.38.21
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jul 2020 13:38:22 -0700 (PDT)
-Received: by mail-vs1-f42.google.com with SMTP id j23so10127173vsq.7
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jul 2020 13:38:21 -0700 (PDT)
-X-Received: by 2002:a67:5c2:: with SMTP id 185mr4706433vsf.42.1596227901080;
- Fri, 31 Jul 2020 13:38:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=sVnBiF5i1es6XtH44ZtTDOKObrgpwZ2en0Vy3+DputQ=;
+        b=EuYo/vnZ45XJJy+sGBjIKVqj+pcEiSMmCAhAHphINKuYVRJNgrB4UqGwYF9MKURp6r
+         ogyzansceEzBYyTCrkv1BhJHTbtZUGBeSLQpwgL1I6d3B+Nh+iQB+6p/x8deB8UdqoQN
+         DlrXPlbePNwavTN4Kl6+LLFubciflzGfmHOUSJF8+xQHFljAHhK8eukfBG/PYjo+AWQ7
+         dbmQ/TvI2VZchpoQJTcZWfh7xpp93DGbKlKQAgw3cIREO0uI1DGmgPDt5LosxwmV0m6l
+         JcfIuzVF0go3Xw8N9u+xV7FEG8oT30cvNcjWabX0mapT4kL/eAjnoOtDgoTxVdDbQk8C
+         llzw==
+X-Gm-Message-State: AOAM532R3QWwY/WhIvx+r8eYghawTO/At2rQMP5XYkJEOWUrvc/qHhFm
+        H+pYzrjn07EjTJ1RB8kREw==
+X-Google-Smtp-Source: ABdhPJwur50y+86swFURuMIPAxgNj7veyK1aygfJ2RBiIH75TGON/Gjzru4QNpnZ11hrSwzisTrTrg==
+X-Received: by 2002:a05:6602:2c08:: with SMTP id w8mr5584224iov.129.1596230899991;
+        Fri, 31 Jul 2020 14:28:19 -0700 (PDT)
+Received: from xps15 ([64.188.179.252])
+        by smtp.gmail.com with ESMTPSA id j5sm5453486ilq.30.2020.07.31.14.28.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jul 2020 14:28:19 -0700 (PDT)
+Received: (nullmailer pid 824420 invoked by uid 1000);
+        Fri, 31 Jul 2020 21:28:16 -0000
+Date:   Fri, 31 Jul 2020 15:28:16 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, sboyd@kernel.org,
+        mturquette@baylibre.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, shawnguo@kernel.org
+Subject: Re: [PATCH v7 02/11] dt-bindings: clock: imx-lpcg: add support to
+ parse clocks from device tree
+Message-ID: <20200731212816.GA824333@bogus>
+References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com>
+ <1596009618-25516-3-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-References: <1594796149-14778-1-git-send-email-tdas@codeaurora.org> <CAD=FV=XwYQxkKQruVPnO9Nbsv_3uyD75-dcyOeB62zLVjJE5+Q@mail.gmail.com>
-In-Reply-To: <CAD=FV=XwYQxkKQruVPnO9Nbsv_3uyD75-dcyOeB62zLVjJE5+Q@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 31 Jul 2020 13:38:09 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XPo8Sa5qK1n1duP7KUcapd6qj1KSBmagAAoNuUuHnWtw@mail.gmail.com>
-Message-ID: <CAD=FV=XPo8Sa5qK1n1duP7KUcapd6qj1KSBmagAAoNuUuHnWtw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sc7180: Add LPASS clock controller nodes
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jimmy Cheng-Yi Chiang <cychiang@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1596009618-25516-3-git-send-email-aisheng.dong@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Wed, 29 Jul 2020 16:00:09 +0800, Dong Aisheng wrote:
+> MX8QM and MX8QXP LPCG Clocks are mostly the same except they may reside
+> in different subsystems across CPUs and also vary a bit on the availability.
+> 
+> Same as SCU clock, we want to move the clock definition into device tree
+> which can fully decouple the dependency of Clock ID definition from device
+> tree and make us be able to write a fully generic lpcg clock driver.
+> 
+> And we can also use the existence of clock nodes in device tree to address
+> the device and clock availability differences across different SoCs.
+> 
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: devicetree@vger.kernel.org
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+> ChangeLog:
+> v6->v7:
+>  * No other changes except converting to json schema based on the former reviewed
+>    patches due to the lagecy binding file was removed in latests kernel.
+>    Because the format is different now, i removed the former R-b
+>    and A-b tags and request a new review.
+>    See original patch here:
+>    https://patchwork.kernel.org/patch/11439079/
+> v4->v6:
+>  * no changes
+> v3->v4:
+>  * change bit-offset property to clock-indices
+>  * use constant macro to define clock indinces
+>  * drop hw-autogate property which is still not used by drivers
+> v2->v3:
+>  * no changes
+> v1->v2:
+>  * Update example
+>  * Add power domain property
+> ---
+>  .../bindings/clock/imx8qxp-lpcg.yaml          | 79 ++++++++++++++-----
+>  include/dt-bindings/clock/imx8-lpcg.h         | 14 ++++
+>  2 files changed, 74 insertions(+), 19 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
+> 
 
-On Thu, Jul 16, 2020 at 10:34 AM Doug Anderson <dianders@chromium.org> wrote:
->
-> Hi,
->
-> On Tue, Jul 14, 2020 at 11:56 PM Taniya Das <tdas@codeaurora.org> wrote:
-> >
-> > Update the clock controller nodes for Low power audio subsystem
-> > functionality.
-> >
-> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > ---
->
-> Somewhere here you should be pointing to the unlanded bindings patch, AKA:
->
-> https://lore.kernel.org/r/1594795010-9074-3-git-send-email-tdas@codeaurora.org
->
-> As per usual the fact that are using a new bindings #include file
-> means Qualcomm maintainers and clock maintainers will need to
-> coordinate landing and this needs to be pointed out.
->
->
-> >  arch/arm64/boot/dts/qcom/sc7180.dtsi | 22 ++++++++++++++++++++++
-> >  1 file changed, 22 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > index 2be81a2..8c30a17 100644
-> > --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> > @@ -8,6 +8,7 @@
-> >  #include <dt-bindings/clock/qcom,dispcc-sc7180.h>
-> >  #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-> >  #include <dt-bindings/clock/qcom,gpucc-sc7180.h>
-> > +#include <dt-bindings/clock/qcom,lpasscorecc-sc7180.h>
-> >  #include <dt-bindings/clock/qcom,rpmh.h>
-> >  #include <dt-bindings/clock/qcom,videocc-sc7180.h>
-> >  #include <dt-bindings/interconnect/qcom,osm-l3.h>
-> > @@ -2136,6 +2137,27 @@
-> >                         };
-> >                 };
-> >
-> > +               lpasscc: clock-controller@62d00000 {
-> > +                       compatible = "qcom,sc7180-lpasscorecc";
-> > +                       reg = <0 0x62d00000 0 0x50000>,
-> > +                           <0 0x62780000 0 0x30000>;
-> > +                       reg-names = "lpass_core_cc", "lpass_audio_cc";
-> > +                       clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>;
-> > +                       clock-names = "iface";
-> > +                       power-domains = <&lpass_hm LPASS_CORE_HM_GDSCR>;
-> > +                       #clock-cells = <1>;
-> > +                       #power-domain-cells = <1>;
-> > +               };
-> > +
-> > +               lpass_hm: clock-controller@63000000 {
-> > +                       compatible = "qcom,sc7180-lpasshm";
-> > +                       reg = <0 0x63000000 0 0x28>;
-> > +                       clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>;
-> > +                       clock-names = "iface";
-> > +                       #clock-cells = <1>;
-> > +                       #power-domain-cells = <1>;
-> > +               };
->
-> Question: would it ever make sense for a board not to need this clock
-> controller?  I ask because the sdm845 "lpass" clock controller is
-> "disabled" by default but yours here isn't.  I know sc7180 and sdm845
-> work pretty differently and perhaps the sdm845's default of "disabled"
-> was just overkill, but I thought I'd ask.
->
->
-> > +
-> >                 etm@7040000 {
-> >                         compatible = "arm,coresight-etm4x", "arm,primecell";
-> >                         reg = <0 0x07040000 0 0x1000>;
->
-> Your sort order is off.  You should be sorting by unit address.  Note
-> that the "ETM" has an extra 0 before its 7, so you're comparing 63 to
-> 07 and you should be after.
->
-> Other than those small things above this patch looks like it matches
-> the example in the bindings, so as long as Rob / the clock guys are
-> fine with the bindings then this seems good to go.
-
-So it looks like the bindings landed and one would think we'd be good
-to go.  Except that when I mixed your device tree patch with the
-driver that landed things went boom.
-
-Can you please re-post addressing my concerns above and also adding
-"bi_tcxo" as I have done in the bindings example here:
-
-https://lore.kernel.org/r/20200731133006.1.Iee81b115f5be50d6d69500fe1bda11bba6e16143@changeid
-
-Thanks!
-
--Doug
+Reviewed-by: Rob Herring <robh@kernel.org>
