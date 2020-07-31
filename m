@@ -2,108 +2,95 @@ Return-Path: <SRS0=1Dwv=BK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FB8C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 03:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BFDC433E0
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 11:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E654A208E4
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 03:52:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OihQDb9S"
+	by mail.kernel.org (Postfix) with ESMTP id 5506022CAD
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 11:14:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596194084;
+	bh=Wrhl52ipoO7lVMpYyYY2X0TUE7l7BgQK1+7/W1Sak/E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=baHv6+8urLROZnGIpp4BLT36YWm3OYhOZo0Fupr23aVmGfAG7IFITuGJYW9jOr/Vb
+	 gIyD6yU9XwN4y80yecr77IOFFjxUf6cifz0BVu+cjybHZNezQxG5MwUTi1UqtccRDy
+	 4O+WPp0aqTjRHnwIYcteagtcoAl+oQ+mEAT8KPaY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731165AbgGaDwE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jul 2020 23:52:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37580 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730820AbgGaDwE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jul 2020 23:52:04 -0400
-Received: from mail-pl1-x641.google.com (mail-pl1-x641.google.com [IPv6:2607:f8b0:4864:20::641])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF937C061574;
-        Thu, 30 Jul 2020 20:52:03 -0700 (PDT)
-Received: by mail-pl1-x641.google.com with SMTP id u10so6658354plr.7;
-        Thu, 30 Jul 2020 20:52:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=i91PStIHGdpSg/hrZKabALiR5l+8TCc0jNirJjRqQCY=;
-        b=OihQDb9SG/Nmy46pP/bdhWFkINVR/x1COCv40lR7nr/yZ4r+tgFdgZXL1YkfaXts2z
-         Ne0C2v27k+bC+8/pdMQ+iGHxyeKN6zFsjN2nbYgVHAySpHhKhKJSx0ZXrIicJNd0I8fN
-         eToGassd0zeNpZuV7ljB+M9vf8WCNl+CyoAwAUoKsAeylbMBUHL8BAr4m771Mi4j2GYg
-         T6gPvZcGjxf/F0Zl3xxxfFMAnTfZllQO4iPQuWdR3d8hq1zMY901Ix7y0kUzdd9vMlRb
-         JxzXMPqWx4O746hK86Cjzts/emJSSqS7GXnXFsTxyyWp19GDQ1JKjvymzRujv4tqTq4S
-         h3vw==
+        id S1732659AbgGaLOk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jul 2020 07:14:40 -0400
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:42299 "EHLO
+        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732508AbgGaLOk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 07:14:40 -0400
+Received: by mail-ot1-f45.google.com with SMTP id v21so15083663otj.9;
+        Fri, 31 Jul 2020 04:14:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=i91PStIHGdpSg/hrZKabALiR5l+8TCc0jNirJjRqQCY=;
-        b=BiVrCEylaGZ+NywVFmEN3T5MTZphBvpz9YIZNBunqrm5Hg0CoRs0pBvNCsGHRw6njw
-         3J5nALMYRZTdmFWtniSHkRj206jMCxE1xvad6iZxkmGiz+97KvW6W4fUpBSPfJEbLIbS
-         1nXF+pBKy8yS82LBq/d8J/Qdmf8MUFrF/PntE2HxyMgt3XuQ4FShfgoZkRKso7hwmwDd
-         DyqQYMmBOtU6ex+fFTRKQ4DyE+yIyzxopvxHL8/QTrDJywP/v4PS0wqOHG0EbGV3Cb+b
-         i36idzmlWZ6ufOMk/zvhyYZ/RHvnqqRdsLNyZm3Z2QDEYMuzO9Y/FTIieH1p20Cb6c4m
-         CrfA==
-X-Gm-Message-State: AOAM53126YkdCz9/fLwMW+E+ItTQi8Bhg6/w9xIkUH1ZW+Vs3U6uWf4/
-        mwzAi45NqFV5qKnPg9T1k2MkF5E/
-X-Google-Smtp-Source: ABdhPJz+qoPB6wkl5+vyxQ0881JdYpSBZLGPc5QaR/2/91qbj091cjxP60tFgnhpJOYLgXwItZPMZQ==
-X-Received: by 2002:a17:902:7c8b:: with SMTP id y11mr1999380pll.142.1596167522728;
-        Thu, 30 Jul 2020 20:52:02 -0700 (PDT)
-Received: from [192.168.1.3] (ip68-111-84-250.oc.oc.cox.net. [68.111.84.250])
-        by smtp.gmail.com with ESMTPSA id n26sm4061830pgl.42.2020.07.30.20.52.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jul 2020 20:52:01 -0700 (PDT)
-Subject: Re: [PATCH v2] clk: bcm2835: Do not use prediv with bcm2711's PLLs
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matthias Brugger <mbrugger@suse.com>
-Cc:     pbrobinson@gmail.com, kernel-list@raspberrypi.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20200730182619.23246-1-nsaenzjulienne@suse.de>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <e49faaf7-405d-c54e-ac7d-85296fef284e@gmail.com>
-Date:   Thu, 30 Jul 2020 20:51:59 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Firefox/68.0 Thunderbird/68.10.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wrhl52ipoO7lVMpYyYY2X0TUE7l7BgQK1+7/W1Sak/E=;
+        b=e8Mf+I+WQ8zZDzTqlM4MFyWH4fWqyDDcS0mXzVUh/UQOfw0B8O1jYrjjXN0Clr3YQV
+         fb8oDU48LVz7ioNY0IyavkluCYoh1N2ldM+rPh4DDE1PseIQPc8cYWm9TaDcBa/zDErU
+         KMTHDf7LxsSZCuV9nsf5qtq6HKt55mrUfHxxDd/r8Z8QJdj5WwYZEOt2BS2zhbEFWSKh
+         SjErkMi+1gmnfQ/zCfb6LjFlk8uF41Erwz2xCDwjzxlI5+vXpqth3TyjlvodiJinCKIi
+         W3BsyzAZWkFuRQL4hmN8eYRHkxt2TEDNAgGxuSRJMNcPzvb1lUbBwm/3zItx7ION+xni
+         HWrQ==
+X-Gm-Message-State: AOAM530X075n3R3ihnyU7Ip7eSqZUI96oAvKAquZhlTw1FQjAzRzlStZ
+        1Tgno80ZpOmQhDA8YsN+bktkG4gQwd/AbQewFXo=
+X-Google-Smtp-Source: ABdhPJwTgm2RTlfE3PfQw+B3a/e5hImLl3RaslOLRm7NlipEADyPDJaaJa0xVKwSiLmbETPnhGvqZ/WsvQDFktbKX1w=
+X-Received: by 2002:a05:6830:1e5c:: with SMTP id e28mr2391298otj.118.1596194079335;
+ Fri, 31 Jul 2020 04:14:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20200730182619.23246-1-nsaenzjulienne@suse.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20200728082857.10829-1-akshu.agrawal@amd.com> <20200728082857.10829-2-akshu.agrawal@amd.com>
+ <159598596077.1360974.483730969007254506@swboyd.mtv.corp.google.com> <c5041407-1bbb-82b3-e5a5-c6de0ab16861@amd.com>
+In-Reply-To: <c5041407-1bbb-82b3-e5a5-c6de0ab16861@amd.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 31 Jul 2020 13:14:26 +0200
+Message-ID: <CAJZ5v0hk+kNrHo1VmBRC=VF-dhdRP2143BxeHOGyY==1Cj+Qrg@mail.gmail.com>
+Subject: Re: [v2 1/4] ACPI: APD: Change name from ST to FCH
+To:     "Agrawal, Akshu" <aagrawal2@amd.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "Agrawal, Akshu" <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Jul 31, 2020 at 2:44 AM Agrawal, Akshu <aagrawal2@amd.com> wrote:
+>
+>
+> On 7/29/2020 6:56 AM, Stephen Boyd wrote:
+> > Quoting Akshu Agrawal (2020-07-28 01:28:53)
+> >> AMD SoC general pupose clk is present in new platforms with
+> >> same MMIO mappings. We can reuse the same clk handler support
+> >> for other platforms. Hence, changing name from ST(SoC) to FCH(IP)
+> >>
+> >> Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
+> >> ---
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+>
+> Hi Rafael,
+> I see the status of these patches as Not Applicable in patchwork, is
+> there any pending action for me?
 
+Yes, there is.
 
-On 7/30/2020 11:26 AM, Nicolas Saenz Julienne wrote:
-> Contrary to previous SoCs, bcm2711 doesn't have a prescaler in the PLL
-> feedback loop. Bypass it by zeroing fb_prediv_mask when running on
-> bcm2711.
-> 
-> Note that, since the prediv configuration bits were re-purposed, this
-> was triggering miscalculations on all clocks hanging from the VPU clock,
-> notably the aux UART, making its output unintelligible.
-> 
-> Fixes: 42de9ad400af ("clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support")
-> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+You need to let me know if you want me to apply them (and I mean the
+whole series). :-)
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
--- 
-Florian
+Besides, I only can see 3 out of 4 patches, so if you want me to apply
+them, can you please resend the whole series with CCs to linux-acpi?
+
+Thanks!
