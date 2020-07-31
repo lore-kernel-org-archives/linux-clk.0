@@ -7,85 +7,74 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BACFC433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 22:24:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8931BC433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 23:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 5549421744
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 22:24:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EDDC207EA
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jul 2020 23:20:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596234260;
-	bh=CFCLX/xODFrhtkzvYcYSNO27dODJFFuiaQpl62SKKfQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FWZ/52+w6anY9BdFUYDXSzrQCM955tIpPs01V9vS0ryJSp5EMsY6v9rtjgdoi5/ud
-	 N8wEj+k9Hoo2pwTzYBiGqGJlOgsd7cZoctFxQtHhV7P8XCoV7UIEPcMC7TN8ejR5+4
-	 ry1dvRyXQqRkVW4VUByKxWROpiQMkd31jdoV1Jjs=
+	s=default; t=1596237659;
+	bh=n5x7Sfjfv0nDyBJcaRAYdP/bxR49Er90sgjkvQtMBwo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=d79X1PzoU+EG/hPejF3C2S8rrKQ78DfnWwMKkE4vajqoq1cLqg+3uyM3odZ9aZqn1
+	 G0545My/nEdNvwWbVom9LZF1AhWAOULKNwaVj49wnD/S4kw/qPHVSCJyCZHkEPkJMj
+	 OWp2JxnryEyVGqK1kY/ke01FUE1IDdccnogTWX3o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726163AbgGaWYU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jul 2020 18:24:20 -0400
-Received: from mail-il1-f195.google.com ([209.85.166.195]:40395 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgGaWYT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jul 2020 18:24:19 -0400
-Received: by mail-il1-f195.google.com with SMTP id x1so6281763ilp.7;
-        Fri, 31 Jul 2020 15:24:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=VAnICWWmHSZyQ/n2FRhx+9FJGWpFXq+PYL2a2PlHGUI=;
-        b=jycLPAkCDbNJ4nUkNKxW89bYzPa06CamYvOZ9+V/xqgesPMVkAYnWnyV4H123CAk7L
-         hSidyLLM911Kj2WDj12tHtdvID9GcL+rN2tfUrw2yjgLcwfyxQ5eownYTU2Y3VGwNeBD
-         z65EvnMeJUxGJ5yExaPKUdN2tFqQ4byF8Env0vwZi48ewtCWl+aKo5lgJBAVKouiz8Fw
-         Se2TfFf4u/o/rUFB1/q9BycKnHAp/G/aZcIHDAUiGwhSZaN0UT9gdxlP+rFgczVdGoqL
-         gEVummtsoyioOIxhcxQh2qbmWAN3gksi9rkiFbc70l8iNc70npVm3vF0REZW7RqFLKEN
-         KMRg==
-X-Gm-Message-State: AOAM532rImezdVZdYVoxDkaNwH8qwz+eg5nHJct+Q5U1XUDxkIAm0sG7
-        GtyhbZbjLvD1Xf+CYKUzDhjjPPFInQ==
-X-Google-Smtp-Source: ABdhPJzNNKwOyFQ6RSiwe5OSJfrjJmwW/9c5cKyL5rJw4Hyu75ZQcI5qmCEHkE7DS7cCCOIQtFoRgQ==
-X-Received: by 2002:a92:c9ca:: with SMTP id k10mr5914173ilq.41.1596234258633;
-        Fri, 31 Jul 2020 15:24:18 -0700 (PDT)
-Received: from xps15 ([64.188.179.252])
-        by smtp.gmail.com with ESMTPSA id f19sm5813243ilf.15.2020.07.31.15.24.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Jul 2020 15:24:18 -0700 (PDT)
-Received: (nullmailer pid 912829 invoked by uid 1000);
-        Fri, 31 Jul 2020 22:24:16 -0000
-Date:   Fri, 31 Jul 2020 16:24:16 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org, Fugang Duan <fugang.duan@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH 07/17] dt-bindings: reset: imx8mp: Add hdmi blk_ctrl
- reset IDs
-Message-ID: <20200731222416.GA912729@bogus>
-References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
- <1596024483-21482-8-git-send-email-abel.vesa@nxp.com>
+        id S1726794AbgGaXU7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jul 2020 19:20:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726471AbgGaXU6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 31 Jul 2020 19:20:58 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DD2220791;
+        Fri, 31 Jul 2020 23:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596237658;
+        bh=n5x7Sfjfv0nDyBJcaRAYdP/bxR49Er90sgjkvQtMBwo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=EflDU+VHZSN5DCYmQBleTYsvkKKfARTPs3jZ/uF5Dd1ySJ3xUx8YqYJRZqy8Bc0eU
+         aQLjLraamVp/Uv+8wQrGClie+sdHvXNDITCEvTuYCsZbjr8Kx9E/FTqzc8chCfbTjL
+         +8OgAOvxlMA5I+wcYs7rQHlrRSkzR31vxvyVvRU4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1596024483-21482-8-git-send-email-abel.vesa@nxp.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200731133006.1.Iee81b115f5be50d6d69500fe1bda11bba6e16143@changeid>
+References: <20200731133006.1.Iee81b115f5be50d6d69500fe1bda11bba6e16143@changeid>
+Subject: Re: [PATCH] dt-bindings: clock: Fix YAML schemas for LPASS clocks on SC7180
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+To:     Douglas Anderson <dianders@chromium.org>
+Date:   Fri, 31 Jul 2020 16:20:57 -0700
+Message-ID: <159623765728.1360974.15372294562830293191@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 29 Jul 2020 15:07:53 +0300, Abel Vesa wrote:
-> These will be used imx8mp for blk-ctrl driver.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Quoting Douglas Anderson (2020-07-31 13:30:10)
+> The YAML schemas that landed forgot one clock: "bi_tcxo".  Presumably
+> the bindings were developed against the v4 version of the driver and
+> when the ".name" was removed in v5 of the driver things broke.
+>=20
+> While touching this, add the needed includes in each example.  I
+> believe both examples are supposed to be independent of each other.
+>=20
+> Let's fix the bindings.
+>=20
+> Fixes: 381cc6f97cda ("dt-bindings: clock: Add YAML schemas for LPASS cloc=
+ks on SC7180")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
->  include/dt-bindings/reset/imx8mp-reset.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Applied to clk-next
