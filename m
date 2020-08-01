@@ -2,107 +2,81 @@ Return-Path: <SRS0=CWN5=BL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E158C433E0
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 00:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5FBC433E0
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 09:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4379B20838
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 00:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596240295;
-	bh=yxrZ9zLGHwCQkdHooEsEc31zMVV+ku9MMSMFZZ9NGaU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=yMMb37beRTrQglkR2kMJe6iP7JWGuu+CD7uHe52WGkmUvPN/w6lMQINzOFG6o6jUK
-	 WbmUWAG/jrqNNJpnc6l3zZDAZdVMi3XlexYbkUJL7fe7uGC6+xxaJcV9GMuJsBATTR
-	 W/aB7SYCkTKXlS+TCa7oL3Hhkk3bpE5IZc5vTlcw=
+	by mail.kernel.org (Postfix) with ESMTP id 7AD382076C
+	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 09:35:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726707AbgHAAEz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jul 2020 20:04:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55120 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726671AbgHAAEy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 31 Jul 2020 20:04:54 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 120F620829;
-        Sat,  1 Aug 2020 00:04:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596240294;
-        bh=yxrZ9zLGHwCQkdHooEsEc31zMVV+ku9MMSMFZZ9NGaU=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=kVGL86X56eRvB5piccOvfJH72r8Au6nFJykPkbYuTBA6yHT1lrcHDmVIzhSa1nn+7
-         sR2s+CRu+9jkqUWhq/YGiPr5SqdYBOM1K7JzC+bpjfRbA3T/Ro6gVIwpKPK6tP9ymn
-         WyaVfCUi6b3TKPS3perpyiXW2tPlOI5DAChzlrgM=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200729152634.GA26850@dragon>
-References: <1596034117-24246-1-git-send-email-Anson.Huang@nxp.com> <20200729152634.GA26850@dragon>
-Subject: Re: [PATCH V7 0/6] Support building i.MX ARMv8 platforms clock driver as module
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
-        arnd@arndb.de, peng.fan@nxp.com, abel.vesa@nxp.com,
-        fugang.duan@nxp.com, daniel.baluta@nxp.com, yuehaibing@huawei.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-Date:   Fri, 31 Jul 2020 17:04:52 -0700
-Message-ID: <159624029292.1360974.8047925230522121316@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+        id S1726414AbgHAJfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 1 Aug 2020 05:35:06 -0400
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:28316 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725931AbgHAJfG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Aug 2020 05:35:06 -0400
+X-IronPort-AV: E=Sophos;i="5.75,420,1589234400"; 
+   d="scan'208";a="462118376"
+Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES256-SHA256; 01 Aug 2020 11:35:04 +0200
+From:   Julia Lawall <Julia.Lawall@inria.fr>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: drop unused function __clk_get_flags
+Date:   Sat,  1 Aug 2020 10:53:42 +0200
+Message-Id: <1596272022-14173-1-git-send-email-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Shawn Guo (2020-07-29 08:26:35)
-> On Wed, Jul 29, 2020 at 10:48:31PM +0800, Anson Huang wrote:
-> > Nowdays, there are more and more requirements of building SoC specific =
-drivers as
-> > modules, such as Android GKI (generic kernel image), this patch set sup=
-ports building
-> > i.MX ARMv8 SoCs clock drivers as modules,
-> >=20
-> > The CLK_IMXxxx is introduced for i.MX ARMv7 platforms in order to make =
-the build
-> > options aligned, the reason why i.MX ARMv7 platforms clock driver do NO=
-T support
-> > module build and COMPILE_TEST is because, some drivers like i.MX GPT ti=
-mer driver
-> > depends on clock driver to be ready before it, GPT driver uses TIMER_OF=
-_DECLARE(),
-> > while i.MX6/7 clock drivers use CLK_OF_DECLARE(), and GPT driver is cri=
-tical for
-> > i.MX6/7 platforms kernel boot up, so GPT driver needs to be changed to =
-support
-> > loadable clock driver first, then the i.MX6/7 clock drivers can support=
- loadable
-> > module, this will be done later.
-> >=20
-> > Changes since V6:
-> >       - improve patch #6's subject and move it to be first patch of thi=
-s series.
-> >=20
-> > Anson Huang (6):
-> >   clk: imx6sl: Use BIT(x) to avoid shifting signed 32-bit value by 31
-> >     bits
-> >   clk: composite: Export clk_hw_register_composite()
-> >   clk: imx: Support building i.MX common clock driver as module
-> >   clk: imx: Add clock configuration for ARMv7 platforms
-> >   clk: imx8m: Support module build
-> >   clk: imx8qxp: Support building i.MX8QXP clock driver as module
->=20
-> Acked-by: Shawn Guo <shawnguo@kernel.org>
->=20
-> Stephen,
->=20
-> I had sent v5.9 material off my hand to you, so please pick this up
-> directly if it looks good to you.  Thanks!
->=20
+The function __clk_get_flags has not been used since the April 2019
+commit a348f05361c9 ("ARM: omap2+: hwmod: drop CLK_IS_BASIC
+flag usage").  Other uses were removed in June 2015, eg by
+commit 98d8a60eccee ("clk: Convert __clk_get_flags() to
+clk_hw_get_flags()"), which shows how clk_hw_get_flags can easily
+be used instead.
 
-Ok. At this point it's pretty late so I think it will have to wait to
-after the merge window unless there's an rc8.
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+
+---
+ drivers/clk/clk.c            |    6 ------
+ include/linux/clk-provider.h |    1 -
+ 2 files changed, 7 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8aed0c3ff122..0a9261a099bd 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -500,12 +500,6 @@ static unsigned long clk_core_get_accuracy_no_lock(struct clk_core *core)
+ 	return core->accuracy;
+ }
+ 
+-unsigned long __clk_get_flags(struct clk *clk)
+-{
+-	return !clk ? 0 : clk->core->flags;
+-}
+-EXPORT_SYMBOL_GPL(__clk_get_flags);
+-
+ unsigned long clk_hw_get_flags(const struct clk_hw *hw)
+ {
+ 	return hw->core->flags;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 6f815be99b77..03a5de5f99f4 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -1096,7 +1096,6 @@ int clk_hw_get_parent_index(struct clk_hw *hw);
+ int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *new_parent);
+ unsigned int __clk_get_enable_count(struct clk *clk);
+ unsigned long clk_hw_get_rate(const struct clk_hw *hw);
+-unsigned long __clk_get_flags(struct clk *clk);
+ unsigned long clk_hw_get_flags(const struct clk_hw *hw);
+ #define clk_hw_can_set_rate_parent(hw) \
+ 	(clk_hw_get_flags((hw)) & CLK_SET_RATE_PARENT)
+
