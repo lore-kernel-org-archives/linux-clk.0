@@ -7,71 +7,65 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31555C433E0
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 19:42:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90EBAC433DF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 20:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id B0EB722CA1
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 19:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BD2C22CAD
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 20:52:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596483751;
-	bh=pg1yMp3Q6hDfDOvtQhZxujnkBMxKrKHKTXX1bU4UQxY=;
+	s=default; t=1596487967;
+	bh=KkMFcL/WXUfYXneGIkwKgonJSMxmmqy0pZLbqTkdThg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=T9aOnxOJihCqagFFLVGH48U1B7f1A01mNUpQGAhe39f8+X6Jse5SdRl9pCG84w2ut
-	 vLf3aTd/5n4CAIphpp9n8n/w5FFC+q80iHyT+/Q8pfCRsEYiKys+cd3AFlr2mIOHUT
-	 Aq83exFQneqNa3FuMltr4sUddg7hLjqWnGpaGnjw=
+	b=081G3QG667OHHoEo0rdyD1s6RGWeGlzMUpX/J2z5O2+pyXy510P2pXJuzTiYaDFwD
+	 SruMDLcdJJywDtaACTZTECJepX9PR+HLkM0b70gSuL8wfatK4mfcSRCrwHGe9LBllT
+	 heD2DFXxiZt5dRUTb/E8EIyK00gmh5zhFNsE95OM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727813AbgHCTmb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Aug 2020 15:42:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56204 "EHLO mail.kernel.org"
+        id S1728157AbgHCUwr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Aug 2020 16:52:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbgHCTmb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Aug 2020 15:42:31 -0400
+        id S1727003AbgHCUwr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Aug 2020 16:52:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D646E22C9F;
-        Mon,  3 Aug 2020 19:42:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF5BE22BF3;
+        Mon,  3 Aug 2020 20:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596483750;
-        bh=pg1yMp3Q6hDfDOvtQhZxujnkBMxKrKHKTXX1bU4UQxY=;
+        s=default; t=1596487966;
+        bh=KkMFcL/WXUfYXneGIkwKgonJSMxmmqy0pZLbqTkdThg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=tWs8XaIn8vAigHR7QF1lMHkQPrbO+/FaTzgbe2uremBsSrlQGNLLcQPmE3I853jNz
-         ZtcIi1hFvzQTLRvU2h9u34eJ/fcrfk5MqNg4rE58AN9GAya57cen3qFmMIDONLeDCS
-         DwGTePIDL7f1t5brhdkxztm8qmlwrRZLttCgrDKE=
+        b=Kz5PC1pSQ13vmx1spi1kPX8nD5Y9p4FKSVyGGB2VUrDdsaRWsCDywXMmtoI7K2jAm
+         CBQnAIGTHY+Es9i28rJq1CW4nBY/qvBHGFk+S1WYi3gnAbEz2Iu3b+wnTl7UnRcTYQ
+         AdA1jEUONPhJIbyovnodr/3WvybwNa+yyIHSGA34=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1596072174-16358-2-git-send-email-Anson.Huang@nxp.com>
-References: <1596072174-16358-1-git-send-email-Anson.Huang@nxp.com> <1596072174-16358-2-git-send-email-Anson.Huang@nxp.com>
-Subject: Re: [PATCH V9 1/6] clk: imx6sl: Use BIT(x) to avoid shifting signed 32-bit value by 31 bits
+In-Reply-To: <20200803084835.21838-1-geert+renesas@glider.be>
+References: <20200803084835.21838-1-geert+renesas@glider.be>
+Subject: Re: [PATCH] clk: hsdk: Fix bad dependency on IOMEM
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Linux-imx@nxp.com
-To:     Anson Huang <Anson.Huang@nxp.com>, abel.vesa@nxp.com,
-        aisheng.dong@nxp.com, arnd@arndb.de, daniel.baluta@nxp.com,
-        festevam@gmail.com, fugang.duan@nxp.com, kernel@pengutronix.de,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org,
-        yuehaibing@huawei.com
-Date:   Mon, 03 Aug 2020 12:42:29 -0700
-Message-ID: <159648374959.1360974.3090613408656313501@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+To:     David Gow <davidgow@google.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Date:   Mon, 03 Aug 2020 13:52:45 -0700
+Message-ID: <159648796545.1360974.17742434774055874684@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2020-07-29 18:22:49)
-> Use readl_relaxed() instead of __raw_readl(), and use BIT(x)
-> instead of (1 << X) to fix below build warning reported by kernel
-> test robot:
+Quoting Geert Uytterhoeven (2020-08-03 01:48:35)
+> CONFIG_IOMEM does not exist.  The correct symbol to depend on is
+> CONFIG_HAS_IOMEM.
 >=20
-> drivers/clk/imx/clk-imx6sl.c:149:49: warning: Shifting signed 32-bit
-> value by 31 bits is undefined behaviour [shiftTooManyBitsSigned]
->      while (!(__raw_readl(anatop_base + PLL_ARM) & BM_PLL_ARM_LOCK))
->=20
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> Reported-by: kernel test robot <lkp@intel.com>
+> Fixes: 1e7468bd9d30a21e ("clk: Specify IOMEM dependency for HSDK pll driv=
+er")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > ---
 
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
