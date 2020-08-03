@@ -2,74 +2,166 @@ Return-Path: <SRS0=ow3Z=BN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C17C433DF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 08:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A94C433E1
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 11:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 27758206D7
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 08:48:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3BF020738
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 11:00:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1596452426;
+	bh=LYS0GWdRpiOi06IUzhl5C/4AAkTdXCxhTjn+IAoTmwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Pj4BnBVtGH8D0A+r+tAfPLSRUhjbvHNoQjtKAKD84H2MPFvFyu7dD6AWyKbaHD9mk
+	 TSfeNrv76T4+7nihGtFd9RJwRkmu3ctQF6tZoRUbHZLo/RjuSILijyeK7dvNta2+8N
+	 17D4sIlFqh0BsIiEXu3/bMpAHj0o6xjIA/y5R4J0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725933AbgHCIst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Aug 2020 04:48:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbgHCIst (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Aug 2020 04:48:49 -0400
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AFFC06174A
-        for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2020 01:48:48 -0700 (PDT)
-Received: from ramsan ([84.195.186.194])
-        by xavier.telenet-ops.be with bizsmtp
-        id Awol2300E4C55Sk01wolnW; Mon, 03 Aug 2020 10:48:45 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k2W9F-0006e5-C3; Mon, 03 Aug 2020 10:48:45 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1k2W9F-0006L6-A8; Mon, 03 Aug 2020 10:48:45 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1725965AbgHCLAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Aug 2020 07:00:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48884 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725945AbgHCLAV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Aug 2020 07:00:21 -0400
+Received: from localhost (unknown [122.171.202.192])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DB520578;
+        Mon,  3 Aug 2020 11:00:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1596452419;
+        bh=LYS0GWdRpiOi06IUzhl5C/4AAkTdXCxhTjn+IAoTmwI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=aknNQkg/fkfqlAJkanuP86F0U0ybdq+0nVqKK3c/cmMK5Mb6txJZRRA1KeHacl4Ag
+         dK3x2SQOz0k+OrDtiLPy69xBdcaBIjnIudeR7vBhfUGph9ozVgDa17Ee5EG9vZ/U25
+         yJmSjh9Iz+yOg9ZX2laUFq6EgqSS3LUUiCNeGX3U=
+Date:   Mon, 3 Aug 2020 16:30:16 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Konrad Dybcio <konradybcio@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Clark <robdclark@gmail.com>
+Cc:     martin.botka1@gmail.com, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        David Gow <davidgow@google.com>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: hsdk: Fix bad dependency on IOMEM
-Date:   Mon,  3 Aug 2020 10:48:35 +0200
-Message-Id: <20200803084835.21838-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Felipe Balbi <balbi@kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        zhengbin <zhengbin13@huawei.com>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        Krzysztof Wilczynski <kw@linux.com>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        Brian Masney <masneyb@onstation.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Xiaozhe Shi <xiaozhes@codeaurora.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/9] drm/msm/dsi: Add phy configuration for SDM630/636/660
+Message-ID: <20200803110016.GL12965@vkoul-mobl>
+References: <20200726111215.22361-1-konradybcio@gmail.com>
+ <20200726111215.22361-5-konradybcio@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200726111215.22361-5-konradybcio@gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-CONFIG_IOMEM does not exist.  The correct symbol to depend on is
-CONFIG_HAS_IOMEM.
+On 26-07-20, 13:12, Konrad Dybcio wrote:
+> These SoCs make use of the 14nm phy, but at different
+> addresses than other 14nm units.
+> 
+> Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
+> ---
+>  .../devicetree/bindings/display/msm/dsi.txt    |  1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c          |  2 ++
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h          |  1 +
+>  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c     | 18 ++++++++++++++++++
 
-Fixes: 1e7468bd9d30a21e ("clk: Specify IOMEM dependency for HSDK pll driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Is there a reason why dsi phy needs to be here and not in phy subsystem
+drivers/phy/ ?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 326f91b2dda9fdc4..5f952e111ab5a6f8 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -50,7 +50,7 @@ source "drivers/clk/versatile/Kconfig"
- config CLK_HSDK
- 	bool "PLL Driver for HSDK platform"
- 	depends on OF || COMPILE_TEST
--	depends on IOMEM
-+	depends on HAS_IOMEM
- 	help
- 	  This driver supports the HSDK core, system, ddr, tunnel and hdmi PLLs
- 	  control.
+>  4 files changed, 22 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> index af95586c898f..7884fd7a85c1 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
+> +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> @@ -87,6 +87,7 @@ Required properties:
+>    * "qcom,dsi-phy-20nm"
+>    * "qcom,dsi-phy-28nm-8960"
+>    * "qcom,dsi-phy-14nm"
+> +  * "qcom,dsi-phy-14nm-660"
+>    * "qcom,dsi-phy-10nm"
+>    * "qcom,dsi-phy-10nm-8998"
+>  - reg: Physical base address and length of the registers of PLL, PHY. Some
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+> index f509ebd77500..009f5b843dd1 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.c
+> @@ -499,6 +499,8 @@ static const struct of_device_id dsi_phy_dt_match[] = {
+>  #ifdef CONFIG_DRM_MSM_DSI_14NM_PHY
+>  	{ .compatible = "qcom,dsi-phy-14nm",
+>  	  .data = &dsi_phy_14nm_cfgs },
+> +	{ .compatible = "qcom,dsi-phy-14nm-660",
+> +	  .data = &dsi_phy_14nm_660_cfgs },
+>  #endif
+>  #ifdef CONFIG_DRM_MSM_DSI_10NM_PHY
+>  	{ .compatible = "qcom,dsi-phy-10nm",
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+> index 24b294ed3059..ef8672d7b123 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy.h
+> @@ -45,6 +45,7 @@ extern const struct msm_dsi_phy_cfg dsi_phy_28nm_lp_cfgs;
+>  extern const struct msm_dsi_phy_cfg dsi_phy_20nm_cfgs;
+>  extern const struct msm_dsi_phy_cfg dsi_phy_28nm_8960_cfgs;
+>  extern const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs;
+> +extern const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs;
+>  extern const struct msm_dsi_phy_cfg dsi_phy_10nm_cfgs;
+>  extern const struct msm_dsi_phy_cfg dsi_phy_10nm_8998_cfgs;
+>  
+> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> index 1594f1422372..519400501bcd 100644
+> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c
+> @@ -161,3 +161,21 @@ const struct msm_dsi_phy_cfg dsi_phy_14nm_cfgs = {
+>  	.io_start = { 0x994400, 0x996400 },
+>  	.num_dsi_phy = 2,
+>  };
+> +
+> +const struct msm_dsi_phy_cfg dsi_phy_14nm_660_cfgs = {
+> +	.type = MSM_DSI_PHY_14NM,
+> +	.src_pll_truthtable = { {false, false}, {true, false} },
+> +	.reg_cfg = {
+> +		.num = 1,
+> +		.regs = {
+> +			{"vcca", 17000, 32},
+> +		},
+> +	},
+> +	.ops = {
+> +		.enable = dsi_14nm_phy_enable,
+> +		.disable = dsi_14nm_phy_disable,
+> +		.init = dsi_14nm_phy_init,
+> +	},
+> +	.io_start = { 0xc994400, 0xc996000 },
+> +	.num_dsi_phy = 2,
+> +};
+> -- 
+> 2.27.0
+
 -- 
-2.17.1
-
+~Vinod
