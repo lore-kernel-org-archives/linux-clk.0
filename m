@@ -1,126 +1,75 @@
-Return-Path: <SRS0=CWN5=BL=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ow3Z=BN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E653C433DF
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 18:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C17C433DF
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 08:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F24E6206E6
-	for <linux-clk@archiver.kernel.org>; Sat,  1 Aug 2020 18:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="ms13z3AY"
+	by mail.kernel.org (Postfix) with ESMTP id 27758206D7
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 08:48:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbgHASOV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Aug 2020 14:14:21 -0400
-Received: from m43-7.mailgun.net ([69.72.43.7]:62733 "EHLO m43-7.mailgun.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727023AbgHASOV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 1 Aug 2020 14:14:21 -0400
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1596305660; h=References: In-Reply-To: Message-Id: Date:
- Subject: Cc: To: From: Sender;
- bh=4G27Zl1+E0JAY/pLZNnLlP6h3k5h3oQBdUrO9rd3Gi4=; b=ms13z3AY/dKfe3ip6kQ0loMusf0bjfiWPPS6c9He/4ftqNDDAWJ9Ns/Ivj3v5qwgD9Mtitdm
- dzGMeGKlUuXdkj6c4flyK68AnSjuCTy148IU+mS5MJvsbER0cos9MIXP1D2OUymQq/qBY6U/
- tYSOlj/s1HuMmq0hOHGxfvMuk3Q=
-X-Mailgun-Sending-Ip: 69.72.43.7
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org
- (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
- smtp-out-n19.prod.us-east-1.postgun.com with SMTP id
- 5f25b0e59403087e10de4307 (version=TLS1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Sat, 01 Aug 2020 18:13:57
- GMT
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id F2F6EC433CA; Sat,  1 Aug 2020 18:13:56 +0000 (UTC)
-Received: from tdas-linux.qualcomm.com (unknown [202.46.22.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3303BC433C6;
-        Sat,  1 Aug 2020 18:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3303BC433C6
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2] arm64: dts: qcom: sc7180: Add LPASS clock controller nodes
-Date:   Sat,  1 Aug 2020 23:43:35 +0530
-Message-Id: <1596305615-5894-2-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1596305615-5894-1-git-send-email-tdas@codeaurora.org>
-References: <1596305615-5894-1-git-send-email-tdas@codeaurora.org>
+        id S1725933AbgHCIst (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Aug 2020 04:48:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbgHCIst (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Aug 2020 04:48:49 -0400
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [IPv6:2a02:1800:120:4::f00:14])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AFFC06174A
+        for <linux-clk@vger.kernel.org>; Mon,  3 Aug 2020 01:48:48 -0700 (PDT)
+Received: from ramsan ([84.195.186.194])
+        by xavier.telenet-ops.be with bizsmtp
+        id Awol2300E4C55Sk01wolnW; Mon, 03 Aug 2020 10:48:45 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k2W9F-0006e5-C3; Mon, 03 Aug 2020 10:48:45 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1k2W9F-0006L6-A8; Mon, 03 Aug 2020 10:48:45 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        David Gow <davidgow@google.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: hsdk: Fix bad dependency on IOMEM
+Date:   Mon,  3 Aug 2020 10:48:35 +0200
+Message-Id: <20200803084835.21838-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the clock controller nodes for Low power audio subsystem
-functionality.
+CONFIG_IOMEM does not exist.  The correct symbol to depend on is
+CONFIG_HAS_IOMEM.
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Fixes: 1e7468bd9d30a21e ("clk: Specify IOMEM dependency for HSDK pll driver")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- arch/arm64/boot/dts/qcom/sc7180.dtsi | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/clk/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-index d46b383..7cf8bfe 100644
---- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/qcom,dispcc-sc7180.h>
- #include <dt-bindings/clock/qcom,gcc-sc7180.h>
- #include <dt-bindings/clock/qcom,gpucc-sc7180.h>
-+#include <dt-bindings/clock/qcom,lpasscorecc-sc7180.h>
- #include <dt-bindings/clock/qcom,rpmh.h>
- #include <dt-bindings/clock/qcom,videocc-sc7180.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
-@@ -3312,6 +3313,30 @@
- 			qcom,msa-fixed-perm;
- 			status = "disabled";
- 		};
-+
-+		lpasscc: clock-controller@62d00000 {
-+			compatible = "qcom,sc7180-lpasscorecc";
-+			reg = <0 0x62d00000 0 0x50000>,
-+			    <0 0x62780000 0 0x30000>;
-+			reg-names = "lpass_core_cc", "lpass_audio_cc";
-+			clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			power-domains = <&lpass_hm LPASS_CORE_HM_GDSCR>;
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
-+		lpass_hm: clock-controller@63000000 {
-+			compatible = "qcom,sc7180-lpasshm";
-+			reg = <0 0x63000000 0 0x28>;
-+			clocks = <&gcc GCC_LPASS_CFG_NOC_SWAY_CLK>,
-+				 <&rpmhcc RPMH_CXO_CLK>;
-+			clock-names = "iface", "bi_tcxo";
-+			#clock-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 	};
-
- 	thermal-zones {
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 326f91b2dda9fdc4..5f952e111ab5a6f8 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -50,7 +50,7 @@ source "drivers/clk/versatile/Kconfig"
+ config CLK_HSDK
+ 	bool "PLL Driver for HSDK platform"
+ 	depends on OF || COMPILE_TEST
+-	depends on IOMEM
++	depends on HAS_IOMEM
+ 	help
+ 	  This driver supports the HSDK core, system, ddr, tunnel and hdmi PLLs
+ 	  control.
+-- 
+2.17.1
 
