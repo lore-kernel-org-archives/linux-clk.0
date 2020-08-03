@@ -6,66 +6,77 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E9EAC433DF
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 20:53:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F143C433E0
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 21:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 18C5522CB1
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 20:53:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D80522CAD
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Aug 2020 21:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596488019;
-	bh=63vausDKl51fDul3cYf/wPKP2WMfhfwyaq3HXHq6eDM=;
+	s=default; t=1596490044;
+	bh=SEWW09/i+04+jjvVuA9NB1iGYFQ/+Gb2zPeEc9SAtPI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=xISOM2HFG+pv6Lbnc6Ue0eVu6M00vUS2PR/FIYNtXZ/1n3dLQxG5J/a6j4tGfZmOS
-	 zgPA+7qL3BkLVmpAd5ylpZ4WCTm+0F9+dWAlEgjdg9qLpLHcmxHJixuwOmyjBhvIW+
-	 Fk/bwUH197dNfh+xbbWSICqO3crDHzz0/eHkhQGc=
+	b=R6RNDPMrgb1251GgBz+uzbOW81E28oRwMF6ESkbufyuMgz5O3hga6yyrFeA+eOvPS
+	 hIrzywTry06FvAx3ZXJfXOmzNWMI0yb+vfb4/aLgLYBM7T0hwcUCexP68VPor4PHbc
+	 1d+D2c4eqkG9UmTg3CpovdAyW/cNufp31xjG3RNc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbgHCUxi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Aug 2020 16:53:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35504 "EHLO mail.kernel.org"
+        id S1729065AbgHCV1Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Aug 2020 17:27:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727003AbgHCUxi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Aug 2020 16:53:38 -0400
+        id S1726398AbgHCV1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Aug 2020 17:27:23 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32BDE22BF3;
-        Mon,  3 Aug 2020 20:53:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACF2C207DF;
+        Mon,  3 Aug 2020 21:27:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596488018;
-        bh=63vausDKl51fDul3cYf/wPKP2WMfhfwyaq3HXHq6eDM=;
+        s=default; t=1596490043;
+        bh=SEWW09/i+04+jjvVuA9NB1iGYFQ/+Gb2zPeEc9SAtPI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=CL9EukmtgevqRm17QTiuKMh+tUSO32Wcv45FcTnONooSMa1oMhDlN+jaAKRAN6Suv
-         UZYlzJMS+14rthWqFV0B7nwrtkGTykxS2SjIINdR4qwsHemi95QBL8OXEPhCmWeI5n
-         IT8S00vlubSd4B/jEh6zQqJv2LQHq02R7OnHytus=
+        b=fKraf1DqTK0sVAU2Wtz2SmkZ8NLOotp3LiIuxM3o3RlO6RPHjb25lL4EmJ4Klx/rT
+         TNxFCNmgzFyC7a6fKwBaVGUPHU4sHqw3J9DCkXSMrNi2k4fiO8OJcLyoLrp26e/+0L
+         i2jpkTYD8p0EVnDCgqcjs8Dt6NYUqq2NR9tOs+9o=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1596272022-14173-1-git-send-email-Julia.Lawall@inria.fr>
-References: <1596272022-14173-1-git-send-email-Julia.Lawall@inria.fr>
-Subject: Re: [PATCH] clk: drop unused function __clk_get_flags
+In-Reply-To: <20200730182619.23246-1-nsaenzjulienne@suse.de>
+References: <20200730182619.23246-1-nsaenzjulienne@suse.de>
+Subject: Re: [PATCH v2] clk: bcm2835: Do not use prediv with bcm2711's PLLs
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Julia Lawall <Julia.Lawall@inria.fr>,
-        Michael Turquette <mturquette@baylibre.com>
-Date:   Mon, 03 Aug 2020 13:53:36 -0700
-Message-ID: <159648801691.1360974.3807233534486926682@swboyd.mtv.corp.google.com>
+Cc:     pbrobinson@gmail.com, kernel-list@raspberrypi.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Matthias Brugger <mbrugger@suse.com>,
+        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Stefan Wahren <wahrenst@gmx.net>,
+        bcm-kernel-feedback-list@broadcom.com
+Date:   Mon, 03 Aug 2020 14:27:22 -0700
+Message-ID: <159649004236.1360974.8603728575729464532@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Julia Lawall (2020-08-01 01:53:42)
-> The function __clk_get_flags has not been used since the April 2019
-> commit a348f05361c9 ("ARM: omap2+: hwmod: drop CLK_IS_BASIC
-> flag usage").  Other uses were removed in June 2015, eg by
-> commit 98d8a60eccee ("clk: Convert __clk_get_flags() to
-> clk_hw_get_flags()"), which shows how clk_hw_get_flags can easily
-> be used instead.
+Quoting Nicolas Saenz Julienne (2020-07-30 11:26:19)
+> Contrary to previous SoCs, bcm2711 doesn't have a prescaler in the PLL
+> feedback loop. Bypass it by zeroing fb_prediv_mask when running on
+> bcm2711.
 >=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+> Note that, since the prediv configuration bits were re-purposed, this
+> was triggering miscalculations on all clocks hanging from the VPU clock,
+> notably the aux UART, making its output unintelligible.
 >=20
+> Fixes: 42de9ad400af ("clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support")
+> Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 > ---
 
 Applied to clk-next
