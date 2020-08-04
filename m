@@ -2,153 +2,118 @@ Return-Path: <SRS0=9oMa=BO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F61C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 14:49:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F834C433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 14:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AB8BA2086A
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 14:49:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jARuo43f"
+	by mail.kernel.org (Postfix) with ESMTP id 768B121744
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 14:56:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729406AbgHDOtH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Aug 2020 10:49:07 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60402 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728478AbgHDOtC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Aug 2020 10:49:02 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D025C06174A;
-        Tue,  4 Aug 2020 07:49:01 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id c10so367736edk.6;
-        Tue, 04 Aug 2020 07:49:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g4HmwOYH2FipfU55YwXNgn+/KWI9nU6qQar00eEKnTI=;
-        b=jARuo43f4imeZbHxuoML4wNyRPTOwuEdSxdGaGmmEjiQMf0k+ARZ+35S8UliQueShq
-         eP0wC8Ag/bCp+Zrr1kaAC9ZuZGyh2J/cqvk1OBx0WpDyelZgZdAiRCd0WFo8tZmYqo0Y
-         7PiuhEGNILTeXGo46kKTLVePah8v3wCgRDJum0EXMPbocMpUleVTqO0Y272GXbjUyPH5
-         lYGAdiePK9a28RHry1cVndmlMfgRO4RvoJjBqJJDQK0K4ygPlXwB8/yGPyFFCbWItV6u
-         UQ9oavX098EpyXsAOA9V3NiotNgRWXOY0NuVucJnh4q/wfX2aBpvyy4qCt4UMFYOlEUY
-         KpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g4HmwOYH2FipfU55YwXNgn+/KWI9nU6qQar00eEKnTI=;
-        b=uR4s7fc9k2GygDjZrzGQfdgslSJPqYUsMsgudBI6P6JrHsSCjsqa3ghYclKZsbviIs
-         maHrjwbUOu+MX6+bfmZxTyCKwnUKgYrV5Q0HQUfHXm67e7VVaV9TswcPioa5SnVLzJmI
-         +Mha3XjMjfIeOcTXUs1du3EV0h10LJjy2wej36TiqFAf4wpG0ICs0ofpCE98ootnAyce
-         ZQQHB05KaLvAXixjn4RmJt2PQ2Pi7zZ7jgYv5WcjMKM0xDYkgJBNu+duwgWIDEHGuunH
-         ViEfzHSZGoPE5yOduI3fOC9g9n0q4Mixzn2/fwMG0zEx/KD3LSfW1gplJfxBsGmhQDdt
-         d9hw==
-X-Gm-Message-State: AOAM530/c0gq4NONL6YrIlnQtKdGFPv+LIHPB0KgPRrAUsjwlPWOSH8Q
-        IEjjoyONn2j0TZCGH2XC+Txd05ALmpuSVHq7BI0=
-X-Google-Smtp-Source: ABdhPJzvDZkA05JzMe/6DGwbz7nTKib7xTiBIdtvgBQrjNjFlefh8ZT9iPjGtuAI7EG71+3trm7KlYtgLwGlIRjAHP0=
-X-Received: by 2002:aa7:da46:: with SMTP id w6mr17536741eds.7.1596552540239;
- Tue, 04 Aug 2020 07:49:00 -0700 (PDT)
+        id S1728408AbgHDO4N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Aug 2020 10:56:13 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:23170 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726556AbgHDO4M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Aug 2020 10:56:12 -0400
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 074B4tG1006974;
+        Tue, 4 Aug 2020 07:05:42 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 32n69ehhxu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 04 Aug 2020 07:05:42 -0400
+Received: from SCSQMBX11.ad.analog.com (scsqmbx11.ad.analog.com [10.77.17.10])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 074B5eca065013
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Tue, 4 Aug 2020 07:05:41 -0400
+Received: from SCSQMBX11.ad.analog.com (10.77.17.10) by
+ SCSQMBX11.ad.analog.com (10.77.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Tue, 4 Aug 2020 04:05:39 -0700
+Received: from zeus.spd.analog.com (10.64.82.11) by SCSQMBX11.ad.analog.com
+ (10.77.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Tue, 4 Aug 2020 04:05:39 -0700
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 074B5VDu005208;
+        Tue, 4 Aug 2020 07:05:36 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <linux-fpga@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <mdf@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH 2/6] clk: axi-clkgen: Set power bits for fractional mode
+Date:   Tue, 4 Aug 2020 14:06:54 +0300
+Message-ID: <20200804110658.40911-3-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20200804110658.40911-1-alexandru.ardelean@analog.com>
+References: <20200804110658.40911-1-alexandru.ardelean@analog.com>
 MIME-Version: 1.0
-References: <20200726111215.22361-1-konradybcio@gmail.com> <20200726111215.22361-5-konradybcio@gmail.com>
- <20200803110016.GL12965@vkoul-mobl> <CAF6AEGtW29BtJPq1xDEtvtkPHFVWEd_QJk5FpJEQPbmofnS64Q@mail.gmail.com>
- <20200804120946.GQ12965@vkoul-mobl>
-In-Reply-To: <20200804120946.GQ12965@vkoul-mobl>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Tue, 4 Aug 2020 07:49:44 -0700
-Message-ID: <CAF6AEGttPJSy+PcspPgxj2OELEyh2Xj-Gm2Uiv7Pcv6JMDE-tg@mail.gmail.com>
-Subject: Re: [PATCH 4/9] drm/msm/dsi: Add phy configuration for SDM630/636/660
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Konrad Dybcio <konradybcio@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        martin.botka1@gmail.com, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        zhengbin <zhengbin13@huawei.com>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        AngeloGioacchino Del Regno <kholk11@gmail.com>,
-        Ben Dooks <ben.dooks@codethink.co.uk>,
-        Krzysztof Wilczynski <kw@linux.com>,
-        Harigovindan P <harigovi@codeaurora.org>,
-        Brian Masney <masneyb@onstation.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Xiaozhe Shi <xiaozhes@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-04_03:2020-08-03,2020-08-04 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0 clxscore=1015
+ mlxscore=0 malwarescore=0 suspectscore=0 priorityscore=1501
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008040084
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 4, 2020 at 5:09 AM Vinod Koul <vkoul@kernel.org> wrote:
->
-> On 03-08-20, 09:06, Rob Clark wrote:
-> > On Mon, Aug 3, 2020 at 4:00 AM Vinod Koul <vkoul@kernel.org> wrote:
-> > >
-> > > On 26-07-20, 13:12, Konrad Dybcio wrote:
-> > > > These SoCs make use of the 14nm phy, but at different
-> > > > addresses than other 14nm units.
-> > > >
-> > > > Signed-off-by: Konrad Dybcio <konradybcio@gmail.com>
-> > > > ---
-> > > >  .../devicetree/bindings/display/msm/dsi.txt    |  1 +
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy.c          |  2 ++
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy.h          |  1 +
-> > > >  drivers/gpu/drm/msm/dsi/phy/dsi_phy_14nm.c     | 18 ++++++++++++++++++
-> > >
-> > > Is there a reason why dsi phy needs to be here and not in phy subsystem
-> > > drivers/phy/ ?
-> >
-> > *maybe* it would be possible to split out all of the dsi (and hdmi)
-> > phy to drivers/phy.  But splitting out just the new ones wouldn't be
-> > practical (it would duplicate a lot of code, and make the rest of the
-> > dsi code have to deal with both cases).  And unlike dp/usb-c I'm not
-> > really sure I see an advantage to justify the churn.
->
-> So the question would be if it helps in reuse if we do that and does it
-> result in a better solution than dsi code managing the phy. The
-> advantage of framework (like phy) is that different subsystems can use
-> a (phy) driver and common framework helps reduce duplicates.
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-I'm not aware of any re-use that would be possible by splitting it
-out.. if there were, it would be a more compelling argument.
+Using the fractional dividers requires some additional power bits to be
+set.
 
-It does increase the complexity and possibilities for getting kernel
-config wrong.  There are devices like the aarch64 laptops which do not
-have a debug serial port, where debugging issues like that can be a
-pain when you get no display.  OTOH that might be balanced out a bit
-by using a common framework/api that others are familiar with.
+The fractional power bits are not documented and the current heuristic
+for setting them seems be insufficient for some cases. Just always set all
+the fractional power bits when in fractional mode.
 
-Overall, nowhere near high enough on my priority list to spend time
-on.. there are bigger fires.  If someone was really motivated about
-this and wanted to send (tested) patches, then I'd take a look and see
-how it turned out.
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ drivers/clk/clk-axi-clkgen.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-BR,
--R
+diff --git a/drivers/clk/clk-axi-clkgen.c b/drivers/clk/clk-axi-clkgen.c
+index 1df03cc6d089..14d803e6af62 100644
+--- a/drivers/clk/clk-axi-clkgen.c
++++ b/drivers/clk/clk-axi-clkgen.c
+@@ -37,6 +37,7 @@
+ #define MMCM_REG_LOCK1		0x18
+ #define MMCM_REG_LOCK2		0x19
+ #define MMCM_REG_LOCK3		0x1a
++#define MMCM_REG_POWER		0x28
+ #define MMCM_REG_FILTER1	0x4e
+ #define MMCM_REG_FILTER2	0x4f
+ 
+@@ -320,6 +321,7 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
+ 	struct axi_clkgen *axi_clkgen = clk_hw_to_axi_clkgen(clk_hw);
+ 	unsigned int d, m, dout;
+ 	struct axi_clkgen_div_params params;
++	uint32_t power = 0;
+ 	uint32_t filter;
+ 	uint32_t lock;
+ 
+@@ -331,6 +333,11 @@ static int axi_clkgen_set_rate(struct clk_hw *clk_hw,
+ 	if (d == 0 || dout == 0 || m == 0)
+ 		return -EINVAL;
+ 
++	if ((dout & 0x7) != 0 || (m & 0x7) != 0)
++		power |= 0x9800;
++
++	axi_clkgen_mmcm_write(axi_clkgen, MMCM_REG_POWER, power, 0x9800);
++
+ 	filter = axi_clkgen_lookup_filter(m - 1);
+ 	lock = axi_clkgen_lookup_lock(m - 1);
+ 
+-- 
+2.17.1
 
-> Yes sure the question was not for a new phy but about the whole
-> msm/dsi/phy code and future for it.
->
-> --
-> ~Vinod
