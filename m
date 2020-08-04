@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56524C433DF
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D08AFC433E0
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 34D7122B42
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B419322BED
+	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 19:28:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596569290;
-	bh=sgnxQDxNFJhXCnpuKyxV9bhtCuQWJwff+93nPoham8s=;
+	s=default; t=1596569295;
+	bh=jL0qvrIWZbUG6iyW2+vlFy/rDnA34eVXXUTdLk1dH1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DpqRW72iuz6TfeAwx2H/aqtkF9UdV9QpHnDUlFo6aYa9W/2NiKZaPbhGMFb3DiL0o
-	 iIiiRek7IEOHpZt8SOBpuLWA/yL3vPN6J6JMC2haH+uOYQzG4vTvFaxNxZitXxQ4GT
-	 eWbytrj/c0g3JfCuT/AXtcqDCeJaUlPg+Hu5DatM=
+	b=vNoCZI+ukk4M7L3RjtepNW3Vg4x0aWGLNYsJ5CsPv29dIeb+gtRN4WYRv2yinaqqM
+	 Ml6i4PpCoqDPkhiMkXYDhvuN7+0espzJ5QnCV5NYnZVDgCUMUp8gW8BYR8WvE2n7bp
+	 BTk7GGz2Au31uDQbiGdq0m3zGOPxpqE2srP1CEPo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728202AbgHDT2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Aug 2020 15:28:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40390 "EHLO mail.kernel.org"
+        id S1726429AbgHDT2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Aug 2020 15:28:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727930AbgHDT2J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Aug 2020 15:28:09 -0400
+        id S1726360AbgHDT2P (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 4 Aug 2020 15:28:15 -0400
 Received: from localhost.localdomain (unknown [194.230.155.117])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6539722BF3;
-        Tue,  4 Aug 2020 19:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCAF22CA0;
+        Tue,  4 Aug 2020 19:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596569289;
-        bh=sgnxQDxNFJhXCnpuKyxV9bhtCuQWJwff+93nPoham8s=;
+        s=default; t=1596569295;
+        bh=jL0qvrIWZbUG6iyW2+vlFy/rDnA34eVXXUTdLk1dH1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0dmsVsNjWAT2k1Ta4zKuRcbRPUBQETmXvmHdU33Noci7gMhuYE6Kqexmr9wfROWGY
-         U+lAFouZwjKWDazsCqCskeLE5nTguXJzcSI54IYC1Epvr2MjBgyonUnjgm2DNSE9Ew
-         VOH5GaPCSFjNYccHAchT7iU0HuPMyJYVqcCit7mo=
+        b=Pi6SY3SUL0/7MiBZt2jitKAi1avA9Ai19KAHIvMhbgLFqULvT289Do353HeEsuRh6
+         nsv65LJBKJWxFTWhwiuouhQPd+G+pGvQC7nFahhlxqCDGq1MHshl7MZy74rQCpKrGu
+         As6mppldhxYGAaF8gcuispWPEDInceuejaQ2thpA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Russell King <linux@armlinux.org.uk>,
         Kukjin Kim <kgene@kernel.org>,
@@ -64,11 +64,10 @@ To:     Russell King <linux@armlinux.org.uk>,
 Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2 08/13] ARM: s3c24xx: fix missing system reset
-Date:   Tue,  4 Aug 2020 21:26:49 +0200
-Message-Id: <20200804192654.12783-9-krzk@kernel.org>
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Subject: [PATCH v2 09/13] ARM: s3c24xx: include common.h header in s3c2443.c
+Date:   Tue,  4 Aug 2020 21:26:50 +0200
+Message-Id: <20200804192654.12783-10-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200804192654.12783-1-krzk@kernel.org>
 References: <20200804192654.12783-1-krzk@kernel.org>
@@ -77,33 +76,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
-removed usage of the watchdog reset platform code in favor of the
-Samsung SoC watchdog driver.  However the latter was not selected thus
-S3C24xx platforms lost reset abilities.
+Include common.h header in the s3c2443.c to bring the prototypes of
+defined functions and fix W=1 compile warnings:
 
-Cc: <stable@vger.kernel.org>
-Fixes: f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
+    arch/arm/mach-s3c24xx/s3c2443.c:60:12: warning: no previous prototype for 's3c2443_init' [-Wmissing-prototypes]
+       60 | int __init s3c2443_init(void)
+    arch/arm/mach-s3c24xx/s3c2443.c:77:13: warning: no previous prototype for 's3c2443_init_uarts' [-Wmissing-prototypes]
+       77 | void __init s3c2443_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+    arch/arm/mach-s3c24xx/s3c2443.c:88:13: warning: no previous prototype for 's3c2443_map_io' [-Wmissing-prototypes]
+       88 | void __init s3c2443_map_io(void)
+
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- arch/arm/Kconfig | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index fe95777af653..063018c387be 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -506,8 +506,10 @@ config ARCH_S3C24XX
- 	select HAVE_S3C2410_I2C if I2C
- 	select HAVE_S3C_RTC if RTC_CLASS
- 	select NEED_MACH_IO_H
-+	select S3C2410_WATCHDOG
- 	select SAMSUNG_ATAGS
- 	select USE_OF
-+	select WATCHDOG
- 	help
- 	  Samsung S3C2410, S3C2412, S3C2413, S3C2416, S3C2440, S3C2442, S3C2443
- 	  and S3C2450 SoCs based systems, such as the Simtec Electronics BAST
+---
+
+Changes since v1:
+1. New patch
+---
+ arch/arm/mach-s3c24xx/s3c2443.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
+index 4cbeb74cf3d6..c278cfc10ba5 100644
+--- a/arch/arm/mach-s3c24xx/s3c2443.c
++++ b/arch/arm/mach-s3c24xx/s3c2443.c
+@@ -38,6 +38,7 @@
+ #include <plat/cpu.h>
+ #include <plat/adc-core.h>
+ 
++#include "common.h"
+ #include "fb-core.h"
+ #include "nand-core.h"
+ #include "spi-core.h"
 -- 
 2.17.1
 
