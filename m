@@ -1,225 +1,192 @@
-Return-Path: <SRS0=9oMa=BO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=GcY6=BP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245B3C433E0
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 23:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C247CC433E0
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Aug 2020 01:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 117852073E
-	for <linux-clk@archiver.kernel.org>; Tue,  4 Aug 2020 23:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4DA8207FC
+	for <linux-clk@archiver.kernel.org>; Wed,  5 Aug 2020 01:11:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PkyKC3jB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725904AbgHDXWQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 4 Aug 2020 19:22:16 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:49392 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725300AbgHDXWQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 4 Aug 2020 19:22:16 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0AF00200326;
-        Wed,  5 Aug 2020 01:22:14 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1C711201346;
-        Wed,  5 Aug 2020 01:22:07 +0200 (CEST)
-Received: from 10.192.242.69 (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8CCA4402CF;
-        Wed,  5 Aug 2020 01:21:58 +0200 (CEST)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        peng.fan@nxp.com, abel.vesa@nxp.com, j.remmet@phytec.de,
-        laurent.pinchart@ideasonboard.com, yuehaibing@huawei.com,
-        andrew.smirnov@gmail.com, horia.geanta@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx: Explicitly include bits.h
-Date:   Wed,  5 Aug 2020 07:17:29 +0800
-Message-Id: <1596583049-7305-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725863AbgHEBLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 4 Aug 2020 21:11:06 -0400
+Received: from mailout3.samsung.com ([203.254.224.33]:19321 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726707AbgHEBLF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 4 Aug 2020 21:11:05 -0400
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20200805011102epoutp03493b69136d277964f31250b282ed0824~oOgVuFqAL2408724087epoutp03L
+        for <linux-clk@vger.kernel.org>; Wed,  5 Aug 2020 01:11:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20200805011102epoutp03493b69136d277964f31250b282ed0824~oOgVuFqAL2408724087epoutp03L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596589862;
+        bh=KbCNbDMefhUKUbaajNsecum/XHQG4c5fyXLbqxhiJ5o=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=PkyKC3jBH4e6rISn6xyBG+EC2Ct7cix9j6XueUCQhlqe7q1dRCPpnBvZh9P/kr2tU
+         Fw1Pkzoa6uDW8AZ3pm4+P9iKYZiIiPjOuNtGosB4yhrUvwkp3FTQTKR8EkrxNs/3ee
+         0XSQ16sydzGRtMxD0ojlyGhTOI3JZHo0PdQuTKdg=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20200805011101epcas1p134440b8ec7af625f204b01561337fc4f~oOgUDj0by1284812848epcas1p1h;
+        Wed,  5 Aug 2020 01:11:01 +0000 (GMT)
+Received: from epsmges1p5.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4BLtq64hQ8zMqYm6; Wed,  5 Aug
+        2020 01:10:58 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
+        85.87.28578.2270A2F5; Wed,  5 Aug 2020 10:10:58 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200805011056epcas1p3bf9fd741d56d48ac5768a6a5e90da1ff~oOgQCGJYH0168901689epcas1p3T;
+        Wed,  5 Aug 2020 01:10:56 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200805011056epsmtrp20e45b5cbcf7fadd254d3f86828ae5cd7~oOgQA7Fg90232902329epsmtrp2R;
+        Wed,  5 Aug 2020 01:10:56 +0000 (GMT)
+X-AuditID: b6c32a39-8c9ff70000006fa2-5f-5f2a0722e5a7
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6B.A8.08303.0270A2F5; Wed,  5 Aug 2020 10:10:56 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200805011056epsmtip2170aeeb40ed95d556a30fc7c39949768~oOgPrgvw20930009300epsmtip2D;
+        Wed,  5 Aug 2020 01:10:56 +0000 (GMT)
+Subject: Re: [PATCH v2 01/13] clk: samsung: s3c64xx: declare
+ s3c64xx_clk_init() in shared header
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <0fe2b0fc-6a41-3063-a407-5568e3bf28af@samsung.com>
+Date:   Wed, 5 Aug 2020 10:22:56 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
+MIME-Version: 1.0
+In-Reply-To: <20200804192654.12783-2-krzk@kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTZxTP19sXRPRSFD+7ZcM7zUaVRynFDwTiAri7aCbZ2BYaZ+3gDgjQ
+        dr2UiCMDnPISRFgYUJ4KzgjIEBgTBjSCjjHADpGXEZG0bLwqKoM6EBilmvHf75zvd87v/M6X
+        w8V4tRw+N0IeQ6nksiiCbc1s7HB0cSI4Aqlr7T8EumHoBmgl5zcOmvsxA6As/QyGdLpaDuo9
+        M8tBdfpBFnqW8YiF8nVtDJQ+aGCh4Zo2DmrPbQXIcKmHgZYbk5jo+u1RDipZuc5CfX8EoPk5
+        LQt1zKaw0OrgDSYy5fQxUf3DQjZKmZjCUGXzS4DOPhQj/dQqhsYzCtmH3iCrS6oB2T/Yh5HL
+        SzmAnBs+xyHLu4cAmVUzzyKbNKMcsq4yjU1eq65mkfUVCWRe0Rog62cmMbLJlMghLzRUAlI3
+        m8skb7UJA3mSSO9wShZKqRwoeYgiNEIe5kMc+UTqJxV7uAqdhJ7oAOEgl0VTPoT/0UCnwxFR
+        6+shHGJlUer1VKCMpgkXX2+VQh1DOYQr6BgfglKGRik9lc60LJpWy8OcQxTRXkJXVzfxOvFk
+        ZPhY8TJHmWF9qiA1D0sEJk46sOJC3B12jv/KSgfWXB5+E8DZtX6GJXgO4KO7f7MtwTyAf02c
+        YbwuGTOuMs2YhzcDmF+mspDmALx6P2e9L5drh38JjUMJ5vx2fIANCy4XAXOA4Z0AjhZOsszV
+        bFwAtZPDbDPehu+GAy/0wIxtcF/YlDm6gZn4Hpg5cg8z4x34Z7Cr8ewrji3sKjBsTGGFi2Hz
+        2NoGxvCd8IGhlGHBb8NfjEWYWRjii1awQpvENk8HcX9Y852rxY0dnO5seLUMPpx/0sq24G/g
+        ta7bbEttKoAN2j9ZlgcR1F75nmHug+GO8KdmF0t6N2xaLgYW3a3wyUIGyyJlA1OTeRbKO7D/
+        8eirJe6C5Slp7IuA0Gxyo9nkQLPJgeZ/sTLArAT2lJKODqNooVK8+bfrwMbpCDxvgjzjU+d2
+        wOCCdgC5GLHd5tn8u1KeTags7jSlUkhV6iiKbgfi9f1mY/wdIYr125PHSIViN5FIhNyFHmKh
+        kNhpM/7AQcrDw2QxVCRFKSnV6zoG14qfyMiUuAsFPS3vi2aOVQfvUfUuHYi1H8m8sLCQ77t6
+        /vefj+7ty1NP9d87NxEfEFQwfuWLsLGCt9wP9lBEYNXIZGzyiQ+Pv0g/aJd2NX5tOtjVKzn7
+        sBe+slgliTPdqgz2G+V1lIQcjyBUFaZdn/qeLJdUhGwJGnp52cV2YKb0vPrfx0bdhLi0K9da
+        8qZg5U7GfUH24r6qr/gt72XtD4iyTdPHJRlNxjunTeIx/2NLddi+LaLy9unE6NyU5/Ofc1dO
+        5DOHezW0W9DkD18nPN27LSl08YNTHhId7XeI2ef7kf0lfbf3fklrC98wEl5cdfHuWqS/NoFW
+        bz0ii9cG5HzrOFMW+LE/waTDZUIBpqJl/wHhKKhdwwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SbUyTVxiGd95vmjS8FA1HcdHVD7QGpDrNwSG6r+QIf2RGZ9SAdbwDMlq6
+        VqYuMVbDgrAKGwmgbUUUQmZTmUCD0ihq2ZjOTei6tXWCTFqkDGplDYOJVC3NEv5dee77ep7z
+        43CkxEgv5gpVhwSNSlEkZURUR7d0afIyVpabese/GrX67gE0W93DomCzHqAq7xiJenuvsOjX
+        k+MsavO6aDShf0SjM71dBKpw+Wjkaelikb3mBkC+C78QaKbjBIUu/zDAovrZyzRy/PwhCgVv
+        0qh7vIxGYVcrhaaqHRRq7zcyqGx4lERm2wuASvs3Iu9omESP9UZmWyK21FsAdrocJJ55Xg1w
+        0PMVixvvuQGuagnRuNMwwOI2czmDL1ksNG5vOo7rTC8Bbh/zk7hzSsfiSqsZ4N7xGgrf7pLv
+        kOwVpecJRYVfCJp1GQdEBYPnZli1XnTk7Kk6Ugem2AoQw0H+bTgYCFMVQMRJ+GsATjdcJKPB
+        Iljr+PE1c685HnZ3a6OdAIAnRmxEZB7PH4QB9/HIfAH/kIF9egcdcUn+LoAjntio0A5grd9L
+        RQKGl8Gbfg8T4Vj+LfjHtBdEWMxnwM7TA3NM8Svg6Qe/zT1iIb8bdjZ5iWgnDt4965vbE8Nv
+        hLbBl1T0WBJ8UR/tk3wC/NN3nojyUng1YCK/AfGGebphnmKYpxjmKQ2AMoNFglqrzFdq5er1
+        KuFwilah1Jao8lM+KVa2gbn/I5NdA9fNz1LsgOCAHUCOlC4QT4SSciXiPMXRLwVNca6mpEjQ
+        2kEiR0kTxJOGCzkSPl9xSPhMENSC5v+U4GIW6wiTKXDq+8drTPvLnq1dX3cjxb3PH7t1PLzy
+        mLFnuzrN9HxTFnb2Fet3ZSsFxqXfZFdtcP5DJtlqsjr+Kxn6907fyuDkFvbb9K2lmz0L74/S
+        Es9FiTXO7W5ODDm3D3LkjpOr4qq3lQ3pLEMPD5SLvk4vra38q7L/WKBl7fmnzbM1G1ot1qs9
+        9gRT3QfOn/as+8i3N/Pc7QbzsonUW13h2eTvCu9bs62N+JLbvzzZsWLn3yVL3ojLes+vm2n8
+        3d9mG55+9+Ni7tPQ5xl6XZPCuXySyct8ZJTkpL1ZQOQclGcPc0np3idXgu83pmb66sVn8BP5
+        OyPX95se5A2Vj+UOZ6QlV0kpbYFCLiM1WsUrNx22L64DAAA=
+X-CMS-MailID: 20200805011056epcas1p3bf9fd741d56d48ac5768a6a5e90da1ff
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200804192731epcas1p2612b16d6fa53bb30fdd289bfd835f3d8
+References: <20200804192654.12783-1-krzk@kernel.org>
+        <CGME20200804192731epcas1p2612b16d6fa53bb30fdd289bfd835f3d8@epcas1p2.samsung.com>
+        <20200804192654.12783-2-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is better to explicitly include the required header file rather
-then get it through some recursive include.
+Hi Krzysztof,
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- drivers/clk/imx/clk-busy.c           | 1 +
- drivers/clk/imx/clk-composite-7ulp.c | 1 +
- drivers/clk/imx/clk-fixup-mux.c      | 1 +
- drivers/clk/imx/clk-imx6q.c          | 1 +
- drivers/clk/imx/clk-imx6sx.c         | 1 +
- drivers/clk/imx/clk-imx7d.c          | 1 +
- drivers/clk/imx/clk-lpcg-scu.c       | 1 +
- drivers/clk/imx/clk-pll14xx.c        | 2 +-
- drivers/clk/imx/clk-pllv1.c          | 1 +
- drivers/clk/imx/clk-pllv4.c          | 1 +
- drivers/clk/imx/clk-vf610.c          | 1 +
- drivers/clk/imx/clk.c                | 1 +
- drivers/clk/imx/clk.h                | 1 +
- 13 files changed, 13 insertions(+), 1 deletion(-)
+On 8/5/20 4:26 AM, Krzysztof Kozlowski wrote:
+> The s3c64xx_clk_init() is defined and used by the clk-s3c64xx driver and
+> also used in the mach-s3c64xx machine code.  Move the declaration to a
+> header to fix W=1 build warning:
+> 
+>     drivers/clk/samsung/clk-s3c64xx.c:391:13: warning: no previous prototype for 's3c64xx_clk_init' [-Wmissing-prototypes]
+>       391 | void __init s3c64xx_clk_init(struct device_node *np, unsigned long xtal_f,
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Drop __init from header (as suggested by Stephen),
+> 2. Add necessary header and forward declaration (as suggested by
+>    Stephen),
+> 3. Add review tag.
+> ---
+>  MAINTAINERS                       |  1 +
+>  arch/arm/mach-s3c64xx/common.c    |  1 +
+>  arch/arm/mach-s3c64xx/common.h    |  2 --
+>  drivers/clk/samsung/clk-s3c64xx.c |  1 +
+>  include/linux/clk/samsung.h       | 24 ++++++++++++++++++++++++
+>  5 files changed, 27 insertions(+), 2 deletions(-)
+>  create mode 100644 include/linux/clk/samsung.h
+> 
 
-diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
-index 25c863d..6f17311 100644
---- a/drivers/clk/imx/clk-busy.c
-+++ b/drivers/clk/imx/clk-busy.c
-@@ -4,6 +4,7 @@
-  * Copyright 2012 Linaro Ltd.
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/imx/clk-composite-7ulp.c b/drivers/clk/imx/clk-composite-7ulp.c
-index b9efcc8..7c4f31b 100644
---- a/drivers/clk/imx/clk-composite-7ulp.c
-+++ b/drivers/clk/imx/clk-composite-7ulp.c
-@@ -5,6 +5,7 @@
-  *
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
-index 58a6763..c824015 100644
---- a/drivers/clk/imx/clk-fixup-mux.c
-+++ b/drivers/clk/imx/clk-fixup-mux.c
-@@ -3,6 +3,7 @@
-  * Copyright (C) 2013 Freescale Semiconductor, Inc.
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index ba33c79..b2ff187 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -6,6 +6,7 @@
- 
- #include <linux/init.h>
- #include <linux/types.h>
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index 89ba712..20dcce5 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/imx6sx-clock.h>
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index b2057bd..6197710 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/imx7d-clock.h>
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clkdev.h>
- #include <linux/clk-provider.h>
-diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
-index a73a799..1f0e44f 100644
---- a/drivers/clk/imx/clk-lpcg-scu.c
-+++ b/drivers/clk/imx/clk-lpcg-scu.c
-@@ -4,6 +4,7 @@
-  *	Dong Aisheng <aisheng.dong@nxp.com>
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index f5c3e7e..aba36e4 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -3,7 +3,7 @@
-  * Copyright 2017-2018 NXP.
-  */
- 
--#include <linux/bitops.h>
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/export.h>
-diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
-index de4f8a4..36ffb05 100644
---- a/drivers/clk/imx/clk-pllv1.c
-+++ b/drivers/clk/imx/clk-pllv1.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/io.h>
- #include <linux/slab.h>
-diff --git a/drivers/clk/imx/clk-pllv4.c b/drivers/clk/imx/clk-pllv4.c
-index a494504..8ec703f2 100644
---- a/drivers/clk/imx/clk-pllv4.c
-+++ b/drivers/clk/imx/clk-pllv4.c
-@@ -7,6 +7,7 @@
-  *
-  */
- 
-+#include <linux/bits.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/io.h>
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 5129ef8..8773f4c 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/of_address.h>
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/syscore_ops.h>
- #include <dt-bindings/clock/vf610-clock.h>
-diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-index 547cade..47882c5 100644
---- a/drivers/clk/imx/clk.c
-+++ b/drivers/clk/imx/clk.c
-@@ -1,4 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0
-+#include <linux/bits.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/err.h>
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index dd47c19..3b796b3 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -2,6 +2,7 @@
- #ifndef __MACH_IMX_CLK_H
- #define __MACH_IMX_CLK_H
- 
-+#include <linux/bits.h>
- #include <linux/spinlock.h>
- #include <linux/clk-provider.h>
- 
+(snip)
+
+Looks good to me. Thanks.
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.7.4
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
