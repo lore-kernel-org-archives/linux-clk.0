@@ -1,128 +1,167 @@
-Return-Path: <SRS0=GcY6=BP=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=o1LC=BQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52F9C433DF
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Aug 2020 20:24:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B2EC433E0
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 94D1122CAD
-	for <linux-clk@archiver.kernel.org>; Wed,  5 Aug 2020 20:24:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596659097;
-	bh=1pc0m+mor7fcXCDG3jZxLB2PnEuA2MfsacFWqfeX5CE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=rcruJgRW3bPEakNCHh/kHcoRej9Pm39O6nLbpPlFfmcSF71SpP3O0DPufT6jFhgDd
-	 vwNkUN4jv8qdxbK4t9SW08WB4lYHP84pr64ZZkXFP/DQUo/YfPDCMGchfNGIwWouMS
-	 n39oIvEq5SJQKDVhqVcsICtPHb/w7jxRGsW/DQ6E=
+	by mail.kernel.org (Postfix) with ESMTP id 1CDB820823
+	for <linux-clk@archiver.kernel.org>; Thu,  6 Aug 2020 02:38:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HGZ8AI6q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726400AbgHEUYy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 5 Aug 2020 16:24:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56516 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725921AbgHEUYy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 5 Aug 2020 16:24:54 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9F33422CAD;
-        Wed,  5 Aug 2020 20:24:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596659093;
-        bh=1pc0m+mor7fcXCDG3jZxLB2PnEuA2MfsacFWqfeX5CE=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=0tekPfO+EVNWpUVU8saTzhp7fiPLfF9kbHOizjy+L15rLvnb6b3s3nlXQnVEDDgYT
-         B1SuZTMBnHya1XTdBAzrMnM2eNxYmFxdUtddGL6uv1FieXSYDaRFbeyufRdcMQbJAE
-         Z5itMJrGoMtlgH7dbgdPFIrzDN6AupUqmVeAMLAU=
-Content-Type: text/plain; charset="utf-8"
+        id S1726150AbgHFCiC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 5 Aug 2020 22:38:02 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:33252 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbgHFCiB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 5 Aug 2020 22:38:01 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200806023758epoutp012f5fac5d1324674bf7bdb1f455ecc077~ojVhwixP32436124361epoutp01Q
+        for <linux-clk@vger.kernel.org>; Thu,  6 Aug 2020 02:37:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200806023758epoutp012f5fac5d1324674bf7bdb1f455ecc077~ojVhwixP32436124361epoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1596681478;
+        bh=xH7bL+kle9j+exssiWUT4mq/xAboUma94B+Nbk8vdRs=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=HGZ8AI6q+frwioSbZHEsGrysqEx6hl2Bix6QBRpxUJKrkoLQ6mtLSdyQckvo/of3F
+         /4Bp29kvh/tSr9rBKPQggMQmHfjpdibnef3+vgLOsW2mu015vOveTtoTsj+YUxbYQr
+         jd/i1XaUzTwdI16ybFzk3JqQ22Xn80ZNCBgcVLpA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200806023758epcas1p2ef5b75dad43e18c8534c9c9d55ae876d~ojVhmAI0g0497004970epcas1p2X;
+        Thu,  6 Aug 2020 02:37:58 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.153]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4BMXj024f0zMqYkk; Thu,  6 Aug
+        2020 02:37:56 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        0D.3D.28581.40D6B2F5; Thu,  6 Aug 2020 11:37:56 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
+        20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88~ojVeQ2Tsw3001230012epcas1p3R;
+        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200806023755epsmtrp2a5b7acfafbc065150137e01df6e93cfd~ojVeQFxem2129621296epsmtrp2P;
+        Thu,  6 Aug 2020 02:37:55 +0000 (GMT)
+X-AuditID: b6c32a38-85df1a8000006fa5-f9-5f2b6d040949
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        82.B2.08382.20D6B2F5; Thu,  6 Aug 2020 11:37:55 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200806023754epsmtip2ad3401f148b627b271c90102e341e131~ojVeC8Ojj0843708437epsmtip23;
+        Thu,  6 Aug 2020 02:37:54 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: Mark top BPLL mux on Exynos542x as
+ critical
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <f9139970-564a-16fc-57aa-4ec11c509c8b@samsung.com>
+Date:   Thu, 6 Aug 2020 11:49:54 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1595606878-2664-5-git-send-email-tdas@codeaurora.org>
-References: <1595606878-2664-1-git-send-email-tdas@codeaurora.org> <1595606878-2664-5-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v5 4/4] clk: qcom: lpass: Add support for LPASS clock controller for SC7180
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Date:   Wed, 05 Aug 2020 13:24:52 -0700
-Message-ID: <159665909245.1360974.10366839079633595523@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
+In-Reply-To: <20200805091601.11983-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLJsWRmVeSWpSXmKPExsWy7bCmri5Lrna8wY7v/BYbZ6xntTh/fgO7
+        xceee6wWn3uPMFrMOL+PyWJhUwu7xdojd9kt/l3byGLR/vQlswOnx5p5axg9Nq3qZPPo27KK
+        0ePzJrkAlqhsm4zUxJTUIoXUvOT8lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23
+        zBygW5QUyhJzSoFCAYnFxUr6djZF+aUlqQoZ+cUltkqpBSk5BZYFesWJucWleel6yfm5VoYG
+        BkamQIUJ2Rkf3zgXvOSpuNTazNbAeIKri5GTQ0LAROJb7xemLkYuDiGBHYwS25t2s0I4nxgl
+        pl56ywRSJSTwjVGi/W0WTMfD6T+YIYr2Mko07v4P1fGeUeLxm7tADgeHsECAxME+U5C4iEAn
+        o8T8KTfAipgFLjFKvLv9ih1kFJuAlsT+FzfYQGx+AUWJqz8eM4LYvAJ2Ete+TmUFsVkEVCTu
+        H5wDZosKhEmc3NYCVSMocXLmExYQmxOo/suJtWBzmAXEJW49mc8EYctLbH87B+xUCYGFHBKL
+        Ts9nhfjBReJC70t2CFtY4tXxLVC2lMTnd3vZIOxqiZUnj7BBNHcwSmzZfwGq2Vhi/9LJTCBv
+        MgtoSqzfpQ8RVpTY+XsuI8RiPol3X3vAISEhwCvR0SYEUaIscfnBXSYIW1JicXsn2wRGpVlI
+        3pmF5IVZSF6YhbBsASPLKkax1ILi3PTUYsMCE+TY3sQITqdaFjsY5779oHeIkYmD8RCjBAez
+        kgjvx8/q8UK8KYmVValF+fFFpTmpxYcYTYEBPJFZSjQ5H5jQ80riDU2NjI2NLUwMzUwNDZXE
+        eR/eUogXEkhPLEnNTk0tSC2C6WPi4JRqYJr3OsM69KK6bct38Qj7WXqVq8x3nM3w55d8w8/6
+        aLn7PHYdh2UfdzK8rv3ooWro3e918fG9/6qdPmVlGzcI3RfI0vt8eXrvs5NLWN8f7L5Q1ixn
+        8uPOsnn/Knqn9cmcmx89lSv4j7ikwvK/ydslEnUMWoK2arYoequlpi64vumwUsId8+bmo1W7
+        W6c+chZwjFrcqXtn0z3jl1e3fyvLLWazjwlRebhj6RHHGWU2CRLftCfwif0L+jFN6/Pu+d+f
+        693SuHH36VafWdv32mnlebYxadxc9CNap/4oa3Jt0Sf1Lb0za9yidVdc0LnySTSqhdnv5zaf
+        40IMzrPPbsi/wVTw+q15MNOiuxX6K+fcElRiKc5INNRiLipOBABEUcr/MAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXpc5VzveYNETRouNM9azWpw/v4Hd
+        4mPPPVaLz71HGC1mnN/HZLGwqYXdYu2Ru+wW/65tZLFof/qS2YHTY828NYwem1Z1snn0bVnF
+        6PF5k1wASxSXTUpqTmZZapG+XQJXxsc3zgUveSoutTazNTCe4Opi5OSQEDCReDj9B3MXIxeH
+        kMBuRonbu/YyQiQkJaZdPAqU4ACyhSUOHy6GqHnLKLFz9mkmkBphAT+JHZPaGEESIgKdjBJ7
+        Hv1gA3GYBa4wSuyb2cwE0TKRUeLEskdgY9kEtCT2v7jBBmLzCyhKXP3xGCzOK2Ance3rVFYQ
+        m0VAReL+wTlgtqhAmMTOJY+ZIGoEJU7OfMICYnMC1X85sRZsDrOAusSfeZeYIWxxiVtP5jNB
+        2PIS29/OYZ7AKDwLSfssJC2zkLTMQtKygJFlFaNkakFxbnpusWGBYV5quV5xYm5xaV66XnJ+
+        7iZGcGxpae5g3L7qg94hRiYOxkOMEhzMSiK8Hz+rxwvxpiRWVqUW5ccXleakFh9ilOZgURLn
+        vVG4ME5IID2xJDU7NbUgtQgmy8TBKdXAFKie8bB68Uwl/jrDy4KTalsedDPEfW7vv/ii6oGo
+        hJBKE0Ps1G3NIbJ7ImvqtgVa/pQXMd1hui14w10rrUPNTt0HxAMeGTpeDdndvEomwUbq7Mly
+        xpR0r2fFSZ9KGuKLwr3nn2W+KDn5Xne6IHNpoLRbzcm9oQdlPu28/min46wT7qVKeic3/cle
+        9y3JYnf4l5uOGy+Lbnh9o6fycNPr8+prBfcpvD+0MSBpfVpptZsD27bVC9yEv+iaXyz5/WqL
+        2qH4A8zXJuydLTd7t2B68y7RrFVXFS93+B0OFd6etCyp+uKE+zofDkToqM7Yc2bT5a7g5TeW
+        79q27J/YuUl+n17/+T551c1Zqmnf2rx8epVYijMSDbWYi4oTAaRcO1scAwAA
+X-CMS-MailID: 20200806023755epcas1p35e51d1b8d855456d129e4e725b769c88
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18
+References: <CGME20200805091612eucas1p28c955b21e57898de60d3ed50c95b9d18@eucas1p2.samsung.com>
+        <20200805091601.11983-1-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-07-24 09:07:58)
-> +
-> +static struct clk_rcg2 core_clk_src =3D {
-> +       .cmd_rcgr =3D 0x1d000,
-> +       .mnd_width =3D 8,
-> +       .hid_width =3D 5,
-> +       .parent_map =3D lpass_core_cc_parent_map_2,
-> +       .clkr.hw.init =3D &(struct clk_init_data){
-> +               .name =3D "core_clk_src",
+Hi Marek,
 
-Any chance this can get a better name? Something with LPASS prefix?
+On 8/5/20 6:16 PM, Marek Szyprowski wrote:
+> BPLL clock must not be disabled because it is needed for proper DRAM
+> operation. This is normally handled by respective memory devfreq driver,
+> but when that driver is not yet probed or its probe has been deferred the
+> clock might got disabled what causes board hang. Fix this by marking it
+> as critical.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index fea33399a632..5ef78928938a 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -734,7 +734,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+>  	MUX_F(CLK_MOUT_MCLK_CDREX, "mout_mclk_cdrex", mout_mclk_cdrex_p,
+>  			SRC_CDREX, 4, 1, CLK_SET_RATE_PARENT, 0),
+>  	MUX_F(CLK_MOUT_BPLL, "mout_bpll", mout_bpll_p, SRC_CDREX, 0, 1,
+> -			CLK_SET_RATE_PARENT, 0),
+> +			CLK_SET_RATE_PARENT | CLK_IS_CRITICAL, 0),
+>  
+>  	/* MAU Block */
+>  	MUX(CLK_MOUT_MAUDIO0, "mout_maudio0", mout_maudio0_p, SRC_MAU, 28, 3),
+> 
 
-> +               .parent_data =3D &(const struct clk_parent_data){
-> +                       .fw_name =3D "bi_tcxo",
-> +               },
-> +               .num_parents =3D 1,
-> +               .ops =3D &clk_rcg2_ops,
-> +       },
-> +};
-> +
-[...]
-> +
-> +static struct clk_branch lpass_audio_core_sysnoc_mport_core_clk =3D {
-> +       .halt_reg =3D 0x23000,
-> +       .halt_check =3D BRANCH_HALT,
-> +       .hwcg_reg =3D 0x23000,
-> +       .hwcg_bit =3D 1,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x23000,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "lpass_audio_core_sysnoc_mport_core_clk=
-",
-> +                       .parent_data =3D &(const struct clk_parent_data){
-> +                               .hw =3D &core_clk_src.clkr.hw,
-> +                       },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-> +
-> +static struct clk_regmap *lpass_core_cc_sc7180_clocks[] =3D {
-> +       [EXT_MCLK0_CLK_SRC] =3D &ext_mclk0_clk_src.clkr,
-> +       [LPAIF_PRI_CLK_SRC] =3D &lpaif_pri_clk_src.clkr,
-> +       [LPAIF_SEC_CLK_SRC] =3D &lpaif_sec_clk_src.clkr,
-> +       [CORE_CLK_SRC] =3D &core_clk_src.clkr,
+Thanks for your fix. Looks good to me.
+Just I have one comment. I looks like the similar case of patch[1] related to G3D clock.
+[1] commit 67f96ff7c8f0 ("clk: samsung: exynos5420: Keep top G3D clocks enabled")
 
-And all of these, can they have LPASS_ prefix on the defines? Seems
-like we're missing a namespace otherwise.
+How about fixing this issue with same style[1]?
+Or are there any reason about should you do it with CLK_IS_CRITICAL?
 
-> +       [LPASS_AUDIO_CORE_EXT_MCLK0_CLK] =3D &lpass_audio_core_ext_mclk0_=
-clk.clkr,
-> +       [LPASS_AUDIO_CORE_LPAIF_PRI_IBIT_CLK] =3D
-> +               &lpass_audio_core_lpaif_pri_ibit_clk.clkr,
-> +       [LPASS_AUDIO_CORE_LPAIF_SEC_IBIT_CLK] =3D
-> +               &lpass_audio_core_lpaif_sec_ibit_clk.clkr,
-> +       [LPASS_AUDIO_CORE_SYSNOC_MPORT_CORE_CLK] =3D
-> +               &lpass_audio_core_sysnoc_mport_core_clk.clkr,
-> +       [LPASS_LPAAUDIO_DIG_PLL] =3D &lpass_lpaaudio_dig_pll.clkr,
-> +       [LPASS_LPAAUDIO_DIG_PLL_OUT_ODD] =3D &lpass_lpaaudio_dig_pll_out_=
-odd.clkr,
-> +};
-> +
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
