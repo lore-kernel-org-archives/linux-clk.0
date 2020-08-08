@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49457C433E4
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 23:44:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F2CC433E1
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 240EC2053B
-	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 23:44:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39950206B5
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 23:47:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596930288;
-	bh=mPYpUOLwPa6N6HVe+fte52UqhbZ4u8iZpGJl2gAFN0Q=;
+	s=default; t=1596930453;
+	bh=5FS1bRYbhh3iZG9BJtPW8I/Q7cLQiRbWaIwY811DndM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0dpsUTe1VBsDJLCJuUHNoDErN+1fPevXrdg0nz3AuzvKQ8C0MaZdBYg6YPDjw0Cvf
-	 eFOCXfIM17RRVRxtP+9dBoU0s5yVm6P4JdtbleErsiIuyLHleY/UIKaG9if0QOx9ji
-	 wkbbhGdsmeDmZLkCSAzlgSvZt6szS7Ji0uQzHq2A=
+	b=h7iXQRUDLWeCWh9cbXftGlV+maGY/zhctSKzEBOvCxWbZawBqZ+cPpKVLnNrGvTPb
+	 bRjHWC2+7hh6KeWP2UJaod7lzW3DPZNh8QYvkhOQYJ48AJgy8BMItQwgUT6TVyHT6J
+	 B+CIGfYnJeCN33ApwkmH82vqXL+Vb7ULaBJ/G1FM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726846AbgHHXjJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 8 Aug 2020 19:39:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53632 "EHLO mail.kernel.org"
+        id S1728495AbgHHXrR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Aug 2020 19:47:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728468AbgHHXjG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 8 Aug 2020 19:39:06 -0400
+        id S1728139AbgHHXh4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 8 Aug 2020 19:37:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2E0C20748;
-        Sat,  8 Aug 2020 23:39:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F70D2075D;
+        Sat,  8 Aug 2020 23:37:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596929945;
-        bh=mPYpUOLwPa6N6HVe+fte52UqhbZ4u8iZpGJl2gAFN0Q=;
+        s=default; t=1596929876;
+        bh=5FS1bRYbhh3iZG9BJtPW8I/Q7cLQiRbWaIwY811DndM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hZNLj3DzkmPPKSuWG5GQvufgwSKMiyC8sa0LaJSoovecx9Fb5n6JfpZ3QCIdcLbGK
-         4nJ2F3lwymrn8O093fOFwY64075QWjrRbrk8oaQqxZMVzaOuLkYNuyzu0mTKt2jcpe
-         d/d8FxeZrUxQfVw19yaoDSl4puVcjxEAWZCO/WKk=
+        b=bObmgYXdx2zd0ZQQvUTdVENtHD36vWhJo2wbMjpSkj4TQmYhNcpDyOtb2R1YByZEa
+         uW5eOY/W6UzXt54JEvfTJcO/KgrG2fSRv/WEcR9/x7w6FskzaOcOS8zzDfdJXVIQqm
+         q9PXyaiO+qU7tI6YWPS9hTJ9a0FGzfS6qM7Vx+98=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Sudeep Holla <sudeep.holla@arm.com>,
@@ -45,12 +45,12 @@ Cc:     Sudeep Holla <sudeep.holla@arm.com>,
         Dien Pham <dien.pham.ry@renesas.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 16/40] clk: scmi: Fix min and max rate when registering clocks with discrete rates
-Date:   Sat,  8 Aug 2020 19:38:20 -0400
-Message-Id: <20200808233844.3618823-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.7 24/58] clk: scmi: Fix min and max rate when registering clocks with discrete rates
+Date:   Sat,  8 Aug 2020 19:36:50 -0400
+Message-Id: <20200808233724.3618168-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20200808233844.3618823-1-sashal@kernel.org>
-References: <20200808233844.3618823-1-sashal@kernel.org>
+In-Reply-To: <20200808233724.3618168-1-sashal@kernel.org>
+References: <20200808233724.3618168-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -83,7 +83,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 19 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 886f7c5df51a9..e3cdb4a282fea 100644
+index c491f5de0f3f4..c754dfbb73fd4 100644
 --- a/drivers/clk/clk-scmi.c
 +++ b/drivers/clk/clk-scmi.c
 @@ -103,6 +103,8 @@ static const struct clk_ops scmi_clk_ops = {
