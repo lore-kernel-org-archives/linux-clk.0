@@ -1,92 +1,128 @@
-Return-Path: <SRS0=RyVB=BR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=IZCQ=BS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F12C433E0
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Aug 2020 21:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2324BC433E0
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 17:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 433CF214F1
-	for <linux-clk@archiver.kernel.org>; Fri,  7 Aug 2020 21:44:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1596836664;
-	bh=RvRidD0gBRnyhL+PINbEd1JlEJ7BuJCSlC1D0xNCzUQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=CTH/7kVE/n0CUQk6efJr9Z3IBE6RGQ109oCgxOPw31ZhJZ54k6ZHtHiR/R7asaCg2
-	 gtf9MYLTb3bkfm+8X9AFKIFpiozztf0Y4Lq03nXOMW+GFQyWt05EHm31pkAjSouUyM
-	 R9BEJ8GUzvHDsn293CCah4gWHyc0SU3rI3J1XK/M=
+	by mail.kernel.org (Postfix) with ESMTP id E61D32073E
+	for <linux-clk@archiver.kernel.org>; Sat,  8 Aug 2020 17:13:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V5zmyG2W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726155AbgHGVoY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 7 Aug 2020 17:44:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725970AbgHGVoX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 7 Aug 2020 17:44:23 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA76D2086A;
-        Fri,  7 Aug 2020 21:44:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1596836663;
-        bh=RvRidD0gBRnyhL+PINbEd1JlEJ7BuJCSlC1D0xNCzUQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=UaJb2DmSREBOT9PFmRI69xnpXJbZI83YIit1bT1pKZllKG7QVow6OkuWPDpJ7BDd+
-         8S6wsRnda2be7ZKVN1L/9SFHalpsqf6JmbQkin0OUpyBeI3sfoDxMRs7axfq5ckrIp
-         w0jS+qWJfWPLWN2jt/z20H+FTcr+8DLyuhBAqDkY=
-Content-Type: text/plain; charset="utf-8"
+        id S1726256AbgHHRNT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 8 Aug 2020 13:13:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36794 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbgHHRNT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 8 Aug 2020 13:13:19 -0400
+Received: from mail-io1-xd43.google.com (mail-io1-xd43.google.com [IPv6:2607:f8b0:4864:20::d43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA417C061756;
+        Sat,  8 Aug 2020 10:13:18 -0700 (PDT)
+Received: by mail-io1-xd43.google.com with SMTP id w12so4971921iom.4;
+        Sat, 08 Aug 2020 10:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=10CvMVkFP5s0ogDLDyQLYDDtzvGA2GFASeeImWfNvUk=;
+        b=V5zmyG2WJuuFRtXQWYNAehEPBSYzwi8qVw7YmJ9J92ZGxTUI3Tj3VA5ZAXaOo5E7dX
+         jW1jq+SfY6CsA9PNjUeGHqd4HxfznppRMyHO1Ny4OvIpxpEfp7kg2chqEQR/fw2d/txO
+         l+S+yq8d2X/KRIoBmR4WVsYIWi5Jg7OuIlpSXqu+FVDL2sHDoRL9yhZpLmaMc9PiyKOp
+         ijCw2OapJAkYJut0Qf7mVS/5Ngs3I4a9M45wN1OvyUirQD1D8aYlYnFK8CEvIS0R34Br
+         aCwcrLJdAvGPoRoHU778k01OI+CZg5kJbehPUkdprZUJ7OaLz6cw/VU1hOeMkjE9kuNv
+         MorQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=10CvMVkFP5s0ogDLDyQLYDDtzvGA2GFASeeImWfNvUk=;
+        b=WZQBwAGBTuyDJbfgfLvpx03D+uACpAzmZY/rIn6O4elef036wITx5cC9sCgoWuv/Bj
+         KCgts0RgK3wh0D6l4jqaVWwiLYTZ2HFJ/2YMfsIps8IAPWbgoflctUjOZy2ej9oIBQrX
+         bhtqsrIUFg09N+SLOySE5XoEttOtba0bUBoVBphjt6CQCpW6zTS2MvDb8rfGvAZL0IEk
+         rfcn2Xo4yVoZwyQL31viMLz7o9x3wDq6+WTqymdGeN9EfwDvUnnpN1snSO95NbY+LLDg
+         sHLjoB1IVygFCqRHaLdo1zoq9LNQnh/7MiB9F20+fwULXMBDgs0UjWmQIorf7WZoZPa4
+         XNKQ==
+X-Gm-Message-State: AOAM533+C7896IFeqb4vCUhNrpzYDKHYIz2tV2AmqW73fl8evOUt5D43
+        Ndf73PQDfMdXPBx+cOgT0ooFeSV66pT76dy+qU8=
+X-Google-Smtp-Source: ABdhPJyX64YtKJWSqwizyrJNygwkrIk1NowT0wwl2BNXq6x0fsRJt7GgJsT1h3wjxw22Xa+W7TBt26KkFZ2Np3csNIc=
+X-Received: by 2002:a6b:b888:: with SMTP id i130mr9996946iof.182.1596906797218;
+ Sat, 08 Aug 2020 10:13:17 -0700 (PDT)
 MIME-Version: 1.0
+References: <CGME20200806160653eucas1p2b7fd860f5d89589cf9df0ad0f8d3981f@eucas1p2.samsung.com>
+ <20200806160646.1997-1-s.nawrocki@samsung.com> <CA+Ln22HGSj4gFRmw1rSLaTvw3TiPC9jaM6JB4Z1fbxpwsWNZWw@mail.gmail.com>
+ <d980e369-73ef-89a8-6669-f7e9c5dd3243@samsung.com>
+In-Reply-To: <d980e369-73ef-89a8-6669-f7e9c5dd3243@samsung.com>
+From:   Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Sat, 8 Aug 2020 19:13:05 +0200
+Message-ID: <CA+Ln22EY1HDMLKpSsfj+9UyON-51_b-pkPgd3MCyArQSAjKYSw@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: Prevent potential endless loop in the PLL
+ set_rate ops
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <159191561875.242598.18326727418245335996@swboyd.mtv.corp.google.com>
-References: <1591885683-29514-1-git-send-email-sanm@codeaurora.org> <1591885683-29514-2-git-send-email-sanm@codeaurora.org> <159191561875.242598.18326727418245335996@swboyd.mtv.corp.google.com>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc: Add genpd active wakeup flag for sc7180
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Date:   Fri, 07 Aug 2020 14:44:21 -0700
-Message-ID: <159683666176.1360974.5500366475077976771@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2020-06-11 15:46:58)
-> Quoting Sandeep Maheswaram (2020-06-11 07:28:02)
-> > From: Taniya Das <tdas@codeaurora.org>
-> >=20
-> > The USB client requires the usb30_prim gdsc to be kept active for
-> > certain use cases, thus add the GENPD_FLAG_ACTIVE_WAKEUP flag.
->=20
-> Can you please describe more of what this is for? Once sentence doesn't
-> tell me much at all. I guess that sometimes we want to wakeup from USB
-> and so the usb gdsc should be marked as "maybe keep on for wakeups" with
-> the GENPD_FLAG_ACTIVE_WAKEUP flag if the USB controller is wakeup
-> enabled?
->=20
-> >=20
-> > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> > ---
->=20
-> Add a Fixes: tag too? And I assume we need to do this for all USB gdscs
-> on various SoCs and maybe other GDSCs like PCIe. Any plans to fix those
-> GDSCs?
->=20
+2020=E5=B9=B48=E6=9C=887=E6=97=A5(=E9=87=91) 19:06 Sylwester Nawrocki <s.na=
+wrocki@samsung.com>:
+>
+> Hi Tomasz,
+>
+> On 8/6/20 18:11, Tomasz Figa wrote:
+> >> --- a/drivers/clk/samsung/clk-pll.c
+> >> +++ b/drivers/clk/samsung/clk-pll.c
+> >> @@ -63,6 +63,27 @@ static long samsung_pll_round_rate(struct clk_hw *h=
+w,
+> >>         return rate_table[i - 1].rate;
+> >>  }
+> >>
+> >> +static int samsung_pll_lock_wait(struct samsung_clk_pll *pll,
+> >> +                                unsigned int reg_mask)
+> >> +{
+> >> +       ktime_t timeout;
+> >> +
+> >> +       /* Wait until the PLL is in steady locked state */
+> >> +       timeout =3D ktime_add_ms(ktime_get(), PLL_TIMEOUT_MS);
+> >> +
+> >> +       while (!(readl_relaxed(pll->con_reg) & reg_mask)) {
+> >> +               if (ktime_after(ktime_get(), timeout)) {
+> >> +                       pr_err("%s: Could not lock PLL %s\n",
+> >> +                               __func__, clk_hw_get_name(&pll->hw));
+> >> +                       return -EFAULT;
+> >> +               }
+> >> +
+> >> +               cpu_relax();
+> >> +       }
+>
+> > Thanks for the patch! Good to have this consolidated. How about going
+> > one step further and using the generic
+> > readl_relaxed_poll_timeout_atomic() helper?
+>
+> Might be a good suggestion, I was considering those helpers but ended
+> up not using them in the patch. The cpu_relax() call might also not be
+> really needed now, when there is the ktime code within the loop.
+> Having multiple occurrences of readl_relaxed_poll_timeout_atomic() could
+> increase the code size due to inlining. How about keeping the
+> samsung_pll_lock_wait() function and just changing its implementation?
 
-Any update here?
+Sounds good to me, thanks!
+
+Best regards,
+Tomasz
