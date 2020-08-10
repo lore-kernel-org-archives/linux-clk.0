@@ -1,113 +1,156 @@
-Return-Path: <SRS0=vWV4=BT=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=eoZA=BU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF76AC433DF
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Aug 2020 23:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DC3C433E0
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 00:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 984A9206A2
-	for <linux-clk@archiver.kernel.org>; Sun,  9 Aug 2020 23:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E27B32068F
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 00:59:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X7e0AEcJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcDioUBh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbgHIXMR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Aug 2020 19:12:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56766 "EHLO
+        id S1726530AbgHJA7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Aug 2020 20:59:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726323AbgHIXMP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Aug 2020 19:12:15 -0400
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E132C061756;
-        Sun,  9 Aug 2020 16:12:15 -0700 (PDT)
-Received: by mail-io1-xd44.google.com with SMTP id h4so1352196ioe.5;
-        Sun, 09 Aug 2020 16:12:15 -0700 (PDT)
+        with ESMTP id S1726335AbgHJA7v (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Aug 2020 20:59:51 -0400
+Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA2AC061756;
+        Sun,  9 Aug 2020 17:59:51 -0700 (PDT)
+Received: by mail-pj1-x1042.google.com with SMTP id f9so4085449pju.4;
+        Sun, 09 Aug 2020 17:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=alLW1LflvonptwdYTfDyuOKeW8wJ3Z5ZzgiFOBxMxyk=;
-        b=X7e0AEcJnUFIDHo7POyVpSf7TOVm4D/eHPFU/cJB/W5t+vZHgZ4uZtakf83tv0AqeL
-         0pKL0DAW5WcoTaS93o/nwwdkvLx+/RIoND6TdllMy06dsk4WZ8O+tEtK9Hf/ieIPeabd
-         arznZdwbsjXEPq38fU4o4tGShHp7YrhPGdJMNHNbyIM+ms67txYmkNo7lKELoQU0jsZo
-         tSF5mgkLuwmXlE/ScSBIe3sO2EcZe0yFBdyKQ2B538eetKfVsGwBGASIpEDR2qpu7QC7
-         dJjHycfFPTL2OLfDU69LdQT3oLF0I7+3X4NwwZGjCeuAxPdEWRuqDkshW19xH5iC72rR
-         m3rg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q0qJO4EPZit/EH6A7WT7wLcgl0yNkUMzQdIUs1Xd0rs=;
+        b=WcDioUBhF3OBNLdRFGPm4xL/wg35NsnX1T7B+N5mLgLGfMHPO6e+ws8jSymjP+fehv
+         Ymmj/A6435/LrpYObcEkppCnaGGFKHSFsc5Ok7yFInm1fFiQ1pRb5OADygG4gD/UQiyU
+         jRioeUsmQzBmnvSOQVGnA7APtjxLRx2pCwkaAoh0rKBI+KwCOGP94+uGAeBY4BZPHm8K
+         61uXgWQlXJ1btsyM3z4HvgYLxoXS0TwCFcZ1JQVvvSH/tfXVaDabCX6i5Iq26FN+Fl7f
+         q+swu2/13lE3Skkfm/pY2Jf9hphdNgNueVLvi4ZCbH+cGiPdJ9qxMi00TiTCAh4bi/ZG
+         hZHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=alLW1LflvonptwdYTfDyuOKeW8wJ3Z5ZzgiFOBxMxyk=;
-        b=pnWZf8rWczc82iMWVvwH1Fhqxj4siEHnTMm4kpC3X/tLWXhTuJFoCQdWGWc8iOn3Sx
-         9a1Sar2EQAI+g/q3UUkVqT+l+bl7+7+V/AlgRJKJ9Jpshuayd/C6t9wabbfq+lzv1O11
-         BfieeQQM4z2gZ9AZjw2DCALvf9ZcKfP9Ig33FaEt2pAA1GVFxdhdIlKCBHFK7oHGLFoO
-         92o9AwbcGb2z4EBSjVLld8rOGur21ZOx7GHfXP8CB3Tm2sr6kOroL6GCXnJAVNR9pUS9
-         ZurdfNv1Jlr3vPFb6LEvYZ8LWdIO+f5yyYmSldqJ07R+onp/LkxaOPAjzlICmD2v78iS
-         CaWw==
-X-Gm-Message-State: AOAM531SmURniQSvitj4OlWyffDZj6Sjr6Kfw8jxnKPwAlAIKqQGqxKf
-        DQm2C7rZ6c+ImzZ85YP2MOQ=
-X-Google-Smtp-Source: ABdhPJxTbP0h5ErtS32xUstdlrrQQtL2dX0QriUiD0MU/qrT2T/EEbDpS+ECoXs/pQTaxfBXJMtMOA==
-X-Received: by 2002:a05:6638:27a:: with SMTP id x26mr16766464jaq.43.1597014734889;
-        Sun, 09 Aug 2020 16:12:14 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [160.94.145.20])
-        by smtp.googlemail.com with ESMTPSA id r6sm10219198iod.7.2020.08.09.16.12.13
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=q0qJO4EPZit/EH6A7WT7wLcgl0yNkUMzQdIUs1Xd0rs=;
+        b=LCZEr76RLHWB4JtMuoZrlTadoxuEVl13t0EVvp9pAtBOv93dT7GqiEtHzIN7MBcKxw
+         1y5chC1JNSIIewfbyZfmmu4yaRu9tK+UNSCNcaCKpW2Pc3uDJ+eIfq1gO/dxIrI0Esxf
+         MKLG9tx5eovoQzTEVzwAPbsPfFO9hiLsGRy+2rdQRPIw9hCRbnwN4LCzn0qKmAP0v78M
+         1cCQrU/TMcAYi8NlCyFhWTrbY0xkP26CLdOLlsKicAhWXjwGKOgVjY0+y7HoWRuLF1H+
+         DL4TLiC0svddgnsiqYcjGg+5SmwvvX1hTrZ3K8YJvtmDkcJwmEolAGWh6mAzvdvTZEtv
+         4z2A==
+X-Gm-Message-State: AOAM532tJHFLrFFJqmyp1GPCDFK2KHa5xJJRQauwyW0ZU7swN2iY0Das
+        BJ+tmKy/+JQ6BqvIzkNPqeQzZVVIU8vkhA==
+X-Google-Smtp-Source: ABdhPJwN4CR2mZ8LTgbsjjdYYXjpnUy33fewmZnUndv91/R9tDZ9Wg5yIe7kVXKqjfra6UNUTrSO0Q==
+X-Received: by 2002:a17:90b:252:: with SMTP id fz18mr24344482pjb.48.1597021190564;
+        Sun, 09 Aug 2020 17:59:50 -0700 (PDT)
+Received: from localhost.localdomain (c-24-16-167-223.hsd1.wa.comcast.net. [24.16.167.223])
+        by smtp.gmail.com with ESMTPSA id j5sm21504055pfg.80.2020.08.09.17.59.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2020 16:12:14 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Rikard Falkeborn <rikard.falkeborn@gmail.com>,
-        YueHaibing <yuehaibing@huawei.com>, linux-clk@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     emamd001@umn.edu
-Subject: [PATCH] clk: bcm2835: add missing release if devm_clk_hw_register fails
-Date:   Sun,  9 Aug 2020 18:11:58 -0500
-Message-Id: <20200809231202.15811-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 09 Aug 2020 17:59:50 -0700 (PDT)
+From:   YourName <argoz1701@gmail.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mturquette@baylibre.com, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        linux-clk@vger.kernel.org, argoz1701@gmail.com
+Subject: [PATCH 3/3] drivers/clk/clk-asm9260.c
+Date:   Sun,  9 Aug 2020 17:59:41 -0700
+Message-Id: <20200810005941.20581-1-argoz1701@gmail.com>
+X-Mailer: git-send-email 2.25.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the implementation of bcm2835_register_pll(), the allocated pll is
-leaked if devm_clk_hw_register() fails to register hw. Release pll if
-devm_clk_hw_register() fails.
+From: Daniel <argoz1701@gmail.com>
 
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
 ---
- drivers/clk/bcm/clk-bcm2835.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/ata/acard-ahci.c  |  6 +++---
+ drivers/bluetooth/bfusb.c |  5 ++---
+ drivers/clk/clk-asm9260.c | 12 ++++++------
+ 3 files changed, 11 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 6bb7efa12037..12b950d50252 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1321,8 +1321,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	pll->hw.init = &init;
+diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
+index 2a04e8abd397..3ffb21f3e88b 100644
+--- a/drivers/ata/acard-ahci.c
++++ b/drivers/ata/acard-ahci.c
+@@ -79,10 +79,10 @@ static struct ata_port_operations acard_ops = {
  
- 	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
--	if (ret)
-+	if (ret) {
-+		kfree(pll);
- 		return NULL;
-+	}
- 	return &pll->hw;
- }
+ #define AHCI_HFLAGS(flags)	.private_data	= (void *)(flags)
  
+-static const struct ata_port_info acard_ahci_port_info[] = {
++static const struct ata_port_info acard_ahci_port_info[] ={
+ 	[board_acard_ahci] =
+-	{
+-		AHCI_HFLAGS	(AHCI_HFLAG_NO_NCQ),
++	
++        {       AHCI_HFLAGS	(AHCI_HFLAG_NO_NCQ),
+ 		.flags		= AHCI_FLAG_COMMON,
+ 		.pio_mask	= ATA_PIO4,
+ 		.udma_mask	= ATA_UDMA6,
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 5a321b4076aa..dc6a62cb1941 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -355,15 +355,14 @@ static void bfusb_rx_complete(struct urb *urb)
+ 	while (count) {
+ 		hdr = buf[0] | (buf[1] << 8);
+ 
+-		if (hdr & 0x4000) {
++		if (hdr & 0x4000) 
+ 			len = 0;
+ 			count -= 2;
+ 			buf   += 2;
+-		} else {
++		 else {
+ 			len = (buf[2] == 0) ? 256 : buf[2];
+ 			count -= 3;
+ 			buf   += 3;
+-		}
+ 
+ 		if (count < len) {
+ 			bt_dev_err(data->hdev, "block extends over URB buffer ranges");
+diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
+index bacebd457e6f..4e608807a00a 100644
+--- a/drivers/clk/clk-asm9260.c
++++ b/drivers/clk/clk-asm9260.c
+@@ -92,8 +92,8 @@ static const struct asm9260_div_clk asm9260_div_clks[] __initconst = {
+ 	{ CLKID_SYS_CPU,	"cpu_div", "main_gate", HW_CPUCLKDIV },
+ 	{ CLKID_SYS_AHB,	"ahb_div", "cpu_div", HW_SYSAHBCLKDIV },
+ 
+-	/* i2s has two deviders: one for only external mclk and internal
+-	 * devider for all clks. */
++	//i2s has two deviders: one for only external mclk and internal
++	//devider for all clks.
+ 	{ CLKID_SYS_I2S0M,	"i2s0m_div", "i2s0_mclk",  HW_I2S0MCLKDIV },
+ 	{ CLKID_SYS_I2S1M,	"i2s1m_div", "i2s1_mclk",  HW_I2S1MCLKDIV },
+ 	{ CLKID_SYS_I2S0S,	"i2s0s_div", "i2s0_gate",  HW_I2S0SCLKDIV },
+@@ -232,10 +232,10 @@ static const struct asm9260_gate_data asm9260_ahb_gates[] __initconst = {
+ 		HW_AHBCLKCTRL1,	16 },
+ };
+ 
+-static const char __initdata *main_mux_p[] =   { NULL, NULL };
+-static const char __initdata *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
+-static const char __initdata *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
+-static const char __initdata *clkout_mux_p[] = { NULL, NULL, "rtc"};
++static const char __initconst *main_mux_p[] =   { NULL, NULL };
++static const char __initconst *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
++static const char __initconst *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
++static const char __initconst *clkout_mux_p[] = { NULL, NULL, "rtc"};
+ static u32 three_mux_table[] = {0, 1, 3};
+ 
+ static struct asm9260_mux_clock asm9260_mux_clks[] __initdata = {
 -- 
-2.17.1
+2.25.1
 
