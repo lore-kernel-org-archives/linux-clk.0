@@ -2,155 +2,170 @@ Return-Path: <SRS0=eoZA=BU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17DC3C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 00:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D77C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 02:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id E27B32068F
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 00:59:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A12E206CD
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 02:46:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcDioUBh"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="inqBJrfm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726530AbgHJA7v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 9 Aug 2020 20:59:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44868 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbgHJA7v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Aug 2020 20:59:51 -0400
-Received: from mail-pj1-x1042.google.com (mail-pj1-x1042.google.com [IPv6:2607:f8b0:4864:20::1042])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BA2AC061756;
-        Sun,  9 Aug 2020 17:59:51 -0700 (PDT)
-Received: by mail-pj1-x1042.google.com with SMTP id f9so4085449pju.4;
-        Sun, 09 Aug 2020 17:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=q0qJO4EPZit/EH6A7WT7wLcgl0yNkUMzQdIUs1Xd0rs=;
-        b=WcDioUBhF3OBNLdRFGPm4xL/wg35NsnX1T7B+N5mLgLGfMHPO6e+ws8jSymjP+fehv
-         Ymmj/A6435/LrpYObcEkppCnaGGFKHSFsc5Ok7yFInm1fFiQ1pRb5OADygG4gD/UQiyU
-         jRioeUsmQzBmnvSOQVGnA7APtjxLRx2pCwkaAoh0rKBI+KwCOGP94+uGAeBY4BZPHm8K
-         61uXgWQlXJ1btsyM3z4HvgYLxoXS0TwCFcZ1JQVvvSH/tfXVaDabCX6i5Iq26FN+Fl7f
-         q+swu2/13lE3Skkfm/pY2Jf9hphdNgNueVLvi4ZCbH+cGiPdJ9qxMi00TiTCAh4bi/ZG
-         hZHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=q0qJO4EPZit/EH6A7WT7wLcgl0yNkUMzQdIUs1Xd0rs=;
-        b=LCZEr76RLHWB4JtMuoZrlTadoxuEVl13t0EVvp9pAtBOv93dT7GqiEtHzIN7MBcKxw
-         1y5chC1JNSIIewfbyZfmmu4yaRu9tK+UNSCNcaCKpW2Pc3uDJ+eIfq1gO/dxIrI0Esxf
-         MKLG9tx5eovoQzTEVzwAPbsPfFO9hiLsGRy+2rdQRPIw9hCRbnwN4LCzn0qKmAP0v78M
-         1cCQrU/TMcAYi8NlCyFhWTrbY0xkP26CLdOLlsKicAhWXjwGKOgVjY0+y7HoWRuLF1H+
-         DL4TLiC0svddgnsiqYcjGg+5SmwvvX1hTrZ3K8YJvtmDkcJwmEolAGWh6mAzvdvTZEtv
-         4z2A==
-X-Gm-Message-State: AOAM532tJHFLrFFJqmyp1GPCDFK2KHa5xJJRQauwyW0ZU7swN2iY0Das
-        BJ+tmKy/+JQ6BqvIzkNPqeQzZVVIU8vkhA==
-X-Google-Smtp-Source: ABdhPJwN4CR2mZ8LTgbsjjdYYXjpnUy33fewmZnUndv91/R9tDZ9Wg5yIe7kVXKqjfra6UNUTrSO0Q==
-X-Received: by 2002:a17:90b:252:: with SMTP id fz18mr24344482pjb.48.1597021190564;
-        Sun, 09 Aug 2020 17:59:50 -0700 (PDT)
-Received: from localhost.localdomain (c-24-16-167-223.hsd1.wa.comcast.net. [24.16.167.223])
-        by smtp.gmail.com with ESMTPSA id j5sm21504055pfg.80.2020.08.09.17.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Aug 2020 17:59:50 -0700 (PDT)
-From:   YourName <argoz1701@gmail.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     mturquette@baylibre.com, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        linux-clk@vger.kernel.org, argoz1701@gmail.com
-Subject: [PATCH 3/3] drivers/clk/clk-asm9260.c
-Date:   Sun,  9 Aug 2020 17:59:41 -0700
-Message-Id: <20200810005941.20581-1-argoz1701@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        id S1726415AbgHJCq3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 9 Aug 2020 22:46:29 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:15279 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726401AbgHJCq3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 9 Aug 2020 22:46:29 -0400
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200810024626epoutp01c3249582125f3097deba0ed805e52ab6~pyCDnqoQI1208812088epoutp01S
+        for <linux-clk@vger.kernel.org>; Mon, 10 Aug 2020 02:46:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200810024626epoutp01c3249582125f3097deba0ed805e52ab6~pyCDnqoQI1208812088epoutp01S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1597027586;
+        bh=Hm0O4+wp4rjYdiIKJCgeEeM6ngWanf6naZsiI8pn48w=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=inqBJrfmptA999manEJmdnIMPcfNa7MRHg7x+vcQsFd1m8yba6blwSvsKlK9Iap5S
+         ZikJOA4p7j8prUs3rqOf2Md8rHRkvMn5Gep2yIjssY2GchhkvZaTardhFiyMTs3nwY
+         yaLFVlJC1y9FmnOvB7IXceUl4XPlRbNn5t8WPSF8=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20200810024626epcas1p304ceed0c05a692d8cc9c7a67f1a5eaf1~pyCDbjKwO1266712667epcas1p3-;
+        Mon, 10 Aug 2020 02:46:26 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4BQ0hv5xR2zMqYlh; Mon, 10 Aug
+        2020 02:46:23 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        BD.46.28581.FF4B03F5; Mon, 10 Aug 2020 11:46:23 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20200810024623epcas1p2888eb6e65b5b870cdd1a343498d41621~pyCAonPsQ1322213222epcas1p22;
+        Mon, 10 Aug 2020 02:46:23 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20200810024623epsmtrp19e2ace4bf31297cb87a8ef19faba5b78~pyCAntfji2223222232epsmtrp1c;
+        Mon, 10 Aug 2020 02:46:23 +0000 (GMT)
+X-AuditID: b6c32a38-2cdff70000006fa5-f7-5f30b4ff64b2
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        CC.A5.08303.FF4B03F5; Mon, 10 Aug 2020 11:46:23 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200810024622epsmtip2775ae2bd691c6b00358fae458caa5262~pyCAQlQxe2988229882epsmtip2u;
+        Mon, 10 Aug 2020 02:46:22 +0000 (GMT)
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x
+ enabled
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <9dafbfdb-c882-1151-b164-f04e65374264@samsung.com>
+Date:   Mon, 10 Aug 2020 11:58:33 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:59.0) Gecko/20100101
+        Thunderbird/59.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200807133143.22748-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmvu7/LQbxBpOm6VtsnLGe1eL8+Q3s
+        Fh977rFafO49wmgx4/w+JouFTS3sFmuP3GW3+HdtI4tF+9OXzA6cHmvmrWH02LSqk82jb8sq
+        Ro/Pm+QCWKKybTJSE1NSixRS85LzUzLz0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTd
+        MnOAblFSKEvMKQUKBSQWFyvp29kU5ZeWpCpk5BeX2CqlFqTkFFgW6BUn5haX5qXrJefnWhka
+        GBiZAhUmZGfsfPKdveA6d8XJngmMDYxXObsYOTkkBEwknm+bytLFyMUhJLCDUWLRnwvsEM4n
+        Rokp3TcYIZzPjBIP351k7WLkAGs58UsNIr6LUeJz4wRmCOc9o8TvUwvZQeYKC/hLnNx3AmyU
+        iEAno8T8KTdYQRxmgUuMEu9uvwKrYhPQktj/4gYbiM0voChx9cdjRhCbV8BOYv6VacwgNouA
+        qkTnrstg9aICYRInt7VA1QhKnJz5hAXE5gSqf71hEVicWUBc4taT+UwQtrzE9rdzwM6TEFjK
+        IbFoy1d2iLddJBbMnwVlC0u8Or4FypaSeNnfBmVXS6w8eYQNormDUWLL/gusEAljif1LJzOB
+        AoNZQFNi/S59iLCixM7fc6GO4JN497UHGl68Eh1tQhAlyhKXH9xlgrAlJRa3d7JNYFSaheSd
+        WUhemIXkhVkIyxYwsqxiFEstKM5NTy02LDBBju9NjOCUqmWxg3Hu2w96hxiZOBgPMUpwMCuJ
+        8Nrd1Y8X4k1JrKxKLcqPLyrNSS0+xGgKDOCJzFKiyfnApJ5XEm9oamRsbGxhYmhmamioJM77
+        8JZCvJBAemJJanZqakFqEUwfEwenVAOTZH1lSlncrPWTJ2SyHog88qrD9ITwA/cJxonHDO+F
+        z1mX7XLk5onvU57lKTysjCiIvj1XNPSOf/D/Vw8OtT+9fkD18s9txs1ciVda7/ScUz1vKrFn
+        o5Gq1Qlfyxjrp/GOWtWzf21j8fvM3iX17KrN6jnf1i5IPux7q6dmbtmSj2tTrnFMXHDAUiei
+        m3nPNd4S3zeXvHcnn5+m987p2FUeDdmDzNtOFClY+Z65HpQumP9kmVB19Jr3TFaPL7s7cBQb
+        OG954/7LKy9q2olfL1pUi89tC3I+eIqhueNj7GXmJqaqPpY/UcXMa5xKFzx8fuDlvO+t8k03
+        V/3c+VX6jNvmg77MD49aH72Qk797o6mYpxJLcUaioRZzUXEiAGkKVJUyBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJXvf/FoN4g009/BYbZ6xntTh/fgO7
+        xceee6wWn3uPMFrMOL+PyWJhUwu7xdojd9kt/l3byGLR/vQlswOnx5p5axg9Nq3qZPPo27KK
+        0ePzJrkAligum5TUnMyy1CJ9uwSujJ1PvrMXXOeuONkzgbGB8SpnFyMHh4SAicSJX2pdjFwc
+        QgI7GCVenTzA3sXICRSXlJh28SgzRI2wxOHDxRA1bxklbh75wAxSIyzgK9G3aRErSEJEoJNR
+        Ys+jH2wgDrPAFUaJfTObmSBaJgJlTlwFa2ET0JLY/+IGG4jNL6AocfXHY0YQm1fATmL+lWlg
+        NSwCqhKduy6DnSEqECaxc8ljJogaQYmTM5+wgNicQPWvNywC62UWUJf4M+8SM4QtLnHryXwm
+        CFteYvvbOcwTGIVnIWmfhaRlFpKWWUhaFjCyrGKUTC0ozk3PLTYsMMpLLdcrTswtLs1L10vO
+        z93ECI4tLa0djHtWfdA7xMjEwXiIUYKDWUmE1+6ufrwQb0piZVVqUX58UWlOavEhRmkOFiVx
+        3q+zFsYJCaQnlqRmp6YWpBbBZJk4OKUamMJsdyhNP394H/eaR7MZc7f+S9/mE/a1e8e6a7Xm
+        Z7fczl2Rx1dh0J38Xfbn0dst/qa+57P79u5/dJ+L9+ZJjmNBfG+P+fayP35u+X1faOqjQxzT
+        WQuqZoaoc92IO5Rsn27p6uAauXHPUv4J+4IsK/64MCvyqpZu22xr7HWxfcX3tPczd85flbE1
+        duJh7l3WMk2Fpxc+FF714FcyQ8B7nemzwjulViZa9HazTDZL9slt1fu/28e8d6t8bPRjq8Of
+        Sv1bW31/MN9NMvrtuu/kzqaWNZ3BrLejPvy5pSKvt/aTUt/D2eY3HgfZ/WMO2ZviM3l+2pOr
+        wT/n7cq6cPCJh5ZxzaVwhScJc/mvWIquuKvEUpyRaKjFXFScCABpcE4nHAMAAA==
+X-CMS-MailID: 20200810024623epcas1p2888eb6e65b5b870cdd1a343498d41621
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
+        <20200807133143.22748-1-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Daniel <argoz1701@gmail.com>
+Hi Marek,
 
----
- drivers/ata/acard-ahci.c  |  6 +++---
- drivers/bluetooth/bfusb.c |  5 ++---
- drivers/clk/clk-asm9260.c | 12 ++++++------
- 3 files changed, 11 insertions(+), 12 deletions(-)
+On 8/7/20 10:31 PM, Marek Szyprowski wrote:
+> BPLL clock must not be disabled because it is needed for proper DRAM
+> operation. This is normally handled by respective memory devfreq driver,
+> but when that driver is not yet probed or its probe has been deferred the
+> clock might got disabled what causes board hang. Fix this by calling
+> clk_prepare_enable() directly from the clock provider driver.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+> Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  drivers/clk/samsung/clk-exynos5420.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index fea33399a632..521cbbfc0987 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -1655,6 +1655,11 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  	 * main G3D clock enablement status.
+>  	 */
+>  	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
+> +	/*
+> +	 * Keep top BPLL mux enabled permanently to ensure that DRAM operates
+> +	 * properly.
+> +	 */
+> +	clk_prepare_enable(__clk_lookup("mout_bpll"));
+>  
+>  	samsung_clk_of_add_provider(np, ctx);
+>  }
+> 
 
-diff --git a/drivers/ata/acard-ahci.c b/drivers/ata/acard-ahci.c
-index 2a04e8abd397..3ffb21f3e88b 100644
---- a/drivers/ata/acard-ahci.c
-+++ b/drivers/ata/acard-ahci.c
-@@ -79,10 +79,10 @@ static struct ata_port_operations acard_ops = {
- 
- #define AHCI_HFLAGS(flags)	.private_data	= (void *)(flags)
- 
--static const struct ata_port_info acard_ahci_port_info[] = {
-+static const struct ata_port_info acard_ahci_port_info[] ={
- 	[board_acard_ahci] =
--	{
--		AHCI_HFLAGS	(AHCI_HFLAG_NO_NCQ),
-+	
-+        {       AHCI_HFLAGS	(AHCI_HFLAG_NO_NCQ),
- 		.flags		= AHCI_FLAG_COMMON,
- 		.pio_mask	= ATA_PIO4,
- 		.udma_mask	= ATA_UDMA6,
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 5a321b4076aa..dc6a62cb1941 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -355,15 +355,14 @@ static void bfusb_rx_complete(struct urb *urb)
- 	while (count) {
- 		hdr = buf[0] | (buf[1] << 8);
- 
--		if (hdr & 0x4000) {
-+		if (hdr & 0x4000) 
- 			len = 0;
- 			count -= 2;
- 			buf   += 2;
--		} else {
-+		 else {
- 			len = (buf[2] == 0) ? 256 : buf[2];
- 			count -= 3;
- 			buf   += 3;
--		}
- 
- 		if (count < len) {
- 			bt_dev_err(data->hdev, "block extends over URB buffer ranges");
-diff --git a/drivers/clk/clk-asm9260.c b/drivers/clk/clk-asm9260.c
-index bacebd457e6f..4e608807a00a 100644
---- a/drivers/clk/clk-asm9260.c
-+++ b/drivers/clk/clk-asm9260.c
-@@ -92,8 +92,8 @@ static const struct asm9260_div_clk asm9260_div_clks[] __initconst = {
- 	{ CLKID_SYS_CPU,	"cpu_div", "main_gate", HW_CPUCLKDIV },
- 	{ CLKID_SYS_AHB,	"ahb_div", "cpu_div", HW_SYSAHBCLKDIV },
- 
--	/* i2s has two deviders: one for only external mclk and internal
--	 * devider for all clks. */
-+	//i2s has two deviders: one for only external mclk and internal
-+	//devider for all clks.
- 	{ CLKID_SYS_I2S0M,	"i2s0m_div", "i2s0_mclk",  HW_I2S0MCLKDIV },
- 	{ CLKID_SYS_I2S1M,	"i2s1m_div", "i2s1_mclk",  HW_I2S1MCLKDIV },
- 	{ CLKID_SYS_I2S0S,	"i2s0s_div", "i2s0_gate",  HW_I2S0SCLKDIV },
-@@ -232,10 +232,10 @@ static const struct asm9260_gate_data asm9260_ahb_gates[] __initconst = {
- 		HW_AHBCLKCTRL1,	16 },
- };
- 
--static const char __initdata *main_mux_p[] =   { NULL, NULL };
--static const char __initdata *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
--static const char __initdata *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
--static const char __initdata *clkout_mux_p[] = { NULL, NULL, "rtc"};
-+static const char __initconst *main_mux_p[] =   { NULL, NULL };
-+static const char __initconst *i2s0_mux_p[] =   { NULL, NULL, "i2s0m_div"};
-+static const char __initconst *i2s1_mux_p[] =   { NULL, NULL, "i2s1m_div"};
-+static const char __initconst *clkout_mux_p[] = { NULL, NULL, "rtc"};
- static u32 three_mux_table[] = {0, 1, 3};
- 
- static struct asm9260_mux_clock asm9260_mux_clks[] __initdata = {
+Thanks.
+
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
 -- 
-2.25.1
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
