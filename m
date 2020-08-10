@@ -2,77 +2,115 @@ Return-Path: <SRS0=eoZA=BU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51468C433E0
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 09:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FACCC433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 13:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id DF7A62073A
-	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 09:36:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="eeEIpWvS"
+	by mail.kernel.org (Postfix) with ESMTP id 18C2920734
+	for <linux-clk@archiver.kernel.org>; Mon, 10 Aug 2020 13:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbgHJJga (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 10 Aug 2020 05:36:30 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:11038 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725809AbgHJJg3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Aug 2020 05:36:29 -0400
-X-UUID: 961db87e583542018ad200db35459a15-20200810
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=VwRgWjEdkPYGkWZKNJSxx1FhonydZDDe5W6HPLrIeDY=;
-        b=eeEIpWvS96ga53cQzaNwO/MvUBF8zz1atKtNYY7cJmUcqxBmKHQcHUu0K5ycnuVXCq/zkJfe80j3nANG4mDhzL28sHSuTqop1eNwcSufHtxqL4tYHOiKZ9b91D45Kbpe+We/CeXO+bUFZYV85vVZorq48Tun943h9wkxLUCeN5Q=;
-X-UUID: 961db87e583542018ad200db35459a15-20200810
-Received: from mtkcas10.mediatek.inc [(172.21.101.39)] by mailgw02.mediatek.com
-        (envelope-from <wendell.lin@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 746720287; Mon, 10 Aug 2020 17:36:27 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1497.2; Mon, 10 Aug 2020 17:36:24 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
- Transport; Mon, 10 Aug 2020 17:36:25 +0800
-Message-ID: <1597052186.27843.1.camel@mtkswgap22>
-Subject: Re: [PATCH 1/1] clk: Export clk_register_composite
-From:   Wendell Lin <wendell.lin@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <wsd_upstream@mediatek.com>
-Date:   Mon, 10 Aug 2020 17:36:26 +0800
-In-Reply-To: <1595493126-21611-1-git-send-email-wendell.lin@mediatek.com>
-References: <1595493126-21611-1-git-send-email-wendell.lin@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726582AbgHJNlo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 10 Aug 2020 09:41:44 -0400
+Received: from mx0a-00128a01.pphosted.com ([148.163.135.77]:36202 "EHLO
+        mx0a-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726569AbgHJNlo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 10 Aug 2020 09:41:44 -0400
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+        by mx0a-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id 07ADbw2c012770;
+        Mon, 10 Aug 2020 09:41:41 -0400
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+        by mx0a-00128a01.pphosted.com with ESMTP id 32sry46rgf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 10 Aug 2020 09:41:41 -0400
+Received: from ASHBMBX8.ad.analog.com (ashbmbx8.ad.analog.com [10.64.17.5])
+        by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 07ADfenD061467
+        (version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=FAIL);
+        Mon, 10 Aug 2020 09:41:40 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 10 Aug 2020 09:41:39 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1779.2; Mon, 10 Aug 2020 09:41:39 -0400
+Received: from zeus.spd.analog.com (10.64.82.11) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.1.1779.2 via Frontend
+ Transport; Mon, 10 Aug 2020 09:41:39 -0400
+Received: from localhost.localdomain ([10.48.65.12])
+        by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 07ADfY3c030109;
+        Mon, 10 Aug 2020 09:41:35 -0400
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <linux-fpga@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <mturquette@baylibre.com>, <sboyd@kernel.org>, <mdf@kernel.org>,
+        <ardeleanalex@gmail.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH v2 0/6] clk: axi-clk-gen: misc updates to the driver
+Date:   Mon, 10 Aug 2020 16:42:39 +0300
+Message-ID: <20200810134252.68614-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.235,18.0.687
+ definitions=2020-08-10_09:2020-08-06,2020-08-10 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=920 mlxscore=0
+ lowpriorityscore=0 clxscore=1011 priorityscore=1501 adultscore=0
+ phishscore=0 suspectscore=0 impostorscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2006250000 definitions=main-2008100101
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgTWF0dGhpYXMgYW5kIGFsbCwNCg0KR2VudGxlIHBpbmcgb24gdGhpcyBwYXRjaC4NCg0KVGhh
-bmtzDQoNCldlbmRlbGwgTGluDQoNCg0KT24gVGh1LCAyMDIwLTA3LTIzIGF0IDE2OjMyICswODAw
-LCBXZW5kZWxsIExpbiB3cm90ZToNCj4gY2xrX3JlZ2lzdGVyX2NvbXBvc2l0ZSgpIHdpbGwgYmUg
-dXNlZCBpbiBtZWRpYXRlaydzDQo+IGNsb2NrIGtlcm5lbCBtb2R1bGUsIHNvIGV4cG9ydCBpdCB0
-byBHUEwgbW9kdWxlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdlbmRlbGwgTGluIDx3ZW5kZWxs
-LmxpbkBtZWRpYXRlay5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9jbGsvY2xrLWNvbXBvc2l0ZS5j
-IHwgICAgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykNCj4gDQo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2Nsay9jbGstY29tcG9zaXRlLmMgYi9kcml2ZXJzL2Nsay9jbGstY29t
-cG9zaXRlLmMNCj4gaW5kZXggNzM3NmY1Ny4uN2M2MDljMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy9jbGsvY2xrLWNvbXBvc2l0ZS5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2Nsay1jb21wb3NpdGUu
-Yw0KPiBAQCAtMzYwLDYgKzM2MCw3IEBAIHN0cnVjdCBjbGsgKmNsa19yZWdpc3Rlcl9jb21wb3Np
-dGUoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1lLA0KPiAgCQlyZXR1cm4gRVJS
-X0NBU1QoaHcpOw0KPiAgCXJldHVybiBody0+Y2xrOw0KPiAgfQ0KPiArRVhQT1JUX1NZTUJPTF9H
-UEwoY2xrX3JlZ2lzdGVyX2NvbXBvc2l0ZSk7DQo+ICANCj4gIHN0cnVjdCBjbGsgKmNsa19yZWdp
-c3Rlcl9jb21wb3NpdGVfcGRhdGEoc3RydWN0IGRldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1l
-LA0KPiAgCQkJY29uc3Qgc3RydWN0IGNsa19wYXJlbnRfZGF0YSAqcGFyZW50X2RhdGEsDQoNCg==
+These patches synchronize the driver with the current state in the
+Analog Devices Linux tree:
+  https://github.com/analogdevicesinc/linux/
+
+They have been in the tree for about 2-3, so they did receive some
+testing.
+
+Highlights are:
+* Add support for fractional dividers (Lars-Peter Clausen)
+* Enable support for ZynqMP (UltraScale) (Dragos Bogdan)
+* Support frequency limits for ZynqMP (Mathias Tausen)
+  - And continued by Mircea Caprioru, to read them from the IP cores
+
+Changelog v1 -> v2:
+- in patch 'include: fpga: adi-axi-common.h: add definitions for supported FPGAs'
+  * converted enums to #define
+  * added Intel FPGA definitions
+  * added Device-Package definitions
+  * added INTEL / XILINX in the define names
+ definitions according to:
+ https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_intel_device_info_enc.tcl
+ https://github.com/analogdevicesinc/hdl/blob/4e438261aa319b1dda4c593c155218a93b1d869b/library/scripts/adi_xilinx_device_info_enc.tcl
+
+Dragos Bogdan (1):
+  clk: axi-clkgen: add support for ZynqMP (UltraScale)
+
+Lars-Peter Clausen (2):
+  clk: axi-clkgen: Add support for fractional dividers
+  clk: axi-clkgen: Set power bits for fractional mode
+
+Mathias Tausen (1):
+  clk: axi-clkgen: Respect ZYNQMP PFD/VCO frequency limits
+
+Mircea Caprioru (2):
+  include: fpga: adi-axi-common.h: add definitions for supported FPGAs
+  clk: axi-clkgen: Add support for FPGA info
+
+ drivers/clk/Kconfig                 |   2 +-
+ drivers/clk/clk-axi-clkgen.c        | 253 ++++++++++++++++++++++------
+ include/linux/fpga/adi-axi-common.h | 103 +++++++++++
+ 3 files changed, 302 insertions(+), 56 deletions(-)
+
+-- 
+2.17.1
 
