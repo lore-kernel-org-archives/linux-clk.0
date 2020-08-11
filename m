@@ -2,234 +2,94 @@ Return-Path: <SRS0=DscH=BV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85919C433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 09:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B468EC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 09:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 61F0E20772
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 09:12:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597137156;
-	bh=JRnhXaH/f3fE892cqJcIwk+cBEd8EiSVWDW91lbdx2Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:List-ID:From;
-	b=l+EO4otA/PPd+PcBCfd5piQU9b5ErOHU4W8+9ytMvkvwkoBaK/vG8vS750udfCm6h
-	 UQQ0cv4gUdqYOBfL32pvcNbsOrr/S0dhoIOCsM0EvgC7x4ksq1+LjFl0FMQ7JFpJvS
-	 Fk7q/CN5zCUYfuF6WCZAhX0XOu5Ccq6SSzKjtYnk=
+	by mail.kernel.org (Postfix) with ESMTP id 8BB5720774
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 09:31:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="hgn0caVL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728368AbgHKJMb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Aug 2020 05:12:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58552 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbgHKJMa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2020 05:12:30 -0400
-Received: from mail-lj1-x242.google.com (mail-lj1-x242.google.com [IPv6:2a00:1450:4864:20::242])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FD18C06174A;
-        Tue, 11 Aug 2020 02:12:28 -0700 (PDT)
-Received: by mail-lj1-x242.google.com with SMTP id g6so12652738ljn.11;
-        Tue, 11 Aug 2020 02:12:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=Eqc+3NbaxwoojpJ4wCmnVzMHGK5tFF910hokAKhwEAQ=;
-        b=QGaJh62swSOyNJSej4GYVVg1+IdjpM91enN86WzVB5D+VT3gJ4F2gVyA67n+QbKlwi
-         vOTvwRtaSkKpVxiRAM6wu07GI0JFfpOm8/6lScOdsMeg9mVzJW0sJjUcEG8LePKK5UzG
-         vOmRdtSMMmGeXonsMVc+4kuQntv6eIFkgFRChGKD0yE7iLNJhb781Qegs1T/6rjUmYSY
-         yHHMHg6aSyFt7wH61PFJNXIJLwCtHc/CnVtcnIvwMNol9qgLVN0L4hoiwDdWAnXfpp6d
-         7C3oBFWGT6N6Sq5YOV1MyyY5dEVm//TnIWGtn5HxSJ2+FFCMhhYhgY3tXa85AwwGEY5K
-         kO1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :date:message-id:mime-version;
-        bh=Eqc+3NbaxwoojpJ4wCmnVzMHGK5tFF910hokAKhwEAQ=;
-        b=BUGSmkK2CbeLYf1+o60B+F3yS99E892Zdt71hMaH1zwRrYjTs6hq8zJJMzCcEDpsU+
-         J1TkAGtLqa74N+ExkqpGGABUj9r4oPHWQrrwRjUWEmEFLvOs2UxM8P9Rv2LdK/W67Dbl
-         gNokHJcd3AD42Dt+LiV29LDDt+PHHinmMQxrU4Tcrn4DXGpzZ6G6x5pZOGx0itHpTAT/
-         v5Z2JByJA2y06GuKZPt6DtzeKMwZ65YcBVzEJK3KUbFZbTRZP8hA3YczwXLgMGWXytcy
-         mP/EoHQnlGz5gslXISTCao3tICIXshl3/3m4kijnop4pZsSTv1y5TFEDgjIVwLCoCjGe
-         9qvg==
-X-Gm-Message-State: AOAM533fHwVsdqVrVtchwmqorfIKe8D7ybF1KYB94Bk4Fnal+yUx/Nem
-        Ko6n2nn4mSxSSp/ilAObqFA=
-X-Google-Smtp-Source: ABdhPJyywIbiOv+zXy+wOQ3SXRh/6kavcG9IMhbtAn8xZQHQnrTcXEUm0BS+Ph7ZWqu7cv6m9U017Q==
-X-Received: by 2002:a2e:3c10:: with SMTP id j16mr2740226lja.324.1597137147094;
-        Tue, 11 Aug 2020 02:12:27 -0700 (PDT)
-Received: from saruman ([194.34.132.58])
-        by smtp.gmail.com with ESMTPSA id d20sm11416961lfn.85.2020.08.11.02.12.24
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 11 Aug 2020 02:12:26 -0700 (PDT)
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Sandeep Maheswaram <sanm@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
-        Sandeep Maheswaram <sanm@codeaurora.org>
-Subject: Re: [PATCH 2/2] usb: dwc3: Host wake up support from system suspend
-In-Reply-To: <1591885683-29514-3-git-send-email-sanm@codeaurora.org>
-References: <1591885683-29514-1-git-send-email-sanm@codeaurora.org> <1591885683-29514-3-git-send-email-sanm@codeaurora.org>
-Date:   Tue, 11 Aug 2020 12:12:20 +0300
-Message-ID: <874kp9pmvf.fsf@kernel.org>
+        id S1728402AbgHKJbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Aug 2020 05:31:11 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34590 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728397AbgHKJbK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2020 05:31:10 -0400
+X-UUID: 7086c5b2896f4757a1a776ce389d0053-20200811
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=LWDEjtdpEZqIYB3lBtQtiTu+w5fRLhiQKXt5bfWHeOk=;
+        b=hgn0caVL0H9yorhFgwrm9TR6ii6nQFW45cj/ReZcDNUDCVHkN4IJpwoFkRZTYYKlEXCeC3t61efCk0PBpGhNAHPzZehtsqpOgq4t0BkZqjFnAslSVnAb1o7nEFjbDvmGYOByEH6/9IaYLRuj78lgmtH2dViukh9fpbyq8gobDQk=;
+X-UUID: 7086c5b2896f4757a1a776ce389d0053-20200811
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 593388462; Tue, 11 Aug 2020 17:31:08 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.2; Tue, 11 Aug 2020 17:31:06 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1497.2 via Frontend
+ Transport; Tue, 11 Aug 2020 17:31:06 +0800
+Message-ID: <1597138267.20627.28.camel@mtksdaap41>
+Subject: Re: [PATCH v2 4/5] clk: mediatek: Add configurable enable control
+ to mtk_pll_data
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Rob Herring <robh@kernel.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Wendell Lin <wendell.lin@mediatek.com>,
+        <linux-clk@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
+Date:   Tue, 11 Aug 2020 17:31:07 +0800
+In-Reply-To: <CANMq1KDRwwFvR2v6ykpvV6Y72L+Ym+4NcZF0F7wYq2znKy4sqw@mail.gmail.com>
+References: <1596012277-8448-1-git-send-email-weiyi.lu@mediatek.com>
+         <1596012277-8448-5-git-send-email-weiyi.lu@mediatek.com>
+         <CANMq1KCG1xUan5-=DBZewvTqmUH=p7=nxy0Va=pdYBhAfYhhjQ@mail.gmail.com>
+         <1597128205.20627.14.camel@mtksdaap41>
+         <CANMq1KDRwwFvR2v6ykpvV6Y72L+Ym+4NcZF0F7wYq2znKy4sqw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+X-TM-SNTS-SMTP: C318D15809A2BCF17A1D3E5347528148A4B325AC6D742D76ADABC327B94E44312000:8
+X-MTK:  N
+Content-Transfer-Encoding: base64
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+T24gVHVlLCAyMDIwLTA4LTExIGF0IDE1OjI4ICswODAwLCBOaWNvbGFzIEJvaWNoYXQgd3JvdGU6
+DQo+IE9uIFR1ZSwgQXVnIDExLCAyMDIwIGF0IDI6NDMgUE0gV2VpeWkgTHUgPHdlaXlpLmx1QG1l
+ZGlhdGVrLmNvbT4gd3JvdGU6DQo+ID4gWy4uLl0NCj4gPiA+ID4gKyAgICAgICB3cml0ZWwociwg
+cGxsLT5lbl9hZGRyKTsNCj4gPiA+ID4NCj4gPiA+ID4gICAgICAgICByID0gcmVhZGwocGxsLT5w
+d3JfYWRkcikgfCBDT04wX0lTT19FTjsNCj4gPiA+ID4gICAgICAgICB3cml0ZWwociwgcGxsLT5w
+d3JfYWRkcik7DQo+ID4gPiA+IEBAIC0zMjcsNiArMzI3LDEwIEBAIHN0YXRpYyBzdHJ1Y3QgY2xr
+ICptdGtfY2xrX3JlZ2lzdGVyX3BsbChjb25zdCBzdHJ1Y3QgbXRrX3BsbF9kYXRhICpkYXRhLA0K
+PiA+ID4gPiAgICAgICAgICAgICAgICAgcGxsLT50dW5lcl9hZGRyID0gYmFzZSArIGRhdGEtPnR1
+bmVyX3JlZzsNCj4gPiA+ID4gICAgICAgICBpZiAoZGF0YS0+dHVuZXJfZW5fcmVnKQ0KPiA+ID4g
+PiAgICAgICAgICAgICAgICAgcGxsLT50dW5lcl9lbl9hZGRyID0gYmFzZSArIGRhdGEtPnR1bmVy
+X2VuX3JlZzsNCj4gPiA+ID4gKyAgICAgICBpZiAoZGF0YS0+ZW5fcmVnKQ0KPiA+ID4gPiArICAg
+ICAgICAgICAgICAgcGxsLT5lbl9hZGRyID0gYmFzZSArIGRhdGEtPmVuX3JlZzsNCj4gPiA+ID4g
+KyAgICAgICBlbHNlDQo+ID4gPiA+ICsgICAgICAgICAgICAgICBwbGwtPmVuX2FkZHIgPSBwbGwt
+PmJhc2VfYWRkciArIFJFR19DT04wOw0KPiA+ID4NCj4gPiA+IERvbid0IHlvdSBuZWVkIHRvIHNl
+dCBwbGwtPmRhdGEtPnBsbF9lbl9iaXQgdG8gQ09OMF9CQVNFX0VOIGhlcmU/DQo+ID4gPiAod2hp
+Y2ggcHJvYmFibHkgbWVhbnMgdGhhdCB5b3UgbmVlZCB0byBhZGQgYSBwbGwtPmVuX2JpdCBmaWVs
+ZCB0bw0KPiA+ID4gc3RydWN0IG10a19jbGtfcGxsKQ0KPiA+ID4NCj4gPg0KPiA+IEJlY2F1c2Ug
+YWxsIG10a19jbGtfcGxsIGRhdGEgYXJlIHN0YXRpYyB2YXJpYWJsZXMsIGVuX2JpdCB3b3VsZCBi
+ZSAwIGlmDQo+ID4gTk8gdmFsdWUgYXNzaWduZWQuDQo+IA0KPiBXb3csIHlvdSdyZSByaWdodCwg
+YnV0IHRoaXMgaXMgYSBsaXR0bGUgYml0IHN1YnRsZS4gSSB3b25kZXIgaWYgaXQncw0KPiB3b3J0
+aCBhZGRpbmcgYSBzbWFsbCBjb21tZW50PyAoZWl0aGVyIGhlcmUgb3IgaW4gc3RydWN0IG10a19w
+bGxfZGF0YSkNCg0KT0ssIEknbGwgYWRkIGNvbW1lbnQgZm9yIGVuX2JpdA0KDQo=
 
-Sandeep Maheswaram <sanm@codeaurora.org> writes:
-
-> Avoiding phy powerdown in host mode so that it can be wake up by devices.
-> Set usb controller wakeup capable when wakeup capable devices are
-> connected to the host.
->
-> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
-> ---
->  drivers/usb/dwc3/core.c      | 47 ++++++++++++++++++++++++++-----
->  drivers/usb/dwc3/core.h      |  1 +
->  drivers/usb/dwc3/dwc3-qcom.c | 66 +++++++++++++++++++++++++++++++++-----=
-------
->  3 files changed, 91 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-> index 25c686a7..8370350 100644
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -31,15 +31,19 @@
->  #include <linux/usb/gadget.h>
->  #include <linux/usb/of.h>
->  #include <linux/usb/otg.h>
-> +#include <linux/usb/hcd.h>
->=20=20
->  #include "core.h"
->  #include "gadget.h"
->  #include "io.h"
->=20=20
->  #include "debug.h"
-> +#include "../host/xhci.h"
-
-nope
-
->  #define DWC3_DEFAULT_AUTOSUSPEND_DELAY	5000 /* ms */
->=20=20
-> +bool need_phy_for_wakeup;
-
-nope
-
-> +
->  /**
->   * dwc3_get_dr_mode - Validates and sets dr_mode
->   * @dwc: pointer to our context structure
-> @@ -1627,10 +1631,36 @@ static int dwc3_core_init_for_resume(struct dwc3 =
-*dwc)
->  	return ret;
->  }
->=20=20
-> +static void dwc3_set_phy_speed_flags(struct dwc3 *dwc)
-> +{
-> +
-> +	int i, num_ports;
-> +	u32 reg;
-> +	struct usb_hcd	*hcd =3D platform_get_drvdata(dwc->xhci);
-> +	struct xhci_hcd	*xhci_hcd =3D hcd_to_xhci(hcd);
-> +
-> +	dwc->hs_phy_flags &=3D ~(PHY_MODE_USB_HOST_HS | PHY_MODE_USB_HOST_LS);
-> +
-> +	reg =3D readl(&xhci_hcd->cap_regs->hcs_params1);
-> +
-> +	num_ports =3D HCS_MAX_PORTS(reg);
-> +	for (i =3D 0; i < num_ports; i++) {
-> +		reg =3D readl(&xhci_hcd->op_regs->port_status_base + i*0x10);
-> +		if (reg & PORT_PE) {
-> +			if (DEV_HIGHSPEED(reg) || DEV_FULLSPEED(reg))
-> +				dwc->hs_phy_flags |=3D PHY_MODE_USB_HOST_HS;
-> +			else if (DEV_LOWSPEED(reg))
-> +				dwc->hs_phy_flags |=3D PHY_MODE_USB_HOST_LS;
-> +		}
-> +	}
-> +	phy_set_mode(dwc->usb2_generic_phy, dwc->hs_phy_flags);
-
-XHCI already supports PHY framework, no?
-
->  static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
->  {
->  	unsigned long	flags;
->  	u32 reg;
-> +	struct usb_hcd  *hcd =3D platform_get_drvdata(dwc->xhci);
->=20=20
->  	switch (dwc->current_dr_role) {
->  	case DWC3_GCTL_PRTCAP_DEVICE:
-> @@ -1643,9 +1673,10 @@ static int dwc3_suspend_common(struct dwc3 *dwc, p=
-m_message_t msg)
->  		dwc3_core_exit(dwc);
->  		break;
->  	case DWC3_GCTL_PRTCAP_HOST:
-> +		dwc3_set_phy_speed_flags(dwc);
->  		if (!PMSG_IS_AUTO(msg)) {
-> -			dwc3_core_exit(dwc);
-> -			break;
-> +			if (usb_wakeup_enabled_descendants(hcd->self.root_hub))
-> +				need_phy_for_wakeup =3D true;
-
-should be done in xhci-plat
-
-> @@ -1705,11 +1736,13 @@ static int dwc3_resume_common(struct dwc3 *dwc, p=
-m_message_t msg)
->  		break;
->  	case DWC3_GCTL_PRTCAP_HOST:
->  		if (!PMSG_IS_AUTO(msg)) {
-> -			ret =3D dwc3_core_init_for_resume(dwc);
-> -			if (ret)
-> -				return ret;
-> -			dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
-> -			break;
-> +			if (!need_phy_for_wakeup) {
-> +				ret =3D dwc3_core_init_for_resume(dwc);
-> +				if (ret)
-> +					return ret;
-> +				dwc3_set_prtcap(dwc, DWC3_GCTL_PRTCAP_HOST);
-> +				break;
-
-why?
-
-=2D-=20
-balbi
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAl8yYPQACgkQzL64meEa
-mQYzpQ//RlvBlJqDn5YjtLQDgcPnIwSd+Toup6FmId0ZU9y6UA08aKYTxxtjupUq
-kx4XvOOrPY0xggUoWDd1od1LIXfwbRci1os+5J4yEyKT9tANjTZucJZLaYH7j5ki
-mCB1Pf8g5LJ1ol5j/fh7UElA+CJ6ZYFXj3Mky9Knd5T++ve02jLzAhqga1cz3fiL
-NHXkCPt2MqILB8H7NYE8Pytp9DHTElr//+lrVBSkxyqTT8buM/pZ2kfo04nJvO6+
-v2yiq6Edksa+Ky8H5NxOM/Up5Y/anuh6AqLiwvirWl1Ugf1gBV3LxCPunezeIg2I
-hXGJ2xnGX+pJkcFhFT5mac6gQVd2qxPOtaQLWRbuswewykyOhtp7e6yOqma5SjuZ
-7VnYVLZ8By/oRH4/dBAtRSrJyagY2+RWOJFOzF3G6zgx0PrDITwWn9qaYzD5f3FD
-Iy1Ybz1U1O8a+TcB9R7DhfSTLTmWswHT8xniuaqdqXOuJKiTwjBZuBkt9WIzvBAS
-Gnnd2jYpu0DMvS037Wv3mnAcps78rPuG7YeepUEzs3irck0HNvI+DajEh/TVzRpe
-NmzFnb9SsfkoLc+cnFvU/GAW4mlyadxZrqydDVI4zawmqxF+eNqxgP6r21waq8Nq
-KchxxSssP4X7sECoErPZRI6O5zPLk1VaXHg7IyjBvCILWcEskLE=
-=3o7M
------END PGP SIGNATURE-----
---=-=-=--
