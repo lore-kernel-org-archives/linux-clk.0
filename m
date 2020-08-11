@@ -2,103 +2,185 @@ Return-Path: <SRS0=DscH=BV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.3 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	NICE_REPLY_A,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 670E1C433E0
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 07:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF9BC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 08:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 38C3320781
-	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 07:28:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0A8820772
+	for <linux-clk@archiver.kernel.org>; Tue, 11 Aug 2020 08:51:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I4zF9BZf"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="DK3XNnjc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbgHKH2l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 11 Aug 2020 03:28:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42564 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726023AbgHKH2l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2020 03:28:41 -0400
-Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32F28C06174A
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2020 00:28:41 -0700 (PDT)
-Received: by mail-ed1-x541.google.com with SMTP id i26so8307545edv.4
-        for <linux-clk@vger.kernel.org>; Tue, 11 Aug 2020 00:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VNS8rgxQTsSqkuQvisEfuQkArMcjZwTTMFnULFhcBtc=;
-        b=I4zF9BZfsZmsK7v24MOsVh7XvfpQcnthAJ+k+iaowWwFaGJKa8I19900B1KW4J28/g
-         QR7nxd0IiU11LQkTVy/3+d7XPpi7vGdQov5nIi0/DWk2Kvl23qwuigMTXNJztOHnjsoM
-         /thmEzj30fA5G4XJFAH1TYiYY+DDEeFHE12gU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VNS8rgxQTsSqkuQvisEfuQkArMcjZwTTMFnULFhcBtc=;
-        b=UyAE92W54T9M2pdH92jbrNhahoB+DUD499p4KLpkYDL7GHl+Cnt9Va7uFe0AtH3bfg
-         5yxBR6uzxnMx95yRCMNKomfyp9eYG4DyFX2UcYTjjlOEtvUk8Jx430ldNUmJxHkCFqNQ
-         1UYL7arArplRArewGtMglVWqi13JNZH7+v7PtPU9zMQnOmYpnfKYa5KZga8QS18JoqD6
-         zKzc/z6dHCySw08mLCfVi2aWT+Nlb6WxB5UXP3wIRqQ+DTo2IDstgq0f4as+zhpCLrNb
-         qw9+4lMoYP8mdN4oJSC5mbWc5Nlv4cyoYVyWYd1a24jqbtQfMv7ZDLy2FUEroPhjBCgQ
-         HBmg==
-X-Gm-Message-State: AOAM532bEZvlcewl+IQsSmz2o1TUd9SnQNZzKKgMnrIpPrRNwnrNfW4K
-        FuOgAq7iktfqiR3/kAPZRIq1ltuM0pWTrlHmW/d8Lw==
-X-Google-Smtp-Source: ABdhPJyDCtyNs+EX7nXIu9V8/MaQkjXI0d/Rvgm77fNHd3xXnjpWHunejPSvEPJyZoDtl5sSAwCP/jkQNo8TgvajC7g=
-X-Received: by 2002:a50:e004:: with SMTP id e4mr13096018edl.114.1597130919795;
- Tue, 11 Aug 2020 00:28:39 -0700 (PDT)
+        id S1728355AbgHKIvS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 11 Aug 2020 04:51:18 -0400
+Received: from mail29.static.mailgun.info ([104.130.122.29]:50364 "EHLO
+        mail29.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728394AbgHKIvS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 11 Aug 2020 04:51:18 -0400
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1597135877; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=7WwnnDLcpDYR0mzRDFxxHd6DBQPVie18LRrLzCaS3S4=; b=DK3XNnjceqLItRAB/N2p+op4lzPc4nkaNpNhLfFPZIVkgOtwzZS/YotTTEJhA3vAWz06oJCb
+ 8z5yAvs9rK1++tQvqwOwPAe7VLwoVIqq8y9WdwlbWQLsSZwx9fFM3o5rZyO8yshicl/Bb2BR
+ TL4otMxAIP3fKz/rkJ3ir0yLewo=
+X-Mailgun-Sending-Ip: 104.130.122.29
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org
+ (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171]) by
+ smtp-out-n12.prod.us-east-1.postgun.com with SMTP id
+ 5f325bf82b87d66049f524f6 (version=TLS1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256); Tue, 11 Aug 2020 08:51:04
+ GMT
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 125CAC433A1; Tue, 11 Aug 2020 08:51:04 +0000 (UTC)
+Received: from [10.131.194.49] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 22AE7C433C9;
+        Tue, 11 Aug 2020 08:50:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 22AE7C433C9
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH 2/2] usb: dwc3: Host wake up support from system suspend
+To:     Sandeep Maheswaram <sanm@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Felipe Balbi <balbi@kernel.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+References: <1591885683-29514-1-git-send-email-sanm@codeaurora.org>
+ <1591885683-29514-3-git-send-email-sanm@codeaurora.org>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <7e2e94c8-e06b-1ecc-4304-008fcce1fe30@codeaurora.org>
+Date:   Tue, 11 Aug 2020 14:20:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.10.0
 MIME-Version: 1.0
-References: <1596012277-8448-1-git-send-email-weiyi.lu@mediatek.com>
- <1596012277-8448-5-git-send-email-weiyi.lu@mediatek.com> <CANMq1KCG1xUan5-=DBZewvTqmUH=p7=nxy0Va=pdYBhAfYhhjQ@mail.gmail.com>
- <1597128205.20627.14.camel@mtksdaap41>
-In-Reply-To: <1597128205.20627.14.camel@mtksdaap41>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Tue, 11 Aug 2020 15:28:29 +0800
-Message-ID: <CANMq1KDRwwFvR2v6ykpvV6Y72L+Ym+4NcZF0F7wYq2znKy4sqw@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] clk: mediatek: Add configurable enable control to mtk_pll_data
-To:     Weiyi Lu <weiyi.lu@mediatek.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        James Liao <jamesjj.liao@mediatek.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        linux-clk@vger.kernel.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1591885683-29514-3-git-send-email-sanm@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 11, 2020 at 2:43 PM Weiyi Lu <weiyi.lu@mediatek.com> wrote:
-> [...]
-> > > +       writel(r, pll->en_addr);
-> > >
-> > >         r = readl(pll->pwr_addr) | CON0_ISO_EN;
-> > >         writel(r, pll->pwr_addr);
-> > > @@ -327,6 +327,10 @@ static struct clk *mtk_clk_register_pll(const struct mtk_pll_data *data,
-> > >                 pll->tuner_addr = base + data->tuner_reg;
-> > >         if (data->tuner_en_reg)
-> > >                 pll->tuner_en_addr = base + data->tuner_en_reg;
-> > > +       if (data->en_reg)
-> > > +               pll->en_addr = base + data->en_reg;
-> > > +       else
-> > > +               pll->en_addr = pll->base_addr + REG_CON0;
-> >
-> > Don't you need to set pll->data->pll_en_bit to CON0_BASE_EN here?
-> > (which probably means that you need to add a pll->en_bit field to
-> > struct mtk_clk_pll)
-> >
->
-> Because all mtk_clk_pll data are static variables, en_bit would be 0 if
-> NO value assigned.
+Hi,
 
-Wow, you're right, but this is a little bit subtle. I wonder if it's
-worth adding a small comment? (either here or in struct mtk_pll_data)
+On 6/11/2020 7:58 PM, Sandeep Maheswaram wrote:
+> Avoiding phy powerdown in host mode so that it can be wake up by devices.
+> Set usb controller wakeup capable when wakeup capable devices are
+> connected to the host.
+>
+> Signed-off-by: Sandeep Maheswaram <sanm@codeaurora.org>
+> ---
+>  drivers/usb/dwc3/core.c      | 47 ++++++++++++++++++++++++++-----
+>  drivers/usb/dwc3/core.h      |  1 +
+>  drivers/usb/dwc3/dwc3-qcom.c | 66 +++++++++++++++++++++++++++++++++-----------
+>  3 files changed, 91 insertions(+), 23 deletions(-)
+>
+> diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
+> index 25c686a7..8370350 100644
+> --- a/drivers/usb/dwc3/core.c
+> +++ b/drivers/usb/dwc3/core.c
+> @@ -31,15 +31,19 @@
+>  #include <linux/usb/gadget.h>
+>  #include <linux/usb/of.h>
+>  #include <linux/usb/otg.h>
+> +#include <linux/usb/hcd.h>
+>  
+>  #include "core.h"
+>  #include "gadget.h"
+>  #include "io.h"
+>  
+>  #include "debug.h"
+> +#include "../host/xhci.h"
+>  
+>  #define DWC3_DEFAULT_AUTOSUSPEND_DELAY	5000 /* ms */
+>  
+> +bool need_phy_for_wakeup;
+> +
+>  /**
+>   * dwc3_get_dr_mode - Validates and sets dr_mode
+>   * @dwc: pointer to our context structure
+> @@ -1627,10 +1631,36 @@ static int dwc3_core_init_for_resume(struct dwc3 *dwc)
+>  	return ret;
+>  }
+>  
+> +static void dwc3_set_phy_speed_flags(struct dwc3 *dwc)
+> +{
+> +
+> +	int i, num_ports;
+> +	u32 reg;
+> +	struct usb_hcd	*hcd = platform_get_drvdata(dwc->xhci);
+
+dwc->xhci could be NULL for DR_MODE = PERIPHERAL.
+
+
+> +	struct xhci_hcd	*xhci_hcd = hcd_to_xhci(hcd);
+> +
+> +	dwc->hs_phy_flags &= ~(PHY_MODE_USB_HOST_HS | PHY_MODE_USB_HOST_LS);
+> +
+> +	reg = readl(&xhci_hcd->cap_regs->hcs_params1);
+> +
+> +	num_ports = HCS_MAX_PORTS(reg);
+> +	for (i = 0; i < num_ports; i++) {
+> +		reg = readl(&xhci_hcd->op_regs->port_status_base + i*0x10);
+> +		if (reg & PORT_PE) {
+> +			if (DEV_HIGHSPEED(reg) || DEV_FULLSPEED(reg))
+> +				dwc->hs_phy_flags |= PHY_MODE_USB_HOST_HS;
+> +			else if (DEV_LOWSPEED(reg))
+> +				dwc->hs_phy_flags |= PHY_MODE_USB_HOST_LS;
+> +		}
+> +	}
+> +	phy_set_mode(dwc->usb2_generic_phy, dwc->hs_phy_flags);
+
+
+Can we move this logic to xhci driver instead?
+
+> +}
+> +
+..
+> @@ -240,6 +267,11 @@ static int dwc3_qcom_suspend(struct dwc3_qcom *qcom)
+>  {
+>  	u32 val;
+>  	int i;
+> +	struct dwc3 *dwc = platform_get_drvdata(qcom->dwc3);
+> +	struct usb_hcd  *hcd = platform_get_drvdata(dwc->xhci);
+
+dwc->xhci could be NULL
+
+
+> +
+> +	if (usb_wakeup_enabled_descendants(hcd->self.root_hub))
+> +		device_init_wakeup(qcom->dev, 1);
+>  
+>  	if (qcom->is_suspended)
+>  		return 0;
+> @@ -262,6 +294,8 @@ static int dwc3_qcom_resume(struct dwc3_qcom *qcom)
+>  	int ret;
+>  	int i;
+>  
+> +	device_init_wakeup(qcom->dev, 0);
+> +
+>  	if (!qcom->is_suspended)
+>  		return 0;
+>  
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
