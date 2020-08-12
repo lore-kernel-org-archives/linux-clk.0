@@ -2,89 +2,81 @@ Return-Path: <SRS0=JZ/x=BW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A627AC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:52:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCECBC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6CAE820771
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:52:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9184F20786
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:53:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597218754;
-	bh=lYGnGkLHu1hG+xc/o4ReH2xXsUyzFmXjEImOntyD4ws=;
+	s=default; t=1597218811;
+	bh=P6ejn0S1w+bT2hmJQj0bBbZBGv/i7M2RCBerqlQ0tto=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=nim5uvV91mv7GzfsSSY7regWfCp3ak9MLNyi4PLi9HRpL5DV4MJ5/b1CUpqsNyy3z
-	 HPhdrl6UQtseVlRoS9mLRlenAoAH/bQlpSapO8rCcAyWC0aYx6D+5ED9d/nA5qGt+P
-	 KWCRss03pmAtHKVH2Z+nSZJMX1Wq8I//CHnm/9bw=
+	b=Maf17pMwa5Yu7mSkusJKjDuglrCVf7kyPOks7FoadSLjaSw7orW0LkAAcakItVyLo
+	 nIBKxVhByWlXjAM7Tn00ah++EARW1nyTy59J2r0XAr+TbiLGTnv++/1PMaIMWffx2X
+	 zfKLmd4fodpZ4eIBOh92HH0YF/nmf6DWUAHF7Z3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbgHLHwe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Aug 2020 03:52:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
+        id S1726517AbgHLHxb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Aug 2020 03:53:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726479AbgHLHwd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Aug 2020 03:52:33 -0400
+        id S1726507AbgHLHxa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Aug 2020 03:53:30 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65F02206B5;
-        Wed, 12 Aug 2020 07:52:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B45720771;
+        Wed, 12 Aug 2020 07:53:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597218753;
-        bh=lYGnGkLHu1hG+xc/o4ReH2xXsUyzFmXjEImOntyD4ws=;
+        s=default; t=1597218810;
+        bh=P6ejn0S1w+bT2hmJQj0bBbZBGv/i7M2RCBerqlQ0tto=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=1p4LHA72BP10qSH06MuALxEGL+GU2nbkV9CWNkn7+vzYlWNNa2iKUE7l2t2sNjo87
-         097ws6IFpDJ2P3anL6PUXIcGnhWnHUm+WEEkiKkVvGdz9NhD2BwpbfB2/UyB/xievf
-         kX/NCz4f7O+i1NWsIh4cgBHOC7WzfgCLvMNrQO6c=
+        b=cYpOh+wGFM5q4h0EVw4BenMsqzWP58oOKUENaUKnf31yzm8gW69JYPjy59IdNYhf4
+         e1I1V8vWSdNMtpxNY4gNzcTAuWAVIs5SuDEKWEJvaywvK0XGOaSOm39fZbxeFkAfWV
+         BSP0At06Izb5dIxnKzChYlLDR4M3KPGOBGNKm5D8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200810044020.2063350-1-natechancellor@gmail.com>
-References: <20200810044020.2063350-1-natechancellor@gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Fix initialization of mux_pll_src_4plls_p
+In-Reply-To: <20200806182059.2431-5-krzk@kernel.org>
+References: <20200806181932.2253-1-krzk@kernel.org> <20200806182059.2431-5-krzk@kernel.org>
+Subject: Re: [PATCH v2 05/41] ARM: s3c24xx: make S3C24XX_MISCCR access indirect
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kukjin Kim <kgene@kernel.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Date:   Wed, 12 Aug 2020 00:52:32 -0700
-Message-ID: <159721875227.33733.9237826555988566719@swboyd.mtv.corp.google.com>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+To:     Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Date:   Wed, 12 Aug 2020 00:53:29 -0700
+Message-ID: <159721880936.33733.15599563496602398778@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Chancellor (2020-08-09 21:40:20)
-> A new warning in Clang points out that the initialization of
-> mux_pll_src_4plls_p appears incorrect:
+Quoting Krzysztof Kozlowski (2020-08-06 11:20:22)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> ../drivers/clk/rockchip/clk-rk3228.c:140:58: warning: suspicious
-> concatenation of string literals in an array initialization; did you
-> mean to separate the elements with a comma? [-Wstring-concatenation]
-> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
- };
->                                                               ^
->                                                              ,
-> ../drivers/clk/rockchip/clk-rk3228.c:140:48: note: place parentheses
-> around the string literal to silence warning
-> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
- };
->                                                     ^
-> 1 warning generated.
+> The clk driver uses both a function call into an exported
+> platform file and a direct register access to a hardcoded
+> virtual address for accessing the MISCCR register, both
+> become are a problem for a multiplatform kernel because
+> of the header file dependency.
 >=20
-> Given the name of the variable and the same variable name in rv1108, it
-> seems that this should have been four distinct elements. Fix it up by
-> adding the comma as suggested.
+> Make this an indirect function call through platform data
+> instead.
 >=20
-> Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1123
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > ---
 
-Looks good to me. I can pick it up for clk-fixes if Heiko agrees.
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
