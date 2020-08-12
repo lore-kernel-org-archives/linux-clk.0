@@ -2,67 +2,234 @@ Return-Path: <SRS0=JZ/x=BW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2C0C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A3CC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 21:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1BBAB2080C
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:58:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597262291;
-	bh=6sM8da5LoKdhSaDEe0PjHdmiWnItuePL6eAY8XKlK7U=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=LuwJMu0KjC9jJWWAeORU5Fjn10IIglPJ7QC3UyUrp9LGE17SCgJ72ucFhp/0RwshP
-	 8eI8wQrZWd20P1eA+F8jr3HbGMLgT+JKIEZBga+se1QcMQGTdnVKsxtVNdaL6sq3Qz
-	 2WkGEC8GHj5fCTpVEdRojjm4PtQXoWSrTjWFryc4=
+	by mail.kernel.org (Postfix) with ESMTP id E124620866
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 21:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726723AbgHLT6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726526AbgHLT6K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:58:10 -0400
-Subject: Re: [GIT PULL] More clk changes for the merge window
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597262290;
-        bh=6sM8da5LoKdhSaDEe0PjHdmiWnItuePL6eAY8XKlK7U=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YeW11yVXog0J0AQbPneqrB0lC5kwfDw9MlRJeB2YgjjXGJfuzIaJ54jr+Q7Svmq1E
-         9CdIx0zj8bVg2fdRHUbwNDWgo52cYIcGeUAU7paC2itzUDjY7IdkZ7ZQg7HSsZdOjf
-         FgX74wEzCtWRrxgVVUU4YTfkr8jWlczj23pyyk4w=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200812173942.1753107-1-sboyd@kernel.org>
-References: <20200812173942.1753107-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200812173942.1753107-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
-X-PR-Tracked-Commit-Id: dd9c697a944a02066877404b01e9fb7dcb3a2218
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 05a5b5d8a2cd82e2bf5a01ad064efa396ec7fbef
-Message-Id: <159726229004.30367.13323706155878500230.pr-tracker-bot@kernel.org>
-Date:   Wed, 12 Aug 2020 19:58:10 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726531AbgHLVfD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Aug 2020 17:35:03 -0400
+Received: from asavdk3.altibox.net ([109.247.116.14]:53986 "EHLO
+        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbgHLVfD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 12 Aug 2020 17:35:03 -0400
+Received: from ravnborg.org (unknown [188.228.123.71])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by asavdk3.altibox.net (Postfix) with ESMTPS id DE6062002E;
+        Wed, 12 Aug 2020 23:34:54 +0200 (CEST)
+Date:   Wed, 12 Aug 2020 23:34:53 +0200
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        alsa-devel@alsa-project.org, linux-pm@vger.kernel.org,
+        linux-iio@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-usb@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-spi@vger.kernel.org, linux-gpio@vger.kernel.org,
+        netdev@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-i2c@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Whitespace clean-ups in schema files
+Message-ID: <20200812213453.GA690477@ravnborg.org>
+References: <20200812203618.2656699-1-robh@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200812203618.2656699-1-robh@kernel.org>
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=f+hm+t6M c=1 sm=1 tr=0
+        a=S6zTFyMACwkrwXSdXUNehg==:117 a=S6zTFyMACwkrwXSdXUNehg==:17
+        a=kj9zAlcOel0A:10 a=7gkXJVJtAAAA:8 a=S2FyQyr5uj24keYp2QUA:9
+        a=CjuIK1q_8ugA:10 a=c0zojPR3vx4A:10 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Wed, 12 Aug 2020 10:39:42 -0700:
+Hi Rob.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+On Wed, Aug 12, 2020 at 02:36:18PM -0600, Rob Herring wrote:
+> Clean-up incorrect indentation, extra spaces, long lines, and missing
+> EOF newline in schema files. Most of the clean-ups are for list
+> indentation which should always be 2 spaces more than the preceding
+> keyword.
+> 
+> Found with yamllint (which I plan to integrate into the checks).
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/05a5b5d8a2cd82e2bf5a01ad064efa396ec7fbef
+I have browsed through the patch - and there was only a few things
+that jumped at me.
 
-Thank you!
+With these points considered:
+Acked-by: Sam Ravnborg <sam@ravnborg.org>
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I expect only some (few) of my points to actually results in any updates.
+
+I look forward to have the lint functionality as part of the built-in
+tools so we catch these things early.
+
+	Sam
+
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+> index f63895c8ce2d..88814a2a14a5 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -273,8 +273,8 @@ properties:
+>                - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
+>                - kontron,imx6ull-n6411-som # Kontron N6411 SOM
+>                - myir,imx6ull-mys-6ulx-eval # MYiR Tech iMX6ULL Evaluation Board
+> -              - toradex,colibri-imx6ull-eval            # Colibri iMX6ULL Module on Colibri Evaluation Board
+> -              - toradex,colibri-imx6ull-wifi-eval       # Colibri iMX6ULL Wi-Fi / Bluetooth Module on Colibri Evaluation Board
+> +              - toradex,colibri-imx6ull-eval      # Colibri iMX6ULL Module on Colibri Eval Board
+> +              - toradex,colibri-imx6ull-wifi-eval # Colibri iMX6ULL Wi-Fi / BT Module on Colibri Eval Board
+>            - const: fsl,imx6ull
+
+This change looks bad as it drops the alignment with the comments below.
+See following patch chunck:
+
+>
+>        - description: Kontron N6411 S Board
+> @@ -312,9 +312,12 @@ properties:
+>                - toradex,colibri-imx7d                   # Colibri iMX7 Dual Module
+>                - toradex,colibri-imx7d-aster             # Colibri iMX7 Dual Module on Aster Carrier Board
+>                - toradex,colibri-imx7d-emmc              # Colibri iMX7 Dual 1GB (eMMC) Module
+> -              - toradex,colibri-imx7d-emmc-aster        # Colibri iMX7 Dual 1GB (eMMC) Module on Aster Carrier Board
+> -              - toradex,colibri-imx7d-emmc-eval-v3      # Colibri iMX7 Dual 1GB (eMMC) Module on Colibri Evaluation Board V3
+> -              - toradex,colibri-imx7d-eval-v3           # Colibri iMX7 Dual Module on Colibri Evaluation Board V3
+> +              - toradex,colibri-imx7d-emmc-aster        # Colibri iMX7 Dual 1GB (eMMC) Module on
+> +                                                        #  Aster Carrier Board
+
+
+
+> diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
+> index 177d48c5bd97..e89c1ea62ffa 100644
+> --- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
+> @@ -25,8 +25,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> -        - dlink,dir-685-panel
+> -
+> +          - dlink,dir-685-panel
+>        - const: ilitek,ili9322
+>
+>    reset-gpios: true
+> diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
+> index a39332276bab..76a9068a85dd 100644
+> --- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
+> +++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
+> @@ -13,8 +13,7 @@ properties:
+>    compatible:
+>      items:
+>        - enum:
+> -        - bananapi,lhr050h41
+> -
+> +          - bananapi,lhr050h41
+>        - const: ilitek,ili9881c
+>
+
+The extra lines is a simple way to indicate that here shall be added
+more in the future. So I like the empty line.
+
+
+> diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> index 32e0896c6bc1..47938e372987 100644
+> --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
+> @@ -79,7 +79,8 @@ properties:
+>      description: |
+>        kHz; switching frequency.
+>      $ref: /schemas/types.yaml#/definitions/uint32
+> -    enum: [ 600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200, 4800, 9600 ]
+> +    enum: [ 600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371, 1600, 1920,
+> +            2400, 3200, 4800, 9600 ]
+>
+>    qcom,ovp:
+>      description: |
+
+In the modern world we are living in now line length of 100 chars are
+OK. checkpatch and coding_style is updated to reflected this.
+
+> diff --git a/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml b/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
+> index 4ddb42a4ae05..9102feae90a2 100644
+> --- a/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
+> +++ b/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
+> @@ -33,4 +33,5 @@ examples:
+>          reg = <0x1f000000 0x10>;
+>      };
+>
+> -...
+> \ No newline at end of file
+> +...
+> +
+
+Added one line too much?
+
+ diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> index 0ae692dc28b5..3d3fed63409b 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> +++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
+> @@ -43,47 +43,47 @@ properties:
+>      maxItems: 1
+>
+>  required:
+> -   - compatible
+> -   - reg
+> -   - spi-max-frequency
+> -   - mux-controls
+> +  - compatible
+> +  - reg
+> +  - spi-max-frequency
+> +  - mux-controls
+>
+>  examples:
+> -   - |
+> -     #include <dt-bindings/gpio/gpio.h>
+> -     mux: mux-controller {
+> -       compatible = "gpio-mux";
+> -       #mux-control-cells = <0>;
+> +  - |
+> +    #include <dt-bindings/gpio/gpio.h>
+> +    mux: mux-controller {
+> +        compatible = "gpio-mux";
+> +        #mux-control-cells = <0>;
+>
+> -       mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+> -     };
+> +        mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+> +    };
+
+Example is updated to use 4-space indent. I like.
+
+But many other examples are left untouched.
+
+So I wonder if updating all examples to the same indent should
+be left for another mega-patch?
+
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> index f3d847832fdc..2baee2c817c1 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+> @@ -993,7 +993,8 @@ patternProperties:
+>    "^sst,.*":
+>      description: Silicon Storage Technology, Inc.
+>    "^sstar,.*":
+> -    description: Xiamen Xingchen(SigmaStar) Technology Co., Ltd. (formerly part of MStar Semiconductor, Inc.)
+> +    description: Xiamen Xingchen(SigmaStar) Technology Co., Ltd.
+> +      (formerly part of MStar Semiconductor, Inc.)
+>    "^st,.*":
+>      description: STMicroelectronics
+>    "^starry,.*":
+
+Did you check that they are all in alphabetical order?
+I would be suprised if this is the only issue in this file.
+
+
