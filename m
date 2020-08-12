@@ -2,154 +2,89 @@ Return-Path: <SRS0=JZ/x=BW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2B92C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A627AC433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id AA74520771
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CAE820771
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 07:52:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597218754;
+	bh=lYGnGkLHu1hG+xc/o4ReH2xXsUyzFmXjEImOntyD4ws=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=nim5uvV91mv7GzfsSSY7regWfCp3ak9MLNyi4PLi9HRpL5DV4MJ5/b1CUpqsNyy3z
+	 HPhdrl6UQtseVlRoS9mLRlenAoAH/bQlpSapO8rCcAyWC0aYx6D+5ED9d/nA5qGt+P
+	 KWCRss03pmAtHKVH2Z+nSZJMX1Wq8I//CHnm/9bw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726255AbgHLH25 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Aug 2020 03:28:57 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:44566 "EHLO inva021.nxp.com"
+        id S1726601AbgHLHwe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Aug 2020 03:52:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726182AbgHLH24 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Aug 2020 03:28:56 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5564120003C;
-        Wed, 12 Aug 2020 09:28:54 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 45412200002;
-        Wed, 12 Aug 2020 09:28:54 +0200 (CEST)
-Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3092B2030A;
-        Wed, 12 Aug 2020 09:28:54 +0200 (CEST)
-Date:   Wed, 12 Aug 2020 10:28:54 +0300
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Fugang Duan <fugang.duan@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 11/17] clk: imx: Add blk_ctrl combo driver
-Message-ID: <20200812072854.4r4d6cz5cprezlof@fsr-ub1664-175>
-References: <1596024483-21482-1-git-send-email-abel.vesa@nxp.com>
- <1596024483-21482-12-git-send-email-abel.vesa@nxp.com>
- <d44e88a1408add6491897a8793b57ee0090fa4c6.camel@pengutronix.de>
- <20200730085508.ddxhb4rjnzwooh2z@fsr-ub1664-175>
- <3f4fd963bdf58e61715524fdb246481fb2b2d137.camel@pengutronix.de>
+        id S1726479AbgHLHwd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Aug 2020 03:52:33 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65F02206B5;
+        Wed, 12 Aug 2020 07:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597218753;
+        bh=lYGnGkLHu1hG+xc/o4ReH2xXsUyzFmXjEImOntyD4ws=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=1p4LHA72BP10qSH06MuALxEGL+GU2nbkV9CWNkn7+vzYlWNNa2iKUE7l2t2sNjo87
+         097ws6IFpDJ2P3anL6PUXIcGnhWnHUm+WEEkiKkVvGdz9NhD2BwpbfB2/UyB/xievf
+         kX/NCz4f7O+i1NWsIh4cgBHOC7WzfgCLvMNrQO6c=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3f4fd963bdf58e61715524fdb246481fb2b2d137.camel@pengutronix.de>
-User-Agent: NeoMutt/20180622
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200810044020.2063350-1-natechancellor@gmail.com>
+References: <20200810044020.2063350-1-natechancellor@gmail.com>
+Subject: Re: [PATCH] clk: rockchip: Fix initialization of mux_pll_src_4plls_p
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        Nathan Chancellor <natechancellor@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Date:   Wed, 12 Aug 2020 00:52:32 -0700
+Message-ID: <159721875227.33733.9237826555988566719@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-07-30 11:39:22, Philipp Zabel wrote:
-> On Thu, 2020-07-30 at 11:55 +0300, Abel Vesa wrote:
-> > On 20-07-29 14:46:28, Philipp Zabel wrote:
-> > > Hi Abel,
-> > > 
-> > > On Wed, 2020-07-29 at 15:07 +0300, Abel Vesa wrote:
-> > > > On i.MX8MP, there is a new type of IP which is called BLK_CTRL in
-> > 
-> > [...]
-> > 
-> > > > +
-> > > > +static int imx_blk_ctrl_reset_set(struct reset_controller_dev *rcdev,
-> > > > +				  unsigned long id, bool assert)
-> > > > +{
-> > > > +	struct imx_blk_ctrl_drvdata *drvdata = container_of(rcdev,
-> > > > +			struct imx_blk_ctrl_drvdata, rcdev);
-> > > > +	unsigned int offset = drvdata->rst_hws[id].offset;
-> > > > +	unsigned int shift = drvdata->rst_hws[id].shift;
-> > > > +	unsigned int mask = drvdata->rst_hws[id].mask;
-> > > > +	void __iomem *reg_addr = drvdata->base + offset;
-> > > > +	unsigned long flags;
-> > > > +	u32 reg;
-> > > > +
-> > > > +	if (assert) {
-> > > > +		pm_runtime_get_sync(rcdev->dev);
-> > > > +		spin_lock_irqsave(&drvdata->lock, flags);
-> > > > +		reg = readl(reg_addr);
-> > > > +		writel(reg & ~(mask << shift), reg_addr);
-> > > > +		spin_unlock_irqrestore(&drvdata->lock, flags);
-> > > > +	} else {
-> > > > +		spin_lock_irqsave(&drvdata->lock, flags);
-> > > > +		reg = readl(reg_addr);
-> > > > +		writel(reg | (mask << shift), reg_addr);
-> > > > +		spin_unlock_irqrestore(&drvdata->lock, flags);
-> > > > +		pm_runtime_put(rcdev->dev);
-> > > 
-> > > This still has the issue of potentially letting exclusive reset control
-> > > users break the device usage counter.
-> > > 
-> > > Also shared reset control users start with deassert(), and you end probe
-> > > with pm_runtime_put(), so the first shared reset control user that
-> > > deasserts its reset will decrement the dev->power.usage_count to -1 ?
-> > > For multiple resets being initially deasserted this would decrement
-> > > multiple times.
-> > > 
-> > > I think you'll have to track the (number of) asserted reset bits in this
-> > > reset controller and limit when to call pm_runtime_get/put_sync().
-> > > 
-> > 
-> > Yes, you're right.
-> > 
-> > I'll add a mask, and for each assert, the according bit will get set, and 
-> > for each deasssert the same bit will get cleared.
-> 
-> > And when the mask has at least one bit set, the pm_runtime_get gets called
-> 
-> ^ When the mask was 0 before but now has a bit set.
-> 
-> > and when the mask is 0, the pm_runtime_put_sync will be called.
-> 
-> ^ When the mask had a bit set but now is 0.
-> 
-> > Does that sound OK ?
-> 
-> And the mask starts out as 0, as after the pm_runtime_put() in probe all
-> reset lines are deasserted?
-> 
+Quoting Nathan Chancellor (2020-08-09 21:40:20)
+> A new warning in Clang points out that the initialization of
+> mux_pll_src_4plls_p appears incorrect:
+>=20
+> ../drivers/clk/rockchip/clk-rk3228.c:140:58: warning: suspicious
+> concatenation of string literals in an array initialization; did you
+> mean to separate the elements with a comma? [-Wstring-concatenation]
+> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
+ };
+>                                                               ^
+>                                                              ,
+> ../drivers/clk/rockchip/clk-rk3228.c:140:48: note: place parentheses
+> around the string literal to silence warning
+> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
+ };
+>                                                     ^
+> 1 warning generated.
+>=20
+> Given the name of the variable and the same variable name in rv1108, it
+> seems that this should have been four distinct elements. Fix it up by
+> adding the comma as suggested.
+>=20
+> Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/1123
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
 
-Yes, that is correct.
-
-> > > > +	}
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static int imx_blk_ctrl_reset_reset(struct reset_controller_dev *rcdev,
-> > > > +					   unsigned long id)
-> > > > +{
-> > > > +	imx_blk_ctrl_reset_set(rcdev, id, true);
-> > > > +	return imx_blk_ctrl_reset_set(rcdev, id, false);
-> > > 
-> > > Does this work for all peripherals? Are there none that require the
-> > > reset line to be asserted for a certain number of bus clocks or similar?
-> > 
-> > As of now, there is no user that calls reset. All the users call the assert
-> > and then deassert. As for the number of clocks for reset, I'll try to have a
-> > chat to the HW design team and then come back with the information.
-> 
-> Ok. If this is not required or can't be guaranteed to work, it may be
-> better to just leave it out.
-> 
-> regards
-> Philipp
+Looks good to me. I can pick it up for clk-fixes if Heiko agrees.
