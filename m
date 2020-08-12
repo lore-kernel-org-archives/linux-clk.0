@@ -2,83 +2,67 @@ Return-Path: <SRS0=JZ/x=BW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=BAYES_00,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 879ECC433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:23:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2C0C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:58:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6664020838
-	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:23:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BBAB2080C
+	for <linux-clk@archiver.kernel.org>; Wed, 12 Aug 2020 19:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597262291;
+	bh=6sM8da5LoKdhSaDEe0PjHdmiWnItuePL6eAY8XKlK7U=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=LuwJMu0KjC9jJWWAeORU5Fjn10IIglPJ7QC3UyUrp9LGE17SCgJ72ucFhp/0RwshP
+	 8eI8wQrZWd20P1eA+F8jr3HbGMLgT+JKIEZBga+se1QcMQGTdnVKsxtVNdaL6sq3Qz
+	 2WkGEC8GHj5fCTpVEdRojjm4PtQXoWSrTjWFryc4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726521AbgHLTXx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 12 Aug 2020 15:23:53 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:39072 "EHLO gloria.sntech.de"
+        id S1726723AbgHLT6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 12 Aug 2020 15:58:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726512AbgHLTXx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 12 Aug 2020 15:23:53 -0400
-Received: from dynamic-194-228-11-227.ipv4.broadband.iol.cz ([194.228.11.227] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <heiko@sntech.de>)
-        id 1k5wLk-0000aL-3f; Wed, 12 Aug 2020 21:23:48 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
+        id S1726526AbgHLT6K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 12 Aug 2020 15:58:10 -0400
+Subject: Re: [GIT PULL] More clk changes for the merge window
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597262290;
+        bh=6sM8da5LoKdhSaDEe0PjHdmiWnItuePL6eAY8XKlK7U=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=YeW11yVXog0J0AQbPneqrB0lC5kwfDw9MlRJeB2YgjjXGJfuzIaJ54jr+Q7Svmq1E
+         9CdIx0zj8bVg2fdRHUbwNDWgo52cYIcGeUAU7paC2itzUDjY7IdkZ7ZQg7HSsZdOjf
+         FgX74wEzCtWRrxgVVUU4YTfkr8jWlczj23pyyk4w=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20200812173942.1753107-1-sboyd@kernel.org>
+References: <20200812173942.1753107-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20200812173942.1753107-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+X-PR-Tracked-Commit-Id: dd9c697a944a02066877404b01e9fb7dcb3a2218
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 05a5b5d8a2cd82e2bf5a01ad064efa396ec7fbef
+Message-Id: <159726229004.30367.13323706155878500230.pr-tracker-bot@kernel.org>
+Date:   Wed, 12 Aug 2020 19:58:10 +0000
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com
-Subject: Re: [PATCH] clk: rockchip: Fix initialization of mux_pll_src_4plls_p
-Date:   Wed, 12 Aug 2020 21:23:31 +0200
-Message-ID: <1687296.fXXW8n0h3p@phil>
-In-Reply-To: <159721875227.33733.9237826555988566719@swboyd.mtv.corp.google.com>
-References: <20200810044020.2063350-1-natechancellor@gmail.com> <159721875227.33733.9237826555988566719@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Mittwoch, 12. August 2020, 09:52:32 CEST schrieb Stephen Boyd:
-> Quoting Nathan Chancellor (2020-08-09 21:40:20)
-> > A new warning in Clang points out that the initialization of
-> > mux_pll_src_4plls_p appears incorrect:
-> > 
-> > ../drivers/clk/rockchip/clk-rk3228.c:140:58: warning: suspicious
-> > concatenation of string literals in an array initialization; did you
-> > mean to separate the elements with a comma? [-Wstring-concatenation]
-> > PNAME(mux_pll_src_4plls_p)      = { "cpll", "gpll", "hdmiphy" "usb480m" };
-> >                                                               ^
-> >                                                              ,
-> > ../drivers/clk/rockchip/clk-rk3228.c:140:48: note: place parentheses
-> > around the string literal to silence warning
-> > PNAME(mux_pll_src_4plls_p)      = { "cpll", "gpll", "hdmiphy" "usb480m" };
-> >                                                     ^
-> > 1 warning generated.
-> > 
-> > Given the name of the variable and the same variable name in rv1108, it
-> > seems that this should have been four distinct elements. Fix it up by
-> > adding the comma as suggested.
-> > 
-> > Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/1123
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> 
-> Looks good to me. I can pick it up for clk-fixes if Heiko agrees.
+The pull request you sent on Wed, 12 Aug 2020 10:39:42 -0700:
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
 
-@Stephen you can pick this up as suggested
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/05a5b5d8a2cd82e2bf5a01ad064efa396ec7fbef
 
+Thank you!
 
-Thanks
-Heiko
-
-
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
