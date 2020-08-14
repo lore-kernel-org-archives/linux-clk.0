@@ -2,158 +2,80 @@ Return-Path: <SRS0=g/9Q=BY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284BBC433E1
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Aug 2020 14:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C340C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Aug 2020 15:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 08AA020866
-	for <linux-clk@archiver.kernel.org>; Fri, 14 Aug 2020 14:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597416712;
-	bh=2azDCJAW0WmwzjFoNP1+Xf1baXp64Ykp/VUpBlKju0s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=BlFIQeYvd/v6xg2VSvMBqryUNjhNNG/+23MkMcJirTqdXvE+v2QJZgBmu8Ly6AgfB
-	 DiIJ3004+Xwncllyi13Za66CUL2Bb+kGo0ijAJNfVGsEy39AzEvgs3c2kMrHqBhzRO
-	 nhwd6Y5bSxY5ac20dCrnA57u3gh9/BdfWwJbsOPs=
+	by mail.kernel.org (Postfix) with ESMTP id 11846208B3
+	for <linux-clk@archiver.kernel.org>; Fri, 14 Aug 2020 15:27:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dYgXg/G3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbgHNOvj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 14 Aug 2020 10:51:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbgHNOvi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 14 Aug 2020 10:51:38 -0400
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2C6E208B3;
-        Fri, 14 Aug 2020 14:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597416697;
-        bh=2azDCJAW0WmwzjFoNP1+Xf1baXp64Ykp/VUpBlKju0s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bjfRL+mBKQdeXNIPuXX+sib3fYs2/XZWJHPOjPd4x196xwXtWkEnxkwGCGKCP+vXy
-         CxGeqKP68MgYI300g+hNTJd4uQCvZb/zOsnBdJ/cEKlyynKbLGyhuMbkA+R9Y9MLDY
-         rajai6Sqx8HGb8L035zTD4t0BSpxCLooD+BQeHTA=
-Received: by mail-ot1-f54.google.com with SMTP id t7so7776444otp.0;
-        Fri, 14 Aug 2020 07:51:36 -0700 (PDT)
-X-Gm-Message-State: AOAM531YqcS4MUxvcGOYChGHRoRMcVsEFsDHYR5LbkHA90TiOSl6Dmh8
-        R/b9TCtT0vzAo6TEwQr7L0CGI1coatN8YZannA==
-X-Google-Smtp-Source: ABdhPJzAQOVgwIRLTeJz+4kS8jI7uSM4yy2bV/QUkiEz2152JH8sgfiQxJMSY+wk4abg95jsoFr6h5Ymz6ZJoeFhB2g=
-X-Received: by 2002:a05:6830:1b79:: with SMTP id d25mr1995774ote.107.1597416696235;
- Fri, 14 Aug 2020 07:51:36 -0700 (PDT)
+        id S1726787AbgHNP1V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 14 Aug 2020 11:27:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46610 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726297AbgHNP1U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 14 Aug 2020 11:27:20 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB1E8C061384;
+        Fri, 14 Aug 2020 08:27:19 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id c16so10313837ejx.12;
+        Fri, 14 Aug 2020 08:27:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=laB7aE4hgtTLxMhcqJK/gtN+/NQVEMfkjyrRHT25v7M=;
+        b=dYgXg/G3LgCbNh9JMLbZBeu/qQ2oxY1Mj9rY3lBz+zDWkR9u63sRSMWkvq0p5z/w64
+         ynepp3rWZI9KIEIFYLAp3bMpYSoRgAId8SBass12h20sKZIGvgVCmoLXQQcuUNJYwpA5
+         j5ECwVo0jJ3WuZfcFfHMvrAf6lCDfDhu1v/t2jUErnKimQd7OSV2BKn0Ztak4xFUu79U
+         f6V5LZELenBEzaKSsgdr5kCn5EVK7ynHtumvJ+0aOXh/JmSXGvz8k9WQrW4Vbz82L8H7
+         EbU78O5ululCJ9bPfSbTK83sBRyTiVbTjdc92IhMYtvTa9Ncdms6xqKtzJctfA6sPRls
+         hA4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=laB7aE4hgtTLxMhcqJK/gtN+/NQVEMfkjyrRHT25v7M=;
+        b=SnoXxHyzKzbGyQTSMY2+69vFvFbDd2az3Cdv6VMpd+D9NfSGxH1B36I+0+f1S38RU8
+         yJ9FAxtYiTcPmMC4r02ezG7J7gD+wxUb2r7k5qqLi28W00f5LS539TX2c/2cQDJUtNyc
+         CqsewRpIuT+wx2JitIEplXocaumAhPOsgN21hlRW1US4utHMNPPNPCwdXPiIxTZ8FETJ
+         Vmr2eHkHW8C+GrYCirTnBblgLznNB54GcIrmgGqhCdvcMF5IrtORDp6VvMZdDATIiumy
+         6wXms+rXgKWplPZQnaDkqW+AWWhi0285Xx1nIYaiDV2hMFoY53/qP7q2rYZKEPJs3tKM
+         vdYg==
+X-Gm-Message-State: AOAM533lQvjqggzA99Zeqxms2Iog7L2haH/0VqfugkXxNP8qsr6enGor
+        qZVqdMsPSR3+KNZrzc0kJJZUMT46z9PlWkjqz9o=
+X-Google-Smtp-Source: ABdhPJxzrpdNKl1n40Wq/XKY+9obkbHdMG7l1mh2ysAETZhznmJJNSayHb9WcWtvRklHAnzv0EkUY/cshH8+meBZ94E=
+X-Received: by 2002:a17:906:3445:: with SMTP id d5mr2856635ejb.348.1597418838713;
+ Fri, 14 Aug 2020 08:27:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20200812203618.2656699-1-robh@kernel.org> <d5808e9c-07fe-1c28-b9a6-a16abe9df458@lucaceresoli.net>
-In-Reply-To: <d5808e9c-07fe-1c28-b9a6-a16abe9df458@lucaceresoli.net>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 14 Aug 2020 08:51:24 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKekx0VO4NROwLrgrU8+L584HaLHM9i3kCZvU+g5myeGw@mail.gmail.com>
-Message-ID: <CAL_JsqKekx0VO4NROwLrgrU8+L584HaLHM9i3kCZvU+g5myeGw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: Whitespace clean-ups in schema files
-To:     Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>,
-        Linux HWMON List <linux-hwmon@vger.kernel.org>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        "open list:IIO SUBSYSTEM AND DRIVERS" <linux-iio@vger.kernel.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        MTD Maling List <linux-mtd@lists.infradead.org>,
-        netdev <netdev@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>
+References: <20200729120057.35079-1-konradybcio@gmail.com> <CAMS8qEWQZPAZy71jx2Wx9B=RDximmC_A9On1Tk-3ekL-LTgsYg@mail.gmail.com>
+In-Reply-To: <CAMS8qEWQZPAZy71jx2Wx9B=RDximmC_A9On1Tk-3ekL-LTgsYg@mail.gmail.com>
+From:   Konrad Dybcio <konradybcio@gmail.com>
+Date:   Fri, 14 Aug 2020 17:26:42 +0200
+Message-ID: <CAMS8qEXj8pHqhtHj-rwMvB8NvuuDbmzP2wZDRcT0r8YA6dX2Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 00/10] msm8992/4 updates
+To:     Konrad Dybcio <konradybcio@gmail.com>
+Cc:     lauren.kelly@msn.com, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 13, 2020 at 4:31 AM Luca Ceresoli <luca@lucaceresoli.net> wrote:
->
-> Hi Rob,
->
-> On 12/08/20 22:36, Rob Herring wrote:
-> > Clean-up incorrect indentation, extra spaces, long lines, and missing
-> > EOF newline in schema files. Most of the clean-ups are for list
-> > indentation which should always be 2 spaces more than the preceding
-> > keyword.
-> >
-> > Found with yamllint (which I plan to integrate into the checks).
->
-> [...]
->
-> > diff --git a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > index 3d4e1685cc55..28c6461b9a9a 100644
-> > --- a/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/idt,versaclock5.yaml
-> > @@ -95,10 +95,10 @@ allOf:
-> >        # Devices without builtin crystal
-> >        properties:
-> >          clock-names:
-> > -            minItems: 1
-> > -            maxItems: 2
-> > -            items:
-> > -              enum: [ xin, clkin ]
-> > +          minItems: 1
-> > +          maxItems: 2
-> > +          items:
-> > +            enum: [ xin, clkin ]
-> >          clocks:
-> >            minItems: 1
-> >            maxItems: 2
->
-> Thanks for noticing, LGTM.
->
-> [...]
->
-> > diff --git a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
-> > index d7dac16a3960..36dc7b56a453 100644
-> > --- a/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
-> > +++ b/Documentation/devicetree/bindings/input/touchscreen/touchscreen.yaml
-> > @@ -33,8 +33,8 @@ properties:
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> >
-> >    touchscreen-min-pressure:
-> > -    description: minimum pressure on the touchscreen to be achieved in order for the
-> > -                 touchscreen driver to report a touch event.
-> > +    description: minimum pressure on the touchscreen to be achieved in order
-> > +      for the touchscreen driver to report a touch event.
->
-> Out of personal taste, I find the original layout more pleasant and
-> readable. This third option is also good, especially for long descriptions:
->
->   description:
->     minimum pressure on the touchscreen to be achieved in order for the
->     touchscreen driver to report a touch event.
->
-> At first glance yamllint seems to support exactly these two by default:
->
-> > With indentation: {spaces: 4, check-multi-line-strings: true}
+Bumping again, merge window closes soon..
 
-Turning on check-multi-line-strings results in 10K+ warnings, so no.
-
-The other issue is the style ruamel.yaml wants to write out is as the
-patch does above. This matters when doing some scripted
-transformations where we read in the files and write them back out. I
-can somewhat work around that by first doing a pass with no changes
-and then another pass with the actual changes, but that's completely
-scriptable. Hopefully, ruamel learns to preserve the style better.
-
-Rob
+Konrad
