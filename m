@@ -2,221 +2,154 @@ Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99120C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B140C433E3
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6744B2076E
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:31:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597685473;
-	bh=r2VsT4GFLEqt9d5QAhoRvDuti8uCDhyea92ziT7tlj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OZE9cEUFl1vGj4U0lCHvt0UsngD4vMASSqK6rZIJy1YgLudgNnroVS5QKETNSkFcb
-	 SrK+uEoyKrxSxgIb7LJatU/LhZzFEnhRRGA3R+JJoupbBfMzGQ6iqGHrnJm+qY8Idq
-	 KHh2X7jAkH5GO6YEljZD0z4e+9qDMsMun84laDDE=
+	by mail.kernel.org (Postfix) with ESMTP id BAE312063A
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:46:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="KNcbpMse"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389237AbgHQRbL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 13:31:11 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40186 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389260AbgHQQ5z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 12:57:55 -0400
-Received: by mail-ed1-f67.google.com with SMTP id a14so12842919edx.7;
-        Mon, 17 Aug 2020 09:57:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3FrKyZ4bgiqRw6fMNXhefxjUO50+4ZZhHM2k568ceUE=;
-        b=jvrzQdFP09I5YMO7ChDtG87bLrS8VDGZGi9TeokYuoPc9doSqg5JaM9RALcaDEX+/S
-         Zm1/ZhcmiyQDsadEY7zSFk9h0rU10m+HBIHgLhTA8Pm6gsqOdN9G8paMkCwCEPMxaTHk
-         SYXsK+CwUIRDvX7RWihL3uBuEYKzooLxRGfCTMq3XHfFoM0Wr7+xvtGrNzj91fvCB7IR
-         wlr8zdrzjcwVn2PUoH1DE5almTWNTSPo7TG1LJD+ATClRY93VRiDs+/Gv5JDTR3+Ewln
-         BZmgyViqqxPLDmzJzx9HdU8+Blf+Cmr1hpjDVUzyLBx1ByknD4jjd7ROjg6MYprJS33o
-         MUqA==
-X-Gm-Message-State: AOAM531ZKy6bJRWv538iXu+EMR7Qa5aS7RzVt+ztD2nH+P5nMDjlhIP8
-        g3vSWchu9UovQStmqc8yr1o=
-X-Google-Smtp-Source: ABdhPJwXGUSxJY2KPJAkdjrQkP68EfvY0m+GPVkx6BxNteF9/a1Q2fay39xFJBTtva4bNXqbU3on7w==
-X-Received: by 2002:a50:ec95:: with SMTP id e21mr15439113edr.250.1597683472383;
-        Mon, 17 Aug 2020 09:57:52 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id lc10sm14820453ejb.22.2020.08.17.09.57.50
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 17 Aug 2020 09:57:51 -0700 (PDT)
-Date:   Mon, 17 Aug 2020 18:57:48 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Tomasz Figa <tomasz.figa@gmail.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
+        id S1731502AbgHQRq2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 13:46:28 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:15381 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388768AbgHQQOI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 12:14:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1597680831;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=rKeNPXXZ5MJgiDN6W3hRxeQoXyTtsWjLXvZBTsWM7s8=;
+        b=KNcbpMse6Bn5w8fyYXwcvSaJITEp5bsH0IKVI/gr7WRdt5y6bFeekLbICfAZ+arhBU
+        oJKbwDndT4kBgRy548ahqvqtVX3BfKmzmoOVAzV1C7aR1iwpua57aitWILSFKA1yK/zr
+        G67w88zamwIX3HpOysktLmo7lmRfGjR+MQ4O4h79btBMxq7UPhRdjnmAm4mHTseBu6mu
+        hLhYWubAenSciYrd2d1i+zrV3ztkuoq0M7LEilFjlDyk4VWjc9nw3kceY7uPA4zytHDH
+        yZkwX2bB7hIW5vkatLYPj3q4TCoxdyKR235MM01CRt23zxKT87pLMI4X3SQ+VG7rmwt4
+        ClpA==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j9IczHboo="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+        by smtp.strato.de (RZmta 46.10.5 DYNA|AUTH)
+        with ESMTPSA id Y0939ew7HGDnInN
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Mon, 17 Aug 2020 18:13:49 +0200 (CEST)
+Date:   Mon, 17 Aug 2020 18:13:44 +0200
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-watchdog@vger.kernel.org,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
-Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
- use direct dependencies
-Message-ID: <20200817165748.GA29664@kozik-lap>
-References: <20200804192654.12783-1-krzk@kernel.org>
- <20200804192654.12783-7-krzk@kernel.org>
+        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Subject: Re: [PATCH] clk: qcom: smd: Disable unused clocks
+Message-ID: <20200817161344.GA1446@gerhold.net>
+References: <20200817140908.185976-1-stephan@gerhold.net>
+ <CAOCk7Nq6CT5q_aXG2jZ2t5=3YKVKM4r=gSnJLJkVccpwyc3XnQ@mail.gmail.com>
+ <20200817152848.GA836@gerhold.net>
+ <CAOCk7NpyiWO_DHidDWbwdBYbzJMrv26CmWOR4foTGRL_pQVbUQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200804192654.12783-7-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAOCk7NpyiWO_DHidDWbwdBYbzJMrv26CmWOR4foTGRL_pQVbUQ@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
-> A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
-> really needed and the s3c24xx watchdog driver can depend on Samsung ARM
-> architectures instead.
+On Mon, Aug 17, 2020 at 09:46:08AM -0600, Jeffrey Hugo wrote:
+> > > So essentially, when the clk framework goes through late init, and
+> > > decides to turn off clocks that are not being used, it will also turn
+> > > off these clocks?
+> > >
+> >
+> > With this patch: yes.
+> >
+> > > I think this is going to break other targets where other subsystems
+> > > happen to rely on these sorts of votes from Linux inorder to run/boot
+> > > (not saying it's a good thing, just that is how it is and since we
+> > > can't change the FW on those....).
+> > >
+> >
+> > As far as I can tell the behavior implemented in this patch (= force
+> > clocks on during boot but disable them when unused) is the same on that
+> > is used on the downstream kernel. Most FW is probably written with the
+> > downstream kernel in mind, so I don't think this is going to cause trouble.
 > 
-> The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsung
-> platforms are here exceptions.  All others just depend on
-> CONFIG_ARCH_xxx.
+> Based on my experience with 8998, I disagree.  I would need to dig up
+> the history for specifics.
 > 
-> This makes the code slightly smaller without any change in
-> functionality.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Re-add the dependency on architectures to keep same functionality.
 
-Hi Guenter, Tomasz,
+I don't know anything about 8998, so it's possible.
+My statement was based on a quick look at the downstream code:
 
-Does such removal of HAVE_S3C2410_WATCHDOG makes sense for you?
+For some reason there is an entirely separate MSM clock framework
+downstream:
 
-Best regards,
-Krzysztof
+ 1. During msm_clock_register() [1] it calls __handoff_clk()
+    for all the clocks.
 
+ 2. __handoff_clk() [2] calls clk->ops->handoff(clk) and if that returns
+    success (HANDOFF_ENABLED_CLK) it adds the clock to a "handoff_list".
+    -> rpm_clk_handoff() [3] forces the clock on similar to mainline.
 
-> ---
->  arch/arm/Kconfig              |  1 -
->  arch/arm/mach-exynos/Kconfig  |  1 -
->  arch/arm/mach-s3c64xx/Kconfig |  2 --
->  arch/arm/mach-s5pv210/Kconfig |  1 -
->  arch/arm64/Kconfig.platforms  |  1 -
->  drivers/watchdog/Kconfig      | 10 ++--------
->  6 files changed, 2 insertions(+), 14 deletions(-)
+ 3. In a late init call (clock_late_init()) [4] it iterates over
+    "handoff_list" and reduces the prepare_count again and eventually
+    disables the clock.
+
+In this patch I implement something equivalent to (3).
+
+[1]: https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/drivers/clk/msm/clock.c?h=LA.UM.7.2.r2-06200-8x98.0#n985
+[2]: https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/drivers/clk/msm/clock.c?h=LA.UM.7.2.r2-06200-8x98.0#n873
+[3]: https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/drivers/clk/msm/clock-rpm.c?h=LA.UM.7.2.r2-06200-8x98.0#n263
+[4]: https://source.codeaurora.org/quic/la/kernel/msm-4.4/tree/drivers/clk/msm/clock.c?h=LA.UM.7.2.r2-06200-8x98.0#n1351
+
+> >
+> > > Also, out of curiosity, how are you validating that BB_CLK2 is
+> > > actually off after this change?
+> > >
+> >
+> > Since BB_CLK1/2 and RF_CLK1/2 are part of the PMIC (at least on MSM8916)
+> > I used the regmap debugfs interface to read the clock registers
+> > through SPMI from Linux.
+> >
+> > From the "PM8916 Hardware Register Description" [1] I got the registers
+> > mentioned in the table, e.g. for BB_CLK2:
+> >
+> > 0x5208: BB_CLK2_STATUS1
+> >         BIT(7): CLK_OK (Indicates Hardware or Software enable and
+> >                         includes warmup delay)
+> >                 0x0: BBCLK_OFF
+> >                 0x1: BBCLK_ON
+> >
+> > I read the registers from /sys/kernel/debug/regmap/0-00/registers:
+> >
+> > Without this patch:
+> >         5108: 80
+> >         5208: 80
+> >         5408: 80
+> >         5508: 80
+> >
+> > With this patch (and with clk-smd-rpm entirely disabled):
+> >         5108: 80
+> >         5208: 00
+> >         5408: 00
+> >         5508: 00
+> >
+> > Stephan
+> >
+> > [1]: https://developer.qualcomm.com/download/sd410/pm8916-hardware-register-description.pdf
 > 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 7564f293f107..fe95777af653 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -504,7 +504,6 @@ config ARCH_S3C24XX
->  	select GPIOLIB
->  	select GENERIC_IRQ_MULTI_HANDLER
->  	select HAVE_S3C2410_I2C if I2C
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select NEED_MACH_IO_H
->  	select SAMSUNG_ATAGS
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index f185cd3d4c62..d2d249706ebb 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -24,7 +24,6 @@ menuconfig ARCH_EXYNOS
->  	select HAVE_ARM_ARCH_TIMER if ARCH_EXYNOS5
->  	select HAVE_ARM_SCU if SMP
->  	select HAVE_S3C2410_I2C if I2C
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-> index ac3e3563487f..e208c2b48853 100644
-> --- a/arch/arm/mach-s3c64xx/Kconfig
-> +++ b/arch/arm/mach-s3c64xx/Kconfig
-> @@ -13,7 +13,6 @@ menuconfig ARCH_S3C64XX
->  	select GPIO_SAMSUNG if ATAGS
->  	select GPIOLIB
->  	select HAVE_S3C2410_I2C if I2C
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_TCM
->  	select PLAT_SAMSUNG
->  	select PM_GENERIC_DOMAINS if PM
-> @@ -165,7 +164,6 @@ config MACH_SMDK6410
->  	bool "SMDK6410"
->  	depends on ATAGS
->  	select CPU_S3C6410
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select S3C64XX_SETUP_FB_24BPP
->  	select S3C64XX_SETUP_I2C1
->  	select S3C64XX_SETUP_IDE
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 03984a791879..b3db1191e437 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -14,7 +14,6 @@ config ARCH_S5PV210
->  	select COMMON_CLK_SAMSUNG
->  	select GPIOLIB
->  	select HAVE_S3C2410_I2C if I2C
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-> index cd58f8495c45..d235b27cf372 100644
-> --- a/arch/arm64/Kconfig.platforms
-> +++ b/arch/arm64/Kconfig.platforms
-> @@ -80,7 +80,6 @@ config ARCH_EXYNOS
->  	select EXYNOS_CHIPID
->  	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
->  	select EXYNOS_PMU
-> -	select HAVE_S3C2410_WATCHDOG if WATCHDOG
->  	select HAVE_S3C_RTC if RTC_CLASS
->  	select PINCTRL
->  	select PINCTRL_EXYNOS
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 4f4687c46d38..297af1c40643 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -478,16 +478,10 @@ config IXP4XX_WATCHDOG
->  
->  	  Say N if you are unsure.
->  
-> -config HAVE_S3C2410_WATCHDOG
-> -	bool
-> -	help
-> -	  This will include watchdog timer support for Samsung SoCs. If
-> -	  you want to include watchdog support for any machine, kindly
-> -	  select this in the respective mach-XXXX/Kconfig file.
-> -
->  config S3C2410_WATCHDOG
->  	tristate "S3C2410 Watchdog"
-> -	depends on HAVE_S3C2410_WATCHDOG || COMPILE_TEST
-> +	depends on ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || \
-> +		   COMPILE_TEST
->  	select WATCHDOG_CORE
->  	select MFD_SYSCON if ARCH_EXYNOS
->  	help
-> -- 
-> 2.17.1
-> 
+> Hmm, 8916 is probably old enough where you can actually do that.  For
+> the modern SoCs, you'll have to go through jtag to get an accurate
+> view of the clocks.
+
+I guess I was lucky then :)
+
+Stephan
