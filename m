@@ -2,182 +2,96 @@ Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0169AC433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 14:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69896C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 15:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id C5F1E2072E
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 14:52:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mwN8E3wf"
+	by mail.kernel.org (Postfix) with ESMTP id 451FC2065C
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 15:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597677185;
+	bh=w2+enJFouBsFUVObLi7FC01Ch0U8RkRLzoUBOYBMdX8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=So2IVRfWwmt2u/UobFXkW16Wev9WpQ6gm9MFL8dHfHUP1jnxoDlMAsnWm4q4Xy73N
+	 Y+o0ho07IYKhtnGSyN9u68g5hN49yFMpJ+Q+6bOL/KIL3qfolAO1+mbv36n1rf8ffX
+	 3c05LWIS+yPnBEDo4WYOqdF+/I9PXaMUKkTpZRK8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729044AbgHQOw7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 10:52:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56342 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728873AbgHQOw6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 10:52:58 -0400
-Received: from mail-il1-x142.google.com (mail-il1-x142.google.com [IPv6:2607:f8b0:4864:20::142])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A92BC061389;
-        Mon, 17 Aug 2020 07:52:58 -0700 (PDT)
-Received: by mail-il1-x142.google.com with SMTP id p18so10917931ilm.7;
-        Mon, 17 Aug 2020 07:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=idCy9UbtWjFjy/KYTQm+toEkEWbKu8TtnGAA1YnlgRc=;
-        b=mwN8E3wfMtyDdeJm+5XVogKdr0Ih7BogWJ5dqN9kddipEHhgUw9T+j4BwZe9umtm/Z
-         ozV6BXTdiRsT3JbJ4vy2r+NLf7N+zfC686gnJEbYbLbv43weQ9E0tE4E7w0TbBy2vF1Q
-         rXzNxdq7U3AwXsAOlluGwkNHkxDNqQP+PfR4N36BAEdedyMZ2nBEb4mXdmlaFj6/w3g6
-         6p+N4LdV4TquUZs3qwL27syM/UdkcT4thF1LjGbkUrGUYSNcA6942S2JGj7UMTCaNqn8
-         XkpCTXpOCH0DD4xEv3RVx82xxAcbf5cYAl7mWEGvhrx3SVXz27lzYPKqzuBprEdsdMWZ
-         VEbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=idCy9UbtWjFjy/KYTQm+toEkEWbKu8TtnGAA1YnlgRc=;
-        b=evcr6oBLgna2PJPNKEJ9OaU4BXiITSlhqx68tlez3PLK+3nbG2iI1dpqQmZB9g1FKu
-         VSJVoRYd7jdlfBdwRS1s7RJIsk2KEq+7tKmXvSBHfHAwWvkTq4maqpaMBUe9Ct1EGOlH
-         L+OSW65fprJvbijCsk46Zo0gxP8VX6FC3FYxgjyx7J6/xmGWuNXgD89JN3IFwKm4pwDH
-         T95vHPxS92SCOLVrmqs7+xb2uzEjJyOeTzF+RfeWV+eDctj+yeuHDrSTSRAzhD7n1wbL
-         9l6BiHu9pgx0tABujbiSgJtyDOpSqVetXKvq5KAYfRuuNrXgY84uueXT3SsABMx+jvAI
-         tW/w==
-X-Gm-Message-State: AOAM53345kzJW2a5JFrkCI2rZehY+o1SFeYPpAgD9jmhz/tmYhmMBXlk
-        q9QBDi1HyoBMM4ljBtO1XEPtTU+ZVziV4drTTLA=
-X-Google-Smtp-Source: ABdhPJwrIS3mv6Ns/Td6HnYubCqM8/MeLmP+SB43QfqweH5BgwFDkPEqTDp9h6N2TCHh3WOlahjFtEV45CBaPdiEV0g=
-X-Received: by 2002:a92:c8c1:: with SMTP id c1mr14199207ilq.42.1597675977617;
- Mon, 17 Aug 2020 07:52:57 -0700 (PDT)
-MIME-Version: 1.0
-References: <20200817140908.185976-1-stephan@gerhold.net>
-In-Reply-To: <20200817140908.185976-1-stephan@gerhold.net>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Mon, 17 Aug 2020 08:52:46 -0600
-Message-ID: <CAOCk7Nq6CT5q_aXG2jZ2t5=3YKVKM4r=gSnJLJkVccpwyc3XnQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: smd: Disable unused clocks
-To:     Stephan Gerhold <stephan@gerhold.net>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728694AbgHQPNE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 11:13:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726630AbgHQPNE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Aug 2020 11:13:04 -0400
+Received: from kozik-lap.mshome.net (unknown [194.230.155.216])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F25552054F;
+        Mon, 17 Aug 2020 15:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1597677183;
+        bh=w2+enJFouBsFUVObLi7FC01Ch0U8RkRLzoUBOYBMdX8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ArtbqySg4ioFTkukPMpYffClJ1lADZAlRkRsJdoA+y8hZt7nCNnRK0DvlDXXHNle7
+         NolvE2Yl4NgbHgk9iRNTvcPKVyu03Ogc4YOsfYMntugwj5at4Rk+sYsQDHORthO6B6
+         GdYBwaf+gZhvYDJgblu/Kxd+2PoakVIEJFEeOifQ=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] clk: imx: vf610: Add CRC clock
+Date:   Mon, 17 Aug 2020 17:12:54 +0200
+Message-Id: <20200817151254.11466-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 8:10 AM Stephan Gerhold <stephan@gerhold.net> wrote:
->
-> At the moment, clk-smd-rpm forces all clocks on at probe time
-> (for "handoff"). However, it does not make the clk core aware of that.
-> This means that the clocks stay enabled forever if they are not used
-> by anything.
->
-> We can easily disable them again after bootup has been completed,
-> by making the clk core aware of the state. This is implemented by
-> returning the current state of the clock in is_prepared().
->
-> Checking the SPMI clock registers reveals that this allows the RPM
-> to disable unused BB/RF clocks. For example, on MSM8916 with all
-> remote processors (except RPM) disabled, we get:
->
->  +--------------------------+------------+---------+--------+-------+
->  |                          | BOOTLOADER | HANDOFF | BEFORE | AFTER |
->  +--------------------------+------------+---------+--------+-------+
->  | BB_CLK1_STATUS1 (0x5108) |     ON*    |    ON   |   ON   |  ON*  |
->  | BB_CLK2_STATUS1 (0x5208) |     OFF    |    ON   |   ON   |  OFF  |
->  | RF_CLK1_STATUS1 (0x5408) |     OFF    |    ON   |   ON   |  OFF  |
->  | RF_CLK2_STATUS1 (0x5508) |     OFF    |    ON   |   ON   |  OFF  |
->  +--------------------------+------------+---------+--------+-------+
->   * BB_CLK1 seems to be always-on in RPM on MSM8916
->
-> where:
->   - BOOTLOADER = clk-smd-rpm disabled entirely in device tree
->   - HANDOFF = temporarily after clk-smd-rpm was probed
->   - BEFORE/AFTER = after boot without/with the changes in this commit
->
-> With this commit BB_CLK2/RF_CLK1/RF_CLK2 are disabled again when unused.
->
-> Cc: Georgi Djakov <georgi.djakov@linaro.org>
-> Signed-off-by: Stephan Gerhold <stephan@gerhold.net>
-> ---
-> Originally I reported this here:
-> https://lore.kernel.org/linux-arm-msm/20200523120810.GA166540@gerhold.net/
->
-> Overall I'm not entirely sure why we need to force all these clocks
-> on at all... But the downstream driver also seems to do it and the RPM
-> interface is barely documented, so I didn't feel comfortable changing it...
+Add the clock for CRC block allowing it to be enabled by consumers.
 
-So essentially, when the clk framework goes through late init, and
-decides to turn off clocks that are not being used, it will also turn
-off these clocks?
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/imx/clk-vf610.c             | 1 +
+ include/dt-bindings/clock/vf610-clock.h | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-I think this is going to break other targets where other subsystems
-happen to rely on these sorts of votes from Linux inorder to run/boot
-(not saying it's a good thing, just that is how it is and since we
-can't change the FW on those....).
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 5129ef8e1d6e..0166ad0b9eb8 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -328,6 +328,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	clk[VF610_CLK_DSPI2] = imx_clk_gate2("dspi2", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(12));
+ 	clk[VF610_CLK_DSPI3] = imx_clk_gate2("dspi3", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(13));
+ 
++	clk[VF610_CLK_CRC] = imx_clk_gate2("crc", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(3));
+ 	clk[VF610_CLK_WDT] = imx_clk_gate2("wdt", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(14));
+ 
+ 	clk[VF610_CLK_ESDHC0_SEL] = imx_clk_mux("esdhc0_sel", CCM_CSCMR1, 16, 2, esdhc_sels, 4);
+diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
+index 0f2d60e884dc..373644e46747 100644
+--- a/include/dt-bindings/clock/vf610-clock.h
++++ b/include/dt-bindings/clock/vf610-clock.h
+@@ -196,6 +196,7 @@
+ #define VF610_CLK_TCON0			187
+ #define VF610_CLK_TCON1			188
+ #define VF610_CLK_CAAM			189
+-#define VF610_CLK_END			190
++#define VF610_CLK_CRC			190
++#define VF610_CLK_END			191
+ 
+ #endif /* __DT_BINDINGS_CLOCK_VF610_H */
+-- 
+2.17.1
 
-I think this needs to be validated on every single qcom platform using
-this driver.
-
-Also, out of curiosity, how are you validating that BB_CLK2 is
-actually off after this change?
-
-> ---
->  drivers/clk/qcom/clk-smd-rpm.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-> index 0e1dfa89489e..fa960cb794a8 100644
-> --- a/drivers/clk/qcom/clk-smd-rpm.c
-> +++ b/drivers/clk/qcom/clk-smd-rpm.c
-> @@ -171,6 +171,9 @@ static int clk_smd_rpm_handoff(struct clk_smd_rpm *r)
->         if (ret)
->                 return ret;
->
-> +       /* During handoff we force all clocks on */
-> +       r->enabled = true;
-> +
->         return 0;
->  }
->
-> @@ -300,6 +303,13 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
->         mutex_unlock(&rpm_smd_clk_lock);
->  }
->
-> +static int clk_smd_rpm_is_prepared(struct clk_hw *hw)
-> +{
-> +       struct clk_smd_rpm *r = to_clk_smd_rpm(hw);
-> +
-> +       return r->enabled;
-> +}
-> +
->  static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
->                                 unsigned long parent_rate)
->  {
-> @@ -396,6 +406,7 @@ static int clk_smd_rpm_enable_scaling(struct qcom_smd_rpm *rpm)
->  static const struct clk_ops clk_smd_rpm_ops = {
->         .prepare        = clk_smd_rpm_prepare,
->         .unprepare      = clk_smd_rpm_unprepare,
-> +       .is_prepared    = clk_smd_rpm_is_prepared,
->         .set_rate       = clk_smd_rpm_set_rate,
->         .round_rate     = clk_smd_rpm_round_rate,
->         .recalc_rate    = clk_smd_rpm_recalc_rate,
-> @@ -404,6 +415,7 @@ static const struct clk_ops clk_smd_rpm_ops = {
->  static const struct clk_ops clk_smd_rpm_branch_ops = {
->         .prepare        = clk_smd_rpm_prepare,
->         .unprepare      = clk_smd_rpm_unprepare,
-> +       .is_prepared    = clk_smd_rpm_is_prepared,
->  };
->
->  /* msm8916 */
-> --
-> 2.28.0
->
