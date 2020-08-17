@@ -1,64 +1,63 @@
-Return-Path: <SRS0=E2lj=B2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 242BBC433DF
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Aug 2020 08:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD42FC433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 06:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id F2E8D206F4
-	for <linux-clk@archiver.kernel.org>; Sun, 16 Aug 2020 08:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD9C1207DF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 06:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597567473;
-	bh=T6UwMy4v18bgR1RYSk8bKZfCqTMnyUP8XZKnI31+u3w=;
+	s=default; t=1597645092;
+	bh=bCo9S69xJPTgREOBEaxrTqK2XsGl+pA07/LQTF8hF9c=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=JuPGXhwGxk1NxVfwpdrhVjKKgLc4YW0Y6gvXCmP93af9T5LLNBo0NdOzheDipoQfw
-	 Ae6yiXLvcU35NGzkjCtAl67RayyMeDWLk0vYgiRX7y9zKGljMthu1nEK9ip3R1cv9d
-	 SdXRzpw1kDfC2tKubIRnoAuYZyY0SR/pD8woH974=
+	b=hRkA/VjwpRh1IhFzKZ4ohvvjrM4smrAx2qtBfyxqY/LETcc661kJsaS4qFHvs7FZ0
+	 fzxjN3dhGkhGdqiYVbyEIK1TOVm94VJ9ciBdUZXDJDv0Au9orDQGMpJHEmdPQnAB5N
+	 XNU8mjKQc3BHAUKVzO9ZpV8hW7XjDUxUekeVz/Fg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbgHPIoc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 16 Aug 2020 04:44:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55002 "EHLO mail.kernel.org"
+        id S1726385AbgHQGSH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 02:18:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725966AbgHPIo0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 16 Aug 2020 04:44:26 -0400
-Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        id S1726235AbgHQGSG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 17 Aug 2020 02:18:06 -0400
+Received: from coco.lan (ip5f5ad5a3.dynamic.kabel-deutschland.de [95.90.213.163])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 032672067C;
-        Sun, 16 Aug 2020 08:44:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 777BC2072D;
+        Mon, 17 Aug 2020 06:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597567464;
-        bh=T6UwMy4v18bgR1RYSk8bKZfCqTMnyUP8XZKnI31+u3w=;
+        s=default; t=1597645085;
+        bh=bCo9S69xJPTgREOBEaxrTqK2XsGl+pA07/LQTF8hF9c=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=drEoeXpHv0E0mUqTh6XgOtxm5HjQ3BZXo/2Vyh0E5JgpqmZ5oJHeFCZAHCZB9rAXm
-         AbIb6f0WWGOxG4kSm3h11hWn0MA48MyZ6oiLma2mj2RujKNmxiI3bNdIjGxh0rdsDK
-         bybFa1BfDVi2cbQ+dCfDbBrEzAgdhLg63i6r2Z2c=
-Date:   Sun, 16 Aug 2020 09:44:18 +0100
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        linux-hwmon@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-spi@vger.kernel.org,
-        linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: Whitespace clean-ups in schema files
-Message-ID: <20200816094418.5bd08f5f@archlinux>
-In-Reply-To: <20200812213453.GA690477@ravnborg.org>
-References: <20200812203618.2656699-1-robh@kernel.org>
-        <20200812213453.GA690477@ravnborg.org>
-X-Mailer: Claws Mail 3.17.6 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        b=XBQbDlHh0KLndVf/A5G/HMzqZxMFRyA8lmLWJCSIAhrrGR3CwiIaMvtopKeG62OJW
+         +8hZahNYhNaX695y02ylJe2fxG1Q8/OpXfqmq8PwtzQ4CTL+oU7yV/Wyu5S97a6lHG
+         BEenRTTvzler/slfGt1SQ8Ug6Hbg0p9EBTCMZTpE=
+Date:   Mon, 17 Aug 2020 08:17:51 +0200
+From:   Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linuxarm@huawei.com, mauro.chehab@huawei.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Ben Dooks <ben.dooks@codethink.co.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] clk: clk-hi3670: Add CLK_IGNORE_UNUSED flag
+Message-ID: <20200817081751.221ef469@coco.lan>
+In-Reply-To: <159754521196.2423498.12327214866049224014@swboyd.mtv.corp.google.com>
+References: <3d575cb4b8016d70efc219bc37e56017cf045c1d.1597414570.git.mchehab+huawei@kernel.org>
+        <159754521196.2423498.12327214866049224014@swboyd.mtv.corp.google.com>
+X-Mailer: Claws Mail 3.17.5 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
@@ -67,193 +66,92 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 12 Aug 2020 23:34:53 +0200
-Sam Ravnborg <sam@ravnborg.org> wrote:
+Em Sat, 15 Aug 2020 19:33:31 -0700
+Stephen Boyd <sboyd@kernel.org> escreveu:
 
-> Hi Rob.
+> Please send patches To: somebody. Sending them to nobody causes my MUA
+> pain.
+
+Ok. Should I send it to you or to someone else?
 > 
-> On Wed, Aug 12, 2020 at 02:36:18PM -0600, Rob Herring wrote:
-> > Clean-up incorrect indentation, extra spaces, long lines, and missing
-> > EOF newline in schema files. Most of the clean-ups are for list
-> > indentation which should always be 2 spaces more than the preceding
-> > keyword.
+> Quoting Mauro Carvalho Chehab (2020-08-14 07:16:20)
+> > There are several clocks that are required for Kirin 970 to
+> > work. Without them, the system hangs. However, most of
+> > the clocks defined at clk-hi3670 aren't specified on its
+> > device tree, nor at Hikey 970 one.
 > > 
-> > Found with yamllint (which I plan to integrate into the checks).  
+> > A few of them are defined at the Linaro's official tree
+> > for Hikey 970, but, even there, distros use
+> > 
+> >         clk_ignore_unused=true
+> > 
+> > as a boot option.
+> > 
+> > So, instead, let's modify the driver to use CLK_IGNORE_UNUSED
+> > flags, removing the need for this boot parameter.
+> > 
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  drivers/clk/hisilicon/clk-hi3670.c | 731 +++++++++++++++++------------
+> >  1 file changed, 425 insertions(+), 306 deletions(-)  
 > 
-> I have browsed through the patch - and there was only a few things
-> that jumped at me.
-> 
-> With these points considered:
-> Acked-by: Sam Ravnborg <sam@ravnborg.org>
+> This is very many. Are all of these clks actually enabled out of boot
+> and are getting turned off at late init?
 
-Replying here as the patch doesn't seem to have made it to linux-iio
-at least. I'm not sure why...
+That's a very good question. Unfortunately, I don't know.
 
-Anyhow, found it in an lkml archive so for the iio changes
-Acked-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+There are some documentation at:
+	https://www.96boards.org/documentation/consumer/hikey/hikey970/hardware-docs/
 
-> 
-> I expect only some (few) of my points to actually results in any updates.
-> 
-> I look forward to have the lint functionality as part of the built-in
-> tools so we catch these things early.
-> 
-> 	Sam
-> 
-> > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > index f63895c8ce2d..88814a2a14a5 100644
-> > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > @@ -273,8 +273,8 @@ properties:
-> >                - fsl,imx6ull-14x14-evk     # i.MX6 UltraLiteLite 14x14 EVK Board
-> >                - kontron,imx6ull-n6411-som # Kontron N6411 SOM
-> >                - myir,imx6ull-mys-6ulx-eval # MYiR Tech iMX6ULL Evaluation Board
-> > -              - toradex,colibri-imx6ull-eval            # Colibri iMX6ULL Module on Colibri Evaluation Board
-> > -              - toradex,colibri-imx6ull-wifi-eval       # Colibri iMX6ULL Wi-Fi / Bluetooth Module on Colibri Evaluation Board
-> > +              - toradex,colibri-imx6ull-eval      # Colibri iMX6ULL Module on Colibri Eval Board
-> > +              - toradex,colibri-imx6ull-wifi-eval # Colibri iMX6ULL Wi-Fi / BT Module on Colibri Eval Board
-> >            - const: fsl,imx6ull  
-> 
-> This change looks bad as it drops the alignment with the comments below.
-> See following patch chunck:
-> 
-> >
-> >        - description: Kontron N6411 S Board
-> > @@ -312,9 +312,12 @@ properties:
-> >                - toradex,colibri-imx7d                   # Colibri iMX7 Dual Module
-> >                - toradex,colibri-imx7d-aster             # Colibri iMX7 Dual Module on Aster Carrier Board
-> >                - toradex,colibri-imx7d-emmc              # Colibri iMX7 Dual 1GB (eMMC) Module
-> > -              - toradex,colibri-imx7d-emmc-aster        # Colibri iMX7 Dual 1GB (eMMC) Module on Aster Carrier Board
-> > -              - toradex,colibri-imx7d-emmc-eval-v3      # Colibri iMX7 Dual 1GB (eMMC) Module on Colibri Evaluation Board V3
-> > -              - toradex,colibri-imx7d-eval-v3           # Colibri iMX7 Dual Module on Colibri Evaluation Board V3
-> > +              - toradex,colibri-imx7d-emmc-aster        # Colibri iMX7 Dual 1GB (eMMC) Module on
-> > +                                                        #  Aster Carrier Board  
-> 
-> 
-> 
-> > diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
-> > index 177d48c5bd97..e89c1ea62ffa 100644
-> > --- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
-> > +++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9322.yaml
-> > @@ -25,8 +25,7 @@ properties:
-> >    compatible:
-> >      items:
-> >        - enum:
-> > -        - dlink,dir-685-panel
-> > -
-> > +          - dlink,dir-685-panel
-> >        - const: ilitek,ili9322
-> >
-> >    reset-gpios: true
-> > diff --git a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-> > index a39332276bab..76a9068a85dd 100644
-> > --- a/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-> > +++ b/Documentation/devicetree/bindings/display/panel/ilitek,ili9881c.yaml
-> > @@ -13,8 +13,7 @@ properties:
-> >    compatible:
-> >      items:
-> >        - enum:
-> > -        - bananapi,lhr050h41
-> > -
-> > +          - bananapi,lhr050h41
-> >        - const: ilitek,ili9881c
-> >  
-> 
-> The extra lines is a simple way to indicate that here shall be added
-> more in the future. So I like the empty line.
-> 
-> 
-> > diff --git a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> > index 32e0896c6bc1..47938e372987 100644
-> > --- a/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> > +++ b/Documentation/devicetree/bindings/leds/backlight/qcom-wled.yaml
-> > @@ -79,7 +79,8 @@ properties:
-> >      description: |
-> >        kHz; switching frequency.
-> >      $ref: /schemas/types.yaml#/definitions/uint32
-> > -    enum: [ 600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371, 1600, 1920, 2400, 3200, 4800, 9600 ]
-> > +    enum: [ 600, 640, 685, 738, 800, 872, 960, 1066, 1200, 1371, 1600, 1920,
-> > +            2400, 3200, 4800, 9600 ]
-> >
-> >    qcom,ovp:
-> >      description: |  
-> 
-> In the modern world we are living in now line length of 100 chars are
-> OK. checkpatch and coding_style is updated to reflected this.
-> 
-> > diff --git a/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml b/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
-> > index 4ddb42a4ae05..9102feae90a2 100644
-> > --- a/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
-> > +++ b/Documentation/devicetree/bindings/spi/mikrotik,rb4xx-spi.yaml
-> > @@ -33,4 +33,5 @@ examples:
-> >          reg = <0x1f000000 0x10>;
-> >      };
-> >
-> > -...
-> > \ No newline at end of file
-> > +...
-> > +  
-> 
-> Added one line too much?
-> 
->  diff --git a/Documentation/devicetree/bindings/spi/spi-mux.yaml b/Documentation/devicetree/bindings/spi/spi-mux.yaml
-> > index 0ae692dc28b5..3d3fed63409b 100644
-> > --- a/Documentation/devicetree/bindings/spi/spi-mux.yaml
-> > +++ b/Documentation/devicetree/bindings/spi/spi-mux.yaml
-> > @@ -43,47 +43,47 @@ properties:
-> >      maxItems: 1
-> >
-> >  required:
-> > -   - compatible
-> > -   - reg
-> > -   - spi-max-frequency
-> > -   - mux-controls
-> > +  - compatible
-> > +  - reg
-> > +  - spi-max-frequency
-> > +  - mux-controls
-> >
-> >  examples:
-> > -   - |
-> > -     #include <dt-bindings/gpio/gpio.h>
-> > -     mux: mux-controller {
-> > -       compatible = "gpio-mux";
-> > -       #mux-control-cells = <0>;
-> > +  - |
-> > +    #include <dt-bindings/gpio/gpio.h>
-> > +    mux: mux-controller {
-> > +        compatible = "gpio-mux";
-> > +        #mux-control-cells = <0>;
-> >
-> > -       mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
-> > -     };
-> > +        mux-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
-> > +    };  
-> 
-> Example is updated to use 4-space indent. I like.
-> 
-> But many other examples are left untouched.
-> 
-> So I wonder if updating all examples to the same indent should
-> be left for another mega-patch?
-> 
-> > diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > index f3d847832fdc..2baee2c817c1 100644
-> > --- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > +++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
-> > @@ -993,7 +993,8 @@ patternProperties:
-> >    "^sst,.*":
-> >      description: Silicon Storage Technology, Inc.
-> >    "^sstar,.*":
-> > -    description: Xiamen Xingchen(SigmaStar) Technology Co., Ltd. (formerly part of MStar Semiconductor, Inc.)
-> > +    description: Xiamen Xingchen(SigmaStar) Technology Co., Ltd.
-> > +      (formerly part of MStar Semiconductor, Inc.)
-> >    "^st,.*":
-> >      description: STMicroelectronics
-> >    "^starry,.*":  
-> 
-> Did you check that they are all in alphabetical order?
-> I would be suprised if this is the only issue in this file.
-> 
-> 
+Including schematics for HiKey 970, but it doesn't seem to show all
+the clock lines, plus the clock names at the driver don't seem to match
+what's there at the datasheet.
 
+> Is there some set of clks that can be marked as CLK_IS_CRITICAL instead?
+
+Maybe, but identifying those would require a huge amount of work. See,
+this patch marks 306 clock lines with CLK_IGNORE_UNUSED:
+
+	$ git grep CLK_IGNORE_UNUSED drivers/clk/hisilicon/clk-hi3670.c|wc -l
+	306
+
+At vanilla Kernel 5.8, there are 49 known clock lines:
+
+	$ git grep -E 'HI\S+CLK' arch/arm64/boot/dts/hisilicon/*70*|wc -l
+	49
+
+As I'm porting several drivers in order to support DRM and hopefully USB,
+this count should increase as drivers get merged.
+
+At downstream 4.9 Kernel, there are 99 known clock lines:
+
+	$ git grep -E 'KI\S+CLK' arch/arm64/boot/dts/hisilicon/*70*|wc -l
+	99
+
+In other words, there are still 207 lines that we have no clue about
+them. What among those are critical or not is a very good question.
+
+
+> The CLK_IGNORE_UNUSED flag shouldn't be used very much at all. Instead,
+> drivers should be using the CLK_IS_CRITICAL flag. We have a lot of
+> CLK_IGNORE_UNUSED in the kernel right now, but the hope is that we can
+> get rid of this flag one day.
+
+I see the point. Yet, I can't see any solution for that, except not letting 
+PM to disable unused clocks on this chipset. See, the only way to use the
+HiKey 970 board (which is the only one with DT bindings upstream for this
+chipset) is to boot the Kernel with clk_ignore_unused=true.
+
+Ok, if someone has enough time and some robot infrastructure that would
+automatically be patching the driver, detect broken boots, and powering
+down/up the device after each attempt, he could be disabling each one of 
+the clock lines that are not specified at the DT, identifying the
+critical ones.
+
+Then, he may need to port more drivers, together with their DT bindings,
+from the downstream tree.
+
+That is a lot of work for, IMHO, not much gain.
+
+Thanks,
+Mauro
