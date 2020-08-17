@@ -2,174 +2,238 @@ Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UPPERCASE_50_75 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87647C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C66AC433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6231120772
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31F432072D
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:59:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4aAZgpV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm3IJty4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbgHQH5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 03:57:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
+        id S1726171AbgHQH7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 03:59:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48486 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbgHQH5k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 03:57:40 -0400
-Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BC8C061389
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2020 00:57:40 -0700 (PDT)
-Received: by mail-ed1-x543.google.com with SMTP id v22so11540646edy.0
-        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2020 00:57:40 -0700 (PDT)
+        with ESMTP id S1725765AbgHQH7k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 03:59:40 -0400
+Received: from mail-ed1-x541.google.com (mail-ed1-x541.google.com [IPv6:2a00:1450:4864:20::541])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFDF6C061388;
+        Mon, 17 Aug 2020 00:59:39 -0700 (PDT)
+Received: by mail-ed1-x541.google.com with SMTP id l23so11518580edv.11;
+        Mon, 17 Aug 2020 00:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zyf1GnJhx3UwerNj3dj95Y5/fqE2+AsdIjPlhMtajAQ=;
-        b=T4aAZgpVWFJ6e3KoyF+v1EA11n/u5zLqZAMoEptQat5ofVfT0SteX6ictIzYfwXtsO
-         DdKr8M8fN37uWnqHtYInzSFGHhFVt+Bk3HGWbx20R6PsKH7tGfN7thI4ggqW//jxt4gt
-         iYsRlG/lpYnlYduQj9H4iS5/T8nviPwdTBiU+8I4/mmhqnqPfMlgeisY0SZ4KDSKj7Lr
-         Q/Zmi0Bp+sinhawAxgE5BIet26FkKHczPL2wEVRoOyrFVjOeeYlWDlsJulvbKtVOlysu
-         vtBYQj+bsWRrf4R+oZt3xI6M3p0wlK2F7OzBgFIEiXk5uzgT0lOoyNsVnMbjfONjlxMx
-         oYLA==
+        bh=1cXbBaafW+50dqCculqXKIrD5iW7sKJPiSxkET4AvNE=;
+        b=Nm3IJty4q+nOfBiYjAgN2NNT/Ch60U3kFDaPe7ksbAtNDXMRFTodjZ4718jIwWG4at
+         NLK4gzt86SR/xlVJyDQRc3XUNMq4tqg/JmJ7lMKJRZFAlaXpECSQE80LNlIaOcdR6V0P
+         3iRcOow9jmzhuUjw6ng67yK/ODaJKsFZYsJ/KpxvF+358PHHT/n1uZgdntQMJWWHIDLJ
+         lonJkbEj9GGn99RNhTQI3sUYQiw4ERGlX6JHuKjcrxy9Lxze4yM+j3ip0go5+m0Vq7kC
+         Fs1S65bJ/vMKUGnv3V1/T9obSPfo9/IE1QMeTkbxrB+QPIX2+mUaGxtR4oZaMk/0NeGi
+         DwtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zyf1GnJhx3UwerNj3dj95Y5/fqE2+AsdIjPlhMtajAQ=;
-        b=a82bCPHd8oqof3p8waIf2SV7CA6xVAWkhrTYcuA9EhKsJwhBWVjmOTodGMiCVE6WmE
-         UVydU91tqfB/0rwm9Tf40ybnjO3pgnn4NPI8PknLRaDiYmvC6acatte0GmcwB9SUyWwh
-         tznshqS13sCevECdWsHBue826rSLNbkaQAlPCfSl7jlFODpmafW8Tn3i/OWcyTLhIWBA
-         RIE+hMZD30M4VBG2wocr/lk34w3B8DHN/+7RYZJWXAL7qxZd2dHGcroLLPzACstqJ6j+
-         QVjG5/PHdTu8+yg5/vVHV57LelYnemradXLUWt31SE7L70WNaBxQA9GTmipe3FAPKj8p
-         7fGw==
-X-Gm-Message-State: AOAM533yq/mYAkMy7lGgyQpSbmxPn2nEvzj0kbIEAimck6kuEa1jVa42
-        YcRqII0107BQ9FwuwayzgXEvPUKQ6KedofHvaqk=
-X-Google-Smtp-Source: ABdhPJw/eAb+81Ye7DQICKEBQsM+VZtP+LycnHlseGh4fHFy0yuTMnmXnhBtuX2IVXFeezB+kvqdH5MlEEmqlW7jFZQ=
-X-Received: by 2002:aa7:d983:: with SMTP id u3mr14248750eds.366.1597651059202;
- Mon, 17 Aug 2020 00:57:39 -0700 (PDT)
+        bh=1cXbBaafW+50dqCculqXKIrD5iW7sKJPiSxkET4AvNE=;
+        b=AmQfwLc3ppg4bCM3kawgUkgDollNJblGIg/o0mlVnlhGffwoLovW2FHraz7lpiLtSa
+         8hj6SA9W7251M3/RPGWmiM/Zv5DgMVY6cCWrCWHQQPXZi/+Ic9leL1JpK3sd/gH185vV
+         rToapePpj4A8ZW/pqMtuKKeRliYrTVhJzqP3cpd8JXwP+Ck5yw0MvAaqJQDYOW5PWy5P
+         ukywT2M2l4Ab6ViX3qEgdUj5rC0R47S5kBTcK9HpYv3p0SEpa7N43rTyyCcG3lV7REeh
+         LI9QTK/kOT/YeDV/8alAK+0vAQ/Qg5UCrAB9Z20f4GNPggCFV7+bAJHPv0BajCNmRV7p
+         53fw==
+X-Gm-Message-State: AOAM530uPYmc7XzdYaMAb3Cd3cOxKA9hw4od2TulTnxHvMuJwgnRLmWc
+        DYdGfR7IfXq62cvqPCBsOwQYZL8sxonsL+UENto=
+X-Google-Smtp-Source: ABdhPJzqKXF/U+5Ql0v/Df74UZIr4RCMxKWkg92mOvojgyrs0Tdhf8aOjQd4f8MhONWORxA/VMe2Cp0vp5ky014312M=
+X-Received: by 2002:aa7:d410:: with SMTP id z16mr13495000edq.287.1597651178388;
+ Mon, 17 Aug 2020 00:59:38 -0700 (PDT)
 MIME-Version: 1.0
-References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com> <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
-In-Reply-To: <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com> <1597406966-13740-2-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <1597406966-13740-2-git-send-email-abel.vesa@nxp.com>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 17 Aug 2020 15:42:33 +0800
-Message-ID: <CAA+hA=Sa11AByUsKnsvhaH4HS_pdwfSv5P4192nnpRs_0vxk9w@mail.gmail.com>
-Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
-To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
+Date:   Mon, 17 Aug 2020 15:44:32 +0800
+Message-ID: <CAA+hA=Qd5BURqbQox1MhXtXcG1fRW6h-pyo2LcH6uukOYi0sKg@mail.gmail.com>
+Subject: Re: [PATCH v2 01/17] dt-bindings: clocks: imx8mp: Rename audiomix ids
+ clocks to audio_blk_ctrl
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Gently ping...
+On Fri, Aug 14, 2020 at 8:14 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+>
+> In the reference manual the actual name is Audio BLK_CTRL.
+> Lets make it more obvious here by renaming from audiomix to audio_blk_ctrl.
+>
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 
-On Wed, Jul 29, 2020 at 4:04 PM Dong Aisheng <dongas86@gmail.com> wrote:
+As there's still no users of the old definitions, it's okay for me to
+change it now.
+Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+
+Regards
+Aisheng
+
+> ---
+>  include/dt-bindings/clock/imx8mp-clock.h | 120 +++++++++++++++----------------
+>  1 file changed, 60 insertions(+), 60 deletions(-)
 >
-> Hi Stephen,
+> diff --git a/include/dt-bindings/clock/imx8mp-clock.h b/include/dt-bindings/clock/imx8mp-clock.h
+> index 7a23f28..6008f32 100644
+> --- a/include/dt-bindings/clock/imx8mp-clock.h
+> +++ b/include/dt-bindings/clock/imx8mp-clock.h
+> @@ -324,66 +324,66 @@
 >
-> This patchset addressed all your new comments.
-> Right now only Patch 2/3 still haven't got any R-b or A-b tags. So
-> still need your help to review.
-> All other patches already got the R-b tags.
+>  #define IMX8MP_CLK_END                         313
 >
-> BTW, for [PATCH v7 02/11] dt-bindings: clock: imx-lpcg: add support to parse
->  clocks from device tree.
-> It was reviewed by Rob/Shawn and you before, however, due to the legacy binding
-> file has been removed and changed to json format.
-> So this patch also updated to json format accordingly based on the
-> former reviewed patch
-> and need a re-review.
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_IPG           0
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1         1
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK2         2
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK3         3
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_IPG           4
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK1         5
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK2         6
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK3         7
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_IPG           8
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1         9
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK2         10
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK3         11
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_IPG           12
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK1         13
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK2         14
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK3         15
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_IPG           16
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK1         17
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK2         18
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK3         19
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_IPG           20
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK1         21
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK2         22
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK3         23
+> -#define IMX8MP_CLK_AUDIOMIX_ASRC_IPG           24
+> -#define IMX8MP_CLK_AUDIOMIX_PDM_IPG            25
+> -#define IMX8MP_CLK_AUDIOMIX_SDMA2_ROOT         26
+> -#define IMX8MP_CLK_AUDIOMIX_SDMA3_ROOT         27
+> -#define IMX8MP_CLK_AUDIOMIX_SPBA2_ROOT         28
+> -#define IMX8MP_CLK_AUDIOMIX_DSP_ROOT           29
+> -#define IMX8MP_CLK_AUDIOMIX_DSPDBG_ROOT                30
+> -#define IMX8MP_CLK_AUDIOMIX_EARC_IPG           31
+> -#define IMX8MP_CLK_AUDIOMIX_OCRAMA_IPG         32
+> -#define IMX8MP_CLK_AUDIOMIX_AUD2HTX_IPG                33
+> -#define IMX8MP_CLK_AUDIOMIX_EDMA_ROOT          34
+> -#define IMX8MP_CLK_AUDIOMIX_AUDPLL_ROOT                35
+> -#define IMX8MP_CLK_AUDIOMIX_MU2_ROOT           36
+> -#define IMX8MP_CLK_AUDIOMIX_MU3_ROOT           37
+> -#define IMX8MP_CLK_AUDIOMIX_EARC_PHY           38
+> -#define IMX8MP_CLK_AUDIOMIX_PDM_ROOT           39
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK1_SEL     40
+> -#define IMX8MP_CLK_AUDIOMIX_SAI1_MCLK2_SEL     41
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK1_SEL     42
+> -#define IMX8MP_CLK_AUDIOMIX_SAI2_MCLK2_SEL     43
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK1_SEL     44
+> -#define IMX8MP_CLK_AUDIOMIX_SAI3_MCLK2_SEL     45
+> -#define IMX8MP_CLK_AUDIOMIX_SAI4_MCLK1_SEL     46
+> -#define IMX8MP_CLK_AUDIOMIX_SAI4_MCLK2_SEL     47
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK1_SEL     48
+> -#define IMX8MP_CLK_AUDIOMIX_SAI5_MCLK2_SEL     49
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK1_SEL     50
+> -#define IMX8MP_CLK_AUDIOMIX_SAI6_MCLK2_SEL     51
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK1_SEL     52
+> -#define IMX8MP_CLK_AUDIOMIX_SAI7_MCLK2_SEL     53
+> -#define IMX8MP_CLK_AUDIOMIX_PDM_SEL            54
+> -#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_REF_SEL    55
+> -#define IMX8MP_CLK_AUDIOMIX_SAI_PLL            56
+> -#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS     57
+> -#define IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT                58
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_IPG             0
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_MCLK1           1
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_MCLK2           2
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_MCLK3           3
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_IPG             4
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_MCLK1           5
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_MCLK2           6
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_MCLK3           7
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_IPG             8
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_MCLK1           9
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_MCLK2           10
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_MCLK3           11
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_IPG             12
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_MCLK1           13
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_MCLK2           14
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_MCLK3           15
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_IPG             16
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_MCLK1           17
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_MCLK2           18
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_MCLK3           19
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_IPG             20
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_MCLK1           21
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_MCLK2           22
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_MCLK3           23
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_ASRC_IPG             24
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_PDM_IPG              25
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SDMA2_ROOT           26
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SDMA3_ROOT           27
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SPBA2_ROOT           28
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_DSP_ROOT             29
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_DSPDBG_ROOT          30
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_EARC_IPG             31
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_OCRAMA_IPG           32
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_AUD2HTX_IPG          33
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_EDMA_ROOT            34
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_AUDPLL_ROOT          35
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_MU2_ROOT             36
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_MU3_ROOT             37
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_EARC_PHY             38
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_PDM_ROOT             39
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_MCLK1_SEL       40
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI1_MCLK2_SEL       41
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_MCLK1_SEL       42
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI2_MCLK2_SEL       43
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_MCLK1_SEL       44
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI3_MCLK2_SEL       45
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI4_MCLK1_SEL       46
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI4_MCLK2_SEL       47
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_MCLK1_SEL       48
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI5_MCLK2_SEL       49
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_MCLK1_SEL       50
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI6_MCLK2_SEL       51
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_MCLK1_SEL       52
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI7_MCLK2_SEL       53
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_PDM_SEL              54
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI_PLL_REF_SEL      55
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI_PLL              56
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI_PLL_BYPASS       57
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_SAI_PLL_OUT          58
 >
-> Regards
-> Aisheng
+> -#define IMX8MP_CLK_AUDIOMIX_END                        59
+> +#define IMX8MP_CLK_AUDIO_BLK_CTRL_END                  59
 >
-> On Wed, Jul 29, 2020 at 4:04 PM Dong Aisheng <aisheng.dong@nxp.com> wrote:
-> >
-> > This patch series is a preparation for the MX8 Architecture improvement.
-> > As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
-> > of a couple of SS(Subsystems) while most of them within the same SS
-> > can be shared. e.g. Clocks, Devices and etc.
-> >
-> > However, current clock binding is using SW IDs for device tree to use
-> > which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
-> > different SoCs.
-> >
-> > This patch series aims to introduce a new binding which is more close to
-> > hardware and platform independent and can makes us write a more general
-> > drivers for different SCU based SoCs.
-> >
-> > Another important thing is that on MX8, each Clock resource is associated
-> > with a power domain. So we have to attach that clock device to the power
-> > domain in order to make it work properly. Further more, the clock state
-> > will be lost when its power domain is completely off during suspend/resume,
-> > so we also introduce the clock state save&restore mechanism.
-> >
-> > It's based on latest shanw/for-next branch.
-> >
-> > The top commit is:
-> > 3c1a41dab7b8 Merge branch 'imx/defconfig' into for-next
-> >
-> > ChangeLog:
-> > v6->v7:
-> >  * addressed all comments from Stephen
-> >  * rebased to latest shawn/for-next
-> > v5->v6:
-> >  * add scu clk unregister if add provider failed
-> > v4->v5:
-> >  * Address all comments from Stephen
-> > v3->v4:
-> >  * use clk-indices for LPCG to fetch each clks offset from dt
-> > v2->v3:
-> >  * change scu clk into two cells binding
-> >  * add clk pm patches to ease the understand of the changes
-> > v1->v2:
-> >  * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
-> >    Documentation/devicetree/bindings/arm/arm,scpi.txt
-> >  * Add required power domain property
-> >  * Dropped PATCH 3&4 first, will send the updated version accordingly
-> >    after the binding is finally determined,
-> >
-> > Dong Aisheng (11):
-> >   dt-bindings: firmware: imx-scu: new binding to parse clocks from
-> >     device tree
-> >   dt-bindings: clock: imx-lpcg: add support to parse clocks from device
-> >     tree
-> >   clk: imx: scu: add two cells binding support
-> >   clk: imx: scu: bypass cpu power domains
-> >   clk: imx: scu: allow scu clk to take device pointer
-> >   clk: imx: scu: add runtime pm support
-> >   clk: imx: scu: add suspend/resume support
-> >   clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
-> >   clk: imx: lpcg: allow lpcg clk to take device pointer
-> >   clk: imx: clk-imx8qxp-lpcg: add runtime pm support
-> >   clk: imx: lpcg: add suspend/resume support
-> >
-> >  .../bindings/arm/freescale/fsl,scu.txt        |  12 +-
-> >  .../bindings/clock/imx8qxp-lpcg.yaml          |  79 ++++--
-> >  drivers/clk/imx/clk-imx8qxp-lpcg.c            | 139 +++++++++++
-> >  drivers/clk/imx/clk-imx8qxp.c                 | 136 +++++-----
-> >  drivers/clk/imx/clk-lpcg-scu.c                |  53 +++-
-> >  drivers/clk/imx/clk-scu.c                     | 234 +++++++++++++++++-
-> >  drivers/clk/imx/clk-scu.h                     |  56 ++++-
-> >  include/dt-bindings/clock/imx8-lpcg.h         |  14 ++
-> >  8 files changed, 620 insertions(+), 103 deletions(-)
-> >  create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
-> >
-> > --
-> > 2.23.0
-> >
+>  #endif
+> --
+> 2.7.4
+>
