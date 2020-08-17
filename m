@@ -2,96 +2,128 @@ Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69896C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 15:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78920C433E1
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 451FC2065C
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 15:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597677185;
-	bh=w2+enJFouBsFUVObLi7FC01Ch0U8RkRLzoUBOYBMdX8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=So2IVRfWwmt2u/UobFXkW16Wev9WpQ6gm9MFL8dHfHUP1jnxoDlMAsnWm4q4Xy73N
-	 Y+o0ho07IYKhtnGSyN9u68g5hN49yFMpJ+Q+6bOL/KIL3qfolAO1+mbv36n1rf8ffX
-	 3c05LWIS+yPnBEDo4WYOqdF+/I9PXaMUKkTpZRK8=
+	by mail.kernel.org (Postfix) with ESMTP id 4C7CF2067C
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 17:01:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHgr2XhL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbgHQPNE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 11:13:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36946 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726630AbgHQPNE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Aug 2020 11:13:04 -0400
-Received: from kozik-lap.mshome.net (unknown [194.230.155.216])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F25552054F;
-        Mon, 17 Aug 2020 15:13:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597677183;
-        bh=w2+enJFouBsFUVObLi7FC01Ch0U8RkRLzoUBOYBMdX8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=ArtbqySg4ioFTkukPMpYffClJ1lADZAlRkRsJdoA+y8hZt7nCNnRK0DvlDXXHNle7
-         NolvE2Yl4NgbHgk9iRNTvcPKVyu03Ogc4YOsfYMntugwj5at4Rk+sYsQDHORthO6B6
-         GdYBwaf+gZhvYDJgblu/Kxd+2PoakVIEJFEeOifQ=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1730073AbgHQRB0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 13:01:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47994 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730003AbgHQRBN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 13:01:13 -0400
+Received: from mail-io1-xd41.google.com (mail-io1-xd41.google.com [IPv6:2607:f8b0:4864:20::d41])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D920C061389;
+        Mon, 17 Aug 2020 10:01:11 -0700 (PDT)
+Received: by mail-io1-xd41.google.com with SMTP id g19so18316221ioh.8;
+        Mon, 17 Aug 2020 10:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=7QBcITzR7oBFEugc9nX1hxSt40e3uHeGjBJ8k9Ii1wk=;
+        b=fHgr2XhLG9zj5YkcLQCd22NWhIzfoaeu5QeDS+zuPzhgz6A9WrGtRdh1mQGvYcgzgH
+         6fj9TEyhln/WsR5x6BeC/423hYjuYZ9wlMXn5FPXN6T07cqvK8Y0oPlHotB2Gh5KOdJT
+         LJif1UzKeOQupsxHtrzDH/KPmIbvLLTsQG6KiVJJ3NvgHwx1pmdFar1M/FHW0UasC8Ll
+         R6VPhg+9IY93n8I8ad7FHyBc+B1u5jept/EHHoEy+14aujf43pE8VBOGQoTiOWPAvjEb
+         WdQW5G6QLx6h4Ma3swlKqupxWiwrjKAcA1iKiIuVFJMfGb0ZdOml/F6Vl6D2fImHN7d0
+         gJ8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=7QBcITzR7oBFEugc9nX1hxSt40e3uHeGjBJ8k9Ii1wk=;
+        b=fMWw829erfdWc35n5lKmlLLiIh+9HmNE0hB41ezzkPTMFGq6g+qSR7mFqY5/MIMddl
+         5ODHUeaBkz3PtE+NBtBBHbi0a2E4TBMZin4QWu1iuI1AlnYpNm546DDhKaq5FPwStpte
+         HIXUuPNUvvny0duPb7L9gB8/V6wRjFOG0bt3izbF2x/2vallDC4vh3ncRb5H/UpphGL/
+         ZYfU8bEIDhmjWT+pkleAjy+xrJadkmPGvjS2CwIewhShllbqYwuJTfVGZV2fMonyYYuw
+         9zYAGo2mQiduADRfYKfq4WFaPI+tcG+3LnxFdxeeAVUkdxCxY7QtJ5t6yliIlaj8fwac
+         qlNQ==
+X-Gm-Message-State: AOAM533gSSOdGpkkFLrZ6P7QYFJJfyB+B0uX7AeAsatiXMpdviaDGjeM
+        sxC1uD0pX/E3CYCKHN0MGSWceRJTL9Z/fJ+6wtvHBkx6
+X-Google-Smtp-Source: ABdhPJyXrGoxJReNPAI+1RpBbwcrrU2PnQSgVLTs6ychSyck01qgTlPaYHYMzi+J5YyRvm1QP4hn4zCwUZeN4+VdjeU=
+X-Received: by 2002:a02:95ae:: with SMTP id b43mr15158386jai.19.1597683670733;
+ Mon, 17 Aug 2020 10:01:10 -0700 (PDT)
+MIME-Version: 1.0
+References: <20200804192654.12783-1-krzk@kernel.org> <20200804192654.12783-7-krzk@kernel.org>
+ <20200817165748.GA29664@kozik-lap>
+In-Reply-To: <20200817165748.GA29664@kozik-lap>
+From:   Tomasz Figa <tomasz.figa@gmail.com>
+Date:   Mon, 17 Aug 2020 19:00:54 +0200
+Message-ID: <CA+Ln22Hw8_FT0s2N0rBo=2XVmuLagj=BFrTkTGd10J7d4B1Jow@mail.gmail.com>
+Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
+ use direct dependencies
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH] clk: imx: vf610: Add CRC clock
-Date:   Mon, 17 Aug 2020 17:12:54 +0200
-Message-Id: <20200817151254.11466-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:SAMSUNG SOC CLOCK DRIVERS" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the clock for CRC block allowing it to be enabled by consumers.
+2020=E5=B9=B48=E6=9C=8817=E6=97=A5(=E6=9C=88) 18:57 Krzysztof Kozlowski <kr=
+zk@kernel.org>:
+>
+> On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
+> > A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
+> > really needed and the s3c24xx watchdog driver can depend on Samsung ARM
+> > architectures instead.
+> >
+> > The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsun=
+g
+> > platforms are here exceptions.  All others just depend on
+> > CONFIG_ARCH_xxx.
+> >
+> > This makes the code slightly smaller without any change in
+> > functionality.
+> >
+> > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> >
+> > ---
+> >
+> > Changes since v1:
+> > 1. Re-add the dependency on architectures to keep same functionality.
+>
+> Hi Guenter, Tomasz,
+>
+> Does such removal of HAVE_S3C2410_WATCHDOG makes sense for you?
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
----
- drivers/clk/imx/clk-vf610.c             | 1 +
- include/dt-bindings/clock/vf610-clock.h | 3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+I don't have any objections and the patch itself is trivial.
 
-diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
-index 5129ef8e1d6e..0166ad0b9eb8 100644
---- a/drivers/clk/imx/clk-vf610.c
-+++ b/drivers/clk/imx/clk-vf610.c
-@@ -328,6 +328,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
- 	clk[VF610_CLK_DSPI2] = imx_clk_gate2("dspi2", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(12));
- 	clk[VF610_CLK_DSPI3] = imx_clk_gate2("dspi3", "ipg_bus", CCM_CCGR6, CCM_CCGRx_CGn(13));
- 
-+	clk[VF610_CLK_CRC] = imx_clk_gate2("crc", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(3));
- 	clk[VF610_CLK_WDT] = imx_clk_gate2("wdt", "ipg_bus", CCM_CCGR1, CCM_CCGRx_CGn(14));
- 
- 	clk[VF610_CLK_ESDHC0_SEL] = imx_clk_mux("esdhc0_sel", CCM_CSCMR1, 16, 2, esdhc_sels, 4);
-diff --git a/include/dt-bindings/clock/vf610-clock.h b/include/dt-bindings/clock/vf610-clock.h
-index 0f2d60e884dc..373644e46747 100644
---- a/include/dt-bindings/clock/vf610-clock.h
-+++ b/include/dt-bindings/clock/vf610-clock.h
-@@ -196,6 +196,7 @@
- #define VF610_CLK_TCON0			187
- #define VF610_CLK_TCON1			188
- #define VF610_CLK_CAAM			189
--#define VF610_CLK_END			190
-+#define VF610_CLK_CRC			190
-+#define VF610_CLK_END			191
- 
- #endif /* __DT_BINDINGS_CLOCK_VF610_H */
--- 
-2.17.1
-
+Best regards,
+Tomasz
