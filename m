@@ -2,153 +2,174 @@ Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FEB7C433DF
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87647C433DF
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 163EC2078A
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6231120772
+	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 07:57:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Wlg/dqCl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4aAZgpV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbgHQH0u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 03:26:50 -0400
-Received: from mail-eopbgr20068.outbound.protection.outlook.com ([40.107.2.68]:33046
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725765AbgHQH0s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 17 Aug 2020 03:26:48 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FYExHsaJRmWXlfghFtSjstthJCNs+aWe54tFu9KasWL3USRMX5xs986epd+pWMVAB5NzCu3v+dM13nsEo3aK2XB3kaLwiqF78oOKjj/1k6QDabo50jhAp65aGlh/R9bXVHohu4j3lX4obNg1IMEiHEr+nbTeL8OV0O2xVCNMMIXQYiDF2GgvuLOL84ihi4ltSLKMWJ38HdRkKKhSZWM1LUTwf8DYLLTLCm9SiN56/pabrVFiqyqKFGDt6TmPX0YCkYnJKkSeksbqrIhZoYhTvs6d2suutLYwTeFz8zwgPitqzBfw4JOy8StgzVcG5RTAC39O/hvJsgxulZ33YpfqDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eo30cFCQGu0R+YOYTvedSn19zuwocmAoDQ4hp9JVY3w=;
- b=UU3lGAEdTczCqwuLNHgiWVY+t+gyNXTAaTdfRLgxf5nwXrQA30AjF2PI+zB6wbmS1hhhhkrD3UtZli9tTXpAozg07B5ohI25EB8l6eN26DQ7c4GiZDlgcbAxUxlNqry9A2SQrIIwDG8r4FJfRX0Fa9Nth2y0IWpCwnfHrhGWORZZ5d8Cj07qjrpO9ljZ8J9eCw9Mxrs/l3WHglh2KdnucQRfGdTW0IiEXH5q25hy7qXbS4dL1mIfq9nErtfCZ0rxiqJiwNtQjxz5HrUReh6+OBAbjR0J9t/7yC2drpPVltVRuWcTgw20SRQ+mMgPBx4IF+x+RKqxeZWoWap9I8jVGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Eo30cFCQGu0R+YOYTvedSn19zuwocmAoDQ4hp9JVY3w=;
- b=Wlg/dqClbubFm45aIRhzhIq/mrswSUEawLz3SQ7Yn6doZTZSMdVPpYUe52d99zbHuTeSxkSEDHkjiFfxSFQkQT3eLe+skX0drBPzZBuzhgGfl3jjZ4lHcDWqtojb2KIEGqEL2BfBeOyDXWxJHP9REAO2UhlIvcke/BJgV2CEK3M=
-Received: from AM8PR04MB7315.eurprd04.prod.outlook.com (2603:10a6:20b:1d4::7)
- by AM0PR04MB5858.eurprd04.prod.outlook.com (2603:10a6:208:132::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.3283.16; Mon, 17 Aug
- 2020 07:26:42 +0000
-Received: from AM8PR04MB7315.eurprd04.prod.outlook.com
- ([fe80::c10b:eaf9:da9a:966e]) by AM8PR04MB7315.eurprd04.prod.outlook.com
- ([fe80::c10b:eaf9:da9a:966e%7]) with mapi id 15.20.3283.027; Mon, 17 Aug 2020
- 07:26:42 +0000
-From:   Andy Duan <fugang.duan@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sven Van Asbroeck <thesven73@gmail.com>
-CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [EXT] Re: [PATCH v1 0/5] imx6qp QuadPlus: support improved enet
- clocking
-Thread-Topic: [EXT] Re: [PATCH v1 0/5] imx6qp QuadPlus: support improved enet
- clocking
-Thread-Index: AQHWdGaEHGWKlL1NRkSmOlcnqonx+qk75gRA
-Date:   Mon, 17 Aug 2020 07:26:42 +0000
-Message-ID: <AM8PR04MB7315BD29E65F11A6DF693224FF5F0@AM8PR04MB7315.eurprd04.prod.outlook.com>
-References: <20200713002512.28742-1-TheSven73@gmail.com>
- <20200817071726.GA16951@dragon>
-In-Reply-To: <20200817071726.GA16951@dragon>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: kernel.org; dkim=none (message not signed)
- header.d=none;kernel.org; dmarc=none action=none header.from=nxp.com;
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e69c08ef-fc9e-4211-0ea5-08d8427ee382
-x-ms-traffictypediagnostic: AM0PR04MB5858:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5858B2F5243772817FB77088FF5F0@AM0PR04MB5858.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7219;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: qc5MMKH5yqDUeCe/2Fk9O/GN1dEQChNMIS9gZVEzS+lijHsGBRAOVHcvPepul/QEK4aVTgAJMjCHYj03RYBocZXHtFzp0ksW/dzSgXfqbApVAZiy62Do+xtccde6QiLGTaTCUUbM5jHUL3k10r3sZcAOP6bxhkrjtLioTb2LzQ9RsS+H7RmvC/1+Cm46apS0Ay+ECzERDSaNb4T0D/oV6eVMmEyEb9Rju9rGMO6tLoHUxiLXYcWZqYubzthWMIVcebfrYGO++3aHvCtA2GBBl7S6J04MOLPJRbILXy5Rd8nt3DFHz76m657JT5yH62ez/asowhxaasM+dTuTiwIDPabRENSEFv9Suj1/fAutQsgAywMbd26Kw3yAEfvxNMKJ
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7315.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(86362001)(5660300002)(4326008)(110136005)(8936002)(66946007)(64756008)(66446008)(66476007)(76116006)(2906002)(52536014)(66556008)(26005)(9686003)(83380400001)(186003)(55016002)(71200400001)(7696005)(6506007)(478600001)(54906003)(316002)(33656002)(8676002)(32563001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata: KDVM51Js5x3vEHG6C4vFaq/H9LUycw8EUZFkKQSSJtwo9ZSg9gB/wW1cjxYBnAz3wqQNTLn5owE7wZVW5THM/WQGLyuZVWBmywu3KfBX0SvgLUSl0sv2pxoJeo2yl13drwu4xhE8g1PiaCsCeXs79Bbp/vvdYn5hT6vDQZtWo+v7oNUWN8zzEk+/D/aF5STBoPqydqfLhPL6ylFvJn2C+AhLt8eRgoiGTqBIx4A8X4u11zi+VXjV1TBS/uQpUQpkXO8/xzIGLR8cpBMLwg1zoJiyA+PTzyAyBn98Sj3Gq8jYFGrafzsx3opUnd9PIRVDRiGvCGMMpbW74TDrDY0Qwuv2Mw8JIKSdCV+9xMxgFPstOw7TGhVzsVZULI8mXTuXSoV7rpeb0QVAbwaAh78ZY/wCMJesQu4Cxw/ycobgSz+KgGtFkeUF/a8KIovtpb2jivHz+d14mimaLVoVtB791pa2SLdRccjz8n6Wj//f0lCfe7Ozvwz2o2c4NoApbr8J6xjZbGx3EDYdJoCDetOgC+XFMUDIw9qThHWpl6yh4jvwpN/yCXzkp0PrwM0HjDzhieW2hmwiC2CrnTZdL935+SrXunYv9kRhp5BhQBWPu9tubOQtsaeRhlEMUt4r3aLjFBNPQKblxYn/9XMH2jkzgw==
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726680AbgHQH5t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 03:57:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48184 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726608AbgHQH5k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 03:57:40 -0400
+Received: from mail-ed1-x543.google.com (mail-ed1-x543.google.com [IPv6:2a00:1450:4864:20::543])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BC8C061389
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2020 00:57:40 -0700 (PDT)
+Received: by mail-ed1-x543.google.com with SMTP id v22so11540646edy.0
+        for <linux-clk@vger.kernel.org>; Mon, 17 Aug 2020 00:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zyf1GnJhx3UwerNj3dj95Y5/fqE2+AsdIjPlhMtajAQ=;
+        b=T4aAZgpVWFJ6e3KoyF+v1EA11n/u5zLqZAMoEptQat5ofVfT0SteX6ictIzYfwXtsO
+         DdKr8M8fN37uWnqHtYInzSFGHhFVt+Bk3HGWbx20R6PsKH7tGfN7thI4ggqW//jxt4gt
+         iYsRlG/lpYnlYduQj9H4iS5/T8nviPwdTBiU+8I4/mmhqnqPfMlgeisY0SZ4KDSKj7Lr
+         Q/Zmi0Bp+sinhawAxgE5BIet26FkKHczPL2wEVRoOyrFVjOeeYlWDlsJulvbKtVOlysu
+         vtBYQj+bsWRrf4R+oZt3xI6M3p0wlK2F7OzBgFIEiXk5uzgT0lOoyNsVnMbjfONjlxMx
+         oYLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zyf1GnJhx3UwerNj3dj95Y5/fqE2+AsdIjPlhMtajAQ=;
+        b=a82bCPHd8oqof3p8waIf2SV7CA6xVAWkhrTYcuA9EhKsJwhBWVjmOTodGMiCVE6WmE
+         UVydU91tqfB/0rwm9Tf40ybnjO3pgnn4NPI8PknLRaDiYmvC6acatte0GmcwB9SUyWwh
+         tznshqS13sCevECdWsHBue826rSLNbkaQAlPCfSl7jlFODpmafW8Tn3i/OWcyTLhIWBA
+         RIE+hMZD30M4VBG2wocr/lk34w3B8DHN/+7RYZJWXAL7qxZd2dHGcroLLPzACstqJ6j+
+         QVjG5/PHdTu8+yg5/vVHV57LelYnemradXLUWt31SE7L70WNaBxQA9GTmipe3FAPKj8p
+         7fGw==
+X-Gm-Message-State: AOAM533yq/mYAkMy7lGgyQpSbmxPn2nEvzj0kbIEAimck6kuEa1jVa42
+        YcRqII0107BQ9FwuwayzgXEvPUKQ6KedofHvaqk=
+X-Google-Smtp-Source: ABdhPJw/eAb+81Ye7DQICKEBQsM+VZtP+LycnHlseGh4fHFy0yuTMnmXnhBtuX2IVXFeezB+kvqdH5MlEEmqlW7jFZQ=
+X-Received: by 2002:aa7:d983:: with SMTP id u3mr14248750eds.366.1597651059202;
+ Mon, 17 Aug 2020 00:57:39 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7315.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e69c08ef-fc9e-4211-0ea5-08d8427ee382
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Aug 2020 07:26:42.2551
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: OrLWmIBEcqgphDYzrpH72pO+qigK1AKv9jom+g8vjKZtq/rrU7lkHEGcwyG3SYSp7S30qU5hAxBO7NYqLSA1Rw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5858
+References: <1596009618-25516-1-git-send-email-aisheng.dong@nxp.com> <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
+In-Reply-To: <CAA+hA=RjwtWLA1aSoNHakHDASrk0+EYy+ayPBw-7ninrYrWFJw@mail.gmail.com>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Mon, 17 Aug 2020 15:42:33 +0800
+Message-ID: <CAA+hA=Sa11AByUsKnsvhaH4HS_pdwfSv5P4192nnpRs_0vxk9w@mail.gmail.com>
+Subject: Re: [PATCH v7 00/11] clk: imx8: add new clock binding for better pm support
+To:     Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Shawn Guo <shawnguo@kernel.org> Sent: Monday, August 17, 2020 3:17 PM
-> On Sun, Jul 12, 2020 at 08:25:07PM -0400, Sven Van Asbroeck wrote:
-> > On the imx6qp QuadPlus, the h/w designers have improved enet clocking.
-> >
-> > This patchset extends the clock tree to reflect the situation on QuadPl=
-us.
-> >
-> > This allows board designers to choose the enet clocking method by
-> > making simple clocktree changes in the devicetree.
-> >
-> > Default setting: external routing of enet_ref from pad to pad.
-> >
-> > Example, change the default to enet_ref @ 125MHz clock routed internall=
-y:
-> >
-> > &fec {
-> >       assigned-clocks =3D <&clks IMX6QDL_CLK_ENET_PTP>,
-> >                         <&clks IMX6QDL_CLK_ENET_REF>;
-> >       assigned-clock-parents =3D <&clks IMX6QDL_CLK_ENET_REF>;
-> >       assigned-clock-rates =3D <0>, <125000000>; };
-> >
-> > To: Shawn Guo <shawnguo@kernel.org>
-> > To: Sascha Hauer <s.hauer@pengutronix.de>
-> > Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> > Cc: Fabio Estevam <festevam@gmail.com>
-> > Cc: NXP Linux Team <linux-imx@nxp.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: linux-clk@vger.kernel.org
-> >
-> > Sven Van Asbroeck (5):
-> >   ARM: mach-imx6q: do not select enet PTP clock source on QuadPlus
-> >   clk: imx: add simple regmap-backed clock mux
-> >   dt-bindings: imx6qdl-clock: add QuadPlus enet clocks
-> >   clk: imx6q: support improved enet clocking on QuadPlus
-> >   ARM: dts: imx6qp: support improved enet clocking on QuadPlus
->=20
-> Hi Fugang,
->=20
-> Can you take a look at the series?
->=20
-> Shawn
+Gently ping...
 
-In fact, Sven already sent the patch list to me in private for review
-due to miss cc to me. We discussed the series for long time and suppose
-Sven will send v2 patch set.
-
-Regards,
-Fugang
+On Wed, Jul 29, 2020 at 4:04 PM Dong Aisheng <dongas86@gmail.com> wrote:
+>
+> Hi Stephen,
+>
+> This patchset addressed all your new comments.
+> Right now only Patch 2/3 still haven't got any R-b or A-b tags. So
+> still need your help to review.
+> All other patches already got the R-b tags.
+>
+> BTW, for [PATCH v7 02/11] dt-bindings: clock: imx-lpcg: add support to parse
+>  clocks from device tree.
+> It was reviewed by Rob/Shawn and you before, however, due to the legacy binding
+> file has been removed and changed to json format.
+> So this patch also updated to json format accordingly based on the
+> former reviewed patch
+> and need a re-review.
+>
+> Regards
+> Aisheng
+>
+> On Wed, Jul 29, 2020 at 4:04 PM Dong Aisheng <aisheng.dong@nxp.com> wrote:
+> >
+> > This patch series is a preparation for the MX8 Architecture improvement.
+> > As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+> > of a couple of SS(Subsystems) while most of them within the same SS
+> > can be shared. e.g. Clocks, Devices and etc.
+> >
+> > However, current clock binding is using SW IDs for device tree to use
+> > which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+> > different SoCs.
+> >
+> > This patch series aims to introduce a new binding which is more close to
+> > hardware and platform independent and can makes us write a more general
+> > drivers for different SCU based SoCs.
+> >
+> > Another important thing is that on MX8, each Clock resource is associated
+> > with a power domain. So we have to attach that clock device to the power
+> > domain in order to make it work properly. Further more, the clock state
+> > will be lost when its power domain is completely off during suspend/resume,
+> > so we also introduce the clock state save&restore mechanism.
+> >
+> > It's based on latest shanw/for-next branch.
+> >
+> > The top commit is:
+> > 3c1a41dab7b8 Merge branch 'imx/defconfig' into for-next
+> >
+> > ChangeLog:
+> > v6->v7:
+> >  * addressed all comments from Stephen
+> >  * rebased to latest shawn/for-next
+> > v5->v6:
+> >  * add scu clk unregister if add provider failed
+> > v4->v5:
+> >  * Address all comments from Stephen
+> > v3->v4:
+> >  * use clk-indices for LPCG to fetch each clks offset from dt
+> > v2->v3:
+> >  * change scu clk into two cells binding
+> >  * add clk pm patches to ease the understand of the changes
+> > v1->v2:
+> >  * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
+> >    Documentation/devicetree/bindings/arm/arm,scpi.txt
+> >  * Add required power domain property
+> >  * Dropped PATCH 3&4 first, will send the updated version accordingly
+> >    after the binding is finally determined,
+> >
+> > Dong Aisheng (11):
+> >   dt-bindings: firmware: imx-scu: new binding to parse clocks from
+> >     device tree
+> >   dt-bindings: clock: imx-lpcg: add support to parse clocks from device
+> >     tree
+> >   clk: imx: scu: add two cells binding support
+> >   clk: imx: scu: bypass cpu power domains
+> >   clk: imx: scu: allow scu clk to take device pointer
+> >   clk: imx: scu: add runtime pm support
+> >   clk: imx: scu: add suspend/resume support
+> >   clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
+> >   clk: imx: lpcg: allow lpcg clk to take device pointer
+> >   clk: imx: clk-imx8qxp-lpcg: add runtime pm support
+> >   clk: imx: lpcg: add suspend/resume support
+> >
+> >  .../bindings/arm/freescale/fsl,scu.txt        |  12 +-
+> >  .../bindings/clock/imx8qxp-lpcg.yaml          |  79 ++++--
+> >  drivers/clk/imx/clk-imx8qxp-lpcg.c            | 139 +++++++++++
+> >  drivers/clk/imx/clk-imx8qxp.c                 | 136 +++++-----
+> >  drivers/clk/imx/clk-lpcg-scu.c                |  53 +++-
+> >  drivers/clk/imx/clk-scu.c                     | 234 +++++++++++++++++-
+> >  drivers/clk/imx/clk-scu.h                     |  56 ++++-
+> >  include/dt-bindings/clock/imx8-lpcg.h         |  14 ++
+> >  8 files changed, 620 insertions(+), 103 deletions(-)
+> >  create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
+> >
+> > --
+> > 2.23.0
+> >
