@@ -2,140 +2,99 @@ Return-Path: <SRS0=cp6a=B4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99DDAC433DF
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 11:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F7EBC433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 15:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 767EE206B5
-	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 11:49:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZtRztLvX"
+	by mail.kernel.org (Postfix) with ESMTP id 249F82080C
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 15:52:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597765944;
+	bh=/bDijrbe0Io59V0lahxfMAjJqZmvoTOk4XcBOedRV+M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=spOXo9Ms2DRCP7rM/TaS60ZtLzXga9g4N3zpqBHxJpb9+0lMKYh9Q+bgLnVPkrLBq
+	 NR0gbKHCv2qWfIIvypAiEoijuQPwpBAJO0d4ijFRCFZDV5FhJGyoMi+psQPmkkOn+G
+	 HelucfviHbifkIsVgyGQTiGZW6zGG/aKOrt9pXQg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgHRLtY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Aug 2020 07:49:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54600 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726391AbgHRLtX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Aug 2020 07:49:23 -0400
-Received: from mail-ej1-x644.google.com (mail-ej1-x644.google.com [IPv6:2a00:1450:4864:20::644])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 517D2C061389;
-        Tue, 18 Aug 2020 04:49:23 -0700 (PDT)
-Received: by mail-ej1-x644.google.com with SMTP id qc22so21700026ejb.4;
-        Tue, 18 Aug 2020 04:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mMxvSNvYN0G9gHfNld2QBfDcMy7NeODVjheMMYfO7t0=;
-        b=ZtRztLvX7y/z12SWaalBEyeOEYxXabLjCHi5xVWw90onClwSFm5N82IkLOBLg85oVy
-         rI/wo7v8wlnrP9amQdbWl54hsO+LiO1KvL4hZAXrs993duzAg9d7CAC11n4cgZy7CQ3C
-         Gwfw62LPLu+BB2BZPBaFtKv7uhcUBYsuhuUTiawxHxTHbFlTywVV+zvU3cOBJHAOnRrN
-         o6e9AisnzU3fcRqeftlfZhzb1ODkMT73Tzcw0LYkSLR9kWddRI4xtv3beWBw95OdSrgP
-         sBGUKq9P+diHlxTYGsn5/LP9yTNnYLB4hiXTPwf+EHlolkFNcHxgpSCDR0fKx6WTLFx/
-         xJCA==
+        id S1728211AbgHRPwQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Aug 2020 11:52:16 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:34943 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727831AbgHRPvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 18 Aug 2020 11:51:54 -0400
+Received: by mail-io1-f68.google.com with SMTP id s189so21679557iod.2;
+        Tue, 18 Aug 2020 08:51:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mMxvSNvYN0G9gHfNld2QBfDcMy7NeODVjheMMYfO7t0=;
-        b=ABdL6YbImcaDlmTvyfFnMJl6puWkqpcxixfV6YamD7FZSUDAL1bx5USq4SiIxm67DR
-         if7Ho6bpVju8RD6wQjZr2sun53RymYf3ouVFx51OuN/SxD/prIj+hi9KT4t29DN+cElg
-         UpuyK1WkPKf1LP5nVPvdGJdhku5QrE0pDdJLRo3bk27DkZLPLbpTy/mxg+aoEyDih03m
-         wMZluBiPD92ZL+7m+1OAvlCO4KyXg+nrAgRadqk/KWcTVl4MGLM+vV2+hYer1VehWAE+
-         TAlPFKizTMgW0HeS8DibR8kpwAUg3POQPXsedN4CflSUlVrADaWzc7QZYb4AuBIzOWtV
-         sb7Q==
-X-Gm-Message-State: AOAM5316KDxmMoSJSKOi9ZBQhqtwrq2QoNBV5PNcEdCHlKrif4Sx9N6e
-        BCS7EkE1ikmNLtDQG2k/jyel7QQeLhWjjBtUW2s=
-X-Google-Smtp-Source: ABdhPJwsPOc04kvdKuEfb7mxh740Lfw+l/VTLX1glmpk7RdsbB0R0Zt9vCZhZGNuyNwSG8ObvYtv5oSZ9wzSF1JryNk=
-X-Received: by 2002:a17:906:4dd4:: with SMTP id f20mr20883087ejw.170.1597751361674;
- Tue, 18 Aug 2020 04:49:21 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Mf422wvmtHGB+fLAHqkYV5iliyU3plq01dFBfESJYS0=;
+        b=fQ033Hg+n30+M9X4XPrqW9mpP2fnBgDl2jbVloW3idniQlMSvwb/B8rkOb56NghyMH
+         RsfWG0S4TH1deKefT4lQgqAA3vY09GBUmTG2s412e95C/tDjg3g5Uo1ydUYZM6ActtYy
+         BKKIz9SdkbCBgfXtSMdna+5a1ZfVgcJtF8n1gtiVoKPKW8usoRRrIZKeewdU9c0SeQRh
+         L6KpLCRNDu48EovocK+ecjSN/Q4urIp1n0yropFRDjrC7WzHbmCvycPCTw13yqlmFmrH
+         vn4rccUxOk/8BDeNz1RocdZg7WCiPqH+XT6q30ds7a6TNRaQe3tkGo7WKOkgkLTWwxr8
+         Ba+Q==
+X-Gm-Message-State: AOAM531JqTfp99peAUucdQdI6JZ3lgcsg+/LkiVl1cCF1ruN5VK9y/BI
+        X740ZWDwU63NJ7ctAnfIDGNjMZRY5Q==
+X-Google-Smtp-Source: ABdhPJxucHnQnFfDvMaxcgX49sVszAnJBk6CGxr0tcEZLJF8jUkmB4GUT5sDMmAuZn81f35K4UToiQ==
+X-Received: by 2002:a02:cf26:: with SMTP id s6mr19858789jar.44.1597765912536;
+        Tue, 18 Aug 2020 08:51:52 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id v14sm11524845iln.76.2020.08.18.08.51.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Aug 2020 08:51:51 -0700 (PDT)
+Received: (nullmailer pid 3526978 invoked by uid 1000);
+        Tue, 18 Aug 2020 15:51:49 -0000
+Date:   Tue, 18 Aug 2020 09:51:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     linux-serial@vger.kernel.org, kernel@pengutronix.de,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, fugang.duan@nxp.com, Linux-imx@nxp.com,
+        s.hauer@pengutronix.de, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        shawnguo@kernel.org, festevam@gmail.com
+Subject: Re: [PATCH V3 1/5] dt-bindings: clock: Update i.MX28 example
+Message-ID: <20200818155149.GA3526911@bogus>
+References: <1597721685-9280-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com> <1597406966-13740-17-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1597406966-13740-17-git-send-email-abel.vesa@nxp.com>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Tue, 18 Aug 2020 19:34:14 +0800
-Message-ID: <CAA+hA=S_wdoZvCPamW2F1Vs73t4fgnQa8LouUwzq2Vfpz3SDCg@mail.gmail.com>
-Subject: Re: [PATCH v2 16/17] arm64: dts: imx8mp: Add media_blk_ctrl node
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1597721685-9280-1-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 14, 2020 at 8:12 PM Abel Vesa <abel.vesa@nxp.com> wrote:
->
-> Some of the features of the media_ctrl will be used by some
-> different drivers in a way those drivers will know best, so adding the
-> syscon compatible we allow those to do just that. Only the resets
-> and the clocks are registered bit the clk-blk-ctrl driver.
->
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+On Tue, 18 Aug 2020 11:34:41 +0800, Anson Huang wrote:
+> Update the i.MX28 clock example to align with MXS AUART binding doc to
+> avoid below build error:
+> 
+> Documentation/devicetree/bindings/clock/imx28-clock.example.dt.yaml:
+>   serial@8006a000: clocks: [[4294967295, 45]] is too short
+> Documentation/devicetree/bindings/clock/imx28-clock.example.dt.yaml:
+>   serial@8006a000: compatible: Additional items are not allowed
+>   ('fsl,imx23-auart' was unexpected)
+> Documentation/devicetree/bindings/clock/imx28-clock.example.dt.yaml:
+>   serial@8006a000: compatible: ['fsl,imx28-auart', 'fsl,imx23-auart']
+>   is too long
+> Documentation/devicetree/bindings/clock/imx28-clock.example.dt.yaml:
+>   serial@8006a000: 'dmas' is a required property
+> Documentation/devicetree/bindings/clock/imx28-clock.example.dt.yaml:
+>   serial@8006a000: 'dma-names' is a required property
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 > ---
->  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> index dede0ae..2d6d213 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-> @@ -736,6 +736,22 @@
->                         };
->                 };
->
-> +               aips4: bus@32c00000 {
-> +                       compatible = "simple-bus";
-> +                       reg = <0x32c00000 0x400000>;
-> +                       #address-cells = <1>;
-> +                       #size-cells = <1>;
-> +                       ranges;
-> +
-> +                       media_blk_ctrl: clock-controller@32ec0000 {
+> no change.
+> ---
+>  Documentation/devicetree/bindings/clock/imx28-clock.yaml | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
 
-For this combo device, maybe we can directly name it as blk-ctrl@32ec0000.
-Rob, do you think if we can do that?
-
-> +                               compatible = "fsl,imx8mp-media-blk-ctrl", "syscon";
-> +                               reg = <0x32ec0000 0x10000>;
-> +
-
-Remove unnecessary blank line
-
-Otherwise:
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
-
-Regards
-Aisheng
-
-> +                               #clock-cells = <1>;
-> +                               #reset-cells = <1>;
-> +                       };
-> +               };
-> +
->                 aips5: bus@30c00000 {
->                         compatible = "fsl,aips-bus", "simple-bus";
->                         reg = <0x30c00000 0x400000>;
-> --
-> 2.7.4
->
+Applied, thanks!
