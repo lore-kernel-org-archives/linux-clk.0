@@ -1,132 +1,254 @@
-Return-Path: <SRS0=dRGr=B3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=cp6a=B4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DF7C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 19:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E6FC433E3
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 02:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 1824F20674
-	for <linux-clk@archiver.kernel.org>; Mon, 17 Aug 2020 19:36:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="rRms8V5V"
+	by mail.kernel.org (Postfix) with ESMTP id AD89B206DA
+	for <linux-clk@archiver.kernel.org>; Tue, 18 Aug 2020 02:18:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1597717080;
+	bh=tDq39NGvAq7ClgPqKMPFIsTTSpYNe/iL4mOaoa92Sqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=1MInG4O01yEyzyHYIBNSPxbYiaxk6fsxwOvLniXn4EyJjYxXd6tDxJwoGZjlcbWZk
+	 iDbrUbaB6rIAJ3eOjYiyU9L0e+DnOtih+H6zBVxKdYCwdL6z4joVwfLLSCEj0F7v48
+	 +BaRbnpBW/WcDP9XeGYidSiRZ0+OnppblRKKT9kE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392239AbgHQTf4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 17 Aug 2020 15:35:56 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:32665 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730046AbgHQP3A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 11:29:00 -0400
-X-Greylist: delayed 4770 seconds by postgrey-1.27 at vger.kernel.org; Mon, 17 Aug 2020 11:28:59 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1597678136;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=rmU0cqhGNgttnoqa8dHivXxzkC4Lsq2IDnfo3KgUPZs=;
-        b=rRms8V5VCp3JnALVaPDXeOx/k4PJcAg/9zIc66ky7UfXgn9kHOWAtsFPlYkoyoExo2
-        BN2xJmMbeyrcJtMcMx63Ee2Bg2IH419ppbss3eeyqEwwRZnIckTGd4gGCuL2KX6wEnPr
-        c+qPj46oNLkxeCMOozYTj2b0Vw/qbXGq5oO2ycksTePTRuceGMDj4/vVYJSamDEjAIev
-        TvOZtlkH1OrYMGVngtWTc/u/TptunFuoKEcxY5a5Gb17Em7xhWuBEfsT+A+xyXmVSREA
-        Pbfw4iA0qbuB+HJvqWQXeVfXodzSeAw7sd8eL2XJjVPgLQMPIU3IM03TtS8tGiiql2Qk
-        ddjg==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j9IczHboo="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 46.10.5 DYNA|AUTH)
-        with ESMTPSA id Y0939ew7HFSsIfG
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Mon, 17 Aug 2020 17:28:54 +0200 (CEST)
-Date:   Mon, 17 Aug 2020 17:28:48 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: smd: Disable unused clocks
-Message-ID: <20200817152848.GA836@gerhold.net>
-References: <20200817140908.185976-1-stephan@gerhold.net>
- <CAOCk7Nq6CT5q_aXG2jZ2t5=3YKVKM4r=gSnJLJkVccpwyc3XnQ@mail.gmail.com>
+        id S1726381AbgHRCR5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 17 Aug 2020 22:17:57 -0400
+Received: from mail-il1-f193.google.com ([209.85.166.193]:41584 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbgHRCR4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 17 Aug 2020 22:17:56 -0400
+Received: by mail-il1-f193.google.com with SMTP id q14so16308058ilj.8;
+        Mon, 17 Aug 2020 19:17:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=L2DmIHf8Mh8SNKm1ILcK/25kWLaKGTlrOIMEK4j6/RY=;
+        b=qIzZnJRWG4DxhyHNlcDL1y5jLoeijkqIWr+Fnm4EZxIUCtRaPNHiyabQAEzLnuqtfz
+         3LIqUvrffhyAxRwF1MD85szLfrKLEwVYbfRlFqw35j2gxerQz4Q7V76TyErWrSUGdWlL
+         GoBDq1Z8/AD06LCi2zqLKP3Hgp7OOuTwgb9VWwZBI6u4XHFrHyaQqInxQv/Pi6wVm+1o
+         De3L8wlhtotmFjyMRUElgN7YvcAkkUjiwruPNl0dvPdFbCg1gxgvw1GtAoVssrTdE8HA
+         CSXXklWOOfLCp8n8TAiLa+CUmUbBMbucNo6QzFfm/X5iWN6GR5W4kytN2qWvzNPxHz3E
+         Yztg==
+X-Gm-Message-State: AOAM530oiFtRAQrlqGLC1DznrE4X9mrSBeBzsc/cYmy7P8xE5+wTZMcg
+        OBYSnOr2K+wq7OVheZi2Bg==
+X-Google-Smtp-Source: ABdhPJzTb9iSNtnstPFXCiIr/7pUPmze817MTsOvNPQH0tN118nNw17Oexeqp2mDQdOIwbH7Kkg05Q==
+X-Received: by 2002:a92:d4cf:: with SMTP id o15mr14177402ilm.160.1597717074835;
+        Mon, 17 Aug 2020 19:17:54 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id a11sm7422830ilh.74.2020.08.17.19.17.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Aug 2020 19:17:54 -0700 (PDT)
+Received: (nullmailer pid 2151391 invoked by uid 1000);
+        Tue, 18 Aug 2020 02:17:52 -0000
+Date:   Mon, 17 Aug 2020 20:17:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        gregkh@linuxfoundation.org, galak@codeaurora.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-serial@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 4/5] dt-bindings: serial: Convert MXS auart to
+ json-schema
+Message-ID: <20200818021752.GA2147074@bogus>
+References: <1597222284-32609-1-git-send-email-Anson.Huang@nxp.com>
+ <1597222284-32609-4-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOCk7Nq6CT5q_aXG2jZ2t5=3YKVKM4r=gSnJLJkVccpwyc3XnQ@mail.gmail.com>
+In-Reply-To: <1597222284-32609-4-git-send-email-Anson.Huang@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 17, 2020 at 08:52:46AM -0600, Jeffrey Hugo wrote:
-> > Overall I'm not entirely sure why we need to force all these clocks
-> > on at all... But the downstream driver also seems to do it and the RPM
-> > interface is barely documented, so I didn't feel comfortable changing it...
+On Wed, Aug 12, 2020 at 04:51:23PM +0800, Anson Huang wrote:
+> Convert the MXS auart binding to DT schema format using json-schema.
 > 
-> So essentially, when the clk framework goes through late init, and
-> decides to turn off clocks that are not being used, it will also turn
-> off these clocks?
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+> ---
+> changes since V1:
+> 	- update examples to align with i.MX23/i.MX28 clock bindings;
+> 	- add minItem to clocks/clock-names property as i.MX23/i.MX28 have optional clocks
+> 	  property with one item.
+> ---
+>  .../devicetree/bindings/serial/fsl-mxs-auart.txt   | 53 -------------
+>  .../devicetree/bindings/serial/fsl-mxs-auart.yaml  | 91 ++++++++++++++++++++++
+>  2 files changed, 91 insertions(+), 53 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/serial/fsl-mxs-auart.txt
+>  create mode 100644 Documentation/devicetree/bindings/serial/fsl-mxs-auart.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/serial/fsl-mxs-auart.txt b/Documentation/devicetree/bindings/serial/fsl-mxs-auart.txt
+> deleted file mode 100644
+> index 5c96d41..0000000
+> --- a/Documentation/devicetree/bindings/serial/fsl-mxs-auart.txt
+> +++ /dev/null
+> @@ -1,53 +0,0 @@
+> -* Freescale MXS Application UART (AUART)
+> -
+> -Required properties for all SoCs:
+> -- compatible : Should be one of fallowing variants:
+> -	"fsl,imx23-auart" - Freescale i.MX23
+> -	"fsl,imx28-auart" - Freescale i.MX28
+> -	"alphascale,asm9260-auart" - Alphascale ASM9260
+> -- reg : Address and length of the register set for the device
+> -- interrupts : Should contain the auart interrupt numbers
+> -- dmas: DMA specifier, consisting of a phandle to DMA controller node
+> -  and AUART DMA channel ID.
+> -  Refer to dma.txt and fsl-mxs-dma.txt for details.
+> -- dma-names: "rx" for RX channel, "tx" for TX channel.
+> -
+> -Required properties for "alphascale,asm9260-auart":
+> -- clocks : the clocks feeding the watchdog timer. See clock-bindings.txt
+> -- clock-names : should be set to
+> -	"mod" - source for tick counter.
+> -	"ahb" - ahb gate.
+> -
+> -Optional properties:
+> -- uart-has-rtscts : Indicate the UART has RTS and CTS lines
+> -  for hardware flow control,
+> -	it also means you enable the DMA support for this UART.
+> -- {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD
+> -  line respectively. It will use specified PIO instead of the peripheral
+> -  function pin for the USART feature.
+> -  If unsure, don't specify this property.
+> -
+> -Example:
+> -auart0: serial@8006a000 {
+> -	compatible = "fsl,imx28-auart", "fsl,imx23-auart";
+> -	reg = <0x8006a000 0x2000>;
+> -	interrupts = <112>;
+> -	dmas = <&dma_apbx 8>, <&dma_apbx 9>;
+> -	dma-names = "rx", "tx";
+> -	cts-gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
+> -	dsr-gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
+> -	dcd-gpios = <&gpio1 17 GPIO_ACTIVE_LOW>;
+> -};
+> -
+> -Note: Each auart port should have an alias correctly numbered in "aliases"
+> -node.
+> -
+> -Example:
+> -
+> -aliases {
+> -	serial0 = &auart0;
+> -	serial1 = &auart1;
+> -	serial2 = &auart2;
+> -	serial3 = &auart3;
+> -	serial4 = &auart4;
+> -};
+> diff --git a/Documentation/devicetree/bindings/serial/fsl-mxs-auart.yaml b/Documentation/devicetree/bindings/serial/fsl-mxs-auart.yaml
+> new file mode 100644
+> index 0000000..5c4fa75
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/serial/fsl-mxs-auart.yaml
+> @@ -0,0 +1,91 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/serial/fsl-mxs-auart.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Freescale MXS Application UART (AUART)
+> +
+> +maintainers:
+> +  - Kumar Gala <galak@codeaurora.org>
+
+Why is Kumar maintainer and that's a really old email address?
+
+> +
+> +allOf:
+> +  - $ref: "serial.yaml"
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - fsl,imx23-auart
+> +      - fsl,imx28-auart
+> +      - alphascale,asm9260-auart
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    items:
+> +      - description: DMA controller phandle and request line for RX
+> +      - description: DMA controller phandle and request line for TX
+> +
+> +  dma-names:
+> +    items:
+> +      - const: rx
+> +      - const: tx
+> +
+> +  clocks:
+> +    items:
+> +      - description: mod clock
+> +      - description: ahb clock
+> +    minItems: 1
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mod
+> +      - const: ahb
+> +    minItems: 1
+> +
+> +  uart-has-rtscts: true
+> +  rts-gpios: true
+> +  cts-gpios: true
+> +  dtr-gpios: true
+> +  dsr-gpios: true
+> +  rng-gpios: true
+> +  dcd-gpios: true
+> +
+> +if:
+> +  properties:
+> +    compatible:
+> +      contains:
+> +        enum:
+> +          - alphascale,asm9260-auart
+> +then:
+> +  required:
+> +    - clocks
+> +    - clock-names
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - dmas
+> +  - dma-names
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    aliases {
+> +        serial0 = &auart0;
+> +    };
+> +
+> +    auart0: serial@8006a000 {
+> +        compatible = "fsl,imx28-auart";
+> +        reg = <0x8006a000 0x2000>;
+> +        interrupts = <112>;
+> +        dmas = <&dma_apbx 8>, <&dma_apbx 9>;
+> +        dma-names = "rx", "tx";
+> +        clocks = <&clks 45>;
+> +    };
+> -- 
+> 2.7.4
 > 
 
-With this patch: yes.
-
-> I think this is going to break other targets where other subsystems
-> happen to rely on these sorts of votes from Linux inorder to run/boot
-> (not saying it's a good thing, just that is how it is and since we
-> can't change the FW on those....).
-> 
-
-As far as I can tell the behavior implemented in this patch (= force
-clocks on during boot but disable them when unused) is the same on that
-is used on the downstream kernel. Most FW is probably written with the
-downstream kernel in mind, so I don't think this is going to cause trouble.
-
-The only situation this patch could break something is if we forgot to
-manage the clocks for one of the devices in mainline
-(and implicitly relied on clk-smd-rpm to keep them always-on).
-
-For example, one situation I checked is for WCNSS on MSM8916.
-It seems to require RF_CLK2 to boot. However, this is already handled in
-qcom_wcnss_iris.c where the clock is forced on until WCNSS is ready.
-
-> I think this needs to be validated on every single qcom platform using
-> this driver.
-> 
-> Also, out of curiosity, how are you validating that BB_CLK2 is
-> actually off after this change?
-> 
-
-Since BB_CLK1/2 and RF_CLK1/2 are part of the PMIC (at least on MSM8916)
-I used the regmap debugfs interface to read the clock registers
-through SPMI from Linux.
-
-From the "PM8916 Hardware Register Description" [1] I got the registers
-mentioned in the table, e.g. for BB_CLK2:
-
-0x5208: BB_CLK2_STATUS1
-	BIT(7): CLK_OK (Indicates Hardware or Software enable and
-			includes warmup delay)
-		0x0: BBCLK_OFF
-		0x1: BBCLK_ON
-
-I read the registers from /sys/kernel/debug/regmap/0-00/registers:
-
-Without this patch:
-	5108: 80
-	5208: 80
-	5408: 80
-	5508: 80
-
-With this patch (and with clk-smd-rpm entirely disabled):
-	5108: 80
-	5208: 00
-	5408: 00
-	5508: 00
-
-Stephan
-
-[1]: https://developer.qualcomm.com/download/sd410/pm8916-hardware-register-description.pdf
