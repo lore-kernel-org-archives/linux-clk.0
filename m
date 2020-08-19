@@ -2,165 +2,108 @@ Return-Path: <SRS0=duEY=B5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDC4C433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 14:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F914C433E5
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 18:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 4B5A72078D
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 14:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79E9820758
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 18:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597846209;
-	bh=In5ktcVArsKzAgL094eAzOG9AV78RIA0HS0QwxilghY=;
+	s=default; t=1597860996;
+	bh=NTiItKTfsa7SWpZkyww5teiQMHRP2dn+TF2yXF1ZHYs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=OaaZHWhp248UOYwRg7Vmu8DtoHERlDVsC0zuEO79JF+7Jhm7eFuL2h4k/KklMO+E+
-	 l3jxvGWZpf1FE5YQcNDovYcjM1ntOqVkIDazHqtAjA+gqkr7C5eJOXbE/oKC24rvik
-	 XSUQpunUoa5tehs/ZxkJr1Z08qZvHUfk6GTX7eGs=
+	b=KEbCePWxHE8SKO3BmtKtoJOL/GHWdqBJO2Wbz27YQ+k5jTNcNXWoOvH97BWI6HLFv
+	 PK5uXs9ZYs7GoDGk7S91Bi8N+cS5TmXL0PmEf5pPy9nPnBdC3/2Z4xhQkhav6t3BS+
+	 ovghzjtFTh+CfJp0nOW7C6Z44ZwxZjaviWXJGiOU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbgHSOKD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Aug 2020 10:10:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726971AbgHSOJ7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 19 Aug 2020 10:09:59 -0400
-Received: from dragon (unknown [80.251.214.228])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28E45204FD;
-        Wed, 19 Aug 2020 14:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597846199;
-        bh=In5ktcVArsKzAgL094eAzOG9AV78RIA0HS0QwxilghY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vxuxv61vOKbl4FMNhYbl9exlmUtZMi3X2eawLCShnhs9vzDfwgzlJ8tWZjw8BxFyH
-         +cTpUlRdHCu/7n5igw1bC/0pb134Au/9eSSoeaMtuXhvJAdMb7A2I6t0aV14FBNOr4
-         HFXA0sXDCrRihMZH2Gu4mBVGfVBwZmx7sn+lgMJQ=
-Date:   Wed, 19 Aug 2020 22:09:43 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     peng.fan@nxp.com
-Cc:     sboyd@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com,
-        abel.vesa@nxp.com, kernel@pengutronix.de, linux-imx@nxp.com,
-        Anson.Huang@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] clk: imx: imx8m: avoid memory leak
-Message-ID: <20200819140939.GG7114@dragon>
-References: <1595926999-14934-1-git-send-email-peng.fan@nxp.com>
+        id S1726676AbgHSSQe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Aug 2020 14:16:34 -0400
+Received: from mail-ej1-f68.google.com ([209.85.218.68]:36900 "EHLO
+        mail-ej1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725804AbgHSSQ3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Aug 2020 14:16:29 -0400
+Received: by mail-ej1-f68.google.com with SMTP id qc22so27429339ejb.4;
+        Wed, 19 Aug 2020 11:16:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t3qsgE3nJwNaWUKRuhBUBlsZ1BJmez2mj7vmp2zbCgY=;
+        b=Tnlj1unBauggwSlix70f6vUjhUdPBQurt+KOWCLPYbMhjWMOU3JgapxH/J7Q5F83aH
+         4wyVyqm3s6E830ylmawbZ8hAnwGKLQ6GIqFDMUrAKT9Dmz0f3/oZqM2KHuSE2m4cGme2
+         4u9r8F82WpnY72uJNvWbog33acySLCunQPdYHxU1tKiXVOxVsLb5kaxEM5DGa8krmjMf
+         zB/874ApOtviZy3ZGQYwrxSfPrjQD8OKGAIL4HS605W3sJcjVetSYMG/pxzJSBcsKj6Z
+         8Q02KRppgs1dOLREeVe/N1/eTU1pCrC30gu/H76ZkJROpBte3yKE222ts5V9wf4IxRpD
+         Q29A==
+X-Gm-Message-State: AOAM531T6t375gWm9oDMaW1zskRmi+juImDvW0yNqLkX3tMYDMfH56J4
+        1tkfxbDPcFJVvI3tElvfKP0=
+X-Google-Smtp-Source: ABdhPJzOcN1GZKTtRnWkWtwfjQiD9o87+S+tpPQkggCUttDLUkxuxmb4YmLExAOC3PinRJdWfsIbkw==
+X-Received: by 2002:a17:906:e17:: with SMTP id l23mr25676842eji.13.1597860987481;
+        Wed, 19 Aug 2020 11:16:27 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.216])
+        by smtp.googlemail.com with ESMTPSA id gh25sm18892391ejb.109.2020.08.19.11.16.25
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 19 Aug 2020 11:16:26 -0700 (PDT)
+Date:   Wed, 19 Aug 2020 20:16:23 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Russell King <linux@armlinux.org.uk>,
+        Kukjin Kim <kgene@kernel.org>,
+        Simtec Linux Team <linux@simtec.co.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>
+Subject: Re: [PATCH v2 06/13] ARM: samsung: remove HAVE_S3C2410_WATCHDOG and
+ use direct dependencies
+Message-ID: <20200819181623.GA21298@kozik-lap>
+References: <20200804192654.12783-1-krzk@kernel.org>
+ <20200804192654.12783-7-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1595926999-14934-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <20200804192654.12783-7-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 28, 2020 at 05:03:18PM +0800, peng.fan@nxp.com wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Tue, Aug 04, 2020 at 09:26:47PM +0200, Krzysztof Kozlowski wrote:
+> A separate Kconfig option HAVE_S3C2410_WATCHDOG for Samsung SoCs is not
+> really needed and the s3c24xx watchdog driver can depend on Samsung ARM
+> architectures instead.
 > 
-> Use devm_kzalloc() to avoid memory leak when probe fail.
+> The "HAVE_xxx_WATCHDOG" pattern of dependency is not popular and Samsung
+> platforms are here exceptions.  All others just depend on
+> CONFIG_ARCH_xxx.
 > 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
+> This makes the code slightly smaller without any change in
+> functionality.
 > 
-> V2:
->  Add () to functions in commit log
-> 
->  drivers/clk/imx/clk-imx8mm.c |  3 +--
->  drivers/clk/imx/clk-imx8mn.c | 15 +++++----------
->  drivers/clk/imx/clk-imx8mp.c |  2 +-
->  drivers/clk/imx/clk-imx8mq.c |  3 +--
->  4 files changed, 8 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index b793264c21c6..b43dbe305e7a 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -306,8 +306,7 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
->  	void __iomem *base;
->  	int ret, i;
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-> -					  IMX8MM_CLK_END), GFP_KERNEL);
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MM_CLK_END), GFP_KERNEL);
->  	if (WARN_ON(!clk_hw_data))
->  		return -ENOMEM;
->  
-> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-> index 213cc37b3173..4189f7f6980e 100644
-> --- a/drivers/clk/imx/clk-imx8mn.c
-> +++ b/drivers/clk/imx/clk-imx8mn.c
-> @@ -299,8 +299,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  	void __iomem *base;
->  	int ret, i;
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-> -					  IMX8MN_CLK_END), GFP_KERNEL);
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MN_CLK_END), GFP_KERNEL);
->  	if (WARN_ON(!clk_hw_data))
->  		return -ENOMEM;
->  
-> @@ -318,10 +317,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  	np = of_find_compatible_node(NULL, NULL, "fsl,imx8mn-anatop");
->  	base = of_iomap(np, 0);
->  	of_node_put(np);
-> -	if (WARN_ON(!base)) {
-> -		ret = -ENOMEM;
-> -		goto unregister_hws;
-> -	}
-> +	if (WARN_ON(!base))
-> +		return -ENOMEM;
->  
->  	hws[IMX8MN_AUDIO_PLL1_REF_SEL] = imx_clk_hw_mux("audio_pll1_ref_sel", base + 0x0, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
->  	hws[IMX8MN_AUDIO_PLL2_REF_SEL] = imx_clk_hw_mux("audio_pll2_ref_sel", base + 0x14, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> @@ -407,10 +404,8 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  
->  	np = dev->of_node;
->  	base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (WARN_ON(IS_ERR(base))) {
-> -		ret = PTR_ERR(base);
-> -		goto unregister_hws;
-> -	}
-> +	if (WARN_ON(IS_ERR(base)))
-> +		return PTR_ERR(base);
 
-How is this related to devm_kzalloc() change?
+Applied.
 
-Shawn
+Best regards,
+Krzysztof
 
->  
->  	/* CORE */
->  	hws[IMX8MN_CLK_A53_DIV] = imx8m_clk_hw_composite_core("arm_a53_div", imx8mn_a53_sels, base + 0x8000);
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index ca747712400f..f6ec7b2b8038 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -447,7 +447,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  		return PTR_ERR(ccm_base);
->  	}
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MP_CLK_END), GFP_KERNEL);
->  	if (WARN_ON(!clk_hw_data)) {
->  		iounmap(anatop_base);
->  		return -ENOMEM;
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index a64aace213c2..0106a33c24a4 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -288,8 +288,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
->  	void __iomem *base;
->  	int err, i;
->  
-> -	clk_hw_data = kzalloc(struct_size(clk_hw_data, hws,
-> -					  IMX8MQ_CLK_END), GFP_KERNEL);
-> +	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, IMX8MQ_CLK_END), GFP_KERNEL);
->  	if (WARN_ON(!clk_hw_data))
->  		return -ENOMEM;
->  
-> -- 
-> 2.16.4
-> 
