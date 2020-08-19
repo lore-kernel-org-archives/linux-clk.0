@@ -2,108 +2,98 @@ Return-Path: <SRS0=duEY=B5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-11.2 required=3.0 tests=BAYES_00,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5413C433DF
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 18:18:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AB0C433DF
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 20:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 87F6C2083B
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 18:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597861117;
-	bh=vFQwGDSSYfJER3fVKCeXFgbhhcjdddDGw2KAl0CUdnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=p2R5i7OAb/5nPb3bAIIe9n3BRjAbHzYthEh7hidvSXofnean8K0OfdOhJh98PCN2W
-	 XCKXz5aq2xkqydfO3F31VMuDZySZdWhs/ThBpOLVxqZNudQPsDbtk4WU7xVLHP7lGN
-	 +V6ENtgkUTrdI2DBSdUBXc64dFVByfHEw6FAy8+M=
+	by mail.kernel.org (Postfix) with ESMTP id 094892086A
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 20:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbgHSSSg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 19 Aug 2020 14:18:36 -0400
-Received: from mail-ej1-f66.google.com ([209.85.218.66]:40922 "EHLO
-        mail-ej1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726211AbgHSSSe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 19 Aug 2020 14:18:34 -0400
-Received: by mail-ej1-f66.google.com with SMTP id o18so27415590eje.7;
-        Wed, 19 Aug 2020 11:18:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wnUg3p/rkzEg7r5c/DTFnIBFdODWMiQLm/bvg10pJj4=;
-        b=lfBI0Y7XjyoRqPM//x6zAuavRa5q+XbI8w7QLgQkIhqyMfIKVmdKkgyzl7rURNejsF
-         YpIcHIIK9gFFtyn7uPe7l5i15yqixWwJElmT0S7l4Pa9pC0ikV5yHbo8WO7BSdDKmRND
-         wV1cjfPNO4lWyD5kVzmCi/SxkM0KlteLjRzKbkMt4FZc8m0wFxdFrSG436tO4nMXQYky
-         7vpbiv3lXzmJjT6w/erpCZDoGbgUezlSqDP1wVrnmyhc+FXqF7uTiEQFB6Fp5W5BE8Zi
-         95xRKc1RcsxLo711IkecguxqAdhL/sGT8Pl1Jnl/SxaIyaLqpEV7dI4WOaX3wvh+o9dy
-         Td6w==
-X-Gm-Message-State: AOAM533Xle120cNVtjC/zMgkbpdT/Um617cWl49W6IEd/YMLqzCcdUZB
-        0rqXj/Axc1rvCGbNvsxUjQU=
-X-Google-Smtp-Source: ABdhPJwhe7v/Ue1xFghexM9wTspolT/ZMLwUsVvmESFPXE05UaS1MOTnbDUeHiPOeM2GGznnOamAJg==
-X-Received: by 2002:a17:906:2717:: with SMTP id z23mr5615021ejc.19.1597861111871;
-        Wed, 19 Aug 2020 11:18:31 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id x10sm17923412eds.21.2020.08.19.11.18.29
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 19 Aug 2020 11:18:31 -0700 (PDT)
-Date:   Wed, 19 Aug 2020 20:18:28 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Russell King <linux@armlinux.org.uk>,
-        Kukjin Kim <kgene@kernel.org>,
-        Simtec Linux Team <linux@simtec.co.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Cc:     Sergio Prado <sergio.prado@e-labworks.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Cedric Roux <sed@free.fr>, Lihua Yao <ylhuajnu@outlook.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2 08/13] ARM: s3c24xx: fix missing system reset
-Message-ID: <20200819181828.GC21298@kozik-lap>
-References: <20200804192654.12783-1-krzk@kernel.org>
- <20200804192654.12783-9-krzk@kernel.org>
+        id S1726967AbgHSUJW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 19 Aug 2020 16:09:22 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50522 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725275AbgHSUJW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 19 Aug 2020 16:09:22 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 19B801A04AE;
+        Wed, 19 Aug 2020 22:09:20 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0CC681A02B3;
+        Wed, 19 Aug 2020 22:09:20 +0200 (CEST)
+Received: from localhost (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id EB6AC20328;
+        Wed, 19 Aug 2020 22:09:19 +0200 (CEST)
+Date:   Wed, 19 Aug 2020 23:09:19 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Dong Aisheng <dongas86@gmail.com>
+Cc:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v2 09/17] arm64: dts: Remove imx-hdmimix-reset header file
+Message-ID: <20200819200919.jck4j6gcuogw3z4h@fsr-ub1664-175>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
+ <1597406966-13740-10-git-send-email-abel.vesa@nxp.com>
+ <CAA+hA=R+zVeVEX_DcsTWD0FtaEHdeyapa4gR-_8Y=yzZD3ku1w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20200804192654.12783-9-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAA+hA=R+zVeVEX_DcsTWD0FtaEHdeyapa4gR-_8Y=yzZD3ku1w@mail.gmail.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 04, 2020 at 09:26:49PM +0200, Krzysztof Kozlowski wrote:
-> Commit f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
-> removed usage of the watchdog reset platform code in favor of the
-> Samsung SoC watchdog driver.  However the latter was not selected thus
-> S3C24xx platforms lost reset abilities.
+On 20-08-17 15:51:13, Dong Aisheng wrote:
+> On Fri, Aug 14, 2020 at 8:13 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+> >
+> > The hdmi BLK_CTRL ids have been moved to imx8mp-reset.h
+> >
+> > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 > 
-> Cc: <stable@vger.kernel.org>
-> Fixes: f6361c6b3880 ("ARM: S3C24XX: remove separate restart code")
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> ---
->  arch/arm/Kconfig | 2 ++
+> The change seems do not comply with the patch title?
+> 
 
-Applied.
+Will fix it in the next version.
 
-Best regards,
-Krzysztof
-
+> Regards
+> Aisheng
+> 
+> > ---
+> >  arch/arm64/boot/dts/freescale/imx8mp.dtsi | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > index 9de2aa1..daa1769 100644
+> > --- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > +++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
+> > @@ -4,6 +4,7 @@
+> >   */
+> >
+> >  #include <dt-bindings/clock/imx8mp-clock.h>
+> > +#include <dt-bindings/reset/imx8mp-reset.h>
+> >  #include <dt-bindings/gpio/gpio.h>
+> >  #include <dt-bindings/input/input.h>
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> > --
+> > 2.7.4
+> >
