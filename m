@@ -2,89 +2,84 @@ Return-Path: <SRS0=duEY=B5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A3BBC433E1
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 03:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 026A9C433E1
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 03:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3AE2078B
-	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 03:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D30D22078B
+	for <linux-clk@archiver.kernel.org>; Wed, 19 Aug 2020 03:12:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1597806570;
-	bh=dIhySR/k16t4QbeFvM/+iC6A7uHOWR3lLBzVgDQjDZo=;
+	s=default; t=1597806751;
+	bh=g3ZGFP1PMiMQKLZBUCjQAQ2Iyb4s3PJWHgJWDCLAgJ4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=u0l1SdYSgaT5fEVCbDf6epvsLlhTHsxMVm8nMfB1iLNB0kuqWZqy/v2mCUXpjan35
-	 mviD4EyXP/XFzUSbp1dzz0l/f2nwjbC27JffbKv+mB/zEvLeutsttX3EhuUIeHXpDP
-	 ORFOUU4yqbanvpGAD69YPmWiGSQ0PLM4lx1Ezg/A=
+	b=gYBGuNs0KZqxvjdvayS9kQsXyiJKeVHmRSgRWdDm2ZQWK92FbF1lYqfk8dI2sZnYH
+	 kMeCvz3zdqyRd27PjD4WdTfg3sf+vJb4xp6dp2THseu/GqgqNiGCAFuWYi9OIBn72e
+	 8DK5PY5tpkf0JQriuCD/hrO+SOjtCU+ljCZECuyI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbgHSDJ3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 18 Aug 2020 23:09:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41478 "EHLO mail.kernel.org"
+        id S1726803AbgHSDMa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 18 Aug 2020 23:12:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726605AbgHSDJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 18 Aug 2020 23:09:29 -0400
+        id S1726751AbgHSDMa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 18 Aug 2020 23:12:30 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 303882065F;
-        Wed, 19 Aug 2020 03:09:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF7182065F;
+        Wed, 19 Aug 2020 03:12:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1597806569;
-        bh=dIhySR/k16t4QbeFvM/+iC6A7uHOWR3lLBzVgDQjDZo=;
+        s=default; t=1597806749;
+        bh=g3ZGFP1PMiMQKLZBUCjQAQ2Iyb4s3PJWHgJWDCLAgJ4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=WwY7F0fl7pTCdmoGsECtz6g6g8C4zUsn9TErj5VE0Z0kHKD/GY29uuajrxTI7eyPF
-         A/g0FtPPoAnT5R/UXDTHyZOsi2EZusDDZF/ftysxcucvXRb2SxhbbCXlQpYr0K/VRh
-         eSz2rXNbJPfSWqttwkOZAY+0qMYLqZo66q1dSUi4=
+        b=fxptJaq6layzDvL5cV7ucXpPZVJq5STOYXySIz5C6erwfaj+/7jWlURafEEBDA0Ed
+         pvQvb237X5DBr+NE8gwORg4irdKTDQbCCLpAycmU7Ui7GnZYv6n6evJ5t0mQQc9q/Z
+         QeQB18/FDDEfFb3gpmai5LeA08KmI2KjZgsLTS8s=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200810044020.2063350-1-natechancellor@gmail.com>
-References: <20200810044020.2063350-1-natechancellor@gmail.com>
-Subject: Re: [PATCH] clk: rockchip: Fix initialization of mux_pll_src_4plls_p
+In-Reply-To: <2ab29b37-5e7f-1a7a-e29c-f20f95aec1a9@kernel.org>
+References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com> <20200807133143.22748-1-m.szyprowski@samsung.com> <2ab29b37-5e7f-1a7a-e29c-f20f95aec1a9@kernel.org>
+Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Date:   Tue, 18 Aug 2020 20:09:28 -0700
-Message-ID: <159780656806.334488.9415034364202507585@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <lukasz.luba@arm.com>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>
+Date:   Tue, 18 Aug 2020 20:12:28 -0700
+Message-ID: <159780674861.334488.4319979250253283002@swboyd.mtv.corp.google.com>
 User-Agent: alot/0.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Chancellor (2020-08-09 21:40:20)
-> A new warning in Clang points out that the initialization of
-> mux_pll_src_4plls_p appears incorrect:
+Quoting Sylwester Nawrocki (2020-08-11 04:31:30)
+> On 8/7/20 15:31, Marek Szyprowski wrote:
+> > BPLL clock must not be disabled because it is needed for proper DRAM
+> > operation. This is normally handled by respective memory devfreq driver,
+> > but when that driver is not yet probed or its probe has been deferred t=
+he
+> > clock might got disabled what causes board hang. Fix this by calling
+> > clk_prepare_enable() directly from the clock provider driver.
+> >=20
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+> > Tested-by: Lukasz Luba <lukasz.luba@arm.com>
+> > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 >=20
-> ../drivers/clk/rockchip/clk-rk3228.c:140:58: warning: suspicious
-> concatenation of string literals in an array initialization; did you
-> mean to separate the elements with a comma? [-Wstring-concatenation]
-> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
- };
->                                                               ^
->                                                              ,
-> ../drivers/clk/rockchip/clk-rk3228.c:140:48: note: place parentheses
-> around the string literal to silence warning
-> PNAME(mux_pll_src_4plls_p)      =3D { "cpll", "gpll", "hdmiphy" "usb480m"=
- };
->                                                     ^
-> 1 warning generated.
+> Should we add a "Fixes" tag so this commit gets backported down do the=20
+> kernels where the DMC driver was introduced?
 >=20
-> Given the name of the variable and the same variable name in rv1108, it
-> seems that this should have been four distinct elements. Fix it up by
-> adding the comma as suggested.
->=20
-> Fixes: 307a2e9ac524 ("clk: rockchip: add clock controller for rk3228")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/1123
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
+> Fixes: 6e7674c3c6df ("memory: Add DMC driver for Exynos5422") ?
 
-Applied to clk-fixes
+I've recently discovered that stable trees aren't checking for Fixes
+tags. So we have to put both a Fixes tag and a Cc stable on the patch
+to make sure it gets applied to stable trees. Otherwise it's up to the
+robot to figure out that a Fixes tag means maybe this is important.
