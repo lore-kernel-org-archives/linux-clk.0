@@ -2,166 +2,144 @@ Return-Path: <SRS0=WfZe=B7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29340C433DF
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Aug 2020 06:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD391C433DF
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Aug 2020 07:11:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id CCBA320748
-	for <linux-clk@archiver.kernel.org>; Fri, 21 Aug 2020 06:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 990882078D
+	for <linux-clk@archiver.kernel.org>; Fri, 21 Aug 2020 07:11:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="kQKpurwa"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="T+HNDBE9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbgHUGtL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 21 Aug 2020 02:49:11 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:35308 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726119AbgHUGtK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Aug 2020 02:49:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1597992546;
-        s=strato-dkim-0002; d=gerhold.net;
-        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=V1ysYwsBw9cTeNCdgwcpfFak0p/RNbnJO+auxIHEaGg=;
-        b=kQKpurwaJ6xNVxALMVF4XadXxg1cKG9d4VsvdOJu3qwYG8vGmVVRM0KyQLeRa8C1Bn
-        qy08hWRAeytJ/+hMPG33l61rY/9/W+IZB0BdFAIyO8LSHfY5Ibzu0MYv3ToD+tcUiAxU
-        RUO6WkUONHblKC226UYHDESWKXLzB9NIMR8/ywP+z14wdQtR6eeXRV09lIocGtxjdJSh
-        BobWTgObzfgKg5+FywLv8yWVigu6b02gPsESEYUyNk8r7AYL+Qk/1Fu5M4K/cRtIjXXB
-        QKe5ZkuQTADjwKupeplG+xJ4SFoPh4jJC9SiDGi/h/LwgZJvEVui85n2hRlf2tlAo3PM
-        cwtA==
-X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u26zEodhPgRDZ8j7Ic/Fboo="
-X-RZG-CLASS-ID: mo00
-Received: from gerhold.net
-        by smtp.strato.de (RZmta 46.10.7 DYNA|AUTH)
-        with ESMTPSA id g0b6c1w7L6n3Hqg
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-        (Client did not present a certificate);
-        Fri, 21 Aug 2020 08:49:03 +0200 (CEST)
-Date:   Fri, 21 Aug 2020 08:48:57 +0200
-From:   Stephan Gerhold <stephan@gerhold.net>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        ~postmarketos/upstreaming@lists.sr.ht,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH] clk: qcom: smd: Disable unused clocks
-Message-ID: <20200821064857.GA905@gerhold.net>
-References: <20200817140908.185976-1-stephan@gerhold.net>
- <CAOCk7Nq6CT5q_aXG2jZ2t5=3YKVKM4r=gSnJLJkVccpwyc3XnQ@mail.gmail.com>
- <20200818080738.GA46574@gerhold.net>
- <159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <159796605593.334488.8355244657387381953@swboyd.mtv.corp.google.com>
+        id S1727925AbgHUHLa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 21 Aug 2020 03:11:30 -0400
+Received: from mailout1.samsung.com ([203.254.224.24]:16539 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727798AbgHUHL2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 21 Aug 2020 03:11:28 -0400
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20200821071125epoutp017f52a18715d1d6d99c0cae4636467e29~tNvjk9TKi1225212252epoutp01U
+        for <linux-clk@vger.kernel.org>; Fri, 21 Aug 2020 07:11:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20200821071125epoutp017f52a18715d1d6d99c0cae4636467e29~tNvjk9TKi1225212252epoutp01U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1597993885;
+        bh=pWhxRBBhpPL/FNckZSjtofTkWnWYHR8ValDZxMZ2xws=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=T+HNDBE9prfmOQSbCSY7oyTj/GB/L2AG4xQPCHRMFWMXClkvggw4HfsgMdhNZmzf8
+         T5gJrGH2e8gSDYq6Brl3lBeOm8D/fFepE5gaKwYpoEcRryp16FmSStRdH/ZFNInky4
+         gvP791B8BgO3frWj5MXAP8q8Pyt2MpwtwcMTRJdo=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20200821071124epcas1p2cb22caadc80637b59cddfbc4bf0c31c1~tNvjBv6L63015030150epcas1p2D;
+        Fri, 21 Aug 2020 07:11:24 +0000 (GMT)
+Received: from epsmges1p1.samsung.com (unknown [182.195.40.156]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4BXt3Z1Nn6zMqYkg; Fri, 21 Aug
+        2020 07:11:22 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A4.8D.18978.A937F3F5; Fri, 21 Aug 2020 16:11:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa~tNvgI2I6P1342713427epcas1p1R;
+        Fri, 21 Aug 2020 07:11:21 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20200821071121epsmtrp27ec11fa305d199e8343a20e4abe67d12~tNvgHZR4u2513725137epsmtrp2N;
+        Fri, 21 Aug 2020 07:11:21 +0000 (GMT)
+X-AuditID: b6c32a35-603ff70000004a22-5b-5f3f739a9010
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A5.20.08303.9937F3F5; Fri, 21 Aug 2020 16:11:21 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.113.111.64]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20200821071121epsmtip2cc62b0a65d5e107ca3d3e67eeee637b5~tNvf0yzxj2425024250epsmtip2f;
+        Fri, 21 Aug 2020 07:11:21 +0000 (GMT)
+From:   Hoegeun Kwon <hoegeun.kwon@samsung.com>
+To:     nsaenzjulienne@suse.de, eric@anholt.net, maxime@cerno.tech
+Cc:     devicetree@vger.kernel.org, tim.gover@raspberrypi.com,
+        dave.stevenson@raspberrypi.com, sboyd@kernel.org,
+        mturquette@baylibre.com, kdasu.kdev@gmail.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-clk@vger.kernel.org, robh+dt@kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org, phil@raspberrypi.com,
+        linux-arm-kernel@lists.infradead.org, hoegeun.kwon@samsung.com
+Subject: [PATCH 0/3] drm/vc4: Support HDMI QHD or higher output
+Date:   Fri, 21 Aug 2020 16:10:42 +0900
+Message-Id: <20200821071045.24501-1-hoegeun.kwon@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUxTVxTAvX2vr5Ws5KWycgMM8JFtouGjlNon4yvOsZfgB4mJf7DM+qAv
+        LVLapg8WN1DBCVOgQjeWjSq6TUwXFhxfqZSkoaOwKoqNApWBQCYZW1As0CCImVs/WNh/v3Pu
+        7+Tcc+/hI0IzFsEv0pQyeg2tJrAQ1OKIT0gwsVny5JUXPLLdMISSiy3XUfLa4H0uObbqwUh7
+        1SggPeZajLSOtaNk15ybSy7Xz3DJ0b4rGGmc6uCR366/BuSD4Q9Ii8mMkTcnn2JktW2QR752
+        d6Lkk69nQbaQOuf5FaM8E9U8yjQ7glGP77swymqa5lFdbRcxarbOyaG6W89S1UMbKHWppw1Q
+        3XfLKW9XdN4b+cXpKoZWMPpYRlOoVRRplBlE7lH5+3Lp3mRxgngfKSNiNXQJk0EcOJiXkFOk
+        9k1HxH5Cq8t8qTyaZYmkzHS9tqyUiVVp2dIMgtEp1Lp9ukSWLmHLNMrEQm1Jmjg5OUXqE08U
+        qxx3bajuc+yUpTGyEkyhtWA7H+KpcKPfhdSCEL4Q7wXw5sj3aDBYAdA13sALBl4AGxxbJaah
+        x5slfQCOWy1blmmmk+O3MDwBrtY/CnAYnglr6n8BfgnBbyHw0Rd1PP/BDjwLPp0eCkgo/jas
+        WnNhfhbgGfBe1Teb7WLgTx12JMjtfDhVlxnkA/Dag2ZekHfABWfPJkdA73MbFmQWjjUvBAaC
+        eKVvBuPlTUkC+2985WvM990oHv7clxRM74TWVy3AzwgeCp+v1nP9CsQF8EKNMKi8A+cr7dwg
+        R8Fhg5kTZApOev8OtBXiH8NG+zyvEbxl2mrwHQBtQMTo2BIlw4p14v//UhcIbOxuaS8wLi4l
+        DgAOHwwAyEeIMIHB9p5cKFDQn37G6LVyfZmaYQeA1PdeRiTizUKtb+U1pXKxNEUikZCp4r1S
+        sZgIF/w+GSsX4kq6lClmGB2j/6+Ow98eUckp2JPSULFo0WdY8B+MNVXbJlbylfCY40vqfM8/
+        h8/OrUrWOyKyRX9yc8ult7Y5x6SnNUve1NDa8D8+ar36bNEuOnr4hWzdcKjbLXo4JzmTHaXK
+        q8k/XnDkykzFjRNh8679ztDpnJAi4mL/uSfcrJGoZVd4xSGnMfFDJyPb34RUPHzV+EztFnha
+        046479Ry4ueHTwm6w/mnFWvLO086Wi7odpWPnkd3RecMVjtp5R3CeDmmw+BM+62yKWYjTi3J
+        H2lq2RPtEtyOycppdi79GFl/+6+C3HFR5PHed6fp3DOynkveOLBQbgYTtrmk2TjqevpJKs4j
+        m3jZFLlm7bx37CWBsipavBvRs/S/1GhtTDoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKLMWRmVeSWpSXmKPExsWy7bCSvO7MYvt4g4crVC3W9h5lsXg7dzGL
+        xfwj51gtrnx9z2ZxoPEyo8X75V1sFjuvrGWx2PT4GqvFx557rBaXd81hs5h4ewO7xYwf/xgt
+        Lp5ytdg2azmbxbpbr9ksWvceYbf4d20ji8WjqfcZHYQ8mt4fY/N4f6OV3WPW/bNsHnfOnWfz
+        2DnrLrvHplWdbB73u48zeWxeUu/RevQXi0ffllWMHptPV3t83iQXwBPFZZOSmpNZllqkb5fA
+        lXH49F6Wgma2im0TpBsYb7N0MXJySAiYSMw6eoe5i5GLQ0hgB6PEhv55zBAJGYlV/VtYuxg5
+        gGxhicOHiyFqPjJK/GtpZwKpYRPQlfjacx3MFhFwknjwdx/YIGaB48wS0/sPsIIkhAXsJV7f
+        PQpWxCKgKtH4/TwbiM0rYCtxpnE61BXyEqs3HGCewMizgJFhFaNkakFxbnpusWGBUV5quV5x
+        Ym5xaV66XnJ+7iZGcMhrae1g3LPqg94hRiYOxkOMEhzMSiK8vXut44V4UxIrq1KL8uOLSnNS
+        iw8xSnOwKInzfp21ME5IID2xJDU7NbUgtQgmy8TBKdXAdOTg17vvGL6nKoXdYdx8sD7EzfnU
+        RPGfF672r3OTSxXkzzrUsGxDi+A+t6p8n3Pt4nv+Rp56Mu34dz2hbM/TyR87WdXl9j2TdNom
+        Fdf47dVjkZudoQ9Ujn/aeTo5gTuf+6fpLdnAg73e59WNg3l3VrM0bRe94dSyRpt5XeEyfccu
+        yRCn4FBXv0iBlp0K6w8qmn428eU4Kt4dtvTy6lPbRNYe8px2pc+3MKA+MJ4n6t7N5weyE15f
+        /i6/nXMvm/HcR39mZi+o0IyeVjBre17tUWl9o27TT7YlF+RuqLm4rmmx/X2zYsX5WtavjXM2
+        Kpv0JAvOsvi8f9uSN1GvX/Hum/55DfulrPLSz37ctdXxSizFGYmGWsxFxYkAvX5QCOgCAAA=
+X-CMS-MailID: 20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa
+References: <CGME20200821071121epcas1p12225cf2891c2bbe22b90ac65e826dcaa@epcas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 20, 2020 at 04:27:35PM -0700, Stephen Boyd wrote:
-> Quoting Stephan Gerhold (2020-08-18 01:07:38)
-> > Hi Jeffrey,
-> > 
-> > On Mon, Aug 17, 2020 at 08:52:46AM -0600, Jeffrey Hugo wrote:
-> > > So essentially, when the clk framework goes through late init, and
-> > > decides to turn off clocks that are not being used, it will also turn
-> > > off these clocks?
-> > > 
-> > > I think this is going to break other targets where other subsystems
-> > > happen to rely on these sorts of votes from Linux inorder to run/boot
-> > > (not saying it's a good thing, just that is how it is and since we
-> > > can't change the FW on those....).
-> > > 
-> > 
-> > After thinking about it some more I realized there are definitely some
-> > of the clocks we shouldn't disable even when unused, for example the
-> > interconnect clocks. With interconnect drivers disabled the system
-> > basically locked up entirely once the clock core disabled the clocks.
-> 
-> The interconnect clks should be moved out of the RPM clk drivers. It's
-> over-engineering to have the RPM interconnect drivers talk to the RPM
-> clk drivers to change the frequency of interconnects based on a
-> calculation in the interconnect driver. It makes sense from a logical
-> perspective to express that these are clks, and they have frequencies,
-> etc., but when you look closer at it you see that it's nonsense.
-> 
-> The RPMh interconnect driver should be able to talk directly to the RPM
+Hi everyone,
 
-Note: I'm talking about the clk-smd-rpm (+ SMD RPM interconnect)
-drivers here (not RPMh), but I guess the same applies for that as well.
+There is a problem that the output does not work at a resolution
+exceeding FHD. To solve this, we need to adjust the bvb clock at a
+resolution exceeding FHD.
 
-> and turn knobs as it see fit. Nobody else is going to use those clks
-> from the RPM clk driver. Any potential consumer is going to go through
-> the interconnect layer to change frequencies. So now we've got two
-> frameworks interfacing with the same wire protocol and remote processor,
-> when we could have only one. And furthermore to the point, the RPM
-> interconnect clks are all parented to nothing, so putting them behind
-> the clk APIs provides practically zero benefits, like managing the clk
-> tree or determining rates down the tree.
-> 
+Rebased on top of next-20200708 and [1].
 
-That makes sense to me since it would also prevent these clocks from
-getting "disabled" when unused.
+[1] : [PATCH v4 00/78] drm/vc4: Support BCM2711 Display Pipeline (Maxime's patchset)
 
-> Honestly I'd like to see all the various RPM drivers combined into one
-> driver that knows what is going on between regulators, interconnects,
-> and clks, etc. Carving it up into these different drivers spread across
-> the tree helps us review the code and logically split the device into
-> pieces, but the flip side is that nobody sees the big picture that a
-> call into a framework here boils down to a couple RPM messages sent over
-> the wire to the same device.
-> 
+Hoegeun Kwon (3):
+  clk: bcm: rpi: Add register to control pixel bvb clk
+  ARM: dts: bcm2711: Add bvb clock for hdmi-pixel
+  drm/vc4: hdmi: Add pixel bvb clock control
 
-I'm not sure, most of the RPM drivers are basically pretty much just
-long struct definitions for the available regulators, clks,
-interconnects, ... of one SoC. Combining this all into one driver would
-likely become rather "messy"...
+ arch/arm/boot/dts/bcm2711-rpi-4-b.dts |  6 ++++--
+ drivers/clk/bcm/clk-raspberrypi.c     |  1 +
+ drivers/gpu/drm/vc4/vc4_hdmi.c        | 25 +++++++++++++++++++++++++
+ drivers/gpu/drm/vc4/vc4_hdmi.h        |  1 +
+ 4 files changed, 31 insertions(+), 2 deletions(-)
 
-> > For now I fixed this by marking all of DEFINE_CLK_SMD_RPM() as
-> > CLK_IGNORE_UNUSED (essentially restoring the current behavior of the
-> > driver). For MSM8916 these are exactly the interconnect clocks, but on
-> > other platforms there are further clocks that might not need
-> > CLK_IGNORE_UNUSED. This could be still optimized later.
-> > 
-> > > I think this needs to be validated on every single qcom platform using
-> > > this driver.
-> > > 
-> > 
-> > After running into the issue above I kind of agree with you. While
-> > problems should be limited by marking the "rate" clocks as
-> > CLK_IGNORE_UNUSED, it's also possible that one of the platforms requires
-> > one of the branch clocks to stay on to boot successfully.
-> > 
-> > I know for sure that this works properly on MSM8916, so maybe I should
-> > make it opt-in and then we add it for each platform after validating it?
-> > 
-> 
-> No! Instead of putting band-aids on this broken mess, please just move
-> the interconnect clks out of the clk driver and into the interconnect
-> driver.
-> 
+-- 
+2.17.1
 
-Hmm, I'm not sure how to implement this in a backwards compatible way.
-In particular, clk-smd-rpm supports SoCs that:
-
-  - Have no interconnect driver at all (MSM8998, SDM660, ...)
-  - Had the interconnect device nodes added much later than rpmcc
-    (MSM8916, MSM8974, ...)
-  - Have some clocks that are not covered by the interconnect drivers yet,
-    e.g. RPM_SMD_GFX3D_CLK_SRC (Is this even interconnect? Not sure...)
-
-In all those cases they likely (implicitly) rely on rpmcc to keep all
-clocks at maximum rate, even if unused. If we were to move the
-interconnect clock management to the interconnect drivers, we would
-still need to handle the clocks somewhere in all those cases.
-
-How would this work?
-
-Thanks,
-Stephan
