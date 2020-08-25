@@ -2,165 +2,97 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 940B2C433E1
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 02:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49DD0C433DF
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 06:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 6FB48204EC
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 02:14:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598321699;
-	bh=XGFf5Fw0UayQG3j+uycg9IlFb0HpDoqlWLldlWqSOrk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tIGx86yt2hwG5vB/NUe8d4LN5N1PgeimuxRFeSURpDBuayzA+9JO2Xsu/IGoqz2+s
-	 bAy8bTrNyF3FZNmSF+0yytj+3xLKzoniyndQFH8vGISp4WfAQHvL0lelIZmz5bZba3
-	 jxRYMBnaUYslKoBOy0tXkhID05/wrlDfjrbiszmY=
+	by mail.kernel.org (Postfix) with ESMTP id F3EDC2078A
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 06:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="sFgnOLhD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726090AbgHYCO7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Aug 2020 22:14:59 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42033 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbgHYCO6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Aug 2020 22:14:58 -0400
-Received: by mail-io1-f67.google.com with SMTP id g13so10899958ioo.9;
-        Mon, 24 Aug 2020 19:14:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=ek5F+H3O/scHf/IKBLIJYApR8mf1sgNbCuJGX+O39pc=;
-        b=WxAadAshJ9PUZjzeGen5RVe1MbeWjNZ8pAX797M9aD2lmimizVD8om+7CnBjkkOgwl
-         KF9izVh54stq7/t2IH40nPqozD8IwQHfdYVeOjC6/R5BXD7AlWd2Zm2OwaJ/wHlqC8UO
-         1L+JKbFhUw8q8bfn3kndB+zgE+VpZGK3SpQYA4jd95xfuWdayQT0xTshWZTjV9g1n0bS
-         g6t5odpTs2Xl+N/Dq62BSHgMWM05dk8AAiuhizfgjkh4K7HsJH+kQaV2KRgdalw8OLwt
-         H1CZZmj9T+uGe9T2QEPDLvuwidBIZ3D9wv6eNirsun+cyqN3XT3L/964l59JOWeSobDb
-         BUlA==
-X-Gm-Message-State: AOAM531MJxpndaoNG/RZrI44ptjEL3iP4VjjaG0E1/YjAeQs+6zWJusk
-        jh+0di3onWNyJgVkIhhJeA==
-X-Google-Smtp-Source: ABdhPJxNxfKvFbxG4f0/yZMBg5QNRAhicF99/EkuVFWZ1jMVx0ih0hihJnB5oksWscSPYnlTD3tIsw==
-X-Received: by 2002:a02:a90f:: with SMTP id n15mr8550255jam.120.1598321697011;
-        Mon, 24 Aug 2020 19:14:57 -0700 (PDT)
-Received: from xps15 ([64.188.179.249])
-        by smtp.gmail.com with ESMTPSA id 132sm8430792ilb.36.2020.08.24.19.14.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Aug 2020 19:14:56 -0700 (PDT)
-Received: (nullmailer pid 3797833 invoked by uid 1000);
-        Tue, 25 Aug 2020 02:14:52 -0000
-Date:   Mon, 24 Aug 2020 20:14:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fugang Duan <fugang.duan@nxp.com>, devicetree@vger.kernel.org,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 10/17] Documentation: bindings: clk: Add bindings for
- i.MX BLK_CTRL
-Message-ID: <20200825021452.GA3795142@bogus>
-References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
- <1597406966-13740-11-git-send-email-abel.vesa@nxp.com>
+        id S1729137AbgHYG7S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 02:59:18 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:9418 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729127AbgHYG7R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 02:59:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1598338757; x=1629874757;
+  h=from:to:cc:subject:date:message-id:mime-version;
+  bh=4WHglWt7OnttEOSn3/CASkkXpuDxsAGSzQEawn0TtmE=;
+  b=sFgnOLhDvmJoOXcUl4DGy71J+EYYZOixyekz8jEtG2DM5T1av7CQOcMB
+   FOgeyhTk3nyTbRMKvG1M8ufrBAkZjUOQIBNoVR2EhvEmEiNJtbv2EZnnV
+   Q0ttBiqD5DubDI5MLuTDQ94JASQVe29QKFL1XQxYTNBQOrMp19Klvxysy
+   vfHXwfPJRI8YAoa6fcV+Uy9f1g66HmrYzFrF1mvcL5iFHtqdcN8vnw5iM
+   5xKEwDAiLzsqoPm2sNZi2KHCvluQIB7AdcwsXYDA5UOW09DzjV+aYyYVT
+   GZYVtfvnMNRcjbYpQiEa/Q2/W3N5vnDmm0c/opoLuto7nAKgWjwKTa4cx
+   A==;
+IronPort-SDR: Vm4ReLPql6/fJ3mzMsP5zrtYuWkhPfkU20oOItWr7ZrpKtQddm0x/NXL7rLbQkXOTaqhtTTAYO
+ PtrlFYMAinPQk/q3l9xuhuv16FtD8PhmMyL5FyY6zeYHZZHmf6vgocyAjNI85gG5gfnAKCFGXU
+ dOcU7qTH5Hddx4/rCPObPzkj2wAsr/KcvO9kB4PHi1k2o84a7tNJhHRLsWUtS10fFTNwE7CRSY
+ w8G11GYXs1FM1mXoP0x8vszwgPUACrohtXIooT26VXh+1rx2eB0x+uy71EFRud3x2U8Ioc7hFF
+ ibg=
+X-IronPort-AV: E=Sophos;i="5.76,351,1592895600"; 
+   d="scan'208";a="93013745"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2020 23:59:16 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1979.3; Mon, 24 Aug 2020 23:59:15 -0700
+Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1979.3 via Frontend Transport; Mon, 24 Aug 2020 23:59:13 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <bbrezillon@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH v2 0/3] fixes for at91 clocks
+Date:   Tue, 25 Aug 2020 09:59:08 +0300
+Message-ID: <1598338751-20607-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1597406966-13740-11-git-send-email-abel.vesa@nxp.com>
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 14, 2020 at 03:09:19PM +0300, Abel Vesa wrote:
-> Document the i.MX BLK_CTRL with its devicetree properties.
-> 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> ---
->  .../bindings/clock/fsl,imx-blk-ctrl.yaml           | 60 ++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
-> new file mode 100644
-> index 00000000..b47590c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,imx-blk-ctrl.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only)
+Hi,
 
-Dual license new bindings please:
+In this series I collected 2 patches send previously and add another that
+fixes a compilation warning.
 
-(GPL-2.0-only OR BSD-2-Clause)
+Changes in v2:
+- add patches "clk: at91: remove the checking of parent_name" and
+  "clk: at91: clk-main: update key before writing AT91_CKGR_MOR" in the same
+  series and collect Reviewed-by tags
+- in patch "clk: at91: remove the checking of parent_name" kept only
+  the changes in at91_clk_register_peripheral() function as the changes in
+  at91_clk_register_sam9x5_peripheral() introduced in v1 were included in
+  commit b4c115c76184 ("clk: at91: clk-peripheral: add support for changeable parent rate");
+  also adapt commit message for this patch;
+- add "clk: at91: clk-sam9x60-pll: remove unused variable" in this series
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/fsl,imx-blk-ctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: NXP i.MX BLK_CTRL
-> +
-> +maintainers:
-> +  - Abel Vesa <abel.vesa@nxp.com>
-> +
-> +description:
-> +  i.MX BLK_CTRL is a conglomerate of different GPRs that are
-> +  dedicated to a specific subsystem. Because it usually contains
-> +  clocks amongst other things, it needs access to the i.MX clocks
-> +  API. All the other functionalities it provides can work just fine
-> +  from the clock subsystem tree.
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +         - fsl,imx8mp-audio-blk-ctrl
-> +         - fsl,imx8mp-hdmi-blk-ctrl
-> +         - fsl,imx8mp-media-blk-ctrl
-> +      - const: syscon
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - power-domains
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/imx8mp-clock.h>
-> +
-> +    audio_blk_ctrl: clock-controller@30e20000 {
-> +       compatible = "fsl,imx8mp-audio-blk-ctrl", "syscon";
-> +       reg = <0x30e20000 0x10000>;
-> +       power-domains = <&audiomix_pd>;
-> +
-> +       #clock-cells = <1>;
-> +       #reset-cells = <1>;
-> +    };
-> -- 
-> 2.7.4
-> 
+Claudiu Beznea (3):
+  clk: at91: remove the checking of parent_name
+  clk: at91: clk-main: update key before writing AT91_CKGR_MOR
+  clk: at91: clk-sam9x60-pll: remove unused variable
+
+ drivers/clk/at91/clk-main.c        | 11 ++++++++---
+ drivers/clk/at91/clk-peripheral.c  |  4 ++--
+ drivers/clk/at91/clk-sam9x60-pll.c |  3 +--
+ 3 files changed, 11 insertions(+), 7 deletions(-)
+
+-- 
+2.7.4
+
