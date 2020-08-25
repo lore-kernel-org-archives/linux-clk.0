@@ -1,113 +1,91 @@
-Return-Path: <SRS0=ipkz=CC=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
 	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58236C433E1
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Aug 2020 10:31:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE975C433E1
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 02:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC7920639
-	for <linux-clk@archiver.kernel.org>; Mon, 24 Aug 2020 10:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE812204EC
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 02:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1598265089;
-	bh=JHmmYdal4LDDL/vAFzi2LbhOBMpq0JX2Bs7bja/+Fnw=;
+	s=default; t=1598321570;
+	bh=EYabL+cR1q0BhSQAaVx++XTBOOEfW4RAx2hWzm8LUo4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hnv+Zt2bl4401TI0ua4Xv6N3iLqpfzQNvwlAi2XG9QTd5fzzlDgFdzBOyKY5CPQs4
-	 hqoW+tYdVwagahjXl/6sbEM2X+XTMmSFBfK+aAs8pa4CVG7CB3pa3QX+aHKf+989JL
-	 Ba58YFYR5q4rMFO8r6Nfcb0IXJ6Q3pPXitO89QSc=
+	b=1M5UZLMd3FbXjKwQWEwvYMpCq0akR5dd4B9R1w8QOOcVc6q+7y2uX4qJT9ShX75xy
+	 arYCLqsYvUesVBnyyR4l0U+xmDzAOsbIMSIAeuiNHqrZR/tu6CkFhCfaxDOWXmRt0w
+	 0B8/oGtanUT0ch3mapnONdZyiqeAHISVzu6P2hwk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726138AbgHXKb2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 24 Aug 2020 06:31:28 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37055 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725968AbgHXKb2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Aug 2020 06:31:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id y3so8118250wrl.4;
-        Mon, 24 Aug 2020 03:31:26 -0700 (PDT)
+        id S1726075AbgHYCMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 24 Aug 2020 22:12:49 -0400
+Received: from mail-il1-f194.google.com ([209.85.166.194]:39404 "EHLO
+        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbgHYCMt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 24 Aug 2020 22:12:49 -0400
+Received: by mail-il1-f194.google.com with SMTP id f12so9112736ils.6;
+        Mon, 24 Aug 2020 19:12:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5xLQKYZI4cTxrUMmil7wS5imap+Bt2COqeo1cf8n/LM=;
-        b=N/UgocIsOgBmrL+mAZIkdG1IEfTi3ls1nm+wuQEw3txfQ/KVm/OVEjZMrhkSRVfSdQ
-         uiVXdVnwUfV6hlSa9zffsrHUuKblyuvzOQiv4MoPm8JaCZNr9YDNILQPk3knhnlpCeBH
-         J1XKSza5ykN+iHxeru1FTZKrC/uwei5lUUWWfjaJrqP1IS3GICMrUp9RPgvhvp2r78I/
-         9k3vNmua5n7d81qJf25DizkMCqBB0f4grw0WYYOy1K3T13LQsWsHSpObi/Pwdq1ujpVG
-         ZEf8EhTurnbWl7tJ70biN9ymvHTm2/EmtinfAMA4tQnPTrdt7bEzfrC1UYrcO3bMAMB3
-         NqvQ==
-X-Gm-Message-State: AOAM531/ZAQe9B9+RfdTtGTsBYZnuDvqL4yQgYPBlJb9Uw1jMQEXfQaV
-        Ls8u1i1Atd2aHqF5nhZtWL0=
-X-Google-Smtp-Source: ABdhPJyn5rnoR81LuJKvJbEUHHChIoVEuMpVbYFRx+shF6dp99Pu2+sob1nRK1HuIR1Wj5ZBPFj8GQ==
-X-Received: by 2002:adf:ec10:: with SMTP id x16mr5016091wrn.74.1598265086281;
-        Mon, 24 Aug 2020 03:31:26 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.216])
-        by smtp.googlemail.com with ESMTPSA id k15sm20428005wrp.43.2020.08.24.03.31.25
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 24 Aug 2020 03:31:25 -0700 (PDT)
-Date:   Mon, 24 Aug 2020 12:31:23 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <snawrocki@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-samsung-soc@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Lukasz Luba <lukasz.luba@arm.com>
-Subject: Re: [PATCH v2] clk: samsung: Keep top BPLL mux on Exynos542x enabled
-Message-ID: <20200824103123.GD25860@kozik-lap>
-References: <CGME20200807133152eucas1p1d83611a984f5c5d875192d08e2f5711f@eucas1p1.samsung.com>
- <20200807133143.22748-1-m.szyprowski@samsung.com>
- <159780685238.334488.5802955284004610550@swboyd.mtv.corp.google.com>
- <f4c87130-25a0-2195-9caa-be805d207c34@kernel.org>
- <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org>
+         :mime-version:content-disposition:in-reply-to;
+        bh=3nloTOrXY+VdXbMaAs1xkJlpZLEd/OL2atDgyYM+HrY=;
+        b=ouOvF2mZd5MzM6g85pgk5cKOvdWD86Fj4FasXtuH+qa6upqgiWp5sXuOk9Fh/F+TCr
+         wCBvvwXXiPJfNmNgUqNJLmU1yRGxjlP5jMm8dGRxftBvfHIum14pglAv3OwM9DGB3cfi
+         cSxMVT6vjtb/9FtAmMhJcxX4lrE+l2PGvBl9Lg7NcXom4cT4TbeIkH1Oiqmit64ZQIn+
+         owsV4KbBQSnFFH2yEY1NNN+Tsjtqi3W9hJwDWPGafQjPrtQ3Lpe/8xpMcK6JsGkObQcs
+         9H/iatBAUO02zzoHbcXaLzQmnrpc+WOgxdVOIdIpIcqh1E9QjfKEb3I7jmlkUqyTQvYM
+         0P4Q==
+X-Gm-Message-State: AOAM531l7UVQpTvw9OgZFCItLXiZXfEhP7sQlZ6T3YjIixKijtGk9/ns
+        kMyO0Jet1sdLMe5BXJ0HPQ==
+X-Google-Smtp-Source: ABdhPJzhTOb/YYKMebmePOL8eCdkTddl1osQhrsQdDZCr8NwQonHozFTxTzXQj36XazSDCyxjovZrw==
+X-Received: by 2002:a92:158c:: with SMTP id 12mr8049584ilv.102.1598321568014;
+        Mon, 24 Aug 2020 19:12:48 -0700 (PDT)
+Received: from xps15 ([64.188.179.249])
+        by smtp.gmail.com with ESMTPSA id k18sm4422961ils.42.2020.08.24.19.12.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Aug 2020 19:12:47 -0700 (PDT)
+Received: (nullmailer pid 3794322 invoked by uid 1000);
+        Tue, 25 Aug 2020 02:12:44 -0000
+Date:   Mon, 24 Aug 2020 20:12:44 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        devicetree@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Anson Huang <anson.huang@nxp.com>,
+        Fugang Duan <fugang.duan@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/17] dt-bindings: clocks: imx8mp: Rename audiomix
+ ids clocks to audio_blk_ctrl
+Message-ID: <20200825021244.GA3794265@bogus>
+References: <1597406966-13740-1-git-send-email-abel.vesa@nxp.com>
+ <1597406966-13740-2-git-send-email-abel.vesa@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fff07b05-f1f6-5333-a056-69ba6995ed4f@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1597406966-13740-2-git-send-email-abel.vesa@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 24, 2020 at 12:28:51PM +0200, Sylwester Nawrocki wrote:
-> On 8/23/20 12:12, Sylwester Nawrocki wrote:
-> > On 8/19/20 05:14, Stephen Boyd wrote:
-> > > Quoting Marek Szyprowski (2020-08-07 06:31:43)
-> > > > BPLL clock must not be disabled because it is needed for proper DRAM
-> > > > operation. This is normally handled by respective memory devfreq driver,
-> > > > but when that driver is not yet probed or its probe has been
-> > > > deferred the
-> > > > clock might got disabled what causes board hang. Fix this by calling
-> > > > clk_prepare_enable() directly from the clock provider driver.
-> > > > 
-> > > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> > > > Tested-by: Lukasz Luba <lukasz.luba@arm.com>
-> > > > Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > > ---
-> > > 
-> > > Can I pick this up for clk-fixes?
-> > 
-> > Sure, thanks for taking care of this.
+On Fri, 14 Aug 2020 15:09:10 +0300, Abel Vesa wrote:
+> In the reference manual the actual name is Audio BLK_CTRL.
+> Lets make it more obvious here by renaming from audiomix to audio_blk_ctrl.
 > 
-> OTOH, I planned to queue that patch for next merged window, together with a
-> patch that depends on that one, since the fix is not for an issue
-> introduced in the last merge window.
-> I guess it's better to avoid pulling (part of) the clk-fixes branch to
-> the clk/samsung tree for next merge window?
+> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> ---
+>  include/dt-bindings/clock/imx8mp-clock.h | 120 +++++++++++++++----------------
+>  1 file changed, 60 insertions(+), 60 deletions(-)
+> 
 
-All current multi_v7 and some of exynos defconfig boots fail on Odroid
-XU3-family, starting from v5.9-rc1. On kernelci and my boot systems. If
-I understand correctly, this is a fix for this issue, so it should go as
-fast as possible to v5.9 cycle.
-
-Otherwise we cannot test anything. The current v5.9 RC is then simply broken.
-
-Best regards,
-Krzysztof
-
+Acked-by: Rob Herring <robh@kernel.org>
