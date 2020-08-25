@@ -2,101 +2,129 @@ Return-Path: <SRS0=7dir=CD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=BAYES_00,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.6 required=3.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1633C433E3
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 06:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E95C433E4
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 07:11:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [23.128.96.18])
-	by mail.kernel.org (Postfix) with ESMTP id ACD3E2078A
-	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 06:59:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="2DAymgT9"
+	by mail.kernel.org (Postfix) with ESMTP id 15F142083B
+	for <linux-clk@archiver.kernel.org>; Tue, 25 Aug 2020 07:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1598339468;
+	bh=FWfgAaWELOpnq9T2ZqffNJ7A9qnO3QfKuIy+OMg+Nkc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GtUR5sDC4fyRoGi7yC93EF+32ifS8JnbTCeTZO/wZyphGdozHJNim3eSC8NSpclkj
+	 m7mSVJt2Xewywt5+jH4N+ntoBij8Uvzr+uJ4a87Us/RAoh7FokgzqKZNxxXdahSoQM
+	 lvdCDmozj67nTjafzvl17Phhqy+D+O0EnwPCfkoQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbgHYG7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 25 Aug 2020 02:59:21 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:9418 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729254AbgHYG7U (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 25 Aug 2020 02:59:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1598338760; x=1629874760;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version;
-  bh=HgjEgkiKGTzhHa9dedX7zLtx+BB912JMHCVfd4RNaDc=;
-  b=2DAymgT9JQbFzU8M2MW7cBIUZZbhtM9OBKJuttv/jwBFhx7gnlTWFgLl
-   FlIoiiQzt5kEoW4mVst467I+R/JSvQjOo1u8OD0paGZotni81DtxG3GtK
-   yqP1sulkgR497zmIXByGE4l81v8aHjISP/XMzAGkBdIQThWZPl4TShTYV
-   nVnX4DMZKXESdRYrVTDpEpCNTClLOX4PMsAULUVApMfPy9VrrBT1l+vdS
-   OpWS+ZGQEo5TkggMnFocHK58HX1rb7JTMVTZv+e32FxWcr7ybD2/Z7faS
-   grJJGMiQkPxa6X9jUd9lvpIilxZBjwkAVMnM3PRAeEyydvGclEv4R8Hx3
-   w==;
-IronPort-SDR: RurX8EOmBuNyZZun6JOWBMi1UJoatI1WaYIR/o8QQiPLgTJ/TdLqoSK14cnfBSgwokGNiuOI/I
- r5ONgtF+uZN+L/sZY4pv4frutkTOkMwGnZvaTbe++PO17im1i0DJnJtgZncF5cYUazHU777RKb
- jD0IIKg1lwfSBO0VNpIAoeeRJPZDACHWmOJ35nHy5gkRVKltwZFv80nP3pjcA9ZwYNEypN1g0w
- ydbqwY3+doLgr6Iwasau+mtioGwuHCcyDbkFNDEWHnI1yeKTw/BvzLE2QPK7w/KNDKWzHKBH5c
- 8Vg=
-X-IronPort-AV: E=Sophos;i="5.76,351,1592895600"; 
-   d="scan'208";a="93013760"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 24 Aug 2020 23:59:19 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1979.3; Mon, 24 Aug 2020 23:59:18 -0700
-Received: from m18063-ThinkPad-T460p.microchip.com (10.10.115.15) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1979.3 via Frontend Transport; Mon, 24 Aug 2020 23:59:16 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <bbrezillon@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH v2 1/3] clk: at91: remove the checking of parent_name
-Date:   Tue, 25 Aug 2020 09:59:09 +0300
-Message-ID: <1598338751-20607-2-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1598338751-20607-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1598338751-20607-1-git-send-email-claudiu.beznea@microchip.com>
+        id S1729374AbgHYHKj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 25 Aug 2020 03:10:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729362AbgHYHKh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 25 Aug 2020 03:10:37 -0400
+Received: from localhost (p54b333df.dip0.t-ipconnect.de [84.179.51.223])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C35662074D;
+        Tue, 25 Aug 2020 07:10:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1598339436;
+        bh=FWfgAaWELOpnq9T2ZqffNJ7A9qnO3QfKuIy+OMg+Nkc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=f3Wq0A6wK+XyCx0NdyaVbiOp2OMrI3KPwj1V3RQ/NOii/Sv8XJMYsbLmiBZPZxHLr
+         0oPOxmO4ZW2uxwUXqLpZCKZIApP5fRkbLXbO9bWzKlL5g/hG5Vx0qfVAI9CAKfOqMV
+         tmM358uBo/FCFQE7cpCl+yIXbi94y/ptPbOUqIoI=
+Date:   Tue, 25 Aug 2020 09:10:33 +0200
+From:   Wolfram Sang <wsa@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-spi@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-input@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-media@vger.kernel.org, alsa-devel@alsa-project.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        netdev@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: Whitespace clean-ups in schema files
+Message-ID: <20200825071033.GB1861@ninjato>
+References: <20200812203618.2656699-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="JYK4vJDZwFMowpUq"
+Content-Disposition: inline
+In-Reply-To: <20200812203618.2656699-1-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no need to check parent_name variable while assigning it to
-init.parent_names. parent_name variable is already checked at
-the beginning of at91_clk_register_peripheral() function.
 
-Fixes: 6114067e437eb ("clk: at91: add PMC peripheral clocks")
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/clk/at91/clk-peripheral.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--JYK4vJDZwFMowpUq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/clk/at91/clk-peripheral.c b/drivers/clk/at91/clk-peripheral.c
-index 7867eaf0447f..7a27ba8e0577 100644
---- a/drivers/clk/at91/clk-peripheral.c
-+++ b/drivers/clk/at91/clk-peripheral.c
-@@ -112,8 +112,8 @@ at91_clk_register_peripheral(struct regmap *regmap, const char *name,
- 
- 	init.name = name;
- 	init.ops = &peripheral_ops;
--	init.parent_names = (parent_name ? &parent_name : NULL);
--	init.num_parents = (parent_name ? 1 : 0);
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
- 	init.flags = 0;
- 
- 	periph->id = id;
--- 
-2.7.4
+On Wed, Aug 12, 2020 at 02:36:18PM -0600, Rob Herring wrote:
+> Clean-up incorrect indentation, extra spaces, long lines, and missing
+> EOF newline in schema files. Most of the clean-ups are for list
+> indentation which should always be 2 spaces more than the preceding
+> keyword.
+>=20
+> Found with yamllint (which I plan to integrate into the checks).
+>=20
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-spi@vger.kernel.org
+> Cc: linux-gpio@vger.kernel.org
+> Cc: linux-remoteproc@vger.kernel.org
+> Cc: linux-hwmon@vger.kernel.org
+> Cc: linux-i2c@vger.kernel.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: linux-iio@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-media@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: netdev@vger.kernel.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-serial@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
+I trust you guys in figuring out the details, so for touching I2C:
+
+Acked-by: Wolfram Sang <wsa@kernel.org>
+
+
+--JYK4vJDZwFMowpUq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl9EuWkACgkQFA3kzBSg
+KbZbPA/+MqNMzGTVXT++2afD+v/Qkum1LRbeldro+e0ewQSps4tnW/eHg9RaemYr
+BwxfsOZA+EJp0lGOnRM5/vhPMoInlSEwJSBlxtjratUScfPiR7D4ljKXGaUQv4IV
+l9cXBZuOeLnSerxdYsuGrs8M0uqe4rAc3jt/FGD4rSgawNTN1HieFaQ0vq/0I5Gi
+pyJv09alaosBuqNYc37Gqm9Ddk6xEJb8lvwrVqeS2ZGMFmfJuFlsuLKhwdgen/og
+Wik6VZEjyUHJbyZgkcwMn6rTVTnopK7E0RYmdap35Bh6MAZ3auQ4eQU2tktY3L0G
++NL/ah9FAvmPH1RAR7KmXzZxVYX2ZoWm3AJVpCIvlc9toZI5NdOwdruT+KlTLHIY
+T0vs7B3wqsrD4pHputHdDtf9iSZDB0FiTi44yJjReI72Yb47gDXXK7tOcewvq33Y
+J9dv/HeT85ER8dZ3fCssLdOsIVSE5ZGaDGjP9M4hPo5ZqM5WlMcqW13gmBsEaY3W
+quFFx4pgOXFmnO+7fCb0OIoySeTtgCMNqSwekaNsrbK8dBsFhMx62IzUwwCwL8ST
+clLrMsK81BA4v5hiU1SXC5zAJJG1W0FEpGvIuQRa5YxW8goqwIJrEuvy8jWLhg1x
+kB4BNFdQdBMg8xw0GSHGDhOZhIxgC5t/fvrbiLmqazzmbfCE1i8=
+=71f2
+-----END PGP SIGNATURE-----
+
+--JYK4vJDZwFMowpUq--
